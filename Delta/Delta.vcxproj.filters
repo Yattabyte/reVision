@@ -13,7 +13,7 @@
     <ClInclude Include="Library\Headers\Assets\Asset.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Library\Headers\Assets\Asset_Manager.h">
+    <ClInclude Include="Library\Headers\Modules\Asset_manager.h">
       <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
@@ -21,7 +21,7 @@
     <ClCompile Include="Library\Source Files\Assets\Asset.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Library\Source Files\Assets\Asset_Manager.cpp">
+    <ClCompile Include="Library\Source Files\Modules\Asset_Manager.cpp">
       <Filter>Modules</Filter>
     </ClCompile>
   </ItemGroup>

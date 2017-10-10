@@ -159,11 +159,11 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Library\Headers\Assets\Asset.h" />
-    <ClInclude Include="Library\Headers\Assets\Asset_Manager.h" />
+    <ClInclude Include="Library\Headers\Modules\Asset_manager.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Source Files\Assets\Asset.cpp" />
-    <ClCompile Include="Library\Source Files\Assets\Asset_Manager.cpp" />
+    <ClCompile Include="Library\Source Files\Modules\Asset_Manager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
