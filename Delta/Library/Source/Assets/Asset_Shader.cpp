@@ -21,27 +21,9 @@ Asset_Shader::Asset_Shader()
 	geometry_text = "";
 }
 
-Asset_Shader::Asset_Shader(const string & _filename) : Asset_Shader()
-{
-	filename = _filename;
-}
-
-void Asset_Shader::Bind()
-{
-	glUseProgram(gl_program_ID);
-}
-
-void Asset_Shader::Release()
-{
-	glUseProgram(0);
-}
-
-void Asset_Shader::Destroy()
-{
-	if (finalized) {
-		glDeleteProgram(gl_program_ID);
-		finalized = false;
-	}
+int Asset_Shader::GetAssetType() 
+{ 
+	return 0; 
 }
 
 void Asset_Shader::Finalize()
@@ -58,7 +40,14 @@ void Asset_Shader::Finalize()
 	}
 }
 
-// Creates and compiles all available shader types given a particular shader category, returning the sub shader ID's
+void Asset_Shader::Destroy()
+{
+	if (finalized) {
+		glDeleteProgram(gl_program_ID);
+		finalized = false;
+	}
+}
+
 void Asset_Shader::Compile()
 {
 	Compile_Single_Shader(gl_shader_vertex_ID, vertex_text.c_str(), GL_VERTEX_SHADER);
@@ -66,7 +55,6 @@ void Asset_Shader::Compile()
 	Compile_Single_Shader(gl_shader_geometry_ID, geometry_text.c_str(), GL_GEOMETRY_SHADER);
 }
 
-// Creates and compiles a singular shader file provided as <source> of the specified <type>, returning the <ID> and <error log> to their respective params. 
 void Asset_Shader::Compile_Single_Shader(GLuint &ID, const char *source, const GLenum &type)
 {
 	if (strlen(source) > 0) {
@@ -84,7 +72,6 @@ void Asset_Shader::Compile_Single_Shader(GLuint &ID, const char *source, const G
 	}
 }
 
-// Creates a shader program and attaches any applicable shaders, provided as params
 void Asset_Shader::GenerateProgram()
 {
 	gl_program_ID = glCreateProgram();
@@ -97,9 +84,6 @@ void Asset_Shader::GenerateProgram()
 		glAttachShader(gl_program_ID, gl_shader_geometry_ID);
 }
 
-// Finishes the shader compilation process
-// 1) Links the program together, returning any errors to the <error> param
-// 2) Deletes the individual shader objects after linking
 void Asset_Shader::LinkProgram()
 {
 	// Link and validate, retrieve any errors
@@ -122,6 +106,15 @@ void Asset_Shader::LinkProgram()
 		glDeleteShader(gl_shader_geometry_ID);
 }
 
+void Asset_Shader::Bind()
+{
+	glUseProgram(gl_program_ID);
+}
+
+void Asset_Shader::Release()
+{
+	glUseProgram(0);
+}
 
 void Asset_Shader::setLocationValue(const GLuint & i, const bool & b) { glUniform1i(i, b); }
 
@@ -211,9 +204,11 @@ bool FetchFileFromDisk(string &returnFile, const string &fileDirectory)
 	return true;
 }
 
+// Start loading the individual shaders from disk.
+// This is the extent to what we can do for this in a separate thread.
 void initialize_Shader(Shared_Asset_Shader & user, const string & filename, bool * complete)
 {
-	unique_lock<shared_mutex> write_guard(user->m_mutex); // Lock the map
+	unique_lock<shared_mutex> write_guard(user->m_mutex);
 
 	bool found_vertex = FetchFileFromDisk(user->vertex_text, filename + ".vsh");
 	bool found_fragement = FetchFileFromDisk(user->fragment_text, filename + ".fsh");
@@ -241,17 +236,19 @@ namespace Asset_Manager {
 			for each (auto &asset in assets_shaders) {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Shader derived_asset = dynamic_pointer_cast<Asset_Shader>(asset);
-				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+				if (derived_asset) { // Check that pointer isn't null after dynamic pointer casting
+					if (derived_asset->filename == filename) { // Filenames match, use this asset
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
-						if (regenerate) {
+						if (regenerate) { 
 							user->Destroy();
 							if (!threaded)
 								break;
 						}
-
+						// If we don't want multithreading, try to create the asset now.
+						// It is OK if the first time this asset was requested was Multithreaded but this one isn't!
+						// Because finalize can be called multiple times safely, as it checks to see if the content was already created.
 						if (!threaded) {
 							user->Finalize();
 							return;
@@ -265,10 +262,12 @@ namespace Asset_Manager {
 		const std::string &fulldirectory = getCurrentDir() + "\\Shaders\\" + filename;
 		{
 			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Shader(new Asset_Shader(filename));
+			user = Shared_Asset_Shader(new Asset_Shader());
+			user->filename = filename;
 			assets_shaders.push_back(user);
 		}
 
+		// Either continue processing on a new thread or stay on the current one
 		bool *complete = new bool(false);
 		if (threaded) {
 			thread *import_thread = new thread(initialize_Shader, user, fulldirectory, complete);

@@ -5,6 +5,7 @@
 	- Uses static variables, designed to be used across an entire application with ease.
 	- Can store and retrieve assets from different threads.
 	- Preliminary support for multithreading, though it is up to each asset type to support it safely.
+	- Static variables kept within source file
 
 	Note: Asset loading initialized by "load_Asset(shared_ptr<ASSET_TYPE> &asset)"
 */

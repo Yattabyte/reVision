@@ -5,13 +5,8 @@ Asset::~Asset()
 }
 
 Asset::Asset()
-{
-}
-
-void Asset::Finalize()
-{ 
-	if (!finalized) 
-		finalized = true; 
+{	
+	finalized = false;
 }
 
 int Asset::GetAssetType() 
@@ -22,4 +17,10 @@ int Asset::GetAssetType()
 bool Asset::ExistsYet() 
 { 
 	return finalized;
+}
+
+void Asset::Finalize()
+{
+	if (!finalized)
+		finalized = true;
 }

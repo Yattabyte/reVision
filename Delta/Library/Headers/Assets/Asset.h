@@ -47,18 +47,20 @@ using namespace std;
 class Asset
 {
 public:
-	~Asset();
-	Asset();
-	shared_mutex m_mutex;
-	// Performs final data processing
-	virtual ASSET_API void Finalize();
+	// Destroyed when no longer used only
+	~Asset(); 
+	// Zero Initialization only
+	Asset(); 
+	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	static ASSET_API int GetAssetType();
+	ASSET_API static int GetAssetType();
 	// Returns whether or not this asset has completed finalizing
 	ASSET_API bool ExistsYet();
+	// Performs final data processing
+	ASSET_API virtual void Finalize();
 
 protected:
-	bool finalized = false;
+	bool finalized;
 };
 
 // For ease of use, define the shared pointer to this class
