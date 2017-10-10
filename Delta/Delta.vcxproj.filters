@@ -13,16 +13,22 @@
     <ClInclude Include="Library\Headers\Assets\Asset.h">
       <Filter>Assets</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Headers\Assets\Asset_Shader.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
     <ClInclude Include="Library\Headers\Modules\Asset_manager.h">
       <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Library\Source Files\Assets\Asset.cpp">
+    <ClCompile Include="Library\Source\Assets\Asset_Shader.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
-    <ClCompile Include="Library\Source Files\Modules\Asset_Manager.cpp">
+    <ClCompile Include="Library\Source\Modules\Asset_Manager.cpp">
       <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source\Assets\Asset.cpp">
+      <Filter>Assets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

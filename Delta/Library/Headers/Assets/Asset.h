@@ -14,7 +14,7 @@
 	*****************************************************************************************************
 
 		* Implement the following:
-			- virtual void Initialize();
+			- void initialize_[Subclass Name]([any arguments here]) in cpp file
 			- virtual void Finalize();
 			- static int GetAssetType();
 
@@ -35,9 +35,9 @@
 #ifndef	ASSET
 #define	ASSET
 #ifdef	ASSET_EXPORT
-#define	DECLSPEC __declspec(dllexport)
+#define	ASSET_API __declspec(dllexport)
 #else
-#define	DECLSPEC __declspec(dllimport)
+#define	ASSET_API __declspec(dllimport)
 #endif
 
 #include <shared_mutex>
@@ -50,17 +50,15 @@ public:
 	~Asset();
 	Asset();
 	shared_mutex m_mutex;
-	// Loads and processes all relevant data from disk
-	virtual DECLSPEC void Initialize();
 	// Performs final data processing
-	virtual DECLSPEC void Finalize();
+	virtual ASSET_API void Finalize();
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	static DECLSPEC int GetAssetType();
-	// Returns whether or not this asset has completed initializing and finalizing
-	DECLSPEC bool ExistsYet();
+	static ASSET_API int GetAssetType();
+	// Returns whether or not this asset has completed finalizing
+	ASSET_API bool ExistsYet();
 
 protected:
-	bool initialized = false, finalized = false;
+	bool finalized = false;
 };
 
 // For ease of use, define the shared pointer to this class
