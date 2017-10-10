@@ -5,18 +5,24 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
+    <Filter Include="Modules">
+      <UniqueIdentifier>{a147322b-5e90-497c-97fd-f1d55ceaf163}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Library\Headers\Assets\Asset.h">
       <Filter>Assets</Filter>
     </ClInclude>
     <ClInclude Include="Library\Headers\Assets\Asset_Manager.h">
-      <Filter>Assets</Filter>
+      <Filter>Modules</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Library\Source Files\Assets\Asset_Manager.cpp">
+    <ClCompile Include="Library\Source Files\Assets\Asset.cpp">
       <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source Files\Assets\Asset_Manager.cpp">
+      <Filter>Modules</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

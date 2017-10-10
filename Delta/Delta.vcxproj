@@ -162,6 +162,7 @@
     <ClInclude Include="Library\Headers\Assets\Asset_Manager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Library\Source Files\Assets\Asset.cpp" />
     <ClCompile Include="Library\Source Files\Assets\Asset_Manager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

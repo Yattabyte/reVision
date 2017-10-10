@@ -51,13 +51,13 @@ public:
 	Asset();
 	shared_mutex m_mutex;
 	// Loads and processes all relevant data from disk
-	virtual DECLSPEC void Initialize() { initialized = true; }
+	virtual DECLSPEC void Initialize();
 	// Performs final data processing
-	virtual DECLSPEC void Finalize() { if (initialized) finalized = true; }
+	virtual DECLSPEC void Finalize();
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	static DECLSPEC int GetAssetType() { return -1; };
+	static DECLSPEC int GetAssetType();
 	// Returns whether or not this asset has completed initializing and finalizing
-	DECLSPEC bool ExistsYet() { return initialized ? finalized : false; }
+	DECLSPEC bool ExistsYet();
 
 protected:
 	bool initialized = false, finalized = false;

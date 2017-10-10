@@ -18,7 +18,7 @@
 #define	ASSET_MANAGER_API __declspec(dllimport)
 #endif
 
-#include "Asset.h"
+#include "Assets\Asset.h"
 #include <deque>
 #include <map>
 #include <shared_mutex>
