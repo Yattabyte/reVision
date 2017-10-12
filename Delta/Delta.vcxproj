@@ -97,12 +97,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;DELTA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;E:\Development Projects\prerequisites\OpenGL\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;E:\Development Projects\prerequisites\OpenGL\GLFW\lib-vc2015\glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -113,12 +113,12 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;DELTA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;E:\Development Projects\prerequisites\OpenGL\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;E:\Development Projects\prerequisites\OpenGL\GLFW\lib-vc2015\glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -131,14 +131,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;DELTA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;E:\Development Projects\prerequisites\OpenGL\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;E:\Development Projects\prerequisites\OpenGL\GLFW\lib-vc2015\glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -151,25 +151,31 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;DELTA_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir)Library\Headers\;E:\Development Projects\prerequisites\OpenGL\GLM;E:\Development Projects\prerequisites\OpenGL\GLEW\include;E:\Development Projects\prerequisites\OpenGL\GLFW\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32.lib;E:\Development Projects\prerequisites\OpenGL\GLEW\lib\Release\$(Platform)\glew32s.lib;E:\Development Projects\prerequisites\OpenGL\GLFW\lib-vc2015\glfw3dll.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Library\Headers\Assets\Asset.h" />
+    <ClInclude Include="Library\Headers\Assets\Asset_Config.h" />
     <ClInclude Include="Library\Headers\Assets\Asset_Shader.h" />
-    <ClInclude Include="Library\Headers\Modules\Asset_manager.h" />
+    <ClInclude Include="Library\Headers\Modules\Asset_Manager.h" />
+    <ClInclude Include="Library\Headers\Modules\Config_Manager.h" />
+    <ClInclude Include="Library\Headers\Modules\Viewport.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Source\Assets\Asset.cpp" />
+    <ClCompile Include="Library\Source\Assets\Asset_Config.cpp" />
     <ClCompile Include="Library\Source\Assets\Asset_Shader.cpp" />
     <ClCompile Include="Library\Source\Modules\Asset_Manager.cpp" />
+    <ClCompile Include="Library\Source\Modules\Config_Manager.cpp" />
+    <ClCompile Include="Library\Source\Modules\Viewport.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

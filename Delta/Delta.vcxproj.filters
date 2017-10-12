@@ -16,8 +16,17 @@
     <ClInclude Include="Library\Headers\Assets\Asset_Shader.h">
       <Filter>Assets</Filter>
     </ClInclude>
-    <ClInclude Include="Library\Headers\Modules\Asset_manager.h">
+    <ClInclude Include="Library\Headers\Modules\Viewport.h">
       <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Headers\Modules\Asset_Manager.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Headers\Modules\Config_Manager.h">
+      <Filter>Modules</Filter>
+    </ClInclude>
+    <ClInclude Include="Library\Headers\Assets\Asset_Config.h">
+      <Filter>Assets</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -28,6 +37,15 @@
       <Filter>Modules</Filter>
     </ClCompile>
     <ClCompile Include="Library\Source\Assets\Asset.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source\Modules\Viewport.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source\Modules\Config_Manager.cpp">
+      <Filter>Modules</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source\Assets\Asset_Config.cpp">
       <Filter>Assets</Filter>
     </ClCompile>
   </ItemGroup>

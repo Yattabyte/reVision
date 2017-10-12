@@ -1,4 +1,4 @@
-#include "Modules\Asset_manager.h"
+#include "Modules\Asset_Manager.h"
 #include <direct.h>
 
 static map<int, vector<Shared_Asset>>	assets;					// Assets stored in vectors coresponding to their asset-type
