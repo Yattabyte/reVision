@@ -32,3 +32,8 @@
 *.app
 *.opendb
 *.tlog
+*.idb
+*.lastbuildstate
+*.1.tlog
+*.1.u.tlog
+*.exp
