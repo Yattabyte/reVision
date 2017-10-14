@@ -175,6 +175,7 @@
     <ClInclude Include="Library\Headers\Managers\Asset_Manager.h" />
     <ClInclude Include="Library\Headers\Managers\Config_Manager.h" />
     <ClInclude Include="Library\Headers\Managers\Material_Manager.h" />
+    <ClInclude Include="Library\Headers\Managers\Message_Manager.h" />
     <ClInclude Include="Library\Headers\Rendering\Viewport.h" />
     <ClInclude Include="Library\Headers\Utilities\FileReader.h" />
   </ItemGroup>
@@ -187,6 +188,7 @@
     <ClCompile Include="Library\Source\Managers\Asset_Manager.cpp" />
     <ClCompile Include="Library\Source\Managers\Config_Manager.cpp" />
     <ClCompile Include="Library\Source\Managers\Material_Manager.cpp" />
+    <ClCompile Include="Library\Source\Managers\Message_Manager.cpp" />
     <ClCompile Include="Library\Source\Renering\Viewport.cpp" />
     <ClCompile Include="Library\Source\Utilities\FileReader.cpp" />
   </ItemGroup>

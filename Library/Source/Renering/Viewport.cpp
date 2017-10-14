@@ -1,5 +1,6 @@
 #include "Rendering\Viewport.h"
 #include "Managers\Config_Manager.h"
+#include "Managers\Message_Manager.h"
 #include <stdlib.h>
 #include <iostream>
 
@@ -64,12 +65,12 @@ void Viewport::Initialize()
 	glfwMakeContextCurrent(window);
 
 	// get version info
-	/*const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
+	const GLubyte* renderer = glGetString(GL_RENDERER); // get renderer string
 	const GLubyte* version = glGetString(GL_VERSION); // version as a string
-	SceneConsole::PrintMessage(std::string(reinterpret_cast<char const *>(renderer)), CSTATEMENT);
-	SceneConsole::PrintMessage(std::string(reinterpret_cast<char const *>(version)), CSTATEMENT);
+	MSG::Statement(std::string(reinterpret_cast<char const *>(renderer)));
+	MSG::Statement(std::string(reinterpret_cast<char const *>(version)));
 
-	setWindowSize(vec2(width, height));*/
+	//setWindowSize(vec2(width, height));
 	//ImGui_ImplGlfwGL3_Init(window, false);
 
 	// OpenGL Dependent Systems //

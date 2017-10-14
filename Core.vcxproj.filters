@@ -46,6 +46,9 @@
     <ClInclude Include="Library\Headers\Managers\Material_Manager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Headers\Managers\Message_Manager.h">
+      <Filter>Managers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Source\Assets\Asset.cpp">
@@ -76,6 +79,9 @@
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="Library\Source\Managers\Material_Manager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Library\Source\Managers\Message_Manager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
   </ItemGroup>

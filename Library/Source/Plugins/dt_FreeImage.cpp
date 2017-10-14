@@ -1,5 +1,6 @@
 #include "Plugins\dt_FreeImage.h"
 #include "Managers\Material_Manager.h"
+#include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
 using namespace Asset_Manager;
@@ -14,24 +15,24 @@ namespace dt_FreeImage {
 		GLubyte* textureData = nullptr;
 
 		if (format == -1) {
-			//SceneConsole::PrintError(MATERIAL_MISSING, str);
+			MSG::Error(FILE_MISSING, str);
 			success = false;
 		}
 		else if (format == FIF_UNKNOWN) {
-			//SceneConsole::PrintError(MATERIAL_CORRUPT, str);
+			MSG::Error(FILE_CORRUPT, str);
 			format = FreeImage_GetFIFFromFilename(file);
 
 			if (!FreeImage_FIFSupportsReading(format)) {
-				//SceneConsole::PrintMessage("Failure, could not recover the file!", CERROR);
+				MSG::Statement("Failure, could not recover the file!");
 				success = false;
 			}
 			else {
-				//SceneConsole::PrintMessage("Successfully resolved the texture file's format!", CSUCCESS);
+				MSG::Statement("Successfully resolved the texture file's format!");
 				success = true;
 			}
 		}
 		else if (format == FIF_GIF) {
-			//SceneConsole::PrintMessage("GIF loading unsupported!", CERROR);
+			MSG::Statement("GIF loading unsupported!");
 			success = false;
 		}
 
@@ -208,21 +209,21 @@ void initialize_Texture(Shared_Asset_Texture &user, const string & filename, boo
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
 	if (format == -1) {
-		//SceneConsole::PrintError(TEXTURE_MISSING, filename);
+		MSG::Error(FILE_MISSING, filename);
 		user = fetchDefaultAsset_Texture();
 		return;
 	}
 
 	if (format == FIF_UNKNOWN) {
-		//SceneConsole::PrintError(TEXTURE_CORRUPT, filename);
+		MSG::Error(FILE_CORRUPT, filename);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) {
-			//	SceneConsole::PrintMessage("Failure, could not read the file! Using fallback texture...", CERROR);
+			//	SceneConsole::Statement("Failure, could not read the file! Using fallback texture...", CERROR);
 			user = fetchDefaultAsset_Texture();
 			return;
 		}
 		else
-		{//	SceneConsole::PrintMessage("Successfully resolved the texture file's format!", CSUCCESS);
+		{//	SceneConsole::Statement("Successfully resolved the texture file's format!", CSUCCESS);
 		}
 	}
 
@@ -232,7 +233,7 @@ void initialize_Texture(Shared_Asset_Texture &user, const string & filename, boo
 	//Load
 	if (format == FIF_GIF) {
 		mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-		//SceneConsole::PrintMessage("GIF loading unsupported, using first frame...", CERROR);
+		MSG::Statement("GIF loading unsupported, using first frame...");
 		bitmap = FreeImage_LockPage(mbitmap, 0);
 	}
 	else
@@ -417,7 +418,7 @@ namespace Asset_Manager {
 		// Attempt to create the asset
 		const string &fulldirectory = getCurrentDir() + "\\Textures\\" + filename;
 		if (!fileOnDisk(fulldirectory)) {
-			//SceneConsole::PrintError(TEXTURE_MISSING, fulldirectory);
+			MSG::Error(FILE_MISSING, fulldirectory);
 			user = fetchDefaultAsset_Texture();
 			return;
 		}
@@ -524,7 +525,7 @@ namespace Asset_Manager {
 		// Attempt to create the asset
 		const std::string &fulldirectory = getCurrentDir() + "\\Materials\\" + filename;
 		if (!fileOnDisk(fulldirectory)) {
-			//SceneConsole::PrintError(TEXTURE_DIRECTORY_MISSING, fulldirectory);
+			MSG::Error(DIRECTORY_MISSING, fulldirectory);
 			
 			// NEED TO UPDATE USER WITH SOMETHING
 			return;

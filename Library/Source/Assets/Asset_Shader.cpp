@@ -1,4 +1,5 @@
 #include "Assets\Asset_Shader.h"
+#include "Managers\Message_Manager.h"
 #include "GLM\gtc\type_ptr.hpp"
 #include <fstream>
 
@@ -70,7 +71,7 @@ void Asset_Shader::Compile_Single_Shader(GLuint &ID, const char *source, const G
 		if (!success) {
 			GLchar InfoLog[1024];
 			glGetShaderInfoLog(ID, sizeof(InfoLog), NULL, InfoLog);
-			//SceneConsole::PrintError(SHADER_INCOMPLETE, filename, string(InfoLog, 1024));
+			MSG::Error(SHADER_INCOMPLETE, filename, string(InfoLog, 1024));
 		}
 	}
 }
@@ -96,7 +97,7 @@ void Asset_Shader::LinkProgram()
 	if (success == 0) {
 		GLchar ErrorLog[1024];
 		glGetProgramInfoLog(gl_program_ID, sizeof(ErrorLog), NULL, ErrorLog);
-		//SceneConsole::PrintError(PROGRAM_INCOMPLETE, filename, string(ErrorLog, 1024));
+		MSG::Error(PROGRAM_INCOMPLETE, filename, string(ErrorLog, 1024));
 	}
 	glValidateProgram(gl_program_ID);
 
@@ -217,12 +218,12 @@ void initialize_Shader(Shared_Asset_Shader & user, const string & filename, bool
 	bool found_fragement = FetchFileFromDisk(user->fragment_text, filename + ".fsh");
 	bool found_geometry = FetchFileFromDisk(user->geometry_text, filename + ".gsh");
 
-	/*if (!found_vertex)
-		SceneConsole::PrintError(SHADER_MISSING, user->filename + ".vsh");
+	if (!found_vertex)
+		MSG::Error(FILE_MISSING, user->filename + ".vsh");
 	if (!found_fragement)
-		SceneConsole::PrintError(SHADER_MISSING, user->filename + ".fsh");
+		MSG::Error(FILE_MISSING, user->filename + ".fsh");
 	else if (!(found_vertex + found_fragement + found_geometry))
-		SceneConsole::PrintError(SHADER_MISSING, user->filename);*/
+		MSG::Error(FILE_MISSING, user->filename);
 
 	submitWorkorder(user);
 	*complete = true;
