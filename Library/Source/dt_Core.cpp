@@ -10,6 +10,10 @@
 
 #include <string>
 
+
+
+
+
 static GLFWwindow *asset_sharing_context = nullptr;
 
 // GLFW sends its errors here
@@ -49,10 +53,9 @@ namespace DELTA {
 		Material_Manager::startup();
 		
 		MSG::Statement(	"Engine Version: " 
-						+ to_string(DT_ENGINE_VER_MAJOR)  + "." 
-						+ to_string(DT_ENGINE_VER_MIDDLE) + "." 
-						+ to_string(DT_ENGINE_VER_MINOR)  + ":" 
-						+ to_string(DT_ENGINE_VER_PATCH));
+						+ DT_ENGINE_VER_MAJOR  + "." 
+						+ DT_ENGINE_VER_MINOR  + "." 
+						+ DT_ENGINE_VER_PATCH);
 		MSG::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
 		MSG::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 		MSG::Statement("Current GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
