@@ -172,6 +172,7 @@
     <ClInclude Include="Library\Headers\Assets\Asset_Material.h" />
     <ClInclude Include="Library\Headers\Assets\Asset_Shader.h" />
     <ClInclude Include="Library\Headers\Assets\Asset_Texture.h" />
+    <ClInclude Include="Library\Headers\dt_Core.h" />
     <ClInclude Include="Library\Headers\Managers\Asset_Manager.h" />
     <ClInclude Include="Library\Headers\Managers\Config_Manager.h" />
     <ClInclude Include="Library\Headers\Managers\Material_Manager.h" />
@@ -185,6 +186,7 @@
     <ClCompile Include="Library\Source\Assets\Asset_Material.cpp" />
     <ClCompile Include="Library\Source\Assets\Asset_Shader.cpp" />
     <ClCompile Include="Library\Source\Assets\Asset_Texture.cpp" />
+    <ClCompile Include="Library\Source\dt_Core.cpp" />
     <ClCompile Include="Library\Source\Managers\Asset_Manager.cpp" />
     <ClCompile Include="Library\Source\Managers\Config_Manager.cpp" />
     <ClCompile Include="Library\Source\Managers\Material_Manager.cpp" />

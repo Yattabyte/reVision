@@ -38,18 +38,21 @@ enum Error_Enum
 	SHADER_INCOMPLETE,
 	PROGRAM_INCOMPLETE,
 
+	GLFW_ERROR,
 	ERROR_COUNT
 };
 
 static std::string Error_String[ERROR_COUNT] =
 {
-	"Error (0): The file % does not exist! ",
-	"Error (1): The directory % does not exist! ",
-	"Error (2): The file % is corrupt! ",
+	"Error ("+to_string(FILE_MISSING)+"): The file % does not exist! ",
+	"Error ("+to_string(DIRECTORY_MISSING)+"): The directory % does not exist! ",
+	"Error ("+to_string(FILE_CORRUPT)+"): The file % is corrupt! ",
 
-	"Error (3): A Framebuffer in the % is incomplete. ",
-	"Error (4): The Shader file % could not compile. ",
-	"Error (5): The Shader program % could not compile. "
+	"Error ("+to_string(FBO_INCOMPLETE)+"): A Framebuffer in the % is incomplete. ",
+	"Error ("+to_string(SHADER_INCOMPLETE)+"): The Shader file % could not compile. ",
+	"Error ("+to_string(PROGRAM_INCOMPLETE)+"): The Shader program % could not compile. ",
+
+	"Error ("+to_string(GLFW_ERROR)+"): GLFW Error % "
 };
 
 #endif // MESSAGE_MANAGER

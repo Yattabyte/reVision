@@ -49,6 +49,7 @@
     <ClInclude Include="Library\Headers\Managers\Message_Manager.h">
       <Filter>Managers</Filter>
     </ClInclude>
+    <ClInclude Include="Library\Headers\dt_Core.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Source\Assets\Asset.cpp">
@@ -84,5 +85,6 @@
     <ClCompile Include="Library\Source\Managers\Message_Manager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
+    <ClCompile Include="Library\Source\dt_Core.cpp" />
   </ItemGroup>
 </Project>
