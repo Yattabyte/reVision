@@ -10,10 +10,6 @@
 
 #include <string>
 
-
-
-
-
 static GLFWwindow *asset_sharing_context = nullptr;
 
 // GLFW sends its errors here
@@ -58,7 +54,7 @@ namespace DELTA {
 						+ DT_ENGINE_VER_PATCH);
 		MSG::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
 		MSG::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-		MSG::Statement("Current GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+		MSG::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
 		MSG::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
 
 		return true;
@@ -67,6 +63,8 @@ namespace DELTA {
 	{
 		Asset_Manager::shutdown();
 		CFG::shutdown();
+		glfwMakeContextCurrent(asset_sharing_context);
+		glfwTerminate();
 	}
 	void* GetContext()
 	{
