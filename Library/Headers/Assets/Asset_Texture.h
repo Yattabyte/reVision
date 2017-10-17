@@ -13,6 +13,9 @@
 #else
 #define	ASSET_TEXTURE_API __declspec(dllimport)
 #endif
+#define EXT_TEXTURE	".png"
+#define DIRECTORY_TEXTURE getCurrentDir() + "\\Textures\\"
+#define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 #include "Managers\Asset_Manager.h"
 #include "GL\glew.h"

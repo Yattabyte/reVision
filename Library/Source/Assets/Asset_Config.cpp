@@ -1,4 +1,5 @@
 #include "Assets\Asset_Config.h"
+#include "Managers\Message_Manager.h"
 #include <fstream>
 
 /* -----ASSET TYPE----- */
@@ -22,7 +23,7 @@ int Asset_Config::GetAssetType()
 
 void Asset_Config::Finalize()
 {
-	return void();
+	finalized = true;
 }
 
 void Asset_Config::setValue(const int & cfg_key, const float & cfg_value)
@@ -46,33 +47,9 @@ void Asset_Config::saveConfig()
 	for each (const auto &value in configuration) 
 		output += "\"" + CFG_STRING[value.first] + "\" \"" + to_string(value.second) + "\"\n";	
 
-	string directory = getCurrentDir() + "\\Config\\" + filename;
+	string directory = ABS_DIRECTORY_CONFIG(filename);
 	ofstream out(directory);
 	out << output.c_str();
-}
-
-// Retrieves (or initializes) a default asset from the Asset_Manager.
-// Can hard code default configuration parameters here.
-// Saves to disk afterwards.
-Shared_Asset_Config fetchDefaultAsset()
-{
-	shared_lock<shared_mutex> guard(getMutexIOAssets());
-	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
-	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Config::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Config::GetAssetType()];
-	if (default_asset.get() == nullptr) {
-		default_asset = shared_ptr<Asset_Config>(new Asset_Config());
-		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
-		
-		/* HARD CODE DEFAULT VALUES HERE */
-		cast_asset->filename = "config.cfg";
-		cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
-		cast_asset->setValue(CFG_ENUM::C_WINDOW_HEIGHT, 512);
-		cast_asset->setValue(CFG_ENUM::C_TEXTURE_ANISOTROPY, 16);
-		cast_asset->saveConfig();
-		return cast_asset; // already casted, might as well return it rather than recasting it
-	}
-	return dynamic_pointer_cast<Asset_Config>(default_asset);
 }
 
 // Attempts to retrieve a string between quotation marks "<string>"
@@ -127,6 +104,42 @@ void initialize_Config(Shared_Asset_Config & user, const string & filename, bool
 	*complete = true;
 }
 
+// Retrieves (or initializes) a default asset from the Asset_Manager.
+// Can hard code default configuration parameters here.
+// Saves to disk afterwards.
+Shared_Asset_Config fetchDefaultConfig()
+{
+	shared_lock<shared_mutex> guard(getMutexIOAssets());
+	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Config::GetAssetType(), Shared_Asset()));
+	auto &default_asset = fallback_assets[Asset_Config::GetAssetType()];
+	if (default_asset.get() == nullptr) { // Check if we already created the default asset
+		default_asset = shared_ptr<Asset_Config>(new Asset_Config());
+		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
+		if (fileOnDisk(ABS_DIRECTORY_CONFIG("defaultConfig"))) { // Check if we have a default one on disk to load
+			bool complete = false;
+			initialize_Config(cast_asset, ABS_DIRECTORY_CONFIG("defaultConfig"), &complete);
+			cast_asset->Finalize();
+			cast_asset->filename = "config";
+			cast_asset->saveConfig();
+			if (complete && cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
+				return cast_asset;
+		}
+		// We didn't load a default asset from disk
+		/* HARD CODE DEFAULT VALUES HERE */
+		cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
+		cast_asset->setValue(CFG_ENUM::C_WINDOW_HEIGHT, 512);
+		cast_asset->setValue(CFG_ENUM::C_TEXTURE_ANISOTROPY, 16);
+		// Save the default configurations to disk
+		cast_asset->filename = "defaultConfig";
+		cast_asset->saveConfig();
+		cast_asset->filename = "config";
+		cast_asset->saveConfig();
+		return cast_asset; 
+	}
+	return dynamic_pointer_cast<Asset_Config>(default_asset);
+}
+
 namespace Asset_Manager {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const bool & threaded)
 	{
@@ -156,9 +169,11 @@ namespace Asset_Manager {
 		}
 
 		// Attempt to create the asset
-		const std::string &fulldirectory = getCurrentDir() + "\\Config\\" + filename;
+		const std::string &fulldirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!fileOnDisk(fulldirectory)) {
-			user = fetchDefaultAsset();
+			MSG::Error(FILE_MISSING, fulldirectory);
+			MSG::Statement("Regenerating default configuration...");
+			user = fetchDefaultConfig();
 			return;
 		}
 		else {

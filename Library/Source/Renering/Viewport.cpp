@@ -38,7 +38,7 @@ void Viewport::Initialize()
 	glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_TRUE);
 	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-	GLFWwindow *other = (GLFWwindow*)DELTA::GetContext();
+	GLFWwindow *other = (GLFWwindow*)dt_Core::GetContext();
 	window = glfwCreateWindow(width, height, "Viewport", NULL, other);
 	if (!window) {
 		close_callback(0); 

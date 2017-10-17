@@ -23,9 +23,9 @@ namespace CFG
 {
 	// Shutsdown by saving the current configuration map to disk
 	CONFIG_MANAGER_API void shutdown();
-	// Loads a configuration file from disk. Defaults to "config.cfg"
+	// Loads a configuration file from disk. Defaults to "config"
 	CONFIG_MANAGER_API void loadConfiguration();
-	// Saves a configuration file to disk. Defaults to "config.cfg"
+	// Saves a configuration file to disk. Defaults to "config"
 	CONFIG_MANAGER_API void saveConfiguration();
 	// Returns a preference value given a preference key
 	CONFIG_MANAGER_API float getPreference(const int &cfg_key);

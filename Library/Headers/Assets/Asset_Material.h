@@ -24,9 +24,11 @@
 #else
 #define	ASSET_MATERIAL_API __declspec(dllimport)
 #endif
-
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
+#define EXT_MATERIAL ".mat"
+#define DIRECTORY_MATERIAL getCurrentDir() + "\\Materials\\"
+#define ABS_DIRECTORY_MATERIAL(filename) DIRECTORY_MATERIAL + filename + EXT_MATERIAL
 
 #include "Managers\Asset_Manager.h"
 #include "GL\glew.h"
@@ -53,6 +55,7 @@ public:
 	/****************
 	----Variables----
 	****************/
+
 	std::string material_filename;
 	std::string textures[MAX_PHYSICAL_IMAGES];
 	GLuint gl_array_ID;

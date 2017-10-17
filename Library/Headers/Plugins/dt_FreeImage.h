@@ -1,7 +1,7 @@
 /*
 	dt_FreeImage : http://freeimage.sourceforge.net/
 
-	- A plugin which uses FreeImage for image loading from disk
+	- A plugin which uses FreeImage for loading images from disk
 */
 
 #pragma once

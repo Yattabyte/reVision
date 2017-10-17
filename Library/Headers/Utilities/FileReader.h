@@ -96,6 +96,10 @@ namespace FileReader {
 		static string setValue(const vector<vec2> &target);
 		static string setValue(const vector<vec3> &target);
 	}
+
+	// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
+	// Returns true if succeeded, false if file doesn't exist
+	FILEREADER_API bool ReadFileFromDisk(string &returnFile, const string &fileDirectory);
 };
 
 #endif // FILEREADER

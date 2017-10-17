@@ -14,6 +14,9 @@
 #else
 #define	ASSET_CONFIG_API __declspec(dllimport)
 #endif
+#define EXT_CONFIG ".cfg"
+#define DIRECTORY_CONFIG getCurrentDir() + "\\Configs\\"
+#define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
 #include "Managers\Asset_Manager.h"
 #include <map>
@@ -28,8 +31,8 @@ public:
 	----Common----
 	*************/
 
-	~Asset_Config();
-	Asset_Config();
+	ASSET_CONFIG_API ~Asset_Config();
+	ASSET_CONFIG_API Asset_Config();
 	ASSET_CONFIG_API static int GetAssetType();
 	ASSET_CONFIG_API virtual void Finalize();
 

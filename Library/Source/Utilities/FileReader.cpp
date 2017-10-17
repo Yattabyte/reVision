@@ -1,4 +1,5 @@
 #include "Utilities\FileReader.h"
+#include <fstream>
 
 namespace FileReader {
 	namespace DocParser {
@@ -232,5 +233,21 @@ namespace FileReader {
 			}
 			return string;
 		}
+	}
+
+	bool ReadFileFromDisk(string & returnFile, const string & fileDirectory)
+	{
+		struct stat buffer;
+		if (stat(fileDirectory.c_str(), &buffer))
+			return false;
+
+		ifstream file(fileDirectory);
+		while (!file.eof()) {
+			string temp;
+			std::getline(file, temp);
+			returnFile.append(temp + '\n');
+		}
+
+		return true;
 	}
 }

@@ -4,7 +4,7 @@
 #include <fstream>
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 2
+#define ASSET_TYPE 3
 
 using namespace Asset_Manager;
 
@@ -214,19 +214,54 @@ void initialize_Shader(Shared_Asset_Shader & user, const string & filename, bool
 {
 	unique_lock<shared_mutex> write_guard(user->m_mutex);
 
-	bool found_vertex = FetchFileFromDisk(user->vertex_text, filename + ".vsh");
-	bool found_fragement = FetchFileFromDisk(user->fragment_text, filename + ".fsh");
-	bool found_geometry = FetchFileFromDisk(user->geometry_text, filename + ".gsh");
+	bool found_vertex = FetchFileFromDisk(user->vertex_text, filename + EXT_SHADER_VERTEX);
+	bool found_fragement = FetchFileFromDisk(user->fragment_text, filename + EXT_SHADER_FRAGMENT);
+	bool found_geometry = FetchFileFromDisk(user->geometry_text, filename + EXT_SHADER_GEOMETRY);
 
 	if (!found_vertex)
-		MSG::Error(FILE_MISSING, user->filename + ".vsh");
+		MSG::Error(FILE_MISSING, user->filename + EXT_SHADER_VERTEX);
 	if (!found_fragement)
-		MSG::Error(FILE_MISSING, user->filename + ".fsh");
-	else if (!(found_vertex + found_fragement + found_geometry))
-		MSG::Error(FILE_MISSING, user->filename);
+		MSG::Error(FILE_MISSING, user->filename + EXT_SHADER_FRAGMENT);
+	if (!(found_vertex + found_fragement + found_geometry)) {
+
+	}
 
 	submitWorkorder(user);
 	*complete = true;
+}
+
+Shared_Asset_Shader fetchDefaultShader()
+{
+	shared_lock<shared_mutex> guard(getMutexIOAssets());
+	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Shader::GetAssetType(), Shared_Asset()));
+	auto &default_asset = fallback_assets[Asset_Shader::GetAssetType()];
+	if (default_asset.get() == nullptr) { // Check if we already created the default asset
+		default_asset = shared_ptr<Asset_Shader>(new Asset_Shader());
+		Shared_Asset_Shader cast_asset = dynamic_pointer_cast<Asset_Shader>(default_asset);
+		cast_asset->filename = "defaultShader";
+		const std::string &fulldirectory = DIRECTORY_SHADER + cast_asset->filename;
+		bool found_vertex = fileOnDisk(fulldirectory + EXT_SHADER_VERTEX);
+		bool found_fragement = fileOnDisk(fulldirectory + EXT_SHADER_FRAGMENT);
+		if (!found_vertex)
+			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_VERTEX);
+		if (!found_fragement)
+			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_FRAGMENT);
+		if ((found_vertex && found_fragement)) { // Check if we have a default one on disk to load		
+			bool complete = false;
+			initialize_Shader(cast_asset, fulldirectory, &complete);
+			cast_asset->Finalize();
+			if (complete && cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
+				return cast_asset;
+		}
+		// We didn't load a default asset from disk
+		/* HARD CODE DEFAULT VALUES HERE */
+		cast_asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
+		cast_asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+		cast_asset->Finalize();
+		return cast_asset;
+	}
+	return dynamic_pointer_cast<Asset_Shader>(default_asset);
 }
 
 namespace Asset_Manager {
@@ -245,7 +280,7 @@ namespace Asset_Manager {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
-						if (regenerate) { 
+						if (regenerate) {
 							user->Destroy();
 							if (!threaded)
 								break;
@@ -263,7 +298,18 @@ namespace Asset_Manager {
 		}
 
 		// Attempt to create the asset
-		const std::string &fulldirectory = getCurrentDir() + "\\Shaders\\" + filename;
+		const std::string &fulldirectory = DIRECTORY_SHADER + filename;
+		bool found_vertex = fileOnDisk(fulldirectory + EXT_SHADER_VERTEX);
+		bool found_fragement = fileOnDisk(fulldirectory + EXT_SHADER_FRAGMENT);
+		if (!found_vertex)
+			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_VERTEX);
+		if (!found_fragement)
+			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_FRAGMENT);
+		if ( !(found_vertex && found_fragement) )
+		{
+			user = fetchDefaultShader();
+			return;
+		}
 		{
 			unique_lock<shared_mutex> guard(mutex_IO_assets);
 			user = Shared_Asset_Shader(new Asset_Shader());

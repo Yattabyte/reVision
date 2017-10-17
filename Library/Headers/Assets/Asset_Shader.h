@@ -15,6 +15,10 @@
 #else
 #define	ASSET_SHADER_API __declspec(dllimport)
 #endif
+#define EXT_SHADER_VERTEX ".vsh"
+#define EXT_SHADER_FRAGMENT ".fsh"
+#define EXT_SHADER_GEOMETRY ".gsh"
+#define DIRECTORY_SHADER getCurrentDir() + "\\Shaders\\"
 
 #include "Managers\Asset_manager.h"
 #include "GLM\common.hpp"
@@ -33,8 +37,8 @@ public:
 	----Common----
 	*************/
 
-	~Asset_Shader(); 
-	Asset_Shader(); 
+	ASSET_SHADER_API ~Asset_Shader();
+	ASSET_SHADER_API Asset_Shader();
 	ASSET_SHADER_API static int GetAssetType();
 	ASSET_SHADER_API virtual void Finalize();
 

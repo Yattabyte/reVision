@@ -12,7 +12,7 @@ namespace CFG
 	void loadConfiguration()
 	{
 		if (configurations.get() == nullptr)
-			Asset_Manager::load_asset(configurations, "config.cfg", false);
+			Asset_Manager::load_asset(configurations, "config", false);
 	}
 
 	void saveConfiguration()

@@ -47,7 +47,7 @@ namespace Asset_Manager {
 	// Retrieves the application's running directory
 	ASSET_MANAGER_API string getCurrentDir();
 	// Checks if a supplied file or folder exists on disk.
-	ASSET_MANAGER_API bool fileOnDisk(const string &name);
+	ASSET_MANAGER_API bool fileOnDisk(const string &path);
 }
 
 #endif // ASSET_MANAGER

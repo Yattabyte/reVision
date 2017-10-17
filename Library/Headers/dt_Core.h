@@ -15,15 +15,13 @@
 
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
-
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(1) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(2) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 
 using namespace std;
 
-class GLFWwindow;
-namespace DELTA {
+namespace dt_Core {
 	DT_CORE_API bool Initialize();
 	DT_CORE_API void Shutdown();
 	DT_CORE_API void* GetContext();

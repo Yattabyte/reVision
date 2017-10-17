@@ -50,6 +50,9 @@
       <Filter>Managers</Filter>
     </ClInclude>
     <ClInclude Include="Library\Headers\dt_Core.h" />
+    <ClInclude Include="Library\Headers\Assets\Asset_Primitive.h">
+      <Filter>Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Library\Source\Assets\Asset.cpp">
@@ -86,5 +89,8 @@
       <Filter>Managers</Filter>
     </ClCompile>
     <ClCompile Include="Library\Source\dt_Core.cpp" />
+    <ClCompile Include="Library\Source\Assets\Asset_Primitive.cpp">
+      <Filter>Assets</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

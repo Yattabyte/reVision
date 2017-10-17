@@ -18,7 +18,7 @@ static void error_callback(int error, const char* description)
 	MSG::Error(GLFW_ERROR, "(" + to_string(error) + "): " + description);	
 }
 
-namespace DELTA {
+namespace dt_Core {
 
 	bool Initialize() 
 	{

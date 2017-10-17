@@ -192,17 +192,7 @@ namespace dt_FreeImage {
 	}
 }
 
-Shared_Asset_Texture fetchDefaultAsset_Texture()
-{
-	shared_lock<shared_mutex> guard(getMutexIOAssets());
-	map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
-	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Texture::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Texture::GetAssetType()];
-	if (default_asset.get() == nullptr)
-		default_asset = shared_ptr<Asset_Texture>(new Asset_Texture());
-	return dynamic_pointer_cast<Asset_Texture>(default_asset);
-}
-
+Shared_Asset_Texture fetchDefaultTexture();
 void initialize_Texture(Shared_Asset_Texture &user, const string & filename, bool *complete)
 {
 	const char * file = filename.c_str();
@@ -210,20 +200,16 @@ void initialize_Texture(Shared_Asset_Texture &user, const string & filename, boo
 
 	if (format == -1) {
 		MSG::Error(FILE_MISSING, filename);
-		user = fetchDefaultAsset_Texture();
+		user = fetchDefaultTexture();
 		return;
 	}
 
 	if (format == FIF_UNKNOWN) {
-		MSG::Error(FILE_CORRUPT, filename);
 		format = FreeImage_GetFIFFromFilename(file);
-		if (!FreeImage_FIFSupportsReading(format)) {
-			//	SceneConsole::Statement("Failure, could not read the file! Using fallback texture...", CERROR);
-			user = fetchDefaultAsset_Texture();
+		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
+			MSG::Error(FILE_CORRUPT, filename, "Using default texture.");
+			user = fetchDefaultTexture();
 			return;
-		}
-		else
-		{//	SceneConsole::Statement("Successfully resolved the texture file's format!", CSUCCESS);
 		}
 	}
 
@@ -279,7 +265,7 @@ void initialize_Material(Shared_Asset_Material &material, const std::string &fil
 	if (filename != "") {
 		Asset_Material::getPBRProperties(filename, material->textures[0], material->textures[1], material->textures[2], material->textures[3], material->textures[4], material->textures[5]);
 		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-			material->textures[x] = getCurrentDir() + "\\Textures\\" + material->textures[x];
+			material->textures[x] = DIRECTORY_MATERIAL + (material->textures[x]);
 	}
 
 	vec2 material_dimensions = vec2(0);
@@ -310,7 +296,7 @@ void initialize_Material(Shared_Asset_Material &material, const std::string &fil
 
 		// If we didn't load a single damn file
 		bool did_we_ever_succeed = false;
-		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
+		for (int x = 0; x < MAX_PHYSICAL_IMAGES && did_we_ever_succeed == false; ++x)
 			did_we_ever_succeed += success[x];
 		if (!did_we_ever_succeed)
 			material_dimensions = vec2(1);
@@ -391,6 +377,60 @@ void initialize_Material(Shared_Asset_Material &material, const std::string &fil
 	*complete = true;
 }
 
+Shared_Asset_Texture fetchDefaultTexture()
+{
+	shared_lock<shared_mutex> guard(getMutexIOAssets());
+	map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Texture::GetAssetType(), Shared_Asset()));
+	auto &default_asset = fallback_assets[Asset_Texture::GetAssetType()];
+	if (default_asset.get() == nullptr) { // Check if we already created the default asset
+		default_asset = shared_ptr<Asset_Texture>(new Asset_Texture());
+		Shared_Asset_Texture cast_asset = dynamic_pointer_cast<Asset_Texture>(default_asset); 
+		cast_asset->filename = "defaultTexture";
+		if (fileOnDisk(ABS_DIRECTORY_TEXTURE("defaultTexture"))) { // Check if we have a default one on disk to load
+			bool complete = false;
+			initialize_Texture(cast_asset, ABS_DIRECTORY_TEXTURE("defaultTexture"), &complete);
+			cast_asset->Finalize();
+			if (complete && cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
+				return cast_asset;
+		}
+		// We didn't load a default asset from disk
+		bool complete = false;
+		cast_asset->pixel_data = new GLubyte[4];
+		for (int x = 0; x < 4; ++x)
+		cast_asset->pixel_data[x] = GLubyte(255);
+		cast_asset->Finalize();
+		return cast_asset;
+	}
+	return dynamic_pointer_cast<Asset_Texture>(default_asset);
+}
+
+Shared_Asset_Material fetchDefaultMaterial()
+{
+	shared_lock<shared_mutex> guard(getMutexIOAssets());
+	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Material::GetAssetType(), Shared_Asset()));
+	auto &default_asset = fallback_assets[Asset_Material::GetAssetType()];
+	if (default_asset.get() == nullptr) { // Check if we already created the default asset
+		default_asset = shared_ptr<Asset_Material>(new Asset_Material());
+		Shared_Asset_Material cast_asset = dynamic_pointer_cast<Asset_Material>(default_asset);
+		if (fileOnDisk(ABS_DIRECTORY_MATERIAL("defaultMaterial"))) { // Check if we have a default one on disk to load
+			bool complete = false;
+			initialize_Material(cast_asset, ABS_DIRECTORY_MATERIAL("defaultMaterial"), &complete);
+			cast_asset->Finalize();
+			if (complete && cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
+				return cast_asset;
+		}
+		// We didn't load a default asset from disk
+		// This will report many missing file errors, but will work.
+		bool complete = false;
+		initialize_Material(cast_asset, "", &complete);
+		cast_asset->Finalize();
+		return cast_asset;
+	}
+	return dynamic_pointer_cast<Asset_Material>(default_asset);
+}
+
 namespace Asset_Manager {
 	void load_asset(Shared_Asset_Texture &user, const string &filename, const bool &mipmap, const bool &anis, const bool &threaded)
 	{
@@ -416,10 +456,10 @@ namespace Asset_Manager {
 		}
 
 		// Attempt to create the asset
-		const string &fulldirectory = getCurrentDir() + "\\Textures\\" + filename;
+		const string &fulldirectory = DIRECTORY_TEXTURE + filename;
 		if (!fileOnDisk(fulldirectory)) {
 			MSG::Error(FILE_MISSING, fulldirectory);
-			user = fetchDefaultAsset_Texture();
+			user = fetchDefaultTexture();
 			return;
 		}
 
@@ -523,11 +563,10 @@ namespace Asset_Manager {
 		}
 
 		// Attempt to create the asset
-		const std::string &fulldirectory = getCurrentDir() + "\\Materials\\" + filename;
-		if (!fileOnDisk(fulldirectory)) {
-			MSG::Error(DIRECTORY_MISSING, fulldirectory);
-			
-			// NEED TO UPDATE USER WITH SOMETHING
+		const std::string &fulldirectory = ABS_DIRECTORY_MATERIAL(filename);
+		if (!fileOnDisk(fulldirectory) || (filename == "") || (filename == " ") ) {
+			MSG::Error(FILE_MISSING, fulldirectory);
+			user = fetchDefaultMaterial();
 			return;
 		}
 
