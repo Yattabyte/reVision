@@ -30,6 +30,16 @@
 *.exe
 *.out
 *.app
+
+# Directories
+CMakeFiles/
+Debug/
+include/
+x64/
+x32/
+
+# Other
+CMakeCache.txt
 *.opendb
 *.tlog
 *.idb
@@ -38,3 +48,8 @@
 *.1.u.tlog
 *.exp
 *.TMP
+*.vcxproj
+*.vcxproj.filters
+*.cmake
+*.sln
+*.db
