@@ -13,12 +13,7 @@
 #define	DELTA_ASSIMP_API __declspec(dllimport)
 #endif
 
-#include "Assets\Asset_Primitive.h"
-
 namespace dt_ASSIMP {
 }
 
-namespace Asset_Manager {
-	DELTA_ASSIMP_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
-}
 #endif // DT_ASSIMP

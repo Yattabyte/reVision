@@ -66,4 +66,7 @@ public:
 	// Returns the vertex-count of this object
 	DELTA_CORE_API size_t GetSize() const;
 };
+namespace Asset_Manager {
+	DELTA_CORE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
+}
 #endif // ASSET_PRIMITIVE

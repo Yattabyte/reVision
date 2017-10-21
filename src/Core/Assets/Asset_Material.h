@@ -74,4 +74,8 @@ public:
 	// Updates the appropriate supplied @string's with a path to the appropriate file
 	DELTA_CORE_API static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 };
+namespace Asset_Manager {
+	DELTA_CORE_API void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded = true);
+	DELTA_CORE_API void load_asset(Shared_Asset_Material &user, const std::string &material_filename, const bool &threaded = true);
+}
 #endif // ASSET_MATERIAL

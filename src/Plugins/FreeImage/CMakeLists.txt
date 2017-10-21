@@ -24,7 +24,7 @@ add_library				(${Module} SHARED 	${ROOT}
 											${RENDERING}
 											${UTILITIES})										
 # Include directories of dependencies
-include_directories 	(${FREEIMAGE_DIR})
+include_directories 	("." ${FREEIMAGE_DIR})
 # Link .lib files of dependencies
 target_link_libraries 	(${Module} 	dt_Core
 									${FREEIMAGE_LIB_DIR})

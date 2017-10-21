@@ -13,8 +13,12 @@
 #define	DELTA_FREEIMAGE_API __declspec(dllimport)
 #endif
 
-#include "Assets\Asset_Texture.h"
-#include "Assets\Asset_Material.h"
+#include "GL\glew.h"
+#include "GLM\common.hpp"
+#include <string>
+
+using namespace std;
+using namespace glm;
 
 class FIBITMAP;
 namespace dt_FreeImage {
@@ -39,11 +43,4 @@ namespace dt_FreeImage {
 	// Updates @dimensions, @dataSize, and @success.
 	DELTA_FREEIMAGE_API GLubyte * ReadImage_4channel(const std::string & fileName, vec2 & dimensions, int & dataSize, bool & success);
 }
-
-namespace Asset_Manager {	
-	DELTA_FREEIMAGE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
-	DELTA_FREEIMAGE_API void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded = true);
-	DELTA_FREEIMAGE_API void load_asset(Shared_Asset_Material &user, const std::string &material_filename, const bool &threaded = true);
-}
-
 #endif // DT_FREEIMAGE_API
