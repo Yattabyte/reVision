@@ -8,10 +8,10 @@
 #pragma once
 #ifndef	ASSET_TEXTURE
 #define	ASSET_TEXTURE
-#ifdef	CORE_EXPORT
-#define	ASSET_TEXTURE_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	ASSET_TEXTURE_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #define EXT_TEXTURE	".png"
 #define DIRECTORY_TEXTURE getCurrentDir() + "\\Textures\\"
@@ -32,11 +32,11 @@ public:
 	----Common----
 	*************/
 
-	ASSET_TEXTURE_API ~Asset_Texture();
-	ASSET_TEXTURE_API Asset_Texture();
-	ASSET_TEXTURE_API Asset_Texture(const string &f, const GLuint &t, const bool &m, const bool &a);
-	ASSET_TEXTURE_API static int GetAssetType();
-	ASSET_TEXTURE_API virtual void Finalize();
+	DELTA_CORE_API ~Asset_Texture();
+	DELTA_CORE_API Asset_Texture();
+	DELTA_CORE_API Asset_Texture(const string &f, const GLuint &t, const bool &m, const bool &a);
+	DELTA_CORE_API static int GetAssetType();
+	DELTA_CORE_API virtual void Finalize();
 
 	/****************
 	----Variables----
@@ -54,7 +54,7 @@ public:
 	************************/
 
 	// Makes this texture active at the specific @texture_unit
-	ASSET_TEXTURE_API void Bind(const GLuint &texture_unit);
+	DELTA_CORE_API void Bind(const GLuint &texture_unit);
 };
 
 

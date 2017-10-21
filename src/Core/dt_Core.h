@@ -1,30 +1,33 @@
 /*
 	Delta Core
 
-	- 
+	- The primary systems and assets that work together forming the engine.
+	- Some behaviour is literally undefined until an appropriate plugin is used, such as:
+		- Image loading (freeimage available)
+		- Model loading (assimp available)
 */
 
 #pragma once
 #ifndef DT_CORE
 #define DT_CORE
 #ifdef	DT_CORE_EXPORT
-#define DT_CORE_API __declspec(dllexport)
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	DT_CORE_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(2) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(4) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 
 using namespace std;
 
 namespace dt_Core {
-	DT_CORE_API bool Initialize();
-	DT_CORE_API void Shutdown();
-	DT_CORE_API void* GetContext();
+	DELTA_CORE_API bool Initialize();
+	DELTA_CORE_API void Shutdown();
+	DELTA_CORE_API void* GetContext();
 }
 
 #define COMPUTE_BUILD_YEAR			(__DATE__[ 9] - '0') * 10 + (__DATE__[10] - '0') 

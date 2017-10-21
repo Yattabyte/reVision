@@ -13,10 +13,10 @@
 #pragma once
 #ifndef ASSET_MANAGER
 #define ASSET_MANAGER
-#ifdef	CORE_EXPORT
-#define ASSET_MANAGER_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	ASSET_MANAGER_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 #include "Assets\Asset.h"
@@ -31,23 +31,23 @@ using namespace std;
 
 namespace Asset_Manager {
 	// Deletes all worker threads
-	ASSET_MANAGER_API void shutdown();
+	DELTA_CORE_API void shutdown();
 	// Submits the provided work order for finalization, after initialization
-	ASSET_MANAGER_API void submitWorkorder(const Shared_Asset &workorder);
+	DELTA_CORE_API void submitWorkorder(const Shared_Asset &workorder);
 	// Submits a new working thread to be kept track of. The pair is the thread and its completion state.
-	ASSET_MANAGER_API void submitWorkthread(const pair<thread*, bool*> &thread);
+	DELTA_CORE_API void submitWorkthread(const pair<thread*, bool*> &thread);
 	// Tick through the work orders, finalizing the front of the stack, and deleting all completed worker threads.
-	ASSET_MANAGER_API void ParseWorkOrders();
+	DELTA_CORE_API void ParseWorkOrders();
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
-	ASSET_MANAGER_API vector<Shared_Asset>& fetchAssetList(const int &asset_type);
+	DELTA_CORE_API vector<Shared_Asset>& fetchAssetList(const int &asset_type);
 	// Retrieves the fallback (default) assets
-	ASSET_MANAGER_API map<int, Shared_Asset>& getFallbackAssets();
+	DELTA_CORE_API map<int, Shared_Asset>& getFallbackAssets();
 	// Retrieves the asset map mutex
-	ASSET_MANAGER_API shared_mutex& getMutexIOAssets();
+	DELTA_CORE_API shared_mutex& getMutexIOAssets();
 	// Retrieves the application's running directory
-	ASSET_MANAGER_API string getCurrentDir();
+	DELTA_CORE_API string getCurrentDir();
 	// Checks if a supplied file or folder exists on disk.
-	ASSET_MANAGER_API bool fileOnDisk(const string &path);
+	DELTA_CORE_API bool fileOnDisk(const string &path);
 }
 
 #endif // ASSET_MANAGER

@@ -8,10 +8,10 @@
 #pragma once
 #ifndef VIEWPORT
 #define VIEWPORT
-#ifdef	CORE_EXPORT
-#define VIEWPORT_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	VIEWPORT_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 #include "GL\glew.h"
@@ -20,12 +20,12 @@
 class Viewport
 {
 public:
-	VIEWPORT_API ~Viewport();
-	VIEWPORT_API Viewport();
+	DELTA_CORE_API ~Viewport();
+	DELTA_CORE_API Viewport();
 	// Creates the window context and starts up all relevant systems tha depend on an opengl context
-	VIEWPORT_API void Initialize();
+	DELTA_CORE_API void Initialize();
 	// Returns whether or not the window should close
-	VIEWPORT_API bool ShouldClose() const;
+	DELTA_CORE_API bool ShouldClose() const;
 
 	GLFWwindow *window;
 };

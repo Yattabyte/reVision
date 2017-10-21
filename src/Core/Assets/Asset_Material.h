@@ -19,10 +19,10 @@
 #pragma once
 #ifndef	ASSET_MATERIAL
 #define	ASSET_MATERIAL
-#ifdef	CORE_EXPORT
-#define	ASSET_MATERIAL_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	ASSET_MATERIAL_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
@@ -45,12 +45,12 @@ public:
 	----Common----
 	*************/
 
-	ASSET_MATERIAL_API ~Asset_Material();
-	ASSET_MATERIAL_API Asset_Material();
-	ASSET_MATERIAL_API Asset_Material(const std::string &_file, const GLuint & mat_buf_id, const GLuint & spot);
-	ASSET_MATERIAL_API Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & mat_buf_id, const GLuint & spot);
-	ASSET_MATERIAL_API static int GetAssetType();
-	ASSET_MATERIAL_API void Finalize();
+	DELTA_CORE_API ~Asset_Material();
+	DELTA_CORE_API Asset_Material();
+	DELTA_CORE_API Asset_Material(const std::string &_file, const GLuint & mat_buf_id, const GLuint & spot);
+	DELTA_CORE_API Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & mat_buf_id, const GLuint & spot);
+	DELTA_CORE_API static int GetAssetType();
+	DELTA_CORE_API void Finalize();
 
 	/****************
 	----Variables----
@@ -72,6 +72,6 @@ public:
 
 	// Material textures are technically separate files, so we used a custom .mat file to direct which files to use for what texture spot
 	// Updates the appropriate supplied @string's with a path to the appropriate file
-	ASSET_MATERIAL_API static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
+	DELTA_CORE_API static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 };
 #endif // ASSET_MATERIAL

@@ -34,3 +34,4 @@ set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT
 												ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												FOLDER "Plugins")
+		target_compile_Definitions (${Module} PRIVATE DT_ASSIMP_EXPORT)

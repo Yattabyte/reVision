@@ -11,10 +11,10 @@
 #pragma once
 #ifndef CONFIG_MANAGER
 #define CONFIG_MANAGER
-#ifdef	CORE_EXPORT
-#define CONFIG_MANAGER_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	CONFIG_MANAGER_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 using namespace std;
@@ -22,13 +22,13 @@ using namespace std;
 namespace CFG
 {
 	// Shutsdown by saving the current configuration map to disk
-	CONFIG_MANAGER_API void shutdown();
+	DELTA_CORE_API void shutdown();
 	// Loads a configuration file from disk. Defaults to "config"
-	CONFIG_MANAGER_API void loadConfiguration();
+	DELTA_CORE_API void loadConfiguration();
 	// Saves a configuration file to disk. Defaults to "config"
-	CONFIG_MANAGER_API void saveConfiguration();
+	DELTA_CORE_API void saveConfiguration();
 	// Returns a preference value given a preference key
-	CONFIG_MANAGER_API float getPreference(const int &cfg_key);
+	DELTA_CORE_API float getPreference(const int &cfg_key);
 }
 
 #endif // CONFIG_MANAGER

@@ -9,10 +9,10 @@
 #pragma once
 #ifndef	ASSET_CONFIG
 #define	ASSET_CONFIG
-#ifdef	CORE_EXPORT
-#define	ASSET_CONFIG_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	ASSET_CONFIG_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #define EXT_CONFIG ".cfg"
 #define DIRECTORY_CONFIG getCurrentDir() + "\\Configs\\"
@@ -31,10 +31,10 @@ public:
 	----Common----
 	*************/
 
-	ASSET_CONFIG_API ~Asset_Config();
-	ASSET_CONFIG_API Asset_Config();
-	ASSET_CONFIG_API static int GetAssetType();
-	ASSET_CONFIG_API virtual void Finalize();
+	DELTA_CORE_API ~Asset_Config();
+	DELTA_CORE_API Asset_Config();
+	DELTA_CORE_API static int GetAssetType();
+	DELTA_CORE_API virtual void Finalize();
 
 	/****************
 	----Variables----
@@ -48,17 +48,17 @@ public:
 	******************************/
 
 	// Saves the value of @cfg_value to the spot of @cfg_key in our configuration map
-	ASSET_CONFIG_API void setValue(const int &cfg_key, const float &cfg_value);
+	DELTA_CORE_API void setValue(const int &cfg_key, const float &cfg_value);
 	// Gets the value in our configuration map at the spot of @cfg_key
 	// Returns UNDEFINED_CVAL when @cfg_key out of bounds (doesn't exist)
-	ASSET_CONFIG_API float getValue(const int & cfg_key);
+	DELTA_CORE_API float getValue(const int & cfg_key);
 	// Saves our configuration map to disk within the \\Config\\ folder
-	ASSET_CONFIG_API void saveConfig();
+	DELTA_CORE_API void saveConfig();
 }; 
 
 namespace Asset_Manager {
 	// Attempts to create an asset from disk or share one if it already exists
-	ASSET_CONFIG_API void load_asset(Shared_Asset_Config &user, const string &filename, const bool &threaded = true);
+	DELTA_CORE_API void load_asset(Shared_Asset_Config &user, const string &filename, const bool &threaded = true);
 }
 
 #define UNDEFINED_CVAL -12345.67890f // Undefined preference

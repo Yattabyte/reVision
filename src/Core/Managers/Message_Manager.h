@@ -11,10 +11,10 @@
 #pragma once
 #ifndef MESSAGE_MANAGER
 #define MESSAGE_MANAGER
-#ifdef	CORE_EXPORT
-#define MESSAGE_MANAGER_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	MESSAGE_MANAGER_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 #include <string>
@@ -23,9 +23,9 @@ using namespace std;
 
 namespace MSG {
 	// Prints a raw string @input to the message log
-	MESSAGE_MANAGER_API void Statement(const string &input);
+	DELTA_CORE_API void Statement(const string &input);
 	// Prints a formatted message using the error @error_number
-	MESSAGE_MANAGER_API void Error(const int &error_number, const string &input, const std::string &additional_input = "");
+	DELTA_CORE_API void Error(const int &error_number, const string &input, const std::string &additional_input = "");
 }
 
 enum Error_Enum

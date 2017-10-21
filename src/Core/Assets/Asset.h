@@ -34,11 +34,7 @@
 #pragma once
 #ifndef	ASSET
 #define	ASSET
-#ifdef	CORE_EXPORT
-#define	ASSET_API __declspec(dllexport)
-#else
-#define	ASSET_API __declspec(dllimport)
-#endif
+#define	DELTA_CORE_API __declspec(dllexport)
 
 #include <shared_mutex>
 
@@ -54,11 +50,11 @@ public:
 	Asset(); 
 	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	ASSET_API static int GetAssetType();
+	DELTA_CORE_API static int GetAssetType();
 	// Returns whether or not this asset has completed finalizing
-	ASSET_API bool ExistsYet();
+	DELTA_CORE_API bool ExistsYet();
 	// Performs final data processing
-	ASSET_API virtual void Finalize();
+	DELTA_CORE_API virtual void Finalize();
 
 protected:
 	bool finalized;

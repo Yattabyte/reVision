@@ -8,10 +8,10 @@
 #pragma once
 #ifndef	FILEREADER
 #define	FILEREADER
-#ifdef	CORE_EXPORT
-#define	FILEREADER_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	FILEREADER_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 #include "GLM\common.hpp"
@@ -51,7 +51,7 @@ namespace FileReader {
 		};
 		
 		// Updates the @property token using the @input string. Returns true if it got any data from it
-		FILEREADER_API bool getProperty(istringstream &string_stream, Property &property, string &input = string(""));
+		DELTA_CORE_API bool getProperty(istringstream &string_stream, Property &property, string &input = string(""));
 
 		/*********************************************************************
 		*--------------------------Getter Functions--------------------------*			
@@ -99,7 +99,7 @@ namespace FileReader {
 
 	// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
 	// Returns true if succeeded, false if file doesn't exist
-	FILEREADER_API bool ReadFileFromDisk(string &returnFile, const string &fileDirectory);
+	DELTA_CORE_API bool ReadFileFromDisk(string &returnFile, const string &fileDirectory);
 };
 
 #endif // FILEREADER

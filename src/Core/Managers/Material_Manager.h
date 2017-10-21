@@ -20,10 +20,10 @@
 #pragma once
 #ifndef MATERIAL_MANAGER
 #define MATERIAL_MANAGER
-#ifdef	CORE_EXPORT
-#define MATERIAL_MANAGER_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	MATERIAL_MANAGER_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
@@ -42,9 +42,9 @@ namespace Material_Manager {
 		GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
 	};
 
-	MATERIAL_MANAGER_API void startup();
-	MATERIAL_MANAGER_API deque<int>& getMatFreeSpots();
-	MATERIAL_MANAGER_API GLuint& getBufferSSBO();
+	DELTA_CORE_API void startup();
+	DELTA_CORE_API deque<int>& getMatFreeSpots();
+	DELTA_CORE_API GLuint& getBufferSSBO();
 }
 
 #endif // MATERIAL_MANAGER
