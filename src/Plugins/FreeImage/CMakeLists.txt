@@ -2,8 +2,7 @@
 #   Plugin: FreeImage   #
 #########################
 set (Module dt_FreeImage)
-set (FREEIMAGE_DIR "" CACHE PATH "FreeImage library directory")
-set (FREEIMAGE_LIB_DIR "" CACHE FILE_PATH "FreeImage .lib path")
+set (FREEIMAGE_DIR "" CACHE PATH "FreeImage root directory")
 
 # Get source files for this project
 file (GLOB 			ROOT 		"*.cpp" "*.h" )
@@ -24,10 +23,10 @@ add_library				(${Module} SHARED 	${ROOT}
 											${RENDERING}
 											${UTILITIES})										
 # Include directories of dependencies
-include_directories 	("." ${FREEIMAGE_DIR})
+include_directories 	("." ${FREEIMAGE_DIR}/Source/)
 # Link .lib files of dependencies
 target_link_libraries 	(${Module} 	dt_Core
-									${FREEIMAGE_LIB_DIR})
+									${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib)
 # Set working directory to the project directory
 set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}

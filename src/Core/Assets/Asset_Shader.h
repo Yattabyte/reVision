@@ -20,7 +20,8 @@
 #define EXT_SHADER_GEOMETRY ".gsh"
 #define DIRECTORY_SHADER getCurrentDir() + "\\Shaders\\"
 
-#include "Managers\Asset_manager.h"
+#include "Managers\Asset_Manager.h"
+#include "glm\glm.hpp"
 #include "GLM\common.hpp"
 #include "GL\glew.h"
 #include <string>

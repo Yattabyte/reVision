@@ -3,7 +3,7 @@
 #include <fstream>
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 0
+#define ASSET_TYPE 1
 
 using namespace Asset_Manager;
 

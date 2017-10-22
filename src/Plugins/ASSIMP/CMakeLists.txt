@@ -2,8 +2,7 @@
 #   Plugin: ASSIMP      #
 #########################
 set (Module dt_ASSIMP)
-set (ASSIMP_DIR "" CACHE PATH "FreeImage library directory")
-set (ASSIMP_LIB_DIR "" CACHE FILE_PATH "ASSIMP .lib path")
+set (ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
 
 # Get source files for this project
 file (GLOB 			ROOT 		"*.cpp" "*.h" )
@@ -24,10 +23,11 @@ add_library				(${Module} SHARED 	${ROOT}
 											${RENDERING}
 											${UTILITIES})										
 # Include directories of dependencies
-include_directories 	("." ${ASSIMP_DIR})
+include_directories 	("." ${ASSIMP_DIR}/include/)
 # Link .lib files of dependencies
-target_link_libraries 	(${Module} 	dt_Core
-									${ASSIMP_LIB_DIR})
+target_link_libraries 	(${Module} 				dt_Core
+									debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
+									optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib)
 # Set working directory to the project directory
 set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}

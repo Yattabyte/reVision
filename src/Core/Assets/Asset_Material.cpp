@@ -3,7 +3,7 @@
 #include "Utilities\FileReader.h"
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 1
+#define ASSET_TYPE 2
 
 using namespace Asset_Manager;
 

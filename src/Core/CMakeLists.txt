@@ -19,11 +19,7 @@ add_library				(${Module} SHARED 	${ROOT}
 											${ASSETS}
 											${MANAGERS}
 											${RENDERING}
-											${UTILITIES})				
-# Link .lib files of dependencies
-target_link_libraries 	(${Module} 	${GLEW_LIB_DIR}
-									${GLFW_LIB_DIR}
-									"OpenGL32.lib")
+											${UTILITIES})	
 # Set working directory to the project directory
 set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}

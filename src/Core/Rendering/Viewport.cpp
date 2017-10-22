@@ -2,6 +2,7 @@
 #include "Managers\Config_Manager.h"
 #include "Managers\Message_Manager.h"
 #include "dt_Core.h"
+#include "GLFW\glfw3.h"
 
 // Is called when the @window closes
 static void close_callback(GLFWwindow * window)

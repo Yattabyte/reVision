@@ -4,7 +4,7 @@
 #include <fstream>
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 3
+#define ASSET_TYPE 4
 
 using namespace Asset_Manager;
 
