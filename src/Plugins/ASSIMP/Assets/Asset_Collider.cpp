@@ -7,9 +7,9 @@
 #include "Assets\Asset_Collider.h"
 #include "Managers\Message_Manager.h"
 #include "dt_ASSIMP.h"
-#include "ASSIMP\Importer.hpp"
-#include "ASSIMP\postprocess.h"
-#include "ASSIMP\scene.h"
+#include "assimp\Importer.hpp"
+#include "assimp\postprocess.h"
+#include "assimp\scene.h"
 
 using namespace Asset_Manager;
 

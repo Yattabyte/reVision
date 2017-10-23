@@ -14,7 +14,6 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #include "Managers\Asset_Manager.h"
-#include <string>
 #include <btBulletDynamicsCommon.h>
 
 class Asset_Collider;
