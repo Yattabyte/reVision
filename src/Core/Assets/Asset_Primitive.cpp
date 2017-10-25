@@ -1,7 +1,7 @@
 #include "Assets\Asset_Primitive.h"
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 4
+#define ASSET_TYPE 3
 
 Asset_Primitive::~Asset_Primitive()
 {

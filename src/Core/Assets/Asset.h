@@ -45,9 +45,9 @@ class Asset
 {
 public:
 	// Destroyed when no longer used only
-	~Asset(); 
+	DELTA_CORE_API ~Asset();
 	// Zero Initialization only
-	Asset(); 
+	DELTA_CORE_API Asset();
 	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
 	DELTA_CORE_API static int GetAssetType();

@@ -1,7 +1,7 @@
 #include "Assets\Asset_Texture.h"
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 6
+#define ASSET_TYPE 5
 
 using namespace Asset_Manager;
 

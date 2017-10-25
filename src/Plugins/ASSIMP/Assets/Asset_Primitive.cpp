@@ -93,7 +93,7 @@ void initialize_Primitive(Shared_Asset_Primitive &primitive, const string & file
 }
 
 namespace Asset_Manager {
-	void load_asset(Shared_Asset_Primitive &user, const string &filename, const bool &threaded)
+	void load_asset(Shared_Asset_Primitive &user, const string &filename, const bool &threaded) 
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = getMutexIOAssets();

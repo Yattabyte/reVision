@@ -9,6 +9,10 @@ set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
 set (CORE_DIR "${PROJECT_SOURCE_DIR}/src/Core")
 set (PROJECT_BIN ${CMAKE_SOURCE_DIR})
+set (BUILD_ASSIMP "true" CACHE BOOL "Use model loading module: ASSIMP")
+set (BUILD_FREEIMAGE "true" CACHE BOOL "Use image loading module: FreeImage")
+set (MODULE_MODEL "false")
+set (MODULE_IMAGE "false")
 
 # Include directories of dependencies for entire project
 include_directories ( 	${CORE_DIR} 
@@ -61,11 +65,18 @@ link_libraries 	(					debug 		${GLM_DIR}/glm/Debug/glm_static.lib
 									optimized	${BULLET_DIR}/lib/Release/HACD.lib
 									optimized	${BULLET_DIR}/lib/Release/LinearMath.lib
 												"OpenGL32.lib")
-
+					
 # add all sub-projects and plugins here
 add_subdirectory( src/Core )
-add_subdirectory( src/Plugins/FreeImage )
-add_subdirectory( src/Plugins/ASSIMP )
+if (BUILD_FREEIMAGE)
+	set (MODULE_IMAGE dt_FreeImage)
+	add_subdirectory( src/Plugins/FreeImage )
+endif()							
+if (BUILD_ASSIMP)
+	set (MODULE_MODEL dt_ASSIMP)
+	add_subdirectory( src/Plugins/ASSIMP )
+endif()
+
 
 # Generates an "includes" folder with only the headers
 macro(GENERATE_INCLUDES GLOBPAT)

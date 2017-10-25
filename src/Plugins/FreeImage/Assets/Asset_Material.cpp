@@ -4,10 +4,10 @@
 	- FreeImage specific implementation of Asset_Material	
 */
 
+#include "dt_FreeImage.h"
 #include "Assets\Asset_Material.h"
 #include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
-#include "dt_FreeImage.h"
 #include "FreeImage.h"
 
 using namespace Asset_Manager;
