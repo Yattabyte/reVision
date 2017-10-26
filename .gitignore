@@ -53,3 +53,7 @@ CMakeCache.txt
 *.cmake
 *.sln
 *.db
+.vs/Delta/v15/.suo
+.vs/Delta/v15/Solution.VC.db-shm
+.vs/Delta/v15/Solution.VC.db-wal
+*.log

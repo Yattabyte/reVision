@@ -34,16 +34,8 @@ link_libraries 	(					debug 		${GLM_DIR}/glm/Debug/glm_static.lib
 									debug		${BULLET_DIR}/lib/Debug/Bullet3OpenCL_clew.lib
 									debug		${BULLET_DIR}/lib/Debug/BulletCollision.lib
 									debug		${BULLET_DIR}/lib/Debug/BulletDynamics.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletFileLoader.lib
 									debug		${BULLET_DIR}/lib/Debug/BulletInverseDynamics.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletInverseDynamicsUtils.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletRobotics.lib
 									debug		${BULLET_DIR}/lib/Debug/BulletSoftBody.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletWorldImporter.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletXmlWorldImporter.lib
-									debug		${BULLET_DIR}/lib/Debug/ConvexDecomposition.lib
-									debug		${BULLET_DIR}/lib/Debug/GIMPACTUtils.lib
-									debug		${BULLET_DIR}/lib/Debug/HACD.lib
 									debug		${BULLET_DIR}/lib/Debug/LinearMath.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet2FileLoader.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3Collision.lib
@@ -53,16 +45,8 @@ link_libraries 	(					debug 		${GLM_DIR}/glm/Debug/glm_static.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3OpenCL_clew.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletCollision.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletDynamics.lib
-									optimized	${BULLET_DIR}/lib/Release/BulletFileLoader.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletInverseDynamics.lib
-									optimized	${BULLET_DIR}/lib/Release/BulletInverseDynamicsUtils.lib
-									optimized	${BULLET_DIR}/lib/Release/BulletRobotics.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletSoftBody.lib
-									optimized	${BULLET_DIR}/lib/Release/BulletWorldImporter.lib
-									optimized	${BULLET_DIR}/lib/Release/BulletXmlWorldImporter.lib
-									optimized	${BULLET_DIR}/lib/Release/ConvexDecomposition.lib
-									optimized	${BULLET_DIR}/lib/Release/GIMPACTUtils.lib
-									optimized	${BULLET_DIR}/lib/Release/HACD.lib
 									optimized	${BULLET_DIR}/lib/Release/LinearMath.lib
 												"OpenGL32.lib")
 					
