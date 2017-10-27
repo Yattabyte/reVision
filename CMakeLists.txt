@@ -54,11 +54,11 @@ link_libraries 	(					debug 		${GLM_DIR}/glm/Debug/glm_static.lib
 add_subdirectory( src/Core )
 if (BUILD_FREEIMAGE)
 	set (MODULE_IMAGE dt_FreeImage)
-	add_subdirectory( src/Plugins/FreeImage )
+	add_subdirectory( src/Plugins/dt_FreeImage )
 endif()							
 if (BUILD_ASSIMP)
 	set (MODULE_MODEL dt_ASSIMP)
-	add_subdirectory( src/Plugins/ASSIMP )
+	add_subdirectory( src/Plugins/dt_ASSIMP )
 endif()
 
 

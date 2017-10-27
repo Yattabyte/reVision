@@ -22,7 +22,7 @@ add_library				(${Module} SHARED 	${ROOT}
 											${RENDERING}
 											${UTILITIES})										
 # Include directories of dependencies
-include_directories 	("." ${ASSIMP_DIR}/include/)
+include_directories 	("." ${ASSIMP_DIR}/include/ ../${MODULE_IMAGE}/.)
 # Link .lib files of dependencies
 target_link_libraries 	(${Module} 				dt_Core
 												${MODULE_IMAGE}

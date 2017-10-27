@@ -13,7 +13,7 @@
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
-#include "Managers\Asset_Manager.h"
+#include "Assets\Asset.h"
 #include <btBulletDynamicsCommon.h>
 
 class Asset_Collider;
@@ -31,7 +31,4 @@ public:
 	string filename;
 	btCollisionShape *shape;
 };
-namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Collider &user, const string & filename, const bool &threaded = true);
-}
 #endif // ASSET_COLLIDER

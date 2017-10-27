@@ -1,5 +1,6 @@
 #include "Assets\Asset_Model.h"
 #include "Managers\Message_Manager.h"
+#include "dt_FreeImage.h"
 
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 6
@@ -87,6 +88,11 @@ Asset_Model::Asset_Model(const string & _filename) : Asset_Model()
 	filename = _filename;
 }
 
+int Asset_Model::GetAssetType()
+{
+	return ASSET_TYPE;
+}
+
 void Asset_Model::Finalize()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
@@ -143,11 +149,6 @@ void Asset_Model::Finalize()
 		glDeleteBuffers(7, buffers);
 		finalized = true;
 	}
-}
-
-int Asset_Model::GetAssetType()
-{
-	return ASSET_TYPE;
 }
 
 Shared_Asset_Model fetchDefaultAsset()

@@ -4,12 +4,11 @@
 	- ASSIMP specific implementation of Asset_Primitive
 */
 
-#include "Assets\Asset_Primitive.h"
-#include "Managers\Message_Manager.h"
 #include "dt_ASSIMP.h"
 #include "ASSIMP\Importer.hpp"
 #include "ASSIMP\postprocess.h"
 #include "ASSIMP\scene.h"
+#include "Managers\Message_Manager.h"
 
 using namespace Asset_Manager;
 

@@ -3,6 +3,17 @@
 #include "FreeImage.h"
 
 namespace dt_FreeImage {
+	bool Initialize()
+	{
+		if (glewInit() != GLEW_OK) {
+			MSG::Error(OTHER_ERROR, "dt_FreeImage couldn't initialize!");
+			return false;
+		}
+		else {
+			MSG::Statement("dt_FreeImage successfully loaded.");
+			return true;
+		}
+	}
 	FIBITMAP * FetchImageFromDisk(const std::string &fileName, vec2 & dimensions, int & dataSize, bool & success)
 	{
 		success = true;

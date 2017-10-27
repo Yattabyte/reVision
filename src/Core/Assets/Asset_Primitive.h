@@ -22,7 +22,7 @@
 #define DIRECTORY_PRIMITIVE getCurrentDir() + "\\Primitives\\"
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
-#include "Managers\Asset_Manager.h"
+#include "Assets\Asset.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <vector>
@@ -66,7 +66,4 @@ public:
 	// Returns the vertex-count of this object
 	DELTA_CORE_API size_t GetSize() const;
 };
-namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
-}
 #endif // ASSET_PRIMITIVE

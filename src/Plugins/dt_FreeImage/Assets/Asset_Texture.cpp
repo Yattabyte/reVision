@@ -4,10 +4,9 @@
 	- FreeImage specific implementation of Asset_Texture	
 */
 
-#include "Assets\Asset_Texture.h"
-#include "Managers\Message_Manager.h"
 #include "dt_FreeImage.h"
 #include "FreeImage.h"
+#include "Managers\Message_Manager.h"
 
 using namespace Asset_Manager;
 

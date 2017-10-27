@@ -3,8 +3,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 5
 
-using namespace Asset_Manager;
-
 Asset_Texture::~Asset_Texture()
 {
 	if (finalized)

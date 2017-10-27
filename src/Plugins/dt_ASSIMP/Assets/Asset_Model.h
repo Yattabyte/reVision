@@ -19,10 +19,10 @@
 #define GLEW_STATIC
 #include "Managers\Asset_Manager.h"
 #include "Assets\Asset_Material.h"
-#include "GL\glew.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
 #include "assimp\scene.h"
+#include "GL\glew.h"
 #include "glm\common.hpp"
 #include "glm\geometric.hpp"
 #include <map>
