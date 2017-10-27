@@ -1,7 +1,8 @@
 /*
 	Asset_Model
 	
-	- 
+	- An geometric model/mesh
+	- To be used in rendering
 */
 
 #pragma once
@@ -28,9 +29,6 @@
 #include <map>
 #include <string>
 #include <vector>
-
-using namespace std;
-using namespace glm;
 
 struct VertexBoneData
 {
@@ -73,13 +71,20 @@ typedef shared_ptr<Asset_Model> Shared_Asset_Model;
 class Asset_Model : public Asset
 {
 public:
+	/*************
+	----Common----
+	*************/
+
 	DELTA_ASSIMP_API ~Asset_Model();
 	DELTA_ASSIMP_API Asset_Model();
 	DELTA_ASSIMP_API Asset_Model(const string & _filename);
 	DELTA_ASSIMP_API void Finalize();
 	DELTA_ASSIMP_API static int GetAssetType();
 
-	// Model Attributes
+	/****************
+	----Variables----
+	****************/
+
 	GLuint								gl_vao_ID;
 	int									mesh_size;
 	string								filename;

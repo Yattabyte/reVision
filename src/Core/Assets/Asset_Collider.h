@@ -21,13 +21,20 @@ typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
 class Asset_Collider : public Asset
 {
 public:
+	/*************
+	----Common----
+	*************/
+
 	DELTA_CORE_API ~Asset_Collider();
 	DELTA_CORE_API Asset_Collider();
 	DELTA_CORE_API Asset_Collider(const string &_filename);
 	DELTA_CORE_API Asset_Collider(btCollisionShape *new_shape);
 	DELTA_CORE_API static int GetAssetType();
 
-	// Collider attributes
+	/****************
+	----Variables----
+	****************/
+
 	string filename;
 	btCollisionShape *shape;
 };
