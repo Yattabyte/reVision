@@ -8,20 +8,20 @@
 #pragma once
 #ifndef	ASSET_MODEL
 #define	ASSET_MODEL
-#ifdef	DT_ASSIMP_EXPORT
-#define DELTA_ASSIMP_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
 #else
-#define	DELTA_ASSIMP_API __declspec(dllimport)
+#define	DELTA_CORE_API __declspec(dllimport)
 #endif
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define NUM_BONES_PER_VEREX 4
 #define NUM_MAX_BONES 100
 #define GLEW_STATIC
+
+#include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
 #include "Assets\Asset_Material.h"
-#include "assimp\Importer.hpp"
-#include "assimp\postprocess.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"
 #include "glm\common.hpp"
@@ -75,11 +75,11 @@ public:
 	----Common----
 	*************/
 
-	DELTA_ASSIMP_API ~Asset_Model();
-	DELTA_ASSIMP_API Asset_Model();
-	DELTA_ASSIMP_API Asset_Model(const string & _filename);
-	DELTA_ASSIMP_API void Finalize();
-	DELTA_ASSIMP_API static int GetAssetType();
+	DELTA_CORE_API ~Asset_Model();
+	DELTA_CORE_API Asset_Model();
+	DELTA_CORE_API Asset_Model(const string & _filename);
+	DELTA_CORE_API void Finalize();
+	DELTA_CORE_API static int GetAssetType();
 
 	/****************
 	----Variables----
@@ -94,6 +94,6 @@ public:
 	vec3								bbox_min, bbox_max;
 };
 namespace Asset_Manager {
-	DELTA_ASSIMP_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
-}
+	DELTA_CORE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
+};
 #endif // ASSET_MODEL

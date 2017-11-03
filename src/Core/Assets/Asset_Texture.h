@@ -18,6 +18,7 @@
 #define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 #include "Assets\Asset.h"
+#include "Managers\Asset_Manager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
@@ -55,5 +56,8 @@ public:
 
 	// Makes this texture active at the specific @texture_unit
 	DELTA_CORE_API void Bind(const GLuint &texture_unit);
+};
+namespace Asset_Manager {
+	DELTA_CORE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
 };
 #endif // ASSET_TEXTURE

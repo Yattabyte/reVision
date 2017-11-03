@@ -1,9 +1,10 @@
 #include "Assets\Asset_Model.h"
 #include "Managers\Message_Manager.h"
-#include "dt_FreeImage.h"
+#include "assimp\Importer.hpp"
+#include "assimp\postprocess.h"
 
 /* -----ASSET TYPE----- */
-#define ASSET_TYPE 6
+#define ASSET_TYPE 4
 
 using namespace Asset_Manager;
 
@@ -23,7 +24,6 @@ VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
 		IDs[i] = vbd.IDs[i];
 		Weights[i] = vbd.Weights[i];
 	}
-
 }
 
 void VertexBoneData::Reset()

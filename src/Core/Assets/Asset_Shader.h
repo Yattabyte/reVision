@@ -20,6 +20,7 @@
 #define EXT_SHADER_GEOMETRY ".gsh"
 #define DIRECTORY_SHADER getCurrentDir() + "\\Shaders\\"
 
+#include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
 #include "glm\glm.hpp"
 #include "GLM\common.hpp"
@@ -109,9 +110,8 @@ public:
 	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const mat4 *o, const int &size);
 	DELTA_CORE_API static void setLocationMatArray(const GLuint &i, const float * o, const int &size, const GLboolean &transpose);		
 };
-
 namespace Asset_Manager {
 	// Attempts to create an asset from disk or share one if it already exists
 	DELTA_CORE_API void load_asset(Shared_Asset_Shader &user, const string &filename, const bool &regenerate = false, const bool &threaded = true);
-}
+};
 #endif // ASSET_SHADER

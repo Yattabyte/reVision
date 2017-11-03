@@ -3,64 +3,60 @@ cmake_minimum_required(VERSION 3.0)
 project(Delta)
 
 # Get dependency directory locations from the user
+set (ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
+set (FREEIMAGE_DIR "" CACHE PATH "FreeImage root directory")
 set (GLM_DIR "" CACHE PATH "OpenGL Mathematics library (GLM) root directory")
 set (GLEW_DIR "" CACHE PATH "OpenGL Extension Wrangler library (GLEW) root directory")
 set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
 set (CORE_DIR "${PROJECT_SOURCE_DIR}/src/Core")
 set (PROJECT_BIN ${CMAKE_SOURCE_DIR})
-set (BUILD_ASSIMP "true" CACHE BOOL "Use model loading module: ASSIMP")
-set (BUILD_FREEIMAGE "true" CACHE BOOL "Use image loading module: FreeImage")
-set (MODULE_MODEL "false")
-set (MODULE_IMAGE "false")
 
 # Include directories of dependencies for entire project
 include_directories ( 	${CORE_DIR} 
+						${ASSIMP_DIR}/include/
+						${FREEIMAGE_DIR}/Source/
 						${GLM_DIR} 
 						${GLEW_DIR}/include/ 
 						${GLFW_DIR}/include/
 						${BULLET_DIR}/src/)
 						
-link_libraries 	(					debug 		${GLM_DIR}/glm/Debug/glm_static.lib
-									optimized	${GLM_DIR}/glm/Release/glm_static.lib 
+link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
+									optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib
+									debug		${ASSIMP_DIR}/lib/Debug/IrrXML.lib
+									optimized	${ASSIMP_DIR}/lib/Release/IrrXML.lib
+									debug		${ASSIMP_DIR}/lib/Debug/zlibstaticd.lib
+									optimized	${ASSIMP_DIR}/lib/Release/zlibstatic.lib
+												${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
 												${GLEW_DIR}/lib/Release/x64/glew32s.lib
 									debug		${GLFW_DIR}/src/Debug/glfw3.lib
 									optimized	${GLFW_DIR}/src/Release/glfw3.lib
 									debug		${BULLET_DIR}/lib/Debug/Bullet2FileLoader.lib
-									debug		${BULLET_DIR}/lib/Debug/Bullet3Collision.lib
-									debug		${BULLET_DIR}/lib/Debug/Bullet3Common.lib
-									debug		${BULLET_DIR}/lib/Debug/Bullet3Dynamics.lib
-									debug		${BULLET_DIR}/lib/Debug/Bullet3Geometry.lib
-									debug		${BULLET_DIR}/lib/Debug/Bullet3OpenCL_clew.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletCollision.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletDynamics.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletInverseDynamics.lib
-									debug		${BULLET_DIR}/lib/Debug/BulletSoftBody.lib
-									debug		${BULLET_DIR}/lib/Debug/LinearMath.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet2FileLoader.lib
+									debug		${BULLET_DIR}/lib/Debug/Bullet3Collision.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3Collision.lib
+									debug		${BULLET_DIR}/lib/Debug/Bullet3Common.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3Common.lib
+									debug		${BULLET_DIR}/lib/Debug/Bullet3Dynamics.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3Dynamics.lib
+									debug		${BULLET_DIR}/lib/Debug/Bullet3Geometry.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3Geometry.lib
+									debug		${BULLET_DIR}/lib/Debug/Bullet3OpenCL_clew.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet3OpenCL_clew.lib
+									debug		${BULLET_DIR}/lib/Debug/BulletCollision.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletCollision.lib
+									debug		${BULLET_DIR}/lib/Debug/BulletDynamics.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletDynamics.lib
+									debug		${BULLET_DIR}/lib/Debug/BulletInverseDynamics.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletInverseDynamics.lib
+									debug		${BULLET_DIR}/lib/Debug/BulletSoftBody.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletSoftBody.lib
+									debug		${BULLET_DIR}/lib/Debug/LinearMath.lib
 									optimized	${BULLET_DIR}/lib/Release/LinearMath.lib
 												"OpenGL32.lib")
 					
 # add all sub-projects and plugins here
 add_subdirectory( src/Core )
-if (BUILD_FREEIMAGE)
-	set (MODULE_IMAGE dt_FreeImage)
-	add_subdirectory( src/Plugins/dt_FreeImage )
-endif()							
-if (BUILD_ASSIMP)
-	set (MODULE_MODEL dt_ASSIMP)
-	add_subdirectory( src/Plugins/dt_ASSIMP )
-endif()
-
 
 # Generates an "includes" folder with only the headers
 macro(GENERATE_INCLUDES GLOBPAT)

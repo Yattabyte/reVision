@@ -18,6 +18,7 @@
 #define DIRECTORY_CONFIG getCurrentDir() + "\\Configs\\"
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
+#include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
 #include <map>
 #include <vector>
@@ -55,11 +56,10 @@ public:
 	// Saves our configuration map to disk within the \\Config\\ folder
 	DELTA_CORE_API void saveConfig();
 }; 
-
 namespace Asset_Manager {
 	// Attempts to create an asset from disk or share one if it already exists
 	DELTA_CORE_API void load_asset(Shared_Asset_Config &user, const string &filename, const bool &threaded = true);
-}
+};
 
 #define UNDEFINED_CVAL -12345.67890f // Undefined preference
 

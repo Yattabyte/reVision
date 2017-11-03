@@ -4,7 +4,6 @@
 #include "Managers\Message_Manager.h"
 
 // OpenGL Dependent Systems //
-#define GLEW_STATIC
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 #include "Managers\Material_Manager.h"
@@ -23,6 +22,8 @@ namespace dt_Core {
 
 	bool Initialize() 
 	{
+		//Shared_Asset_Primitive qwe;
+		//Asset_Manager::load_asset(qwe, "quad", false);
 		glfwSetErrorCallback(error_callback);
 		if (!glfwInit()) {
 			glfwTerminate();

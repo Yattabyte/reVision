@@ -34,11 +34,16 @@
 #pragma once
 #ifndef	ASSET
 #define	ASSET
-#define	DELTA_CORE_API __declspec(dllexport)
+#ifdef	DT_CORE_EXPORT
+#define DELTA_CORE_API __declspec(dllexport)
+#else
+#define	DELTA_CORE_API __declspec(dllimport)
+#endif
 
 #include <shared_mutex>
 
 using namespace std;
+
 class Asset;
 typedef shared_ptr<Asset> Shared_Asset;
 class Asset
