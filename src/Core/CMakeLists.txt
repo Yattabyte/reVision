@@ -3,23 +3,15 @@
 ############
 set (Module dt_Core)
 # Get source files for this project
-file (GLOB 			ROOT 		"*.cpp" "*.h" )
-file (GLOB_RECURSE 	ASSETS 		"Assets/*.cpp" "Assets/*.h")
-file (GLOB_RECURSE 	MANAGERS 	"Managers/*.cpp" "Managers/*.h")
-file (GLOB_RECURSE 	RENDERING 	"Rendering/*.cpp" "Rendering/*.h")
-file (GLOB_RECURSE 	UTILITIES 	"Utilities/*.cpp" "Utilities/*.h")
-# Organize the source files into folders/groups
-source_group ("" 			FILES	${ROOT})
-source_group ("Assets" 		FILES 	${ASSETS})
-source_group ("Managers" 	FILES 	${MANAGERS} )
-source_group ("Rendering" 	FILES 	${RENDERING} )
-source_group ("Utilities" 	FILES 	${UTILITIES} ) 
+file (GLOB_RECURSE ROOT RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp" "*.h")
 # Create a library using those source files
-add_library				(${Module} SHARED 	${ROOT}
-											${ASSETS}
-											${MANAGERS}
-											${RENDERING}
-											${UTILITIES})	
+add_library				(${Module} SHARED 	${ROOT})	
+# Generate source groups mimicking the folder structure
+foreach(source IN LISTS ROOT)
+    get_filename_component(source_path "${source}" PATH)
+    string(REPLACE "/" "\\" source_path_msvc "${source_path}")
+    source_group("${source_path_msvc}" FILES "${source}")
+endforeach()
 # Set working directory to the project directory
 set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
