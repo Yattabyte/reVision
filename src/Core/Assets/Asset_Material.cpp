@@ -119,13 +119,13 @@ void Asset_Material::getPBRProperties(const string &filename, string &albedo, st
 
 
 // Forward declaration
-Shared_Asset_Material fetchDefaultMaterial();
+Shared_Asset_Material fetchDefaultAsset();
 // Forward declaration
 void initialize_Material(Shared_Asset_Material &material, const std::string &filename, bool *complete);
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Will generate a default one itself if the default doesn't exist.
-Shared_Asset_Material fetchDefaultMaterial()
+Shared_Asset_Material fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
@@ -356,7 +356,7 @@ namespace Asset_Manager {
 		const std::string &fulldirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!fileOnDisk(fulldirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fulldirectory);
-			user = fetchDefaultMaterial();
+			user = fetchDefaultAsset();
 			return;
 		}
 

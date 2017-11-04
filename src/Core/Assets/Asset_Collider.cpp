@@ -36,7 +36,7 @@ int Asset_Collider::GetAssetType()
 	return ASSET_TYPE;
 }
 
-Shared_Asset_Collider &fetchDefaultAsset()
+Shared_Asset_Collider fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();

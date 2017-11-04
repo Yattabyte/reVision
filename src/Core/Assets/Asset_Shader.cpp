@@ -230,7 +230,7 @@ void initialize_Shader(Shared_Asset_Shader & user, const string & filename, bool
 	*complete = true;
 }
 
-Shared_Asset_Shader fetchDefaultShader()
+Shared_Asset_Shader fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
@@ -307,7 +307,7 @@ namespace Asset_Manager {
 			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_FRAGMENT);
 		if ( !(found_vertex && found_fragement) )
 		{
-			user = fetchDefaultShader();
+			user = fetchDefaultAsset();
 			return;
 		}
 		{

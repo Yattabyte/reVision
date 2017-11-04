@@ -22,7 +22,11 @@
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
+
+
 using namespace std;
+
+class Scene;
 
 namespace dt_Core {
 	// Initializes the core system
@@ -31,7 +35,14 @@ namespace dt_Core {
 	// Shutsdown the core system
 	// This should be the last system to shutdown to prevent errors or crashes
 	DELTA_CORE_API void Shutdown();
-	DELTA_CORE_API void* GetContext();
+	// Ticks the engine's overall simulation by a frame
+	DELTA_CORE_API void Tick();
+	// Returns whether or not the engine should close
+	// E.g. the viewport has been closed ('x' clicked)
+	DELTA_CORE_API bool ShouldClose();
+	// Takes in a rendering scene to coordinate how the scene should be rendered
+	// Does not take ownership of the pointer and will NOT delete it when overwritten
+	DELTA_CORE_API void SetScene(Scene *scene);
 }
 
 #define COMPUTE_BUILD_YEAR			(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 

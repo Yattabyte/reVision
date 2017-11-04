@@ -86,13 +86,13 @@ size_t Asset_Primitive::GetSize() const
 }
 
 // Forward declaration
-Shared_Asset_Primitive fetchDefaultPrimitive();
+Shared_Asset_Primitive fetchDefaultAsset();
 // Forward declaration
 void initialize_Primitive(Shared_Asset_Primitive &primitive, const string & filename, bool *complete);
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Will generate a default one itself if the default doesn't exist.
-Shared_Asset_Primitive fetchDefaultPrimitive()
+Shared_Asset_Primitive fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
@@ -125,7 +125,7 @@ void initialize_Primitive(Shared_Asset_Primitive &primitive, const string & file
 	vector<vec3> vertices;
 	vector<vec2> uv_coords;
 	if (!ModelImporter::Import_Model(filename, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
-		primitive = fetchDefaultPrimitive();
+		primitive = fetchDefaultAsset();
 		return;
 	}	
 	Asset_Primitive *prim_ptr = primitive.get();

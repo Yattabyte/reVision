@@ -107,7 +107,7 @@ void initialize_Config(Shared_Asset_Config & user, const string & filename, bool
 // Retrieves (or initializes) a default asset from the Asset_Manager.
 // Can hard code default configuration parameters here.
 // Saves to disk afterwards.
-Shared_Asset_Config fetchDefaultConfig()
+Shared_Asset_Config fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
@@ -126,6 +126,7 @@ Shared_Asset_Config fetchDefaultConfig()
 				return cast_asset;
 		}
 		// We didn't load a default asset from disk
+		MSG::Statement("Regenerating default configuration...");
 		/* HARD CODE DEFAULT VALUES HERE */
 		cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
 		cast_asset->setValue(CFG_ENUM::C_WINDOW_HEIGHT, 512);
@@ -172,8 +173,7 @@ namespace Asset_Manager {
 		const std::string &fulldirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!fileOnDisk(fulldirectory)) {
 			MSG::Error(FILE_MISSING, fulldirectory);
-			MSG::Statement("Regenerating default configuration...");
-			user = fetchDefaultConfig();
+			user = fetchDefaultAsset();
 			return;
 		}
 		else {

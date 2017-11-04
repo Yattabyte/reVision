@@ -92,13 +92,13 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 }
 
 // Forward declaration
-Shared_Asset_Texture fetchDefaultTexture();
+Shared_Asset_Texture fetchDefaultAsset();
 // Forward declaration
 void initialize_Texture(Shared_Asset_Texture &user, const string & filename, bool *complete);
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Will generate a default one itself if the default doesn't exist.
-Shared_Asset_Texture fetchDefaultTexture()
+Shared_Asset_Texture fetchDefaultAsset()
 {
 	shared_lock<shared_mutex> guard(getMutexIOAssets());
 	map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
@@ -133,7 +133,7 @@ void initialize_Texture(Shared_Asset_Texture &user, const string & filename, boo
 
 	if (format == -1) {
 		MSG::Error(FILE_MISSING, filename);
-		user = fetchDefaultTexture();
+		user = fetchDefaultAsset();
 		return;
 	}
 
@@ -141,7 +141,7 @@ void initialize_Texture(Shared_Asset_Texture &user, const string & filename, boo
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
 			MSG::Error(FILE_CORRUPT, filename, "Using default texture.");
-			user = fetchDefaultTexture();
+			user = fetchDefaultAsset();
 			return;
 		}
 	}
@@ -221,7 +221,7 @@ namespace Asset_Manager {
 		const string &fulldirectory = DIRECTORY_TEXTURE + filename;
 		if (!fileOnDisk(fulldirectory)) {
 			MSG::Error(FILE_MISSING, fulldirectory);
-			user = fetchDefaultTexture();
+			user = fetchDefaultAsset();
 			return;
 		}
 
