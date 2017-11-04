@@ -97,6 +97,7 @@ namespace dt_Core {
 
 	void Tick()
 	{
+		Asset_Manager::ParseWorkOrders();
 		if (rendering_scene != nullptr) {
 			rendering_scene->RenderFrame();
 		}

@@ -19,4 +19,11 @@ Test_Scene::Test_Scene()
 void Test_Scene::RenderFrame()
 {
 	glViewport(0, 0, 512, 512);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+	shader->Bind();
+	quad->Bind();
+	quad->Draw();
+	quad->Unbind();
+	shader->Release();
 }
