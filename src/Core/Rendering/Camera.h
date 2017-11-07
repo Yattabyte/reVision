@@ -14,6 +14,7 @@
 #endif
 
 #include "GL\glew.h"
+#include "glm\common.hpp"
 #include "glm\glm.hpp"
 
 using namespace glm;
@@ -65,6 +66,9 @@ public:
 	// Updates the camera's state on the GPU
 	// All matrix updates performed here
 	DELTA_CORE_API void Update();
+	// Make the current camera active
+	// Exposes this camera's attribute buffer to all shaders at spot 1
+	DELTA_CORE_API void Bind();
 
 private:
 	GLuint ssboCameraID;

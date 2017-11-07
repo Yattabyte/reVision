@@ -12,13 +12,14 @@ Test_Scene::~Test_Scene()
 // Startup
 Test_Scene::Test_Scene()
 {
-	Asset_Manager::load_asset(quad, "quad");
+	Asset_Manager::load_asset(quad, "sphere");
 	Asset_Manager::load_asset(shader, "testShader");
 }
 
 void Test_Scene::RenderFrame()
 {
 	glViewport(0, 0, 512, 512);
+	glClear(GL_COLOR_BUFFER_BIT);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 	shader->Bind();

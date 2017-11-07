@@ -57,7 +57,7 @@ namespace dt_Core {
 		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		asset_sharing_context = glfwCreateWindow(640, 480, "", NULL, NULL);
+		asset_sharing_context = glfwCreateWindow(512, 512, "", NULL, NULL);
 		glfwMakeContextCurrent(asset_sharing_context);
 		glewExperimental = GL_TRUE;
 		glewInit();

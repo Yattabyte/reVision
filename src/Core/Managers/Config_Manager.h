@@ -29,6 +29,10 @@ namespace CFG
 	DELTA_CORE_API void saveConfiguration();
 	// Returns a preference value given a preference key
 	DELTA_CORE_API float getPreference(const int &cfg_key);
+	// Set a preference at @cfg_key with the value at @value
+	DELTA_CORE_API void setPreference(const int &cfg_key, const float &cfg_value);
+	// Add a callback function @function to be called whenever the preference @cfg_key changes
+	DELTA_CORE_API void addPreferenceCallback(const int &cfg_key, void(*function)());
 }
 
 #endif // CONFIG_MANAGER

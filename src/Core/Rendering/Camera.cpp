@@ -1,4 +1,5 @@
 #include "Rendering\Camera.h"
+#include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
 Camera::~Camera()
@@ -42,7 +43,6 @@ void Camera::operator=(Camera const & other)
 void Camera::setPosition(const vec3 &p)
 {
 	ssboCameraBuffer.EyePosition = p;
-	ssboCameraBuffer.vMatrix = glm::translate(mat4(), p);
 }
 
 void Camera::setDimensions(const vec2 &d)
@@ -67,11 +67,21 @@ Camera_Buffer Camera::getCameraBuffer() const
 
 void Camera::Update()
 {
+	// Update Perspective Matrix
 	float ar(ssboCameraBuffer.Dimensions.x/ ssboCameraBuffer.Dimensions.y);
 	float verticalFOV = 2.0f * atanf(tanf(glm::radians(ssboCameraBuffer.FOV) / 2.0f) / ar);
 	ssboCameraBuffer.pMatrix = glm::perspective(verticalFOV, ar, 0.01f, ssboCameraBuffer.DrawDistance);
 
+	// Update Viewing Matrix
+	ssboCameraBuffer.vMatrix = glm::translate(mat4(1.0f), -ssboCameraBuffer.EyePosition);
+
+	// Send data to GPU
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &ssboCameraBuffer);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void Camera::Bind()
+{
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboCameraID);
 }
