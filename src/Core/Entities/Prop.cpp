@@ -2,6 +2,7 @@
 
 Prop::~Prop()
 {
+	glDeleteBuffers(1, &uboID);
 }
 
 Prop::Prop()
@@ -34,6 +35,16 @@ void Prop::operator=(const Prop & other)
 	worldState = other.worldState;
 	assetModel = other.assetModel;
 	Update();
+}
+
+void Prop::registerSelf()
+{
+	
+}
+
+void Prop::unregisterSelf()
+{
+	
 }
 
 void Prop::Update()

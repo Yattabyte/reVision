@@ -39,6 +39,8 @@ public:
 	DELTA_CORE_API Prop(const string &relativePath);
 	DELTA_CORE_API Prop(const Prop &other);
 	DELTA_CORE_API void operator= (const Prop &other);
+	DELTA_CORE_API virtual void registerSelf();
+	DELTA_CORE_API virtual void unregisterSelf();
 
 
 	/*************************

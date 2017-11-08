@@ -28,6 +28,10 @@ public:
 	Entity(const Entity &other) {};
 	// Change this entity into another entity
 	void operator= (const Entity &other) {};
+	// Tell this entity to register itself into any and all subsystems that it requires
+	virtual void registerSelf() {};
+	// Tell this entity to un-register itself from any and all subsystems that it required
+	virtual void unregisterSelf() {};
 };
 
 #endif // ENTITY
