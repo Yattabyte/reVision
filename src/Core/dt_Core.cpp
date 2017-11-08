@@ -11,20 +11,28 @@
 
 #include <string>
 
+static bool			should_close			= false;
 static GLFWwindow	*rendering_context		= nullptr,
 					*asset_sharing_context	= nullptr;
 static Scene		*rendering_scene		= nullptr;
 
 // GLFW sends its errors here
-static void error_callback(int error, const char* description)
+static void GLFW_error_callback(int error, const char* description)
 {
 	MSG::Error(GLFW_ERROR, "(" + to_string(error) + "): " + description);	
 }
 
 // Is called when the window closes
-static void close_callback(GLFWwindow * window)
+static void GLFW_window_close_callback(GLFWwindow * window)
 {
-	glfwTerminate();
+	should_close = true;
+}
+
+// Is called when the window resizes
+static void GLFW_window_resize_callback(GLFWwindow * window, int width, int height)
+{
+	CFG::setPreference(0, width);
+	CFG::setPreference(1, height);
 }
 
 namespace dt_Core {
@@ -33,7 +41,7 @@ namespace dt_Core {
 	{
 		//Shared_Asset_Primitive qwe;
 		//Asset_Manager::load_asset(qwe, "quad", false);
-		glfwSetErrorCallback(error_callback);
+		glfwSetErrorCallback(GLFW_error_callback);
 		if (!glfwInit()) {
 			glfwTerminate();
 			MSG::Error(OTHER_ERROR, "Unable to initialize!");
@@ -83,6 +91,8 @@ namespace dt_Core {
 		rendering_context = glfwCreateWindow(width, height, "", NULL, NULL);
 		glfwSetWindowPos(rendering_context, ((maxWidth - width) / 2), ((maxHeight - height) / 2));
 		glfwMakeContextCurrent(rendering_context);
+		glfwSetWindowCloseCallback(rendering_context, GLFW_window_close_callback);
+		glfwSetWindowSizeCallback(rendering_context, GLFW_window_resize_callback);
 
 		return true;
 	}
@@ -97,17 +107,19 @@ namespace dt_Core {
 
 	void Tick()
 	{
-		Asset_Manager::ParseWorkOrders();
-		if (rendering_scene != nullptr) {
-			rendering_scene->RenderFrame();
+		if (!(glfwWindowShouldClose(rendering_context) && should_close)) {
+			Asset_Manager::ParseWorkOrders();
+			if (rendering_scene != nullptr) {
+				rendering_scene->RenderFrame();
+			}
+			glfwSwapBuffers(rendering_context);
+			glfwPollEvents();
 		}
-		glfwSwapBuffers(rendering_context);
-		glfwPollEvents();
 	}
 
 	bool ShouldClose() 
 	{
-		return glfwWindowShouldClose(rendering_context);
+		return should_close;
 	}
 
 	void SetScene(Scene * scene)

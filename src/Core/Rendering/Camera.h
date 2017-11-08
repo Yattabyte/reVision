@@ -41,9 +41,9 @@ struct Camera_Buffer
 class Camera 
 {
 public:
-	// Destroys the camera
+	// Destructs the camera
 	DELTA_CORE_API ~Camera();
-	// Creates the camera
+	// Constructs the camera
 	DELTA_CORE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &draw_distance = 1.0f, const float &horizontal_FOV = 90.0f);
 	// Creates this camera and makes it a copy from another camera @other
 	DELTA_CORE_API Camera(Camera const &other);
