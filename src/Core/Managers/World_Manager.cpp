@@ -22,7 +22,12 @@ void World_Manager::removeEntity(Entity * entity)
 	delete entity;
 }
 
-void World_Manager::clearMap()
+void World_Manager::LoadWorld()
+{
+
+}
+
+void World_Manager::UnloadWorld()
 {
 	for each (auto *entity in level_entities) {
 		entity->unregisterSelf();

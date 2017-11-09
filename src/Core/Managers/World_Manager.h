@@ -24,8 +24,10 @@ namespace World_Manager {
 	DELTA_CORE_API void addEntity(Entity * entity);
 	// Remove the entity from the level
 	DELTA_CORE_API void removeEntity(Entity * entity);
+	// Load the world
+	DELTA_CORE_API void LoadWorld();
 	// Unload the map (remove all entities)
-	DELTA_CORE_API void clearMap();
+	DELTA_CORE_API void UnloadWorld();
 }
 
 #endif // WORLD_MANAGER

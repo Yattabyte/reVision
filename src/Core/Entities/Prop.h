@@ -2,6 +2,7 @@
 	Prop
 
 	- A renderable mesh with a position, orientation, and scale
+	- Is of type "Geometry", and is intended to be registered in some form of geometry manager
 */
 
 #pragma once
@@ -13,7 +14,7 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
-#include "Entities\Entity.h"
+#include "Entities\Geometry.h"
 #include "Utilities\Transform.h"
 #include "Assets\Asset_Model.h"
 #include <string>
@@ -27,7 +28,7 @@ struct Transform_Buffer {
 	mat4 transforms[NUM_MAX_BONES];
 };
 
-class Prop : public Entity
+class Prop : public Geometry
 {
 public:
 	/*************
@@ -58,11 +59,12 @@ public:
 	DELTA_CORE_API void Update();
 
 
-	/**************************
-	----Rendering Functions----
-	**************************/
+	/*************************
+	----Geometry Functions----
+	*************************/
 
-	DELTA_CORE_API void geometryPass();
+	DELTA_CORE_API static int GetGeometryType();
+	DELTA_CORE_API virtual void geometryPass();
 
 
 	/****************
