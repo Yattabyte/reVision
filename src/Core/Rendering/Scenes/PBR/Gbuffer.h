@@ -17,7 +17,10 @@
 #define GLEW_STATIC
 
 #include "GL\glew.h"
+#include "glm\glm.hpp"
+#include "glm\common.hpp"
 
+using namespace glm;
 
 class GBuffer
 {
@@ -42,6 +45,8 @@ public:
 	DELTA_CORE_API void BindForReading();
 	// Resets the state and ensures its rendertargets are attached
 	DELTA_CORE_API void End();
+	// Change the size of the framebuffer object
+	DELTA_CORE_API void Resize(const vec2 & size);
 
 
 	/****************

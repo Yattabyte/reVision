@@ -1,15 +1,23 @@
 #include "Rendering\Scenes\PBR\Gbuffer.h"
 #include "Managers\Config_Manager.h"
 #include "Managers\Message_Manager.h"
+#include <algorithm>
 
 static float screen_width = 1.0f, screen_height = 1.0f;
+static vector<GBuffer*> gbuffers; // Exists so that we can have a single callback that will resize all the gbuffers at once
 
 static void WidthChangeCallback(const float &width) {
 	screen_width = width;
+	for each (auto *buffer in gbuffers)
+		buffer->Resize(vec2(screen_width, screen_height));
 }
+
 static void HeightChangeCallback(const float &height) {
 	screen_height = height;
+	for each (auto *buffer in gbuffers)
+		buffer->Resize(vec2(screen_width, screen_height));
 }
+
 static void AssignTextureProperties()
 {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -20,6 +28,11 @@ static void AssignTextureProperties()
 
 GBuffer::~GBuffer()
 {
+	// Remove THIS gbuffer from the static gbuffer list
+	gbuffers.erase(std::remove_if(begin(gbuffers), end(gbuffers), [this](const auto *stored_buffer) {
+		return (stored_buffer == this);
+	}), end(gbuffers));
+
 	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
 	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
 
@@ -31,6 +44,9 @@ GBuffer::~GBuffer()
 
 GBuffer::GBuffer()
 {
+	// Add THIS gbuffer to the static gbuffer list
+	gbuffers.push_back(this);
+
 	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
 	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
 	screen_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
@@ -107,5 +123,25 @@ void GBuffer::End()
 	// Return the borrowed depth-stencil texture
 	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
 
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+void GBuffer::Resize(const vec2 &size)
+{
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+	// Diffuse Texture
+	glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_IMAGE]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+	// View-Normal Texture
+	glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+	// Specular Texture
+	glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR]);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+	// Depth-stencil buffer texture
+	glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screen_width, screen_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+
+	// restore default FBO
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
