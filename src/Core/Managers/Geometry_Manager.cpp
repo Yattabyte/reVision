@@ -1,15 +1,11 @@
 #include "Geometry_Manager.h"
 #include <algorithm>
-#include <map>
-#include <mutex>
-#include <shared_mutex>
-#include <vector>
 
 static map<int, vector<Geometry*>> geometry_objects;
-static shared_mutex registration_mutex;
+static shared_mutex system_mutex;
 
-void Geometry_Manager::registerGeometry(const int &typeID, Geometry *geometry) {
-	lock_guard<shared_mutex> write(registration_mutex);
+void Geometry_Manager::RegisterGeometry(const int &typeID, Geometry *geometry) {
+	lock_guard<shared_mutex> write(system_mutex);
 
 	// Ensure there is a vector for geometry for this category
 	// Is safe, only inserts once
@@ -18,8 +14,8 @@ void Geometry_Manager::registerGeometry(const int &typeID, Geometry *geometry) {
 	geometry_objects[typeID].push_back(geometry);
 }
 
-void Geometry_Manager::unregisterGeometry(const int &typeID, Geometry *geometry) {
-	lock_guard<shared_mutex> write(registration_mutex);
+void Geometry_Manager::UnRegisterGeometry(const int &typeID, Geometry *geometry) {
+	lock_guard<shared_mutex> write(system_mutex);
 
 	// Check if the category even exists yet
 	// Remove all instances of the provided geometry in that category
@@ -29,4 +25,14 @@ void Geometry_Manager::unregisterGeometry(const int &typeID, Geometry *geometry)
 			return (ref == geometry);
 		}), end(objects));
 	}
+}
+
+shared_mutex & Geometry_Manager::GetDataLock()
+{
+	return system_mutex;
+}
+
+map<int, vector<Geometry*>>& Geometry_Manager::GetAllGeometry()
+{
+	return geometry_objects;
 }

@@ -23,9 +23,12 @@ struct Camera_Buffer
 {
 	mat4 pMatrix;
 	mat4 vMatrix;
+	mat4 pMatrix_Inverse;
+	mat4 vMatrix_Inverse;
 	vec3 EyePosition;
 	vec2 Dimensions;
-	float DrawDistance;
+	float NearPlane;
+	float FarPlane;
 	float FOV;
 
 	Camera_Buffer() {
@@ -33,7 +36,8 @@ struct Camera_Buffer
 		vMatrix = mat4(1.0f);
 		EyePosition = vec3(0.0f);
 		Dimensions = vec2(1.0f);
-		DrawDistance = 1.0f;
+		NearPlane = 0.01f;
+		FarPlane = 1.0f;
 		FOV = 1.0f;
 	}
 };
@@ -44,7 +48,7 @@ public:
 	// Destructs the camera
 	DELTA_CORE_API ~Camera();
 	// Constructs the camera
-	DELTA_CORE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &draw_distance = 1.0f, const float &horizontal_FOV = 90.0f);
+	DELTA_CORE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 1.0f, const float &horizontal_FOV = 90.0f);
 	// Creates this camera and makes it a copy from another camera @other
 	DELTA_CORE_API Camera(Camera const &other);
 	// Copies another camera @other
@@ -55,9 +59,12 @@ public:
 	// Sets the dimensions of the camera
 	// Doesn't update GPU state
 	DELTA_CORE_API void setDimensions(const vec2 &d);
-	// Sets the draw distance of the camera
+	// Sets the closest point the camera can see
 	// Doesn't update GPU state
-	DELTA_CORE_API void setDrawDistance(const float &d);
+	DELTA_CORE_API void setNearPlane(const float & d);
+	// Sets the furthest point the camera can see (aka the draw distance)
+	// Doesn't update GPU state
+	DELTA_CORE_API void setFarPlane(const float &d);
 	// Sets the horizontal FOV of the camera
 	// Doesn't update GPU state
 	DELTA_CORE_API void setHorizontalFOV(const float &fov);

@@ -42,12 +42,12 @@ void Prop::operator=(const Prop & other)
 
 void Prop::registerSelf()
 {
-	Geometry_Manager::registerGeometry(Prop::GetGeometryType(), this);
+	Geometry_Manager::RegisterGeometry(Prop::GetGeometryType(), this);
 }
 
 void Prop::unregisterSelf()
 {
-	Geometry_Manager::unregisterGeometry(Prop::GetGeometryType(), this);
+	Geometry_Manager::UnRegisterGeometry(Prop::GetGeometryType(), this);
 }
 
 void Prop::Update()
@@ -65,7 +65,7 @@ int Prop::GetGeometryType()
 	return GEOMETRY_TYPE;
 }
 
-void Prop::geometryPass()
+void Prop::geometryPass() const
 {
 	shared_lock<shared_mutex> guard(assetModel->m_mutex);
 
@@ -74,5 +74,4 @@ void Prop::geometryPass()
 	glBindVertexArray(assetModel->gl_vao_ID);
 	glDrawArrays(GL_TRIANGLES, 0, assetModel->mesh_size);
 	glBindVertexArray(0);
-
 }

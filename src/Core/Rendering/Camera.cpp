@@ -7,10 +7,11 @@ Camera::~Camera()
 	glDeleteBuffers(1, &ssboCameraID);
 }
 
-Camera::Camera(const vec3 &position, const vec2 &size, const float &draw_distance, const float &horizontal_FOV)
+Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, const float &far_plane, const float &horizontal_FOV)
 {
 	setPosition(position);
-	setDrawDistance(draw_distance);
+	setNearPlane(near_plane);
+	setFarPlane(far_plane);
 	setDimensions(size);
 	setHorizontalFOV(horizontal_FOV);
 	ssboCameraID = 0;
@@ -50,9 +51,14 @@ void Camera::setDimensions(const vec2 &d)
 	ssboCameraBuffer.Dimensions = d;
 }
 
-void Camera::setDrawDistance(const float &d)
+void Camera::setNearPlane(const float &d)
 {
-	ssboCameraBuffer.DrawDistance = d;
+	ssboCameraBuffer.FarPlane = d;
+}
+
+void Camera::setFarPlane(const float &d)
+{
+	ssboCameraBuffer.FarPlane = d;
 }
 
 void Camera::setHorizontalFOV(const float &fov)
@@ -68,12 +74,12 @@ Camera_Buffer Camera::getCameraBuffer() const
 void Camera::Update()
 {
 	// Update Perspective Matrix
-	float ar(ssboCameraBuffer.Dimensions.x/ ssboCameraBuffer.Dimensions.y);
-	float verticalFOV = 2.0f * atanf(tanf(glm::radians(ssboCameraBuffer.FOV) / 2.0f) / ar);
-	ssboCameraBuffer.pMatrix = glm::perspective(verticalFOV, ar, 0.01f, ssboCameraBuffer.DrawDistance);
+	float ar(ssboCameraBuffer.Dimensions.x / ssboCameraBuffer.Dimensions.y);
+	float verticalFOV = 2.0f * atanf(tanf(radians(ssboCameraBuffer.FOV) / 2.0f) / ar);
+	ssboCameraBuffer.pMatrix = perspective(verticalFOV, ar, ssboCameraBuffer.NearPlane, ssboCameraBuffer.FarPlane);
 
 	// Update Viewing Matrix
-	ssboCameraBuffer.vMatrix = glm::translate(mat4(1.0f), -ssboCameraBuffer.EyePosition);
+	ssboCameraBuffer.vMatrix = translate(mat4(1.0f), -ssboCameraBuffer.EyePosition);
 
 	// Send data to GPU
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);

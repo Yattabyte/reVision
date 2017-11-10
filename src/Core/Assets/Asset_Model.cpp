@@ -236,11 +236,11 @@ void initialize_Model_Material(Shared_Asset_Material &texture, const aiMesh * me
 	// Get the aiStrings for all the textures for a material
 	aiString	albedo, normal, metalness, roughness, height, ao;
 	aiReturn	albedo_exists = material->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
-		normal_exists = material->GetTexture(aiTextureType_NORMALS, 0, &normal),
-		metalness_exists = material->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
-		roughness_exists = material->GetTexture(aiTextureType_SHININESS, 0, &roughness),
-		height_exists = material->GetTexture(aiTextureType_HEIGHT, 0, &height),
-		ao_exists = material->GetTexture(aiTextureType_AMBIENT, 0, &ao);
+				normal_exists = material->GetTexture(aiTextureType_NORMALS, 0, &normal),
+				metalness_exists = material->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
+				roughness_exists = material->GetTexture(aiTextureType_SHININESS, 0, &roughness),
+				height_exists = material->GetTexture(aiTextureType_HEIGHT, 0, &height),
+				ao_exists = material->GetTexture(aiTextureType_AMBIENT, 0, &ao);
 
 	// Assuming the diffuse element exists, generate some fallback texture elements
 	std::string templateTexture, extension = ".png";

@@ -64,7 +64,7 @@ public:
 	*************************/
 
 	DELTA_CORE_API static int GetGeometryType();
-	DELTA_CORE_API virtual void geometryPass();
+	DELTA_CORE_API virtual void geometryPass() const;
 
 
 	/****************

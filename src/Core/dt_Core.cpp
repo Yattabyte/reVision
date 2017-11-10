@@ -1,5 +1,5 @@
 #include "dt_Core.h"
-#include "Rendering\Scene.h"
+#include "Rendering\Scenes\Scene.h"
 #include "Managers\Asset_Manager.h"
 #include "Managers\Config_Manager.h"
 #include "Managers\Message_Manager.h"
@@ -70,9 +70,7 @@ namespace dt_Core {
 		glewExperimental = GL_TRUE;
 		glewInit();
 
-		// OpenGL Dependent Systems //
 		CFG::loadConfiguration();
-		Material_Manager::startup();
 		
 		MSG::Statement(	"Engine Version: " 
 						+ DT_ENGINE_VER_MAJOR  + "." 
@@ -93,6 +91,8 @@ namespace dt_Core {
 		glfwMakeContextCurrent(rendering_context);
 		glfwSetWindowCloseCallback(rendering_context, GLFW_window_close_callback);
 		glfwSetWindowSizeCallback(rendering_context, GLFW_window_resize_callback);
+
+		Material_Manager::startup();
 
 		return true;
 	}

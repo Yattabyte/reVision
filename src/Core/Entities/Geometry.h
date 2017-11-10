@@ -39,7 +39,7 @@ public:
 	// Used for categorization in database maps and such
 	static int GetGeometryType() { return -1; };
 	// Render this geometry
-	virtual void geometryPass() {};
+	virtual void geometryPass() const {};
 };
 
 #endif // GEOMETRY

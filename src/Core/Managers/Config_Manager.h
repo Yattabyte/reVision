@@ -32,7 +32,9 @@ namespace CFG
 	// Set a preference at @cfg_key with the value at @value
 	DELTA_CORE_API void setPreference(const int &cfg_key, const float &cfg_value);
 	// Add a callback function @function to be called whenever the preference @cfg_key changes
-	DELTA_CORE_API void addPreferenceCallback(const int &cfg_key, void(*function)());
+	DELTA_CORE_API void addPreferenceCallback(const int &cfg_key, void(*function)(const float&));
+	// Remove a callback function @function from being called whenever the preference @cfg_key changes
+	DELTA_CORE_API void removePreferenceCallback(const int &cfg_key, void(*function)(const float&));
 }
 
 #endif // CONFIG_MANAGER

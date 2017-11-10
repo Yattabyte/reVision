@@ -1,9 +1,10 @@
 #include "Managers\Config_Manager.h"
+#include <algorithm>
 #include <vector>
 #include <map>
 
 static Shared_Asset_Config configurations;
-static map<int, vector<void(*)()>> function_map;
+static map<int, vector<void(*)(const float&)>> function_map;
 
 namespace CFG
 {
@@ -37,18 +38,28 @@ namespace CFG
 			configurations->setValue(cfg_key, cfg_value);
 		if (function_map.size() > cfg_key)
 			for each (auto &function in function_map[cfg_key])
-				function();
+				function(cfg_value);
 	}
 
-	void addPreferenceCallback(const int & cfg_key, void(*function)())
+	void addPreferenceCallback(const int & cfg_key, void(*function)(const float&))
 	{
 		// Inserts a function vector at the key in the map. Map keys are unique so this will only happen once
-		function_map.insert(std::pair<int, vector<void(*)()>>(cfg_key, vector<void(*)()>()));
+		function_map.insert(std::pair<int, vector<void(*)(const float&)>>(cfg_key, vector<void(*)(const float&)>()));
 		// Only add the function to the vector once
 		bool found = false;
 		for each (auto *current_function in function_map[cfg_key])
 			if (function == current_function)
 				return;
 		function_map[cfg_key].push_back(function);
+	}
+
+	void removePreferenceCallback(const int & cfg_key, void(*function)(const float&))
+	{
+		if (function_map.find(cfg_key) != function_map.end()) {
+			auto &funcVector = function_map[cfg_key]; 
+			funcVector.erase(std::remove_if(begin(funcVector), end(funcVector), [function](const auto *stored_function) {
+				return (stored_function == function);
+			}), end(funcVector));
+		}
 	}
 }
