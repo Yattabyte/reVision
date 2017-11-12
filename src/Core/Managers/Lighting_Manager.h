@@ -22,6 +22,8 @@
 using namespace std;
 
 namespace Lighting_Manager {
+	// Clears everything out of the lighting manager
+	DELTA_CORE_API void shutdown();
 	// Using the class type ID @typeID as a grouping key, registers and groups the given light @light
 	DELTA_CORE_API void RegisterLight(const int &typeID, Light *light);
 	// Searches the register at @typeID and removes all instances of @light

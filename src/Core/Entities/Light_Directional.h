@@ -23,6 +23,7 @@
 
 using namespace glm;
 
+class Visibility_Token;
 struct LightBuffer
 {
 	mat4 lightV;
@@ -67,20 +68,26 @@ public:
 	/**********************
 	----Light Functions----
 	**********************/
+
 	static int GetLightType() { return LIGHT_TYPE_DIRECTIONAL; }
 	DELTA_CORE_API virtual void directPass(const int &vertex_count);
 	DELTA_CORE_API virtual void indirectPass(const int &vertex_count);
+	DELTA_CORE_API virtual void shadowPass(const Visibility_Token &vis_token) const;
 	/*void shadowPass_models(VisibilityToken & vis_token);
 	void shadowPass_terrain(VisibilityToken & vis_token);
 	void shadowPass_brushes(VisibilityToken & vis_token);*/
+	DELTA_CORE_API virtual bool shouldRender(const mat4 &PVMatrix);
 
 	/*************************
 	----Variable Functions----
 	*************************/
 
 	void setColor(const vec3 &rgb) { m_lightBuffer.LightColor = rgb; };
+	vec3 getColor() const { return m_lightBuffer.LightColor; };
 	void setIntensity(const float &ints) { m_lightBuffer.LightIntensity = ints; };
+	float getIntensity() const { return m_lightBuffer.LightIntensity; };
 	void setOrientation(const quat &ori) { m_orientation = ori; };
+	quat getOrientation() const { return m_orientation; };
 	bool CastsShadows() { return m_lightBuffer.Use_Shadows; };
 	DELTA_CORE_API void Update();
 

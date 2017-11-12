@@ -15,6 +15,7 @@
 #endif
 
 #include "Entities\Entity.h"
+#include "Utilities\Frustum.h"
 
 class Geometry : public Entity
 {
@@ -38,6 +39,8 @@ public:
 	// Returns a unique ID per class that inherits this
 	// Used for categorization in database maps and such
 	static int GetGeometryType() { return -1; };
+	// Returns whther or not this object should render
+	virtual bool shouldRender(const mat4 &PVMatrix) { return true; };
 	// Render this geometry
 	virtual void geometryPass() const {};
 };

@@ -69,7 +69,10 @@ namespace Asset_Manager {
 static const enum CFG_ENUM {
 	C_WINDOW_WIDTH,
 	C_WINDOW_HEIGHT,
-	C_TEXTURE_ANISOTROPY
+	C_TEXTURE_ANISOTROPY,
+	C_SHADOW_SIZE_REGULAR,
+	C_SHADOW_SIZE_LARGE,
+	C_SHADOW_QUALITY
 };
 
 /******************************
@@ -78,7 +81,10 @@ static const enum CFG_ENUM {
 static const vector<string> CFG_STRING = {
 	"C_WINDOW_WIDTH",
 	"C_WINDOW_HEIGHT",
-	"C_TEXTURE_ANISOTROPY"
+	"C_TEXTURE_ANISOTROPY",
+	"C_SHADOW_SIZE_REGULAR",
+	"C_SHADOW_SIZE_LARGE",
+	"C_SHADOW_QUALITY"
 };
 
 #endif //ASSET_CONFIG

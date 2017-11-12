@@ -1,13 +1,19 @@
 #include "dt_Core.h"
+#include "Rendering\Camera.h"
 #include "Rendering\Scenes\Scene.h"
 #include "Managers\Asset_Manager.h"
 #include "Managers\Config_Manager.h"
+#include "Managers\Geometry_Manager.h"
+#include "Managers\Lighting_Manager.h"
+#include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
+#include "Managers\Shadowmap_Manager.h"
+#include "Managers\Visibility_Manager.h"
+#include "Managers\World_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
-#include "Managers\Material_Manager.h"
 
 #include <string>
 
@@ -15,6 +21,7 @@ static bool			should_close			= false;
 static GLFWwindow	*rendering_context		= nullptr,
 					*asset_sharing_context	= nullptr;
 static Scene		*rendering_scene		= nullptr;
+static Camera		*rendering_camera		= nullptr;
 
 // GLFW sends its errors here
 static void GLFW_error_callback(int error, const char* description)
@@ -93,14 +100,20 @@ namespace dt_Core {
 		glfwSetWindowSizeCallback(rendering_context, GLFW_window_resize_callback);
 
 		Material_Manager::startup();
-
+		Shadowmap_Manager::startup();
+		Visibility_Manager::statup();
 		return true;
 	}
 
 	void Shutdown()
 	{
-		Asset_Manager::shutdown();
+		Visibility_Manager::shutdown();
+		Asset_Manager::shutdown();		
 		CFG::shutdown();
+		World_Manager::shutdown();
+		Geometry_Manager::shutdown();
+		Lighting_Manager::shutdown();
+		Shadowmap_Manager::shutdown();
 		glfwMakeContextCurrent(asset_sharing_context);
 		glfwTerminate();
 	}
@@ -113,7 +126,6 @@ namespace dt_Core {
 				rendering_scene->RenderFrame();
 			}
 			glfwSwapBuffers(rendering_context);
-			glfwPollEvents();
 		}
 	}
 
@@ -125,5 +137,15 @@ namespace dt_Core {
 	void SetScene(Scene * scene)
 	{
 		rendering_scene = scene;
+	}
+
+	void SetCamera(Camera * camera)
+	{
+		rendering_camera = camera;
+	}
+
+	Camera * GetCamera()
+	{
+		return rendering_camera;
 	}
 }

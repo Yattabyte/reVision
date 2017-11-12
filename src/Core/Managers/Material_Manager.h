@@ -31,19 +31,24 @@
 #include "GL\glew.h"
 #include <deque>
 
-using namespace std;
+using namespace std; 
+
+struct Material_Buffer
+{
+	Material_Buffer() {
+		ZERO_MEM(MaterialMaps);
+	}
+	GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
+};
 
 namespace Material_Manager {
-	struct Material_Buffer
-	{
-		Material_Buffer() {
-			ZERO_MEM(MaterialMaps);
-		}
-		GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
-	};
-
+	// Start up and initialize the material manager
 	DELTA_CORE_API void startup();
+	// Shut down and flush out the material manager
+	DELTA_CORE_API void shutdown();
+	// Returns a list of spots within the material manager that have been deleted and can be used for new materials
 	DELTA_CORE_API deque<int>& getMatFreeSpots();
+	// returns the material buffer object ID for use in shaders
 	DELTA_CORE_API GLuint& getBufferSSBO();
 }
 

@@ -4,6 +4,11 @@
 
 static vector<Entity*> level_entities;
 
+void World_Manager::shutdown()
+{
+	UnloadWorld();
+}
+
 void World_Manager::addEntity(Entity * entity)
 {
 	level_entities.push_back(entity);

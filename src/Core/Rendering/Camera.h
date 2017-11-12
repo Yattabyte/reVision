@@ -13,9 +13,12 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
+#include "Rendering\Visibility_Token.h"
+#include "Utilities\Frustum.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 #include "glm\gtc\quaternion.hpp"
+#include <shared_mutex>
 
 using namespace glm;
 
@@ -70,22 +73,32 @@ public:
 	*************************/
 
 	// Sets the position of the camera
-	void setPosition(const vec3 &p) { m_cameraBuffer.EyePosition = p; };
+	void setPosition(const vec3 &p) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.EyePosition = p; };
 	// Sets the orientation of the camera
-	void setOrientation(const quat &q) { m_orientation = q; };
+	void setOrientation(const quat &q) { lock_guard<shared_mutex> wguard(data_mutex); m_orientation = q; };
 	// Sets the dimensions of the camera
-	void setDimensions(const vec2 &d) { m_cameraBuffer.Dimensions = d; };
+	void setDimensions(const vec2 &d) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.Dimensions = d; };
 	// Sets the closest point the camera can see
-	void setNearPlane(const float & n) { m_cameraBuffer.NearPlane = n; };
+	void setNearPlane(const float & n) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.NearPlane = n; };
 	// Sets the furthest point the camera can see (aka the draw distance)
-	void setFarPlane(const float &f) { m_cameraBuffer.FarPlane = f; };
+	void setFarPlane(const float &f) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FarPlane = f; };
 	// Sets the horizontal FOV of the camera
-	void setHorizontalFOV(const float &fov) { m_cameraBuffer.FOV = fov; };
+	void setHorizontalFOV(const float &fov) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FOV = fov; };
+	// Return a reference to the visibility token
+	Visibility_Token &GetVisibilityToken() { return m_vistoken; };
+	// Returns a copy of this camera's data buffer
+	Camera_Buffer getCameraBuffer() const { return m_cameraBuffer; };
+	// Sets the flag for whether or not this camera should be rendered from
+	void enableRendering(const bool &b) { render_enabled = b; };
+	// Retrieve the flag for whether or not this camera is active for rendering
+	bool shouldRender() const { return render_enabled; }
+	// Returns a copy of the viewing frustum
+	Frustum getFrustum() const { return m_frustum; };
+	// Returns the mutex
+	shared_mutex &getDataMutex() const { return data_mutex; };
 	// Updates the camera's state on the GPU
 	// All matrix updates performed here
 	DELTA_CORE_API void Update();
-	// Returns a copy of this camera's data buffer
-	DELTA_CORE_API Camera_Buffer getCameraBuffer() const;
 
 
 private:
@@ -93,9 +106,13 @@ private:
 	----Variables----
 	****************/
 
+	mutable shared_mutex data_mutex;
 	GLuint ssboCameraID;
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
+	Visibility_Token m_vistoken;
+	Frustum m_frustum;
+	bool render_enabled;
 };
 
 #endif // CAMERA

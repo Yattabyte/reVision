@@ -4,6 +4,11 @@
 static map<int, vector<Light*>> light_objects;
 static shared_mutex system_mutex;
 
+void Lighting_Manager::shutdown()
+{
+	light_objects.clear();
+}
+
 void Lighting_Manager::RegisterLight(const int &typeID, Light *light) {
 	lock_guard<shared_mutex> write(system_mutex);
 

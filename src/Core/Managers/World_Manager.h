@@ -20,6 +20,8 @@
 using namespace std;
 
 namespace World_Manager {
+	// Shutsdown the world and deletes everything 
+	DELTA_CORE_API void shutdown();
 	// Add the entity to the level
 	DELTA_CORE_API void addEntity(Entity * entity);
 	// Remove the entity from the level

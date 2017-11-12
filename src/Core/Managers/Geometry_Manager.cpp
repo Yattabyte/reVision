@@ -4,6 +4,11 @@
 static map<int, vector<Geometry*>> geometry_objects;
 static shared_mutex system_mutex;
 
+void Geometry_Manager::shutdown()
+{
+	geometry_objects.clear();
+}
+
 void Geometry_Manager::RegisterGeometry(const int &typeID, Geometry *geometry) {
 	lock_guard<shared_mutex> write(system_mutex);
 

@@ -7,6 +7,7 @@
 #include "Rendering\Scenes\Scene.h"
 #include "Rendering\Scenes\PBR\Geometry_Buffer.h"
 #include "Rendering\Scenes\PBR\Lighting_Buffer.h"
+#include "Rendering\Visibility_Token.h"
 
 #pragma once
 #ifndef TEST_SCENE
@@ -24,10 +25,12 @@ public:
 	DELTA_CORE_API Scene_PBR();
 	DELTA_CORE_API virtual void RenderFrame();
 
+
 protected:
-	void GeometryPass();
-	void LightingPass();
-	void FinalPass();
+	void RegenerationPass(const Visibility_Token &vis_token);
+	void GeometryPass(const Visibility_Token &vis_token);
+	void LightingPass(const Visibility_Token &vis_token);
+	void FinalPass(const Visibility_Token &vis_token);
 
 private:
 	Geometry_Buffer m_gbuffer;

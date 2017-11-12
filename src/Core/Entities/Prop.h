@@ -19,6 +19,7 @@
 #include "Utilities\Transform.h"
 #include "Assets\Asset_Model.h"
 #include <string>
+#include <shared_mutex>
 
 using namespace glm;
 using namespace std;
@@ -50,6 +51,7 @@ public:
 	*************************/
 
 	static int GetGeometryType() { return GEOMETRY_TYPE_PROP; }
+	DELTA_CORE_API virtual bool shouldRender(const mat4 &PVMatrix);
 	DELTA_CORE_API virtual void geometryPass() const;
 
 	
@@ -57,21 +59,22 @@ public:
 	----Variable Functions----
 	*************************/
 
-	void setPosition(const vec3 &position) { worldState.position = position; }
-	void setOrientation(const quat &orientation) { worldState.orientation = orientation; }
-	void setScale(const vec3 &scale) { worldState.scale = scale; }
-	vec3 getPosition() const { return worldState.position; }
-	quat getOrientation() const { return worldState.orientation; }
-	vec3 getScale() const { return worldState.scale; }
-	mat4 getModelMatrix() const { return worldState.modelMatrix; }
-	mat4 getInverseModelMatrix() const { return worldState.inverseModelMatrix; }
+	void setPosition(const vec3 &position) { lock_guard<shared_mutex> write_guard(data_mutex);  worldState.position = position; }
+	void setOrientation(const quat &orientation) { lock_guard<shared_mutex> write_guard(data_mutex); worldState.orientation = orientation; }
+	void setScale(const vec3 &scale) { lock_guard<shared_mutex> write_guard(data_mutex); worldState.scale = scale; }
+	vec3 getPosition() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.position; }
+	quat getOrientation() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.orientation; }
+	vec3 getScale() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.scale; }
+	mat4 getModelMatrix() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.modelMatrix; }
+	mat4 getInverseModelMatrix() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.inverseModelMatrix; }
+	shared_mutex & getDataMutex() const { return data_mutex; };
 	DELTA_CORE_API void Update();
 
 
 	/****************
 	----Variables----
 	****************/
-
+	mutable shared_mutex data_mutex;
 	Transform worldState;
 	Shared_Asset_Model assetModel;
 	GLuint uboID;

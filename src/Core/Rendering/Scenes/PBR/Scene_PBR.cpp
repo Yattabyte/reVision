@@ -1,11 +1,16 @@
 #include "Rendering\Scenes\PBR\Scene_PBR.h"
+#include "Rendering\Camera.h"
+#include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Managers\Config_Manager.h"
-#include "Managers\Geometry_Manager.h"
-#include "Managers\Lighting_Manager.h"
+#include "Managers\Shadowmap_Manager.h"
 
-static Shared_Asset_Shader geometry_shader, lighting_shader;
+#include "Entities\Light_Directional.h"
+
+#include "dt_Core.h"
+
+static Shared_Asset_Shader geometry_shader, geometry_shadow_shader, lighting_shader;
 static Shared_Asset_Primitive shape_quad;
 static float screen_width = 1.0f, screen_height = 1.0f;
 
@@ -31,6 +36,7 @@ Scene_PBR::Scene_PBR() : m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
 	screen_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
 	screen_height = CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
 	Asset_Manager::load_asset(geometry_shader, "Geometry\\geometry");
+	Asset_Manager::load_asset(geometry_shadow_shader, "Geometry\\geometry_shadow");
 	Asset_Manager::load_asset(lighting_shader, "Lighting\\lighting");
 	Asset_Manager::load_asset(shape_quad, "quad");
 }
@@ -39,35 +45,55 @@ void Scene_PBR::RenderFrame()
 {
 	glViewport(0, 0, screen_width, screen_height);
 
-	GeometryPass();
-	LightingPass();
-	FinalPass();
+	Camera *mainCamera = dt_Core::GetCamera();
+	shared_lock<shared_mutex> read_guard(mainCamera->getDataMutex());
+	const Visibility_Token &vis_token = mainCamera->GetVisibilityToken();
+
+	RegenerationPass(vis_token);
+	GeometryPass(vis_token);
+	LightingPass(vis_token);
+	FinalPass(vis_token);
 }
 
-void Scene_PBR::GeometryPass()
+void Scene_PBR::RegenerationPass(const Visibility_Token &vis_token)
 {
-	auto &geometryMutex = Geometry_Manager::GetDataLock();
-	const auto &geometryMap = Geometry_Manager::GetAllGeometry();
+	glEnable(GL_DEPTH_TEST);
+	glDepthMask(GL_TRUE);
+	glDisable(GL_BLEND);
+	glDepthFunc(GL_LEQUAL);
+	glCullFace(GL_BACK);
 
+	Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
+
+	geometry_shadow_shader->Bind();
+	if (vis_token.visible_lights.size())
+		for each (const auto *light in vis_token.visible_lights.at(Light_Directional::GetLightType()))
+			light->shadowPass(vis_token);
+	geometry_shadow_shader->Release();
+
+	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
+
+	glViewport(0, 0, screen_width, screen_height);
+
+	glDepthFunc(GL_LESS);
+}
+
+void Scene_PBR::GeometryPass(const Visibility_Token &vis_token)
+{
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	m_gbuffer.Clear();
 	m_gbuffer.BindForWriting();
 	geometry_shader->Bind();
-	shared_lock<shared_mutex> readLock(geometryMutex);
-	for each (auto vec in geometryMap)
+	for each (auto vec in vis_token.visible_geometry)
 		for each (auto *obj in vec.second)
 			obj->geometryPass();
-	readLock.release();
 	geometry_shader->Release();
 }
 
-void Scene_PBR::LightingPass()
+void Scene_PBR::LightingPass(const Visibility_Token &vis_token)
 {
-	auto &lightingMutex = Lighting_Manager::GetDataLock();
-	const auto &lightingMap = Lighting_Manager::GetAllLights();
-
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_BLEND);
@@ -81,16 +107,14 @@ void Scene_PBR::LightingPass()
 	lighting_shader->Bind();
 	shape_quad->Bind();
 	const int quad_size = shape_quad->GetSize();
-	shared_lock<shared_mutex> readLock(lightingMutex);
-	for each (auto vec in lightingMap)
+	for each (auto vec in vis_token.visible_lights)
 		for each (auto *obj in vec.second)
 			obj->directPass(quad_size);
-	readLock.release();
 	shape_quad->Unbind();
 	lighting_shader->Release();
 }
 
-void Scene_PBR::FinalPass()
+void Scene_PBR::FinalPass(const Visibility_Token &vis_token)
 {
 	glDisable(GL_DEPTH_TEST);
 	glDepthMask(GL_FALSE);
