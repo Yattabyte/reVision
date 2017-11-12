@@ -86,7 +86,7 @@ namespace dt_Core {
 		int maxWidth = mainMode->width, maxHeight = mainMode->height;
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-		rendering_context = glfwCreateWindow(width, height, "", NULL, NULL);
+		rendering_context = glfwCreateWindow(width, height, "Delta", NULL, asset_sharing_context);
 		glfwSetWindowPos(rendering_context, ((maxWidth - width) / 2), ((maxHeight - height) / 2));
 		glfwMakeContextCurrent(rendering_context);
 		glfwSetWindowCloseCallback(rendering_context, GLFW_window_close_callback);

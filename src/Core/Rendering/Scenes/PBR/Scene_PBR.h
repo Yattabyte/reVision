@@ -5,7 +5,8 @@
 */
 
 #include "Rendering\Scenes\Scene.h"
-#include "Rendering\Scenes\PBR\Gbuffer.h"
+#include "Rendering\Scenes\PBR\Geometry_Buffer.h"
+#include "Rendering\Scenes\PBR\Lighting_Buffer.h"
 
 #pragma once
 #ifndef TEST_SCENE
@@ -23,8 +24,14 @@ public:
 	DELTA_CORE_API Scene_PBR();
 	DELTA_CORE_API virtual void RenderFrame();
 
+protected:
+	void GeometryPass();
+	void LightingPass();
+	void FinalPass();
+
 private:
-	GBuffer m_gbuffer;
+	Geometry_Buffer m_gbuffer;
+	Lighting_Buffer m_lbuffer;
 };
 
 #endif // TEST_SCENE

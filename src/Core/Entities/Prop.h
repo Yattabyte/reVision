@@ -13,6 +13,7 @@
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
+#define GEOMETRY_TYPE_PROP 0
 
 #include "Entities\Geometry.h"
 #include "Utilities\Transform.h"
@@ -45,6 +46,14 @@ public:
 
 
 	/*************************
+	----Geometry Functions----
+	*************************/
+
+	static int GetGeometryType() { return GEOMETRY_TYPE_PROP; }
+	DELTA_CORE_API virtual void geometryPass() const;
+
+	
+	/*************************
 	----Variable Functions----
 	*************************/
 
@@ -57,14 +66,6 @@ public:
 	mat4 getModelMatrix() const { return worldState.modelMatrix; }
 	mat4 getInverseModelMatrix() const { return worldState.inverseModelMatrix; }
 	DELTA_CORE_API void Update();
-
-
-	/*************************
-	----Geometry Functions----
-	*************************/
-
-	DELTA_CORE_API static int GetGeometryType();
-	DELTA_CORE_API virtual void geometryPass() const;
 
 
 	/****************

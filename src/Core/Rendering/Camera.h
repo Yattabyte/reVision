@@ -14,8 +14,8 @@
 #endif
 
 #include "GL\glew.h"
-#include "glm\common.hpp"
 #include "glm\glm.hpp"
+#include "glm\gtc\quaternion.hpp"
 
 using namespace glm;
 
@@ -25,7 +25,7 @@ struct Camera_Buffer
 	mat4 vMatrix;
 	mat4 pMatrix_Inverse;
 	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
+	vec3 EyePosition; float padding;
 	vec2 Dimensions;
 	float NearPlane;
 	float FarPlane;
@@ -34,6 +34,8 @@ struct Camera_Buffer
 	Camera_Buffer() {
 		pMatrix = mat4(1.0f);
 		vMatrix = mat4(1.0f);
+		pMatrix_Inverse = mat4(1.0f);
+		vMatrix_Inverse = mat4(1.0f);
 		EyePosition = vec3(0.0f);
 		Dimensions = vec2(1.0f);
 		NearPlane = 0.01f;
@@ -45,41 +47,55 @@ struct Camera_Buffer
 class Camera 
 {
 public:
-	// Destructs the camera
+	/*************
+	----Common----
+	*************/
+
 	DELTA_CORE_API ~Camera();
-	// Constructs the camera
 	DELTA_CORE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 1.0f, const float &horizontal_FOV = 90.0f);
-	// Creates this camera and makes it a copy from another camera @other
 	DELTA_CORE_API Camera(Camera const &other);
-	// Copies another camera @other
 	DELTA_CORE_API void operator=(Camera const&other);
-	// Sets the position of the camera
-	// Doesn't update GPU state
-	DELTA_CORE_API void setPosition(const vec3 &p);
-	// Sets the dimensions of the camera
-	// Doesn't update GPU state
-	DELTA_CORE_API void setDimensions(const vec2 &d);
-	// Sets the closest point the camera can see
-	// Doesn't update GPU state
-	DELTA_CORE_API void setNearPlane(const float & d);
-	// Sets the furthest point the camera can see (aka the draw distance)
-	// Doesn't update GPU state
-	DELTA_CORE_API void setFarPlane(const float &d);
-	// Sets the horizontal FOV of the camera
-	// Doesn't update GPU state
-	DELTA_CORE_API void setHorizontalFOV(const float &fov);
-	// Returns a copy of this camera's data buffer
-	DELTA_CORE_API Camera_Buffer getCameraBuffer() const;
-	// Updates the camera's state on the GPU
-	// All matrix updates performed here
-	DELTA_CORE_API void Update();
+
+	/***********************
+	----Camera Functions----
+	***********************/
+
 	// Make the current camera active
 	// Exposes this camera's attribute buffer to all shaders at spot 1
 	DELTA_CORE_API void Bind();
 
+
+	/*************************
+	----Variable Functions----
+	*************************/
+
+	// Sets the position of the camera
+	void setPosition(const vec3 &p) { m_cameraBuffer.EyePosition = p; };
+	// Sets the orientation of the camera
+	void setOrientation(const quat &q) { m_orientation = q; };
+	// Sets the dimensions of the camera
+	void setDimensions(const vec2 &d) { m_cameraBuffer.Dimensions = d; };
+	// Sets the closest point the camera can see
+	void setNearPlane(const float & n) { m_cameraBuffer.NearPlane = n; };
+	// Sets the furthest point the camera can see (aka the draw distance)
+	void setFarPlane(const float &f) { m_cameraBuffer.FarPlane = f; };
+	// Sets the horizontal FOV of the camera
+	void setHorizontalFOV(const float &fov) { m_cameraBuffer.FOV = fov; };
+	// Updates the camera's state on the GPU
+	// All matrix updates performed here
+	DELTA_CORE_API void Update();
+	// Returns a copy of this camera's data buffer
+	DELTA_CORE_API Camera_Buffer getCameraBuffer() const;
+
+
 private:
+	/****************
+	----Variables----
+	****************/
+
 	GLuint ssboCameraID;
-	Camera_Buffer ssboCameraBuffer;
+	Camera_Buffer m_cameraBuffer;
+	quat m_orientation;
 };
 
 #endif // CAMERA

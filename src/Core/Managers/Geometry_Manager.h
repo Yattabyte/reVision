@@ -1,7 +1,7 @@
 /*
 	Geometry_Manager
 
-	- 
+	- Stores different types of geometry into an organized map, grouped by type into separate vectors
 */
 
 #pragma once
@@ -34,8 +34,6 @@ namespace Geometry_Manager {
 
 	// TO DO:
 	//void Update_VisibilityToken() {};
-	//void GeometryPass() {};
-
 }
 
 #endif // GEOMETRY_MANAGER

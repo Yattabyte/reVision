@@ -1,8 +1,6 @@
 #include "Prop.h"
 #include "Managers\Geometry_Manager.h"
 
-#define GEOMETRY_TYPE 0
-
 Prop::~Prop()
 {
 	glDeleteBuffers(1, &uboID);
@@ -42,12 +40,12 @@ void Prop::operator=(const Prop & other)
 
 void Prop::registerSelf()
 {
-	Geometry_Manager::RegisterGeometry(Prop::GetGeometryType(), this);
+	Geometry_Manager::RegisterGeometry(GetGeometryType(), this);
 }
 
 void Prop::unregisterSelf()
 {
-	Geometry_Manager::UnRegisterGeometry(Prop::GetGeometryType(), this);
+	Geometry_Manager::UnRegisterGeometry(GetGeometryType(), this);
 }
 
 void Prop::Update()
@@ -58,11 +56,6 @@ void Prop::Update()
 	glBindBuffer(GL_UNIFORM_BUFFER, uboID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 16, sizeof(mat4x4), &worldState.modelMatrix);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-int Prop::GetGeometryType()
-{
-	return GEOMETRY_TYPE;
 }
 
 void Prop::geometryPass() const

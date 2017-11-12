@@ -10,14 +10,15 @@ Camera::~Camera()
 Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, const float &far_plane, const float &horizontal_FOV)
 {
 	setPosition(position);
+	setDimensions(size);
 	setNearPlane(near_plane);
 	setFarPlane(far_plane);
-	setDimensions(size);
 	setHorizontalFOV(horizontal_FOV);
+	setOrientation(quat(1, 0, 0, 0));
 	ssboCameraID = 0;
 	glGenBuffers(1, &ssboCameraID);
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &ssboCameraBuffer, GL_DYNAMIC_COPY);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	Update();
@@ -25,11 +26,11 @@ Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, 
 
 Camera::Camera(Camera const & other)
 {
-	ssboCameraBuffer = other.getCameraBuffer();	
+	m_cameraBuffer = other.getCameraBuffer();
 	ssboCameraID = 0;
 	glGenBuffers(1, &ssboCameraID);
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &ssboCameraBuffer, GL_DYNAMIC_COPY);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	Update();
@@ -37,53 +38,30 @@ Camera::Camera(Camera const & other)
 
 void Camera::operator=(Camera const & other)
 {
-	ssboCameraBuffer = other.getCameraBuffer();
+	m_cameraBuffer = other.getCameraBuffer();
 	Update();
-}
-
-void Camera::setPosition(const vec3 &p)
-{
-	ssboCameraBuffer.EyePosition = p;
-}
-
-void Camera::setDimensions(const vec2 &d)
-{
-	ssboCameraBuffer.Dimensions = d;
-}
-
-void Camera::setNearPlane(const float &d)
-{
-	ssboCameraBuffer.FarPlane = d;
-}
-
-void Camera::setFarPlane(const float &d)
-{
-	ssboCameraBuffer.FarPlane = d;
-}
-
-void Camera::setHorizontalFOV(const float &fov)
-{
-	ssboCameraBuffer.FOV = fov;
 }
 
 Camera_Buffer Camera::getCameraBuffer() const
 {
-	return ssboCameraBuffer;
+	return m_cameraBuffer;
 }
 
 void Camera::Update()
 {
 	// Update Perspective Matrix
-	float ar(ssboCameraBuffer.Dimensions.x / ssboCameraBuffer.Dimensions.y);
-	float verticalFOV = 2.0f * atanf(tanf(radians(ssboCameraBuffer.FOV) / 2.0f) / ar);
-	ssboCameraBuffer.pMatrix = perspective(verticalFOV, ar, ssboCameraBuffer.NearPlane, ssboCameraBuffer.FarPlane);
+	float ar(m_cameraBuffer.Dimensions.x / m_cameraBuffer.Dimensions.y);
+	float verticalFOV = 2.0f * atanf(tanf(radians(m_cameraBuffer.FOV) / 2.0f) / ar);
+	m_cameraBuffer.pMatrix = perspective(verticalFOV, ar, m_cameraBuffer.NearPlane, m_cameraBuffer.FarPlane);
+	m_cameraBuffer.pMatrix_Inverse = glm::inverse(m_cameraBuffer.pMatrix);
 
 	// Update Viewing Matrix
-	ssboCameraBuffer.vMatrix = translate(mat4(1.0f), -ssboCameraBuffer.EyePosition);
+	m_cameraBuffer.vMatrix = glm::mat4_cast(m_orientation) * translate(mat4(1.0f), -m_cameraBuffer.EyePosition);
+	m_cameraBuffer.vMatrix_Inverse = glm::inverse(m_cameraBuffer.vMatrix);
 
 	// Send data to GPU
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &ssboCameraBuffer);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &m_cameraBuffer);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
