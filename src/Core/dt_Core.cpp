@@ -4,6 +4,7 @@
 #include "Managers\Asset_Manager.h"
 #include "Managers\Config_Manager.h"
 #include "Managers\Geometry_Manager.h"
+#include "Managers\Input_Manager.h"
 #include "Managers\Lighting_Manager.h"
 #include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
@@ -96,8 +97,16 @@ namespace dt_Core {
 		rendering_context = glfwCreateWindow(width, height, "Delta", NULL, asset_sharing_context);
 		glfwSetWindowPos(rendering_context, ((maxWidth - width) / 2), ((maxHeight - height) / 2));
 		glfwMakeContextCurrent(rendering_context);
+		glfwSetInputMode(rendering_context, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+		// Set Callbacks
 		glfwSetWindowCloseCallback(rendering_context, GLFW_window_close_callback);
 		glfwSetWindowSizeCallback(rendering_context, GLFW_window_resize_callback);
+		glfwSetCursorPosCallback(rendering_context, Input_Manager::CursorPosCallback);
+		glfwSetKeyCallback(rendering_context, Input_Manager::KeyCallback);
+		glfwSetCharModsCallback(rendering_context, Input_Manager::CharModsCallback);
+		glfwSetMouseButtonCallback(rendering_context, Input_Manager::MouseButtonCallback);
+		glfwSetScrollCallback(rendering_context, Input_Manager::ScrollCallback);
 
 		Material_Manager::startup();
 		Shadowmap_Manager::startup();
@@ -126,6 +135,7 @@ namespace dt_Core {
 				rendering_scene->RenderFrame();
 			}
 			glfwSwapBuffers(rendering_context);
+			glfwPollEvents();
 		}
 	}
 
@@ -147,5 +157,10 @@ namespace dt_Core {
 	Camera * GetCamera()
 	{
 		return rendering_camera;
+	}
+
+	void * GetWindow()
+	{
+		return rendering_context;
 	}
 }

@@ -73,7 +73,8 @@ void Light_Directional::indirectPass(const int & vertex_count)
 
 bool Light_Directional::shouldRender(const mat4 & PVMatrix)
 {
-	return true; // Directional lights are infinite as they approximate the sun.
+	// Directional lights are infinite as they simulate the sun.
+	return true; 
 }
 
 void Light_Directional::shadowPass(const Visibility_Token & vis_token) const

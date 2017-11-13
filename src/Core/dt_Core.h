@@ -18,7 +18,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(20) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(21) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -46,6 +46,8 @@ namespace dt_Core {
 	DELTA_CORE_API void SetCamera(Camera *camera);
 	// Retrieves the main camera that is being used when rendering
 	DELTA_CORE_API Camera* GetCamera();
+	// Retrieves the main window
+	DELTA_CORE_API void* GetWindow();
 }
 
 #define COMPUTE_BUILD_YEAR			(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 
