@@ -14,11 +14,24 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
-struct Component
+class ComponentCreator;
+class Component
 {
-	~Component() {};
-	Component() {};
+public:
 	virtual unsigned int GetTypeID() { return -1; }
+
+protected:
+	DELTA_CORE_API virtual ~Component() {};
+	DELTA_CORE_API Component() {};
+	friend class ComponentCreator;
+};
+
+class ComponentCreator
+{
+public:
+	DELTA_CORE_API virtual Component* Create(void) { return new Component(); };
+	DELTA_CORE_API virtual void Destroy(Component *component) { delete component; };
+	DELTA_CORE_API virtual ~ComponentCreator(void) {};
 };
 
 #endif // COMPONENT

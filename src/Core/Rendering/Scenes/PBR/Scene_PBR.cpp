@@ -3,8 +3,8 @@
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Managers\Config_Manager.h"
-#include "Managers\Shadowmap_Manager.h"
+#include "Systems\Config_Manager.h"
+#include "Systems\Shadowmap_Manager.h"
 
 #include "Entities\Light_Directional.h"
 

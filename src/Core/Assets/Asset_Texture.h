@@ -18,7 +18,7 @@
 #define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

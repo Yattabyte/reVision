@@ -1,5 +1,5 @@
 #include "Rendering\Camera.h"
-#include "Managers\Visibility_Manager.h"
+#include "Systems\Visibility_Manager.h"
 #include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 

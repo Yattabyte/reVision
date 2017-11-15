@@ -23,7 +23,7 @@
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <vector>

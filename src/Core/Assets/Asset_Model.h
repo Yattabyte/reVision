@@ -20,7 +20,7 @@
 #define GLEW_STATIC
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include "Assets\Asset_Material.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"

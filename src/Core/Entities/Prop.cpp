@@ -1,6 +1,8 @@
 #include "Prop.h"
 #include "Entities\Components\Anim_Model_Component.h"
-#include "Managers\Component_Manager.h"
+#include "Systems\Factories\ComponentFactory.h"
+#include "Systems\World_Manager.h"
+//#include "Systems\Component_Manager.h"
 
 Prop::~Prop()
 {
@@ -8,20 +10,14 @@ Prop::~Prop()
 
 Prop::Prop()
 {
-	
-}
-
-Prop::Prop(const string & relativePath) : Prop()
-{
-	addComponent(new Anim_Model_Component(relativePath, &worldState));
-	Update();
+	addComponent("Anim_Model");	
 }
 
 void Prop::Update()
 {
-	lock_guard<shared_mutex> write_guard(data_mutex);
-	worldState.Update();
-	auto qwe = (Anim_Model_Component*)Component_Manager::GetComponent(m_component_handles[0]);
+	//lock_guard<shared_mutex> write_guard(data_mutex);
+	//worldState.Update();
+//	auto qwe = (Anim_Model_Component*)Component_Manager::GetComponent(m_component_handles[0]);
 }
 
 bool Prop::shouldRender(const mat4 & PVMatrix)

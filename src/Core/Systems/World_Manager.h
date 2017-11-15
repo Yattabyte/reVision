@@ -20,12 +20,10 @@
 using namespace std;
 
 namespace World_Manager {
+	// TO DO
+	DELTA_CORE_API void startup();
 	// Shutsdown the world and deletes everything 
 	DELTA_CORE_API void shutdown();
-	// Add the entity to the level
-	DELTA_CORE_API void addEntity(Entity * entity);
-	// Remove the entity from the level
-	DELTA_CORE_API void removeEntity(Entity * entity);
 	// Load the world
 	DELTA_CORE_API void LoadWorld();
 	// Unload the map (remove all entities)

@@ -1,5 +1,5 @@
 #include "Assets\Asset_Cubemap.h"
-#include "Managers\Config_Manager.h"
+#include "Systems\Config_Manager.h"
 
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 2

@@ -23,16 +23,13 @@
 using namespace glm;
 using namespace std;
 
+class PropCreator;
 class Prop : protected Entity
 {
 public:
 	/*************
 	----Common----
 	*************/
-
-	DELTA_CORE_API ~Prop();
-	DELTA_CORE_API Prop();
-	DELTA_CORE_API Prop(const string &relativePath);
 
 
 	/*************************
@@ -48,7 +45,7 @@ public:
 	----Variable Functions----
 	*************************/
 
-	void setPosition(const vec3 &position) { lock_guard<shared_mutex> write_guard(data_mutex);  worldState.position = position; }
+/*	void setPosition(const vec3 &position) { lock_guard<shared_mutex> write_guard(data_mutex);  worldState.position = position; }
 	void setOrientation(const quat &orientation) { lock_guard<shared_mutex> write_guard(data_mutex); worldState.orientation = orientation; }
 	void setScale(const vec3 &scale) { lock_guard<shared_mutex> write_guard(data_mutex); worldState.scale = scale; }
 	vec3 getPosition() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.position; }
@@ -56,15 +53,27 @@ public:
 	vec3 getScale() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.scale; }
 	mat4 getModelMatrix() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.modelMatrix; }
 	mat4 getInverseModelMatrix() const { shared_lock<shared_mutex> read_guard(data_mutex); return worldState.inverseModelMatrix; }
-	shared_mutex & getDataMutex() const { return data_mutex; };
+	shared_mutex & getDataMutex() const { return data_mutex; };*/
 	DELTA_CORE_API void Update();
 
 
 	/****************
 	----Variables----
 	****************/
-	mutable shared_mutex data_mutex;
-	Transform worldState;
+	//mutable shared_mutex data_mutex;
+	//Transform worldState;
+protected:
+	DELTA_CORE_API ~Prop();
+	DELTA_CORE_API Prop();
+	friend class PropCreator;
+};
+
+class PropCreator : public EntityCreator
+{
+public:
+	DELTA_CORE_API virtual Entity* Create(void) {
+		return new Prop();
+	}
 };
 
 #endif // PROP

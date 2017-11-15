@@ -31,7 +31,7 @@
 #define ABS_DIRECTORY_MATERIAL(filename) DIRECTORY_MATERIAL + filename + EXT_MATERIAL
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

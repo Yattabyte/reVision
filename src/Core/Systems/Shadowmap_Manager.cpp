@@ -1,6 +1,6 @@
-#include "Managers\Shadowmap_Manager.h"
-#include "Managers\Config_Manager.h"
-#include "Managers\Message_Manager.h"
+#include "Systems\Shadowmap_Manager.h"
+#include "Systems\Config_Manager.h"
+#include "Systems\Message_Manager.h"
 #include <deque>
 #include <minmax.h>
 

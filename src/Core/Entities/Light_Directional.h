@@ -56,11 +56,6 @@ public:
 	/*************
 	----Common----
 	*************/
-
-	DELTA_CORE_API ~Light_Directional();
-	DELTA_CORE_API Light_Directional(const vec3 &rgb = vec3(1.0f), const float &ints = float(1.0f), const bool &use_shadows = true);
-	DELTA_CORE_API Light_Directional(const Light_Directional &other);
-	DELTA_CORE_API void operator= (const Light_Directional &other);
 	DELTA_CORE_API virtual void registerSelf();
 	DELTA_CORE_API virtual void unregisterSelf();
 
@@ -92,6 +87,11 @@ public:
 	DELTA_CORE_API void Update();
 
 private:
+	DELTA_CORE_API ~Light_Directional();
+	DELTA_CORE_API Light_Directional(const vec3 &rgb = vec3(1.0f), const float &ints = float(1.0f), const bool &use_shadows = true);
+	DELTA_CORE_API Light_Directional(const Light_Directional &other);
+	DELTA_CORE_API void operator= (const Light_Directional &other);
+
 	/****************
 	----Variables----
 	****************/

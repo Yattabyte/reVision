@@ -1,6 +1,6 @@
-#include "Managers\Visibility_Manager.h"
-#include "Managers\Geometry_Manager.h"
-#include "Managers\Lighting_Manager.h"
+#include "Systems\Visibility_Manager.h"
+#include "Systems\Geometry_Manager.h"
+#include "Systems\Lighting_Manager.h"
 #include <algorithm>
 #include <windows.h> 
 

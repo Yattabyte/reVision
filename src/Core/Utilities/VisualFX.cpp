@@ -1,7 +1,7 @@
 /*#include "Utilities\VisualFX.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Shader.h"
-#include "Managers\Config_Manager.h"
+#include "Systems\Config_Manager.h"
 
 static Shared_Asset_Primitive shape_quad;
 static Shared_Asset_Shader CF_SHADER, GB_SHADER, GB_A_SHADER;

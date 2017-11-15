@@ -1,4 +1,4 @@
-#include "Managers\Lighting_Manager.h"
+#include "Systems\Lighting_Manager.h"
 #include <algorithm>
 
 static map<int, vector<Light*>> light_objects;

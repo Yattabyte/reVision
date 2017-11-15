@@ -21,7 +21,7 @@
 #define DIRECTORY_SHADER getCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
 #include <string>

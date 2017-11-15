@@ -1,6 +1,6 @@
 #include "Entities\Light_Directional.h"
-#include "Managers\Lighting_Manager.h"
-#include "Managers\Shadowmap_Manager.h"
+#include "Systems\Lighting_Manager.h"
+#include "Systems\Shadowmap_Manager.h"
 #include "Rendering\Visibility_Token.h"
 
 Light_Directional::~Light_Directional()

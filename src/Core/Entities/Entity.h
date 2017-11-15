@@ -16,18 +16,31 @@
 #define GLEW_STATIC
 
 #include "GL\glew.h"
+#include <map>
 #include <vector>
 
+struct cmp_str { bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; } };
+
+class EntityCreator;
 class Component;
 class Entity
 {
 public:
-	Entity() {};
-	DELTA_CORE_API ~Entity();
-	DELTA_CORE_API void addComponent(Component *newComponent);
+	DELTA_CORE_API Component* addComponent(char *type);
 	
 protected:
-	std::vector<std::pair<unsigned int, unsigned int>> m_component_handles;
+	DELTA_CORE_API virtual ~Entity();
+	DELTA_CORE_API Entity() {};
+	friend class EntityCreator;
+	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
+};
+
+class EntityCreator
+{
+public:
+	DELTA_CORE_API virtual Entity* Create(void) { return new Entity(); };
+	DELTA_CORE_API virtual void Destroy(Entity *entity) { delete entity; };
+	DELTA_CORE_API virtual ~EntityCreator(void) {};
 };
 
 #endif // ENTITY

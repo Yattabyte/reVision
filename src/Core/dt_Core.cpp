@@ -1,16 +1,16 @@
 #include "dt_Core.h"
 #include "Rendering\Camera.h"
 #include "Rendering\Scenes\Scene.h"
-#include "Managers\Asset_Manager.h"
-#include "Managers\Config_Manager.h"
-#include "Managers\Geometry_Manager.h"
-#include "Managers\Input_Manager.h"
-#include "Managers\Lighting_Manager.h"
-#include "Managers\Material_Manager.h"
-#include "Managers\Message_Manager.h"
-#include "Managers\Shadowmap_Manager.h"
-#include "Managers\Visibility_Manager.h"
-#include "Managers\World_Manager.h"
+#include "Systems\Asset_Manager.h"
+#include "Systems\Config_Manager.h"
+#include "Systems\Geometry_Manager.h"
+#include "Systems\Input_Manager.h"
+#include "Systems\Lighting_Manager.h"
+#include "Systems\Material_Manager.h"
+#include "Systems\Message_Manager.h"
+#include "Systems\Shadowmap_Manager.h"
+#include "Systems\Visibility_Manager.h"
+#include "Systems\World_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -111,6 +111,7 @@ namespace dt_Core {
 		Material_Manager::startup();
 		Shadowmap_Manager::startup();
 		Visibility_Manager::statup();
+		World_Manager::startup();
 		return true;
 	}
 

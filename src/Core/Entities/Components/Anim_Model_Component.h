@@ -29,10 +29,10 @@ struct Transform_Buffer {
 	mat4 transforms[NUM_MAX_BONES];
 };
 
-class Anim_Model_Component : public Component
+class Anim_Model_Creator;
+class Anim_Model_Component : protected Component
 {
 public:
-	DELTA_CORE_API ~Anim_Model_Component();
 	DELTA_CORE_API Anim_Model_Component(const string & relativePath, Transform *worldState);	
 	DELTA_CORE_API void Update();
 	DELTA_CORE_API void Draw();
@@ -43,6 +43,18 @@ public:
 	Transform_Buffer m_uboData;
 	Transform * m_transformData;
 	Shared_Asset_Model m_model;
+
+protected:
+	DELTA_CORE_API ~Anim_Model_Component();
+	DELTA_CORE_API Anim_Model_Component();
+	friend class Anim_Model_Creator;
+};
+
+class Anim_Model_Creator : public ComponentCreator
+{
+	DELTA_CORE_API virtual Component* Create(void) {
+		return new Anim_Model_Component();
+	}
 };
 
 #endif // TEST_COMPONENT

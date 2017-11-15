@@ -1,6 +1,6 @@
 #include "Rendering\Scenes\PBR\Geometry_Buffer.h"
-#include "Managers\Config_Manager.h"
-#include "Managers\Message_Manager.h"
+#include "Systems\Config_Manager.h"
+#include "Systems\Message_Manager.h"
 #include <algorithm>
 
 static float screen_width = 1.0f, screen_height = 1.0f;

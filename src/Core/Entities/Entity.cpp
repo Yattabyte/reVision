@@ -1,15 +1,18 @@
 #include "Entities\Entity.h"
 #include "Entities\Components\Component.h"
-#include "Managers\Component_Manager.h"
+#include "Systems\Factories\ComponentFactory.h"
+//#include "Systems\Component_Manager.h"
+
+Component* Entity::addComponent(char *type)
+{
+	m_component_handles.insert(std::pair<char*, vector<unsigned int>>(type, vector<unsigned int>()));
+	m_component_handles[type].push_back(ComponentFactory::CreateComponent(type));
+	return ComponentFactory::GetComponent(type, m_component_handles[type].back());
+}
 
 Entity::~Entity()
 {
-	Component_Manager::DeRegisterComponent(m_component_handles);
-}
-
-void Entity::addComponent(Component * newComponent)
-{
-	const int category = newComponent->GetTypeID();
-	const int spot = Component_Manager::RegisterComponent(category, newComponent);
-	m_component_handles.push_back(std::pair<unsigned int, unsigned int>(category, spot));
+	for each (auto pair in m_component_handles)
+		for each (auto id in pair.second) 
+			ComponentFactory::DeleteComponent(pair.first, id);			
 }

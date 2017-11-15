@@ -15,7 +15,7 @@
 #endif
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Systems\Asset_Manager.h"
 #include <btBulletDynamicsCommon.h>
 
 class Asset_Collider;
