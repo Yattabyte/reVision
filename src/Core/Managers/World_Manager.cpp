@@ -11,8 +11,7 @@ void World_Manager::shutdown()
 
 void World_Manager::addEntity(Entity * entity)
 {
-	level_entities.push_back(entity);
-	entity->registerSelf();
+	level_entities.push_back(entity);	
 }
 
 void World_Manager::removeEntity(Entity * entity)
@@ -23,7 +22,6 @@ void World_Manager::removeEntity(Entity * entity)
 			return true;
 		return false;
 	}), end(level_entities));
-	entity->unregisterSelf();
 	delete entity;
 }
 
@@ -34,9 +32,7 @@ void World_Manager::LoadWorld()
 
 void World_Manager::UnloadWorld()
 {
-	for each (auto *entity in level_entities) {
-		entity->unregisterSelf();
+	for each (auto *entity in level_entities) 
 		delete entity;
-	}
 	level_entities.clear();
 }

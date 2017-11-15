@@ -16,22 +16,18 @@
 #define GLEW_STATIC
 
 #include "GL\glew.h"
+#include <vector>
 
+class Component;
 class Entity
 {
 public:
-	// Destructs the entity
-	~Entity() {};
-	// Constructs the entity
 	Entity() {};
-	// Constructs the entity from another entity
-	Entity(const Entity &other) {};
-	// Change this entity into another entity
-	void operator= (const Entity &other) {};
-	// Tell this entity to register itself into any and all subsystems that it requires
-	virtual void registerSelf() {};
-	// Tell this entity to un-register itself from any and all subsystems that it required
-	virtual void unregisterSelf() {};
+	DELTA_CORE_API ~Entity();
+	DELTA_CORE_API void addComponent(Component *newComponent);
+	
+protected:
+	std::vector<std::pair<unsigned int, unsigned int>> m_component_handles;
 };
 
 #endif // ENTITY

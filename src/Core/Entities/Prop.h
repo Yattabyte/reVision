@@ -15,22 +15,15 @@
 #endif
 #define GEOMETRY_TYPE_PROP 0
 
-#include "Entities\Geometry.h"
+#include "Entities\Entity.h"
 #include "Utilities\Transform.h"
-#include "Assets\Asset_Model.h"
 #include <string>
 #include <shared_mutex>
 
 using namespace glm;
 using namespace std;
 
-struct Transform_Buffer {
-	int useBones; vec3 padding1;
-	mat4 mMatrix;
-	mat4 transforms[NUM_MAX_BONES];
-};
-
-class Prop : public Geometry
+class Prop : protected Entity
 {
 public:
 	/*************
@@ -40,10 +33,6 @@ public:
 	DELTA_CORE_API ~Prop();
 	DELTA_CORE_API Prop();
 	DELTA_CORE_API Prop(const string &relativePath);
-	DELTA_CORE_API Prop(const Prop &other);
-	DELTA_CORE_API void operator= (const Prop &other);
-	DELTA_CORE_API virtual void registerSelf();
-	DELTA_CORE_API virtual void unregisterSelf();
 
 
 	/*************************
@@ -76,9 +65,6 @@ public:
 	****************/
 	mutable shared_mutex data_mutex;
 	Transform worldState;
-	Shared_Asset_Model assetModel;
-	GLuint uboID;
-	Transform_Buffer uboData;
 };
 
 #endif // PROP
