@@ -14,23 +14,30 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
+#include <utility>
+
+typedef std::pair<char*, unsigned int> ECSHandle;
+
+class ECSMessage;
 class ComponentCreator;
 class Component
 {
 public:
-	virtual unsigned int GetTypeID() { return -1; }
+	DELTA_CORE_API void SendMessage(ECSMessage *message);
+	DELTA_CORE_API void ReceiveMessage(ECSMessage *message);
 
 protected:
 	DELTA_CORE_API virtual ~Component() {};
-	DELTA_CORE_API Component() {};
+	DELTA_CORE_API Component(const ECSHandle &id, const ECSHandle &pid) : m_ID(id), m_parentID(pid) {};
+	ECSHandle m_ID, m_parentID;
 	friend class ComponentCreator;
 };
 
 class ComponentCreator
 {
 public:
-	DELTA_CORE_API virtual Component* Create(void) { return new Component(); };
-	DELTA_CORE_API virtual void Destroy(Component *component) { delete component; };
+	DELTA_CORE_API virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) { return new Component(id, pid); };
+	DELTA_CORE_API void Destroy(Component *component) { delete component; };
 	DELTA_CORE_API virtual ~ComponentCreator(void) {};
 };
 

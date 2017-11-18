@@ -1,6 +1,6 @@
 #include "Systems\World_Manager.h"
-#include "Systems\Factories\ComponentFactory.h"
-#include "Systems\Factories\EntityFactory.h"
+#include "Systems\ECS\ComponentFactory.h"
+#include "Systems\ECS\EntityFactory.h"
 #include <algorithm>
 
 #include "Entities\Prop.h"

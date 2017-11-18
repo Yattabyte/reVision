@@ -1,16 +1,11 @@
 #include "Prop.h"
 #include "Entities\Components\Anim_Model_Component.h"
-#include "Systems\Factories\ComponentFactory.h"
+#include "Systems\ECS\ComponentFactory.h"
 #include "Systems\World_Manager.h"
 //#include "Systems\Component_Manager.h"
 
 Prop::~Prop()
 {
-}
-
-Prop::Prop()
-{
-	addComponent("Anim_Model");	
 }
 
 void Prop::Update()

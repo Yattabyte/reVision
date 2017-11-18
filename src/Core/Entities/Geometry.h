@@ -17,7 +17,7 @@
 #include "Entities\Entity.h"
 #include "Utilities\Frustum.h"
 
-class Geometry : public Entity
+class Geometry /*: public Entity*/
 {
 public:
 	/*************

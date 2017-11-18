@@ -50,14 +50,14 @@ struct LightBuffer
 	}
 };
 
-class Light_Directional : public Light
+class Light_Directional /*: public Light*/
 {
 public:
 	/*************
 	----Common----
 	*************/
-	DELTA_CORE_API virtual void registerSelf();
-	DELTA_CORE_API virtual void unregisterSelf();
+	/*DELTA_CORE_API virtual void registerSelf();
+	DELTA_CORE_API virtual void unregisterSelf();*/
 
 
 	/**********************

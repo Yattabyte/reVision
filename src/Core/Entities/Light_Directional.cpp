@@ -42,7 +42,7 @@ void Light_Directional::operator=(const Light_Directional & other)
 
 	Update();
 }
-
+/*
 void Light_Directional::registerSelf()
 {
 	Lighting_Manager::RegisterLight(GetLightType(), this);
@@ -57,7 +57,7 @@ void Light_Directional::unregisterSelf()
 	if (m_lightBuffer.Use_Shadows)
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			Shadowmap_Manager::UnRegisterShadowCaster(SHADOW_LARGE, m_lightBuffer.Shadow_Spot[x].x);
-}
+}*/
 
 void Light_Directional::directPass(const int & vertex_count)
 {

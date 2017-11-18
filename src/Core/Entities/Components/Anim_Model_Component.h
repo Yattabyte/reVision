@@ -33,7 +33,7 @@ class Anim_Model_Creator;
 class Anim_Model_Component : protected Component
 {
 public:
-	DELTA_CORE_API Anim_Model_Component(const string & relativePath, Transform *worldState);	
+	//DELTA_CORE_API Anim_Model_Component(const string & relativePath, Transform *worldState);	
 	DELTA_CORE_API void Update();
 	DELTA_CORE_API void Draw();
 	virtual unsigned int GetTypeID() { return TYPE_COMPONENT_ANIM_MODEL; }
@@ -46,14 +46,14 @@ public:
 
 protected:
 	DELTA_CORE_API ~Anim_Model_Component();
-	DELTA_CORE_API Anim_Model_Component();
+	DELTA_CORE_API Anim_Model_Component(const ECSHandle &id, const ECSHandle &pid);
 	friend class Anim_Model_Creator;
 };
 
 class Anim_Model_Creator : public ComponentCreator
 {
-	DELTA_CORE_API virtual Component* Create(void) {
-		return new Anim_Model_Component();
+	DELTA_CORE_API virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
+		return new Anim_Model_Component(id, pid);
 	}
 };
 

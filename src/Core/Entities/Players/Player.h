@@ -16,7 +16,7 @@
 #include "Entities\Entity.h"
 #include "Utilities\Transform.h"
 
-class Player : public Entity
+class Player /*: public Entity*/
 {
 public:
 	~Player() {};

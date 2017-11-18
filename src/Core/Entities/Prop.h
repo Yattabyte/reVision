@@ -64,15 +64,17 @@ public:
 	//Transform worldState;
 protected:
 	DELTA_CORE_API ~Prop();
-	DELTA_CORE_API Prop();
+	DELTA_CORE_API Prop(const ECSHandle &id) : Entity(id) {}
 	friend class PropCreator;
 };
 
 class PropCreator : public EntityCreator
 {
 public:
-	DELTA_CORE_API virtual Entity* Create(void) {
-		return new Prop();
+	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) {
+		Prop *prop = new Prop(id);
+		prop->addComponent("Anim_Model");
+		return prop;
 	}
 };
 

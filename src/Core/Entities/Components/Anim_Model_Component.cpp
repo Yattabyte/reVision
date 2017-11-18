@@ -1,15 +1,24 @@
 #include "Entities\Components\Anim_Model_Component.h"
+#include "Systems\ECS\ECSMessage.h"
 
 Anim_Model_Component::~Anim_Model_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 }
 
-Anim_Model_Component::Anim_Model_Component()
+Anim_Model_Component::Anim_Model_Component(const ECSHandle &id, const ECSHandle &pid) : Component(id, pid)
 {
+	glGenBuffers(1, &m_uboID);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	glBufferData(GL_UNIFORM_BUFFER, (sizeof(mat4) * 101) + sizeof(float), &m_uboData, GL_DYNAMIC_COPY);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+	GLvoid* p = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
+	memcpy(p, &m_uboData, sizeof(Transform_Buffer));
+	glUnmapBuffer(GL_UNIFORM_BUFFER);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-Anim_Model_Component::Anim_Model_Component(const string & relativePath, Transform *worldState)
+/*Anim_Model_Component::Anim_Model_Component(const string & relativePath, Transform *worldState)
 {
 	Asset_Manager::load_asset(m_model, relativePath);
 	m_transformData = worldState;
@@ -21,7 +30,7 @@ Anim_Model_Component::Anim_Model_Component(const string & relativePath, Transfor
 	memcpy(p, &m_uboData, sizeof(Transform_Buffer));
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
+}*/
 
 void Anim_Model_Component::Update()
 {
