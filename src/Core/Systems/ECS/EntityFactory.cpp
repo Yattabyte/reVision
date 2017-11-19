@@ -1,6 +1,7 @@
 #include "Systems\ECS\EntityFactory.h"
 #include "Systems\ECS\ECSMessage.h"
 #include "Entities\Prop.h"
+#include "Entities\Sun.h"
 #include <deque>
 #include <map>
 
@@ -11,6 +12,7 @@ static map<char*, EntityCreator*, cmp_str> creator_map;
 void EntityFactory::Startup()
 {
 	creator_map.insert(pair<char*, EntityCreator*>("Prop", new PropCreator()));
+	creator_map.insert(pair<char*, EntityCreator*>("Sun", new SunCreator()));
 }
 
 ECSHandle EntityFactory::CreateEntity(char * type)
@@ -62,7 +64,7 @@ vector<Entity*> &EntityFactory::GetEntitiesByType(char * type)
 void EntityFactory::SendMessageToEntity(ECSMessage * message, const ECSHandle & target)
 {
 	if (target.first && level_entities.find(target.first) != level_entities.end()) {
-
+		level_entities[target.first][target.second]->ReceiveMessage(message);
 	}
 }
 

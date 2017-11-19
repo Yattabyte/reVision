@@ -1,6 +1,5 @@
 #include "Systems\Visibility_Manager.h"
-#include "Systems\Geometry_Manager.h"
-#include "Systems\Lighting_Manager.h"
+#include "Systems\ECS\ComponentFactory.h"
 #include <algorithm>
 #include <windows.h> 
 
@@ -57,7 +56,7 @@ void Visibility_Manager::UnRegisterViewer(Camera * camera)
 
 void Visibility_Manager::DeRegisterGeometryFromViewers(Geometry *g)
 {
-	shared_lock<shared_mutex> cam_list_guard(camera_list_mutex);
+	/*shared_lock<shared_mutex> cam_list_guard(camera_list_mutex);
 	for each (auto *cam in camera_list) {
 		for (auto & spot = begin(cam->GetVisibilityToken().visible_geometry); spot != end(cam->GetVisibilityToken().visible_geometry); spot++) {
 			vector<Geometry*> &vec = (*spot).second;
@@ -65,12 +64,12 @@ void Visibility_Manager::DeRegisterGeometryFromViewers(Geometry *g)
 				return (ref == g);
 			}), end(vec));
 		}		
-	}
+	}*/
 }
 
 void Visibility_Manager::Visibility_Checker()
 {
-	bool keep_looping = true;
+	/*bool keep_looping = true;
 	while (keep_looping) {
 		{
 			shared_lock<shared_mutex> system_active_lock_guard(systemActiveMutex);
@@ -86,8 +85,8 @@ void Visibility_Manager::Visibility_Checker()
 					map<int, vector<Geometry*>> geometry_list;
 					map<int, vector<Light*>> light_list;
 					{
-						shared_lock<shared_mutex> geometry_read_guard(Geometry_Manager::GetDataLock());
-						const auto &geometryMap = Geometry_Manager::GetAllGeometry();
+						const auto &geometryMap = ComponentFactory::GetComponentsByType("Anim_Model");
+						shared_lock<shared_mutex> geometry_read_guard(ComponentFactory::GetDataLock());
 
 						for (int x = 0; x < geometryMap.size(); ++x) {
 							geometry_list.insert(pair<int, vector<Geometry*>>(x, vector<Geometry*>()));
@@ -122,5 +121,5 @@ void Visibility_Manager::Visibility_Checker()
 			shared_lock<shared_mutex> system_active_lock_guard(systemActiveMutex);
 			shouldSleep = systemPause;
 		} while (shouldSleep);
-	}
+	}*/
 }

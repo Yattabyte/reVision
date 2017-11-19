@@ -20,6 +20,7 @@
 #include "glm\gtc\quaternion.hpp"
 #include <shared_mutex>
 
+using namespace std;
 using namespace glm;
 
 struct Camera_Buffer

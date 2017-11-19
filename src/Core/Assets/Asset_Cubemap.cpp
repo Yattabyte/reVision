@@ -46,6 +46,7 @@ void Asset_Cubemap::Finalize()
 		anisotropy = max(0.0f, min(anisotropy, maxAnisotropy));
 
 		// Create the source texture
+		sourceTexture = 0;
 		glGenTextures(1, &sourceTexture);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, sourceTexture);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -58,6 +59,7 @@ void Asset_Cubemap::Finalize()
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGBA, size.x, size.x, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
 
 		// Create the final texture
+		gl_tex_ID = 0;
 		glGenTextures(1, &gl_tex_ID);
 		glBindTexture(type, gl_tex_ID);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

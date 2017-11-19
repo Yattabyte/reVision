@@ -1,12 +1,19 @@
 #include "Rendering\Scenes\PBR\Scene_PBR.h"
 #include "Rendering\Camera.h"
 #include "Rendering\Visibility_Token.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
+
 #include "Systems\Config_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
+#include "Systems\ECS\Components\Geometry_Manager.h"
+#include "Systems\ECS\Components\Lighting_Manager.h"
+#include "Systems\ECS\ComponentFactory.h"
+#include "Systems\ECS\ECSMessage.h"
 
-#include "Entities\Light_Directional.h"
+#include "Entities\Components\Geometry_Component.h"
+#include "Entities\Components\Lighting_Component.h"
+
+#include "Assets\Asset_Shader.h"
+#include "Assets\Asset_Primitive.h"
 
 #include "dt_Core.h"
 
@@ -45,10 +52,11 @@ void Scene_PBR::RenderFrame()
 {
 	glViewport(0, 0, screen_width, screen_height);
 
-	Camera *mainCamera = dt_Core::GetCamera();
-	shared_lock<shared_mutex> read_guard(mainCamera->getDataMutex());
-	const Visibility_Token &vis_token = mainCamera->GetVisibilityToken();
-
+	Camera &mainCamera = *dt_Core::GetCamera();
+	Visibility_Token &vis_token = mainCamera.GetVisibilityToken();
+	Geometry_Manager::CalcVisibility(mainCamera);
+	Lighting_Manager::CalcVisibility(mainCamera);
+	
 	RegenerationPass(vis_token);
 	GeometryPass(vis_token);
 	LightingPass(vis_token);
@@ -65,11 +73,11 @@ void Scene_PBR::RegenerationPass(const Visibility_Token &vis_token)
 
 	Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
 
-	geometry_shadow_shader->Bind();
+	/*geometry_shadow_shader->Bind();
 	if (vis_token.visible_lights.size())
 		for each (const auto *light in vis_token.visible_lights.at(Light_Directional::GetLightType()))
 			light->shadowPass(vis_token);
-	geometry_shadow_shader->Release();
+	geometry_shadow_shader->Release();*/
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
 
@@ -86,9 +94,12 @@ void Scene_PBR::GeometryPass(const Visibility_Token &vis_token)
 	m_gbuffer.Clear();
 	m_gbuffer.BindForWriting();
 	geometry_shader->Bind();
-	for each (auto vec in vis_token.visible_geometry)
-		for each (auto *obj in vec.second)
-			obj->geometryPass();
+
+	const vector<Geometry_Component*> &geometry = *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model")));
+
+	for each (auto component in geometry)
+		component->Draw();
+
 	geometry_shader->Release();
 }
 
@@ -101,15 +112,16 @@ void Scene_PBR::LightingPass(const Visibility_Token &vis_token)
 	glBlendFunc(GL_ONE, GL_ONE);
 	/*glDisable(GL_STENCIL_TEST);*/
 	m_lbuffer.Clear();
+
+	const vector<Lighting_Component*> &directional = *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional")));
 	
 	m_gbuffer.BindForReading();
 	m_lbuffer.BindForWriting();
 	lighting_shader->Bind();
 	shape_quad->Bind();
 	const int quad_size = shape_quad->GetSize();
-	for each (auto vec in vis_token.visible_lights)
-		for each (auto *obj in vec.second)
-			obj->directPass(quad_size);
+	for each (auto component in directional)
+		component->directPass(quad_size);
 	shape_quad->Unbind();
 	lighting_shader->Release();
 }

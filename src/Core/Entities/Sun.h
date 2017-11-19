@@ -1,13 +1,13 @@
 /*
-	Prop
+	Sun
 
 	- A type of entity
-	- Contains an animation-supported model-component
+	- Contains a directional-light-component
 */
 
 #pragma once
-#ifndef PROP
-#define PROP
+#ifndef SUN
+#define SUN
 #ifdef	DT_CORE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
@@ -16,14 +16,14 @@
 
 #include "Entities\Entity.h"
 
-class PropCreator : protected EntityCreator
+class SunCreator : protected EntityCreator
 {
 public:
 	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) {
 		Entity *entity = EntityCreator::Create(id);
-		entity->addComponent("Anim_Model");
+		entity->addComponent("Light_Directional");
 		return entity;
 	}
 };
 
-#endif // PROP
+#endif // SUN

@@ -25,7 +25,6 @@ public:
 	DELTA_CORE_API Scene_PBR();
 	DELTA_CORE_API virtual void RenderFrame();
 
-
 protected:
 	void RegenerationPass(const Visibility_Token &vis_token);
 	void GeometryPass(const Visibility_Token &vis_token);

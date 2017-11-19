@@ -14,12 +14,13 @@
 #endif
 
 #include "Entities\Components\Component.h"
+#include "Rendering\Visibility_Token.h"
 #include <map>
 #include <vector>
+#include <shared_mutex>
 
 using namespace std;
 
-struct cmp_str { bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; } };
 class ECSMessage;
 namespace ComponentFactory {
 	DELTA_CORE_API void Startup();
@@ -29,6 +30,7 @@ namespace ComponentFactory {
 	DELTA_CORE_API vector<Component*> &GetComponentsByType(char *type);
 	DELTA_CORE_API void SendMessageToComponents(ECSMessage *message, const std::map<char *, std::vector<unsigned int>, cmp_str> &targets);
 	DELTA_CORE_API void Flush();
+	DELTA_CORE_API shared_mutex & GetDataLock();
 }
 
 #endif // COMPONENTFACTORY

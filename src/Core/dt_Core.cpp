@@ -3,9 +3,7 @@
 #include "Rendering\Scenes\Scene.h"
 #include "Systems\Asset_Manager.h"
 #include "Systems\Config_Manager.h"
-#include "Systems\Geometry_Manager.h"
 #include "Systems\Input_Manager.h"
-#include "Systems\Lighting_Manager.h"
 #include "Systems\Material_Manager.h"
 #include "Systems\Message_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
@@ -121,8 +119,6 @@ namespace dt_Core {
 		Asset_Manager::shutdown();		
 		CFG::shutdown();
 		World_Manager::shutdown();
-		Geometry_Manager::shutdown();
-		Lighting_Manager::shutdown();
 		Shadowmap_Manager::shutdown();
 		glfwMakeContextCurrent(asset_sharing_context);
 		glfwTerminate();

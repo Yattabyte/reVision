@@ -13,30 +13,12 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
-#include "Entities\Geometry.h"
-#include "Entities\Light.h"
+#include "Entities\Components\Component.h"
 #include <map>
 #include <vector>
 
-using namespace std;
+struct cmp_str { bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; } };
 
-class Visibility_Token
-{
-public:
-	/*************
-	----Common----
-	*************/
-
-	~Visibility_Token() {};
-	Visibility_Token() {};
-
-
-	/****************
-	----Variables----
-	****************/
-
-	map<int, vector<Geometry*>> visible_geometry;
-	map<int, vector<Light*>> visible_lights, visible_shadow_lights;
-};
+typedef std::map<char*, std::vector<Component*>, cmp_str> Visibility_Token;
 
 #endif // VISIBILITY_TOKEN

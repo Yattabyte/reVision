@@ -24,7 +24,7 @@ class Component
 {
 public:
 	DELTA_CORE_API void SendMessage(ECSMessage *message);
-	DELTA_CORE_API void ReceiveMessage(ECSMessage *message);
+	DELTA_CORE_API virtual void ReceiveMessage(ECSMessage *message);
 
 protected:
 	DELTA_CORE_API virtual ~Component() {};
