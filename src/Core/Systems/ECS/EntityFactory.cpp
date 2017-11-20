@@ -1,5 +1,5 @@
 #include "Systems\ECS\EntityFactory.h"
-#include "Systems\ECS\ECSMessage.h"
+#include "Systems\ECS\ECSmessage.h"
 #include "Entities\Prop.h"
 #include "Entities\Sun.h"
 #include <deque>
@@ -61,7 +61,7 @@ vector<Entity*> &EntityFactory::GetEntitiesByType(char * type)
 	return level_entities[type];
 }
 
-void EntityFactory::SendMessageToEntity(ECSMessage * message, const ECSHandle & target)
+void EntityFactory::SendMessageToEntity(ECSmessage * message, const ECSHandle & target)
 {
 	if (target.first && level_entities.find(target.first) != level_entities.end()) {
 		level_entities[target.first][target.second]->ReceiveMessage(message);

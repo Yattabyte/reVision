@@ -1,6 +1,6 @@
 #include "Entities\Components\Anim_Model_Component.h"
-#include "Systems\ECS\ECSMessage.h"
-#include "Systems\ECS\ECSMessages.h"
+#include "Systems\ECS\ECSmessage.h"
+#include "Systems\ECS\ECSmessages.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
 
@@ -56,21 +56,16 @@ bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
 	return false;	
 }
 
-void Anim_Model_Component::ReceiveMessage(ECSMessage * message)
+void Anim_Model_Component::ReceiveMessage(ECSmessage * message)
 {
-	switch (message->GetTypeID()) {
-		case SET_MODEL_DIR:
-		{
-			auto msg = (MSG_Set_Model_Dir*)message;
-			Asset_Manager::load_asset(m_model, msg->GetPayload());
-			break;
-		}
-		case SET_TRANSFORM:
-		{
-			auto msg = (MSG_Set_Transform*)message;
-			m_uboData.mMatrix = msg->GetPayload().modelMatrix;
-			Update();
-			break;
-		}
+	const char* typeID = message->GetTypeID();
+	if (typeID == ofTypeString) {
+		auto msg = (ECS_Payload_Set_Model_Dir*)message;
+		Asset_Manager::load_asset(m_model, msg->GetPayload());
+	}
+	else if (typeID == ofTypeTransform) {
+		auto msg = (ECS_Payload_Set_Transform*)message;
+		m_uboData.mMatrix = msg->GetPayload().modelMatrix;
+		Update();		
 	}
 }

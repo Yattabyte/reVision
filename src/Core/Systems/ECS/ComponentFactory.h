@@ -21,14 +21,14 @@
 
 using namespace std;
 
-class ECSMessage;
+class ECSmessage;
 namespace ComponentFactory {
 	DELTA_CORE_API void Startup();
 	DELTA_CORE_API ECSHandle CreateComponent(char *type, const ECSHandle &parent_ID);
 	DELTA_CORE_API void DeleteComponent(const ECSHandle& id);
 	DELTA_CORE_API Component * GetComponent(const ECSHandle& id);
 	DELTA_CORE_API vector<Component*> &GetComponentsByType(char *type);
-	DELTA_CORE_API void SendMessageToComponents(ECSMessage *message, const std::map<char *, std::vector<unsigned int>, cmp_str> &targets);
+	DELTA_CORE_API void SendMessageToComponents(ECSmessage *message, const std::map<char *, std::vector<unsigned int>, cmp_str> &targets);
 	DELTA_CORE_API void Flush();
 	DELTA_CORE_API shared_mutex & GetDataLock();
 }

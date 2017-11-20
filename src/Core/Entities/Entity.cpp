@@ -1,6 +1,6 @@
 #include "Entities\Entity.h"
 #include "Entities\Components\Component.h"
-#include "Systems\ECS\ECSMessage.h"
+#include "Systems\ECS\ECSmessage.h"
 #include "Systems\ECS\ComponentFactory.h"
 
 void Entity::addComponent(char *type)
@@ -14,13 +14,13 @@ Component * Entity::getComponent(const ECSHandle & id)
 	return ComponentFactory::GetComponent(id);
 }
 
-void Entity::SendMessage(ECSMessage * message)
+void Entity::SendMessage(ECSmessage * message)
 {
 	// Forward message to all components
 	ComponentFactory::SendMessageToComponents(message, m_component_handles);
 }
 
-void Entity::ReceiveMessage(ECSMessage * message)
+void Entity::ReceiveMessage(ECSmessage * message)
 {
 	// Forward message to all components
 	SendMessage(message);

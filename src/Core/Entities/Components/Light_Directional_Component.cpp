@@ -1,6 +1,6 @@
 #include "Entities\Components\Light_Directional_Component.h"
-#include "Systems\ECS\ECSMessage.h"
-#include "Systems\ECS\ECSMessages.h"
+#include "Systems\ECS\ECSmessage.h"
+#include "Systems\ECS\ECSmessages.h"
 #include "Utilities\Frustum.h"
 
 Light_Directional_Component::~Light_Directional_Component()
@@ -17,44 +17,36 @@ Light_Directional_Component::Light_Directional_Component(const ECSHandle & id, c
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void Light_Directional_Component::ReceiveMessage(ECSMessage * message)
+void Light_Directional_Component::ReceiveMessage(ECSmessage * message)
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
-	switch (message->GetTypeID()) {
-		case SET_LIGHT_COLOR:
-		{
-			auto msg = (MSG_Set_Light_Color*)message;
-			m_uboData.LightColor = msg->GetPayload();
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4), sizeof(vec3), &m_uboData.LightColor);
-			break;
-		}
-		case SET_LIGHT_INTENSITY:
-		{
-			auto msg = (MSG_Set_Light_Intensity*)message;
-			m_uboData.LightIntensity = msg->GetPayload();
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4), sizeof(float), &m_uboData.LightIntensity);
-			break;
-		}
-		case SET_ORIENTATION:
-		{
-			auto msg = (MSG_Set_Orientation*)message;
-			const mat4 rotation = glm::mat4_cast(msg->GetPayload());
-			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));			
-			Update();
-			break;
-		}
-		case SET_TRANSFORM:
-		{
-			auto msg = (MSG_Set_Transform*)message;
-			const mat4 &rotation = msg->GetPayload().modelMatrix;
-			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-			Update();
-			break;
-		}
+	const char* typeID = message->GetTypeID();
+	if (typeID == ofTypeVec3) {
+		auto msg = (ECS_Payload_Set_Light_Color*)message;
+		m_uboData.LightColor = msg->GetPayload();
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4), sizeof(vec3), &m_uboData.LightColor);
 	}
+	else if (typeID == ofTypeFloat) {
+		auto msg = (ECS_Payload_Set_Light_Intensity*)message;
+		m_uboData.LightIntensity = msg->GetPayload();
+		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4), sizeof(float), &m_uboData.LightIntensity);
+	}
+	else if (typeID == ofTypeQuat) {
+		auto msg = (ECS_Payload_Set_Orientation*)message;
+		const mat4 rotation = glm::mat4_cast(msg->GetPayload());
+		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+		Update();
+	}
+	else if (typeID == ofTypeTransform) {
+		auto msg = (ECS_Payload_Set_Transform*)message;
+		const mat4 &rotation = msg->GetPayload().modelMatrix;
+		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+		Update();
+	}
+	
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 

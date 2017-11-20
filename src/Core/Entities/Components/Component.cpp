@@ -1,15 +1,15 @@
 #include "Entities\Components\Component.h"
 #include "Systems\ECS\ComponentFactory.h"
 #include "Systems\ECS\EntityFactory.h"
-#include "Systems\ECS\ECSMessage.h"
+#include "Systems\ECS\ECSmessage.h"
 
-void Component::SendMessage(ECSMessage * message)
+void Component::SendMessage(ECSmessage * message)
 {
 	// Forward Message to parent
 	EntityFactory::SendMessageToEntity(message, m_parentID);
 }
 
-void Component::ReceiveMessage(ECSMessage * message)
+void Component::ReceiveMessage(ECSmessage * message)
 {
 	// Do something
 }

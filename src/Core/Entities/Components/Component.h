@@ -18,13 +18,13 @@
 
 typedef std::pair<char*, unsigned int> ECSHandle;
 
-class ECSMessage;
+class ECSmessage;
 class ComponentCreator;
 class Component
 {
 public:
-	DELTA_CORE_API void SendMessage(ECSMessage *message);
-	DELTA_CORE_API virtual void ReceiveMessage(ECSMessage *message);
+	DELTA_CORE_API void SendMessage(ECSmessage *message);
+	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage *message);
 
 protected:
 	DELTA_CORE_API virtual ~Component() {};

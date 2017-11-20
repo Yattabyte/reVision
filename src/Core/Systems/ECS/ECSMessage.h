@@ -1,5 +1,5 @@
 /*
-	ECSMessage
+	ECSmessage
 
 	- A class for sending data to and from components and entities.
 	- Is useless in its basic form. Must be expanded upon and given a unique ID.
@@ -17,19 +17,18 @@
 
 typedef std::pair<char*, unsigned int> ECSHandle;
 
-class ECSMessage
+class DELTA_CORE_API ECSmessage
 {
 public: 
-	DELTA_CORE_API ~ECSMessage() {};
-	DELTA_CORE_API ECSMessage() : m_typeID(-1), m_senderID(ECSHandle("", -1)), m_targetID(ECSHandle("", -1)) {};
-	DELTA_CORE_API unsigned int GetTypeID() const { return m_typeID; };
-	DELTA_CORE_API ECSHandle GetSenderID() const { return m_senderID; };
-	DELTA_CORE_API void SetSenderID(const ECSHandle &sender) { m_senderID = sender; };
-	DELTA_CORE_API ECSHandle GetTargetID() const { return m_targetID; };
-	DELTA_CORE_API void SetTargetID(const ECSHandle &target) { m_targetID = target; };
+	~ECSmessage() {};
+	ECSmessage() : m_senderID(ECSHandle("", -1)), m_targetID(ECSHandle("", -1)) {};
+	virtual const char* GetTypeID() { return 0; };
+	ECSHandle GetSenderID() const { return m_senderID; };
+	void SetSenderID(const ECSHandle &sender) { m_senderID = sender; };
+	ECSHandle GetTargetID() const { return m_targetID; };
+	void SetTargetID(const ECSHandle &target) { m_targetID = target; };
 
 protected:
-	unsigned int m_typeID;
 	ECSHandle m_senderID, m_targetID;
 };
 

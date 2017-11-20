@@ -7,7 +7,7 @@
 #include "Systems\ECS\Components\Geometry_Manager.h"
 #include "Systems\ECS\Components\Lighting_Manager.h"
 #include "Systems\ECS\ComponentFactory.h"
-#include "Systems\ECS\ECSMessage.h"
+#include "Systems\ECS\ECSmessage.h"
 
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"

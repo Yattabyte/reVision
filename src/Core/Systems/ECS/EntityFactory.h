@@ -18,14 +18,14 @@
 
 using namespace std;
 
-class ECSMessage;
+class ECSmessage;
 namespace EntityFactory {
 	DELTA_CORE_API void Startup();
 	DELTA_CORE_API ECSHandle CreateEntity(char *type);
 	DELTA_CORE_API void DeleteEntity(const ECSHandle& id);
 	DELTA_CORE_API Entity * GetEntity(const ECSHandle& id);
 	DELTA_CORE_API vector<Entity*> &GetEntitiesByType(char *type);
-	DELTA_CORE_API void SendMessageToEntity(ECSMessage *message, const ECSHandle &target);
+	DELTA_CORE_API void SendMessageToEntity(ECSmessage *message, const ECSHandle &target);
 	DELTA_CORE_API void Flush();
 }
 

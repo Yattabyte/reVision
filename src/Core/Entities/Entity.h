@@ -22,7 +22,7 @@
 
 typedef std::pair<char*, unsigned int> ECSHandle;
 
-class ECSMessage;
+class ECSmessage;
 class EntityCreator;
 class Component;
 class Entity
@@ -30,8 +30,8 @@ class Entity
 public:
 	DELTA_CORE_API void addComponent(char *type);
 	DELTA_CORE_API Component* getComponent(const ECSHandle &id);
-	DELTA_CORE_API void SendMessage(ECSMessage *message);
-	DELTA_CORE_API void ReceiveMessage(ECSMessage *message);
+	DELTA_CORE_API void SendMessage(ECSmessage *message);
+	DELTA_CORE_API void ReceiveMessage(ECSmessage *message);
 	
 protected:
 	DELTA_CORE_API virtual ~Entity();
