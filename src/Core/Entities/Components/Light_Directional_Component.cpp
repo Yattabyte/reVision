@@ -21,31 +21,30 @@ void Light_Directional_Component::ReceiveMessage(ECSmessage * message)
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
-	const char* typeID = message->GetTypeID();
-	if (typeID == ofTypeVec3) {
-		auto msg = (ECS_Payload_Set_Light_Color*)message;
-		m_uboData.LightColor = msg->GetPayload();
+	/*if (message->IsOfType<vec3>()) {
+		const auto &payload = *(vec3*)(message->GetPayload());
+		m_uboData.LightColor = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4), sizeof(vec3), &m_uboData.LightColor);
 	}
-	else if (typeID == ofTypeFloat) {
-		auto msg = (ECS_Payload_Set_Light_Intensity*)message;
-		m_uboData.LightIntensity = msg->GetPayload();
+	else if (message->IsOfType<float>()) {
+		const auto &payload = *(float*)(message->GetPayload());
+		m_uboData.LightIntensity = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4), sizeof(float), &m_uboData.LightIntensity);
 	}
-	else if (typeID == ofTypeQuat) {
-		auto msg = (ECS_Payload_Set_Orientation*)message;
-		const mat4 rotation = glm::mat4_cast(msg->GetPayload());
+	else if (message->IsOfType<quat>()) {
+		const auto &payload = *(quat*)(message->GetPayload());
+		const mat4 rotation = glm::mat4_cast(payload);
 		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
 		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
 		Update();
 	}
-	else if (typeID == ofTypeTransform) {
-		auto msg = (ECS_Payload_Set_Transform*)message;
-		const mat4 &rotation = msg->GetPayload().modelMatrix;
+	else if (message->IsOfType<Transform>()) {
+		const auto &payload = *(Transform*)(message->GetPayload());
+		const mat4 &rotation = payload.modelMatrix;
 		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
 		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
 		Update();
-	}
+	}*/
 	
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

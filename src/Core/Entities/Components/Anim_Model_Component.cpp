@@ -58,14 +58,14 @@ bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
 
 void Anim_Model_Component::ReceiveMessage(ECSmessage * message)
 {
-	const char* typeID = message->GetTypeID();
-	if (typeID == ofTypeString) {
-		auto msg = (ECS_Payload_Set_Model_Dir*)message;
-		Asset_Manager::load_asset(m_model, msg->GetPayload());
+	if (message->IsOfType<std::string>()){
+		//const std::string &payload = *((std::string*)(message->GetPayload()));
+		Asset_Manager::load_asset(m_model, "");
 	}
-	else if (typeID == ofTypeTransform) {
-		auto msg = (ECS_Payload_Set_Transform*)message;
-		m_uboData.mMatrix = msg->GetPayload().modelMatrix;
+	else if (message->IsOfType<Transform>()) {		
+		auto qwe = message->GetPayload<Transform>();
+		//const Transform &payload = *(Transform*)(message->GetPayload().get());
+		//m_uboData.mMatrix = payload.modelMatrix;
 		Update();		
 	}
 }
