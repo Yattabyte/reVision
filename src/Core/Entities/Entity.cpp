@@ -14,13 +14,13 @@ Component * Entity::getComponent(const ECSHandle & id)
 	return ComponentFactory::GetComponent(id);
 }
 
-void Entity::SendMessage(ECSmessage * message)
+void Entity::SendMessage(ECSmessage &message)
 {
 	// Forward message to all components
 	ComponentFactory::SendMessageToComponents(message, m_component_handles);
 }
 
-void Entity::ReceiveMessage(ECSmessage * message)
+void Entity::ReceiveMessage(ECSmessage &message)
 {
 	// Forward message to all components
 	SendMessage(message);

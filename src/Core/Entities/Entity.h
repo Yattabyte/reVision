@@ -16,13 +16,11 @@
 #define GLEW_STATIC
 
 #include "Systems\ECS\ComponentFactory.h"
+#include "Systems\ECS\ECSmessage.h"
 #include "GL\glew.h"
 #include <map>
 #include <vector>
 
-typedef std::pair<char*, unsigned int> ECSHandle;
-
-class ECSmessage;
 class EntityCreator;
 class Component;
 class Entity
@@ -30,8 +28,8 @@ class Entity
 public:
 	DELTA_CORE_API void addComponent(char *type);
 	DELTA_CORE_API Component* getComponent(const ECSHandle &id);
-	DELTA_CORE_API void SendMessage(ECSmessage *message);
-	DELTA_CORE_API void ReceiveMessage(ECSmessage *message);
+	DELTA_CORE_API void SendMessage(ECSmessage &message);
+	DELTA_CORE_API void ReceiveMessage(ECSmessage &message);
 	
 protected:
 	DELTA_CORE_API virtual ~Entity();

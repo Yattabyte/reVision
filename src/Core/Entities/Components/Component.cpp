@@ -3,13 +3,13 @@
 #include "Systems\ECS\EntityFactory.h"
 #include "Systems\ECS\ECSmessage.h"
 
-void Component::SendMessage(ECSmessage * message)
+void Component::SendMessage(ECSmessage &message)
 {
 	// Forward Message to parent
 	EntityFactory::SendMessageToEntity(message, m_parentID);
 }
 
-void Component::ReceiveMessage(ECSmessage * message)
+void Component::ReceiveMessage(ECSmessage &message)
 {
 	// Do something
 }

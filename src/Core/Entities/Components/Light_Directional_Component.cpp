@@ -1,7 +1,7 @@
 #include "Entities\Components\Light_Directional_Component.h"
 #include "Systems\ECS\ECSmessage.h"
-#include "Systems\ECS\ECSmessages.h"
 #include "Utilities\Frustum.h"
+#include "Utilities\Transform.h"
 
 Light_Directional_Component::~Light_Directional_Component()
 {
@@ -17,34 +17,34 @@ Light_Directional_Component::Light_Directional_Component(const ECSHandle & id, c
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void Light_Directional_Component::ReceiveMessage(ECSmessage * message)
+void Light_Directional_Component::ReceiveMessage(ECSmessage &message)
 {
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
-	/*if (message->IsOfType<vec3>()) {
-		const auto &payload = *(vec3*)(message->GetPayload());
+	if (message.IsOfType<vec3>()) {
+		const auto &payload = message.GetPayload<vec3>();
 		m_uboData.LightColor = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4), sizeof(vec3), &m_uboData.LightColor);
 	}
-	else if (message->IsOfType<float>()) {
-		const auto &payload = *(float*)(message->GetPayload());
+	else if (message.IsOfType<float>()) {
+		const auto &payload = message.GetPayload<float>();
 		m_uboData.LightIntensity = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4), sizeof(float), &m_uboData.LightIntensity);
 	}
-	else if (message->IsOfType<quat>()) {
-		const auto &payload = *(quat*)(message->GetPayload());
+	else if (message.IsOfType<quat>()) {
+		const auto &payload = message.GetPayload<quat>();
 		const mat4 rotation = glm::mat4_cast(payload);
 		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
 		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
 		Update();
 	}
-	else if (message->IsOfType<Transform>()) {
-		const auto &payload = *(Transform*)(message->GetPayload());
+	else if (message.IsOfType<Transform>()) {
+		const auto &payload = message.GetPayload<Transform>();
 		const mat4 &rotation = payload.modelMatrix;
 		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
 		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
 		Update();
-	}*/
+	}
 	
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }

@@ -70,7 +70,7 @@ vector<Component*> &ComponentFactory::GetComponentsByType(char * type)
 	return level_components[type];
 }
 
-void ComponentFactory::SendMessageToComponents(ECSmessage * message, const std::map<char*, std::vector<unsigned int>, cmp_str>& handles)
+void ComponentFactory::SendMessageToComponents(ECSmessage &message, const std::map<char*, std::vector<unsigned int>, cmp_str>& handles)
 {
 	shared_lock<shared_mutex> read_lock(data_lock);
 

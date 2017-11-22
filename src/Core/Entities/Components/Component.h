@@ -14,17 +14,15 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
+#include "Systems\ECS\ECSmessage.h"
 #include <utility>
 
-typedef std::pair<char*, unsigned int> ECSHandle;
-
-class ECSmessage;
 class ComponentCreator;
 class Component
 {
 public:
-	DELTA_CORE_API void SendMessage(ECSmessage *message);
-	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage *message);
+	DELTA_CORE_API void SendMessage(ECSmessage &message);
+	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage &message);
 
 protected:
 	DELTA_CORE_API virtual ~Component() {};

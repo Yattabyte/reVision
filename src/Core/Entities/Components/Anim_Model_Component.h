@@ -40,7 +40,7 @@ public:
 	*************/
 
 	// Logic for interpreting receiving messages
-	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage *message);
+	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage &message);
 
 
 	/***************************
