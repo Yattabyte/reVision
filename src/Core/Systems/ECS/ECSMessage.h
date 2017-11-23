@@ -48,12 +48,12 @@ private:
 
 	unsigned int m_commandID;
 	ECSHandle m_senderID, m_targetID;
-	std::shared_ptr<PayloadConcept> m_payload;
+	std::unique_ptr<PayloadConcept> m_payload;
 
 public:
 	// Constructor, generates a container to hold our object
 	template <typename DATA_TYPE>
-	ECSmessage(const unsigned int &commandID, const DATA_TYPE& obj) : m_commandID(commandID), m_payload(new PayloadModel<DATA_TYPE>(obj)) {}
+	ECSmessage(const unsigned int &commandID, const DATA_TYPE& obj) : m_commandID(commandID), m_payload(std::make_unique<PayloadModel<DATA_TYPE>>(obj)) {}
 	~ECSmessage() { }
 
 	ECSHandle GetSenderID() const { return m_senderID; };
@@ -65,7 +65,7 @@ public:
 	unsigned int GetCommandID() const { return m_commandID; }
 
 	// Returns the payload in the format requested
-	template <typename T> const T &GetPayload() const {	return (std::dynamic_pointer_cast<PayloadModel<T>>(m_payload)).get()->GetData(); };	
+	template <typename T> const T &GetPayload() const {	return (dynamic_cast<PayloadModel<T>*>(m_payload.get()))->GetData(); };	
 
 	// Checks to see if the payload is of the type supplied
 	template <typename T> bool IsOfType() const { return strcmp(m_payload->GetTypeID(), typeid(T).name()) == 0; }
