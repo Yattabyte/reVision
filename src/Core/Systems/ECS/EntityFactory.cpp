@@ -61,13 +61,6 @@ vector<Entity*> &EntityFactory::GetEntitiesByType(char * type)
 	return level_entities[type];
 }
 
-void EntityFactory::SendMessageToEntity(ECSmessage &message, const ECShandle & target)
-{
-	if (target.first && level_entities.find(target.first) != level_entities.end()) {
-		level_entities[target.first][target.second]->ReceiveMessage(message);
-	}
-}
-
 void EntityFactory::Flush()
 {
 	for each (auto pair in level_entities) {

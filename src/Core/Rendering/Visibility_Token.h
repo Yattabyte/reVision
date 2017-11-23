@@ -14,10 +14,9 @@
 #endif
 
 #include "Entities\Components\Component.h"
+#include "Systems\ECS\ECSdefines.h"
 #include <map>
 #include <vector>
-
-struct cmp_str { bool operator()(const char *a, const char *b) const { return std::strcmp(a, b) < 0; } };
 
 typedef std::map<char*, std::vector<Component*>, cmp_str> Visibility_Token;
 

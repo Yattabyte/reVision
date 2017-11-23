@@ -2,6 +2,7 @@
 #include "Entities\Components\Anim_Model_Component.h"
 #include "Entities\Components\Light_Directional_Component.h"
 #include "Systems\ECS\ECSmessage.h"
+#include "Systems\ECS\ECSdefines.h"
 #include <deque>
 
 static map<char*, vector<Component*>, cmp_str> level_components;
@@ -68,15 +69,6 @@ vector<Component*> &ComponentFactory::GetComponentsByType(char * type)
 	if (level_components.find(type) == level_components.end())
 		return vector<Component*>();
 	return level_components[type];
-}
-
-void ComponentFactory::SendMessageToComponents(ECSmessage &message, const std::map<char*, std::vector<unsigned int>, cmp_str>& handles)
-{
-	shared_lock<shared_mutex> read_lock(data_lock);
-
-	for each (const auto &pair in handles)
-		for each (const auto &id in pair.second)
-			level_components[pair.first][id]->ReceiveMessage(message);
 }
 
 void ComponentFactory::Flush()

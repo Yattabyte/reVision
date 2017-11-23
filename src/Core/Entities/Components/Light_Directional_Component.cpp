@@ -18,7 +18,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void Light_Directional_Component::ReceiveMessage(ECSmessage &message)
+void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
 {
 	if (Component::Am_I_The_Sender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);

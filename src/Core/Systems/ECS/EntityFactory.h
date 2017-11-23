@@ -30,8 +30,6 @@ namespace EntityFactory {
 	DELTA_CORE_API Entity * GetEntity(const ECShandle& id);
 	// Retrieve an array of entities that match the category specified
 	DELTA_CORE_API vector<Entity*> &GetEntitiesByType(char *type);
-	// Sends a message to the entity with the handle supplied
-	DELTA_CORE_API void SendMessageToEntity(ECSmessage &message, const ECShandle &target);
 	// Removes all entities from the system
 	DELTA_CORE_API void Flush();
 }

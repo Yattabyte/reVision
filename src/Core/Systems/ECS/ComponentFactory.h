@@ -33,8 +33,6 @@ namespace ComponentFactory {
 	DELTA_CORE_API Component * GetComponent(const ECShandle& id);
 	// Retrieve an array of components that match the category specified
 	DELTA_CORE_API vector<Component*> &GetComponentsByType(char *type);
-	// Sends a message to all the components identified by the map supplied
-	DELTA_CORE_API void SendMessageToComponents(ECSmessage &message, const std::map<char *, std::vector<unsigned int>, cmp_str> &targets);
 	// Removes all components from the system
 	DELTA_CORE_API void Flush();
 	// Returns the data lock for the system

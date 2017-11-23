@@ -15,12 +15,11 @@
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
+#include "Systems\ECS\ECSdefines.h"
 #include <stdio.h>
 #include <string>
 #include <utility>
 #include <memory>
-
-typedef std::pair<char*, unsigned int> ECShandle;
 
 using namespace std;
 

@@ -56,7 +56,7 @@ bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
 	return false;	
 }
 
-void Anim_Model_Component::ReceiveMessage(ECSmessage &message)
+void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 {
 	if (Component::Am_I_The_Sender(message)) return;
 	switch (message.GetCommandID())

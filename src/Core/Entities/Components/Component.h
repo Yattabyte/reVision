@@ -22,9 +22,9 @@ class DELTA_CORE_API Component
 {
 public:
 	// Propogates a message from this component to its parent
-	void SendMessage(ECSmessage &message);
+	void SendMessage(const ECSmessage &message);
 	// Handles what to do when receiving a message
-	virtual void ReceiveMessage(ECSmessage &message);
+	virtual void ReceiveMessage(const ECSmessage &message);
 	// Returns whether or not the provided message was sent from this component
 	bool Am_I_The_Sender(const ECSmessage &message);
 
