@@ -19,7 +19,7 @@
 class SunCreator : public EntityCreator
 {
 public:
-	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) {
+	DELTA_CORE_API virtual Entity* Create(const ECShandle &id) {
 		Entity *entity = EntityCreator::Create(id);
 		entity->addComponent("Light_Directional");
 		return entity;

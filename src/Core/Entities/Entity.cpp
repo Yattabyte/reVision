@@ -9,7 +9,7 @@ void Entity::addComponent(char *type)
 	m_component_handles[type].push_back(ComponentFactory::CreateComponent(type, m_ID).second);
 }
 
-Component * Entity::getComponent(const ECSHandle & id)
+Component * Entity::getComponent(const ECShandle & id)
 {
 	return ComponentFactory::GetComponent(id);
 }
@@ -30,5 +30,5 @@ Entity::~Entity()
 {
 	for each (auto pair in m_component_handles)
 		for each (auto id in pair.second) 
-			ComponentFactory::DeleteComponent(ECSHandle(pair.first, id));			
+			ComponentFactory::DeleteComponent(ECShandle(pair.first, id));			
 }

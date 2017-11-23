@@ -9,7 +9,7 @@ Light_Directional_Component::~Light_Directional_Component()
 	glDeleteBuffers(1, &m_uboID);
 }
 
-Light_Directional_Component::Light_Directional_Component(const ECSHandle & id, const ECSHandle & pid) : Lighting_Component(id, pid)
+Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid) : Lighting_Component(id, pid)
 {
 	m_uboID = 0;
 	glGenBuffers(1, &m_uboID);
@@ -20,6 +20,7 @@ Light_Directional_Component::Light_Directional_Component(const ECSHandle & id, c
 
 void Light_Directional_Component::ReceiveMessage(ECSmessage &message)
 {
+	if (Component::Am_I_The_Sender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	switch (message.GetCommandID())

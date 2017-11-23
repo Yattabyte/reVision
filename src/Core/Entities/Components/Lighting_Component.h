@@ -40,7 +40,7 @@ public:
 
 protected:
 	DELTA_CORE_API ~Lighting_Component() {};
-	DELTA_CORE_API Lighting_Component(const ECSHandle &id, const ECSHandle &pid) : Component(id, pid) {};
+	DELTA_CORE_API Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // LIGHTING_COMPONENT

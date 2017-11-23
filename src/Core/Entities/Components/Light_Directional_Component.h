@@ -81,7 +81,7 @@ public:
 
 protected:
 	DELTA_CORE_API ~Light_Directional_Component();
-	DELTA_CORE_API Light_Directional_Component(const ECSHandle &id, const ECSHandle &pid);
+	DELTA_CORE_API Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
 	friend class Light_Directional_Creator;
 	GLuint m_uboID;
 	LightBuffer m_uboData;
@@ -89,7 +89,7 @@ protected:
 
 class DELTA_CORE_API Light_Directional_Creator : public ComponentCreator
 {
-	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Light_Directional_Component(id, pid);
 	}
 };

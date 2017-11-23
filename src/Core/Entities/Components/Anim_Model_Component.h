@@ -57,7 +57,7 @@ public:
 
 protected:
 	DELTA_CORE_API ~Anim_Model_Component();
-	DELTA_CORE_API Anim_Model_Component(const ECSHandle &id, const ECSHandle &pid);
+	DELTA_CORE_API Anim_Model_Component(const ECShandle &id, const ECShandle &pid);
 	friend class Anim_Model_Creator;
 	
 	GLuint m_uboID;
@@ -67,7 +67,7 @@ protected:
 
 class DELTA_CORE_API Anim_Model_Creator : public ComponentCreator
 {
-	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Anim_Model_Component(id, pid);
 	}
 };

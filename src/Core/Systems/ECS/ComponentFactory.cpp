@@ -15,7 +15,7 @@ void ComponentFactory::Startup()
 	creator_map.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator()));
 }
 
-ECSHandle ComponentFactory::CreateComponent(char * type, const const ECSHandle &parent_ID)
+ECShandle ComponentFactory::CreateComponent(char * type, const const ECShandle &parent_ID)
 {
 	unique_lock<shared_mutex> write_lock(data_lock);
 
@@ -33,12 +33,12 @@ ECSHandle ComponentFactory::CreateComponent(char * type, const const ECSHandle &
 		level_components[type].push_back(nullptr);
 	}
 	
-	component = creator_map[type]->Create(ECSHandle(type, spot), parent_ID);
+	component = creator_map[type]->Create(ECShandle(type, spot), parent_ID);
 	level_components[type][spot] = component;
-	return ECSHandle(type, spot);
+	return ECShandle(type, spot);
 }
 
-void ComponentFactory::DeleteComponent(const ECSHandle& id)
+void ComponentFactory::DeleteComponent(const ECShandle& id)
 {
 	unique_lock<shared_mutex> write_lock(data_lock);
 
@@ -52,7 +52,7 @@ void ComponentFactory::DeleteComponent(const ECSHandle& id)
 }
 
 
-Component * ComponentFactory::GetComponent(const ECSHandle& id)
+Component * ComponentFactory::GetComponent(const ECShandle& id)
 {
 	shared_lock<shared_mutex> read_lock(data_lock);
 

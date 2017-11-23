@@ -35,7 +35,7 @@ public:
 
 protected:
 	DELTA_CORE_API ~Geometry_Component() {};
-	DELTA_CORE_API Geometry_Component(const ECSHandle &id, const ECSHandle &pid) : Component(id, pid) {};
+	DELTA_CORE_API Geometry_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // GEOMETRY_COMPONENT

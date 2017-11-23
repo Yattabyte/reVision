@@ -23,15 +23,15 @@ namespace EntityFactory {
 	// Starts up the factory
 	DELTA_CORE_API void Startup();
 	// Creates an entity of the supplied type and returns the handle
-	DELTA_CORE_API ECSHandle CreateEntity(char *type);
+	DELTA_CORE_API ECShandle CreateEntity(char *type);
 	// Delete the entity that matches the supplied ID
-	DELTA_CORE_API void DeleteEntity(const ECSHandle& id);
+	DELTA_CORE_API void DeleteEntity(const ECShandle& id);
 	// Retrieve the actual entity that matches the supplied ID
-	DELTA_CORE_API Entity * GetEntity(const ECSHandle& id);
+	DELTA_CORE_API Entity * GetEntity(const ECShandle& id);
 	// Retrieve an array of entities that match the category specified
 	DELTA_CORE_API vector<Entity*> &GetEntitiesByType(char *type);
 	// Sends a message to the entity with the handle supplied
-	DELTA_CORE_API void SendMessageToEntity(ECSmessage &message, const ECSHandle &target);
+	DELTA_CORE_API void SendMessageToEntity(ECSmessage &message, const ECShandle &target);
 	// Removes all entities from the system
 	DELTA_CORE_API void Flush();
 }

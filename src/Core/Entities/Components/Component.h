@@ -18,23 +18,27 @@
 #include <utility>
 
 class ComponentCreator;
-class Component
+class DELTA_CORE_API Component
 {
 public:
-	DELTA_CORE_API void SendMessage(ECSmessage &message);
-	DELTA_CORE_API virtual void ReceiveMessage(ECSmessage &message);
+	// Propogates a message from this component to its parent
+	void SendMessage(ECSmessage &message);
+	// Handles what to do when receiving a message
+	virtual void ReceiveMessage(ECSmessage &message);
+	// Returns whether or not the provided message was sent from this component
+	bool Am_I_The_Sender(const ECSmessage &message);
 
 protected:
-	DELTA_CORE_API virtual ~Component() {};
-	DELTA_CORE_API Component(const ECSHandle &id, const ECSHandle &pid) : m_ID(id), m_parentID(pid) {};
-	ECSHandle m_ID, m_parentID;
+	virtual ~Component() {};
+	Component(const ECShandle &id, const ECShandle &pid) : m_ID(id), m_parentID(pid) {};
+	ECShandle m_ID, m_parentID;
 	friend class ComponentCreator;
 };
 
 class DELTA_CORE_API ComponentCreator
 {
 public:
-	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) { return new Component(id, pid); };
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid) { return new Component(id, pid); };
 	void Destroy(Component *component) { delete component; };
 	virtual ~ComponentCreator(void) {};
 };

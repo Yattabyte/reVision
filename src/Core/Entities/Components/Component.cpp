@@ -13,4 +13,9 @@ void Component::ReceiveMessage(ECSmessage &message)
 {
 	// Do something
 }
+
+bool Component::Am_I_The_Sender(const ECSmessage & message)
+{
+	return (message.GetSenderID() == m_ID);
+}
 	

@@ -9,7 +9,7 @@ Anim_Model_Component::~Anim_Model_Component()
 	glDeleteBuffers(1, &m_uboID);
 }
 
-Anim_Model_Component::Anim_Model_Component(const ECSHandle &id, const ECSHandle &pid) : Geometry_Component(id, pid)
+Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid) : Geometry_Component(id, pid)
 {
 	m_uboID = 0;
 	Asset_Manager::load_asset(m_model, "");
@@ -58,6 +58,7 @@ bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
 
 void Anim_Model_Component::ReceiveMessage(ECSmessage &message)
 {
+	if (Component::Am_I_The_Sender(message)) return;
 	switch (message.GetCommandID())
 	{
 		case SET_MODEL_DIR: {

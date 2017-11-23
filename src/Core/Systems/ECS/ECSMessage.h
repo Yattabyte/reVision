@@ -20,7 +20,7 @@
 #include <utility>
 #include <memory>
 
-typedef std::pair<char*, unsigned int> ECSHandle;
+typedef std::pair<char*, unsigned int> ECShandle;
 
 using namespace std;
 
@@ -47,26 +47,25 @@ private:
 	};
 
 	unsigned int m_commandID;
-	ECSHandle m_senderID, m_targetID;
+	ECShandle m_senderID;
 	std::unique_ptr<PayloadConcept> m_payload;
 
 public:
 	// Constructor, generates a container to hold our object
 	template <typename DATA_TYPE>
-	ECSmessage(const unsigned int &commandID, const DATA_TYPE& obj) : m_commandID(commandID), m_payload(std::make_unique<PayloadModel<DATA_TYPE>>(obj)) {}
+	ECSmessage(const unsigned int &commandID, const DATA_TYPE& obj, const ECShandle &senderID = ECShandle("", -1)) :
+		m_commandID(commandID),
+		m_payload(std::make_unique<PayloadModel<DATA_TYPE>>(obj)),
+		m_senderID(senderID)
+	{}
 	~ECSmessage() { }
 
-	ECSHandle GetSenderID() const { return m_senderID; };
-	void SetSenderID(const ECSHandle &sender) { m_senderID = sender; };
-	ECSHandle GetTargetID() const { return m_targetID; };
-	void SetTargetID(const ECSHandle &target) { m_targetID = target; };
-
+	// Returns the sender ID 
+	ECShandle GetSenderID() const { return m_senderID; };
 	// Returns the command ID
 	unsigned int GetCommandID() const { return m_commandID; }
-
 	// Returns the payload in the format requested
 	template <typename T> const T &GetPayload() const {	return (dynamic_cast<PayloadModel<T>*>(m_payload.get()))->GetData(); };	
-
 	// Checks to see if the payload is of the type supplied
 	template <typename T> bool IsOfType() const { return strcmp(m_payload->GetTypeID(), typeid(T).name()) == 0; }
 };

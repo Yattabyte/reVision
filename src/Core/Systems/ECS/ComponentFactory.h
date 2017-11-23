@@ -26,11 +26,11 @@ namespace ComponentFactory {
 	// Starts up the factory
 	DELTA_CORE_API void Startup();
 	// Creates a component of the supplied type, assigns it the entity parent ID supplied, and returns the handle to this component
-	DELTA_CORE_API ECSHandle CreateComponent(char *type, const ECSHandle &parent_ID);
+	DELTA_CORE_API ECShandle CreateComponent(char *type, const ECShandle &parent_ID);
 	// Delete the component that matches the supplied ID
-	DELTA_CORE_API void DeleteComponent(const ECSHandle& id);
+	DELTA_CORE_API void DeleteComponent(const ECShandle& id);
 	// Retrieve the actual component that matches the supplied ID
-	DELTA_CORE_API Component * GetComponent(const ECSHandle& id);
+	DELTA_CORE_API Component * GetComponent(const ECShandle& id);
 	// Retrieve an array of components that match the category specified
 	DELTA_CORE_API vector<Component*> &GetComponentsByType(char *type);
 	// Sends a message to all the components identified by the map supplied

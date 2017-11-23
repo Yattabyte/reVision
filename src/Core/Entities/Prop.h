@@ -19,7 +19,7 @@
 class DELTA_CORE_API PropCreator : public EntityCreator
 {
 public:
-	virtual Entity* Create(const ECSHandle &id) {
+	virtual Entity* Create(const ECShandle &id) {
 		Entity *entity = EntityCreator::Create(id);
 		entity->addComponent("Anim_Model");
 		return entity;

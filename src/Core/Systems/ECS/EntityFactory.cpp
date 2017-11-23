@@ -15,7 +15,7 @@ void EntityFactory::Startup()
 	creator_map.insert(pair<char*, EntityCreator*>("Sun", new SunCreator()));
 }
 
-ECSHandle EntityFactory::CreateEntity(char * type)
+ECShandle EntityFactory::CreateEntity(char * type)
 {
 	level_entities.insert(pair<char*, vector<Entity*>>(type, vector<Entity*>()));
 	Entity *entity;
@@ -31,12 +31,12 @@ ECSHandle EntityFactory::CreateEntity(char * type)
 		level_entities[type].push_back(nullptr);
 	}
 
-	entity = creator_map[type]->Create(ECSHandle(type, spot));
+	entity = creator_map[type]->Create(ECShandle(type, spot));
 	level_entities[type][spot] = entity;
-	return ECSHandle(type, spot);
+	return ECShandle(type, spot);
 }
 
-void EntityFactory::DeleteEntity(const ECSHandle& id)
+void EntityFactory::DeleteEntity(const ECShandle& id)
 {
 	if (level_entities.find(id.first) == level_entities.end())
 		return;
@@ -47,7 +47,7 @@ void EntityFactory::DeleteEntity(const ECSHandle& id)
 	free_spots[id.first].push_back(id.second);
 }
 
-Entity * EntityFactory::GetEntity(const ECSHandle& id)
+Entity * EntityFactory::GetEntity(const ECShandle& id)
 {
 	if (level_entities.find(id.first) == level_entities.end())
 		return nullptr;
@@ -61,7 +61,7 @@ vector<Entity*> &EntityFactory::GetEntitiesByType(char * type)
 	return level_entities[type];
 }
 
-void EntityFactory::SendMessageToEntity(ECSmessage &message, const ECSHandle & target)
+void EntityFactory::SendMessageToEntity(ECSmessage &message, const ECShandle & target)
 {
 	if (target.first && level_entities.find(target.first) != level_entities.end()) {
 		level_entities[target.first][target.second]->ReceiveMessage(message);
