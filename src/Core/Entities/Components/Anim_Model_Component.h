@@ -65,9 +65,9 @@ protected:
 	Shared_Asset_Model m_model;
 };
 
-class Anim_Model_Creator : public ComponentCreator
+class DELTA_CORE_API Anim_Model_Creator : public ComponentCreator
 {
-	DELTA_CORE_API virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
+	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
 		return new Anim_Model_Component(id, pid);
 	}
 };

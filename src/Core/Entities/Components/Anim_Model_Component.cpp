@@ -1,5 +1,6 @@
 #include "Entities\Components\Anim_Model_Component.h"
 #include "Systems\ECS\ECSmessage.h"
+#include "Systems\ECS\ECSmessages.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
 
@@ -57,13 +58,20 @@ bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
 
 void Anim_Model_Component::ReceiveMessage(ECSmessage &message)
 {
-	if (message.IsOfType<std::string>()) {
-		const auto &payload = message.GetPayload<string>();
-		Asset_Manager::load_asset(m_model, payload);
-	}
-	else if (message.IsOfType<Transform>()) {		
-		const auto &payload = message.GetPayload<Transform>();
-		m_uboData.mMatrix = payload.modelMatrix;
-		Update();		
+	switch (message.GetCommandID())
+	{
+		case SET_MODEL_DIR: {
+			if (!message.IsOfType<string>()) break;
+			const auto &payload = message.GetPayload<string>();
+			Asset_Manager::load_asset(m_model, payload);
+			break;
+		}	
+		case SET_MODEL_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			m_uboData.mMatrix = payload.modelMatrix;
+			Update();
+			break;
+		}
 	}
 }

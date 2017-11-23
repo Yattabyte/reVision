@@ -16,10 +16,10 @@
 
 #include "Entities\Entity.h"
 
-class PropCreator : protected EntityCreator
+class DELTA_CORE_API PropCreator : public EntityCreator
 {
 public:
-	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) {
+	virtual Entity* Create(const ECSHandle &id) {
 		Entity *entity = EntityCreator::Create(id);
 		entity->addComponent("Anim_Model");
 		return entity;

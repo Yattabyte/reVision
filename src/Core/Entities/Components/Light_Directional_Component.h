@@ -87,9 +87,9 @@ protected:
 	LightBuffer m_uboData;
 };
 
-class Light_Directional_Creator : public ComponentCreator
+class DELTA_CORE_API Light_Directional_Creator : public ComponentCreator
 {
-	DELTA_CORE_API virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
+	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) {
 		return new Light_Directional_Component(id, pid);
 	}
 };

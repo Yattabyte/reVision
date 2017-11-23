@@ -16,7 +16,7 @@
 
 #include "Entities\Entity.h"
 
-class SunCreator : protected EntityCreator
+class SunCreator : public EntityCreator
 {
 public:
 	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) {

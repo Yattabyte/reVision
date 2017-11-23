@@ -31,12 +31,12 @@ protected:
 	friend class ComponentCreator;
 };
 
-class ComponentCreator
+class DELTA_CORE_API ComponentCreator
 {
 public:
-	DELTA_CORE_API virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) { return new Component(id, pid); };
-	DELTA_CORE_API void Destroy(Component *component) { delete component; };
-	DELTA_CORE_API virtual ~ComponentCreator(void) {};
+	virtual Component* Create(const ECSHandle &id, const ECSHandle &pid) { return new Component(id, pid); };
+	void Destroy(Component *component) { delete component; };
+	virtual ~ComponentCreator(void) {};
 };
 
 #endif // COMPONENT

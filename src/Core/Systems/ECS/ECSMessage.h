@@ -27,33 +27,33 @@ using namespace std;
 class DELTA_CORE_API ECSmessage
 {
 private:
-	// The interface / base class
+	// The payload interface
 	struct PayloadConcept {
 		virtual ~PayloadConcept() {};
 		virtual const char* GetTypeID() = 0;
 	};
 
-	// The specific class that will hold our object
-	template <typename T>
+	// The specific class that will hold our payload's data
+	template <typename DATA_TYPE>
 	struct PayloadModel : PayloadConcept {
-		PayloadModel(const T& t) { m_data = t; }
+		PayloadModel(const DATA_TYPE& t) { m_data = t; }
 		~PayloadModel() {}
 		const char* GetTypeID() {
-			return typeid(T).name();
+			return typeid(DATA_TYPE).name();
 		}
-		const T &GetData() const { return m_data; }
+		const DATA_TYPE &GetData() const { return m_data; }
 	private:
-		T m_data;
+		DATA_TYPE m_data;
 	};
 
+	unsigned int m_commandID;
 	ECSHandle m_senderID, m_targetID;
 	std::shared_ptr<PayloadConcept> m_payload;
 
-
 public:
 	// Constructor, generates a container to hold our object
-	template< typename T > 
-	ECSmessage(const T& obj) : m_payload(new PayloadModel<T>(obj)) {}
+	template <typename DATA_TYPE>
+	ECSmessage(const unsigned int &commandID, const DATA_TYPE& obj) : m_commandID(commandID), m_payload(new PayloadModel<DATA_TYPE>(obj)) {}
 	~ECSmessage() { }
 
 	ECSHandle GetSenderID() const { return m_senderID; };
@@ -61,11 +61,14 @@ public:
 	ECSHandle GetTargetID() const { return m_targetID; };
 	void SetTargetID(const ECSHandle &target) { m_targetID = target; };
 
-	// Checks to see if the payload is of the type supplied
-	template< typename T> const T &GetPayload() const {	return (std::dynamic_pointer_cast<PayloadModel<T>>(m_payload)).get()->GetData(); };	
+	// Returns the command ID
+	unsigned int GetCommandID() const { return m_commandID; }
 
 	// Returns the payload in the format requested
-	template< typename T> bool IsOfType() const { return strcmp(m_payload->GetTypeID(), typeid(T).name()) == 0; }
+	template <typename T> const T &GetPayload() const {	return (std::dynamic_pointer_cast<PayloadModel<T>>(m_payload)).get()->GetData(); };	
+
+	// Checks to see if the payload is of the type supplied
+	template <typename T> bool IsOfType() const { return strcmp(m_payload->GetTypeID(), typeid(T).name()) == 0; }
 };
 
 #endif // ECSMESSAGE

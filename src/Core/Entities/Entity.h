@@ -39,12 +39,12 @@ protected:
 	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
 };
 
-class EntityCreator
+class DELTA_CORE_API EntityCreator
 {
 public:
-	DELTA_CORE_API virtual Entity* Create(const ECSHandle &id) { return new Entity(id); };
-	DELTA_CORE_API virtual void Destroy(Entity *entity) { delete entity; };
-	DELTA_CORE_API virtual ~EntityCreator(void) {};
+	virtual Entity* Create(const ECSHandle &id) { return new Entity(id); };
+	virtual void Destroy(Entity *entity) { delete entity; };
+	virtual ~EntityCreator(void) {};
 };
 
 #endif // ENTITY
