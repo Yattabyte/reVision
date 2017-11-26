@@ -12,9 +12,9 @@
 #ifndef SYSTEM_INPUT
 #define SYSTEM_INPUT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Systems\System_Interface.h"
@@ -23,7 +23,7 @@
 
 class GLFWwindow;
 
-class DELTA_CORE_API System_Input : public System
+class DT_ENGINE_API System_Input : public System
 {
 public: 
 	~System_Input();

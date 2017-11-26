@@ -9,9 +9,9 @@
 #ifndef GEOMETRY_COMPONENT
 #define GEOMETRY_COMPONENT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Components\Component.h"
@@ -28,14 +28,14 @@ public:
 	*************************/
 
 	// Renders the model to the current framebuffer
-	DELTA_CORE_API virtual void Draw() {};
+	DT_ENGINE_API virtual void Draw() {};
 	// Returns whether or not this model is visible
-	DELTA_CORE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
+	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 
 
 protected:
-	DELTA_CORE_API ~Geometry_Component() {};
-	DELTA_CORE_API Geometry_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
+	DT_ENGINE_API ~Geometry_Component() {};
+	DT_ENGINE_API Geometry_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // GEOMETRY_COMPONENT

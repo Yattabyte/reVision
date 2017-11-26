@@ -14,9 +14,9 @@
 #ifndef CONFIG_MANAGER
 #define CONFIG_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 using namespace std;
@@ -48,19 +48,19 @@ static const vector<string> CFG_STRING = {
 namespace CFG
 {
 	// Shutsdown by saving the current configuration map to disk
-	DELTA_CORE_API void shutdown();
+	DT_ENGINE_API void shutdown();
 	// Loads a configuration file from disk. Defaults to "config"
-	DELTA_CORE_API void loadConfiguration();
+	DT_ENGINE_API void loadConfiguration();
 	// Saves a configuration file to disk. Defaults to "config"
-	DELTA_CORE_API void saveConfiguration();
+	DT_ENGINE_API void saveConfiguration();
 	// Returns a preference value given a preference key
-	DELTA_CORE_API float getPreference(const int &cfg_key);
+	DT_ENGINE_API float getPreference(const int &cfg_key);
 	// Set a preference at @cfg_key with the value at @value
-	DELTA_CORE_API void setPreference(const int &cfg_key, const float &cfg_value);
+	DT_ENGINE_API void setPreference(const int &cfg_key, const float &cfg_value);
 	// Add a callback function @function to be called whenever the preference @cfg_key changes
-	DELTA_CORE_API void addPreferenceCallback(const int &cfg_key, void(*function)(const float&));
+	DT_ENGINE_API void addPreferenceCallback(const int &cfg_key, void(*function)(const float&));
 	// Remove a callback function @function from being called whenever the preference @cfg_key changes
-	DELTA_CORE_API void removePreferenceCallback(const int &cfg_key, void(*function)(const float&));
+	DT_ENGINE_API void removePreferenceCallback(const int &cfg_key, void(*function)(const float&));
 }
 
 #endif // CONFIG_MANAGER

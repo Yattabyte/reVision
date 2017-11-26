@@ -8,9 +8,9 @@
 #ifndef TRANSFORMATION
 #define TRANSFORMATION
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #define GLM_ENABLE_EXPERIMENTAL 
@@ -33,7 +33,7 @@ struct Transform
 	mat4x4 modelMatrix;
 	mat4x4 inverseModelMatrix;
 
-	DELTA_CORE_API Transform(const vec3 &p = vec3(0.0f), const quat &ori = quat(1, 0, 0, 0), const vec3 &scl = vec3(1.0f))
+	DT_ENGINE_API Transform(const vec3 &p = vec3(0.0f), const quat &ori = quat(1, 0, 0, 0), const vec3 &scl = vec3(1.0f))
 	{
 		position = p;
 		orientation = ori;
@@ -41,7 +41,7 @@ struct Transform
 		Update();
 	}
 
-	DELTA_CORE_API void Update()
+	DT_ENGINE_API void Update()
 	{
 		modelMatrix =	glm::translate( mat4(1.0f), position ) * 
 						glm::mat4_cast( orientation ) *

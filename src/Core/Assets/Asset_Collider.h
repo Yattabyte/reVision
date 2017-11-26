@@ -9,9 +9,9 @@
 #ifndef	ASSET_COLLIDER
 #define	ASSET_COLLIDER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Assets\Asset.h"
@@ -27,11 +27,11 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Asset_Collider();
-	DELTA_CORE_API Asset_Collider();
-	DELTA_CORE_API Asset_Collider(const string &_filename);
-	DELTA_CORE_API Asset_Collider(btCollisionShape *new_shape);
-	DELTA_CORE_API static int GetAssetType();
+	DT_ENGINE_API ~Asset_Collider();
+	DT_ENGINE_API Asset_Collider();
+	DT_ENGINE_API Asset_Collider(const string &_filename);
+	DT_ENGINE_API Asset_Collider(btCollisionShape *new_shape);
+	DT_ENGINE_API static int GetAssetType();
 
 	/****************
 	----Variables----
@@ -41,6 +41,6 @@ public:
 	btCollisionShape *shape;
 };
 namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Collider &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Collider &user, const string & filename, const bool &threaded = true);
 };
 #endif // ASSET_COLLIDER

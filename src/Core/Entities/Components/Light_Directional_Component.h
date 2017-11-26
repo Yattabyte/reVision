@@ -8,9 +8,9 @@
 #ifndef LIGHT_DIRECTIONAL_COMPONENT
 #define LIGHT_DIRECTIONAL_COMPONENT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define LIGHT_TYPE_DIRECTIONAL 0
 #define NUM_CASCADES 4
@@ -60,7 +60,7 @@ public:
 	*************/
 
 	// Logic for interpreting receiving messages
-	DELTA_CORE_API virtual void ReceiveMessage(const ECSmessage &message);
+	DT_ENGINE_API virtual void ReceiveMessage(const ECSmessage &message);
 
 
 	/**********************************
@@ -68,26 +68,26 @@ public:
 	**********************************/
 
 	// Direct lighting pass
-	DELTA_CORE_API virtual void directPass(const int &vertex_count);
+	DT_ENGINE_API virtual void directPass(const int &vertex_count);
 	// Indirect lighting pass
-	DELTA_CORE_API virtual void indirectPass(const int &vertex_count);
+	DT_ENGINE_API virtual void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	DELTA_CORE_API virtual void shadowPass(const Visibility_Token &vis_token) const;
+	DT_ENGINE_API virtual void shadowPass(const Visibility_Token &vis_token) const;
 	// Returns whether or not this light is visible
-	DELTA_CORE_API virtual bool IsVisible(const mat4 & PVMatrix);
+	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
-	DELTA_CORE_API void Update();
+	DT_ENGINE_API void Update();
 
 
 protected:
-	DELTA_CORE_API ~Light_Directional_Component();
-	DELTA_CORE_API Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
+	DT_ENGINE_API ~Light_Directional_Component();
+	DT_ENGINE_API Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
 	friend class Light_Directional_Creator;
 	GLuint m_uboID;
 	LightBuffer m_uboData;
 };
 
-class DELTA_CORE_API Light_Directional_Creator : public ComponentCreator
+class DT_ENGINE_API Light_Directional_Creator : public ComponentCreator
 {
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Light_Directional_Component(id, pid);

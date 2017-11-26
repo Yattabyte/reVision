@@ -9,9 +9,9 @@
 #ifndef	ASSET_TEXTURE
 #define	ASSET_TEXTURE
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_TEXTURE	".png"
 #define DIRECTORY_TEXTURE getCurrentDir() + "\\Textures\\"
@@ -33,11 +33,11 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Asset_Texture();
-	DELTA_CORE_API Asset_Texture();
-	DELTA_CORE_API Asset_Texture(const string &f, const GLuint &t, const bool &m, const bool &a);
-	DELTA_CORE_API static int GetAssetType();
-	DELTA_CORE_API virtual void Finalize();
+	DT_ENGINE_API ~Asset_Texture();
+	DT_ENGINE_API Asset_Texture();
+	DT_ENGINE_API Asset_Texture(const string &f, const GLuint &t, const bool &m, const bool &a);
+	DT_ENGINE_API static int GetAssetType();
+	DT_ENGINE_API virtual void Finalize();
 
 	/****************
 	----Variables----
@@ -55,9 +55,9 @@ public:
 	************************/
 
 	// Makes this texture active at the specific @texture_unit
-	DELTA_CORE_API void Bind(const GLuint &texture_unit);
+	DT_ENGINE_API void Bind(const GLuint &texture_unit);
 };
 namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
 };
 #endif // ASSET_TEXTURE

@@ -14,9 +14,9 @@
 #ifndef ASSET_MANAGER
 #define ASSET_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Assets\Asset.h"
@@ -31,23 +31,23 @@ using namespace std;
 
 namespace Asset_Manager {
 	// Deletes all worker threads
-	DELTA_CORE_API void shutdown();
+	DT_ENGINE_API void shutdown();
 	// Submits the provided work order for finalization, after initialization
-	DELTA_CORE_API void submitWorkorder(const Shared_Asset &workorder);
+	DT_ENGINE_API void submitWorkorder(const Shared_Asset &workorder);
 	// Submits a new working thread to be kept track of. The pair is the thread and its completion state.
-	DELTA_CORE_API void submitWorkthread(const pair<thread*, bool*> &thread);
+	DT_ENGINE_API void submitWorkthread(const pair<thread*, bool*> &thread);
 	// Tick through the work orders, finalizing the front of the stack, and deleting all completed worker threads.
-	DELTA_CORE_API void ParseWorkOrders();
+	DT_ENGINE_API void ParseWorkOrders();
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
-	DELTA_CORE_API vector<Shared_Asset>& fetchAssetList(const int &asset_type);
+	DT_ENGINE_API vector<Shared_Asset>& fetchAssetList(const int &asset_type);
 	// Retrieves the fallback (default) assets
-	DELTA_CORE_API map<int, Shared_Asset>& getFallbackAssets();
+	DT_ENGINE_API map<int, Shared_Asset>& getFallbackAssets();
 	// Retrieves the asset map mutex
-	DELTA_CORE_API shared_mutex& getMutexIOAssets();
+	DT_ENGINE_API shared_mutex& getMutexIOAssets();
 	// Retrieves the application's running directory
-	DELTA_CORE_API string getCurrentDir();
+	DT_ENGINE_API string getCurrentDir();
 	// Checks if a supplied file or folder exists on disk.
-	DELTA_CORE_API bool fileOnDisk(const string &path);
+	DT_ENGINE_API bool fileOnDisk(const string &path);
 }
 
 #endif // ASSET_MANAGER

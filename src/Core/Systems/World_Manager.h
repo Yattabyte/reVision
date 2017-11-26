@@ -10,9 +10,9 @@
 #ifndef WORLD_MANAGER
 #define WORLD_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Entity.h"
@@ -21,13 +21,13 @@ using namespace std;
 
 namespace World_Manager {
 	// TO DO
-	DELTA_CORE_API void startup();
+	DT_ENGINE_API void startup();
 	// Shutsdown the world and deletes everything 
-	DELTA_CORE_API void shutdown();
+	DT_ENGINE_API void shutdown();
 	// Load the world
-	DELTA_CORE_API void LoadWorld();
+	DT_ENGINE_API void LoadWorld();
 	// Unload the map (remove all entities)
-	DELTA_CORE_API void UnloadWorld();
+	DT_ENGINE_API void UnloadWorld();
 }
 
 #endif // WORLD_MANAGER

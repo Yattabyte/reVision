@@ -35,9 +35,9 @@
 #ifndef	ASSET
 #define	ASSET
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include <shared_mutex>
@@ -50,16 +50,16 @@ class Asset
 {
 public:
 	// Destroyed when no longer used only
-	DELTA_CORE_API ~Asset();
+	DT_ENGINE_API ~Asset();
 	// Zero Initialization only
-	DELTA_CORE_API Asset();
+	DT_ENGINE_API Asset();
 	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	DELTA_CORE_API static int GetAssetType();
+	DT_ENGINE_API static int GetAssetType();
 	// Returns whether or not this asset has completed finalizing
-	DELTA_CORE_API bool ExistsYet();
+	DT_ENGINE_API bool ExistsYet();
 	// Performs final data processing
-	DELTA_CORE_API virtual void Finalize();
+	DT_ENGINE_API virtual void Finalize();
 
 protected:
 	bool finalized;

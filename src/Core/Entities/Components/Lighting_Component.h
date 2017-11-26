@@ -9,9 +9,9 @@
 #ifndef LIGHTING_COMPONENT
 #define LIGHTING_COMPONENT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Components\Component.h"
@@ -29,18 +29,18 @@ public:
 	*************************/
 
 	// Direct lighting pass
-	DELTA_CORE_API virtual void directPass(const int &vertex_count) {};
+	DT_ENGINE_API virtual void directPass(const int &vertex_count) {};
 	// Indirect lighting pass
-	DELTA_CORE_API virtual void indirectPass(const int &vertex_count) {};
+	DT_ENGINE_API virtual void indirectPass(const int &vertex_count) {};
 	// Shadow lighting pass
-	DELTA_CORE_API virtual void shadowPass(const Visibility_Token &vis_token) const {};
+	DT_ENGINE_API virtual void shadowPass(const Visibility_Token &vis_token) const {};
 	// Returns whether or not this light is visible
-	DELTA_CORE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
+	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 		
 
 protected:
-	DELTA_CORE_API ~Lighting_Component() {};
-	DELTA_CORE_API Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
+	DT_ENGINE_API ~Lighting_Component() {};
+	DT_ENGINE_API Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // LIGHTING_COMPONENT

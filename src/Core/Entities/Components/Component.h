@@ -9,16 +9,16 @@
 #ifndef COMPONENT
 #define COMPONENT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Systems\ECS\ECSmessage.h"
 #include <utility>
 
 class ComponentCreator;
-class DELTA_CORE_API Component
+class DT_ENGINE_API Component
 {
 public:
 	// Propogates a message from this component to its parent
@@ -35,7 +35,7 @@ protected:
 	friend class ComponentCreator;
 };
 
-class DELTA_CORE_API ComponentCreator
+class DT_ENGINE_API ComponentCreator
 {
 public:
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) { return new Component(id, pid); };

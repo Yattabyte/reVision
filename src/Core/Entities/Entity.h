@@ -9,9 +9,9 @@
 #ifndef ENTITY
 #define ENTITY
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define GLEW_STATIC
 
@@ -26,7 +26,7 @@
 
 class EntityCreator;
 class Component;
-class DELTA_CORE_API Entity
+class DT_ENGINE_API Entity
 {
 public:
 	void addComponent(char *type);
@@ -42,7 +42,7 @@ protected:
 	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
 };
 
-class DELTA_CORE_API EntityCreator
+class DT_ENGINE_API EntityCreator
 {
 public:
 	virtual Entity* Create(const ECShandle &id) { return new Entity(id); };

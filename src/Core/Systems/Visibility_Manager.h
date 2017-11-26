@@ -8,9 +8,9 @@
 #ifndef VISIBILITY_MANAGER
 #define VISIBILITY_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Rendering\Camera.h"
@@ -22,10 +22,10 @@
 using namespace std;
 
 namespace Visibility_Manager {
-	DELTA_CORE_API void statup();
-	DELTA_CORE_API void shutdown();
-	DELTA_CORE_API void pause();
-	DELTA_CORE_API void resume();
+	DT_ENGINE_API void statup();
+	DT_ENGINE_API void shutdown();
+	DT_ENGINE_API void pause();
+	DT_ENGINE_API void resume();
 	void RegisterViewer(Camera *camera);
 	void UnRegisterViewer(Camera *camera);
 	void DeRegisterGeometryFromViewers(Geometry *g);	

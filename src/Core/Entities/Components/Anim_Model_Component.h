@@ -9,9 +9,9 @@
 #ifndef ANIM_MODEL_COMPONENT
 #define ANIM_MODEL_COMPONENT
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Components\Geometry_Component.h"
@@ -40,7 +40,7 @@ public:
 	*************/
 
 	// Logic for interpreting receiving messages
-	DELTA_CORE_API virtual void ReceiveMessage(const ECSmessage &message);
+	DT_ENGINE_API virtual void ReceiveMessage(const ECSmessage &message);
 
 
 	/***************************
@@ -48,16 +48,16 @@ public:
 	***************************/
 
 	// Renders the model to the current framebuffer
-	DELTA_CORE_API virtual void Draw();
+	DT_ENGINE_API virtual void Draw();
 	// Returns whether or not this model is visible
-	DELTA_CORE_API virtual bool IsVisible(const mat4 & PVMatrix);
+	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
-	DELTA_CORE_API void Update();
+	DT_ENGINE_API void Update();
 
 
 protected:
-	DELTA_CORE_API ~Anim_Model_Component();
-	DELTA_CORE_API Anim_Model_Component(const ECShandle &id, const ECShandle &pid);
+	DT_ENGINE_API ~Anim_Model_Component();
+	DT_ENGINE_API Anim_Model_Component(const ECShandle &id, const ECShandle &pid);
 	friend class Anim_Model_Creator;
 	
 	GLuint m_uboID;
@@ -65,7 +65,7 @@ protected:
 	Shared_Asset_Model m_model;
 };
 
-class DELTA_CORE_API Anim_Model_Creator : public ComponentCreator
+class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
 {
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Anim_Model_Component(id, pid);

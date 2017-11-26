@@ -13,17 +13,17 @@
 #ifndef TEST_SCENE
 #define TEST_SCENE
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define DELTA_CORE_API __declspec(dllimport)
+#define DT_ENGINE_API __declspec(dllimport)
 #endif
 
 class Scene_PBR : public Scene
 {
 public: 
-	DELTA_CORE_API ~Scene_PBR();
-	DELTA_CORE_API Scene_PBR();
-	DELTA_CORE_API virtual void RenderFrame(Camera *);
+	DT_ENGINE_API ~Scene_PBR();
+	DT_ENGINE_API Scene_PBR();
+	DT_ENGINE_API virtual void RenderFrame(Camera *);
 
 protected:
 	void RegenerationPass(const Visibility_Token &vis_token);

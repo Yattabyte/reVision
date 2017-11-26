@@ -9,9 +9,9 @@
 #ifndef SUN
 #define SUN
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Entity.h"
@@ -19,7 +19,7 @@
 class SunCreator : public EntityCreator
 {
 public:
-	DELTA_CORE_API virtual Entity* Create(const ECShandle &id) {
+	DT_ENGINE_API virtual Entity* Create(const ECShandle &id) {
 		Entity *entity = EntityCreator::Create(id);
 		entity->addComponent("Light_Directional");
 		return entity;

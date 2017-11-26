@@ -9,9 +9,9 @@
 #ifndef	ASSET_MODEL
 #define	ASSET_MODEL
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
@@ -75,11 +75,11 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Asset_Model();
-	DELTA_CORE_API Asset_Model();
-	DELTA_CORE_API Asset_Model(const string & _filename);
-	DELTA_CORE_API void Finalize();
-	DELTA_CORE_API static int GetAssetType();
+	DT_ENGINE_API ~Asset_Model();
+	DT_ENGINE_API Asset_Model();
+	DT_ENGINE_API Asset_Model(const string & _filename);
+	DT_ENGINE_API void Finalize();
+	DT_ENGINE_API static int GetAssetType();
 
 	/****************
 	----Variables----
@@ -94,6 +94,6 @@ public:
 	vec3								bbox_min, bbox_max;
 };
 namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
 };
 #endif // ASSET_MODEL

@@ -10,9 +10,9 @@
 #ifndef ECSMESSAGE
 #define ECSMESSAGE
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Systems\ECS\ECSdefines.h"
@@ -23,7 +23,7 @@
 
 using namespace std;
 
-class DELTA_CORE_API ECSmessage
+class DT_ENGINE_API ECSmessage
 {
 private:
 	// The payload interface

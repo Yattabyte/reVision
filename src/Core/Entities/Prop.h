@@ -9,14 +9,14 @@
 #ifndef PROP
 #define PROP
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Entities\Entity.h"
 
-class DELTA_CORE_API PropCreator : public EntityCreator
+class DT_ENGINE_API PropCreator : public EntityCreator
 {
 public:
 	virtual Entity* Create(const ECShandle &id) {

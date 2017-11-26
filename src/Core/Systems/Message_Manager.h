@@ -12,9 +12,9 @@
 #ifndef MESSAGE_MANAGER
 #define MESSAGE_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include <string>
@@ -23,9 +23,9 @@ using namespace std;
 
 namespace MSG {
 	// Prints a raw string @input to the message log
-	DELTA_CORE_API void Statement(const string &input);
+	DT_ENGINE_API void Statement(const string &input);
 	// Prints a formatted message using the error @error_number
-	DELTA_CORE_API void Error(const int &error_number, const string &input, const std::string &additional_input = "");
+	DT_ENGINE_API void Error(const int &error_number, const string &input, const std::string &additional_input = "");
 }
 
 enum Error_Enum

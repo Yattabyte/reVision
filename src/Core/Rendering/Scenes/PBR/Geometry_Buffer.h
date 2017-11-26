@@ -11,9 +11,9 @@
 #ifndef GEOMETRY_BUFFER
 #define GEOMETRY_BUFFER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define GLEW_STATIC
 
@@ -29,8 +29,8 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Geometry_Buffer();
-	DELTA_CORE_API Geometry_Buffer();
+	DT_ENGINE_API ~Geometry_Buffer();
+	DT_ENGINE_API Geometry_Buffer();
 
 
 	/************************
@@ -38,15 +38,15 @@ public:
 	************************/
 
 	// Binds and clears out all the texture rendertargets in this framebuffer
-	DELTA_CORE_API void Clear();
+	DT_ENGINE_API void Clear();
 	// Binds the framebuffer and its rendertargets for writing
-	DELTA_CORE_API void BindForWriting();
+	DT_ENGINE_API void BindForWriting();
 	// Binds the framebuffer and its rendertargets for reading
-	DELTA_CORE_API void BindForReading();
+	DT_ENGINE_API void BindForReading();
 	// Resets the state and ensures its rendertargets are attached
-	DELTA_CORE_API void End();
+	DT_ENGINE_API void End();
 	// Change the size of the framebuffer object
-	DELTA_CORE_API void Resize(const vec2 & size);
+	DT_ENGINE_API void Resize(const vec2 & size);
 
 
 	/****************

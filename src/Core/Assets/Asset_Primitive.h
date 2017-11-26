@@ -14,9 +14,9 @@
 #ifndef	ASSET_PRIMITIVE
 #define	ASSET_PRIMITIVE
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_PRIMITIVE ".obj"
 #define DIRECTORY_PRIMITIVE getCurrentDir() + "\\Primitives\\"
@@ -39,11 +39,11 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Asset_Primitive();
-	DELTA_CORE_API Asset_Primitive();
-	DELTA_CORE_API Asset_Primitive(const string &_filename);
-	DELTA_CORE_API static int GetAssetType();
-	DELTA_CORE_API virtual void Finalize();
+	DT_ENGINE_API ~Asset_Primitive();
+	DT_ENGINE_API Asset_Primitive();
+	DT_ENGINE_API Asset_Primitive(const string &_filename);
+	DT_ENGINE_API static int GetAssetType();
+	DT_ENGINE_API virtual void Finalize();
 	
 	/****************
 	----Variables----
@@ -59,15 +59,15 @@ public:
 	**************************/
 
 	// Binds this object's VAO to the current rendering context
-	DELTA_CORE_API void Bind();
+	DT_ENGINE_API void Bind();
 	// Unbinds any previously bound VAO from the current rendering context (binds null)
-	DELTA_CORE_API static void Unbind();
+	DT_ENGINE_API static void Unbind();
 	// Renders this object into the currently bound framebuffer.
-	DELTA_CORE_API void Draw();
+	DT_ENGINE_API void Draw();
 	// Returns the vertex-count of this object
-	DELTA_CORE_API size_t GetSize() const;
+	DT_ENGINE_API size_t GetSize() const;
 };
 namespace Asset_Manager {
-	DELTA_CORE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
 };
 #endif // ASSET_PRIMITIVE

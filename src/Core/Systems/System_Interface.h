@@ -11,12 +11,12 @@
 #ifndef SYSTEM_INTERFACE
 #define SYSTEM_INTERFACE
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-class DELTA_CORE_API System
+class DT_ENGINE_API System
 {
 public:
 	// All systems need to implement their own destructor

@@ -9,9 +9,9 @@
 #ifndef	MODELIMPORTER
 #define	MODELIMPORTER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "btBulletCollisionCommon.h"
@@ -26,9 +26,9 @@ class ModelImporter {
 public:
 	// Reads the model from disk and returns its vertices into btScalar vector @points.
 	// Returns 1 if successfull, 0 if file doesn't exist, and -1 if the file exists but is unreadable.
-	DELTA_CORE_API static int Import_Model(const string &fulldirectory, unsigned int pFlags, vector<btScalar> &points);
+	DT_ENGINE_API static int Import_Model(const string &fulldirectory, unsigned int pFlags, vector<btScalar> &points);
 	// Reads the model from disk and returns its vertices and uvcoords into @vertices and @uv_coords.
 	// Returns 1 if successfull, 0 if file doesn't exist, and -1 if the file exists but is unreadable.
-	DELTA_CORE_API static int Import_Model(const string &fulldirectory, unsigned int pFlags, vector<vec3> &vertices, vector<vec2> &uv_coords);
+	DT_ENGINE_API static int Import_Model(const string &fulldirectory, unsigned int pFlags, vector<vec3> &vertices, vector<vec2> &uv_coords);
 };
 #endif // MODELIMPORTER

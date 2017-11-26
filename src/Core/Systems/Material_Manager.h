@@ -21,9 +21,9 @@
 #ifndef MATERIAL_MANAGER
 #define MATERIAL_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
@@ -43,13 +43,13 @@ struct Material_Buffer
 
 namespace Material_Manager {
 	// Start up and initialize the material manager
-	DELTA_CORE_API void startup();
+	DT_ENGINE_API void startup();
 	// Shut down and flush out the material manager
-	DELTA_CORE_API void shutdown();
+	DT_ENGINE_API void shutdown();
 	// Returns a list of spots within the material manager that have been deleted and can be used for new materials
-	DELTA_CORE_API deque<int>& getMatFreeSpots();
+	DT_ENGINE_API deque<int>& getMatFreeSpots();
 	// returns the material buffer object ID for use in shaders
-	DELTA_CORE_API GLuint& getBufferSSBO();
+	DT_ENGINE_API GLuint& getBufferSSBO();
 }
 
 #endif // MATERIAL_MANAGER

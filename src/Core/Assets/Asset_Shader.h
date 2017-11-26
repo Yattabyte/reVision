@@ -11,9 +11,9 @@
 #ifndef	ASSET_SHADER
 #define	ASSET_SHADER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_SHADER_VERTEX ".vsh"
 #define EXT_SHADER_FRAGMENT ".fsh"
@@ -38,10 +38,10 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Asset_Shader();
-	DELTA_CORE_API Asset_Shader();
-	DELTA_CORE_API static int GetAssetType();
-	DELTA_CORE_API virtual void Finalize();
+	DT_ENGINE_API ~Asset_Shader();
+	DT_ENGINE_API Asset_Shader();
+	DT_ENGINE_API static int GetAssetType();
+	DT_ENGINE_API virtual void Finalize();
 
 	/****************
 	----Variables----
@@ -55,62 +55,62 @@ public:
 	***********************/
 
 	// Destroy's this shader program's opengl shader state
-	DELTA_CORE_API void Destroy();
+	DT_ENGINE_API void Destroy();
 	// Creates and compiles all available shader types for this program
-	DELTA_CORE_API void Compile();
+	DT_ENGINE_API void Compile();
 	// Creates and compiles a single shader file, given the text as <source> and the specified shader type as <type>.
-	DELTA_CORE_API void Compile_Single_Shader(GLuint & ID, const char * source, const GLenum & type);
+	DT_ENGINE_API void Compile_Single_Shader(GLuint & ID, const char * source, const GLenum & type);
 	// Generates an OpenGL shader program ID for this class, and attempts to attach any available shaders
-	DELTA_CORE_API void GenerateProgram();
+	DT_ENGINE_API void GenerateProgram();
 	// Attempts to link and validate the shader program
-	DELTA_CORE_API void LinkProgram();
+	DT_ENGINE_API void LinkProgram();
 	// Make this shader program active
-	DELTA_CORE_API void Bind();
+	DT_ENGINE_API void Bind();
 	// Inactivate any currently bound shader program
-	DELTA_CORE_API static void Release();
+	DT_ENGINE_API static void Release();
 
 	/****************************************************************************************************
  	----Convenience functions for setting uniform values at a given location, while a shader is bound----
 	****************************************************************************************************/
 
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const bool &b);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const int &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const double &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const float &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec2 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec3 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec4 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const ivec2 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const ivec3 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const ivec4 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const mat3 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const mat4 &o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const int *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const double *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const float *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec2 *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec3 *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const vec4 *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const mat3 *o);
-	DELTA_CORE_API static void setLocationValue(const GLuint &i, const mat4 *o);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const int &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const double &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const float &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec2 &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec3 &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec4 &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const mat4 &o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const int *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const double *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const float *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec2 *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec3 *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const vec4 *o, const int &size);
-	DELTA_CORE_API static void setLocationValueArray(const GLuint &i, const mat4 *o, const int &size);
-	DELTA_CORE_API static void setLocationMatArray(const GLuint &i, const float * o, const int &size, const GLboolean &transpose);		
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const bool &b);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const int &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const double &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const float &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec2 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec3 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec4 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const ivec2 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const ivec3 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const ivec4 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const mat3 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const mat4 &o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const int *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const double *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const float *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec2 *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec3 *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const vec4 *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const mat3 *o);
+	DT_ENGINE_API static void setLocationValue(const GLuint &i, const mat4 *o);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const int &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const double &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const float &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec2 &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec3 &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec4 &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const mat4 &o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const int *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const double *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const float *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec2 *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec3 *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const vec4 *o, const int &size);
+	DT_ENGINE_API static void setLocationValueArray(const GLuint &i, const mat4 *o, const int &size);
+	DT_ENGINE_API static void setLocationMatArray(const GLuint &i, const float * o, const int &size, const GLboolean &transpose);		
 };
 namespace Asset_Manager {
 	// Attempts to create an asset from disk or share one if it already exists
-	DELTA_CORE_API void load_asset(Shared_Asset_Shader &user, const string &filename, const bool &regenerate = false, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Shader &user, const string &filename, const bool &regenerate = false, const bool &threaded = true);
 };
 #endif // ASSET_SHADER

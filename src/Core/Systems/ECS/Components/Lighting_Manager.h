@@ -8,9 +8,9 @@
 #ifndef LIGHTING_MANAGER
 #define LIGHTING_MANAGER
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Rendering\Visibility_Token.h"
@@ -19,7 +19,7 @@
 using namespace std;
 
 namespace Lighting_Manager {
-	DELTA_CORE_API void CalcVisibility(Camera &camera);
+	DT_ENGINE_API void CalcVisibility(Camera &camera);
 }
 
 #endif // LIGHTING_MANAGER

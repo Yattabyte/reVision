@@ -8,9 +8,9 @@
 #ifndef CAMERA
 #define CAMERA
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
 #include "Rendering\Visibility_Token.h"
@@ -55,10 +55,10 @@ public:
 	----Common----
 	*************/
 
-	DELTA_CORE_API ~Camera();
-	DELTA_CORE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 1.0f, const float &horizontal_FOV = 90.0f);
-	DELTA_CORE_API Camera(Camera const &other);
-	DELTA_CORE_API void operator=(Camera const&other);
+	DT_ENGINE_API ~Camera();
+	DT_ENGINE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 1.0f, const float &horizontal_FOV = 90.0f);
+	DT_ENGINE_API Camera(Camera const &other);
+	DT_ENGINE_API void operator=(Camera const&other);
 
 	/***********************
 	----Camera Functions----
@@ -66,7 +66,7 @@ public:
 
 	// Make the current camera active
 	// Exposes this camera's attribute buffer to all shaders at spot 1
-	DELTA_CORE_API void Bind();
+	DT_ENGINE_API void Bind();
 
 
 	/*************************
@@ -99,7 +99,7 @@ public:
 	shared_mutex &getDataMutex() const { return data_mutex; };
 	// Updates the camera's state on the GPU
 	// All matrix updates performed here
-	DELTA_CORE_API void Update();
+	DT_ENGINE_API void Update();
 
 
 private:

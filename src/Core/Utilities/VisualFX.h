@@ -8,9 +8,9 @@
 #ifndef VISUALFX
 #define VISUALFX
 #ifdef	ENGINE_EXPORT
-#define DELTA_CORE_API __declspec(dllexport)
+#define DT_ENGINE_API __declspec(dllexport)
 #else
-#define	DELTA_CORE_API __declspec(dllimport)
+#define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define CF_MIP_LODS 6
 #define CF_MIP_SIZE 1024
@@ -22,9 +22,9 @@
 using namespace glm;
 
 namespace VisualFX {
-	DELTA_CORE_API void Initialize();
-	DELTA_CORE_API void APPLY_FX_CUBE_FILTER(const GLuint &sourceTexture, const GLuint & destinationTexture, const float &size);
-	DELTA_CORE_API void APPLY_FX_GAUSSIAN_BLUR(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
-	DELTA_CORE_API void APPLY_FX_GAUSSIAN_BLUR_ALPHA(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
+	DT_ENGINE_API void Initialize();
+	DT_ENGINE_API void APPLY_FX_CUBE_FILTER(const GLuint &sourceTexture, const GLuint & destinationTexture, const float &size);
+	DT_ENGINE_API void APPLY_FX_GAUSSIAN_BLUR(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
+	DT_ENGINE_API void APPLY_FX_GAUSSIAN_BLUR_ALPHA(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
 };
 #endif // VISUALFX*/
