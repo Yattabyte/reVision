@@ -6,18 +6,44 @@
 	- Mostly a wrapper for the config asset, but this keeps a static one for all to use
 */
 
+
+
 #include "Assets\Asset_Config.h"
 
 #pragma once
 #ifndef CONFIG_MANAGER
 #define CONFIG_MANAGER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
 #endif
 
 using namespace std;
+
+/****************************
+----Preferences as ENUMS ----
+****************************/
+static const enum CFG_ENUM {
+	C_WINDOW_WIDTH,
+	C_WINDOW_HEIGHT,
+	C_TEXTURE_ANISOTROPY,
+	C_SHADOW_SIZE_REGULAR,
+	C_SHADOW_SIZE_LARGE,
+	C_SHADOW_QUALITY
+};
+
+/******************************
+----Preferences as STRINGS ----
+******************************/
+static const vector<string> CFG_STRING = {
+	"C_WINDOW_WIDTH",
+	"C_WINDOW_HEIGHT",
+	"C_TEXTURE_ANISOTROPY",
+	"C_SHADOW_SIZE_REGULAR",
+	"C_SHADOW_SIZE_LARGE",
+	"C_SHADOW_QUALITY"
+};
 
 namespace CFG
 {

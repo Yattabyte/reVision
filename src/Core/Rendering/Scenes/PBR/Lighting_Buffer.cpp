@@ -26,7 +26,7 @@ Lighting_Buffer::~Lighting_Buffer()
 	lbuffers.erase(std::remove_if(begin(lbuffers), end(lbuffers), [this](const auto *stored_buffer) {
 		return (stored_buffer == this);
 	}), end(lbuffers));
-
+	
 	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
 	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
 

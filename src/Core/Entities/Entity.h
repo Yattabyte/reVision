@@ -8,7 +8,7 @@
 #pragma once
 #ifndef ENTITY
 #define ENTITY
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
@@ -22,19 +22,21 @@
 #include <map>
 #include <vector>
 
+
+
 class EntityCreator;
 class Component;
-class Entity
+class DELTA_CORE_API Entity
 {
 public:
-	DELTA_CORE_API void addComponent(char *type);
-	DELTA_CORE_API Component* getComponent(const ECShandle &id);
-	DELTA_CORE_API void SendMessage(const ECSmessage &message);
-	DELTA_CORE_API void ReceiveMessage(const ECSmessage &message);
+	void addComponent(char *type);
+	Component* getComponent(const ECShandle &id);
+	void SendMessage(const ECSmessage &message);
+	void ReceiveMessage(const ECSmessage &message);
 	
 protected:
-	DELTA_CORE_API virtual ~Entity();
-	DELTA_CORE_API Entity(const ECShandle &id) : m_ID(id) {};
+	virtual ~Entity();
+	Entity(const ECShandle &id) : m_ID(id) {};
 	friend class EntityCreator;
 	ECShandle m_ID;
 	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;

@@ -7,7 +7,7 @@
 #pragma once
 #ifndef GEOMETRY_MANAGER
 #define GEOMETRY_MANAGER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

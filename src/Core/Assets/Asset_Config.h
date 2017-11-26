@@ -9,7 +9,7 @@
 #pragma once
 #ifndef	ASSET_CONFIG
 #define	ASSET_CONFIG
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
@@ -17,6 +17,7 @@
 #define EXT_CONFIG ".cfg"
 #define DIRECTORY_CONFIG getCurrentDir() + "\\Configs\\"
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
+#define UNDEFINED_CVAL -12345.67890f // Undefined preference
 
 #include "Assets\Asset.h"
 #include "Systems\Asset_Manager.h"
@@ -42,7 +43,8 @@ public:
 	****************/
 
 	string filename;
-	map<int, float> configuration;
+	map<unsigned int, float> configuration;
+	vector<string> m_strings;
 
 	/******************************
 	----Configuration Functions----
@@ -58,33 +60,7 @@ public:
 }; 
 namespace Asset_Manager {
 	// Attempts to create an asset from disk or share one if it already exists
-	DELTA_CORE_API void load_asset(Shared_Asset_Config &user, const string &filename, const bool &threaded = true);
-};
-
-#define UNDEFINED_CVAL -12345.67890f // Undefined preference
-
-/****************************
-----Preferences as ENUMS ----
-****************************/
-static const enum CFG_ENUM {
-	C_WINDOW_WIDTH,
-	C_WINDOW_HEIGHT,
-	C_TEXTURE_ANISOTROPY,
-	C_SHADOW_SIZE_REGULAR,
-	C_SHADOW_SIZE_LARGE,
-	C_SHADOW_QUALITY
-};
-
-/******************************
-----Preferences as STRINGS ----
-******************************/
-static const vector<string> CFG_STRING = {
-	"C_WINDOW_WIDTH",
-	"C_WINDOW_HEIGHT",
-	"C_TEXTURE_ANISOTROPY",
-	"C_SHADOW_SIZE_REGULAR",
-	"C_SHADOW_SIZE_LARGE",
-	"C_SHADOW_QUALITY"
+	DELTA_CORE_API void load_asset(Shared_Asset_Config &user, const string &filename, const vector<string> &cfg_strings, const bool &threaded = true);
 };
 
 #endif //ASSET_CONFIG

@@ -10,7 +10,7 @@
 #pragma once
 #ifndef GEOMETRY_BUFFER
 #define GEOMETRY_BUFFER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

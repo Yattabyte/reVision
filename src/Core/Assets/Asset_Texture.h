@@ -8,7 +8,7 @@
 #pragma once
 #ifndef	ASSET_TEXTURE
 #define	ASSET_TEXTURE
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

@@ -8,7 +8,7 @@
 #pragma once
 #ifndef	ASSET_COLLIDER
 #define	ASSET_COLLIDER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

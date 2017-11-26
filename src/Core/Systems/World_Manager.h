@@ -9,7 +9,7 @@
 #pragma once
 #ifndef WORLD_MANAGER
 #define WORLD_MANAGER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

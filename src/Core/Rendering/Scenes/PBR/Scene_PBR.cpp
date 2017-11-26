@@ -15,8 +15,6 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
-#include "dt_Core.h"
-
 static Shared_Asset_Shader geometry_shader, geometry_shadow_shader, lighting_shader;
 static Shared_Asset_Primitive shape_quad;
 static float screen_width = 1.0f, screen_height = 1.0f;
@@ -48,11 +46,11 @@ Scene_PBR::Scene_PBR() : m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
 	Asset_Manager::load_asset(shape_quad, "quad");
 }
 
-void Scene_PBR::RenderFrame()
+void Scene_PBR::RenderFrame(Camera *camera)
 {
 	glViewport(0, 0, screen_width, screen_height);
 
-	Camera &mainCamera = *dt_Core::GetCamera();
+	Camera &mainCamera = *camera;
 	Visibility_Token &vis_token = mainCamera.GetVisibilityToken();
 	Geometry_Manager::CalcVisibility(mainCamera);
 	Lighting_Manager::CalcVisibility(mainCamera);

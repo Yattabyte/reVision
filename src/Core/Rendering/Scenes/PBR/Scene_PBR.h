@@ -12,7 +12,7 @@
 #pragma once
 #ifndef TEST_SCENE
 #define TEST_SCENE
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define DELTA_CORE_API __declspec(dllimport)
@@ -23,7 +23,7 @@ class Scene_PBR : public Scene
 public: 
 	DELTA_CORE_API ~Scene_PBR();
 	DELTA_CORE_API Scene_PBR();
-	DELTA_CORE_API virtual void RenderFrame();
+	DELTA_CORE_API virtual void RenderFrame(Camera *);
 
 protected:
 	void RegenerationPass(const Visibility_Token &vis_token);

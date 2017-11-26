@@ -8,7 +8,7 @@
 #pragma once
 #ifndef GEOMETRY_COMPONENT
 #define GEOMETRY_COMPONENT
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

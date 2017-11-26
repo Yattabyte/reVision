@@ -1,16 +1,15 @@
 /*
-	Delta Core
+	dt_Engine
 
-	- The primary systems and assets that work together forming the engine.
-	- Some behaviour is literally undefined until an appropriate plugin is used, such as:
-		- Image loading (freeimage available)
-		- Model loading (assimp available)
+	- The enapsulation of the entire engine
 */
 
+
+
 #pragma once
-#ifndef DT_CORE
-#define DT_CORE
-#ifdef	DT_CORE_EXPORT
+#ifndef DT_ENGINE
+#define DT_ENGINE
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
@@ -18,37 +17,49 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(32) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(33) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
+#include "Utilities\Action_State.h"
+#include <vector>
+
 using namespace std;
 
-class Scene;
+class GLFWwindow;
+class System;
 class Camera;
+class Scene;
 
-namespace dt_Core {
-	// Initializes the core system
-	// Returns true if it successfull, false otherwise. Reports its own errors to the console.
-	DELTA_CORE_API bool Initialize();
-	// Shutsdown the core system
-	// This should be the last system to shutdown to prevent errors or crashes
-	DELTA_CORE_API void Shutdown();
+class DELTA_CORE_API dt_Engine
+{
+public:
+	// Destroy the engine
+	~dt_Engine();
+	// Zero-initialize the engine
+	dt_Engine();
+	// Initialize the engine
+	bool Initialize();
+	// Shutdown the engine
+	void Shutdown();
 	// Ticks the engine's overall simulation by a frame
-	DELTA_CORE_API void Tick();
-	// Returns whether or not the engine should close
-	// E.g. the viewport has been closed ('x' clicked)
-	DELTA_CORE_API bool ShouldClose();
+	void Tick(const float &deltaTime);
+	// Check if the engine should close
+	bool ShouldClose();
 	// Takes in a rendering scene to coordinate how the scene should be rendered
 	// Does not take ownership of the pointer and will NOT delete it when overwritten
-	DELTA_CORE_API void SetScene(Scene *scene);
+	void SetScene(Scene *scene);
 	// Sets the desired camera to be the main active camera when rendering
-	DELTA_CORE_API void SetCamera(Camera *camera);
-	// Retrieves the main camera that is being used when rendering
-	DELTA_CORE_API Camera* GetCamera();
-	// Retrieves the main window
-	DELTA_CORE_API void* GetWindow();
-}
+	void SetCamera(Camera *camera);
+
+private:
+	bool					m_Initialized;
+	GLFWwindow			*	m_Context_Rendering;
+	Scene				*	m_Scene;
+	Camera				*	m_Camera;
+	vector<System*>			m_Systems;
+	Action_State			m_Action_State;
+};
 
 #define COMPUTE_BUILD_YEAR			(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 
 #define BUILD_MONTH_IS_JAN			(__DATE__[0] == 'J' && __DATE__[1] == 'a' && __DATE__[2] == 'n')
@@ -77,4 +88,4 @@ namespace dt_Core {
 									(BUILD_MONTH_IS_DEC) ? 12 : 0)
 #define COMPUTE_BUILD_DAY			((__DATE__[4] >= '0') ? (__DATE__[4] - '0') * 10 : 0) + (__DATE__[5] - '0')
 #define COMPUTE_BUILD_HOUR			(__TIME__[0] - '0') * 10 + __TIME__[1] - '0'
-#endif // DT_CORE
+#endif // DT_ENGINE

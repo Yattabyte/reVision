@@ -7,7 +7,7 @@
 #pragma once
 #ifndef LIGHT_DIRECTIONAL_COMPONENT
 #define LIGHT_DIRECTIONAL_COMPONENT
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

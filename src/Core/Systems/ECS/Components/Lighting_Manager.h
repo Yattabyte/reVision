@@ -7,7 +7,7 @@
 #pragma once
 #ifndef LIGHTING_MANAGER
 #define LIGHTING_MANAGER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

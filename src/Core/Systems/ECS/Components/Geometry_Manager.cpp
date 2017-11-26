@@ -3,6 +3,7 @@
 #include "Entities\Components\Geometry_Component.h"
 
 
+
 void Geometry_Manager::CalcVisibility(Camera &camera)
 {
 	shared_lock<shared_mutex> read_guard(camera.getDataMutex());

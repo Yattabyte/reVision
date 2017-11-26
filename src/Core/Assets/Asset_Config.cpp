@@ -45,7 +45,7 @@ void Asset_Config::saveConfig()
 	string output;
 
 	for each (const auto &value in configuration) 
-		output += "\"" + CFG_STRING[value.first] + "\" \"" + to_string(value.second) + "\"\n";	
+		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
 
 	string directory = ABS_DIRECTORY_CONFIG(filename);
 	ofstream out(directory);
@@ -72,15 +72,15 @@ string getBetweenQuotes(string &s)
 // Checks if the value @s is a parameter in the CFG_STRING list. 
 // If true, returns the spot in the list @s is. 
 // If false, returns -1.
-int findCFGProperty(const string &s)
+int findCFGProperty(const string &s, const vector<string> &m_strings)
 {
 	string UPPER_STRING;
 	for each (const auto &c in s) 
 		UPPER_STRING += toupper(c);
 	bool success = false;
-	for (auto value = begin(CFG_STRING); value != end(CFG_STRING); value++)
+	for (auto value = begin(m_strings); value != end(m_strings); value++)
 		if ((*value) == UPPER_STRING)
-			return std::distance(CFG_STRING.begin(), value);
+			return std::distance(m_strings.begin(), value);
 	return -1;
 }
 
@@ -88,11 +88,11 @@ int findCFGProperty(const string &s)
 void initialize_Config(Shared_Asset_Config & user, const string & filename, bool * complete)
 {
 	ifstream file_stream(filename);
-	unique_lock<shared_mutex> write_guard(user->m_mutex);
+	unique_lock<shared_mutex> write_guard(user->m_mutex);	
 	for (std::string line; std::getline(file_stream, line); ) {
-		if (file_stream.good()) {
+		if (line.length()) {
 			const string cfg_property = getBetweenQuotes(line);
-			int spot = findCFGProperty(cfg_property);
+			int spot = findCFGProperty(cfg_property, user->m_strings);
 			if (spot >= 0) {
 				string cfg_value = getBetweenQuotes(line);
 				user->setValue(spot, atof(cfg_value.c_str()));
@@ -116,7 +116,7 @@ Shared_Asset_Config fetchDefaultAsset()
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Config>(new Asset_Config());
 		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
-		if (fileOnDisk(ABS_DIRECTORY_CONFIG("defaultConfig"))) { // Check if we have a default one on disk to load
+		/*if (fileOnDisk(ABS_DIRECTORY_CONFIG("defaultConfig"))) { // Check if we have a default one on disk to load
 			bool complete = false;
 			initialize_Config(cast_asset, ABS_DIRECTORY_CONFIG("defaultConfig"), &complete);
 			cast_asset->Finalize();
@@ -128,21 +128,21 @@ Shared_Asset_Config fetchDefaultAsset()
 		// We didn't load a default asset from disk
 		MSG::Statement("Regenerating default configuration...");
 		/* HARD CODE DEFAULT VALUES HERE */
-		cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
+		/*cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
 		cast_asset->setValue(CFG_ENUM::C_WINDOW_HEIGHT, 512);
 		cast_asset->setValue(CFG_ENUM::C_TEXTURE_ANISOTROPY, 16);
 		// Save the default configurations to disk
 		cast_asset->filename = "defaultConfig";
 		cast_asset->saveConfig();
 		cast_asset->filename = "config";
-		cast_asset->saveConfig();
-		return cast_asset; 
+		cast_asset->saveConfig();*/
+		return cast_asset;
 	}
 	return dynamic_pointer_cast<Asset_Config>(default_asset);
 }
 
 namespace Asset_Manager {
-	void load_asset(Shared_Asset_Config & user, const string & filename, const bool & threaded)
+	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> &cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = getMutexIOAssets();
@@ -180,6 +180,7 @@ namespace Asset_Manager {
 			unique_lock<shared_mutex> guard(mutex_IO_assets);
 			user = Shared_Asset_Config(new Asset_Config());
 			user->filename = filename;
+			user->m_strings = cfg_strings;
 			assets_configs.push_back(user);
 		}
 

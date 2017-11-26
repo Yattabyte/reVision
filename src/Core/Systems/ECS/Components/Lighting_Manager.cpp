@@ -2,6 +2,8 @@
 #include "Systems\ECS\ComponentFactory.h"
 #include "Entities\Components\Lighting_Component.h"
 
+
+
 void Lighting_Manager::CalcVisibility(Camera &camera)
 {
 	shared_lock<shared_mutex> read_guard(camera.getDataMutex());

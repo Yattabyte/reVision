@@ -8,7 +8,7 @@
 #pragma once
 #ifndef LIGHTING_BUFFER
 #define LIGHTING_BUFFER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)

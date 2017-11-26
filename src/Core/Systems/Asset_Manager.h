@@ -13,7 +13,7 @@
 #pragma once
 #ifndef ASSET_MANAGER
 #define ASSET_MANAGER
-#ifdef	DT_CORE_EXPORT
+#ifdef	ENGINE_EXPORT
 #define DELTA_CORE_API __declspec(dllexport)
 #else
 #define	DELTA_CORE_API __declspec(dllimport)
