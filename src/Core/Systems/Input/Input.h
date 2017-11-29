@@ -19,15 +19,15 @@
 
 #include "Systems\System_Interface.h"
 #include "Systems\Input\Input_Binding.h"
-#include "Utilities\Action_State.h"
 
+class Engine_Package;
 class GLFWwindow;
 
 class DT_ENGINE_API System_Input : public System
 {
 public: 
 	~System_Input();
-	System_Input(GLFWwindow *window, Action_State *state, const System_Input_Binding &bind_interface = System_Input_Binding());
+	System_Input(Engine_Package *package, const System_Input_Binding &bind_interface = System_Input_Binding());
 
 	// Check the status of peripheral input devices
 	void Update(const float &deltaTime);
@@ -42,9 +42,8 @@ public:
 	void Callback_Scroll(GLFWwindow * window, double xoffset, double yoffset);
 
 private:
-	GLFWwindow *m_window;
-	Action_State *m_state;
-	System_Input_Binding m_binds;
+	Engine_Package *m_enginePackage;
+	System_Input_Binding m_binds; 
 };
 
 #endif // SYSTEM_INPUT

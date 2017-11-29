@@ -28,6 +28,8 @@ static const enum ACTION_ENUM {
 	JUMP,
 	CROUCH,
 	RUN,
+	LOOK_X,
+	LOOK_Y,
 	ACTION_COUNT
 };
 
@@ -38,7 +40,9 @@ static const vector<string> ACTION_STRINGS = {
 	"RIGHT",
 	"JUMP",
 	"CROUCH",
-	"RUN"
+	"RUN",
+	"LOOK_X",
+	"LOOK_Y"
 };
 
 class Action_State : public map<unsigned int, float>

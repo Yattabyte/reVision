@@ -1,36 +1,32 @@
 #include "Systems\Graphics\Graphics_PBR.h"
+#include "Utilities\Engine_Package.h"
 #include "Rendering\Camera.h"
 #include "Systems\Config_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
 
-static Shared_Asset_Shader geometry_shader, geometry_shadow_shader, lighting_shader;
-static Shared_Asset_Primitive shape_quad;
+
 
 System_Graphics_PBR::~System_Graphics_PBR()
 {
 }
 
-System_Graphics_PBR::System_Graphics_PBR(Camera *engineCamera) : 
-	m_engineCamera(engineCamera), m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
+System_Graphics_PBR::System_Graphics_PBR(Engine_Package *package) :
+	m_enginePackage(package), m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
 {
-	screen_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
-	screen_height = CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
-	Asset_Manager::load_asset(geometry_shader, "Geometry\\geometry");
-	Asset_Manager::load_asset(geometry_shadow_shader, "Geometry\\geometry_shadow");
-	Asset_Manager::load_asset(lighting_shader, "Lighting\\lighting");
-	Asset_Manager::load_asset(shape_quad, "quad");
+	Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
+	Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
+	Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
+	Asset_Manager::load_asset(m_shapeQuad, "quad");
 }
 
 void System_Graphics_PBR::Update(const float & deltaTime)
 {
-	glViewport(0, 0, screen_width, screen_height);
+	glViewport(0, 0, m_enginePackage->window_width, m_enginePackage->window_height);
 
-	shared_lock<shared_mutex> read_guard(m_engineCamera->getDataMutex());
-	Visibility_Token &vis_token = m_engineCamera->GetVisibilityToken();
+	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera->getDataMutex());
+	Visibility_Token &vis_token = m_enginePackage->m_Camera->GetVisibilityToken();
 	
 	if (vis_token.size()) {
 		RegenerationPass(vis_token);
@@ -50,15 +46,15 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 	Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
 
-	/*geometry_shadow_shader->Bind();
+	/*m_shaderGeometryShadow->Bind();
 	if (vis_token.visible_lights.size())
 	for each (const auto *light in vis_token.visible_lights.at(Light_Directional::GetLightType()))
 	light->shadowPass(vis_token);
-	geometry_shadow_shader->Release();*/
+	m_shaderGeometryShadow->Release();*/
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
 
-	glViewport(0, 0, screen_width, screen_height);
+	glViewport(0, 0, m_enginePackage->window_width, m_enginePackage->window_height);
 
 	glDepthFunc(GL_LESS);
 }
@@ -71,12 +67,12 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		glEnable(GL_DEPTH_TEST);
 		m_gbuffer.Clear();
 		m_gbuffer.BindForWriting();
-		geometry_shader->Bind();
+		m_shaderGeometry->Bind();
 
 		for each (auto component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
 			component->Draw();
 
-		geometry_shader->Release();
+		m_shaderGeometry->Release();
 	}
 }
 
@@ -93,13 +89,13 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 		
 		m_gbuffer.BindForReading();
 		m_lbuffer.BindForWriting();
-		lighting_shader->Bind();
-		shape_quad->Bind();
-		const int quad_size = shape_quad->GetSize();
+		m_shaderLighting->Bind();
+		m_shapeQuad->Bind();
+		const int quad_size = m_shapeQuad->GetSize();
 		for each (auto component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
 			component->directPass(quad_size);
-		shape_quad->Unbind();
-		lighting_shader->Release();
+		m_shapeQuad->Unbind();
+		m_shaderLighting->Release();
 	}
 }
 
@@ -116,5 +112,5 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	glBlitFramebuffer(0, 0, screen_width, screen_height, 0, 0, screen_width, screen_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	glBlitFramebuffer(0, 0, m_enginePackage->window_width, m_enginePackage->window_height, 0, 0, m_enginePackage->window_width, m_enginePackage->window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }

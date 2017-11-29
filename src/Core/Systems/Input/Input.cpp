@@ -1,4 +1,5 @@
 #include "Systems\Input\Input.h"
+#include "Utilities\Engine_Package.h"
 #include "GLFW\glfw3.h"
 #include "Input.h"
 
@@ -8,12 +9,10 @@ System_Input::~System_Input()
 {
 }
 
-System_Input::System_Input(GLFWwindow * window, Action_State * state, const System_Input_Binding & binds)
-	:	m_window(window),
-		m_state(state),
+System_Input::System_Input(Engine_Package *package, const System_Input_Binding & binds)
+	:	m_enginePackage(package),
 		m_binds(binds)
 {
-
 }
 
 void System_Input::Update(const float & deltaTime)
@@ -26,13 +25,18 @@ void System_Input::Update(const float & deltaTime)
 		const auto &action = pair.first;
 		const auto &input_button = (int)pair.second;
 		// If Key is pressed, set state to 1, otherwise set to 0
-		m_state->at(action) = (glfwGetKey(m_window, input_button)) ? 1.0f : 0.0f;
+		m_enginePackage->m_Action_State.at(action) = (glfwGetKey(m_enginePackage->m_Context_Rendering, input_button)) ? 1.0f : 0.0f;
 	}
+	double mouseX, mouseY;
+	glfwGetCursorPos(m_enginePackage->m_Context_Rendering, &mouseX, &mouseY);
+	m_enginePackage->m_Action_State.at(LOOK_X) = mouseX;
+	m_enginePackage->m_Action_State.at(LOOK_Y) = mouseY;
+	glfwSetCursorPos(m_enginePackage->m_Context_Rendering, 0, 0);
 }
 
 void System_Input::Callback_CursorPos(GLFWwindow * window, double x, double y)
 {
-	bool qwe = true;
+	
 }
 
 void System_Input::Callback_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)

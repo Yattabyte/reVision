@@ -8,6 +8,7 @@
 #include "Systems\Input\Input.h"
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Systems\Visibility.h"
+#include "Systems\Logic\Logic.h"
 #include "Systems\Asset_Manager.h"
 
 // To replace with abstract systems
@@ -36,7 +37,6 @@ static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int heigh
 	CFG::setPreference(1, height);
 }
 
-
 dt_Engine::~dt_Engine()
 {
 	Shutdown();
@@ -44,9 +44,8 @@ dt_Engine::~dt_Engine()
 
 dt_Engine::dt_Engine()
 {
-	m_Initialized = false;
-	m_Context_Rendering = nullptr;
-	m_Camera = nullptr;
+	m_Initialized = false;	
+	m_lastTime = 0;
 }
 
 bool Initialize_Sharing()
@@ -98,47 +97,49 @@ bool Initialize_Sharing()
 
 bool dt_Engine::Initialize()
 {
-	unique_lock<shared_mutex> write_lock(m_EngineMutex);
+	unique_lock<shared_mutex> write_lock(m_package.m_EngineMutex);
 	if ((!m_Initialized) && Initialize_Sharing()) {	
 		CFG::loadConfiguration();		
-		m_Camera = new Camera();
+		m_package.m_Camera = new Camera();
 		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
 		m_UpdaterThread->detach();
 		
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-		const double	width		= CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH),
-						height		= CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
-		const int		maxWidth	= mainMode->width, maxHeight = mainMode->height;
+		m_package.window_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
+		m_package.window_height = CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
+		const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-		m_Context_Rendering = glfwCreateWindow(width, height, "Delta", NULL, m_Context_Sharing);
-		glfwSetWindowPos(m_Context_Rendering, ((maxWidth - width) / 2), ((maxHeight - height) / 2));
-		glfwMakeContextCurrent(m_Context_Rendering);
-		glfwSetInputMode(m_Context_Rendering, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		m_package.m_Context_Rendering = glfwCreateWindow(m_package.window_width, m_package.window_height, "Delta", NULL, m_Context_Sharing);
+		glfwSetWindowPos(m_package.m_Context_Rendering, (maxWidth - m_package.window_width) / 2, (maxHeight - m_package.window_height) / 2);
+		glfwMakeContextCurrent(m_package.m_Context_Rendering);
+		glfwSetInputMode(m_package.m_Context_Rendering, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+		glfwSetCursorPos(m_package.m_Context_Rendering, 0, 0);
 		
 		// Create Systems
-		System_Input *sysInput = new System_Input(m_Context_Rendering, &m_Action_State);
-		glfwSetWindowUserPointer(m_Context_Rendering, sysInput);
-		glfwSetWindowSizeCallback(m_Context_Rendering, GLFW_Callback_WindowResize);		
-		glfwSetCursorPosCallback(m_Context_Rendering, [](GLFWwindow * window, double x, double y) { 
+		System_Input *sysInput = new System_Input(&m_package);
+		glfwSetWindowUserPointer(m_package.m_Context_Rendering, sysInput);
+		glfwSetWindowSizeCallback(m_package.m_Context_Rendering, GLFW_Callback_WindowResize);
+		glfwSetCursorPosCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, double x, double y) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_CursorPos(window, x, y);
 		});
-		glfwSetKeyCallback(m_Context_Rendering, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
+		glfwSetKeyCallback(m_package.m_Context_Rendering, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_KeyPress(window, key, scancode, action, mods);
 		});
-		glfwSetCharModsCallback(m_Context_Rendering, [](GLFWwindow* window, unsigned int codepoint, int mods) {
+		glfwSetCharModsCallback(m_package.m_Context_Rendering, [](GLFWwindow* window, unsigned int codepoint, int mods) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_CharMods(window, codepoint, mods);
 		});
-		glfwSetMouseButtonCallback(m_Context_Rendering, [](GLFWwindow * window, int button, int action, int mods) {
+		glfwSetMouseButtonCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, int button, int action, int mods) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_MouseButton(window, button, action, mods);
 		});
-		glfwSetScrollCallback(m_Context_Rendering, [](GLFWwindow * window, double xoffset, double yoffset) {
+		glfwSetScrollCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, double xoffset, double yoffset) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_Scroll(window, xoffset, yoffset);
 		});
 		
-		m_Systems.insert(pair<const char*, System*>("Input", sysInput));
-		m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(m_Camera)));
-		m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(m_Camera)));
+		m_package.m_Systems.insert(pair<const char*, System*>("Input", sysInput));
+		m_package.m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(&m_package)));
+		m_package.m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(&m_package)));
+		m_package.m_Systems.insert(pair<const char*, System*>("Logic", new System_Logic(&m_package)));
 
 		Material_Manager::startup();
 		Shadowmap_Manager::startup();
@@ -150,7 +151,7 @@ bool dt_Engine::Initialize()
 
 void dt_Engine::Shutdown()
 {
-	unique_lock<shared_mutex> write_lock(m_EngineMutex);
+	unique_lock<shared_mutex> write_lock(m_package.m_EngineMutex);
 	if (m_Initialized) {
 		m_Initialized = false;
 
@@ -163,14 +164,19 @@ void dt_Engine::Shutdown()
 	}
 }
 
-void dt_Engine::Tick(const float &deltaTime)
+void dt_Engine::Update()
 {
-	if (!glfwWindowShouldClose(m_Context_Rendering)) {		
+	float deltaTime = 0;
+	float thisTime = glfwGetTime();
+	if (m_Initialized && !glfwWindowShouldClose(m_package.m_Context_Rendering)) {
+		deltaTime = thisTime - m_lastTime;
+		m_lastTime = thisTime;
+
 		Asset_Manager::ParseWorkOrders();
-		for each (auto system in m_Systems)
+		for each (auto system in m_package.m_Systems)
 			system.second->Update(deltaTime);
 		
-		glfwSwapBuffers(m_Context_Rendering);
+		glfwSwapBuffers(m_package.m_Context_Rendering);
 		glfwPollEvents();
 	}
 }
@@ -180,12 +186,12 @@ void dt_Engine::Updater_Thread()
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
 	bool stay_alive = true;
 	while (stay_alive) {
-		shared_lock<shared_mutex> read_lock(m_EngineMutex);
+		shared_lock<shared_mutex> read_lock(m_package.m_EngineMutex);
 		if (m_Initialized) {
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
-			for each (auto system in m_Systems)
+			for each (auto system in m_package.m_Systems)
 				system.second->Update_Threaded(deltaTime);
 		}
 		stay_alive = !ShouldClose();
@@ -195,5 +201,5 @@ void dt_Engine::Updater_Thread()
 
 bool dt_Engine::ShouldClose()
 {
-	return glfwWindowShouldClose(m_Context_Rendering);
+	return glfwWindowShouldClose(m_package.m_Context_Rendering);
 }

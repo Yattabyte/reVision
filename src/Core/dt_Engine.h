@@ -17,11 +17,12 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(35) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(36) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
 #include "Utilities\Action_State.h"
+#include "Utilities\Engine_Package.h"
 #include <map>
 #include <shared_mutex>
 #include <thread>
@@ -29,10 +30,10 @@
 
 using namespace std;
 
+
 class GLFWwindow;
 class Camera;
 class System;
-class Scene;
 
 class DT_ENGINE_API dt_Engine
 {
@@ -46,21 +47,17 @@ public:
 	// Shutdown the engine
 	void Shutdown();
 	// Ticks the engine's overall simulation by a frame
-	void Tick(const float &deltaTime);
+	void Update();
 	// Check if the engine should close
 	bool ShouldClose();
 
-	Camera *GetCamera() { return m_Camera; }
+	Camera *GetCamera() { return m_package.m_Camera; }
 
 private:
-	shared_mutex					m_EngineMutex;
-	bool							m_Initialized;
-	GLFWwindow					*	m_Context_Rendering;
-	thread						*	m_UpdaterThread;
-	Camera						*	m_Camera;
-	map<const char*, System*>		m_Systems;
-	Action_State					m_Action_State;
-
+	bool m_Initialized;	
+	float m_lastTime;	
+	Engine_Package m_package;
+	thread *m_UpdaterThread;
 	void Updater_Thread();
 };
 

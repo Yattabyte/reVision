@@ -1,14 +1,14 @@
 /*
-	Visibility
+	Logic
 
-	- Calculates visibility information - whether or not things are visible from a given viewing perspective
+	-
 */
 
 
 
 #pragma once
-#ifndef SYSTEM_VISIBILITY
-#define SYSTEM_VISIBILITY
+#ifndef SYSTEM_LOGIC
+#define SYSTEM_LOGIC
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
 #else
@@ -16,21 +16,23 @@
 #endif
 
 #include "Systems\System_Interface.h"
+#include "Utilities\Transform.h"
+
 
 class Engine_Package;
-class DT_ENGINE_API System_Visibility : public System
+class DT_ENGINE_API System_Logic : public System
 {
 public: 
-	~System_Visibility();
-	System_Visibility(Engine_Package *package);
+	~System_Logic();
+	System_Logic(Engine_Package * package);
 
-	// Recalculate visibility
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
 
-
 private:
 	Engine_Package *m_enginePackage;
+	Transform m_transform;
+	vec3 m_rotation;
 };
 
-#endif // SYSTEM_VISIBILITY
+#endif // SYSTEM_LOGIC
