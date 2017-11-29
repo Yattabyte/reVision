@@ -22,8 +22,11 @@ public:
 	// All systems need to implement their own destructor
 	virtual ~System() {};
 
-	// All systems need to implement their own update function
-	virtual void Update(const float &deltaTime) = 0;
+	// All systems can implement their own update function
+	virtual void Update(const float &deltaTime) {};
+
+	// An optional secondary threaded update function
+	virtual void Update_Threaded(const float &deltaTime) {};
 };
 
 #endif // SYSTEM_INTERFACE

@@ -17,18 +17,21 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(34) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(35) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
 #include "Utilities\Action_State.h"
+#include <map>
+#include <shared_mutex>
+#include <thread>
 #include <vector>
 
 using namespace std;
 
 class GLFWwindow;
-class System;
 class Camera;
+class System;
 class Scene;
 
 class DT_ENGINE_API dt_Engine
@@ -46,19 +49,19 @@ public:
 	void Tick(const float &deltaTime);
 	// Check if the engine should close
 	bool ShouldClose();
-	// Takes in a rendering scene to coordinate how the scene should be rendered
-	// Does not take ownership of the pointer and will NOT delete it when overwritten
-	void SetScene(Scene *scene);
-	// Sets the desired camera to be the main active camera when rendering
-	void SetCamera(Camera *camera);
+
+	Camera *GetCamera() { return m_Camera; }
 
 private:
-	bool					m_Initialized;
-	GLFWwindow			*	m_Context_Rendering;
-	Scene				*	m_Scene;
-	Camera				*	m_Camera;
-	vector<System*>			m_Systems;
-	Action_State			m_Action_State;
+	shared_mutex					m_EngineMutex;
+	bool							m_Initialized;
+	GLFWwindow					*	m_Context_Rendering;
+	thread						*	m_UpdaterThread;
+	Camera						*	m_Camera;
+	map<const char*, System*>		m_Systems;
+	Action_State					m_Action_State;
+
+	void Updater_Thread();
 };
 
 #define COMPUTE_BUILD_YEAR			(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 

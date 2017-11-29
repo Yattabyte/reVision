@@ -11,47 +11,47 @@ bool systemActive, systemPause;
 
 void Visibility_Manager::statup()
 {
-	systemActive = true;
-	systemPause = false;
-	thread_visibility_shadow = new thread(&Visibility_Manager::Visibility_Checker);
-	thread_visibility_shadow->detach();
+	/*systemActive = true;
+	systemPause = false;*/
+	/*thread_visibility_shadow = new thread(&Visibility_Manager::Visibility_Checker);
+	thread_visibility_shadow->detach();*/
 }
 
 void Visibility_Manager::shutdown()
 {
-	lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex);
-	systemActive = false;
+	/*lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex);
+	systemActive = false;*/
 
-	if (thread_visibility_shadow->joinable())
+	/*if (thread_visibility_shadow->joinable())
 		thread_visibility_shadow->join();
 
-	delete thread_visibility_shadow;
+	delete thread_visibility_shadow;*/
 }
 
 void Visibility_Manager::pause() 
 { 
-	lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex); 
-	systemPause = true; 
+	/*lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex); 
+	systemPause = true; */
 }
 
 void Visibility_Manager::resume() 
 { 
-	lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex); 
-	systemPause = false; 
+	/*lock_guard<shared_mutex> system_active_lock_guard(systemActiveMutex); 
+	systemPause = false; */
 }
 
 void Visibility_Manager::RegisterViewer(Camera * camera)
 {
-	lock_guard<shared_mutex> cam_list_guard(camera_list_mutex);
-	camera_list.push_back(camera);
+	/*lock_guard<shared_mutex> cam_list_guard(camera_list_mutex);
+	camera_list.push_back(camera);*/
 }
 
 void Visibility_Manager::UnRegisterViewer(Camera * camera)
 {
-	lock_guard<shared_mutex> cam_list_guard(camera_list_mutex);
+	/*lock_guard<shared_mutex> cam_list_guard(camera_list_mutex);
 	camera_list.erase(std::remove_if(begin(camera_list), end(camera_list), [camera](const auto *ref) {
 		return (ref == camera);
-	}), end(camera_list));	
+	}), end(camera_list));	*/
 }
 
 void Visibility_Manager::DeRegisterGeometryFromViewers(Geometry *g)

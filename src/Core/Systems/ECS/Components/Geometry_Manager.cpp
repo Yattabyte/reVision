@@ -6,7 +6,7 @@
 
 void Geometry_Manager::CalcVisibility(Camera &camera)
 {
-	shared_lock<shared_mutex> read_guard(camera.getDataMutex());
+	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
 	Visibility_Token & vis_token = camera.GetVisibilityToken();
 	const auto &camBuffer = camera.getCameraBuffer();
 	const mat4 camPVMatrix = camBuffer.pMatrix * camBuffer.vMatrix;

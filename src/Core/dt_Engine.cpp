@@ -6,16 +6,15 @@
 
 #include "Systems\Message_Manager.h"
 #include "Systems\Input\Input.h"
+#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Visibility.h"
 #include "Systems\Asset_Manager.h"
-
 
 // To replace with abstract systems
 #include "Systems\Config_Manager.h"
 #include "Systems\Material_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
-#include "Systems\Visibility_Manager.h"
 #include "Systems\World_Manager.h"
-
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -47,7 +46,6 @@ dt_Engine::dt_Engine()
 {
 	m_Initialized = false;
 	m_Context_Rendering = nullptr;
-	m_Scene = nullptr;
 	m_Camera = nullptr;
 }
 
@@ -100,11 +98,14 @@ bool Initialize_Sharing()
 
 bool dt_Engine::Initialize()
 {
+	unique_lock<shared_mutex> write_lock(m_EngineMutex);
 	if ((!m_Initialized) && Initialize_Sharing()) {	
 		CFG::loadConfiguration();		
+		m_Camera = new Camera();
+		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
+		m_UpdaterThread->detach();
 		
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
 		const double	width		= CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH),
 						height		= CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
 		const int		maxWidth	= mainMode->width, maxHeight = mainMode->height;
@@ -117,9 +118,6 @@ bool dt_Engine::Initialize()
 		
 		// Create Systems
 		System_Input *sysInput = new System_Input(m_Context_Rendering, &m_Action_State);
-		m_Systems.push_back(sysInput);
-
-		// Set Callbacks
 		glfwSetWindowUserPointer(m_Context_Rendering, sysInput);
 		glfwSetWindowSizeCallback(m_Context_Rendering, GLFW_Callback_WindowResize);		
 		glfwSetCursorPosCallback(m_Context_Rendering, [](GLFWwindow * window, double x, double y) { 
@@ -137,10 +135,13 @@ bool dt_Engine::Initialize()
 		glfwSetScrollCallback(m_Context_Rendering, [](GLFWwindow * window, double xoffset, double yoffset) {
 			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_Scroll(window, xoffset, yoffset);
 		});
+		
+		m_Systems.insert(pair<const char*, System*>("Input", sysInput));
+		m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(m_Camera)));
+		m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(m_Camera)));
 
 		Material_Manager::startup();
 		Shadowmap_Manager::startup();
-		Visibility_Manager::statup();
 		World_Manager::startup();
 		m_Initialized = true;
 	}
@@ -149,43 +150,50 @@ bool dt_Engine::Initialize()
 
 void dt_Engine::Shutdown()
 {
+	unique_lock<shared_mutex> write_lock(m_EngineMutex);
 	if (m_Initialized) {
 		m_Initialized = false;
 
-		/* Shutdown Code */
+		if (m_UpdaterThread->joinable())
+			m_UpdaterThread->join();
+		delete m_UpdaterThread;
+
+		write_lock.unlock();
+		write_lock.release();
 	}
 }
 
 void dt_Engine::Tick(const float &deltaTime)
 {
-	if (!glfwWindowShouldClose(m_Context_Rendering)) {
-		// Begin rendering frame first
-		if (m_Scene != nullptr) {
-			m_Scene->RenderFrame(m_Camera);
-		}
-
-		// Do other frames while gpu is busy (don't force it to sync yet)
+	if (!glfwWindowShouldClose(m_Context_Rendering)) {		
 		Asset_Manager::ParseWorkOrders();
 		for each (auto system in m_Systems)
-			system->Update(deltaTime);
-
-		// Now sync
+			system.second->Update(deltaTime);
+		
 		glfwSwapBuffers(m_Context_Rendering);
 		glfwPollEvents();
 	}
 }
 
+void dt_Engine::Updater_Thread()
+{
+	float lastTime = 0, thisTime = 0, deltaTime = 0;
+	bool stay_alive = true;
+	while (stay_alive) {
+		shared_lock<shared_mutex> read_lock(m_EngineMutex);
+		if (m_Initialized) {
+			thisTime = glfwGetTime();
+			deltaTime = thisTime - lastTime;
+			lastTime = thisTime;
+			for each (auto system in m_Systems)
+				system.second->Update_Threaded(deltaTime);
+		}
+		stay_alive = !ShouldClose();
+	}
+}
+
+
 bool dt_Engine::ShouldClose()
 {
 	return glfwWindowShouldClose(m_Context_Rendering);
-}
-
-void dt_Engine::SetScene(Scene * scene)
-{
-	m_Scene = scene;
-}
-
-void dt_Engine::SetCamera(Camera * camera)
-{
-	m_Camera = camera;
 }
