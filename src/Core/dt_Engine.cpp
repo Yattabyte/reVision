@@ -35,6 +35,11 @@ static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int heigh
 {
 	CFG::setPreference(0, width);
 	CFG::setPreference(1, height);
+	Engine_Package &package = *((Engine_Package*)glfwGetWindowUserPointer(window));
+	package.window_width = width;
+	package.window_height = height;
+	package.m_Camera->setDimensions(vec2(width, height));
+	package.m_Camera->Update();
 }
 
 dt_Engine::~dt_Engine()
@@ -117,26 +122,10 @@ bool dt_Engine::Initialize()
 		glfwSetCursorPos(m_package.m_Context_Rendering, 0, 0);
 		
 		// Create Systems
-		System_Input *sysInput = new System_Input(&m_package);
-		glfwSetWindowUserPointer(m_package.m_Context_Rendering, sysInput);
+		glfwSetWindowUserPointer(m_package.m_Context_Rendering, &m_package);
 		glfwSetWindowSizeCallback(m_package.m_Context_Rendering, GLFW_Callback_WindowResize);
-		glfwSetCursorPosCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, double x, double y) {
-			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_CursorPos(window, x, y);
-		});
-		glfwSetKeyCallback(m_package.m_Context_Rendering, [](GLFWwindow* window, int key, int scancode, int action, int mods) {
-			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_KeyPress(window, key, scancode, action, mods);
-		});
-		glfwSetCharModsCallback(m_package.m_Context_Rendering, [](GLFWwindow* window, unsigned int codepoint, int mods) {
-			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_CharMods(window, codepoint, mods);
-		});
-		glfwSetMouseButtonCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, int button, int action, int mods) {
-			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_MouseButton(window, button, action, mods);
-		});
-		glfwSetScrollCallback(m_package.m_Context_Rendering, [](GLFWwindow * window, double xoffset, double yoffset) {
-			static_cast<System_Input*>(glfwGetWindowUserPointer(window))->Callback_Scroll(window, xoffset, yoffset);
-		});
 		
-		m_package.m_Systems.insert(pair<const char*, System*>("Input", sysInput));
+		m_package.m_Systems.insert(pair<const char*, System*>("Input", new System_Input(&m_package)));
 		m_package.m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(&m_package)));
 		m_package.m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(&m_package)));
 		m_package.m_Systems.insert(pair<const char*, System*>("Logic", new System_Logic(&m_package)));

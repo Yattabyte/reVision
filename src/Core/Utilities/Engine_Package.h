@@ -23,4 +23,16 @@ public:
 		m_Context_Rendering = nullptr;
 		m_Camera = nullptr;
 	}
+
+	bool FindSubSystem(const char*c) { 
+		if (m_Systems.find(c) == m_Systems.end()) 
+			return false; 
+		else
+			return true; 
+	}
+
+	template <typename T>
+	T * GetSubSystem(const char*c) {
+		return (T*)m_Systems[c];
+	}
 };
