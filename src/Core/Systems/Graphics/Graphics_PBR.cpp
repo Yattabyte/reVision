@@ -1,7 +1,6 @@
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Utilities\Engine_Package.h"
 #include "Rendering\Camera.h"
-#include "Systems\Config_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
@@ -13,7 +12,7 @@ System_Graphics_PBR::~System_Graphics_PBR()
 }
 
 System_Graphics_PBR::System_Graphics_PBR(Engine_Package *package) :
-	m_enginePackage(package), m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
+	m_enginePackage(package), m_gbuffer(package), m_lbuffer(package,m_gbuffer.m_depth_stencil)
 {
 	Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
 	Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
@@ -23,10 +22,10 @@ System_Graphics_PBR::System_Graphics_PBR(Engine_Package *package) :
 
 void System_Graphics_PBR::Update(const float & deltaTime)
 {
-	glViewport(0, 0, m_enginePackage->window_width, m_enginePackage->window_height);
+	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
 
-	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera->getDataMutex());
-	Visibility_Token &vis_token = m_enginePackage->m_Camera->GetVisibilityToken();
+	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
+	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
 	
 	if (vis_token.size()) {
 		RegenerationPass(vis_token);
@@ -54,7 +53,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
 
-	glViewport(0, 0, m_enginePackage->window_width, m_enginePackage->window_height);
+	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
 
 	glDepthFunc(GL_LESS);
 }
@@ -112,5 +111,9 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	glBlitFramebuffer(0, 0, m_enginePackage->window_width, m_enginePackage->window_height, 0, 0, m_enginePackage->window_width, m_enginePackage->window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	float window_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+	float window_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+
+	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
+	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 }

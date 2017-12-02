@@ -51,10 +51,10 @@ public:
 	******************************/
 
 	// Saves the value of @cfg_value to the spot of @cfg_key in our configuration map
-	DT_ENGINE_API void setValue(const int &cfg_key, const float &cfg_value);
+	DT_ENGINE_API void setValue(const unsigned int &cfg_key, const float &cfg_value);
 	// Gets the value in our configuration map at the spot of @cfg_key
 	// Returns UNDEFINED_CVAL when @cfg_key out of bounds (doesn't exist)
-	DT_ENGINE_API float getValue(const int & cfg_key);
+	DT_ENGINE_API float getValue(const unsigned int & cfg_key);
 	// Saves our configuration map to disk within the \\Config\\ folder
 	DT_ENGINE_API void saveConfig();
 }; 

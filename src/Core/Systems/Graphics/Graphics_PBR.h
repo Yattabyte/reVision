@@ -17,8 +17,8 @@
 #endif
 
 #include "Systems\System_Interface.h"
-#include "Rendering\Scenes\PBR\Geometry_Buffer.h"
-#include "Rendering\Scenes\PBR\Lighting_Buffer.h"
+#include "Systems\Graphics\Geometry_Buffer.h"
+#include "Systems\Graphics\Lighting_Buffer.h"
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"

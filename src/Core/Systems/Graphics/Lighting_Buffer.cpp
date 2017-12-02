@@ -1,49 +1,47 @@
-#include "Rendering\Scenes\PBR\Lighting_Buffer.h"
-#include "Rendering\Scenes\PBR\Geometry_Buffer.h"
-#include "Systems\Config_Manager.h"
+#include "Systems\Graphics\Lighting_Buffer.h"
 #include "Systems\Message_Manager.h"
+#include "Utilities\Engine_Package.h"
 #include <algorithm>
 
-static float screen_width = 1.0f, screen_height = 1.0f;
-static vector<Lighting_Buffer*> lbuffers; // Exists so that we can have a single callback that will resize all the lbuffers at once
-
-static void WidthChangeCallback(const float &width) {
-	screen_width = width;
-	for each (auto *buffer in lbuffers)
-		buffer->Resize(vec2(screen_width, screen_height));
-}
-
-static void HeightChangeCallback(const float &height) {
-	screen_height = height;
-	for each (auto *buffer in lbuffers)
-		buffer->Resize(vec2(screen_width, screen_height));
-}
-
+class LB_WidthChangeCallback : public Callback_Container {
+public:
+	~LB_WidthChangeCallback() {};
+	LB_WidthChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
+	void Callback(const float &value) {
+		m_LBuffer->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
+	}
+private:
+	Lighting_Buffer *m_LBuffer;
+};
+class LB_HeightChangeCallback : public Callback_Container {
+public:
+	~LB_HeightChangeCallback() {};
+	LB_HeightChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
+	void Callback(const float &value) {
+		m_LBuffer->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
+	}
+private:
+	Lighting_Buffer *m_LBuffer;
+};
 
 Lighting_Buffer::~Lighting_Buffer()
 {
-	// Remove THIS gbuffer from the static gbuffer list
-	lbuffers.erase(std::remove_if(begin(lbuffers), end(lbuffers), [this](const auto *stored_buffer) {
-		return (stored_buffer == this);
-	}), end(lbuffers));
-	
-	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
-	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
+	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 
 	// Destroy OpenGL objects
 	glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
 	glDeleteFramebuffers(1, &m_fbo);
 }
 
-Lighting_Buffer::Lighting_Buffer(const GLuint &m_depth_stencil)
+Lighting_Buffer::Lighting_Buffer(Engine_Package *package, const GLuint &m_depth_stencil) : m_enginePackage(package)
 {
-	// Add THIS lbuffer to the static gbuffer list
-	lbuffers.push_back(this);
-
-	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
-	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
-	screen_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
-	screen_height = CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
+	m_widthChangeCallback = new LB_WidthChangeCallback(this);
+	m_heightChangeCallback = new LB_HeightChangeCallback(this);
+	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+	const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+	const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
 
 	this->m_depth_stencil = m_depth_stencil;
 	m_fbo = 0;
@@ -109,7 +107,7 @@ void Lighting_Buffer::Resize(const vec2 & size)
 
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
 		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);		
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 
 	// restore default FBO

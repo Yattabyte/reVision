@@ -19,6 +19,6 @@ void System_Visibility::Update(const float & deltaTime)
 
 void System_Visibility::Update_Threaded(const float & deltaTime)
 {
-	Geometry_Manager::CalcVisibility(*m_enginePackage->m_Camera);
-	Lighting_Manager::CalcVisibility(*m_enginePackage->m_Camera);
+	Geometry_Manager::CalcVisibility(m_enginePackage->m_Camera);
+	Lighting_Manager::CalcVisibility(m_enginePackage->m_Camera);
 }

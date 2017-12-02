@@ -1,5 +1,4 @@
 #include "Assets\Asset_Cubemap.h"
-#include "Systems\Config_Manager.h"
 
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 2
@@ -41,7 +40,7 @@ void Asset_Cubemap::Finalize()
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);
 		float anisotropy = 0.0f, maxAnisotropy = 0.0f;
-		anisotropy = CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
+		anisotropy = 16.0f;//CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
 		anisotropy = max(0.0f, min(anisotropy, maxAnisotropy));
 

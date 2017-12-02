@@ -1,7 +1,8 @@
 /*
 	Logic
 
-	-
+	- Contains logic for updating gamestate every tick
+	- This particular instance just updates the game camera
 */
 
 

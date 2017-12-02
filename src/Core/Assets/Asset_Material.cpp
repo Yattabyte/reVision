@@ -1,5 +1,4 @@
 #include "Assets\Asset_Material.h"
-#include "Systems\Config_Manager.h"
 #include "Systems\Material_Manager.h"
 #include "Systems\Message_Manager.h"
 #include "Utilities\FileReader.h"
@@ -58,7 +57,7 @@ void Asset_Material::Finalize()
 		glBindTexture(GL_TEXTURE_2D_ARRAY, gl_array_ID);
 
 		float anisotropy = 0.0f, maxAnisotropy = 0.0f;
-		anisotropy = CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
+		anisotropy = 16.0F;// CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
 		anisotropy = max(0.0f, min(anisotropy, maxAnisotropy));
 

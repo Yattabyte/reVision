@@ -22,6 +22,8 @@
 
 using namespace glm;
 
+class Callback_Container;
+class Engine_Package;
 class Geometry_Buffer
 {
 public:
@@ -30,7 +32,7 @@ public:
 	*************/
 
 	DT_ENGINE_API ~Geometry_Buffer();
-	DT_ENGINE_API Geometry_Buffer();
+	DT_ENGINE_API Geometry_Buffer(Engine_Package *package);
 
 
 	/************************
@@ -61,6 +63,10 @@ public:
 	};
 	GLuint m_fbo;
 	GLuint m_textures[GBUFFER_NUM_TEXTURES], m_depth_stencil;
+
+private:
+	Engine_Package *m_enginePackage;
+	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
 };
 
 #endif // GEOMETRY_BUFFER

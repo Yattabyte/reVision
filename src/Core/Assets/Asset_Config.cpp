@@ -26,14 +26,14 @@ void Asset_Config::Finalize()
 	finalized = true;
 }
 
-void Asset_Config::setValue(const int & cfg_key, const float & cfg_value)
+void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 {
 	// Try inserting the value by key in case the key doesn't exist.
 	configuration.insert(pair<int, float>(cfg_key, cfg_value));
 	configuration[cfg_key] = cfg_value;
 }
 
-float Asset_Config::getValue(const int & cfg_key)
+float Asset_Config::getValue(const unsigned int & cfg_key)
 {
 	if (cfg_key >= 0 && configuration.find(cfg_key) != configuration.end())
 		return configuration[cfg_key];
@@ -116,26 +116,6 @@ Shared_Asset_Config fetchDefaultAsset()
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Config>(new Asset_Config());
 		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
-		/*if (fileOnDisk(ABS_DIRECTORY_CONFIG("defaultConfig"))) { // Check if we have a default one on disk to load
-			bool complete = false;
-			initialize_Config(cast_asset, ABS_DIRECTORY_CONFIG("defaultConfig"), &complete);
-			cast_asset->Finalize();
-			cast_asset->filename = "config";
-			cast_asset->saveConfig();
-			if (complete && cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
-				return cast_asset;
-		}
-		// We didn't load a default asset from disk
-		MSG::Statement("Regenerating default configuration...");
-		/* HARD CODE DEFAULT VALUES HERE */
-		/*cast_asset->setValue(CFG_ENUM::C_WINDOW_WIDTH, 512);
-		cast_asset->setValue(CFG_ENUM::C_WINDOW_HEIGHT, 512);
-		cast_asset->setValue(CFG_ENUM::C_TEXTURE_ANISOTROPY, 16);
-		// Save the default configurations to disk
-		cast_asset->filename = "defaultConfig";
-		cast_asset->saveConfig();
-		cast_asset->filename = "config";
-		cast_asset->saveConfig();*/
 		return cast_asset;
 	}
 	return dynamic_pointer_cast<Asset_Config>(default_asset);

@@ -20,6 +20,9 @@
 
 using namespace glm;
 
+class Engine_Package;
+class Callback_Container;
+
 class Lighting_Buffer
 {
 public:
@@ -28,7 +31,7 @@ public:
 	*************/
 
 	DT_ENGINE_API ~Lighting_Buffer();
-	DT_ENGINE_API Lighting_Buffer(const GLuint &m_depth_stencil);
+	DT_ENGINE_API Lighting_Buffer(Engine_Package *package, const GLuint &m_depth_stencil);
 
 
 	/************************
@@ -59,6 +62,10 @@ public:
 	GLuint m_fbo;
 	GLuint m_textures[LBUFFER_NUM_TEXTURES];
 	GLuint m_depth_stencil; // Donated by the geometry buffer
+
+private:
+	Engine_Package *m_enginePackage;
+	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
 };
 
 #endif // LIGHTING_BUFFER

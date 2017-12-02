@@ -17,12 +17,10 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(37) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(38) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
-#include "Utilities\Action_State.h"
-#include "Utilities\Engine_Package.h"
 #include <map>
 #include <shared_mutex>
 #include <thread>
@@ -30,7 +28,7 @@
 
 using namespace std;
 
-
+class Engine_Package;
 class GLFWwindow;
 class Camera;
 class System;
@@ -50,13 +48,13 @@ public:
 	void Update();
 	// Check if the engine should close
 	bool ShouldClose();
-
-	Camera *GetCamera() { return m_package.m_Camera; }
+	// Return the camera
+	Camera *GetCamera();
 
 private:
 	bool m_Initialized;	
 	float m_lastTime;	
-	Engine_Package m_package;
+	Engine_Package *m_package;
 	thread *m_UpdaterThread;
 	void Updater_Thread();
 };

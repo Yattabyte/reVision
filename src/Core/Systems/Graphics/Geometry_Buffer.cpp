@@ -1,22 +1,28 @@
-#include "Rendering\Scenes\PBR\Geometry_Buffer.h"
-#include "Systems\Config_Manager.h"
+#include "Systems\Graphics\Geometry_Buffer.h"
 #include "Systems\Message_Manager.h"
+#include "Utilities\Engine_Package.h"
 #include <algorithm>
 
-static float screen_width = 1.0f, screen_height = 1.0f;
-static vector<Geometry_Buffer*> gbuffers; // Exists so that we can have a single callback that will resize all the gbuffers at once
-
-static void WidthChangeCallback(const float &width) {
-	screen_width = width;
-	for each (auto *buffer in gbuffers)
-		buffer->Resize(vec2(screen_width, screen_height));
-}
-
-static void HeightChangeCallback(const float &height) {
-	screen_height = height;
-	for each (auto *buffer in gbuffers)
-		buffer->Resize(vec2(screen_width, screen_height));
-}
+class GB_WidthChangeCallback : public Callback_Container {
+public:
+	~GB_WidthChangeCallback() {};
+	GB_WidthChangeCallback(Geometry_Buffer *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback(const float &value) {
+		m_gBuffer->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
+	}
+private:
+	Geometry_Buffer *m_gBuffer;
+};
+class GB_HeightChangeCallback : public Callback_Container {
+public:
+	~GB_HeightChangeCallback() {};
+	GB_HeightChangeCallback(Geometry_Buffer *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback(const float &value) {
+		m_gBuffer->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
+	}
+private:
+	Geometry_Buffer *m_gBuffer;
+};
 
 static void AssignTextureProperties()
 {
@@ -27,14 +33,9 @@ static void AssignTextureProperties()
 }
 
 Geometry_Buffer::~Geometry_Buffer()
-{
-	// Remove THIS gbuffer from the static gbuffer list
-	gbuffers.erase(std::remove_if(begin(gbuffers), end(gbuffers), [this](const auto *stored_buffer) {
-		return (stored_buffer == this);
-	}), end(gbuffers));
-
-	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
-	CFG::removePreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
+{	
+	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 
 	// Destroy OpenGL objects
 	glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
@@ -42,15 +43,14 @@ Geometry_Buffer::~Geometry_Buffer()
 	glDeleteFramebuffers(1, &m_fbo);
 }
 
-Geometry_Buffer::Geometry_Buffer()
+Geometry_Buffer::Geometry_Buffer(Engine_Package *package) : m_enginePackage(package)
 {
-	// Add THIS gbuffer to the static gbuffer list
-	gbuffers.push_back(this);
-
-	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_WIDTH, WidthChangeCallback);
-	CFG::addPreferenceCallback(CFG_ENUM::C_WINDOW_HEIGHT, HeightChangeCallback);
-	screen_width = CFG::getPreference(CFG_ENUM::C_WINDOW_WIDTH);
-	screen_height = CFG::getPreference(CFG_ENUM::C_WINDOW_HEIGHT);
+	m_widthChangeCallback = new GB_WidthChangeCallback(this);
+	m_heightChangeCallback = new GB_HeightChangeCallback(this);
+	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+	const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+	const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
 
 	m_fbo = 0;
 	m_depth_stencil = 0;
@@ -126,12 +126,12 @@ void Geometry_Buffer::Resize(const vec2 &size)
 
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 	
 	// Depth-stencil buffer texture
 	glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screen_width, screen_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 
 	// restore default FBO
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

@@ -1,5 +1,4 @@
 #include "Systems\Shadowmap_Manager.h"
-#include "Systems\Config_Manager.h"
 #include "Systems\Message_Manager.h"
 #include <deque>
 #include <minmax.h>
@@ -52,12 +51,12 @@ static void QualityChangeCallback(const float &value)
 
 void Shadowmap_Manager::startup()
 {
-	CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_SIZE_REGULAR, SizeRegularChangeCallback);
-	CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_SIZE_LARGE, SizeLargeChangeCallback);
-	CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_QUALITY, QualityChangeCallback);
-	float size_regular = CFG::getPreference(CFG_ENUM::C_SHADOW_SIZE_REGULAR);
-	float size_large = CFG::getPreference(CFG_ENUM::C_SHADOW_SIZE_LARGE);
-	m_update_quality = CFG::getPreference(CFG_ENUM::C_SHADOW_QUALITY);
+	//CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_SIZE_REGULAR, SizeRegularChangeCallback);
+	//CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_SIZE_LARGE, SizeLargeChangeCallback);
+	//CFG::addPreferenceCallback(CFG_ENUM::C_SHADOW_QUALITY, QualityChangeCallback);
+	float size_regular = 1;// CFG::getPreference(CFG_ENUM::C_SHADOW_SIZE_REGULAR);
+	float size_large = 1;// CFG::getPreference(CFG_ENUM::C_SHADOW_SIZE_LARGE);
+	m_update_quality = 1;// CFG::getPreference(CFG_ENUM::C_SHADOW_QUALITY);
 	m_size[SHADOW_REGULAR] = vec2(max(1.0f, size_regular));
 	m_size[SHADOW_LARGE] = vec2(max(1.0f, size_large));
 	for (int x = 0; x < SHADOW_MAX; ++x) {
