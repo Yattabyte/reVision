@@ -21,6 +21,9 @@ class DT_ENGINE_API System
 public:
 	// All systems need to implement their own destructor
 	virtual ~System() {};
+	
+	// All systems can implement their own shutdown function
+	virtual void Shutdown() {};
 
 	// All systems can implement their own update function
 	virtual void Update(const float &deltaTime) {};

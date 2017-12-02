@@ -149,6 +149,9 @@ void dt_Engine::Shutdown()
 		if (m_UpdaterThread->joinable())
 			m_UpdaterThread->join();
 		delete m_UpdaterThread;
+		
+		for each (auto system in m_package->m_Systems)
+			system.second->Shutdown();
 
 		write_lock.unlock();
 		write_lock.release();

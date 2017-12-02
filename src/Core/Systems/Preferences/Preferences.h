@@ -25,6 +25,7 @@ public:
 	~System_Preferences();
 	System_Preferences(Engine_Package * package, const std::string &filename = "preferences");
 
+	void Shutdown();
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
 
