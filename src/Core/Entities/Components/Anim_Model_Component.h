@@ -67,6 +67,8 @@ protected:
 
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
 {
+public:
+	Anim_Model_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Anim_Model_Component(id, pid);
 	}

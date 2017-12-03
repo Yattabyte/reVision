@@ -19,8 +19,8 @@
 class DT_ENGINE_API PropCreator : public EntityCreator
 {
 public:
-	virtual Entity* Create(const ECShandle &id) {
-		Entity *entity = EntityCreator::Create(id);
+	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
+		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
 		entity->addComponent("Anim_Model");
 		return entity;
 	}

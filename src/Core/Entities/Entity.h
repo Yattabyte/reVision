@@ -15,15 +15,15 @@
 #endif
 #define GLEW_STATIC
 
-#include "Systems\ECS\ComponentFactory.h"
-#include "Systems\ECS\ECSmessage.h"
-#include "Systems\ECS\ECSdefines.h"
+#include "Systems\World\ECSmessage.h"
+#include "Systems\World\ECSdefines.h"
 #include "GL\glew.h"
 #include <map>
 #include <vector>
 
 
-
+class ECSmessanger;
+class Component_Factory;
 class EntityCreator;
 class Component;
 class DT_ENGINE_API Entity
@@ -37,17 +37,24 @@ public:
 protected:
 	virtual ~Entity();
 	Entity(const ECShandle &id) : m_ID(id) {};
-	friend class EntityCreator;
 	ECShandle m_ID;
 	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
+	ECSmessanger *m_ECSmessanger;
+	Component_Factory *m_componentFactory;
+	friend class EntityCreator;
 };
 
 class DT_ENGINE_API EntityCreator
 {
 public:
-	virtual Entity* Create(const ECShandle &id) { return new Entity(id); };
-	virtual void Destroy(Entity *entity) { delete entity; };
 	virtual ~EntityCreator(void) {};
+	virtual void Destroy(Entity *entity) { delete entity; };
+	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) { 
+		Entity *entity = new Entity(id);
+		entity->m_ECSmessanger = ecsMessanger;
+		entity->m_componentFactory = componentFactory;
+		return entity;
+	};
 };
 
 #endif // ENTITY

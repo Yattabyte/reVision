@@ -1,5 +1,4 @@
 #include "Systems\Visibility_Manager.h"
-#include "Systems\ECS\ComponentFactory.h"
 #include <algorithm>
 #include <windows.h> 
 

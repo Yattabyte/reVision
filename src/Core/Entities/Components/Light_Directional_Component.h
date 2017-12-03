@@ -51,7 +51,7 @@ struct LightBuffer
 };
 
 class Light_Directional_Creator;
-class Light_Directional_Component : protected Lighting_Component
+class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {
 public:
 
@@ -60,7 +60,7 @@ public:
 	*************/
 
 	// Logic for interpreting receiving messages
-	DT_ENGINE_API virtual void ReceiveMessage(const ECSmessage &message);
+	virtual void ReceiveMessage(const ECSmessage &message);
 
 
 	/**********************************
@@ -68,27 +68,29 @@ public:
 	**********************************/
 
 	// Direct lighting pass
-	DT_ENGINE_API virtual void directPass(const int &vertex_count);
+	virtual void directPass(const int &vertex_count);
 	// Indirect lighting pass
-	DT_ENGINE_API virtual void indirectPass(const int &vertex_count);
+	virtual void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	DT_ENGINE_API virtual void shadowPass(const Visibility_Token &vis_token) const;
+	virtual void shadowPass(const Visibility_Token &vis_token) const;
 	// Returns whether or not this light is visible
-	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix);
+	virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
-	DT_ENGINE_API void Update();
+	void Update();
 
 
 protected:
-	DT_ENGINE_API ~Light_Directional_Component();
-	DT_ENGINE_API Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
-	friend class Light_Directional_Creator;
+	~Light_Directional_Component();
+	Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
 	GLuint m_uboID;
 	LightBuffer m_uboData;
+	friend class Light_Directional_Creator;
 };
 
 class DT_ENGINE_API Light_Directional_Creator : public ComponentCreator
 {
+public:
+	Light_Directional_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
 		return new Light_Directional_Component(id, pid);
 	}

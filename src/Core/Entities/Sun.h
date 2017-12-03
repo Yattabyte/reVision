@@ -16,11 +16,11 @@
 
 #include "Entities\Entity.h"
 
-class SunCreator : public EntityCreator
+class DT_ENGINE_API SunCreator : public EntityCreator
 {
 public:
-	DT_ENGINE_API virtual Entity* Create(const ECShandle &id) {
-		Entity *entity = EntityCreator::Create(id);
+	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
+		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
 		entity->addComponent("Light_Directional");
 		return entity;
 	}

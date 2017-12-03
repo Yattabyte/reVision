@@ -1,6 +1,6 @@
 #include "Entities\Components\Light_Directional_Component.h"
-#include "Systems\ECS\ECSmessage.h"
-#include "Systems\ECS\ECSmessages.h"
+#include "Systems\World\ECSmessage.h"
+#include "Systems\World\ECSmessages.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
 

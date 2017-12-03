@@ -14,9 +14,10 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\ECS\ECSmessage.h"
+#include "Systems\World\ECSmessage.h"
 #include <utility>
 
+class ECSmessanger;
 class ComponentCreator;
 class DT_ENGINE_API Component
 {
@@ -32,15 +33,18 @@ protected:
 	virtual ~Component() {};
 	Component(const ECShandle &id, const ECShandle &pid) : m_ID(id), m_parentID(pid) {};
 	ECShandle m_ID, m_parentID;
+	ECSmessanger *m_ECSmessanger;
 	friend class ComponentCreator;
 };
 
 class DT_ENGINE_API ComponentCreator
 {
 public:
+	ComponentCreator(ECSmessanger *ecsMessanger) : m_ECSmessanger(ecsMessanger) {};
+	virtual ~ComponentCreator(void) {};
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid) { return new Component(id, pid); };
 	void Destroy(Component *component) { delete component; };
-	virtual ~ComponentCreator(void) {};
+	ECSmessanger *m_ECSmessanger;
 };
 
 #endif // COMPONENT

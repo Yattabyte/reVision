@@ -18,8 +18,9 @@
 
 using namespace std;
 
+class Component_Factory;
 namespace Lighting_Manager {
-	DT_ENGINE_API void CalcVisibility(Camera &camera);
+	DT_ENGINE_API void CalcVisibility(Camera &camera, Component_Factory *componentFactory);
 }
 
 #endif // LIGHTING_MANAGER

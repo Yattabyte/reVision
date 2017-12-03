@@ -10,6 +10,7 @@
 #include "Systems\Visibility.h"
 #include "Systems\Logic\Logic.h"
 #include "Systems\Preferences\Preferences.h"
+#include "Systems\World\World.h"
 
 
 // To replace with abstract systems
@@ -17,7 +18,6 @@
 #include "Systems\Asset_Manager.h"
 #include "Systems\Material_Manager.h"
 #include "Systems\Shadowmap_Manager.h"
-#include "Systems\World_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -116,6 +116,7 @@ bool dt_Engine::Initialize()
 		m_package->m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(m_package)));
 		m_package->m_Systems.insert(pair<const char*, System*>("Logic", new System_Logic(m_package)));
 		m_package->m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(m_package)));
+		m_package->m_Systems.insert(pair<const char*, System*>("World", new System_World(m_package)));
 
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		const float window_width = m_package->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
@@ -134,7 +135,6 @@ bool dt_Engine::Initialize()
 
 		Material_Manager::startup();
 		Shadowmap_Manager::startup();
-		World_Manager::startup();
 		m_Initialized = true;
 	}
 	return m_Initialized;

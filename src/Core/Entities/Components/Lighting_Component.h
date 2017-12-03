@@ -20,7 +20,7 @@
 
 using namespace glm;
 
-class Lighting_Component : protected Component
+class DT_ENGINE_API Lighting_Component : protected Component
 {
 public:
 
@@ -29,18 +29,18 @@ public:
 	*************************/
 
 	// Direct lighting pass
-	DT_ENGINE_API virtual void directPass(const int &vertex_count) {};
+	virtual void directPass(const int &vertex_count) {};
 	// Indirect lighting pass
-	DT_ENGINE_API virtual void indirectPass(const int &vertex_count) {};
+	virtual void indirectPass(const int &vertex_count) {};
 	// Shadow lighting pass
-	DT_ENGINE_API virtual void shadowPass(const Visibility_Token &vis_token) const {};
+	virtual void shadowPass(const Visibility_Token &vis_token) const {};
 	// Returns whether or not this light is visible
-	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
+	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 		
 
 protected:
-	DT_ENGINE_API ~Lighting_Component() {};
-	DT_ENGINE_API Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
+	~Lighting_Component() {};
+	Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // LIGHTING_COMPONENT

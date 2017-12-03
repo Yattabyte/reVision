@@ -14,7 +14,7 @@
 #endif
 
 #include "Entities\Components\Component.h"
-#include "Systems\ECS\ECSdefines.h"
+#include "Systems\World\ECSdefines.h"
 #include <map>
 #include <vector>
 

@@ -1,17 +1,27 @@
-#include "Systems\ECS\ECSmessanger.h"
-#include "Systems\ECS\EntityFactory.h"
-#include "Systems\ECS\ComponentFactory.h"
+#include "Systems\World\ECSmessanger.h"
+#include "Systems\World\Entity_Factory.h"
+#include "Systems\World\Component_Factory.h"
+
+ECSmessanger::~ECSmessanger()
+{
+}
+
+ECSmessanger::ECSmessanger(Entity_Factory * entityFactory, Component_Factory * componentFactory) : 
+	m_entityFactory(entityFactory), 
+	m_componentFactory(componentFactory)
+{
+}
 
 void ECSmessanger::SendMessage_ToEntity(const ECSmessage & message, const ECShandle & target)
 {
-	auto entity = EntityFactory::GetEntity(target);
+	auto entity = m_entityFactory->GetEntity(target);
 	if (entity == nullptr) return;
 	entity->ReceiveMessage(message);
 }
 
 void ECSmessanger::SendMessage_ToComponent(const ECSmessage & message, const ECShandle & target)
 {
-	auto component = ComponentFactory::GetComponent(target);
+	auto component = m_componentFactory->GetComponent(target);
 	if (component == nullptr) return;
 	component->ReceiveMessage(message);
 }

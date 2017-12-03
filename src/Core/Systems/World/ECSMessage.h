@@ -15,7 +15,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\ECS\ECSdefines.h"
+#include "Systems\World\ECSdefines.h"
 #include <stdio.h>
 #include <string>
 #include <utility>

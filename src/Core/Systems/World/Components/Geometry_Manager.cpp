@@ -1,10 +1,10 @@
-#include "Systems\ECS\Components\Geometry_Manager.h"
-#include "Systems\ECS\ComponentFactory.h"
+#include "Systems\World\Components\Geometry_Manager.h"
+#include "Systems\World\Component_Factory.h"
 #include "Entities\Components\Geometry_Component.h"
 
 
 
-void Geometry_Manager::CalcVisibility(Camera &camera)
+void Geometry_Manager::CalcVisibility(Camera &camera, Component_Factory *componentFactory)
 {
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
 	Visibility_Token & vis_token = camera.GetVisibilityToken();
@@ -14,7 +14,7 @@ void Geometry_Manager::CalcVisibility(Camera &camera)
 	vector<char*> types = { "Anim_Model" };
 
 	for each (auto type in types) {
-		const auto components = *((vector<Geometry_Component*>*)(&ComponentFactory::GetComponentsByType(type)));
+		const auto components = *((vector<Geometry_Component*>*)(&componentFactory->GetComponentsByType(type)));
 
 		vector<Component*> visible_components;
 

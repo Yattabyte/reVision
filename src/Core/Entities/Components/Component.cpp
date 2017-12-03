@@ -1,11 +1,11 @@
 #include "Entities\Components\Component.h"
-#include "Systems\ECS\ECSmessanger.h"
-#include "Systems\ECS\ECSmessage.h"
+#include "Systems\World\ECSmessanger.h"
+#include "Systems\World\ECSmessage.h"
 
 void Component::SendMessage(const ECSmessage &message)
 {
 	// Forward Message to parent
-	ECSmessanger::SendMessage_ToEntity(message, m_parentID);
+	m_ECSmessanger->SendMessage_ToEntity(message, m_parentID);
 }
 
 void Component::ReceiveMessage(const ECSmessage &message)

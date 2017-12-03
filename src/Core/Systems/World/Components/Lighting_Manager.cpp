@@ -1,10 +1,10 @@
-#include "Systems\ECS\Components\Lighting_Manager.h"
-#include "Systems\ECS\ComponentFactory.h"
+#include "Systems\World\Components\Lighting_Manager.h"
+#include "Systems\World\Component_Factory.h"
 #include "Entities\Components\Lighting_Component.h"
 
 
 
-void Lighting_Manager::CalcVisibility(Camera &camera)
+void Lighting_Manager::CalcVisibility(Camera &camera, Component_Factory *componentFactory)
 {
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
 	Visibility_Token & vis_token = camera.GetVisibilityToken();
@@ -14,7 +14,7 @@ void Lighting_Manager::CalcVisibility(Camera &camera)
 	vector<char*> types = { "Light_Directional" };
 
 	for each (auto type in types) {
-		const auto components = *((vector<Lighting_Component*>*)(&ComponentFactory::GetComponentsByType(type)));
+		const auto components = *((vector<Lighting_Component*>*)(&componentFactory->GetComponentsByType(type)));
 
 		vector<Component*> visible_components;
 

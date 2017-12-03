@@ -16,9 +16,10 @@
 #include "Rendering\Visibility_Token.h"
 #include "Rendering\Camera.h"
 
+class Component_Factory;
 namespace Geometry_Manager {
 
-	DT_ENGINE_API void CalcVisibility(Camera &camera);
+	DT_ENGINE_API void CalcVisibility(Camera &camera, Component_Factory *componentFactory);
 }
 
 #endif
