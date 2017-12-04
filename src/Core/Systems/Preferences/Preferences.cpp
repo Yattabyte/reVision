@@ -5,6 +5,7 @@
 
 System_Preferences::~System_Preferences()
 {
+	m_enginePackage->m_Preference_State.Save();
 }
 
 System_Preferences::System_Preferences(const std::string & filename) : m_fileName(filename)
@@ -20,11 +21,6 @@ void System_Preferences::Initialize(Engine_Package * enginePackage)
 		m_enginePackage->m_Camera.Update();
 		m_Initialized = true;
 	}
-}
-
-void System_Preferences::Shutdown()
-{
-	m_enginePackage->m_Preference_State.Save();
 }
 
 void System_Preferences::Update(const float & deltaTime)

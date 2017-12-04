@@ -25,11 +25,9 @@ public:
 
 	// Create da constructor
 	System() { m_Initialized = false; }
-	
-	virtual void Initialize(Engine_Package * enginePackage) {}
 
-	// All systems can implement their own shutdown function
-	virtual void Shutdown() {};
+	// All systems can implement their own initialization function
+	virtual void Initialize(Engine_Package * enginePackage) {}
 
 	// All systems can implement their own update function
 	virtual void Update(const float &deltaTime) {};

@@ -141,7 +141,8 @@ void dt_Engine::Shutdown()
 		delete m_UpdaterThread;
 		
 		for each (auto system in m_package->m_Systems)
-			system.second->Shutdown();
+			delete system.second;
+		m_package->m_Systems.clear();
 
 		write_lock.unlock();
 		write_lock.release();
