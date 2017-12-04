@@ -19,6 +19,7 @@
 
 class ECSmessanger;
 class ComponentCreator;
+class Engine_Package;
 class DT_ENGINE_API Component
 {
 public:
@@ -42,7 +43,7 @@ class DT_ENGINE_API ComponentCreator
 public:
 	ComponentCreator(ECSmessanger *ecsMessanger) : m_ECSmessanger(ecsMessanger) {};
 	virtual ~ComponentCreator(void) {};
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid) { return new Component(id, pid); };
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) { return new Component(id, pid); };
 	void Destroy(Component *component) { delete component; };
 	ECSmessanger *m_ECSmessanger;
 };

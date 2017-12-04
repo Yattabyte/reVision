@@ -153,22 +153,72 @@ void System_Shadowmap::Update_Threaded(const float & deltaTime)
 
 void System_Shadowmap::RegisterShadowCaster(const int & shadow_type, int & array_spot)
 {
+	if (m_freed_shadow_spots[shadow_type].size()) {
+		array_spot = m_freed_shadow_spots[shadow_type].front();
+		m_freed_shadow_spots[shadow_type].pop_front();
+	}
+	else {
+		array_spot = m_shadow_count[shadow_type];
+		m_shadow_count[shadow_type]++;
+	}
+
+	// Adjust the layer count every time a new light is added (preserve memory rather than preallocating memory for shadows that don't exist
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_depth[shadow_type]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldpos[shadow_type]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldnormal[shadow_type]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_radiantflux[shadow_type]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+
 }
 
 void System_Shadowmap::UnRegisterShadowCaster(const int & shadow_type, int & array_spot)
 {
+	bool found = false;
+	for (int x = 0, size = m_freed_shadow_spots[shadow_type].size(); x < size; ++x)
+		if (m_freed_shadow_spots[shadow_type][x] == array_spot)
+			found = true;
+	if (!found)
+		m_freed_shadow_spots[shadow_type].push_back(array_spot);
 }
 
 void System_Shadowmap::BindForWriting(const int & ShadowSpot)
 {
+	glViewport(0, 0, m_size[ShadowSpot].x, m_size[ShadowSpot].y);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadow_fbo[ShadowSpot]);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void System_Shadowmap::BindForReading(const int & ShadowSpot, const GLuint & ShaderTextureUnit)
 {
+	glActiveTexture(GL_TEXTURE0 + ShaderTextureUnit);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_depth[ShadowSpot]);
 }
 
 void System_Shadowmap::SetSize(const unsigned int & spot, const float & size)
 {
+	m_size[spot] = vec2(max(size, 1));
+	glBindFramebuffer(GL_FRAMEBUFFER, m_shadow_fbo[spot]);
+
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_depth[spot]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size[spot].x, m_size[spot].y, m_shadow_count[spot], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, m_shadow_depth[spot], 0);
+
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldpos[spot]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[spot].x, m_size[spot].y, m_shadow_count[spot], 0, GL_RGB, GL_FLOAT, NULL);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_shadow_worldpos[spot], 0);
+
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldnormal[spot]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[spot].x, m_size[spot].y, m_shadow_count[spot], 0, GL_RGB, GL_FLOAT, NULL);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, m_shadow_worldnormal[spot], 0);
+
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_radiantflux[spot]);
+	glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[spot].x, m_size[spot].y, m_shadow_count[spot], 0, GL_RGB, GL_FLOAT, NULL);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, m_shadow_radiantflux[spot], 0);
+
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void System_Shadowmap::SetUpdateQuality(const float & quality)

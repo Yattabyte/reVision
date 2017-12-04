@@ -50,6 +50,7 @@ struct LightBuffer
 	}
 };
 
+class System_Shadowmap;
 class Light_Directional_Creator;
 class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {
@@ -81,9 +82,11 @@ public:
 
 protected:
 	~Light_Directional_Component();
-	Light_Directional_Component(const ECShandle &id, const ECShandle &pid);
+	Light_Directional_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	GLuint m_uboID;
 	LightBuffer m_uboData;
+	float m_cascadeEnd[5];
+	System_Shadowmap *m_Shadowmapper;
 	friend class Light_Directional_Creator;
 };
 
@@ -91,8 +94,8 @@ class DT_ENGINE_API Light_Directional_Creator : public ComponentCreator
 {
 public:
 	Light_Directional_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
-		return new Light_Directional_Component(id, pid);
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
+		return new Light_Directional_Component(id, pid, enginePackage);
 	}
 };
 

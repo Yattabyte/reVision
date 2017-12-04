@@ -8,10 +8,22 @@ Component_Factory::~Component_Factory()
 {
 }
 
-Component_Factory::Component_Factory(ECSmessanger *ecsMessanger) : m_ECSmessanger(ecsMessanger)
+Component_Factory::Component_Factory() 
 {
-	m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessanger)));
-	m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessanger)));
+	m_Initialized = false;
+}
+
+void Component_Factory::Initialize(Engine_Package *enginePackage, ECSmessanger *ecsMessanger)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage;
+		m_ECSmessanger = ecsMessanger;
+
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessanger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessanger)));
+
+		m_Initialized = true;
+	}
 }
 
 ECShandle Component_Factory::CreateComponent(char * type, const ECShandle & parent_ID)
@@ -32,7 +44,7 @@ ECShandle Component_Factory::CreateComponent(char * type, const ECShandle & pare
 		m_levelComponents[type].push_back(nullptr);
 	}
 
-	component = m_creatorMap[type]->Create(ECShandle(type, spot), parent_ID);
+	component = m_creatorMap[type]->Create(ECShandle(type, spot), parent_ID, m_enginePackage);
 	m_levelComponents[type][spot] = component;
 	return ECShandle(type, spot);
 }

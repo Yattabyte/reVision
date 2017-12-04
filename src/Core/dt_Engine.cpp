@@ -9,7 +9,6 @@
 #include "Systems\Message_Manager.h"
 #include "Systems\Asset_Manager.h"
 #include "Systems\Material_Manager.h"
-#include "Systems\Shadowmap_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -124,7 +123,6 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		m_UpdaterThread->detach();
 
 		Material_Manager::startup();
-		Shadowmap_Manager::startup();
 		m_Initialized = true;
 	}
 	return m_Initialized;

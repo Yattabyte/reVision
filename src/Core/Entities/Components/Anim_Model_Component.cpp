@@ -9,7 +9,7 @@ Anim_Model_Component::~Anim_Model_Component()
 	glDeleteBuffers(1, &m_uboID);
 }
 
-Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid) : Geometry_Component(id, pid)
+Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) : Geometry_Component(id, pid)
 {
 	m_uboID = 0;
 	Asset_Manager::load_asset(m_model, "");

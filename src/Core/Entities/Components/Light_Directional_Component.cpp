@@ -1,21 +1,25 @@
 #include "Entities\Components\Light_Directional_Component.h"
+#include "Utilities\Engine_Package.h"
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSmessages.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
+#include "Systems\Shadows\Shadowmap.h"
 
 Light_Directional_Component::~Light_Directional_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 }
 
-Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid) : Lighting_Component(id, pid)
+Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, Engine_Package *enginePackage) : Lighting_Component(id, pid)
 {
 	m_uboID = 0;
 	glGenBuffers(1, &m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+	m_Shadowmapper = (enginePackage->FindSubSystem("Shadows") ? enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
 }
 
 void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)

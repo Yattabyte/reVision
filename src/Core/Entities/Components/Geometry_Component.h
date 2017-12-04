@@ -19,7 +19,7 @@
 
 using namespace glm;
 
-class Geometry_Component : protected Component
+class DT_ENGINE_API Geometry_Component : protected Component
 {
 public:
 
@@ -28,14 +28,14 @@ public:
 	*************************/
 
 	// Renders the model to the current framebuffer
-	DT_ENGINE_API virtual void Draw() {};
+	virtual void Draw() {};
 	// Returns whether or not this model is visible
-	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
+	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 
 
 protected:
-	DT_ENGINE_API ~Geometry_Component() {};
-	DT_ENGINE_API Geometry_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
+	~Geometry_Component() {};
+	Geometry_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
 };
 
 #endif // GEOMETRY_COMPONENT

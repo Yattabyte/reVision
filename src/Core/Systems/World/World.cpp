@@ -16,8 +16,7 @@ System_World::~System_World()
 
 System_World::System_World() : 
 	m_ECSmessanger(&m_entityFactory, &m_componentFactory),
-	m_entityFactory(&m_ECSmessanger, &m_componentFactory),
-	m_componentFactory(&m_ECSmessanger)
+	m_entityFactory(&m_ECSmessanger, &m_componentFactory)
 {
 	
 }
@@ -26,6 +25,7 @@ void System_World::Initialize(Engine_Package * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
+		m_componentFactory.Initialize(m_enginePackage, &m_ECSmessanger);
 
 		auto prop1 = m_entityFactory.CreateEntity("Prop");
 		auto prop2 = m_entityFactory.CreateEntity("Prop");

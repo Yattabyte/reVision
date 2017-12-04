@@ -32,7 +32,7 @@ struct Transform_Buffer {
 };
 
 class Anim_Model_Creator;
-class Anim_Model_Component : protected Geometry_Component
+class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
 {
 public:
 	/*************
@@ -40,7 +40,7 @@ public:
 	*************/
 
 	// Logic for interpreting receiving messages
-	DT_ENGINE_API virtual void ReceiveMessage(const ECSmessage &message);
+	virtual void ReceiveMessage(const ECSmessage &message);
 
 
 	/***************************
@@ -48,16 +48,16 @@ public:
 	***************************/
 
 	// Renders the model to the current framebuffer
-	DT_ENGINE_API virtual void Draw();
+	virtual void Draw();
 	// Returns whether or not this model is visible
-	DT_ENGINE_API virtual bool IsVisible(const mat4 & PVMatrix);
+	virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
-	DT_ENGINE_API void Update();
+	void Update();
 
 
 protected:
-	DT_ENGINE_API ~Anim_Model_Component();
-	DT_ENGINE_API Anim_Model_Component(const ECShandle &id, const ECShandle &pid);
+	~Anim_Model_Component();
+	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	friend class Anim_Model_Creator;
 	
 	GLuint m_uboID;
@@ -69,8 +69,8 @@ class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
 {
 public:
 	Anim_Model_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid) {
-		return new Anim_Model_Component(id, pid);
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
+		return new Anim_Model_Component(id, pid, enginePackage);
 	}
 };
 

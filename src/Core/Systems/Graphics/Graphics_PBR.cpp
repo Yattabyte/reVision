@@ -1,7 +1,6 @@
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Utilities\Engine_Package.h"
 #include "Rendering\Camera.h"
-#include "Systems\Shadowmap_Manager.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
 
@@ -55,7 +54,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
 
-	Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
+	//Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
 
 	/*m_shaderGeometryShadow->Bind();
 	if (vis_token.visible_lights.size())

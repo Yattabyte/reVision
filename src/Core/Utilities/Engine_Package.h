@@ -12,12 +12,12 @@ class System;
 class Engine_Package 
 {
 public:
-	shared_mutex					m_EngineMutex;
-	GLFWwindow					*	m_Context_Rendering;
-	Camera							m_Camera;
-	Action_State					m_Action_State;
-	Preference_State				m_Preference_State;
-	map<const char*, System*>		m_Systems;	
+	shared_mutex							m_EngineMutex;
+	GLFWwindow							*	m_Context_Rendering;
+	Camera									m_Camera;
+	Action_State							m_Action_State;
+	Preference_State						m_Preference_State;
+	map<const char*, System*, cmp_str>		m_Systems;	
 
 	Engine_Package() {
 		m_Context_Rendering = nullptr;
