@@ -23,14 +23,15 @@ class DT_ENGINE_API System_Preferences : public System
 {
 public: 
 	~System_Preferences();
-	System_Preferences(Engine_Package * package, const std::string &filename = "preferences");
+	System_Preferences(const std::string &filename = "preferences");
+	void Initialize(Engine_Package * package);
 
 	void Shutdown();
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
 
 private:
-	Engine_Package *m_enginePackage;
+	std::string m_fileName;
 };
 
 #endif // SYSTEM_PREFERENCES

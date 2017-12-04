@@ -26,45 +26,58 @@ private:
 
 Lighting_Buffer::~Lighting_Buffer()
 {
-	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+	if (m_Initialized) {
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		delete m_widthChangeCallback;
+		delete m_heightChangeCallback;
 
-	// Destroy OpenGL objects
-	glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
-	glDeleteFramebuffers(1, &m_fbo);
+		// Destroy OpenGL objects
+		glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
+		glDeleteFramebuffers(1, &m_fbo);
+	}
 }
 
-Lighting_Buffer::Lighting_Buffer(Engine_Package *package, const GLuint &m_depth_stencil) : m_enginePackage(package)
+Lighting_Buffer::Lighting_Buffer(const GLuint &depthStencil)
 {
-	m_widthChangeCallback = new LB_WidthChangeCallback(this);
-	m_heightChangeCallback = new LB_HeightChangeCallback(this);
-	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-	const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-	const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
-
-	this->m_depth_stencil = m_depth_stencil;
+	m_Initialized = false;
+	m_depth_stencil = depthStencil;
 	m_fbo = 0;
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
+}
 
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glGenTextures(LBUFFER_NUM_TEXTURES, m_textures);
-	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
-		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
-	}
+void Lighting_Buffer::Initialize(Engine_Package * enginePackage)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage;
+		m_widthChangeCallback = new LB_WidthChangeCallback(this);
+		m_heightChangeCallback = new LB_HeightChangeCallback(this);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
 
-	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG::Error(FBO_INCOMPLETE, "Lighting Buffer", errorString);
+		glGenFramebuffers(1, &m_fbo);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glGenTextures(LBUFFER_NUM_TEXTURES, m_textures);
+		for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
+			glBindTexture(GL_TEXTURE_2D, m_textures[x]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
+		}
+
+		GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
+			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
+			MSG::Error(FBO_INCOMPLETE, "Lighting Buffer", errorString);
+			return;
+		}
+		m_Initialized = true;
 	}
 }
 

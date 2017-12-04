@@ -30,19 +30,18 @@ class DT_ENGINE_API System_Graphics_PBR : public System
 {
 public: 
 	~System_Graphics_PBR();
-	System_Graphics_PBR(Engine_Package *package);
+	System_Graphics_PBR();
+	void Initialize(Engine_Package * enginePackage);
 
 	// Render a frame
 	void Update(const float &deltaTime);
-
-
+	
 private:
 	void RegenerationPass(const Visibility_Token &vis_token);
 	void GeometryPass(const Visibility_Token &vis_token);
 	void LightingPass(const Visibility_Token &vis_token);
 	void FinalPass(const Visibility_Token &vis_token);
 
-	Engine_Package *m_enginePackage;
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting;

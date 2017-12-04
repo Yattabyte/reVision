@@ -8,10 +8,17 @@ System_Logic::~System_Logic()
 {
 }
 
-System_Logic::System_Logic(Engine_Package *package)
-	: m_enginePackage(package)
+System_Logic::System_Logic()	
 {
 	m_rotation = vec3(0.0f);
+}
+
+void System_Logic::Initialize(Engine_Package * enginePackage)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage; 
+		m_Initialized = true;
+	}
 }
 
 // Noclip type camera

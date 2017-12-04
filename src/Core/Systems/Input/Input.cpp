@@ -9,10 +9,16 @@ System_Input::~System_Input()
 {
 }
 
-System_Input::System_Input(Engine_Package *package, const System_Input_Binding & binds)
-	:	m_enginePackage(package),
-		m_binds(binds)
+System_Input::System_Input(const System_Input_Binding & binds) : m_binds(binds)
 {
+}
+
+void System_Input::Initialize(Engine_Package * enginePackage)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage; 
+		m_Initialized = true;
+	}
 }
 
 void System_Input::Update(const float & deltaTime)

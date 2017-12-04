@@ -5,14 +5,6 @@
 
 #include "Utilities\Engine_Package.h"
 
-#include "Systems\Input\Input.h"
-#include "Systems\Graphics\Graphics_PBR.h"
-#include "Systems\Visibility.h"
-#include "Systems\Logic\Logic.h"
-#include "Systems\Preferences\Preferences.h"
-#include "Systems\World\World.h"
-
-
 // To replace with abstract systems
 #include "Systems\Message_Manager.h"
 #include "Systems\Asset_Manager.h"
@@ -100,7 +92,7 @@ bool Initialize_Sharing()
 	return m_Initialized_Sharing;
 }
 
-bool dt_Engine::Initialize()
+bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 
@@ -111,12 +103,10 @@ bool dt_Engine::Initialize()
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 
-		m_package->m_Systems.insert(pair<const char*, System*>("Preferences", new System_Preferences(m_package, "preferences")));
-		m_package->m_Systems.insert(pair<const char*, System*>("Input", new System_Input(m_package)));
-		m_package->m_Systems.insert(pair<const char*, System*>("Visibility", new System_Visibility(m_package)));
-		m_package->m_Systems.insert(pair<const char*, System*>("Logic", new System_Logic(m_package)));
-		m_package->m_Systems.insert(pair<const char*, System*>("Graphics", new System_Graphics_PBR(m_package)));
-		m_package->m_Systems.insert(pair<const char*, System*>("World", new System_World(m_package)));
+		for each (auto &pair in systems) {
+			pair.second->Initialize(m_package);
+			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
+		}
 
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		const float window_width = m_package->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);

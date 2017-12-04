@@ -41,7 +41,7 @@ public:
 	// Zero-initialize the engine
 	dt_Engine();
 	// Initialize the engine
-	bool Initialize();
+	bool Initialize(const vector<pair<const char*, System*>> &systems);
 	// Shutdown the engine
 	void Shutdown();
 	// Ticks the engine's overall simulation by a frame

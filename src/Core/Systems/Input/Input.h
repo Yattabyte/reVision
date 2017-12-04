@@ -27,7 +27,8 @@ class DT_ENGINE_API System_Input : public System
 {
 public: 
 	~System_Input();
-	System_Input(Engine_Package *package, const System_Input_Binding &bind_interface = System_Input_Binding());
+	System_Input(const System_Input_Binding &bind_interface = System_Input_Binding());
+	void Initialize(Engine_Package * enginePackage);
 
 	// Check the status of peripheral input devices
 	void Update(const float &deltaTime);
@@ -42,7 +43,6 @@ public:
 	void Callback_Scroll(GLFWwindow * window, double xoffset, double yoffset);
 
 private:
-	Engine_Package *m_enginePackage;
 	System_Input_Binding m_binds; 
 };
 

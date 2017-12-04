@@ -16,12 +16,18 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
+class Engine_Package;
 class DT_ENGINE_API System
 {
 public:
 	// All systems need to implement their own destructor
 	virtual ~System() {};
+
+	// Create da constructor
+	System() { m_Initialized = false; }
 	
+	virtual void Initialize(Engine_Package * enginePackage) {}
+
 	// All systems can implement their own shutdown function
 	virtual void Shutdown() {};
 
@@ -30,6 +36,10 @@ public:
 
 	// An optional secondary threaded update function
 	virtual void Update_Threaded(const float &deltaTime) {};
+
+protected:
+	bool m_Initialized;
+	Engine_Package *m_enginePackage;
 };
 
 #endif // SYSTEM_INTERFACE

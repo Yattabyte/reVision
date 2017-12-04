@@ -34,54 +34,67 @@ static void AssignTextureProperties()
 
 Geometry_Buffer::~Geometry_Buffer()
 {	
-	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+	if (m_Initialized) {
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		delete m_widthChangeCallback;
+		delete m_heightChangeCallback;
 
-	// Destroy OpenGL objects
-	glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
-	glDeleteTextures(1, &m_depth_stencil);
-	glDeleteFramebuffers(1, &m_fbo);
+		// Destroy OpenGL objects
+		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
+		glDeleteTextures(1, &m_depth_stencil);
+		glDeleteFramebuffers(1, &m_fbo);
+	}
 }
 
-Geometry_Buffer::Geometry_Buffer(Engine_Package *package) : m_enginePackage(package)
-{
-	m_widthChangeCallback = new GB_WidthChangeCallback(this);
-	m_heightChangeCallback = new GB_HeightChangeCallback(this);
-	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-	const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-	const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
-
+Geometry_Buffer::Geometry_Buffer()
+{	
+	m_Initialized = false;
 	m_fbo = 0;
 	m_depth_stencil = 0;
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
+}
 
-	// Create the FBO
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+void Geometry_Buffer::Initialize(Engine_Package * enginePackage)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage;
+		m_widthChangeCallback = new GB_WidthChangeCallback(this);
+		m_heightChangeCallback = new GB_HeightChangeCallback(this);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+		
+		// Create the FBO
+		glGenFramebuffers(1, &m_fbo);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
-	// Create the gbuffer textures
-	glGenTextures(GBUFFER_NUM_TEXTURES, m_textures);
-	glGenTextures(1, &m_depth_stencil);
+		// Create the gbuffer textures
+		glGenTextures(GBUFFER_NUM_TEXTURES, m_textures);
+		glGenTextures(1, &m_depth_stencil);
 
-	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
-		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
+			glBindTexture(GL_TEXTURE_2D, m_textures[x]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			AssignTextureProperties();
+			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
+		}
+
+		// Depth-stencil buffer texture
+		glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screen_width, screen_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 		AssignTextureProperties();
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
-	}
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
 
-	// Depth-stencil buffer texture
-	glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screen_width, screen_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-	AssignTextureProperties();
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
-
-	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG::Error(FBO_INCOMPLETE, "Geometry Buffer", errorString);
+		GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
+			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
+			MSG::Error(FBO_INCOMPLETE, "Geometry Buffer", errorString);
+			return;
+		}
+		m_Initialized = true;
 	}
 }
 

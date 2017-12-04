@@ -1,12 +1,12 @@
 #include "Rendering\Camera.h"
-#include "Systems\Visibility_Manager.h"
+//#include "Systems\Visibility_Manager.h"
 #include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
 Camera::~Camera()
 {
 	glDeleteBuffers(1, &ssboCameraID);
-	Visibility_Manager::UnRegisterViewer(this);
+	//Visibility_Manager::UnRegisterViewer(this);
 }
 
 Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, const float &far_plane, const float &horizontal_FOV)
@@ -26,7 +26,7 @@ Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	Update();
 
-	Visibility_Manager::RegisterViewer(this);
+	//Visibility_Manager::RegisterViewer(this);
 }
 
 Camera::Camera(Camera const & other)
@@ -42,7 +42,7 @@ Camera::Camera(Camera const & other)
 	m_frustum = Frustum(other.getFrustum());
 	Update();
 
-	Visibility_Manager::RegisterViewer(this);
+	//Visibility_Manager::RegisterViewer(this);
 }
 
 void Camera::operator=(Camera const & other)

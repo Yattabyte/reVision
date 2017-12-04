@@ -25,13 +25,13 @@ class DT_ENGINE_API System_Logic : public System
 {
 public: 
 	~System_Logic();
-	System_Logic(Engine_Package * package);
+	System_Logic();
+	void Initialize(Engine_Package *enginePackage);
 
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
 
 private:
-	Engine_Package *m_enginePackage;
 	Transform m_transform;
 	vec3 m_rotation;
 };

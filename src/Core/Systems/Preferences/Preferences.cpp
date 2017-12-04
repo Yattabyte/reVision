@@ -7,11 +7,19 @@ System_Preferences::~System_Preferences()
 {
 }
 
-System_Preferences::System_Preferences(Engine_Package * package, const std::string & filename) : m_enginePackage(package)
-{
-	m_enginePackage->m_Preference_State.LoadFile(filename);
-	m_enginePackage->m_Camera.setDimensions(vec2(m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
-	m_enginePackage->m_Camera.Update();
+System_Preferences::System_Preferences(const std::string & filename) : m_fileName(filename)
+{	
+}
+
+void System_Preferences::Initialize(Engine_Package * enginePackage)
+{ 
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage;
+		m_enginePackage->m_Preference_State.LoadFile(m_fileName);
+		m_enginePackage->m_Camera.setDimensions(vec2(m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
+		m_enginePackage->m_Camera.Update();
+		m_Initialized = true;
+	}
 }
 
 void System_Preferences::Shutdown()

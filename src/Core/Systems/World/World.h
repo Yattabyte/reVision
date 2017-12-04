@@ -25,7 +25,8 @@ class DT_ENGINE_API System_World : public System
 {
 public: 
 	~System_World();
-	System_World(Engine_Package *package);
+	System_World();
+	void Initialize(Engine_Package *enginePackage);
 
 	// Recalculate visibility
 	void Update(const float &deltaTime);
@@ -33,7 +34,6 @@ public:
 
 
 private:
-	Engine_Package *m_enginePackage;
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
 	ECSmessanger m_ECSmessanger;

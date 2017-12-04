@@ -11,13 +11,25 @@ System_Graphics_PBR::~System_Graphics_PBR()
 {
 }
 
-System_Graphics_PBR::System_Graphics_PBR(Engine_Package *package) :
-	m_enginePackage(package), m_gbuffer(package), m_lbuffer(package,m_gbuffer.m_depth_stencil)
+
+System_Graphics_PBR::System_Graphics_PBR() :
+	m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
 {
-	Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
-	Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
-	Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
-	Asset_Manager::load_asset(m_shapeQuad, "quad");
+	
+}
+
+void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
+{
+	if (!m_Initialized) {
+		m_enginePackage = enginePackage;
+		m_gbuffer.Initialize(m_enginePackage);
+		m_lbuffer.Initialize(m_enginePackage);
+		Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
+		Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
+		Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
+		Asset_Manager::load_asset(m_shapeQuad, "quad");
+		m_Initialized = true;
+	}
 }
 
 void System_Graphics_PBR::Update(const float & deltaTime)

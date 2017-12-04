@@ -24,15 +24,16 @@ using namespace glm;
 
 class Callback_Container;
 class Engine_Package;
-class Geometry_Buffer
+class DT_ENGINE_API Geometry_Buffer
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	DT_ENGINE_API ~Geometry_Buffer();
-	DT_ENGINE_API Geometry_Buffer(Engine_Package *package);
+	~Geometry_Buffer();
+	Geometry_Buffer();
+	void Initialize(Engine_Package *enginePackage);
 
 
 	/************************
@@ -40,15 +41,15 @@ public:
 	************************/
 
 	// Binds and clears out all the texture rendertargets in this framebuffer
-	DT_ENGINE_API void Clear();
+	void Clear();
 	// Binds the framebuffer and its rendertargets for writing
-	DT_ENGINE_API void BindForWriting();
+	void BindForWriting();
 	// Binds the framebuffer and its rendertargets for reading
-	DT_ENGINE_API void BindForReading();
+	void BindForReading();
 	// Resets the state and ensures its rendertargets are attached
-	DT_ENGINE_API void End();
+	void End();
 	// Change the size of the framebuffer object
-	DT_ENGINE_API void Resize(const vec2 & size);
+	void Resize(const vec2 & size);
 
 
 	/****************
@@ -67,6 +68,7 @@ public:
 private:
 	Engine_Package *m_enginePackage;
 	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
+	bool m_Initialized;
 };
 
 #endif // GEOMETRY_BUFFER
