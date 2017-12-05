@@ -5,7 +5,7 @@
 	- Supports bindless textures
 	- How this works:
 		- This stores an array of GLuint64 bindless texture handles
-		- That array is stored as an shader storage buffer object (SSBO), with the ID statically stored in cpp file
+		- That array is stored as a shader storage buffer object (SSBO)
 		- Geometry requests a spot in the material buffer array:
 			- this provides an int index
 			- geometry stores it alongside vertices (MUST NOT be interpolated across face)
@@ -30,6 +30,7 @@
 
 #include "GL\glew.h"
 #include <deque>
+#include <shared_mutex>
 
 using namespace std; 
 
@@ -41,15 +42,35 @@ struct Material_Buffer
 	GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
 };
 
-namespace Material_Manager {
+class DT_ENGINE_API Material_Manager {
+public:
+	static Material_Manager &Get() {
+		static Material_Manager instance;
+		return instance;
+	}
 	// Start up and initialize the material manager
-	DT_ENGINE_API void startup();
+	static void Startup() { (Get())._startup(); }
 	// Shut down and flush out the material manager
-	DT_ENGINE_API void shutdown();
-	// Returns a list of spots within the material manager that have been deleted and can be used for new materials
-	DT_ENGINE_API deque<int>& getMatFreeSpots();
-	// returns the material buffer object ID for use in shaders
-	DT_ENGINE_API GLuint& getBufferSSBO();
-}
+	static void Shutdown() { (Get())._shutdown(); }
+	// Generates a material ID
+	static GLuint GenerateMaterialBufferID();
+	static void UpdateHandle(const GLuint &materialBufferID, const GLuint &glTextureID);
+
+private:
+	~Material_Manager() {};
+	Material_Manager();
+	Material_Manager(Material_Manager const&) = delete;
+	void operator=(Material_Manager const&) = delete;
+
+	void _startup();
+	void _shutdown();
+
+	shared_mutex m_DataMutex;
+	bool m_Initialized; 
+	GLuint m_BufferSSBO;
+	Material_Buffer m_MatBuffer;
+	unsigned int m_Count;
+	deque<unsigned int> m_FreeSpots;
+};
 
 #endif // MATERIAL_MANAGER

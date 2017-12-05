@@ -4,11 +4,11 @@
 #include <string>
 
 #include "Utilities\Engine_Package.h"
+#include "Managers\Material_Manager.h"
 
 // To replace with abstract systems
 #include "Systems\Message_Manager.h"
 #include "Systems\Asset_Manager.h"
-#include "Systems\Material_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -104,6 +104,11 @@ bool Initialize_Sharing()
 	return m_Initialized_Sharing;
 }
 
+void Shutdown_Sharing()
+{
+	Material_Manager::Shutdown();
+}
+
 bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
@@ -138,8 +143,8 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 
 		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
 		m_UpdaterThread->detach();
-
-		Material_Manager::startup();
+		
+		Material_Manager::Startup();
 		m_Initialized = true;
 	}
 	return m_Initialized;

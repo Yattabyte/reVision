@@ -48,8 +48,8 @@ public:
 
 	DT_ENGINE_API ~Asset_Material();
 	DT_ENGINE_API Asset_Material();
-	DT_ENGINE_API Asset_Material(const std::string &_file, const GLuint & mat_buf_id, const GLuint & spot);
-	DT_ENGINE_API Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & mat_buf_id, const GLuint & spot);
+	DT_ENGINE_API Asset_Material(const std::string &_file, const GLuint & spot);
+	DT_ENGINE_API Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 	DT_ENGINE_API static int GetAssetType();
 	DT_ENGINE_API void Finalize();
 
@@ -60,10 +60,8 @@ public:
 	std::string material_filename;
 	std::string textures[MAX_PHYSICAL_IMAGES];
 	GLuint gl_array_ID;
-	GLuint64 handle;
 	vec2 size;
 	GLubyte *materialData;
-	GLuint matbuffer_ID;
 	GLuint mat_spot;
 
 
