@@ -17,7 +17,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(COMPUTE_BUILD_YEAR) + to_string(COMPUTE_BUILD_MONTH) + to_string(COMPUTE_BUILD_DAY) + to_string(COMPUTE_BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(43) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(44) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -29,6 +29,7 @@
 using namespace std;
 
 class Engine_Package;
+class Callback_Container;
 class GLFWwindow;
 class Camera;
 class System;
@@ -56,6 +57,7 @@ private:
 	float m_lastTime;	
 	Engine_Package *m_package;
 	thread *m_UpdaterThread;
+	Callback_Container *m_drawDistCallback;
 	void Updater_Thread();
 };
 

@@ -15,6 +15,7 @@
 #include "GLFW\glfw3.h"
 
 
+
 static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
 
@@ -32,6 +33,18 @@ static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int heigh
 	package.m_Camera.setDimensions(vec2(width, height));
 	package.m_Camera.Update();
 }
+
+class EN_DrawDistCallback : public Callback_Container {
+public:
+	~EN_DrawDistCallback() {};
+	EN_DrawDistCallback(Engine_Package *pointer) : m_pointer(pointer) {}
+	void Callback(const float &value) {
+		m_pointer->m_Camera.setFarPlane(value);
+		m_pointer->m_Camera.Update();
+	}
+private:
+	Engine_Package *m_pointer;
+};
 
 dt_Engine::~dt_Engine()
 {
@@ -97,6 +110,10 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 
 		m_package = new Engine_Package();
 		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);		
+
+		m_drawDistCallback = new EN_DrawDistCallback(m_package);
+		m_package->AddCallback(PREFERENCE_ENUMS::C_DRAW_DISTANCE, m_drawDistCallback);
+
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
@@ -132,8 +149,9 @@ void dt_Engine::Shutdown()
 {
 	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
-		m_Initialized = false;
-
+		m_package->RemoveCallback(PREFERENCE_ENUMS::C_DRAW_DISTANCE, m_drawDistCallback);
+		delete m_drawDistCallback;
+		
 		if (m_UpdaterThread->joinable())
 			m_UpdaterThread->join();
 		delete m_UpdaterThread;
@@ -142,6 +160,7 @@ void dt_Engine::Shutdown()
 			delete system.second;
 		m_package->m_Systems.clear();
 
+		m_Initialized = false;
 		write_lock.unlock();
 		write_lock.release();
 	}
