@@ -5,6 +5,7 @@
 
 #include "Utilities\Engine_Package.h"
 #include "Managers\Material_Manager.h"
+#include "Managers\Asset_Manager.h"
 
 // To replace with abstract systems
 #include "Systems\Message_Manager.h"
@@ -107,8 +108,11 @@ bool Initialize_Sharing()
 void Shutdown_Sharing()
 {
 	Material_Manager::Shutdown();
+	Asset_Managera::Shutdown();
 }
 
+
+#include "Assets\Asset_Material.h"
 bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
@@ -123,6 +127,15 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
+		
+		Shared_Asset_Material mat;
+		std::string material_textures[6] = { Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_diffuse.png",
+			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_normal.png",
+			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_specular.png",
+			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_roughness.png",
+			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_height.png",
+			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_ao.png" };
+		Asset_Manager::load_asset(mat, material_textures);
 
 		for each (auto &pair in systems) {
 			pair.second->Initialize(m_package);
@@ -141,10 +154,11 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		glfwSetWindowUserPointer(m_package->m_Context_Rendering, m_package);
 		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_WindowResize);		
 
+		Material_Manager::Startup();
+		Asset_Managera::Startup();
 		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
 		m_UpdaterThread->detach();
-		
-		Material_Manager::Startup();
+
 		m_Initialized = true;
 	}
 	return m_Initialized;
@@ -179,7 +193,9 @@ void dt_Engine::Update()
 		deltaTime = thisTime - m_lastTime;
 		m_lastTime = thisTime;
 
+		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		Asset_Manager::ParseWorkOrders();
+		Material_Manager::ParseWorkOrders();
 		for each (auto system in m_package->m_Systems)
 			system.second->Update(deltaTime);
 		
@@ -193,18 +209,20 @@ void dt_Engine::Updater_Thread()
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
 	bool stay_alive = true;
 	while (stay_alive) {
-		shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
-		if (m_Initialized) {
+		if (m_Initialized && m_Initialized_Sharing) {
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
+			glfwMakeContextCurrent(m_Context_Sharing);
+			Asset_Managera::Finalize_WorkOrders_Threaded();
+			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->Update_Threaded(deltaTime);
+			glFinish();
 		}
 		stay_alive = !ShouldClose();
 	}
 }
-
 
 bool dt_Engine::ShouldClose()
 {

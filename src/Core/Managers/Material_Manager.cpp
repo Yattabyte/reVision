@@ -53,7 +53,7 @@ GLuint Material_Manager::GenerateMaterialBufferID()
 	return arraySpot;
 }
 
-void Material_Manager::UpdateHandle(const GLuint &materialBufferID, const GLuint &glTextureID)
+void Material_Manager::GenerateHandle(const GLuint &materialBufferID, const GLuint &glTextureID)
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
@@ -62,5 +62,16 @@ void Material_Manager::UpdateHandle(const GLuint &materialBufferID, const GLuint
 	glBindBuffer(GL_UNIFORM_BUFFER, manager.m_BufferSSBO);
 	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(GLuint64) * materialBufferID, sizeof(GLuint64), &handle);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	manager.m_MatBuffer.MaterialMaps[materialBufferID] = handle;
+	manager.m_MatBuffer.MaterialMaps[materialBufferID] = handle;	
+	manager.m_WorkOrders.push_back(handle);
+}
+
+void Material_Manager::ParseWorkOrders()
+{
+	auto &manager = Get();
+
+	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
+	for each (const auto &handle in manager.m_WorkOrders) 
+		glMakeTextureHandleResidentARB(handle);	
+	manager.m_WorkOrders.clear();
 }

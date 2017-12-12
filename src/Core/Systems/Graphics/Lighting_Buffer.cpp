@@ -38,18 +38,19 @@ Lighting_Buffer::~Lighting_Buffer()
 	}
 }
 
-Lighting_Buffer::Lighting_Buffer(const GLuint &depthStencil)
+Lighting_Buffer::Lighting_Buffer()
 {
 	m_Initialized = false;
-	m_depth_stencil = depthStencil;
+	m_depth_stencil = 0;
 	m_fbo = 0;
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
 }
 
-void Lighting_Buffer::Initialize(Engine_Package * enginePackage)
+void Lighting_Buffer::Initialize(Engine_Package * enginePackage, const GLuint &depthStencil)
 {
 	if (!m_Initialized) {
+		m_depth_stencil = depthStencil;
 		m_enginePackage = enginePackage;
 		m_widthChangeCallback = new LB_WidthChangeCallback(this);
 		m_heightChangeCallback = new LB_HeightChangeCallback(this);

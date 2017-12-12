@@ -12,7 +12,6 @@ Anim_Model_Component::~Anim_Model_Component()
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) : Geometry_Component(id, pid)
 {
 	m_uboID = 0;
-	Asset_Manager::load_asset(m_model, "");
 	glGenBuffers(1, &m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(Transform_Buffer), &m_uboData, GL_DYNAMIC_COPY);

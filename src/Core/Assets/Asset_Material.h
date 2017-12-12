@@ -32,6 +32,7 @@
 
 #include "Assets\Asset.h"
 #include "Systems\Asset_Manager.h"
+#include "Managers\Asset_Manager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
@@ -39,19 +40,18 @@ using namespace glm;
 
 class Asset_Material;
 typedef shared_ptr<Asset_Material> Shared_Asset_Material;
-class Asset_Material : public Asset
+class DT_ENGINE_API Asset_Material : public Asset
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	DT_ENGINE_API ~Asset_Material();
-	DT_ENGINE_API Asset_Material();
-	DT_ENGINE_API Asset_Material(const std::string &_file, const GLuint & spot);
-	DT_ENGINE_API Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
-	DT_ENGINE_API static int GetAssetType();
-	DT_ENGINE_API void Finalize();
+	~Asset_Material();
+	Asset_Material();
+	Asset_Material(const std::string &_file, const GLuint & spot);
+	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
+	static int GetAssetType();
 
 	/****************
 	----Variables----
@@ -71,10 +71,23 @@ public:
 
 	// Material textures are technically separate files, so we used a custom .mat file to direct which files to use for what texture spot
 	// Updates the appropriate supplied @string's with a path to the appropriate file
-	DT_ENGINE_API static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
+	static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 };
 namespace Asset_Manager {
 	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded = true);
 	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string &material_filename, const bool &threaded = true);
 };
+
+class Material_WorkOrder : public Work_Order {
+public:
+	Material_WorkOrder(Shared_Asset_Material &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	~Material_WorkOrder() {};
+	virtual void Initialize_Order();
+	virtual void Finalize_Order();
+
+private:
+	std::string m_filename;
+	Shared_Asset_Material m_asset;
+};
+
 #endif // ASSET_MATERIAL

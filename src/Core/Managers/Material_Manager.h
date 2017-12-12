@@ -30,6 +30,7 @@
 
 #include "GL\glew.h"
 #include <deque>
+#include <vector>
 #include <shared_mutex>
 
 using namespace std; 
@@ -54,7 +55,8 @@ public:
 	static void Shutdown() { (Get())._shutdown(); }
 	// Generates a material ID
 	static GLuint GenerateMaterialBufferID();
-	static void UpdateHandle(const GLuint &materialBufferID, const GLuint &glTextureID);
+	static void GenerateHandle(const GLuint &materialBufferID, const GLuint &glTextureID);
+	static void ParseWorkOrders();
 
 private:
 	~Material_Manager() {};
@@ -71,6 +73,7 @@ private:
 	Material_Buffer m_MatBuffer;
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
+	vector<GLuint64> m_WorkOrders;
 };
 
 #endif // MATERIAL_MANAGER

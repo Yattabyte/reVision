@@ -12,7 +12,7 @@ System_Graphics_PBR::~System_Graphics_PBR()
 
 
 System_Graphics_PBR::System_Graphics_PBR() :
-	m_gbuffer(), m_lbuffer(m_gbuffer.m_depth_stencil)
+	m_gbuffer(), m_lbuffer()
 {
 	
 }
@@ -21,8 +21,8 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_gbuffer.Initialize(m_enginePackage);
-		m_lbuffer.Initialize(m_enginePackage);
+		m_gbuffer.Initialize(m_enginePackage);		
+		m_lbuffer.Initialize(m_enginePackage, m_gbuffer.m_depth_stencil);
 		Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
 		Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
@@ -122,9 +122,11 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	glReadBuffer(GL_COLOR_ATTACHMENT0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	float window_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-	float window_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+	const float &window_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
+	const float &window_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
 
-	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
+	glViewport(0, 0, window_width, window_height);
 	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+
+	m_gbuffer.End();
 }

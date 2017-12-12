@@ -31,8 +31,8 @@ public:
 	*************/
 
 	~Lighting_Buffer();
-	Lighting_Buffer(const GLuint &depthStencil);
-	void Initialize(Engine_Package *enginePackage);
+	Lighting_Buffer();
+	void Initialize(Engine_Package *enginePackage, const GLuint &depthStencil);
 
 
 	/************************
@@ -45,8 +45,6 @@ public:
 	void BindForWriting();
 	// Binds the framebuffer and its rendertargets for reading
 	void BindForReading();
-	// Resets the state and ensures its rendertargets are attached
-	void End();
 	// Change the size of the framebuffer object
 	void Resize(const vec2 & size);
 
