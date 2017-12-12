@@ -1,5 +1,6 @@
 #include "Utilities\FileReader.h"
 #include <fstream>
+#include <direct.h>
 
 namespace FileReader {
 	namespace DocParser {
@@ -249,5 +250,19 @@ namespace FileReader {
 		}
 
 		return true;
+	}
+	bool FileExistsOnDisk(const string & name)
+	{
+		// Technique to return whether or not a given file or folder exists
+		struct stat buffer;
+		return (stat(name.c_str(), &buffer) == 0);		
+	}
+	string GetCurrentDir()
+	{
+		// Technique to return the running directory of the application
+		char cCurrentPath[FILENAME_MAX];
+		if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
+			cCurrentPath[sizeof(cCurrentPath) - 1] = '/0';
+		return string(cCurrentPath);
 	}
 }

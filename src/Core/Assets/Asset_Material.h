@@ -27,12 +27,12 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 #define EXT_MATERIAL ".mat"
-#define DIRECTORY_MATERIAL getCurrentDir() + "\\Materials\\"
+#define DIRECTORY_MATERIAL FileReader::GetCurrentDir() + "\\Materials\\"
 #define ABS_DIRECTORY_MATERIAL(filename) DIRECTORY_MATERIAL + filename + EXT_MATERIAL
 
 #include "Assets\Asset.h"
-#include "Systems\Asset_Manager.h"
 #include "Managers\Asset_Manager.h"
+#include "Utilities\FileReader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

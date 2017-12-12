@@ -53,6 +53,7 @@ namespace FileReader {
 		// Updates the @property token using the @input string. Returns true if it got any data from it
 		DT_ENGINE_API bool getProperty(istringstream &string_stream, Property &property, string &input = string(""));
 
+
 		/*********************************************************************
 		*--------------------------Getter Functions--------------------------*			
 		*----Converts @string_stream into an appropriate value in @target----*
@@ -100,6 +101,10 @@ namespace FileReader {
 	// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
 	// Returns true if succeeded, false if file doesn't exist
 	DT_ENGINE_API bool ReadFileFromDisk(string &returnFile, const string &fileDirectory);
+	// Checks if a supplied file or folder exists on disk.
+	DT_ENGINE_API bool FileExistsOnDisk(const string & name);
+	// Retrieves the application's running directory
+	DT_ENGINE_API string GetCurrentDir();
 };
 
 #endif // FILEREADER

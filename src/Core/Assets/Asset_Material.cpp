@@ -1,7 +1,6 @@
 #include "Assets\Asset_Material.h"
 #include "Managers\Material_Manager.h"
 #include "Systems\Message_Manager.h"
-#include "Utilities\FileReader.h"
 #include "Utilities\ImageImporter.h"
 #include "FreeImage.h"
 
@@ -85,14 +84,14 @@ void Asset_Material::getPBRProperties(const string &filename, string &albedo, st
 // Will generate a default one itself if the default doesn't exist.
 Shared_Asset_Material fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(getMutexIOAssets());
-	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
+	std::map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Material::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Material::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Material>(new Asset_Material());
 		Shared_Asset_Material cast_asset = dynamic_pointer_cast<Asset_Material>(default_asset);
-		if (fileOnDisk(ABS_DIRECTORY_MATERIAL("defaultMaterial"))) { // Check if we have a default one on disk to load
+		if (FileReader::FileExistsOnDisk(ABS_DIRECTORY_MATERIAL("defaultMaterial"))) { // Check if we have a default one on disk to load
 			Material_WorkOrder work_order(cast_asset, ABS_DIRECTORY_MATERIAL("defaultMaterial"));
 			work_order.Initialize_Order();
 			work_order.Finalize_Order();
@@ -113,8 +112,8 @@ Shared_Asset_Material fetchDefaultAsset()
 namespace Asset_Manager {
 	void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded) {
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = getMutexIOAssets();
-		auto &assets_materials = (fetchAssetList(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
+		auto &assets_materials = (Asset_Managera::GetAssets_List(Asset_Material::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -162,8 +161,8 @@ namespace Asset_Manager {
 	void load_asset(Shared_Asset_Material &user, const std::string &filename, const bool &threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = getMutexIOAssets();
-		auto &assets_materials = (fetchAssetList(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
+		auto &assets_materials = (Asset_Managera::GetAssets_List(Asset_Material::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -185,7 +184,7 @@ namespace Asset_Manager {
 
 		// Attempt to create the asset
 		const std::string &fulldirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!fileOnDisk(fulldirectory) || (filename == "") || (filename == " ")) {
+		if (!FileReader::FileExistsOnDisk(fulldirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fulldirectory);
 			user = fetchDefaultAsset();
 			return;

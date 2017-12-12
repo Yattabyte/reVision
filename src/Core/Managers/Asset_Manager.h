@@ -75,14 +75,22 @@ public:
 		return instance;
 	}
 	// Start up and initialize the asset manager
-	static void Startup() { (Get())._startup(); }
+	static void Startup() { Get()._startup(); }
 	// Shut down and flush out the asset manager
-	static void Shutdown() { (Get())._shutdown(); }
+	static void Shutdown() { Get()._shutdown(); }
 	// Add a new work order request
 	static void AddWorkOrder(Work_Order* order);
 	// Peforms the last stage of processing on work orders that couldn't be threaded
 	// Eg: creating texture objects and making them resident on the GPU
 	static void Finalize_WorkOrders_Threaded();
+	// Retrieves the asset map mutex
+	static shared_mutex& GetMutex_Assets();
+	// Retrieves the map of all assets
+	static map<int, vector<Shared_Asset>>& GetAssets_Map();
+	// Retrieves the map of all fallback assets
+	static map<int, Shared_Asset>& GetFallbackAssets_Map();
+	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
+	static vector<Shared_Asset>& GetAssets_List(const int &asset_type);
 
 
 private:
@@ -95,11 +103,16 @@ private:
 	void _shutdown();
 	void _threaded_func(shared_ptr<Assets_Worker> &worker);
 
-	shared_mutex m_DataMutex;
 	bool m_Initialized;
+	vector<shared_ptr<Assets_Worker>> m_Workers;
+
+	shared_mutex m_Mutex_Workorders;
 	deque<Work_Order*> m_WorkOrders_to_initialize;
 	deque<Work_Order*> m_WorkOrders_to_finalize;
-	vector<shared_ptr<Assets_Worker>> m_Workers;
+
+	shared_mutex m_Mutex_Assets;
+	map<int, vector<Shared_Asset>> m_AssetMap;
+	map<int, Shared_Asset> m_AssetMap_Fallback;										
 };
 
 
