@@ -73,6 +73,7 @@ public:
 	// Updates the appropriate supplied @string's with a path to the appropriate file
 	static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 };
+
 namespace Asset_Manager {
 	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded = true);
 	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string &material_filename, const bool &threaded = true);

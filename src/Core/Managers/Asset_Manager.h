@@ -1,5 +1,5 @@
 /*
-	Asset Manager
+	Asset_Manager
 
 	- Manages the storage and retrieval of assets.
 	- Uses static variables, designed to be used across an entire application with ease.

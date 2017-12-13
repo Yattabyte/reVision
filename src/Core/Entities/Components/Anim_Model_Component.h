@@ -53,6 +53,8 @@ public:
 	virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
 	void Update();
+	// Binds model buffer data to our VAO
+	void UpdateBuffers();
 
 
 protected:
@@ -60,7 +62,8 @@ protected:
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	friend class Anim_Model_Creator;
 	
-	GLuint m_uboID;
+	bool m_updateBuffers;
+	GLuint m_uboID, m_vao_id;
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
 };

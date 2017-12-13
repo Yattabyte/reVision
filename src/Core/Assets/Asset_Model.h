@@ -20,8 +20,8 @@
 #define GLEW_STATIC
 
 #include "Assets\Asset.h"
-#include "Systems\Asset_Manager.h"
 #include "Assets\Asset_Material.h"
+#include "Managers\Asset_Manager.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"
 #include "glm\common.hpp"
@@ -68,32 +68,46 @@ struct AnimationInfo {
 
 class Asset_Model;
 typedef shared_ptr<Asset_Model> Shared_Asset_Model;
-class Asset_Model : public Asset
+class DT_ENGINE_API Asset_Model : public Asset
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	DT_ENGINE_API ~Asset_Model();
-	DT_ENGINE_API Asset_Model();
-	DT_ENGINE_API Asset_Model(const string & _filename);
-	DT_ENGINE_API void Finalize();
-	DT_ENGINE_API static int GetAssetType();
+	~Asset_Model();
+	Asset_Model();
+	Asset_Model(const string & _filename);
+	static int GetAssetType();
 
 	/****************
 	----Variables----
 	****************/
 
-	GLuint								gl_vao_ID;
 	int									mesh_size;
 	string								filename;
 	vector<Shared_Asset_Material>		textures;
 	GeometryInfo						data;
 	AnimationInfo						animationInfo;
 	vec3								bbox_min, bbox_max;
+	GLuint								buffers[7];
 };
+
 namespace Asset_Manager {
 	DT_ENGINE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
+};
+
+class Model_WorkOrder : public Work_Order {
+public:
+	Model_WorkOrder(Shared_Asset_Model &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	~Model_WorkOrder() {};
+	virtual void Initialize_Order();
+	virtual void Finalize_Order();
+
+private:
+	std::string m_filename;
+	Shared_Asset_Model m_asset;
+	void Initialize_Bones(Shared_Asset_Model &model, const aiScene* scene);
+	void Initialize_Material(Shared_Asset_Material &texture, const aiMesh * mesh, const aiMaterial * material, const string & specificTexDir);
 };
 #endif // ASSET_MODEL

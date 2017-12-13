@@ -249,8 +249,7 @@ void Material_WorkOrder::Initialize_Order()
 			did_we_ever_succeed += success[x];
 		if (!did_we_ever_succeed)
 			material_dimensions = vec2(1);
-
-
+		
 		// Stitch data together 
 		{	// 3 textures with 4 data channels (RGBA) of X*Y size
 			const int mat_data_size_1 = int(material_dimensions.x * material_dimensions.y);

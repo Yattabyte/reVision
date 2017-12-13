@@ -36,8 +36,8 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		ECSmessage msg_dir(SET_MODEL_DIR, std::string("Test\\ChamferedCube.obj"));
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(msg_dir);
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(msg_dir);
-		m_entityFactory.GetEntity(prop3)->ReceiveMessage(msg_dir);
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(msg_dir);
+		m_entityFactory.GetEntity(prop3)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\AnimationTest.obj")));
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-2.5, -2.5, 0))));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(2.5, -2.5, 0))));
 		m_entityFactory.GetEntity(prop3)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
