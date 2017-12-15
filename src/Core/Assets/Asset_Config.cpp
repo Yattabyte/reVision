@@ -21,11 +21,6 @@ int Asset_Config::GetAssetType()
 	return ASSET_TYPE;
 }
 
-void Asset_Config::Finalize()
-{
-	finalized = true;
-}
-
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 {
 	// Try inserting the value by key in case the key doesn't exist.
@@ -84,33 +79,13 @@ int findCFGProperty(const string &s, const vector<string> &m_strings)
 	return -1;
 }
 
-// Reads in the configuration file from disk.
-void initialize_Config(Shared_Asset_Config & user, const string & filename, bool * complete)
-{
-	ifstream file_stream(filename);
-	unique_lock<shared_mutex> write_guard(user->m_mutex);	
-	for (std::string line; std::getline(file_stream, line); ) {
-		if (line.length()) {
-			const string cfg_property = getBetweenQuotes(line);
-			int spot = findCFGProperty(cfg_property, user->m_strings);
-			if (spot >= 0) {
-				string cfg_value = getBetweenQuotes(line);
-				user->setValue(spot, atof(cfg_value.c_str()));
-			}
-		}
-	}
-
-	submitWorkorder(user);
-	*complete = true;
-}
-
 // Retrieves (or initializes) a default asset from the Asset_Manager.
 // Can hard code default configuration parameters here.
 // Saves to disk afterwards.
 Shared_Asset_Config fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(getMutexIOAssets());
-	std::map<int, Shared_Asset> &fallback_assets = getFallbackAssets();
+	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
+	std::map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Config::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Config::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
@@ -125,8 +100,8 @@ namespace Asset_Manager {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> &cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = getMutexIOAssets();
-		auto &assets_configs = (fetchAssetList(Asset_Config::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
+		auto &assets_configs = (Asset_Managera::GetAssets_List(Asset_Config::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_configs) {
@@ -151,7 +126,7 @@ namespace Asset_Manager {
 
 		// Attempt to create the asset
 		const std::string &fulldirectory = ABS_DIRECTORY_CONFIG(filename);
-		if (!fileOnDisk(fulldirectory)) {
+		if (!FileReader::FileExistsOnDisk(fulldirectory)) {
 			MSG::Error(FILE_MISSING, fulldirectory);
 			user = fetchDefaultAsset();
 			return;
@@ -166,14 +141,39 @@ namespace Asset_Manager {
 
 		// Either continue processing on a new thread or stay on the current one
 		bool *complete = new bool(false);
-		if (threaded) {
-			thread *import_thread = new thread(initialize_Config, user, fulldirectory, complete);
-			import_thread->detach();
-			submitWorkthread(std::pair<thread*, bool*>(import_thread, complete));
-		}
+		if (threaded) 
+			Asset_Managera::AddWorkOrder(new Config_WorkOrder(user, fulldirectory));	
 		else {
-			initialize_Config(user, fulldirectory, complete);
-			user->Finalize();
+			Config_WorkOrder work_order(user, fulldirectory);
+			work_order.Initialize_Order();
+			work_order.Finalize_Order();
 		}
+	}
+}
+
+void Config_WorkOrder::Initialize_Order()
+{
+	ifstream file_stream(m_filename);
+	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
+	for (std::string line; std::getline(file_stream, line); ) {
+		if (line.length()) {
+			const string cfg_property = getBetweenQuotes(line);
+			int spot = findCFGProperty(cfg_property, m_asset->m_strings);
+			if (spot >= 0) {
+				string cfg_value = getBetweenQuotes(line);
+				m_asset->setValue(spot, atof(cfg_value.c_str()));
+			}
+		}
+	}
+}
+
+void Config_WorkOrder::Finalize_Order()
+{
+	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
+	if (!m_asset->ExistsYet()) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
+		m_asset->Finalize();
 	}
 }
