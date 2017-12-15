@@ -81,7 +81,7 @@ void Anim_Model_Component::Draw()
 {
 	if (m_updateBuffers)
 		UpdateBuffers();
-	if (m_model) {
+	if (m_model && m_model->ExistsYet()) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
 
 		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);

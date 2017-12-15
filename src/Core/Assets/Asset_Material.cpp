@@ -148,7 +148,6 @@ namespace Asset_Manager {
 
 		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
 		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
-		bool *complete = new bool(false);
 		if (threaded)
 			Asset_Managera::AddWorkOrder(new Material_WorkOrder(user, ""));
 		else {
@@ -198,7 +197,6 @@ namespace Asset_Manager {
 
 		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
 		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
-		bool *complete = new bool(false);
 		if (threaded) 			
 			Asset_Managera::AddWorkOrder(new Material_WorkOrder(user, fulldirectory));
 		else {
