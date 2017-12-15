@@ -22,6 +22,7 @@
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Assets\Asset_Texture.h"
 
 class Engine_Package;
 
@@ -44,8 +45,9 @@ private:
 
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting;
+	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderTest;
 	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Asset_Texture m_texture;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR

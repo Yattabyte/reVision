@@ -27,6 +27,9 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
 		Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
 		Asset_Manager::load_asset(m_shapeQuad, "quad");
+		Asset_Manager::load_asset(m_shaderTest, "test");
+		Asset_Manager::load_asset(m_texture, "test.jpg");
+
 		m_Initialized = true;
 	}
 }
@@ -128,5 +131,10 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	glViewport(0, 0, window_width, window_height);
 	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
 
+	m_texture->Bind(GL_TEXTURE0);
+	glEnable(GL_BLEND);
+	m_shaderTest->Bind();
+	m_shapeQuad->Draw();
+	glDisable(GL_BLEND);
 	m_gbuffer.End();
 }
