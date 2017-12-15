@@ -24,11 +24,7 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0); 
 	
-	glGenVertexArrays(1, &m_vao_id);
-	glBindVertexArray(m_vao_id);
-	for (unsigned int x = 0; x < 8; ++x)
-		glEnableVertexAttribArray(x);
-	glBindVertexArray(0);
+	m_vao_id = Asset_Model::GenerateVAO();
 }
 
 void Anim_Model_Component::Update()
@@ -43,37 +39,9 @@ void Anim_Model_Component::Update()
 
 void Anim_Model_Component::UpdateBuffers()
 {
-	if (m_model) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		auto &buffers = m_model->buffers;
-		if (buffers[0] != GLuint(-1)) {
-			glBindVertexArray(m_vao_id);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-			glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-			glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-			glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-			glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
-			glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
-			glVertexAttribIPointer(5, 1, GL_UNSIGNED_INT, 0, 0);
-
-			glBindBuffer(GL_ARRAY_BUFFER, buffers[6]);
-			glVertexAttribIPointer(6, 4, GL_INT, sizeof(VertexBoneData), (const GLvoid*)0);
-			glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (const GLvoid*)16);
-
-			glBindVertexArray(0);
-			m_updateBuffers = false;
-		}
+	if (m_model && m_model->ExistsYet()) {
+		m_model->UpdateVAO(m_vao_id);
+		m_updateBuffers = false;		
 	}
 }
 

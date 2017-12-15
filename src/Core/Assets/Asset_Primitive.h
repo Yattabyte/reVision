@@ -19,11 +19,12 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_PRIMITIVE ".obj"
-#define DIRECTORY_PRIMITIVE getCurrentDir() + "\\Primitives\\"
+#define DIRECTORY_PRIMITIVE FileReader::GetCurrentDir() + "\\Primitives\\"
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 #include "Assets\Asset.h"
-#include "Systems\Asset_Manager.h"
+#include "Managers\Asset_Manager.h"
+#include "Utilities\FileReader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <vector>
@@ -32,42 +33,54 @@ using namespace glm;
 
 class Asset_Primitive;
 typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
-class Asset_Primitive : public Asset
+class DT_ENGINE_API Asset_Primitive : public Asset
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	DT_ENGINE_API ~Asset_Primitive();
-	DT_ENGINE_API Asset_Primitive();
-	DT_ENGINE_API Asset_Primitive(const string &_filename);
-	DT_ENGINE_API static int GetAssetType();
-	DT_ENGINE_API virtual void Finalize();
+	~Asset_Primitive();
+	Asset_Primitive();
+	Asset_Primitive(const string &_filename);
+	static int GetAssetType();
+
 	
 	/****************
 	----Variables----
 	****************/
 
-	GLuint ID;
+	GLuint buffers[2];
 	string filename;
 	vector<vec3> data;
 	vector<vec2> uv_data;
 
+
 	/**************************
 	----Primitive Functions----
 	**************************/
-
-	// Binds this object's VAO to the current rendering context
-	DT_ENGINE_API void Bind();
-	// Unbinds any previously bound VAO from the current rendering context (binds null)
-	DT_ENGINE_API static void Unbind();
-	// Renders this object into the currently bound framebuffer.
-	DT_ENGINE_API void Draw();
+	
+	// Generates a vertex array object, formed to match primitives' object data
+	static GLuint GenerateVAO();
+	// Updates a vertex array object's state with this objects' data
+	void UpdateVAO(const GLuint &vaoID);
 	// Returns the vertex-count of this object
-	DT_ENGINE_API size_t GetSize() const;
+	size_t GetSize() const;
 };
+
 namespace Asset_Manager {
 	DT_ENGINE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
+};
+
+class Primitive_WorkOrder : public Work_Order {
+public:
+	Primitive_WorkOrder(Shared_Asset_Primitive &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	~Primitive_WorkOrder() {};
+	virtual void Initialize_Order();
+	virtual void Finalize_Order();
+
+private:
+	std::string m_filename;
+	Shared_Asset_Primitive m_asset;
 };
 #endif // ASSET_PRIMITIVE

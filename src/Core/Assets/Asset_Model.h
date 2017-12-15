@@ -80,6 +80,15 @@ public:
 	Asset_Model(const string & _filename);
 	static int GetAssetType();
 
+	/**********************
+	----Model Functions----
+	**********************/
+
+	// Generates a vertex array object, formed to match models' object data
+	static GLuint GenerateVAO();
+	// Updates a vertex array object's state with this models' data
+	void UpdateVAO(const GLuint &vaoID);
+
 	/****************
 	----Variables----
 	****************/

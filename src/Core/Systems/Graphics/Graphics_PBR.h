@@ -47,6 +47,8 @@ private:
 	Lighting_Buffer m_lbuffer;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderTest;
 	Shared_Asset_Primitive m_shapeQuad;
+	GLuint m_quadVAO;
+	bool m_quadLoaded;
 	Shared_Asset_Texture m_texture;
 };
 

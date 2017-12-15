@@ -14,7 +14,8 @@ System_Graphics_PBR::~System_Graphics_PBR()
 System_Graphics_PBR::System_Graphics_PBR() :
 	m_gbuffer(), m_lbuffer()
 {
-	
+	m_quadVAO = 0;
+	m_quadLoaded = false;
 }
 
 void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
@@ -29,13 +30,18 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Manager::load_asset(m_shapeQuad, "quad");
 		Asset_Manager::load_asset(m_shaderTest, "test");
 		Asset_Manager::load_asset(m_texture, "test.jpg");
-
+		m_quadVAO = Asset_Primitive::GenerateVAO();
 		m_Initialized = true;
 	}
 }
 
 void System_Graphics_PBR::Update(const float & deltaTime)
 {
+	if ((!m_quadLoaded) && m_shapeQuad->ExistsYet()) {
+		m_shapeQuad->UpdateVAO(m_quadVAO);
+		m_quadLoaded = true;
+	}
+
 	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
 
 	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
@@ -103,11 +109,11 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 		m_gbuffer.BindForReading();
 		m_lbuffer.BindForWriting();
 		m_shaderLighting->Bind();
-		m_shapeQuad->Bind();
+		glBindVertexArray(m_quadVAO);
 		const int quad_size = m_shapeQuad->GetSize();
 		for each (auto component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
 			component->directPass(quad_size);
-		m_shapeQuad->Unbind();
+		glBindVertexArray(0);
 		m_shaderLighting->Release();
 	}
 }
@@ -134,7 +140,9 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	m_texture->Bind(GL_TEXTURE0);
 	glEnable(GL_BLEND);
 	m_shaderTest->Bind();
-	m_shapeQuad->Draw();
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, m_shapeQuad->GetSize());
+	glBindVertexArray(0);
 	glDisable(GL_BLEND);
 	m_gbuffer.End();
 }
