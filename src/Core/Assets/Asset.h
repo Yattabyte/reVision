@@ -24,7 +24,7 @@
 			- typedef shared_ptr< Asset_[Subclass Name] > Shared_Asset_[Subclass Name];
 
 		* Continue Asset_Manager namespace for asset loading function:
-			-	namespace Asset_Manager {
+			-	namespace Asset_Loader {
 					void load_asset(Shared_Asset_[Subclass Name] &asset, [any arguments needed]);
 				};
 

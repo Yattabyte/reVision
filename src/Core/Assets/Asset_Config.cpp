@@ -5,7 +5,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 1
 
-using namespace Asset_Manager;
+using namespace Asset_Loader;
 
 Asset_Config::~Asset_Config()
 {
@@ -84,8 +84,8 @@ int findCFGProperty(const string &s, const vector<string> &m_strings)
 // Saves to disk afterwards.
 Shared_Asset_Config fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
+	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Config::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Config::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
@@ -96,12 +96,12 @@ Shared_Asset_Config fetchDefaultAsset()
 	return dynamic_pointer_cast<Asset_Config>(default_asset);
 }
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> &cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_configs = (Asset_Managera::GetAssets_List(Asset_Config::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_configs = (Asset_Manager::GetAssets_List(Asset_Config::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_configs) {
@@ -142,7 +142,7 @@ namespace Asset_Manager {
 		// Either continue processing on a new thread or stay on the current one
 		bool *complete = new bool(false);
 		if (threaded) 
-			Asset_Managera::AddWorkOrder(new Config_WorkOrder(user, fulldirectory));	
+			Asset_Manager::AddWorkOrder(new Config_WorkOrder(user, fulldirectory));	
 		else {
 			Config_WorkOrder work_order(user, fulldirectory);
 			work_order.Initialize_Order();

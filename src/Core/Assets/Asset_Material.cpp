@@ -7,7 +7,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 3
 
-using namespace Asset_Manager;
+using namespace Asset_Loader;
 
 Asset_Material::~Asset_Material()
 {
@@ -84,8 +84,8 @@ void Asset_Material::getPBRProperties(const string &filename, string &albedo, st
 // Will generate a default one itself if the default doesn't exist.
 Shared_Asset_Material fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
+	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Material::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Material::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
@@ -109,11 +109,11 @@ Shared_Asset_Material fetchDefaultAsset()
 	return dynamic_pointer_cast<Asset_Material>(default_asset);
 }
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded) {
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_materials = (Asset_Managera::GetAssets_List(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_materials = (Asset_Manager::GetAssets_List(Asset_Material::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -149,7 +149,7 @@ namespace Asset_Manager {
 		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
 		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
 		if (threaded)
-			Asset_Managera::AddWorkOrder(new Material_WorkOrder(user, ""));
+			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, ""));
 		else {
 			Material_WorkOrder work_order(user, "");
 			work_order.Initialize_Order();
@@ -160,8 +160,8 @@ namespace Asset_Manager {
 	void load_asset(Shared_Asset_Material &user, const std::string &filename, const bool &threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_materials = (Asset_Managera::GetAssets_List(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_materials = (Asset_Manager::GetAssets_List(Asset_Material::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -198,7 +198,7 @@ namespace Asset_Manager {
 		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
 		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
 		if (threaded) 			
-			Asset_Managera::AddWorkOrder(new Material_WorkOrder(user, fulldirectory));
+			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, fulldirectory));
 		else {
 			Material_WorkOrder work_order(user, fulldirectory);
 			work_order.Initialize_Order();

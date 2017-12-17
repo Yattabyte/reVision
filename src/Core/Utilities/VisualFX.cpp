@@ -15,7 +15,7 @@ void InitCubeFilter()
 	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	Asset_Manager::load_asset(CF_SHADER, "FX\\cube_filter", false);
+	Asset_Loader::load_asset(CF_SHADER, "FX\\cube_filter", false);
 }
 
 void InitGaussianBlurFilter()
@@ -27,15 +27,15 @@ void InitGaussianBlurFilter()
 	glBindFramebuffer(GL_FRAMEBUFFER, GB_FBO);	
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
-	Asset_Manager::load_asset(GB_SHADER, "FX\\gaussianblur", false);
-	Asset_Manager::load_asset(GB_A_SHADER, "FX\\gaussianblur_alpha", false);
+	Asset_Loader::load_asset(GB_SHADER, "FX\\gaussianblur", false);
+	Asset_Loader::load_asset(GB_A_SHADER, "FX\\gaussianblur_alpha", false);
 }
 
 namespace VisualFX {
 	void Initialize()
 	{
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		Asset_Manager::load_asset(shape_quad, "quad"); 
+		Asset_Loader::load_asset(shape_quad, "quad"); 
 		InitCubeFilter();
 		InitGaussianBlurFilter();
 	}

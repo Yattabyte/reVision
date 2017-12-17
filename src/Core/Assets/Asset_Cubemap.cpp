@@ -40,8 +40,8 @@ void Asset_Cubemap::Bind(const GLuint & texture_unit)
 // Will generate a default one itself if the default doesn't exist.
 Shared_Asset_Cubemap fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
-	map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
+	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+	map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Cubemap::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Cubemap::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
@@ -72,12 +72,12 @@ Shared_Asset_Cubemap fetchDefaultAsset()
 	return dynamic_pointer_cast<Asset_Cubemap>(default_asset);
 }
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	void load_asset(Shared_Asset_Cubemap &user, const string &filename, const bool &threaded)
 	{
 		// Check if a copy already finalized
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_cubemaps = (Asset_Managera::GetAssets_List(Asset_Cubemap::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_cubemaps = (Asset_Manager::GetAssets_List(Asset_Cubemap::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_cubemaps) {
@@ -111,7 +111,7 @@ namespace Asset_Manager {
 		}
 
 		if (threaded)
-			Asset_Managera::AddWorkOrder(new Cubemap_WorkOrder(user, fulldirectory));
+			Asset_Manager::AddWorkOrder(new Cubemap_WorkOrder(user, fulldirectory));
 		else {
 			Cubemap_WorkOrder work_order(user, fulldirectory);
 			work_order.Initialize_Order();

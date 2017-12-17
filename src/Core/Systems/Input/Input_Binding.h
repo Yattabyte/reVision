@@ -24,7 +24,7 @@ class DT_ENGINE_API System_Input_Binding
 {
 public: 
 	~System_Input_Binding() {}
-	System_Input_Binding(const std::string &filename = "binds") { Asset_Manager::load_asset(bindings, filename, ACTION_STRINGS, false); }
+	System_Input_Binding(const std::string &filename = "binds") { Asset_Loader::load_asset(bindings, filename, ACTION_STRINGS, false); }
 	const Shared_Asset_Config &getBindings() const { return bindings; };
 	
 private:

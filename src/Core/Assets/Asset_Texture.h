@@ -60,7 +60,7 @@ public:
 	void Bind(const GLuint &texture_unit);
 };
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	DT_ENGINE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
 };
 

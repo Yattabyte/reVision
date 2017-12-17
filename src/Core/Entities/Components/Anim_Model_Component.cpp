@@ -79,7 +79,7 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 		case SET_MODEL_DIR: {
 			if (!message.IsOfType<string>()) break;
 			const auto &payload = message.GetPayload<string>();
-			Asset_Manager::load_asset(m_model, payload);
+			Asset_Loader ::load_asset(m_model, payload);
 			m_updateBuffers = true;
 			break;
 		}	

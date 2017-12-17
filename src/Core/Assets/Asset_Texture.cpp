@@ -5,7 +5,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 7
 
-using namespace Asset_Manager;
+using namespace Asset_Loader;
 
 Asset_Texture::~Asset_Texture()
 {
@@ -48,8 +48,8 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 // Will generate a default one itself if the default doesn't exist.
 Shared_Asset_Texture fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
-	map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
+	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+	map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Texture::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Texture::GetAssetType()];
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
@@ -74,12 +74,12 @@ Shared_Asset_Texture fetchDefaultAsset()
 	return dynamic_pointer_cast<Asset_Texture>(default_asset);
 }
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	void load_asset(Shared_Asset_Texture &user, const string &filename, const bool &mipmap, const bool &anis, const bool &threaded)
 	{
 		// Check if a copy already finalized
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_textures = (Asset_Managera::GetAssets_List(Asset_Texture::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_textures = (Asset_Manager::GetAssets_List(Asset_Texture::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_textures) {
@@ -113,7 +113,7 @@ namespace Asset_Manager {
 		}
 
 		if (threaded)
-			Asset_Managera::AddWorkOrder(new Texture_WorkOrder(user, fulldirectory));
+			Asset_Manager::AddWorkOrder(new Texture_WorkOrder(user, fulldirectory));
 		else {
 			Texture_WorkOrder work_order(user, fulldirectory);
 			work_order.Initialize_Order();

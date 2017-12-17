@@ -9,7 +9,6 @@
 
 // To replace with abstract systems
 #include "Systems\Message_Manager.h"
-#include "Systems\Asset_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -108,7 +107,7 @@ bool Initialize_Sharing()
 void Shutdown_Sharing()
 {
 	Material_Manager::Shutdown();
-	Asset_Managera::Shutdown();
+	Asset_Manager::Shutdown();
 }
 
 
@@ -129,13 +128,14 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		
 		Shared_Asset_Material mat;
-		std::string material_textures[6] = { Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_diffuse.png",
-			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_normal.png",
-			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_specular.png",
-			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_roughness.png",
-			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_height.png",
-			Asset_Manager::getCurrentDir() + "\\Textures\\Models\\Test\\cube_ao.png" };
-		Asset_Manager::load_asset(mat, material_textures);
+		std::string material_textures[6] = { 
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_diffuse.png",
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_normal.png",
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_specular.png",
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_roughness.png",
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_height.png",
+			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_ao.png" };
+		Asset_Loader::load_asset(mat, material_textures);
 
 		for each (auto &pair in systems) {
 			pair.second->Initialize(m_package);
@@ -155,7 +155,7 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_WindowResize);		
 
 		Material_Manager::Startup();
-		Asset_Managera::Startup();
+		Asset_Manager::Startup();
 		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
 		m_UpdaterThread->detach();
 
@@ -194,7 +194,6 @@ void dt_Engine::Update()
 		m_lastTime = thisTime;
 
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
-		Asset_Manager::ParseWorkOrders();
 		Material_Manager::ParseWorkOrders();
 		for each (auto system in m_package->m_Systems)
 			system.second->Update(deltaTime);
@@ -214,7 +213,7 @@ void dt_Engine::Updater_Thread()
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			glfwMakeContextCurrent(m_Context_Sharing);
-			Asset_Managera::Finalize_WorkOrders_Threaded();
+			Asset_Manager::Finalize_WorkOrders_Threaded();
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->Update_Threaded(deltaTime);

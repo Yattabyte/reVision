@@ -2,32 +2,32 @@
 
 
 
-Asset_Managera::Asset_Managera()
+Asset_Manager::Asset_Manager()
 {
 }
 
-void Asset_Managera::_startup()
+void Asset_Manager::_startup()
 {
 	m_Workers.reserve(3);
 	for (unsigned int x = 0; x < 3; ++x) {
 		m_Workers.push_back(std::make_shared<Assets_Worker>());
 		auto &worker = m_Workers[x];
 		unique_lock<shared_mutex> writeGuard(worker->m_mutex);
-		worker->m_thread = new thread(&Asset_Managera::_threaded_func, this, worker);
+		worker->m_thread = new thread(&Asset_Manager::_threaded_func, this, worker);
 	}
 }
 
-void Asset_Managera::_shutdown()
+void Asset_Manager::_shutdown()
 {
 }
 
-void Asset_Managera::AddWorkOrder(Work_Order * order) {
+void Asset_Manager::AddWorkOrder(Work_Order * order) {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
 	manager.m_WorkOrders_to_initialize.push_back(order);
 }
 
-void Asset_Managera::_threaded_func(shared_ptr<Assets_Worker> &worker)
+void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)
 {
 	bool stay_alive = true;
 	while (stay_alive) {		
@@ -53,7 +53,7 @@ void Asset_Managera::_threaded_func(shared_ptr<Assets_Worker> &worker)
 	}
 }
 
-void Asset_Managera::Finalize_WorkOrders_Threaded()
+void Asset_Manager::Finalize_WorkOrders_Threaded()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
@@ -68,22 +68,22 @@ void Asset_Managera::Finalize_WorkOrders_Threaded()
 	}
 }
 
-shared_mutex & Asset_Managera::GetMutex_Assets() 
+shared_mutex & Asset_Manager::GetMutex_Assets() 
 { 
 	return Get().m_Mutex_Assets; 
 }
 
-map<int, vector<Shared_Asset>>& Asset_Managera::GetAssets_Map()
+map<int, vector<Shared_Asset>>& Asset_Manager::GetAssets_Map()
 {
 	return Get().m_AssetMap;
 }
 
-map<int, Shared_Asset>& Asset_Managera::GetFallbackAssets_Map()
+map<int, Shared_Asset>& Asset_Manager::GetFallbackAssets_Map()
 {
 	return Get().m_AssetMap_Fallback;
 }
 
-vector<Shared_Asset>& Asset_Managera::GetAssets_List(const int & asset_type)
+vector<Shared_Asset>& Asset_Manager::GetAssets_List(const int & asset_type)
 {
 	// Returns the vector of assets in the asset map at the spot of asset_type.
 	// First tries to insert a vector in the map with the key of asset_type.

@@ -11,8 +11,8 @@
 */
 
 #pragma once
-#ifndef ASSET_MANAGERa
-#define ASSET_MANAGERa
+#ifndef ASSET_MANAGER
+#define ASSET_MANAGER
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
 #else
@@ -68,10 +68,10 @@ public:
 	virtual void Finalize_Order() = 0;
 };
 
-class DT_ENGINE_API Asset_Managera {
+class DT_ENGINE_API Asset_Manager {
 public:
-	static Asset_Managera &Get() {
-		static Asset_Managera instance;
+	static Asset_Manager &Get() {
+		static Asset_Manager instance;
 		return instance;
 	}
 	// Start up and initialize the asset manager
@@ -94,10 +94,10 @@ public:
 
 
 private:
-	~Asset_Managera() {};
-	Asset_Managera();
-	Asset_Managera(Asset_Managera const&) = delete;
-	void operator=(Asset_Managera const&) = delete;
+	~Asset_Manager() {};
+	Asset_Manager();
+	Asset_Manager(Asset_Manager const&) = delete;
+	void operator=(Asset_Manager const&) = delete;
 
 	void _startup();
 	void _shutdown();

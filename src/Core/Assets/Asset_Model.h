@@ -102,7 +102,7 @@ public:
 	GLuint								buffers[7];
 };
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	DT_ENGINE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
 };
 

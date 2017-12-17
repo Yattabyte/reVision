@@ -104,7 +104,7 @@ public:
 	static void setLocationMatArray(const GLuint &i, const float * o, const int &size, const GLboolean &transpose);		
 };
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	// Attempts to create an asset from disk or share one if it already exists
 	DT_ENGINE_API void load_asset(Shared_Asset_Shader &user, const string &filename, const bool &threaded = true);
 };

@@ -1,4 +1,4 @@
-#include "Systems\Asset_Manager.h"
+#include "Utilities\FileReader.h"
 #include "Systems\Message_Manager.h"
 #include "Utilities\ModelImporter.h"
 #include "assimp\Importer.hpp"
@@ -8,7 +8,7 @@
 int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlags, vector<btScalar>& points)
 {
 	// Check if the file exists
-	if (!Asset_Manager::fileOnDisk(fulldirectory)) {
+	if (!FileReader::FileExistsOnDisk(fulldirectory)) {
 		MSG::Error(FILE_MISSING, fulldirectory);
 		return 0;
 	}
@@ -39,7 +39,7 @@ int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlag
 int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlags, vector<vec3>& vertices, vector<vec2>& uv_coords)
 {
 	// Check if the file exists
-	if (!Asset_Manager::fileOnDisk(fulldirectory)) {
+	if (!FileReader::FileExistsOnDisk(fulldirectory)) {
 		MSG::Error(FILE_MISSING, fulldirectory);
 		return 0;
 	}

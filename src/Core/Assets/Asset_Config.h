@@ -59,7 +59,7 @@ public:
 	void saveConfig();
 }; 
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	// Attempts to create an asset from disk or share one if it already exists
 	DT_ENGINE_API void load_asset(Shared_Asset_Config &user, const string &filename, const vector<string> &cfg_strings, const bool &threaded = true);
 };

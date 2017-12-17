@@ -6,7 +6,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 4
 
-using namespace Asset_Manager;
+using namespace Asset_Loader;
 
 VertexBoneData::~VertexBoneData()
 {
@@ -139,8 +139,8 @@ void Asset_Model::UpdateVAO(const GLuint & vaoID)
 
 Shared_Asset_Model fetchDefaultAsset()
 {
-	shared_lock<shared_mutex> guard(Asset_Managera::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Managera::GetFallbackAssets_Map();
+	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Model::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Model::GetAssetType()];
 	if (default_asset.get() == nullptr)
@@ -148,12 +148,12 @@ Shared_Asset_Model fetchDefaultAsset()
 	return dynamic_pointer_cast<Asset_Model>(default_asset);
 }
 
-namespace Asset_Manager {
+namespace Asset_Loader {
 	void load_asset(Shared_Asset_Model &user, const string &filename, const bool &threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Managera::GetMutex_Assets();
-		auto &assets_models = (Asset_Managera::GetAssets_List(Asset_Model::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
+		auto &assets_models = (Asset_Manager::GetAssets_List(Asset_Model::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (const auto &asset in assets_models) {
@@ -187,7 +187,7 @@ namespace Asset_Manager {
 		}
 
 		if (threaded)
-			Asset_Managera::AddWorkOrder(new Model_WorkOrder(user, fulldirectory));
+			Asset_Manager::AddWorkOrder(new Model_WorkOrder(user, fulldirectory));
 		else {
 			Model_WorkOrder work_order(user, fulldirectory);
 			work_order.Initialize_Order();
@@ -410,5 +410,5 @@ void Model_WorkOrder::Initialize_Material(Shared_Asset_Material & texture, const
 		/*AO*/							specificTexDir + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	Asset_Manager::load_asset(texture, material_textures);
+	Asset_Loader::load_asset(texture, material_textures);
 }

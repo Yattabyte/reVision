@@ -70,7 +70,7 @@ public:
 	}
 	// Loads a preference file from disk
 	void LoadFile(const string &filename) {
-		Asset_Manager::load_asset(m_preferences, filename, PREFERENCE_STRINGS, false);
+		Asset_Loader::load_asset(m_preferences, filename, PREFERENCE_STRINGS, false);
 	}
 	// Saves the preference file to disk
 	void Save() {

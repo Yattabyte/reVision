@@ -24,12 +24,12 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_enginePackage = enginePackage;
 		m_gbuffer.Initialize(m_enginePackage);		
 		m_lbuffer.Initialize(m_enginePackage, m_gbuffer.m_depth_stencil);
-		Asset_Manager::load_asset(m_shaderGeometry, "Geometry\\geometry");
-		Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
-		Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
-		Asset_Manager::load_asset(m_shapeQuad, "quad");
-		Asset_Manager::load_asset(m_shaderSky, "skybox");
-		Asset_Manager::load_asset(m_textureSky, "sky\\");
+		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
+		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
+		Asset_Loader::load_asset(m_shaderLighting, "Lighting\\lighting");
+		Asset_Loader::load_asset(m_shapeQuad, "quad");
+		Asset_Loader::load_asset(m_shaderSky, "skybox");
+		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
 		m_Initialized = true;
 	}
