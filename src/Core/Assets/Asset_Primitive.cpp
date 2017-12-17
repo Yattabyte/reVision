@@ -61,8 +61,9 @@ void Asset_Primitive::UpdateVAO(const GLuint & vaoID)
 	glBindVertexArray(0);
 }
 
-size_t Asset_Primitive::GetSize() const
+size_t Asset_Primitive::GetSize()
 {
+	shared_lock<shared_mutex> guard(m_mutex);
 	return data.size();
 }
 

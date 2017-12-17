@@ -53,6 +53,7 @@ public:
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 	static int GetAssetType();
 
+
 	/****************
 	----Variables----
 	****************/

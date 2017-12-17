@@ -28,8 +28,8 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Manager::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
 		Asset_Manager::load_asset(m_shaderLighting, "Lighting\\lighting");
 		Asset_Manager::load_asset(m_shapeQuad, "quad");
-		Asset_Manager::load_asset(m_shaderTest, "test");
-		Asset_Manager::load_asset(m_texture, "test.jpg");
+		Asset_Manager::load_asset(m_shaderSky, "skybox");
+		Asset_Manager::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
 		m_Initialized = true;
 	}
@@ -88,7 +88,7 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		m_gbuffer.BindForWriting();
 		m_shaderGeometry->Bind();
 
-		for each (auto component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
+		for each (auto &component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
 			component->Draw();
 
 		m_shaderGeometry->Release();
@@ -97,25 +97,34 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 
 void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 {
+	const int quad_size = m_shapeQuad->GetSize();
+	m_lbuffer.Clear();
+	m_lbuffer.BindForWriting();
+
+	glDisable(GL_BLEND);
+	glDepthMask(GL_FALSE);
+	glEnable(GL_DEPTH_TEST);
+	m_textureSky->Bind(GL_TEXTURE0);
+	m_shaderSky->Bind();
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+
+	m_gbuffer.BindForReading();
 	if (vis_token.find("Light_Directional") != vis_token.end()) {
-		glDisable(GL_DEPTH_TEST);
-		glDepthMask(GL_FALSE);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		/*glDisable(GL_STENCIL_TEST);*/
-		m_lbuffer.Clear();
-		
-		m_gbuffer.BindForReading();
-		m_lbuffer.BindForWriting();
+		glDisable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
+		//glDisable(GL_STENCIL_TEST);
 		m_shaderLighting->Bind();
 		glBindVertexArray(m_quadVAO);
-		const int quad_size = m_shapeQuad->GetSize();
-		for each (auto component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
+		for each (auto &component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
 			component->directPass(quad_size);
-		glBindVertexArray(0);
-		m_shaderLighting->Release();
 	}
+
+	m_shaderLighting->Release();
+	glBindVertexArray(0);
 }
 
 void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
@@ -128,7 +137,7 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 	m_lbuffer.BindForReading();
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_lbuffer.m_fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glReadBuffer(GL_COLOR_ATTACHMENT0);
+	glReadBuffer(GL_COLOR_ATTACHMENT0); 
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	const float &window_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
@@ -136,13 +145,7 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 
 	glViewport(0, 0, window_width, window_height);
 	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-
-	m_texture->Bind(GL_TEXTURE0);
-	glEnable(GL_BLEND);
-	m_shaderTest->Bind();
-	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, m_shapeQuad->GetSize());
-	glBindVertexArray(0);
-	glDisable(GL_BLEND);
 	m_gbuffer.End();
+
+	
 }

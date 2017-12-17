@@ -65,7 +65,7 @@ public:
 	// Updates a vertex array object's state with this objects' data
 	void UpdateVAO(const GLuint &vaoID);
 	// Returns the vertex-count of this object
-	size_t GetSize() const;
+	size_t GetSize();
 };
 
 namespace Asset_Manager {

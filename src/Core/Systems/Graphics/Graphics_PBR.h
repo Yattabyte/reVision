@@ -22,7 +22,7 @@
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
+#include "Assets\Asset_Cubemap.h"
 
 class Engine_Package;
 
@@ -45,11 +45,11 @@ private:
 
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderTest;
+	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderSky;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_quadLoaded;
-	Shared_Asset_Texture m_texture;
+	Shared_Asset_Cubemap m_textureSky;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR
