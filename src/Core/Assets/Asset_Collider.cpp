@@ -40,6 +40,8 @@ Shared_Asset_Collider fetchDefaultAsset()
 	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Collider::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Collider::GetAssetType()];
+	guard.unlock();
+	guard.release();
 	if (default_asset.get() == nullptr)
 		default_asset = shared_ptr<Asset_Collider>(new Asset_Collider());
 	return dynamic_pointer_cast<Asset_Collider>(default_asset);

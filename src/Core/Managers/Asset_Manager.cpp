@@ -53,7 +53,7 @@ void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)
 	}
 }
 
-void Asset_Manager::Finalize_WorkOrders_Threaded()
+void Asset_Manager::Finalize_Orders()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
@@ -92,4 +92,21 @@ vector<Shared_Asset>& Asset_Manager::GetAssets_List(const int & asset_type)
 	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
 	manager.m_AssetMap.insert(pair<int, vector<Shared_Asset>>(asset_type, vector<Shared_Asset>()));
 	return manager.m_AssetMap[asset_type];
+}
+
+void Asset_Manager::Queue_Notification(const vector<Asset_Observer*>& observers)
+{
+	auto &manager = Get();
+	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
+	manager.m_observers.insert(end(manager.m_observers), begin(observers), end(observers)); // dump new list of observers onto end of list
+}
+
+void Asset_Manager::Noitfy_Observers()
+{
+	auto &manager = Get();
+	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
+	for each (auto *observer in manager.m_observers) 
+		observer->Notify_Finalized();
+	
+	manager.m_observers.clear();
 }

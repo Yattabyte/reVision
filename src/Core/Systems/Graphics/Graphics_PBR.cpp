@@ -15,7 +15,6 @@ System_Graphics_PBR::System_Graphics_PBR() :
 	m_gbuffer(), m_lbuffer()
 {
 	m_quadVAO = 0;
-	m_quadLoaded = false;
 }
 
 void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
@@ -32,22 +31,18 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
 		m_Initialized = true;
+		m_observer = make_shared<Primitive_Observer>(m_shapeQuad, m_quadVAO);
 	}
 }
 
 void System_Graphics_PBR::Update(const float & deltaTime)
 {
-	if ((!m_quadLoaded) && m_shapeQuad->ExistsYet()) {
-		m_shapeQuad->UpdateVAO(m_quadVAO);
-		m_quadLoaded = true;
-	}
-
 	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
 
 	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
 	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
 	
-	if (vis_token.size()) {
+	if (vis_token.size() && m_shapeQuad->ExistsYet()) {
 		RegenerationPass(vis_token);
 		GeometryPass(vis_token);
 		LightingPass(vis_token);
@@ -145,7 +140,11 @@ void System_Graphics_PBR::FinalPass(const Visibility_Token & vis_token)
 
 	glViewport(0, 0, window_width, window_height);
 	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
-	m_gbuffer.End();
+	m_gbuffer.End();	
+}
 
-	
+void Primitive_Observer::Notify_Finalized()
+{
+	if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
+		m_asset->UpdateVAO(m_vao_id);
 }

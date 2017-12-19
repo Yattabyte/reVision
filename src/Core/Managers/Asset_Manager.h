@@ -82,7 +82,7 @@ public:
 	static void AddWorkOrder(Work_Order* order);
 	// Peforms the last stage of processing on work orders that couldn't be threaded
 	// Eg: creating texture objects and making them resident on the GPU
-	static void Finalize_WorkOrders_Threaded();
+	static void Finalize_Orders();
 	// Retrieves the asset map mutex
 	static shared_mutex& GetMutex_Assets();
 	// Retrieves the map of all assets
@@ -91,6 +91,10 @@ public:
 	static map<int, Shared_Asset>& GetFallbackAssets_Map();
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
 	static vector<Shared_Asset>& GetAssets_List(const int &asset_type);
+	// Queue up a list of observers to notify them that their asset has finalized
+	static void Queue_Notification(const vector<Asset_Observer*> &observers);
+	// Notifies the observers of assets that completed finalization
+	static void Noitfy_Observers();
 
 
 private:
@@ -112,7 +116,8 @@ private:
 
 	shared_mutex m_Mutex_Assets;
 	map<int, vector<Shared_Asset>> m_AssetMap;
-	map<int, Shared_Asset> m_AssetMap_Fallback;										
+	map<int, Shared_Asset> m_AssetMap_Fallback;			
+	vector<Asset_Observer*> m_observers;
 };
 
 

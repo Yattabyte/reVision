@@ -6,29 +6,6 @@
 	- Intended to be basic and reusable
 		- A particular asset file should be loaded from disk once and shared from memory whenever needed
 	- Under this system, an asset can be stored once in the Asset_Manager, and referenced across an entire application
-
-	
-
-	*****************************************************************************************************
-	*											NEW ASSET GUIDE											*
-	*****************************************************************************************************
-
-		* Implement the following:
-			- void initialize_[Subclass Name]([any arguments here]) in cpp file
-			- virtual void Finalize();
-			- static int GetAssetType();
-
-		* Ensure Asset Type is unique!
-
-		* typedef Shared_Asset:
-			- typedef shared_ptr< Asset_[Subclass Name] > Shared_Asset_[Subclass Name];
-
-		* Continue Asset_Manager namespace for asset loading function:
-			-	namespace Asset_Loader {
-					void load_asset(Shared_Asset_[Subclass Name] &asset, [any arguments needed]);
-				};
-
-	*****************************************************************************************************
 */
 
 #pragma once
@@ -41,27 +18,46 @@
 #endif
 
 #include <shared_mutex>
+#include <vector>
 
 using namespace std;
 
+class Asset_Observer;
 class Asset;
 typedef shared_ptr<Asset> Shared_Asset;
-class Asset
+class DT_ENGINE_API Asset
 {
 public:
 	// Destroyed when no longer used only
-	DT_ENGINE_API ~Asset();
+	~Asset();
 	// Zero Initialization only
-	DT_ENGINE_API Asset();
+	Asset();
 	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	DT_ENGINE_API static int GetAssetType();
+	static int GetAssetType();
 	// Returns whether or not this asset has completed finalizing
-	DT_ENGINE_API bool ExistsYet();
+	bool ExistsYet();
 	// Performs final data processing
-	DT_ENGINE_API virtual void Finalize();
+	virtual void Finalize();
+	// Adds a state observer/listener
+	void AddObserver(Asset_Observer *observer);
+	// Removes a state observer/listener
+	void RemoveObserver(Asset_Observer *observer);
+
 
 protected:
 	bool finalized;
+	vector<Asset_Observer*> m_Observers;
+
 };
+
+class DT_ENGINE_API Asset_Observer
+{
+public:
+	Asset_Observer(Asset *asset);
+	virtual ~Asset_Observer();
+	virtual void Notify_Finalized() = 0;
+};
+
+
 #endif // ASSET

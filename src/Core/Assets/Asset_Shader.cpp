@@ -138,6 +138,8 @@ Shared_Asset_Shader fetchDefaultAsset()
 	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Shader::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Shader::GetAssetType()];
+	guard.unlock();
+	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Shader>(new Asset_Shader());
 		Shared_Asset_Shader cast_asset = dynamic_pointer_cast<Asset_Shader>(default_asset);

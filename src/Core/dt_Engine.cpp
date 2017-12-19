@@ -121,8 +121,21 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 
 		m_drawDistCallback = new EN_DrawDistCallback(m_package);
 		m_package->AddCallback(PREFERENCE_ENUMS::C_DRAW_DISTANCE, m_drawDistCallback);
+		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
+		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
+		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
+		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
+		glfwWindowHint(GLFW_ALPHA_BITS, 0);
+		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DT_DESIRED_OGL_VER_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DT_DESIRED_OGL_VER_MINOR);
+		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+		glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+		glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_TRUE);
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
@@ -142,7 +155,6 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
 		}
 
-		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		const float window_width = m_package->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
 		const float window_height = m_package->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
 		const int maxWidth = mainMode->width, maxHeight = mainMode->height;
@@ -194,6 +206,7 @@ void dt_Engine::Update()
 		m_lastTime = thisTime;
 
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
+		Asset_Manager::Noitfy_Observers();
 		Material_Manager::ParseWorkOrders();
 		for each (auto system in m_package->m_Systems)
 			system.second->Update(deltaTime);
@@ -213,7 +226,7 @@ void dt_Engine::Updater_Thread()
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			glfwMakeContextCurrent(m_Context_Sharing);
-			Asset_Manager::Finalize_WorkOrders_Threaded();
+			Asset_Manager::Finalize_Orders();
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->Update_Threaded(deltaTime);

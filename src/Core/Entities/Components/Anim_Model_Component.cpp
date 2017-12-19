@@ -12,7 +12,6 @@ Anim_Model_Component::~Anim_Model_Component()
 
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) : Geometry_Component(id, pid)
 {
-	m_updateBuffers = false;
 	m_uboID = 0;
 	m_vao_id = 0;
 	glGenBuffers(1, &m_uboID);
@@ -33,22 +32,10 @@ void Anim_Model_Component::Update()
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	if (m_updateBuffers)
-		UpdateBuffers();
-}
-
-void Anim_Model_Component::UpdateBuffers()
-{
-	if (m_model && m_model->ExistsYet()) {
-		m_model->UpdateVAO(m_vao_id);
-		m_updateBuffers = false;		
-	}
 }
 
 void Anim_Model_Component::Draw()
 {
-	if (m_updateBuffers)
-		UpdateBuffers();
 	if (m_model && m_model->ExistsYet()) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
 
@@ -79,8 +66,10 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 		case SET_MODEL_DIR: {
 			if (!message.IsOfType<string>()) break;
 			const auto &payload = message.GetPayload<string>();
-			Asset_Loader ::load_asset(m_model, payload);
-			m_updateBuffers = true;
+			if (m_observer)
+				m_observer.reset();
+			Asset_Loader::load_asset(m_model, payload);
+			m_observer = make_shared<Model_Observer>(m_model, m_vao_id);
 			break;
 		}	
 		case SET_MODEL_TRANSFORM: {
@@ -91,4 +80,10 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 			break;
 		}
 	}
+}
+
+void Model_Observer::Notify_Finalized()
+{
+	if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
+		m_asset->UpdateVAO(m_vao_id);
 }

@@ -75,6 +75,8 @@ Shared_Asset_Primitive fetchDefaultAsset()
 	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Primitive::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Primitive::GetAssetType()];
+	guard.unlock();
+	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Primitive>(new Asset_Primitive());
 		Shared_Asset_Primitive cast_asset = dynamic_pointer_cast<Asset_Primitive>(default_asset);

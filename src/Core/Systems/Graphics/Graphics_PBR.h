@@ -27,6 +27,7 @@
 class Engine_Package;
 
 class Camera;
+class Primitive_Observer;
 class DT_ENGINE_API System_Graphics_PBR : public System
 {
 public: 
@@ -48,8 +49,19 @@ private:
 	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderSky;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
-	bool m_quadLoaded;
 	Shared_Asset_Cubemap m_textureSky;
+	shared_ptr<Primitive_Observer> m_observer;
+};
+
+class DT_ENGINE_API Primitive_Observer : Asset_Observer
+{
+public:
+	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	virtual ~Primitive_Observer() { m_asset->RemoveObserver(this); };
+	virtual void Notify_Finalized();
+
+	GLuint m_vao_id;
+	Shared_Asset_Primitive m_asset;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR

@@ -52,6 +52,8 @@ Shared_Asset_Texture fetchDefaultAsset()
 	map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Texture::GetAssetType(), Shared_Asset()));
 	auto &default_asset = fallback_assets[Asset_Texture::GetAssetType()];
+	guard.unlock();
+	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
 		default_asset = shared_ptr<Asset_Texture>(new Asset_Texture());
 		Shared_Asset_Texture cast_asset = dynamic_pointer_cast<Asset_Texture>(default_asset);

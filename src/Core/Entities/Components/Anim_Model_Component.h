@@ -32,6 +32,7 @@ struct Transform_Buffer {
 };
 
 class Anim_Model_Creator;
+class Model_Observer;
 class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
 {
 public:
@@ -53,8 +54,6 @@ public:
 	virtual bool IsVisible(const mat4 & PVMatrix);
 	// Sends current data to the GPU
 	void Update();
-	// Binds model buffer data to our VAO
-	void UpdateBuffers();
 
 
 protected:
@@ -62,10 +61,10 @@ protected:
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	friend class Anim_Model_Creator;
 	
-	bool m_updateBuffers;
 	GLuint m_uboID, m_vao_id;
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
+	shared_ptr<Model_Observer> m_observer;
 };
 
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
@@ -75,6 +74,17 @@ public:
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
 		return new Anim_Model_Component(id, pid, enginePackage);
 	}
+};
+
+class DT_ENGINE_API Model_Observer : Asset_Observer
+{
+public:
+	Model_Observer(Shared_Asset_Model &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	virtual ~Model_Observer() { m_asset->RemoveObserver(this); };
+	virtual void Notify_Finalized();
+
+	GLuint m_vao_id;
+	Shared_Asset_Model m_asset;
 };
 
 #endif // ANIM_MODEL_COMPONENT
