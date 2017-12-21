@@ -30,9 +30,7 @@ public:
 	*************/
 
 	~Asset_Collider();
-	Asset_Collider();
-	Asset_Collider(const string &_filename);
-	Asset_Collider(btCollisionShape *new_shape);
+	Asset_Collider(const string & filename = "");
 	static int GetAssetType();
 
 
@@ -40,23 +38,22 @@ public:
 	----Variables----
 	****************/
 
-	string filename;
-	btCollisionShape *shape;
+	btCollisionShape * shape;
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Collider &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded = true);
 };
 
 class Collider_WorkOrder : public Work_Order {
 public:
-	Collider_WorkOrder(Shared_Asset_Collider &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Collider_WorkOrder(Shared_Asset_Collider & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Collider_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Collider m_asset;
 };
 

@@ -9,9 +9,10 @@ Asset::~Asset()
 {
 }
 
-Asset::Asset()
+Asset::Asset(const string & filename)
 {	
-	finalized = false;
+	m_finalized = false;
+	m_filename = filename;
 }
 
 int Asset::GetAssetType() 
@@ -19,30 +20,40 @@ int Asset::GetAssetType()
 	return ASSET_TYPE;
 }
 
+string Asset::GetFileName() const
+{
+	return string();
+}
+
+void Asset::SetFileName(const string & fn)
+{
+	m_filename = fn;
+}
+
 bool Asset::ExistsYet() 
 { 
-	return finalized;
+	return m_finalized;
 }
 
 void Asset::Finalize()
 {
-	if (!finalized) {
-		finalized = true;
-		Asset_Manager::Queue_Notification(m_Observers); // Notify later, guaranteed to be done during rendering loop
+	if (!m_finalized) {
+		m_finalized = true;
+		Asset_Manager::Queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
 	}
 }
 
 void Asset::AddObserver(Asset_Observer * observer)
 {
 	unique_lock<shared_mutex> write_guard(m_mutex);
-	m_Observers.push_back(observer);
+	m_observers.push_back(observer);
 }
 
 void Asset::RemoveObserver(Asset_Observer * observer)
 {
-	m_Observers.erase(std::remove_if(begin(m_Observers), end(m_Observers), [observer](const auto *element) {
+	m_observers.erase(std::remove_if(begin(m_observers), end(m_observers), [observer](const auto *element) {
 		return (element == observer);
-	}), end(m_Observers));
+	}), end(m_observers));
 }
 
 Asset_Observer::Asset_Observer(Asset * asset)

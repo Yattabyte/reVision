@@ -35,13 +35,12 @@ typedef shared_ptr<Asset_Shader> Shared_Asset_Shader;
 class DT_ENGINE_API Asset_Shader : public Asset
 {
 public:	
-
 	/*************
 	----Common----
 	*************/
 
 	~Asset_Shader();
-	Asset_Shader();
+	Asset_Shader(const string & filename = "");
 	static int GetAssetType();
 
 
@@ -50,7 +49,7 @@ public:
 	****************/
 
 	GLuint gl_program_ID, gl_shader_vertex_ID, gl_shader_fragment_ID, gl_shader_geometry_ID; // OpenGL ID's
-	string filename, vertex_text, fragment_text, geometry_text; // Text Data
+	string vertex_text, fragment_text, geometry_text; // Text Data
 
 
 	/***********************
@@ -67,58 +66,56 @@ public:
  	----Convenience functions for setting uniform values at a given location, while a shader is bound----
 	****************************************************************************************************/
 
-	static void setLocationValue(const GLuint &i, const bool &b);
-	static void setLocationValue(const GLuint &i, const int &o);
-	static void setLocationValue(const GLuint &i, const double &o);
-	static void setLocationValue(const GLuint &i, const float &o);
-	static void setLocationValue(const GLuint &i, const vec2 &o);
-	static void setLocationValue(const GLuint &i, const vec3 &o);
-	static void setLocationValue(const GLuint &i, const vec4 &o);
-	static void setLocationValue(const GLuint &i, const ivec2 &o);
-	static void setLocationValue(const GLuint &i, const ivec3 &o);
-	static void setLocationValue(const GLuint &i, const ivec4 &o);
-	static void setLocationValue(const GLuint &i, const mat3 &o);
-	static void setLocationValue(const GLuint &i, const mat4 &o);
-	static void setLocationValue(const GLuint &i, const int *o);
-	static void setLocationValue(const GLuint &i, const double *o);
-	static void setLocationValue(const GLuint &i, const float *o);
-	static void setLocationValue(const GLuint &i, const vec2 *o);
-	static void setLocationValue(const GLuint &i, const vec3 *o);
-	static void setLocationValue(const GLuint &i, const vec4 *o);
-	static void setLocationValue(const GLuint &i, const mat3 *o);
-	static void setLocationValue(const GLuint &i, const mat4 *o);
-	static void setLocationValueArray(const GLuint &i, const int &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const double &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const float &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec2 &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec3 &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec4 &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const mat4 &o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const int *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const double *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const float *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec2 *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec3 *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const vec4 *o, const int &size);
-	static void setLocationValueArray(const GLuint &i, const mat4 *o, const int &size);
-	static void setLocationMatArray(const GLuint &i, const float * o, const int &size, const GLboolean &transpose);		
+	static void setLocationValue(const GLuint & i, const bool & o);
+	static void setLocationValue(const GLuint & i, const int & o);
+	static void setLocationValue(const GLuint & i, const double & o);
+	static void setLocationValue(const GLuint & i, const float & o);
+	static void setLocationValue(const GLuint & i, const vec2 & o);
+	static void setLocationValue(const GLuint & i, const vec3 & o);
+	static void setLocationValue(const GLuint & i, const vec4 & o);
+	static void setLocationValue(const GLuint & i, const ivec2 & o);
+	static void setLocationValue(const GLuint & i, const ivec3 & o);
+	static void setLocationValue(const GLuint & i, const ivec4 & o);
+	static void setLocationValue(const GLuint & i, const mat3 & o);
+	static void setLocationValue(const GLuint & i, const mat4 & o);
+	static void setLocationValue(const GLuint & i, const int * o);
+	static void setLocationValue(const GLuint & i, const double * o);
+	static void setLocationValue(const GLuint & i, const float * o);
+	static void setLocationValue(const GLuint & i, const vec2 * o);
+	static void setLocationValue(const GLuint & i, const vec3 * o);
+	static void setLocationValue(const GLuint & i, const vec4 * o);
+	static void setLocationValue(const GLuint & i, const mat3 * o);
+	static void setLocationValue(const GLuint & i, const mat4 * o);
+	static void setLocationValueArray(const GLuint & i, const int & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const double & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const float & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec2 & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec3 & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec4 & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const mat4 & o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const int * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const double * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const float * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec2 * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec3 * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const vec4 * o, const int & size);
+	static void setLocationValueArray(const GLuint & i, const mat4 * o, const int & size);
+	static void setLocationMatArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose);		
 };
 
 namespace Asset_Loader {
 	// Attempts to create an asset from disk or share one if it already exists
-	DT_ENGINE_API void load_asset(Shared_Asset_Shader &user, const string &filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded = true);
 };
 
 class Shader_WorkOrder : public Work_Order {
 public:
-	Shader_WorkOrder(Shared_Asset_Shader &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Shader_WorkOrder(Shared_Asset_Shader & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Shader_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	// Destroy's this shader program's opengl shader state
-	void Destroy();
 	// Creates and compiles all available shader types for this program
 	void Compile();
 	// Creates and compiles a single shader file, given the text as <source> and the specified shader type as <type>.
@@ -133,7 +130,7 @@ private:
 	----Variables----
 	****************/
 
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Shader m_asset;
 };
 

@@ -9,24 +9,22 @@ using namespace Asset_Loader;
 
 Asset_Texture::~Asset_Texture()
 {
-	if (finalized)
+	if (ExistsYet())
 		glDeleteTextures(1, &gl_tex_ID);
 }
 
-Asset_Texture::Asset_Texture()
+Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
 {
 	gl_tex_ID = 0;
 	type = 0;
 	size = vec2(0);
-	filename = "";
 	pixel_data = nullptr;
 	mipmap = false;
 	anis = false;
 }
 
-Asset_Texture::Asset_Texture(const string & f, const GLuint & t, const bool & m, const bool & a) : Asset_Texture()
+Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
 {
-	filename = f;
 	type = t;
 	mipmap = m;
 	anis = a;
@@ -36,7 +34,6 @@ int Asset_Texture::GetAssetType()
 {
 	return ASSET_TYPE;
 }
-
 
 void Asset_Texture::Bind(const GLuint & texture_unit)
 {
@@ -55,9 +52,8 @@ Shared_Asset_Texture fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Texture>(new Asset_Texture());
+		default_asset = shared_ptr<Asset_Texture>(new Asset_Texture("defaultTexture"));
 		Shared_Asset_Texture cast_asset = dynamic_pointer_cast<Asset_Texture>(default_asset);
-		cast_asset->filename = "defaultTexture"; 
 		string fulldirectory = ABS_DIRECTORY_TEXTURE("defaultTexture");
 		Texture_WorkOrder work_order(cast_asset, fulldirectory);
 		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
@@ -77,7 +73,7 @@ Shared_Asset_Texture fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Texture &user, const string &filename, const bool &mipmap, const bool &anis, const bool &threaded)
+	void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap, const bool & anis, const bool & threaded)
 	{
 		// Check if a copy already finalized
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -88,7 +84,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Texture derived_asset = dynamic_pointer_cast<Asset_Texture>(asset);
 				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+					if (derived_asset->GetFileName() == filename) {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;

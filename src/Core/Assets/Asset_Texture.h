@@ -35,8 +35,8 @@ public:
 	*************/
 
 	~Asset_Texture();
-	Asset_Texture();
-	Asset_Texture(const string &f, const GLuint &t, const bool &m, const bool &a);
+	Asset_Texture(const string & filename = "");
+	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
 	static int GetAssetType();
 
 
@@ -46,8 +46,7 @@ public:
 
 	GLuint gl_tex_ID, type;
 	vec2 size;
-	string filename;
-	GLubyte	*pixel_data;
+	GLubyte	* pixel_data;
 	bool mipmap;
 	bool anis;
 
@@ -61,18 +60,18 @@ public:
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Texture &user, const string & filename, const bool &mipmap = false, const bool &anis = false, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 };
 
 class Texture_WorkOrder : public Work_Order {
 public:
-	Texture_WorkOrder(Shared_Asset_Texture &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Texture_WorkOrder(Shared_Asset_Texture & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Texture_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Texture m_asset;
 };
 

@@ -11,9 +11,8 @@ Asset_Config::~Asset_Config()
 {
 }
 
-Asset_Config::Asset_Config()
+Asset_Config::Asset_Config(const string & filename) : Asset(filename)
 {
-	filename = "";
 }
 
 int Asset_Config::GetAssetType()
@@ -42,13 +41,13 @@ void Asset_Config::saveConfig()
 	for each (const auto &value in configuration) 
 		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
 
-	string directory = ABS_DIRECTORY_CONFIG(filename);
+	string directory = ABS_DIRECTORY_CONFIG(GetFileName());
 	ofstream out(directory);
 	out << output.c_str();
 }
 
 // Attempts to retrieve a string between quotation marks "<string>"
-string getBetweenQuotes(string &s)
+string getBetweenQuotes(string & s)
 {
 	string output = s;
 	int spot1 = s.find_first_of("\"");
@@ -67,7 +66,7 @@ string getBetweenQuotes(string &s)
 // Checks if the value @s is a parameter in the CFG_STRING list. 
 // If true, returns the spot in the list @s is. 
 // If false, returns -1.
-int findCFGProperty(const string &s, const vector<string> &m_strings)
+int findCFGProperty(const string & s, const vector<string> & m_strings)
 {
 	string UPPER_STRING;
 	for each (const auto &c in s) 
@@ -91,7 +90,7 @@ Shared_Asset_Config fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Config>(new Asset_Config());
+		default_asset = shared_ptr<Asset_Config>(new Asset_Config("defaultConfig"));
 		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
 		return cast_asset;
 	}
@@ -99,7 +98,7 @@ Shared_Asset_Config fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> &cfg_strings, const bool & threaded)
+	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -110,7 +109,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Config derived_asset = dynamic_pointer_cast<Asset_Config>(asset);
 				if (derived_asset) { // Check that pointer isn't null after dynamic pointer casting
-					if (derived_asset->filename == filename) { // Filenames match, use this asset
+					if (derived_asset->GetFileName() == filename) { // Filenames match, use this asset
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
@@ -130,8 +129,7 @@ namespace Asset_Loader {
 		}
 		else {
 			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Config(new Asset_Config());
-			user->filename = filename;
+			user = Shared_Asset_Config(new Asset_Config(filename));
 			user->m_strings = cfg_strings;
 			assets_configs.push_back(user);
 		}

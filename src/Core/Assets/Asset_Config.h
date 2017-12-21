@@ -35,23 +35,24 @@ public:
 	*************/
 
 	~Asset_Config();
-	Asset_Config();
+	Asset_Config(const string & filename = "");
 	static int GetAssetType();
+
 
 	/****************
 	----Variables----
 	****************/
 
-	string filename;
 	map<unsigned int, float> configuration;
 	vector<string> m_strings;
+
 
 	/******************************
 	----Configuration Functions----
 	******************************/
 
 	// Saves the value of @cfg_value to the spot of @cfg_key in our configuration map
-	void setValue(const unsigned int &cfg_key, const float &cfg_value);
+	void setValue(const unsigned int & cfg_key, const float & cfg_value);
 	// Gets the value in our configuration map at the spot of @cfg_key
 	// Returns UNDEFINED_CVAL when @cfg_key out of bounds (doesn't exist)
 	float getValue(const unsigned int & cfg_key);
@@ -61,18 +62,18 @@ public:
 
 namespace Asset_Loader {
 	// Attempts to create an asset from disk or share one if it already exists
-	DT_ENGINE_API void load_asset(Shared_Asset_Config &user, const string &filename, const vector<string> &cfg_strings, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 };
 
 class Config_WorkOrder : public Work_Order {
 public:
-	Config_WorkOrder(Shared_Asset_Config &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Config_WorkOrder(Shared_Asset_Config & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Config_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Config m_asset;
 };
 #endif //ASSET_CONFIG

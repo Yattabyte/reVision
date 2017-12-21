@@ -18,6 +18,9 @@
 #define NUM_BONES_PER_VEREX 4
 #define NUM_MAX_BONES 100
 #define GLEW_STATIC
+#define EXT_MODEL ".obj"
+#define DIRECTORY_MODEL FileReader::GetCurrentDir() + "\\Models\\"
+#define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
@@ -54,7 +57,7 @@ struct BoneInfo
 };
 struct AnimationInfo {
 	vector<aiAnimation*> Animations;
-	aiNode *RootNode;
+	aiNode * RootNode;
 	vector<BoneInfo> meshTransforms;
 	map<string, int> boneMap;
 
@@ -76,8 +79,7 @@ public:
 	*************/
 
 	~Asset_Model();
-	Asset_Model();
-	Asset_Model(const string & _filename);
+	Asset_Model(const string & filename = "");
 	static int GetAssetType();
 
 	/**********************
@@ -87,14 +89,13 @@ public:
 	// Generates a vertex array object, formed to match models' object data
 	static GLuint GenerateVAO();
 	// Updates a vertex array object's state with this models' data
-	void UpdateVAO(const GLuint &vaoID);
+	void UpdateVAO(const GLuint & vaoID);
 
 	/****************
 	----Variables----
 	****************/
 
 	int									mesh_size;
-	string								filename;
 	vector<Shared_Asset_Material>		textures;
 	GeometryInfo						data;
 	AnimationInfo						animationInfo;
@@ -103,20 +104,20 @@ public:
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Model &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded = true);
 };
 
 class Model_WorkOrder : public Work_Order {
 public:
-	Model_WorkOrder(Shared_Asset_Model &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Model_WorkOrder(Shared_Asset_Model & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Model_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Model m_asset;
-	void Initialize_Bones(Shared_Asset_Model &model, const aiScene* scene);
-	void Initialize_Material(Shared_Asset_Material &texture, const aiMesh * mesh, const aiMaterial * material, const string & specificTexDir);
+	void Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene);
+	void Initialize_Material(Shared_Asset_Material & texture, const aiMesh * mesh, const aiMaterial * material, const string & specificTexDir);
 };
 #endif // ASSET_MODEL

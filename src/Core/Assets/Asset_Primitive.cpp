@@ -12,21 +12,14 @@ using namespace Asset_Loader;
 
 Asset_Primitive::~Asset_Primitive()
 {
-	if (finalized)
+	if (ExistsYet())
 		glDeleteBuffers(2, buffers);
 }
 
-Asset_Primitive::Asset_Primitive()
+Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 {
-	filename = "";
-	finalized = false;
 	for each (auto &buffer in buffers)
 		buffer = -1;
-}
-
-Asset_Primitive::Asset_Primitive(const string & _filename) : Asset_Primitive()
-{
-	filename = _filename;
 }
 
 int Asset_Primitive::GetAssetType()
@@ -78,9 +71,8 @@ Shared_Asset_Primitive fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Primitive>(new Asset_Primitive());
+		default_asset = shared_ptr<Asset_Primitive>(new Asset_Primitive("defaultPrimitive"));
 		Shared_Asset_Primitive cast_asset = dynamic_pointer_cast<Asset_Primitive>(default_asset);
-		cast_asset->filename = "defaultPrimitive";
 		string fulldirectory = ABS_DIRECTORY_PRIMITIVE("defaultPrimitive");
 		Primitive_WorkOrder work_order(cast_asset, fulldirectory);
 		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
@@ -100,7 +92,7 @@ Shared_Asset_Primitive fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Primitive &user, const string &filename, const bool &threaded)
+	void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -111,7 +103,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Primitive derived_asset = dynamic_pointer_cast<Asset_Primitive>(asset);
 				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+					if (derived_asset->GetFileName() == filename) {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;

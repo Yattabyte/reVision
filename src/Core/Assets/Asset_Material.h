@@ -48,8 +48,8 @@ public:
 	*************/
 
 	~Asset_Material();
-	Asset_Material();
-	Asset_Material(const std::string &_file, const GLuint & spot);
+	Asset_Material(const std::string & filename = "");
+	Asset_Material(const std::string & filename, const GLuint & spot);
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 	static int GetAssetType();
 
@@ -58,11 +58,10 @@ public:
 	----Variables----
 	****************/
 
-	std::string material_filename;
-	std::string textures[MAX_PHYSICAL_IMAGES];
+	string textures[MAX_PHYSICAL_IMAGES];
 	GLuint gl_array_ID;
 	vec2 size;
-	GLubyte *materialData;
+	GLubyte * materialData;
 	GLuint mat_spot;
 
 
@@ -76,19 +75,19 @@ public:
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string(&textures)[6], const bool &threaded = true);
-	DT_ENGINE_API void load_asset(Shared_Asset_Material &user, const std::string &material_filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string(&textures)[6], const bool & threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string & material_filename, const bool & threaded = true);
 };
 
 class Material_WorkOrder : public Work_Order {
 public:
-	Material_WorkOrder(Shared_Asset_Material &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Material_WorkOrder(Shared_Asset_Material & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Material_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Material m_asset;
 };
 

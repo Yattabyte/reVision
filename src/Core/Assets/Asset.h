@@ -31,24 +31,28 @@ public:
 	// Destroyed when no longer used only
 	~Asset();
 	// Zero Initialization only
-	Asset();
+	Asset(const string & filename = "");
 	shared_mutex m_mutex;	
 	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
 	static int GetAssetType();
+	// Gets the name of this asset
+	string GetFileName() const;
+	// Sets the name of this asset to @fn
+	void SetFileName(const string & filename);
 	// Returns whether or not this asset has completed finalizing
 	bool ExistsYet();
 	// Performs final data processing
 	virtual void Finalize();
 	// Adds a state observer/listener
-	void AddObserver(Asset_Observer *observer);
+	void AddObserver(Asset_Observer * observer);
 	// Removes a state observer/listener
-	void RemoveObserver(Asset_Observer *observer);
+	void RemoveObserver(Asset_Observer * observer);
 
 
 protected:
-	bool finalized;
-	vector<Asset_Observer*> m_Observers;
-
+	bool m_finalized;
+	string m_filename;
+	vector<Asset_Observer*> m_observers;
 };
 
 class DT_ENGINE_API Asset_Observer

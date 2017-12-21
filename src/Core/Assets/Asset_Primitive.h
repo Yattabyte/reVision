@@ -41,8 +41,7 @@ public:
 	*************/
 
 	~Asset_Primitive();
-	Asset_Primitive();
-	Asset_Primitive(const string &_filename);
+	Asset_Primitive(const string & filename = "");
 	static int GetAssetType();
 
 	
@@ -51,7 +50,6 @@ public:
 	****************/
 
 	GLuint buffers[2];
-	string filename;
 	vector<vec3> data;
 	vector<vec2> uv_data;
 
@@ -63,24 +61,24 @@ public:
 	// Generates a vertex array object, formed to match primitives' object data
 	static GLuint GenerateVAO();
 	// Updates a vertex array object's state with this objects' data
-	void UpdateVAO(const GLuint &vaoID);
+	void UpdateVAO(const GLuint & vaoID);
 	// Returns the vertex-count of this object
 	size_t GetSize();
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Primitive &user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded = true);
 };
 
 class Primitive_WorkOrder : public Work_Order {
 public:
-	Primitive_WorkOrder(Shared_Asset_Primitive &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Primitive_WorkOrder(Shared_Asset_Primitive & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Primitive_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Primitive m_asset;
 };
 #endif // ASSET_PRIMITIVE

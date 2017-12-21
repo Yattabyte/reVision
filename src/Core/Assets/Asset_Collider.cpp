@@ -12,21 +12,9 @@ Asset_Collider::~Asset_Collider()
 		delete shape;
 }
 
-Asset_Collider::Asset_Collider()
+Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 {
 	shape = nullptr;
-	finalized = false;
-}
-
-Asset_Collider::Asset_Collider(const string & _filename) : Asset_Collider()
-{
-	filename = _filename;
-}
-
-Asset_Collider::Asset_Collider(btCollisionShape *new_shape)
-{
-	shape = new_shape;
-	finalized = true;
 }
 
 int Asset_Collider::GetAssetType()
@@ -43,12 +31,12 @@ Shared_Asset_Collider fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr)
-		default_asset = shared_ptr<Asset_Collider>(new Asset_Collider());
+		default_asset = shared_ptr<Asset_Collider>(new Asset_Collider("defaultCollider"));
 	return dynamic_pointer_cast<Asset_Collider>(default_asset);
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Collider &user, const string &filename, const bool &threaded)
+	void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex  &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -59,7 +47,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Collider derived_asset = dynamic_pointer_cast<Asset_Collider>(asset);
 				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+					if (derived_asset->GetFileName() == filename) {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;

@@ -34,8 +34,7 @@ public:
 	*************/
 
 	~Asset_Cubemap();
-	Asset_Cubemap();
-	Asset_Cubemap(const std::string &f);
+	Asset_Cubemap(const std::string & filename = "");
 	static int GetAssetType();
 
 
@@ -43,10 +42,9 @@ public:
 	----Variables----
 	****************/
 
-	GLuint			gl_tex_ID;
-	vec2			size;
-	string			filename;
-	GLubyte			*pixel_data[6];
+	GLuint gl_tex_ID;
+	vec2 size;
+	GLubyte	* pixel_data[6];
 	
 
 	/************************
@@ -54,22 +52,22 @@ public:
 	************************/
 
 	// Makes this texture active at the specific @texture_unit
-	void Bind(const GLuint &texture_unit);
+	void Bind(const GLuint & texture_unit);
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool &threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded = true);
 };
 
 class Cubemap_WorkOrder : public Work_Order {
 public:
-	Cubemap_WorkOrder(Shared_Asset_Cubemap &asset, const std::string &filename) : m_asset(asset), m_filename(filename) {};
+	Cubemap_WorkOrder(Shared_Asset_Cubemap & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Cubemap_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
-	std::string m_filename;
+	string m_filename;
 	Shared_Asset_Cubemap m_asset;
 };
 #endif // ASSET_CUBEMAP

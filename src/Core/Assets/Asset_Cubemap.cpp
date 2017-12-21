@@ -7,21 +7,14 @@
 
 Asset_Cubemap::~Asset_Cubemap()
 {
-	if (finalized)
+	if (ExistsYet())
 		glDeleteTextures(1, &gl_tex_ID);
 }
 
-Asset_Cubemap::Asset_Cubemap()
+Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 {
 	gl_tex_ID = 0;
 	size = vec2(0);
-	filename = "";
-	finalized = false;
-}
-
-Asset_Cubemap::Asset_Cubemap(const std::string & f) : Asset_Cubemap()
-{
-	filename = f;
 }
 
 int Asset_Cubemap::GetAssetType()
@@ -47,9 +40,8 @@ Shared_Asset_Cubemap fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Cubemap>(new Asset_Cubemap());
+		default_asset = shared_ptr<Asset_Cubemap>(new Asset_Cubemap("defaultCubemap"));
 		Shared_Asset_Cubemap cast_asset = dynamic_pointer_cast<Asset_Cubemap>(default_asset);
-		cast_asset->filename = "defaultCubemap";
 		string fulldirectory = ABS_DIRECTORY_CUBEMAP("defaultCubemap");
 		Cubemap_WorkOrder work_order(cast_asset, fulldirectory);
 		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
@@ -75,7 +67,7 @@ Shared_Asset_Cubemap fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Cubemap &user, const string &filename, const bool &threaded)
+	void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already finalized
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -86,7 +78,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Cubemap derived_asset = dynamic_pointer_cast<Asset_Cubemap>(asset);
 				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+					if (derived_asset->GetFileName() == filename) {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;

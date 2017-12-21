@@ -10,19 +10,16 @@ using namespace Asset_Loader;
 
 Asset_Shader::~Asset_Shader()
 {
-	if (finalized) {
-		glDeleteProgram(gl_program_ID);
-		finalized = false;
-	}
+	if (ExistsYet()) 
+		glDeleteProgram(gl_program_ID);	
 }
 
-Asset_Shader::Asset_Shader()
+Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
 {
 	gl_program_ID = 0;
 	gl_shader_vertex_ID = 0;
 	gl_shader_fragment_ID = 0;
 	gl_shader_geometry_ID = 0;
-	filename = "";
 	vertex_text = "";
 	fragment_text = "";
 	geometry_text = "";
@@ -116,7 +113,7 @@ void Asset_Shader::setLocationMatArray(const GLuint & i, const float * o, const 
 
 // Reads in a text file from disk, given a file directory, and appends it to the returnFile param
 // Returns true if succeeded, false if file doesn't exist
-bool FetchFileFromDisk(string &returnFile, const string &fileDirectory)
+bool FetchFileFromDisk(string & returnFile, const string & fileDirectory)
 {
 	struct stat buffer;
 	if (stat(fileDirectory.c_str(), &buffer))
@@ -141,10 +138,9 @@ Shared_Asset_Shader fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Shader>(new Asset_Shader());
+		default_asset = shared_ptr<Asset_Shader>(new Asset_Shader("defaultShader"));
 		Shared_Asset_Shader cast_asset = dynamic_pointer_cast<Asset_Shader>(default_asset);
-		cast_asset->filename = "defaultShader";
-		const std::string &fulldirectory = DIRECTORY_SHADER + cast_asset->filename;
+		const std::string &fulldirectory = DIRECTORY_SHADER + cast_asset->GetFileName();
 		bool found_vertex = FileReader::FileExistsOnDisk(fulldirectory + EXT_SHADER_VERTEX);
 		bool found_fragement = FileReader::FileExistsOnDisk(fulldirectory + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
@@ -169,7 +165,7 @@ Shared_Asset_Shader fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Shader & user, const string &filename, const bool & threaded)
+	void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -180,7 +176,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Shader derived_asset = dynamic_pointer_cast<Asset_Shader>(asset);
 				if (derived_asset) { // Check that pointer isn't null after dynamic pointer casting
-					if (derived_asset->filename == filename) { // Filenames match, use this asset
+					if (derived_asset->GetFileName() == filename) { // Filenames match, use this asset
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
@@ -205,8 +201,7 @@ namespace Asset_Loader {
 		}
 		{
 			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Shader(new Asset_Shader());
-			user->filename = filename;
+			user = Shared_Asset_Shader(new Asset_Shader(filename));
 			assets_shaders.push_back(user);
 		}
 
@@ -230,9 +225,9 @@ void Shader_WorkOrder::Initialize_Order()
 	bool found_geometry = FetchFileFromDisk(m_asset->geometry_text, m_filename + EXT_SHADER_GEOMETRY);
 
 	if (!found_vertex)
-		MSG::Error(FILE_MISSING, m_asset->filename + EXT_SHADER_VERTEX);
+		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_VERTEX);
 	if (!found_fragement)
-		MSG::Error(FILE_MISSING, m_asset->filename + EXT_SHADER_FRAGMENT);
+		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_FRAGMENT);
 	if (!(found_vertex + found_fragement + found_geometry)) {
 
 	}
@@ -253,7 +248,7 @@ void Shader_WorkOrder::Finalize_Order()
 	}
 }
 
-void Shader_WorkOrder::Compile_Single_Shader(GLuint &ID, const char *source, const GLenum &type)
+void Shader_WorkOrder::Compile_Single_Shader(GLuint & ID, const char * source, const GLenum & type)
 {
 	if (strlen(source) > 0) {
 		ID = glCreateShader(type);

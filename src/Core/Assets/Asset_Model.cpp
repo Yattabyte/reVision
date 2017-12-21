@@ -69,24 +69,17 @@ size_t AnimationInfo::NumAnimations() const
 
 Asset_Model::~Asset_Model()
 {
-	if (finalized) 
+	if (ExistsYet())
 		glDeleteBuffers(7, buffers);	
 }
 
-Asset_Model::Asset_Model()
+Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 {
 	mesh_size = 0;
-	filename = "";
 	bbox_min = vec3(0.0f);
 	bbox_max = vec3(0.0f);
-	finalized = false;
 	for each (auto &buffer in buffers)
 		buffer = -1;
-}
-
-Asset_Model::Asset_Model(const string & _filename) : Asset_Model()
-{
-	filename = _filename;
 }
 
 int Asset_Model::GetAssetType()
@@ -145,13 +138,25 @@ Shared_Asset_Model fetchDefaultAsset()
 	auto &default_asset = fallback_assets[Asset_Model::GetAssetType()];
 	guard.unlock();
 	guard.release();
-	if (default_asset.get() == nullptr)
-		default_asset = shared_ptr<Asset_Model>(new Asset_Model());
+	if (default_asset.get() == nullptr) { // Check if we already created the default asset
+		default_asset = shared_ptr<Asset_Model>(new Asset_Model("defaultModel"));
+		Shared_Asset_Model cast_asset = dynamic_pointer_cast<Asset_Model>(default_asset);
+		string fulldirectory = ABS_DIRECTORY_MODEL("defaultPrimitive");
+		Model_WorkOrder work_order(cast_asset, fulldirectory);
+		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
+			work_order.Initialize_Order();
+			work_order.Finalize_Order();
+			if (cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
+				return cast_asset;
+		}
+		// We didn't load a default asset from disk
+		/* HARD CODE DEFAULT VALUES HERE */
+	}
 	return dynamic_pointer_cast<Asset_Model>(default_asset);
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Model &user, const string &filename, const bool &threaded)
+	void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
@@ -162,7 +167,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Model derived_asset = dynamic_pointer_cast<Asset_Model>(asset);
 				if (derived_asset) {
-					if (derived_asset->filename == filename) {
+					if (derived_asset->GetFileName() == filename) {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
@@ -199,7 +204,7 @@ namespace Asset_Loader {
 
 // Calculates a Axis Aligned Bounding Box from a set of vertices. 
 // Returns it as updated minimum and maximum values &minOut and &maxOut respectively
-void calculate_AABB(const vector<vec3> &vertices, vec3 &minOut, vec3 &maxOut)
+void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 {
 	if (vertices.size() >= 1) {
 		const vec3 &vector = vertices.at(0);
