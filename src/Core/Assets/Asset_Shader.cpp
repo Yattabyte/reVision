@@ -184,13 +184,8 @@ namespace Asset_Loader {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
-						// If we don't want multithreading, try to create the asset now.
-						// It is OK if the first time this asset was requested was Multithreaded but this one isn't!
-						// Because finalize can be called multiple times safely, as it checks to see if the content was already created.
-						if (!threaded) {
-							user->Finalize();
-							return;
-						}
+						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
+						return;
 					}
 				}
 			}

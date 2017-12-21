@@ -92,8 +92,7 @@ namespace Asset_Loader {
 						asset_guard.unlock();
 						asset_guard.release();
 						user = derived_asset;
-						if (!threaded)
-							user->Finalize();
+						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
 						return;
 					}
 				}
