@@ -41,7 +41,7 @@ public:
 	*************/
 
 	~Asset_Primitive();
-	Asset_Primitive(const string & filename = "");
+	Asset_Primitive(const string & filename);
 	static int GetAssetType();
 
 	

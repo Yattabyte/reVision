@@ -79,7 +79,7 @@ public:
 	*************/
 
 	~Asset_Model();
-	Asset_Model(const string & filename = "");
+	Asset_Model(const string & filename);
 	static int GetAssetType();
 
 	/**********************

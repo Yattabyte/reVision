@@ -168,24 +168,8 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_shaders = (Asset_Manager::GetAssets_List(Asset_Shader::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (auto &asset in assets_shaders) {
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Shader derived_asset = dynamic_pointer_cast<Asset_Shader>(asset);
-				if (derived_asset) { // Check that pointer isn't null after dynamic pointer casting
-					if (derived_asset->GetFileName() == filename) { // Filenames match, use this asset
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
+		if (Asset_Manager::QueryExistingAsset<Asset_Shader>(user, filename))
+			return;
 
 		// Attempt to create the asset
 		const std::string &fulldirectory = DIRECTORY_SHADER + filename;
@@ -199,13 +183,9 @@ namespace Asset_Loader {
 			user = fetchDefaultAsset();
 			return;
 		}
-		{
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Shader(new Asset_Shader(filename));
-			assets_shaders.push_back(user);
-		}
 
-		// Either continue processing on a new thread or stay on the current one
+		Asset_Manager::CreateNewAsset<Asset_Shader>(user, filename);	
+
 		if (threaded)
 			Asset_Manager::AddWorkOrder(new Shader_WorkOrder(user, fulldirectory));		
 		else {

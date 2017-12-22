@@ -48,9 +48,10 @@ public:
 	*************/
 
 	~Asset_Material();
-	Asset_Material(const std::string & filename = "");
+	Asset_Material(const std::string & filename);
 	Asset_Material(const std::string & filename, const GLuint & spot);
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
+	void setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);
 	static int GetAssetType();
 
 
@@ -75,7 +76,7 @@ public:
 };
 
 namespace Asset_Loader {
-	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string(&textures)[6], const bool & threaded = true);
+	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
 	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string & material_filename, const bool & threaded = true);
 };
 

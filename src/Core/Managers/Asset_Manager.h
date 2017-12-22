@@ -26,6 +26,8 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <cstdarg>
+#include <utility>
 
 using namespace std;
 
@@ -91,6 +93,31 @@ public:
 	static map<int, Shared_Asset>& GetFallbackAssets_Map();
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
 	static vector<Shared_Asset>& GetAssets_List(const int &asset_type);
+	// Create a new asset of the supplied type and filename 
+	template <typename T, class... _Args>
+	static void CreateNewAsset(shared_ptr<T> & user, _Args&&... _Ax) {
+		user = shared_ptr<T>(new T(forward<_Args>(_Ax)...));
+		(Asset_Manager::GetAssets_List(T::GetAssetType())).push_back(user);
+	}
+	// Query if desired asset already exists
+	template <typename T>
+	static bool QueryExistingAsset(shared_ptr<T> & user, const string &filename) {
+		auto &asset_list = (Asset_Manager::GetAssets_List(T::GetAssetType()));
+		shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+		for each (auto &asset in asset_list) {
+			shared_lock<shared_mutex> asset_guard(asset->m_mutex);
+			// No need to cast it, filename is a member variable across assets
+			if (asset->GetFileName() == filename) {
+				asset_guard.unlock();
+				asset_guard.release();
+				user = dynamic_pointer_cast<T>(asset);
+
+				// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
+				return true;
+			}
+		}
+		return false;
+	}
 	// Queue up a list of observers to notify them that their asset has finalized
 	static void Queue_Notification(const vector<Asset_Observer*> &observers);
 	// Notifies the observers of assets that completed finalization
@@ -119,7 +146,5 @@ private:
 	map<int, Shared_Asset> m_AssetMap_Fallback;			
 	vector<Asset_Observer*> m_observers;
 };
-
-
 
 #endif // ASSET_MANAGER

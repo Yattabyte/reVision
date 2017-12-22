@@ -40,7 +40,7 @@ public:
 	*************/
 
 	~Asset_Shader();
-	Asset_Shader(const string & filename = "");
+	Asset_Shader(const string & filename);
 	static int GetAssetType();
 
 

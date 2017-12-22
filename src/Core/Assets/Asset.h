@@ -63,5 +63,4 @@ public:
 	virtual void Notify_Finalized() = 0;
 };
 
-
 #endif // ASSET

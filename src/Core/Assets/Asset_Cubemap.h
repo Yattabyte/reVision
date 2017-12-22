@@ -34,7 +34,7 @@ public:
 	*************/
 
 	~Asset_Cubemap();
-	Asset_Cubemap(const std::string & filename = "");
+	Asset_Cubemap(const std::string & filename);
 	static int GetAssetType();
 
 

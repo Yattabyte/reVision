@@ -11,7 +11,7 @@ Asset_Config::~Asset_Config()
 {
 }
 
-Asset_Config::Asset_Config(const string & filename) : Asset(filename)
+Asset_Config::Asset_Config(const string & filename, const vector<string> &strings) : Asset(filename), m_strings(strings)
 {
 }
 
@@ -90,7 +90,7 @@ Shared_Asset_Config fetchDefaultAsset()
 	guard.unlock();
 	guard.release();
 	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Config>(new Asset_Config("defaultConfig"));
+		default_asset = shared_ptr<Asset_Config>(new Asset_Config("defaultConfig", vector<string>()));
 		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
 		return cast_asset;
 	}
@@ -101,25 +101,9 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_configs = (Asset_Manager::GetAssets_List(Asset_Config::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (auto &asset in assets_configs) {
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Config derived_asset = dynamic_pointer_cast<Asset_Config>(asset);
-				if (derived_asset) { // Check that pointer isn't null after dynamic pointer casting
-					if (derived_asset->GetFileName() == filename) { // Filenames match, use this asset
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
-
+		if (Asset_Manager::QueryExistingAsset<Asset_Config>(user, filename))
+			return;
+		
 		// Attempt to create the asset
 		const std::string &fulldirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!FileReader::FileExistsOnDisk(fulldirectory)) {
@@ -127,15 +111,9 @@ namespace Asset_Loader {
 			user = fetchDefaultAsset();
 			return;
 		}
-		else {
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Config(new Asset_Config(filename));
-			user->m_strings = cfg_strings;
-			assets_configs.push_back(user);
-		}
 
-		// Either continue processing on a new thread or stay on the current one
-		bool *complete = new bool(false);
+		Asset_Manager::CreateNewAsset<Asset_Config>(user, filename, cfg_strings);
+
 		if (threaded) 
 			Asset_Manager::AddWorkOrder(new Config_WorkOrder(user, fulldirectory));	
 		else {

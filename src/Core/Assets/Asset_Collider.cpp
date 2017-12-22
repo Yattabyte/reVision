@@ -39,24 +39,8 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex  &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_colliders = (Asset_Manager::GetAssets_List(Asset_Collider::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (const auto &asset in assets_colliders) {
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Collider derived_asset = dynamic_pointer_cast<Asset_Collider>(asset);
-				if (derived_asset) {
-					if (derived_asset->GetFileName() == filename) {
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
+		if (Asset_Manager::QueryExistingAsset<Asset_Collider>(user, filename))
+			return;
 		
 		// Attempt to create the asset
 		const std::string &fulldirectory = ABS_DIRECTORY_COLLIDER(filename);
@@ -66,13 +50,8 @@ namespace Asset_Loader {
 			return;
 		}
 
-		{
-			// Attempt to create the asset
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Collider(new Asset_Collider(filename));
-			assets_colliders.push_back(user);
-		}
-
+		Asset_Manager::CreateNewAsset<Asset_Collider>(user, filename);
+		
 		if (threaded)
 			Asset_Manager::AddWorkOrder(new Collider_WorkOrder(user, fulldirectory));
 		else {

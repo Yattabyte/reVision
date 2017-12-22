@@ -30,7 +30,7 @@ public:
 	*************/
 
 	~Asset_Collider();
-	Asset_Collider(const string & filename = "");
+	Asset_Collider(const string & filename);
 	static int GetAssetType();
 
 

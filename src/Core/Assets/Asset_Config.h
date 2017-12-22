@@ -35,7 +35,7 @@ public:
 	*************/
 
 	~Asset_Config();
-	Asset_Config(const string & filename = "");
+	Asset_Config(const string & filename, const vector<string> &strings);
 	static int GetAssetType();
 
 

@@ -95,32 +95,12 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_primitives = (Asset_Manager::GetAssets_List(Asset_Primitive::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (const auto &asset in assets_primitives) {
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Primitive derived_asset = dynamic_pointer_cast<Asset_Primitive>(asset);
-				if (derived_asset) {
-					if (derived_asset->GetFileName() == filename) {
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
-
+		if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(user, filename))
+			return;
+		
+		Asset_Manager::CreateNewAsset<Asset_Primitive>(user, filename);
 		const std::string &fulldirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		{
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Primitive(new Asset_Primitive(filename));
-			assets_primitives.push_back(user);
-		}
-
+		
 		if (threaded)
 			Asset_Manager::AddWorkOrder(new Primitive_WorkOrder(user, fulldirectory));
 		else {

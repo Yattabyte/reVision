@@ -22,7 +22,7 @@ int Asset::GetAssetType()
 
 string Asset::GetFileName() const
 {
-	return string();
+	return m_filename;
 }
 
 void Asset::SetFileName(const string & fn)

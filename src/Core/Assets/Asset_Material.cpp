@@ -27,11 +27,17 @@ Asset_Material::Asset_Material(const std::string & filename, const GLuint & spot
 	mat_spot = spot;
 }
 
-Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot) : Asset_Material()
+Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot) : Asset_Material("")
 {
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 		textures[x] = tx[x];
 	mat_spot = spot;
+}
+
+void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
+{
+	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
+		textures[x] = tx[x];
 }
 
 int Asset_Material::GetAssetType()
@@ -110,7 +116,7 @@ Shared_Asset_Material fetchDefaultAsset()
 }
 
 namespace Asset_Loader {
-	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[6], const bool & threaded) {
+	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded) {
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
 		auto &assets_materials = (Asset_Manager::GetAssets_List(Asset_Material::GetAssetType()));
@@ -121,7 +127,7 @@ namespace Asset_Loader {
 				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
 				const Shared_Asset_Material derived_asset = dynamic_pointer_cast<Asset_Material>(asset);
 				if (derived_asset) {
-					for (int x = 0; x < 5; ++x) {
+					for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
 						if (derived_asset->textures[x] != textures[x]) {
 							identical = false;
 							break;
@@ -137,16 +143,9 @@ namespace Asset_Loader {
 				}
 			}
 		}
+		
+		Asset_Manager::CreateNewAsset<Asset_Material>(user, textures, Material_Manager::GenerateMaterialBufferID());
 
-		{
-			// Attempt to create the asset
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Material(new Asset_Material(textures, Material_Manager::GenerateMaterialBufferID()));
-			assets_materials.push_back(user);
-		}
-
-		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
-		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
 		if (threaded)
 			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, ""));
 		else {
@@ -159,26 +158,8 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Material & user, const std::string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_materials = (Asset_Manager::GetAssets_List(Asset_Material::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (auto &asset in assets_materials) {
-				bool identical = true;
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Material derived_asset = dynamic_pointer_cast<Asset_Material>(asset);
-				if (derived_asset) {
-					if (derived_asset->GetFileName() == filename) {
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						if (!threaded)
-							user->Finalize();
-						return;
-					}
-				}
-			}
-		}
+		if (Asset_Manager::QueryExistingAsset<Asset_Material>(user, filename))
+			return;
 
 		// Attempt to create the asset
 		const std::string &fulldirectory = ABS_DIRECTORY_MATERIAL(filename);
@@ -188,14 +169,9 @@ namespace Asset_Loader {
 			return;
 		}
 
-		{
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Material(new Asset_Material(filename, Material_Manager::GenerateMaterialBufferID()));
-			assets_materials.push_back(user);
-		}
+		Asset_Manager::CreateNewAsset<Asset_Material>(user, filename);
+		user->mat_spot = Material_Manager::GenerateMaterialBufferID();
 
-		// The texture ID of the surface that requested this texture has had it's ID pushed into this material's user list
-		// We generate the texture object on the materials handle, and then when processing the work order we propagate the ID onto all the users
 		if (threaded) 			
 			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, fulldirectory));
 		else {

@@ -69,25 +69,9 @@ Shared_Asset_Cubemap fetchDefaultAsset()
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded)
 	{
-		// Check if a copy already finalized
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_cubemaps = (Asset_Manager::GetAssets_List(Asset_Cubemap::GetAssetType()));
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (auto &asset in assets_cubemaps) {
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Cubemap derived_asset = dynamic_pointer_cast<Asset_Cubemap>(asset);
-				if (derived_asset) {
-					if (derived_asset->GetFileName() == filename) {
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
+		// Check if a copy already exists
+		if (Asset_Manager::QueryExistingAsset<Asset_Cubemap>(user, filename))
+			return;
 
 		// Attempt to create the asset
 		const string &fulldirectory = DIRECTORY_CUBEMAP + filename;
@@ -97,12 +81,8 @@ namespace Asset_Loader {
 			return;
 		}
 
-		{
-			unique_lock<shared_mutex> guard(mutex_IO_assets);
-			user = Shared_Asset_Cubemap(new Asset_Cubemap(filename));
-			assets_cubemaps.push_back(user);
-		}
-
+		Asset_Manager::CreateNewAsset<Asset_Cubemap>(user, filename);
+		
 		if (threaded)
 			Asset_Manager::AddWorkOrder(new Cubemap_WorkOrder(user, fulldirectory));
 		else {

@@ -35,7 +35,7 @@ public:
 	*************/
 
 	~Asset_Texture();
-	Asset_Texture(const string & filename = "");
+	Asset_Texture(const string & filename);
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
 	static int GetAssetType();
 
