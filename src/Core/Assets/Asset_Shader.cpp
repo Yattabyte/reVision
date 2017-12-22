@@ -171,7 +171,7 @@ namespace Asset_Loader {
 		if (Asset_Manager::QueryExistingAsset<Asset_Shader>(user, filename))
 			return;
 
-		// Attempt to create the asset
+		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
 		bool found_vertex = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
 		bool found_fragement = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
@@ -184,6 +184,7 @@ namespace Asset_Loader {
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }

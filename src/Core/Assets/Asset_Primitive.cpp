@@ -97,8 +97,16 @@ namespace Asset_Loader {
 		// Check if a copy already exists
 		if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(user, filename))
 			return;
-		
+
+		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
+		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+			MSG::Error(FILE_MISSING, fullDirectory);
+			user = fetchDefaultAsset();
+			return;
+		}
+
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }

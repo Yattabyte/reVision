@@ -161,15 +161,16 @@ namespace Asset_Loader {
 		// Check if a copy already exists
 		if (Asset_Manager::QueryExistingAsset<Asset_Model>(user, filename))
 			return;
-		
-		// Attempt to create the asset
-		const std::string &fullDirectory = FileReader::GetCurrentDir() + "\\Models\\" + filename;
+
+		// Check if the file/directory exists on disk
+		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Model, Model_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }

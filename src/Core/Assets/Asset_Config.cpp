@@ -103,8 +103,8 @@ namespace Asset_Loader {
 		// Check if a copy already exists
 		if (Asset_Manager::QueryExistingAsset<Asset_Config>(user, filename))
 			return;
-		
-		// Attempt to create the asset
+
+		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
@@ -112,6 +112,7 @@ namespace Asset_Loader {
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
 	}
 }

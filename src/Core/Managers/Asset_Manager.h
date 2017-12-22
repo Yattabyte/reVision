@@ -107,9 +107,9 @@ public:
 		}
 	}
 	// Query if desired asset already exists
-	template <typename T>
-	static bool QueryExistingAsset(shared_ptr<T> & user, const string &filename) {
-		auto &asset_list = (Asset_Manager::GetAssets_List(T::GetAssetType()));
+	template <typename Asset_T>
+	static bool QueryExistingAsset(shared_ptr<Asset_T> & user, const string &filename) {
+		auto &asset_list = (Asset_Manager::GetAssets_List(Asset_T::GetAssetType()));
 		shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
 		for each (auto &asset in asset_list) {
 			shared_lock<shared_mutex> asset_guard(asset->m_mutex);
@@ -117,13 +117,28 @@ public:
 			if (asset->GetFileName() == filename) {
 				asset_guard.unlock();
 				asset_guard.release();
-				user = dynamic_pointer_cast<T>(asset);
+				user = dynamic_pointer_cast<Asset_T>(asset);
 
 				// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
 				return true;
 			}
 		}
 		return false;
+	}
+	// Return the default asset of the provided category
+	template <typename Asset_T>
+	static bool RetrieveDefaultAsset(shared_ptr<Asset_T> & user, const string &defaultText) {
+		shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
+		map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
+		const auto &type = Asset_T::GetAssetType();
+		fallback_assets.insert(pair<int, Shared_Asset>(type, Shared_Asset()));
+		auto &defaultAsset = fallback_assets[type];
+		if ((defaultAsset.get() == nullptr)) {
+			defaultAsset = shared_ptr<Asset_T>(new Asset_T(defaultText));
+			user = dynamic_pointer_cast<Asset_T>(defaultAsset);
+			return false;
+		}
+		return true;
 	}
 	// Queue up a list of observers to notify them that their asset has finalized
 	static void Queue_Notification(const vector<Asset_Observer*> &observers);

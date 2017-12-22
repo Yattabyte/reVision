@@ -41,8 +41,8 @@ namespace Asset_Loader {
 		// Check if a copy already exists
 		if (Asset_Manager::QueryExistingAsset<Asset_Collider>(user, filename))
 			return;
-		
-		// Attempt to create the asset
+
+		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
 		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
@@ -50,6 +50,7 @@ namespace Asset_Loader {
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }

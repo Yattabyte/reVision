@@ -31,39 +31,31 @@ void Asset_Cubemap::Bind(const GLuint & texture_unit)
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Will generate a default one itself if the default doesn't exist.
-Shared_Asset_Cubemap fetchDefaultAsset()
-{
-	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
-	map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
-	fallback_assets.insert(pair<int, Shared_Asset>(Asset_Cubemap::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Cubemap::GetAssetType()];
-	guard.unlock();
-	guard.release();
-	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Cubemap>(new Asset_Cubemap("defaultCubemap"));
-		Shared_Asset_Cubemap cast_asset = dynamic_pointer_cast<Asset_Cubemap>(default_asset);
-		string fulldirectory = ABS_DIRECTORY_CUBEMAP("defaultCubemap");
-		Cubemap_WorkOrder work_order(cast_asset, fulldirectory);
-		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-			if (cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
-				return cast_asset;
-		}
-		// We didn't load a default asset from disk
-		cast_asset->pixel_data[0] = new GLubyte[4];
-		cast_asset->pixel_data[1] = new GLubyte[4];
-		cast_asset->pixel_data[2] = new GLubyte[4];
-		cast_asset->pixel_data[3] = new GLubyte[4];
-		cast_asset->pixel_data[4] = new GLubyte[4];
-		cast_asset->pixel_data[5] = new GLubyte[4];
-		for (int x = 0; x < 6; ++x)
-			for (int y = 0; y < 4; ++y)
-			cast_asset->pixel_data[x][y] = GLubyte(255);
+void fetchDefaultAsset(Shared_Asset_Cubemap &asset)
+{	
+	// Check if a copy already exists
+	if (Asset_Manager::RetrieveDefaultAsset<Asset_Cubemap>(asset, "defaultCubemap"))
+		return;
+
+	// Check if the file/directory exists on disk
+	const string fullDirectory = ABS_DIRECTORY_CUBEMAP("defaultCubemap");
+	Cubemap_WorkOrder work_order(asset, fullDirectory);
+	if (FileReader::FileExistsOnDisk(fullDirectory)) {
+		work_order.Initialize_Order();
 		work_order.Finalize_Order();
-		return cast_asset;
+		if (asset->ExistsYet())
+			return;
 	}
-	return dynamic_pointer_cast<Asset_Cubemap>(default_asset);
+
+	// We couldn't load the default file, generate a temporary one
+	MSG::Error(FILE_MISSING, fullDirectory);
+	for (int x = 0; x < 6; ++x) {
+		asset->pixel_data[x] = new GLubyte[4];
+		for (int y = 0; y < 4; ++y)
+			asset->pixel_data[x][y] = GLubyte(127);
+	}
+	asset->size = vec2(1);
+	work_order.Finalize_Order();
 }
 
 namespace Asset_Loader {
@@ -73,14 +65,15 @@ namespace Asset_Loader {
 		if (Asset_Manager::QueryExistingAsset<Asset_Cubemap>(user, filename))
 			return;
 
-		// Attempt to create the asset
+		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			user = fetchDefaultAsset();
+			fetchDefaultAsset(user);
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
@@ -102,9 +95,17 @@ void Cubemap_WorkOrder::Initialize_Order()
 				break;
 		}
 
+		for (int x = 0; x < 3; ++x) {
+			specific_side_directory = m_filename + "\\" + side_suffixes[sides]+ extensions[x];
+			file = specific_side_directory.c_str();
+			format = FreeImage_GetFileType(file, 0);
+			if (format != -1)
+				break;
+		}
+
 		if (format == -1) {
 			MSG::Error(FILE_MISSING, m_filename);
-			m_asset = fetchDefaultAsset();
+			fetchDefaultAsset(m_asset);
 			return;
 		}
 
@@ -112,7 +113,7 @@ void Cubemap_WorkOrder::Initialize_Order()
 			format = FreeImage_GetFIFFromFilename(file);
 			if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
 				MSG::Error(FILE_CORRUPT, m_filename, "Using default texture.");
-				m_asset = fetchDefaultAsset();
+				 fetchDefaultAsset(m_asset);
 				return;
 			}
 		}

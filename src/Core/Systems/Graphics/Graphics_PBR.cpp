@@ -42,7 +42,7 @@ void System_Graphics_PBR::Update(const float & deltaTime)
 	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
 	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
 	
-	if (vis_token.size() && m_shapeQuad->ExistsYet()) {
+	if (vis_token.size() && m_shapeQuad->ExistsYet() && m_textureSky->ExistsYet() && m_shaderSky->ExistsYet()) {
 		RegenerationPass(vis_token);
 		GeometryPass(vis_token);
 		LightingPass(vis_token);
@@ -97,7 +97,6 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	m_lbuffer.BindForWriting();
 
 	glDisable(GL_BLEND);
-	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 	m_textureSky->Bind(GL_TEXTURE0);
 	m_shaderSky->Bind();

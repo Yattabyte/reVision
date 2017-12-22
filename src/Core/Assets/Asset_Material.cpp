@@ -143,7 +143,8 @@ namespace Asset_Loader {
 				}
 			}
 		}
-		
+
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::GenerateMaterialBufferID());
 	}
 
@@ -153,7 +154,7 @@ namespace Asset_Loader {
 		if (Asset_Manager::QueryExistingAsset<Asset_Material>(user, filename))
 			return;
 
-		// Attempt to create the asset
+		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
@@ -161,6 +162,7 @@ namespace Asset_Loader {
 			return;
 		}
 
+		// Create the asset
 		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::GenerateMaterialBufferID());
 	}
 }
