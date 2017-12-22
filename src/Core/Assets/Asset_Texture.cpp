@@ -43,7 +43,7 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Will resort to building one of its own if it can't find one from disk
-void fetchDefaultAsset(Shared_Asset_Texture &asset)
+void fetchDefaultAsset(Shared_Asset_Texture & asset)
 {
 	// Check if a copy already exists
 	if (Asset_Manager::RetrieveDefaultAsset<Asset_Texture>(asset, "defaultTexture"))
@@ -61,6 +61,7 @@ void fetchDefaultAsset(Shared_Asset_Texture &asset)
 
 	// We couldn't load the default file, generate a temporary one
 	MSG::Error(FILE_MISSING, fullDirectory);
+	/* HARD CODE DEFAULT VALUES HERE */
 	asset->pixel_data = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		asset->pixel_data[x] = GLubyte(255);

@@ -78,23 +78,28 @@ int findCFGProperty(const string & s, const vector<string> & m_strings)
 	return -1;
 }
 
-// Retrieves (or initializes) a default asset from the Asset_Manager.
-// Can hard code default configuration parameters here.
-// Saves to disk afterwards.
-Shared_Asset_Config fetchDefaultAsset()
-{
-	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
-	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Config::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Config::GetAssetType()];
-	guard.unlock();
-	guard.release();
-	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Config>(new Asset_Config("defaultConfig", vector<string>()));
-		Shared_Asset_Config cast_asset = dynamic_pointer_cast<Asset_Config>(default_asset);
-		return cast_asset;
+// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+// Will resort to building one of its own if it can't find one from disk
+void fetchDefaultAsset(Shared_Asset_Config & asset)
+{	
+	// Check if a copy already exists
+	if (Asset_Manager::RetrieveDefaultAsset<Asset_Config>(asset, "defaultConfig", vector<string>()))
+		return;
+
+	// Check if the file/directory exists on disk
+	const string fullDirectory = ABS_DIRECTORY_CONFIG("defaultConfig");
+	Config_WorkOrder work_order(asset, fullDirectory);
+	if (FileReader::FileExistsOnDisk(fullDirectory)) {
+		work_order.Initialize_Order();
+		work_order.Finalize_Order();
+		if (asset->ExistsYet())
+			return;
 	}
-	return dynamic_pointer_cast<Asset_Config>(default_asset);
+
+	// We couldn't load the default file, generate a temporary one
+	MSG::Error(FILE_MISSING, fullDirectory);
+	/* HARD CODE DEFAULT VALUES HERE */
+	work_order.Finalize_Order();
 }
 
 namespace Asset_Loader {
@@ -108,7 +113,7 @@ namespace Asset_Loader {
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			user = fetchDefaultAsset();
+			fetchDefaultAsset(user);
 			return;
 		}
 

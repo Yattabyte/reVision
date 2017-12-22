@@ -47,6 +47,8 @@ void Asset::AddObserver(Asset_Observer * observer)
 {
 	unique_lock<shared_mutex> write_guard(m_mutex);
 	m_observers.push_back(observer);
+	if (m_finalized) // If we finalized already, new observer needs to know this is ready to go
+		Asset_Manager::Queue_Notification(m_observers);
 }
 
 void Asset::RemoveObserver(Asset_Observer * observer)

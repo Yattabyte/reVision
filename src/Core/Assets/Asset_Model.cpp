@@ -130,29 +130,41 @@ void Asset_Model::UpdateVAO(const GLuint & vaoID)
 	glBindVertexArray(0);
 }
 
-Shared_Asset_Model fetchDefaultAsset()
-{
-	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
-	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Model::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Model::GetAssetType()];
-	guard.unlock();
-	guard.release();
-	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Model>(new Asset_Model("defaultModel"));
-		Shared_Asset_Model cast_asset = dynamic_pointer_cast<Asset_Model>(default_asset);
-		string fulldirectory = ABS_DIRECTORY_MODEL("defaultPrimitive");
-		Model_WorkOrder work_order(cast_asset, fulldirectory);
-		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-			if (cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
-				return cast_asset;
-		}
-		// We didn't load a default asset from disk
-		/* HARD CODE DEFAULT VALUES HERE */
+// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+// Will resort to building one of its own if it can't find one from disk
+void fetchDefaultAsset(Shared_Asset_Model & asset)
+{	
+	// Check if a copy already exists
+	if (Asset_Manager::RetrieveDefaultAsset<Asset_Model>(asset, "defaultModel"))
+		return;
+
+	// Check if the file/directory exists on disk
+	const string fullDirectory = ABS_DIRECTORY_MODEL("defaultModel");
+	Model_WorkOrder work_order(asset, fullDirectory);
+	if (FileReader::FileExistsOnDisk(fullDirectory)) {
+		work_order.Initialize_Order();
+		work_order.Finalize_Order();
+		if (asset->ExistsYet())
+			return;
 	}
-	return dynamic_pointer_cast<Asset_Model>(default_asset);
+
+	// We couldn't load the default file, generate a temporary one
+	MSG::Error(FILE_MISSING, fullDirectory);
+	/* HARD CODE DEFAULT VALUES HERE */
+	asset->data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	asset->data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->bbox_min = vec3(-1);
+	asset->bbox_max = vec3(1);
+	asset->data.bones.resize(6);
+	Shared_Asset_Material material;
+	Asset_Loader::load_asset(material, "defaultMaterial");
+	const GLuint &matspot = material->mat_spot;
+	asset->textures.push_back(material);
+	asset->data.ts = vector<GLuint>{ matspot, matspot, matspot, matspot, matspot, matspot };
+	work_order.Finalize_Order();
 }
 
 namespace Asset_Loader {
@@ -166,7 +178,7 @@ namespace Asset_Loader {
 		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			user = fetchDefaultAsset();
+			fetchDefaultAsset(user);
 			return;
 		}
 
@@ -222,7 +234,7 @@ void Model_WorkOrder::Initialize_Order()
 								   // Scene cannot be read
 	if (!scene) {
 		MSG::Error(FILE_CORRUPT, m_filename);
-		m_asset = fetchDefaultAsset();
+		fetchDefaultAsset(m_asset);
 		return;
 	}
 

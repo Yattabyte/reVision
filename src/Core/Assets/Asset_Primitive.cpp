@@ -61,34 +61,29 @@ size_t Asset_Primitive::GetSize()
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will generate a default one itself if the default doesn't exist.
-Shared_Asset_Primitive fetchDefaultAsset()
+// Will resort to building one of its own if it can't find one from disk
+void fetchDefaultAsset(Shared_Asset_Primitive & asset)
 {
-	shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
-	std::map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
-	fallback_assets.insert(std::pair<int, Shared_Asset>(Asset_Primitive::GetAssetType(), Shared_Asset()));
-	auto &default_asset = fallback_assets[Asset_Primitive::GetAssetType()];
-	guard.unlock();
-	guard.release();
-	if (default_asset.get() == nullptr) { // Check if we already created the default asset
-		default_asset = shared_ptr<Asset_Primitive>(new Asset_Primitive("defaultPrimitive"));
-		Shared_Asset_Primitive cast_asset = dynamic_pointer_cast<Asset_Primitive>(default_asset);
-		string fulldirectory = ABS_DIRECTORY_PRIMITIVE("defaultPrimitive");
-		Primitive_WorkOrder work_order(cast_asset, fulldirectory);
-		if (FileReader::FileExistsOnDisk(fulldirectory)) { // Check if we have a default one on disk to load
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-			if (cast_asset->ExistsYet()) // did we successfully load the default asset from disk?
-				return cast_asset;
-		}
-		// We didn't load a default asset from disk
-		/* HARD CODE DEFAULT VALUES HERE */
-		cast_asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-		cast_asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	// Check if a copy already exists
+	if (Asset_Manager::RetrieveDefaultAsset<Asset_Primitive>(asset, "defaultPrimitive"))
+		return;
+
+	// Check if the file/directory exists on disk
+	const string fullDirectory = ABS_DIRECTORY_PRIMITIVE("defaultPrimitive");
+	Primitive_WorkOrder work_order(asset, fullDirectory);
+	if (FileReader::FileExistsOnDisk(fullDirectory)) {
+		work_order.Initialize_Order();
 		work_order.Finalize_Order();
-		return cast_asset;
+		if (asset->ExistsYet())
+			return;
 	}
-	return dynamic_pointer_cast<Asset_Primitive>(default_asset);
+
+	// We couldn't load the default file, generate a temporary one
+	MSG::Error(FILE_MISSING, fullDirectory);
+	/* HARD CODE DEFAULT VALUES HERE */
+	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	work_order.Finalize_Order();
 }
 
 namespace Asset_Loader {
@@ -102,7 +97,7 @@ namespace Asset_Loader {
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
 		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			user = fetchDefaultAsset();
+			fetchDefaultAsset(user);
 			return;
 		}
 
@@ -116,7 +111,7 @@ void Primitive_WorkOrder::Initialize_Order()
 	vector<vec3> vertices;
 	vector<vec2> uv_coords;
 	if (!ModelImporter::Import_Model(m_filename, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
-		m_asset = fetchDefaultAsset();
+		fetchDefaultAsset(m_asset);
 		return;
 	}
 

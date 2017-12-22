@@ -94,7 +94,7 @@ public:
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
 	static vector<Shared_Asset>& GetAssets_List(const int &asset_type);
 	// Create a new asset of the supplied type and filename 
-	template <typename Asset_T, typename Workorder_T, class... _Args>
+	template <typename Asset_T, typename Workorder_T, typename... _Args>
 	static void CreateNewAsset(shared_ptr<Asset_T> & user, const bool & threaded, const string & fullDirectory, _Args&&... _Ax) {
 		user = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...)); // new asset of type asset_t, args held in _Ax		
 		(Asset_Manager::GetAssets_List(Asset_T::GetAssetType())).push_back(user); // add vector in asset map
@@ -126,19 +126,18 @@ public:
 		return false;
 	}
 	// Return the default asset of the provided category
-	template <typename Asset_T>
-	static bool RetrieveDefaultAsset(shared_ptr<Asset_T> & user, const string &defaultText) {
+	template <typename Asset_T, typename... _Args>
+	static bool RetrieveDefaultAsset(shared_ptr<Asset_T> & user, _Args&&... _Ax) {
 		shared_lock<shared_mutex> guard(Asset_Manager::GetMutex_Assets());
 		map<int, Shared_Asset> &fallback_assets = Asset_Manager::GetFallbackAssets_Map();
 		const auto &type = Asset_T::GetAssetType();
 		fallback_assets.insert(pair<int, Shared_Asset>(type, Shared_Asset()));
 		auto &defaultAsset = fallback_assets[type];
-		if ((defaultAsset.get() == nullptr)) {
-			defaultAsset = shared_ptr<Asset_T>(new Asset_T(defaultText));
-			user = dynamic_pointer_cast<Asset_T>(defaultAsset);
-			return false;
-		}
-		return true;
+		const bool createNew = (defaultAsset.get() == nullptr);
+		if (createNew) 
+			defaultAsset = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...));		
+		user = dynamic_pointer_cast<Asset_T>(defaultAsset);
+		return !createNew;
 	}
 	// Queue up a list of observers to notify them that their asset has finalized
 	static void Queue_Notification(const vector<Asset_Observer*> &observers);
