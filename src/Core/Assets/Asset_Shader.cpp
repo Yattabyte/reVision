@@ -172,27 +172,19 @@ namespace Asset_Loader {
 			return;
 
 		// Attempt to create the asset
-		const std::string &fulldirectory = DIRECTORY_SHADER + filename;
-		bool found_vertex = FileReader::FileExistsOnDisk(fulldirectory + EXT_SHADER_VERTEX);
-		bool found_fragement = FileReader::FileExistsOnDisk(fulldirectory + EXT_SHADER_FRAGMENT);
+		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
+		bool found_vertex = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
+		bool found_fragement = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
-			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_VERTEX);
+			MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
 		if (!found_fragement)
-			MSG::Error(FILE_MISSING, fulldirectory + EXT_SHADER_FRAGMENT);
+			MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
 		if ( !(found_vertex && found_fragement) ) {
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Shader>(user, filename);	
-
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Shader_WorkOrder(user, fulldirectory));		
-		else {
-			Shader_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

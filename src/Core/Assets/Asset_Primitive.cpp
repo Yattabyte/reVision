@@ -98,16 +98,8 @@ namespace Asset_Loader {
 		if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(user, filename))
 			return;
 		
-		Asset_Manager::CreateNewAsset<Asset_Primitive>(user, filename);
-		const std::string &fulldirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Primitive_WorkOrder(user, fulldirectory));
-		else {
-			Primitive_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
+		Asset_Manager::CreateNewAsset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

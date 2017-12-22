@@ -94,10 +94,17 @@ public:
 	// Retrieves the vector of assets of the given type. Will create one if it doesn't exist.
 	static vector<Shared_Asset>& GetAssets_List(const int &asset_type);
 	// Create a new asset of the supplied type and filename 
-	template <typename T, class... _Args>
-	static void CreateNewAsset(shared_ptr<T> & user, _Args&&... _Ax) {
-		user = shared_ptr<T>(new T(forward<_Args>(_Ax)...));
-		(Asset_Manager::GetAssets_List(T::GetAssetType())).push_back(user);
+	template <typename Asset_T, typename Workorder_T, class... _Args>
+	static void CreateNewAsset(shared_ptr<Asset_T> & user, const bool & threaded, const string & fullDirectory, _Args&&... _Ax) {
+		user = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...)); // new asset of type asset_t, args held in _Ax		
+		(Asset_Manager::GetAssets_List(Asset_T::GetAssetType())).push_back(user); // add vector in asset map
+		if (threaded)
+			Asset_Manager::AddWorkOrder(new Workorder_T(user, fullDirectory));
+		else {
+			Workorder_T work_order(user, fullDirectory);
+			work_order.Initialize_Order();
+			work_order.Finalize_Order();
+		}
 	}
 	// Query if desired asset already exists
 	template <typename T>

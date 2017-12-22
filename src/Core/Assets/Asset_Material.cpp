@@ -144,15 +144,7 @@ namespace Asset_Loader {
 			}
 		}
 		
-		Asset_Manager::CreateNewAsset<Asset_Material>(user, textures, Material_Manager::GenerateMaterialBufferID());
-
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, ""));
-		else {
-			Material_WorkOrder work_order(user, "");
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::GenerateMaterialBufferID());
 	}
 
 	void load_asset(Shared_Asset_Material & user, const std::string & filename, const bool & threaded)
@@ -162,23 +154,14 @@ namespace Asset_Loader {
 			return;
 
 		// Attempt to create the asset
-		const std::string &fulldirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!FileReader::FileExistsOnDisk(fulldirectory) || (filename == "") || (filename == " ")) {
-			MSG::Error(FILE_MISSING, fulldirectory);
+		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
+		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Material>(user, filename);
-		user->mat_spot = Material_Manager::GenerateMaterialBufferID();
-
-		if (threaded) 			
-			Asset_Manager::AddWorkOrder(new Material_WorkOrder(user, fulldirectory));
-		else {
-			Material_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::GenerateMaterialBufferID());
 	}
 }
 

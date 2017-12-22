@@ -43,22 +43,14 @@ namespace Asset_Loader {
 			return;
 		
 		// Attempt to create the asset
-		const std::string &fulldirectory = ABS_DIRECTORY_COLLIDER(filename);
-		if (!FileReader::FileExistsOnDisk(fulldirectory) || (filename == "") || (filename == " ")) {
-			MSG::Error(FILE_MISSING, fulldirectory);
+		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
+		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Collider>(user, filename);
-		
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Collider_WorkOrder(user, fulldirectory));
-		else {
-			Collider_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}		
+		Asset_Manager::CreateNewAsset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

@@ -74,22 +74,14 @@ namespace Asset_Loader {
 			return;
 
 		// Attempt to create the asset
-		const string &fulldirectory = DIRECTORY_CUBEMAP + filename;
-		if (!FileReader::FileExistsOnDisk(fulldirectory)) {
-			MSG::Error(FILE_MISSING, fulldirectory);
+		const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
+		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Cubemap>(user, filename);
-		
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Cubemap_WorkOrder(user, fulldirectory));
-		else {
-			Cubemap_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

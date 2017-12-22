@@ -105,22 +105,14 @@ namespace Asset_Loader {
 			return;
 		
 		// Attempt to create the asset
-		const std::string &fulldirectory = ABS_DIRECTORY_CONFIG(filename);
-		if (!FileReader::FileExistsOnDisk(fulldirectory)) {
-			MSG::Error(FILE_MISSING, fulldirectory);
+		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
+		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Config>(user, filename, cfg_strings);
-
-		if (threaded) 
-			Asset_Manager::AddWorkOrder(new Config_WorkOrder(user, fulldirectory));	
-		else {
-			Config_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
 	}
 }
 

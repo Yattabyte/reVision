@@ -80,22 +80,14 @@ namespace Asset_Loader {
 			return;
 
 		// Attempt to create the asset
-		const string &fulldirectory = DIRECTORY_TEXTURE + filename;
-		if (!FileReader::FileExistsOnDisk(fulldirectory)) {
-			MSG::Error(FILE_MISSING, fulldirectory);
+		const string &fullDirectory = DIRECTORY_TEXTURE + filename;
+		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+			MSG::Error(FILE_MISSING, fullDirectory);
 			user = fetchDefaultAsset();
 			return;
 		}
 
-		Asset_Manager::CreateNewAsset<Asset_Texture>(user, filename, GL_TEXTURE_2D, mipmap, anis);
-
-		if (threaded)
-			Asset_Manager::AddWorkOrder(new Texture_WorkOrder(user, fulldirectory));
-		else {
-			Texture_WorkOrder work_order(user, fulldirectory);
-			work_order.Initialize_Order();
-			work_order.Finalize_Order();
-		}
+		Asset_Manager::CreateNewAsset<Asset_Texture, Texture_WorkOrder>(user, threaded, fullDirectory, filename, GL_TEXTURE_2D, mipmap, anis);
 	}
 }
 
