@@ -30,8 +30,9 @@ void Asset::SetFileName(const string & fn)
 	m_filename = fn;
 }
 
-bool Asset::ExistsYet() 
+bool Asset::ExistsYet()
 { 
+	shared_lock<shared_mutex> read_guard(m_mutex);
 	return m_finalized;
 }
 

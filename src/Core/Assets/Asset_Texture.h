@@ -38,6 +38,7 @@ public:
 	Asset_Texture(const string & filename);
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
 	static int GetAssetType();
+	bool ExistsYet();
 
 
 	/****************
@@ -47,6 +48,7 @@ public:
 	GLuint gl_tex_ID, type;
 	vec2 size;
 	GLubyte	* pixel_data;
+	GLsync m_fence;
 	bool mipmap;
 	bool anis;
 

@@ -29,19 +29,16 @@ void System_World::Initialize(Engine_Package * enginePackage)
 
 		auto prop1 = m_entityFactory.CreateEntity("Prop");
 		auto prop2 = m_entityFactory.CreateEntity("Prop");
-		auto prop3 = m_entityFactory.CreateEntity("Prop");
-		auto prop4 = m_entityFactory.CreateEntity("Prop");
+		//auto prop4 = m_entityFactory.CreateEntity("Prop");
 		sun = m_entityFactory.CreateEntity("Sun");
 
-		ECSmessage msg_dir(SET_MODEL_DIR, std::string("Test\\ChamferedCube.obj"));
-		m_entityFactory.GetEntity(prop1)->ReceiveMessage(msg_dir);
-		m_entityFactory.GetEntity(prop2)->ReceiveMessage(msg_dir);
-		m_entityFactory.GetEntity(prop4)->ReceiveMessage(msg_dir);
-		m_entityFactory.GetEntity(prop3)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
+		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox2.obj")));
+		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+	//	m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-2.5, -2.5, 0))));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(2.5, -2.5, 0))));
-		m_entityFactory.GetEntity(prop3)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
-		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -7.5, 0), quat(1, 0, 0, 0), vec3(10, 0.5, 10))));
+		//m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75f, 0.25f)));

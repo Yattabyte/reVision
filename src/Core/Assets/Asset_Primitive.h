@@ -43,6 +43,7 @@ public:
 	~Asset_Primitive();
 	Asset_Primitive(const string & filename);
 	static int GetAssetType();
+	bool ExistsYet();
 
 	
 	/****************
@@ -52,6 +53,7 @@ public:
 	GLuint buffers[2];
 	vector<vec3> data;
 	vector<vec2> uv_data;
+	GLsync m_fence;
 
 
 	/**************************

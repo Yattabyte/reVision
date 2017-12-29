@@ -11,6 +11,8 @@ Asset_Texture::~Asset_Texture()
 {
 	if (ExistsYet())
 		glDeleteTextures(1, &gl_tex_ID);
+	if (m_fence != nullptr)
+		glDeleteSync(m_fence);
 }
 
 Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
@@ -21,6 +23,7 @@ Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
 	pixel_data = nullptr;
 	mipmap = false;
 	anis = false;
+	m_fence = nullptr;
 }
 
 Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
@@ -33,6 +36,21 @@ Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bo
 int Asset_Texture::GetAssetType()
 {
 	return ASSET_TYPE;
+}
+
+bool Asset_Texture::ExistsYet()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	if (Asset::ExistsYet() && m_fence != nullptr) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
+			&& (state != GL_WAIT_FAILED))
+			return true;
+	}
+	return false;
 }
 
 void Asset_Texture::Bind(const GLuint & texture_unit)
@@ -155,10 +173,7 @@ void Texture_WorkOrder::Initialize_Order()
 
 void Texture_WorkOrder::Finalize_Order()
 {
-	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
 	if (!m_asset->ExistsYet()) {
-		read_guard.unlock();
-		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		auto &gl_tex_ID = m_asset->gl_tex_ID;
 		auto &type = m_asset->type;
@@ -203,6 +218,10 @@ void Texture_WorkOrder::Finalize_Order()
 				break;
 			}
 		}
+
+		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		glFlush();
+
 		m_asset->Finalize();
 	}
 }

@@ -40,7 +40,7 @@ public:
 	// Sets the name of this asset to @fn
 	void SetFileName(const string & filename);
 	// Returns whether or not this asset has completed finalizing
-	bool ExistsYet();
+	virtual bool ExistsYet();
 	// Performs final data processing
 	virtual void Finalize();
 	// Adds a state observer/listener

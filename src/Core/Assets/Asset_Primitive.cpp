@@ -14,17 +14,35 @@ Asset_Primitive::~Asset_Primitive()
 {
 	if (ExistsYet())
 		glDeleteBuffers(2, buffers);
+	if (m_fence != nullptr)
+		glDeleteSync(m_fence);
 }
 
 Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 {
 	for each (auto &buffer in buffers)
 		buffer = -1;
+	m_fence = nullptr;
 }
 
 int Asset_Primitive::GetAssetType()
 {
 	return ASSET_TYPE;
+}
+
+bool Asset_Primitive::ExistsYet()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	if (Asset::ExistsYet() && m_fence != nullptr) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
+			&& (state != GL_WAIT_FAILED))
+			return true;
+	}
+	return false;
 }
 
 GLuint Asset_Primitive::GenerateVAO()
@@ -122,10 +140,7 @@ void Primitive_WorkOrder::Initialize_Order()
 
 void Primitive_WorkOrder::Finalize_Order()
 {
-	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
 	if (!m_asset->ExistsYet()) {
-		read_guard.unlock();
-		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 
 		auto &data = m_asset->data;
@@ -139,6 +154,8 @@ void Primitive_WorkOrder::Finalize_Order()
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
 		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec2), &uv_data[0][0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		glFlush();
 
 		m_asset->Finalize();
 	}

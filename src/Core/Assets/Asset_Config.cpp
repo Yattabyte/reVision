@@ -140,10 +140,7 @@ void Config_WorkOrder::Initialize_Order()
 
 void Config_WorkOrder::Finalize_Order()
 {
-	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
 	if (!m_asset->ExistsYet()) {
-		read_guard.unlock();
-		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		m_asset->Finalize();
 	}

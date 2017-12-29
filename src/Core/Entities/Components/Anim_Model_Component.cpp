@@ -14,10 +14,11 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 {
 	m_uboID = 0;
 	m_vao_id = 0;
+	m_skin = 0;
+	m_fence = nullptr;
 	glGenBuffers(1, &m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(Transform_Buffer), &m_uboData, GL_DYNAMIC_COPY);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
 	GLvoid* p = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
 	memcpy(p, &m_uboData, sizeof(Transform_Buffer));
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
@@ -28,7 +29,6 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 
 void Anim_Model_Component::Update()
 {
-	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -36,13 +36,17 @@ void Anim_Model_Component::Update()
 
 void Anim_Model_Component::Draw()
 {
-	if (m_model && m_model->ExistsYet()) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-
-		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-		glBindVertexArray(m_vao_id);
-		glDrawArrays(GL_TRIANGLES, 0, m_model->mesh_size);
-		glBindVertexArray(0);
+	if (!m_model) return;
+	if (m_model->ExistsYet() && m_fence != nullptr) {
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
+			&& (state != GL_WAIT_FAILED)) {
+			shared_lock<shared_mutex> guard(m_model->m_mutex);
+			glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+			glBindVertexArray(m_vao_id);
+			glDrawArrays(GL_TRIANGLES, 0, m_model->mesh_size);
+			glBindVertexArray(0);
+		}
 	}
 }
 
@@ -69,7 +73,7 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 			if (m_observer)
 				m_observer.reset();
 			Asset_Loader::load_asset(m_model, payload);
-			m_observer = make_shared<Model_Observer>(m_model, m_vao_id);
+			m_observer = make_shared<Model_Observer>(m_model, m_vao_id, &m_uboData, &m_skin, m_uboID, &m_fence);
 			break;
 		}	
 		case SET_MODEL_TRANSFORM: {
@@ -79,11 +83,30 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 			Update();
 			break;
 		}
+		case SET_MODEL_SKIN: {
+			if (!message.IsOfType<GLuint>()) break;
+			const auto &payload = message.GetPayload<GLuint>();
+			m_skin = payload;
+			if (m_model->ExistsYet()) {
+				m_uboData.materialID = m_model->GetSkinID(m_skin);
+				Update();
+			}
+			break;
+		}
 	}
 }
 
 void Model_Observer::Notify_Finalized()
 {
-	if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
+	if (m_asset->ExistsYet()) {// in case this gets used more than once by mistake
 		m_asset->UpdateVAO(m_vao_id);
+		m_uboData->materialID = m_asset->GetSkinID(*m_skin);
+		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_ubo_id);
+		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo_id);
+		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), m_uboData);
+		glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+		*m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		glFlush();
+	}
 }

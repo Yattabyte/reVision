@@ -42,6 +42,7 @@ public:
 	~Asset_Shader();
 	Asset_Shader(const string & filename);
 	static int GetAssetType();
+	bool ExistsYet();
 
 
 	/****************
@@ -50,6 +51,7 @@ public:
 
 	GLuint gl_program_ID, gl_shader_vertex_ID, gl_shader_fragment_ID, gl_shader_geometry_ID; // OpenGL ID's
 	string vertex_text, fragment_text, geometry_text; // Text Data
+	GLsync m_fence;
 
 
 	/***********************

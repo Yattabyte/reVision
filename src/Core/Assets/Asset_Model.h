@@ -16,11 +16,13 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define NUM_BONES_PER_VEREX 4
+#define NUM_VERTEX_ATTRIBUTES 6
 #define NUM_MAX_BONES 100
 #define GLEW_STATIC
 #define EXT_MODEL ".obj"
 #define DIRECTORY_MODEL FileReader::GetCurrentDir() + "\\Models\\"
 #define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
+#define DIRECTORY_MODEL_MAT_TEX FileReader::GetCurrentDir() + "\\Textures\\Environment\\" 
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
@@ -47,7 +49,6 @@ struct VertexBoneData
 struct GeometryInfo {
 	vector<vec3> vs, nm, tg, bt;
 	vector<vec2> uv;
-	vector<GLuint> ts;
 	vector<VertexBoneData> bones;
 };
 struct BoneInfo
@@ -81,6 +82,8 @@ public:
 	~Asset_Model();
 	Asset_Model(const string & filename);
 	static int GetAssetType();
+	bool ExistsYet();
+
 
 	/**********************
 	----Model Functions----
@@ -90,17 +93,22 @@ public:
 	static GLuint GenerateVAO();
 	// Updates a vertex array object's state with this models' data
 	void UpdateVAO(const GLuint & vaoID);
+	// Returns the material ID for a skin given an index into this list
+	// Clamps to the skin list size, so it won't go out of bounds
+	GLuint GetSkinID(const unsigned int &desired);
+
 
 	/****************
 	----Variables----
 	****************/
 
 	int									mesh_size;
-	vector<Shared_Asset_Material>		textures;
+	vector<Shared_Asset_Material>		skins;
 	GeometryInfo						data;
 	AnimationInfo						animationInfo;
 	vec3								bbox_min, bbox_max;
-	GLuint								buffers[7];
+	GLuint								buffers[NUM_VERTEX_ATTRIBUTES];
+	GLsync								m_fence;
 };
 
 namespace Asset_Loader {
@@ -118,6 +126,7 @@ private:
 	string m_filename;
 	Shared_Asset_Model m_asset;
 	void Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene);
-	void Initialize_Material(Shared_Asset_Material & texture, const aiMesh * mesh, const aiMaterial * material, const string & specificTexDir);
+	void Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
+	void Generate_Material(Shared_Asset_Material & modelMaterial);
 };
 #endif // ASSET_MODEL

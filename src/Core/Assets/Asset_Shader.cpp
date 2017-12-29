@@ -11,7 +11,9 @@ using namespace Asset_Loader;
 Asset_Shader::~Asset_Shader()
 {
 	if (ExistsYet()) 
-		glDeleteProgram(gl_program_ID);	
+		glDeleteProgram(gl_program_ID);
+	if (m_fence != nullptr)
+		glDeleteSync(m_fence);
 }
 
 Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
@@ -23,11 +25,27 @@ Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
 	vertex_text = "";
 	fragment_text = "";
 	geometry_text = "";
+	m_fence = nullptr;
 }
 
 int Asset_Shader::GetAssetType() 
 { 
 	return ASSET_TYPE;
+}
+
+bool Asset_Shader::ExistsYet()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	if (Asset::ExistsYet() && m_fence != nullptr) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
+			&& (state != GL_WAIT_FAILED))
+			return true;
+	}
+	return false;
 }
 
 void Asset_Shader::Bind()
@@ -205,14 +223,13 @@ void Shader_WorkOrder::Initialize_Order()
 
 void Shader_WorkOrder::Finalize_Order()
 {
-	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
 	if (!m_asset->ExistsYet()) {
-		read_guard.unlock();
-		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		Compile();
 		GenerateProgram();
 		LinkProgram();
+		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		glFlush();
 
 		m_asset->Finalize();
 	}

@@ -2,6 +2,7 @@
 #include "Systems\Message_Manager.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
+#include <minmax.h>
 
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 4
@@ -71,6 +72,8 @@ Asset_Model::~Asset_Model()
 {
 	if (ExistsYet())
 		glDeleteBuffers(7, buffers);	
+	if (m_fence != nullptr)
+		glDeleteSync(m_fence);
 }
 
 Asset_Model::Asset_Model(const string & filename) : Asset(filename)
@@ -80,11 +83,27 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	bbox_max = vec3(0.0f);
 	for each (auto &buffer in buffers)
 		buffer = -1;
+	m_fence = nullptr;
 }
 
 int Asset_Model::GetAssetType()
 {
 	return ASSET_TYPE;
+}
+
+bool Asset_Model::ExistsYet()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	if (Asset::ExistsYet() && m_fence != nullptr ) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED)) 
+			&& (state != GL_WAIT_FAILED))
+			return true;
+	}
+	return false;
 }
 
 GLuint Asset_Model::GenerateVAO()
@@ -93,7 +112,7 @@ GLuint Asset_Model::GenerateVAO()
 
 	glGenVertexArrays(1, &vaoID);
 	glBindVertexArray(vaoID);
-	for (unsigned int x = 0; x < 8; ++x)
+	for (unsigned int x = 0; x < NUM_VERTEX_ATTRIBUTES; ++x)
 		glEnableVertexAttribArray(x);
 	glBindVertexArray(0);
 
@@ -121,13 +140,16 @@ void Asset_Model::UpdateVAO(const GLuint & vaoID)
 	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
-	glVertexAttribIPointer(5, 1, GL_UNSIGNED_INT, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[6]);
-	glVertexAttribIPointer(6, 4, GL_INT, sizeof(VertexBoneData), (const GLvoid*)0);
-	glVertexAttribPointer(7, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (const GLvoid*)16);
+	glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (const GLvoid*)0);
+	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (const GLvoid*)16);
 
 	glBindVertexArray(0);
+}
+
+GLuint Asset_Model::GetSkinID(const unsigned int & desired)
+{
+	shared_lock<shared_mutex> guard(m_mutex);
+	return skins[max(0, min(skins.size() - 1, desired))]->mat_spot;
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -162,8 +184,7 @@ void fetchDefaultAsset(Shared_Asset_Model & asset)
 	Shared_Asset_Material material;
 	Asset_Loader::load_asset(material, "defaultMaterial");
 	const GLuint &matspot = material->mat_spot;
-	asset->textures.push_back(material);
-	asset->data.ts = vector<GLuint>{ matspot, matspot, matspot, matspot, matspot, matspot };
+	asset->skins.push_back(material);
 	work_order.Finalize_Order();
 }
 
@@ -217,10 +238,7 @@ void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 }
 
 void Model_WorkOrder::Initialize_Order()
-{
-	int m_assetStart = m_filename.find("\\Models\\");
-	std::string specificTexDir = std::string(m_filename).insert(m_assetStart, "\\Textures");
-	specificTexDir = specificTexDir.substr(0, specificTexDir.find_last_of("\\") + 1);
+{	
 	Assimp::Importer &importer = *new Assimp::Importer();
 	const aiScene* scene = importer.ReadFile(m_filename,
 		aiProcess_LimitBoneWeights |
@@ -241,17 +259,20 @@ void Model_WorkOrder::Initialize_Order()
 	{ // Separated as to destroy lock at completion
 		unique_lock<shared_mutex> m_asset_guard(m_asset->m_mutex);
 		GeometryInfo &gi = m_asset->data;
-		vector<Shared_Asset_Material> &textures = m_asset->textures;
-		textures.resize(scene->mNumMeshes);
+
+		// Generate all the required skins
+		m_asset->skins.resize( max(1, (scene->mNumMaterials - 1)) );
+		if (scene->mNumMaterials > 1) { 
+			// ignore scene material [0] 
+			for (int x = 1; x < scene->mNumMaterials; ++x)
+				Generate_Material(m_asset->skins[x-1], scene->mMaterials[x]);
+		}
+		else 
+			Generate_Material(m_asset->skins[0]);		
 
 		// Combine mesh data into single struct
 		for (int a = 0, atotal = scene->mNumMeshes; a < atotal; a++) {
-
 			const aiMesh *mesh = scene->mMeshes[a];
-			Shared_Asset_Material &texture = textures[a];
-			Initialize_Material(texture, mesh, scene->mMaterials[mesh->mMaterialIndex], specificTexDir);
-			const GLuint &mat_spot = texture->mat_spot;
-
 			for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 				const aiFace& face = mesh->mFaces[x];
 				for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
@@ -266,7 +287,6 @@ void Model_WorkOrder::Initialize_Order()
 					gi.tg.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z) - vec3(normal.x, normal.y, normal.z) * glm::dot(vec3(normal.x, normal.y, normal.z), vec3(tangent.x, tangent.y, tangent.z))));
 					gi.bt.push_back(vec3(bitangent.x, bitangent.y, bitangent.z));
 					gi.uv.push_back(vec2(uvmap.x, uvmap.y));
-					gi.ts.push_back(mat_spot);
 				}
 			}
 		}
@@ -281,17 +301,14 @@ void Model_WorkOrder::Initialize_Order()
 
 void Model_WorkOrder::Finalize_Order()
 {
-	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
 	if (!m_asset->ExistsYet()) {
-		read_guard.unlock();
-		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		
 		auto &data = m_asset->data;
 		auto &buffers = m_asset->buffers;
 		const size_t &arraySize = data.vs.size();
 
-		glGenBuffers(7, buffers);
+		glGenBuffers(6, buffers);
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
 		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data.vs[0][0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
@@ -303,10 +320,10 @@ void Model_WorkOrder::Finalize_Order()
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
 		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec2), &data.uv[0][0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(GLuint), &data.ts[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[6]);
 		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(VertexBoneData), &data.bones[0], GL_STATIC_DRAW);
 		glBindBuffer(GL_ARRAY_BUFFER, 0);		
+		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		glFlush();
 
 		m_asset->Finalize();
 	}
@@ -354,16 +371,16 @@ void Model_WorkOrder::Initialize_Bones(Shared_Asset_Model & model, const aiScene
 	}
 }
 
-void Model_WorkOrder::Initialize_Material(Shared_Asset_Material & texture, const aiMesh * mesh, const aiMaterial * material, const string & specificTexDir)
+void Model_WorkOrder::Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
 {
 	// Get the aiStrings for all the textures for a material
 	aiString	albedo, normal, metalness, roughness, height, ao;
-	aiReturn	albedo_exists = material->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
-		normal_exists = material->GetTexture(aiTextureType_NORMALS, 0, &normal),
-		metalness_exists = material->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
-		roughness_exists = material->GetTexture(aiTextureType_SHININESS, 0, &roughness),
-		height_exists = material->GetTexture(aiTextureType_HEIGHT, 0, &height),
-		ao_exists = material->GetTexture(aiTextureType_AMBIENT, 0, &ao);
+	aiReturn	albedo_exists = sceneMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
+				normal_exists = sceneMaterial->GetTexture(aiTextureType_NORMALS, 0, &normal),
+				metalness_exists = sceneMaterial->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
+				roughness_exists = sceneMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughness),
+				height_exists = sceneMaterial->GetTexture(aiTextureType_HEIGHT, 0, &height),
+				ao_exists = sceneMaterial->GetTexture(aiTextureType_AMBIENT, 0, &ao);
 
 	// Assuming the diffuse element exists, generate some fallback texture elements
 	std::string templateTexture, extension = ".png";
@@ -393,13 +410,20 @@ void Model_WorkOrder::Initialize_Material(Shared_Asset_Material & texture, const
 
 	// Get texture names
 	std::string material_textures[6] = {
-		/*ALBEDO*/						specificTexDir + (albedo_exists == AI_SUCCESS ? albedo.C_Str() : "diffuse.png"),
-		/*NORMAL*/						specificTexDir + (normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
-		/*METALNESS*/					specificTexDir + (metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
-		/*ROUGHNESS*/					specificTexDir + (roughness_exists == AI_SUCCESS ? roughness.C_Str() : templateTexture + "roughness" + extension),
-		/*HEIGHT*/						specificTexDir + (height_exists == AI_SUCCESS ? height.C_Str() : templateTexture + "height" + extension),
-		/*AO*/							specificTexDir + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
+		/*ALBEDO*/						DIRECTORY_MODEL_MAT_TEX + (albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
+		/*NORMAL*/						DIRECTORY_MODEL_MAT_TEX + (normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
+		/*METALNESS*/					DIRECTORY_MODEL_MAT_TEX + (metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
+		/*ROUGHNESS*/					DIRECTORY_MODEL_MAT_TEX + (roughness_exists == AI_SUCCESS ? roughness.C_Str() : templateTexture + "roughness" + extension),
+		/*HEIGHT*/						DIRECTORY_MODEL_MAT_TEX + (height_exists == AI_SUCCESS ? height.C_Str() : templateTexture + "height" + extension),
+		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	Asset_Loader::load_asset(texture, material_textures);
+	Asset_Loader::load_asset(modelMaterial, material_textures);
+}
+
+void Model_WorkOrder::Generate_Material(Shared_Asset_Material & modelMaterial)
+{
+	std::string materialFilename = m_filename.substr(m_filename.find("Models\\"));
+	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));
+	Asset_Loader::load_asset(modelMaterial, materialFilename);
 }

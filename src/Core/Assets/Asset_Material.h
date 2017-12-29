@@ -27,8 +27,8 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 #define EXT_MATERIAL ".mat"
-#define DIRECTORY_MATERIAL FileReader::GetCurrentDir() + "\\Materials\\"
-#define ABS_DIRECTORY_MATERIAL(filename) DIRECTORY_MATERIAL + filename + EXT_MATERIAL
+#define ABS_DIRECTORY_MATERIAL(filename) FileReader::GetCurrentDir() + "\\Materials\\" + filename + EXT_MATERIAL
+#define ABS_DIRECTORY_MAT_TEX(filename) FileReader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
@@ -53,6 +53,7 @@ public:
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 	void setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);
 	static int GetAssetType();
+	bool ExistsYet();
 
 
 	/****************
@@ -64,6 +65,7 @@ public:
 	vec2 size;
 	GLubyte * materialData;
 	GLuint mat_spot;
+	GLsync m_fence;
 
 
 	/*************************

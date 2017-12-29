@@ -21,12 +21,14 @@
 using namespace glm;
 
 struct Transform_Buffer {
-	int useBones; vec3 padding1;
+	int useBones;  // no padding here;
+	GLuint materialID; vec2 padding1; // for some reason padding here
 	mat4 mMatrix;
 	mat4 transforms[NUM_MAX_BONES];
 	Transform_Buffer()
 	{
 		useBones = 0;
+		materialID = 0;
 		mMatrix = mat4(1.0f);
 	}
 };
@@ -61,10 +63,12 @@ protected:
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	friend class Anim_Model_Creator;
 	
+	GLuint m_skin;
 	GLuint m_uboID, m_vao_id;
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
 	shared_ptr<Model_Observer> m_observer;
+	GLsync m_fence;
 };
 
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
@@ -79,11 +83,15 @@ public:
 class DT_ENGINE_API Model_Observer : Asset_Observer
 {
 public:
-	Model_Observer(Shared_Asset_Model &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	Model_Observer(Shared_Asset_Model & asset, const GLuint &vao, Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) : 
+		Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
 	virtual ~Model_Observer() { m_asset->RemoveObserver(this); };
 	virtual void Notify_Finalized();
 
-	GLuint m_vao_id;
+	GLuint m_vao_id, m_ubo_id;
+	GLsync *m_fence;
+	GLuint *m_skin;
+	Transform_Buffer *m_uboData;
 	Shared_Asset_Model m_asset;
 };
 

@@ -36,6 +36,7 @@ public:
 	~Asset_Cubemap();
 	Asset_Cubemap(const std::string & filename);
 	static int GetAssetType();
+	bool ExistsYet();
 
 
 	/****************
@@ -45,6 +46,7 @@ public:
 	GLuint gl_tex_ID;
 	vec2 size;
 	GLubyte	* pixel_data[6];
+	GLsync m_fence;
 	
 
 	/************************

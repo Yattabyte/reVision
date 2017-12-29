@@ -138,18 +138,8 @@ bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
-		glfwMakeContextCurrent(m_package->m_Context_Rendering);
+		glfwMakeContextCurrent(m_package->m_Context_Rendering);		
 		
-		Shared_Asset_Material mat;
-		std::string material_textures[6] = { 
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_diffuse.png",
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_normal.png",
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_specular.png",
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_roughness.png",
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_height.png",
-			FileReader::GetCurrentDir() + "\\Textures\\Models\\Test\\cube_ao.png" };
-		Asset_Loader::load_asset(mat, material_textures);
-
 		for each (auto &pair in systems) {
 			pair.second->Initialize(m_package);
 			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
@@ -230,7 +220,7 @@ void dt_Engine::Updater_Thread()
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->Update_Threaded(deltaTime);
-			glFinish();
+			//glFinish();
 		}
 		stay_alive = !ShouldClose();
 	}
