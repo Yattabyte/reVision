@@ -91,7 +91,7 @@ public:
 
 private:
 	string m_filename;
-	Shared_Asset_Material m_asset;
+	Shared_Asset_Material m_asset;	
 };
 
 #endif // ASSET_MATERIAL
