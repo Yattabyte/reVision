@@ -78,11 +78,6 @@ map<int, vector<Shared_Asset>>& Asset_Manager::GetAssets_Map()
 	return Get().m_AssetMap;
 }
 
-map<int, Shared_Asset>& Asset_Manager::GetFallbackAssets_Map()
-{
-	return Get().m_AssetMap_Fallback;
-}
-
 vector<Shared_Asset>& Asset_Manager::GetAssets_List(const int & asset_type)
 {
 	// Returns the vector of assets in the asset map at the spot of asset_type.

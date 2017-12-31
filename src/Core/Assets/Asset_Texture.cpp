@@ -60,26 +60,16 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will resort to building one of its own if it can't find one from disk
+// Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Texture & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::RetrieveDefaultAsset<Asset_Texture>(asset, "defaultTexture"))
+	if (Asset_Manager::QueryExistingAsset<Asset_Texture>(asset, "defaultTexture"))
 		return;
-	
-	// Check if the file/directory exists on disk
-	const string fullDirectory = ABS_DIRECTORY_TEXTURE("defaultTexture");
-	Texture_WorkOrder work_order(asset, fullDirectory);
-	if (FileReader::FileExistsOnDisk(fullDirectory)) {
-		work_order.Initialize_Order();
-		work_order.Finalize_Order();
-		if (asset->ExistsYet())
-			return;		
-	}
 
-	// We couldn't load the default file, generate a temporary one
-	MSG::Error(FILE_MISSING, fullDirectory);
-	/* HARD CODE DEFAULT VALUES HERE */
+	// Create hardcoded alternative
+	Asset_Manager::CreateNewAsset<Asset_Texture>(asset, "defaultTexture");
+	Texture_WorkOrder work_order(asset, "");
 	asset->pixel_data = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		asset->pixel_data[x] = GLubyte(255);

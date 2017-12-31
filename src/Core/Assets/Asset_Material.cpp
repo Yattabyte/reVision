@@ -102,34 +102,22 @@ void Asset_Material::getPBRProperties(const string & filename, string & albedo, 
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will resort to building one of its own if it can't find one from disk
+// Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Material & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::RetrieveDefaultAsset<Asset_Material>(asset, "defaultMaterial"))
+	if (Asset_Manager::QueryExistingAsset<Asset_Material>(asset, "defaultMaterial"))
 		return;
 
-	// Check if the file/directory exists on disk
-	const string fullDirectory = ABS_DIRECTORY_MATERIAL("defaultMaterial");
-	Material_WorkOrder work_order(asset, fullDirectory);
-	if (FileReader::FileExistsOnDisk(fullDirectory)) {
-		work_order.Initialize_Order();
-		work_order.Finalize_Order();
-		if (asset->ExistsYet())
-			return;
-	}
-
-	// We couldn't load the default file, generate a temporary one
-	MSG::Error(FILE_MISSING, fullDirectory);
-	/* HARD CODE DEFAULT VALUES HERE */
-	work_order = Material_WorkOrder(asset, "");	
-	asset->textures[0] = ABS_DIRECTORY_MAT_TEX("albedo.png");
-	asset->textures[1] = ABS_DIRECTORY_MAT_TEX("normal.png");
-	asset->textures[2] = ABS_DIRECTORY_MAT_TEX("metalness.png");
-	asset->textures[3] = ABS_DIRECTORY_MAT_TEX("roughness.png");
-	asset->textures[4] = ABS_DIRECTORY_MAT_TEX("height.png");
-	asset->textures[5] = ABS_DIRECTORY_MAT_TEX("ao.png");
-	work_order.Initialize_Order();
+	// Create hardcoded alternative
+	Asset_Manager::CreateNewAsset<Asset_Material>(asset, "defaultMaterial", Material_Manager::GenerateMaterialBufferID());
+	Material_WorkOrder work_order(asset, "");
+	asset->materialData = new GLubyte[12] {	
+		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
+		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
+		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
+	};
+	asset->size = vec2(1);
 	work_order.Finalize_Order();
 }
 
@@ -200,12 +188,8 @@ void Material_WorkOrder::Initialize_Order()
 	FIBITMAP *bitmaps[MAX_PHYSICAL_IMAGES];
 
 	// Load all images
-	vector<string> defaultNames = { "albedo.png" , "normal.png" , "metalness.png" , "roughness.png" , "height.png" , "ao.png" };
-	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
-		bitmaps[x] = ImageImporter::FetchImageFromDisk(m_asset->textures[x]);
-		if (!bitmaps[x])
-			bitmaps[x] = ImageImporter::FetchImageFromDisk(ABS_DIRECTORY_MAT_TEX(defaultNames[x]));
-	}
+	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
+		bitmaps[x] = ImageImporter::FetchImageFromDisk(m_asset->textures[x]);	
 
 	// unlock
 	read_guard.unlock();

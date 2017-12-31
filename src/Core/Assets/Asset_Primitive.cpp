@@ -79,26 +79,16 @@ size_t Asset_Primitive::GetSize()
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will resort to building one of its own if it can't find one from disk
+// Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Primitive & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::RetrieveDefaultAsset<Asset_Primitive>(asset, "defaultPrimitive"))
+	if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(asset, "defaultPrimitive"))
 		return;
 
-	// Check if the file/directory exists on disk
-	const string fullDirectory = ABS_DIRECTORY_PRIMITIVE("defaultPrimitive");
-	Primitive_WorkOrder work_order(asset, fullDirectory);
-	if (FileReader::FileExistsOnDisk(fullDirectory)) {
-		work_order.Initialize_Order();
-		work_order.Finalize_Order();
-		if (asset->ExistsYet())
-			return;
-	}
-
-	// We couldn't load the default file, generate a temporary one
-	MSG::Error(FILE_MISSING, fullDirectory);
-	/* HARD CODE DEFAULT VALUES HERE */
+	// Create hardcoded alternative
+	Asset_Manager::CreateNewAsset<Asset_Primitive>(asset, "defaultPrimitive");
+	Primitive_WorkOrder work_order(asset, "");
 	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
 	work_order.Finalize_Order();

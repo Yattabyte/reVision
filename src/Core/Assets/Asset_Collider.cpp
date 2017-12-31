@@ -23,26 +23,16 @@ int Asset_Collider::GetAssetType()
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will resort to building one of its own if it can't find one from disk
+// Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Collider & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::RetrieveDefaultAsset<Asset_Collider>(asset, "defaultCollider"))
+	if (Asset_Manager::QueryExistingAsset<Asset_Collider>(asset, "defaultCollider"))
 		return;
-
-	// Check if the file/directory exists on disk
-	const string fullDirectory = ABS_DIRECTORY_COLLIDER("defaultCollider");
-	Collider_WorkOrder work_order(asset, fullDirectory);
-	if (FileReader::FileExistsOnDisk(fullDirectory)) {
-		work_order.Initialize_Order();
-		work_order.Finalize_Order();
-		if (asset->ExistsYet())
-			return;
-	}
-
-	// We couldn't load the default file, generate a temporary one
-	MSG::Error(FILE_MISSING, fullDirectory);
-	/* HARD CODE DEFAULT VALUES HERE */
+	
+	// Create hardcoded alternative
+	Asset_Manager::CreateNewAsset<Asset_Collider>(asset, "defaultCollider");
+	Collider_WorkOrder work_order(asset, "");
 	asset->shape = new btBoxShape(btVector3(1, 1, 1));
 	work_order.Finalize_Order();
 }

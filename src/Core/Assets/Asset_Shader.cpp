@@ -148,32 +148,16 @@ bool FetchFileFromDisk(string & returnFile, const string & fileDirectory)
 }
 
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Will resort to building one of its own if it can't find one from disk
+// Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Shader & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::RetrieveDefaultAsset<Asset_Shader>(asset, "defaultShader"))
+	if (Asset_Manager::QueryExistingAsset<Asset_Shader>(asset, "defaultShader"))
 		return;
 
-	// Check if the file/directory exists on disk
-	const string fullDirectory = DIRECTORY_SHADER + "defaultShader";
-	Shader_WorkOrder work_order(asset, fullDirectory);
-	bool found_vertex = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
-	bool found_fragement = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
-	if (!found_vertex)
-		MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
-	if (!found_fragement)
-		MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
-	if ((found_vertex && found_fragement)) { 
-		work_order.Initialize_Order();
-		work_order.Finalize_Order();
-		if (asset->ExistsYet())
-			return;
-	}
-
-	// We couldn't load the default file, generate a temporary one
-	MSG::Error(FILE_MISSING, fullDirectory);
-	/* HARD CODE DEFAULT VALUES HERE */
+	// Create hardcoded alternative
+	Asset_Manager::CreateNewAsset<Asset_Shader>(asset, "defaultShader");
+	Shader_WorkOrder work_order(asset, "");
 	asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
 	asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
 	work_order.Finalize_Order();
