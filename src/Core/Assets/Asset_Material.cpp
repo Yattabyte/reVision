@@ -111,14 +111,13 @@ void fetchDefaultAsset(Shared_Asset_Material & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Material>(asset, "defaultMaterial", Material_Manager::GenerateMaterialBufferID());
-	Material_WorkOrder work_order(asset, "");
 	asset->materialData = new GLubyte[12] {	
 		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
 		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
 	};
 	asset->size = vec2(1);
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Material_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

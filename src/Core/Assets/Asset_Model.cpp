@@ -162,7 +162,6 @@ void fetchDefaultAsset(Shared_Asset_Model & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Model>(asset, "defaultModel");
-	Model_WorkOrder work_order(asset, "");
 	asset->data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
 	asset->data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
@@ -173,7 +172,7 @@ void fetchDefaultAsset(Shared_Asset_Model & asset)
 	asset->data.bones.resize(6);
 	asset->skins.resize(1);
 	Asset_Loader::load_asset(asset->skins[0], "defaultMaterial");
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Model_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

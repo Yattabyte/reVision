@@ -88,10 +88,9 @@ void fetchDefaultAsset(Shared_Asset_Primitive & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Primitive>(asset, "defaultPrimitive");
-	Primitive_WorkOrder work_order(asset, "");
 	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Primitive_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

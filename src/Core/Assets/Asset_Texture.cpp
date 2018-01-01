@@ -69,12 +69,11 @@ void fetchDefaultAsset(Shared_Asset_Texture & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Texture>(asset, "defaultTexture");
-	Texture_WorkOrder work_order(asset, "");
 	asset->pixel_data = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		asset->pixel_data[x] = GLubyte(255);
 	asset->size = vec2(1);
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Texture_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

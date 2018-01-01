@@ -81,7 +81,8 @@ public:
 	// Shut down and flush out the asset manager
 	static void Shutdown() { Get()._shutdown(); }
 	// Add a new work order request
-	static void AddWorkOrder(Work_Order* order);
+	// Set the finalize only flagg to skip initialization
+	static void AddWorkOrder(Work_Order* order, const bool &onlyFinalize = false);
 	// Peforms the last stage of processing on work orders that couldn't be threaded
 	// Eg: creating texture objects and making them resident on the GPU
 	static void Finalize_Orders();

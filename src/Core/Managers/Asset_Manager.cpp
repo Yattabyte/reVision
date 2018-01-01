@@ -21,10 +21,13 @@ void Asset_Manager::_shutdown()
 {
 }
 
-void Asset_Manager::AddWorkOrder(Work_Order * order) {
+void Asset_Manager::AddWorkOrder(Work_Order * order, const bool & finalizeOnly) {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
-	manager.m_WorkOrders_to_initialize.push_back(order);
+	if (!finalizeOnly)
+		manager.m_WorkOrders_to_initialize.push_back(order);
+	else
+		manager.m_WorkOrders_to_finalize.push_back(order);
 }
 
 void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)

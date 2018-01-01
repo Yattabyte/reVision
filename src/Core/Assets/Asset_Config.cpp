@@ -88,8 +88,7 @@ void fetchDefaultAsset(Shared_Asset_Config & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Config>(asset, "defaultConfig", vector<string>());
-	Config_WorkOrder work_order(asset, "");
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Config_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

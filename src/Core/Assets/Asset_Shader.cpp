@@ -157,10 +157,9 @@ void fetchDefaultAsset(Shared_Asset_Shader & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Shader>(asset, "defaultShader");
-	Shader_WorkOrder work_order(asset, "");
 	asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
 	asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Shader_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

@@ -57,7 +57,6 @@ void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Cubemap>(asset, "defaultCubemap");
-	Cubemap_WorkOrder work_order(asset, "");
 	asset->pixel_data[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
@@ -65,7 +64,7 @@ void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 	asset->pixel_data[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
 	asset->pixel_data[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
 	asset->size = vec2(1);
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Cubemap_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {

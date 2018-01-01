@@ -32,9 +32,8 @@ void fetchDefaultAsset(Shared_Asset_Collider & asset)
 	
 	// Create hardcoded alternative
 	Asset_Manager::CreateNewAsset<Asset_Collider>(asset, "defaultCollider");
-	Collider_WorkOrder work_order(asset, "");
 	asset->shape = new btBoxShape(btVector3(1, 1, 1));
-	work_order.Finalize_Order();
+	Asset_Manager::AddWorkOrder(new Collider_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
