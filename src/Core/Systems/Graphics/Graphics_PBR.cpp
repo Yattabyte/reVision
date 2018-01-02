@@ -27,7 +27,8 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
 		Asset_Loader::load_asset(m_shaderLighting, "Lighting\\lighting");
-		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
+		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
+		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA"); 
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
@@ -162,18 +163,16 @@ void System_Graphics_PBR::HDRPass()
 
 void System_Graphics_PBR::FinalPass()
 {
+	const size_t &quad_size = m_shapeQuad->GetSize();
 	m_hdrbuffer.BindForReading();
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, m_hdrbuffer.m_fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glReadBuffer(GL_COLOR_ATTACHMENT0); 
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	const float &window_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-	const float &window_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
-
-	glViewport(0, 0, window_width, window_height);
-	glBlitFramebuffer(0, 0, window_width, window_height, 0, 0, window_width, window_height, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+	m_shaderFXAA->Bind();
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+	glBindVertexArray(0);
+	Asset_Shader::Release();
 	m_gbuffer.End();	
 }
 
