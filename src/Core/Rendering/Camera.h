@@ -34,6 +34,7 @@ struct Camera_Buffer
 	float NearPlane;
 	float FarPlane;
 	float FOV;
+	float Gamma;
 
 	Camera_Buffer() {
 		pMatrix = mat4(1.0f);
@@ -45,20 +46,22 @@ struct Camera_Buffer
 		NearPlane = 0.01f;
 		FarPlane = 1.0f;
 		FOV = 1.0f;
+		Gamma = 1.0f;
 	}
 };
 
-class Camera 
+class DT_ENGINE_API Camera
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	DT_ENGINE_API ~Camera();
-	DT_ENGINE_API Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 1.0f, const float &horizontal_FOV = 90.0f);
-	DT_ENGINE_API Camera(Camera const &other);
-	DT_ENGINE_API void operator=(Camera const&other);
+	~Camera();
+	Camera(const vec3 &position = vec3(), const vec2 &size = vec2(1.0f), const float &near_plane = 0.01f, const float &far_plane = 10.0f, const float &horizontal_FOV = 90.0f);
+	Camera(Camera const &other);
+	void operator=(Camera const&other);
+
 
 	/***********************
 	----Camera Functions----
@@ -66,7 +69,7 @@ public:
 
 	// Make the current camera active
 	// Exposes this camera's attribute buffer to all shaders at spot 1
-	DT_ENGINE_API void Bind();
+	void Bind();
 
 
 	/*************************
@@ -85,6 +88,8 @@ public:
 	void setFarPlane(const float &f) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FarPlane = f; };
 	// Sets the horizontal FOV of the camera
 	void setHorizontalFOV(const float &fov) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FOV = fov; };
+	// Sets the gamma of the camera
+	void setGamma(const float &gamma) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.Gamma = gamma; };
 	// Return a reference to the visibility token
 	Visibility_Token &GetVisibilityToken() { return m_vistoken; };
 	// Returns a copy of this camera's data buffer
@@ -99,7 +104,7 @@ public:
 	shared_mutex &getDataMutex() const { return data_mutex; };
 	// Updates the camera's state on the GPU
 	// All matrix updates performed here
-	DT_ENGINE_API void Update();
+	void Update();
 
 
 private:

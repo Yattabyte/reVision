@@ -41,7 +41,7 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75f, 0.25f)));
+		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.75, 0.74, 0.68)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.5f));
 
 		m_Initialized = true;
@@ -51,7 +51,7 @@ void System_World::Initialize(Engine_Package * enginePackage)
 void System_World::Update(const float & deltaTime)
 {
 	auto Sun = m_entityFactory.GetEntity(sun);
-	ori = glm::rotate(ori, glm::radians(2.0f), vec3(0, 1, 1));
+	ori = glm::rotate(ori, glm::radians(1.0f), vec3(0, 1, 1));
 	Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, ori));
 }
 

@@ -243,47 +243,42 @@ void Model_WorkOrder::Initialize_Order()
 		return;
 	}
 
-	{ // Separated as to destroy lock at completion
-		unique_lock<shared_mutex> m_asset_guard(m_asset->m_mutex);
-		GeometryInfo &gi = m_asset->data;
+	unique_lock<shared_mutex> m_asset_guard(m_asset->m_mutex);
+	GeometryInfo &gi = m_asset->data;
 
-		// Generate all the required skins
-		m_asset->skins.resize( max(1, (scene->mNumMaterials - 1)) );
-		if (scene->mNumMaterials > 1) { 
-			// ignore scene material [0] 
-			for (int x = 1; x < scene->mNumMaterials; ++x)
-				Generate_Material(m_asset->skins[x-1], scene->mMaterials[x]);
-		}
-		else 
-			Generate_Material(m_asset->skins[0]);		
-
-		// Combine mesh data into single struct
-		for (int a = 0, atotal = scene->mNumMeshes; a < atotal; a++) {
-			const aiMesh *mesh = scene->mMeshes[a];
-			for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-				const aiFace& face = mesh->mFaces[x];
-				for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-					const int index = face.mIndices[b];
-					const aiVector3D vertex = mesh->mVertices[index];
-					const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-					const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-					const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-					const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-					gi.vs.push_back(vec3(vertex.x, vertex.y, vertex.z));
-					gi.nm.push_back(glm::normalize(vec3(normal.x, normal.y, normal.z)));
-					gi.tg.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z) - vec3(normal.x, normal.y, normal.z) * glm::dot(vec3(normal.x, normal.y, normal.z), vec3(tangent.x, tangent.y, tangent.z))));
-					gi.bt.push_back(vec3(bitangent.x, bitangent.y, bitangent.z));
-					gi.uv.push_back(vec2(uvmap.x, uvmap.y));
-				}
+	// Combine mesh data into single struct
+	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
+		const aiMesh *mesh = scene->mMeshes[a];
+		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+			const aiFace& face = mesh->mFaces[x];
+			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
+				const int index = face.mIndices[b];
+				const aiVector3D vertex = mesh->mVertices[index];
+				const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
+				gi.vs.push_back(vec3(vertex.x, vertex.y, vertex.z));
+				gi.nm.push_back(glm::normalize(vec3(normal.x, normal.y, normal.z)));
+				gi.tg.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z) - vec3(normal.x, normal.y, normal.z) * glm::dot(vec3(normal.x, normal.y, normal.z), vec3(tangent.x, tangent.y, tangent.z))));
+				gi.bt.push_back(vec3(bitangent.x, bitangent.y, bitangent.z));
+				gi.uv.push_back(vec2(uvmap.x, uvmap.y));
 			}
 		}
-		m_asset->mesh_size = gi.vs.size(); // Final vertex size (needed for draw arrays call)
-		calculate_AABB(gi.vs, m_asset->bbox_min, m_asset->bbox_max); // Bounding box size for frustum culling (only of m_asset, we won't fs cull sub meshes)
-
-		gi.bones.resize(gi.vs.size());
-		Initialize_Bones(m_asset, scene);
-		m_asset->animationInfo.SetScene(scene);
 	}
+	m_asset->animationInfo.SetScene(scene);
+	m_asset->mesh_size = gi.vs.size(); // Final vertex size (needed for draw arrays call)
+	gi.bones.resize(gi.vs.size());
+	calculate_AABB(gi.vs, m_asset->bbox_min, m_asset->bbox_max);
+	Initialize_Bones(m_asset, scene);
+
+	// Generate all the required skins
+	m_asset->skins.resize(max(1, (scene->mNumMaterials - 1)));
+	if (scene->mNumMaterials > 1) 		
+		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
+			Generate_Material(m_asset->skins[x - 1], scene->mMaterials[x]);	
+	else
+		Generate_Material(m_asset->skins[0]);
 }
 
 void Model_WorkOrder::Finalize_Order()

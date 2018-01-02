@@ -189,7 +189,7 @@ void dt_Engine::Shutdown()
 
 void dt_Engine::Update()
 {
-	float deltaTime = 0;
+ 	float deltaTime = 0;
 	float thisTime = glfwGetTime();
 	if (m_Initialized && !glfwWindowShouldClose(m_package->m_Context_Rendering)) {
 		deltaTime = thisTime - m_lastTime;

@@ -1,13 +1,13 @@
 /*
-	Lighting_Buffer
+	HDR_Buffer
 
 	- A specialized frame buffer
-	- Lights render into it, reading from the Geometry buffer	
+	- Color corrects and joins lighting results together
 */
 
 #pragma once
-#ifndef LIGHTING_BUFFER
-#define LIGHTING_BUFFER
+#ifndef HDR_BUFFER
+#define HDR_BUFFER
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
 #else
@@ -23,21 +23,21 @@ using namespace glm;
 class Engine_Package;
 class Callback_Container;
 
-class DT_ENGINE_API Lighting_Buffer
+class DT_ENGINE_API HDR_Buffer
 {
 public:
 	/*************
 	----Common----
 	*************/
 
-	~Lighting_Buffer();
-	Lighting_Buffer();
-	void Initialize(Engine_Package *enginePackage, const GLuint &depthStencil);
+	~HDR_Buffer();
+	HDR_Buffer();
+	void Initialize(Engine_Package *enginePackage);
 
 
-	/********************************
-	----Lighting_Buffer Functions----
-	********************************/
+	/***************************
+	----HDR_Buffer Functions----
+	***************************/
 
 	// Binds and clears out all the texture rendertargets in this framebuffer
 	void Clear();
@@ -53,14 +53,8 @@ public:
 	----Variables----
 	****************/
 
-	enum LBUFFER_TEXTURE_TYPE {
-		LBUFFER_TEXTURE_TYPE_SCENE,
-		LBUFFER_TEXTURE_TYPE_OVERBRIGHT,
-		LBUFFER_NUM_TEXTURES
-	};
 	GLuint m_fbo;
-	GLuint m_textures[LBUFFER_NUM_TEXTURES];
-	GLuint m_depth_stencil; // Donated by the geometry buffer
+	GLuint m_texture;
 
 private:
 	Engine_Package *m_enginePackage;
@@ -68,4 +62,4 @@ private:
 	bool m_Initialized;
 };
 
-#endif // LIGHTING_BUFFER
+#endif // HDR_BUFFER

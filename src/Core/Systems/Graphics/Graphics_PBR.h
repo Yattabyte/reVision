@@ -19,6 +19,7 @@
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Geometry_Buffer.h"
 #include "Systems\Graphics\Lighting_Buffer.h"
+#include "Systems\Graphics\HDR_Buffer.h"
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
@@ -41,12 +42,15 @@ public:
 private:
 	void RegenerationPass(const Visibility_Token &vis_token);
 	void GeometryPass(const Visibility_Token &vis_token);
+	void SkyPass();
 	void LightingPass(const Visibility_Token &vis_token);
-	void FinalPass(const Visibility_Token &vis_token);
+	void HDRPass();
+	void FinalPass();
 
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderSky;
+	HDR_Buffer m_hdrbuffer;
+	Shared_Asset_Shader m_shaderGeometry, m_shaderGeometryShadow, m_shaderLighting, m_shaderSky, m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
