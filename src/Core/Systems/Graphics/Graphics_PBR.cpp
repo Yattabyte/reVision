@@ -5,14 +5,31 @@
 #include "Entities\Components\Lighting_Component.h"
 
 
+class Primitive_Observer : Asset_Observer
+{
+public:
+	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	virtual ~Primitive_Observer() { 
+		m_asset->RemoveObserver(this); 
+	};
+	virtual void Notify_Finalized() {
+		if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
+			m_asset->UpdateVAO(m_vao_id);
+	}
+
+	GLuint m_vao_id;
+	Shared_Asset_Primitive m_asset;
+};
 
 System_Graphics_PBR::~System_Graphics_PBR()
 {
+	if (!m_Initialized)
+		delete m_observer;
 }
 
 
 System_Graphics_PBR::System_Graphics_PBR() :
-	m_gbuffer(), m_lbuffer(), m_hdrbuffer()
+	m_visualFX(), m_gbuffer(), m_lbuffer(), m_hdrbuffer()
 {
 	m_quadVAO = 0;
 }
@@ -21,8 +38,9 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
+		m_visualFX.Initialize(m_enginePackage);
 		m_gbuffer.Initialize(m_enginePackage);		
-		m_lbuffer.Initialize(m_enginePackage, m_gbuffer.m_depth_stencil);
+		m_lbuffer.Initialize(m_enginePackage, &m_visualFX, m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.Initialize(m_enginePackage);
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
@@ -33,9 +51,9 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
-		m_Initialized = true;
-		m_observer = make_shared<Primitive_Observer>(m_shapeQuad, m_quadVAO);
+		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
 		m_gbuffer.End();
+		m_Initialized = true;
 	}
 }
 
@@ -139,6 +157,7 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 
 	glBindVertexArray(0);
 	Asset_Shader::Release();
+	m_lbuffer.ApplyBloom();
 }
 
 void System_Graphics_PBR::HDRPass()
@@ -174,10 +193,4 @@ void System_Graphics_PBR::FinalPass()
 	glBindVertexArray(0);
 	Asset_Shader::Release();
 	m_gbuffer.End();	
-}
-
-void Primitive_Observer::Notify_Finalized()
-{
-	if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
-		m_asset->UpdateVAO(m_vao_id);
 }

@@ -5,11 +5,6 @@
 #include "Systems\World\ECSmessages.h"
 #include "Utilities\Transform.h"
 
-
-
-static quat ori = glm::rotate(quat(1, 0, 0, 0), glm::radians(75.0f), vec3(1, 1, 0));
-static ECShandle sun;
-
 System_World::~System_World()
 {
 }
@@ -30,7 +25,7 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		auto prop1 = m_entityFactory.CreateEntity("Prop");
 		auto prop2 = m_entityFactory.CreateEntity("Prop");
 		auto prop4 = m_entityFactory.CreateEntity("Prop");
-		sun = m_entityFactory.CreateEntity("Sun");
+		auto sun = m_entityFactory.CreateEntity("Sun");
 
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox2.obj")));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
@@ -41,7 +36,8 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.75, 0.74, 0.68)));
+		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.25)));
+		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.5f));
 
 		m_Initialized = true;
@@ -50,9 +46,10 @@ void System_World::Initialize(Engine_Package * enginePackage)
 
 void System_World::Update(const float & deltaTime)
 {
-	auto Sun = m_entityFactory.GetEntity(sun);
+	/*auto Sun = m_entityFactory.GetEntity(sun);
 	ori = glm::rotate(ori, glm::radians(1.0f), vec3(0, 1, 1));
-	Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, ori));
+	Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, ori));*/
+	//m_entityFactory.GetEntitiesByType("Sun")[0]->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
 }
 
 #include "Entities\Components\Geometry_Component.h"

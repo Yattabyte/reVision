@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Lighting_Buffer.h"
+#include "Systems\Graphics\VisualFX.h"
 #include "Systems\Message_Manager.h"
 #include "Utilities\Engine_Package.h"
 #include <algorithm>
@@ -22,6 +23,16 @@ public:
 	}
 private:
 	Lighting_Buffer *m_LBuffer;
+}; 
+class LB_BloomStrengthChangeCallback : public Callback_Container {
+public:
+	~LB_BloomStrengthChangeCallback() {};
+	LB_BloomStrengthChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
+	void Callback(const float &value) {
+		m_LBuffer->SetBloomStrength((int)value);
+	}
+private:
+	Lighting_Buffer *m_LBuffer;
 };
 
 Lighting_Buffer::~Lighting_Buffer()
@@ -29,8 +40,10 @@ Lighting_Buffer::~Lighting_Buffer()
 	if (m_Initialized) {
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
 		delete m_widthChangeCallback;
 		delete m_heightChangeCallback;
+		delete m_bloomStrengthChangeCallback;
 
 		// Destroy OpenGL objects
 		glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
@@ -43,21 +56,30 @@ Lighting_Buffer::Lighting_Buffer()
 	m_Initialized = false;
 	m_depth_stencil = 0;
 	m_fbo = 0;
+	m_renderSize = vec2(512);
+	m_bloomStrength = 8;
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
+	for (int x = 0; x < 2; ++x)
+		m_texturesGB[x] = 0;
 }
 
-void Lighting_Buffer::Initialize(Engine_Package * enginePackage, const GLuint &depthStencil)
+void Lighting_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visualFX, const GLuint &depthStencil)
 {
 	if (!m_Initialized) {
 		m_depth_stencil = depthStencil;
 		m_enginePackage = enginePackage;
+		m_visualFX = visualFX;
 		m_widthChangeCallback = new LB_WidthChangeCallback(this);
 		m_heightChangeCallback = new LB_HeightChangeCallback(this);
+		m_bloomStrengthChangeCallback = new LB_BloomStrengthChangeCallback(this);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
 		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
 		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+		m_renderSize = vec2(screen_width, screen_height);
+		m_bloomStrength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH);
 
 		glGenFramebuffers(1, &m_fbo);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
@@ -70,6 +92,15 @@ void Lighting_Buffer::Initialize(Engine_Package * enginePackage, const GLuint &d
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
+		}
+		glGenTextures(2, m_texturesGB);
+		for (int x = 0; x < 2; ++x) {
+			glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		}
 
 		GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
@@ -117,6 +148,7 @@ void Lighting_Buffer::BindForReading()
 
 void Lighting_Buffer::Resize(const vec2 & size)
 {
+	m_renderSize = size;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
@@ -125,5 +157,23 @@ void Lighting_Buffer::Resize(const vec2 & size)
 	}
 
 	// restore default FBO
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+void Lighting_Buffer::SetBloomStrength(const int & strength)
+{
+	m_bloomStrength = strength;
+}
+
+void Lighting_Buffer::ApplyBloom()
+{
+	glDisable(GL_BLEND);
+	m_visualFX->applyGaussianBlur(m_textures[LBUFFER_TEXTURE_TYPE_OVERBRIGHT], m_texturesGB, m_renderSize, m_bloomStrength);
+
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+	// return the G_Buffer's depth-stencil texture
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, 0, 0);
+	// return our overbright texture following its convolution
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + LBUFFER_TEXTURE_TYPE_OVERBRIGHT, GL_TEXTURE_2D, m_textures[LBUFFER_TEXTURE_TYPE_OVERBRIGHT], 0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }

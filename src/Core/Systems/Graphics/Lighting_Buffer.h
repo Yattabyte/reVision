@@ -22,6 +22,7 @@ using namespace glm;
 
 class Engine_Package;
 class Callback_Container;
+class VisualFX;
 
 class DT_ENGINE_API Lighting_Buffer
 {
@@ -32,7 +33,7 @@ public:
 
 	~Lighting_Buffer();
 	Lighting_Buffer();
-	void Initialize(Engine_Package *enginePackage, const GLuint &depthStencil);
+	void Initialize(Engine_Package *enginePackage, VisualFX *visualFX, const GLuint &depthStencil);
 
 
 	/********************************
@@ -47,6 +48,10 @@ public:
 	void BindForReading();
 	// Change the size of the framebuffer object
 	void Resize(const vec2 & size);
+	// Set the strength of the bloom effect
+	void SetBloomStrength(const int &strength);
+	// Apply blur filter to bloom attachment, because its useless otherwise
+	void ApplyBloom();
 
 
 	/****************
@@ -59,12 +64,15 @@ public:
 		LBUFFER_NUM_TEXTURES
 	};
 	GLuint m_fbo;
-	GLuint m_textures[LBUFFER_NUM_TEXTURES];
+	GLuint m_textures[LBUFFER_NUM_TEXTURES], m_texturesGB[2];
 	GLuint m_depth_stencil; // Donated by the geometry buffer
 
 private:
 	Engine_Package *m_enginePackage;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
+	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
+	VisualFX *m_visualFX;
+	vec2 m_renderSize;
+	int m_bloomStrength;
 	bool m_Initialized;
 };
 

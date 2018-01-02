@@ -20,6 +20,7 @@
 #include "Systems\Graphics\Geometry_Buffer.h"
 #include "Systems\Graphics\Lighting_Buffer.h"
 #include "Systems\Graphics\HDR_Buffer.h"
+#include "Systems\Graphics\VisualFX.h"
 #include "Rendering\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
@@ -28,7 +29,6 @@
 class Engine_Package;
 
 class Camera;
-class Primitive_Observer;
 class DT_ENGINE_API System_Graphics_PBR : public System
 {
 public: 
@@ -47,6 +47,7 @@ private:
 	void HDRPass();
 	void FinalPass();
 
+	VisualFX m_visualFX;
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
 	HDR_Buffer m_hdrbuffer;
@@ -54,18 +55,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
-	shared_ptr<Primitive_Observer> m_observer;
-};
-
-class DT_ENGINE_API Primitive_Observer : Asset_Observer
-{
-public:
-	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
-	virtual ~Primitive_Observer() { m_asset->RemoveObserver(this); };
-	virtual void Notify_Finalized();
-
-	GLuint m_vao_id;
-	Shared_Asset_Primitive m_asset;
+	void* m_observer;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR

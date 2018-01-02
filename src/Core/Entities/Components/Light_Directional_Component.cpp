@@ -40,7 +40,7 @@ void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<float>()) break;
 			const auto &payload = message.GetPayload<float>();
 			m_uboData.LightIntensity = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4), sizeof(float), &m_uboData.LightIntensity);
+			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) + sizeof(vec4) + sizeof(vec4) + sizeof(float), sizeof(float), &m_uboData.LightIntensity);
 			break;
 		}
 		case SET_LIGHT_ORIENTATION: {

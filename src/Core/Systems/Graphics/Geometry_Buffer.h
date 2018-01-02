@@ -36,9 +36,9 @@ public:
 	void Initialize(Engine_Package *enginePackage);
 
 
-	/************************
+	/********************************
 	----Geometry_Buffer Functions----
-	************************/
+	********************************/
 
 	// Binds and clears out all the texture rendertargets in this framebuffer
 	void Clear();
