@@ -1,8 +1,23 @@
 #include "Systems\Graphics\Geometry_Buffer.h"
+#include "Systems\Graphics\VisualFX.h"
 #include "Systems\Message_Manager.h"
 #include "Utilities\Engine_Package.h"
 #include <algorithm>
+#include <random>
 
+class Primitive_Observer : Asset_Observer
+{
+public:
+	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	virtual ~Primitive_Observer() { m_asset->RemoveObserver(this); };
+	virtual void Notify_Finalized() {
+		if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
+			m_asset->UpdateVAO(m_vao_id);
+	}
+
+	GLuint m_vao_id;
+	Shared_Asset_Primitive m_asset;
+};
 class GB_WidthChangeCallback : public Callback_Container {
 public:
 	~GB_WidthChangeCallback() {};
@@ -39,9 +54,11 @@ Geometry_Buffer::~Geometry_Buffer()
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		delete m_widthChangeCallback;
 		delete m_heightChangeCallback;
+		delete m_observer;
 
 		// Destroy OpenGL objects
 		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
+		glDeleteTextures(2, m_texturesGB);
 		glDeleteTextures(1, &m_depth_stencil);
 		glDeleteFramebuffers(1, &m_fbo);
 	}
@@ -52,20 +69,29 @@ Geometry_Buffer::Geometry_Buffer()
 	m_Initialized = false;
 	m_fbo = 0;
 	m_depth_stencil = 0;
+	m_vao_Quad = 0;
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
+	for (int x = 0; x < 2; ++x)
+		m_texturesGB[x] = 0;
 }
 
-void Geometry_Buffer::Initialize(Engine_Package * enginePackage)
+void Geometry_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visualFX)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
+		m_visualFX = visualFX;
+		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
+		Asset_Loader::load_asset(m_shapeQuad, "quad");
+		m_vao_Quad = Asset_Primitive::GenerateVAO();
+		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
 		m_widthChangeCallback = new GB_WidthChangeCallback(this);
 		m_heightChangeCallback = new GB_HeightChangeCallback(this);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
 		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+		m_renderSize = vec2(screen_width, screen_height);
 		
 		// Create the FBO
 		glGenFramebuffers(1, &m_fbo);
@@ -92,8 +118,34 @@ void Geometry_Buffer::Initialize(Engine_Package * enginePackage)
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
 			MSG::Error(FBO_INCOMPLETE, "Geometry Buffer", errorString);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 			return;
 		}
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+		glGenTextures(2, m_texturesGB);
+		for (int x = 0; x < 2; ++x) {
+			glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			AssignTextureProperties();
+		}
+
+		// Prepare the noise texture and kernal	
+		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
+		std::default_random_engine generator;
+		vec3 noiseArray[16];
+		for (GLuint i = 0; i < 16; i++) {
+			glm::vec3 noise(
+				randomFloats(generator) * 2.0 - 1.0,
+				randomFloats(generator) * 2.0 - 1.0,
+				0.0f);
+			noiseArray[i] = (noise);
+		}
+		glGenTextures(1, &m_noiseID);
+		glBindTexture(GL_TEXTURE_2D, m_noiseID);
+		AssignTextureProperties();
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &noiseArray[0]);
+		glBindTexture(GL_TEXTURE_2D, 0);
 		m_Initialized = true;
 	}
 }
@@ -135,17 +187,58 @@ void Geometry_Buffer::End()
 
 void Geometry_Buffer::Resize(const vec2 &size)
 {
+	m_renderSize = size;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
-	
+
+	for (int x = 0; x < 2; ++x) {
+		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+	}
+
 	// Depth-stencil buffer texture
 	glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 
 	// restore default FBO
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+}
+
+void Geometry_Buffer::ApplyAO()
+{
+	if (m_shapeQuad->ExistsYet() && m_shaderSSAO->ExistsYet()) {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glDrawBuffer(GL_COLOR_ATTACHMENT2);
+
+		glDepthMask(GL_FALSE);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
+
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_IMAGE]);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
+		glActiveTexture(GL_TEXTURE2);
+		glBindTexture(GL_TEXTURE_2D, m_noiseID);
+
+		m_shaderSSAO->Bind();
+		glBindVertexArray(m_vao_Quad);
+		const size_t &quad_size = m_shapeQuad->GetSize();
+		glDrawArrays(GL_TRIANGLES, 0, quad_size);
+		glBindVertexArray(0);
+		Asset_Shader::Release();
+
+		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
+
+		glEnable(GL_DEPTH_TEST);
+		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		glDisable(GL_BLEND);
+	}
 }

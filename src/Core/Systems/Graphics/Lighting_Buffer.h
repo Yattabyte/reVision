@@ -23,7 +23,6 @@ using namespace glm;
 class Engine_Package;
 class Callback_Container;
 class VisualFX;
-
 class DT_ENGINE_API Lighting_Buffer
 {
 public:
@@ -69,8 +68,8 @@ public:
 
 private:
 	Engine_Package *m_enginePackage;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
 	VisualFX *m_visualFX;
+	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
 	vec2 m_renderSize;
 	int m_bloomStrength;
 	bool m_Initialized;

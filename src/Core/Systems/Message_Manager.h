@@ -39,8 +39,9 @@ enum Error_Enum
 	PROGRAM_INCOMPLETE,
 
 	GLFW_ERROR,
+	OPENGL_ERROR,
 	OTHER_ERROR,
-	ERROR_COUNT
+	ERROR_COUNT,
 };
 
 static std::string Error_String[ERROR_COUNT] =
@@ -53,8 +54,9 @@ static std::string Error_String[ERROR_COUNT] =
 	"Error ("+to_string(SHADER_INCOMPLETE)+"): The Shader file % could not compile. ",
 	"Error ("+to_string(PROGRAM_INCOMPLETE)+"): The Shader program % could not compile. ",
 
-	"Error ("+to_string(GLFW_ERROR)+"): GLFW Error % "
-	"Error ("+to_string(OTHER_ERROR)+"): % "
+	"Error ("+to_string(GLFW_ERROR)+"): GLFW Error: % ",
+	"Error ("+to_string(OPENGL_ERROR)+"): OpenGL Error: % ",
+	"Error ("+to_string(OTHER_ERROR)+"): % ",
 };
 
 #endif // MESSAGE_MANAGER

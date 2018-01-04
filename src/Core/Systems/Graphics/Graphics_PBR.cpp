@@ -3,13 +3,14 @@
 #include "Rendering\Camera.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
+#include <random>
 
 
-class Primitive_Observer : Asset_Observer
+class Primitivee_Observer : Asset_Observer
 {
 public:
-	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
-	virtual ~Primitive_Observer() { 
+	Primitivee_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	virtual ~Primitivee_Observer() {
 		m_asset->RemoveObserver(this); 
 	};
 	virtual void Notify_Finalized() {
@@ -20,18 +21,63 @@ public:
 	GLuint m_vao_id;
 	Shared_Asset_Primitive m_asset;
 };
+class SSAO_Callback : public Callback_Container {
+public:
+	~SSAO_Callback() {};
+	SSAO_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback(const float &value) {
+		m_gBuffer->SetSSAO((bool)value);
+	}
+private:
+	System_Graphics_PBR *m_gBuffer;
+};
+class SSAO_Samples_Callback : public Callback_Container {
+public:
+	~SSAO_Samples_Callback() {};
+	SSAO_Samples_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback(const float &value) {
+		m_gBuffer->SetSSAOSamples((int)value);
+	}
+private:
+	System_Graphics_PBR *m_gBuffer;
+};
+class SSAO_Strength_Callback : public Callback_Container {
+public:
+	~SSAO_Strength_Callback() {};
+	SSAO_Strength_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback(const float &value) {
+		m_gBuffer->SetSSAOStrength((int)value);
+	}
+private:
+	System_Graphics_PBR *m_gBuffer;
+};
+class SSAO_Radius_Callback : public Callback_Container {
+public:
+	~SSAO_Radius_Callback() {};
+	SSAO_Radius_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	void Callback( const float &value) {
+		m_gBuffer->SetSSAORadius(value);
+	}
+private:
+	System_Graphics_PBR *m_gBuffer;
+};
 
 System_Graphics_PBR::~System_Graphics_PBR()
 {
-	if (!m_Initialized)
+	if (!m_Initialized) {
 		delete m_observer;
+		delete m_ssaoCallback;
+		delete m_ssaoSamplesCallback;
+		delete m_ssaoStrengthCallback;
+		delete m_ssaoRadiusCallback;
+	}
 }
-
 
 System_Graphics_PBR::System_Graphics_PBR() :
 	m_visualFX(), m_gbuffer(), m_lbuffer(), m_hdrbuffer()
 {
 	m_quadVAO = 0;
+	m_attribID = 0;
 }
 
 void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
@@ -39,7 +85,7 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		m_visualFX.Initialize(m_enginePackage);
-		m_gbuffer.Initialize(m_enginePackage);		
+		m_gbuffer.Initialize(m_enginePackage, &m_visualFX);
 		m_lbuffer.Initialize(m_enginePackage, &m_visualFX, m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.Initialize(m_enginePackage);
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
@@ -51,10 +97,91 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
-		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
+		m_observer = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
 		m_gbuffer.End();
+		
+		m_ssaoCallback = new SSAO_Callback(this);
+		m_ssaoSamplesCallback = new SSAO_Samples_Callback(this);
+		m_ssaoStrengthCallback = new SSAO_Strength_Callback(this);
+		m_ssaoRadiusCallback = new SSAO_Radius_Callback(this);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_attribs.m_ssao_radius = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_RADIUS);
+		m_attribs.m_ssao_strength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH);
+		m_attribs.m_aa_samples = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_SAMPLES);
+		m_attribs.m_ssao = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO);
+		glGenBuffers(1, &m_attribID);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
+		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);
+		GLvoid* p = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
+		memcpy(p, &m_attribs, sizeof(m_attribs));
+		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
+		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		GenerateKernal();
 		m_Initialized = true;
 	}
+}
+
+inline GLfloat lerp(GLfloat a, GLfloat b, GLfloat f)
+{
+	return a + f * (b - a);
+}
+
+void System_Graphics_PBR::GenerateKernal() 
+{
+	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
+	std::default_random_engine generator;
+	for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
+		glm::vec3 sample(
+			randomFloats(generator) * 2.0 - 1.0,
+			randomFloats(generator) * 2.0 - 1.0,
+			randomFloats(generator)
+		);
+		sample = glm::normalize(sample);
+		sample *= randomFloats(generator);
+		GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
+		scale = lerp(0.1f, 1.0f, scale * scale);
+		sample *= scale;
+		m_attribs.kernel[t] = vec4(sample, 1);
+	}
+	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void System_Graphics_PBR::SetSSAO(const bool & ssao)
+{
+	m_attribs.m_ssao = ssao;
+	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void System_Graphics_PBR::SetSSAOSamples(const int & samples)
+{
+	m_attribs.m_aa_samples = samples;
+	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void System_Graphics_PBR::SetSSAOStrength(const int & strength)
+{
+	m_attribs.m_ssao_strength = strength;
+	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void System_Graphics_PBR::SetSSAORadius(const float & radius)
+{
+	m_attribs.m_ssao_radius = radius;
+	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void System_Graphics_PBR::Update(const float & deltaTime)
@@ -115,7 +242,9 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		for each (auto &component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
 			component->Draw();
 
-		m_shaderGeometry->Release();
+		Asset_Shader::Release();
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);
+		m_gbuffer.ApplyAO();
 	}
 }
 

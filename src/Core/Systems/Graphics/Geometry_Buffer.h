@@ -17,6 +17,8 @@
 #endif
 #define GLEW_STATIC
 
+#include "Assets\Asset_Shader.h"
+#include "Assets\Asset_Primitive.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 
@@ -24,6 +26,7 @@ using namespace glm;
 
 class Callback_Container;
 class Engine_Package;
+class VisualFX;
 class DT_ENGINE_API Geometry_Buffer
 {
 public:
@@ -33,7 +36,7 @@ public:
 
 	~Geometry_Buffer();
 	Geometry_Buffer();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(Engine_Package *enginePackage, VisualFX *visualFX);
 
 
 	/********************************
@@ -50,6 +53,8 @@ public:
 	void End();
 	// Change the size of the framebuffer object
 	void Resize(const vec2 & size);
+	// Generate ambient occlusion for the frame
+	void ApplyAO();
 
 
 	/****************
@@ -62,13 +67,19 @@ public:
 		GBUFFER_TEXTURE_TYPE_SPECULAR,
 		GBUFFER_NUM_TEXTURES
 	};
-	GLuint m_fbo;
-	GLuint m_textures[GBUFFER_NUM_TEXTURES], m_depth_stencil;
+	GLuint m_fbo, m_noiseID;
+	GLuint m_textures[GBUFFER_NUM_TEXTURES], m_texturesGB[2], m_depth_stencil;
 
 private:
 	Engine_Package *m_enginePackage;
 	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
+	VisualFX *m_visualFX;
+	Shared_Asset_Shader m_shaderSSAO;	
+	Shared_Asset_Primitive m_shapeQuad;
+	GLuint m_vao_Quad;
+	vec2 m_renderSize;
 	bool m_Initialized;
+	void *m_observer;
 };
 
 #endif // GEOMETRY_BUFFER

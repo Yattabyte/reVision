@@ -31,8 +31,8 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
-		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-2.5, -2.5, 0))));
-		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(2.5, -2.5, 0))));
+		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-1, -2.5, 0))));
+		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(1, -2.5, 0))));
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 2.5, 0))));
 
 		auto Sun = m_entityFactory.GetEntity(sun);

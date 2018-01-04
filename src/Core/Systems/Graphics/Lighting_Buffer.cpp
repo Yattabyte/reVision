@@ -47,6 +47,7 @@ Lighting_Buffer::~Lighting_Buffer()
 
 		// Destroy OpenGL objects
 		glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
+		glDeleteTextures(2, m_texturesGB);
 		glDeleteFramebuffers(1, &m_fbo);
 	}
 }
@@ -154,6 +155,10 @@ void Lighting_Buffer::Resize(const vec2 & size)
 	for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
 		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+	}
+	for (int x = 0; x < 2; ++x) {
+		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 
 	// restore default FBO

@@ -15,6 +15,7 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
+#define MAX_KERNEL_SIZE 128 // Don't manipulate this, set the usable to a different value < than this
 
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Geometry_Buffer.h"
@@ -26,8 +27,16 @@
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Cubemap.h"
 
-class Engine_Package;
+struct Renderer_Attribs
+{
+	vec4 kernel[MAX_KERNEL_SIZE];
+	float m_ssao_radius;
+	int m_ssao_strength, m_aa_samples;
+	int m_ssao;
+};
 
+class Engine_Package;
+class Callback_Container;
 class Camera;
 class DT_ENGINE_API System_Graphics_PBR : public System
 {
@@ -35,6 +44,12 @@ public:
 	~System_Graphics_PBR();
 	System_Graphics_PBR();
 	void Initialize(Engine_Package * enginePackage);
+
+	void GenerateKernal();
+	void SetSSAO(const bool &ssao);
+	void SetSSAOSamples(const int &samples);
+	void SetSSAOStrength(const int &strength);
+	void SetSSAORadius(const float &radius);
 
 	// Render a frame
 	void Update(const float &deltaTime);
@@ -47,6 +62,9 @@ private:
 	void HDRPass();
 	void FinalPass();
 
+	Renderer_Attribs m_attribs;
+	GLuint m_attribID;
+	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;

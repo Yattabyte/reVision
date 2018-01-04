@@ -40,7 +40,7 @@ public:
 	
 	//void applyCubeFilter(const GLuint &sourceTexture, const GLuint & destinationTexture, const float &size);
 	void applyGaussianBlur(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
-	//void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
+	void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
 
 
 private:
