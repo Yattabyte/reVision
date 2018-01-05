@@ -52,6 +52,7 @@ struct LightBuffer
 
 class System_Shadowmap;
 class Light_Directional_Creator;
+class Engine_Package;
 class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {
 public:
@@ -72,9 +73,10 @@ public:
 	// Indirect lighting pass
 	virtual void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	virtual void shadowPass(const Visibility_Token &vis_token) const;
+	virtual void shadowPass(const Visibility_Token &vis_token);
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PVMatrix);
+	void CalculateCascades();
 	// Sends current data to the GPU
 	void Update();
 
@@ -85,6 +87,7 @@ protected:
 	GLuint m_uboID;
 	LightBuffer m_uboData;
 	float m_cascadeEnd[5];
+	Engine_Package *m_enginePackage;
 	System_Shadowmap *m_Shadowmapper;
 	friend class Light_Directional_Creator;
 };

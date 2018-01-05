@@ -38,11 +38,13 @@ public:
 	// Recalculate visibility
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
-
+	
 	void RegisterShadowCaster(const int & shadow_type, int & array_spot);
 	void UnRegisterShadowCaster(const int & shadow_type, int & array_spot);
 	void BindForWriting(const int & ShadowSpot);
 	void BindForReading(const int & ShadowSpot, const GLuint & ShaderTextureUnit);
+	void Test(); 
+	void ClearShadow(const int & ShadowSpot, const int & layer, const int &depth);
 	void SetSize(const unsigned int &spot, const float &size);
 	void SetUpdateQuality(const float &quality);
 

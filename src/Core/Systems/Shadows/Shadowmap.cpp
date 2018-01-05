@@ -197,6 +197,22 @@ void System_Shadowmap::BindForReading(const int & ShadowSpot, const GLuint & Sha
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_depth[ShadowSpot]);
 }
 
+void System_Shadowmap::Test()
+{
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_radiantflux[SHADOW_LARGE]);
+}
+
+void System_Shadowmap::ClearShadow(const int & ShadowSpot, const int & layer, const int & depth)
+{
+	const float clearDepth(1.0f);
+	const vec3 clear(0.0f);
+	glClearTexSubImage(m_shadow_depth[ShadowSpot], 0, 0, 0, layer, m_size[ShadowSpot].x, m_size[ShadowSpot].y, depth, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
+	glClearTexSubImage(m_shadow_worldpos[ShadowSpot], 0, 0, 0, layer, m_size[ShadowSpot].x, m_size[ShadowSpot].y, depth, GL_RGB, GL_FLOAT, &clear);
+	glClearTexSubImage(m_shadow_worldnormal[ShadowSpot], 0, 0, 0, layer, m_size[ShadowSpot].x, m_size[ShadowSpot].y, depth, GL_RGB, GL_FLOAT, &clear);
+	glClearTexSubImage(m_shadow_radiantflux[ShadowSpot], 0, 0, 0, layer, m_size[ShadowSpot].x, m_size[ShadowSpot].y, depth, GL_RGB, GL_FLOAT, &clear);
+}
+
 void System_Shadowmap::SetSize(const unsigned int & spot, const float & size)
 {
 	m_size[spot] = vec2(max(size, 1));

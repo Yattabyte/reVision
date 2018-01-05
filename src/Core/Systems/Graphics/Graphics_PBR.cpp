@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Shadows\Shadowmap.h"
 #include "Utilities\Engine_Package.h"
 #include "Rendering\Camera.h"
 #include "Entities\Components\Geometry_Component.h"
@@ -126,7 +127,7 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
-		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
+		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometryShadow");
 		Asset_Loader::load_asset(m_shaderLighting, "Lighting\\lighting");
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
 		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA"); 
@@ -267,22 +268,30 @@ void System_Graphics_PBR::Update(const float & deltaTime)
 
 void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 {
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(GL_TRUE);
+	// Quit early if we don't have models, or we don't have any lights 
+	// Logically equivalent to continuing while we have at least 1 model and 1 light
+	if ((vis_token.find("Anim_Model") == vis_token.end()) ||
+		(vis_token.find("Light_Directional") == vis_token.end() /* &&
+		(vis_token.find("Light_Point") == vis_token.end() &&
+		(vis_token.find("Light_Spot") == vis_token.end() */))
+		return;
+
 	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
 
-	//Shadowmap_Manager::BindForWriting(SHADOW_LARGE);
+	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
+	m_shaderGeometryShadow->Bind();
 
-	/*m_shaderGeometryShadow->Bind();
-	if (vis_token.visible_lights.size())
-	for each (const auto *light in vis_token.visible_lights.at(Light_Directional::GetLightType()))
-	light->shadowPass(vis_token);
-	m_shaderGeometryShadow->Release();*/
+	for each (auto &component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
+		component->shadowPass(vis_token);
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
-
+	Asset_Shader::Release();
+	
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
@@ -292,6 +301,8 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glCullFace(GL_BACK);
 		m_gbuffer.Clear();
 		m_gbuffer.BindForWriting();
 		m_shaderGeometry->Bind();
@@ -334,6 +345,9 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_gbuffer.BindForReading();
 
+
+	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	m_Shadowmapper->BindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional") != vis_token.end()) {
 		m_shaderLighting->Bind();
 		glBindVertexArray(m_quadVAO);
@@ -370,6 +384,8 @@ void System_Graphics_PBR::FinalPass()
 {
 	const size_t &quad_size = m_shapeQuad->GetSize();
 	m_hdrbuffer.BindForReading();
+	/*auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	m_Shadowmapper->Test();*/
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 

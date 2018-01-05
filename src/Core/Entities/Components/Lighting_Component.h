@@ -33,7 +33,7 @@ public:
 	// Indirect lighting pass
 	virtual void indirectPass(const int &vertex_count) {};
 	// Shadow lighting pass
-	virtual void shadowPass(const Visibility_Token &vis_token) const {};
+	virtual void shadowPass(const Visibility_Token &vis_token) {};
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 		
