@@ -24,52 +24,92 @@ public:
 class SSAO_Callback : public Callback_Container {
 public:
 	~SSAO_Callback() {};
-	SSAO_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	SSAO_Callback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
 	void Callback(const float &value) {
-		m_gBuffer->SetSSAO((bool)value);
+		m_Graphics->SetSSAO((bool)value);
 	}
 private:
-	System_Graphics_PBR *m_gBuffer;
+	System_Graphics_PBR *m_Graphics;
 };
 class SSAO_Samples_Callback : public Callback_Container {
 public:
 	~SSAO_Samples_Callback() {};
-	SSAO_Samples_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	SSAO_Samples_Callback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
 	void Callback(const float &value) {
-		m_gBuffer->SetSSAOSamples((int)value);
+		m_Graphics->SetSSAOSamples((int)value);
 	}
 private:
-	System_Graphics_PBR *m_gBuffer;
+	System_Graphics_PBR *m_Graphics;
 };
 class SSAO_Strength_Callback : public Callback_Container {
 public:
 	~SSAO_Strength_Callback() {};
-	SSAO_Strength_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	SSAO_Strength_Callback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
 	void Callback(const float &value) {
-		m_gBuffer->SetSSAOStrength((int)value);
+		m_Graphics->SetSSAOStrength((int)value);
 	}
 private:
-	System_Graphics_PBR *m_gBuffer;
+	System_Graphics_PBR *m_Graphics;
 };
 class SSAO_Radius_Callback : public Callback_Container {
 public:
 	~SSAO_Radius_Callback() {};
-	SSAO_Radius_Callback(System_Graphics_PBR *gBuffer) : m_gBuffer(gBuffer) {}
+	SSAO_Radius_Callback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
 	void Callback( const float &value) {
-		m_gBuffer->SetSSAORadius(value);
+		m_Graphics->SetSSAORadius(value);
 	}
 private:
-	System_Graphics_PBR *m_gBuffer;
+	System_Graphics_PBR *m_Graphics;
 };
+class Bloom_StrengthChangeCallback : public Callback_Container {
+public:
+	~Bloom_StrengthChangeCallback() {};
+	Bloom_StrengthChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
+	void Callback(const float &value) {
+		m_LBuffer->SetBloomStrength((int)value);
+	}
+private:
+	Lighting_Buffer *m_LBuffer;
+};
+class Cam_WidthChangeCallback : public Callback_Container {
+public:
+	~Cam_WidthChangeCallback() {};
+	Cam_WidthChangeCallback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
+	void Callback(const float &value) {
+		m_Graphics->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
+	}
+private:
+	System_Graphics_PBR *m_Graphics;
+};
+class Cam_HeightChangeCallback : public Callback_Container {
+public:
+	~Cam_HeightChangeCallback() {};
+	Cam_HeightChangeCallback(System_Graphics_PBR *lBuffer) : m_Graphics(lBuffer) {}
+	void Callback(const float &value) {
+		m_Graphics->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
+	}
+private:
+	System_Graphics_PBR *m_Graphics;
+}; 
 
 System_Graphics_PBR::~System_Graphics_PBR()
 {
 	if (!m_Initialized) {
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		delete m_observer;
 		delete m_ssaoCallback;
 		delete m_ssaoSamplesCallback;
 		delete m_ssaoStrengthCallback;
 		delete m_ssaoRadiusCallback;
+		delete m_bloomStrengthChangeCallback;
+		delete m_widthChangeCallback;
+		delete m_heightChangeCallback;
 	}
 }
 
@@ -78,16 +118,13 @@ System_Graphics_PBR::System_Graphics_PBR() :
 {
 	m_quadVAO = 0;
 	m_attribID = 0;
+	m_renderSize = vec2(1);
 }
 
 void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_visualFX.Initialize(m_enginePackage);
-		m_gbuffer.Initialize(m_enginePackage, &m_visualFX);
-		m_lbuffer.Initialize(m_enginePackage, &m_visualFX, m_gbuffer.m_depth_stencil);
-		m_hdrbuffer.Initialize(m_enginePackage);
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometry_shadow");
 		Asset_Loader::load_asset(m_shaderLighting, "Lighting\\lighting");
@@ -104,14 +141,21 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_ssaoSamplesCallback = new SSAO_Samples_Callback(this);
 		m_ssaoStrengthCallback = new SSAO_Strength_Callback(this);
 		m_ssaoRadiusCallback = new SSAO_Radius_Callback(this);
+		m_widthChangeCallback = new Cam_WidthChangeCallback(this);
+		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
+		m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(&m_lbuffer);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
 		m_attribs.m_ssao_radius = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_RADIUS);
 		m_attribs.m_ssao_strength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH);
 		m_attribs.m_aa_samples = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_SAMPLES);
 		m_attribs.m_ssao = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO);
+		m_renderSize = vec2(m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -121,6 +165,12 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		GenerateKernal();
+
+		m_visualFX.Initialize(m_enginePackage);
+		m_gbuffer.Initialize(m_renderSize, &m_visualFX);
+		m_lbuffer.Initialize(m_renderSize, &m_visualFX, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
+		m_hdrbuffer.Initialize(m_renderSize);
+
 		m_Initialized = true;
 	}
 }
@@ -184,9 +234,17 @@ void System_Graphics_PBR::SetSSAORadius(const float & radius)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
+void System_Graphics_PBR::Resize(const vec2 & size)
+{
+	m_renderSize = size;
+	m_gbuffer.Resize(size);
+	m_lbuffer.Resize(size);
+	m_hdrbuffer.Resize(size);
+}
+
 void System_Graphics_PBR::Update(const float & deltaTime)
 {
-	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 
 	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
 	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
@@ -225,8 +283,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
 
-	glViewport(0, 0, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
-
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
 void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
@@ -284,8 +341,8 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 			component->directPass(quad_size);
 	}
 
-	glBindVertexArray(0);
 	Asset_Shader::Release();
+	glBindVertexArray(0);
 	m_lbuffer.ApplyBloom();
 }
 

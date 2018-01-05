@@ -20,9 +20,6 @@
 
 using namespace glm;
 
-class Engine_Package;
-class Callback_Container;
-
 class DT_ENGINE_API HDR_Buffer
 {
 public:
@@ -32,7 +29,7 @@ public:
 
 	~HDR_Buffer();
 	HDR_Buffer();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(const vec2 &size);
 
 
 	/***************************
@@ -57,8 +54,6 @@ public:
 	GLuint m_texture;
 
 private:
-	Engine_Package *m_enginePackage;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
 	bool m_Initialized;
 };
 

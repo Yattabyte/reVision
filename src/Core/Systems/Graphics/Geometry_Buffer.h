@@ -24,8 +24,6 @@
 
 using namespace glm;
 
-class Callback_Container;
-class Engine_Package;
 class VisualFX;
 class DT_ENGINE_API Geometry_Buffer
 {
@@ -36,7 +34,7 @@ public:
 
 	~Geometry_Buffer();
 	Geometry_Buffer();
-	void Initialize(Engine_Package *enginePackage, VisualFX *visualFX);
+	void Initialize(const vec2 &size, VisualFX *visualFX);
 
 
 	/********************************
@@ -71,8 +69,6 @@ public:
 	GLuint m_textures[GBUFFER_NUM_TEXTURES], m_texturesGB[2], m_depth_stencil;
 
 private:
-	Engine_Package *m_enginePackage;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	
 	Shared_Asset_Primitive m_shapeQuad;

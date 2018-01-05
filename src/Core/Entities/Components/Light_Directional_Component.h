@@ -9,7 +9,7 @@
 #define LIGHT_DIRECTIONAL_COMPONENT
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
-#else
+#else            
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define LIGHT_TYPE_DIRECTIONAL 0
@@ -55,7 +55,6 @@ class Light_Directional_Creator;
 class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {
 public:
-
 	/*************
 	----Common----
 	*************/

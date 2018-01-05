@@ -1,50 +1,11 @@
 #include "Systems\Graphics\Lighting_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\Message_Manager.h"
-#include "Utilities\Engine_Package.h"
 #include <algorithm>
-
-class LB_WidthChangeCallback : public Callback_Container {
-public:
-	~LB_WidthChangeCallback() {};
-	LB_WidthChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
-	void Callback(const float &value) {
-		m_LBuffer->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
-	}
-private:
-	Lighting_Buffer *m_LBuffer;
-};
-class LB_HeightChangeCallback : public Callback_Container {
-public:
-	~LB_HeightChangeCallback() {};
-	LB_HeightChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
-	void Callback(const float &value) {
-		m_LBuffer->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
-	}
-private:
-	Lighting_Buffer *m_LBuffer;
-}; 
-class LB_BloomStrengthChangeCallback : public Callback_Container {
-public:
-	~LB_BloomStrengthChangeCallback() {};
-	LB_BloomStrengthChangeCallback(Lighting_Buffer *lBuffer) : m_LBuffer(lBuffer) {}
-	void Callback(const float &value) {
-		m_LBuffer->SetBloomStrength((int)value);
-	}
-private:
-	Lighting_Buffer *m_LBuffer;
-};
 
 Lighting_Buffer::~Lighting_Buffer()
 {
 	if (m_Initialized) {
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
-		delete m_widthChangeCallback;
-		delete m_heightChangeCallback;
-		delete m_bloomStrengthChangeCallback;
-
 		// Destroy OpenGL objects
 		glDeleteTextures(LBUFFER_NUM_TEXTURES, m_textures);
 		glDeleteTextures(2, m_texturesGB);
@@ -65,29 +26,20 @@ Lighting_Buffer::Lighting_Buffer()
 		m_texturesGB[x] = 0;
 }
 
-void Lighting_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visualFX, const GLuint &depthStencil)
+void Lighting_Buffer::Initialize(const vec2 &size, VisualFX *visualFX, const int &bloomStrength, const GLuint &depthStencil)
 {
 	if (!m_Initialized) {
 		m_depth_stencil = depthStencil;
-		m_enginePackage = enginePackage;
 		m_visualFX = visualFX;
-		m_widthChangeCallback = new LB_WidthChangeCallback(this);
-		m_heightChangeCallback = new LB_HeightChangeCallback(this);
-		m_bloomStrengthChangeCallback = new LB_BloomStrengthChangeCallback(this);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
-		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
-		m_renderSize = vec2(screen_width, screen_height);
-		m_bloomStrength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH);
+		m_renderSize = size;
+		m_bloomStrength = bloomStrength;
 
 		glGenFramebuffers(1, &m_fbo);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 		glGenTextures(LBUFFER_NUM_TEXTURES, m_textures);
 		for (int x = 0; x < LBUFFER_NUM_TEXTURES; ++x) {
 			glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -97,7 +49,7 @@ void Lighting_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visua
 		glGenTextures(2, m_texturesGB);
 		for (int x = 0; x < 2; ++x) {
 			glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, screen_width, screen_height, 0, GL_RGB, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

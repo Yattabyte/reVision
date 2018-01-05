@@ -1,7 +1,6 @@
 #include "Systems\Graphics\Geometry_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\Message_Manager.h"
-#include "Utilities\Engine_Package.h"
 #include <algorithm>
 #include <random>
 
@@ -18,26 +17,6 @@ public:
 	GLuint m_vao_id;
 	Shared_Asset_Primitive m_asset;
 };
-class GB_WidthChangeCallback : public Callback_Container {
-public:
-	~GB_WidthChangeCallback() {};
-	GB_WidthChangeCallback(Geometry_Buffer *gBuffer) : m_gBuffer(gBuffer) {}
-	void Callback(const float &value) {
-		m_gBuffer->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
-	}
-private:
-	Geometry_Buffer *m_gBuffer;
-};
-class GB_HeightChangeCallback : public Callback_Container {
-public:
-	~GB_HeightChangeCallback() {};
-	GB_HeightChangeCallback(Geometry_Buffer *gBuffer) : m_gBuffer(gBuffer) {}
-	void Callback(const float &value) {
-		m_gBuffer->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
-	}
-private:
-	Geometry_Buffer *m_gBuffer;
-};
 
 static void AssignTextureProperties()
 {
@@ -50,17 +29,13 @@ static void AssignTextureProperties()
 Geometry_Buffer::~Geometry_Buffer()
 {	
 	if (m_Initialized) {
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		delete m_widthChangeCallback;
-		delete m_heightChangeCallback;
-		delete m_observer;
-
 		// Destroy OpenGL objects
 		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
 		glDeleteTextures(2, m_texturesGB);
 		glDeleteTextures(1, &m_depth_stencil);
 		glDeleteFramebuffers(1, &m_fbo);
+
+		delete m_observer;
 	}
 }
 
@@ -76,22 +51,15 @@ Geometry_Buffer::Geometry_Buffer()
 		m_texturesGB[x] = 0;
 }
 
-void Geometry_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visualFX)
+void Geometry_Buffer::Initialize(const vec2 &size, VisualFX *visualFX)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
 		m_visualFX = visualFX;
 		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		m_vao_Quad = Asset_Primitive::GenerateVAO();
 		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
-		m_widthChangeCallback = new GB_WidthChangeCallback(this);
-		m_heightChangeCallback = new GB_HeightChangeCallback(this);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		const float screen_width = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-		const float screen_height = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
-		m_renderSize = vec2(screen_width, screen_height);
+		m_renderSize = size;
 		
 		// Create the FBO
 		glGenFramebuffers(1, &m_fbo);
@@ -103,14 +71,14 @@ void Geometry_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visua
 
 		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 			glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
 			AssignTextureProperties();
 			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
 		}
 
 		// Depth-stencil buffer texture
 		glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, screen_width, screen_height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 		AssignTextureProperties();
 		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
 
@@ -126,7 +94,7 @@ void Geometry_Buffer::Initialize(Engine_Package * enginePackage, VisualFX *visua
 		glGenTextures(2, m_texturesGB);
 		for (int x = 0; x < 2; ++x) {
 			glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
-			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, screen_width, screen_height, 0, GL_RGBA, GL_FLOAT, NULL);
+			glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
 			AssignTextureProperties();
 		}
 

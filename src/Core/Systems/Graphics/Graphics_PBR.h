@@ -50,6 +50,7 @@ public:
 	void SetSSAOSamples(const int &samples);
 	void SetSSAOStrength(const int &strength);
 	void SetSSAORadius(const float &radius);
+	void Resize(const vec2 & size);
 
 	// Render a frame
 	void Update(const float &deltaTime);
@@ -64,7 +65,8 @@ private:
 
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
-	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback;
+	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback;
+	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;

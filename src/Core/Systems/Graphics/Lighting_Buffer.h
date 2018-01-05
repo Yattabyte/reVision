@@ -20,8 +20,6 @@
 
 using namespace glm;
 
-class Engine_Package;
-class Callback_Container;
 class VisualFX;
 class DT_ENGINE_API Lighting_Buffer
 {
@@ -32,7 +30,7 @@ public:
 
 	~Lighting_Buffer();
 	Lighting_Buffer();
-	void Initialize(Engine_Package *enginePackage, VisualFX *visualFX, const GLuint &depthStencil);
+	void Initialize(const vec2 &size, VisualFX *visualFX, const int &bloomStrength, const GLuint &depthStencil);
 
 
 	/********************************
@@ -67,9 +65,7 @@ public:
 	GLuint m_depth_stencil; // Donated by the geometry buffer
 
 private:
-	Engine_Package *m_enginePackage;
 	VisualFX *m_visualFX;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
 	vec2 m_renderSize;
 	int m_bloomStrength;
 	bool m_Initialized;
