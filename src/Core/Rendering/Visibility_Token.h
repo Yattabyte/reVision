@@ -18,6 +18,28 @@
 #include <map>
 #include <vector>
 
-typedef std::map<char*, std::vector<Component*>, cmp_str> Visibility_Token;
+class Visibility_Token {
+public:
+	Visibility_Token() {}
+	~Visibility_Token() {}
+	
+	void insert(char *c) {
+		mList.insert(pair<char*, vector<Component*>>(c, vector<Component*>()));
+	}
+	template <typename T> 
+	const std::vector<T*>& getTypeList(char *c) const {
+		return *(vector<T*>*)(&mList.at(c));
+	}
+	std::vector<Component*>& operator[](char *c) {
+		return mList.at(c);
+	}
+	size_t size() const {
+		return mList.size();
+	}
+	bool find(char *c) const {
+		return !(mList.find(c) == mList.end());
+	}
+	std::map<char*, std::vector<Component*>, cmp_str> mList;
+};
 
 #endif // VISIBILITY_TOKEN

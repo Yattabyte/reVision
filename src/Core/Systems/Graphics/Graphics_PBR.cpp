@@ -270,10 +270,10 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 {
 	// Quit early if we don't have models, or we don't have any lights 
 	// Logically equivalent to continuing while we have at least 1 model and 1 light
-	if ((vis_token.find("Anim_Model") == vis_token.end()) ||
-		(vis_token.find("Light_Directional") == vis_token.end() /* &&
+	if ((!vis_token.find("Anim_Model")) ||
+		(!vis_token.find("Light_Directional")) /* &&
 		(vis_token.find("Light_Point") == vis_token.end() &&
-		(vis_token.find("Light_Spot") == vis_token.end() */))
+		(vis_token.find("Light_Spot") == vis_token.end() */)
 		return;
 
 	glDisable(GL_BLEND);
@@ -286,7 +286,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
 	m_shaderGeometryShadow->Bind();
 
-	for each (auto &component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 		component->shadowPass(vis_token);
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
@@ -297,7 +297,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 {
-	if (vis_token.find("Anim_Model") != vis_token.end()) {
+	if (vis_token.find("Anim_Model")) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
@@ -307,7 +307,7 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		m_gbuffer.BindForWriting();
 		m_shaderGeometry->Bind();
 
-		for each (auto &component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
+		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 			component->Draw();
 
 		Asset_Shader::Release();
@@ -345,13 +345,12 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_gbuffer.BindForReading();
 
-
 	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	m_Shadowmapper->BindForReading(SHADOW_LARGE, 3);
-	if (vis_token.find("Light_Directional") != vis_token.end()) {
+	if (vis_token.find("Light_Directional")) {
 		m_shaderLighting->Bind();
 		glBindVertexArray(m_quadVAO);
-		for each (auto &component in *((vector<Lighting_Component*>*)(&vis_token.at("Light_Directional"))))
+		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 			component->directPass(quad_size);
 	}
 
@@ -384,8 +383,6 @@ void System_Graphics_PBR::FinalPass()
 {
 	const size_t &quad_size = m_shapeQuad->GetSize();
 	m_hdrbuffer.BindForReading();
-	/*auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
-	m_Shadowmapper->Test();*/
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 

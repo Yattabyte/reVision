@@ -105,7 +105,7 @@ void Light_Directional_Component::shadowPass(const Visibility_Token & vis_token)
 	Update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 
-	for each (auto &component in *((vector<Geometry_Component*>*)(&vis_token.at("Anim_Model"))))
+	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 		component->Draw();
 }
 

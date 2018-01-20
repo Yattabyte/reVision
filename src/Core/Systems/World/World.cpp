@@ -36,7 +36,7 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.25)));
+		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.5f));
 
@@ -73,7 +73,7 @@ void System_World::Update_Threaded(const float & deltaTime)
 				if (component->IsVisible(camPVMatrix))
 					visible_components.push_back((Component*)component);
 
-			vis_token.insert(pair<char*, vector<Component*>>(type, vector<Component*>()));
+			vis_token.insert(type);
 			vis_token[type] = visible_components;
 		}
 	}
@@ -89,7 +89,7 @@ void System_World::Update_Threaded(const float & deltaTime)
 				if (component->IsVisible(camPVMatrix))
 					visible_components.push_back((Component*)component);
 
-			vis_token.insert(pair<char*, vector<Component*>>(type, vector<Component*>()));
+			vis_token.insert(type);
 			vis_token[type] = visible_components;
 		}
 	}
