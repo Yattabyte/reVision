@@ -16,6 +16,7 @@
 #endif
 
 #include "Systems\System_Interface.h"
+#include "Systems\World\Camera.h"
 #include "Systems\World\ECSmessanger.h"
 #include "Systems\World\Entity_Factory.h"
 #include "Systems\World\Component_Factory.h"
@@ -28,15 +29,19 @@ public:
 	System_World();
 	void Initialize(Engine_Package *enginePackage);
 
-	// Recalculate visibility
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);
-
+	void RegisterViewer(Camera *c);
+	void UnRegisterViewer(Camera *c);
 
 private:
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
 	ECSmessanger m_ECSmessanger;
+	shared_mutex m_lock;
+	vector<Camera*> m_viewers;
+
+	void calcVisibility(Camera &camera);
 };
 
 #endif // SYSTEM_WORLD

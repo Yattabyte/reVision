@@ -1,5 +1,5 @@
-#include "Rendering\Camera.h"
-//#include "Systems\Visibility_Manager.h"
+#include "Systems\World\Camera.h"
+//#include "Systems\World_Manager.h"
 #include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
@@ -53,6 +53,21 @@ void Camera::operator=(Camera const & other)
 	m_frustum = Frustum(other.getFrustum());
 	data_mutex.unlock();
 	Update();
+}
+
+void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
+{
+	lock_guard<shared_mutex> wguard(data_mutex);
+	m_cameraBuffer.pMatrix = pMatrix;
+	m_cameraBuffer.vMatrix = vMatrix;
+	m_cameraBuffer.pMatrix_Inverse = glm::inverse(pMatrix);
+	m_cameraBuffer.vMatrix_Inverse = glm::inverse(vMatrix);
+	m_frustum.setFrustum(pMatrix * vMatrix);
+
+	// Send data to GPU
+	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &m_cameraBuffer);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Camera::Update()

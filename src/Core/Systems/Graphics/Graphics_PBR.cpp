@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Systems\Shadows\Shadowmap.h"
 #include "Utilities\Engine_Package.h"
-#include "Rendering\Camera.h"
+#include "Systems\World\Camera.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
 #include <random>
@@ -287,7 +287,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	m_shaderGeometryShadow->Bind();
 
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-		component->shadowPass(vis_token);
+		component->shadowPass();
 
 	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
 	Asset_Shader::Release();

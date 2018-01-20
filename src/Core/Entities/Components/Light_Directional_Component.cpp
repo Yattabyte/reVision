@@ -1,6 +1,7 @@
 #include "Entities\Components\Light_Directional_Component.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Utilities\Engine_Package.h"
+#include "Systems\World\World.h"
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSmessages.h"
 #include "Utilities\Frustum.h"
@@ -14,6 +15,8 @@ Light_Directional_Component::~Light_Directional_Component()
 		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			shadowmapper->UnRegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+		if (m_enginePackage->FindSubSystem("World"))
+			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
 	}
 }
 
@@ -26,7 +29,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	if (m_enginePackage && m_enginePackage->FindSubSystem("Shadows")) {
+	if (m_enginePackage->FindSubSystem("Shadows")) {
 		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			shadowmapper->RegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
@@ -42,6 +45,8 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 		m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
 	}
 
+	if (m_enginePackage->FindSubSystem("World")) 
+		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera);	
 }
 
 void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
@@ -100,12 +105,13 @@ void Light_Directional_Component::indirectPass(const int & vertex_count)
 	glDrawArraysInstanced(GL_POINTS, 0, 1, vertex_count);
 }
 
-void Light_Directional_Component::shadowPass(const Visibility_Token & vis_token)
+void Light_Directional_Component::shadowPass()
 {
 	Update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 
-	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
+	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
+	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
 		component->Draw();
 }
 
@@ -164,9 +170,8 @@ void Light_Directional_Component::CalculateCascades()
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 		m_uboData.lightP[i] = glm::ortho(l, r, b, t, n, f);
 
-		/*Camera &cam = dirCamera[i];
-		cam.setProjection(m);
-		cam.updateFrustum();*/
+		if (i == 0) 
+			m_camera.setMatrices(m_uboData.lightP[i], mat4(1.0f));		
 	}
 
 	for (int x = 0; x < NUM_CASCADES; ++x) {

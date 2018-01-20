@@ -21,6 +21,7 @@
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
 #include "Entities\Components\Lighting_Component.h"
+#include "Systems\World\Camera.h"
 
 using namespace glm;
 
@@ -73,7 +74,7 @@ public:
 	// Indirect lighting pass
 	virtual void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	virtual void shadowPass(const Visibility_Token &vis_token);
+	virtual void shadowPass();
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PVMatrix);
 	void CalculateCascades();
@@ -89,6 +90,7 @@ protected:
 	float m_cascadeEnd[5];
 	Engine_Package *m_enginePackage;
 	System_Shadowmap *m_Shadowmapper;
+	Camera m_camera;
 	friend class Light_Directional_Creator;
 };
 

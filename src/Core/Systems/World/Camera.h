@@ -13,7 +13,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Rendering\Visibility_Token.h"
+#include "Systems\World\Visibility_Token.h"
 #include "Utilities\Frustum.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
@@ -90,6 +90,8 @@ public:
 	void setHorizontalFOV(const float &fov) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FOV = fov; };
 	// Sets the gamma of the camera
 	void setGamma(const float &gamma) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.Gamma = gamma; };
+	// Set Matrices manually
+	void setMatrices(const mat4 &pMatrix, const mat4 &vMatrix);
 	// Return a reference to the visibility token
 	Visibility_Token &GetVisibilityToken() { return m_vistoken; };
 	// Returns a copy of this camera's data buffer

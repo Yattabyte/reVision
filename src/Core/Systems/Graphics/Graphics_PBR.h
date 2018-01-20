@@ -22,7 +22,7 @@
 #include "Systems\Graphics\Lighting_Buffer.h"
 #include "Systems\Graphics\HDR_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
-#include "Rendering\Visibility_Token.h"
+#include "Systems\World\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Cubemap.h"

@@ -15,7 +15,7 @@
 #endif
 
 #include "Entities\Entity.h"
-#include "Rendering\Visibility_Token.h"
+#include "Systems\World\Visibility_Token.h"
 #include "glm\glm.hpp"
 
 using namespace glm;

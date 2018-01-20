@@ -15,7 +15,7 @@
 
 #include "Entities\Components\Component.h"
 #include "Systems\World\ECSmessage.h"
-#include "Rendering\Visibility_Token.h"
+#include "Systems\World\Visibility_Token.h"
 #include <deque>
 #include <map>
 #include <vector>

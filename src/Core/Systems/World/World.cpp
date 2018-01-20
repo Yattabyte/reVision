@@ -1,9 +1,9 @@
 #include "Systems\World\World.h"
+#include "Systems\World\Visibility_Token.h"
 #include "Utilities\Engine_Package.h"
-#include "Rendering\Visibility_Token.h"
-#include "Rendering\Camera.h"
 #include "Systems\World\ECSmessages.h"
 #include "Utilities\Transform.h"
+#include <algorithm>
 
 System_World::~System_World()
 {
@@ -20,8 +20,33 @@ void System_World::Initialize(Engine_Package * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_componentFactory.Initialize(m_enginePackage, &m_ECSmessanger);
+		m_componentFactory.Initialize(m_enginePackage, &m_ECSmessanger);	
 
+		m_Initialized = true;
+	}
+}
+
+void System_World::RegisterViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.push_back(c);
+}
+
+void System_World::UnRegisterViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto *camera) {
+		return (camera == c);
+	}), end(m_viewers));
+}
+
+#include "Entities\Components\Geometry_Component.h"
+#include "Entities\Components\Lighting_Component.h"
+
+void System_World::Update(const float & deltaTime)
+{	
+	static bool loaded = false;
+	if (!loaded) {
 		auto prop1 = m_entityFactory.CreateEntity("Prop");
 		auto prop2 = m_entityFactory.CreateEntity("Prop");
 		auto prop4 = m_entityFactory.CreateEntity("Prop");
@@ -39,24 +64,20 @@ void System_World::Initialize(Engine_Package * enginePackage)
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.5f));
-
-		m_Initialized = true;
+		loaded = true;
 	}
 }
 
-void System_World::Update(const float & deltaTime)
-{
-	/*auto Sun = m_entityFactory.GetEntity(sun);
-	ori = glm::rotate(ori, glm::radians(1.0f), vec3(0, 1, 1));
-	Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, ori));*/
-	//m_entityFactory.GetEntitiesByType("Sun")[0]->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
-}
-
-#include "Entities\Components\Geometry_Component.h"
-#include "Entities\Components\Lighting_Component.h"
 void System_World::Update_Threaded(const float & deltaTime)
 {
-	Camera &camera = m_enginePackage->m_Camera;
+	calcVisibility(m_enginePackage->m_Camera);
+	shared_lock<shared_mutex> readGuard(m_lock);
+	for each (auto &camera in m_viewers)
+		calcVisibility(*camera);
+}
+
+void System_World::calcVisibility(Camera & camera)
+{
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
 	Visibility_Token &vis_token = camera.GetVisibilityToken();
 	const auto &camBuffer = camera.getCameraBuffer();
@@ -77,7 +98,7 @@ void System_World::Update_Threaded(const float & deltaTime)
 			vis_token[type] = visible_components;
 		}
 	}
-	
+
 	{
 		vector<char*> types = { "Light_Directional" };
 		for each (auto type in types) {

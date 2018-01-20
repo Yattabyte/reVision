@@ -15,7 +15,7 @@
 #endif
 
 #include "Entities\Components\Component.h"
-#include "Rendering\Visibility_Token.h"
+#include "Systems\World\Visibility_Token.h"
 #include "glm\glm.hpp"
 
 using namespace glm;
@@ -33,7 +33,7 @@ public:
 	// Indirect lighting pass
 	virtual void indirectPass(const int &vertex_count) {};
 	// Shadow lighting pass
-	virtual void shadowPass(const Visibility_Token &vis_token) {};
+	virtual void shadowPass() {};
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
 		
