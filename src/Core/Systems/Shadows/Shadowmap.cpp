@@ -237,6 +237,11 @@ void System_Shadowmap::SetSize(const unsigned int & spot, const float & size)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+vec2 System_Shadowmap::GetSize(const unsigned int & spot)
+{
+	return m_size[spot];
+}
+
 void System_Shadowmap::SetUpdateQuality(const float & quality)
 {
 	m_update_quality = max(-1, quality);

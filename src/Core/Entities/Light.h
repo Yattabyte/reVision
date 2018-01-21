@@ -6,8 +6,8 @@
 */
 
 #pragma once
-#ifndef LIGHT
-#define LIGHT
+#ifndef LIGHTS
+#define LIGHTS
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
 #else
@@ -15,37 +15,15 @@
 #endif
 
 #include "Entities\Entity.h"
-#include "Systems\World\Visibility_Token.h"
-#include "glm\glm.hpp"
 
-using namespace glm;
+class DT_ENGINE_API SpotLightCreator : public EntityCreator
+{
+public:
+	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
+		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
+		entity->addComponent("Light_Spot");
+		return entity;
+	}
+};
 
-//class Light : public Entity
-//{
-//public:
-//	/*************
-//	----Common----
-//	*************/
-//	// Tell this entity to register itself into any and all subsystems that it requires
-//	virtual void registerSelf() {};
-//	// Tell this entity to un-register itself from any and all subsystems that it required
-//	virtual void unregisterSelf() {};
-//
-//
-//	/*************************
-//	----Light Functions----
-//	*************************/
-//	// Direct lighting pass
-//	virtual void directPass(const int &vertex_count) {};
-//	// Indirect lighting pass
-//	virtual void indirectPass(const int &vertex_count) {};
-//	// Shadow lighting pass
-//	virtual void shadowPass(const Visibility_Token &vis_token) const {};	
-//	// Returns a unique ID per class that inherits this
-//	// Used for categorization in database maps and such
-//	static int GetLightType() { return -1; };
-//	// Returns whther or not this object should render
-//	virtual bool shouldRender(const mat4 &PVMatrix) { return false; };
-//};
-
-#endif // LIGHT
+#endif // LIGHTS

@@ -51,6 +51,7 @@ void System_World::Update(const float & deltaTime)
 		auto prop2 = m_entityFactory.CreateEntity("Prop");
 		auto prop4 = m_entityFactory.CreateEntity("Prop");
 		auto sun = m_entityFactory.CreateEntity("Sun");
+		auto spot = m_entityFactory.CreateEntity("SpotLight");
 
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox2.obj")));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
@@ -59,6 +60,10 @@ void System_World::Update(const float & deltaTime)
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-1, 2.5, 0))));
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(1, 2.5, 0))));
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(0, vec3(0.5,0.75,1)));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(1, 10.0f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(2, 7.5f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(3, 45.f));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
@@ -100,7 +105,7 @@ void System_World::calcVisibility(Camera & camera)
 	}
 
 	{
-		vector<char*> types = { "Light_Directional" };
+		vector<char*> types = { "Light_Directional", "Light_Spot" };
 		for each (auto type in types) {
 			const auto components = *((vector<Lighting_Component*>*)(&m_componentFactory.GetComponentsByType(type)));
 
@@ -113,5 +118,6 @@ void System_World::calcVisibility(Camera & camera)
 			vis_token.insert(type);
 			vis_token[type] = visible_components;
 		}
+
 	}
 }

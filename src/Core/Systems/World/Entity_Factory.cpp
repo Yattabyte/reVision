@@ -3,6 +3,7 @@
 #include "Systems\World\ECSmessanger.h"
 #include "Entities\Prop.h"
 #include "Entities\Sun.h"
+#include "Entities\Light.h"
 
 
 
@@ -16,6 +17,7 @@ Entity_Factory::Entity_Factory(ECSmessanger *ecsMessanger, Component_Factory *co
 {
 	m_creatorMap.insert(pair<char*, EntityCreator*>("Prop", new PropCreator()));
 	m_creatorMap.insert(pair<char*, EntityCreator*>("Sun", new SunCreator()));
+	m_creatorMap.insert(pair<char*, EntityCreator*>("SpotLight", new SpotLightCreator()));
 }
 
 ECShandle Entity_Factory::CreateEntity(char * type)

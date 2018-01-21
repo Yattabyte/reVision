@@ -46,6 +46,7 @@ public:
 	void Test(); 
 	void ClearShadow(const int & ShadowSpot, const int & layer, const int &depth);
 	void SetSize(const unsigned int &spot, const float &size);
+	vec2 GetSize(const unsigned int &spot);
 	void SetUpdateQuality(const float &quality);
 
 private:

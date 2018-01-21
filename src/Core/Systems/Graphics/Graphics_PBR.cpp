@@ -103,7 +103,8 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		delete m_observer;
+		delete m_QuadObserver;
+		delete m_ConeObserver;
 		delete m_ssaoCallback;
 		delete m_ssaoSamplesCallback;
 		delete m_ssaoStrengthCallback;
@@ -128,14 +129,18 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometryShadow");
-		Asset_Loader::load_asset(m_shaderLighting, "Lighting\\lighting");
+		Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
+		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot");
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
 		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA"); 
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
+		Asset_Loader::load_asset(m_shapeCone, "cone");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
-		m_observer = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
+		m_coneVAO = Asset_Primitive::GenerateVAO();
+		m_QuadObserver = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
+		m_ConeObserver = (void*)(new Primitivee_Observer(m_shapeCone, m_coneVAO));
 		m_gbuffer.End();
 		
 		m_ssaoCallback = new SSAO_Callback(this);
@@ -171,6 +176,9 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_gbuffer.Initialize(m_renderSize, &m_visualFX);
 		m_lbuffer.Initialize(m_renderSize, &m_visualFX, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.Initialize(m_renderSize);
+
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		m_Initialized = true;
 	}
@@ -255,7 +263,7 @@ void System_Graphics_PBR::Update(const float & deltaTime)
 		m_textureSky->ExistsYet() && 
 		m_shaderSky->ExistsYet() &&
 		m_shaderGeometry->ExistsYet() &&
-		m_shaderLighting->ExistsYet()) 
+		m_shaderDirectional->ExistsYet()) 
 	{
 		RegenerationPass(vis_token);
 		GeometryPass(vis_token);
@@ -340,6 +348,7 @@ void System_Graphics_PBR::SkyPass()
 void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 {
 	const size_t &quad_size = m_shapeQuad->GetSize();
+	const size_t &cone_size = m_shapeCone->GetSize();
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -348,12 +357,26 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	m_Shadowmapper->BindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional")) {
-		m_shaderLighting->Bind();
+		m_shaderDirectional->Bind();
 		glBindVertexArray(m_quadVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 			component->directPass(quad_size);
 	}
 
+	glEnable(GL_STENCIL_TEST);
+	glCullFace(GL_FRONT);
+	m_Shadowmapper->BindForReading(SHADOW_REGULAR, 3);
+	if (vis_token.find("Light_Spot")) {
+		m_shaderSpot->Bind();
+		glBindVertexArray(m_coneVAO);
+		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+			component->directPass(cone_size);
+	}
+
+	glCullFace(GL_BACK);
+	glDisable(GL_STENCIL_TEST);
+	glBlendFunc(GL_ONE, GL_ZERO);
+	glDisable(GL_BLEND);
 	Asset_Shader::Release();
 	glBindVertexArray(0);
 	m_lbuffer.ApplyBloom();

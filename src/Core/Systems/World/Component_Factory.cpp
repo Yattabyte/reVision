@@ -3,6 +3,7 @@
 #include "Systems\World\ECSmessanger.h"
 #include "Entities\Components\Anim_Model_Component.h"
 #include "Entities\Components\Light_Directional_Component.h"
+#include "Entities\Components\Light_Spot_Component.h"
 
 Component_Factory::~Component_Factory()
 {
@@ -21,6 +22,7 @@ void Component_Factory::Initialize(Engine_Package *enginePackage, ECSmessanger *
 
 		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessanger)));
 		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessanger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Spot", new Light_Spot_Creator(m_ECSmessanger)));
 
 		m_Initialized = true;
 	}

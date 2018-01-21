@@ -11,10 +11,12 @@
 Light_Directional_Component::~Light_Directional_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
-	if (m_enginePackage && m_enginePackage->FindSubSystem("Shadows")) {
-		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
-		for (int x = 0; x < NUM_CASCADES; ++x)
-			shadowmapper->UnRegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+	if (m_enginePackage) {
+		if (m_enginePackage->FindSubSystem("Shadows")) {
+			auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+			for (int x = 0; x < NUM_CASCADES; ++x)
+				shadowmapper->UnRegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+		}
 		if (m_enginePackage->FindSubSystem("World"))
 			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
 	}
@@ -26,14 +28,8 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	m_uboID = 0;
 	glGenBuffers(1, &m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightBuffer), &m_uboData, GL_DYNAMIC_COPY);
+	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightDirBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-	if (m_enginePackage->FindSubSystem("Shadows")) {
-		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
-		for (int x = 0; x < NUM_CASCADES; ++x)
-			shadowmapper->RegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
-	}
 
 	float near_plane = -0.1f;
 	float far_plane = - m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_DRAW_DISTANCE);
@@ -45,8 +41,13 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 		m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
 	}
 
-	if (m_enginePackage->FindSubSystem("World")) 
-		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera);	
+	if (m_enginePackage->FindSubSystem("Shadows")) {
+		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+		for (int x = 0; x < NUM_CASCADES; ++x)
+			shadowmapper->RegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+	}
+	if (m_enginePackage->FindSubSystem("World"))
+		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera);
 }
 
 void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
@@ -186,7 +187,7 @@ void Light_Directional_Component::Update()
 	CalculateCascades();
 	
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightBuffer), &m_uboData);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightDirBuffer), &m_uboData);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 }
