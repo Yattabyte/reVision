@@ -63,7 +63,7 @@ void System_World::Update(const float & deltaTime)
 		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(0, vec3(0.5,0.75,1)));
 		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(1, 10.0f));
 		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(2, 7.5f));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(3, 45.f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(3, 45.0f));
 
 		auto Sun = m_entityFactory.GetEntity(sun);
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));

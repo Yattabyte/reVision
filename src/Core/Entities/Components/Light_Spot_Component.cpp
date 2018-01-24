@@ -47,14 +47,14 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<vec3>()) break;
 			const auto &payload = message.GetPayload<vec3>();
 			m_uboData.LightColor = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, sizeof(mat4x4) * 3, sizeof(vec3), &m_uboData.LightColor);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
 			break;
 		}
 		case SET_INTENSITY: {
 			if (!message.IsOfType<float>()) break;
 			const auto &payload = message.GetPayload<float>();
 			m_uboData.LightIntensity = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(mat4x4) * 3) + (sizeof(vec4) * 3) + sizeof(float), sizeof(float), &m_uboData.LightIntensity);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
 			break;
 		}
 		case SET_RADIUS: {
@@ -63,17 +63,16 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			m_uboData.LightRadius = payload;
 			m_squaredRadius = payload * payload;
 			m_camera.setFarPlane(m_squaredRadius);
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(mat4x4) * 3) + (sizeof(vec4) * 3) + (sizeof(float) * 2), sizeof(float), &m_uboData.LightRadius);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
 			Update();
 			break;
 		}
 		case SET_CUTOFF: {
 			if (!message.IsOfType<float>()) break;
 			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightCutoff = payload;
-			float converted = cosf(glm::radians(payload));
-			m_camera.setHorizontalFOV(m_uboData.LightCutoff * 2.0f);
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(mat4x4) * 3) + (sizeof(vec4) * 3) + (sizeof(float) * 3), sizeof(float), &converted);
+			m_uboData.LightCutoff = cosf(glm::radians(payload));
+			m_camera.setHorizontalFOV(payload * 2.0f);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightCutoff), sizeof(float), &m_uboData.LightCutoff);
 			Update();
 			break;
 		}
@@ -88,7 +87,7 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<vec3>()) break;
 			const auto &payload = message.GetPayload<vec3>();
 			m_uboData.LightPosition = payload; 
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(mat4x4) * 3) + sizeof(vec4), sizeof(float), &m_uboData.LightPosition);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
 			Update();
 			break;
 		}
@@ -97,7 +96,7 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<Transform>();
 			m_uboData.LightPosition = payload.position;
 			m_orientation = payload.orientation;
-			glBufferSubData(GL_UNIFORM_BUFFER, (sizeof(mat4x4) * 3) + sizeof(vec4), sizeof(float), &m_uboData.LightPosition);
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
 			Update();
 			break;
 		}
@@ -112,7 +111,7 @@ void Light_Spot_Component::directPass(const int & vertex_count)
 
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 	m_uboData.LightStencil = 1;
-	glBufferSubData(GL_UNIFORM_BUFFER, 264, 4, &m_uboData.LightStencil);
+	glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightStencil), 4, &m_uboData.LightStencil);
 
 	// Draw only into depth-stencil buffer
 	glEnable(GL_DEPTH_TEST);
@@ -123,7 +122,7 @@ void Light_Spot_Component::directPass(const int & vertex_count)
 
 	// Now draw into color buffers
 	m_uboData.LightStencil = 0;
-	glBufferSubData(GL_UNIFORM_BUFFER, 264, 4, &m_uboData.LightStencil);
+	glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightStencil), 4, &m_uboData.LightStencil);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_CULL_FACE);
