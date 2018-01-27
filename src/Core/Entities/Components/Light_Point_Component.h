@@ -1,12 +1,12 @@
 /*
-	Light_Spot_Component
+	Light_Point_Component
 
-	- A lighting technique that mimicks a flashlight / spotlight
+	- A lighting technique that mimicks a lightbulb / pointlight
 */
 
 #pragma once
-#ifndef LIGHT_SPOT_COMPONENT
-#define LIGHT_SPOT_COMPONENT
+#ifndef LIGHT_POINT_COMPONENT
+#define LIGHT_POINT_COMPONENT
 #ifdef	ENGINE_EXPORT
 #define DT_ENGINE_API __declspec(dllexport)
 #else            
@@ -23,43 +23,43 @@
 
 using namespace glm;
 
-struct LightSpotBuffer
+struct LightPointBuffer
 {
 	mat4 mMatrix;
 	mat4 lightV;
-	mat4 lightP;
 	vec3 LightColor; float padding1;
 	vec3 LightPosition; float padding2;
-	vec3 LightDirection; float padding3;
+	float p_far;
+	float p_dir;
 	float ShadowSize;
 	float LightIntensity;
 	float LightRadius;
-	float LightCutoff;
-	int Shadow_Spot;
+	int Shadow_Spot1;
+	int Shadow_Spot2;
 	int Use_Shadows;
 	int LightStencil;
 	
-	LightSpotBuffer() {
+	LightPointBuffer() {
 		mMatrix = mat4(1.0f);
 		lightV = mat4(1.0f);
-		lightP = mat4(1.0f);
 		LightColor = vec3(1.0f);
 		LightPosition = vec3(0.0f);
-		LightDirection = vec3(0, -1, 0);
+		p_far = 0;
+		p_dir = 0;
 		ShadowSize = 0;
 		LightIntensity = 0;
 		LightRadius = 0;
-		LightCutoff = 0;
-		Shadow_Spot = 0;
+		Shadow_Spot1 = 0;
+		Shadow_Spot2 = 0;
 		Use_Shadows = 0;
 		LightStencil = 0;
 	}
 };
 
 class System_Shadowmap;
-class Light_Spot_Creator;
+class Light_Point_Creator;
 class Engine_Package;
-class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
+class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 {
 public:
 	/*************
@@ -73,15 +73,13 @@ public:
 		SET_COLOR,
 		SET_INTENSITY,
 		SET_RADIUS,
-		SET_CUTOFF,
 		SET_POSITION,
-		SET_ORIENTATION,
-		SET_TRANSFORM,
+		SET_TRANSFORM
 	};
-	
+
 
 	/***************************
-	----Light_Spot Functions----
+	----Light_Point Functions----
 	***************************/
 
 	// Direct lighting pass
@@ -97,24 +95,23 @@ public:
 
 
 protected:
-	~Light_Spot_Component();
-	Light_Spot_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
+	~Light_Point_Component();
+	Light_Point_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	GLuint m_uboID;
-	LightSpotBuffer m_uboData;
+	LightPointBuffer m_uboData;
 	Engine_Package *m_enginePackage;
-	quat m_orientation;
 	float m_squaredRadius;
-	Camera m_camera;
-	friend class Light_Spot_Creator;
+	Camera m_camera[2];
+	friend class Light_Point_Creator;
 };
 
-class DT_ENGINE_API Light_Spot_Creator : public ComponentCreator
+class DT_ENGINE_API Light_Point_Creator : public ComponentCreator
 {
 public:
-	Light_Spot_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
+	Light_Point_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
-		return new Light_Spot_Component(id, pid, enginePackage);
+		return new Light_Point_Component(id, pid, enginePackage);
 	}
 };
 
-#endif // LIGHT_SPOT_COMPONENT
+#endif // LIGHT_POINT_COMPONENT

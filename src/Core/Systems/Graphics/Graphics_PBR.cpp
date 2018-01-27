@@ -105,6 +105,7 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		delete m_QuadObserver;
 		delete m_ConeObserver;
+		delete m_SphereObserver;
 		delete m_ssaoCallback;
 		delete m_ssaoSamplesCallback;
 		delete m_ssaoStrengthCallback;
@@ -119,6 +120,8 @@ System_Graphics_PBR::System_Graphics_PBR() :
 	m_visualFX(), m_gbuffer(), m_lbuffer(), m_hdrbuffer()
 {
 	m_quadVAO = 0;
+	m_coneVAO = 0;
+	m_sphereVAO = 0;
 	m_attribID = 0;
 	m_renderSize = vec2(1);
 }
@@ -131,17 +134,21 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		Asset_Loader::load_asset(m_shaderShadowDir, "Geometry\\geometryShadowDir");
 		Asset_Loader::load_asset(m_shaderShadowSpot, "Geometry\\geometryShadowSpot");
 		Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
-		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot");
+		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot"); 
+		Asset_Loader::load_asset(m_shaderPoint, "Lighting\\point");
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
 		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA"); 
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		Asset_Loader::load_asset(m_shapeCone, "cone");
+		Asset_Loader::load_asset(m_shapeSphere, "sphere");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::GenerateVAO();
 		m_coneVAO = Asset_Primitive::GenerateVAO();
+		m_sphereVAO = Asset_Primitive::GenerateVAO();
 		m_QuadObserver = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
 		m_ConeObserver = (void*)(new Primitivee_Observer(m_shapeCone, m_coneVAO));
+		m_SphereObserver = (void*)(new Primitivee_Observer(m_shapeSphere, m_sphereVAO));
 		m_gbuffer.End();
 		
 		m_ssaoCallback = new SSAO_Callback(this);
@@ -355,6 +362,7 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 {
 	const size_t &quad_size = m_shapeQuad->GetSize();
 	const size_t &cone_size = m_shapeCone->GetSize();
+	const size_t &sphere_size = m_shapeSphere->GetSize();
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -377,6 +385,12 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 		glBindVertexArray(m_coneVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 			component->directPass(cone_size);
+	}
+	if (vis_token.find("Light_Point")) {
+		m_shaderPoint->Bind();
+		glBindVertexArray(m_sphereVAO);
+		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+			component->directPass(sphere_size);
 	}
 
 	glCullFace(GL_BACK);

@@ -71,11 +71,11 @@ private:
 	Geometry_Buffer m_gbuffer;
 	Lighting_Buffer m_lbuffer;
 	HDR_Buffer m_hdrbuffer;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderShadowDir, m_shaderShadowSpot, m_shaderDirectional, m_shaderSpot, m_shaderSky, m_shaderHDR, m_shaderFXAA;
-	Shared_Asset_Primitive m_shapeQuad, m_shapeCone;
-	GLuint m_quadVAO, m_coneVAO;
+	Shared_Asset_Shader m_shaderGeometry, m_shaderShadowDir, m_shaderShadowSpot, m_shaderDirectional, m_shaderSpot, m_shaderPoint, m_shaderSky, m_shaderHDR, m_shaderFXAA;
+	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
+	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
 	Shared_Asset_Cubemap m_textureSky;
-	void* m_QuadObserver, *m_ConeObserver;
+	void* m_QuadObserver, *m_ConeObserver, *m_SphereObserver;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR

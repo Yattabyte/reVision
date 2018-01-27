@@ -1,7 +1,7 @@
 /*
 	Light_Directional_Component
 
-	- A lighting technique that micicks the sun
+	- A lighting technique that mimicks the sun
 */
 
 #pragma once
