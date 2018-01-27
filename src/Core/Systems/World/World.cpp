@@ -50,7 +50,7 @@ void System_World::Update(const float & deltaTime)
 		auto prop1 = m_entityFactory.CreateEntity("Prop");
 		auto prop2 = m_entityFactory.CreateEntity("Prop");
 		auto prop4 = m_entityFactory.CreateEntity("Prop");
-		auto sun = m_entityFactory.CreateEntity("Sun");
+		//auto sun = m_entityFactory.CreateEntity("Sun");
 		auto spot = m_entityFactory.CreateEntity("SpotLight");
 
 		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox2.obj")));
@@ -61,14 +61,15 @@ void System_World::Update(const float & deltaTime)
 		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(1, 2.5, 0))));
 		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
 		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(0, vec3(0.5,0.75,1)));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(1, 10.0f));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(2, 7.5f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(1, 20.0f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(2, 10.0f));
 		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(3, 45.0f));
+		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(4, vec3(1,0,0)));
 
-		auto Sun = m_entityFactory.GetEntity(sun);
+		/*auto Sun = m_entityFactory.GetEntity(sun);
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
 		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.5f));
+		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));*/
 		loaded = true;
 	}
 }

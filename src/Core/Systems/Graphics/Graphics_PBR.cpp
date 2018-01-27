@@ -128,7 +128,8 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
-		Asset_Loader::load_asset(m_shaderGeometryShadow, "Geometry\\geometryShadow");
+		Asset_Loader::load_asset(m_shaderShadowDir, "Geometry\\geometryShadowDir");
+		Asset_Loader::load_asset(m_shaderShadowSpot, "Geometry\\geometryShadowSpot");
 		Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
 		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot");
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
@@ -279,8 +280,8 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	// Quit early if we don't have models, or we don't have any lights 
 	// Logically equivalent to continuing while we have at least 1 model and 1 light
 	if ((!vis_token.find("Anim_Model")) ||
-		(!vis_token.find("Light_Directional")) /* &&
-		(vis_token.find("Light_Point") == vis_token.end() &&
+		(!vis_token.find("Light_Directional"))  &&
+		(!vis_token.find("Light_Spot")) /*&&
 		(vis_token.find("Light_Spot") == vis_token.end() */)
 		return;
 
@@ -291,13 +292,18 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	glCullFace(GL_BACK);
 
 	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
-	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
-	m_shaderGeometryShadow->Bind();
 
+	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
+	m_shaderShadowDir->Bind();
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 		component->shadowPass();
 
-	//Shadowmap_Manager::BindForWriting(SHADOW_REGULAR);
+	m_Shadowmapper->BindForWriting(SHADOW_REGULAR);
+	m_shaderShadowSpot->Bind();
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+		component->shadowPass();
+
+
 	Asset_Shader::Release();
 	
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
