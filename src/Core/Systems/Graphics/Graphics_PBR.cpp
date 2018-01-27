@@ -132,10 +132,11 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderShadowDir, "Geometry\\geometryShadowDir");
+		Asset_Loader::load_asset(m_shaderShadowPoint, "Geometry\\geometryShadowPoint");
 		Asset_Loader::load_asset(m_shaderShadowSpot, "Geometry\\geometryShadowSpot");
 		Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
-		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot"); 
 		Asset_Loader::load_asset(m_shaderPoint, "Lighting\\point");
+		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot"); 
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR"); 
 		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA"); 
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
@@ -288,8 +289,8 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	// Logically equivalent to continuing while we have at least 1 model and 1 light
 	if ((!vis_token.find("Anim_Model")) ||
 		(!vis_token.find("Light_Directional"))  &&
-		(!vis_token.find("Light_Spot")) /*&&
-		(vis_token.find("Light_Spot") == vis_token.end() */)
+		(!vis_token.find("Light_Point")) &&
+		(!vis_token.find("Light_Spot")))
 		return;
 
 	glDisable(GL_BLEND);
@@ -306,6 +307,10 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 		component->shadowPass();
 
 	m_Shadowmapper->BindForWriting(SHADOW_REGULAR);
+	m_shaderShadowPoint->Bind();
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		component->shadowPass();
+
 	m_shaderShadowSpot->Bind();
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 		component->shadowPass();
@@ -380,17 +385,18 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	glEnable(GL_STENCIL_TEST);
 	glCullFace(GL_FRONT);
 	m_Shadowmapper->BindForReading(SHADOW_REGULAR, 3);
-	if (vis_token.find("Light_Spot")) {
-		m_shaderSpot->Bind();
-		glBindVertexArray(m_coneVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-			component->directPass(cone_size);
-	}
 	if (vis_token.find("Light_Point")) {
 		m_shaderPoint->Bind();
 		glBindVertexArray(m_sphereVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
 			component->directPass(sphere_size);
+	}
+
+	if (vis_token.find("Light_Spot")) {
+		m_shaderSpot->Bind();
+		glBindVertexArray(m_coneVAO);
+		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+			component->directPass(cone_size);
 	}
 
 	glCullFace(GL_BACK);
