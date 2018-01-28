@@ -72,8 +72,6 @@ void Collider_WorkOrder::Initialize_Order()
 
 void Collider_WorkOrder::Finalize_Order()
 {
-	if (!m_asset->ExistsYet()) {
-		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		m_asset->Finalize();
-	}
+	if (!m_asset->ExistsYet()) 
+		m_asset->Finalize();	
 }

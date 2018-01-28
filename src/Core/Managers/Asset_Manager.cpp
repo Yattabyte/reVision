@@ -42,13 +42,13 @@ void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)
 			m_WorkOrders_to_initialize.pop_front();
 		}
 		manager_writeGuard.unlock();
+		manager_writeGuard.release();
 		if (workOrder != nullptr) {
 			workOrder->Initialize_Order();
-			manager_writeGuard.lock();
+
+			unique_lock<shared_mutex> new_manager_writeGuard(m_Mutex_Workorders);
 			m_WorkOrders_to_finalize.push_back(workOrder);
-			manager_writeGuard.unlock();
 		}
-		manager_writeGuard.release();
 		
 		// Check if worker should shutdonw
 		shared_lock<shared_mutex> worker_readGuard(worker->m_mutex);

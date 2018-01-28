@@ -307,6 +307,8 @@ void Model_WorkOrder::Finalize_Order()
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 
+		write_guard.unlock();
+		write_guard.release();
 		m_asset->Finalize();
 	}
 }

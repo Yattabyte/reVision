@@ -118,6 +118,8 @@ public:
 	virtual void Finalize_Order();
 
 private:
+	// Parse for inclusions
+	void Parse();
 	// Creates and compiles all available shader types for this program
 	void Compile();
 	// Creates and compiles a single shader file, given the text as <source> and the specified shader type as <type>.
@@ -126,7 +128,9 @@ private:
 	void GenerateProgram();
 	// Attempts to link and validate the shader program
 	void LinkProgram();
-
+	// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
+	bool FetchFileFromDisk(string & returnFile, const string & fileDirectory);
+	
 
 	/****************
 	----Variables----

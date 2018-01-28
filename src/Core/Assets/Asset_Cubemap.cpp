@@ -223,7 +223,8 @@ void Cubemap_WorkOrder::Finalize_Order()
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
-
+		write_guard.unlock();
+		write_guard.release();
 		m_asset->Finalize();
 	}
 }

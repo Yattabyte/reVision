@@ -129,24 +129,6 @@ void Asset_Shader::setLocationValueArray(const GLuint & i, const mat4 * o, const
 
 void Asset_Shader::setLocationMatArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
 
-// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
-// Returns true if succeeded, false if file doesn't exist
-bool FetchFileFromDisk(string & returnFile, const string & fileDirectory)
-{
-	struct stat buffer;
-	if (stat(fileDirectory.c_str(), &buffer))
-		return false;
-
-	ifstream file(fileDirectory);
-	while (!file.eof()) {
-		string temp;
-		std::getline(file, temp);
-		returnFile.append(temp + '\n');
-	}
-
-	return true;
-}
-
 // Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 // Uses hardcoded values
 void fetchDefaultAsset(Shared_Asset_Shader & asset)
@@ -190,17 +172,50 @@ namespace Asset_Loader {
 void Shader_WorkOrder::Initialize_Order()
 {
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-
 	bool found_vertex = FetchFileFromDisk(m_asset->vertex_text, m_filename + EXT_SHADER_VERTEX);
 	bool found_fragement = FetchFileFromDisk(m_asset->fragment_text, m_filename + EXT_SHADER_FRAGMENT);
 	bool found_geometry = FetchFileFromDisk(m_asset->geometry_text, m_filename + EXT_SHADER_GEOMETRY);
-
+	write_guard.unlock();
+	write_guard.release();
+	
 	if (!found_vertex)
 		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_VERTEX);
 	if (!found_fragement)
 		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_FRAGMENT);
 	if (!(found_vertex + found_fragement + found_geometry)) {
 		// handle this?
+	}
+
+	// Parse
+	Parse();
+}
+
+#include "Assets\Asset_Shader_Pkg.h"
+void Shader_WorkOrder::Parse()
+{
+	string *text[3] = { &m_asset->vertex_text, &m_asset->fragment_text, &m_asset->geometry_text };
+	for (int x = 0; x < 3; ++x) {		
+		if (*text[x] == "") continue;
+		string input = *text[x];
+		// Find Package to include
+		int spot = input.find("#package");
+		while (spot != string::npos) {
+			string directory = input.substr(spot);
+
+			unsigned int qspot1 = directory.find("\"");
+			unsigned int qspot2 = directory.find("\"", qspot1+1);
+			// find string quotes and remove them
+			directory = directory.substr(qspot1+1, qspot2-1 - qspot1);
+
+			Shared_Asset_Shader_Pkg package;
+			Asset_Loader::load_asset(package, directory, false);		
+			string left = input.substr(0, spot);
+			string right = input.substr(spot+1 + qspot2);
+			input = left + package->getPackageText() + right;
+			spot = input.find("#package");
+		}
+		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
+		*text[x] = input;
 	}
 }
 
@@ -214,6 +229,8 @@ void Shader_WorkOrder::Finalize_Order()
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 
+		write_guard.unlock();
+		write_guard.release();
 		m_asset->Finalize();
 	}
 }
@@ -274,4 +291,22 @@ void Shader_WorkOrder::LinkProgram()
 		glDeleteShader(m_asset->gl_shader_fragment_ID);
 	if (m_asset->gl_shader_geometry_ID != 0)
 		glDeleteShader(m_asset->gl_shader_geometry_ID);
+}
+
+// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
+// Returns true if succeeded, false if file doesn't exist
+bool Shader_WorkOrder::FetchFileFromDisk(string & returnFile, const string & fileDirectory)
+{
+	struct stat buffer;
+	if (stat(fileDirectory.c_str(), &buffer))
+		return false;
+
+	ifstream file(fileDirectory);
+	while (!file.eof()) {
+		string temp;
+		std::getline(file, temp);
+		returnFile.append(temp + '\n');
+	}
+
+	return true;
 }
