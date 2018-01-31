@@ -7,6 +7,7 @@
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
 #include "Systems\Shadows\Shadowmap.h"
+#include "GLFW\glfw3.h"
 #include <math.h>
 
 Light_Spot_Component::~Light_Spot_Component()
@@ -144,6 +145,8 @@ void Light_Spot_Component::shadowPass()
 	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
 	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
 		component->Draw();
+
+	m_shadowUpdateTime = glfwGetTime();
 }
 
 bool Light_Spot_Component::IsVisible(const mat4 & PVMatrix)

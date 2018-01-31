@@ -36,11 +36,14 @@ public:
 	virtual void shadowPass() {};
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
-		
+	// Returns the timestamp of the last time this light updated its shadowmap
+	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
+
 
 protected:
 	~Lighting_Component() {};
-	Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) {};
+	Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) { m_shadowUpdateTime = 0; };
+	double m_shadowUpdateTime;
 };
 
 #endif // LIGHTING_COMPONENT

@@ -23,26 +23,15 @@ public:
 private:
 	System_Shadowmap *m_pointer;
 };
-class SM_ShadowQualityChangeCallback : public Callback_Container {
-public:
-	~SM_ShadowQualityChangeCallback() {};
-	SM_ShadowQualityChangeCallback(System_Shadowmap *pointer) : m_pointer(pointer) {}
-	void Callback(const float &value) {
-		m_pointer->SetUpdateQuality(value);
-	}
-private:
-	System_Shadowmap *m_pointer;
-};
+
 
 System_Shadowmap::~System_Shadowmap()
 {
 	if (m_Initialized) {
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		delete m_RegularChangeCallback;
 		delete m_largeChangeCallback;
-		delete m_QualityChangeCallback;
 
 		glDeleteFramebuffers(SHADOW_MAX, m_shadow_fbo);
 		glDeleteTextures(SHADOW_MAX, m_shadow_depth);
@@ -69,13 +58,10 @@ void System_Shadowmap::Initialize(Engine_Package * enginePackage)
 		m_enginePackage = enginePackage;
 		m_RegularChangeCallback = new SM_ShadowSizeRegularChangeCallback(this);
 		m_largeChangeCallback = new SM_ShadowSizeLargeChangeCallback(this);
-		m_QualityChangeCallback = new SM_ShadowQualityChangeCallback(this);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		float size_regular = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
 		float size_large = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE);
-		m_update_quality = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_QUALITY);
 		m_size[SHADOW_REGULAR] = vec2(max(1.0f, size_regular));
 		m_size[SHADOW_LARGE] = vec2(max(1.0f, size_large));
 
@@ -240,9 +226,4 @@ void System_Shadowmap::SetSize(const unsigned int & spot, const float & size)
 vec2 System_Shadowmap::GetSize(const unsigned int & spot)
 {
 	return m_size[spot];
-}
-
-void System_Shadowmap::SetUpdateQuality(const float & quality)
-{
-	m_update_quality = max(-1, quality);
 }

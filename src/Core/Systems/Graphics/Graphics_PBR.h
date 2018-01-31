@@ -65,7 +65,7 @@ private:
 
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
-	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback;
+	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gbuffer;
@@ -75,6 +75,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
 	Shared_Asset_Cubemap m_textureSky;
+	int m_updateQuality;
 	void* m_QuadObserver, *m_ConeObserver, *m_SphereObserver;
 };
 

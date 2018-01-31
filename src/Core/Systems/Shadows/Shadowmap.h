@@ -58,8 +58,7 @@ private:
 	GLuint				m_shadow_radiantflux[SHADOW_MAX];
 	unsigned int		m_shadow_count[SHADOW_MAX];
 	deque<unsigned int>	m_freed_shadow_spots[SHADOW_MAX];
-	int					m_update_quality;
-	Callback_Container *m_largeChangeCallback, *m_RegularChangeCallback, *m_QualityChangeCallback;
+	Callback_Container *m_largeChangeCallback, *m_RegularChangeCallback;
 };
 
 #endif // SYSTEM_SHADOWMAP

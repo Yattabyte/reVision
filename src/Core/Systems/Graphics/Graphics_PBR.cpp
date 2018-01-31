@@ -92,6 +92,16 @@ public:
 private:
 	System_Graphics_PBR *m_Graphics;
 }; 
+class ShadowQualityChangeCallback : public Callback_Container {
+public:
+	~ShadowQualityChangeCallback() {};
+	ShadowQualityChangeCallback(int *pointer) : m_pointer(pointer) {}
+	void Callback(const float &value) {
+		*m_pointer = (int)value;
+	}
+private:
+	int *m_pointer;
+};
 
 System_Graphics_PBR::~System_Graphics_PBR()
 {
@@ -103,6 +113,7 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		delete m_QuadObserver;
 		delete m_ConeObserver;
 		delete m_SphereObserver;
@@ -113,6 +124,7 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		delete m_bloomStrengthChangeCallback;
 		delete m_widthChangeCallback;
 		delete m_heightChangeCallback;
+		delete m_QualityChangeCallback;
 	}
 }
 
@@ -159,6 +171,7 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_widthChangeCallback = new Cam_WidthChangeCallback(this);
 		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
 		m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(&m_lbuffer);
+		m_QualityChangeCallback = new ShadowQualityChangeCallback(&m_updateQuality);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
@@ -166,11 +179,13 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
+		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		m_attribs.m_ssao_radius = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_RADIUS);
 		m_attribs.m_ssao_strength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH);
 		m_attribs.m_aa_samples = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_SAMPLES);
 		m_attribs.m_ssao = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO);
 		m_renderSize = vec2(m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
+		m_updateQuality = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_QUALITY);
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -285,6 +300,61 @@ void System_Graphics_PBR::Update(const float & deltaTime)
 
 void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 {
+	struct PriorityLightList {
+		// Nested Element struct
+		struct LightElement {
+			double m_updateTime;
+			Lighting_Component *m_ptr;
+			char* m_lightType;
+			LightElement(const double &time, Lighting_Component *ptr, char* type) {
+				m_updateTime = time;
+				m_ptr = ptr;
+				m_lightType = type;
+			}
+		};
+
+		// Constructor
+		PriorityLightList(const int &capacity) {
+			m_capacity = capacity;
+			m_list.reserve(capacity);
+		}
+
+		// Accessors/Updaters
+		void add(Lighting_Component *c, char *type) {
+			const size_t &listSize = m_list.size();
+			double time = c->getShadowUpdateTime(); 
+			int insertionIndex = 0;
+			if (listSize < m_capacity)
+				insertionIndex = listSize;				
+			for (int x = 0; x < listSize && x < m_capacity; ++x) {
+				if (time < m_list[x].m_updateTime) {
+					insertionIndex = x;
+					break;
+				}
+			}
+			m_list.insert(m_list.begin() + insertionIndex, LightElement(time, c, type));
+			if (m_list.size() > m_capacity) {
+				m_list.reserve(m_capacity);
+				m_list.shrink_to_fit();
+			}			
+		}
+		Visibility_Token toVisToken() {
+			Visibility_Token token;
+			token.insert("Light_Directional");
+			token.insert("Light_Point");
+			token.insert("Light_Spot");
+			for (int x = 0, size = m_list.size(); x < size && x < m_capacity; ++x) {
+				const auto & element = m_list[x];
+				token[element.m_lightType].push_back((Component*)element.m_ptr);
+			}
+			return token;
+		}
+
+		// Members
+		int m_capacity;
+		vector<LightElement> m_list;
+	};
+
 	// Quit early if we don't have models, or we don't have any lights 
 	// Logically equivalent to continuing while we have at least 1 model and 1 light
 	if ((!vis_token.find("Anim_Model")) ||
@@ -300,24 +370,32 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	glCullFace(GL_BACK);
 
 	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	
+	PriorityLightList timedList(m_updateQuality);
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
+		timedList.add(component, "Light_Directional");
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		timedList.add(component, "Light_Point");
+	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+		timedList.add(component, "Light_Spot");
 
+
+	const Visibility_Token &priorityLights = timedList.toVisToken();
 	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
 	m_shaderShadowDir->Bind();
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
+	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Directional"))
 		component->shadowPass();
 
 	m_Shadowmapper->BindForWriting(SHADOW_REGULAR);
 	m_shaderShadowPoint->Bind();
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Point"))
 		component->shadowPass();
 
 	m_shaderShadowSpot->Bind();
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Spot"))
 		component->shadowPass();
 
-
-	Asset_Shader::Release();
-	
+	Asset_Shader::Release();	
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
