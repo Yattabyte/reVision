@@ -35,21 +35,27 @@ ECShandle Component_Factory::CreateComponent(char * type, const ECShandle & pare
 	unique_lock<shared_mutex> write_lock(m_dataLock);
 
 	m_levelComponents.insert(pair<char*, vector<Component*>>(type, vector<Component*>()));
-	Component *component;
 	unsigned int spot;
 
+	// Component creation can be lengthy, and may create more components
+	// Need to unlock mutex before creating and relock before adding the component to the list
 	if ((m_freeSpots.find(type) != m_freeSpots.end()) && m_freeSpots[type].size()) {
 		spot = m_freeSpots[type].front();
-		m_levelComponents[type][spot] = nullptr;
 		m_freeSpots[type].pop_front();
+		write_lock.unlock();
+		write_lock.release();
+		Component *component = m_creatorMap[type]->Create(ECShandle(type, spot), parent_ID, m_enginePackage);
+		unique_lock<shared_mutex> write_lock2(m_dataLock);
+		m_levelComponents[type][spot] = component;
 	}
 	else {
 		spot = m_levelComponents[type].size();
-		m_levelComponents[type].push_back(nullptr);
+		write_lock.unlock();
+		write_lock.release();
+		Component *component = m_creatorMap[type]->Create(ECShandle(type, spot), parent_ID, m_enginePackage);
+		unique_lock<shared_mutex> write_lock2(m_dataLock);
+		m_levelComponents[type].push_back(component);
 	}
-
-	component = m_creatorMap[type]->Create(ECShandle(type, spot), parent_ID, m_enginePackage);
-	m_levelComponents[type][spot] = component;
 	return ECShandle(type, spot);
 }
 

@@ -47,35 +47,46 @@ void System_World::Update(const float & deltaTime)
 {	
 	static bool loaded = false;
 	if (!loaded) {
-		auto prop1 = m_entityFactory.CreateEntity("Prop");
-		auto prop2 = m_entityFactory.CreateEntity("Prop");
-		auto prop4 = m_entityFactory.CreateEntity("Prop");
-		//auto sun = m_entityFactory.CreateEntity("Sun");
-		auto spot = m_entityFactory.CreateEntity("SpotLight");
-		auto point = m_entityFactory.CreateEntity("PointLight");
+		auto sponza = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		sponza->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
+		sponza->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
 
-		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox2.obj")));
-		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
-		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
-		m_entityFactory.GetEntity(prop1)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-1, 2.5, 0))));
-		m_entityFactory.GetEntity(prop2)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(1, 2.5, 0))));
-		m_entityFactory.GetEntity(prop4)->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(0, vec3(0.5,0.75,1)));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(1, 20.0f));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(2, 10.0f));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(3, 45.0f));
-		m_entityFactory.GetEntity(spot)->ReceiveMessage(ECSmessage(4, vec3(1,0,0)));
-		m_entityFactory.GetEntity(point)->ReceiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
-		m_entityFactory.GetEntity(point)->ReceiveMessage(ECSmessage(1, 20.0f));
-		m_entityFactory.GetEntity(point)->ReceiveMessage(ECSmessage(2, 5.0f));
-		m_entityFactory.GetEntity(point)->ReceiveMessage(ECSmessage(3, vec3(-1, 0, 0)));
+		for (int x = 0; x < 3; ++x) {
+			auto point = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("PointLight"));
+			point->ReceiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
+			point->ReceiveMessage(ECSmessage(1, 20.0f));
+			point->ReceiveMessage(ECSmessage(2, 5.0f));
+			point->ReceiveMessage(ECSmessage(3, vec3((x-1) * 25, 5, 0)));;
+		}
+			
+		auto model1 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		model1->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model1->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
+		auto model2 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		model2->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model2->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
+		auto model3 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		model3->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model3->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
 		
 
-		/*auto Sun = m_entityFactory.GetEntity(sun);
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
-		Sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));*/
+		/*for (int x = 0; x < 3; ++x) {
+			auto spot = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("SpotLight"));
+			spot->ReceiveMessage(ECSmessage(0, vec3(0.5, 0.75, 1)));
+			spot->ReceiveMessage(ECSmessage(1, 20.0f));
+			spot->ReceiveMessage(ECSmessage(2, 10.0f));
+			spot->ReceiveMessage(ECSmessage(3, 45.0f));
+			spot->ReceiveMessage(ECSmessage(4, vec3(x-1, 0, 5)));
+			spot->ReceiveMessage(ECSmessage(5, glm::rotate(quat(1,0,0,0), glm::radians((x-1)*90.0f), vec3(0, 1, 0))));
+			auto model = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+			model->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+			model->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3((x - 1)*2.5f, -2.5, 2.5), quat(1, 0, 0, 0), vec3(0.5f))));
+		}
+
+		/*auto sun = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Sun"));				
+		sun->ReceiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.50)));
+		sun->ReceiveMessage(ECSmessage(SET_LIGHT_ORIENTATION, quat(0.153046, -0.690346, 0.690346, 0.153046)));
+		sun->ReceiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));*/
 		loaded = true;
 	}
 }
