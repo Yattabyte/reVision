@@ -53,7 +53,7 @@ public:
 	// Renders the model to the current framebuffer
 	virtual void Draw();
 	// Returns whether or not this model is visible
-	virtual bool IsVisible(const mat4 & PVMatrix);
+	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	// Sends current data to the GPU
 	void Update();
 

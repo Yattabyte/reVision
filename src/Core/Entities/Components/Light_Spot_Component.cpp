@@ -149,12 +149,10 @@ void Light_Spot_Component::shadowPass()
 	m_shadowUpdateTime = glfwGetTime();
 }
 
-bool Light_Spot_Component::IsVisible(const mat4 & PVMatrix)
+bool Light_Spot_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
-	Frustum frustum(PVMatrix * m_uboData.lightV);
-	if (frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius)))
-		return true;
-	return false;
+	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
+	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
 }
 
 void Light_Spot_Component::Update()

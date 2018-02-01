@@ -91,7 +91,7 @@ public:
 	// Shadow lighting pass
 	virtual void shadowPass();
 	// Returns whether or not this light is visible
-	virtual bool IsVisible(const mat4 & PVMatrix);
+	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	// Sends current data to the GPU
 	void Update();
 

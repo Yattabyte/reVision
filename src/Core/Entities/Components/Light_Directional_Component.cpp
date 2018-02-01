@@ -119,7 +119,7 @@ void Light_Directional_Component::shadowPass()
 	m_shadowUpdateTime = glfwGetTime();
 }
 
-bool Light_Directional_Component::IsVisible(const mat4 & PVMatrix)
+bool Light_Directional_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
 	// Directional lights are infinite as they simulate the sun.
 	return true;

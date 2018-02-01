@@ -50,14 +50,13 @@ void Anim_Model_Component::Draw()
 	}
 }
 
-bool Anim_Model_Component::IsVisible(const mat4 & PVMatrix)
+bool Anim_Model_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
 	if (m_model) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		Frustum frustum(PVMatrix * m_uboData.mMatrix);
+		Frustum frustum(PMatrix * VMatrix * m_uboData.mMatrix);
 
-		if (frustum.AABBInFrustom(m_model->bbox_min, m_model->bbox_max))
-			return true;
+		return frustum.AABBInFrustom(m_model->bbox_min, m_model->bbox_max);
 	}
 	return false;	
 }

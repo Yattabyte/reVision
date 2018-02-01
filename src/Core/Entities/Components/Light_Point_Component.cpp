@@ -35,6 +35,9 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightPointBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
+	m_camera[0].setHorizontalFOV(180);
+	m_camera[1].setHorizontalFOV(180);
+
 	if (m_enginePackage->FindSubSystem("Shadows")) {
 		m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
 		m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
@@ -150,12 +153,10 @@ void Light_Point_Component::shadowPass()
 	m_shadowUpdateTime = glfwGetTime();
 }
 
-bool Light_Point_Component::IsVisible(const mat4 & PVMatrix)
+bool Light_Point_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
-	Frustum frustum(PVMatrix * m_uboData.lightV);
-	if (frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius)))
-		return true;
-	return false;
+	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
+	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
 }
 
 void Light_Point_Component::Update()
@@ -163,8 +164,7 @@ void Light_Point_Component::Update()
 	// Calculate view matrix
 	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
 	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	const mat4 final = glm::inverse(trans);
-	m_uboData.lightV = final;
+	m_uboData.lightV = glm::translate(mat4(1.0f), -m_uboData.LightPosition);
 	m_uboData.mMatrix = trans * scl;
 
 	// Calculate perspective matrix
@@ -175,8 +175,8 @@ void Light_Point_Component::Update()
 	for (int x = 0; x < 2; ++x) {
 		m_camera[x].setPosition(m_uboData.LightPosition);
 		m_camera[x].setDimensions(size);
+		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
 		m_camera[x].Update();
-		m_camera[x].setMatrices(mat4(1.0f), final);
 	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);

@@ -35,7 +35,7 @@ public:
 	// Shadow lighting pass
 	virtual void shadowPass() {};
 	// Returns whether or not this light is visible
-	virtual bool IsVisible(const mat4 & PVMatrix) { return false; };
+	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix) { return false; };
 	// Returns the timestamp of the last time this light updated its shadowmap
 	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
 

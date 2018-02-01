@@ -60,13 +60,13 @@ void System_World::Update(const float & deltaTime)
 		}
 			
 		auto model1 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
-		model1->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model1->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
 		auto model2 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
-		model2->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model2->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
 		auto model3 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
-		model3->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\skinbox.obj")));
+		model3->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
 		
 
@@ -104,7 +104,8 @@ void System_World::calcVisibility(Camera & camera)
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
 	Visibility_Token &vis_token = camera.GetVisibilityToken();
 	const auto &camBuffer = camera.getCameraBuffer();
-	const mat4 camPVMatrix = camBuffer.pMatrix * camBuffer.vMatrix;
+	const mat4 &camPMatrix = camBuffer.pMatrix;
+	const mat4 &camVMatrix = camBuffer.vMatrix;
 
 	{
 		vector<char*> types = { "Anim_Model" };
@@ -114,7 +115,7 @@ void System_World::calcVisibility(Camera & camera)
 			vector<Component*> visible_components;
 
 			for each (auto component in components)
-				if (component->IsVisible(camPVMatrix))
+				if (component->IsVisible(camPMatrix, camVMatrix))
 					visible_components.push_back((Component*)component);
 
 			vis_token.insert(type);
@@ -130,7 +131,7 @@ void System_World::calcVisibility(Camera & camera)
 			vector<Component*> visible_components;
 
 			for each (auto component in components)
-				if (component->IsVisible(camPVMatrix))
+				if (component->IsVisible(camPMatrix, camVMatrix))
 					visible_components.push_back((Component*)component);
 
 			vis_token.insert(type);
