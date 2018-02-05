@@ -13,6 +13,8 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
+#define GLM_FORCE_SWIZZLE
+#define GLM_SWIZZLE_XYZ
 
 #include "Entities\Components\Geometry_Component.h"
 #include "Assets\Asset_Model.h"

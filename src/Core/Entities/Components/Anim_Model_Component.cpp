@@ -126,13 +126,11 @@ void Model_Observer::Notify_Finalized()
 	}
 }
 
-inline mat4 aiMatrixtoMat4x4(const aiMatrix4x4 &d)
-{
-	return mat4(d.a1, d.b1, d.c1, d.d1,
-		d.a2, d.b2, d.c2, d.d2,
-		d.a3, d.b3, d.c3, d.d3,
-		d.a4, d.b4, d.c4, d.d4);
-}
+template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }
+template <> inline quat convertType(const aiQuaternion &t) { return quat(t.w, t.x, t.y, t.z); }
+template <> inline mat4 convertType(const aiMatrix4x4 &t) { return mat4(t.a1, t.b1, t.c1, t.d1,	t.a2, t.b2, t.c2, t.d2,	t.a3, t.b3, t.c3, t.d3,	t.a4, t.b4, t.c4, t.d4); }
+template <typename T> inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
+template <> inline quat valueMix(const quat &t1, const quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
 
 inline const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const string &NodeName)
 {
@@ -153,59 +151,22 @@ inline int FindKey(const float &AnimationTime, const unsigned int &count, const 
 	return 0;
 }
 
-inline mat4 CalcInterpolatedScaling(const float &AnimationTime, const aiNodeAnim* pNodeAnim)
-{
-	assert(pNodeAnim->mNumScalingKeys > 0);
-	auto Result = pNodeAnim->mScalingKeys[0].mValue;	
-	if (pNodeAnim->mNumScalingKeys > 1) { // Ensure we have 2 values to interpolate between
-		unsigned int ScalingIndex = FindKey<aiVectorKey>(AnimationTime, pNodeAnim->mNumScalingKeys - 1, pNodeAnim->mScalingKeys);
-		unsigned int NextScalingIndex = (ScalingIndex + 1) > pNodeAnim->mNumScalingKeys ? 0 : (ScalingIndex + 1);
-		const auto &Key = pNodeAnim->mScalingKeys[ScalingIndex];
-		const auto &NextKey = pNodeAnim->mScalingKeys[NextScalingIndex];
+template <typename KeyType, typename FromType, typename DesiredType>
+inline DesiredType InterpolateKeys(const float &AnimationTime, const unsigned int &keyCount, KeyType *keys) {
+	assert(keyCount > 0);
+	DesiredType &Result = convertType<FromType, DesiredType>(keys[0].mValue);
+	if (keyCount > 1) { // Ensure we have 2 values to interpolate between
+		unsigned int Index = FindKey<KeyType>(AnimationTime, keyCount - 1, keys);
+		unsigned int NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
+		const KeyType &Key = keys[Index];
+		const KeyType &NextKey = keys[NextIndex];
 		const float DeltaTime = (float)(NextKey.mTime - Key.mTime);
 		const float Factor = clamp((AnimationTime - (float)Key.mTime) / DeltaTime, 0.0f, 1.0f);
-		const aiVector3D& Start = Key.mValue;
-		const aiVector3D& End = NextKey.mValue;
-		Result = Start + Factor * (End - Start);
+		const DesiredType Start = convertType<FromType, DesiredType>(Key.mValue);
+		const DesiredType End = convertType<FromType, DesiredType>(NextKey.mValue);
+		return valueMix(Start, End, Factor);
 	}
-	return glm::scale(mat4(1.0f), vec3(Result.x, Result.y, Result.z));
-}
-
-inline mat4 CalcInterpolatedRotation(const float &AnimationTime, const aiNodeAnim* pNodeAnim)
-{
-	assert(pNodeAnim->mNumRotationKeys > 0);
-	auto Result = pNodeAnim->mRotationKeys[0].mValue;
-	if (pNodeAnim->mNumRotationKeys > 1) { // Ensure we have 2 values to interpolate between
-		unsigned int RotationIndex = FindKey<aiQuatKey>(AnimationTime, pNodeAnim->mNumRotationKeys - 1, pNodeAnim->mRotationKeys);
-		unsigned int NextRotationIndex = (RotationIndex + 1) > pNodeAnim->mNumRotationKeys ? 0 : (RotationIndex + 1);
-		const auto &Key = pNodeAnim->mRotationKeys[RotationIndex];
-		const auto &NextKey = pNodeAnim->mRotationKeys[NextRotationIndex];
-		const float DeltaTime = (float)(NextKey.mTime - Key.mTime);
-		const float Factor = clamp((AnimationTime - (float)Key.mTime) / DeltaTime, 0.0f, 1.0f);
-		const aiQuaternion& StartRotationQ = Key.mValue;
-		const aiQuaternion& EndRotationQ = NextKey.mValue;
-		aiQuaternion::Interpolate(Result, StartRotationQ, EndRotationQ, Factor);
-		Result.Normalize();
-	}
-	return aiMatrixtoMat4x4(aiMatrix4x4(Result.GetMatrix()));
-}
-
-inline mat4 CalcInterpolatedPosition(const float &AnimationTime, const aiNodeAnim* pNodeAnim)
-{
-	assert(pNodeAnim->mNumPositionKeys > 0);	
-	auto Result = pNodeAnim->mPositionKeys[0].mValue;
-	if (pNodeAnim->mNumPositionKeys > 1) { // Ensure we have 2 values to interpolate between
-		unsigned int PositionIndex = FindKey<aiVectorKey>(AnimationTime, pNodeAnim->mNumPositionKeys - 1, pNodeAnim->mPositionKeys);
-		unsigned int NextPositionIndex = (PositionIndex + 1) > pNodeAnim->mNumPositionKeys ? 0 : (PositionIndex + 1);
-		const auto &Key = pNodeAnim->mPositionKeys[PositionIndex];
-		const auto &NextKey = pNodeAnim->mPositionKeys[NextPositionIndex];
-		const float DeltaTime = (float)(NextKey.mTime - Key.mTime);
-		const float Factor = clamp((AnimationTime - (float)Key.mTime) / DeltaTime, 0.0f, 1.0f);
-		const aiVector3D& Start = pNodeAnim->mPositionKeys[PositionIndex].mValue;
-		const aiVector3D& End = pNodeAnim->mPositionKeys[NextPositionIndex].mValue;
-		Result = Start + Factor * (End - Start);
-	}	
-	return glm::translate(mat4(1.0f), vec3(Result.x, Result.y, Result.z));
+	return Result;
 }
 
 inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
@@ -213,19 +174,23 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 	const string NodeName(parentNode->mName.data);
 	const aiAnimation* pAnimation = model->animationInfo.Animations[animation_ID];
 	const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-	mat4 NodeTransformation = aiMatrixtoMat4x4(parentNode->mTransformation);
+	mat4 NodeTransformation = convertType<aiMatrix4x4, mat4>(parentNode->mTransformation);
 
 	// Interpolate scaling, rotation, and translation.
 	// Generate their matrices and apply their transformations.
 	if (pNodeAnim) {
-		const mat4 ScalingM = CalcInterpolatedScaling(animation_time, pNodeAnim);
-		const mat4 RotationM = CalcInterpolatedRotation(animation_time, pNodeAnim);
-		const mat4 TranslationM = CalcInterpolatedPosition(animation_time, pNodeAnim);
-		NodeTransformation = TranslationM * RotationM * ScalingM;
+		const vec3 Scaling = InterpolateKeys<aiVectorKey, aiVector3D, vec3>
+							(animation_time, pNodeAnim->mNumScalingKeys, pNodeAnim->mScalingKeys);
+		const quat Rotation = InterpolateKeys<aiQuatKey, aiQuaternion, quat>
+							(animation_time, pNodeAnim->mNumRotationKeys, pNodeAnim->mRotationKeys);
+		const vec3 Translation = InterpolateKeys<aiVectorKey, aiVector3D, vec3>
+							(animation_time, pNodeAnim->mNumPositionKeys, pNodeAnim->mPositionKeys);
+		
+		NodeTransformation = glm::translate(mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(mat4(1.0f), Scaling);
 	}
 
 	const mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const mat4 GlobalInverseTransform = glm::inverse(aiMatrixtoMat4x4(model->animationInfo.RootNode->mTransformation));
+	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->animationInfo.RootNode->mTransformation));
 	const map<string, int> &BoneMap = model->animationInfo.boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		int BoneIndex = BoneMap.at(NodeName);
