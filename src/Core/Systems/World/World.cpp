@@ -62,12 +62,16 @@ void System_World::Update(const float & deltaTime)
 		auto model1 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
 		model1->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
+		model1->ReceiveMessage(ECSmessage(PLAY_ANIMATION, 0));
 		auto model2 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
 		model2->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
+		model2->ReceiveMessage(ECSmessage(PLAY_ANIMATION, 1));
+		model2->ReceiveMessage(ECSmessage(PLAY_ANIMATION, false));
 		auto model3 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
 		model3->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
+		model3->ReceiveMessage(ECSmessage(PLAY_ANIMATION, 2));
 		
 
 		/*for (int x = 0; x < 3; ++x) {

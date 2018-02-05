@@ -33,6 +33,14 @@ public:
 	void Update_Threaded(const float &deltaTime);
 	void RegisterViewer(Camera *c);
 	void UnRegisterViewer(Camera *c);
+	// Retrieve an array of components that match the category specified
+	template <typename T>
+	vector<T*> &GetSpecificComponents(char *type) {
+		auto &found = m_componentFactory.GetComponentsByType(type);
+		if (found.size())
+			return *(vector<T*>*)(&found);
+		return vector<T*>();
+	}
 
 private:
 	Entity_Factory m_entityFactory;

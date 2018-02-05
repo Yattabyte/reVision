@@ -56,6 +56,9 @@ public:
 	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	// Sends current data to the GPU
 	void Update();
+	// Ticks ahead the animation state by the amount of deltaTime
+	void animate(const double &deltaTime);
+
 
 
 protected:
@@ -63,12 +66,16 @@ protected:
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
 	friend class Anim_Model_Creator;
 	
+	int m_animation;
+	bool m_playAnim;
+	float m_animTime, m_animStart;
 	GLuint m_skin;
 	GLuint m_uboID, m_vao_id;
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
-	shared_ptr<Model_Observer> m_observer;
-	GLsync m_fence;
+	vector<BoneInfo> m_transforms;
+	unique_ptr<Model_Observer> m_observer;
+	GLsync m_fence; 
 };
 
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
@@ -83,8 +90,8 @@ public:
 class DT_ENGINE_API Model_Observer : Asset_Observer
 {
 public:
-	Model_Observer(Shared_Asset_Model & asset, const GLuint &vao, Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) : 
-		Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
+	Model_Observer(Shared_Asset_Model & asset, vector<BoneInfo> *transforms, const GLuint &vao, Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) :
+		Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset), m_transforms(transforms), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
 	virtual ~Model_Observer() { m_asset->RemoveObserver(this); };
 	virtual void Notify_Finalized();
 
@@ -93,6 +100,7 @@ public:
 	GLuint *m_skin;
 	Transform_Buffer *m_uboData;
 	Shared_Asset_Model m_asset;
+	vector<BoneInfo> *m_transforms;
 };
 
 #endif // ANIM_MODEL_COMPONENT

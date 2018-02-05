@@ -53,8 +53,8 @@ struct GeometryInfo {
 };
 struct BoneInfo
 {
-	aiMatrix4x4 BoneOffset;
-	aiMatrix4x4 FinalTransformation;
+	mat4 BoneOffset;
+	mat4 FinalTransformation;
 };
 struct AnimationInfo {
 	vector<aiAnimation*> Animations;

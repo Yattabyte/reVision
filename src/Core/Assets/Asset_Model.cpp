@@ -312,6 +312,13 @@ void Model_WorkOrder::Finalize_Order()
 		m_asset->Finalize();
 	}
 }
+mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
+{
+	return mat4(d.a1, d.b1, d.c1, d.d1,
+		d.a2, d.b2, d.c2, d.d2,
+		d.a3, d.b3, d.c3, d.d3,
+		d.a4, d.b4, d.c4, d.d4);
+}
 
 void Model_WorkOrder::Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene)
 {
@@ -338,7 +345,7 @@ void Model_WorkOrder::Initialize_Bones(Shared_Asset_Model & model, const aiScene
 				BoneIndex = m_BoneMapping[BoneName];
 
 			m_BoneMapping[BoneName] = BoneIndex;
-			boneInfo[BoneIndex].BoneOffset = mesh->mBones[B]->mOffsetMatrix;
+			boneInfo[BoneIndex].BoneOffset = aiMatrixtoMat4x4(mesh->mBones[B]->mOffsetMatrix);
 
 			for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
 				int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
