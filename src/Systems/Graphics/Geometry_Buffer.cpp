@@ -1,6 +1,6 @@
 #include "Systems\Graphics\Geometry_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include <algorithm>
 #include <random>
 

@@ -1,5 +1,5 @@
 #include "Utilities\ImageImporter.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
 FIBITMAP * ImageImporter::FetchImageFromDisk(const std::string &fileName)

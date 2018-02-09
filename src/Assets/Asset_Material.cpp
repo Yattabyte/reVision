@@ -1,6 +1,6 @@
 #include "Assets\Asset_Material.h"
 #include "Managers\Material_Manager.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include "Utilities\ImageImporter.h"
 #include "FreeImage.h"
 

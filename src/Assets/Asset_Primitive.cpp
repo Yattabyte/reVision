@@ -1,5 +1,5 @@
 #include "Assets\Asset_Primitive.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include "Utilities\ModelImporter.h"
 #include "ASSIMP\Importer.hpp"
 #include "ASSIMP\postprocess.h"

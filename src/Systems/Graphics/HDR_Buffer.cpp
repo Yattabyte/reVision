@@ -1,5 +1,5 @@
 #include "Systems\Graphics\HDR_Buffer.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include <algorithm>
 
 HDR_Buffer::~HDR_Buffer()

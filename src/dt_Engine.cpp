@@ -8,7 +8,7 @@
 #include "Managers\Asset_Manager.h"
 
 // To replace with abstract systems
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
@@ -155,7 +155,6 @@ void Shutdown_Sharing()
 	Material_Manager::Shutdown();
 	Asset_Manager::Shutdown();
 }
-
 
 #include "Assets\Asset_Material.h"
 bool dt_Engine::Initialize(const vector<pair<const char*, System*>> &systems)

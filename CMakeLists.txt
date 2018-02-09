@@ -9,7 +9,7 @@ set (GLM_DIR "" CACHE PATH "OpenGL Mathematics library (GLM) root directory")
 set (GLEW_DIR "" CACHE PATH "OpenGL Extension Wrangler library (GLEW) root directory")
 set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
-set (CORE_DIR "${PROJECT_SOURCE_DIR}/src/Core")
+set (CORE_DIR "${PROJECT_SOURCE_DIR}/src")
 set (PROJECT_BIN ${CMAKE_SOURCE_DIR})
 
 # Include directories of dependencies for entire project
@@ -56,7 +56,7 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 												"OpenGL32.lib")
 					
 # add all sub-projects and plugins here
-add_subdirectory( src/Core )
+add_subdirectory( src )
 
 # Generates an "includes" folder with only the headers
 macro(GENERATE_INCLUDES GLOBPAT)
@@ -66,7 +66,7 @@ macro(GENERATE_INCLUDES GLOBPAT)
 	add_custom_target(Generate_Includes ALL COMMENT "Copying files")
 	foreach(FILENAME ${COPY_FILES}) 	
 		set(SRC "src/${FILENAME}")
-		set(DST "include/DT/${FILENAME}")	
+		set(DST "include/${FILENAME}")	
 		add_custom_command(
 			TARGET Generate_Includes
 			COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
@@ -74,10 +74,24 @@ macro(GENERATE_INCLUDES GLOBPAT)
 	endforeach()	
 endmacro()
 GENERATE_INCLUDES("src/*.h")	
+
+# Generates the documentation folder and runs doxygen
+macro(GENERATE_DOCUMENTATION)
+	find_package(Doxygen)
+	if(DOXYGEN_FOUND)
+		# Create a new doxyfile with the appropriate directory
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)		
+		# Create the folder for documentation to be stored in
+		add_custom_target(Generate_Documentation COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/Documentation/")				
+		add_custom_command(TARGET Generate_Documentation COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Documentation/ )		
+	endif(DOXYGEN_FOUND)
+endmacro()
+GENERATE_DOCUMENTATION()	
  
 # Enable folder structure
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 # ALL_BUILD, ZERO_CHECK, and other build functions' folder
 set_property (GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER Build_Functions)
 set_property (TARGET Generate_Includes PROPERTY FOLDER "Build_Functions")
+set_property (TARGET Generate_Documentation PROPERTY FOLDER "Build_Functions")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")

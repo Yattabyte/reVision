@@ -1,5 +1,5 @@
 #include "Assets\Asset_Cubemap.h"
-#include "Systems\Message_Manager.h"
+#include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
 /* -----ASSET TYPE----- */
