@@ -14,10 +14,10 @@ Light_Spot_Component::~Light_Spot_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
-		if (m_enginePackage->FindSubSystem("Shadows"))
-			m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
-		if (m_enginePackage->FindSubSystem("World"))
-			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
+		if (m_shadowMapper)
+			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
+		if (m_shadowMapper)
+			m_world->UnRegisterViewer(&m_camera);
 	}
 }
 
@@ -32,10 +32,14 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	if (m_enginePackage->FindSubSystem("Shadows")) 
-		m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
-	if (m_enginePackage->FindSubSystem("World"))
-		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera);
+	if (m_enginePackage->FindSubSystem("Shadows")) {
+		m_shadowMapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
+	}
+	if (m_enginePackage->FindSubSystem("World")) {
+		m_world = m_enginePackage->GetSubSystem<System_World>("World");
+		m_world->RegisterViewer(&m_camera);
+	}
 }
 
 void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
@@ -141,6 +145,7 @@ void Light_Spot_Component::shadowPass()
 {
 	Update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot());
 
 	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
 	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
@@ -153,6 +158,16 @@ bool Light_Spot_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
 	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
 	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
+}
+
+float Light_Spot_Component::getImportance(const vec3 & position)
+{
+	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
+}
+
+GLuint Light_Spot_Component::getShadowSpot() const
+{
+	return m_uboData.Shadow_Spot;
 }
 
 void Light_Spot_Component::Update()

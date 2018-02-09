@@ -174,7 +174,7 @@ void System_Shadowmap::BindForWriting(const int & ShadowSpot)
 {
 	glViewport(0, 0, m_size[ShadowSpot].x, m_size[ShadowSpot].y);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadow_fbo[ShadowSpot]);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void System_Shadowmap::BindForReading(const int & ShadowSpot, const GLuint & ShaderTextureUnit)

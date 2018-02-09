@@ -5,6 +5,7 @@
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
 #include <random>
+#include <minmax.h>
 
 
 class Primitivee_Observer : Asset_Observer
@@ -304,18 +305,21 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 		// Nested Element struct
 		struct LightElement {
 			double m_updateTime;
+			float m_importance;
 			Lighting_Component *m_ptr;
 			char* m_lightType;
-			LightElement(const double &time, Lighting_Component *ptr, char* type) {
+			LightElement(const double &time, const float &importance, Lighting_Component *ptr, char* type) {
 				m_updateTime = time;
+				m_importance = importance;
 				m_ptr = ptr;
 				m_lightType = type;
 			}
 		};
 
 		// Constructor
-		PriorityLightList(const int &capacity) {
+		PriorityLightList(const int &capacity, const vec3 &position) {
 			m_capacity = capacity;
+			m_position = position;
 			m_list.reserve(capacity);
 		}
 
@@ -323,35 +327,52 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 		void add(Lighting_Component *c, char *type) {
 			const size_t &listSize = m_list.size();
 			double time = c->getShadowUpdateTime(); 
-			int insertionIndex = 0;
-			if (listSize < m_capacity)
-				insertionIndex = listSize;				
-			for (int x = 0; x < listSize && x < m_capacity; ++x) {
+			int insertionIndex = listSize;	
+			for (int x = 0; x < listSize; ++x) {
 				if (time < m_list[x].m_updateTime) {
 					insertionIndex = x;
 					break;
 				}
 			}
-			m_list.insert(m_list.begin() + insertionIndex, LightElement(time, c, type));
+			m_list.insert(m_list.begin() + insertionIndex, LightElement(time, c->getImportance(m_position), c, type));
 			if (m_list.size() > m_capacity) {
 				m_list.reserve(m_capacity);
 				m_list.shrink_to_fit();
-			}			
+			}		
 		}
 		Visibility_Token toVisToken() {
 			Visibility_Token token;
 			token.insert("Light_Directional");
 			token.insert("Light_Point");
 			token.insert("Light_Spot");
-			for (int x = 0, size = m_list.size(); x < size && x < m_capacity; ++x) {
-				const auto & element = m_list[x];
-				token[element.m_lightType].push_back((Component*)element.m_ptr);
+
+			if (m_list.size()) {
+				// Find the closest element
+				LightElement closest = m_list[0];
+				unsigned int closestSpot = 0;
+				for (unsigned int x = 1, size = m_list.size(); x < size; ++x) {
+					const auto & element = m_list[x];
+					if (element.m_importance > closest.m_importance) {
+						closest = element;
+						closestSpot = x;
+					}
+				}
+				// Push the closest light first
+				token[closest.m_lightType].push_back((Component*)closest.m_ptr);
+				// Get the m_capacity-1 oldest lights
+				for (unsigned int x = 0, size = m_list.size(); x < size && x < m_capacity-1; ++x) {
+					if (x == closestSpot) 
+						continue;
+					const auto & element = m_list[x];
+					token[element.m_lightType].push_back((Component*)element.m_ptr);
+				}
 			}
 			return token;
 		}
 
 		// Members
 		int m_capacity;
+		vec3 m_position;
 		vector<LightElement> m_list;
 	};
 
@@ -371,7 +392,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	
-	PriorityLightList timedList(m_updateQuality);
+	PriorityLightList timedList(m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 		timedList.add(component, "Light_Directional");
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
@@ -381,19 +402,22 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 
 
 	const Visibility_Token &priorityLights = timedList.toVisToken();
+	const auto &dirLights = priorityLights.getTypeList<Lighting_Component>("Light_Directional"),
+			   &pointLights = priorityLights.getTypeList<Lighting_Component>("Light_Point"), 
+			   &spotLights = priorityLights.getTypeList<Lighting_Component>("Light_Spot");
 	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
 	m_shaderShadowDir->Bind();
-	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Directional"))
-		component->shadowPass();
+	for each (auto &component in dirLights) 
+		component->shadowPass();	
 
 	m_Shadowmapper->BindForWriting(SHADOW_REGULAR);
 	m_shaderShadowPoint->Bind();
-	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Point"))
-		component->shadowPass();
+	for each (auto &component in pointLights) 
+		component->shadowPass();	
 
 	m_shaderShadowSpot->Bind();
-	for each (auto &component in priorityLights.getTypeList<Lighting_Component>("Light_Spot"))
-		component->shadowPass();
+	for each (auto &component in spotLights) 
+		component->shadowPass();	
 
 	Asset_Shader::Release();	
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);

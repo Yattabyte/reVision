@@ -52,11 +52,13 @@ void System_World::Update(const float & deltaTime)
 		sponza->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
 
 		for (int x = 0; x < 3; ++x) {
-			auto point = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("PointLight"));
-			point->ReceiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
-			point->ReceiveMessage(ECSmessage(1, 20.0f));
-			point->ReceiveMessage(ECSmessage(2, 5.0f));
-			point->ReceiveMessage(ECSmessage(3, vec3((x-1) * 25, 5, 0)));;
+			for (int y = 0; y < 2; ++y) {
+				auto point = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("PointLight"));
+				point->ReceiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
+				point->ReceiveMessage(ECSmessage(1, 5.0f));
+				point->ReceiveMessage(ECSmessage(2, 5.0f));
+				point->ReceiveMessage(ECSmessage(3, vec3((x - 1) * 25, 5, (y) * 25)));;
+			}
 		}
 			
 		auto model1 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
@@ -67,7 +69,7 @@ void System_World::Update(const float & deltaTime)
 		model2->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
 		model2->ReceiveMessage(ECSmessage(PLAY_ANIMATION, 1));
-		model2->ReceiveMessage(ECSmessage(PLAY_ANIMATION, false));
+		model2->ReceiveMessage(ECSmessage(PLAY_ANIMATION, true));
 		auto model3 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
 		model3->ReceiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->ReceiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));

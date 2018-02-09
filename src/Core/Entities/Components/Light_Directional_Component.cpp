@@ -125,6 +125,11 @@ bool Light_Directional_Component::IsVisible(const mat4 & PMatrix, const mat4 &VM
 	return true;
 }
 
+float Light_Directional_Component::getImportance(const vec3 & position)
+{
+	return 1.0f;
+}
+
 void Light_Directional_Component::CalculateCascades()
 {
 	const auto &cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();

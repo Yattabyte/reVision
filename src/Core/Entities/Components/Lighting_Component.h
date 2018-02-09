@@ -36,6 +36,8 @@ public:
 	virtual void shadowPass() {};
 	// Returns whether or not this light is visible
 	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix) { return false; };
+	// Returns the importance value for this light (distance / size)
+	virtual float getImportance(const vec3 &position) { return 1.0f; };
 	// Returns the timestamp of the last time this light updated its shadowmap
 	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
 

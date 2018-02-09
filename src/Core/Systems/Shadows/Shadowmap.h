@@ -44,7 +44,7 @@ public:
 	void BindForWriting(const int & ShadowSpot);
 	void BindForReading(const int & ShadowSpot, const GLuint & ShaderTextureUnit);
 	void Test(); 
-	void ClearShadow(const int & ShadowSpot, const int & layer, const int &depth);
+	void ClearShadow(const int & ShadowSpot, const int & layer, const int &depth = 1.0f);
 	void SetSize(const unsigned int &spot, const float &size);
 	vec2 GetSize(const unsigned int &spot);
 	void SetUpdateQuality(const float &quality);

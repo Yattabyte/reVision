@@ -69,13 +69,16 @@ public:
 	**********************************/
 
 	// Direct lighting pass
-	virtual void directPass(const int &vertex_count);
+	void directPass(const int &vertex_count);
 	// Indirect lighting pass
-	virtual void indirectPass(const int &vertex_count);
+	void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	virtual void shadowPass();
+	void shadowPass();
 	// Returns whether or not this light is visible
-	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	// Returns the importance value for this light (distance / size)
+	float getImportance(const vec3 &position);
+	// Recalculates the cascades
 	void CalculateCascades();
 	// Sends current data to the GPU
 	void Update();

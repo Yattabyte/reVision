@@ -57,6 +57,7 @@ struct LightSpotBuffer
 };
 
 class System_Shadowmap;
+class System_World;
 class Light_Spot_Creator;
 class Engine_Package;
 class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
@@ -85,13 +86,17 @@ public:
 	***************************/
 
 	// Direct lighting pass
-	virtual void directPass(const int &vertex_count);
+	void directPass(const int &vertex_count);
 	// Indirect lighting pass
-	virtual void indirectPass(const int &vertex_count);
+	void indirectPass(const int &vertex_count);
 	// Shadow lighting pass
-	virtual void shadowPass();
+	void shadowPass();
 	// Returns whether or not this light is visible
-	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	// Returns the importance value for this light (distance / size)
+	float getImportance(const vec3 &position);
+	// Returns the shadow spot for this light
+	GLuint getShadowSpot() const;
 	// Sends current data to the GPU
 	void Update();
 
@@ -102,6 +107,8 @@ protected:
 	GLuint m_uboID;
 	LightSpotBuffer m_uboData;
 	Engine_Package *m_enginePackage;
+	System_Shadowmap *m_shadowMapper;
+	System_World *m_world;
 	quat m_orientation;
 	float m_squaredRadius;
 	Camera m_camera;

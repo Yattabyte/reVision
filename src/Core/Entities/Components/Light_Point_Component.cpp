@@ -14,13 +14,13 @@ Light_Point_Component::~Light_Point_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
-		if (m_enginePackage->FindSubSystem("Shadows")) {
-			m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
-			m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
+		if (m_shadowMapper) {
+			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
+			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 		}
-		if (m_enginePackage->FindSubSystem("World")) {
-			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera[0]);
-			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera[1]);
+		if (m_world) {
+			m_world->UnRegisterViewer(&m_camera[0]);
+			m_world->UnRegisterViewer(&m_camera[1]);
 		}
 	}
 }
@@ -39,12 +39,14 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_camera[1].setHorizontalFOV(180);
 
 	if (m_enginePackage->FindSubSystem("Shadows")) {
-		m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
-		m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows")->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
+		m_shadowMapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
+		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 	}
 	if (m_enginePackage->FindSubSystem("World")) {
-		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera[0]);
-		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera[1]);
+		m_world = m_enginePackage->GetSubSystem<System_World>("World");
+		m_world->RegisterViewer(&m_camera[0]);
+		m_world->RegisterViewer(&m_camera[1]);
 	}
 }
 
@@ -137,6 +139,8 @@ void Light_Point_Component::shadowPass()
 {
 	Update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot(false));
+	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot(true));
 
 
 	for (int x = 0; x < 2; x++) {
@@ -157,6 +161,16 @@ bool Light_Point_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
 	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
 	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
+}
+
+float Light_Point_Component::getImportance(const vec3 & position)
+{
+	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
+}
+
+GLuint Light_Point_Component::getShadowSpot(const bool & front) const
+{
+	return front ? m_uboData.Shadow_Spot1 : m_uboData.Shadow_Spot2;
 }
 
 void Light_Point_Component::Update()
