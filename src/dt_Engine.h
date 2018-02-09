@@ -1,11 +1,3 @@
-/*
-	dt_Engine
-
-	- The enapsulation of the entire engine
-*/
-
-
-
 #pragma once
 #ifndef DT_ENGINE
 #define DT_ENGINE
@@ -17,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(87) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(88) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -27,30 +19,42 @@
 #include <vector>
 
 using namespace std;
-
 class Engine_Package;
 class Callback_Container;
 class GLFWwindow;
 class Camera;
 class System;
 
+/**
+ * The main game engine object. Encapsulates the entire engine state.
+ * The engine is responsible for storing all the system pointers for use through its life.
+*/
 class DT_ENGINE_API dt_Engine
 {
 public:
-	// Destroy the engine
+	/** Destroys the engine. */
 	~dt_Engine();
-	// Zero-initialize the engine
+	/** Zero-initialize the engine. */
 	dt_Engine();
-	// Initialize the engine
+
+	/** Initializes the engine.
+	 * @param		vector of all systems to create this engine with
+	 * @return		true if successfully initialized */
 	bool Initialize(const vector<pair<const char*, System*>> &systems);
-	// Shutdown the engine
+
+	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void Shutdown();
-	// Ticks the engine's overall simulation by a frame
+
+	/** Ticks the engine's overall simulation by a frame */
 	void Update();
-	// Check if the engine should close
+
+	/** Checks if the engine wants to shut down
+	 * @return		true if engine should shut down */
 	bool ShouldClose();
-	// Return the camera
-	Camera *GetCamera();
+
+	/** Returns the main camera belonging to this engine's viewport.
+	 * @return		Camera* */
+	Camera *GetCamera();	
 
 private:
 	bool m_Initialized;	

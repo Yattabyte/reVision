@@ -80,10 +80,10 @@ macro(GENERATE_DOCUMENTATION)
 	find_package(Doxygen)
 	if(DOXYGEN_FOUND)
 		# Create a new doxyfile with the appropriate directory
-		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile @ONLY)		
+		configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile.in ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile.out @ONLY)		
 		# Create the folder for documentation to be stored in
-		add_custom_target(Generate_Documentation COMMAND ${CMAKE_COMMAND} -E make_directory "${PROJECT_SOURCE_DIR}/Documentation/")				
-		add_custom_command(TARGET Generate_Documentation COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Documentation/ )		
+		add_custom_target(Generate_Documentation COMMAND ${CMAKE_COMMAND} -E make_directory ${PROJECT_SOURCE_DIR}/Documentation/)				
+		add_custom_command(TARGET Generate_Documentation COMMAND ${DOXYGEN_EXECUTABLE} ${PROJECT_SOURCE_DIR}/Doxyfile.out WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/Documentation/ )		
 	endif(DOXYGEN_FOUND)
 endmacro()
 GENERATE_DOCUMENTATION()	

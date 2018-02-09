@@ -58,4 +58,5 @@ CMakeCache.txt
 .vs/Delta/v15/Solution.VC.db-wal
 *.log
 *.ipch
-Doxyfile.in
+Doxyfile.out
+Documentation/
