@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(88) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(89) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -32,31 +32,34 @@ class System;
 class DT_ENGINE_API dt_Engine
 {
 public:
+	// Constructors
 	/** Destroys the engine. */
 	~dt_Engine();
 	/** Zero-initialize the engine. */
 	dt_Engine();
 
 	/** Initializes the engine.
-	 * @param		vector of all systems to create this engine with
-	 * @return		true if successfully initialized */
-	bool Initialize(const vector<pair<const char*, System*>> &systems);
+	 * @param	systems	vector of all systems to create this engine with
+	 * @return	true if successfully initialized */
+	bool Initialize(const vector<pair<const char*, System*>> & systems);
 
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void Shutdown();
 
-	/** Ticks the engine's overall simulation by a frame */
+	/** Ticks the engine's overall simulation by a frame. */
 	void Update();
 
-	/** Checks if the engine wants to shut down
-	 * @return		true if engine should shut down */
+	/** Checks if the engine wants to shut down.
+	 * @return	true if engine should shut down */
 	bool ShouldClose();
 
 	/** Returns the main camera belonging to this engine's viewport.
-	 * @return		Camera* */
-	Camera *GetCamera();	
+	 * @return	a pointer to the main camera */
+	Camera * GetCamera();	
+	
 
 private:
+	// Members
 	bool m_Initialized;	
 	float m_lastTime;	
 	Engine_Package *m_package;
@@ -92,4 +95,36 @@ private:
 									(BUILD_MONTH_IS_DEC) ? 12 : 0)
 #define BUILD_DAY					((__DATE__[4] >= '0') ? (__DATE__[4] - '0') * 10 : 0) + (__DATE__[5] - '0')
 #define BUILD_HOUR					(__TIME__[0] - '0') * 10 + __TIME__[1] - '0'
+
+/*! \mainpage Project Delta
+ *
+ * \section info_sec Information
+ *
+ * This project is very much a work in progress.
+ *
+ * \section standards_sec Standards used
+ *
+ * - Member attributes prefixed with 'm_' followed by rest in camel case
+ *	 - Example: vec3 m_currentPosition;
+ * - All public member functions are camel cased with first character lower case
+ *   - Example: void createObject( ... );
+ * - Static Functions are camel cased with first character upper case, and underscores between words
+ *   - Example: static void Import_Script( ... );
+ *
+ * \section chores_sec Chores:
+ *
+ * \todo
+ * \bug
+ * \reminder
+ *
+ * \section dependencies_sec External Dependencies
+ *
+ * - ASSIMP - Model importer: http://assimp.sourceforge.net/
+ * - Bullet - Physics simulator: http://bulletphysics.org/wordpress/
+ * - FreeImage - Texture importer: http://freeimage.sourceforge.net/
+ * - GLEW - OpenGl extension wrangler: http://glew.sourceforge.net/
+ * - GLFW - OpenGL windowing framework: http://www.glfw.org/
+ * - GLM - OpenGL mathematics library: https://glm.g-truc.net/0.9.8/index.html
+*/
+
 #endif // DT_ENGINE

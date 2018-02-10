@@ -1,14 +1,11 @@
 #include "dt_Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
-#include <string>
-
 #include "Utilities\Engine_Package.h"
-#include "Managers\Material_Manager.h"
 #include "Managers\Asset_Manager.h"
-
-// To replace with abstract systems
+#include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
+#include <string>
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"

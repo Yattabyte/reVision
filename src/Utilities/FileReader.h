@@ -1,9 +1,4 @@
-/*
-	FileReader
 
-	- A utility for reading certain things from disk
-	- Mostly used for reading my our own format stuff	
-*/
 
 #pragma once
 #ifndef	FILEREADER
@@ -23,9 +18,10 @@
 using namespace std;
 using namespace glm;
 
+/** Provides some basic file parsing functionality for the engine. */
 namespace FileReader {
 
-	// A utility for interacting with text driven documents
+	/** A utility for interacting with text driven documents. */
 	namespace DocParser {
 		// A terrible solution
 		struct Property {
@@ -51,7 +47,8 @@ namespace FileReader {
 		};
 		
 		// Updates the @property token using the @input string. Returns true if it got any data from it
-		DT_ENGINE_API bool getProperty(istringstream &string_stream, Property &property, string &input = string(""));
+		DT_ENGINE_API bool getProperty(istringstream & string_stream, Property & property, string & input = string(""));
+
 
 
 		/*********************************************************************
@@ -59,51 +56,59 @@ namespace FileReader {
 		*----Converts @string_stream into an appropriate value in @target----*
 		*********************************************************************/
 
-		static void getValue(istringstream &string_stream, string &target);
-		static void getValue(istringstream &string_stream, int &target);
-		static void getValue(istringstream &string_stream, ivec2 &target);
-		static void getValue(istringstream &string_stream, ivec3 &target);
-		static void getValue(istringstream &string_stream, ivec4 &target);
-		static void getValue(istringstream &string_stream, float &target);
-		static void getValue(istringstream &string_stream, vec2 &target);
-		static void getValue(istringstream &string_stream, vec3 &target);
-		static void getValue(istringstream &string_stream, vec4 &target);
-		static void getValue(istringstream &string_stream, vector<string> &target);
-		static void getValue(istringstream &string_stream, vector<int> &target);
-		static void getValue(istringstream &string_stream, vector<ivec2> &target);
-		static void getValue(istringstream &string_stream, vector<ivec3> &target);
-		static void getValue(istringstream &string_stream, vector<ivec4> &target);
-		static void getValue(istringstream &string_stream, vector<float> &target);
-		static void getValue(istringstream &string_stream, vector<vec2> &target);
-		static void getValue(istringstream &string_stream, vector<vec3> &target);
-		static void getValue(istringstream &string_stream, vector<vec4> &target);
+		static void getValue(istringstream & string_stream, string & target);
+		static void getValue(istringstream & string_stream, int & target);
+		static void getValue(istringstream & string_stream, ivec2 & target);
+		static void getValue(istringstream & string_stream, ivec3 & target);
+		static void getValue(istringstream & string_stream, ivec4 & target);
+		static void getValue(istringstream & string_stream, float & target);
+		static void getValue(istringstream & string_stream, vec2 & target);
+		static void getValue(istringstream & string_stream, vec3 & target);
+		static void getValue(istringstream & string_stream, vec4 & target);
+		static void getValue(istringstream & string_stream, vector<string> & target);
+		static void getValue(istringstream & string_stream, vector<int> & target);
+		static void getValue(istringstream & string_stream, vector<ivec2> & target);
+		static void getValue(istringstream & string_stream, vector<ivec3> & target);
+		static void getValue(istringstream & string_stream, vector<ivec4> & target);
+		static void getValue(istringstream & string_stream, vector<float> & target);
+		static void getValue(istringstream & string_stream, vector<vec2> & target);
+		static void getValue(istringstream & string_stream, vector<vec3> & target);
+		static void getValue(istringstream & string_stream, vector<vec4> & target);
+
 
 		/*********************************************************************
 		*--------------------------Setter Functions--------------------------*
 		*----Converts @target into an appropriate string, then returns it----*
 		*********************************************************************/
 
-		static string setValue(const string &target);
-		static string setValue(const int &target);
-		static string setValue(const ivec2 &target);
-		static string setValue(const ivec3 &target);
-		static string setValue(const ivec4 &target);
-		static string setValue(const float &target);
-		static string setValue(const vec2 &target);
-		static string setValue(const vec3 &target);
-		static string setValue(const vec4 &target);
-		static string setValue(const quat &target);
-		static string setValue(const vector<ivec2> &target);
-		static string setValue(const vector<vec2> &target);
-		static string setValue(const vector<vec3> &target);
+		static string setValue(const string & target);
+		static string setValue(const int & target);
+		static string setValue(const ivec2 & target);
+		static string setValue(const ivec3 & target);
+		static string setValue(const ivec4 & target);
+		static string setValue(const float & target);
+		static string setValue(const vec2 & target);
+		static string setValue(const vec3 & target);
+		static string setValue(const vec4 & target);
+		static string setValue(const quat & target);
+		static string setValue(const vector<ivec2> & target);
+		static string setValue(const vector<vec2> & target);
+		static string setValue(const vector<vec3> & target);
 	}
 
-	// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
-	// Returns true if succeeded, false if file doesn't exist
-	DT_ENGINE_API bool ReadFileFromDisk(string &returnFile, const string &fileDirectory);
-	// Checks if a supplied file or folder exists on disk.
-	DT_ENGINE_API bool FileExistsOnDisk(const string & name);
-	// Retrieves the application's running directory
+	/** Reads in a text file from disk, given a file directory, and appends it to the returnFile param.
+	 * @param	returnFile	a reference string to append the data retrieved
+	 * @param	fileDirectory	the absolute directory of the file stored as a string
+	 * @return	true if succeeded, false otherwise */
+	DT_ENGINE_API bool ReadFileFromDisk(string & returnFile, const string & fileDirectory);
+	
+	/** Quickly checks if a supplied file or folder exists on disk.
+	* @param	fileName	the absolute directory of the file
+	* @return	true if the file exists, false otherwise */
+	DT_ENGINE_API bool FileExistsOnDisk(const string & fileName);	
+
+	/** Retrieves the application's running directory.
+	* @return	string of the absolute directory that this executable ran from */
 	DT_ENGINE_API string GetCurrentDir();
 };
 

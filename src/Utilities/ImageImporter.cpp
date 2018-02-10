@@ -2,7 +2,7 @@
 #include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
-FIBITMAP * ImageImporter::FetchImageFromDisk(const std::string &fileName)
+FIBITMAP * ImageImporter::Import_Image(const std::string & fileName)
 {
 	const char * file = fileName.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
@@ -34,7 +34,7 @@ FIBITMAP * ImageImporter::FetchImageFromDisk(const std::string &fileName)
 	return nullptr;
 }
 
-GLubyte * ImageImporter::ParseImage_1channel(FIBITMAP *bitmap, const ivec2 & dimensions)
+GLubyte * ImageImporter::Parse_Image_1channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 1];
@@ -53,7 +53,7 @@ GLubyte * ImageImporter::ParseImage_1channel(FIBITMAP *bitmap, const ivec2 & dim
 	return textureData;
 }
 
-GLubyte * ImageImporter::ParseImage_2channel(FIBITMAP *bitmap, const ivec2 & dimensions)
+GLubyte * ImageImporter::Parse_Image_2channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 2];
@@ -74,7 +74,7 @@ GLubyte * ImageImporter::ParseImage_2channel(FIBITMAP *bitmap, const ivec2 & dim
 	return textureData;
 }
 
-GLubyte * ImageImporter::ParseImage_3channel(FIBITMAP *bitmap, const ivec2 & dimensions)
+GLubyte * ImageImporter::Parse_Image_3channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 3];
@@ -97,7 +97,7 @@ GLubyte * ImageImporter::ParseImage_3channel(FIBITMAP *bitmap, const ivec2 & dim
 	return textureData;
 }
 
-GLubyte * ImageImporter::ParseImage_4channel(FIBITMAP *bitmap, const ivec2 & dimensions)
+GLubyte * ImageImporter::Parse_Image_4channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 4];

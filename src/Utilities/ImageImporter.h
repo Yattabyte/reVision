@@ -1,10 +1,3 @@
-/*
-	Image Importer
-	
-	- Uses FreeImage : http://freeimage.sourceforge.net/
-	- Provides handy functions for retrieving images from disk
-*/
-
 #pragma once
 #ifndef	IMAGEIMPORTER
 #define	IMAGEIMPORTER
@@ -21,20 +14,45 @@
 
 using namespace std;
 using namespace glm;
-
 class FIBITMAP;
-class ImageImporter {
+
+/**
+ * A static helper class used for importing images.
+ * Uses the FreeImage texture importer: http://freeimage.sourceforge.net/
+ */
+class DT_ENGINE_API ImageImporter 
+{
 public:
-	// Attempts to load an image from disk given a @fileName, returning an FIBITMAP pointer.
-	// Pointer needs to be unloaded manually.
-	DT_ENGINE_API static FIBITMAP * FetchImageFromDisk(const std::string &fileName);
-	// Returns image data pointer formatted as GLubyte, arranged as a monoc-hromatic image (all red). 
-	DT_ENGINE_API static GLubyte * ParseImage_1channel(FIBITMAP *bitmap, const ivec2 & dimensions);
-	// Returns image data pointer formatted as GLubyte, arranged as a di-chromatic image (red/green). 
-	DT_ENGINE_API static GLubyte * ParseImage_2channel(FIBITMAP *bitmap, const ivec2 & dimensions);
-	// Returns image data pointer formatted as GLubyte, arranged as a tri-chromatic image (red/green/blue). 
-	DT_ENGINE_API static GLubyte * ParseImage_3channel(FIBITMAP *bitmap, const ivec2 & dimensions);
-	// Returns image data pointer formatted as GLubyte, arranged as a quad-chromatic image (red/green/blue/alpha). 
-	DT_ENGINE_API static GLubyte * ParseImage_4channel(FIBITMAP *bitmap, const ivec2 & dimensions);
+	/** Retrieve an image from disk. 
+	 * Reports its errors into the messaging system. Safely fails.
+	 * @param	fileName	the string absolute directory to the image file to import
+	 * @return	a 32bit FIBITMAP* pointer containing the image if successfull, nullptr otherwise.  
+	 * @note	requires manually deleting the FIBITMAP pointer when no longer needed! */
+	static FIBITMAP * Import_Image(const std::string& fileName);
+
+	/** Parses the supplied image into a pixel array using the supplied dimensions, interpreted as a mono-chromatic image (all red channel).
+	 * @param	bitmap	the bitmap pointer containing the image to parse
+	 * @param	dimensions	the dimensions of the image as an (integer) vec2
+	 * @return	a pointer to a GLubyte array containing our pixels */
+	static GLubyte * Parse_Image_1channel(FIBITMAP * bitmap, const ivec2 & dimensions);
+
+	/** Parses the supplied image into a pixel array using the supplied dimensions, interpreted as a di-chromatic image (red/green).
+	 * @param	bitmap	the bitmap pointer containing the image to parse
+	 * @param	dimensions	the dimensions of the image as an (integer) vec2
+	 * @return	a pointer to a GLubyte array containing our pixels */
+	static GLubyte * Parse_Image_2channel(FIBITMAP * bitmap, const ivec2 & dimensions);
+
+	/** Parses the supplied image into a pixel array using the supplied dimensions, interpreted as a tri-chromatic image (red/green/blue). 
+	 * @param	bitmap	the bitmap pointer containing the image to parse
+	 * @param	dimensions	the dimensions of the image as an (integer) vec2
+	 * @return	a pointer to a GLubyte array containing our pixels */
+	static GLubyte * Parse_Image_3channel(FIBITMAP * bitmap, const ivec2 & dimensions);
+
+	/** Parses the supplied image into a pixel array using the supplied dimensions, interpreted as a quad-chromatic image (red/green/blue/alpha). 
+	 * @param	bitmap	the bitmap pointer containing the image to parse
+	 * @param	dimensions	the dimensions of the image as an (integer) vec2
+	 * @return	a pointer to a GLubyte array containing our pixels */
+	static GLubyte * Parse_Image_4channel(FIBITMAP * bitmap, const ivec2 & dimensions);
 };
+
 #endif // IMAGEIMPORTER

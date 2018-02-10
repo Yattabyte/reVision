@@ -49,7 +49,7 @@ namespace FileReader {
 			string_stream >> target.x >> target.y >> target.z >> target.w; 
 		}
 
-		void getValue(istringstream & string_stream, vector<string>& target) {
+		void getValue(istringstream & string_stream, vector<string> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -59,7 +59,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<int>& target) {
+		void getValue(istringstream & string_stream, vector<int> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -69,7 +69,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<ivec2>& target) {
+		void getValue(istringstream & string_stream, vector<ivec2> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -79,7 +79,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<ivec3>& target) {
+		void getValue(istringstream & string_stream, vector<ivec3> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -89,7 +89,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<ivec4>& target) {
+		void getValue(istringstream & string_stream, vector<ivec4> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -99,7 +99,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<float>& target) {
+		void getValue(istringstream & string_stream, vector<float> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -109,7 +109,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<vec2>& target) {
+		void getValue(istringstream & string_stream, vector<vec2> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -119,7 +119,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<vec3>& target) {
+		void getValue(istringstream & string_stream, vector<vec3> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -129,7 +129,7 @@ namespace FileReader {
 			}
 		}
 
-		void getValue(istringstream & string_stream, vector<vec4>& target) {
+		void getValue(istringstream & string_stream, vector<vec4> & target) {
 			int size = 0; string_stream >> size;
 			target.reserve(size);
 			for (int x = 0; x < size; ++x) {
@@ -208,7 +208,7 @@ namespace FileReader {
 			return "vec4 " + to_string(target.x) + " " + to_string(target.y) + " " + to_string(target.z) + " " + to_string(target.w); 
 		}
 
-		string setValue(const vector<ivec2>& target)
+		string setValue(const vector<ivec2> & target)
 		{
 			string string = "ivec2_array " + to_string(target.size());
 			for each (const ivec2 &n in target) {
@@ -217,7 +217,7 @@ namespace FileReader {
 			return string;
 		}
 
-		string setValue(const vector<vec2>& target)
+		string setValue(const vector<vec2> & target)
 		{
 			string string = "vec2_array " + to_string(target.size());
 			for each (const vec2 &n in target) {
@@ -226,7 +226,7 @@ namespace FileReader {
 			return string;
 		}
 
-		string setValue(const vector<vec3>& target)
+		string setValue(const vector<vec3> & target)
 		{
 			string string = "vec3_array " + to_string(target.size());
 			for each (const vec3 &n in target) {
@@ -251,12 +251,14 @@ namespace FileReader {
 
 		return true;
 	}
+
 	bool FileExistsOnDisk(const string & name)
 	{
 		// Technique to return whether or not a given file or folder exists
 		struct stat buffer;
 		return (stat(name.c_str(), &buffer) == 0);		
 	}
+
 	string GetCurrentDir()
 	{
 		// Technique to return the running directory of the application

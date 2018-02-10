@@ -188,7 +188,7 @@ void Material_WorkOrder::Initialize_Order()
 
 	// Load all images
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
-		bitmaps[x] = ImageImporter::FetchImageFromDisk(m_asset->textures[x]);	
+		bitmaps[x] = ImageImporter::Import_Image(m_asset->textures[x]);	
 
 	// unlock
 	read_guard.unlock();
@@ -214,10 +214,10 @@ void Material_WorkOrder::Initialize_Order()
 		}
 
 	// Fetch and format the raw data
-	textureData[0] = ImageImporter::ParseImage_4channel(bitmaps[0], material_dimensions);
-	textureData[1] = ImageImporter::ParseImage_3channel(bitmaps[1], material_dimensions);
+	textureData[0] = ImageImporter::Parse_Image_4channel(bitmaps[0], material_dimensions);
+	textureData[1] = ImageImporter::Parse_Image_3channel(bitmaps[1], material_dimensions);
 	for (int x = 2; x < MAX_PHYSICAL_IMAGES; ++x)
-		textureData[x] = ImageImporter::ParseImage_1channel(bitmaps[x], material_dimensions);
+		textureData[x] = ImageImporter::Parse_Image_1channel(bitmaps[x], material_dimensions);
 
 	// Zero initialize the material data to compensate for any holes / missing images
 	const unsigned int size_mult =	material_dimensions.x * material_dimensions.y;
