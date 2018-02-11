@@ -1,8 +1,8 @@
 #include "Utilities\Frustum.h"
 #include "glm\gtc\type_ptr.hpp"
 #include "glm\gtc\matrix_access.hpp"
-
 #define ANG2RAD 3.14159265358979323846/180.0
+
 
 Frustum::Plane::~Plane()
 {

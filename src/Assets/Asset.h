@@ -63,4 +63,17 @@ public:
 	virtual void Notify_Finalized() = 0;
 };
 
+class DT_ENGINE_API Work_Order
+{
+public:
+	// Boring ole constructor
+	Work_Order() {};
+	// Virtual destructor
+	virtual ~Work_Order() {};
+	// To be used for loading data from disk in a thread safe way
+	virtual void Initialize_Order() = 0;
+	// To be used for attaching to opengl state
+	virtual void Finalize_Order() = 0;
+};
+
 #endif // ASSET

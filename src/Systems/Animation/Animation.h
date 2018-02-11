@@ -16,13 +16,13 @@
 #include "Systems\System_Interface.h"
 
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System_Animation : public System
 {
 public:
 	~System_Animation();
 	System_Animation();
-	virtual void Initialize(Engine_Package * enginePackage);
+	virtual void Initialize(EnginePackage * enginePackage);
 	virtual void Update(const float &deltaTime);
 	virtual void Update_Threaded(const float &deltaTime);
 

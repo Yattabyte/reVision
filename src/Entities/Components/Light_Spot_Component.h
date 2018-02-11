@@ -59,7 +59,7 @@ struct LightSpotBuffer
 class System_Shadowmap;
 class System_World;
 class Light_Spot_Creator;
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
 {
 public:
@@ -103,10 +103,10 @@ public:
 
 protected:
 	~Light_Spot_Component();
-	Light_Spot_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
+	Light_Spot_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 	GLuint m_uboID;
 	LightSpotBuffer m_uboData;
-	Engine_Package *m_enginePackage;
+	EnginePackage *m_enginePackage;
 	System_Shadowmap *m_shadowMapper;
 	System_World *m_world;
 	quat m_orientation;
@@ -119,7 +119,7 @@ class DT_ENGINE_API Light_Spot_Creator : public ComponentCreator
 {
 public:
 	Light_Spot_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Light_Spot_Component(id, pid, enginePackage);
 	}
 };

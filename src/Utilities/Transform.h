@@ -16,6 +16,7 @@
 
 using namespace glm;
 
+
 /**
  * A 3D transformation object. 
  * Takes in position, orientation, and scaling attributes, and caluclates a transformation matrix.
@@ -34,12 +35,12 @@ struct DT_ENGINE_API Transform
 		position = p;
 		orientation = ori;
 		scale = scl;
-		Update();
+		update();
 	}
 
 	// Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
-	void Update() {
+	void update() {
 		modelMatrix = glm::translate( mat4(1.0f), position ) * 
 					  glm::mat4_cast( orientation ) *
 					  glm::scale( mat4(1.0f), scale );

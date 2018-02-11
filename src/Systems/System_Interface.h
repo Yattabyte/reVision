@@ -16,7 +16,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System
 {
 public:
@@ -27,7 +27,7 @@ public:
 	System() { m_Initialized = false; }
 
 	// All systems can implement their own initialization function
-	virtual void Initialize(Engine_Package * enginePackage) {}
+	virtual void Initialize(EnginePackage * enginePackage) {}
 
 	// All systems can implement their own update function
 	virtual void Update(const float &deltaTime) {};
@@ -37,7 +37,7 @@ public:
 
 protected:
 	bool m_Initialized;
-	Engine_Package *m_enginePackage;
+	EnginePackage *m_enginePackage;
 };
 
 #endif // SYSTEM_INTERFACE

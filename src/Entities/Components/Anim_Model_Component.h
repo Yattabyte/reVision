@@ -65,7 +65,7 @@ public:
 
 protected:
 	~Anim_Model_Component();
-	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
+	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 	friend class Anim_Model_Creator;
 	
 	int m_animation;
@@ -84,7 +84,7 @@ class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
 {
 public:
 	Anim_Model_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Anim_Model_Component(id, pid, enginePackage);
 	}
 };

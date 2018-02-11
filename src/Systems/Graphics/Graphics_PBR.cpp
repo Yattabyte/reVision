@@ -1,6 +1,6 @@
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Systems\Shadows\Shadowmap.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
 #include "Entities\Components\Geometry_Component.h"
 #include "Entities\Components\Lighting_Component.h"
@@ -78,7 +78,7 @@ public:
 	~Cam_WidthChangeCallback() {};
 	Cam_WidthChangeCallback(System_Graphics_PBR *graphics) : m_Graphics(graphics) {}
 	void Callback(const float &value) {
-		m_Graphics->Resize(vec2(value, m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
+		m_Graphics->Resize(vec2(value, m_preferenceState->getPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT)));
 	}
 private:
 	System_Graphics_PBR *m_Graphics;
@@ -88,7 +88,7 @@ public:
 	~Cam_HeightChangeCallback() {};
 	Cam_HeightChangeCallback(System_Graphics_PBR *lBuffer) : m_Graphics(lBuffer) {}
 	void Callback(const float &value) {
-		m_Graphics->Resize(vec2(m_preferenceState->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
+		m_Graphics->Resize(vec2(m_preferenceState->getPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), value));
 	}
 private:
 	System_Graphics_PBR *m_Graphics;
@@ -107,14 +107,14 @@ private:
 System_Graphics_PBR::~System_Graphics_PBR()
 {
 	if (!m_Initialized) {
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		delete m_QuadObserver;
 		delete m_ConeObserver;
 		delete m_SphereObserver;
@@ -139,7 +139,7 @@ System_Graphics_PBR::System_Graphics_PBR() :
 	m_renderSize = vec2(1);
 }
 
-void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
+void System_Graphics_PBR::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -173,20 +173,20 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
 		m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(&m_lbuffer);
 		m_QualityChangeCallback = new ShadowQualityChangeCallback(&m_updateQuality);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
-		m_attribs.m_ssao_radius = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_RADIUS);
-		m_attribs.m_ssao_strength = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH);
-		m_attribs.m_aa_samples = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO_SAMPLES);
-		m_attribs.m_ssao = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SSAO);
-		m_renderSize = vec2(m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
-		m_updateQuality = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_QUALITY);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SSAO, m_ssaoCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SHADOW_QUALITY, m_QualityChangeCallback);
+		m_attribs.m_ssao_radius = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SSAO_RADIUS);
+		m_attribs.m_ssao_strength = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SSAO_BLUR_STRENGTH);
+		m_attribs.m_aa_samples = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SSAO_SAMPLES);
+		m_attribs.m_ssao = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SSAO);
+		m_renderSize = vec2(m_enginePackage->getPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH), m_enginePackage->getPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT));
+		m_updateQuality = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SHADOW_QUALITY);
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -199,7 +199,7 @@ void System_Graphics_PBR::Initialize(Engine_Package * enginePackage)
 
 		m_visualFX.Initialize(m_enginePackage);
 		m_gbuffer.Initialize(m_renderSize, &m_visualFX);
-		m_lbuffer.Initialize(m_renderSize, &m_visualFX, m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
+		m_lbuffer.Initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PREFERENCE_ENUMS::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.Initialize(m_renderSize);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
@@ -390,7 +390,7 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
 
-	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	auto m_Shadowmapper = (m_enginePackage->findSubSystem("Shadows") ? m_enginePackage->getSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	
 	PriorityLightList timedList(m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
@@ -475,7 +475,7 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_gbuffer.BindForReading();
 
-	auto m_Shadowmapper = (m_enginePackage->FindSubSystem("Shadows") ? m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows") : nullptr);
+	auto m_Shadowmapper = (m_enginePackage->findSubSystem("Shadows") ? m_enginePackage->getSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	m_Shadowmapper->BindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional")) {
 		m_shaderDirectional->Bind();

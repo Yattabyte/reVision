@@ -27,13 +27,13 @@ using namespace std;
 using namespace glm;
 
 class Callback_Container;
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System_Shadowmap : public System
 {
 public: 
 	~System_Shadowmap();
 	System_Shadowmap();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(EnginePackage *enginePackage);
 
 	// Recalculate visibility
 	void Update(const float &deltaTime);

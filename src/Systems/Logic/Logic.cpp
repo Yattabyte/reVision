@@ -1,5 +1,5 @@
 #include "Systems\Logic\Logic.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Input\Action_State.h"
 
@@ -13,7 +13,7 @@ System_Logic::System_Logic()
 	m_rotation = vec3(0.0f);
 }
 
-void System_Logic::Initialize(Engine_Package * enginePackage)
+void System_Logic::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage; 

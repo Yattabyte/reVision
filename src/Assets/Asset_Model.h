@@ -20,9 +20,9 @@
 #define NUM_MAX_BONES 100
 #define GLEW_STATIC
 #define EXT_MODEL ".obj"
-#define DIRECTORY_MODEL FileReader::GetCurrentDir() + "\\Models\\"
+#define DIRECTORY_MODEL File_Reader::GetCurrentDir() + "\\Models\\"
 #define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
-#define DIRECTORY_MODEL_MAT_TEX FileReader::GetCurrentDir() + "\\Textures\\Environment\\" 
+#define DIRECTORY_MODEL_MAT_TEX File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" 
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"

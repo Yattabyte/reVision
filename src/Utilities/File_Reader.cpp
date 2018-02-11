@@ -1,8 +1,9 @@
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include <fstream>
 #include <direct.h>
 
-namespace FileReader {
+
+namespace File_Reader {
 	namespace DocParser {
 		void getValue(istringstream & string_stream, string & target)
 		{

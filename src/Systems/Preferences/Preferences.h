@@ -18,13 +18,13 @@
 #include "Systems\System_Interface.h"
 #include <string>
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System_Preferences : public System
 {
 public: 
 	~System_Preferences();
 	System_Preferences(const std::string &filename = "preferences");
-	void Initialize(Engine_Package * package);
+	void Initialize(EnginePackage * package);
 
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);

@@ -1,6 +1,6 @@
 #include "Entities\Components\Light_Directional_Component.h"
 #include "Entities\Components\Geometry_Component.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "Systems\World\World.h"
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSmessages.h"
@@ -13,17 +13,17 @@ Light_Directional_Component::~Light_Directional_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
-		if (m_enginePackage->FindSubSystem("Shadows")) {
-			auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+		if (m_enginePackage->findSubSystem("Shadows")) {
+			auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 			for (int x = 0; x < NUM_CASCADES; ++x)
 				shadowmapper->UnRegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 		}
-		if (m_enginePackage->FindSubSystem("World"))
-			m_enginePackage->GetSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
+		if (m_enginePackage->findSubSystem("World"))
+			m_enginePackage->getSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
 	}
 }
 
-Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, Engine_Package *enginePackage) : Lighting_Component(id, pid)
+Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
 	m_uboID = 0;
@@ -33,7 +33,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	float near_plane = -0.1f;
-	float far_plane = - m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_DRAW_DISTANCE);
+	float far_plane = - m_enginePackage->getPreference(PREFERENCE_ENUMS::C_DRAW_DISTANCE);
 	m_cascadeEnd[0] = near_plane;
 	for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 		float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
@@ -42,13 +42,13 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 		m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
 	}
 
-	if (m_enginePackage->FindSubSystem("Shadows")) {
-		auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+	if (m_enginePackage->findSubSystem("Shadows")) {
+		auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			shadowmapper->RegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 	}
-	if (m_enginePackage->FindSubSystem("World"))
-		m_enginePackage->GetSubSystem<System_World>("World")->RegisterViewer(&m_camera);
+	if (m_enginePackage->findSubSystem("World"))
+		m_enginePackage->getSubSystem<System_World>("World")->RegisterViewer(&m_camera);
 }
 
 void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
@@ -140,7 +140,7 @@ void Light_Directional_Component::CalculateCascades()
 	float ar = size.x / size.y;
 	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
 	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
-	const float shadowSize = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
+	const float shadowSize = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
 	m_uboData.ShadowSize = shadowSize;
 
 	for (int i = 0; i < NUM_CASCADES; i++) {

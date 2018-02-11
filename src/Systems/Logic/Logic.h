@@ -20,13 +20,13 @@
 #include "Utilities\Transform.h"
 
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System_Logic : public System
 {
 public: 
 	~System_Logic();
 	System_Logic();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(EnginePackage *enginePackage);
 
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);

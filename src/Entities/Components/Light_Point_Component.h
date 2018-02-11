@@ -59,7 +59,7 @@ struct LightPointBuffer
 class System_Shadowmap;
 class System_World;
 class Light_Point_Creator;
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 {
 public:
@@ -100,10 +100,10 @@ public:
 
 protected:
 	~Light_Point_Component();
-	Light_Point_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage);
+	Light_Point_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 	GLuint m_uboID;
 	LightPointBuffer m_uboData;
-	Engine_Package *m_enginePackage;
+	EnginePackage *m_enginePackage;
 	System_Shadowmap *m_shadowMapper;
 	System_World *m_world;
 	float m_squaredRadius;
@@ -115,7 +115,7 @@ class DT_ENGINE_API Light_Point_Creator : public ComponentCreator
 {
 public:
 	Light_Point_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) {
+	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Light_Point_Component(id, pid, enginePackage);
 	}
 };

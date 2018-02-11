@@ -21,7 +21,7 @@
 
 using namespace glm;
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API VisualFX
 {
 public:
@@ -31,7 +31,7 @@ public:
 
 	~VisualFX();
 	VisualFX();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(EnginePackage *enginePackage);
 	
 
 	/*************************
@@ -48,7 +48,7 @@ private:
 	void Initialize_GausianBlur();
 
 	bool m_Initialized;
-	Engine_Package *m_enginePackage;
+	EnginePackage *m_enginePackage;
 	Shared_Asset_Primitive m_shapeQuad;
 	void* m_observer;
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;

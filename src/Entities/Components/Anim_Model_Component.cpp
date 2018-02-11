@@ -11,7 +11,7 @@ Anim_Model_Component::~Anim_Model_Component()
 	glDeleteVertexArrays(1, &m_vao_id);
 }
 
-Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, Engine_Package *enginePackage) : Geometry_Component(id, pid)
+Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
 {
 	m_animation = 0;
 	m_animTime = 0;

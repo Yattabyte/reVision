@@ -1,5 +1,5 @@
 #include "Systems\Input\Input.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "GLFW\glfw3.h"
 #include "Input.h"
 
@@ -13,7 +13,7 @@ System_Input::System_Input(const System_Input_Binding & binds) : m_binds(binds)
 {
 }
 
-void System_Input::Initialize(Engine_Package * enginePackage)
+void System_Input::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage; 

@@ -1,6 +1,6 @@
 #include "Entities\Components\Light_Spot_Component.h"
 #include "Entities\Components\Geometry_Component.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "Systems\World\World.h"
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSmessages.h"
@@ -21,7 +21,7 @@ Light_Spot_Component::~Light_Spot_Component()
 	}
 }
 
-Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, Engine_Package *enginePackage) : Lighting_Component(id, pid)
+Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
 	m_uboID = 0;
@@ -32,12 +32,12 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-	if (m_enginePackage->FindSubSystem("Shadows")) {
-		m_shadowMapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+	if (m_enginePackage->findSubSystem("Shadows")) {
+		m_shadowMapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 	}
-	if (m_enginePackage->FindSubSystem("World")) {
-		m_world = m_enginePackage->GetSubSystem<System_World>("World");
+	if (m_enginePackage->findSubSystem("World")) {
+		m_world = m_enginePackage->getSubSystem<System_World>("World");
 		m_world->RegisterViewer(&m_camera);
 	}
 }
@@ -182,7 +182,7 @@ void Light_Spot_Component::Update()
 	m_uboData.mMatrix = (trans * rot) * scl;
 
 	// Calculate perspective matrix
-	auto shadowmapper = m_enginePackage->GetSubSystem<System_Shadowmap>("Shadows");
+	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 	const vec2 &size = shadowmapper->GetSize(SHADOW_REGULAR); 
 	m_uboData.ShadowSize = size.x;
 	m_camera.setDimensions(size);

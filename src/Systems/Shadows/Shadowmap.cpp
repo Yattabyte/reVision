@@ -1,6 +1,6 @@
 #include "Systems\Shadows\Shadowmap.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include <minmax.h>
 
 class SM_ShadowSizeRegularChangeCallback : public Callback_Container {
@@ -28,8 +28,8 @@ private:
 System_Shadowmap::~System_Shadowmap()
 {
 	if (m_Initialized) {
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
-		m_enginePackage->RemoveCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
+		m_enginePackage->removeCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
 		delete m_RegularChangeCallback;
 		delete m_largeChangeCallback;
 
@@ -52,16 +52,16 @@ System_Shadowmap::System_Shadowmap()
 	}	
 }
 
-void System_Shadowmap::Initialize(Engine_Package * enginePackage)
+void System_Shadowmap::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		m_RegularChangeCallback = new SM_ShadowSizeRegularChangeCallback(this);
 		m_largeChangeCallback = new SM_ShadowSizeLargeChangeCallback(this);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
-		m_enginePackage->AddCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
-		float size_regular = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
-		float size_large = m_enginePackage->GetPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
+		m_enginePackage->addCallback(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
+		float size_regular = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
+		float size_large = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_LARGE);
 		m_size[SHADOW_REGULAR] = vec2(max(1.0f, size_regular));
 		m_size[SHADOW_LARGE] = vec2(max(1.0f, size_large));
 

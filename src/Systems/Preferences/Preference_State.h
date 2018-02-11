@@ -91,13 +91,13 @@ public:
 		m_preferences->saveConfig();
 	}
 	// Returns a value for a preference with the given ID
-	float GetPreference(const unsigned int &targetKey) const {
+	float getPreference(const unsigned int &targetKey) const {
 		if (m_preferences) 
 			return m_preferences->getValue(targetKey);		
 		return UNDEFINED_CVAL;
 	}
 	// Sets a value for a preference with the given ID
-	void SetPreference(const unsigned int &targetKey, const float &targetValue) {
+	void setPreference(const unsigned int &targetKey, const float &targetValue) {
 		if (m_preferences) {
 			m_preferences->setValue(targetKey, targetValue);
 			if (m_callbacks.find(targetKey) != m_callbacks.end()) 
@@ -106,13 +106,13 @@ public:
 		}
 	}
 	// Attaches a callback class which gets triggered when a preference with the given @targetkey is changed
-	void AddCallback(const unsigned int &targetKey, Callback_Container *callback) {
+	void addCallback(const unsigned int &targetKey, Callback_Container *callback) {
 		m_callbacks.insert(pair<unsigned int, vector<Callback_Container*>>(targetKey, vector<Callback_Container*>()));
 		m_callbacks[targetKey].push_back(callback);
 		callback->m_preferenceState = this;
 	}
 	// Removes the supplied callback from getting triggered when the value at @targetKey changes
-	void RemoveCallback(const unsigned int &targetKey, Callback_Container *callback) {
+	void removeCallback(const unsigned int &targetKey, Callback_Container *callback) {
 		if (m_callbacks.find(targetKey) != m_callbacks.end()) {
 			auto &callback_list = m_callbacks[targetKey];
 			callback_list.erase(std::remove_if(begin(callback_list), end(callback_list), [callback](const auto *stored_callback) {

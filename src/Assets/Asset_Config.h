@@ -15,13 +15,13 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_CONFIG ".cfg"
-#define DIRECTORY_CONFIG FileReader::GetCurrentDir() + "\\Configs\\"
+#define DIRECTORY_CONFIG File_Reader::GetCurrentDir() + "\\Configs\\"
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 #define UNDEFINED_CVAL -12345.67890f // Undefined preference
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include <map>
 #include <vector>
 

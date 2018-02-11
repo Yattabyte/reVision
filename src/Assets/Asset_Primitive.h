@@ -19,12 +19,12 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_PRIMITIVE ".obj"
-#define DIRECTORY_PRIMITIVE FileReader::GetCurrentDir() + "\\Primitives\\"
+#define DIRECTORY_PRIMITIVE File_Reader::GetCurrentDir() + "\\Primitives\\"
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <vector>

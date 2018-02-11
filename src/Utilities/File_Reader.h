@@ -1,5 +1,3 @@
-
-
 #pragma once
 #ifndef	FILEREADER
 #define	FILEREADER
@@ -18,8 +16,9 @@
 using namespace std;
 using namespace glm;
 
+
 /** Provides some basic file parsing functionality for the engine. */
-namespace FileReader {
+namespace File_Reader {
 
 	/** A utility for interacting with text driven documents. */
 	namespace DocParser {
@@ -49,8 +48,7 @@ namespace FileReader {
 		// Updates the @property token using the @input string. Returns true if it got any data from it
 		DT_ENGINE_API bool getProperty(istringstream & string_stream, Property & property, string & input = string(""));
 
-
-
+		
 		/*********************************************************************
 		*--------------------------Getter Functions--------------------------*			
 		*----Converts @string_stream into an appropriate value in @target----*

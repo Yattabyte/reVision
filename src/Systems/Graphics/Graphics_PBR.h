@@ -35,7 +35,7 @@ struct Renderer_Attribs
 	int m_ssao;
 };
 
-class Engine_Package;
+class EnginePackage;
 class Callback_Container;
 class Camera;
 class DT_ENGINE_API System_Graphics_PBR : public System
@@ -43,7 +43,7 @@ class DT_ENGINE_API System_Graphics_PBR : public System
 public: 
 	~System_Graphics_PBR();
 	System_Graphics_PBR();
-	void Initialize(Engine_Package * enginePackage);
+	void Initialize(EnginePackage * enginePackage);
 
 	void GenerateKernal();
 	void SetSSAO(const bool &ssao);

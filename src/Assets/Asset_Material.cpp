@@ -1,7 +1,7 @@
 #include "Assets\Asset_Material.h"
 #include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\ImageImporter.h"
+#include "Utilities\Image_Importer.h"
 #include "FreeImage.h"
 
 /* -----ASSET TYPE----- */
@@ -75,7 +75,7 @@ void Asset_Material::getPBRProperties(const string & filename, string & albedo, 
 				const size_t propertycount = 6;
 
 				for (int x = 0; x < propertycount; ++x) {
-					FileReader::DocParser::Property property;
+					File_Reader::DocParser::Property property;
 					std::getline(file_stream, line);
 					std::istringstream string_stream(line);
 					string_stream >> line;
@@ -106,25 +106,25 @@ void Asset_Material::getPBRProperties(const string & filename, string & albedo, 
 void fetchDefaultAsset(Shared_Asset_Material & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Material>(asset, "defaultMaterial"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Material>(asset, "defaultMaterial"))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Material>(asset, "defaultMaterial", Material_Manager::GenerateMaterialBufferID());
+	Asset_Manager::create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::generate_ID());
 	asset->materialData = new GLubyte[12] {	
 		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
 		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
 	};
 	asset->size = vec2(1);
-	Asset_Manager::AddWorkOrder(new Material_WorkOrder(asset, ""), true);
+	Asset_Manager::add_Work_Order(new Material_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded) {
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::GetMutex_Assets();
-		auto &assets_materials = (Asset_Manager::GetAssets_List(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::get_Mutex_Assets();
+		auto &assets_materials = (Asset_Manager::get_Assets_List(Asset_Material::GetAssetType()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -150,25 +150,25 @@ namespace Asset_Loader {
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::GenerateMaterialBufferID());
+		Asset_Manager::submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::generate_ID());
 	}
 
 	void load_asset(Shared_Asset_Material & user, const std::string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Material>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Material>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			fetchDefaultAsset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::GenerateMaterialBufferID());
+		Asset_Manager::submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::generate_ID());
 	}
 }
 
@@ -188,7 +188,7 @@ void Material_WorkOrder::Initialize_Order()
 
 	// Load all images
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
-		bitmaps[x] = ImageImporter::Import_Image(m_asset->textures[x]);	
+		bitmaps[x] = Image_Importer::import_Image(m_asset->textures[x]);	
 
 	// unlock
 	read_guard.unlock();
@@ -214,10 +214,10 @@ void Material_WorkOrder::Initialize_Order()
 		}
 
 	// Fetch and format the raw data
-	textureData[0] = ImageImporter::Parse_Image_4channel(bitmaps[0], material_dimensions);
-	textureData[1] = ImageImporter::Parse_Image_3channel(bitmaps[1], material_dimensions);
+	textureData[0] = Image_Importer::parse_Image_4_channel(bitmaps[0], material_dimensions);
+	textureData[1] = Image_Importer::parse_Image_3_channel(bitmaps[1], material_dimensions);
 	for (int x = 2; x < MAX_PHYSICAL_IMAGES; ++x)
-		textureData[x] = ImageImporter::Parse_Image_1channel(bitmaps[x], material_dimensions);
+		textureData[x] = Image_Importer::parse_Image_1_channel(bitmaps[x], material_dimensions);
 
 	// Zero initialize the material data to compensate for any holes / missing images
 	const unsigned int size_mult =	material_dimensions.x * material_dimensions.y;
@@ -304,7 +304,7 @@ void Material_WorkOrder::Finalize_Order()
 		glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
 		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
-		Material_Manager::GenerateHandle(mat_spot, gl_array_ID);
+		Material_Manager::generate_Handle(mat_spot, gl_array_ID);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 		
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

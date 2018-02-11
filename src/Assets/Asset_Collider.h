@@ -13,11 +13,11 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define DIRECTORY_COLLIDER FileReader::GetCurrentDir() + "\\Models\\"
+#define DIRECTORY_COLLIDER File_Reader::GetCurrentDir() + "\\Models\\"
 #define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include <btBulletDynamicsCommon.h>
 
 class Asset_Collider;

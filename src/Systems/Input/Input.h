@@ -20,7 +20,7 @@
 #include "Systems\System_Interface.h"
 #include "Systems\Input\Input_Binding.h"
 
-class Engine_Package;
+class EnginePackage;
 class GLFWwindow;
 
 class DT_ENGINE_API System_Input : public System
@@ -28,7 +28,7 @@ class DT_ENGINE_API System_Input : public System
 public: 
 	~System_Input();
 	System_Input(const System_Input_Binding &bind_interface = System_Input_Binding());
-	void Initialize(Engine_Package * enginePackage);
+	void Initialize(EnginePackage * enginePackage);
 
 	// Check the status of peripheral input devices
 	void Update(const float &deltaTime);

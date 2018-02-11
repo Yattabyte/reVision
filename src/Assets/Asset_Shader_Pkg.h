@@ -15,11 +15,11 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_PACKAGE ".pkg"
-#define DIRECTORY_SHADER_PKG FileReader::GetCurrentDir() + "\\Shaders\\"
+#define DIRECTORY_SHADER_PKG File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
 #include <string>

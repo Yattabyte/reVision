@@ -1,6 +1,6 @@
 #include "Assets\Asset_Primitive.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\ModelImporter.h"
+#include "Utilities\Model_Importer.h"
 #include "ASSIMP\Importer.hpp"
 #include "ASSIMP\postprocess.h"
 #include "ASSIMP\scene.h"
@@ -83,33 +83,33 @@ size_t Asset_Primitive::GetSize()
 void fetchDefaultAsset(Shared_Asset_Primitive & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(asset, "defaultPrimitive"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Primitive>(asset, "defaultPrimitive"))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Primitive>(asset, "defaultPrimitive");
+	Asset_Manager::create_New_Asset<Asset_Primitive>(asset, "defaultPrimitive");
 	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	Asset_Manager::AddWorkOrder(new Primitive_WorkOrder(asset, ""), true);
+	Asset_Manager::add_Work_Order(new Primitive_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Primitive>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Primitive>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			fetchDefaultAsset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::submit_New_Asset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
@@ -117,7 +117,7 @@ void Primitive_WorkOrder::Initialize_Order()
 {
 	vector<vec3> vertices;
 	vector<vec2> uv_coords;
-	if (!ModelImporter::Import_Model(m_filename, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
+	if (!Model_Importer::import_Model(m_filename, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
 		fetchDefaultAsset(m_asset);
 		return;
 	}

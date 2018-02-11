@@ -1,6 +1,6 @@
 #include "Asset_Collider.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\ModelImporter.h"
+#include "Utilities\Model_Importer.h"
 #include "assimp\postprocess.h"
 
 /* -----ASSET TYPE----- */
@@ -27,32 +27,32 @@ int Asset_Collider::GetAssetType()
 void fetchDefaultAsset(Shared_Asset_Collider & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Collider>(asset, "defaultCollider"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Collider>(asset, "defaultCollider"))
 		return;
 	
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Collider>(asset, "defaultCollider");
+	Asset_Manager::create_New_Asset<Asset_Collider>(asset, "defaultCollider");
 	asset->shape = new btBoxShape(btVector3(1, 1, 1));
-	Asset_Manager::AddWorkOrder(new Collider_WorkOrder(asset, ""), true);
+	Asset_Manager::add_Work_Order(new Collider_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Collider>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Collider>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
-		if (!FileReader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			fetchDefaultAsset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::submit_New_Asset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
@@ -60,7 +60,7 @@ void Collider_WorkOrder::Initialize_Order()
 {
 	// Attempt to create the asset
 	vector<btScalar> points;
-	if (!ModelImporter::Import_Model(m_filename, aiProcess_Triangulate, points)) {
+	if (!Model_Importer::import_Model(m_filename, aiProcess_Triangulate, points)) {
 		fetchDefaultAsset(m_asset);
 		return;
 	}

@@ -24,12 +24,12 @@
 using namespace std;
 
 class ECSmessanger;
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API Component_Factory {
 public:
 	~Component_Factory();
 	Component_Factory();
-	void Initialize(Engine_Package *enginePackage, ECSmessanger *ecsMessange);
+	void Initialize(EnginePackage *enginePackage, ECSmessanger *ecsMessange);
 	// Creates a component of the supplied type, assigns it the entity parent ID supplied, and returns the handle to this component
 	ECShandle CreateComponent(char *type, const ECShandle &parent_ID);
 	// Delete the component that matches the supplied ID
@@ -50,7 +50,7 @@ private:
 	map<char*, ComponentCreator*, cmp_str> m_creatorMap;
 	shared_mutex m_dataLock;
 	ECSmessanger *m_ECSmessanger;
-	Engine_Package *m_enginePackage;
+	EnginePackage *m_enginePackage;
 };
 
 #endif // COMPONENT_FACTORY

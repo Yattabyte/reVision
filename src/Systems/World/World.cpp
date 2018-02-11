@@ -1,6 +1,6 @@
 #include "Systems\World\World.h"
 #include "Systems\World\Visibility_Token.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 #include "Systems\World\ECSmessages.h"
 #include "Utilities\Transform.h"
 #include <algorithm>
@@ -16,7 +16,7 @@ System_World::System_World() :
 	
 }
 
-void System_World::Initialize(Engine_Package * enginePackage)
+void System_World::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;

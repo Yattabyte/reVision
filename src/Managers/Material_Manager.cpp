@@ -1,7 +1,6 @@
 #include "Managers\Material_Manager.h"
 
 
-
 Material_Manager::Material_Manager()
 {
 	m_Initialized = false;
@@ -38,7 +37,7 @@ void Material_Manager::_shutdown()
 	}
 }
 
-GLuint Material_Manager::GenerateMaterialBufferID()
+GLuint Material_Manager::generate_ID()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
@@ -53,7 +52,7 @@ GLuint Material_Manager::GenerateMaterialBufferID()
 	return arraySpot;
 }
 
-void Material_Manager::GenerateHandle(const GLuint &materialBufferID, const GLuint &glTextureID)
+void Material_Manager::generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID)
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
@@ -66,7 +65,7 @@ void Material_Manager::GenerateHandle(const GLuint &materialBufferID, const GLui
 	manager.m_WorkOrders.push_back(handle);
 }
 
-void Material_Manager::ParseWorkOrders()
+void Material_Manager::parse_Work_Orders()
 {
 	auto &manager = Get();
 

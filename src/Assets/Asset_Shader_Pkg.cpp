@@ -37,24 +37,24 @@ string Asset_Shader_Pkg::getPackageText() const
 void fetchDefaultAsset(Shared_Asset_Shader_Pkg & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Shader_Pkg>(asset, ""))
+	if (Asset_Manager::query_Existing_Asset<Asset_Shader_Pkg>(asset, ""))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Shader_Pkg>(asset, "");
-	Asset_Manager::AddWorkOrder(new Shader_Pkg_WorkOrder(asset, ""), true);
+	Asset_Manager::create_New_Asset<Asset_Shader_Pkg>(asset, "");
+	Asset_Manager::add_Work_Order(new Shader_Pkg_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Shader_Pkg & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Shader_Pkg>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Shader_Pkg>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
-		bool found = FileReader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
+		bool found = File_Reader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
 		if (!found) {
 			MSG::Error(FILE_MISSING, fullDirectory + EXT_PACKAGE);
 			fetchDefaultAsset(user);
@@ -62,7 +62,7 @@ namespace Asset_Loader {
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Shader_Pkg, Shader_Pkg_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::submit_New_Asset<Asset_Shader_Pkg, Shader_Pkg_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

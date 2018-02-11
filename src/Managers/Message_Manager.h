@@ -1,13 +1,3 @@
-/*
-	Message Manager
-
-	- Manages engine related error message and statement outputs
-	- Has handy enum and string lists with definitions
-	- Can print raw text or a specific error
-	- By default, prints via std::cout
-	- Holds a log of text in case they need to be access by any external UI
-*/
-
 #pragma once
 #ifndef MESSAGE_MANAGER
 #define MESSAGE_MANAGER
@@ -21,13 +11,25 @@
 
 using namespace std;
 
+
+/** Provides some message reporting functionality for the engine. 
+ * Is a static namespace class for now.
+ * Holds a log of text in case they need to be access by any external UI
+ * @todo Make into an object passed into the engine and stored in the package. Maybe a system even.
+ */
 namespace MSG {
-	// Prints a raw string @input to the message log
-	DT_ENGINE_API void Statement(const string &input);
-	// Prints a formatted message using the error @error_number
-	DT_ENGINE_API void Error(const int &error_number, const string &input, const std::string &additional_input = "");
+	/** Prints a raw string into the message log.
+	 * @param	input	string message to print */
+	DT_ENGINE_API void Statement(const string & input);
+
+	/** Prints a formatted message based around the supplied error type.
+	 * @param	error_number	the error type to format this error message around
+	 * @param	input	the error message to be formatted
+	 * @param	additional_input	an optional additional message to supplement the original */
+	DT_ENGINE_API void Error(const int & error_number, const string & input, const std::string & additional_input = "");
 }
 
+// Enumerations used for reporting error types
 enum Error_Enum
 {
 	FILE_MISSING,
@@ -44,6 +46,7 @@ enum Error_Enum
 	ERROR_COUNT,
 };
 
+// Stringified versions of the previous error enumerations
 static std::string Error_String[ERROR_COUNT] =
 {
 	"Error ("+to_string(FILE_MISSING)+"): The file % does not exist! ",

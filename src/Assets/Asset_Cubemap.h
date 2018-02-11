@@ -13,12 +13,12 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define EXT_CUBEMAP ".png"
-#define DIRECTORY_CUBEMAP FileReader::GetCurrentDir() + "\\Textures\\Cubemaps\\"
+#define DIRECTORY_CUBEMAP File_Reader::GetCurrentDir() + "\\Textures\\Cubemaps\\"
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

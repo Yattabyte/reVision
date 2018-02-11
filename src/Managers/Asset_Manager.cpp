@@ -1,7 +1,6 @@
 #include "Managers\Asset_Manager.h"
 
 
-
 Asset_Manager::Asset_Manager()
 {
 }
@@ -21,7 +20,7 @@ void Asset_Manager::_shutdown()
 {
 }
 
-void Asset_Manager::AddWorkOrder(Work_Order * order, const bool & finalizeOnly) {
+void Asset_Manager::add_Work_Order(Work_Order * order, const bool & finalizeOnly) {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
 	if (!finalizeOnly)
@@ -30,7 +29,7 @@ void Asset_Manager::AddWorkOrder(Work_Order * order, const bool & finalizeOnly) 
 		manager.m_WorkOrders_to_finalize.push_back(order);
 }
 
-void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)
+void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> & worker)
 {
 	bool stay_alive = true;
 	while (stay_alive) {		
@@ -56,7 +55,7 @@ void Asset_Manager::_threaded_func(shared_ptr<Assets_Worker> &worker)
 	}
 }
 
-void Asset_Manager::Finalize_Orders()
+void Asset_Manager::finalize_Orders()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> manager_writeGuard(manager.m_Mutex_Workorders);
@@ -71,17 +70,17 @@ void Asset_Manager::Finalize_Orders()
 	}
 }
 
-shared_mutex & Asset_Manager::GetMutex_Assets() 
+shared_mutex & Asset_Manager::get_Mutex_Assets()
 { 
 	return Get().m_Mutex_Assets; 
 }
 
-map<int, vector<Shared_Asset>>& Asset_Manager::GetAssets_Map()
+map<int, vector<Shared_Asset>> & Asset_Manager::get_Assets_Map()
 {
 	return Get().m_AssetMap;
 }
 
-vector<Shared_Asset>& Asset_Manager::GetAssets_List(const int & asset_type)
+vector<Shared_Asset> & Asset_Manager::get_Assets_List(const int & asset_type)
 {
 	// Returns the vector of assets in the asset map at the spot of asset_type.
 	// First tries to insert a vector in the map with the key of asset_type.
@@ -92,14 +91,14 @@ vector<Shared_Asset>& Asset_Manager::GetAssets_List(const int & asset_type)
 	return manager.m_AssetMap[asset_type];
 }
 
-void Asset_Manager::Queue_Notification(const vector<Asset_Observer*>& observers)
+void Asset_Manager::queue_Notification(const vector<Asset_Observer*> & observers)
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
 	manager.m_observers.insert(end(manager.m_observers), begin(observers), end(observers)); // dump new list of observers onto end of list
 }
 
-void Asset_Manager::Noitfy_Observers()
+void Asset_Manager::notify_Observers()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);

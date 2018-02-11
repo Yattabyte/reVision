@@ -83,31 +83,31 @@ int findCFGProperty(const string & s, const vector<string> & m_strings)
 void fetchDefaultAsset(Shared_Asset_Config & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Config>(asset, "defaultConfig"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Config>(asset, "defaultConfig"))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Config>(asset, "defaultConfig", vector<string>());
-	Asset_Manager::AddWorkOrder(new Config_WorkOrder(asset, ""), true);
+	Asset_Manager::create_New_Asset<Asset_Config>(asset, "defaultConfig", vector<string>());
+	Asset_Manager::add_Work_Order(new Config_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Config>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Config>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
-		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			fetchDefaultAsset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
+		Asset_Manager::submit_New_Asset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
 	}
 }
 

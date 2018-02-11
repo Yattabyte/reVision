@@ -1,8 +1,9 @@
-#include "Utilities\ImageImporter.h"
+#include "Utilities\Image_Importer.h"
 #include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
-FIBITMAP * ImageImporter::Import_Image(const std::string & fileName)
+
+FIBITMAP * Image_Importer::import_Image(const std::string & fileName)
 {
 	const char * file = fileName.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
@@ -34,7 +35,7 @@ FIBITMAP * ImageImporter::Import_Image(const std::string & fileName)
 	return nullptr;
 }
 
-GLubyte * ImageImporter::Parse_Image_1channel(FIBITMAP * bitmap, const ivec2 & dimensions)
+GLubyte * Image_Importer::parse_Image_1_channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 1];
@@ -53,7 +54,7 @@ GLubyte * ImageImporter::Parse_Image_1channel(FIBITMAP * bitmap, const ivec2 & d
 	return textureData;
 }
 
-GLubyte * ImageImporter::Parse_Image_2channel(FIBITMAP * bitmap, const ivec2 & dimensions)
+GLubyte * Image_Importer::parse_Image_2_channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 2];
@@ -74,7 +75,7 @@ GLubyte * ImageImporter::Parse_Image_2channel(FIBITMAP * bitmap, const ivec2 & d
 	return textureData;
 }
 
-GLubyte * ImageImporter::Parse_Image_3channel(FIBITMAP * bitmap, const ivec2 & dimensions)
+GLubyte * Image_Importer::parse_Image_3_channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 3];
@@ -97,7 +98,7 @@ GLubyte * ImageImporter::Parse_Image_3channel(FIBITMAP * bitmap, const ivec2 & d
 	return textureData;
 }
 
-GLubyte * ImageImporter::Parse_Image_4channel(FIBITMAP * bitmap, const ivec2 & dimensions)
+GLubyte * Image_Importer::parse_Image_4_channel(FIBITMAP * bitmap, const ivec2 & dimensions)
 {
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 	GLubyte* textureData = new GLubyte[size_mult * 4];

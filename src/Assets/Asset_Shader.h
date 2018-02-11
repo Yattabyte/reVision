@@ -18,11 +18,11 @@
 #define EXT_SHADER_VERTEX ".vsh"
 #define EXT_SHADER_FRAGMENT ".fsh"
 #define EXT_SHADER_GEOMETRY ".gsh"
-#define DIRECTORY_SHADER FileReader::GetCurrentDir() + "\\Shaders\\"
+#define DIRECTORY_SHADER File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
 #include <string>

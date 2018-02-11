@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(89) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(90) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -19,11 +19,12 @@
 #include <vector>
 
 using namespace std;
-class Engine_Package;
+class EnginePackage;
 class Callback_Container;
 class GLFWwindow;
 class Camera;
 class System;
+
 
 /**
  * The main game engine object. Encapsulates the entire engine state.
@@ -41,28 +42,28 @@ public:
 	/** Initializes the engine.
 	 * @param	systems	vector of all systems to create this engine with
 	 * @return	true if successfully initialized */
-	bool Initialize(const vector<pair<const char*, System*>> & systems);
+	bool initialize(const vector<pair<const char*, System*>> & systems);
 
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
-	void Shutdown();
+	void shutdown();
 
 	/** Ticks the engine's overall simulation by a frame. */
-	void Update();
+	void update();
 
 	/** Checks if the engine wants to shut down.
 	 * @return	true if engine should shut down */
-	bool ShouldClose();
+	bool shouldClose();
 
 	/** Returns the main camera belonging to this engine's viewport.
 	 * @return	a pointer to the main camera */
-	Camera * GetCamera();	
+	Camera * getCamera();	
 	
 
 private:
 	// Members
 	bool m_Initialized;	
 	float m_lastTime;	
-	Engine_Package *m_package;
+	EnginePackage *m_package;
 	thread *m_UpdaterThread;
 	Callback_Container *m_drawDistCallback;
 	void Updater_Thread();
@@ -97,34 +98,89 @@ private:
 #define BUILD_HOUR					(__TIME__[0] - '0') * 10 + __TIME__[1] - '0'
 
 /*! \mainpage Project Delta
+ * 
+ *  \section info_sec Information
+ * 
+ *  This project is very much a work in progress.
+ * 
+ *  \section standards_sec Standards/Conventions used
+ *  - All classes/members are to be camel cased unless specified
+ *  - All member attributes shall be prefixed with 'm_' followed by the rest in camel case, leading with a lowercase character
+ *		- vec3 m_currentPosition;
+ *  - All private member methods or methods declared/implemented outside of headers will be lower case and separated by underscores '_'
+ *		- void calculate_position_offset( ... );
  *
- * \section info_sec Information
+ *  \subsection nonstatic_classes Non-Static classes
+ *  - Class names are camel cased with a leading upper case character
+ * 		- FooBar
+ * 		- Entity
+ * 		- GeometryBuffer
+ *  - **Exception**: Identifying class polymorphism/implementation through use of an underscore '_'
+ * 		- The Left most term should include the newest implementation in the hierarchy
+ * 		- Armor_Item
+ * 		- Point_Light_Component
+ * 		- System_Interface
+ *  - Member functions are camel cased with a leading lower case character
+ *		- void createObject ( ... );
  *
- * This project is very much a work in progress.
  *
- * \section standards_sec Standards used
+ * \subsection static_classes Static classes / Singletons
+ * - Class names are camel cased with a leading upper case character, and has underscores '_' between every word
+ *		- Model_Importer
+ *		- Asset_Manager
+ * - Member functions are camel cased with a leading lower case character, and has underscores '_' between every word
+ *		- void import_Model ( ... );
+ *		- void load_Asset ( ... );
  *
- * - Member attributes prefixed with 'm_' followed by rest in camel case
- *	 - Example: vec3 m_currentPosition;
- * - All public member functions are camel cased with first character lower case
- *   - Example: void createObject( ... );
- * - Static Functions are camel cased with first character upper case, and underscores between words
- *   - Example: static void Import_Script( ... );
+ * \subsection namespaces Namespaces
+ * - Namespaces methods are camel cased with a leading upper case character
+ *		- bool FileExistsOnDisk ( ... );
  *
- * \section chores_sec Chores:
+ *  \section dependencies_sec External Dependencies
+ * 
+ *  - ASSIMP - Model importer: http://assimp.sourceforge.net/
+ *  - Bullet - Physics simulator: http://bulletphysics.org/wordpress/
+ *  - FreeImage - Texture importer: http://freeimage.sourceforge.net/
+ *  - GLEW - OpenGl extension wrangler: http://glew.sourceforge.net/
+ *  - GLFW - OpenGL windowing framework: http://www.glfw.org/
+ *  - GLM - OpenGL mathematics library: https://glm.g-truc.net/0.9.8/index.html
+ */
+
+/*! \page Assets
  *
- * \todo
- * \bug
- * \reminder
+ */
+
+ /*! \page Entities
  *
- * \section dependencies_sec External Dependencies
+ */
+
+ /*! \page Managers
+ * \section mgr_sec Engine Managers
+ * This section contains Singleton classes.\n
+ * Although singletons are frowned upon in OOP, I couldn't think of any scenario in which these \n
+ * few systems would ever benefit from being instantiated more than once.\n
+ * They include:
+ *		- Asset_Manager
+ *		- Material_Manager
+ *		- Message_Manager
+ */
+
+ /*! \page Systems
  *
- * - ASSIMP - Model importer: http://assimp.sourceforge.net/
- * - Bullet - Physics simulator: http://bulletphysics.org/wordpress/
- * - FreeImage - Texture importer: http://freeimage.sourceforge.net/
- * - GLEW - OpenGl extension wrangler: http://glew.sourceforge.net/
- * - GLFW - OpenGL windowing framework: http://www.glfw.org/
- * - GLM - OpenGL mathematics library: https://glm.g-truc.net/0.9.8/index.html
-*/
+ */
+
+ /*! \page Utilities
+ * \section util_sec Engine Utilities
+ * This section contains some helper tools and objects that don't fit neately into any other category.\n
+ * The rules for this section are pretty slack, however it shouldn't include 1-time use classes that \n
+ * could just as easily be nested and void documenting.
+ * They include:
+ *		- EnginePackage
+ *		- File_Reader
+ *		- Frustum
+ *		- Image_Importer
+ *		- Model_Importer
+ *		- Transform
+ */
 
 #endif // DT_ENGINE

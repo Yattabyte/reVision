@@ -134,27 +134,27 @@ void Asset_Shader::setLocationMatArray(const GLuint & i, const float * o, const 
 void fetchDefaultAsset(Shared_Asset_Shader & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Shader>(asset, "defaultShader"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Shader>(asset, "defaultShader"))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Shader>(asset, "defaultShader");
+	Asset_Manager::create_New_Asset<Asset_Shader>(asset, "defaultShader");
 	asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
 	asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	Asset_Manager::AddWorkOrder(new Shader_WorkOrder(asset, ""), true);
+	Asset_Manager::add_Work_Order(new Shader_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Shader>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Shader>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
-		bool found_vertex = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
-		bool found_fragement = FileReader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
+		bool found_vertex = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
+		bool found_fragement = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
 			MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
 		if (!found_fragement)
@@ -165,7 +165,7 @@ namespace Asset_Loader {
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::submit_New_Asset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

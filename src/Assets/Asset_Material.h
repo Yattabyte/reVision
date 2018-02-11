@@ -27,12 +27,12 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 #define EXT_MATERIAL ".mat"
-#define ABS_DIRECTORY_MATERIAL(filename) FileReader::GetCurrentDir() + "\\Materials\\" + filename + EXT_MATERIAL
-#define ABS_DIRECTORY_MAT_TEX(filename) FileReader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
+#define ABS_DIRECTORY_MATERIAL(filename) File_Reader::GetCurrentDir() + "\\Materials\\" + filename + EXT_MATERIAL
+#define ABS_DIRECTORY_MAT_TEX(filename) File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
 
 #include "Assets\Asset.h"
 #include "Managers\Asset_Manager.h"
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

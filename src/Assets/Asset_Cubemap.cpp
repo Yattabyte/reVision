@@ -52,11 +52,11 @@ void Asset_Cubemap::Bind(const GLuint & texture_unit)
 void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::QueryExistingAsset<Asset_Cubemap>(asset, "defaultCubemap"))
+	if (Asset_Manager::query_Existing_Asset<Asset_Cubemap>(asset, "defaultCubemap"))
 		return;
 
 	// Create hardcoded alternative
-	Asset_Manager::CreateNewAsset<Asset_Cubemap>(asset, "defaultCubemap");
+	Asset_Manager::create_New_Asset<Asset_Cubemap>(asset, "defaultCubemap");
 	asset->pixel_data[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
@@ -64,26 +64,26 @@ void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 	asset->pixel_data[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
 	asset->pixel_data[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
 	asset->size = vec2(1);
-	Asset_Manager::AddWorkOrder(new Cubemap_WorkOrder(asset, ""), true);
+	Asset_Manager::add_Work_Order(new Cubemap_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::QueryExistingAsset<Asset_Cubemap>(user, filename))
+		if (Asset_Manager::query_Existing_Asset<Asset_Cubemap>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
-		if (!FileReader::FileExistsOnDisk(fullDirectory)) {
+		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
 			fetchDefaultAsset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::CreateNewAsset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::submit_New_Asset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 

@@ -21,13 +21,13 @@
 #include "Systems\World\Entity_Factory.h"
 #include "Systems\World\Component_Factory.h"
 
-class Engine_Package;
+class EnginePackage;
 class DT_ENGINE_API System_World : public System
 {
 public: 
 	~System_World();
 	System_World();
-	void Initialize(Engine_Package *enginePackage);
+	void Initialize(EnginePackage *enginePackage);
 
 	void Update(const float &deltaTime);
 	void Update_Threaded(const float &deltaTime);

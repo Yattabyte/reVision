@@ -1,5 +1,5 @@
 #include "Systems\Graphics\VisualFX.h"
-#include "Utilities\Engine_Package.h"
+#include "Utilities\EnginePackage.h"
 
 class Primitive_Observer : Asset_Observer
 {
@@ -29,7 +29,7 @@ VisualFX::VisualFX()
 	m_fbo_GB = 0;
 }
 
-void VisualFX::Initialize(Engine_Package * enginePackage)
+void VisualFX::Initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;

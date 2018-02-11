@@ -15,7 +15,7 @@ Component_Factory::Component_Factory()
 	m_Initialized = false;
 }
 
-void Component_Factory::Initialize(Engine_Package *enginePackage, ECSmessanger *ecsMessanger)
+void Component_Factory::Initialize(EnginePackage *enginePackage, ECSmessanger *ecsMessanger)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;

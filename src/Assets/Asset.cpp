@@ -44,7 +44,7 @@ void Asset::Finalize()
 		write_guard.unlock();
 		write_guard.release();
 		shared_lock<shared_mutex> read_guard(m_mutex);
-		Asset_Manager::Queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
+		Asset_Manager::queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
 	}
 }
 
@@ -56,7 +56,7 @@ void Asset::AddObserver(Asset_Observer * observer)
 	write_guard.release();
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	if (m_finalized) // If we finalized already, new observer needs to know this is ready to go
-		Asset_Manager::Queue_Notification(m_observers);
+		Asset_Manager::queue_Notification(m_observers);
 }
 
 void Asset::RemoveObserver(Asset_Observer * observer)

@@ -1,22 +1,3 @@
-/*
-	Material Manager
-
-	- Manages the creation and storage of materials, and to a lesser degree their destruction
-	- Supports bindless textures
-	- How this works:
-		- This stores an array of GLuint64 bindless texture handles
-		- That array is stored as a shader storage buffer object (SSBO)
-		- Geometry requests a spot in the material buffer array:
-			- this provides an int index
-			- geometry stores it alongside vertices (MUST NOT be interpolated across face)
-		- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
-			- get GLuint64 from ssbo's array using index
-			- transform into sampler
-	- Why this is used:
-		- Texture binding is slow, this circumvents it
-		- Many separate materials PER model
-*/
-
 #pragma once
 #ifndef MATERIAL_MANAGER
 #define MATERIAL_MANAGER
@@ -35,30 +16,47 @@
 
 using namespace std; 
 
-struct Material_Buffer
-{
-	Material_Buffer() {
-		ZERO_MEM(MaterialMaps);
-	}
-	GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
-};
 
-class DT_ENGINE_API Material_Manager {
+/** Manages the creation and storage of materials, and to a lesser degree their destruction. * 
+ * - How this works:
+ *		- This stores an array of GLuint64 bindless texture handles
+ *		- That array is stored as a shader storage buffer object (SSBO)
+ *		- Pieces of geometry requests a spot in the material buffer array:
+ *			- this provides an int index
+ *			- geometry stores it alongside vertices (MUST NOT be interpolated across face)
+ *		- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
+ *			- get GLuint64 from ssbo's array using index
+ *			- transform into sampler
+ * - Uses bindless textures to circumvent slow texture binding */
+class DT_ENGINE_API Material_Manager 
+{
 public:
 	static Material_Manager &Get() {
 		static Material_Manager instance;
 		return instance;
 	}
 	// Start up and initialize the material manager
-	static void Startup() { (Get())._startup(); }
+	static void startup() { (Get())._startup(); }
 	// Shut down and flush out the material manager
-	static void Shutdown() { (Get())._shutdown(); }
+	static void shutdown() { (Get())._shutdown(); }
 	// Generates a material ID
-	static GLuint GenerateMaterialBufferID();
-	static void GenerateHandle(const GLuint &materialBufferID, const GLuint &glTextureID);
-	static void ParseWorkOrders();
+	static GLuint generate_ID();
+	static void generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID);
+	static void parse_Work_Orders();
+
 
 private:
+	/** Nested Material Buffer
+	* @brief is kind of pointless, but this can be made much better
+	* @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
+	*/
+	static struct Material_Buffer
+	{
+		Material_Buffer() {
+			ZERO_MEM(MaterialMaps);
+		}
+		GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
+	};
 	~Material_Manager() {};
 	Material_Manager();
 	Material_Manager(Material_Manager const&) = delete;

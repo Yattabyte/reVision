@@ -1,14 +1,15 @@
-#include "Utilities\FileReader.h"
+#include "Utilities\File_Reader.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\ModelImporter.h"
+#include "Utilities\Model_Importer.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
 #include "assimp\scene.h"
 
-int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlags, vector<btScalar> & points)
+
+int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFlags, vector<btScalar> & points)
 {
 	// Check if the file exists
-	if (!FileReader::FileExistsOnDisk(fulldirectory)) {
+	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
 		MSG::Error(FILE_MISSING, fulldirectory);
 		return 0;
 	}
@@ -36,10 +37,10 @@ int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlag
 	return 1;
 }
 
-int ModelImporter::Import_Model(const string & fulldirectory, unsigned int pFlags, vector<vec3> & vertices, vector<vec2> & uv_coords)
+int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFlags, vector<vec3> & vertices, vector<vec2> & uv_coords)
 {
 	// Check if the file exists
-	if (!FileReader::FileExistsOnDisk(fulldirectory)) {
+	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
 		MSG::Error(FILE_MISSING, fulldirectory);
 		return 0;
 	}
