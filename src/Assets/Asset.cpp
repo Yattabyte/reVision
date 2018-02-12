@@ -5,6 +5,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE -1
 
+
 Asset::~Asset()
 {
 }
@@ -64,13 +65,4 @@ void Asset::RemoveObserver(Asset_Observer * observer)
 	m_observers.erase(std::remove_if(begin(m_observers), end(m_observers), [observer](const auto *element) {
 		return (element == observer);
 	}), end(m_observers));
-}
-
-Asset_Observer::Asset_Observer(Asset * asset)
-{
-	asset->AddObserver(this);
-}
-
-Asset_Observer::~Asset_Observer()
-{	
 }

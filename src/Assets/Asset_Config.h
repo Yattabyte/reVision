@@ -1,11 +1,3 @@
-/*
-	Asset_Config
-	
-	- Stores and retrieves configuration values / preferences
-	- They are mapped between an integer key and a float value
-	- For convienience, the keys are defined at the bottom of this document as ENUMS and strings
-*/
-
 #pragma once
 #ifndef	ASSET_CONFIG
 #define	ASSET_CONFIG
@@ -27,52 +19,68 @@
 
 class Asset_Config;
 typedef shared_ptr<Asset_Config> Shared_Asset_Config;
+
+
+/**
+ * A registry for configuration name-value pairs.
+ **/
 class DT_ENGINE_API Asset_Config : public Asset
 {
 public: 
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Config. */
 	~Asset_Config();
-	Asset_Config(const string & filename, const vector<string> &strings);
+
+	/** Construct the config with a particular set of variable names. */
+	Asset_Config(const string & filename, const vector<string> & strings);
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
+	
+
+	// Methods
+	/** Assigns the specified value to the specified key.
+	 * @param	cfg_key	the key to apply this new value to
+	 * @param	cfg_value	the new value to give to this key */
+	void setValue(const unsigned int & cfg_key, const float & cfg_value);
+
+	/** Retrieves the value assigned to the supplied key.
+	 * @param	cfg_key	the key in which to fetch the value from
+	 * @return	float	the value assigned to supplied key
+	 * @note	returns UNDEFINED_CVAL if the supplied key doesn't exist. */
+	float getValue(const unsigned int & cfg_key);
+
+	/** Writes the configuration file back to disk within the \\Config\\ folder. */
+	void saveConfig();
 
 
-	/****************
-	----Variables----
-	****************/
-
+	// Attributes
 	map<unsigned int, float> configuration;
 	vector<string> m_strings;
-
-
-	/******************************
-	----Configuration Functions----
-	******************************/
-
-	// Saves the value of @cfg_value to the spot of @cfg_key in our configuration map
-	void setValue(const unsigned int & cfg_key, const float & cfg_value);
-	// Gets the value in our configuration map at the spot of @cfg_key
-	// Returns UNDEFINED_CVAL when @cfg_key out of bounds (doesn't exist)
-	float getValue(const unsigned int & cfg_key);
-	// Saves our configuration map to disk within the \\Config\\ folder
-	void saveConfig();
 }; 
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
-	// Attempts to create an asset from disk or share one if it already exists
+	/** Attempts to create an asset from disk or share one if it already exists. */
 	DT_ENGINE_API void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Configuration Assets.
+ **/
 class Config_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Config work order. */
 	Config_WorkOrder(Shared_Asset_Config & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Config_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Attributes
 	string m_filename;
 	Shared_Asset_Config m_asset;
 };

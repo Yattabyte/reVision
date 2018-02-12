@@ -38,7 +38,7 @@ using namespace std;
  *		- Is a singleton, shares its data across the entire application with ease.
  *		- Can store and retrieve assets from different threads.
  *		- Supports multithreading
- */
+ **/
 class DT_ENGINE_API Asset_Manager {
 public:
 	// Methods
@@ -150,7 +150,7 @@ private:
 	/** Nested Asset Worker
 	 * @brief is kind of pointless, but this can be made much better
 	 * @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
-	 */
+	 **/
 	static class Assets_Worker
 	{
 	public:

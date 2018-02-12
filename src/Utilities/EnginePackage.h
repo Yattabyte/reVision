@@ -22,7 +22,7 @@ class System;
 /** 
  * Holds the engine state in a manner that can be shared among the entire program.
  * Useful for sharing systems, configurations, and preferences all throughout.
- */
+ **/
 class DT_ENGINE_API EnginePackage
 {
 public:

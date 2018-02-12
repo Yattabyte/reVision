@@ -12,11 +12,12 @@
 using namespace std;
 
 
-/** Provides some message reporting functionality for the engine. 
+/** 
+ * Provides some message reporting functionality for the engine. 
  * Is a static namespace class for now.
  * Holds a log of text in case they need to be access by any external UI
  * @todo Make into an object passed into the engine and stored in the package. Maybe a system even.
- */
+ **/
 namespace MSG {
 	/** Prints a raw string into the message log.
 	 * @param	input	string message to print */

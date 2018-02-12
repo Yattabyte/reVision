@@ -6,7 +6,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 6
 
-using namespace Asset_Loader;
 
 Asset_Shader::~Asset_Shader()
 {
@@ -129,15 +128,16 @@ void Asset_Shader::setLocationValueArray(const GLuint & i, const mat4 * o, const
 
 void Asset_Shader::setLocationMatArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Shader & asset)
 {	
 	// Check if a copy already exists
 	if (Asset_Manager::query_Existing_Asset<Asset_Shader>(asset, "defaultShader"))
 		return;
 
-	// Create hardcoded alternative
+	// Create hard-coded alternative
 	Asset_Manager::create_New_Asset<Asset_Shader>(asset, "defaultShader");
 	asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
 	asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
@@ -293,8 +293,6 @@ void Shader_WorkOrder::LinkProgram()
 		glDeleteShader(m_asset->gl_shader_geometry_ID);
 }
 
-// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
-// Returns true if succeeded, false if file doesn't exist
 bool Shader_WorkOrder::FetchFileFromDisk(string & returnFile, const string & fileDirectory)
 {
 	struct stat buffer;

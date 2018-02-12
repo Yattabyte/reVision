@@ -1,11 +1,3 @@
-/*
-	Asset_Shader_Pkg
-
-	- An accessory asset for shaders
-	- Stores some functionality for other shaders to include from before compiling
-	- Has no functionality on its own
-*/
-
 #pragma once
 #ifndef	ASSET_SHADER_PKG
 #define	ASSET_SHADER_PKG
@@ -26,57 +18,73 @@
 
 using namespace glm;
 using namespace std;
-
 class Asset_Shader_Pkg;
 typedef shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
+
+
+/**
+ * An accessory asset for shaders that stores code blocks for other shaders to use.
+ * @brief	no functionality on its own, but can recursively import more code blocks for other shaders and itself.
+ **/
 class DT_ENGINE_API Asset_Shader_Pkg : public Asset
 {
-public:	
-	/*************
-	----Common----
-	*************/
-
+public:
+	// (de)Constructors
+	/** Destroy the Shader Package. */
 	~Asset_Shader_Pkg();
+	
+	/** Construct the Shader Package. */
 	Asset_Shader_Pkg(const string & filename);
+
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
+
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
 	bool ExistsYet();
 
-
-	/****************
-	----Variables----
-	****************/
-
-	string package_text;
-
-
-	/***********************
-	----Shader Functions----
-	***********************/
-
-	// Make this shader program active
+	/** Retrieves this package's content as a string.
+	 * @return string	package contents */
 	string getPackageText() const;
+
+	
+	// Attributes
+	string package_text;
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
-	// Attempts to create an asset from disk or share one if it already exists
+	/** Attempts to create an asset from disk or share one if it already exists */
 	DT_ENGINE_API void load_asset(Shared_Asset_Shader_Pkg & user, const string & filename, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Shader Package Assets.
+ **/
 class Shader_Pkg_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Shader_Pkg work order */
 	Shader_Pkg_WorkOrder(Shared_Asset_Shader_Pkg & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Shader_Pkg_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Methods
+	/** Reads in a text file from disk.
+	 * @param	returnFile	reference string to return the text file to
+	 * @param	fileDirectory	absolute path to the file to read from
+	 * @return	bool	true if the file exists, false otherwise */
 	bool FetchFileFromDisk(string & returnFile, const string & fileDirectory);
+
+	/** Parses the document for further inclusions and imports when necessary. */
 	void Parse();
 
-	/****************
-	----Variables----
-	****************/
-
+	// Attributes
 	string m_filename;
 	Shared_Asset_Shader_Pkg m_asset;
 };

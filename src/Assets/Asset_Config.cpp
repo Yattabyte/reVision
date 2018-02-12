@@ -5,13 +5,12 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 1
 
-using namespace Asset_Loader;
 
 Asset_Config::~Asset_Config()
 {
 }
 
-Asset_Config::Asset_Config(const string & filename, const vector<string> &strings) : Asset(filename), m_strings(strings)
+Asset_Config::Asset_Config(const string & filename, const vector<string> & strings) : Asset(filename), m_strings(strings)
 {
 }
 
@@ -46,7 +45,8 @@ void Asset_Config::saveConfig()
 	out << output.c_str();
 }
 
-// Attempts to retrieve a string between quotation marks "<string>"
+/** Attempts to retrieve a string between quotation marks "<string>" 
+ * @return	string	the string between quotation marks*/
 string getBetweenQuotes(string & s)
 {
 	string output = s;
@@ -63,9 +63,10 @@ string getBetweenQuotes(string & s)
 	return output;
 }
 
-// Checks if the value @s is a parameter in the CFG_STRING list. 
-// If true, returns the spot in the list @s is. 
-// If false, returns -1.
+/** Checks if the supplied value is a parameter in the CFG_STRING list. 
+ * @param	s	the string to check for in the list
+ * @param	m_strings	the list of strings to check for an occurence of our value within
+ * @return	the index of the value in the list if found, otherwise -1. */
 int findCFGProperty(const string & s, const vector<string> & m_strings)
 {
 	string UPPER_STRING;
@@ -78,15 +79,16 @@ int findCFGProperty(const string & s, const vector<string> & m_strings)
 	return -1;
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Config & asset)
 {	
 	// Check if a copy already exists
 	if (Asset_Manager::query_Existing_Asset<Asset_Config>(asset, "defaultConfig"))
 		return;
 
-	// Create hardcoded alternative
+	// Create hard-coded alternative
 	Asset_Manager::create_New_Asset<Asset_Config>(asset, "defaultConfig", vector<string>());
 	Asset_Manager::add_Work_Order(new Config_WorkOrder(asset, ""), true);
 }

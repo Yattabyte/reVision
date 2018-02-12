@@ -22,7 +22,7 @@ using namespace glm;
  * Takes in position, orientation, and scaling attributes, and caluclates a transformation matrix.
  * @todo Make member variables m_*name* and fix occurences related to it
  * @todo Give constructor better named parameters
- */
+ **/
 struct DT_ENGINE_API Transform 
 {
 	// (de)Constructors

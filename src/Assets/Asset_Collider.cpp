@@ -6,6 +6,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 0
 
+
 Asset_Collider::~Asset_Collider()
 {
 	if (shape != nullptr)
@@ -22,8 +23,9 @@ int Asset_Collider::GetAssetType()
 	return ASSET_TYPE;
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Collider & asset)
 {
 	// Check if a copy already exists

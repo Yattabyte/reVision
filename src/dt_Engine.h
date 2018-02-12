@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(90) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(91) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -29,13 +29,14 @@ class System;
 /**
  * The main game engine object. Encapsulates the entire engine state.
  * The engine is responsible for storing all the system pointers for use through its life.
-*/
+ **/
 class DT_ENGINE_API dt_Engine
 {
 public:
 	// Constructors
 	/** Destroys the engine. */
 	~dt_Engine();
+
 	/** Zero-initialize the engine. */
 	dt_Engine();
 

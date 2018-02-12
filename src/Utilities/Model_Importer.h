@@ -19,7 +19,7 @@ using namespace glm;
 /** 
  * A static helper class used for importing models.
  * Uses the Assimp model importer: http://assimp.sourceforge.net/
- */
+ **/
 class DT_ENGINE_API Model_Importer 
 {
 public:

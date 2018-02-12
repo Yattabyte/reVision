@@ -1,15 +1,3 @@
-/*
-	Asset_Primitive
-	
-	- A basic geometry shape with no complex attributes assigned to it.
-	- Intended to be used in rendering scenarios where basic shapes are needed, such as:
-		- a full screen quad
-		- a point-light bounding sphere
-		- a spot-light bounding cone
-	- No coresponding texture, just raw geometric data is sought after
-	- Shapes saved on disk
-*/
-
 #pragma once
 #ifndef	ASSET_PRIMITIVE
 #define	ASSET_PRIMITIVE
@@ -30,56 +18,74 @@
 #include <vector>
 
 using namespace glm;
-
 class Asset_Primitive;
 typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
+
+
+/**
+ * A basic geometric shape to be used in basic visual processing, such as a quad or a sphere.
+ **/
 class DT_ENGINE_API Asset_Primitive : public Asset
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Primitive. */
 	~Asset_Primitive();
+
+	/** Construct the Primitive. */
 	Asset_Primitive(const string & filename);
+
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
+
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
 	bool ExistsYet();
 
-	
-	/****************
-	----Variables----
-	****************/
+	/** Generates a vertex array object, formed to match primitives' object data.
+	 * @return	GLuint	a vertex array object resident on the GPU */
+	static GLuint GenerateVAO();
 
+	/** Updates a vertex array object's state with this primitives' data. 
+	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
+	 * @param	vaoID	the vertex array object's ID on the GPU */	
+	void UpdateVAO(const GLuint & vaoID);
+
+	/** Returns the vertex-count of this object. 
+	 * @return	size_t	vertex-count of this object */
+	size_t GetSize();
+	
+
+	// Attributes
 	GLuint buffers[2];
 	vector<vec3> data;
 	vector<vec2> uv_data;
 	GLsync m_fence;
-
-
-	/**************************
-	----Primitive Functions----
-	**************************/
-	
-	// Generates a vertex array object, formed to match primitives' object data
-	static GLuint GenerateVAO();
-	// Updates a vertex array object's state with this objects' data
-	void UpdateVAO(const GLuint & vaoID);
-	// Returns the vertex-count of this object
-	size_t GetSize();
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
+	/** Attempts to create an asset from disk or share one if it already exists */
 	DT_ENGINE_API void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Primitive Assets.
+ **/
 class Primitive_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Primitive work order */
 	Primitive_WorkOrder(Shared_Asset_Primitive & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Primitive_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Attributes
 	string m_filename;
 	Shared_Asset_Primitive m_asset;
 };

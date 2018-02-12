@@ -1,10 +1,3 @@
-/*
-	Asset_Model
-	
-	- An geometric model/mesh
-	- To be used in rendering
-*/
-
 #pragma once
 #ifndef	ASSET_MODEL
 #define	ASSET_MODEL
@@ -42,9 +35,9 @@ struct VertexBoneData
 
 	~VertexBoneData();
 	VertexBoneData();
-	VertexBoneData(const VertexBoneData& vbd);
+	VertexBoneData(const VertexBoneData & vbd);
 	void Reset();
-	void AddBoneData(int BoneID, float Weight);
+	void AddBoneData(const int & BoneID, const float & Weight);
 };
 struct GeometryInfo {
 	vector<vec3> vs, nm, tg, bt;
@@ -66,42 +59,52 @@ struct AnimationInfo {
 	AnimationInfo();
 	// Scene gets destroyed at the end of asset creation
 	// We need to copy animation related information
-	void SetScene(const aiScene* scene);
+	void SetScene(const aiScene * scene);
 	size_t NumAnimations() const;
 };
-
 class Asset_Model;
 typedef shared_ptr<Asset_Model> Shared_Asset_Model;
+
+
+/**
+ * A 3D geometric mesh meant to be used in 3D rendering.
+ **/
 class DT_ENGINE_API Asset_Model : public Asset
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Model. */
 	~Asset_Model();
+
+	/** Construct the Model. */
 	Asset_Model(const string & filename);
+
+	// Methods
+	/** @todo delete*/
 	static int GetAssetType();
-	bool ExistsYet();
 
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	bool ExistsYet();	
 
-	/**********************
-	----Model Functions----
-	**********************/
-
-	// Generates a vertex array object, formed to match models' object data
+	/** Generates a vertex array object, formed to match models' object data .
+	 * @return	GLuint	a vertex array object resident on the GPU */
 	static GLuint GenerateVAO();
-	// Updates a vertex array object's state with this models' data
+
+	
+	/** Updates a vertex array object's state with this models' data. 
+	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
+	 * @param	vaoID	the vertex array object's ID on the GPU */
 	void UpdateVAO(const GLuint & vaoID);
-	// Returns the material ID for a skin given an index into this list
-	// Clamps to the skin list size, so it won't go out of bounds
-	GLuint GetSkinID(const unsigned int &desired);
+
+	/** Returns the material ID for a skin given an index into this list
+	 * @note	Clamps to the skin list size, so it won't go out of bounds
+	 * @param	index into this model's skin list. 
+	 * @return	GLuint	index into the master material list in which this skin can be found at */	
+	GLuint GetSkinID(const unsigned int & desired);
 
 
-	/****************
-	----Variables----
-	****************/
-
+	// Attributes
 	int									mesh_size;
 	vector<Shared_Asset_Material>		skins;
 	GeometryInfo						data;
@@ -111,22 +114,45 @@ public:
 	GLsync								m_fence;
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
+	/** Attempts to create an asset from disk or share one if it already exists */
 	DT_ENGINE_API void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Model Assets.
+ **/
 class Model_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Model work order */
 	Model_WorkOrder(Shared_Asset_Model & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Model_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Methods
+	/** Generates and parses the bones for our model.
+	 * @param	model	the model to load the bones onto
+	 * @param	scene	the model scene to load the bones from **/
+	void Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene);
+	
+	/** Generates and parses the materials for our model from the model scene.
+	 * @param	modelMaterial	the material asset to load the model material into
+	 * @param	sceneMaterial	the model scene material to parse from **/
+	void Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
+
+	/** Generates and parses the materials for our model as a last resort.
+	 * @brief	attempts to load a material from disk as it doesn't have any aiMaterial's to load from.
+	 * @param	modelMaterial	the material asset to load the model material into */
+	void Generate_Material(Shared_Asset_Material & modelMaterial);
+
+
+	// Attributes
 	string m_filename;
 	Shared_Asset_Model m_asset;
-	void Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene);
-	void Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
-	void Generate_Material(Shared_Asset_Material & modelMaterial);
 };
 #endif // ASSET_MODEL

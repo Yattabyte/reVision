@@ -1,13 +1,3 @@
-/*
-	Asset
-
-	- A basic data type meant to encapsulate some form of data loaded from disk
-		- Example usages: Model, Shader, Sound, Level, etc
-	- Intended to be basic and reusable
-		- A particular asset file should be loaded from disk once and shared from memory whenever needed
-	- Under this system, an asset can be stored once in the Asset_Manager, and referenced across an entire application
-*/
-
 #pragma once
 #ifndef	ASSET
 #define	ASSET
@@ -21,32 +11,62 @@
 #include <vector>
 
 using namespace std;
-
 class Asset_Observer;
 class Asset;
 typedef shared_ptr<Asset> Shared_Asset;
+
+
+/**
+ * An abstract base-class for assets.
+ * @brief	Represents some form of data to be loaded from disk, such as shaders, models, levels, and sounds.
+ * @note	is an abstract class instead of interface to reduce redundant code.
+ * @usage	Should be created once, and its pointer passed around using shared pointers.
+ **/
 class DT_ENGINE_API Asset
 {
 public:
-	// Destroyed when no longer used only
+	// (de)Constructors
+	/** Destroy the asset only when all references are destroyed. */
 	~Asset();
-	// Zero Initialization only
+
+	/** Create asset that uses the specified file-path. */
 	Asset(const string & filename = "");
-	shared_mutex m_mutex;	
-	// Returns a UNIQUE asset type identifier. Each sub-class should have their own
-	static int GetAssetType();
-	// Gets the name of this asset
+
+	// Methods	
+	/** Gets the file name of this asset.
+	 * @return	the file name belonging to this asset */
 	string GetFileName() const;
-	// Sets the name of this asset to @fn
+
+	/** Sets the file name of this asset.
+	 * @param	filename	the file name to set this asset to */
 	void SetFileName(const string & filename);
-	// Returns whether or not this asset has completed finalizing
-	virtual bool ExistsYet();
-	// Performs final data processing
-	virtual void Finalize();
-	// Adds a state observer/listener
+
+	/** Adds a state observer/listener to this asset.
+	 * @brief	adds asset observers that want to be know when this asset finishes finalizing.
+	 * @param	observer	the observer to add to this asset */
 	void AddObserver(Asset_Observer * observer);
-	// Removes a state observer/listener
+
+	/** Removes a state observer/listener from this asset.
+	 * @brief	removes the observer specified from this asset.
+	 * @note	will remove all instances from this asset, or none if it doesn't exist. 
+	 * @param	observer	the observer to remove from this asset*/
 	void RemoveObserver(Asset_Observer * observer);
+
+	/** Returns a UNIQUE asset type identifier. Each sub-class should have their own
+  	 * @todo	Delete this and change the system to use const char* keys */
+	static int GetAssetType();
+
+	/** Returns whether or not this asset has completed finalizing.
+	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool ExistsYet();
+
+	/** Performs final data processing.
+	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
+	virtual void Finalize();
+
+	/** public mutex, to encourage safe access of asset. */
+	shared_mutex m_mutex;
 
 
 protected:
@@ -55,24 +75,41 @@ protected:
 	vector<Asset_Observer*> m_observers;
 };
 
+/**
+ * An abstract class used to tailor a specific response to an asset completing both initializing and finalizing.\n
+ * To be appended to an asset's observer list, and will be iterated through at its discretion.
+ * @todo	Maybe make this a template or something, try to make the destructor code not redundant.
+ **/
 class DT_ENGINE_API Asset_Observer
 {
 public:
-	Asset_Observer(Asset *asset);
-	virtual ~Asset_Observer();
+	/** Constructor. Takes the asset, and calls its addObserver method on *this*. */
+	Asset_Observer(Asset * asset) { asset->AddObserver(this); }
+	/** Virtual destructor. To be used in removing observer from the asset. */
+	virtual ~Asset_Observer() {}; 
+	/** To be called when the asset finishes finalizing. */
 	virtual void Notify_Finalized() = 0;
 };
 
+/**
+ * An abstract class for assets work orders.
+ * @brief	Each asset should implement a specific work order specialized for their own data.
+ **/
 class DT_ENGINE_API Work_Order
 {
 public:
-	// Boring ole constructor
+	/** Generic default constructor .*/
 	Work_Order() {};
-	// Virtual destructor
+
+	/** Virtual destructor. */
 	virtual ~Work_Order() {};
-	// To be used for loading data from disk in a thread safe way
+
+	/** Begins reading and parsing an asset's data from disk. 
+	 * @note	This is designed to be multi-threaded if the asset can support it. */
 	virtual void Initialize_Order() = 0;
-	// To be used for attaching to opengl state
+
+	/** Finishes remaining operations needed to finalize an asset.
+	 * @note	Since many assets require GPU synchronization, this step is done in the main thread. */
 	virtual void Finalize_Order() = 0;
 };
 

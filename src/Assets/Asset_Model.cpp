@@ -7,7 +7,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 4
 
-using namespace Asset_Loader;
 
 VertexBoneData::~VertexBoneData()
 {
@@ -33,7 +32,7 @@ void VertexBoneData::Reset()
 	ZERO_MEM(Weights);
 }
 
-void VertexBoneData::AddBoneData(int BoneID, float Weight)
+void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
 {
 	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++)
 		if (Weights[i] == 0.0) {
@@ -152,15 +151,16 @@ GLuint Asset_Model::GetSkinID(const unsigned int & desired)
 	return skins[max(0, min(skins.size() - 1, desired))]->mat_spot;
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Model & asset)
 {	
 	// Check if a copy already exists
 	if (Asset_Manager::query_Existing_Asset<Asset_Model>(asset, "defaultModel"))
 		return;
 
-	// Create hardcoded alternative
+	// Create hard-coded alternative
 	Asset_Manager::create_New_Asset<Asset_Model>(asset, "defaultModel");
 	asset->data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
@@ -195,8 +195,11 @@ namespace Asset_Loader {
 	}
 }
 
-// Calculates a Axis Aligned Bounding Box from a set of vertices. 
-// Returns it as updated minimum and maximum values &minOut and &maxOut respectively
+/** Calculates a Axis Aligned Bounding Box from a set of vertices.\n
+ * Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
+ * @param	vertices	the vertices of the mesh to derive the AABB from
+ * @param	minOut	output reference containing the minimum extents of the AABB
+ * @param	maxOut	output reference containing the maximum extents of the AABB */
 void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 {
 	if (vertices.size() >= 1) {

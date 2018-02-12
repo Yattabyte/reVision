@@ -1,10 +1,3 @@
-/*
-	Asset_Texture
-
-	- Encapsulates an OpenGL texture object
-	- Support for mipmapping and anistropic filtering
-*/
-
 #pragma once
 #ifndef	ASSET_TEXTURE
 #define	ASSET_TEXTURE
@@ -24,55 +17,70 @@
 #include "GLM\common.hpp"
 
 using namespace glm;
-
 class Asset_Texture;
 typedef shared_ptr<Asset_Texture> Shared_Asset_Texture;
+
+
+/**
+ * An encapsulation of an OpenGL texture object.\n
+ * Supports MIP-mapping and anisotropic filtering.
+ **/
 class DT_ENGINE_API Asset_Texture : public Asset
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Texture. */
 	~Asset_Texture();
+
+	/** Construct the Texture. */
 	Asset_Texture(const string & filename);
+
+	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
+
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
 	bool ExistsYet();
 
+	/** Makes this texture active at a specific texture unit
+	 * @param	texture_unit	the texture unit to make this texture active at */
+	void Bind(const GLuint & texture_unit);
 
-	/****************
-	----Variables----
-	****************/
 
+	// Attributes
 	GLuint gl_tex_ID, type;
 	vec2 size;
 	GLubyte	* pixel_data;
 	GLsync m_fence;
 	bool mipmap;
 	bool anis;
-
-
-	/************************
-	----Texture Functions----
-	************************/
-
-	// Makes this texture active at the specific @texture_unit
-	void Bind(const GLuint &texture_unit);
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
+	/** Attempts to create an asset from disk or share one if it already exists */
 	DT_ENGINE_API void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Texture Assets.
+ **/
 class Texture_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Texture work order */
 	Texture_WorkOrder(Shared_Asset_Texture & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Texture_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Attributes
 	string m_filename;
 	Shared_Asset_Texture m_asset;
 };

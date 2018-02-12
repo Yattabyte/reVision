@@ -5,7 +5,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 8
 
-using namespace Asset_Loader;
 
 Asset_Texture::~Asset_Texture()
 {
@@ -59,8 +58,9 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 	glBindTexture(type, gl_tex_ID);
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Texture & asset)
 {
 	// Check if a copy already exists

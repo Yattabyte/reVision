@@ -6,7 +6,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 7
 
-using namespace Asset_Loader;
 
 Asset_Shader_Pkg::~Asset_Shader_Pkg()
 {
@@ -32,8 +31,9 @@ string Asset_Shader_Pkg::getPackageText() const
 	return package_text;
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Shader_Pkg & asset)
 {	
 	// Check if a copy already exists
@@ -112,8 +112,6 @@ void Shader_Pkg_WorkOrder::Finalize_Order()
 		m_asset->Finalize();	
 }
 
-// Reads in a text file from disk, given a file directory, and appends it to the returnFile param
-// Returns true if succeeded, false if file doesn't exist
 bool Shader_Pkg_WorkOrder::FetchFileFromDisk(string & returnFile, const string & fileDirectory)
 {
 	struct stat buffer;

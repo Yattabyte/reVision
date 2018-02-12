@@ -5,6 +5,7 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 2
 
+
 Asset_Cubemap::~Asset_Cubemap()
 {
 	if (ExistsYet())
@@ -47,8 +48,9 @@ void Asset_Cubemap::Bind(const GLuint & texture_unit)
 	glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 {	
 	// Check if a copy already exists

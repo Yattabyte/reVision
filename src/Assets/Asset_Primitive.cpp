@@ -8,7 +8,6 @@
 /* -----ASSET TYPE----- */
 #define ASSET_TYPE 5
 
-using namespace Asset_Loader;
 
 Asset_Primitive::~Asset_Primitive()
 {
@@ -78,8 +77,9 @@ size_t Asset_Primitive::GetSize()
 	return data.size();
 }
 
-// Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-// Uses hardcoded values
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
 void fetchDefaultAsset(Shared_Asset_Primitive & asset)
 {
 	// Check if a copy already exists

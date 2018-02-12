@@ -17,7 +17,8 @@
 using namespace std; 
 
 
-/** Manages the creation and storage of materials, and to a lesser degree their destruction. * 
+/**
+ * Manages the creation and storage of materials, and to a lesser degree their destruction. * 
  * - How this works:
  *		- This stores an array of GLuint64 bindless texture handles
  *		- That array is stored as a shader storage buffer object (SSBO)
@@ -27,7 +28,8 @@ using namespace std;
  *		- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
  *			- get GLuint64 from ssbo's array using index
  *			- transform into sampler
- * - Uses bindless textures to circumvent slow texture binding */
+ * - Uses bindless textures to circumvent slow texture binding 
+ **/
 class DT_ENGINE_API Material_Manager 
 {
 public:
@@ -46,10 +48,11 @@ public:
 
 
 private:
-	/** Nested Material Buffer
-	* @brief is kind of pointless, but this can be made much better
-	* @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
-	*/
+	/**
+	 * Nested Material Buffer
+	 * @brief is kind of pointless, but this can be made much better
+	 * @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
+	 **/
 	static struct Material_Buffer
 	{
 		Material_Buffer() {

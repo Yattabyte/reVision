@@ -1,9 +1,3 @@
-/*
-	Asset_Cubemap
-
-	- Encapsulates an OpenGL cubemap texture object
-*/
-
 #pragma once
 #ifndef	ASSET_CUBEMAP
 #define	ASSET_CUBEMAP
@@ -23,52 +17,66 @@
 #include "GLM\common.hpp"
 
 using namespace glm;
-
 class Asset_Cubemap;
 typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
+
+
+/**
+ * Represents an OpenGL cubemap texture object.
+ **/
 class DT_ENGINE_API Asset_Cubemap : public Asset
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Cubemap. */
 	~Asset_Cubemap();
+
+	/** Construct the Cubemap. */
 	Asset_Cubemap(const std::string & filename);
+
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
+
+	/** Returns whether or not this asset has completed finalizing.
+	* @return	true if this asset has finished finalizing, false otherwise. */
 	bool ExistsYet();
 
+	/** Makes this texture active at a specific texture unit.
+	 * @param	texture_unit	the desired texture unit to make this texture active at */
+	void Bind(const GLuint & texture_unit);
 
-	/****************
-	----Variables----
-	****************/
-
+	
+	// Attributes
+	/** @todo make members prefixed with 'm_' */
 	GLuint gl_tex_ID;
 	vec2 size;
 	GLubyte	* pixel_data[6];
 	GLsync m_fence;
-	
-
-	/************************
-	----Cubemap Functions----
-	************************/
-
-	// Makes this texture active at the specific @texture_unit
-	void Bind(const GLuint & texture_unit);
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
+	/** Attempts to create an asset from disk or share one if it already exists. */
 	DT_ENGINE_API void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Cubemap Assets.
+ **/
 class Cubemap_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Cubemap work order. */
 	Cubemap_WorkOrder(Shared_Asset_Cubemap & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Cubemap_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Attributes
 	string m_filename;
 	Shared_Asset_Cubemap m_asset;
 };

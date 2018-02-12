@@ -20,7 +20,7 @@ class FIBITMAP;
 /**
  * A static helper class used for importing images.
  * Uses the FreeImage texture importer: http://freeimage.sourceforge.net/
- */
+ **/
 class DT_ENGINE_API Image_Importer 
 {
 public:

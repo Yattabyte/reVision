@@ -1,10 +1,3 @@
-/*
-	Asset_Collider
-	
-	- A geometric mesh used for collision detection
-	- Specific to bullet physics
-*/
-
 #pragma once
 #ifndef	ASSET_COLLIDER
 #define	ASSET_COLLIDER
@@ -22,37 +15,51 @@
 
 class Asset_Collider;
 typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
+
+
+/** 
+ * A 3D mesh tuned for use in physics simulations instead of rendering.
+ **/
 class DT_ENGINE_API Asset_Collider : public Asset
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the Collider. */
 	~Asset_Collider();
+
+	/** Construct the Collider. */
 	Asset_Collider(const string & filename);
+
+	// Methods
+	/** @todo delete */
 	static int GetAssetType();
 
 
-	/****************
-	----Variables----
-	****************/
-
+	// Attributes
 	btCollisionShape * shape;
 };
 
+/**
+ * Namespace that provides functionality for loading assets.
+ **/
 namespace Asset_Loader {
+	/** Attempts to create an asset from disk or share one if it already exists. */
 	DT_ENGINE_API void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded = true);
 };
 
+/**
+ * Implements a work order for Collider Assets.
+ **/
 class Collider_WorkOrder : public Work_Order {
 public:
+	/** Constructs an Asset_Collider work order. */
 	Collider_WorkOrder(Shared_Asset_Collider & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Collider_WorkOrder() {};
 	virtual void Initialize_Order();
 	virtual void Finalize_Order();
 
 private:
+	// Attributes
 	string m_filename;
 	Shared_Asset_Collider m_asset;
 };
