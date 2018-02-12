@@ -10,7 +10,7 @@
 
 Asset_Material::~Asset_Material()
 {
-	if (ExistsYet())
+	if (existsYet())
 		glDeleteTextures(1, &gl_array_ID);
 	if (materialData)
 		delete materialData;
@@ -42,15 +42,15 @@ void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
 		textures[x] = tx[x];
 }
 
-int Asset_Material::GetAssetType()
+int Asset_Material::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
 
-bool Asset_Material::ExistsYet()
+bool Asset_Material::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr) {
+	if (Asset::existsYet() && m_fence != nullptr) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -62,7 +62,7 @@ bool Asset_Material::ExistsYet()
 	return false;
 }
 
-void Asset_Material::getPBRProperties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
+void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
 {
 	std::ifstream file_stream(filename);
 	for (std::string line; std::getline(file_stream, line); ) {
@@ -103,28 +103,28 @@ void Asset_Material::getPBRProperties(const string & filename, string & albedo, 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Material & asset)
+void fetch_default_asset(Shared_Asset_Material & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Material>(asset, "defaultMaterial"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Material>(asset, "defaultMaterial"))
 		return;
 
-	// Create hardcoded alternative
-	Asset_Manager::create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::generate_ID());
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::Generate_ID());
 	asset->materialData = new GLubyte[12] {	
 		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
 		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
 	};
 	asset->size = vec2(1);
-	Asset_Manager::add_Work_Order(new Material_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Material_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded) {
 		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::get_Mutex_Assets();
-		auto &assets_materials = (Asset_Manager::get_Assets_List(Asset_Material::GetAssetType()));
+		shared_mutex &mutex_IO_assets = Asset_Manager::Get_Mutex_Assets();
+		auto &assets_materials = (Asset_Manager::Get_Assets_List(Asset_Material::Get_Asset_Type()));
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {
@@ -150,33 +150,33 @@ namespace Asset_Loader {
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::generate_ID());
+		Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::Generate_ID());
 	}
 
 	void load_asset(Shared_Asset_Material & user, const std::string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Material>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Material>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::generate_ID());
+		Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::Generate_ID());
 	}
 }
 
-void Material_WorkOrder::Initialize_Order()
+void Material_WorkOrder::initializeOrder()
 {
 	if (m_filename != "") {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		Asset_Material::getPBRProperties(m_filename, m_asset->textures[0], m_asset->textures[1], m_asset->textures[2], m_asset->textures[3], m_asset->textures[4], m_asset->textures[5]);
+		Asset_Material::Get_PBR_Properties(m_filename, m_asset->textures[0], m_asset->textures[1], m_asset->textures[2], m_asset->textures[3], m_asset->textures[4], m_asset->textures[5]);
 		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 			m_asset->textures[x] = ABS_DIRECTORY_MAT_TEX(m_asset->textures[x]);
 	}
@@ -279,9 +279,9 @@ void Material_WorkOrder::Initialize_Order()
 		}
 }
 
-void Material_WorkOrder::Finalize_Order()
+void Material_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		auto &gl_array_ID = m_asset->gl_array_ID;
 		auto &size = m_asset->size;
@@ -304,13 +304,13 @@ void Material_WorkOrder::Finalize_Order()
 		glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
 		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
 
-		Material_Manager::generate_Handle(mat_spot, gl_array_ID);
+		Material_Manager::Generate_Handle(mat_spot, gl_array_ID);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 		
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }

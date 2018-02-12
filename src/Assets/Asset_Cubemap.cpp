@@ -8,7 +8,7 @@
 
 Asset_Cubemap::~Asset_Cubemap()
 {
-	if (ExistsYet())
+	if (existsYet())
 		glDeleteTextures(1, &gl_tex_ID);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
@@ -21,15 +21,15 @@ Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 	m_fence = nullptr;
 }
 
-int Asset_Cubemap::GetAssetType()
+int Asset_Cubemap::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
 
-bool Asset_Cubemap::ExistsYet()
+bool Asset_Cubemap::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr) {
+	if (Asset::existsYet() && m_fence != nullptr) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -41,7 +41,7 @@ bool Asset_Cubemap::ExistsYet()
 	return false;
 }
 
-void Asset_Cubemap::Bind(const GLuint & texture_unit)
+void Asset_Cubemap::bind(const GLuint & texture_unit)
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	glActiveTexture(texture_unit);
@@ -51,14 +51,14 @@ void Asset_Cubemap::Bind(const GLuint & texture_unit)
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
+void fetch_default_asset(Shared_Asset_Cubemap & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Cubemap>(asset, "defaultCubemap"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Cubemap>(asset, "defaultCubemap"))
 		return;
 
-	// Create hardcoded alternative
-	Asset_Manager::create_New_Asset<Asset_Cubemap>(asset, "defaultCubemap");
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Cubemap>(asset, "defaultCubemap");
 	asset->pixel_data[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
 	asset->pixel_data[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
@@ -66,30 +66,30 @@ void fetchDefaultAsset(Shared_Asset_Cubemap & asset)
 	asset->pixel_data[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
 	asset->pixel_data[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
 	asset->size = vec2(1);
-	Asset_Manager::add_Work_Order(new Cubemap_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Cubemap_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Cubemap>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Cubemap>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::Submit_New_Asset<Asset_Cubemap, Cubemap_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
-void Cubemap_WorkOrder::Initialize_Order()
+void Cubemap_WorkOrder::initializeOrder()
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
@@ -116,7 +116,7 @@ void Cubemap_WorkOrder::Initialize_Order()
 
 		if (format == -1) {
 			MSG::Error(FILE_MISSING, m_filename);
-			fetchDefaultAsset(m_asset);
+			fetch_default_asset(m_asset);
 			return;
 		}
 
@@ -124,7 +124,7 @@ void Cubemap_WorkOrder::Initialize_Order()
 			format = FreeImage_GetFIFFromFilename(file);
 			if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
 				MSG::Error(FILE_CORRUPT, m_filename, "Using default texture.");
-				 fetchDefaultAsset(m_asset);
+				 fetch_default_asset(m_asset);
 				return;
 			}
 		}
@@ -173,9 +173,9 @@ void Cubemap_WorkOrder::Initialize_Order()
 	}	
 }
 
-void Cubemap_WorkOrder::Finalize_Order()
+void Cubemap_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		auto &gl_tex_ID = m_asset->gl_tex_ID;
 		auto &size = m_asset->size;
@@ -227,6 +227,6 @@ void Cubemap_WorkOrder::Finalize_Order()
 		glFlush();
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }

@@ -35,35 +35,35 @@ public:
 	// Methods	
 	/** Gets the file name of this asset.
 	 * @return	the file name belonging to this asset */
-	string GetFileName() const;
+	string getFileName() const;
 
 	/** Sets the file name of this asset.
 	 * @param	filename	the file name to set this asset to */
-	void SetFileName(const string & filename);
+	void setFileName(const string & filename);
 
 	/** Adds a state observer/listener to this asset.
 	 * @brief	adds asset observers that want to be know when this asset finishes finalizing.
 	 * @param	observer	the observer to add to this asset */
-	void AddObserver(Asset_Observer * observer);
+	void addObserver(Asset_Observer * observer);
 
 	/** Removes a state observer/listener from this asset.
 	 * @brief	removes the observer specified from this asset.
 	 * @note	will remove all instances from this asset, or none if it doesn't exist. 
 	 * @param	observer	the observer to remove from this asset*/
-	void RemoveObserver(Asset_Observer * observer);
+	void removeObserver(Asset_Observer * observer);
 
 	/** Returns a UNIQUE asset type identifier. Each sub-class should have their own
   	 * @todo	Delete this and change the system to use const char* keys */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool ExistsYet();
+	virtual bool existsYet();
 
 	/** Performs final data processing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
-	virtual void Finalize();
+	virtual void finalize();
 
 	/** public mutex, to encourage safe access of asset. */
 	shared_mutex m_mutex;
@@ -84,7 +84,7 @@ class DT_ENGINE_API Asset_Observer
 {
 public:
 	/** Constructor. Takes the asset, and calls its addObserver method on *this*. */
-	Asset_Observer(Asset * asset) { asset->AddObserver(this); }
+	Asset_Observer(Asset * asset) { asset->addObserver(this); }
 	/** Virtual destructor. To be used in removing observer from the asset. */
 	virtual ~Asset_Observer() {}; 
 	/** To be called when the asset finishes finalizing. */
@@ -106,11 +106,11 @@ public:
 
 	/** Begins reading and parsing an asset's data from disk. 
 	 * @note	This is designed to be multi-threaded if the asset can support it. */
-	virtual void Initialize_Order() = 0;
+	virtual void initializeOrder() = 0;
 
 	/** Finishes remaining operations needed to finalize an asset.
 	 * @note	Since many assets require GPU synchronization, this step is done in the main thread. */
-	virtual void Finalize_Order() = 0;
+	virtual void finalizeOrder() = 0;
 };
 
 #endif // ASSET

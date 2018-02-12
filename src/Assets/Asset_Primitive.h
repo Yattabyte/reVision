@@ -38,24 +38,24 @@ public:
 
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();
+	bool existsYet();
 
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return	GLuint	a vertex array object resident on the GPU */
-	static GLuint GenerateVAO();
+	static GLuint Generate_VAO();
 
 	/** Updates a vertex array object's state with this primitives' data. 
 	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
 	 * @param	vaoID	the vertex array object's ID on the GPU */	
-	void UpdateVAO(const GLuint & vaoID);
+	void updateVAO(const GLuint & vaoID);
 
 	/** Returns the vertex-count of this object. 
 	 * @return	size_t	vertex-count of this object */
-	size_t GetSize();
+	size_t getSize();
 	
 
 	// Attributes
@@ -81,8 +81,9 @@ public:
 	/** Constructs an Asset_Primitive work order */
 	Primitive_WorkOrder(Shared_Asset_Primitive & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Primitive_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Attributes

@@ -42,14 +42,14 @@ public:
 
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();
+	bool existsYet();
 
 	/** Make this shader program active */
-	void Bind();
+	void bind();
 
 	/** Inactivate any currently bound shader program. */
 	static void Release();	
@@ -58,41 +58,41 @@ public:
  	----Convenience functions for setting uniform values at a given location, while a shader is bound----
 	****************************************************************************************************/
 
-	static void setLocationValue(const GLuint & i, const bool & o);
-	static void setLocationValue(const GLuint & i, const int & o);
-	static void setLocationValue(const GLuint & i, const double & o);
-	static void setLocationValue(const GLuint & i, const float & o);
-	static void setLocationValue(const GLuint & i, const vec2 & o);
-	static void setLocationValue(const GLuint & i, const vec3 & o);
-	static void setLocationValue(const GLuint & i, const vec4 & o);
-	static void setLocationValue(const GLuint & i, const ivec2 & o);
-	static void setLocationValue(const GLuint & i, const ivec3 & o);
-	static void setLocationValue(const GLuint & i, const ivec4 & o);
-	static void setLocationValue(const GLuint & i, const mat3 & o);
-	static void setLocationValue(const GLuint & i, const mat4 & o);
-	static void setLocationValue(const GLuint & i, const int * o);
-	static void setLocationValue(const GLuint & i, const double * o);
-	static void setLocationValue(const GLuint & i, const float * o);
-	static void setLocationValue(const GLuint & i, const vec2 * o);
-	static void setLocationValue(const GLuint & i, const vec3 * o);
-	static void setLocationValue(const GLuint & i, const vec4 * o);
-	static void setLocationValue(const GLuint & i, const mat3 * o);
-	static void setLocationValue(const GLuint & i, const mat4 * o);
-	static void setLocationValueArray(const GLuint & i, const int & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const double & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const float & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec2 & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec3 & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec4 & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const mat4 & o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const int * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const double * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const float * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec2 * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec3 * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const vec4 * o, const int & size);
-	static void setLocationValueArray(const GLuint & i, const mat4 * o, const int & size);
-	static void setLocationMatArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose);		
+	static void Set_Uniform(const GLuint & i, const bool & o);
+	static void Set_Uniform(const GLuint & i, const int & o);
+	static void Set_Uniform(const GLuint & i, const double & o);
+	static void Set_Uniform(const GLuint & i, const float & o);
+	static void Set_Uniform(const GLuint & i, const vec2 & o);
+	static void Set_Uniform(const GLuint & i, const vec3 & o);
+	static void Set_Uniform(const GLuint & i, const vec4 & o);
+	static void Set_Uniform(const GLuint & i, const ivec2 & o);
+	static void Set_Uniform(const GLuint & i, const ivec3 & o);
+	static void Set_Uniform(const GLuint & i, const ivec4 & o);
+	static void Set_Uniform(const GLuint & i, const mat3 & o);
+	static void Set_Uniform(const GLuint & i, const mat4 & o);
+	static void Set_Uniform(const GLuint & i, const int * o);
+	static void Set_Uniform(const GLuint & i, const double * o);
+	static void Set_Uniform(const GLuint & i, const float * o);
+	static void Set_Uniform(const GLuint & i, const vec2 * o);
+	static void Set_Uniform(const GLuint & i, const vec3 * o);
+	static void Set_Uniform(const GLuint & i, const vec4 * o);
+	static void Set_Uniform(const GLuint & i, const mat3 * o);
+	static void Set_Uniform(const GLuint & i, const mat4 * o);
+	static void Set_Uniform_Array(const GLuint & i, const int & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const double & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const float & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec2 & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec3 & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec4 & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const mat4 & o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const int * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const double * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const float * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec2 * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec3 * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const vec4 * o, const int & size);
+	static void Set_Uniform_Array(const GLuint & i, const mat4 * o, const int & size);
+	static void Set_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose);		
 
 		
 	// Attributes
@@ -118,8 +118,9 @@ public:
 	/** Constructs an Asset_Shader work order */
 	Shader_WorkOrder(Shared_Asset_Shader & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Shader_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Methods

@@ -30,9 +30,10 @@ public:
 	/** Construct the Collider. */
 	Asset_Collider(const string & filename);
 
+
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 
 	// Attributes
@@ -55,8 +56,9 @@ public:
 	/** Constructs an Asset_Collider work order. */
 	Collider_WorkOrder(Shared_Asset_Collider & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Collider_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Attributes

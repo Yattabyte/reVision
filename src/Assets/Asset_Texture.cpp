@@ -8,7 +8,7 @@
 
 Asset_Texture::~Asset_Texture()
 {
-	if (ExistsYet())
+	if (existsYet())
 		glDeleteTextures(1, &gl_tex_ID);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
@@ -32,15 +32,15 @@ Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bo
 	anis = a;
 }
 
-int Asset_Texture::GetAssetType()
+int Asset_Texture::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
 
-bool Asset_Texture::ExistsYet()
+bool Asset_Texture::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr) {
+	if (Asset::existsYet() && m_fence != nullptr) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -52,7 +52,7 @@ bool Asset_Texture::ExistsYet()
 	return false;
 }
 
-void Asset_Texture::Bind(const GLuint & texture_unit)
+void Asset_Texture::bind(const GLuint & texture_unit)
 {
 	glActiveTexture(texture_unit);
 	glBindTexture(type, gl_tex_ID);
@@ -61,49 +61,49 @@ void Asset_Texture::Bind(const GLuint & texture_unit)
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Texture & asset)
+void fetch_default_asset(Shared_Asset_Texture & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Texture>(asset, "defaultTexture"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(asset, "defaultTexture"))
 		return;
 
-	// Create hardcoded alternative
-	Asset_Manager::create_New_Asset<Asset_Texture>(asset, "defaultTexture");
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Texture>(asset, "defaultTexture");
 	asset->pixel_data = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		asset->pixel_data[x] = GLubyte(255);
 	asset->size = vec2(1);
-	Asset_Manager::add_Work_Order(new Texture_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Texture_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap, const bool & anis, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Texture>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(user, filename))
 			return;
 		
 		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_TEXTURE + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Texture, Texture_WorkOrder>(user, threaded, fullDirectory, filename, GL_TEXTURE_2D, mipmap, anis);
+		Asset_Manager::Submit_New_Asset<Asset_Texture, Texture_WorkOrder>(user, threaded, fullDirectory, filename, GL_TEXTURE_2D, mipmap, anis);
 	}
 }
 
-void Texture_WorkOrder::Initialize_Order()
+void Texture_WorkOrder::initializeOrder()
 {
 	const char * file = m_filename.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
 	if (format == -1) {
 		MSG::Error(FILE_MISSING, m_filename);
-		fetchDefaultAsset(m_asset);
+		fetch_default_asset(m_asset);
 		return;
 	}
 
@@ -111,7 +111,7 @@ void Texture_WorkOrder::Initialize_Order()
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
 			MSG::Error(FILE_CORRUPT, m_filename, "Using default texture.");
-			fetchDefaultAsset(m_asset);
+			fetch_default_asset(m_asset);
 			return;
 		}
 	}
@@ -160,9 +160,9 @@ void Texture_WorkOrder::Initialize_Order()
 		m_asset->type = GL_TEXTURE_1D;
 }
 
-void Texture_WorkOrder::Finalize_Order()
+void Texture_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		auto &gl_tex_ID = m_asset->gl_tex_ID;
 		auto &type = m_asset->type;
@@ -213,6 +213,6 @@ void Texture_WorkOrder::Finalize_Order()
 
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }

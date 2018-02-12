@@ -53,7 +53,7 @@ AnimationInfo::AnimationInfo()
 
 // Scene gets destroyed at the end of asset creation
 // We need to copy animation related information
-void AnimationInfo::SetScene(const aiScene * scene) 
+void AnimationInfo::setScene(const aiScene * scene) 
 {
 	Animations.resize(scene->mNumAnimations);
 	for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
@@ -62,14 +62,14 @@ void AnimationInfo::SetScene(const aiScene * scene)
 	RootNode = new aiNode(*scene->mRootNode);
 }
 
-size_t AnimationInfo::NumAnimations() const 
+size_t AnimationInfo::numAnimations() const 
 {
 	return Animations.size(); 
 }
 
 Asset_Model::~Asset_Model()
 {
-	if (ExistsYet())
+	if (existsYet())
 		glDeleteBuffers(7, buffers);	
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
@@ -85,15 +85,15 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_fence = nullptr;
 }
 
-int Asset_Model::GetAssetType()
+int Asset_Model::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
 
-bool Asset_Model::ExistsYet()
+bool Asset_Model::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr ) {
+	if (Asset::existsYet() && m_fence != nullptr ) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -105,7 +105,7 @@ bool Asset_Model::ExistsYet()
 	return false;
 }
 
-GLuint Asset_Model::GenerateVAO()
+GLuint Asset_Model::Generate_VAO()
 {
 	GLuint vaoID = 0;
 
@@ -118,7 +118,7 @@ GLuint Asset_Model::GenerateVAO()
 	return vaoID;
 }
 
-void Asset_Model::UpdateVAO(const GLuint & vaoID)
+void Asset_Model::updateVAO(const GLuint & vaoID)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	glBindVertexArray(vaoID);
@@ -145,7 +145,7 @@ void Asset_Model::UpdateVAO(const GLuint & vaoID)
 	glBindVertexArray(0);
 }
 
-GLuint Asset_Model::GetSkinID(const unsigned int & desired)
+GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	return skins[max(0, min(skins.size() - 1, desired))]->mat_spot;
@@ -154,14 +154,14 @@ GLuint Asset_Model::GetSkinID(const unsigned int & desired)
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Model & asset)
+void fetch_default_asset(Shared_Asset_Model & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Model>(asset, "defaultModel"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(asset, "defaultModel"))
 		return;
 
 	// Create hard-coded alternative
-	Asset_Manager::create_New_Asset<Asset_Model>(asset, "defaultModel");
+	Asset_Manager::Create_New_Asset<Asset_Model>(asset, "defaultModel");
 	asset->data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
 	asset->data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
@@ -172,26 +172,26 @@ void fetchDefaultAsset(Shared_Asset_Model & asset)
 	asset->data.bones.resize(6);
 	asset->skins.resize(1);
 	Asset_Loader::load_asset(asset->skins[0], "defaultMaterial");
-	Asset_Manager::add_Work_Order(new Model_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Model_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Model>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Model>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Model, Model_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::Submit_New_Asset<Asset_Model, Model_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
@@ -227,7 +227,7 @@ void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 	}
 }
 
-void Model_WorkOrder::Initialize_Order()
+void Model_WorkOrder::initializeOrder()
 {	
 	Assimp::Importer &importer = *new Assimp::Importer();
 	const aiScene* scene = importer.ReadFile(m_filename,
@@ -242,7 +242,7 @@ void Model_WorkOrder::Initialize_Order()
 								   // Scene cannot be read
 	if (!scene) {
 		MSG::Error(FILE_CORRUPT, m_filename);
-		fetchDefaultAsset(m_asset);
+		fetch_default_asset(m_asset);
 		return;
 	}
 
@@ -269,24 +269,24 @@ void Model_WorkOrder::Initialize_Order()
 			}
 		}
 	}
-	m_asset->animationInfo.SetScene(scene);
+	m_asset->animationInfo.setScene(scene);
 	m_asset->mesh_size = gi.vs.size(); // Final vertex size (needed for draw arrays call)
 	gi.bones.resize(gi.vs.size());
 	calculate_AABB(gi.vs, m_asset->bbox_min, m_asset->bbox_max);
-	Initialize_Bones(m_asset, scene);
+	initializeBones(m_asset, scene);
 
 	// Generate all the required skins
 	m_asset->skins.resize(max(1, (scene->mNumMaterials - 1)));
 	if (scene->mNumMaterials > 1) 		
 		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
-			Generate_Material(m_asset->skins[x - 1], scene->mMaterials[x]);	
+			generateMaterial(m_asset->skins[x - 1], scene->mMaterials[x]);	
 	else
-		Generate_Material(m_asset->skins[0]);
+		generateMaterial(m_asset->skins[0]);
 }
 
-void Model_WorkOrder::Finalize_Order()
+void Model_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		
 		auto &data = m_asset->data;
@@ -312,7 +312,7 @@ void Model_WorkOrder::Finalize_Order()
 
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }
 mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
@@ -323,7 +323,7 @@ mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-void Model_WorkOrder::Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene)
+void Model_WorkOrder::initializeBones(Shared_Asset_Model & model, const aiScene * scene)
 {
 	vector<BoneInfo> &boneInfo = model->animationInfo.meshTransforms;
 	map<string, int> &m_BoneMapping = model->animationInfo.boneMap;
@@ -365,7 +365,7 @@ void Model_WorkOrder::Initialize_Bones(Shared_Asset_Model & model, const aiScene
 	}
 }
 
-void Model_WorkOrder::Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
+void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
 {
 	// Get the aiStrings for all the textures for a material
 	aiString	albedo, normal, metalness, roughness, height, ao;
@@ -415,7 +415,7 @@ void Model_WorkOrder::Generate_Material(Shared_Asset_Material & modelMaterial, c
 	Asset_Loader::load_asset(modelMaterial, material_textures);
 }
 
-void Model_WorkOrder::Generate_Material(Shared_Asset_Material & modelMaterial)
+void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial)
 {
 	std::string materialFilename = m_filename.substr(m_filename.find("Models\\"));
 	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));

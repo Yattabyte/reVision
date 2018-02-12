@@ -16,28 +16,28 @@ Asset::Asset(const string & filename)
 	m_filename = filename;
 }
 
-int Asset::GetAssetType() 
+int Asset::Get_Asset_Type() 
 {
 	return ASSET_TYPE;
 }
 
-string Asset::GetFileName() const
+string Asset::getFileName() const
 {
 	return m_filename;
 }
 
-void Asset::SetFileName(const string & fn)
+void Asset::setFileName(const string & fn)
 {
 	m_filename = fn;
 }
 
-bool Asset::ExistsYet()
+bool Asset::existsYet()
 { 
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	return m_finalized;
 }
 
-void Asset::Finalize()
+void Asset::finalize()
 {
 	if (!m_finalized) {
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -45,11 +45,11 @@ void Asset::Finalize()
 		write_guard.unlock();
 		write_guard.release();
 		shared_lock<shared_mutex> read_guard(m_mutex);
-		Asset_Manager::queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
+		Asset_Manager::Queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
 	}
 }
 
-void Asset::AddObserver(Asset_Observer * observer)
+void Asset::addObserver(Asset_Observer * observer)
 {
 	unique_lock<shared_mutex> write_guard(m_mutex);
 	m_observers.push_back(observer);
@@ -57,10 +57,10 @@ void Asset::AddObserver(Asset_Observer * observer)
 	write_guard.release();
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	if (m_finalized) // If we finalized already, new observer needs to know this is ready to go
-		Asset_Manager::queue_Notification(m_observers);
+		Asset_Manager::Queue_Notification(m_observers);
 }
 
-void Asset::RemoveObserver(Asset_Observer * observer)
+void Asset::removeObserver(Asset_Observer * observer)
 {
 	m_observers.erase(std::remove_if(begin(m_observers), end(m_observers), [observer](const auto *element) {
 		return (element == observer);

@@ -9,7 +9,7 @@
 
 Asset_Shader::~Asset_Shader()
 {
-	if (ExistsYet()) 
+	if (existsYet()) 
 		glDeleteProgram(gl_program_ID);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
@@ -27,15 +27,15 @@ Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
 	m_fence = nullptr;
 }
 
-int Asset_Shader::GetAssetType() 
+int Asset_Shader::Get_Asset_Type() 
 { 
 	return ASSET_TYPE;
 }
 
-bool Asset_Shader::ExistsYet()
+bool Asset_Shader::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr) {
+	if (Asset::existsYet() && m_fence != nullptr) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -47,7 +47,7 @@ bool Asset_Shader::ExistsYet()
 	return false;
 }
 
-void Asset_Shader::Bind()
+void Asset_Shader::bind()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	glUseProgram(gl_program_ID);
@@ -58,97 +58,97 @@ void Asset_Shader::Release()
 	glUseProgram(0);
 }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const bool & b) { glUniform1i(i, b); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const bool & b) { glUniform1i(i, b); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const int & o) { glUniform1i(i, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const int & o) { glUniform1i(i, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const double & o) { glUniform1d(i, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const double & o) { glUniform1d(i, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const float & o) { glUniform1f(i, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const float & o) { glUniform1f(i, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec2 & o) { glUniform2f(i, o.x, o.y); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec2 & o) { glUniform2f(i, o.x, o.y); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec3 & o) { glUniform3f(i, o.x, o.y, o.z); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec3 & o) { glUniform3f(i, o.x, o.y, o.z); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec4 & o) { glUniform4f(i, o.x, o.y, o.z, o.w); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec4 & o) { glUniform4f(i, o.x, o.y, o.z, o.w); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const ivec2 & o) { glUniform2i(i, o.x, o.y); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const ivec2 & o) { glUniform2i(i, o.x, o.y); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const ivec3 & o) { glUniform3i(i, o.x, o.y, o.z); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const ivec3 & o) { glUniform3i(i, o.x, o.y, o.z); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const ivec4 & o) { glUniform4i(i, o.x, o.y, o.z, o.w); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const ivec4 & o) { glUniform4i(i, o.x, o.y, o.z, o.w); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const mat3 & o) { glUniformMatrix3fv(i, 1, GL_FALSE, &o[0][0]); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const mat3 & o) { glUniformMatrix3fv(i, 1, GL_FALSE, &o[0][0]); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const mat4 & o) { glUniformMatrix4fv(i, 1, GL_FALSE, &o[0][0]); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const mat4 & o) { glUniformMatrix4fv(i, 1, GL_FALSE, &o[0][0]); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const int * o) { glUniform1iv(i, 1, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const int * o) { glUniform1iv(i, 1, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const double * o) { glUniform1dv(i, 1, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const double * o) { glUniform1dv(i, 1, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const float * o) { glUniform1fv(i, 1, o); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const float * o) { glUniform1fv(i, 1, o); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec2 * o) { glUniform2fv(i, 1, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec2 * o) { glUniform2fv(i, 1, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec3 * o) { glUniform3fv(i, 1, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec3 * o) { glUniform3fv(i, 1, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const vec4 * o) { glUniform4fv(i, 1, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const vec4 * o) { glUniform4fv(i, 1, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const mat3 * o) { glUniformMatrix3fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const mat3 * o) { glUniformMatrix3fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValue(const GLuint & i, const mat4 * o) { glUniformMatrix4fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform(const GLuint & i, const mat4 * o) { glUniformMatrix4fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const int & o, const int & size) { glUniform1iv(i, size, &o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const int & o, const int & size) { glUniform1iv(i, size, &o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const double & o, const int & size) { glUniform1dv(i, size, &o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const double & o, const int & size) { glUniform1dv(i, size, &o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const float & o, const int & size) { glUniform1fv(i, size, &o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const float & o, const int & size) { glUniform1fv(i, size, &o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec2 & o, const int & size) { glUniform2fv(i, size, glm::value_ptr(o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec2 & o, const int & size) { glUniform2fv(i, size, glm::value_ptr(o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec3 & o, const int & size) { glUniform3fv(i, size, glm::value_ptr(o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec3 & o, const int & size) { glUniform3fv(i, size, glm::value_ptr(o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec4 & o, const int & size) { glUniform4fv(i, size, glm::value_ptr(o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec4 & o, const int & size) { glUniform4fv(i, size, glm::value_ptr(o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const mat4 & o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const mat4 & o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const int * o, const int & size) { glUniform1iv(i, size, o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const int * o, const int & size) { glUniform1iv(i, size, o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const double * o, const int & size) { glUniform1dv(i, size, o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const double * o, const int & size) { glUniform1dv(i, size, o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const float * o, const int & size) { glUniform1fv(i, size, o); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const float * o, const int & size) { glUniform1fv(i, size, o); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec2 * o, const int & size) { glUniform2fv(i, size, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec2 * o, const int & size) { glUniform2fv(i, size, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec3 * o, const int & size) { glUniform3fv(i, size, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec3 * o, const int & size) { glUniform3fv(i, size, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const vec4 * o, const int & size) { glUniform4fv(i, size, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec4 * o, const int & size) { glUniform4fv(i, size, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationValueArray(const GLuint & i, const mat4 * o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(*o)); }
+void Asset_Shader::Set_Uniform_Array(const GLuint & i, const mat4 * o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(*o)); }
 
-void Asset_Shader::setLocationMatArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
+void Asset_Shader::Set_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Shader & asset)
+void fetch_default_asset(Shared_Asset_Shader & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Shader>(asset, "defaultShader"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(asset, "defaultShader"))
 		return;
 
 	// Create hard-coded alternative
-	Asset_Manager::create_New_Asset<Asset_Shader>(asset, "defaultShader");
+	Asset_Manager::Create_New_Asset<Asset_Shader>(asset, "defaultShader");
 	asset->vertex_text = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
 	asset->fragment_text = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	Asset_Manager::add_Work_Order(new Shader_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Shader_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Shader>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
@@ -160,16 +160,16 @@ namespace Asset_Loader {
 		if (!found_fragement)
 			MSG::Error(FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
 		if ( !(found_vertex && found_fragement) ) {
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::Submit_New_Asset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
-void Shader_WorkOrder::Initialize_Order()
+void Shader_WorkOrder::initializeOrder()
 {
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 	bool found_vertex = FetchFileFromDisk(m_asset->vertex_text, m_filename + EXT_SHADER_VERTEX);
@@ -179,9 +179,9 @@ void Shader_WorkOrder::Initialize_Order()
 	write_guard.release();
 	
 	if (!found_vertex)
-		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_VERTEX);
+		MSG::Error(FILE_MISSING, m_asset->getFileName() + EXT_SHADER_VERTEX);
 	if (!found_fragement)
-		MSG::Error(FILE_MISSING, m_asset->GetFileName() + EXT_SHADER_FRAGMENT);
+		MSG::Error(FILE_MISSING, m_asset->getFileName() + EXT_SHADER_FRAGMENT);
 	if (!(found_vertex + found_fragement + found_geometry)) {
 		// handle this?
 	}
@@ -219,9 +219,9 @@ void Shader_WorkOrder::Parse()
 	}
 }
 
-void Shader_WorkOrder::Finalize_Order()
+void Shader_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		Compile();
 		GenerateProgram();
@@ -231,7 +231,7 @@ void Shader_WorkOrder::Finalize_Order()
 
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }
 

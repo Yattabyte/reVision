@@ -14,7 +14,7 @@ Asset_Config::Asset_Config(const string & filename, const vector<string> & strin
 {
 }
 
-int Asset_Config::GetAssetType()
+int Asset_Config::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
@@ -40,14 +40,14 @@ void Asset_Config::saveConfig()
 	for each (const auto &value in configuration) 
 		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
 
-	string directory = ABS_DIRECTORY_CONFIG(GetFileName());
+	string directory = ABS_DIRECTORY_CONFIG(getFileName());
 	ofstream out(directory);
 	out << output.c_str();
 }
 
 /** Attempts to retrieve a string between quotation marks "<string>" 
  * @return	string	the string between quotation marks*/
-string getBetweenQuotes(string & s)
+string get_between_quotes(string & s)
 {
 	string output = s;
 	int spot1 = s.find_first_of("\"");
@@ -67,7 +67,7 @@ string getBetweenQuotes(string & s)
  * @param	s	the string to check for in the list
  * @param	m_strings	the list of strings to check for an occurence of our value within
  * @return	the index of the value in the list if found, otherwise -1. */
-int findCFGProperty(const string & s, const vector<string> & m_strings)
+int find_CFG_Property(const string & s, const vector<string> & m_strings)
 {
 	string UPPER_STRING;
 	for each (const auto &c in s) 
@@ -82,55 +82,55 @@ int findCFGProperty(const string & s, const vector<string> & m_strings)
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Config & asset)
+void fetch_default_asset(Shared_Asset_Config & asset)
 {	
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Config>(asset, "defaultConfig"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Config>(asset, "defaultConfig"))
 		return;
 
 	// Create hard-coded alternative
-	Asset_Manager::create_New_Asset<Asset_Config>(asset, "defaultConfig", vector<string>());
-	Asset_Manager::add_Work_Order(new Config_WorkOrder(asset, ""), true);
+	Asset_Manager::Create_New_Asset<Asset_Config>(asset, "defaultConfig", vector<string>());
+	Asset_Manager::Add_Work_Order(new Config_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Config>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Config>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
+		Asset_Manager::Submit_New_Asset<Asset_Config, Config_WorkOrder>(user, threaded, fullDirectory, filename, cfg_strings);
 	}
 }
 
-void Config_WorkOrder::Initialize_Order()
+void Config_WorkOrder::initializeOrder()
 {
 	ifstream file_stream(m_filename);
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 	for (std::string line; std::getline(file_stream, line); ) {
 		if (line.length()) {
-			const string cfg_property = getBetweenQuotes(line);
-			int spot = findCFGProperty(cfg_property, m_asset->m_strings);
+			const string cfg_property = get_between_quotes(line);
+			int spot = find_CFG_Property(cfg_property, m_asset->m_strings);
 			if (spot >= 0) {
-				string cfg_value = getBetweenQuotes(line);
+				string cfg_value = get_between_quotes(line);
 				m_asset->setValue(spot, atof(cfg_value.c_str()));
 			}
 		}
 	}
 }
 
-void Config_WorkOrder::Finalize_Order()
+void Config_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) 
-		m_asset->Finalize();	
+	if (!m_asset->existsYet()) 
+		m_asset->finalize();	
 }

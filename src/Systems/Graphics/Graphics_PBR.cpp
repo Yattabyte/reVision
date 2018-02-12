@@ -13,11 +13,11 @@ class Primitivee_Observer : Asset_Observer
 public:
 	Primitivee_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
 	virtual ~Primitivee_Observer() {
-		m_asset->RemoveObserver(this); 
+		m_asset->removeObserver(this); 
 	};
 	virtual void Notify_Finalized() {
-		if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
-			m_asset->UpdateVAO(m_vao_id);
+		if (m_asset->existsYet()) // in case this gets used more than once by mistake
+			m_asset->updateVAO(m_vao_id);
 	}
 
 	GLuint m_vao_id;
@@ -157,9 +157,9 @@ void System_Graphics_PBR::Initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shapeSphere, "sphere");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
-		m_quadVAO = Asset_Primitive::GenerateVAO();
-		m_coneVAO = Asset_Primitive::GenerateVAO();
-		m_sphereVAO = Asset_Primitive::GenerateVAO();
+		m_quadVAO = Asset_Primitive::Generate_VAO();
+		m_coneVAO = Asset_Primitive::Generate_VAO();
+		m_sphereVAO = Asset_Primitive::Generate_VAO();
 		m_QuadObserver = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
 		m_ConeObserver = (void*)(new Primitivee_Observer(m_shapeCone, m_coneVAO));
 		m_SphereObserver = (void*)(new Primitivee_Observer(m_shapeSphere, m_sphereVAO));
@@ -284,11 +284,11 @@ void System_Graphics_PBR::Update(const float & deltaTime)
 	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
 	
 	if (vis_token.size() && 
-		m_shapeQuad->ExistsYet() &&
-		m_textureSky->ExistsYet() && 
-		m_shaderSky->ExistsYet() &&
-		m_shaderGeometry->ExistsYet() &&
-		m_shaderDirectional->ExistsYet()) 
+		m_shapeQuad->existsYet() &&
+		m_textureSky->existsYet() && 
+		m_shaderSky->existsYet() &&
+		m_shaderGeometry->existsYet() &&
+		m_shaderDirectional->existsYet()) 
 	{
 		RegenerationPass(vis_token);
 		GeometryPass(vis_token);
@@ -406,16 +406,16 @@ void System_Graphics_PBR::RegenerationPass(const Visibility_Token & vis_token)
 			   &pointLights = priorityLights.getTypeList<Lighting_Component>("Light_Point"), 
 			   &spotLights = priorityLights.getTypeList<Lighting_Component>("Light_Spot");
 	m_Shadowmapper->BindForWriting(SHADOW_LARGE);
-	m_shaderShadowDir->Bind();
+	m_shaderShadowDir->bind();
 	for each (auto &component in dirLights) 
 		component->shadowPass();	
 
 	m_Shadowmapper->BindForWriting(SHADOW_REGULAR);
-	m_shaderShadowPoint->Bind();
+	m_shaderShadowPoint->bind();
 	for each (auto &component in pointLights) 
 		component->shadowPass();	
 
-	m_shaderShadowSpot->Bind();
+	m_shaderShadowSpot->bind();
 	for each (auto &component in spotLights) 
 		component->shadowPass();	
 
@@ -433,7 +433,7 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		glCullFace(GL_BACK);
 		m_gbuffer.Clear();
 		m_gbuffer.BindForWriting();
-		m_shaderGeometry->Bind();
+		m_shaderGeometry->bind();
 
 		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 			component->Draw();
@@ -446,7 +446,7 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 
 void System_Graphics_PBR::SkyPass()
 {
-	const size_t &quad_size = m_shapeQuad->GetSize();
+	const size_t &quad_size = m_shapeQuad->getSize();
 	m_lbuffer.Clear();
 	m_lbuffer.BindForWriting();
 
@@ -454,8 +454,8 @@ void System_Graphics_PBR::SkyPass()
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 
-	m_textureSky->Bind(GL_TEXTURE0);
-	m_shaderSky->Bind();
+	m_textureSky->bind(GL_TEXTURE0);
+	m_shaderSky->bind();
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 	glBindVertexArray(0);
@@ -467,9 +467,9 @@ void System_Graphics_PBR::SkyPass()
 
 void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 {
-	const size_t &quad_size = m_shapeQuad->GetSize();
-	const size_t &cone_size = m_shapeCone->GetSize();
-	const size_t &sphere_size = m_shapeSphere->GetSize();
+	const size_t &quad_size = m_shapeQuad->getSize();
+	const size_t &cone_size = m_shapeCone->getSize();
+	const size_t &sphere_size = m_shapeSphere->getSize();
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
@@ -478,7 +478,7 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	auto m_Shadowmapper = (m_enginePackage->findSubSystem("Shadows") ? m_enginePackage->getSubSystem<System_Shadowmap>("Shadows") : nullptr);
 	m_Shadowmapper->BindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional")) {
-		m_shaderDirectional->Bind();
+		m_shaderDirectional->bind();
 		glBindVertexArray(m_quadVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 			component->directPass(quad_size);
@@ -488,14 +488,14 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 	glCullFace(GL_FRONT);
 	m_Shadowmapper->BindForReading(SHADOW_REGULAR, 3);
 	if (vis_token.find("Light_Point")) {
-		m_shaderPoint->Bind();
+		m_shaderPoint->bind();
 		glBindVertexArray(m_sphereVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
 			component->directPass(sphere_size);
 	}
 
 	if (vis_token.find("Light_Spot")) {
-		m_shaderSpot->Bind();
+		m_shaderSpot->bind();
 		glBindVertexArray(m_coneVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 			component->directPass(cone_size);
@@ -512,7 +512,7 @@ void System_Graphics_PBR::LightingPass(const Visibility_Token & vis_token)
 
 void System_Graphics_PBR::HDRPass()
 {
-	const size_t &quad_size = m_shapeQuad->GetSize();
+	const size_t &quad_size = m_shapeQuad->getSize();
 	m_lbuffer.BindForReading();
 	m_hdrbuffer.Clear();
 	m_hdrbuffer.BindForWriting();
@@ -523,7 +523,7 @@ void System_Graphics_PBR::HDRPass()
 	glDisable(GL_BLEND);
 	//glDisable(GL_CULL_FACE);
 
-	m_shaderHDR->Bind();
+	m_shaderHDR->bind();
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 	glBindVertexArray(0);
@@ -532,12 +532,12 @@ void System_Graphics_PBR::HDRPass()
 
 void System_Graphics_PBR::FinalPass()
 {
-	const size_t &quad_size = m_shapeQuad->GetSize();
+	const size_t &quad_size = m_shapeQuad->getSize();
 	m_hdrbuffer.BindForReading();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
-	m_shaderFXAA->Bind();
+	m_shaderFXAA->bind();
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 	glBindVertexArray(0);

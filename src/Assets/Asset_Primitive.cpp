@@ -11,7 +11,7 @@
 
 Asset_Primitive::~Asset_Primitive()
 {
-	if (ExistsYet())
+	if (existsYet())
 		glDeleteBuffers(2, buffers);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
@@ -24,15 +24,15 @@ Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 	m_fence = nullptr;
 }
 
-int Asset_Primitive::GetAssetType()
+int Asset_Primitive::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
 
-bool Asset_Primitive::ExistsYet()
+bool Asset_Primitive::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::ExistsYet() && m_fence != nullptr) {
+	if (Asset::existsYet() && m_fence != nullptr) {
 		read_guard.unlock();
 		read_guard.release();
 		unique_lock<shared_mutex> write_guard(m_mutex);
@@ -44,7 +44,7 @@ bool Asset_Primitive::ExistsYet()
 	return false;
 }
 
-GLuint Asset_Primitive::GenerateVAO()
+GLuint Asset_Primitive::Generate_VAO()
 {
 	GLuint vaoID = 0;
 
@@ -57,7 +57,7 @@ GLuint Asset_Primitive::GenerateVAO()
 	return vaoID;
 }
 
-void Asset_Primitive::UpdateVAO(const GLuint & vaoID)
+void Asset_Primitive::updateVAO(const GLuint & vaoID)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	glBindVertexArray(vaoID);
@@ -71,7 +71,7 @@ void Asset_Primitive::UpdateVAO(const GLuint & vaoID)
 	glBindVertexArray(0);
 }
 
-size_t Asset_Primitive::GetSize()
+size_t Asset_Primitive::getSize()
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	return data.size();
@@ -80,45 +80,45 @@ size_t Asset_Primitive::GetSize()
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Primitive & asset)
+void fetch_default_asset(Shared_Asset_Primitive & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Primitive>(asset, "defaultPrimitive"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(asset, "defaultPrimitive"))
 		return;
 
-	// Create hardcoded alternative
-	Asset_Manager::create_New_Asset<Asset_Primitive>(asset, "defaultPrimitive");
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Primitive>(asset, "defaultPrimitive");
 	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	Asset_Manager::add_Work_Order(new Primitive_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Primitive_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Primitive>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::Submit_New_Asset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
-void Primitive_WorkOrder::Initialize_Order()
+void Primitive_WorkOrder::initializeOrder()
 {
 	vector<vec3> vertices;
 	vector<vec2> uv_coords;
 	if (!Model_Importer::import_Model(m_filename, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
-		fetchDefaultAsset(m_asset);
+		fetch_default_asset(m_asset);
 		return;
 	}
 
@@ -127,9 +127,9 @@ void Primitive_WorkOrder::Initialize_Order()
 	m_asset->uv_data = uv_coords;
 }
 
-void Primitive_WorkOrder::Finalize_Order()
+void Primitive_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) {
+	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 
 		auto &data = m_asset->data;
@@ -148,6 +148,6 @@ void Primitive_WorkOrder::Finalize_Order()
 
 		write_guard.unlock();
 		write_guard.release();
-		m_asset->Finalize();
+		m_asset->finalize();
 	}
 }

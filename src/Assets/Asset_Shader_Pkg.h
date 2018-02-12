@@ -39,11 +39,11 @@ public:
 
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();
+	bool existsYet();
 
 	/** Retrieves this package's content as a string.
 	 * @return string	package contents */
@@ -70,8 +70,9 @@ public:
 	/** Constructs an Asset_Shader_Pkg work order */
 	Shader_Pkg_WorkOrder(Shared_Asset_Shader_Pkg & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Shader_Pkg_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Methods
@@ -79,10 +80,11 @@ private:
 	 * @param	returnFile	reference string to return the text file to
 	 * @param	fileDirectory	absolute path to the file to read from
 	 * @return	bool	true if the file exists, false otherwise */
-	bool FetchFileFromDisk(string & returnFile, const string & fileDirectory);
+	bool fetchFileFromDisk(string & returnFile, const string & fileDirectory);
 
 	/** Parses the document for further inclusions and imports when necessary. */
-	void Parse();
+	void parse();
+
 
 	// Attributes
 	string m_filename;

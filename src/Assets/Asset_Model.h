@@ -59,8 +59,8 @@ struct AnimationInfo {
 	AnimationInfo();
 	// Scene gets destroyed at the end of asset creation
 	// We need to copy animation related information
-	void SetScene(const aiScene * scene);
-	size_t NumAnimations() const;
+	void setScene(const aiScene * scene);
+	size_t numAnimations() const;
 };
 class Asset_Model;
 typedef shared_ptr<Asset_Model> Shared_Asset_Model;
@@ -79,29 +79,29 @@ public:
 	/** Construct the Model. */
 	Asset_Model(const string & filename);
 
+
 	// Methods
 	/** @todo delete*/
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();	
+	bool existsYet();	
 
 	/** Generates a vertex array object, formed to match models' object data .
 	 * @return	GLuint	a vertex array object resident on the GPU */
-	static GLuint GenerateVAO();
-
-	
+	static GLuint Generate_VAO();
+		
 	/** Updates a vertex array object's state with this models' data. 
 	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
 	 * @param	vaoID	the vertex array object's ID on the GPU */
-	void UpdateVAO(const GLuint & vaoID);
+	void updateVAO(const GLuint & vaoID);
 
 	/** Returns the material ID for a skin given an index into this list
 	 * @note	Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index into this model's skin list. 
 	 * @return	GLuint	index into the master material list in which this skin can be found at */	
-	GLuint GetSkinID(const unsigned int & desired);
+	GLuint getSkinID(const unsigned int & desired);
 
 
 	// Attributes
@@ -130,25 +130,26 @@ public:
 	/** Constructs an Asset_Model work order */
 	Model_WorkOrder(Shared_Asset_Model & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Model_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Methods
 	/** Generates and parses the bones for our model.
 	 * @param	model	the model to load the bones onto
 	 * @param	scene	the model scene to load the bones from **/
-	void Initialize_Bones(Shared_Asset_Model & model, const aiScene * scene);
+	void initializeBones(Shared_Asset_Model & model, const aiScene * scene);
 	
 	/** Generates and parses the materials for our model from the model scene.
 	 * @param	modelMaterial	the material asset to load the model material into
 	 * @param	sceneMaterial	the model scene material to parse from **/
-	void Generate_Material(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
+	void generateMaterial(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
 
 	/** Generates and parses the materials for our model as a last resort.
 	 * @brief	attempts to load a material from disk as it doesn't have any aiMaterial's to load from.
 	 * @param	modelMaterial	the material asset to load the model material into */
-	void Generate_Material(Shared_Asset_Material & modelMaterial);
+	void generateMaterial(Shared_Asset_Material & modelMaterial);
 
 
 	// Attributes

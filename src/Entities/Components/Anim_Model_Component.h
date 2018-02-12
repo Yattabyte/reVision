@@ -94,7 +94,7 @@ class DT_ENGINE_API Model_Observer : Asset_Observer
 public:
 	Model_Observer(Shared_Asset_Model & asset, vector<BoneInfo> *transforms, const GLuint &vao, Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) :
 		Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset), m_transforms(transforms), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
-	virtual ~Model_Observer() { m_asset->RemoveObserver(this); };
+	virtual ~Model_Observer() { m_asset->removeObserver(this); };
 	virtual void Notify_Finalized();
 
 	GLuint m_vao_id, m_ubo_id;

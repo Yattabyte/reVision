@@ -18,7 +18,7 @@ Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 	shape = nullptr;
 }
 
-int Asset_Collider::GetAssetType()
+int Asset_Collider::Get_Asset_Type()
 {
 	return ASSET_TYPE;
 }
@@ -26,44 +26,44 @@ int Asset_Collider::GetAssetType()
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values
  * @param	asset	a shared pointer to fill with the default asset */
-void fetchDefaultAsset(Shared_Asset_Collider & asset)
+void fetch_default_asset(Shared_Asset_Collider & asset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::query_Existing_Asset<Asset_Collider>(asset, "defaultCollider"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(asset, "defaultCollider"))
 		return;
 	
-	// Create hardcoded alternative
-	Asset_Manager::create_New_Asset<Asset_Collider>(asset, "defaultCollider");
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Collider>(asset, "defaultCollider");
 	asset->shape = new btBoxShape(btVector3(1, 1, 1));
-	Asset_Manager::add_Work_Order(new Collider_WorkOrder(asset, ""), true);
+	Asset_Manager::Add_Work_Order(new Collider_WorkOrder(asset, ""), true);
 }
 
 namespace Asset_Loader {
 	void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded)
 	{
 		// Check if a copy already exists
-		if (Asset_Manager::query_Existing_Asset<Asset_Collider>(user, filename))
+		if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(user, filename))
 			return;
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG::Error(FILE_MISSING, fullDirectory);
-			fetchDefaultAsset(user);
+			fetch_default_asset(user);
 			return;
 		}
 
 		// Create the asset
-		Asset_Manager::submit_New_Asset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
+		Asset_Manager::Submit_New_Asset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
 	}
 }
 
-void Collider_WorkOrder::Initialize_Order()
+void Collider_WorkOrder::initializeOrder()
 {
 	// Attempt to create the asset
 	vector<btScalar> points;
 	if (!Model_Importer::import_Model(m_filename, aiProcess_Triangulate, points)) {
-		fetchDefaultAsset(m_asset);
+		fetch_default_asset(m_asset);
 		return;
 	}
 
@@ -72,8 +72,8 @@ void Collider_WorkOrder::Initialize_Order()
 	m_asset->shape = shape;
 }
 
-void Collider_WorkOrder::Finalize_Order()
+void Collider_WorkOrder::finalizeOrder()
 {
-	if (!m_asset->ExistsYet()) 
-		m_asset->Finalize();	
+	if (!m_asset->existsYet()) 
+		m_asset->finalize();	
 }

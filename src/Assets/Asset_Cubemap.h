@@ -37,15 +37,15 @@ public:
 
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	* @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();
+	bool existsYet();
 
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
-	void Bind(const GLuint & texture_unit);
+	void bind(const GLuint & texture_unit);
 
 	
 	// Attributes
@@ -72,8 +72,9 @@ public:
 	/** Constructs an Asset_Cubemap work order. */
 	Cubemap_WorkOrder(Shared_Asset_Cubemap & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Cubemap_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Attributes

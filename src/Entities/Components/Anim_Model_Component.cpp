@@ -29,7 +29,7 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0); 
 	
-	m_vao_id = Asset_Model::GenerateVAO();
+	m_vao_id = Asset_Model::Generate_VAO();
 }
 
 void Anim_Model_Component::Update()
@@ -42,7 +42,7 @@ void Anim_Model_Component::Update()
 void Anim_Model_Component::Draw()
 {
 	if (!m_model) return;
-	if (m_model->ExistsYet() && m_fence != nullptr) {
+	if (m_model->existsYet() && m_fence != nullptr) {
 		const auto state = glClientWaitSync(m_fence, 0, 0);
 		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
 			&& (state != GL_WAIT_FAILED)) {
@@ -91,8 +91,8 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<GLuint>()) break;
 			const auto &payload = message.GetPayload<GLuint>();
 			m_skin = payload;
-			if (m_model->ExistsYet()) {
-				m_uboData.materialID = m_model->GetSkinID(m_skin);
+			if (m_model->existsYet()) {
+				m_uboData.materialID = m_model->getSkinID(m_skin);
 				Update();
 			}
 			break;
@@ -112,9 +112,9 @@ void Anim_Model_Component::ReceiveMessage(const ECSmessage &message)
 
 void Model_Observer::Notify_Finalized()
 {
-	if (m_asset->ExistsYet()) {// in case this gets used more than once by mistake
-		m_asset->UpdateVAO(m_vao_id);
-		m_uboData->materialID = m_asset->GetSkinID(*m_skin);
+	if (m_asset->existsYet()) {// in case this gets used more than once by mistake
+		m_asset->updateVAO(m_vao_id);
+		m_uboData->materialID = m_asset->getSkinID(*m_skin);
 		*m_transforms = m_asset->animationInfo.meshTransforms;
 		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_ubo_id);
 		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo_id);
@@ -203,7 +203,7 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 
 void Anim_Model_Component::animate(const double & deltaTime)
 {
-	if (!m_model->ExistsYet()) return;
+	if (!m_model->existsYet()) return;
 
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);

@@ -37,7 +37,7 @@ void Material_Manager::_shutdown()
 	}
 }
 
-GLuint Material_Manager::generate_ID()
+GLuint Material_Manager::Generate_ID()
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
@@ -52,7 +52,7 @@ GLuint Material_Manager::generate_ID()
 	return arraySpot;
 }
 
-void Material_Manager::generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID)
+void Material_Manager::Generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID)
 {
 	auto &manager = Get();
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
@@ -65,7 +65,7 @@ void Material_Manager::generate_Handle(const GLuint & materialBufferID, const GL
 	manager.m_WorkOrders.push_back(handle);
 }
 
-void Material_Manager::parse_Work_Orders()
+void Material_Manager::Parse_Work_Orders()
 {
 	auto &manager = Get();
 

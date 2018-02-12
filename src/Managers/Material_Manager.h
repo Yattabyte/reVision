@@ -26,25 +26,38 @@ using namespace std;
  *			- this provides an int index
  *			- geometry stores it alongside vertices (MUST NOT be interpolated across face)
  *		- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
- *			- get GLuint64 from ssbo's array using index
+ *			- get GLuint64 from SSBO's array using index
  *			- transform into sampler
  * - Uses bindless textures to circumvent slow texture binding 
  **/
 class DT_ENGINE_API Material_Manager 
 {
 public:
+	// Methods
+	/** Singleton GET method.
+	 * @return	static Material_Manager instance */
 	static Material_Manager &Get() {
 		static Material_Manager instance;
 		return instance;
 	}
-	// Start up and initialize the material manager
-	static void startup() { (Get())._startup(); }
-	// Shut down and flush out the material manager
-	static void shutdown() { (Get())._shutdown(); }
-	// Generates a material ID
-	static GLuint generate_ID();
-	static void generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID);
-	static void parse_Work_Orders();
+
+	/** Start up and initialize the material manager */
+	static void Start_Up() { (Get())._startup(); }
+
+	/** Shut down and flush out the material manager */
+	static void Shut_Down() { (Get())._shutdown(); }
+
+	/** Generates a material ID 
+	 * @return	a new material ID */
+	static GLuint Generate_ID();
+
+	/** Generates a 64-bit GLuint64 texture handle for the specified texture, and makes it resident on the GPU
+	 * @param	materialBufferID	the material buffer
+	 * @param	glTextureID	the texture to generate the handle for **/
+	static void Generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID);
+
+	/** Tick through the work orders */
+	static void Parse_Work_Orders();
 
 
 private:
@@ -60,14 +73,20 @@ private:
 		}
 		GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
 	};
+
+	// (de)Constructors
 	~Material_Manager() {};
 	Material_Manager();
 	Material_Manager(Material_Manager const&) = delete;
-	void operator=(Material_Manager const&) = delete;
 
+
+	// Methods
+	void operator=(Material_Manager const&) = delete;
 	void _startup();
 	void _shutdown();
 
+
+	// Attributes
 	shared_mutex m_DataMutex;
 	bool m_Initialized; 
 	GLuint m_BufferSSBO;

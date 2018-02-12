@@ -8,10 +8,10 @@ class Primitive_Observer : Asset_Observer
 {
 public:
 	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
-	virtual ~Primitive_Observer() { m_asset->RemoveObserver(this); };
+	virtual ~Primitive_Observer() { m_asset->removeObserver(this); };
 	virtual void Notify_Finalized() {
-		if (m_asset->ExistsYet()) // in case this gets used more than once by mistake
-			m_asset->UpdateVAO(m_vao_id);
+		if (m_asset->existsYet()) // in case this gets used more than once by mistake
+			m_asset->updateVAO(m_vao_id);
 	}
 
 	GLuint m_vao_id;
@@ -57,7 +57,7 @@ void Geometry_Buffer::Initialize(const vec2 &size, VisualFX *visualFX)
 		m_visualFX = visualFX;
 		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
-		m_vao_Quad = Asset_Primitive::GenerateVAO();
+		m_vao_Quad = Asset_Primitive::Generate_VAO();
 		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
 		m_renderSize = size;
 		
@@ -178,7 +178,7 @@ void Geometry_Buffer::Resize(const vec2 &size)
 
 void Geometry_Buffer::ApplyAO()
 {
-	if (m_shapeQuad->ExistsYet() && m_shaderSSAO->ExistsYet()) {
+	if (m_shapeQuad->existsYet() && m_shaderSSAO->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
 
@@ -195,9 +195,9 @@ void Geometry_Buffer::ApplyAO()
 		glActiveTexture(GL_TEXTURE2);
 		glBindTexture(GL_TEXTURE_2D, m_noiseID);
 
-		m_shaderSSAO->Bind();
+		m_shaderSSAO->bind();
 		glBindVertexArray(m_vao_Quad);
-		const size_t &quad_size = m_shapeQuad->GetSize();
+		const size_t &quad_size = m_shapeQuad->getSize();
 		glDrawArrays(GL_TRIANGLES, 0, quad_size);
 		glBindVertexArray(0);
 		Asset_Shader::Release();

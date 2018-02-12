@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(91) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(92) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -105,33 +105,23 @@ private:
  *  This project is very much a work in progress.
  * 
  *  \section standards_sec Standards/Conventions used
- *  - All classes/members are to be camel cased unless specified
  *  - All member attributes shall be prefixed with 'm_' followed by the rest in camel case, leading with a lowercase character
  *		- vec3 m_currentPosition;
- *  - All private member methods or methods declared/implemented outside of headers will be lower case and separated by underscores '_'
+ *	- All member functions are camel cased with a leading lower case character
+ *		- void createObject ( ... );
+ *	- Static methods are camel cased with a leading upper case character and underscores between words '_'
+ *		- static void Load_Asset ( ... );
+ *  - All other private member methods or hidden implementations will be lower case and separated by underscores '_'
  *		- void calculate_position_offset( ... );
- *
- *  \subsection nonstatic_classes Non-Static classes
  *  - Class names are camel cased with a leading upper case character
  * 		- FooBar
  * 		- Entity
  * 		- GeometryBuffer
- *  - **Exception**: Identifying class polymorphism/implementation through use of an underscore '_'
- * 		- The Left most term should include the newest implementation in the hierarchy
+ *  - However, where fitting, underscores should be used to bring focus to the implementation at play.\n
+ * 	  The Left most term should include the newest implementation in the hierarchy
  * 		- Armor_Item
  * 		- Point_Light_Component
  * 		- System_Interface
- *  - Member functions are camel cased with a leading lower case character
- *		- void createObject ( ... );
- *
- *
- * \subsection static_classes Static classes / Singletons
- * - Class names are camel cased with a leading upper case character, and has underscores '_' between every word
- *		- Model_Importer
- *		- Asset_Manager
- * - Member functions are camel cased with a leading lower case character, and has underscores '_' between every word
- *		- void import_Model ( ... );
- *		- void load_Asset ( ... );
  *
  * \subsection namespaces Namespaces
  * - Namespaces methods are camel cased with a leading upper case character

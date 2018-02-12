@@ -148,8 +148,8 @@ bool Initialize_Sharing()
 
 void Shutdown_Sharing()
 {
-	Material_Manager::shutdown();
-	Asset_Manager::shutdown();
+	Material_Manager::Shut_Down();
+	Asset_Manager::Shut_Down();
 }
 
 #include "Assets\Asset_Material.h"
@@ -197,8 +197,8 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		glfwSetWindowUserPointer(m_package->m_Context_Rendering, m_package);
 		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_WindowResize);		
 
-		Material_Manager::startup();
-		Asset_Manager::startup();
+		Material_Manager::Start_Up();
+		Asset_Manager::Start_Up();
 		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
 		m_UpdaterThread->detach();
 
@@ -237,8 +237,8 @@ void dt_Engine::update()
 		m_lastTime = thisTime;
 
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
-		Asset_Manager::notify_Observers();
-		Material_Manager::parse_Work_Orders();
+		Asset_Manager::Notify_Observers();
+		Material_Manager::Parse_Work_Orders();
 		for each (auto system in m_package->m_Systems)
 			system.second->Update(deltaTime);
 		
@@ -257,7 +257,7 @@ void dt_Engine::Updater_Thread()
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			glfwMakeContextCurrent(m_Context_Sharing);
-			Asset_Manager::finalize_Orders();
+			Asset_Manager::Finalize_Orders();
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->Update_Threaded(deltaTime);

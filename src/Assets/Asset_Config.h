@@ -34,9 +34,10 @@ public:
 	/** Construct the config with a particular set of variable names. */
 	Asset_Config(const string & filename, const vector<string> & strings);
 
+
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 	
 
 	// Methods
@@ -76,8 +77,9 @@ public:
 	/** Constructs an Asset_Config work order. */
 	Config_WorkOrder(Shared_Asset_Config & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Config_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Attributes

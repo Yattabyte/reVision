@@ -54,11 +54,11 @@ public:
 
 	// Methods
 	/** @todo delete */
-	static int GetAssetType();
+	static int Get_Asset_Type();
 
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool ExistsYet();
+	bool existsYet();
 
 	/** Apply a specific set of textures to be used as a material.
 	 * @param	tx	an array of MAX_PHYSICAL_IMAGES length, formatted as a list of material textures (albedo/normal/metalness/roughness/height/occlusion) */
@@ -73,7 +73,7 @@ public:
 	 * @param	roughness	reference updated with roughness texture file path
 	 * @param	height	reference updated with height texture file path
 	 * @param	occlusion	reference updated with occlusion texture file path */
-	static void getPBRProperties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
+	static void Get_PBR_Properties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 
 	
 	// Attributes
@@ -104,8 +104,9 @@ public:
 	/** Constructs an Asset_Material work order */
 	Material_WorkOrder(Shared_Asset_Material & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
 	~Material_WorkOrder() {};
-	virtual void Initialize_Order();
-	virtual void Finalize_Order();
+	virtual void initializeOrder();
+	virtual void finalizeOrder();
+
 
 private:
 	// Attributes
