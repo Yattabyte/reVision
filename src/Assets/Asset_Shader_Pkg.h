@@ -31,8 +31,7 @@ class DT_ENGINE_API Asset_Shader_Pkg : public Asset
 public:
 	// (de)Constructors
 	/** Destroy the Shader Package. */
-	~Asset_Shader_Pkg();
-	
+	~Asset_Shader_Pkg();	
 	/** Construct the Shader Package. */
 	Asset_Shader_Pkg(const string & filename);
 
@@ -40,14 +39,15 @@ public:
 	// Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
+	/** Retrieves this package's content as a string.
+	 * @return package contents */
+	string getPackageText() const;
 
+
+	// Interface Implementation	
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
-	/** Retrieves this package's content as a string.
-	 * @return string	package contents */
-	string getPackageText() const;
+	virtual bool existsYet();
 
 	
 	// Attributes
@@ -79,7 +79,7 @@ private:
 	/** Reads in a text file from disk.
 	 * @param	returnFile	reference string to return the text file to
 	 * @param	fileDirectory	absolute path to the file to read from
-	 * @return	bool	true if the file exists, false otherwise */
+	 * @return	true if the file exists, false otherwise */
 	bool fetchFileFromDisk(string & returnFile, const string & fileDirectory);
 
 	/** Parses the document for further inclusions and imports when necessary. */

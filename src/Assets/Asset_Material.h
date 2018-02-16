@@ -41,13 +41,10 @@ public:
 	// (de)Constructors
 	/** Destroy the Material. */
 	~Asset_Material();
-
 	/** Construct the Material. */
 	Asset_Material(const std::string & filename);
-
 	/** Construct the Material with a specific index.*/
 	Asset_Material(const std::string & filename, const GLuint & spot);
-
 	/** Construct the Material with a manual set of textures, and a specific index. */
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 
@@ -55,15 +52,9 @@ public:
 	// Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
 	/** Apply a specific set of textures to be used as a material.
 	 * @param	tx	an array of MAX_PHYSICAL_IMAGES length, formatted as a list of material textures (albedo/normal/metalness/roughness/height/occlusion) */
 	void setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);
-
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	 * @brief	Updates the appropriate supplied @string's with a path to the appropriate file
 	 * @param	filename	the absolute file path of the '.mat' file to read from
@@ -74,6 +65,12 @@ public:
 	 * @param	height	reference updated with height texture file path
 	 * @param	occlusion	reference updated with occlusion texture file path */
 	static void Get_PBR_Properties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
+
+	
+	// Interface Implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
 
 	
 	// Attributes

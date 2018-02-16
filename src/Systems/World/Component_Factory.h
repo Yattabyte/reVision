@@ -49,7 +49,7 @@ private:
 	map<char*, deque<unsigned int>> m_freeSpots;
 	map<char*, ComponentCreator*, cmp_str> m_creatorMap;
 	shared_mutex m_dataLock;
-	ECSmessanger *m_ECSmessanger;
+	ECSmessanger *m_ECSmessenger;
 	EnginePackage *m_enginePackage;
 };
 

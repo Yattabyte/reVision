@@ -12,7 +12,7 @@ Entity_Factory::~Entity_Factory()
 }
 
 Entity_Factory::Entity_Factory(ECSmessanger *ecsMessanger, Component_Factory *componentFactory) : 
-	m_ECSmessanger(ecsMessanger),
+	m_ECSmessenger(ecsMessanger),
 	m_componentFactory(componentFactory)
 {
 	m_creatorMap.insert(pair<char*, EntityCreator*>("Prop", new PropCreator()));
@@ -37,7 +37,7 @@ ECShandle Entity_Factory::CreateEntity(char * type)
 		m_levelEntities[type].push_back(nullptr);
 	}
 
-	entity = m_creatorMap[type]->Create(ECShandle(type, spot), m_ECSmessanger, m_componentFactory);
+	entity = m_creatorMap[type]->create(ECShandle(type, spot), m_ECSmessenger, m_componentFactory);
 	m_levelEntities[type][spot] = entity;
 	return ECShandle(type, spot);
 }
@@ -48,7 +48,7 @@ void Entity_Factory::DeleteEntity(const ECShandle & id)
 		return;
 	if (m_levelEntities[id.first].size() <= id.second)
 		return;
-	m_creatorMap[id.first]->Destroy(m_levelEntities.at(id.first).at(id.second));
+	m_creatorMap[id.first]->destroy(m_levelEntities.at(id.first).at(id.second));
 	m_freeSpots.insert(pair<char*, deque<unsigned int>>(id.first, deque<unsigned int>()));
 	m_freeSpots[id.first].push_back(id.second);
 }
@@ -71,7 +71,7 @@ void Entity_Factory::Flush()
 {
 	for each (auto pair in m_levelEntities) {
 		for each (auto *entity in pair.second) {
-			m_creatorMap[pair.first]->Destroy(entity);
+			m_creatorMap[pair.first]->destroy(entity);
 		}
 	}
 	m_levelEntities.clear();

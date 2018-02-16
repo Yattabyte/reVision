@@ -1,9 +1,3 @@
-/*
-	Light_Point_Component
-
-	- A lighting technique that mimicks a lightbulb / pointlight
-*/
-
 #pragma once
 #ifndef LIGHT_POINT_COMPONENT
 #define LIGHT_POINT_COMPONENT
@@ -22,53 +16,20 @@
 #include "Systems\World\Camera.h"
 
 using namespace glm;
-
-struct LightPointBuffer
-{
-	mat4 mMatrix;
-	mat4 lightV;
-	vec3 LightColor; float padding1;
-	vec3 LightPosition; float padding2;
-	float p_far;
-	float p_dir;
-	float ShadowSize;
-	float LightIntensity;
-	float LightRadius;
-	int Shadow_Spot1;
-	int Shadow_Spot2;
-	int Use_Shadows;
-	int LightStencil;
-	
-	LightPointBuffer() {
-		mMatrix = mat4(1.0f);
-		lightV = mat4(1.0f);
-		LightColor = vec3(1.0f);
-		LightPosition = vec3(0.0f);
-		p_far = 0;
-		p_dir = 0;
-		ShadowSize = 0;
-		LightIntensity = 0;
-		LightRadius = 0;
-		Shadow_Spot1 = 0;
-		Shadow_Spot2 = 0;
-		Use_Shadows = 0;
-		LightStencil = 0;
-	}
-};
-
 class System_Shadowmap;
 class System_World;
 class Light_Point_Creator;
 class EnginePackage;
+
+
+/**
+ * A renderable light component that mimics a light-bulb.
+ * Uses dual paraboloid shadow maps.
+ **/
 class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 {
 public:
-	/*************
-	----Common----
-	*************/
-
-	// Logic for interpreting receiving messages
-	virtual void ReceiveMessage(const ECSmessage &message);
+	/** Message Enumerators for this component type. */
 	static enum MSG_TYPES
 	{
 		SET_COLOR,
@@ -79,28 +40,67 @@ public:
 	};
 
 
-	/***************************
-	----Light_Point Functions----
-	***************************/
-
-	// Direct lighting pass
-	void directPass(const int &vertex_count);
-	// Indirect lighting pass
-	void indirectPass(const int &vertex_count);
-	// Shadow lighting pass
-	void shadowPass();
-	// Returns whether or not this light is visible
-	bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix);
-	// Returns the importance value for this light (distance / size)
-	float getImportance(const vec3 &position);
-	// Sends current data to the GPU
+	/** Sends current data to the GPU. */
+	void update();
+	/** Retrieves the front or rear shadow spot.
+	 * @param	front	set to true to retrieve the front, or false for the back
+	 * @return	the shadow spot requested */
 	GLuint getShadowSpot(const bool &front) const;
-	void Update();
+
+
+	// Interface Implementation
+	virtual void receiveMessage(const ECSmessage &message);
+	void directPass(const int &vertex_count);
+	void indirectPass(const int &vertex_count);
+	void shadowPass();
+	bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	float getImportance(const vec3 &position);	
 
 
 protected:
+	/** Nested Buffer class.
+	 * @brief	used for sending data to the gpu. */
+	struct LightPointBuffer {
+		mat4 mMatrix;
+		mat4 lightV;
+		vec3 LightColor; float padding1;
+		vec3 LightPosition; float padding2;
+		float p_far;
+		float p_dir;
+		float ShadowSize;
+		float LightIntensity;
+		float LightRadius;
+		int Shadow_Spot1;
+		int Shadow_Spot2;
+		int Use_Shadows;
+		int LightStencil;
+
+		LightPointBuffer() {
+			mMatrix = mat4(1.0f);
+			lightV = mat4(1.0f);
+			LightColor = vec3(1.0f);
+			LightPosition = vec3(0.0f);
+			p_far = 0;
+			p_dir = 0;
+			ShadowSize = 0;
+			LightIntensity = 0;
+			LightRadius = 0;
+			Shadow_Spot1 = 0;
+			Shadow_Spot2 = 0;
+			Use_Shadows = 0;
+			LightStencil = 0;
+		}
+	};
+
+
+	// (de)Constructors
+	/** Destroys a point light component. */
 	~Light_Point_Component();
+	/** Constructs a point light component. */
 	Light_Point_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+
+
+	// Attributes
 	GLuint m_uboID;
 	LightPointBuffer m_uboData;
 	EnginePackage *m_enginePackage;

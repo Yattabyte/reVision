@@ -29,7 +29,6 @@ public:
 	 * @param	points	a reference to a btScalar vector that will hold the vertices
 	 * @return	1 if successfull, 0 if file doesn't exist, and -1 if the file is corrupt */
 	static int import_Model(const string & fulldirectory, unsigned int pFlags, vector<btScalar> & points);
-
 	/** Reads the model from disk and retrieves its vertices and UV coordinates.
 	 * @param	fulldirectory	a string containing the absolute directory of the model to read from
 	 * @param	pFlags	integer flags for controlling the ASSIMP importing process

@@ -19,12 +19,12 @@ void Component_Factory::Initialize(EnginePackage *enginePackage, ECSmessanger *e
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_ECSmessanger = ecsMessanger;
+		m_ECSmessenger = ecsMessanger;
 
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessanger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessanger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Spot", new Light_Spot_Creator(m_ECSmessanger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Point", new Light_Point_Creator(m_ECSmessanger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessenger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessenger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Spot", new Light_Spot_Creator(m_ECSmessenger)));
+		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Point", new Light_Point_Creator(m_ECSmessenger)));
 
 		m_Initialized = true;
 	}

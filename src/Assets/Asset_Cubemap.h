@@ -30,22 +30,22 @@ public:
 	// (de)Constructors
 	/** Destroy the Cubemap. */
 	~Asset_Cubemap();
-
 	/** Construct the Cubemap. */
 	Asset_Cubemap(const std::string & filename);
 
-
+	
 	// Methods
 	/** @todo delete */
-	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	* @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
+	static int Get_Asset_Type();	
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const GLuint & texture_unit);
+
+
+	// Interface implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
 
 	
 	// Attributes

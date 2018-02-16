@@ -31,7 +31,6 @@ public:
 	// (de)Constructors
 	/** Destroy the Primitive. */
 	~Asset_Primitive();
-
 	/** Construct the Primitive. */
 	Asset_Primitive(const string & filename);
 
@@ -39,24 +38,23 @@ public:
 	// Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
 	/** Generates a vertex array object, formed to match primitives' object data.
-	 * @return	GLuint	a vertex array object resident on the GPU */
+	 * @return	a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();
-
 	/** Updates a vertex array object's state with this primitives' data. 
 	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
 	 * @param	vaoID	the vertex array object's ID on the GPU */	
 	void updateVAO(const GLuint & vaoID);
-
 	/** Returns the vertex-count of this object. 
-	 * @return	size_t	vertex-count of this object */
+	 * @return	vertex-count of this object */
 	size_t getSize();
 	
+
+	// Interface Implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
 
 	// Attributes
 	GLuint buffers[2];

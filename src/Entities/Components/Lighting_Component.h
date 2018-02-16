@@ -1,10 +1,3 @@
-/*
-	Lighting_Component
-
-	- A base class for lighting components
-	- Does nothing on its own, just exposes common methods for other components
-*/
-
 #pragma once
 #ifndef LIGHTING_COMPONENT
 #define LIGHTING_COMPONENT
@@ -20,31 +13,44 @@
 
 using namespace glm;
 
+
+/**
+ * An interface for lighting related components.
+ * @todo	convert to pure interface
+ **/
 class DT_ENGINE_API Lighting_Component : protected Component
 {
 public:
-
-	/*************************
-	----Lighting Functions----
-	*************************/
-
-	// Direct lighting pass
+	/** Renders the light, performing direct lighting calculations only. */
 	virtual void directPass(const int &vertex_count) {};
-	// Indirect lighting pass
+	/** Renders the light, performing indirect lighting calculations only. */
 	virtual void indirectPass(const int &vertex_count) {};
-	// Shadow lighting pass
+	/** Renders the light, performing shadow calculations only. */
 	virtual void shadowPass() {};
-	// Returns whether or not this light is visible
-	virtual bool IsVisible(const mat4 & PMatrix, const mat4 &VMatrix) { return false; };
-	// Returns the importance value for this light (distance / size)
-	virtual float getImportance(const vec3 &position) { return 1.0f; };
-	// Returns the timestamp of the last time this light updated its shadowmap
+	/** Tests if this object is within the viewing frustum of the camera.
+	 * @brief	a test of general visibility (excluding obstruction of other objects). 
+	 * @param	PMatrix	the projection matrix of the camera
+	 * @param	VMatrix	the viewing matrix of the camera
+	 * @return	true if this object is within the viewing frustum of the camera, false otherwise */
+	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix) = 0;
+	/** Generates an 'importance' value for this light.
+	 * @brief	importance is equal to (distance / size).
+	 * @param	position	the position of the viewer (camera)
+	 * @return	the importance value calculated. */
+	virtual float getImportance(const vec3 &position) = 0;
+	/** Retrieves the timestamp of the last shadowmap update.
+	 * @return	the shadow update time */
 	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
 
 
 protected:
+	/** Virtual Destructor. */
 	~Lighting_Component() {};
-	Lighting_Component(const ECShandle &id, const ECShandle &pid) : Component(id, pid) { m_shadowUpdateTime = 0; };
+	/** Constructor. Takes in component ID and parent ID. */
+	Lighting_Component(const ECShandle & id, const ECShandle & pid) : Component(id, pid) { m_shadowUpdateTime = 0; };
+
+
+	// Attributes
 	double m_shadowUpdateTime;
 };
 

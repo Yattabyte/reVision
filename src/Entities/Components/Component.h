@@ -1,10 +1,3 @@
-/*
-	Component
-
-	- An extendable container like object
-	- To be derived/inherited from to accomplish a specific goal
-*/
-
 #pragma once
 #ifndef COMPONENT
 #define COMPONENT
@@ -20,32 +13,66 @@
 class ECSmessanger;
 class ComponentCreator;
 class EnginePackage;
+
+
+/**
+ * A base class which is extend-able to create a specific component type.
+ * Created by the component factory.
+ **/
 class DT_ENGINE_API Component
 {
 public:
-	// Propogates a message from this component to its parent
-	void SendMessage(const ECSmessage &message);
-	// Handles what to do when receiving a message
-	virtual void ReceiveMessage(const ECSmessage &message);
-	// Returns whether or not the provided message was sent from this component
-	bool Am_I_The_Sender(const ECSmessage &message);
+	/** Have this component accept a message.
+	 * @brief	a handy way to interface with components.
+	 * @param	message	the message to send to this component */
+	virtual void receiveMessage(const ECSmessage & message);
+
 
 protected:
+	// (de)Constructors
+	/** Virtual Destructor. */
 	virtual ~Component() {};
-	Component(const ECShandle &id, const ECShandle &pid) : m_ID(id), m_parentID(pid) {};
+
+	/** Constructor. 
+	 * @param	id	handle for this component (into component factory)
+	 * @param	pid	handle for the parent entity (into entity factory) */
+	Component(const ECShandle & id, const ECShandle & pid) : m_ID(id), m_parentID(pid) {};
+	/** Tests a message to determine if it originated from this component.
+	 * @param	message	the message to test
+	 * @return	true if this component is the sender, false otherwise */
+	bool compareMSGSender(const ECSmessage & message);
+
+
+	// Attributes
 	ECShandle m_ID, m_parentID;
-	ECSmessanger *m_ECSmessanger;
+	ECSmessanger *m_ECSmessenger;
 	friend class ComponentCreator;
 };
 
+/**
+ * An interface to direct the creation of specific components.
+ **/
 class DT_ENGINE_API ComponentCreator
 {
 public:
-	ComponentCreator(ECSmessanger *ecsMessanger) : m_ECSmessanger(ecsMessanger) {};
+	/** Constructor. */
+	ComponentCreator(ECSmessanger * ecsMessanger) : m_ECSmessenger(ecsMessanger) {};
+
+	/** Virtual Destructor. */
 	virtual ~ComponentCreator(void) {};
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) { return new Component(id, pid); };
-	void Destroy(Component *component) { delete component; };
-	ECSmessanger *m_ECSmessanger;
+	/** Destroy the component.
+	 * @param	component	the component to delete */
+	void Destroy(Component * component) { delete component; };
+	/** Creates an component.
+	 * @param	id	the handle identifier for the component
+	 * @param	pid	the handle identifier for the parent entity
+	 * @param	enginePackage	pointer to the engine package	
+	 * @return	the component created */
+	virtual Component* Create(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) { return new Component(id, pid); };
+	
+
+	// Attributes
+	ECSmessanger *m_ECSmessenger;
 };
 
 #endif // COMPONENT

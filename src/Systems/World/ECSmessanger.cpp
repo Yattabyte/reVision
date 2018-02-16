@@ -16,14 +16,14 @@ void ECSmessanger::SendMessage_ToEntity(const ECSmessage & message, const ECShan
 {
 	auto entity = m_entityFactory->GetEntity(target);
 	if (entity == nullptr) return;
-	entity->ReceiveMessage(message);
+	entity->receiveMessage(message);
 }
 
 void ECSmessanger::SendMessage_ToComponent(const ECSmessage & message, const ECShandle & target)
 {
 	auto component = m_componentFactory->GetComponent(target);
 	if (component == nullptr) return;
-	component->ReceiveMessage(message);
+	component->receiveMessage(message);
 }
 
 void ECSmessanger::SendMessage_ToComponents(const ECSmessage & message, const ECShandle_map & targets)

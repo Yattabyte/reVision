@@ -38,6 +38,7 @@ struct DT_ENGINE_API Transform
 		update();
 	}
 
+
 	// Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
 	void update() {
@@ -46,6 +47,7 @@ struct DT_ENGINE_API Transform
 					  glm::scale( mat4(1.0f), scale );
 		inverseModelMatrix = glm::inverse(modelMatrix);
 	}
+
 
 	// Attributes
 	// Input Variables

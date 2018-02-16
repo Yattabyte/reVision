@@ -26,7 +26,6 @@ public:
 	// (de)Constructors
 	/** Destroy the Collider. */
 	~Asset_Collider();
-
 	/** Construct the Collider. */
 	Asset_Collider(const string & filename);
 

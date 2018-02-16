@@ -26,6 +26,13 @@ int Asset_Cubemap::Get_Asset_Type()
 	return ASSET_TYPE;
 }
 
+void Asset_Cubemap::bind(const GLuint & texture_unit)
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	glActiveTexture(texture_unit);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
+}
+
 bool Asset_Cubemap::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
@@ -39,13 +46,6 @@ bool Asset_Cubemap::existsYet()
 			return true;
 	}
 	return false;
-}
-
-void Asset_Cubemap::bind(const GLuint & texture_unit)
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	glActiveTexture(texture_unit);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

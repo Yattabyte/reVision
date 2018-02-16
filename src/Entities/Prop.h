@@ -1,10 +1,3 @@
-/*
-	Prop
-
-	- A type of entity
-	- Contains an animation-supported model-component
-*/
-
 #pragma once
 #ifndef PROP
 #define PROP
@@ -16,11 +9,15 @@
 
 #include "Entities\Entity.h"
 
+
+/**
+ * Creates a Prop entity, composed of an animated model component
+ **/
 class DT_ENGINE_API PropCreator : public EntityCreator
 {
 public:
-	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
-		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
+	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessanger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessanger, componentFactory);
 		entity->addComponent("Anim_Model");
 		return entity;
 	}

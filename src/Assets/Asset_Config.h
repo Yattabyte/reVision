@@ -30,7 +30,6 @@ public:
 	// (de)Constructors
 	/** Destroy the Config. */
 	~Asset_Config();
-
 	/** Construct the config with a particular set of variable names. */
 	Asset_Config(const string & filename, const vector<string> & strings);
 
@@ -45,13 +44,11 @@ public:
 	 * @param	cfg_key	the key to apply this new value to
 	 * @param	cfg_value	the new value to give to this key */
 	void setValue(const unsigned int & cfg_key, const float & cfg_value);
-
 	/** Retrieves the value assigned to the supplied key.
 	 * @param	cfg_key	the key in which to fetch the value from
-	 * @return	float	the value assigned to supplied key
+	 * @return	the value assigned to supplied key
 	 * @note	returns UNDEFINED_CVAL if the supplied key doesn't exist. */
 	float getValue(const unsigned int & cfg_key);
-
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
 	void saveConfig();
 

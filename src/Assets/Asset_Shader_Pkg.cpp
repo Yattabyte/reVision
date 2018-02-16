@@ -21,14 +21,14 @@ int Asset_Shader_Pkg::Get_Asset_Type()
 	return ASSET_TYPE;
 }
 
-bool Asset_Shader_Pkg::existsYet()
-{
-	return Asset::existsYet();
-}
-
 string Asset_Shader_Pkg::getPackageText() const
 {
 	return package_text;
+}
+
+bool Asset_Shader_Pkg::existsYet()
+{
+	return Asset::existsYet();
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

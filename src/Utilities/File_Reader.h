@@ -98,13 +98,11 @@ namespace File_Reader {
 	 * @param	returnFile	a reference string to append the data retrieved
 	 * @param	fileDirectory	the absolute directory of the file stored as a string
 	 * @return	true if succeeded, false otherwise */
-	DT_ENGINE_API bool ReadFileFromDisk(string & returnFile, const string & fileDirectory);
-	
+	DT_ENGINE_API bool ReadFileFromDisk(string & returnFile, const string & fileDirectory);	
 	/** Quickly checks if a supplied file or folder exists on disk.
 	* @param	fileName	the absolute directory of the file
 	* @return	true if the file exists, false otherwise */
 	DT_ENGINE_API bool FileExistsOnDisk(const string & fileName);	
-
 	/** Retrieves the application's running directory.
 	* @return	string of the absolute directory that this executable ran from */
 	DT_ENGINE_API string GetCurrentDir();

@@ -1,10 +1,3 @@
-/*
-	Entity
-
-	- The gist of what an entity is
-	- Not much to it, as entities need to be specific
-*/
-
 #pragma once
 #ifndef ENTITY
 #define ENTITY
@@ -21,37 +14,69 @@
 #include <map>
 #include <vector>
 
-
 class ECSmessanger;
 class Component_Factory;
 class EntityCreator;
 class Component;
+
+
+/**
+ * A super object composed of components.\n
+ * Because of this, we don't re-implement entities, instead we re-implement entity-creators to dish out the components needed per entity.
+ **/
 class DT_ENGINE_API Entity
 {
 public:
-	void addComponent(char *type);
-	Component* getComponent(const ECShandle &id);
-	void SendMessage(const ECSmessage &message);
-	void ReceiveMessage(const ECSmessage &message);
+	// Methods
+	/** Generates a new component for this entity of the supplied type.
+	 * @param	type	const char array name of the component type to add */
+	void addComponent(char * type);
+	/** Returns a component if it exists from this entity, using the supplied handle.
+	 * @param	id	the handle of the component to return
+	 * @return	the component which matches the handle supplied */
+	Component* getComponent(const ECShandle & id);	
+	/** Propagate a message onto this entity's components.
+	 * @param	message	the message to send */
+	void receiveMessage(const ECSmessage & message);
 	
+
 protected:
+	// (de)Constructors
+	/** Virtual Destructor. */
 	virtual ~Entity();
-	Entity(const ECShandle &id) : m_ID(id) {};
+	/** Constructor with handle identifier into entity factory. */
+	Entity(const ECShandle & id) : m_ID(id) {};
+
+
+	// Attributes
 	ECShandle m_ID;
 	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
-	ECSmessanger *m_ECSmessanger;
+	ECSmessanger *m_ECSmessenger;
 	Component_Factory *m_componentFactory;
 	friend class EntityCreator;
 };
 
+/**
+ * An interface to direct the creation of specific entities.
+ **/
 class DT_ENGINE_API EntityCreator
 {
 public:
+	/** Virtual Destructor. */
 	virtual ~EntityCreator(void) {};
-	virtual void Destroy(Entity *entity) { delete entity; };
-	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) { 
+
+	/** Destroy the entity.
+	 * @param	entity	the entity to delete */
+	virtual void destroy(Entity * entity) { delete entity; };
+
+	/** Creates an entity
+	 * @param	id	the handle identifier for the entity
+	 * @param	ecsMessenger	pointer to the messenger system allowing communication between entities and components
+	 * @param	componentFactory	pointer to the component factory to allow creation of specific components
+	 * @return	the entity created */
+	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessenger, Component_Factory * componentFactory) { 
 		Entity *entity = new Entity(id);
-		entity->m_ECSmessanger = ecsMessanger;
+		entity->m_ECSmessenger = ecsMessenger;
 		entity->m_componentFactory = componentFactory;
 		return entity;
 	};

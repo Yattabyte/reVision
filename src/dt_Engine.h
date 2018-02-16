@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(92) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(93) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -36,25 +36,19 @@ public:
 	// Constructors
 	/** Destroys the engine. */
 	~dt_Engine();
-
 	/** Zero-initialize the engine. */
 	dt_Engine();
-
 	/** Initializes the engine.
 	 * @param	systems	vector of all systems to create this engine with
 	 * @return	true if successfully initialized */
 	bool initialize(const vector<pair<const char*, System*>> & systems);
-
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void shutdown();
-
 	/** Ticks the engine's overall simulation by a frame. */
 	void update();
-
 	/** Checks if the engine wants to shut down.
 	 * @return	true if engine should shut down */
 	bool shouldClose();
-
 	/** Returns the main camera belonging to this engine's viewport.
 	 * @return	a pointer to the main camera */
 	Camera * getCamera();	
@@ -137,15 +131,34 @@ private:
  *  - GLM - OpenGL mathematics library: https://glm.g-truc.net/0.9.8/index.html
  */
 
-/*! \page Assets
+/*! \page assets Assets
+ * \section assets_sec Engine Assets
+ * \title Engine Assets
+ * This section contains all of the asset types the engine currently supports.\n
+ * All assets require doing the following:
+ *		- Re-implementing the base asset class
+ *		- Overloading the load_asset function in the Asset_Loader namespace
+ *		- Define a custom work order class tailored for use in the asset loader (re-implement base work order).
+ *		<br>
+ *		
+ *	They include:
+ *		- Asset
+ *		- Asset_Collider
+ *		- Asset_Config
+ *		- Asset_Cubemap
+ *		- Asset_Material
+ *		- Asset_Model
+ *		- Asset_Primitive
+ *		- Asset_Shader
+ *		- Asset_Shader_Pkg
+ *		- Asset_Texture
+ */
+
+ /*! \page entities Entities
  *
  */
 
- /*! \page Entities
- *
- */
-
- /*! \page Managers
+ /*! \page managers Managers
  * \section mgr_sec Engine Managers
  * This section contains Singleton classes.\n
  * Although singletons are frowned upon in OOP, I couldn't think of any scenario in which these \n
@@ -156,13 +169,13 @@ private:
  *		- Message_Manager
  */
 
- /*! \page Systems
+ /*! \page systems Systems
  *
  */
 
- /*! \page Utilities
+ /*! \page utilities Utilities
  * \section util_sec Engine Utilities
- * This section contains some helper tools and objects that don't fit neately into any other category.\n
+ * This section contains some helper tools and objects that don't fit neatly into any other category.\n
  * The rules for this section are pretty slack, however it shouldn't include 1-time use classes that \n
  * could just as easily be nested and void documenting.
  * They include:

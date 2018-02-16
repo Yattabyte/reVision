@@ -28,48 +28,44 @@ public:
 	// (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
 	~Asset();
-
 	/** Create asset that uses the specified file-path. */
 	Asset(const string & filename = "");
+
 
 	// Methods	
 	/** Gets the file name of this asset.
 	 * @return	the file name belonging to this asset */
 	string getFileName() const;
-
 	/** Sets the file name of this asset.
 	 * @param	filename	the file name to set this asset to */
 	void setFileName(const string & filename);
-
 	/** Adds a state observer/listener to this asset.
 	 * @brief	adds asset observers that want to be know when this asset finishes finalizing.
 	 * @param	observer	the observer to add to this asset */
 	void addObserver(Asset_Observer * observer);
-
 	/** Removes a state observer/listener from this asset.
 	 * @brief	removes the observer specified from this asset.
 	 * @note	will remove all instances from this asset, or none if it doesn't exist. 
 	 * @param	observer	the observer to remove from this asset*/
 	void removeObserver(Asset_Observer * observer);
-
 	/** Returns a UNIQUE asset type identifier. Each sub-class should have their own
   	 * @todo	Delete this and change the system to use const char* keys */
 	static int Get_Asset_Type();
-
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();
-
 	/** Performs final data processing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
 	virtual void finalize();
 
-	/** public mutex, to encourage safe access of asset. */
-	shared_mutex m_mutex;
+
+	// Attributes
+	shared_mutex m_mutex;	/** public mutex, to encourage safe access of asset. */
 
 
 protected:
+	// Attributes
 	bool m_finalized;
 	string m_filename;
 	vector<Asset_Observer*> m_observers;

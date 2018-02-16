@@ -106,7 +106,7 @@ public:
 	shared_mutex &getDataMutex() const { return data_mutex; };
 	// Updates the camera's state on the GPU
 	// All matrix updates performed here
-	void Update();
+	void update();
 
 
 private:

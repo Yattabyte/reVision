@@ -10,6 +10,7 @@
 #include "GLFW\glfw3.h"
 #include <math.h>
 
+
 Light_Spot_Component::~Light_Spot_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
@@ -42,9 +43,40 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	}
 }
 
-void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
+void Light_Spot_Component::update()
 {
-	if (Component::Am_I_The_Sender(message)) return;
+	// Calculate view matrix
+	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
+	const mat4 rot = glm::mat4_cast(m_orientation);
+	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+	m_uboData.LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+	m_uboData.lightV = final;
+	m_uboData.mMatrix = (trans * rot) * scl;
+
+	// Calculate perspective matrix
+	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
+	const vec2 &size = shadowmapper->GetSize(SHADOW_REGULAR);
+	m_uboData.ShadowSize = size.x;
+	m_camera.setDimensions(size);
+	m_camera.update();
+	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;
+	m_camera.setMatrices(m_uboData.lightP, final);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightSpotBuffer), &m_uboData);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+}
+
+GLuint Light_Spot_Component::getShadowSpot() const
+{
+	return m_uboData.Shadow_Spot;
+}
+
+void Light_Spot_Component::receiveMessage(const ECSmessage &message)
+{
+	if (Component::compareMSGSender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	switch (message.GetCommandID()) {
@@ -69,7 +101,7 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			m_squaredRadius = payload * payload;
 			m_camera.setFarPlane(m_squaredRadius);
 			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
-			Update();
+			update();
 			break;
 		}
 		case SET_CUTOFF: {
@@ -78,14 +110,14 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			m_uboData.LightCutoff = cosf(glm::radians(payload));
 			m_camera.setHorizontalFOV(payload * 2.0f);
 			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightCutoff), sizeof(float), &m_uboData.LightCutoff);
-			Update();
+			update();
 			break;
 		}
 		case SET_ORIENTATION: {
 			if (!message.IsOfType<quat>()) break;
 			const auto &payload = message.GetPayload<quat>();
 			m_orientation = payload;
-			Update();
+			update();
 			break;
 		}
 		case SET_POSITION: {
@@ -93,7 +125,7 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<vec3>();
 			m_uboData.LightPosition = payload; 
 			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			Update();
+			update();
 			break;
 		}
 		case SET_TRANSFORM: {
@@ -102,7 +134,7 @@ void Light_Spot_Component::ReceiveMessage(const ECSmessage &message)
 			m_uboData.LightPosition = payload.position;
 			m_orientation = payload.orientation;
 			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			Update();
+			update();
 			break;
 		}
 	}
@@ -143,18 +175,18 @@ void Light_Spot_Component::indirectPass(const int & vertex_count)
 
 void Light_Spot_Component::shadowPass()
 {
-	Update();
+	update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot());
 
 	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
 	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
-		component->Draw();
+		component->draw();
 
 	m_shadowUpdateTime = glfwGetTime();
 }
 
-bool Light_Spot_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
+bool Light_Spot_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
 	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
 	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
@@ -163,36 +195,5 @@ bool Light_Spot_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 float Light_Spot_Component::getImportance(const vec3 & position)
 {
 	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
-}
-
-GLuint Light_Spot_Component::getShadowSpot() const
-{
-	return m_uboData.Shadow_Spot;
-}
-
-void Light_Spot_Component::Update()
-{
-	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
-	const mat4 rot = glm::mat4_cast(m_orientation);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-	m_uboData.LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-	m_uboData.lightV = final;
-	m_uboData.mMatrix = (trans * rot) * scl;
-
-	// Calculate perspective matrix
-	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-	const vec2 &size = shadowmapper->GetSize(SHADOW_REGULAR); 
-	m_uboData.ShadowSize = size.x;
-	m_camera.setDimensions(size);
-	m_camera.Update();
-	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;
-	m_camera.setMatrices(m_uboData.lightP, final);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightSpotBuffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 }
 

@@ -46,7 +46,7 @@ void Asset_Config::saveConfig()
 }
 
 /** Attempts to retrieve a string between quotation marks "<string>" 
- * @return	string	the string between quotation marks*/
+ * @return	the string between quotation marks*/
 string get_between_quotes(string & s)
 {
 	string output = s;
@@ -65,7 +65,7 @@ string get_between_quotes(string & s)
 
 /** Checks if the supplied value is a parameter in the CFG_STRING list. 
  * @param	s	the string to check for in the list
- * @param	m_strings	the list of strings to check for an occurence of our value within
+ * @param	m_strings	the list of strings to check for an occurrence of our value within
  * @return	the index of the value in the list if found, otherwise -1. */
 int find_CFG_Property(const string & s, const vector<string> & m_strings)
 {

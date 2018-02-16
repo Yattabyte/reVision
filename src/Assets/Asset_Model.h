@@ -75,7 +75,6 @@ public:
 	// (de)Constructors
 	/** Destroy the Model. */
 	~Asset_Model();
-
 	/** Construct the Model. */
 	Asset_Model(const string & filename);
 
@@ -83,25 +82,24 @@ public:
 	// Methods
 	/** @todo delete*/
 	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();	
-
 	/** Generates a vertex array object, formed to match models' object data .
-	 * @return	GLuint	a vertex array object resident on the GPU */
-	static GLuint Generate_VAO();
-		
+	 * @return	a vertex array object resident on the GPU */
+	static GLuint Generate_VAO();		
 	/** Updates a vertex array object's state with this models' data. 
 	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
 	 * @param	vaoID	the vertex array object's ID on the GPU */
 	void updateVAO(const GLuint & vaoID);
-
 	/** Returns the material ID for a skin given an index into this list
 	 * @note	Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index into this model's skin list. 
-	 * @return	GLuint	index into the master material list in which this skin can be found at */	
+	 * @return	index into the master material list in which this skin can be found at */	
 	GLuint getSkinID(const unsigned int & desired);
+
+
+	// Interface Implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();	
 
 
 	// Attributes

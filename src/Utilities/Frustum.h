@@ -49,6 +49,10 @@ private:
 	};
 
 public:
+	/** Enumerations for testing intersections. */
+	static enum { OUTSIDE, INTERSECT, INSIDE };
+
+
 	// (de)Constructors
 	/** Desttroys the frustum */
 	~Frustum();
@@ -64,14 +68,12 @@ public:
 	/** Sets a matrix for this frustum to be based upon.
 	 * @param	m	the perspective-projection matrix to use */
 	void setFrustum(const mat4 & m);
-
 	/** Tests if a supplied sphere is visible within this frustum. 
 	 * @param	p	the position of the sphere
 	 * @param	radius	the radius of the sphere
 	 * @return	integer representing outside, intersect, or inside (0-2)
 	 * @note	see this class's public enumeration */
 	int sphereInFrustum(const vec3 & p, const vec3 & radius);
-
 	/** Tests if a supplied axis-aligned bounding-box is visible within this frustum.
 	 * @param	bbox_min	the minumum extents of this box
 	 * @param	bbox_max	the maximum extents of this box
@@ -79,11 +81,7 @@ public:
 	 * @note	see this class's public enumeration */
 	int AABBInFrustom(const vec3 & bbox_min, const vec3 & bbox_max);
 
-
-	// Enums for test results
-	static enum { OUTSIDE, INTERSECT, INSIDE };
-
-
+	
 private:
 	// Attributes
 	Plane pl[6];

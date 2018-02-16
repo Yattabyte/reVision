@@ -436,7 +436,7 @@ void System_Graphics_PBR::GeometryPass(const Visibility_Token & vis_token)
 		m_shaderGeometry->bind();
 
 		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
-			component->Draw();
+			component->draw();
 
 		Asset_Shader::Release();
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);

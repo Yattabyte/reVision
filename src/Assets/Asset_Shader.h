@@ -35,22 +35,15 @@ public:
 	// (de)Constructors
 	/** Destroy the Shader. */
 	~Asset_Shader();
-
 	/** Construct the Shader. */
 	Asset_Shader(const string & filename);
 
 
 	// Methods
 	/** @todo delete */
-	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
+	static int Get_Asset_Type();	
 	/** Make this shader program active */
 	void bind();
-
 	/** Inactivate any currently bound shader program. */
 	static void Release();	
 	
@@ -94,7 +87,13 @@ public:
 	static void Set_Uniform_Array(const GLuint & i, const mat4 * o, const int & size);
 	static void Set_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose);		
 
-		
+	
+	// Interface Implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
+
 	// Attributes
 	GLuint gl_program_ID, gl_shader_vertex_ID, gl_shader_fragment_ID, gl_shader_geometry_ID; // OpenGL ID's
 	string vertex_text, fragment_text, geometry_text; // Text Data
@@ -146,7 +145,7 @@ private:
 	/** Reads in a text file from disk.
 	 * @param	returnFile	reference string to return the text file to
 	 * @param	fileDirectory	absolute path to the file to read from
-	 * @return	bool	true if the file exists, false otherwise */
+	 * @return	true if the file exists, false otherwise */
 	bool FetchFileFromDisk(string & returnFile, const string & fileDirectory);
 	
 	

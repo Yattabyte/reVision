@@ -55,7 +55,7 @@ void System_Logic::Update(const float & deltaTime)
 	// Update the engine package
 	m_enginePackage->m_Camera.setPosition(m_transform.position);
 	m_enginePackage->m_Camera.setOrientation(m_transform.orientation);
-	m_enginePackage->m_Camera.Update();
+	m_enginePackage->m_Camera.update();
 }
 
 void System_Logic::Update_Threaded(const float & deltaTime)

@@ -27,7 +27,7 @@ static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int heigh
 	package.setPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH, width);
 	package.setPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, height);
 	package.m_Camera.setDimensions(vec2(width, height));
-	package.m_Camera.Update();
+	package.m_Camera.update();
 }
 
 // Is called when error messages occur within OpenGL driver
@@ -76,7 +76,7 @@ public:
 	EN_DrawDistCallback(EnginePackage *pointer) : m_pointer(pointer) {}
 	void Callback(const float &value) {
 		m_pointer->m_Camera.setFarPlane(value);
-		m_pointer->m_Camera.Update();
+		m_pointer->m_Camera.update();
 	}
 private:
 	EnginePackage *m_pointer;

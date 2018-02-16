@@ -24,7 +24,7 @@ Camera::Camera(const vec3 &position, const vec2 &size, const float &near_plane, 
 	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	Update();
+	update();
 
 	//Visibility_Manager::RegisterViewer(this);
 }
@@ -40,7 +40,7 @@ Camera::Camera(Camera const & other)
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 	m_frustum = Frustum(other.getFrustum());
-	Update();
+	update();
 
 	//Visibility_Manager::RegisterViewer(this);
 }
@@ -52,7 +52,7 @@ void Camera::operator=(Camera const & other)
 	m_cameraBuffer = other.getCameraBuffer();
 	m_frustum = Frustum(other.getFrustum());
 	data_mutex.unlock();
-	Update();
+	update();
 }
 
 void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
@@ -70,7 +70,7 @@ void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void Camera::Update()
+void Camera::update()
 {
 	shared_lock<shared_mutex> rguard(data_mutex);
 

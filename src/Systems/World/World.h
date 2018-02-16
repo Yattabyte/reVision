@@ -45,7 +45,7 @@ public:
 private:
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
-	ECSmessanger m_ECSmessanger;
+	ECSmessanger m_ECSmessenger;
 	shared_mutex m_lock;
 	vector<Camera*> m_viewers;
 

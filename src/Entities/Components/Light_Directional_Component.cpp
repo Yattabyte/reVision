@@ -9,6 +9,7 @@
 #include "Systems\Shadows\Shadowmap.h"
 #include "GLFW\glfw3.h"
 
+
 Light_Directional_Component::~Light_Directional_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
@@ -51,86 +52,17 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 		m_enginePackage->getSubSystem<System_World>("World")->RegisterViewer(&m_camera);
 }
 
-void Light_Directional_Component::ReceiveMessage(const ECSmessage &message)
+void Light_Directional_Component::update()
 {
-	if (Component::Am_I_The_Sender(message)) return;
+	calculateCascades();
+
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-
-	switch (message.GetCommandID())
-	{
-		case SET_LIGHT_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.LightColor = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
-			break;
-		}	
-		case SET_LIGHT_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightIntensity = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
-			break;
-		}
-		case SET_LIGHT_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			const mat4 rotation = glm::mat4_cast(payload);
-			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-			Update();
-			break;
-		}
-		case SET_LIGHT_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			const mat4 &rotation = payload.modelMatrix;
-			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-			Update();
-			break;
-		}
-	}	
-	
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightDirBuffer), &m_uboData);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void Light_Directional_Component::directPass(const int & vertex_count)
-{
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 }
 
-void Light_Directional_Component::indirectPass(const int & vertex_count)
-{
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	glDrawArraysInstanced(GL_POINTS, 0, 1, vertex_count);
-}
-
-void Light_Directional_Component::shadowPass()
-{
-	Update();
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-
-	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
-	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
-		component->Draw();
-
-	m_shadowUpdateTime = glfwGetTime();
-}
-
-bool Light_Directional_Component::IsVisible(const mat4 & PMatrix, const mat4 &VMatrix)
-{
-	// Directional lights are infinite as they simulate the sun.
-	return true;
-}
-
-float Light_Directional_Component::getImportance(const vec3 & position)
-{
-	return 1.0f;
-}
-
-void Light_Directional_Component::CalculateCascades()
+void Light_Directional_Component::calculateCascades()
 {
 	const auto &cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
 	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
@@ -179,8 +111,8 @@ void Light_Directional_Component::CalculateCascades()
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 		m_uboData.lightP[i] = glm::ortho(l, r, b, t, n, f);
 
-		if (i == 0) 
-			m_camera.setMatrices(m_uboData.lightP[i], mat4(1.0f));		
+		if (i == 0)
+			m_camera.setMatrices(m_uboData.lightP[i], mat4(1.0f));
 	}
 
 	for (int x = 0; x < NUM_CASCADES; ++x) {
@@ -190,13 +122,81 @@ void Light_Directional_Component::CalculateCascades()
 	}
 }
 
-void Light_Directional_Component::Update()
+void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 {
-	CalculateCascades();
-	
+	if (Component::compareMSGSender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightDirBuffer), &m_uboData);
+
+	switch (message.GetCommandID())
+	{
+		case SET_LIGHT_COLOR: {
+			if (!message.IsOfType<vec3>()) break;
+			const auto &payload = message.GetPayload<vec3>();
+			m_uboData.LightColor = payload;
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
+			break;
+		}	
+		case SET_LIGHT_INTENSITY: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			m_uboData.LightIntensity = payload;
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
+			break;
+		}
+		case SET_LIGHT_ORIENTATION: {
+			if (!message.IsOfType<quat>()) break;
+			const auto &payload = message.GetPayload<quat>();
+			const mat4 rotation = glm::mat4_cast(payload);
+			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+			update();
+			break;
+		}
+		case SET_LIGHT_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			const mat4 &rotation = payload.modelMatrix;
+			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+			update();
+			break;
+		}
+	}	
+	
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 }
 
+void Light_Directional_Component::directPass(const int & vertex_count)
+{
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
+}
+
+void Light_Directional_Component::indirectPass(const int & vertex_count)
+{
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, vertex_count);
+}
+
+void Light_Directional_Component::shadowPass()
+{
+	update();
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+
+	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
+	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
+		component->draw();
+
+	m_shadowUpdateTime = glfwGetTime();
+}
+
+bool Light_Directional_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
+{
+	// Directional lights are infinite as they simulate the sun.
+	return true;
+}
+
+float Light_Directional_Component::getImportance(const vec3 & position)
+{
+	return 1.0f;
+}

@@ -4,7 +4,8 @@
 #include "Systems\World\Component_Factory.h"
 #include "Systems\World\ECSmessanger.h"
 
-void Entity::addComponent(char *type)
+
+void Entity::addComponent(char * type)
 {
 	m_component_handles.insert(std::pair<char*, vector<unsigned int>>(type, vector<unsigned int>()));
 	m_component_handles[type].push_back(m_componentFactory->CreateComponent(type, m_ID).second);
@@ -15,16 +16,10 @@ Component * Entity::getComponent(const ECShandle & id)
 	return m_componentFactory->GetComponent(id);
 }
 
-void Entity::SendMessage(const ECSmessage &message)
+void Entity::receiveMessage(const ECSmessage & message)
 {
 	// Forward message to all components
-	m_ECSmessanger->SendMessage_ToComponents(message, m_component_handles);
-}
-
-void Entity::ReceiveMessage(const ECSmessage &message)
-{
-	// Forward message to all components
-	SendMessage(message);
+	m_ECSmessenger->SendMessage_ToComponents(message, m_component_handles);
 }
 
 Entity::~Entity()

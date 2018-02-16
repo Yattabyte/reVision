@@ -31,10 +31,8 @@ public:
 	// (de)Constructors
 	/** Destroy the Texture. */
 	~Asset_Texture();
-
 	/** Construct the Texture. */
 	Asset_Texture(const string & filename);
-
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
 
@@ -42,16 +40,17 @@ public:
 	// Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
-
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
-
 	/** Makes this texture active at a specific texture unit
 	 * @param	texture_unit	the texture unit to make this texture active at */
 	void bind(const GLuint & texture_unit);
 
 
+	// Interface Implementation
+	/** Returns whether or not this asset has completed finalizing.
+	 * @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
+	
 	// Attributes
 	GLuint gl_tex_ID, type;
 	vec2 size;

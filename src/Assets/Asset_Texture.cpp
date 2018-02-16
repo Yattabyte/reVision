@@ -37,6 +37,12 @@ int Asset_Texture::Get_Asset_Type()
 	return ASSET_TYPE;
 }
 
+void Asset_Texture::bind(const GLuint & texture_unit)
+{
+	glActiveTexture(texture_unit);
+	glBindTexture(type, gl_tex_ID);
+}
+
 bool Asset_Texture::existsYet()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
@@ -50,12 +56,6 @@ bool Asset_Texture::existsYet()
 			return true;
 	}
 	return false;
-}
-
-void Asset_Texture::bind(const GLuint & texture_unit)
-{
-	glActiveTexture(texture_unit);
-	glBindTexture(type, gl_tex_ID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

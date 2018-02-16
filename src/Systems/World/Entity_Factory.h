@@ -45,7 +45,7 @@ private:
 	map<char*, vector<Entity*>, cmp_str> m_levelEntities;
 	map<char*, deque<unsigned int>> m_freeSpots;
 	map<char*, EntityCreator*, cmp_str> m_creatorMap;
-	ECSmessanger *m_ECSmessanger;
+	ECSmessanger *m_ECSmessenger;
 	Component_Factory *m_componentFactory;
 };
 

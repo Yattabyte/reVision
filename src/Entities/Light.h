@@ -1,10 +1,3 @@
-/*
-	Light
-
-	- An abstract class to be expanded on by all lighting entities
-	- To be used in the Lighting Manager
-*/
-
 #pragma once
 #ifndef LIGHTS
 #define LIGHTS
@@ -16,21 +9,28 @@
 
 #include "Entities\Entity.h"
 
+
+/**
+ * Creates a Spot Light entity, composed of only a spot light component.
+ **/
 class DT_ENGINE_API SpotLightCreator : public EntityCreator
 {
 public:
-	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
-		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
+	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessanger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessanger, componentFactory);
 		entity->addComponent("Light_Spot");
 		return entity;
 	}
 };
 
+/**
+ * Creates a Point Light entity, composed of only a point light component.
+ **/
 class DT_ENGINE_API PointLightCreator : public EntityCreator
 {
 public:
-	virtual Entity* Create(const ECShandle &id, ECSmessanger *ecsMessanger, Component_Factory *componentFactory) {
-		Entity *entity = EntityCreator::Create(id, ecsMessanger, componentFactory);
+	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessanger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessanger, componentFactory);
 		entity->addComponent("Light_Point");
 		return entity;
 	}
