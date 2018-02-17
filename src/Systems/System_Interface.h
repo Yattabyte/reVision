@@ -1,12 +1,3 @@
-/*
-	System_Interface
-
-	- An abstract class for an engine system
-	- To be expanded upon to complete a particular goal
-*/
-
-
-
 #pragma once
 #ifndef SYSTEM_INTERFACE
 #define SYSTEM_INTERFACE
@@ -17,25 +8,36 @@
 #endif
 
 class EnginePackage;
+
+
+/**
+ * An abstract class representing an engine system. 
+ **/
 class DT_ENGINE_API System
 {
 public:
-	// All systems need to implement their own destructor
+	// (de)Constructors
+	/** Virtual Destructor*/
 	virtual ~System() {};
-
-	// Create da constructor
+	/** Constructor*/
 	System() { m_Initialized = false; }
+	/** Initializes the system.
+	 * @param	enginePackage	the engine package */
+	virtual void initialize(EnginePackage * enginePackage) = 0;
+	/** Tell the system to update, typically called within the main loop.
+	 * @param	deltaTime	the time since last update */
+	virtual void update(const float & deltaTime) = 0;
+	/** Tell the system to update in a separate thread.
+	 * @brief	can be used if this system supports multi-threading.
+	 * @param	deltaTime	the time since last update */
+	/** updateThreaded
+	 * @param		const float & deltaTime
+	 * @return		void */
+	virtual void updateThreaded(const float & deltaTime) = 0;
 
-	// All systems can implement their own initialization function
-	virtual void Initialize(EnginePackage * enginePackage) {}
-
-	// All systems can implement their own update function
-	virtual void Update(const float &deltaTime) {};
-
-	// An optional secondary threaded update function
-	virtual void Update_Threaded(const float &deltaTime) {};
 
 protected:
+	// Attributes
 	bool m_Initialized;
 	EnginePackage *m_enginePackage;
 };

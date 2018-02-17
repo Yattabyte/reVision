@@ -2,6 +2,7 @@
 #include "Managers\Message_Manager.h"
 #include <algorithm>
 
+
 HDR_Buffer::~HDR_Buffer()
 {
 	if (m_Initialized) {
@@ -18,7 +19,7 @@ HDR_Buffer::HDR_Buffer()
 	m_texture = 0;
 }
 
-void HDR_Buffer::Initialize(const vec2 &size)
+void HDR_Buffer::initialize(const vec2 & size)
 {
 	if (!m_Initialized) {
 		glGenFramebuffers(1, &m_fbo);
@@ -43,24 +44,24 @@ void HDR_Buffer::Initialize(const vec2 &size)
 	}
 }
 
-void HDR_Buffer::Clear()
+void HDR_Buffer::clear()
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void HDR_Buffer::BindForWriting()
+void HDR_Buffer::bindForWriting()
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 }
 
-void HDR_Buffer::BindForReading()
+void HDR_Buffer::bindForReading()
 {
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, m_texture);	
 }
 
-void HDR_Buffer::Resize(const vec2 & size)
+void HDR_Buffer::resize(const vec2 & size)
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 

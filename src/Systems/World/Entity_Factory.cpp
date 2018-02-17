@@ -6,7 +6,6 @@
 #include "Entities\Light.h"
 
 
-
 Entity_Factory::~Entity_Factory()
 {
 }

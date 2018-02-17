@@ -4,16 +4,15 @@
 #include "Input.h"
 
 
-
 System_Input::~System_Input()
 {
 }
 
-System_Input::System_Input(const System_Input_Binding & binds) : m_binds(binds)
+System_Input::System_Input(const Input_Binding & binds) : m_binds(binds)
 {
 }
 
-void System_Input::Initialize(EnginePackage * enginePackage)
+void System_Input::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage; 
@@ -21,7 +20,7 @@ void System_Input::Initialize(EnginePackage * enginePackage)
 	}
 }
 
-void System_Input::Update(const float & deltaTime)
+void System_Input::update(const float & deltaTime)
 {
 	const auto bindings = m_binds.getBindings();
 	if (!bindings.get()) return;
@@ -35,32 +34,7 @@ void System_Input::Update(const float & deltaTime)
 	}
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_enginePackage->m_Context_Rendering, &mouseX, &mouseY);
-	m_enginePackage->m_Action_State.at(LOOK_X) = mouseX;
-	m_enginePackage->m_Action_State.at(LOOK_Y) = mouseY;
+	m_enginePackage->m_Action_State.at(Action_State::LOOK_X) = mouseX;
+	m_enginePackage->m_Action_State.at(Action_State::LOOK_Y) = mouseY;
 	glfwSetCursorPos(m_enginePackage->m_Context_Rendering, 0, 0);
-}
-
-void System_Input::Callback_CursorPos(GLFWwindow * window, double x, double y)
-{
-	
-}
-
-void System_Input::Callback_KeyPress(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	bool qwe = true;
-}
-
-void System_Input::Callback_CharMods(GLFWwindow* window, unsigned int codepoint, int mods)
-{
-	bool qwe = true;
-}
-
-void System_Input::Callback_MouseButton(GLFWwindow* window, int button, int action, int mods)
-{
-	bool qwe = true;
-}
-
-void System_Input::Callback_Scroll(GLFWwindow* window, double xoffset, double yoffset)
-{
-	bool qwe = true;
 }

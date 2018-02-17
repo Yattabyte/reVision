@@ -1,9 +1,3 @@
-/*
-	System_Animation
-
-	- Retrieves objects that implement the animate_interface and controls their animation
-*/
-
 #pragma once
 #ifndef SYSTEM_ANIMATION
 #define SYSTEM_ANIMATION
@@ -15,18 +9,26 @@
 
 #include "Systems\System_Interface.h"
 
-
 class EnginePackage;
+
+
+/**
+ * An engine system that controls animation-supporting objects.
+ **/
 class DT_ENGINE_API System_Animation : public System
 {
 public:
-	~System_Animation();
-	System_Animation();
-	virtual void Initialize(EnginePackage * enginePackage);
-	virtual void Update(const float &deltaTime);
-	virtual void Update_Threaded(const float &deltaTime);
+	// (de)Constructors
+	/** Destroy the animation system. */
+	~System_Animation() {}
+	/** Construct the animation system. */
+	System_Animation() {}
 
-private:
+
+	// Interface Implementations
+	virtual void initialize(EnginePackage * enginePackage);
+	virtual void update(const float & deltaTime);
+	virtual void updateThreaded(const float & deltaTime) {};
 };
 
 #endif // SYSTEM_ANIMATION

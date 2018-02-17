@@ -67,7 +67,7 @@ public:
 	static void Get_PBR_Properties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
 
 	
-	// Interface Implementation
+	// Interface Implementations
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();

@@ -6,6 +6,7 @@
 #include "Entities\Components\Light_Spot_Component.h"
 #include "Entities\Components\Light_Point_Component.h"
 
+
 Component_Factory::~Component_Factory()
 {
 }
@@ -15,7 +16,7 @@ Component_Factory::Component_Factory()
 	m_Initialized = false;
 }
 
-void Component_Factory::Initialize(EnginePackage *enginePackage, ECSmessanger *ecsMessanger)
+void Component_Factory::Initialize(EnginePackage * enginePackage, ECSmessanger * ecsMessanger)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;

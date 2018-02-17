@@ -21,11 +21,11 @@ static void GLFW_Callback_Error(int error, const char* description)
 }
 
 // Is called when the window resizes
-static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int height)
+static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	EnginePackage &package = *((EnginePackage*)glfwGetWindowUserPointer(window));
-	package.setPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH, width);
-	package.setPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT, height);
+	package.setPreference(Preference_State::C_WINDOW_WIDTH, width);
+	package.setPreference(Preference_State::C_WINDOW_HEIGHT, height);
 	package.m_Camera.setDimensions(vec2(width, height));
 	package.m_Camera.update();
 }
@@ -161,7 +161,7 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);		
 
 		m_drawDistCallback = new EN_DrawDistCallback(m_package);
-		m_package->addCallback(PREFERENCE_ENUMS::C_DRAW_DISTANCE, m_drawDistCallback);
+		m_package->addCallback(Preference_State::C_DRAW_DISTANCE, m_drawDistCallback);
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
@@ -182,12 +182,12 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);		
 		
 		for each (auto &pair in systems) {
-			pair.second->Initialize(m_package);
+			pair.second->initialize(m_package);
 			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
 		}
 
-		const float window_width = m_package->getPreference(PREFERENCE_ENUMS::C_WINDOW_WIDTH);
-		const float window_height = m_package->getPreference(PREFERENCE_ENUMS::C_WINDOW_HEIGHT);
+		const float window_width = m_package->getPreference(Preference_State::C_WINDOW_WIDTH);
+		const float window_height = m_package->getPreference(Preference_State::C_WINDOW_HEIGHT);
 		const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 		glfwSetWindowSize(m_package->m_Context_Rendering, window_width, window_height);
 		glfwSetWindowPos(m_package->m_Context_Rendering, (maxWidth - window_width) / 2, (maxHeight - window_height) / 2);
@@ -195,7 +195,7 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		glfwSetCursorPos(m_package->m_Context_Rendering, 0, 0);
 				
 		glfwSetWindowUserPointer(m_package->m_Context_Rendering, m_package);
-		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_WindowResize);		
+		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_Windowresize);		
 
 		Material_Manager::Start_Up();
 		Asset_Manager::Start_Up();
@@ -211,7 +211,7 @@ void dt_Engine::shutdown()
 {
 	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
-		m_package->removeCallback(PREFERENCE_ENUMS::C_DRAW_DISTANCE, m_drawDistCallback);
+		m_package->removeCallback(Preference_State::C_DRAW_DISTANCE, m_drawDistCallback);
 		delete m_drawDistCallback;
 		
 		if (m_UpdaterThread->joinable())
@@ -240,7 +240,7 @@ void dt_Engine::update()
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
 		for each (auto system in m_package->m_Systems)
-			system.second->Update(deltaTime);
+			system.second->update(deltaTime);
 		
 		glfwSwapBuffers(m_package->m_Context_Rendering);
 		glfwPollEvents();
@@ -260,7 +260,7 @@ void dt_Engine::Updater_Thread()
 			Asset_Manager::Finalize_Orders();
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
-				system.second->Update_Threaded(deltaTime);
+				system.second->updateThreaded(deltaTime);
 			//glFinish();
 		}
 		stay_alive = !shouldClose();

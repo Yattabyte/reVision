@@ -1,10 +1,11 @@
 #include "Systems\Graphics\VisualFX.h"
 #include "Utilities\EnginePackage.h"
 
+
 class Primitive_Observer : Asset_Observer
 {
 public:
-	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
 	virtual ~Primitive_Observer() { m_asset->removeObserver(this); };
 	virtual void Notify_Finalized() {
 		if (m_asset->existsYet()) // in case this gets used more than once by mistake
@@ -29,7 +30,7 @@ VisualFX::VisualFX()
 	m_fbo_GB = 0;
 }
 
-void VisualFX::Initialize(EnginePackage * enginePackage)
+void VisualFX::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -37,18 +38,18 @@ void VisualFX::Initialize(EnginePackage * enginePackage)
 		m_vao_Quad = Asset_Primitive::Generate_VAO();
 		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
 
-		Initialize_CubeFilter();
-		Initialize_GausianBlur();
+		initializeCubeFilter();
+		initializeGausianBlur();
 
 		m_Initialized = true;
 	}
 }
 
-void VisualFX::Initialize_CubeFilter()
+void VisualFX::initializeCubeFilter()
 {
 }
 
-void VisualFX::Initialize_GausianBlur()
+void VisualFX::initializeGausianBlur()
 {
 	glGenFramebuffers(1, &m_fbo_GB);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo_GB);

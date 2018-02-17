@@ -3,6 +3,7 @@
 #include "Managers\Message_Manager.h"
 #include <algorithm>
 
+
 Lighting_Buffer::~Lighting_Buffer()
 {
 	if (m_Initialized) {
@@ -26,7 +27,7 @@ Lighting_Buffer::Lighting_Buffer()
 		m_texturesGB[x] = 0;
 }
 
-void Lighting_Buffer::Initialize(const vec2 &size, VisualFX *visualFX, const int &bloomStrength, const GLuint &depthStencil)
+void Lighting_Buffer::initialize(const vec2 & size, VisualFX * visualFX, const int & bloomStrength, const GLuint & depthStencil)
 {
 	if (!m_Initialized) {
 		m_depth_stencil = depthStencil;
@@ -66,7 +67,7 @@ void Lighting_Buffer::Initialize(const vec2 &size, VisualFX *visualFX, const int
 	}
 }
 
-void Lighting_Buffer::Clear()
+void Lighting_Buffer::clear()
 {
 	GLenum DrawBuffers[] = {
 		GL_COLOR_ATTACHMENT0,
@@ -78,7 +79,7 @@ void Lighting_Buffer::Clear()
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void Lighting_Buffer::BindForWriting()
+void Lighting_Buffer::bindForWriting()
 {
 	GLenum DrawBuffers[] = {
 		GL_COLOR_ATTACHMENT0,
@@ -91,7 +92,7 @@ void Lighting_Buffer::BindForWriting()
 	glDrawBuffers(LBUFFER_NUM_TEXTURES, DrawBuffers);
 }
 
-void Lighting_Buffer::BindForReading()
+void Lighting_Buffer::bindForReading()
 {
 	for (unsigned int i = 0; i < LBUFFER_NUM_TEXTURES; i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -99,7 +100,7 @@ void Lighting_Buffer::BindForReading()
 	}
 }
 
-void Lighting_Buffer::Resize(const vec2 & size)
+void Lighting_Buffer::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
@@ -117,12 +118,12 @@ void Lighting_Buffer::Resize(const vec2 & size)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
-void Lighting_Buffer::SetBloomStrength(const int & strength)
+void Lighting_Buffer::setBloomStrength(const int & strength)
 {
 	m_bloomStrength = strength;
 }
 
-void Lighting_Buffer::ApplyBloom()
+void Lighting_Buffer::applyBloom()
 {
 	glDisable(GL_BLEND);
 	m_visualFX->applyGaussianBlur(m_textures[LBUFFER_TEXTURE_TYPE_OVERBRIGHT], m_texturesGB, m_renderSize, m_bloomStrength);

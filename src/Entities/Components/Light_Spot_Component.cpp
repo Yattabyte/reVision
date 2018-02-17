@@ -16,9 +16,9 @@ Light_Spot_Component::~Light_Spot_Component()
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
 		if (m_shadowMapper)
-			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
+			m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 		if (m_shadowMapper)
-			m_world->UnRegisterViewer(&m_camera);
+			m_world->unregisterViewer(&m_camera);
 	}
 }
 
@@ -35,11 +35,11 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 
 	if (m_enginePackage->findSubSystem("Shadows")) {
 		m_shadowMapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
+		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 	}
 	if (m_enginePackage->findSubSystem("World")) {
 		m_world = m_enginePackage->getSubSystem<System_World>("World");
-		m_world->RegisterViewer(&m_camera);
+		m_world->registerViewer(&m_camera);
 	}
 }
 
@@ -56,7 +56,7 @@ void Light_Spot_Component::update()
 
 	// Calculate perspective matrix
 	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-	const vec2 &size = shadowmapper->GetSize(SHADOW_REGULAR);
+	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
 	m_uboData.ShadowSize = size.x;
 	m_camera.setDimensions(size);
 	m_camera.update();
@@ -177,7 +177,7 @@ void Light_Spot_Component::shadowPass()
 {
 	update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot());
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot());
 
 	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
 	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))

@@ -5,6 +5,7 @@
 #include "Utilities\Transform.h"
 #include <algorithm>
 
+
 System_World::~System_World()
 {
 }
@@ -16,7 +17,7 @@ System_World::System_World() :
 	
 }
 
-void System_World::Initialize(EnginePackage * enginePackage)
+void System_World::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -26,24 +27,7 @@ void System_World::Initialize(EnginePackage * enginePackage)
 	}
 }
 
-void System_World::RegisterViewer(Camera * c)
-{
-	unique_lock<shared_mutex> writeGuard(m_lock);
-	m_viewers.push_back(c);
-}
-
-void System_World::UnRegisterViewer(Camera * c)
-{
-	unique_lock<shared_mutex> writeGuard(m_lock);
-	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto *camera) {
-		return (camera == c);
-	}), end(m_viewers));
-}
-
-#include "Entities\Components\Geometry_Component.h"
-#include "Entities\Components\Lighting_Component.h"
-
-void System_World::Update(const float & deltaTime)
+void System_World::update(const float & deltaTime)
 {	
 	static bool loaded = false;
 	if (!loaded) {
@@ -97,7 +81,7 @@ void System_World::Update(const float & deltaTime)
 	}
 }
 
-void System_World::Update_Threaded(const float & deltaTime)
+void System_World::updateThreaded(const float & deltaTime)
 {
 	calcVisibility(m_enginePackage->m_Camera);
 	shared_lock<shared_mutex> readGuard(m_lock);
@@ -105,6 +89,22 @@ void System_World::Update_Threaded(const float & deltaTime)
 		calcVisibility(*camera);
 }
 
+void System_World::registerViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.push_back(c);
+}
+
+void System_World::unregisterViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto *camera) {
+		return (camera == c);
+	}), end(m_viewers));
+}
+
+#include "Entities\Components\Geometry_Component.h"
+#include "Entities\Components\Lighting_Component.h"
 void System_World::calcVisibility(Camera & camera)
 {
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
@@ -124,7 +124,7 @@ void System_World::calcVisibility(Camera & camera)
 				if (component->isVisible(camPMatrix, camVMatrix))
 					visible_components.push_back((Component*)component);
 
-			vis_token.insert(type);
+			vis_token.insertType(type);
 			vis_token[type] = visible_components;
 		}
 	}
@@ -140,7 +140,7 @@ void System_World::calcVisibility(Camera & camera)
 				if (component->isVisible(camPMatrix, camVMatrix))
 					visible_components.push_back((Component*)component);
 
-			vis_token.insert(type);
+			vis_token.insertType(type);
 			vis_token[type] = visible_components;
 		}
 

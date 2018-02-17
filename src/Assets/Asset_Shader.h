@@ -88,7 +88,7 @@ public:
 	static void Set_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose);		
 
 	
-	// Interface Implementation
+	// Interface Implementations
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();

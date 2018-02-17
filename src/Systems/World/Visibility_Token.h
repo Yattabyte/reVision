@@ -1,9 +1,3 @@
-/*
-	Visibility_Token
-
-	- An element that defines where and how a scene should be viewed
-*/
-
 #pragma once
 #ifndef VISIBILITY_TOKEN
 #define VISIBILITY_TOKEN
@@ -18,27 +12,52 @@
 #include <map>
 #include <vector>
 
+
+/**
+ * An object that holds a list of components considered to be visible.
+ **/
 class Visibility_Token {
 public:
+	// (de)Constructors
+	/** Destroy the token. */
 	Visibility_Token() {}
+	/** Construct the token. */
 	~Visibility_Token() {}
 	
-	void insert(char *c) {
-		mList.insert(pair<char*, vector<Component*>>(c, vector<Component*>()));
+
+	// Public Methods
+	/** Insert a component type into the map ahead of time. 
+	 * @param	name	the name of the type to insert */
+	void insertType(char * name) {
+		mList.insert(pair<char*, vector<Component*>>(name, vector<Component*>()));
 	}
+	/** Get a type-casted list of components that match the given type
+	 * @param	name	the name of the type to retrieve
+	 * @param	<T>		the type to down-cast the components to.
+	 * @return	a type-casted list of components matching the supplied type */
 	template <typename T> 
-	const std::vector<T*>& getTypeList(char *c) const {
-		return *(vector<T*>*)(&mList.at(c));
+	const std::vector<T*>& getTypeList(char * name) const {
+		return *(vector<T*>*)(&mList.at(name));
 	}
-	std::vector<Component*>& operator[](char *c) {
-		return mList.at(c);
+	/** Retrieve a list of components of the given type.
+	 * @param	name	the name of the type to retrieve
+	 * @return	the list of components matching the supplied type */
+	std::vector<Component*>& operator[](char * name) {
+		return mList.at(name);
 	}
+	/** Retrieve the size of the map.
+	 * @return	the size of the map */
 	size_t size() const {
 		return mList.size();
 	}
-	bool find(char *c) const {
-		return !(mList.find(c) == mList.end());
+	/** Check if the given component type. 
+	 * @param	name	the name of the type to retrieve */
+	bool find(char * name) const {
+		return !(mList.find(name) == mList.end());
 	}
+
+
+	// Public Attributes
 	std::map<char*, std::vector<Component*>, cmp_str> mList;
 };
 

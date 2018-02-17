@@ -36,7 +36,7 @@ public:
 	void calculateCascades();
 
 
-	// Interface implementation
+	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual void directPass(const int &vertex_count);
 	virtual void indirectPass(const int &vertex_count);

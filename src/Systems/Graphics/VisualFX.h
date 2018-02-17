@@ -1,9 +1,3 @@
-/*
-	VisualFX
-
-	- An effects class that manipulates images such as applying gaussian blur filters
-*/
-
 #pragma once
 #ifndef VISUALFX
 #define VISUALFX
@@ -20,33 +14,52 @@
 #include "glm\glm.hpp"
 
 using namespace glm;
-
 class EnginePackage;
+
+
+/**
+ * A utility class that applies graphical effects/filters to images, such as Gaussian blur.
+ **/
 class DT_ENGINE_API VisualFX
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destructor. */
 	~VisualFX();
+	/** Constructor. */
 	VisualFX();
-	void Initialize(EnginePackage *enginePackage);
-	
 
-	/*************************
-	----VisualFX Functions----
-	*************************/
 	
+	// Methods
+	/** Initialize this utility and all its filters.
+	 * @param	enginePackage	the engine package*/
+	void initialize(EnginePackage * enginePackage);	
+	/** Apply a Gaussian blur filter to the desired texture.
+	 * @note	requires two other textures to flip between to apply the filter
+	 * @param	desiredTexture	ID of the texture to filter
+	 * @param	flipTextures	array of 2 other textures to ping-pong the effect between
+	 * @param	size	the size of the textures provided (must all be the same)
+	 * @param	amount	the intensity (number of passes to perform) */
+	void applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const vec2 & size, const int & amount);
+	/** applyGaussianBlur_Alpha to the alpha channel of the desired texture.
+	 * @note	requires two other textures to flip between to apply the filter
+	 * @param	desiredTexture	ID of the texture to filter
+	 * @param	flipTextures	array of 2 other textures to ping-pong the effect between
+	 * @param	size	the size of the textures provided (must all be the same)
+	 * @param	amount	the intensity (number of passes to perform) */
+	void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint * flipTextures, const vec2 & size, const int & amount);
 	//void applyCubeFilter(const GLuint &sourceTexture, const GLuint & destinationTexture, const float &size);
-	void applyGaussianBlur(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
-	void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint *flipTextures, const vec2 &size, const int &amount);
 
 
 private:
-	void Initialize_CubeFilter();
-	void Initialize_GausianBlur();
+	// Private Methods
+	/** Initializes the cubemap filter. */
+	void initializeCubeFilter();
+	/** Initializes the Gaussian blur filter. */
+	void initializeGausianBlur();
 
+	
+	// Private Attributes
 	bool m_Initialized;
 	EnginePackage *m_enginePackage;
 	Shared_Asset_Primitive m_shapeQuad;

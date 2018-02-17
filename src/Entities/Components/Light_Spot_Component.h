@@ -30,7 +30,7 @@ class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
 {
 public:
 	/** Message Enumerators for this component type. */
-	static enum MSG_TYPES
+	static const enum MSG_TYPES
 	{
 		SET_COLOR,
 		SET_INTENSITY,
@@ -50,13 +50,13 @@ public:
 	GLuint getShadowSpot() const;
 
 
-	// Interface Implementation
+	// Interface Implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	void directPass(const int &vertex_count);
-	void indirectPass(const int &vertex_count);
-	void shadowPass();
-	bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
-	float getImportance(const vec3 &position);
+	virtual void directPass(const int &vertex_count);
+	virtual void indirectPass(const int &vertex_count);
+	virtual void shadowPass();
+	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	virtual float getImportance(const vec3 &position);
 
 
 protected:

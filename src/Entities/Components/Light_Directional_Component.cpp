@@ -17,10 +17,10 @@ Light_Directional_Component::~Light_Directional_Component()
 		if (m_enginePackage->findSubSystem("Shadows")) {
 			auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 			for (int x = 0; x < NUM_CASCADES; ++x)
-				shadowmapper->UnRegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+				shadowmapper->unregisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 		}
 		if (m_enginePackage->findSubSystem("World"))
-			m_enginePackage->getSubSystem<System_World>("World")->UnRegisterViewer(&m_camera);
+			m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 	}
 }
 
@@ -34,7 +34,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	float near_plane = -0.1f;
-	float far_plane = - m_enginePackage->getPreference(PREFERENCE_ENUMS::C_DRAW_DISTANCE);
+	float far_plane = - m_enginePackage->getPreference(Preference_State::C_DRAW_DISTANCE);
 	m_cascadeEnd[0] = near_plane;
 	for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 		float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
@@ -46,10 +46,10 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	if (m_enginePackage->findSubSystem("Shadows")) {
 		auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
 		for (int x = 0; x < NUM_CASCADES; ++x)
-			shadowmapper->RegisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+			shadowmapper->registerShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 	}
 	if (m_enginePackage->findSubSystem("World"))
-		m_enginePackage->getSubSystem<System_World>("World")->RegisterViewer(&m_camera);
+		m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
 }
 
 void Light_Directional_Component::update()
@@ -72,7 +72,7 @@ void Light_Directional_Component::calculateCascades()
 	float ar = size.x / size.y;
 	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
 	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
-	const float shadowSize = m_enginePackage->getPreference(PREFERENCE_ENUMS::C_SHADOW_SIZE_REGULAR);
+	const float shadowSize = m_enginePackage->getPreference(Preference_State::C_SHADOW_SIZE_REGULAR);
 	m_uboData.ShadowSize = shadowSize;
 
 	for (int i = 0; i < NUM_CASCADES; i++) {

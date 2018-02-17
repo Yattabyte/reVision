@@ -43,18 +43,18 @@ private:
 		vec3 m_normal, m_point;
 		vec4 m_values;
 	};
-	static enum {
+	static const enum {
 		TOP = 0, BOTTOM, LEFT,
 		RIGHT, NEARP, FARP
 	};
 
 public:
 	/** Enumerations for testing intersections. */
-	static enum { OUTSIDE, INTERSECT, INSIDE };
+	static const enum { OUTSIDE, INTERSECT, INSIDE };
 
 
 	// (de)Constructors
-	/** Desttroys the frustum */
+	/** Destroys the frustum */
 	~Frustum();
 	/** Zero-Initialize the frustum */
 	Frustum();

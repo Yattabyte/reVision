@@ -1,12 +1,3 @@
-/*
-	Logic
-
-	- Contains logic for updating gamestate every tick
-	- This particular instance just updates the game camera
-*/
-
-
-
 #pragma once
 #ifndef SYSTEM_LOGIC
 #define SYSTEM_LOGIC
@@ -19,19 +10,31 @@
 #include "Systems\System_Interface.h"
 #include "Utilities\Transform.h"
 
-
 class EnginePackage;
+
+
+/**
+ * An engine system that controls updating game-state every tick
+ * @todo	add physics and stuff
+ **/
 class DT_ENGINE_API System_Logic : public System
 {
-public: 
+public:
+	// (de)Constructors
+	/** Destroy the logic system. */
 	~System_Logic();
+	/** Construct the logic system. */
 	System_Logic();
-	void Initialize(EnginePackage *enginePackage);
 
-	void Update(const float &deltaTime);
-	void Update_Threaded(const float &deltaTime);
+
+	// Interface Implementations
+	virtual void initialize(EnginePackage * enginePackage);
+	virtual void update(const float & deltaTime);
+	virtual void updateThreaded(const float & deltaTime) {};
+
 
 private:
+	// Private Attributes
 	Transform m_transform;
 	vec3 m_rotation;
 };

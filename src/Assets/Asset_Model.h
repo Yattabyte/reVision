@@ -96,7 +96,7 @@ public:
 	GLuint getSkinID(const unsigned int & desired);
 
 
-	// Interface Implementation
+	// Interface Implementations
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();	

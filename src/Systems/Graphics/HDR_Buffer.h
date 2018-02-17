@@ -1,10 +1,3 @@
-/*
-	HDR_Buffer
-
-	- A specialized frame buffer
-	- Color corrects and joins lighting results together
-*/
-
 #pragma once
 #ifndef HDR_BUFFER
 #define HDR_BUFFER
@@ -20,40 +13,39 @@
 
 using namespace glm;
 
+
+/**
+ * A specialized framebuffer used for combining previous rendering phases and applying HDR+Bloom.
+ **/
 class DT_ENGINE_API HDR_Buffer
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the HDRBuffer. */
 	~HDR_Buffer();
+	/** Construct the HDRBuffer. */
 	HDR_Buffer();
-	void Initialize(const vec2 &size);
 
 
-	/***************************
-	----HDR_Buffer Functions----
-	***************************/
+	// Methods
+	/** Initialize the framebuffer.
+	 * @param	size	the size of the framebuffer */
+	void initialize(const vec2 & size);
+	/** Binds and clears out all the render-targets in this framebuffer. */
+	void clear();
+	/** Binds the framebuffer and its render-targets for writing. */
+	void bindForWriting();
+	/** Binds the framebuffer and its render-targets for reading. */
+	void bindForReading();
+	/** Change the size of the framebuffer object.
+	 * @param	size	the new size of the framebuffer */
+	void resize(const vec2 & size);
 
-	// Binds and clears out all the texture rendertargets in this framebuffer
-	void Clear();
-	// Binds the framebuffer and its rendertargets for writing
-	void BindForWriting();
-	// Binds the framebuffer and its rendertargets for reading
-	void BindForReading();
-	// Change the size of the framebuffer object
-	void Resize(const vec2 & size);
-
-
-	/****************
-	----Variables----
-	****************/
-
-	GLuint m_fbo;
-	GLuint m_texture;
 
 private:
+	// Private Attributes
+	GLuint m_fbo;
+	GLuint m_texture;
 	bool m_Initialized;
 };
 

@@ -45,7 +45,7 @@ public:
 	void bind(const GLuint & texture_unit);
 
 
-	// Interface Implementation
+	// Interface Implementations
 	/** Returns whether or not this asset has completed finalizing.
 	 * @return	true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();

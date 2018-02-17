@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(93) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(94) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -29,6 +29,13 @@ class System;
 /**
  * The main game engine object. Encapsulates the entire engine state.
  * The engine is responsible for storing all the system pointers for use through its life.
+ * @todo	mark all interface implementations as first methods after the constructors
+ * @todo	mark all methods/attributes with public/private before
+ * @todo	change messanger to messenger
+ * @todo	ensure consistent indentation in comments
+ * @todo	revamp ecs message definitions
+ * @todo	make an interface/ADT for the factories
+ * @todo	get rid of '_' in non-static classes
  **/
 class DT_ENGINE_API dt_Engine
 {
@@ -155,7 +162,27 @@ private:
  */
 
  /*! \page entities Entities
+ * \section ent_sec	Engine Entities
+ * This section contains entities and their components.\n
+ * There exists only 1 entity class, as all complex entities can be created by adding unique components to them.\n
+ * Entities are created by entityCreator classes, controlled by the EntityFactory.\n
+ * 
+ * Entities implemented so far include:
+ *		- Entity (base class)
+ *		- SpotLight
+ *		- PointLight
+ *		- Sun
+ *		- Prop
+ *		<br>
  *
+ * Components implemented so far include:
+ *		- Component (base class)
+ *		- Geometry_Component (interface)
+ *		- Lighting_Component (interface)
+ *		- Anim_Model_Component
+ *		- Light_Directional_Component
+ *		- Light_Point_Component
+ *		- Light_Spot_Component
  */
 
  /*! \page managers Managers
@@ -170,7 +197,30 @@ private:
  */
 
  /*! \page systems Systems
- *
+ * \section	sys_sec	Engine Systems
+ * This section details systems implemented thus far for the engine.\n
+ * The System_Interface details 3 virtual methods all systems inherit: 
+ *		- A safe post-context creation initialization function
+ *		- A main-loop update function (with delta-time argument)
+ *		- A secondary threaded update function (with delta-time argument)
+ *		<br>
+ *		
+ *	***Why 2 update functions?***
+ *	The main update function is intended to be used all the essentials, such as rendering and physics.\n
+ *	These things are time sensitive, so if anything that needs frequent updating can be offloaded to a second thread, then they can be implemented in the threaded function.\n
+ *  For example, visibility calculations are currently offloaded entirely to the second thread.
+ *  
+ *  The engine currently requires the following base systems:
+ *		- System_Animation
+ *		- System_Graphics_PBR
+ *		- System_Input
+ *		- System_Logic
+ *		- System_Preferences
+ *		- System_Shadowmap
+ *		- System_World
+ *		<br>
+ *	
+ *	It is planned to allow swapping out a system of a given category with a different one that implements that system's interface.
  */
 
  /*! \page utilities Utilities

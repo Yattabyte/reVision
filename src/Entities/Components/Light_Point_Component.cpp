@@ -16,12 +16,12 @@ Light_Point_Component::~Light_Point_Component()
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
 		if (m_shadowMapper) {
-			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
-			m_shadowMapper->UnRegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
+			m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
+			m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 		}
 		if (m_world) {
-			m_world->UnRegisterViewer(&m_camera[0]);
-			m_world->UnRegisterViewer(&m_camera[1]);
+			m_world->unregisterViewer(&m_camera[0]);
+			m_world->unregisterViewer(&m_camera[1]);
 		}
 	}
 }
@@ -41,13 +41,13 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 
 	if (m_enginePackage->findSubSystem("Shadows")) {
 		m_shadowMapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
-		m_shadowMapper->RegisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
+		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
+		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 	}
 	if (m_enginePackage->findSubSystem("World")) {
 		m_world = m_enginePackage->getSubSystem<System_World>("World");
-		m_world->RegisterViewer(&m_camera[0]);
-		m_world->RegisterViewer(&m_camera[1]);
+		m_world->registerViewer(&m_camera[0]);
+		m_world->registerViewer(&m_camera[1]);
 	}
 }
 
@@ -61,7 +61,7 @@ void Light_Point_Component::update()
 
 	// Calculate perspective matrix
 	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-	const vec2 &size = shadowmapper->GetSize(SHADOW_REGULAR);
+	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
 	m_uboData.ShadowSize = size.x;
 
 	for (int x = 0; x < 2; ++x) {
@@ -171,8 +171,8 @@ void Light_Point_Component::shadowPass()
 {
 	update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot(false));
-	m_shadowMapper->ClearShadow(SHADOW_REGULAR, getShadowSpot(true));
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(false));
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(true));
 
 
 	for (int x = 0; x < 2; x++) {

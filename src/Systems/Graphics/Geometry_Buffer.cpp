@@ -7,7 +7,7 @@
 class Primitive_Observer : Asset_Observer
 {
 public:
-	Primitive_Observer(Shared_Asset_Primitive &asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
+	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
 	virtual ~Primitive_Observer() { m_asset->removeObserver(this); };
 	virtual void Notify_Finalized() {
 		if (m_asset->existsYet()) // in case this gets used more than once by mistake
@@ -51,7 +51,7 @@ Geometry_Buffer::Geometry_Buffer()
 		m_texturesGB[x] = 0;
 }
 
-void Geometry_Buffer::Initialize(const vec2 &size, VisualFX *visualFX)
+void Geometry_Buffer::initialize(const vec2 & size, VisualFX * visualFX)
 {
 	if (!m_Initialized) {
 		m_visualFX = visualFX;
@@ -118,13 +118,13 @@ void Geometry_Buffer::Initialize(const vec2 &size, VisualFX *visualFX)
 	}
 }
 
-void Geometry_Buffer::Clear()
+void Geometry_Buffer::clear()
 {
-	BindForWriting();
+	bindForWriting();
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 }
 
-void Geometry_Buffer::BindForWriting()
+void Geometry_Buffer::bindForWriting()
 {
 	GLenum DrawBuffers[] = {
 		GL_COLOR_ATTACHMENT0,
@@ -135,7 +135,7 @@ void Geometry_Buffer::BindForWriting()
 	glDrawBuffers(GBUFFER_NUM_TEXTURES, DrawBuffers);
 }
 
-void Geometry_Buffer::BindForReading()
+void Geometry_Buffer::bindForReading()
 {
 	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; i++) {
 		glActiveTexture(GL_TEXTURE0 + i);
@@ -143,7 +143,7 @@ void Geometry_Buffer::BindForReading()
 	}
 }
 
-void Geometry_Buffer::End()
+void Geometry_Buffer::end()
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
@@ -153,7 +153,7 @@ void Geometry_Buffer::End()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
-void Geometry_Buffer::Resize(const vec2 &size)
+void Geometry_Buffer::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
@@ -176,7 +176,7 @@ void Geometry_Buffer::Resize(const vec2 &size)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 
-void Geometry_Buffer::ApplyAO()
+void Geometry_Buffer::applyAO()
 {
 	if (m_shapeQuad->existsYet() && m_shaderSSAO->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);

@@ -1,13 +1,3 @@
-/*
-	Input
-
-	- Manages receiving actual peripheral input devices' input, such as mouse, keyboard, and controllers
-	- Performs no interpretation on it
-	- Takes in the window to which to track, the engine state to modify, and the binds for which to search
-*/
-
-
-
 #pragma once
 #ifndef SYSTEM_INPUT
 #define SYSTEM_INPUT
@@ -23,27 +13,30 @@
 class EnginePackage;
 class GLFWwindow;
 
+
+/**
+ * An engine system responsible for receiving user input from various peripheral devices, and converting it into standardized engine inputs.
+ **/
 class DT_ENGINE_API System_Input : public System
 {
-public: 
+public:
+	// (de)Constructors
+	/** Destroy the input system. */
 	~System_Input();
-	System_Input(const System_Input_Binding &bind_interface = System_Input_Binding());
-	void Initialize(EnginePackage * enginePackage);
+	/** Construct the input system. 
+	 * @param	bind_interface	an optional bindingInterface. Will default to loading binds.cfg*/
+	System_Input(const Input_Binding & bind_interface = Input_Binding());
 
-	// Check the status of peripheral input devices
-	void Update(const float &deltaTime);
 
-	// Callback Functions //
-	// To be used in UI interactions ONLY //
+	// Interface Implementations
+	virtual void initialize(EnginePackage * enginePackage);
+	virtual void update(const float & deltaTime);
+	virtual void updateThreaded(const float & deltaTime) {};
 
-	void Callback_CursorPos(GLFWwindow * window, double x, double y);
-	void Callback_KeyPress(GLFWwindow * window, int key, int scancode, int action, int mods);
-	void Callback_CharMods(GLFWwindow * window, unsigned int codepoint, int mods);
-	void Callback_MouseButton(GLFWwindow * window, int button, int action, int mods);
-	void Callback_Scroll(GLFWwindow * window, double xoffset, double yoffset);
 
 private:
-	System_Input_Binding m_binds; 
+	// Private Attributes
+	Input_Binding m_binds; 
 };
 
 #endif // SYSTEM_INPUT

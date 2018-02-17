@@ -32,7 +32,7 @@ public:
 	void animate(const double &deltaTime);
 
 
-	// Interface implementation
+	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual void draw();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);

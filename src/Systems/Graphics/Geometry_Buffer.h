@@ -1,12 +1,3 @@
-/*
-	Geometry_Buffer
-
-	- A specialized frame buffer
-	- The backbone of our deferred renderer
-	- Geometry renders into it, storing surface values like albedo, normal, specular, and depth
-	- Values stored in view space, depth can get converted into view position -> world position
-*/
-
 #pragma once
 #ifndef GEOMETRY_BUFFER
 #define GEOMETRY_BUFFER
@@ -23,52 +14,58 @@
 #include "glm\glm.hpp"
 
 using namespace glm;
-
 class VisualFX;
+
+
+/**
+ * A specialized framebuffer that accumulates surface attributes of all rendered objects for a single frame.
+ * @brief	Objects render into it, storing their albedo, normal, specular, roughness, height, occlusion, and depth.
+ * @todo	make an interface for the buffers?
+ **/
 class DT_ENGINE_API Geometry_Buffer
 {
 public:
-	/*************
-	----Common----
-	*************/
-
+	// (de)Constructors
+	/** Destroy the gBuffer. */
 	~Geometry_Buffer();
+	/** Construct the gBuffer. */
 	Geometry_Buffer();
-	void Initialize(const vec2 &size, VisualFX *visualFX);
+
+	
+	// Methods
+	/** Initialize the framebuffer.
+	 * @param	size	the size of the framebuffer
+	 * @param	visualFX	reference to the post-processing utility class */
+	void initialize(const vec2 & size, VisualFX * visualFX);
+	/** Binds and clears out all the render-targets in this framebuffer. */
+	void clear();
+	/** Binds the framebuffer and its render-targets for writing. */
+	void bindForWriting();
+	/** Binds the framebuffer and its render-targets for reading. */
+	void bindForReading();
+	/** Resets the framebuffer and re-attaches all its render-targets.*/
+	void end();
+	/** Change the size of the framebuffer object. 
+	 * @param	size	the new size of the framebuffer */
+	void resize(const vec2 & size);
+	/** Generate ambient occlusion for the frame. */
+	void applyAO();
 
 
-	/********************************
-	----Geometry_Buffer Functions----
-	********************************/
-
-	// Binds and clears out all the texture rendertargets in this framebuffer
-	void Clear();
-	// Binds the framebuffer and its rendertargets for writing
-	void BindForWriting();
-	// Binds the framebuffer and its rendertargets for reading
-	void BindForReading();
-	// Resets the state and ensures its rendertargets are attached
-	void End();
-	// Change the size of the framebuffer object
-	void Resize(const vec2 & size);
-	// Generate ambient occlusion for the frame
-	void ApplyAO();
-
-
-	/****************
-	----Variables----
-	****************/
-
-	enum GBUFFER_TEXTURE_TYPE {
+	// Public attributes
+	/** Enumeration for indexing into m_textures. */
+	static const enum GBUFFER_TEXTURE_TYPE {
 		GBUFFER_TEXTURE_TYPE_IMAGE,
 		GBUFFER_TEXTURE_TYPE_VIEWNORMAL,
 		GBUFFER_TEXTURE_TYPE_SPECULAR,
 		GBUFFER_NUM_TEXTURES
 	};
-	GLuint m_fbo, m_noiseID;
 	GLuint m_textures[GBUFFER_NUM_TEXTURES], m_texturesGB[2], m_depth_stencil;
 
+
 private:
+	// Private attributes
+	GLuint m_fbo, m_noiseID;
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	
 	Shared_Asset_Primitive m_shapeQuad;
