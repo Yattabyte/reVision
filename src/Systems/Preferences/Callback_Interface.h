@@ -7,7 +7,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-class Preference_State;
+class PreferenceState;
 
 
 /**
@@ -24,7 +24,7 @@ public:
 
 
 	// Public Attributes
-	Preference_State *m_preferenceState;
+	PreferenceState *m_preferenceState;
 
 
 private:
@@ -34,7 +34,7 @@ private:
 
 
 	// Private Attributes
-	friend class Preference_State;
+	friend class PreferenceState;
 };
 
 #endif // CALLBACK_CONTAINER

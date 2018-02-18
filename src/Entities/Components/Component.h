@@ -10,7 +10,7 @@
 #include "Systems\World\ECSmessage.h"
 #include <utility>
 
-class ECSmessanger;
+class ECSmessenger;
 class ComponentCreator;
 class EnginePackage;
 
@@ -23,8 +23,8 @@ class DT_ENGINE_API Component
 {
 public:
 	/** Have this component accept a message.
-	 * @brief	a handy way to interface with components.
-	 * @param	message	the message to send to this component */
+	 * @brief				a handy way to interface with components.
+	 * @param	message		the message to send to this component */
 	virtual void receiveMessage(const ECSmessage & message);
 
 
@@ -32,20 +32,19 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~Component() {};
-
 	/** Constructor. 
-	 * @param	id	handle for this component (into component factory)
-	 * @param	pid	handle for the parent entity (into entity factory) */
+	 * @param	id			handle for this component (into component factory)
+	 * @param	pid			handle for the parent entity (into entity factory) */
 	Component(const ECShandle & id, const ECShandle & pid) : m_ID(id), m_parentID(pid) {};
 	/** Tests a message to determine if it originated from this component.
-	 * @param	message	the message to test
-	 * @return	true if this component is the sender, false otherwise */
+	 * @param	message		the message to test
+	 * @return				true if this component is the sender, false otherwise */
 	bool compareMSGSender(const ECSmessage & message);
 
 
-	// Attributes
+	// Protected Attributes
 	ECShandle m_ID, m_parentID;
-	ECSmessanger *m_ECSmessenger;
+	ECSmessenger *m_ECSmessenger;
 	friend class ComponentCreator;
 };
 
@@ -55,24 +54,27 @@ protected:
 class DT_ENGINE_API ComponentCreator
 {
 public:
-	/** Constructor. */
-	ComponentCreator(ECSmessanger * ecsMessanger) : m_ECSmessenger(ecsMessanger) {};
-
+	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~ComponentCreator(void) {};
+	/** Constructor. */
+	ComponentCreator(ECSmessenger * ecsMessenger) : m_ECSmessenger(ecsMessenger) {};
+
+
+	// Public Methods
 	/** Destroy the component.
 	 * @param	component	the component to delete */
 	void Destroy(Component * component) { delete component; };
 	/** Creates an component.
-	 * @param	id	the handle identifier for the component
-	 * @param	pid	the handle identifier for the parent entity
+	 * @param	id				the handle identifier for the component
+	 * @param	pid				the handle identifier for the parent entity
 	 * @param	enginePackage	pointer to the engine package	
-	 * @return	the component created */
+	 * @return					the component created */
 	virtual Component* Create(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) { return new Component(id, pid); };
 	
 
-	// Attributes
-	ECSmessanger *m_ECSmessenger;
+	// Public Attributes
+	ECSmessenger *m_ECSmessenger;
 };
 
 #endif // COMPONENT

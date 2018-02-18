@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(94) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(95) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -29,13 +29,8 @@ class System;
 /**
  * The main game engine object. Encapsulates the entire engine state.
  * The engine is responsible for storing all the system pointers for use through its life.
- * @todo	mark all interface implementations as first methods after the constructors
- * @todo	mark all methods/attributes with public/private before
- * @todo	change messanger to messenger
- * @todo	ensure consistent indentation in comments
- * @todo	revamp ecs message definitions
- * @todo	make an interface/ADT for the factories
- * @todo	get rid of '_' in non-static classes
+ * @todo	revamp ECS message definitions
+ * @todo	make an interface/ADT for the frame buffers
  **/
 class DT_ENGINE_API dt_Engine
 {
@@ -46,8 +41,8 @@ public:
 	/** Zero-initialize the engine. */
 	dt_Engine();
 	/** Initializes the engine.
-	 * @param	systems	vector of all systems to create this engine with
-	 * @return	true if successfully initialized */
+	 * @param	systems		vector of all systems to create this engine with
+	 * @return				true if successfully initialized */
 	bool initialize(const vector<pair<const char*, System*>> & systems);
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void shutdown();
@@ -62,7 +57,7 @@ public:
 	
 
 private:
-	// Members
+	// Public Attributes
 	bool m_Initialized;	
 	float m_lastTime;	
 	EnginePackage *m_package;

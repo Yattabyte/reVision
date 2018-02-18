@@ -34,19 +34,19 @@ public:
 	/** Get a type-casted list of components that match the given type
 	 * @param	name	the name of the type to retrieve
 	 * @param	<T>		the type to down-cast the components to.
-	 * @return	a type-casted list of components matching the supplied type */
+	 * @return			a type-casted list of components matching the supplied type */
 	template <typename T> 
 	const std::vector<T*>& getTypeList(char * name) const {
 		return *(vector<T*>*)(&mList.at(name));
 	}
 	/** Retrieve a list of components of the given type.
 	 * @param	name	the name of the type to retrieve
-	 * @return	the list of components matching the supplied type */
+	 * @return			the list of components matching the supplied type */
 	std::vector<Component*>& operator[](char * name) {
 		return mList.at(name);
 	}
 	/** Retrieve the size of the map.
-	 * @return	the size of the map */
+	 * @return			the size of the map */
 	size_t size() const {
 		return mList.size();
 	}

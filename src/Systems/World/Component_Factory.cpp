@@ -1,6 +1,6 @@
 #include "Systems\World\Component_Factory.h"
 #include "Systems\World\ECSmessage.h"
-#include "Systems\World\ECSmessanger.h"
+#include "Systems\World\ECSmessenger.h"
 #include "Entities\Components\Anim_Model_Component.h"
 #include "Entities\Components\Light_Directional_Component.h"
 #include "Entities\Components\Light_Spot_Component.h"
@@ -16,11 +16,11 @@ Component_Factory::Component_Factory()
 	m_Initialized = false;
 }
 
-void Component_Factory::Initialize(EnginePackage * enginePackage, ECSmessanger * ecsMessanger)
+void Component_Factory::Initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessenger)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_ECSmessenger = ecsMessanger;
+		m_ECSmessenger = ecsMessenger;
 
 		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessenger)));
 		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessenger)));

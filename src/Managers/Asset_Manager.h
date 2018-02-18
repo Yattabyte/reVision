@@ -37,11 +37,11 @@ using namespace std;
  * Features:
  *		- Is a singleton, shares its data across the entire application with ease.
  *		- Can store and retrieve assets from different threads.
- *		- Supports multithreading
+ *		- Supports multi-threading
  **/
 class DT_ENGINE_API Asset_Manager {
 public:
-	// Methods
+	// Public Methods
 	/** Singleton GET method.
 	 * @return	static Asset_Manager instance */
 	static Asset_Manager & Get() {
@@ -55,19 +55,19 @@ public:
 	static void Shut_Down() { Get()._shutdown(); }
 
 	/** Submit a new work order request.
-	 * @brief	Uses multiple worker-threads. Calls order initialize function.
-	 * @param	order	the work order to fulfill
+	 * @brief					Uses multiple worker-threads. Calls order initialize function.
+	 * @param	order			the work order to fulfill
 	 * @param	onlyFinalize	if true, the work order should only be finalized (skip initialization) 
-	 * @note	If the asset doesn't support multi-threading, initialize it first and set onlyFinalize to true! */
+	 * @note					If the asset doesn't support multi-threading, initialize it first and set onlyFinalize to true! */
 	static void Add_Work_Order(Work_Order * order, const bool & onlyFinalize = false);
 
 	/** Finalizes work orders that have finished initializing.
-	 * @brief	Occurs in main thread. Calls order finalize function. Acts as a syncronization point.
+	 * @brief	Occurs in main thread. Calls order finalize function. Acts as a synchronization point.
 	 * @note	Immediately after finalizing, assets will call their notify function alerting their observers. */
 	static void Finalize_Orders();
 
 	/** Retrieves the asset map mutex
-	 * @return	the mutex used for accesing the asset map */
+	 * @return	the mutex used for accessing the asset map */
 	static shared_mutex & Get_Mutex_Assets();
 
 	/** Retrieves the map containing all the assets 
@@ -75,30 +75,30 @@ public:
 	static map<int, vector<Shared_Asset>> & Get_Assets_Map();
 
 	/** Retrieves the vector of assets of the given type within the map.
-	 * @brief	A helper function bypassing the need to first retrieve the map when only 1 type of asset is needed
+	 * @brief				A helper function bypassing the need to first retrieve the map when only 1 type of asset is needed
 	 * @param	asset_type	the category of asset to retrieve from the map
-	 * @return	the vector belonging to the category of assets chosen
-	 * @note	This will create the category if it didn't already exist. Guaranteed to return a vector.*/
+	 * @return				the vector belonging to the category of assets chosen
+	 * @note				This will create the category if it didn't already exist. Guaranteed to return a vector.*/
 	static vector<Shared_Asset> & Get_Assets_List(const int & asset_type);
 
 	/** Creates a new asset of the supplied type and arguments
 	 * @param	<Asset_T>	The Asset class type to create
-	 * @param	user	the shared_ptr container for the asset
-	 * @param	_Ax		the arguments to send to the assets constructor
-	 * @note	The asset will be zero-initialized, and requires submission as a work order. Safe to share. */
+	 * @param	user		the shared_ptr container for the asset
+	 * @param	_Ax			the arguments to send to the assets constructor
+	 * @note				The asset will be zero-initialized, and requires submission as a work order. Safe to share. */
 	template <typename Asset_T, typename... _Args>
 	static void Create_New_Asset(shared_ptr<Asset_T> & user, _Args&&... _Ax) {
-		user = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...)); // new asset of type asset_t, args held in _Ax		
+		user = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...)); // new asset of type asset_t, ARGS held in _Ax		
 		(Asset_Manager::Get_Assets_List(Asset_T::Get_Asset_Type())).push_back(user); // add vector in asset map
 	}
 
 	/** Creates and submits a new asset of the supplied type and arguments. Generates the work order too.
-	 * @brief	Creates the asset and then generates the work order. 
-	 * @param	<Asset_T>	The Asset class type to create
-	 * @param	user	the shared_ptr container for the asset
-	 * @param	threaded	if true, submits the workorder onto a separate thread
+	 * @brief					Creates the asset and then generates the work order. 
+	 * @param	<Asset_T>		The Asset class type to create
+	 * @param	user			the shared_ptr container for the asset
+	 * @param	threaded		if true, submits the work order onto a separate thread
 	 * @param	fullDirectory	absolute path to the file on disk for this asset
-	 * @param	_Ax		the arguments to send to the asset's constructor */
+	 * @param	_Ax				the arguments to send to the asset's constructor */
 	template <typename Asset_T, typename Workorder_T, typename... _Args>
 	static void Submit_New_Asset(shared_ptr<Asset_T> & user, const bool & threaded, const string & fullDirectory, _Args&&... _Ax) {
 		Create_New_Asset<Asset_T>(user, _Ax...);
@@ -112,11 +112,11 @@ public:
 	}
 
 	/** Queries if an asset already exists with the given filename, fetching if true
-	 * @brief	Searches for and updates the supplied container with the desired asset if it already exists.
+	 * @brief				Searches for and updates the supplied container with the desired asset if it already exists.
 	 * @param	<Asset_T>	the type of asset to query for
-	 * @param	user	the shared_ptr container to load the asset into if the query is successful
+	 * @param	user		the shared_ptr container to load the asset into if the query is successful
 	 * @param	filename	the relative filename (within the project directory) of the asset to search for
-	 * @return	true if it was successful in finding the asset, false otherwise */
+	 * @return				true if it was successful in finding the asset, false otherwise */
 	template <typename Asset_T>
 	static bool Query_Existing_Asset(shared_ptr<Asset_T> & user, const string & filename) {
 		auto &asset_list = (Asset_Manager::Get_Assets_List(Asset_T::Get_Asset_Type()));
@@ -137,12 +137,12 @@ public:
 	}
 
 	/** Appends a list of observers to notify later that their asset has finished finalization
-	 * @brief	when the main thread is ready, it will notify all the assets that have queued up.
+	 * @brief				when the main thread is ready, it will notify all the assets that have queued up.
 	 * @param	observers	the list of observers to notify */
 	static void Queue_Notification(const vector<Asset_Observer*> & observers);
 
 	/** Notifies all the queued up observers that their assets have finished finalization.
-	 * @note	is called from the main thread only to ensure proper synchronization. */
+	 * @note				is called from the main thread only to ensure proper synchronization. */
 	static void Notify_Observers();
 
 
@@ -187,13 +187,13 @@ private:
 	void operator=(Asset_Manager const&) = delete;
 
 
-	// Methods
+	// Public Methods
 	void _startup();
 	void _shutdown();
 	void _threaded_func(shared_ptr<Assets_Worker> &worker);
 
 
-	// Attributes
+	// Public Attributes
 	bool m_Initialized;
 	vector<shared_ptr<Assets_Worker>> m_Workers;
 	shared_mutex m_Mutex_Workorders;

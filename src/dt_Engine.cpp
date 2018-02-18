@@ -24,8 +24,8 @@ static void GLFW_Callback_Error(int error, const char* description)
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	EnginePackage &package = *((EnginePackage*)glfwGetWindowUserPointer(window));
-	package.setPreference(Preference_State::C_WINDOW_WIDTH, width);
-	package.setPreference(Preference_State::C_WINDOW_HEIGHT, height);
+	package.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
+	package.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 	package.m_Camera.setDimensions(vec2(width, height));
 	package.m_Camera.update();
 }
@@ -161,7 +161,7 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);		
 
 		m_drawDistCallback = new EN_DrawDistCallback(m_package);
-		m_package->addCallback(Preference_State::C_DRAW_DISTANCE, m_drawDistCallback);
+		m_package->addCallback(PreferenceState::C_DRAW_DISTANCE, m_drawDistCallback);
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
@@ -186,8 +186,8 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
 		}
 
-		const float window_width = m_package->getPreference(Preference_State::C_WINDOW_WIDTH);
-		const float window_height = m_package->getPreference(Preference_State::C_WINDOW_HEIGHT);
+		const float window_width = m_package->getPreference(PreferenceState::C_WINDOW_WIDTH);
+		const float window_height = m_package->getPreference(PreferenceState::C_WINDOW_HEIGHT);
 		const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 		glfwSetWindowSize(m_package->m_Context_Rendering, window_width, window_height);
 		glfwSetWindowPos(m_package->m_Context_Rendering, (maxWidth - window_width) / 2, (maxHeight - window_height) / 2);
@@ -211,7 +211,7 @@ void dt_Engine::shutdown()
 {
 	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
-		m_package->removeCallback(Preference_State::C_DRAW_DISTANCE, m_drawDistCallback);
+		m_package->removeCallback(PreferenceState::C_DRAW_DISTANCE, m_drawDistCallback);
 		delete m_drawDistCallback;
 		
 		if (m_UpdaterThread->joinable())

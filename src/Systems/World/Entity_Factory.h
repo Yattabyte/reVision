@@ -13,7 +13,7 @@
 #include <vector>
 
 using namespace std;
-class ECSmessanger;
+class ECSmessenger;
 class Component_Factory;
 
 
@@ -27,9 +27,9 @@ public:
 	/** Destroy the factory. */
 	~Entity_Factory();
 	/** Construct the factory.
-	 * @param	ecsMessanger		pointer to the entity-component messenger system 
+	 * @param	ecsMessenger		pointer to the entity-component messenger system 
 	 * @param	componentFactory	pointer to the component factory */
-	Entity_Factory(ECSmessanger * ecsMessanger, Component_Factory * componentFactory);
+	Entity_Factory(ECSmessenger * ecsMessenger, Component_Factory * componentFactory);
 
 
 	// Public Methods
@@ -57,7 +57,7 @@ private:
 	map<char*, vector<Entity*>, cmp_str> m_levelEntities;
 	map<char*, deque<unsigned int>> m_freeSpots;
 	map<char*, EntityCreator*, cmp_str> m_creatorMap;
-	ECSmessanger *m_ECSmessenger;
+	ECSmessenger *m_ECSmessenger;
 	Component_Factory *m_componentFactory;
 };
 

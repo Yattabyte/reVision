@@ -27,7 +27,7 @@ public:
 	HDR_Buffer();
 
 
-	// Methods
+	// Public Methods
 	/** Initialize the framebuffer.
 	 * @param	size	the size of the framebuffer */
 	void initialize(const vec2 & size);

@@ -19,17 +19,17 @@ using namespace glm;
 
 /**
  * A 3D transformation object. 
- * Takes in position, orientation, and scaling attributes, and caluclates a transformation matrix.
+ * Takes in position, orientation, and scaling attributes, and calculates a transformation matrix.
  * @todo Make member variables m_*name* and fix occurences related to it
  * @todo Give constructor better named parameters
  **/
 struct DT_ENGINE_API Transform 
 {
 	// (de)Constructors
-	/** Constructs a transformation object with any of the supplied paramaters.
-	 * @param p the desired position
-	 * @param ori the desired orientation
-	 * @param scl the desired scale
+	/** Constructs a transformation object with any of the supplied parameters.
+	 * @param p		the desired position
+	 * @param ori	the desired orientation
+	 * @param scl	the desired scale
 	 */
 	Transform(const vec3 &p = vec3(0.0f), const quat &ori = quat(1, 0, 0, 0), const vec3 &scl = vec3(1.0f)) {
 		position = p;
@@ -39,7 +39,7 @@ struct DT_ENGINE_API Transform
 	}
 
 
-	// Methods
+	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
 	void update() {
 		modelMatrix = glm::translate( mat4(1.0f), position ) * 
@@ -49,7 +49,7 @@ struct DT_ENGINE_API Transform
 	}
 
 
-	// Attributes
+	// Public Attributes
 	// Input Variables
 	vec3 position;
 	quat orientation;

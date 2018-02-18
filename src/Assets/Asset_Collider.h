@@ -30,12 +30,12 @@ public:
 	Asset_Collider(const string & filename);
 
 
-	// Methods
+	// Public Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
 
 
-	// Attributes
+	// Public Attributes
 	btCollisionShape * shape;
 };
 
@@ -60,7 +60,7 @@ public:
 
 
 private:
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Collider m_asset;
 };

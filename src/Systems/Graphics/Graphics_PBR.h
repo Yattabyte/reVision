@@ -43,21 +43,21 @@ public:
 	virtual void updateThreaded(const float & deltaTime) {};
 
 
-	// Methods
+	// Public Methods
 	/** Enable or Disable screen-space ambient occlusion.
-	 * @param	ssao	true or false */
+	 * @param	ssao		true or false */
 	void setSSAO(const bool & ssao);
 	/** Change the number of samples used in screen-space ambient occlusion. 
-	 * @param	samples	the number of samples to use */
+	 * @param	samples		the number of samples to use */
 	void setSSAOSamples(const int & samples);
 	/** Change the strength of the screen-space ambient occlusion. 
 	 * @param	strength	the strength to use */
 	void setSSAOStrength(const int & strength);
 	/** Change the radius of the screen-space ambient occlusion.
-	 * @param	radius	the radius to use*/
+	 * @param	radius		the radius to use*/
 	void setSSAORadius(const float & radius);
 	/** Change the size of framebuffers used.
-	 * @param	size	the new size to use */
+	 * @param	size		the new size to use */
 	void resize(const vec2 & size);
 
 	
@@ -71,7 +71,7 @@ private:
 	};
 
 
-	// Methods
+	// Public Methods
 	/** Regenerate the noise kernel. */
 	void generateKernal();
 	/** Regenerates visible texture maps such as shadowmaps and cubemaps. 
@@ -91,7 +91,7 @@ private:
 	void finalPass();
 
 
-	// Attributes
+	// Public Attributes
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
 	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;

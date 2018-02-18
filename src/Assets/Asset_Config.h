@@ -34,26 +34,25 @@ public:
 	Asset_Config(const string & filename, const vector<string> & strings);
 
 
-	// Methods
+	// Public Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
 	
 
-	// Methods
+	// Public Methods
 	/** Assigns the specified value to the specified key.
-	 * @param	cfg_key	the key to apply this new value to
+	 * @param	cfg_key		the key to apply this new value to
 	 * @param	cfg_value	the new value to give to this key */
 	void setValue(const unsigned int & cfg_key, const float & cfg_value);
 	/** Retrieves the value assigned to the supplied key.
-	 * @param	cfg_key	the key in which to fetch the value from
-	 * @return	the value assigned to supplied key
-	 * @note	returns UNDEFINED_CVAL if the supplied key doesn't exist. */
+	 * @param	cfg_key		the key in which to fetch the value from
+	 * @return				the value assigned to supplied key (UNDEFINED_CVAL if the supplied key doesn't exist) */
 	float getValue(const unsigned int & cfg_key);
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
 	void saveConfig();
 
 
-	// Attributes
+	// Public Attributes
 	map<unsigned int, float> configuration;
 	vector<string> m_strings;
 }; 
@@ -79,7 +78,7 @@ public:
 
 
 private:
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Config m_asset;
 };

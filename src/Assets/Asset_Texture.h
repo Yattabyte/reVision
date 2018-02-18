@@ -35,23 +35,23 @@ public:
 	Asset_Texture(const string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
+	
+
+	// Interface Implementations
+	/** Returns whether or not this asset has completed finalizing.
+	* @return					true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
 
 
-	// Methods
+	// Public Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
 	/** Makes this texture active at a specific texture unit
 	 * @param	texture_unit	the texture unit to make this texture active at */
 	void bind(const GLuint & texture_unit);
 
-
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
 	
-	// Attributes
+	// Public Attributes
 	GLuint gl_tex_ID, type;
 	vec2 size;
 	GLubyte	* pixel_data;
@@ -81,7 +81,7 @@ public:
 
 
 private:
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Texture m_asset;
 };

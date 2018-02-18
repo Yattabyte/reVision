@@ -43,100 +43,69 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	}
 }
 
-void Light_Spot_Component::update()
-{
-	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
-	const mat4 rot = glm::mat4_cast(m_orientation);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-	m_uboData.LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-	m_uboData.lightV = final;
-	m_uboData.mMatrix = (trans * rot) * scl;
-
-	// Calculate perspective matrix
-	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
-	m_uboData.ShadowSize = size.x;
-	m_camera.setDimensions(size);
-	m_camera.update();
-	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;
-	m_camera.setMatrices(m_uboData.lightP, final);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightSpotBuffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-}
-
-GLuint Light_Spot_Component::getShadowSpot() const
-{
-	return m_uboData.Shadow_Spot;
-}
-
 void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	switch (message.GetCommandID()) {
-		case SET_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.LightColor = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
-			break;
-		}
-		case SET_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightIntensity = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
-			break;
-		}
-		case SET_RADIUS: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightRadius = payload;
-			m_squaredRadius = payload * payload;
-			m_camera.setFarPlane(m_squaredRadius);
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
-			update();
-			break;
-		}
-		case SET_CUTOFF: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightCutoff = cosf(glm::radians(payload));
-			m_camera.setHorizontalFOV(payload * 2.0f);
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightCutoff), sizeof(float), &m_uboData.LightCutoff);
-			update();
-			break;
-		}
-		case SET_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			m_orientation = payload;
-			update();
-			break;
-		}
-		case SET_POSITION: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.LightPosition = payload; 
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			update();
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			m_uboData.LightPosition = payload.position;
-			m_orientation = payload.orientation;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			update();
-			break;
-		}
+	case SET_COLOR: {
+		if (!message.IsOfType<vec3>()) break;
+		const auto &payload = message.GetPayload<vec3>();
+		m_uboData.LightColor = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
+		break;
+	}
+	case SET_INTENSITY: {
+		if (!message.IsOfType<float>()) break;
+		const auto &payload = message.GetPayload<float>();
+		m_uboData.LightIntensity = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
+		break;
+	}
+	case SET_RADIUS: {
+		if (!message.IsOfType<float>()) break;
+		const auto &payload = message.GetPayload<float>();
+		m_uboData.LightRadius = payload;
+		m_squaredRadius = payload * payload;
+		m_camera.setFarPlane(m_squaredRadius);
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
+		update();
+		break;
+	}
+	case SET_CUTOFF: {
+		if (!message.IsOfType<float>()) break;
+		const auto &payload = message.GetPayload<float>();
+		m_uboData.LightCutoff = cosf(glm::radians(payload));
+		m_camera.setHorizontalFOV(payload * 2.0f);
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightCutoff), sizeof(float), &m_uboData.LightCutoff);
+		update();
+		break;
+	}
+	case SET_ORIENTATION: {
+		if (!message.IsOfType<quat>()) break;
+		const auto &payload = message.GetPayload<quat>();
+		m_orientation = payload;
+		update();
+		break;
+	}
+	case SET_POSITION: {
+		if (!message.IsOfType<vec3>()) break;
+		const auto &payload = message.GetPayload<vec3>();
+		m_uboData.LightPosition = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
+		update();
+		break;
+	}
+	case SET_TRANSFORM: {
+		if (!message.IsOfType<Transform>()) break;
+		const auto &payload = message.GetPayload<Transform>();
+		m_uboData.LightPosition = payload.position;
+		m_orientation = payload.orientation;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
+		update();
+		break;
+	}
 	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -197,3 +166,33 @@ float Light_Spot_Component::getImportance(const vec3 & position)
 	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
 }
 
+void Light_Spot_Component::update()
+{
+	// Calculate view matrix
+	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
+	const mat4 rot = glm::mat4_cast(m_orientation);
+	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+	m_uboData.LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+	m_uboData.lightV = final;
+	m_uboData.mMatrix = (trans * rot) * scl;
+
+	// Calculate perspective matrix
+	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
+	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
+	m_uboData.ShadowSize = size.x;
+	m_camera.setDimensions(size);
+	m_camera.update();
+	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;
+	m_camera.setMatrices(m_uboData.lightP, final);
+
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightSpotBuffer), &m_uboData);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+}
+
+GLuint Light_Spot_Component::getShadowSpot() const
+{
+	return m_uboData.Shadow_Spot;
+}

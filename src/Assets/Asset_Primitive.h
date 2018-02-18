@@ -35,28 +35,28 @@ public:
 	Asset_Primitive(const string & filename);
 
 
-	// Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
-	/** Generates a vertex array object, formed to match primitives' object data.
-	 * @return	a vertex array object resident on the GPU */
-	static GLuint Generate_VAO();
-	/** Updates a vertex array object's state with this primitives' data. 
-	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
-	 * @param	vaoID	the vertex array object's ID on the GPU */	
-	void updateVAO(const GLuint & vaoID);
-	/** Returns the vertex-count of this object. 
-	 * @return	vertex-count of this object */
-	size_t getSize();
-	
-
 	// Interface Implementations
 	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
+	* @return			true if this asset has finished finalizing, false otherwise. */
 	virtual bool existsYet();
 
 
-	// Attributes
+	// Public Methods
+	/** @todo delete */
+	static int Get_Asset_Type();
+	/** Generates a vertex array object, formed to match primitives' object data.
+	 * @return			a vertex array object resident on the GPU */
+	static GLuint Generate_VAO();
+	/** Updates a vertex array object's state with this primitives' data. 
+	 * @brief			using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
+	 * @param	vaoID	the vertex array object's ID on the GPU */	
+	void updateVAO(const GLuint & vaoID);
+	/** Returns the vertex-count of this object. 
+	 * @return			vertex-count of this object */
+	size_t getSize();
+	
+	
+	// Public Attributes
 	GLuint buffers[2];
 	vector<vec3> data;
 	vector<vec2> uv_data;
@@ -84,7 +84,7 @@ public:
 
 
 private:
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Primitive m_asset;
 };

@@ -16,6 +16,11 @@ Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
 	package_text = "";
 }
 
+bool Asset_Shader_Pkg::existsYet()
+{
+	return Asset::existsYet();
+}
+
 int Asset_Shader_Pkg::Get_Asset_Type() 
 { 
 	return ASSET_TYPE;
@@ -24,11 +29,6 @@ int Asset_Shader_Pkg::Get_Asset_Type()
 string Asset_Shader_Pkg::getPackageText() const
 {
 	return package_text;
-}
-
-bool Asset_Shader_Pkg::existsYet()
-{
-	return Asset::existsYet();
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

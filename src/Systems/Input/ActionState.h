@@ -16,14 +16,14 @@ using namespace std;
 /**
  * A container class that holds the action state for the engine, such as forward/back/left/right and amount
  **/
-class Action_State : public map<unsigned int, float>
+class ActionState : public map<unsigned int, float>
 {
 public:
 	// (de)Constructors
 	/** Destroy the action state. */
-	~Action_State() {}
+	~ActionState() {}
 	/** Construct the action state. */
-	Action_State() {
+	ActionState() {
 		for (unsigned int x = 0; x < ACTION_COUNT; ++x)
 			insert(pair<unsigned int, float>(x, 0.0f));
 	}

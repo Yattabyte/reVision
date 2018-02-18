@@ -25,19 +25,16 @@ public:
 	 * @param	enginePackage	the engine package */
 	virtual void initialize(EnginePackage * enginePackage) = 0;
 	/** Tell the system to update, typically called within the main loop.
-	 * @param	deltaTime	the time since last update */
+	 * @param	deltaTime		the time since last update */
 	virtual void update(const float & deltaTime) = 0;
 	/** Tell the system to update in a separate thread.
-	 * @brief	can be used if this system supports multi-threading.
-	 * @param	deltaTime	the time since last update */
-	/** updateThreaded
-	 * @param		const float & deltaTime
-	 * @return		void */
+	 * @brief					can be used if this system supports multi-threading.
+	 * @param	deltaTime		the time since last update */
 	virtual void updateThreaded(const float & deltaTime) = 0;
 
 
 protected:
-	// Attributes
+	// Protected Attributes
 	bool m_Initialized;
 	EnginePackage *m_enginePackage;
 };

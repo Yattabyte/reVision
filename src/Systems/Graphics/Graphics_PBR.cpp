@@ -78,7 +78,7 @@ public:
 	~Cam_WidthChangeCallback() {};
 	Cam_WidthChangeCallback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
 	void Callback(const float & value) {
-		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(Preference_State::C_WINDOW_HEIGHT)));
+		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
 	}
 private:
 	System_Graphics_PBR *m_Graphics;
@@ -88,7 +88,7 @@ public:
 	~Cam_HeightChangeCallback() {};
 	Cam_HeightChangeCallback(System_Graphics_PBR * lBuffer) : m_Graphics(lBuffer) {}
 	void Callback(const float & value) {
-		m_Graphics->resize(vec2(m_preferenceState->getPreference(Preference_State::C_WINDOW_WIDTH), value));
+		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
 	}
 private:
 	System_Graphics_PBR *m_Graphics;
@@ -107,14 +107,14 @@ private:
 System_Graphics_PBR::~System_Graphics_PBR()
 {
 	if (!m_Initialized) {
-		m_enginePackage->removeCallback(Preference_State::C_SSAO, m_ssaoCallback);
-		m_enginePackage->removeCallback(Preference_State::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->removeCallback(Preference_State::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->removeCallback(Preference_State::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->removeCallback(Preference_State::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
-		m_enginePackage->removeCallback(Preference_State::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->removeCallback(Preference_State::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->removeCallback(Preference_State::C_SHADOW_QUALITY, m_QualityChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SSAO, m_ssaoCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		delete m_QuadObserver;
 		delete m_ConeObserver;
 		delete m_SphereObserver;
@@ -173,20 +173,20 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
 		m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(&m_lbuffer);
 		m_QualityChangeCallback = new ShadowQualityChangeCallback(&m_updateQuality);
-		m_enginePackage->addCallback(Preference_State::C_SSAO, m_ssaoCallback);
-		m_enginePackage->addCallback(Preference_State::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->addCallback(Preference_State::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->addCallback(Preference_State::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->addCallback(Preference_State::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->addCallback(Preference_State::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->addCallback(Preference_State::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
-		m_enginePackage->addCallback(Preference_State::C_SHADOW_QUALITY, m_QualityChangeCallback);
-		m_attribs.m_ssao_radius = m_enginePackage->getPreference(Preference_State::C_SSAO_RADIUS);
-		m_attribs.m_ssao_strength = m_enginePackage->getPreference(Preference_State::C_SSAO_BLUR_STRENGTH);
-		m_attribs.m_aa_samples = m_enginePackage->getPreference(Preference_State::C_SSAO_SAMPLES);
-		m_attribs.m_ssao = m_enginePackage->getPreference(Preference_State::C_SSAO);
-		m_renderSize = vec2(m_enginePackage->getPreference(Preference_State::C_WINDOW_WIDTH), m_enginePackage->getPreference(Preference_State::C_WINDOW_HEIGHT));
-		m_updateQuality = m_enginePackage->getPreference(Preference_State::C_SHADOW_QUALITY);
+		m_enginePackage->addCallback(PreferenceState::C_SSAO, m_ssaoCallback);
+		m_enginePackage->addCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
+		m_enginePackage->addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
+		m_enginePackage->addCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
+		m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
+		m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
+		m_enginePackage->addCallback(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
+		m_enginePackage->addCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
+		m_attribs.m_ssao_radius = m_enginePackage->getPreference(PreferenceState::C_SSAO_RADIUS);
+		m_attribs.m_ssao_strength = m_enginePackage->getPreference(PreferenceState::C_SSAO_BLUR_STRENGTH);
+		m_attribs.m_aa_samples = m_enginePackage->getPreference(PreferenceState::C_SSAO_SAMPLES);
+		m_attribs.m_ssao = m_enginePackage->getPreference(PreferenceState::C_SSAO);
+		m_renderSize = vec2(m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH), m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT));
+		m_updateQuality = m_enginePackage->getPreference(PreferenceState::C_SHADOW_QUALITY);
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -199,7 +199,7 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 
 		m_visualFX.initialize(m_enginePackage);
 		m_gbuffer.initialize(m_renderSize, &m_visualFX);
-		m_lbuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(Preference_State::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
+		m_lbuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.initialize(m_renderSize);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);

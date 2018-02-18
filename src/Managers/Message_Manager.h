@@ -25,8 +25,8 @@ namespace MSG {
 	DT_ENGINE_API void Statement(const string & input);
 
 	/** Prints a formatted message based around the supplied error type.
-	 * @param	error_number	the error type to format this error message around
-	 * @param	input	the error message to be formatted
+	 * @param	error_number		the error type to format this error message around
+	 * @param	input				the error message to be formatted
 	 * @param	additional_input	an optional additional message to supplement the original */
 	DT_ENGINE_API void Error(const int & error_number, const string & input, const std::string & additional_input = "");
 }
@@ -48,7 +48,7 @@ enum Error_Enum
 	ERROR_COUNT,
 };
 
-// Stringified versions of the previous error enumerations
+// String-ified versions of the previous error enumerations
 static std::string Error_String[ERROR_COUNT] =
 {
 	"Error ("+to_string(FILE_MISSING)+"): The file % does not exist! ",

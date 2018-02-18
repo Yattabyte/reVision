@@ -24,6 +24,21 @@ Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 	m_fence = nullptr;
 }
 
+bool Asset_Primitive::existsYet()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	if (Asset::existsYet() && m_fence != nullptr) {
+		read_guard.unlock();
+		read_guard.release();
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		const auto state = glClientWaitSync(m_fence, 0, 0);
+		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
+			&& (state != GL_WAIT_FAILED))
+			return true;
+	}
+	return false;
+}
+
 int Asset_Primitive::Get_Asset_Type()
 {
 	return ASSET_TYPE;
@@ -60,21 +75,6 @@ size_t Asset_Primitive::getSize()
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	return data.size();
-}
-
-bool Asset_Primitive::existsYet()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

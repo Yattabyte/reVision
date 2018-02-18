@@ -32,13 +32,13 @@ private:
 		Plane(const Plane&);
 		Plane(const vec3 & v1, const vec3 & v2, const vec3 & v3);
 
-		// Methods
+		// Public Methods
 		void set3Points(const vec3 & v1, const vec3 & v2, const vec3 & v3);
 		void setNormalAndPoint(const vec3 & normal, const vec3 & point);
 		void setCoefficients(const vec4 & plane);
 		float distance(const vec3 & p);
 
-		// Attributes
+		// Public Attributes
 		float m_d;
 		vec3 m_normal, m_point;
 		vec4 m_values;
@@ -64,26 +64,26 @@ public:
 	Frustum(const mat4 & m);
 
 
-	// Methods
+	// Public Methods
 	/** Sets a matrix for this frustum to be based upon.
-	 * @param	m	the perspective-projection matrix to use */
+	 * @param	m			the perspective-projection matrix to use */
 	void setFrustum(const mat4 & m);
 	/** Tests if a supplied sphere is visible within this frustum. 
-	 * @param	p	the position of the sphere
-	 * @param	radius	the radius of the sphere
-	 * @return	integer representing outside, intersect, or inside (0-2)
-	 * @note	see this class's public enumeration */
+	 * @param	p			the position of the sphere
+	 * @param	radius		the radius of the sphere
+	 * @return				integer representing outside, intersect, or inside (0-2)
+	 * @note				see this class's public enumeration */
 	int sphereInFrustum(const vec3 & p, const vec3 & radius);
 	/** Tests if a supplied axis-aligned bounding-box is visible within this frustum.
-	 * @param	bbox_min	the minumum extents of this box
+	 * @param	bbox_min	the minimum extents of this box
 	 * @param	bbox_max	the maximum extents of this box
-	 * @return	integer representing outside, intersect, or inside(0 - 2)
-	 * @note	see this class's public enumeration */
+	 * @return				integer representing outside, intersect, or inside(0 - 2)
+	 * @note				see this class's public enumeration */
 	int AABBInFrustom(const vec3 & bbox_min, const vec3 & bbox_max);
 
 	
 private:
-	// Attributes
+	// Private Attributes
 	Plane pl[6];
 	vec3 ntl, ntr, nbl, nbr, ftl, ftr, fbl, fbr;
 	float nearD, farD, ratio, angle, tang;

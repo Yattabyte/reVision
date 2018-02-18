@@ -16,8 +16,8 @@
 class DT_ENGINE_API SpotLightCreator : public EntityCreator
 {
 public:
-	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessanger, Component_Factory * componentFactory) {
-		Entity *entity = EntityCreator::create(id, ecsMessanger, componentFactory);
+	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessenger, componentFactory);
 		entity->addComponent("Light_Spot");
 		return entity;
 	}
@@ -29,8 +29,8 @@ public:
 class DT_ENGINE_API PointLightCreator : public EntityCreator
 {
 public:
-	virtual Entity* create(const ECShandle & id, ECSmessanger * ecsMessanger, Component_Factory * componentFactory) {
-		Entity *entity = EntityCreator::create(id, ecsMessanger, componentFactory);
+	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessenger, componentFactory);
 		entity->addComponent("Light_Point");
 		return entity;
 	}

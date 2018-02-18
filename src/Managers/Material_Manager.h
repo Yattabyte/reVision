@@ -33,7 +33,7 @@ using namespace std;
 class DT_ENGINE_API Material_Manager 
 {
 public:
-	// Methods
+	// Public Methods
 	/** Singleton GET method.
 	 * @return	static Material_Manager instance */
 	static Material_Manager &Get() {
@@ -53,7 +53,7 @@ public:
 
 	/** Generates a 64-bit GLuint64 texture handle for the specified texture, and makes it resident on the GPU
 	 * @param	materialBufferID	the material buffer
-	 * @param	glTextureID	the texture to generate the handle for **/
+	 * @param	glTextureID			the texture to generate the handle for **/
 	static void Generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID);
 
 	/** Tick through the work orders */
@@ -80,13 +80,13 @@ private:
 	Material_Manager(Material_Manager const&) = delete;
 
 
-	// Methods
+	// Public Methods
 	void operator=(Material_Manager const&) = delete;
 	void _startup();
 	void _shutdown();
 
 
-	// Attributes
+	// Public Attributes
 	shared_mutex m_DataMutex;
 	bool m_Initialized; 
 	GLuint m_BufferSSBO;

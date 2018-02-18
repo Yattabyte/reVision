@@ -9,7 +9,7 @@
 
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
-#include "Systems\World\ECSmessanger.h"
+#include "Systems\World\ECSmessenger.h"
 #include "Systems\World\Entity_Factory.h"
 #include "Systems\World\Component_Factory.h"
 
@@ -62,7 +62,7 @@ private:
 	// Private Attributes
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
-	ECSmessanger m_ECSmessenger;
+	ECSmessenger m_ECSmessenger;
 	shared_mutex m_lock;
 	vector<Camera*> m_viewers;
 };

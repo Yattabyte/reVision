@@ -79,30 +79,30 @@ public:
 	Asset_Model(const string & filename);
 
 
-	// Methods
+	// Interface Implementations
+	/** Returns whether or not this asset has completed finalizing.
+	* @return			true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
+
+	// Public Methods
 	/** @todo delete*/
 	static int Get_Asset_Type();
 	/** Generates a vertex array object, formed to match models' object data .
-	 * @return	a vertex array object resident on the GPU */
+	 * @return			a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();		
 	/** Updates a vertex array object's state with this models' data. 
-	 * @brief	using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
+	 * @brief			using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
 	 * @param	vaoID	the vertex array object's ID on the GPU */
 	void updateVAO(const GLuint & vaoID);
 	/** Returns the material ID for a skin given an index into this list
-	 * @note	Clamps to the skin list size, so it won't go out of bounds
-	 * @param	index into this model's skin list. 
-	 * @return	index into the master material list in which this skin can be found at */	
+	 * @note			Clamps to the skin list size, so it won't go out of bounds
+	 * @param	index	into this model's skin list. 
+	 * @return			index into the master material list in which this skin can be found at */	
 	GLuint getSkinID(const unsigned int & desired);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();	
-
-
-	// Attributes
+	// Public Attributes
 	int									mesh_size;
 	vector<Shared_Asset_Material>		skins;
 	GeometryInfo						data;
@@ -133,24 +133,22 @@ public:
 
 
 private:
-	// Methods
+	// Private Methods
 	/** Generates and parses the bones for our model.
 	 * @param	model	the model to load the bones onto
 	 * @param	scene	the model scene to load the bones from **/
-	void initializeBones(Shared_Asset_Model & model, const aiScene * scene);
-	
+	void initializeBones(Shared_Asset_Model & model, const aiScene * scene);	
 	/** Generates and parses the materials for our model from the model scene.
 	 * @param	modelMaterial	the material asset to load the model material into
 	 * @param	sceneMaterial	the model scene material to parse from **/
 	void generateMaterial(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
-
 	/** Generates and parses the materials for our model as a last resort.
 	 * @brief	attempts to load a material from disk as it doesn't have any aiMaterial's to load from.
 	 * @param	modelMaterial	the material asset to load the model material into */
 	void generateMaterial(Shared_Asset_Material & modelMaterial);
 
 
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Model m_asset;
 };

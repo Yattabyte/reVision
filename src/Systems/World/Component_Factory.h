@@ -16,7 +16,7 @@
 #include <shared_mutex>
 
 using namespace std;
-class ECSmessanger;
+class ECSmessenger;
 class EnginePackage;
 
 
@@ -35,8 +35,8 @@ public:
 	// Public Methods
 	/** Initialize  the component factory
 	 * @param	enginePackage	pointer to the engine package
-	 * @param	ecsMessanger	pointer to the entity-component messenger system */
-	void Initialize(EnginePackage * enginePackage, ECSmessanger * ecsMessange);
+	 * @param	ecsMessenger	pointer to the entity-component messenger system */
+	void Initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessange);
 	/** Creates a component of the supplied type and returns its handle 
 	 * @param	type			the type of component to create
 	 * @param	parent_ID		the handle of the parent to pass to the component
@@ -67,7 +67,7 @@ private:
 	map<char*, deque<unsigned int>> m_freeSpots;
 	map<char*, ComponentCreator*, cmp_str> m_creatorMap;
 	shared_mutex m_dataLock;
-	ECSmessanger *m_ECSmessenger;
+	ECSmessenger *m_ECSmessenger;
 	EnginePackage *m_enginePackage;
 };
 

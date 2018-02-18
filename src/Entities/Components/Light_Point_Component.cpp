@@ -51,86 +51,55 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	}
 }
 
-void Light_Point_Component::update()
-{
-	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	m_uboData.lightV = glm::translate(mat4(1.0f), -m_uboData.LightPosition);
-	m_uboData.mMatrix = trans * scl;
-
-	// Calculate perspective matrix
-	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
-	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
-	m_uboData.ShadowSize = size.x;
-
-	for (int x = 0; x < 2; ++x) {
-		m_camera[x].setPosition(m_uboData.LightPosition);
-		m_camera[x].setDimensions(size);
-		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
-		m_camera[x].update();
-	}
-
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightPointBuffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-}
-
-GLuint Light_Point_Component::getShadowSpot(const bool & front) const
-{
-	return front ? m_uboData.Shadow_Spot1 : m_uboData.Shadow_Spot2;
-}
-
 void Light_Point_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	switch (message.GetCommandID()) {
-		case SET_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.LightColor = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
-			break;
-		}
-		case SET_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_uboData.LightIntensity = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
-			break;
-		}
-		case SET_RADIUS: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_squaredRadius = payload * payload;
-			m_uboData.p_far = m_squaredRadius;
-			m_uboData.LightRadius = payload;
-			m_camera[0].setFarPlane(m_squaredRadius);
-			m_camera[1].setFarPlane(m_squaredRadius);
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, p_far), sizeof(float), &m_uboData.p_far);
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
-			update();
-			break;
-		}
-		case SET_POSITION: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.LightPosition = payload;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			update();
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			m_uboData.LightPosition = payload.position;
-			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-			update();
-			break;
-		}
+	case SET_COLOR: {
+		if (!message.IsOfType<vec3>()) break;
+		const auto &payload = message.GetPayload<vec3>();
+		m_uboData.LightColor = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
+		break;
+	}
+	case SET_INTENSITY: {
+		if (!message.IsOfType<float>()) break;
+		const auto &payload = message.GetPayload<float>();
+		m_uboData.LightIntensity = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
+		break;
+	}
+	case SET_RADIUS: {
+		if (!message.IsOfType<float>()) break;
+		const auto &payload = message.GetPayload<float>();
+		m_squaredRadius = payload * payload;
+		m_uboData.p_far = m_squaredRadius;
+		m_uboData.LightRadius = payload;
+		m_camera[0].setFarPlane(m_squaredRadius);
+		m_camera[1].setFarPlane(m_squaredRadius);
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, p_far), sizeof(float), &m_uboData.p_far);
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
+		update();
+		break;
+	}
+	case SET_POSITION: {
+		if (!message.IsOfType<vec3>()) break;
+		const auto &payload = message.GetPayload<vec3>();
+		m_uboData.LightPosition = payload;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
+		update();
+		break;
+	}
+	case SET_TRANSFORM: {
+		if (!message.IsOfType<Transform>()) break;
+		const auto &payload = message.GetPayload<Transform>();
+		m_uboData.LightPosition = payload.position;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
+		update();
+		break;
+	}
 	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -198,4 +167,35 @@ bool Light_Point_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 float Light_Point_Component::getImportance(const vec3 & position)
 {
 	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
+}
+
+void Light_Point_Component::update()
+{
+	// Calculate view matrix
+	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
+	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+	m_uboData.lightV = glm::translate(mat4(1.0f), -m_uboData.LightPosition);
+	m_uboData.mMatrix = trans * scl;
+
+	// Calculate perspective matrix
+	auto shadowmapper = m_enginePackage->getSubSystem<System_Shadowmap>("Shadows");
+	const vec2 &size = shadowmapper->getSize(SHADOW_REGULAR);
+	m_uboData.ShadowSize = size.x;
+
+	for (int x = 0; x < 2; ++x) {
+		m_camera[x].setPosition(m_uboData.LightPosition);
+		m_camera[x].setDimensions(size);
+		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
+		m_camera[x].update();
+	}
+
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightPointBuffer), &m_uboData);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+}
+
+GLuint Light_Point_Component::getShadowSpot(const bool & front) const
+{
+	return front ? m_uboData.Shadow_Spot1 : m_uboData.Shadow_Spot2;
 }

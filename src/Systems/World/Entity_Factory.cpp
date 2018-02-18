@@ -1,6 +1,6 @@
 #include "Systems\World\Entity_Factory.h"
 #include "Systems\World\ECSmessage.h"
-#include "Systems\World\ECSmessanger.h"
+#include "Systems\World\ECSmessenger.h"
 #include "Entities\Prop.h"
 #include "Entities\Sun.h"
 #include "Entities\Light.h"
@@ -10,8 +10,8 @@ Entity_Factory::~Entity_Factory()
 {
 }
 
-Entity_Factory::Entity_Factory(ECSmessanger *ecsMessanger, Component_Factory *componentFactory) : 
-	m_ECSmessenger(ecsMessanger),
+Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *componentFactory) : 
+	m_ECSmessenger(ecsMessenger),
 	m_componentFactory(componentFactory)
 {
 	m_creatorMap.insert(pair<char*, EntityCreator*>("Prop", new PropCreator()));

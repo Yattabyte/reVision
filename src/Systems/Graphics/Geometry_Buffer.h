@@ -32,9 +32,9 @@ public:
 	Geometry_Buffer();
 
 	
-	// Methods
+	// Public Methods
 	/** Initialize the framebuffer.
-	 * @param	size	the size of the framebuffer
+	 * @param	size		the size of the framebuffer
 	 * @param	visualFX	reference to the post-processing utility class */
 	void initialize(const vec2 & size, VisualFX * visualFX);
 	/** Binds and clears out all the render-targets in this framebuffer. */
@@ -46,7 +46,7 @@ public:
 	/** Resets the framebuffer and re-attaches all its render-targets.*/
 	void end();
 	/** Change the size of the framebuffer object. 
-	 * @param	size	the new size of the framebuffer */
+	 * @param	size		the new size of the framebuffer */
 	void resize(const vec2 & size);
 	/** Generate ambient occlusion for the frame. */
 	void applyAO();

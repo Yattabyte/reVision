@@ -29,6 +29,15 @@ class EnginePackage;
 class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
 {
 public:
+	// Interface Implementations
+	virtual void receiveMessage(const ECSmessage &message);
+	virtual void directPass(const int &vertex_count);
+	virtual void indirectPass(const int &vertex_count);
+	virtual void shadowPass();
+	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	virtual float getImportance(const vec3 &position);
+
+
 	/** Message Enumerators for this component type. */
 	static const enum MSG_TYPES
 	{
@@ -42,21 +51,12 @@ public:
 	};
 
 
-	// Methods
+	// Public Methods
 	/** Sends current data to the GPU. */
 	void update();
 	/** Retrieves the shadow spot for this light
-	 * @return	the shadow spot requested */
+	* @return	the shadow spot requested */
 	GLuint getShadowSpot() const;
-
-
-	// Interface Implementations
-	virtual void receiveMessage(const ECSmessage &message);
-	virtual void directPass(const int &vertex_count);
-	virtual void indirectPass(const int &vertex_count);
-	virtual void shadowPass();
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
-	virtual float getImportance(const vec3 &position);
 
 
 protected:
@@ -103,7 +103,7 @@ protected:
 	Light_Spot_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 
 
-	// Attributes
+	// Protected Attributes
 	GLuint m_uboID;
 	LightSpotBuffer m_uboData;
 	EnginePackage *m_enginePackage;
@@ -118,7 +118,7 @@ protected:
 class DT_ENGINE_API Light_Spot_Creator : public ComponentCreator
 {
 public:
-	Light_Spot_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
+	Light_Spot_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Light_Spot_Component(id, pid, enginePackage);
 	}

@@ -36,21 +36,21 @@ public:
 	Asset_Shader_Pkg(const string & filename);
 
 
-	// Methods
+	// Interface Implementations
+	/** Returns whether or not this asset has completed finalizing.
+	* @return	true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
+
+	// Public Methods
 	/** @todo delete */
 	static int Get_Asset_Type();
 	/** Retrieves this package's content as a string.
-	 * @return package contents */
+	 * @return	package contents */
 	string getPackageText() const;
 
-
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
 	
-	// Attributes
+	// Public Attributes
 	string package_text;
 };
 
@@ -75,7 +75,7 @@ public:
 
 
 private:
-	// Methods
+	// Private Methods
 	/** Reads in a text file from disk.
 	 * @param	returnFile	reference string to return the text file to
 	 * @param	fileDirectory	absolute path to the file to read from
@@ -86,7 +86,7 @@ private:
 	void parse();
 
 
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Shader_Pkg m_asset;
 };

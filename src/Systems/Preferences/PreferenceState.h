@@ -19,15 +19,15 @@ using namespace std;
 /**
  * A container class that holds the preference state for the engine, such as window size and graphics options.
  **/
-class DT_ENGINE_API Preference_State
+class DT_ENGINE_API PreferenceState
 {
 public:
 	// (de)Constructors
 	/** Destroy the preference state. */
-	~Preference_State() {}
+	~PreferenceState() {}
 	/** Construct the preference state.
 	* @param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	Preference_State(const string & filename = "preferences") {
+	PreferenceState(const string & filename = "preferences") {
 		LoadFile(filename);
 	}
 
@@ -36,7 +36,7 @@ public:
 	/** Loads a preference file from disk.
 	 * @param	filename	the relative path to the preference file to load */
 	void LoadFile(const string & filename) {
-		Asset_Loader::load_asset(m_preferences, filename, Preference_State::Preference_Strings(), false);
+		Asset_Loader::load_asset(m_preferences, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void Save() {
@@ -44,7 +44,7 @@ public:
 	}
 	/** Retrieves a value tied to the supplied preference ID.
 	 * @param	targetKey	the preference key to look up
-	 * @return	the value tied to the preference supplied */
+	 * @return				the value tied to the preference supplied */
 	float getPreference(const unsigned int & targetKey) const {
 		if (m_preferences) 
 			return m_preferences->getValue(targetKey);		

@@ -33,22 +33,22 @@ public:
 	/** Construct the Cubemap. */
 	Asset_Cubemap(const std::string & filename);
 
+
+	// Interface implementations
+	/** Returns whether or not this asset has completed finalizing.
+	* @return					true if this asset has finished finalizing, false otherwise. */
+	virtual bool existsYet();
+
 	
-	// Methods
+	// Public Methods
 	/** @todo delete */
 	static int Get_Asset_Type();	
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const GLuint & texture_unit);
 
-
-	// Interface implementations
-	/** Returns whether or not this asset has completed finalizing.
-	 * @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
 	
-	// Attributes
+	// Public Attributes
 	/** @todo make members prefixed with 'm_' */
 	GLuint gl_tex_ID;
 	vec2 size;
@@ -77,7 +77,7 @@ public:
 
 
 private:
-	// Attributes
+	// Private Attributes
 	string m_filename;
 	Shared_Asset_Cubemap m_asset;
 };

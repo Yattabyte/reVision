@@ -9,22 +9,22 @@
 
 #include "Systems\System_Interface.h"
 #include "Assets\Asset_Config.h"
-#include "Systems\Input\Action_State.h"
+#include "Systems\Input\ActionState.h"
 #include <string>
 
 
 /**
  * Responsible for loading a particular key-binding configuration
  **/
-class DT_ENGINE_API Input_Binding
+class DT_ENGINE_API InputBinding
 {
 public: 
 	// (de)Constructors
 	/** Destroy the binding (not from disk) */
-	~Input_Binding() {}
+	~InputBinding() {}
 	/** Construct a key-binding.
 	 * @param	filename	an optional relative path to a key-bind file to load. Defaults to binds.cfg */
-	Input_Binding(const std::string & filename = "binds") { Asset_Loader::load_asset(bindings, filename, Action_State::Action_Strings(), false); }
+	InputBinding(const std::string & filename = "binds") { Asset_Loader::load_asset(bindings, filename, ActionState::Action_Strings(), false); }
 
 
 	// Public Methods

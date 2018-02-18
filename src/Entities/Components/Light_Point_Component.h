@@ -29,6 +29,15 @@ class EnginePackage;
 class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 {
 public:
+	// Interface Implementations
+	virtual void receiveMessage(const ECSmessage &message);
+	virtual void directPass(const int &vertex_count);
+	virtual void indirectPass(const int &vertex_count);
+	virtual void shadowPass();
+	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	virtual float getImportance(const vec3 &position);
+
+
 	/** Message Enumerators for this component type. */
 	static const enum MSG_TYPES
 	{
@@ -44,17 +53,8 @@ public:
 	void update();
 	/** Retrieves the front or rear shadow spot.
 	 * @param	front	set to true to retrieve the front, or false for the back
-	 * @return	the shadow spot requested */
+	 * @return			the shadow spot requested */
 	GLuint getShadowSpot(const bool &front) const;
-
-
-	// Interface Implementations
-	virtual void receiveMessage(const ECSmessage &message);
-	virtual void directPass(const int &vertex_count);
-	virtual void indirectPass(const int &vertex_count);
-	virtual void shadowPass();
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
-	virtual float getImportance(const vec3 &position);
 
 
 protected:
@@ -100,7 +100,7 @@ protected:
 	Light_Point_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 
 
-	// Attributes
+	// Protected Attributes
 	GLuint m_uboID;
 	LightPointBuffer m_uboData;
 	EnginePackage *m_enginePackage;
@@ -114,7 +114,7 @@ protected:
 class DT_ENGINE_API Light_Point_Creator : public ComponentCreator
 {
 public:
-	Light_Point_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
+	Light_Point_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Light_Point_Component(id, pid, enginePackage);
 	}

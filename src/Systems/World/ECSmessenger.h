@@ -19,29 +19,29 @@ class Component_Factory;
 /**
  * A utility that handles the deliver of messages between entities and components.
  **/
-class DT_ENGINE_API ECSmessanger {
+class DT_ENGINE_API ECSmessenger {
 public:
 	// (de)Constructors
-	/** Destroy the messanger. */
-	~ECSmessanger();
-	/** Construct the messanger.
+	/** Destroy the messenger. */
+	~ECSmessenger();
+	/** Construct the messenger.
 	 * @param	entityFactory		pointer to the entity factory
 	 * @param	componentFactory	pointer to the component factory */
-	ECSmessanger(Entity_Factory *entityFactory, Component_Factory *componentFactory);
+	ECSmessenger(Entity_Factory *entityFactory, Component_Factory *componentFactory);
 
 
 	// Public Methods
 	/** Propagates a message towards an entity matching the handle provided
-	 * @param	message		the message to send
-	 * @param	target		the handle of the desired entity */
+	 * @param	message				the message to send
+	 * @param	target				the handle of the desired entity */
 	void SendMessage_ToEntity(const ECSmessage &message, const ECShandle &target);
 	/** Propagates a message towards a component matching the handle provided
-	 * @param	message		the message to send
-	 * @param	target		the handle of the desired component */
+	 * @param	message				the message to send
+	 * @param	target				the handle of the desired component */
 	void SendMessage_ToComponent(const ECSmessage &message, const ECShandle &target);
 	/** Propagates a message towards all components matching the handles provided
-	 * @param	message		the message to send
-	 * @param	targets		a map of component handles */
+	 * @param	message				the message to send
+	 * @param	targets				a map of component handles */
 	void SendMessage_ToComponents(const ECSmessage &message, const ECShandle_map &targets);
 
 

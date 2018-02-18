@@ -29,10 +29,10 @@ public:
 	Lighting_Buffer();
 
 
-	// Methods
+	// Public Methods
 	/** Initialize the framebuffer.
-	 * @param	size	the size of the framebuffer
-	 * @param	visualFX	reference to the post-processing utility class
+	 * @param	size			the size of the framebuffer
+	 * @param	visualFX		reference to the post-processing utility class
 	 * @param	bloomStrength	intensity / number of passes for the bloom effect
 	 * @param	depthStencil	reference to the depthStencil texture from the gBuffer */
 	void initialize(const vec2 & size, VisualFX * visualFX, const int & bloomStrength, const GLuint & depthStencil);
@@ -43,10 +43,10 @@ public:
 	/** Binds the framebuffer and its render-targets for reading. */
 	void bindForReading();
 	/** Change the size of the framebuffer object. 
-	 * @param	size	the new size of the framebuffer */
+	 * @param	size			the new size of the framebuffer */
 	void resize(const vec2 & size);
 	/** Change the strength of the bloom effect.
-	 * @param	strength	the new strength of the bloom effect */
+	 * @param	strength		the new strength of the bloom effect */
 	void setBloomStrength(const int &strength);
 	/** Apply blur filter to bloom attachment, finishing the bloom effect. */
 	void applyBloom();

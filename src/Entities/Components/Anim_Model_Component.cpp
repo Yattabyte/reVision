@@ -34,48 +34,6 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	m_vao_id = Asset_Model::Generate_VAO();
 }
 
-void Anim_Model_Component::update()
-{
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void Anim_Model_Component::animate(const double & deltaTime)
-{
-	if (!m_model->existsYet()) return;
-
-	shared_lock<shared_mutex> guard(m_model->m_mutex);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-
-	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->animationInfo.Animations.size()) {
-		m_uboData.useBones = 0;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
-	}
-	else {
-		m_uboData.useBones = 1;
-		if (m_playAnim)
-			m_animTime += deltaTime;
-		const float TicksPerSecond = m_model->animationInfo.Animations[m_animation]->mTicksPerSecond != 0
-			? m_model->animationInfo.Animations[m_animation]->mTicksPerSecond
-			: 25.0f;
-		const float TimeInTicks = m_animTime * TicksPerSecond;
-		const float AnimationTime = fmod(TimeInTicks, m_model->animationInfo.Animations[m_animation]->mDuration);
-		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
-
-		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->animationInfo.RootNode, m_model, mat4(1.0f));
-
-		// Lock guard goes here
-		const unsigned int total = min(m_transforms.size(), NUM_MAX_BONES);
-		for (int i = 0; i < total; i++)
-			m_uboData.transforms[i] = m_transforms[i].FinalTransformation;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, transforms), sizeof(mat4) * total, &m_uboData.transforms);
-	}
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
 void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
@@ -144,7 +102,49 @@ bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 
 		return frustum.AABBInFrustom(m_model->bbox_min, m_model->bbox_max);
 	}
-	return false;	
+	return false;
+}
+
+void Anim_Model_Component::update()
+{
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void Anim_Model_Component::animate(const double & deltaTime)
+{
+	if (!m_model->existsYet()) return;
+
+	shared_lock<shared_mutex> guard(m_model->m_mutex);
+	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+
+	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->animationInfo.Animations.size()) {
+		m_uboData.useBones = 0;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
+	}
+	else {
+		m_uboData.useBones = 1;
+		if (m_playAnim)
+			m_animTime += deltaTime;
+		const float TicksPerSecond = m_model->animationInfo.Animations[m_animation]->mTicksPerSecond != 0
+			? m_model->animationInfo.Animations[m_animation]->mTicksPerSecond
+			: 25.0f;
+		const float TimeInTicks = m_animTime * TicksPerSecond;
+		const float AnimationTime = fmod(TimeInTicks, m_model->animationInfo.Animations[m_animation]->mDuration);
+		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
+
+		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->animationInfo.RootNode, m_model, mat4(1.0f));
+
+		// Lock guard goes here
+		const unsigned int total = min(m_transforms.size(), NUM_MAX_BONES);
+		for (int i = 0; i < total; i++)
+			m_uboData.transforms[i] = m_transforms[i].FinalTransformation;
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
+		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, transforms), sizeof(mat4) * total, &m_uboData.transforms);
+	}
+	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Model_Observer::Notify_Finalized()

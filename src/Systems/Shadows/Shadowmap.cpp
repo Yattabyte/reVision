@@ -29,8 +29,8 @@ private:
 System_Shadowmap::~System_Shadowmap()
 {
 	if (m_Initialized) {
-		m_enginePackage->removeCallback(Preference_State::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
-		m_enginePackage->removeCallback(Preference_State::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
+		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
 		delete m_RegularChangeCallback;
 		delete m_largeChangeCallback;
 
@@ -59,10 +59,10 @@ void System_Shadowmap::initialize(EnginePackage * enginePackage)
 		m_enginePackage = enginePackage;
 		m_RegularChangeCallback = new SM_ShadowSizeRegularChangeCallback(this);
 		m_largeChangeCallback = new SM_ShadowSizeLargeChangeCallback(this);
-		m_enginePackage->addCallback(Preference_State::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
-		m_enginePackage->addCallback(Preference_State::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
-		float size_regular = m_enginePackage->getPreference(Preference_State::C_SHADOW_SIZE_REGULAR);
-		float size_large = m_enginePackage->getPreference(Preference_State::C_SHADOW_SIZE_LARGE);
+		m_enginePackage->addCallback(PreferenceState::C_SHADOW_SIZE_REGULAR, m_RegularChangeCallback);
+		m_enginePackage->addCallback(PreferenceState::C_SHADOW_SIZE_LARGE, m_largeChangeCallback);
+		float size_regular = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_REGULAR);
+		float size_large = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_LARGE);
 		m_size[SHADOW_REGULAR] = vec2(max(1.0f, size_regular));
 		m_size[SHADOW_LARGE] = vec2(max(1.0f, size_large));
 

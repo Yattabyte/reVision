@@ -1,7 +1,7 @@
 #include "Systems\Logic\Logic.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
-#include "Systems\Input\Action_State.h"
+#include "Systems\Input\ActionState.h"
 
 
 System_Logic::~System_Logic()
@@ -25,7 +25,7 @@ void System_Logic::initialize(EnginePackage * enginePackage)
 void System_Logic::update(const float & deltaTime)
 {
 	// Determine how much the camera should rotate
-	m_rotation += 25.0f * deltaTime * vec3(m_enginePackage->m_Action_State.at(Action_State::LOOK_X), m_enginePackage->m_Action_State.at(Action_State::LOOK_Y), 0);
+	m_rotation += 25.0f * deltaTime * vec3(m_enginePackage->m_ActionState.at(ActionState::LOOK_X), m_enginePackage->m_ActionState.at(ActionState::LOOK_Y), 0);
 	m_rotation.x = fmodf(m_rotation.x, 360.0f);
 	if (m_rotation.x < 0.0f)
 		m_rotation.x += 360.0f;
@@ -40,13 +40,13 @@ void System_Logic::update(const float & deltaTime)
 	const float velocity = 50.0f;
 	const float moveAmount = velocity * deltaTime;
 	vec3 deltaPosition(0.0f);
-	if (m_enginePackage->m_Action_State.at(Action_State::FORWARD) > 0.5f)
+	if (m_enginePackage->m_ActionState.at(ActionState::FORWARD) > 0.5f)
 		deltaPosition += vec3(0, 0, -moveAmount);
-	if (m_enginePackage->m_Action_State.at(Action_State::BACK) > 0.5f)
+	if (m_enginePackage->m_ActionState.at(ActionState::BACK) > 0.5f)
 		deltaPosition += vec3(0, 0, moveAmount);
-	if (m_enginePackage->m_Action_State.at(Action_State::LEFT) > 0.5f)
+	if (m_enginePackage->m_ActionState.at(ActionState::LEFT) > 0.5f)
 		deltaPosition += vec3(-moveAmount, 0, 0);
-	if (m_enginePackage->m_Action_State.at(Action_State::RIGHT) > 0.5f)
+	if (m_enginePackage->m_ActionState.at(ActionState::RIGHT) > 0.5f)
 		deltaPosition += vec3(moveAmount, 0, 0);
 	// Make the translation amount be relative to the camera's orientation
 	vec4 rotatedPosition = glm::inverse(rotationMatrix) * vec4(deltaPosition, 1.0f);

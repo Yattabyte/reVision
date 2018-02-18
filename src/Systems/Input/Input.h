@@ -8,7 +8,7 @@
 #endif
 
 #include "Systems\System_Interface.h"
-#include "Systems\Input\Input_Binding.h"
+#include "Systems\Input\InputBinding.h"
 
 class EnginePackage;
 class GLFWwindow;
@@ -25,7 +25,7 @@ public:
 	~System_Input();
 	/** Construct the input system. 
 	 * @param	bind_interface	an optional bindingInterface. Will default to loading binds.cfg*/
-	System_Input(const Input_Binding & bind_interface = Input_Binding());
+	System_Input(const InputBinding & bind_interface = InputBinding());
 
 
 	// Interface Implementations
@@ -36,7 +36,7 @@ public:
 
 private:
 	// Private Attributes
-	Input_Binding m_binds; 
+	InputBinding m_binds; 
 };
 
 #endif // SYSTEM_INPUT

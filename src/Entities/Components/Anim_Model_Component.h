@@ -25,17 +25,17 @@ class Model_Observer;
 class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
 {
 public:
-	// Methods
-	/** Sends current data to the GPU. */
-	void update();
-	/** Ticks ahead the animation state by the amount of deltaTime. */
-	void animate(const double &deltaTime);
-
-
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual void draw();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+
+
+	// Public Methods
+	/** Sends current data to the GPU. */
+	void update();
+	/** Ticks ahead the animation state by the amount of deltaTime. */
+	void animate(const double &deltaTime);
 
 
 protected:
@@ -61,7 +61,7 @@ protected:
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 
 
-	// Attributes
+	// Protected Attributes
 	int m_animation;
 	bool m_playAnim;
 	float m_animTime, m_animStart;
@@ -79,7 +79,7 @@ protected:
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
 {
 public:
-	Anim_Model_Creator(ECSmessanger *ecsMessanger) : ComponentCreator(ecsMessanger) {}
+	Anim_Model_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Anim_Model_Component(id, pid, enginePackage);
 	}
