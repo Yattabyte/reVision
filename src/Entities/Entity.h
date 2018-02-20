@@ -10,9 +10,8 @@
 
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSdefines.h"
+#include "Utilities\MappedChar.h"
 #include "GL\glew.h"
-#include <map>
-#include <vector>
 
 class ECSmessenger;
 class Component_Factory;
@@ -30,13 +29,13 @@ public:
 	// Public Methods
 	/** Generates a new component for this entity of the supplied type.
 	 * @param	type	const char array name of the component type to add */
-	void addComponent(char * type);
+	void addComponent(const char * type);
 	/** Returns a component if it exists from this entity, using the supplied handle.
-	 * @param	id	the handle of the component to return
-	 * @return	the component which matches the handle supplied */
+	 * @param	id		the handle of the component to return
+	 * @return			the component which matches the handle supplied */
 	Component* getComponent(const ECShandle & id);	
 	/** Propagate a message onto this entity's components.
-	 * @param	message	the message to send */
+	 * @param			message	the message to send */
 	void receiveMessage(const ECSmessage & message);
 	
 
@@ -50,7 +49,7 @@ protected:
 
 	// Protected Attributes
 	ECShandle m_ID;
-	std::map<char *, std::vector<unsigned int>, cmp_str> m_component_handles;
+	VectorMap<unsigned int> m_component_handles;
 	ECSmessenger *m_ECSmessenger;
 	Component_Factory *m_componentFactory;
 	friend class EntityCreator;

@@ -41,7 +41,7 @@ GLubyte * Image_Importer::parse_Image_1_channel(FIBITMAP * bitmap, const ivec2 &
 	GLubyte* textureData = new GLubyte[size_mult * 1];
 
 	if (bitmap) {
-		char* pixels = (char*)FreeImage_GetBits(bitmap);
+		char * pixels = (char *)FreeImage_GetBits(bitmap);
 		for (unsigned int i = 0; i < size_mult; ++i) {
 			// format gets read as BGRA
 			const GLubyte &red		= pixels[i * 4 + 2];
@@ -60,7 +60,7 @@ GLubyte * Image_Importer::parse_Image_2_channel(FIBITMAP * bitmap, const ivec2 &
 	GLubyte* textureData = new GLubyte[size_mult * 2];
 
 	if (bitmap) {
-		char* pixels = (char*)FreeImage_GetBits(bitmap);
+		char * pixels = (char *)FreeImage_GetBits(bitmap);
 		for (unsigned int i = 0; i < size_mult; ++i) {
 			// format gets read as BGRA
 			const GLubyte &green	= pixels[i * 4 + 1],
@@ -81,7 +81,7 @@ GLubyte * Image_Importer::parse_Image_3_channel(FIBITMAP * bitmap, const ivec2 &
 	GLubyte* textureData = new GLubyte[size_mult * 3];
 	
 	if (bitmap) {
-		char* pixels = (char*)FreeImage_GetBits(bitmap);
+		char * pixels = (char *)FreeImage_GetBits(bitmap);
 		for (unsigned int i = 0; i < size_mult; ++i) {
 			// format gets read as BGRA
 			const GLubyte &blue		= pixels[i * 4 + 0],
@@ -104,7 +104,7 @@ GLubyte * Image_Importer::parse_Image_4_channel(FIBITMAP * bitmap, const ivec2 &
 	GLubyte* textureData = new GLubyte[size_mult * 4];
 
 	if (bitmap) {
-		char* pixels = (char*)FreeImage_GetBits(bitmap);
+		char * pixels = (char *)FreeImage_GetBits(bitmap);
 		for (unsigned int i = 0; i < size_mult; ++i) {
 			// format gets read as BGRA
 			const GLubyte &blue		= pixels[i * 4 + 0],

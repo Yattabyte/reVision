@@ -14,19 +14,19 @@ Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *co
 	m_ECSmessenger(ecsMessenger),
 	m_componentFactory(componentFactory)
 {
-	m_creatorMap.insert(pair<char*, EntityCreator*>("Prop", new PropCreator()));
-	m_creatorMap.insert(pair<char*, EntityCreator*>("Sun", new SunCreator()));
-	m_creatorMap.insert(pair<char*, EntityCreator*>("SpotLight", new SpotLightCreator()));
-	m_creatorMap.insert(pair<char*, EntityCreator*>("PointLight", new PointLightCreator()));
+	m_creatorMap["Prop"] = new PropCreator();
+	m_creatorMap["Sun"] = new SunCreator();
+	m_creatorMap["SpotLight"] = new SpotLightCreator();
+	m_creatorMap["PointLight"] = new PointLightCreator();
 }
 
-ECShandle Entity_Factory::CreateEntity(char * type)
+ECShandle Entity_Factory::createEntity(const char * type)
 {
-	m_levelEntities.insert(pair<char*, vector<Entity*>>(type, vector<Entity*>()));
+	m_levelEntities.insert(type);
 	Entity *entity;
 	unsigned int spot;
 
-	if ((m_freeSpots.find(type) != m_freeSpots.end()) && m_freeSpots[type].size()) {
+	if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
 		spot = m_freeSpots[type].front();
 		m_levelEntities[type][spot] = nullptr;
 		m_freeSpots[type].pop_front();
@@ -41,32 +41,30 @@ ECShandle Entity_Factory::CreateEntity(char * type)
 	return ECShandle(type, spot);
 }
 
-void Entity_Factory::DeleteEntity(const ECShandle & id)
+void Entity_Factory::deleteEntity(const ECShandle & id)
 {
-	if (m_levelEntities.find(id.first) == m_levelEntities.end())
+	if (!m_levelEntities.find(id.first))
 		return;
 	if (m_levelEntities[id.first].size() <= id.second)
 		return;
 	m_creatorMap[id.first]->destroy(m_levelEntities.at(id.first).at(id.second));
-	m_freeSpots.insert(pair<char*, deque<unsigned int>>(id.first, deque<unsigned int>()));
+	m_freeSpots.insert(id.first);
 	m_freeSpots[id.first].push_back(id.second);
 }
 
-Entity * Entity_Factory::GetEntity(const ECShandle & id)
+Entity * Entity_Factory::getEntity(const ECShandle & id)
 {
-	if (m_levelEntities.find(id.first) == m_levelEntities.end())
+	if (!m_levelEntities.find(id.first))
 		return nullptr;
 	return m_levelEntities[id.first][id.second];
 }
 
-vector<Entity*>& Entity_Factory::GetEntitiesByType(char * type)
+vector<Entity*>& Entity_Factory::getEntitiesByType(const char * type)
 {
-	if (m_levelEntities.find(type) == m_levelEntities.end())
-		return vector<Entity*>();
 	return m_levelEntities[type];
 }
 
-void Entity_Factory::Flush()
+void Entity_Factory::flush()
 {
 	for each (auto pair in m_levelEntities) {
 		for each (auto *entity in pair.second) {

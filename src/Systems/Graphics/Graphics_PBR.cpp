@@ -302,8 +302,8 @@ void System_Graphics_PBR::regenerationPass(const Visibility_Token & vis_token)
 			double m_updateTime;
 			float m_importance;
 			Lighting_Component *m_ptr;
-			char* m_lightType;
-			LightElement(const double &time, const float &importance, Lighting_Component *ptr, char* type) {
+			const char * m_lightType;
+			LightElement(const double & time, const float & importance, Lighting_Component * ptr,const char * type) {
 				m_updateTime = time;
 				m_importance = importance;
 				m_ptr = ptr;
@@ -319,7 +319,7 @@ void System_Graphics_PBR::regenerationPass(const Visibility_Token & vis_token)
 		}
 
 		// Accessors/Updaters
-		void add(Lighting_Component * c, char * type) {
+		void add(Lighting_Component * c, const char * type) {
 			const size_t &listSize = m_list.size();
 			double time = c->getShadowUpdateTime(); 
 			int insertionIndex = listSize;	

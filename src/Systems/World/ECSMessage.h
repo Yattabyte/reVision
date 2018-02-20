@@ -63,7 +63,7 @@ private:
 	/** Payload concept/interface */
 	struct PayloadConcept {
 		virtual ~PayloadConcept() {};
-		virtual const char* GetTypeID() = 0;
+		virtual const char * GetTypeID() = 0;
 	};
 	/** The actual payload container.
 	 * This class is abstract and holds the data for every message. */
@@ -74,7 +74,7 @@ private:
 		PayloadModel(const DATA_TYPE & t) { m_data = t; }
 
 		// Public Methods
-		const char* GetTypeID() { return typeid(DATA_TYPE).name(); }
+		const char * GetTypeID() { return typeid(DATA_TYPE).name(); }
 		const DATA_TYPE &GetData() const { return m_data; }
 
 

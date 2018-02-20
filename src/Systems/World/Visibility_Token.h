@@ -9,8 +9,7 @@
 
 #include "Entities\Components\Component.h"
 #include "Systems\World\ECSdefines.h"
-#include <map>
-#include <vector>
+#include "Utilities\MappedChar.h"
 
 
 /**
@@ -28,21 +27,21 @@ public:
 	// Public Methods
 	/** Insert a component type into the map ahead of time. 
 	 * @param	name	the name of the type to insert */
-	void insertType(char * name) {
-		mList.insert(pair<char*, vector<Component*>>(name, vector<Component*>()));
+	void insertType(const char * name) {
+		mList.insert(name);
 	}
 	/** Get a type-casted list of components that match the given type
 	 * @param	name	the name of the type to retrieve
 	 * @param	<T>		the type to down-cast the components to.
 	 * @return			a type-casted list of components matching the supplied type */
 	template <typename T> 
-	const std::vector<T*>& getTypeList(char * name) const {
+	const vector<T*>& getTypeList(const char * name) const {
 		return *(vector<T*>*)(&mList.at(name));
 	}
 	/** Retrieve a list of components of the given type.
 	 * @param	name	the name of the type to retrieve
 	 * @return			the list of components matching the supplied type */
-	std::vector<Component*>& operator[](char * name) {
+	vector<Component*>& operator[](const char * name) {
 		return mList.at(name);
 	}
 	/** Retrieve the size of the map.
@@ -51,14 +50,15 @@ public:
 		return mList.size();
 	}
 	/** Check if the given component type. 
-	 * @param	name	the name of the type to retrieve */
-	bool find(char * name) const {
-		return !(mList.find(name) == mList.end());
+	 * @param	name	the name of the type to retrieve
+	 * @return			true if found, false otherwise */
+	bool find(const char * name) const {
+		return mList.find(name);
 	}
 
 
 	// Public Attributes
-	std::map<char*, std::vector<Component*>, cmp_str> mList;
+	VectorMap<Component*> mList;
 };
 
 #endif // VISIBILITY_TOKEN

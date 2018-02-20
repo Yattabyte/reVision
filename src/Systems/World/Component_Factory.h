@@ -10,9 +10,8 @@
 #include "Entities\Components\Component.h"
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\Visibility_Token.h"
+#include "Utilities\MappedChar.h"
 #include <deque>
-#include <map>
-#include <vector>
 #include <shared_mutex>
 
 using namespace std;
@@ -36,37 +35,42 @@ public:
 	/** Initialize  the component factory
 	 * @param	enginePackage	pointer to the engine package
 	 * @param	ecsMessenger	pointer to the entity-component messenger system */
-	void Initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessange);
+	void initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessange);
 	/** Creates a component of the supplied type and returns its handle 
 	 * @param	type			the type of component to create
 	 * @param	parent_ID		the handle of the parent to pass to the component
 	 * @return					the handle of the created component */	 
-	ECShandle CreateComponent(char * type, const ECShandle & parent_ID);
+	ECShandle createComponent(const char * type, const ECShandle & parent_ID);
 	/** Delete the component of the given handle.
   	 * @param	id				the handle of the component to delete */
-	void DeleteComponent(const ECShandle & id);
+	void deleteComponent(const ECShandle & id);
 	/** Retrieve the actual component that matches the supplied ID.
 	 * @param	id				the handle of the component to retrieve
 	 * @return					the component who matches the handle provided */
-	Component * GetComponent(const ECShandle & id);
+	Component * getComponent(const ECShandle & id);
 	/** Retrieves an array of components that match the category specified.
+	 * @brief					Guaranteed to return at least a zero-length vector. Types that don't exist are created.
 	 * @param	type			the type-name of the component list to retrieve
 	 * @return					the list of components that match the type provided */
-	vector<Component*> &GetComponentsByType(char * type);
+	const vector<Component*> & getComponentsByType(const char * type);
 	/** Removes all components from the system. */
-	void Flush();
+	void flush();	
+	/** Checks the map to see if it has any entries of a specific type
+	 * @param	key				the type to check
+	 * @return					true if it finds the key in the map, false otherwise */
+	bool find(const char * key) const;
 	/** Returns the data lock for the system. 
 	 * @return					the mutex for this factory*/
-	shared_mutex & GetDataLock();
+	shared_mutex & getDataLock();
 
 
 private:
 	// Private Attributes
 	bool m_Initialized;
-	map<char*, vector<Component*>, cmp_str> m_levelComponents;
-	map<char*, deque<unsigned int>> m_freeSpots;
-	map<char*, ComponentCreator*, cmp_str> m_creatorMap;
-	shared_mutex m_dataLock;
+	VectorMap<Component*> m_levelComponents;	
+	MappedChar<deque<unsigned int>> m_freeSpots;
+	MappedChar<ComponentCreator*> m_creatorMap;
+	mutable shared_mutex m_dataLock;
 	ECSmessenger *m_ECSmessenger;
 	EnginePackage *m_enginePackage;
 };

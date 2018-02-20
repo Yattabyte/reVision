@@ -15,19 +15,19 @@ ECSmessenger::ECSmessenger(Entity_Factory * entityFactory, Component_Factory * c
 
 void ECSmessenger::SendMessage_ToEntity(const ECSmessage & message, const ECShandle & target)
 {
-	auto entity = m_entityFactory->GetEntity(target);
+	auto entity = m_entityFactory->getEntity(target);
 	if (entity == nullptr) return;
 	entity->receiveMessage(message);
 }
 
 void ECSmessenger::SendMessage_ToComponent(const ECSmessage & message, const ECShandle & target)
 {
-	auto component = m_componentFactory->GetComponent(target);
+	auto component = m_componentFactory->getComponent(target);
 	if (component == nullptr) return;
 	component->receiveMessage(message);
 }
 
-void ECSmessenger::SendMessage_ToComponents(const ECSmessage & message, const ECShandle_map & targets)
+void ECSmessenger::SendMessage_ToComponents(const ECSmessage & message, const VectorMap<unsigned int> &targets)
 {
 	for each (const auto pair in targets) 
 		for each (const auto componentID in pair.second) 

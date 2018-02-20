@@ -150,7 +150,7 @@ void Cubemap_WorkOrder::initializeOrder()
 		vec2 size = vec2(FreeImage_GetWidth(bitmap32), FreeImage_GetHeight(bitmap32));
 		m_asset->size = size;
 		GLubyte* textureData = new GLubyte[4 * (int)size.x*(int)size.y];
-		char* pixels = (char*)FreeImage_GetBits(bitmap32);
+		char* pixels = (char *)FreeImage_GetBits(bitmap32);
 
 		for (int j = 0, total = (int)size.x*(int)size.y; j < total; j++) {
 			const GLubyte

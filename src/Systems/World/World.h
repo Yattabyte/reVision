@@ -30,33 +30,31 @@ public:
 
 
 	// Interface Implementations
-	virtual void initialize(EnginePackage *enginePackage);
-	virtual void update(const float &deltaTime);
-	virtual void updateThreaded(const float &deltaTime);
+	virtual void initialize(EnginePackage * enginePackage);
+	virtual void update(const float & deltaTime);
+	virtual void updateThreaded(const float & deltaTime);
 
 
 	// Public Methods
 	/** Register a viewer into the system, to maintain its visibility info. 
  	 * @param	camera	the camera to register */
-	void registerViewer(Camera *camera);
+	void registerViewer(Camera * camera);
 	/** Remove a viewer from the system.
 	* @param	camera	the camera to unregister */
-	void unregisterViewer(Camera *camera);
+	void unregisterViewer(Camera * camera);
 	/** Retrieve and down-cast an array of components that match the category specified.
+	 * @brief			Guaranteed to return at least a zero-length vector. Types that don't exist are created.
 	 * @param	type	the name of the component type to retrieve
 	 * @param	<T>		the class-type to cast the components to */
 	template <typename T>
-	vector<T*> &getSpecificComponents(char *type) {
-		auto &found = m_componentFactory.GetComponentsByType(type);
-		if (found.size())
-			return *(vector<T*>*)(&found);
-		return vector<T*>();
+	const vector<T*>& getSpecificComponents(const char * type) {
+		return *(vector<T*>*)(&m_componentFactory.getComponentsByType(type));
 	}
 
 
 private:
 	// Private Methods
-	void calcVisibility(Camera &camera);
+	void calcVisibility(Camera & camera);
 
 
 	// Private Attributes

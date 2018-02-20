@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(95) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(96) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -43,7 +43,7 @@ public:
 	/** Initializes the engine.
 	 * @param	systems		vector of all systems to create this engine with
 	 * @return				true if successfully initialized */
-	bool initialize(const vector<pair<const char*, System*>> & systems);
+	bool initialize(const vector<pair<const char *, System*>> & systems);
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void shutdown();
 	/** Ticks the engine's overall simulation by a frame. */

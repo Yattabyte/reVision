@@ -16,31 +16,31 @@ Component_Factory::Component_Factory()
 	m_Initialized = false;
 }
 
-void Component_Factory::Initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessenger)
+void Component_Factory::initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessenger)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		m_ECSmessenger = ecsMessenger;
 
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Anim_Model", new Anim_Model_Creator(m_ECSmessenger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Directional", new Light_Directional_Creator(m_ECSmessenger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Spot", new Light_Spot_Creator(m_ECSmessenger)));
-		m_creatorMap.insert(pair<char*, ComponentCreator*>("Light_Point", new Light_Point_Creator(m_ECSmessenger)));
+		m_creatorMap["Anim_Model"] = new Anim_Model_Creator(m_ECSmessenger);
+		m_creatorMap["Light_Directional"] = new Light_Directional_Creator(m_ECSmessenger);
+		m_creatorMap["Light_Spot"] = new Light_Spot_Creator(m_ECSmessenger);
+		m_creatorMap["Light_Point"] = new Light_Point_Creator(m_ECSmessenger);
 
 		m_Initialized = true;
 	}
 }
 
-ECShandle Component_Factory::CreateComponent(char * type, const ECShandle & parent_ID)
+ECShandle Component_Factory::createComponent(const char * type, const ECShandle & parent_ID)
 {
 	unique_lock<shared_mutex> write_lock(m_dataLock);
 
-	m_levelComponents.insert(pair<char*, vector<Component*>>(type, vector<Component*>()));
+	m_levelComponents.insert(type);
 	unsigned int spot;
 
 	// Component creation can be lengthy, and may create more components
-	// Need to unlock mutex before creating and relock before adding the component to the list
-	if ((m_freeSpots.find(type) != m_freeSpots.end()) && m_freeSpots[type].size()) {
+	// Need to unlock mutex before creating and re-lock before adding the component to the list
+	if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
 		spot = m_freeSpots[type].front();
 		m_freeSpots[type].pop_front();
 		write_lock.unlock();
@@ -60,38 +60,35 @@ ECShandle Component_Factory::CreateComponent(char * type, const ECShandle & pare
 	return ECShandle(type, spot);
 }
 
-void Component_Factory::DeleteComponent(const ECShandle & id)
+void Component_Factory::deleteComponent(const ECShandle & id)
 {
 	unique_lock<shared_mutex> write_lock(m_dataLock);
 
-	if (m_levelComponents.find(id.first) == m_levelComponents.end())
+	if (!m_levelComponents.find(id.first))
 		return;
 	if (m_levelComponents[id.first].size() <= id.second)
 		return;
 	m_creatorMap[id.first]->Destroy(m_levelComponents.at(id.first).at(id.second));
-	m_freeSpots.insert(pair<char*, deque<unsigned int>>(id.first, deque<unsigned int>()));
+	m_freeSpots.insert(id.first);
 	m_freeSpots[id.first].push_back(id.second);
 }
 
-Component * Component_Factory::GetComponent(const ECShandle & id)
+Component * Component_Factory::getComponent(const ECShandle & id)
 {
 	shared_lock<shared_mutex> read_lock(m_dataLock);
 
-	if (m_levelComponents.find(id.first) == m_levelComponents.end())
+	if (!m_levelComponents.find(id.first))
 		return nullptr;
 	return m_levelComponents[id.first][id.second];
 }
 
-vector<Component*>& Component_Factory::GetComponentsByType(char * type)
+const vector<Component*>& Component_Factory::getComponentsByType(const char * type)
 {
 	shared_lock<shared_mutex> read_lock(m_dataLock);
-
-	if (m_levelComponents.find(type) == m_levelComponents.end())
-		return vector<Component*>();
 	return m_levelComponents[type];
 }
 
-void Component_Factory::Flush()
+void Component_Factory::flush()
 {
 	unique_lock<shared_mutex> write_lock(m_dataLock);
 
@@ -104,7 +101,13 @@ void Component_Factory::Flush()
 	m_freeSpots.clear();
 }
 
-shared_mutex & Component_Factory::GetDataLock()
+bool Component_Factory::find(const char * key) const
+{
+	shared_lock<shared_mutex> read_lock(m_dataLock);
+	return m_levelComponents.find(key);
+}
+
+shared_mutex & Component_Factory::getDataLock()
 {
 	return m_dataLock;
 }

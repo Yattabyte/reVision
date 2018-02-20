@@ -49,7 +49,7 @@ public:
 	 * @param	observer	the observer to remove from this asset*/
 	void removeObserver(Asset_Observer * observer);
 	/** Returns a UNIQUE asset type identifier. Each sub-class should have their own
-  	 * @todo	Delete this and change the system to use const char* keys */
+  	 * @todo	Delete this and change the system to use const char * keys */
 	static int Get_Asset_Type();
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.

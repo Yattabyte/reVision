@@ -17,7 +17,7 @@ void System_Animation::update(const float & deltaTime)
 {
 	System_World *world = m_enginePackage->getSubSystem<System_World>("World");
 	if (!world) return;
-	auto &models = world->getSpecificComponents<Anim_Model_Component>("Anim_Model");
+	const auto &models = world->getSpecificComponents<Anim_Model_Component>("Anim_Model");
 	for each (auto model in models)
 		model->animate(deltaTime);
 }

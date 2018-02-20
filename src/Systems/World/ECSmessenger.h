@@ -9,8 +9,7 @@
 
 #include "Systems\World\ECSmessage.h"
 #include "Systems\World\ECSdefines.h"
-#include <map>
-#include <vector>
+#include "Utilities\MappedChar.h"
 
 class Entity_Factory;
 class Component_Factory;
@@ -42,7 +41,7 @@ public:
 	/** Propagates a message towards all components matching the handles provided
 	 * @param	message				the message to send
 	 * @param	targets				a map of component handles */
-	void SendMessage_ToComponents(const ECSmessage &message, const ECShandle_map &targets);
+	void SendMessage_ToComponents(const ECSmessage &message, const VectorMap<unsigned int> &targets);
 
 
 private:

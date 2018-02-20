@@ -21,7 +21,7 @@ void System_World::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_componentFactory.Initialize(m_enginePackage, &m_ECSmessenger);	
+		m_componentFactory.initialize(m_enginePackage, &m_ECSmessenger);	
 
 		m_Initialized = true;
 	}
@@ -31,13 +31,13 @@ void System_World::update(const float & deltaTime)
 {	
 	static bool loaded = false;
 	if (!loaded) {
-		auto sponza = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		auto sponza = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		sponza->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
 		sponza->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -2.5, 0))));
 
 		for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
-				auto point = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("PointLight"));
+				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
 				point->receiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
 				point->receiveMessage(ECSmessage(1, 5.0f));
 				point->receiveMessage(ECSmessage(2, 5.0f));
@@ -45,16 +45,16 @@ void System_World::update(const float & deltaTime)
 			}
 		}
 			
-		auto model1 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
 		model1->receiveMessage(ECSmessage(PLAY_ANIMATION, 0));
-		auto model2 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		auto model2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
 		model2->receiveMessage(ECSmessage(PLAY_ANIMATION, 1));
 		model2->receiveMessage(ECSmessage(PLAY_ANIMATION, true));
-		auto model3 = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
+		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
 		model3->receiveMessage(ECSmessage(PLAY_ANIMATION, 2));
@@ -98,7 +98,7 @@ void System_World::registerViewer(Camera * c)
 void System_World::unregisterViewer(Camera * c)
 {
 	unique_lock<shared_mutex> writeGuard(m_lock);
-	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto *camera) {
+	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto * camera) {
 		return (camera == c);
 	}), end(m_viewers));
 }
@@ -114,9 +114,9 @@ void System_World::calcVisibility(Camera & camera)
 	const mat4 &camVMatrix = camBuffer.vMatrix;
 
 	{
-		vector<char*> types = { "Anim_Model" };
+		vector<const char *> types = { "Anim_Model" };
 		for each (auto type in types) {
-			const auto components = *((vector<Geometry_Component*>*)(&m_componentFactory.GetComponentsByType(type)));
+			const auto &components = getSpecificComponents<Geometry_Component>(type);
 
 			vector<Component*> visible_components;
 
@@ -130,9 +130,9 @@ void System_World::calcVisibility(Camera & camera)
 	}
 
 	{
-		vector<char*> types = { "Light_Directional", "Light_Spot", "Light_Point" };
+		vector<const char *> types = { "Light_Directional", "Light_Spot", "Light_Point" };
 		for each (auto type in types) {
-			const auto components = *((vector<Lighting_Component*>*)(&m_componentFactory.GetComponentsByType(type)));
+			const auto &components = getSpecificComponents<Lighting_Component>(type);
 
 			vector<Component*> visible_components;
 

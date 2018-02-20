@@ -15,7 +15,7 @@
 static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
 
-static void GLFW_Callback_Error(int error, const char* description)
+static void GLFW_Callback_Error(int error, const char * description)
 {
 	MSG::Error(GLFW_ERROR, "(" + to_string(error) + "): " + description);
 }
@@ -153,7 +153,7 @@ void Shutdown_Sharing()
 }
 
 #include "Assets\Asset_Material.h"
-bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
+bool dt_Engine::initialize(const vector<pair<const char *, System*>> &systems)
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 
@@ -183,7 +183,7 @@ bool dt_Engine::initialize(const vector<pair<const char*, System*>> &systems)
 		
 		for each (auto &pair in systems) {
 			pair.second->initialize(m_package);
-			m_package->m_Systems.insert(std::pair<const char*, System*>(pair.first, pair.second));
+			m_package->m_Systems[pair.first] = pair.second;
 		}
 
 		const float window_width = m_package->getPreference(PreferenceState::C_WINDOW_WIDTH);

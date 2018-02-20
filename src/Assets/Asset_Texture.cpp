@@ -138,7 +138,7 @@ void Texture_WorkOrder::initializeOrder()
 	m_asset->size = size;
 	m_asset->pixel_data = new GLubyte[4 * (int)size.x*(int)size.y];
 	GLubyte *textureData = m_asset->pixel_data;
-	char* pixels = (char*)FreeImage_GetBits(bitmap32);
+	char* pixels = (char *)FreeImage_GetBits(bitmap32);
 
 	for (int j = 0, total = (int)size.x*(int)size.y; j < total; j++) {
 		GLubyte blue = pixels[j * 4 + 0],

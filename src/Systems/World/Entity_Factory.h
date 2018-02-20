@@ -8,9 +8,8 @@
 #endif
 
 #include "Entities\Entity.h"
+#include "Utilities\MappedChar.h"
 #include <deque>
-#include <map>
-#include <vector>
 
 using namespace std;
 class ECSmessenger;
@@ -36,27 +35,28 @@ public:
 	/** Creates an entity of the supplied type and returns its handle.
 	 * @param	type				the type-name of the entity to create
 	 * @return						the ECShandle of the entity created */
-	ECShandle CreateEntity(char * type);
+	ECShandle createEntity(const char * type);
 	/** Delete the entity of the given handle.
 	 * @param	id					the handle of the entity to delete */
-	void DeleteEntity(const ECShandle & id);
+	void deleteEntity(const ECShandle & id);
 	/** Retrieve the actual entity that matches the supplied ID.
 	 * @param	id					the handle of the entity to retrieve
 	 * @return						the entity who matches the handle provided */
-	Entity * GetEntity(const ECShandle & id);
+	Entity * getEntity(const ECShandle & id);
 	/** Retrieves an array of entities that match the category specified.
+	 * @brief						Guaranteed to return at least a zero-length vector. Types that don't exist are created.
 	 * @param	type				the type-name of the entity list to retrieve
 	 * @return						the list of entities that match the type provided */
-	vector<Entity*> &GetEntitiesByType(char * type);
+	vector<Entity*> & getEntitiesByType(const char * type);
 	/** Removes all entities from the system. */
-	void Flush();
+	void flush();
 
 
 private:
 	// Private Attributes
-	map<char*, vector<Entity*>, cmp_str> m_levelEntities;
-	map<char*, deque<unsigned int>> m_freeSpots;
-	map<char*, EntityCreator*, cmp_str> m_creatorMap;
+	VectorMap<Entity*> m_levelEntities; 
+	MappedChar<deque<unsigned int>> m_freeSpots;
+	MappedChar<EntityCreator*> m_creatorMap;
 	ECSmessenger *m_ECSmessenger;
 	Component_Factory *m_componentFactory;
 };
