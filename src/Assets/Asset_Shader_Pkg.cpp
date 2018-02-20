@@ -3,9 +3,6 @@
 #include "GLM\gtc\type_ptr.hpp"
 #include <fstream>
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 7
-
 
 Asset_Shader_Pkg::~Asset_Shader_Pkg()
 {
@@ -19,11 +16,6 @@ Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
 bool Asset_Shader_Pkg::existsYet()
 {
 	return Asset::existsYet();
-}
-
-int Asset_Shader_Pkg::Get_Asset_Type() 
-{ 
-	return ASSET_TYPE;
 }
 
 string Asset_Shader_Pkg::getPackageText() const

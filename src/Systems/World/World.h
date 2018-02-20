@@ -47,7 +47,9 @@ public:
 	 * @param	type	the name of the component type to retrieve
 	 * @param	<T>		the class-type to cast the components to */
 	template <typename T>
-	const vector<T*>& getSpecificComponents(const char * type) {
+	const vector<T*> getSpecificComponents(const char * type) {
+		// Want to return a copy because this data would need to be locked until done being used at its target otherwise.
+		shared_lock<shared_mutex> read_lock(m_componentFactory.getDataLock());
 		return *(vector<T*>*)(&m_componentFactory.getComponentsByType(type));
 	}
 

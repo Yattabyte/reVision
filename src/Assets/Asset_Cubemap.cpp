@@ -2,9 +2,6 @@
 #include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 2
-
 
 Asset_Cubemap::~Asset_Cubemap()
 {
@@ -34,11 +31,6 @@ bool Asset_Cubemap::existsYet()
 			return true;
 	}
 	return false;
-}
-
-int Asset_Cubemap::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 void Asset_Cubemap::bind(const GLuint & texture_unit)

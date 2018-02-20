@@ -2,9 +2,6 @@
 #include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 8
-
 
 Asset_Texture::~Asset_Texture()
 {
@@ -45,11 +42,6 @@ bool Asset_Texture::existsYet()
 			return true;
 	}
 	return false;
-}
-
-int Asset_Texture::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 void Asset_Texture::bind(const GLuint & texture_unit)

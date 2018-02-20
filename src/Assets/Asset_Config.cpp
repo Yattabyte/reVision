@@ -2,9 +2,6 @@
 #include "Managers\Message_Manager.h"
 #include <fstream>
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 1
-
 
 Asset_Config::~Asset_Config()
 {
@@ -12,11 +9,6 @@ Asset_Config::~Asset_Config()
 
 Asset_Config::Asset_Config(const string & filename, const vector<string> & strings) : Asset(filename), m_strings(strings)
 {
-}
-
-int Asset_Config::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)

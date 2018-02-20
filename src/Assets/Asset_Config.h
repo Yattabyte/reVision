@@ -33,12 +33,7 @@ public:
 	/** Construct the config with a particular set of variable names. */
 	Asset_Config(const string & filename, const vector<string> & strings);
 
-
-	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
 	
-
 	// Public Methods
 	/** Assigns the specified value to the specified key.
 	 * @param	cfg_key		the key to apply this new value to

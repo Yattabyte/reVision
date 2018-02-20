@@ -5,9 +5,6 @@
 #include "ASSIMP\postprocess.h"
 #include "ASSIMP\scene.h"
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 5
-
 
 Asset_Primitive::~Asset_Primitive()
 {
@@ -37,11 +34,6 @@ bool Asset_Primitive::existsYet()
 			return true;
 	}
 	return false;
-}
-
-int Asset_Primitive::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 GLuint Asset_Primitive::Generate_VAO()

@@ -51,7 +51,6 @@ public:
 	 * @return			the size of the map. */
 	size_t				size()						const	{ return m_map.size(); }
 	/** Retrieve the element associated with the given key.
-	 * @note			will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized <T>.\nIf this is undesired, used the const version or operator[].
 	 * @param	key		the key associated with the element to retrieve
 	 * @return			the element paired with the key supplied */
 	T &					at(const char * key)				{ return m_map.at(key); }
@@ -60,6 +59,7 @@ public:
 	 * @return			the element paired with the key supplied */
 	const T &			at(const char * key)		const	{ return m_map.at(key); }
 	/** Retrieve the element associated with the given key.
+	 * @note			will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized <T>.\nIf this is undesired, used .at()
 	 * @param	key		the key associated with the element to retrieve
 	 * @return			the element paired with the key supplied */
 	T &					operator[](const char * key)		{	return m_map[key];	}

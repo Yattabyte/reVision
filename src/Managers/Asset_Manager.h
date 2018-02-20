@@ -20,14 +20,15 @@
 #endif
 
 #include "Assets\Asset.h"
-#include <deque>
-#include <map>
+#include "Utilities\MappedChar.h"
 #include <shared_mutex>
-#include <string>
 #include <thread>
+#include <string>
+#include <deque>
 #include <vector>
 #include <cstdarg>
 #include <utility>
+#include <typeinfo.h>
 
 using namespace std;
 
@@ -72,14 +73,24 @@ public:
 
 	/** Retrieves the map containing all the assets 
 	 * @return	the asset map */
-	static map<int, vector<Shared_Asset>> & Get_Assets_Map();
+	static VectorMap<Shared_Asset> & Get_Assets_Map();
 
-	/** Retrieves the vector of assets of the given type within the map.
+	/** Retrieves the vector of assets within the map that match the supplied type <Asset_T>.
 	 * @brief				A helper function bypassing the need to first retrieve the map when only 1 type of asset is needed
+	 * @param	<Asset_T>	Any type of asset that extends the base class Asset
 	 * @param	asset_type	the category of asset to retrieve from the map
 	 * @return				the vector belonging to the category of assets chosen
 	 * @note				This will create the category if it didn't already exist. Guaranteed to return a vector.*/
-	static vector<Shared_Asset> & Get_Assets_List(const int & asset_type);
+	template <typename Asset_t>
+	static vector<Shared_Asset> & Get_Assets_List() {
+		// Returns the vector of assets in the asset map at the spot of asset_type.
+		// First tries to insert a vector in the map with the key of asset_type.
+		// Map disallows duplicates, so this vector won't insert if the asset_type already exists.
+		auto &manager = Get();
+		const char * asset_type = typeid(Asset_t).name();
+		unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
+		return manager.m_AssetMap[asset_type];
+	}
 
 	/** Creates a new asset of the supplied type and arguments
 	 * @param	<Asset_T>	The Asset class type to create
@@ -89,7 +100,7 @@ public:
 	template <typename Asset_T, typename... _Args>
 	static void Create_New_Asset(shared_ptr<Asset_T> & user, _Args&&... _Ax) {
 		user = shared_ptr<Asset_T>(new Asset_T(forward<_Args>(_Ax)...)); // new asset of type asset_t, ARGS held in _Ax		
-		(Asset_Manager::Get_Assets_List(Asset_T::Get_Asset_Type())).push_back(user); // add vector in asset map
+		(Asset_Manager::Get_Assets_List<Asset_T>()).push_back(user); // add vector in asset map
 	}
 
 	/** Creates and submits a new asset of the supplied type and arguments. Generates the work order too.
@@ -119,7 +130,7 @@ public:
 	 * @return				true if it was successful in finding the asset, false otherwise */
 	template <typename Asset_T>
 	static bool Query_Existing_Asset(shared_ptr<Asset_T> & user, const string & filename) {
-		auto &asset_list = (Asset_Manager::Get_Assets_List(Asset_T::Get_Asset_Type()));
+		auto &asset_list = (Asset_Manager::Get_Assets_List<Asset_T>());
 		shared_lock<shared_mutex> guard(Asset_Manager::Get_Mutex_Assets());
 		for each (auto &asset in asset_list) {
 			shared_lock<shared_mutex> asset_guard(asset->m_mutex);
@@ -200,7 +211,7 @@ private:
 	deque<Work_Order*> m_WorkOrders_to_initialize;
 	deque<Work_Order*> m_WorkOrders_to_finalize;
 	shared_mutex m_Mutex_Assets;
-	map<int, vector<Shared_Asset>> m_AssetMap;		
+	VectorMap<Shared_Asset> m_AssetMap;		
 	vector<Asset_Observer*> m_observers;
 };
 

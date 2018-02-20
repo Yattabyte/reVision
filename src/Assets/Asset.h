@@ -9,6 +9,10 @@
 
 #include <shared_mutex>
 #include <vector>
+#include <stdio.h>
+#include <string>
+#include <utility>
+#include <memory>
 
 using namespace std;
 class Asset_Observer;
@@ -48,9 +52,6 @@ public:
 	 * @note				will remove all instances from this asset, or none if it doesn't exist. 
 	 * @param	observer	the observer to remove from this asset*/
 	void removeObserver(Asset_Observer * observer);
-	/** Returns a UNIQUE asset type identifier. Each sub-class should have their own
-  	 * @todo	Delete this and change the system to use const char * keys */
-	static int Get_Asset_Type();
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return				true if this asset has finished finalizing, false otherwise. */

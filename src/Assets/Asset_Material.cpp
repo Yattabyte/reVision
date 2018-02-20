@@ -4,9 +4,6 @@
 #include "Utilities\Image_Importer.h"
 #include "FreeImage.h"
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 3
-
 
 Asset_Material::~Asset_Material()
 {
@@ -49,11 +46,6 @@ bool Asset_Material::existsYet()
 			return true;
 	}
 	return false;
-}
-
-int Asset_Material::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
@@ -124,7 +116,7 @@ namespace Asset_Loader {
 	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded) {
 		// Check if a copy already exists
 		shared_mutex &mutex_IO_assets = Asset_Manager::Get_Mutex_Assets();
-		auto &assets_materials = (Asset_Manager::Get_Assets_List(Asset_Material::Get_Asset_Type()));
+		auto &assets_materials = (Asset_Manager::Get_Assets_List<Asset_Material>());
 		{
 			shared_lock<shared_mutex> guard(mutex_IO_assets);
 			for each (auto &asset in assets_materials) {

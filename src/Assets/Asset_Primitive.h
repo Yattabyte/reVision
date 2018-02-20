@@ -42,8 +42,6 @@ public:
 
 
 	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return			a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();

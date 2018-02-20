@@ -75,20 +75,9 @@ shared_mutex & Asset_Manager::Get_Mutex_Assets()
 	return Get().m_Mutex_Assets; 
 }
 
-map<int, vector<Shared_Asset>> & Asset_Manager::Get_Assets_Map()
+VectorMap<Shared_Asset> & Asset_Manager::Get_Assets_Map()
 {
 	return Get().m_AssetMap;
-}
-
-vector<Shared_Asset> & Asset_Manager::Get_Assets_List(const int & asset_type)
-{
-	// Returns the vector of assets in the asset map at the spot of asset_type.
-	// First tries to insert a vector in the map with the key of asset_type.
-	// Map disallows duplicates, so this vector won't insert if the asset_type already exists.
-	auto &manager = Get();
-	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
-	manager.m_AssetMap.insert(pair<int, vector<Shared_Asset>>(asset_type, vector<Shared_Asset>()));
-	return manager.m_AssetMap[asset_type];
 }
 
 void Asset_Manager::Queue_Notification(const vector<Asset_Observer*> & observers)

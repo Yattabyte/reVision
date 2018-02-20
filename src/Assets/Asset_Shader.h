@@ -46,8 +46,6 @@ public:
 
 
 	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();	
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */

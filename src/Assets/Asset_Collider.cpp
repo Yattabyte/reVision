@@ -3,9 +3,6 @@
 #include "Utilities\Model_Importer.h"
 #include "assimp\postprocess.h"
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 0
-
 
 Asset_Collider::~Asset_Collider()
 {
@@ -16,11 +13,6 @@ Asset_Collider::~Asset_Collider()
 Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 {
 	shape = nullptr;
-}
-
-int Asset_Collider::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.

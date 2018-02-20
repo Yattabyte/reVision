@@ -2,9 +2,6 @@
 #include "Managers\Asset_Manager.h"
 #include <algorithm>
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE -1
-
 
 Asset::~Asset()
 {
@@ -14,11 +11,6 @@ Asset::Asset(const string & filename)
 {	
 	m_finalized = false;
 	m_filename = filename;
-}
-
-int Asset::Get_Asset_Type() 
-{
-	return ASSET_TYPE;
 }
 
 string Asset::getFileName() const

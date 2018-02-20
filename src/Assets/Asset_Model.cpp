@@ -4,9 +4,6 @@
 #include "assimp\postprocess.h"
 #include <minmax.h>
 
-/* -----ASSET TYPE----- */
-#define ASSET_TYPE 4
-
 
 VertexBoneData::~VertexBoneData()
 {
@@ -98,11 +95,6 @@ bool Asset_Model::existsYet()
 			return true;
 	}
 	return false;
-}
-
-int Asset_Model::Get_Asset_Type()
-{
-	return ASSET_TYPE;
 }
 
 GLuint Asset_Model::Generate_VAO()

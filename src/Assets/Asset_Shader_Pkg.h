@@ -43,8 +43,6 @@ public:
 
 
 	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
 	/** Retrieves this package's content as a string.
 	 * @return	package contents */
 	string getPackageText() const;

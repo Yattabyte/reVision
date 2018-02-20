@@ -56,8 +56,6 @@ public:
 
 
 	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
 	/** Apply a specific set of textures to be used as a material.
 	 * @param	tx	an array of MAX_PHYSICAL_IMAGES length, formatted as a list of material textures (albedo/normal/metalness/roughness/height/occlusion) */
 	void setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);

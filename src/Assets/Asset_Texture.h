@@ -44,8 +44,6 @@ public:
 
 
 	// Public Methods
-	/** @todo delete */
-	static int Get_Asset_Type();
 	/** Makes this texture active at a specific texture unit
 	 * @param	texture_unit	the texture unit to make this texture active at */
 	void bind(const GLuint & texture_unit);
