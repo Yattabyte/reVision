@@ -34,7 +34,7 @@ void System_Logic::update(const float & deltaTime)
 	else if (m_rotation.y < -90.0f)
 		m_rotation.y = -90.0f;
 	mat4 rotationMatrix = glm::rotate(mat4(1.0f), glm::radians(m_rotation.y), vec3(1.0f, 0, 0)) * glm::rotate(mat4(1.0f), glm::radians(m_rotation.x), vec3(0, 1.0f, 0));
-	m_transform.orientation = quat_cast(rotationMatrix);
+	m_transform.m_orientation = quat_cast(rotationMatrix);
 
 	// Determine how much to move in local space
 	const float velocity = 50.0f;
@@ -50,10 +50,10 @@ void System_Logic::update(const float & deltaTime)
 		deltaPosition += vec3(moveAmount, 0, 0);
 	// Make the translation amount be relative to the camera's orientation
 	vec4 rotatedPosition = glm::inverse(rotationMatrix) * vec4(deltaPosition, 1.0f);
-	m_transform.position += vec3(rotatedPosition / rotatedPosition.w);
+	m_transform.m_position += vec3(rotatedPosition / rotatedPosition.w);
 
 	// Update the engine package
-	m_enginePackage->m_Camera.setPosition(m_transform.position);
-	m_enginePackage->m_Camera.setOrientation(m_transform.orientation);
+	m_enginePackage->m_Camera.setPosition(m_transform.m_position);
+	m_enginePackage->m_Camera.setOrientation(m_transform.m_orientation);
 	m_enginePackage->m_Camera.update();
 }

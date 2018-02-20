@@ -49,7 +49,7 @@ public:
 
 	
 	// Public Attributes
-	string package_text;
+	string m_packageText;
 };
 
 /**

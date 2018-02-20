@@ -17,7 +17,7 @@ static GLFWwindow	*	m_Context_Sharing = nullptr;
 
 static void GLFW_Callback_Error(int error, const char * description)
 {
-	MSG::Error(GLFW_ERROR, "(" + to_string(error) + "): " + description);
+	MSG_Manager::Error(MSG_Manager::GLFW_ERROR, "(" + to_string(error) + "): " + description);
 }
 
 // Is called when the window resizes
@@ -67,7 +67,7 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 		errorSeverity = "HIGH";
 		break;
 	}
-//	MSG::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
+//	MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
 
 class EN_DrawDistCallback : public Callback_Container {
@@ -100,7 +100,7 @@ bool Initialize_Sharing()
 		glfwSetErrorCallback(GLFW_Callback_Error);
 		if (!glfwInit()) {
 			glfwTerminate();
-			MSG::Error(OTHER_ERROR, "Unable to initialize!");
+			MSG_Manager::Error(MSG_Manager::OTHER_ERROR, "Unable to initialize!");
 			return false;
 		}
 
@@ -126,14 +126,14 @@ bool Initialize_Sharing()
 		glewExperimental = GL_TRUE;
 		glewInit();
 
-		MSG::Statement(	"Engine Version: " +
+		MSG_Manager::Statement(	"Engine Version: " +
 						DT_ENGINE_VER_MAJOR + "." +
 						DT_ENGINE_VER_MINOR + "." +
 						DT_ENGINE_VER_PATCH	);
-		MSG::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-		MSG::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-		MSG::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-		MSG::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+		MSG_Manager::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+		MSG_Manager::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+		MSG_Manager::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+		MSG_Manager::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
 
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
@@ -153,7 +153,14 @@ void Shutdown_Sharing()
 }
 
 #include "Assets\Asset_Material.h"
-bool dt_Engine::initialize(const vector<pair<const char *, System*>> &systems)
+#include "Systems\Animation\Animation.h"
+#include "Systems\Preferences\Preferences.h"
+#include "Systems\Shadows\Shadowmap.h"
+#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Input\Input.h"
+#include "Systems\Logic\Logic.h"
+#include "Systems\World\World.h"
+bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_systems)
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 
@@ -181,10 +188,25 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &systems)
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);		
 		
-		for each (auto &pair in systems) {
-			pair.second->initialize(m_package);
-			m_package->m_Systems[pair.first] = pair.second;
+		// Create all the required systems
+		auto &systems = m_package->m_Systems;
+		systems["Animation"] = new System_Animation();
+		systems["Preferences"] = new System_Preferences("preferences");
+		systems["Shadows"] = new System_Shadowmap();
+		systems["Graphics"] = new System_Graphics_PBR();
+		systems["Input"] = new System_Input();
+		systems["Logic"] = new System_Logic();
+		systems["World"] = new System_World();
+		// Replace base systems with ones provided
+		for each (auto &sys_pair in other_systems) {
+			if (systems.find(sys_pair.first))
+				if (systems[sys_pair.first] != nullptr)
+					delete systems[sys_pair.first];
+			systems[sys_pair.first] = sys_pair.second;
 		}
+		// Initialize all systems
+		for each (auto &system in systems)
+			system.second->initialize(m_package);
 
 		const float window_width = m_package->getPreference(PreferenceState::C_WINDOW_WIDTH);
 		const float window_height = m_package->getPreference(PreferenceState::C_WINDOW_HEIGHT);
@@ -199,8 +221,6 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &systems)
 
 		Material_Manager::Start_Up();
 		Asset_Manager::Start_Up();
-		m_UpdaterThread = new thread(&dt_Engine::Updater_Thread, this);
-		m_UpdaterThread->detach();
 
 		m_Initialized = true;
 	}
@@ -214,10 +234,6 @@ void dt_Engine::shutdown()
 		m_package->removeCallback(PreferenceState::C_DRAW_DISTANCE, m_drawDistCallback);
 		delete m_drawDistCallback;
 		
-		if (m_UpdaterThread->joinable())
-			m_UpdaterThread->join();
-		delete m_UpdaterThread;
-		
 		for each (auto system in m_package->m_Systems)
 			delete system.second;
 		m_package->m_Systems.clear();
@@ -228,7 +244,7 @@ void dt_Engine::shutdown()
 	}
 }
 
-void dt_Engine::update()
+void dt_Engine::tick()
 {
  	float deltaTime = 0;
 	float thisTime = glfwGetTime();
@@ -247,7 +263,7 @@ void dt_Engine::update()
 	}
 }
 
-void dt_Engine::Updater_Thread()
+void dt_Engine::tickThreaded()
 {
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
 	bool stay_alive = true;

@@ -10,17 +10,17 @@ FIBITMAP * Image_Importer::import_Image(const std::string & fileName)
 	GLubyte* textureData = nullptr;
 
 	if (format == -1) 
-		MSG::Error(FILE_MISSING, fileName);
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fileName);
 	else if (format == FIF_UNKNOWN) {
-		MSG::Error(FILE_CORRUPT, fileName);
+		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fileName);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) 
-			MSG::Statement("Failure, could not recover the file!");		
+			MSG_Manager::Statement("Failure, could not recover the file!");		
 		else 
-			MSG::Statement("Successfully resolved the texture file's format!");		
+			MSG_Manager::Statement("Successfully resolved the texture file's format!");		
 	}
 	else if (format == FIF_GIF) 
-		MSG::Statement("GIF loading unsupported!");
+		MSG_Manager::Statement("GIF loading unsupported!");
 	else {
 		FIBITMAP *bitmap = FreeImage_Load(format, file);
 		FIBITMAP *bitmap32;

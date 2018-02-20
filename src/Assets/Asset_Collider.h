@@ -31,7 +31,7 @@ public:
 
 
 	// Public Attributes
-	btCollisionShape * shape;
+	btCollisionShape * m_shape;
 };
 
 /**

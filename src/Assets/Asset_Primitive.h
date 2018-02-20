@@ -55,9 +55,9 @@ public:
 	
 	
 	// Public Attributes
-	GLuint buffers[2];
-	vector<vec3> data;
-	vector<vec2> uv_data;
+	GLuint m_buffers[2];
+	vector<vec3> m_dataVertex;
+	vector<vec2> m_dataUV;
 	GLsync m_fence;
 };
 

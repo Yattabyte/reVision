@@ -47,10 +47,9 @@ public:
 
 	
 	// Public Attributes
-	/** @todo make members prefixed with 'm_' */
-	GLuint gl_tex_ID;
-	vec2 size;
-	GLubyte	* pixel_data[6];
+	GLuint m_glTexID;
+	vec2 m_size;
+	GLubyte	* m_pixelData[6];
 	GLsync m_fence;
 };
 

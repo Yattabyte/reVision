@@ -38,26 +38,26 @@ void System_World::update(const float & deltaTime)
 		for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-				point->receiveMessage(ECSmessage(0, vec3(1, 0.75, 0.5)));
-				point->receiveMessage(ECSmessage(1, 5.0f));
-				point->receiveMessage(ECSmessage(2, 5.0f));
-				point->receiveMessage(ECSmessage(3, vec3((x - 1) * 25, 5, (y) * 25)));;
+				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
+				point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));
+				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
+				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));;
 			}
 		}
 			
 		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
-		model1->receiveMessage(ECSmessage(PLAY_ANIMATION, 0));
+		model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 0));
 		auto model2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
-		model2->receiveMessage(ECSmessage(PLAY_ANIMATION, 1));
-		model2->receiveMessage(ECSmessage(PLAY_ANIMATION, true));
+		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 1));
+		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, true));
 		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
-		model3->receiveMessage(ECSmessage(PLAY_ANIMATION, 2));
+		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2));
 		
 
 		/*for (int x = 0; x < 3; ++x) {

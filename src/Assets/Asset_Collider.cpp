@@ -6,13 +6,13 @@
 
 Asset_Collider::~Asset_Collider()
 {
-	if (shape != nullptr)
-		delete shape;
+	if (m_shape != nullptr)
+		delete m_shape;
 }
 
 Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 {
-	shape = nullptr;
+	m_shape = nullptr;
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -26,7 +26,7 @@ void fetch_default_asset(Shared_Asset_Collider & asset)
 	
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Collider>(asset, "defaultCollider");
-	asset->shape = new btBoxShape(btVector3(1, 1, 1));
+	asset->m_shape = new btBoxShape(btVector3(1, 1, 1));
 	Asset_Manager::Add_Work_Order(new Collider_WorkOrder(asset, ""), true);
 }
 
@@ -40,7 +40,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -61,7 +61,7 @@ void Collider_WorkOrder::initializeOrder()
 
 	btConvexHullShape *shape = new btConvexHullShape(&points[0], points.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
-	m_asset->shape = shape;
+	m_asset->m_shape = shape;
 }
 
 void Collider_WorkOrder::finalizeOrder()

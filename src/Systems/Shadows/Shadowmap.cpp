@@ -122,7 +122,7 @@ void System_Shadowmap::initialize(EnginePackage * enginePackage)
 			glBindTexture(GL_TEXTURE_2D, 0);
 			if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 				std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-				MSG::Error(FBO_INCOMPLETE, "Shadowmap Manager", errorString);
+				MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Shadowmap Manager", errorString);
 				return;
 			}
 		}

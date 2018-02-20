@@ -50,12 +50,12 @@ public:
 
 	
 	// Public Attributes
-	GLuint gl_tex_ID, type;
-	vec2 size;
-	GLubyte	* pixel_data;
+	GLuint m_glTexID, m_type;
+	vec2 m_size;
+	GLubyte	* m_pixelData;
 	GLsync m_fence;
-	bool mipmap;
-	bool anis;
+	bool m_mipmap;
+	bool m_anis;
 };
 
 /**

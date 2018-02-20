@@ -49,21 +49,21 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	switch (message.GetCommandID()) {
-	case SET_COLOR: {
+	case SET_LIGHT_COLOR: {
 		if (!message.IsOfType<vec3>()) break;
 		const auto &payload = message.GetPayload<vec3>();
 		m_uboData.LightColor = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
 		break;
 	}
-	case SET_INTENSITY: {
+	case SET_LIGHT_INTENSITY: {
 		if (!message.IsOfType<float>()) break;
 		const auto &payload = message.GetPayload<float>();
 		m_uboData.LightIntensity = payload;
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
 		break;
 	}
-	case SET_RADIUS: {
+	case SET_LIGHT_RADIUS: {
 		if (!message.IsOfType<float>()) break;
 		const auto &payload = message.GetPayload<float>();
 		m_uboData.LightRadius = payload;
@@ -73,7 +73,7 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 		update();
 		break;
 	}
-	case SET_CUTOFF: {
+	case SET_LIGHT_CUTOFF: {
 		if (!message.IsOfType<float>()) break;
 		const auto &payload = message.GetPayload<float>();
 		m_uboData.LightCutoff = cosf(glm::radians(payload));
@@ -100,8 +100,8 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 	case SET_TRANSFORM: {
 		if (!message.IsOfType<Transform>()) break;
 		const auto &payload = message.GetPayload<Transform>();
-		m_uboData.LightPosition = payload.position;
-		m_orientation = payload.orientation;
+		m_uboData.LightPosition = payload.m_position;
+		m_orientation = payload.m_orientation;
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
 		update();
 		break;

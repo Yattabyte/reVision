@@ -36,18 +36,7 @@ public:
 	virtual void shadowPass();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	virtual float getImportance(const vec3 &position);
-
-
-	/** Message Enumerators for this component type. */
-	static const enum MSG_TYPES
-	{
-		SET_COLOR,
-		SET_INTENSITY,
-		SET_RADIUS,
-		SET_POSITION,
-		SET_TRANSFORM
-	};
-
+	
 
 	/** Sends current data to the GPU. */
 	void update();

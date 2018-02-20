@@ -8,20 +8,14 @@
 #include <minmax.h>
 
 
-class Primitivee_Observer : Asset_Observer
+struct Primitivee_Observer : Asset_Observer
 {
-public:
-	Primitivee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset) {};
-	virtual ~Primitivee_Observer() {
-		m_asset->removeObserver(this); 
-	};
+	Primitivee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
 	virtual void Notify_Finalized() {
-		if (m_asset->existsYet()) // in case this gets used more than once by mistake
-			m_asset->updateVAO(m_vao_id);
+		if (m_asset->existsYet())
+			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
 	}
-
 	GLuint m_vao_id;
-	Shared_Asset_Primitive m_asset;
 };
 class SSAO_Callback : public Callback_Container {
 public:

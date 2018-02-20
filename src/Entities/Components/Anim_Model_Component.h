@@ -20,7 +20,6 @@ class Model_Observer;
 
 /**
  * A renderable model component that supports animation.
- * @todo	add component messages here?
  **/
 class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
 {
@@ -85,19 +84,16 @@ public:
 	}
 };
 
-class DT_ENGINE_API Model_Observer : Asset_Observer
+struct DT_ENGINE_API Model_Observer : Asset_Observer
 {
-public:
 	Model_Observer(Shared_Asset_Model & asset, vector<BoneInfo> *transforms, const GLuint &vao, Anim_Model_Component::Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) :
-		Asset_Observer(asset.get()), m_vao_id(vao), m_asset(asset), m_transforms(transforms), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
-	virtual ~Model_Observer() { m_asset->removeObserver(this); };
+		Asset_Observer(asset.get()), m_vao_id(vao), m_transforms(transforms), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
 	virtual void Notify_Finalized();
 
 	GLuint m_vao_id, m_ubo_id;
 	GLsync *m_fence;
 	GLuint *m_skin;
 	Anim_Model_Component::Transform_Buffer *m_uboData;
-	Shared_Asset_Model m_asset;
 	vector<BoneInfo> *m_transforms;
 };
 

@@ -37,7 +37,7 @@ void HDR_Buffer::initialize(const vec2 & size)
 		GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-			MSG::Error(FBO_INCOMPLETE, "Lighting Buffer", errorString);
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
 			return;
 		}
 		m_Initialized = true;

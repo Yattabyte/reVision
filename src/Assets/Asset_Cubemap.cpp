@@ -6,15 +6,15 @@
 Asset_Cubemap::~Asset_Cubemap()
 {
 	if (existsYet())
-		glDeleteTextures(1, &gl_tex_ID);
+		glDeleteTextures(1, &m_glTexID);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
 
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 {
-	gl_tex_ID = 0;
-	size = vec2(0);
+	m_glTexID = 0;
+	m_size = vec2(0);
 	m_fence = nullptr;
 }
 
@@ -37,7 +37,7 @@ void Asset_Cubemap::bind(const GLuint & texture_unit)
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	glActiveTexture(texture_unit);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_glTexID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -51,13 +51,13 @@ void fetch_default_asset(Shared_Asset_Cubemap & asset)
 
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Cubemap>(asset, "defaultCubemap");
-	asset->pixel_data[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
-	asset->pixel_data[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
-	asset->pixel_data[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
-	asset->pixel_data[3] = new GLubyte[4]{ GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255) };
-	asset->pixel_data[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
-	asset->pixel_data[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
-	asset->size = vec2(1);
+	asset->m_pixelData[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
+	asset->m_pixelData[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
+	asset->m_pixelData[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
+	asset->m_pixelData[3] = new GLubyte[4]{ GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255) };
+	asset->m_pixelData[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
+	asset->m_pixelData[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
+	asset->m_size = vec2(1);
 	Asset_Manager::Add_Work_Order(new Cubemap_WorkOrder(asset, ""), true);
 }
 
@@ -71,7 +71,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -107,7 +107,7 @@ void Cubemap_WorkOrder::initializeOrder()
 		}
 
 		if (format == -1) {
-			MSG::Error(FILE_MISSING, m_filename);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, m_filename);
 			fetch_default_asset(m_asset);
 			return;
 		}
@@ -115,7 +115,7 @@ void Cubemap_WorkOrder::initializeOrder()
 		if (format == FIF_UNKNOWN) {
 			format = FreeImage_GetFIFFromFilename(file);
 			if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-				MSG::Error(FILE_CORRUPT, m_filename, "Using default texture.");
+				MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, m_filename, "Using default texture.");
 				 fetch_default_asset(m_asset);
 				return;
 			}
@@ -127,7 +127,7 @@ void Cubemap_WorkOrder::initializeOrder()
 		//Load
 		if (format == FIF_GIF) {
 			mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-			MSG::Statement("GIF loading unsupported, using first frame...");
+			MSG_Manager::Statement("GIF loading unsupported, using first frame...");
 			bitmap = FreeImage_LockPage(mbitmap, 0);
 		}
 		else
@@ -140,7 +140,7 @@ void Cubemap_WorkOrder::initializeOrder()
 			bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
 
 		vec2 size = vec2(FreeImage_GetWidth(bitmap32), FreeImage_GetHeight(bitmap32));
-		m_asset->size = size;
+		m_asset->m_size = size;
 		GLubyte* textureData = new GLubyte[4 * (int)size.x*(int)size.y];
 		char* pixels = (char *)FreeImage_GetBits(bitmap32);
 
@@ -161,7 +161,7 @@ void Cubemap_WorkOrder::initializeOrder()
 		FreeImage_Unload(bitmap32);
 		if (bitsPerPixel != 32)
 			FreeImage_Unload(bitmap);
-		m_asset->pixel_data[sides] = textureData;
+		m_asset->m_pixelData[sides] = textureData;
 	}	
 }
 
@@ -169,9 +169,9 @@ void Cubemap_WorkOrder::finalizeOrder()
 {
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		auto &gl_tex_ID = m_asset->gl_tex_ID;
-		auto &size = m_asset->size;
-		auto *pixel_data = m_asset->pixel_data;
+		auto &gl_tex_ID = m_asset->m_glTexID;
+		auto &size = m_asset->m_size;
+		auto *pixel_data = m_asset->m_pixelData;
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glBindTexture(GL_TEXTURE_2D, 0);

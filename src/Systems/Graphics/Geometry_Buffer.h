@@ -20,7 +20,6 @@ class VisualFX;
 /**
  * A specialized framebuffer that accumulates surface attributes of all rendered objects for a single frame.
  * @brief	Objects render into it, storing their albedo, normal, specular, roughness, height, occlusion, and depth.
- * @todo	make an interface for the buffers?
  **/
 class DT_ENGINE_API Geometry_Buffer
 {

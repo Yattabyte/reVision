@@ -20,21 +20,19 @@ using namespace glm;
 /**
  * A 3D transformation object. 
  * Takes in position, orientation, and scaling attributes, and calculates a transformation matrix.
- * @todo Make member variables m_*name* and fix occurences related to it
- * @todo Give constructor better named parameters
  **/
 struct DT_ENGINE_API Transform 
 {
 	// (de)Constructors
 	/** Constructs a transformation object with any of the supplied parameters.
-	 * @param p		the desired position
-	 * @param ori	the desired orientation
-	 * @param scl	the desired scale
+	 * @param position		the desired position
+	 * @param orientation	the desired orientation
+	 * @param scale			the desired scale
 	 */
-	Transform(const vec3 &p = vec3(0.0f), const quat &ori = quat(1, 0, 0, 0), const vec3 &scl = vec3(1.0f)) {
-		position = p;
-		orientation = ori;
-		scale = scl;
+	Transform(const vec3 &position = vec3(0.0f), const quat &orientation = quat(1, 0, 0, 0), const vec3 &scale = vec3(1.0f)) {
+		m_position = position;
+		m_orientation = orientation;
+		m_scale = scale;
 		update();
 	}
 
@@ -42,21 +40,21 @@ struct DT_ENGINE_API Transform
 	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
 	void update() {
-		modelMatrix = glm::translate( mat4(1.0f), position ) * 
-					  glm::mat4_cast( orientation ) *
-					  glm::scale( mat4(1.0f), scale );
-		inverseModelMatrix = glm::inverse(modelMatrix);
+		m_modelMatrix = glm::translate( mat4(1.0f), m_position ) * 
+						glm::mat4_cast( m_orientation ) *
+						glm::scale( mat4(1.0f), m_scale );
+		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 	}
 
 
 	// Public Attributes
 	// Input Variables
-	vec3 position;
-	quat orientation;
-	vec3 scale;
+	vec3 m_position;
+	quat m_orientation;
+	vec3 m_scale;
 	// Derived Variables
-	mat4x4 modelMatrix;
-	mat4x4 inverseModelMatrix;
+	mat4x4 m_modelMatrix;
+	mat4x4 m_inverseModelMatrix;
 };
 
 #endif // TRANSFORMATION

@@ -51,7 +51,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 	case SET_MODEL_TRANSFORM: {
 		if (!message.IsOfType<Transform>()) break;
 		const auto &payload = message.GetPayload<Transform>();
-		m_uboData.mMatrix = payload.modelMatrix;
+		m_uboData.mMatrix = payload.m_modelMatrix;
 		update();
 		break;
 	}
@@ -65,7 +65,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 		}
 		break;
 	}
-	case PLAY_ANIMATION: {
+	case SET_MODEL_ANIMATION: {
 		if (message.IsOfType<int>()) {
 			m_animation = message.GetPayload<int>();
 			m_playAnim = true;
@@ -88,7 +88,7 @@ void Anim_Model_Component::draw()
 			shared_lock<shared_mutex> guard(m_model->m_mutex);
 			glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
 			glBindVertexArray(m_vao_id);
-			glDrawArrays(GL_TRIANGLES, 0, m_model->mesh_size);
+			glDrawArrays(GL_TRIANGLES, 0, m_model->m_meshSize);
 			glBindVertexArray(0);
 		}
 	}
@@ -100,7 +100,7 @@ bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
 		Frustum frustum(PMatrix * VMatrix * m_uboData.mMatrix);
 
-		return frustum.AABBInFrustom(m_model->bbox_min, m_model->bbox_max);
+		return frustum.AABBInFrustom(m_model->m_bboxMin, m_model->m_bboxMax);
 	}
 	return false;
 }
@@ -120,7 +120,7 @@ void Anim_Model_Component::animate(const double & deltaTime)
 	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
-	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->animationInfo.Animations.size()) {
+	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animationInfo.Animations.size()) {
 		m_uboData.useBones = 0;
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
 	}
@@ -128,14 +128,14 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		m_uboData.useBones = 1;
 		if (m_playAnim)
 			m_animTime += deltaTime;
-		const float TicksPerSecond = m_model->animationInfo.Animations[m_animation]->mTicksPerSecond != 0
-			? m_model->animationInfo.Animations[m_animation]->mTicksPerSecond
+		const float TicksPerSecond = m_model->m_animationInfo.Animations[m_animation]->mTicksPerSecond != 0
+			? m_model->m_animationInfo.Animations[m_animation]->mTicksPerSecond
 			: 25.0f;
 		const float TimeInTicks = m_animTime * TicksPerSecond;
-		const float AnimationTime = fmod(TimeInTicks, m_model->animationInfo.Animations[m_animation]->mDuration);
+		const float AnimationTime = fmod(TimeInTicks, m_model->m_animationInfo.Animations[m_animation]->mDuration);
 		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
 
-		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->animationInfo.RootNode, m_model, mat4(1.0f));
+		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_animationInfo.RootNode, m_model, mat4(1.0f));
 
 		// Lock guard goes here
 		const unsigned int total = min(m_transforms.size(), NUM_MAX_BONES);
@@ -149,10 +149,11 @@ void Anim_Model_Component::animate(const double & deltaTime)
 
 void Model_Observer::Notify_Finalized()
 {
-	if (m_asset->existsYet()) {// in case this gets used more than once by mistake
-		m_asset->updateVAO(m_vao_id);
-		m_uboData->materialID = m_asset->getSkinID(*m_skin);
-		*m_transforms = m_asset->animationInfo.meshTransforms;
+	if (m_asset->existsYet()) {
+		auto &cast_asset = dynamic_pointer_cast<Asset_Model>(m_asset);
+		cast_asset->updateVAO(m_vao_id);
+		m_uboData->materialID = cast_asset->getSkinID(*m_skin);
+		*m_transforms = cast_asset->m_animationInfo.meshTransforms;
 		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_ubo_id);
 		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo_id);
 		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), m_uboData);
@@ -209,7 +210,7 @@ inline DesiredType InterpolateKeys(const float &AnimationTime, const unsigned in
 inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
 {
 	const string NodeName(parentNode->mName.data);
-	const aiAnimation* pAnimation = model->animationInfo.Animations[animation_ID];
+	const aiAnimation* pAnimation = model->m_animationInfo.Animations[animation_ID];
 	const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 	mat4 NodeTransformation = convertType<aiMatrix4x4, mat4>(parentNode->mTransformation);
 
@@ -227,8 +228,8 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 	}
 
 	const mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->animationInfo.RootNode->mTransformation));
-	const map<string, int> &BoneMap = model->animationInfo.boneMap;
+	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->m_animationInfo.RootNode->mTransformation));
+	const map<string, int> &BoneMap = model->m_animationInfo.boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		int BoneIndex = BoneMap.at(NodeName);
 		transforms.at(BoneIndex).FinalTransformation = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).BoneOffset;

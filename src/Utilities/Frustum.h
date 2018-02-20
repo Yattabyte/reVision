@@ -15,7 +15,6 @@ using namespace glm;
 /**
  * A viewing frustum object. 
  * Used in visibility calculations, this object takes in a mat4 and generates planes for intersection tests.
- * @todo Update member prefixes
  **/
 class Frustum
 {

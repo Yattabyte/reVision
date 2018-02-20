@@ -8,29 +8,29 @@
 Asset_Material::~Asset_Material()
 {
 	if (existsYet())
-		glDeleteTextures(1, &gl_array_ID);
-	if (materialData)
-		delete materialData;
+		glDeleteTextures(1, &m_glArrayID);
+	if (m_materialData)
+		delete m_materialData;
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
 
 Asset_Material::Asset_Material(const string & filename) : Asset(filename)
 {
-	gl_array_ID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
+	m_glArrayID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
 	m_fence = nullptr;
 }
 
 Asset_Material::Asset_Material(const std::string & filename, const GLuint & spot) : Asset_Material(filename)
 {
-	mat_spot = spot;
+	m_matSpot = spot;
 }
 
 Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot) : Asset_Material("")
 {
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		textures[x] = tx[x];
-	mat_spot = spot;
+		m_textures[x] = tx[x];
+	m_matSpot = spot;
 }
 
 bool Asset_Material::existsYet()
@@ -51,7 +51,7 @@ bool Asset_Material::existsYet()
 void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
 {
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		textures[x] = tx[x];
+		m_textures[x] = tx[x];
 }
 
 void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
@@ -103,12 +103,12 @@ void fetch_default_asset(Shared_Asset_Material & asset)
 
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::Generate_ID());
-	asset->materialData = new GLubyte[12] {	
+	asset->m_materialData = new GLubyte[12] {	
 		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
 		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
 	};
-	asset->size = vec2(1);
+	asset->m_size = vec2(1);
 	Asset_Manager::Add_Work_Order(new Material_WorkOrder(asset, ""), true);
 }
 
@@ -125,7 +125,7 @@ namespace Asset_Loader {
 				const Shared_Asset_Material derived_asset = dynamic_pointer_cast<Asset_Material>(asset);
 				if (derived_asset) {
 					for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
-						if (derived_asset->textures[x] != textures[x]) {
+						if (derived_asset->m_textures[x] != textures[x]) {
 							identical = false;
 							break;
 						}
@@ -154,7 +154,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -168,9 +168,9 @@ void Material_WorkOrder::initializeOrder()
 {
 	if (m_filename != "") {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		Asset_Material::Get_PBR_Properties(m_filename, m_asset->textures[0], m_asset->textures[1], m_asset->textures[2], m_asset->textures[3], m_asset->textures[4], m_asset->textures[5]);
+		Asset_Material::Get_PBR_Properties(m_filename, m_asset->m_textures[0], m_asset->m_textures[1], m_asset->m_textures[2], m_asset->m_textures[3], m_asset->m_textures[4], m_asset->m_textures[5]);
 		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-			m_asset->textures[x] = ABS_DIRECTORY_MAT_TEX(m_asset->textures[x]);
+			m_asset->m_textures[x] = ABS_DIRECTORY_MAT_TEX(m_asset->m_textures[x]);
 	}
 
 	shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
@@ -180,7 +180,7 @@ void Material_WorkOrder::initializeOrder()
 
 	// Load all images
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
-		bitmaps[x] = Image_Importer::import_Image(m_asset->textures[x]);	
+		bitmaps[x] = Image_Importer::import_Image(m_asset->m_textures[x]);	
 
 	// unlock
 	read_guard.unlock();
@@ -217,9 +217,9 @@ void Material_WorkOrder::initializeOrder()
 									(size_mult * 4) + // Normal size
 									(size_mult * 4) ; // Metalness, roughness, height, and ao size
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-	m_asset->size = material_dimensions;
-	m_asset->materialData = new GLubyte[data_size];
-	GLubyte *materialData = m_asset->materialData;
+	m_asset->m_size = material_dimensions;
+	m_asset->m_materialData = new GLubyte[data_size];
+	GLubyte *materialData = m_asset->m_materialData;
 	unsigned int arrayIndex = 0;
 	// First texture has white albedo with full alpha
 	for (unsigned int x = 0, first_size = size_mult * 4; x < first_size; ++x, ++arrayIndex)
@@ -275,10 +275,10 @@ void Material_WorkOrder::finalizeOrder()
 {
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		auto &gl_array_ID = m_asset->gl_array_ID;
-		auto &size = m_asset->size;
-		auto *materialData = m_asset->materialData;
-		auto &mat_spot = m_asset->mat_spot;
+		auto &gl_array_ID = m_asset->m_glArrayID;
+		auto &size = m_asset->m_size;
+		auto *materialData = m_asset->m_materialData;
+		auto &mat_spot = m_asset->m_matSpot;
 
 		glGenTextures(1, &gl_array_ID);
 		glBindTexture(GL_TEXTURE_2D_ARRAY, gl_array_ID);

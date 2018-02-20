@@ -9,14 +9,14 @@
 Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
-		glDeleteBuffers(2, buffers);
+		glDeleteBuffers(2, m_buffers);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
 
 Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 {
-	for each (auto &buffer in buffers)
+	for each (auto &buffer in m_buffers)
 		buffer = -1;
 	m_fence = nullptr;
 }
@@ -54,10 +54,10 @@ void Asset_Primitive::updateVAO(const GLuint & vaoID)
 	shared_lock<shared_mutex> guard(m_mutex);
 	glBindVertexArray(vaoID);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
 	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glBindVertexArray(0);
@@ -66,7 +66,7 @@ void Asset_Primitive::updateVAO(const GLuint & vaoID)
 size_t Asset_Primitive::getSize()
 {
 	shared_lock<shared_mutex> guard(m_mutex);
-	return data.size();
+	return m_dataVertex.size();
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -80,8 +80,8 @@ void fetch_default_asset(Shared_Asset_Primitive & asset)
 
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Primitive>(asset, "defaultPrimitive");
-	asset->data = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->uv_data = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	asset->m_dataVertex = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->m_dataUV = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
 	Asset_Manager::Add_Work_Order(new Primitive_WorkOrder(asset, ""), true);
 }
 
@@ -95,7 +95,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -115,8 +115,8 @@ void Primitive_WorkOrder::initializeOrder()
 	}
 
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-	m_asset->data = vertices;
-	m_asset->uv_data = uv_coords;
+	m_asset->m_dataVertex = vertices;
+	m_asset->m_dataUV = uv_coords;
 }
 
 void Primitive_WorkOrder::finalizeOrder()
@@ -124,9 +124,9 @@ void Primitive_WorkOrder::finalizeOrder()
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 
-		auto &data = m_asset->data;
-		auto &uv_data = m_asset->uv_data;
-		auto &buffers = m_asset->buffers;
+		auto &data = m_asset->m_dataVertex;
+		auto &uv_data = m_asset->m_dataUV;
+		auto &buffers = m_asset->m_buffers;
 		const size_t &arraySize = data.size();
 
 		glGenBuffers(2, buffers);

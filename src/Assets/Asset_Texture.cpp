@@ -6,27 +6,27 @@
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet())
-		glDeleteTextures(1, &gl_tex_ID);
+		glDeleteTextures(1, &m_glTexID);
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
 
 Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
 {
-	gl_tex_ID = 0;
-	type = 0;
-	size = vec2(0);
-	pixel_data = nullptr;
-	mipmap = false;
-	anis = false;
+	m_glTexID = 0;
+	m_type = 0;
+	m_size = vec2(0);
+	m_pixelData = nullptr;
+	m_mipmap = false;
+	m_anis = false;
 	m_fence = nullptr;
 }
 
 Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
 {
-	type = t;
-	mipmap = m;
-	anis = a;
+	m_type = t;
+	m_mipmap = m;
+	m_anis = a;
 }
 
 bool Asset_Texture::existsYet()
@@ -47,7 +47,7 @@ bool Asset_Texture::existsYet()
 void Asset_Texture::bind(const GLuint & texture_unit)
 {
 	glActiveTexture(texture_unit);
-	glBindTexture(type, gl_tex_ID);
+	glBindTexture(m_type, m_glTexID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -61,10 +61,10 @@ void fetch_default_asset(Shared_Asset_Texture & asset)
 
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Texture>(asset, "defaultTexture");
-	asset->pixel_data = new GLubyte[4];
+	asset->m_pixelData = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
-		asset->pixel_data[x] = GLubyte(255);
-	asset->size = vec2(1);
+		asset->m_pixelData[x] = GLubyte(255);
+	asset->m_size = vec2(1);
 	Asset_Manager::Add_Work_Order(new Texture_WorkOrder(asset, ""), true);
 }
 
@@ -78,7 +78,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const string &fullDirectory = DIRECTORY_TEXTURE + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -94,7 +94,7 @@ void Texture_WorkOrder::initializeOrder()
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
 	if (format == -1) {
-		MSG::Error(FILE_MISSING, m_filename);
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, m_filename);
 		fetch_default_asset(m_asset);
 		return;
 	}
@@ -102,7 +102,7 @@ void Texture_WorkOrder::initializeOrder()
 	if (format == FIF_UNKNOWN) {
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-			MSG::Error(FILE_CORRUPT, m_filename, "Using default texture.");
+			MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, m_filename, "Using default texture.");
 			fetch_default_asset(m_asset);
 			return;
 		}
@@ -114,7 +114,7 @@ void Texture_WorkOrder::initializeOrder()
 	//Load
 	if (format == FIF_GIF) {
 		mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-		MSG::Statement("GIF loading unsupported, using first frame...");
+		MSG_Manager::Statement("GIF loading unsupported, using first frame...");
 		bitmap = FreeImage_LockPage(mbitmap, 0);
 	}
 	else
@@ -127,9 +127,9 @@ void Texture_WorkOrder::initializeOrder()
 		bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
 
 	vec2 size = vec2(FreeImage_GetWidth(bitmap32), FreeImage_GetHeight(bitmap32));
-	m_asset->size = size;
-	m_asset->pixel_data = new GLubyte[4 * (int)size.x*(int)size.y];
-	GLubyte *textureData = m_asset->pixel_data;
+	m_asset->m_size = size;
+	m_asset->m_pixelData = new GLubyte[4 * (int)size.x*(int)size.y];
+	GLubyte *textureData = m_asset->m_pixelData;
 	char* pixels = (char *)FreeImage_GetBits(bitmap32);
 
 	for (int j = 0, total = (int)size.x*(int)size.y; j < total; j++) {
@@ -149,19 +149,19 @@ void Texture_WorkOrder::initializeOrder()
 		FreeImage_Unload(bitmap);
 
 	if (size.x < 1.5f || size.y < 1.5f)
-		m_asset->type = GL_TEXTURE_1D;
+		m_asset->m_type = GL_TEXTURE_1D;
 }
 
 void Texture_WorkOrder::finalizeOrder()
 {
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		auto &gl_tex_ID = m_asset->gl_tex_ID;
-		auto &type = m_asset->type;
-		auto &size = m_asset->size;
-		auto &pixel_data = m_asset->pixel_data;
-		auto &anis = m_asset->anis;
-		auto &mipmap = m_asset->mipmap;
+		auto &gl_tex_ID = m_asset->m_glTexID;
+		auto &type = m_asset->m_type;
+		auto &size = m_asset->m_size;
+		auto &pixel_data = m_asset->m_pixelData;
+		auto &anis = m_asset->m_anis;
+		auto &mipmap = m_asset->m_mipmap;
 		glGenTextures(1, &gl_tex_ID);
 		glBindTexture(type, gl_tex_ID);
 		switch (type) {

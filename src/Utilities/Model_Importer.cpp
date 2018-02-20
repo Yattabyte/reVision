@@ -10,7 +10,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 {
 	// Check if the file exists
 	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
-		MSG::Error(FILE_MISSING, fulldirectory);
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fulldirectory);
 		return 0;
 	}
 
@@ -18,7 +18,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 	const aiScene* scene = importer.ReadFile(fulldirectory, pFlags);
 	// Check if the file is corrupted
 	if (!scene) {
-		MSG::Error(FILE_CORRUPT, fulldirectory);
+		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fulldirectory);
 		return -1;
 	}
 
@@ -41,7 +41,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 {
 	// Check if the file exists
 	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
-		MSG::Error(FILE_MISSING, fulldirectory);
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fulldirectory);
 		return 0;
 	}
 
@@ -49,7 +49,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 	const aiScene* scene = importer.ReadFile(fulldirectory, pFlags);
 	// Check if the file is corrupted
 	if (!scene) {
-		MSG::Error(FILE_CORRUPT, fulldirectory);
+		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fulldirectory);
 		return -1;
 	}
 

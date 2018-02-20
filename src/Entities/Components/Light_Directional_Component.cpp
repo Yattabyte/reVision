@@ -73,7 +73,7 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
 		break;
 	}
-	case SET_LIGHT_ORIENTATION: {
+	case SET_ORIENTATION: {
 		if (!message.IsOfType<quat>()) break;
 		const auto &payload = message.GetPayload<quat>();
 		const mat4 rotation = glm::mat4_cast(payload);
@@ -82,10 +82,10 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 		update();
 		break;
 	}
-	case SET_LIGHT_TRANSFORM: {
+	case SET_TRANSFORM: {
 		if (!message.IsOfType<Transform>()) break;
 		const auto &payload = message.GetPayload<Transform>();
-		const mat4 &rotation = payload.modelMatrix;
+		const mat4 &rotation = payload.m_modelMatrix;
 		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
 		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
 		update();

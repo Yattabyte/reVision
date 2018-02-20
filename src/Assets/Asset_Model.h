@@ -28,6 +28,7 @@
 #include <string>
 #include <vector>
 
+
 struct VertexBoneData
 {
 	int IDs[NUM_BONES_PER_VEREX];
@@ -101,12 +102,12 @@ public:
 
 
 	// Public Attributes
-	int									mesh_size;
-	vector<Shared_Asset_Material>		skins;
-	GeometryInfo						data;
-	AnimationInfo						animationInfo;
-	vec3								bbox_min, bbox_max;
-	GLuint								buffers[NUM_VERTEX_ATTRIBUTES];
+	int									m_meshSize;
+	vector<Shared_Asset_Material>		m_skins;
+	GeometryInfo						m_data;
+	AnimationInfo						m_animationInfo;
+	vec3								m_bboxMin, m_bboxMax;
+	GLuint								m_buffers[NUM_VERTEX_ATTRIBUTES];
 	GLsync								m_fence;
 };
 

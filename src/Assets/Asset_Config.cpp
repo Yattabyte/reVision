@@ -14,14 +14,14 @@ Asset_Config::Asset_Config(const string & filename, const vector<string> & strin
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 {
 	// Try inserting the value by key in case the key doesn't exist.
-	configuration.insert(pair<int, float>(cfg_key, cfg_value));
-	configuration[cfg_key] = cfg_value;
+	m_configuration.insert(pair<int, float>(cfg_key, cfg_value));
+	m_configuration[cfg_key] = cfg_value;
 }
 
 float Asset_Config::getValue(const unsigned int & cfg_key)
 {
-	if (cfg_key >= 0 && configuration.find(cfg_key) != configuration.end())
-		return configuration[cfg_key];
+	if (cfg_key >= 0 && m_configuration.find(cfg_key) != m_configuration.end())
+		return m_configuration[cfg_key];
 	return UNDEFINED_CVAL;
 }
 
@@ -29,7 +29,7 @@ void Asset_Config::saveConfig()
 {
 	string output;
 
-	for each (const auto &value in configuration) 
+	for each (const auto &value in m_configuration) 
 		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
 
 	string directory = ABS_DIRECTORY_CONFIG(getFileName());
@@ -95,7 +95,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}

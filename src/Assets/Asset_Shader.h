@@ -93,8 +93,8 @@ public:
 
 
 	// Public Attributes
-	GLuint gl_program_ID, gl_shader_vertex_ID, gl_shader_fragment_ID, gl_shader_geometry_ID; // OpenGL ID's
-	string vertex_text, fragment_text, geometry_text; // Text Data
+	GLuint m_glProgramID, m_glVertexID, m_glFragmentID, m_glGeometryID; // OpenGL ID's
+	string m_vertexText, m_fragmentText, m_geometryText; // Text Data
 	GLsync m_fence;
 };
 

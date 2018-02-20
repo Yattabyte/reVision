@@ -75,17 +75,19 @@ protected:
 /**
  * An abstract class used to tailor a specific response to an asset completing both initializing and finalizing.\n
  * To be appended to an asset's observer list, and will be iterated through at its discretion.
- * @todo	Maybe make this a template or something, try to make the destructor code not redundant.
  **/
-class DT_ENGINE_API Asset_Observer
+struct DT_ENGINE_API Asset_Observer
 {
-public:
 	/** Constructor. Takes the asset, and calls its addObserver method on *this*. */
-	Asset_Observer(Asset * asset) { asset->addObserver(this); }
-	/** Virtual destructor. To be used in removing observer from the asset. */
-	virtual ~Asset_Observer() {}; 
+	Asset_Observer(Asset * asset) : m_asset(asset) { m_asset->addObserver(this); }
+	/** Destructor. Removes the observer from the asset. */
+	~Asset_Observer() { m_asset->removeObserver(this); };
 	/** To be called when the asset finishes finalizing. */
 	virtual void Notify_Finalized() = 0;
+
+
+	// Public Attributes
+	Shared_Asset m_asset;
 };
 
 /**

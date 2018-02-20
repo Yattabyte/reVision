@@ -72,12 +72,12 @@ public:
 	
 	
 	// Public Attributes
-	string textures[MAX_PHYSICAL_IMAGES];
-	GLuint gl_array_ID;
-	vec2 size;
-	GLubyte * materialData;
-	GLuint mat_spot;
-	GLsync m_fence;	
+	GLuint m_glArrayID;
+	GLuint m_matSpot;
+	GLsync m_fence;
+	GLubyte * m_materialData;
+	vec2 m_size;
+	string m_textures[MAX_PHYSICAL_IMAGES];
 };
 
 /**

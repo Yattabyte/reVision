@@ -10,7 +10,7 @@ Asset_Shader_Pkg::~Asset_Shader_Pkg()
 
 Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
 {	
-	package_text = "";
+	m_packageText = "";
 }
 
 bool Asset_Shader_Pkg::existsYet()
@@ -20,7 +20,7 @@ bool Asset_Shader_Pkg::existsYet()
 
 string Asset_Shader_Pkg::getPackageText() const
 {
-	return package_text;
+	return m_packageText;
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -48,7 +48,7 @@ namespace Asset_Loader {
 		const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
 		bool found = File_Reader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
 		if (!found) {
-			MSG::Error(FILE_MISSING, fullDirectory + EXT_PACKAGE);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_PACKAGE);
 			fetch_default_asset(user);
 			return;
 		}
@@ -61,12 +61,12 @@ namespace Asset_Loader {
 void Shader_Pkg_WorkOrder::initializeOrder()
 {
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-	bool found = fetchFileFromDisk(m_asset->package_text, m_filename + EXT_PACKAGE);
+	bool found = fetchFileFromDisk(m_asset->m_packageText, m_filename + EXT_PACKAGE);
 	write_guard.unlock();
 	write_guard.release();
 
 	if (!found)
-		MSG::Error(FILE_MISSING, m_asset->getFileName() + EXT_PACKAGE);
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, m_asset->getFileName() + EXT_PACKAGE);
 
 	// Parse
 	parse();
@@ -74,7 +74,7 @@ void Shader_Pkg_WorkOrder::initializeOrder()
 
 void Shader_Pkg_WorkOrder::parse()
 {
-	string input = m_asset->package_text;
+	string input = m_asset->m_packageText;
 	if (input == "") return;
 	// Find Package to include
 	int spot = input.find("#package");
@@ -94,7 +94,7 @@ void Shader_Pkg_WorkOrder::parse()
 		spot = input.find("#package");
 	}
 	unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-	m_asset->package_text = input;	
+	m_asset->m_packageText = input;	
 }
 
 

@@ -48,7 +48,7 @@ public:
 
 
 	// Public Attributes
-	map<unsigned int, float> configuration;
+	map<unsigned int, float> m_configuration;
 	vector<string> m_strings;
 }; 
 

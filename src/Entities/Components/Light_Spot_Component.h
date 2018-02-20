@@ -38,19 +38,6 @@ public:
 	virtual float getImportance(const vec3 &position);
 
 
-	/** Message Enumerators for this component type. */
-	static const enum MSG_TYPES
-	{
-		SET_COLOR,
-		SET_INTENSITY,
-		SET_RADIUS,
-		SET_CUTOFF,
-		SET_POSITION,
-		SET_ORIENTATION,
-		SET_TRANSFORM,
-	};
-
-
 	// Public Methods
 	/** Sends current data to the GPU. */
 	void update();

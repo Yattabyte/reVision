@@ -67,17 +67,17 @@ size_t AnimationInfo::numAnimations() const
 Asset_Model::~Asset_Model()
 {
 	if (existsYet())
-		glDeleteBuffers(7, buffers);	
+		glDeleteBuffers(7, m_buffers);	
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
 
 Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 {
-	mesh_size = 0;
-	bbox_min = vec3(0.0f);
-	bbox_max = vec3(0.0f);
-	for each (auto &buffer in buffers)
+	m_meshSize = 0;
+	m_bboxMin = vec3(0.0f);
+	m_bboxMax = vec3(0.0f);
+	for each (auto &buffer in m_buffers)
 		buffer = -1;
 	m_fence = nullptr;
 }
@@ -115,22 +115,22 @@ void Asset_Model::updateVAO(const GLuint & vaoID)
 	shared_lock<shared_mutex> guard(m_mutex);
 	glBindVertexArray(vaoID);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
 	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[2]);
 	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[3]);
 	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[4]);
 	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
+	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[5]);
 	glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (const GLvoid*)0);
 	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (const GLvoid*)16);
 
@@ -140,7 +140,7 @@ void Asset_Model::updateVAO(const GLuint & vaoID)
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
-	return skins[max(0, min(skins.size() - 1, desired))]->mat_spot;
+	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -154,16 +154,16 @@ void fetch_default_asset(Shared_Asset_Model & asset)
 
 	// Create hard-coded alternative
 	Asset_Manager::Create_New_Asset<Asset_Model>(asset, "defaultModel");
-	asset->data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	asset->data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->bbox_min = vec3(-1);
-	asset->bbox_max = vec3(1);
-	asset->data.bones.resize(6);
-	asset->skins.resize(1);
-	Asset_Loader::load_asset(asset->skins[0], "defaultMaterial");
+	asset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->m_data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	asset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	asset->m_bboxMin = vec3(-1);
+	asset->m_bboxMax = vec3(1);
+	asset->m_data.bones.resize(6);
+	asset->m_skins.resize(1);
+	Asset_Loader::load_asset(asset->m_skins[0], "defaultMaterial");
 	Asset_Manager::Add_Work_Order(new Model_WorkOrder(asset, ""), true);
 }
 
@@ -177,7 +177,7 @@ namespace Asset_Loader {
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
 		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG::Error(FILE_MISSING, fullDirectory);
+			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
 			fetch_default_asset(user);
 			return;
 		}
@@ -233,13 +233,13 @@ void Model_WorkOrder::initializeOrder()
 								   aiProcess_ImproveCacheLocality*/);
 								   // Scene cannot be read
 	if (!scene) {
-		MSG::Error(FILE_CORRUPT, m_filename);
+		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, m_filename);
 		fetch_default_asset(m_asset);
 		return;
 	}
 
 	unique_lock<shared_mutex> m_asset_guard(m_asset->m_mutex);
-	GeometryInfo &gi = m_asset->data;
+	GeometryInfo &gi = m_asset->m_data;
 
 	// Combine mesh data into single struct
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
@@ -261,19 +261,19 @@ void Model_WorkOrder::initializeOrder()
 			}
 		}
 	}
-	m_asset->animationInfo.setScene(scene);
-	m_asset->mesh_size = gi.vs.size(); // Final vertex size (needed for draw arrays call)
+	m_asset->m_animationInfo.setScene(scene);
+	m_asset->m_meshSize = gi.vs.size(); // Final vertex size (needed for draw arrays call)
 	gi.bones.resize(gi.vs.size());
-	calculate_AABB(gi.vs, m_asset->bbox_min, m_asset->bbox_max);
+	calculate_AABB(gi.vs, m_asset->m_bboxMin, m_asset->m_bboxMax);
 	initializeBones(m_asset, scene);
 
 	// Generate all the required skins
-	m_asset->skins.resize(max(1, (scene->mNumMaterials - 1)));
+	m_asset->m_skins.resize(max(1, (scene->mNumMaterials - 1)));
 	if (scene->mNumMaterials > 1) 		
 		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
-			generateMaterial(m_asset->skins[x - 1], scene->mMaterials[x]);	
+			generateMaterial(m_asset->m_skins[x - 1], scene->mMaterials[x]);	
 	else
-		generateMaterial(m_asset->skins[0]);
+		generateMaterial(m_asset->m_skins[0]);
 }
 
 void Model_WorkOrder::finalizeOrder()
@@ -281,8 +281,8 @@ void Model_WorkOrder::finalizeOrder()
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		
-		auto &data = m_asset->data;
-		auto &buffers = m_asset->buffers;
+		auto &data = m_asset->m_data;
+		auto &buffers = m_asset->m_buffers;
 		const size_t &arraySize = data.vs.size();
 
 		glGenBuffers(6, buffers);
@@ -317,9 +317,9 @@ mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
 
 void Model_WorkOrder::initializeBones(Shared_Asset_Model & model, const aiScene * scene)
 {
-	vector<BoneInfo> &boneInfo = model->animationInfo.meshTransforms;
-	map<string, int> &m_BoneMapping = model->animationInfo.boneMap;
-	vector<VertexBoneData> &bones = model->data.bones;
+	vector<BoneInfo> &boneInfo = model->m_animationInfo.meshTransforms;
+	map<string, int> &m_BoneMapping = model->m_animationInfo.boneMap;
+	vector<VertexBoneData> &bones = model->m_data.bones;
 
 	int vertexOffset = 0;
 

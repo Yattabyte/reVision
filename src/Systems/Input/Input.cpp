@@ -24,7 +24,7 @@ void System_Input::update(const float & deltaTime)
 {
 	const auto bindings = m_binds.getBindings();
 	if (!bindings.get()) return;
-	const auto &bind_map = bindings.get()->configuration;
+	const auto &bind_map = bindings.get()->m_configuration;
 	// Pair is the action followed by the key assigned to it
 	for each (const auto &pair in bind_map) {		
 		const auto &action = pair.first;

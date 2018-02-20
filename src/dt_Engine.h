@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(97) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(98) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -29,8 +29,6 @@ class System;
 /**
  * The main game engine object. Encapsulates the entire engine state.
  * The engine is responsible for storing all the system pointers for use through its life.
- * @todo	revamp ECS message definitions
- * @todo	make an interface/ADT for the frame buffers
  **/
 class DT_ENGINE_API dt_Engine
 {
@@ -40,14 +38,16 @@ public:
 	~dt_Engine();
 	/** Zero-initialize the engine. */
 	dt_Engine();
-	/** Initializes the engine.
+	/** Initializes the engine and overrides any systems with the same names
 	 * @param	systems		vector of all systems to create this engine with
 	 * @return				true if successfully initialized */
-	bool initialize(const vector<pair<const char *, System*>> & systems);
+	bool initialize(const vector<pair<const char *, System*>> & other_systems = vector<pair<const char *, System*>>(0));
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void shutdown();
-	/** Ticks the engine's overall simulation by a frame. */
-	void update();
+	/** Ticks the engine's overall simulation by a frame from the main thread */
+	void tick();
+	/** Ticks the engine's overall simulation by a frame from a secondary thread. */
+	void tickThreaded();
 	/** Checks if the engine wants to shut down.
 	 * @return	true if engine should shut down */
 	bool shouldClose();
@@ -61,9 +61,7 @@ private:
 	bool m_Initialized;	
 	float m_lastTime;	
 	EnginePackage *m_package;
-	thread *m_UpdaterThread;
 	Callback_Container *m_drawDistCallback;
-	void Updater_Thread();
 };
 
 #define BUILD_YEAR					(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 
