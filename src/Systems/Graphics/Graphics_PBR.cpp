@@ -1,9 +1,8 @@
 #include "Systems\Graphics\Graphics_PBR.h"
-#include "Systems\Shadows\Shadowmap.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
-#include "Entities\Components\Geometry_Component.h"
-#include "Entities\Components\Lighting_Component.h"
+#include "Systems\World\ECS\Components\Geometry_Component.h"
+#include "Systems\World\ECS\Components\Lighting_Component.h"
 #include <random>
 #include <minmax.h>
 
@@ -193,8 +192,9 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 
 		m_visualFX.initialize(m_enginePackage);
 		m_gbuffer.initialize(m_renderSize, &m_visualFX);
-		m_lbuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
 		m_hdrbuffer.initialize(m_renderSize);
+		m_lbuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH), m_gbuffer.m_depth_stencil);
+		m_shadowBuffer.initialize(enginePackage);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -264,6 +264,11 @@ void System_Graphics_PBR::resize(const vec2 & size)
 	m_gbuffer.resize(size);
 	m_lbuffer.resize(size);
 	m_hdrbuffer.resize(size);
+}
+
+Shadow_Buffer & System_Graphics_PBR::getShadowBuffer()
+{
+	return m_shadowBuffer;
 }
 
 void System_Graphics_PBR::generateKernal()
@@ -378,9 +383,7 @@ void System_Graphics_PBR::regenerationPass(const Visibility_Token & vis_token)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
-
-	auto m_Shadowmapper = (m_enginePackage->findSubSystem("Shadows") ? m_enginePackage->getSubSystem<System_Shadowmap>("Shadows") : nullptr);
-	
+		
 	PriorityLightList timedList(m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 		timedList.add(component, "Light_Directional");
@@ -394,12 +397,12 @@ void System_Graphics_PBR::regenerationPass(const Visibility_Token & vis_token)
 	const auto &dirLights = priorityLights.getTypeList<Lighting_Component>("Light_Directional"),
 			   &pointLights = priorityLights.getTypeList<Lighting_Component>("Light_Point"), 
 			   &spotLights = priorityLights.getTypeList<Lighting_Component>("Light_Spot");
-	m_Shadowmapper->bindForWriting(SHADOW_LARGE);
+	m_shadowBuffer.bindForWriting(SHADOW_LARGE);
 	m_shaderShadowDir->bind();
 	for each (auto &component in dirLights) 
 		component->shadowPass();	
 
-	m_Shadowmapper->bindForWriting(SHADOW_REGULAR);
+	m_shadowBuffer.bindForWriting(SHADOW_REGULAR);
 	m_shaderShadowPoint->bind();
 	for each (auto &component in pointLights) 
 		component->shadowPass();	
@@ -464,8 +467,7 @@ void System_Graphics_PBR::lightingPass(const Visibility_Token & vis_token)
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_gbuffer.bindForReading();
 
-	auto m_Shadowmapper = (m_enginePackage->findSubSystem("Shadows") ? m_enginePackage->getSubSystem<System_Shadowmap>("Shadows") : nullptr);
-	m_Shadowmapper->bindForReading(SHADOW_LARGE, 3);
+	m_shadowBuffer.bindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional")) {
 		m_shaderDirectional->bind();
 		glBindVertexArray(m_quadVAO);
@@ -475,7 +477,7 @@ void System_Graphics_PBR::lightingPass(const Visibility_Token & vis_token)
 
 	glEnable(GL_STENCIL_TEST);
 	glCullFace(GL_FRONT);
-	m_Shadowmapper->bindForReading(SHADOW_REGULAR, 3);
+	m_shadowBuffer.bindForReading(SHADOW_REGULAR, 3);
 	if (vis_token.find("Light_Point")) {
 		m_shaderPoint->bind();
 		glBindVertexArray(m_sphereVAO);

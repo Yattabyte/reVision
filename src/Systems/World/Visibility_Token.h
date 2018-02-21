@@ -7,8 +7,8 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Entities\Components\Component.h"
-#include "Systems\World\ECSdefines.h"
+#include "Systems\World\ECS\Components\Component.h"
+#include "Systems\World\ECS\ECSdefines.h"
 #include "Utilities\MappedChar.h"
 
 

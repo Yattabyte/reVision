@@ -1,7 +1,7 @@
 #include "Systems\World\World.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\EnginePackage.h"
-#include "Systems\World\ECSmessages.h"
+#include "Systems\World\ECS\ECSdefines.h"
 #include "Utilities\Transform.h"
 #include <algorithm>
 
@@ -12,9 +12,10 @@ System_World::~System_World()
 
 System_World::System_World() : 
 	m_ECSmessenger(&m_entityFactory, &m_componentFactory),
-	m_entityFactory(&m_ECSmessenger, &m_componentFactory)
+	m_entityFactory(&m_ECSmessenger, &m_componentFactory),
+	m_animator(Animator(this))
 {
-	
+
 }
 
 void System_World::initialize(EnginePackage * enginePackage)
@@ -53,7 +54,7 @@ void System_World::update(const float & deltaTime)
 		model2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model2->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-30, 0, 0))));
 		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 1));
-		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, true));
+		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, true)); 
 		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
@@ -79,6 +80,8 @@ void System_World::update(const float & deltaTime)
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));*/
 		loaded = true;
 	}
+
+	m_animator.animate(deltaTime);
 }
 
 void System_World::updateThreaded(const float & deltaTime)
@@ -103,8 +106,8 @@ void System_World::unregisterViewer(Camera * c)
 	}), end(m_viewers));
 }
 
-#include "Entities\Components\Geometry_Component.h"
-#include "Entities\Components\Lighting_Component.h"
+#include "Systems\World\ECS\Components\Geometry_Component.h"
+#include "Systems\World\ECS\Components\Lighting_Component.h"
 void System_World::calcVisibility(Camera & camera)
 {
 	unique_lock<shared_mutex> write_guard(camera.getDataMutex());

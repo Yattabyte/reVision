@@ -9,9 +9,10 @@
 #define MAX_KERNEL_SIZE 128 // Don't manipulate this, set the usable to a different value < than this
 
 #include "Systems\System_Interface.h"
-#include "Systems\Graphics\Geometry_Buffer.h"
-#include "Systems\Graphics\Lighting_Buffer.h"
-#include "Systems\Graphics\HDR_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\Geometry_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\HDR_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
@@ -59,6 +60,9 @@ public:
 	/** Change the size of framebuffers used.
 	 * @param	size		the new size to use */
 	void resize(const vec2 & size);
+	/** Retrieve the shadow buffer. 
+	 * @return				the shadow map buffer */
+	Shadow_Buffer & getShadowBuffer();
 
 	
 private:
@@ -74,7 +78,7 @@ private:
 	// Public Methods
 	/** Regenerate the noise kernel. */
 	void generateKernal();
-	/** Regenerates visible texture maps such as shadowmaps and cubemaps. 
+	/** Regenerates visible texture maps such as shadowmaps and cubemap's. 
 	 * @param	vis_token	the visible objects in this frame */
 	void regenerationPass(const Visibility_Token & vis_token);
 	/** Fills the gBuffer by rendering all visible geometric objects.
@@ -98,8 +102,9 @@ private:
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gbuffer;
-	Lighting_Buffer m_lbuffer;
 	HDR_Buffer m_hdrbuffer;
+	Lighting_Buffer m_lbuffer;
+	Shadow_Buffer m_shadowBuffer;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderShadowDir, m_shaderShadowPoint, m_shaderShadowSpot, m_shaderDirectional, m_shaderPoint, m_shaderSpot, m_shaderSky, m_shaderHDR, m_shaderFXAA;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;

@@ -9,9 +9,10 @@
 
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
-#include "Systems\World\ECSmessenger.h"
-#include "Systems\World\Entity_Factory.h"
-#include "Systems\World\Component_Factory.h"
+#include "Systems\World\Animator.h"
+#include "Systems\World\ECS\ECSmessenger.h"
+#include "Systems\World\ECS\Entity_Factory.h"
+#include "Systems\World\ECS\Component_Factory.h"
 
 class EnginePackage;
 
@@ -65,6 +66,7 @@ private:
 	ECSmessenger m_ECSmessenger;
 	shared_mutex m_lock;
 	vector<Camera*> m_viewers;
+	Animator m_animator;
 };
 
 #endif // SYSTEM_WORLD

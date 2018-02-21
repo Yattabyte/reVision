@@ -9,7 +9,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(98) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(99) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -204,12 +204,10 @@ private:
  *  For example, visibility calculations are currently offloaded entirely to the second thread.
  *  
  *  The engine currently requires the following base systems:
- *		- System_Animation
  *		- System_Graphics_PBR
  *		- System_Input
  *		- System_Logic
  *		- System_Preferences
- *		- System_Shadowmap
  *		- System_World
  *		<br>
  *	
