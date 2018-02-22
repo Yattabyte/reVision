@@ -1,7 +1,9 @@
 #pragma once
 #ifndef	ASSET_CONFIG
 #define	ASSET_CONFIG
-#ifdef	ENGINE_EXPORT
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
 #define DT_ENGINE_API __declspec(dllexport)
 #else
 #define	DT_ENGINE_API __declspec(dllimport)

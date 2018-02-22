@@ -1,12 +1,13 @@
 #pragma once
 #ifndef	IMAGEIMPORTER
 #define	IMAGEIMPORTER
-#ifdef	ENGINE_EXPORT
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
 #define DT_ENGINE_API __declspec(dllexport)
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define GLEW_STATIC
 
 #include "GL\glew.h"
 #include "GLM\common.hpp"

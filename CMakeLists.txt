@@ -19,7 +19,7 @@ include_directories ( 	${CORE_DIR}
 						${GLM_DIR} 
 						${GLEW_DIR}/include/ 
 						${GLFW_DIR}/include/
-						${BULLET_DIR}/src/)
+						${BULLET_DIR}/src/			)
 						
 link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 									optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib
@@ -57,12 +57,15 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 					
 # add all sub-projects and plugins here
 add_subdirectory( src )
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT dt_exec)
+
 
 # Generates an "includes" folder with only the headers
 macro(GENERATE_INCLUDES GLOBPAT)
 	file(GLOB_RECURSE COPY_FILES
     RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/src/
     ${GLOBPAT})
+	list (REMOVE_ITEM COPY_FILES "main.cpp") # remove main file
 	add_custom_target(Generate_Includes ALL COMMENT "Copying files")
 	foreach(FILENAME ${COPY_FILES}) 	
 		set(SRC "src/${FILENAME}")

@@ -1,7 +1,9 @@
 #pragma once
 #ifndef SYSTEM_GRAPHICS_PBR
 #define SYSTEM_GRAPHICS_PBR
-#ifdef	ENGINE_EXPORT
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
 #define DT_ENGINE_API __declspec(dllexport)
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
@@ -13,6 +15,7 @@
 #include "Systems\Graphics\Frame Buffers\HDR_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\GlobalIllumination_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
@@ -78,17 +81,23 @@ private:
 	// Public Methods
 	/** Regenerate the noise kernel. */
 	void generateKernal();
-	/** Regenerates visible texture maps such as shadowmaps and cubemap's. 
+	/** Regenerates shadowmap's. 
 	 * @param	vis_token	the visible objects in this frame */
-	void regenerationPass(const Visibility_Token & vis_token);
+	void shadowPass(const Visibility_Token & vis_token);
+	/** Regenerates bouncemap's.
+	* @param	vis_token	the visible objects in this frame */
+	void bouncePass(const Visibility_Token & vis_token);
 	/** Fills the gBuffer by rendering all visible geometric objects.
 	 * @param	vis_token	the visible objects in this frame */
 	void geometryPass(const Visibility_Token & vis_token);
 	/** Renders the sky to the lighting buffer. */
 	void skyPass();
-	/** Renderings all visible lights to the lighting buffer.
+	/** Calculates direct lighting. All visible lights run their shaders and fill the lighting buffer.
 	 * @param	vis_token	the visible objects in this frame */
-	void lightingPass(const Visibility_Token & vis_token);
+	void directLightingPass(const Visibility_Token & vis_token);
+	/** Calculates indirect lighting, using 1st/2nd light bounce shaders + all visible lights, and reflection shaders.
+	* @param	vis_token	the visible objects in this frame */
+	void indirectLightingPass(const Visibility_Token & vis_token);
 	/** Performs HDR+bloom pass and other camera effects. */
 	void HDRPass();
 	/** Performs AA and writes out to default framebuffer. */
@@ -101,13 +110,17 @@ private:
 	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
-	Geometry_Buffer m_gbuffer;
-	HDR_Buffer m_hdrbuffer;
-	Lighting_Buffer m_lbuffer;
+	Geometry_Buffer m_gBuffer;
+	HDR_Buffer m_hdrBuffer;
+	Lighting_Buffer m_lBuffer;
 	Shadow_Buffer m_shadowBuffer;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderShadowDir, m_shaderShadowPoint, m_shaderShadowSpot, m_shaderDirectional, m_shaderPoint, m_shaderSpot, m_shaderSky, m_shaderHDR, m_shaderFXAA;
+	GlobalIllumination_Buffer m_giBuffer;
+	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot, 
+						m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,
+						m_shaderDirectional_Bounce, m_shaderPoint_Bounce, m_shaderSpot_Bounce,
+						m_shaderGeometry, m_shaderGIReconstruct, m_shaderGISecondBounce, m_shaderSky, m_shaderHDR, m_shaderFXAA;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
-	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
+	GLuint m_quadVAO, m_coneVAO, m_sphereVAO, m_bounceVAO;
 	Shared_Asset_Cubemap m_textureSky;
 	int m_updateQuality;
 	void* m_QuadObserver, *m_ConeObserver, *m_SphereObserver;

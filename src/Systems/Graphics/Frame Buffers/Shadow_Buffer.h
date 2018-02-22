@@ -1,7 +1,9 @@
 #pragma once
 #ifndef SYSTEM_SHADOWMAP
 #define SYSTEM_SHADOWMAP
-#ifdef	ENGINE_EXPORT
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
 #define DT_ENGINE_API __declspec(dllexport)
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
@@ -50,8 +52,12 @@ public:
 	void bindForWriting(const int & shadow_type);
 	/** Binds the framebuffer and its render-targets for reading. 
 	 * @param	shadow_type			the type of shadow to be written
+	 * @param	ShaderTextureUnit	the texture unit to bind the texture to */
+	void bindForReading(const int & shadow_type, const GLuint & ShaderTextureUnit);	
+	/** Binds the framebuffer and its render-targets for reading, specifically for the global illumination pass. 
+	 * @param	shadow_type			the type of shadow to be written
 	 * @param	ShaderTextureUnit	the texture unit to bind the texture to*/
-	void bindForReading(const int & shadow_type, const GLuint & ShaderTextureUnit);
+	void BindForReading_GI(const int &ShadowSpot, const GLuint &ShaderTextureUnit);
 	/** Binds and clears out the render-targets in this framebuffer.
 	 * @param	shadow_type			the type of shadow to be written
 	 * @param	layer				index of the shadow to clear */

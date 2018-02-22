@@ -7,8 +7,8 @@ Asset_Manager::Asset_Manager()
 
 void Asset_Manager::_startup()
 {
-	m_Workers.reserve(3);
-	for (unsigned int x = 0; x < 3; ++x) {
+	m_Workers.reserve(4);
+	for (unsigned int x = 0; x < 4; ++x) {
 		m_Workers.push_back(std::make_shared<Assets_Worker>());
 		auto &worker = m_Workers[x];
 		unique_lock<shared_mutex> writeGuard(worker->m_mutex);

@@ -177,6 +177,18 @@ void Shadow_Buffer::bindForReading(const int & shadow_type, const GLuint & Shade
 	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_depth[shadow_type]);
 }
 
+void Shadow_Buffer::BindForReading_GI(const int & ShadowSpot, const GLuint & ShaderTextureUnit)
+{
+	glActiveTexture(ShaderTextureUnit);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldpos[ShadowSpot]);
+
+	glActiveTexture(ShaderTextureUnit + 1);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_worldnormal[ShadowSpot]);
+
+	glActiveTexture(ShaderTextureUnit + 2);
+	glBindTexture(GL_TEXTURE_2D_ARRAY, m_shadow_radiantflux[ShadowSpot]);
+}
+
 void Shadow_Buffer::clearShadow(const int & shadow_type, const int & layer)
 {
 	const float clearDepth(1.0f);

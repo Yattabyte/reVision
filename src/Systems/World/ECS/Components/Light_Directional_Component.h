@@ -1,9 +1,11 @@
 #pragma once
 #ifndef LIGHT_DIRECTIONAL_COMPONENT
 #define LIGHT_DIRECTIONAL_COMPONENT
-#ifdef	ENGINE_EXPORT
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
 #define DT_ENGINE_API __declspec(dllexport)
-#else            
+#else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 #define LIGHT_TYPE_DIRECTIONAL 0
