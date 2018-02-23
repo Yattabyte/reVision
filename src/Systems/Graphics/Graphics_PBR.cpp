@@ -1,6 +1,7 @@
 #include "Systems\Graphics\Graphics_PBR.h"
 #include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
 #include "Systems\Graphics\Lighting Techniques\IndirectLighting_Tech.h"
+#include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
@@ -58,16 +59,6 @@ public:
 private:
 	System_Graphics_PBR *m_Graphics;
 };
-class Bloom_StrengthChangeCallback : public Callback_Container {
-public:
-	~Bloom_StrengthChangeCallback() {};
-	Bloom_StrengthChangeCallback(Lighting_Buffer * lBuffer) : m_LBuffer(lBuffer) {}
-	void Callback(const float & value) {
-		m_LBuffer->setBloomStrength((int)value);
-	}
-private:
-	Lighting_Buffer *m_LBuffer;
-};
 class Cam_WidthChangeCallback : public Callback_Container {
 public:
 	~Cam_WidthChangeCallback() {};
@@ -106,7 +97,6 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		m_enginePackage->removeCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
@@ -115,12 +105,12 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		delete m_ssaoSamplesCallback;
 		delete m_ssaoStrengthCallback;
 		delete m_ssaoRadiusCallback;
-		delete m_bloomStrengthChangeCallback;
 		delete m_widthChangeCallback;
 		delete m_heightChangeCallback;
 		delete m_QualityChangeCallback;
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
+		delete m_bloomTech;
 	}
 }
 
@@ -155,7 +145,6 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		m_ssaoRadiusCallback = new SSAO_Radius_Callback(this);
 		m_widthChangeCallback = new Cam_WidthChangeCallback(this);
 		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
-		m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(&m_lBuffer);
 		m_QualityChangeCallback = new ShadowQualityChangeCallback(&m_updateQuality);
 		m_enginePackage->addCallback(PreferenceState::C_SSAO, m_ssaoCallback);
 		m_enginePackage->addCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
@@ -163,7 +152,6 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		m_enginePackage->addCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
 		m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
 		m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->addCallback(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
 		m_enginePackage->addCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		m_attribs.m_ssao_radius = m_enginePackage->getPreference(PreferenceState::C_SSAO_RADIUS);
 		m_attribs.m_ssao_strength = m_enginePackage->getPreference(PreferenceState::C_SSAO_BLUR_STRENGTH);
@@ -184,7 +172,7 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		m_visualFX.initialize(m_enginePackage);
 		m_gBuffer.initialize(m_renderSize, &m_visualFX);
 		m_hdrBuffer.initialize(m_renderSize);
-		m_lBuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH), m_gBuffer.m_depth_stencil);
+		m_lBuffer.initialize(m_renderSize, m_gBuffer.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
@@ -192,6 +180,7 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 
 		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
 		m_lightingTechs.push_back(new IndirectLighting_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer));
+		m_bloomTech = new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX, m_renderSize);
 
 		m_Initialized = true;
 	}
@@ -226,9 +215,13 @@ void System_Graphics_PBR::update(const float & deltaTime)
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
-		m_lBuffer.applyBloom();
+		m_bloomTech->applyEffect();
+		m_bloomTech->bindForReading();
 		HDRPass();
+
 		finalPass();
+		m_lBuffer.end();
+		m_gBuffer.end();
 	}
 }
 
@@ -494,5 +487,4 @@ void System_Graphics_PBR::finalPass()
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 	glBindVertexArray(0);
 	Asset_Shader::Release();
-	m_gBuffer.end();	
 }

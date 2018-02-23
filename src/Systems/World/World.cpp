@@ -40,7 +40,7 @@ void System_World::update(const float & deltaTime)
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
 		hills->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
 
-		/*for (int x = 0; x < 3; ++x) {
+		for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
 				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
@@ -48,13 +48,13 @@ void System_World::update(const float & deltaTime)
 				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
 				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));;
 			}
-		}*/
+		}
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.80, 0.6)));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.5f));
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0,0,1))));
 			
-		/*auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
 		model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 0));
@@ -66,7 +66,7 @@ void System_World::update(const float & deltaTime)
 		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
-		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2));*/
+		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2));
 
 		auto wall = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		wall->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));

@@ -16,6 +16,7 @@
 #include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
@@ -99,7 +100,7 @@ private:
 	// Public Attributes
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
-	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_bloomStrengthChangeCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;
+	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gBuffer;
@@ -116,6 +117,7 @@ private:
 
 	// Lighting Techniques
 	vector<Lighting_Technique*> m_lightingTechs;
+	FX_Technique * m_bloomTech;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR
