@@ -29,7 +29,7 @@ GlobalIllumination_Buffer::GlobalIllumination_Buffer()
 void GlobalIllumination_Buffer::initialize(const unsigned int & volumeSize, EnginePackage * enginePackage)
 {
 	m_enginePackage = enginePackage;
-	m_attribBuffer = GI_Attribs_Buffer(volumeSize, 1.0F, 7.5f, 1.0f, 12);
+	m_attribBuffer = GI_Attribs_Buffer(volumeSize, 2.0f, 7.5, 0.75f, 12);
 	if (!m_Initialized) {
 		glGenFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 		glGenTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
