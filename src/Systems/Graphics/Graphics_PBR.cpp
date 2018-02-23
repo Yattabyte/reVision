@@ -1,4 +1,6 @@
 #include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
+#include "Systems\Graphics\Lighting Techniques\IndirectLighting_Tech.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
@@ -109,8 +111,6 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
 		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
 		delete m_QuadObserver;
-		delete m_ConeObserver;
-		delete m_SphereObserver;
 		delete m_ssaoCallback;
 		delete m_ssaoSamplesCallback;
 		delete m_ssaoStrengthCallback;
@@ -119,16 +119,15 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		delete m_widthChangeCallback;
 		delete m_heightChangeCallback;
 		delete m_QualityChangeCallback;
+		for each (auto * tech in m_lightingTechs)
+			delete tech;
 	}
 }
 
 System_Graphics_PBR::System_Graphics_PBR() :
-	m_visualFX(), m_gBuffer(), m_lBuffer(), m_hdrBuffer(), m_giBuffer()
+	m_visualFX(), m_gBuffer(), m_lBuffer(), m_hdrBuffer()
 {
 	m_quadVAO = 0;
-	m_coneVAO = 0;
-	m_sphereVAO = 0;
-	m_bounceVAO = 0;
 	m_attribID = 0;
 	m_renderSize = vec2(1);
 }
@@ -141,27 +140,13 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
 		Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
 		Asset_Loader::load_asset(m_shaderSpot_Shadow, "Geometry\\geometryShadowSpot");
-		Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
-		Asset_Loader::load_asset(m_shaderPoint, "Lighting\\point");
-		Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot");
-		Asset_Loader::load_asset(m_shaderDirectional_Bounce, "Lighting\\directional_bounce");
-		Asset_Loader::load_asset(m_shaderPoint_Bounce, "Lighting\\point_bounce");
-		Asset_Loader::load_asset(m_shaderSpot_Bounce, "Lighting\\spot_bounce");
-		Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\gi_reconstruction");
-		Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\gi_second_bounce");
 		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
 		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
-		Asset_Loader::load_asset(m_shapeCone, "cone");
-		Asset_Loader::load_asset(m_shapeSphere, "sphere");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_coneVAO = Asset_Primitive::Generate_VAO();
-		m_sphereVAO = Asset_Primitive::Generate_VAO();
 		m_QuadObserver = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
-		m_ConeObserver = (void*)(new Primitivee_Observer(m_shapeCone, m_coneVAO));
-		m_SphereObserver = (void*)(new Primitivee_Observer(m_shapeSphere, m_sphereVAO));
 		m_gBuffer.end();
 
 		m_ssaoCallback = new SSAO_Callback(this);
@@ -201,23 +186,12 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		m_hdrBuffer.initialize(m_renderSize);
 		m_lBuffer.initialize(m_renderSize, &m_visualFX, m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH), m_gBuffer.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
-		m_giBuffer.initialize(16, enginePackage);
-
-		{
-			GLuint VBO = 0;
-			glGenVertexArrays(1, &m_bounceVAO);
-			glBindVertexArray(m_bounceVAO);
-			glGenBuffers(1, &VBO);
-			glBindBuffer(GL_ARRAY_BUFFER, VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(GLint), GLint(0), GL_DYNAMIC_DRAW);
-			glEnableVertexAttribArray(0);
-			glVertexAttribIPointer(0, 1, GL_INT, sizeof(GLint), 0);
-			glBindBuffer(GL_ARRAY_BUFFER, 0);
-			glBindVertexArray(0);
-		}
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+
+		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
+		m_lightingTechs.push_back(new IndirectLighting_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer));
 
 		m_Initialized = true;
 	}
@@ -230,22 +204,29 @@ void System_Graphics_PBR::update(const float & deltaTime)
 	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
 	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
 
-	if (vis_token.size() &&
+	if (m_Initialized &&
+		vis_token.size() &&
 		m_shapeQuad->existsYet() &&
 		m_textureSky->existsYet() &&
 		m_shaderSky->existsYet() &&
-		m_shaderGeometry->existsYet() &&
-		m_shaderDirectional->existsYet())
+		m_shaderGeometry->existsYet())
 	{
 		// Regeneration Phase
 		shadowPass(vis_token);
-		bouncePass(vis_token);
+		for each (auto *tech in m_lightingTechs)
+			tech->updateLighting(vis_token);
 
+		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		m_gBuffer.clear();
+		m_lBuffer.clear();
 
 		geometryPass(vis_token);
+
 		skyPass();
-		directLightingPass(vis_token);
-		indirectLightingPass(vis_token);
+		for each (auto *tech in m_lightingTechs)
+			tech->applyLighting(vis_token);
+
+		m_lBuffer.applyBloom();
 		HDRPass();
 		finalPass();
 	}
@@ -441,57 +422,6 @@ void System_Graphics_PBR::shadowPass(const Visibility_Token & vis_token)
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
-void System_Graphics_PBR::bouncePass(const Visibility_Token & vis_token)
-{
-	m_giBuffer.updateData();
-
-	// Prepare rendering state
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-
-	m_giBuffer.bindNoise(GL_TEXTURE4);
-	m_giBuffer.bindForWriting(0);
-
-	// Perform primary light bounce
-	glBindVertexArray(m_bounceVAO);
-
-		// Bounce directional light
-		m_shadowBuffer.BindForReading_GI(SHADOW_LARGE, GL_TEXTURE0);
-		if (vis_token.find("Light_Directional")) {
-			m_shaderDirectional_Bounce->bind();
-			for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-				component->indirectPass(16);
-		}
-		// Bounce point lights
-		m_shadowBuffer.BindForReading_GI(SHADOW_REGULAR, GL_TEXTURE0);
-		if (vis_token.find("Light_Point")) {
-			m_shaderPoint_Bounce->bind();
-			for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
-				component->indirectPass(16);
-		}
-		// Bounce spot lights
-		if (vis_token.find("Light_Spot")) {
-			m_shaderSpot_Bounce->bind();
-			for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-				component->indirectPass(16);
-		}		
-
-	// Perform secondary light bounce
-	m_shaderGISecondBounce->bind();
-	m_giBuffer.bindForReading(0, GL_TEXTURE5);
-	m_giBuffer.bindForWriting(1);
-	glDrawArraysInstanced(GL_POINTS, 0, 1, 32);
-
-	glBindVertexArray(0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-	Asset_Shader::Release();
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-}
-
 void System_Graphics_PBR::geometryPass(const Visibility_Token & vis_token)
 {
 	if (vis_token.find("Anim_Model")) {
@@ -500,7 +430,6 @@ void System_Graphics_PBR::geometryPass(const Visibility_Token & vis_token)
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
-		m_gBuffer.clear();
 		m_gBuffer.bindForWriting();
 		m_shaderGeometry->bind();
 
@@ -516,7 +445,6 @@ void System_Graphics_PBR::geometryPass(const Visibility_Token & vis_token)
 void System_Graphics_PBR::skyPass()
 {
 	const size_t &quad_size = m_shapeQuad->getSize();
-	m_lBuffer.clear();
 	m_lBuffer.bindForWriting();
 
 	glDisable(GL_BLEND);
@@ -532,76 +460,6 @@ void System_Graphics_PBR::skyPass()
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
-}
-
-void System_Graphics_PBR::directLightingPass(const Visibility_Token & vis_token)
-{
-	const size_t &quad_size = m_shapeQuad->getSize();
-	const size_t &cone_size = m_shapeCone->getSize();
-	const size_t &sphere_size = m_shapeSphere->getSize();
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	m_gBuffer.bindForReading();
-	m_lBuffer.bindForWriting();
-
-	m_shadowBuffer.bindForReading(SHADOW_LARGE, 3);
-	if (vis_token.find("Light_Directional")) {
-		m_shaderDirectional->bind();
-		glBindVertexArray(m_quadVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-			component->directPass(quad_size);
-	}
-
-	glEnable(GL_STENCIL_TEST);
-	glCullFace(GL_FRONT);
-	m_shadowBuffer.bindForReading(SHADOW_REGULAR, 3);
-	if (vis_token.find("Light_Point")) {
-		m_shaderPoint->bind();
-		glBindVertexArray(m_sphereVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
-			component->directPass(sphere_size);
-	}
-
-	if (vis_token.find("Light_Spot")) {
-		m_shaderSpot->bind();
-		glBindVertexArray(m_coneVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-			component->directPass(cone_size);
-	}
-
-	glCullFace(GL_BACK);
-	glDisable(GL_STENCIL_TEST);
-	glBlendFunc(GL_ONE, GL_ZERO);
-	glDisable(GL_BLEND);
-	Asset_Shader::Release();
-	glBindVertexArray(0);
-	m_lBuffer.applyBloom();
-}
-
-void System_Graphics_PBR::indirectLightingPass(const Visibility_Token & vis_token)
-{
-	// Reconstruct GI from data
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	m_gBuffer.bindForReading();
-	m_lBuffer.bindForWriting();
-
-	m_shaderGIReconstruct->bind();
-	const size_t &quad_size = m_shapeQuad->getSize();	
-
-	m_giBuffer.bindNoise(GL_TEXTURE4);
-	glBindVertexArray(m_quadVAO);
-	m_giBuffer.bindForReading(1, GL_TEXTURE5);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-	
-
-	Asset_Shader::Release();
-	glBindVertexArray(0);
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void System_Graphics_PBR::HDRPass()

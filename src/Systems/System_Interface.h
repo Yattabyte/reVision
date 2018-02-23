@@ -19,9 +19,9 @@ class DT_ENGINE_API System
 {
 public:
 	// (de)Constructors
-	/** Virtual Destructor*/
+	/** Virtual Destructor. */
 	virtual ~System() {};
-	/** Constructor*/
+	/** Constructor. */
 	System() { m_Initialized = false; }
 	/** Initializes the system.
 	 * @param	enginePackage	the engine package */

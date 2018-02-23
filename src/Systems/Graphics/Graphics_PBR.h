@@ -15,12 +15,13 @@
 #include "Systems\Graphics\Frame Buffers\HDR_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
-#include "Systems\Graphics\Frame Buffers\GlobalIllumination_Buffer.h"
+#include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Cubemap.h"
+#include <vector>
 
 class EnginePackage;
 class Callback_Container;
@@ -84,20 +85,11 @@ private:
 	/** Regenerates shadowmap's. 
 	 * @param	vis_token	the visible objects in this frame */
 	void shadowPass(const Visibility_Token & vis_token);
-	/** Regenerates bouncemap's.
-	* @param	vis_token	the visible objects in this frame */
-	void bouncePass(const Visibility_Token & vis_token);
 	/** Fills the gBuffer by rendering all visible geometric objects.
 	 * @param	vis_token	the visible objects in this frame */
 	void geometryPass(const Visibility_Token & vis_token);
 	/** Renders the sky to the lighting buffer. */
-	void skyPass();
-	/** Calculates direct lighting. All visible lights run their shaders and fill the lighting buffer.
-	 * @param	vis_token	the visible objects in this frame */
-	void directLightingPass(const Visibility_Token & vis_token);
-	/** Calculates indirect lighting, using 1st/2nd light bounce shaders + all visible lights, and reflection shaders.
-	* @param	vis_token	the visible objects in this frame */
-	void indirectLightingPass(const Visibility_Token & vis_token);
+	void skyPass();		
 	/** Performs HDR+bloom pass and other camera effects. */
 	void HDRPass();
 	/** Performs AA and writes out to default framebuffer. */
@@ -114,16 +106,16 @@ private:
 	HDR_Buffer m_hdrBuffer;
 	Lighting_Buffer m_lBuffer;
 	Shadow_Buffer m_shadowBuffer;
-	GlobalIllumination_Buffer m_giBuffer;
-	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot, 
-						m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,
-						m_shaderDirectional_Bounce, m_shaderPoint_Bounce, m_shaderSpot_Bounce,
-						m_shaderGeometry, m_shaderGIReconstruct, m_shaderGISecondBounce, m_shaderSky, m_shaderHDR, m_shaderFXAA;
-	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
-	GLuint m_quadVAO, m_coneVAO, m_sphereVAO, m_bounceVAO;
+	Shared_Asset_Shader	m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,						
+						m_shaderGeometry, m_shaderSky, m_shaderHDR, m_shaderFXAA;
+	Shared_Asset_Primitive m_shapeQuad;
+	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
 	int m_updateQuality;
-	void* m_QuadObserver, *m_ConeObserver, *m_SphereObserver;
+	void* m_QuadObserver;
+
+	// Lighting Techniques
+	vector<Lighting_Technique*> m_lightingTechs;
 };
 
 #endif // SYSTEM_GRAPHICS_PBR
