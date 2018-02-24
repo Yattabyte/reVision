@@ -5,7 +5,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
-#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Graphics.h"
 #include "GLFW\glfw3.h"
 #include <math.h>
 
@@ -39,7 +39,7 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_camera[1].setHorizontalFOV(180);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics_PBR>("Graphics")->getShadowBuffer();
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 	}

@@ -5,7 +5,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
-#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Graphics.h"
 #include "GLFW\glfw3.h"
 #include <math.h>
 
@@ -33,7 +33,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics_PBR>("Graphics")->getShadowBuffer();
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 	}
 	if (m_enginePackage->findSubSystem("World")) {

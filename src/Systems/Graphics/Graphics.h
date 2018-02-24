@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SYSTEM_GRAPHICS_PBR
-#define SYSTEM_GRAPHICS_PBR
+#ifndef SYSTEM_GRAPHICS
+#define SYSTEM_GRAPHICS
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -12,7 +12,6 @@
 
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Frame Buffers\Geometry_Buffer.h"
-#include "Systems\Graphics\Frame Buffers\HDR_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
@@ -30,17 +29,17 @@ class Camera;
 
 
 /**
- * An engine system responsible for rendering. Creates Geometry_Buffer, HDR_Buffer, Lighting_Buffer, and VisualFX
+ * An engine system responsible for rendering. Creates Geometry_Buffer, Lighting_Buffer, Shadow_Buffer, and VisualFX
  * @note	performs physically based rendering techniques.
  **/
-class DT_ENGINE_API System_Graphics_PBR : public System
+class DT_ENGINE_API System_Graphics : public System
 {
 public: 
 	// (de)Constructors
 	/** Destroy the rendering system. */
-	~System_Graphics_PBR();
+	~System_Graphics();
 	/** Construct the rendering system. */
-	System_Graphics_PBR();
+	System_Graphics();
 	
 
 	// Interface Implementations
@@ -91,10 +90,6 @@ private:
 	void geometryPass(const Visibility_Token & vis_token);
 	/** Renders the sky to the lighting buffer. */
 	void skyPass();		
-	/** Performs HDR+bloom pass and other camera effects. */
-	void HDRPass();
-	/** Performs AA and writes out to default framebuffer. */
-	void finalPass();
 
 
 	// Public Attributes
@@ -104,20 +99,19 @@ private:
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gBuffer;
-	HDR_Buffer m_hdrBuffer;
 	Lighting_Buffer m_lBuffer;
 	Shadow_Buffer m_shadowBuffer;
 	Shared_Asset_Shader	m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,						
-						m_shaderGeometry, m_shaderSky, m_shaderHDR, m_shaderFXAA;
+						m_shaderGeometry, m_shaderSky;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
 	int m_updateQuality;
 	void* m_QuadObserver;
 
-	// Lighting Techniques
+	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;
-	FX_Technique * m_bloomTech;
+	vector<FX_Technique*> m_fxTechs;
 };
 
-#endif // SYSTEM_GRAPHICS_PBR
+#endif // SYSTEM_GRAPHICS

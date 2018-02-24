@@ -1,7 +1,9 @@
-#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
 #include "Systems\Graphics\Lighting Techniques\IndirectLighting_Tech.h"
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
+#include "Systems\Graphics\FX Techniques\HDR_Tech.h"
+#include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
@@ -10,9 +12,9 @@
 #include <minmax.h>
 
 
-struct Primitivee_Observer : Asset_Observer
+struct Primitive_Observer : Asset_Observer
 {
-	Primitivee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
+	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
 	virtual void Notify_Finalized() {
 		if (m_asset->existsYet())
 			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
@@ -22,62 +24,62 @@ struct Primitivee_Observer : Asset_Observer
 class SSAO_Callback : public Callback_Container {
 public:
 	~SSAO_Callback() {};
-	SSAO_Callback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
+	SSAO_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
 	void Callback(const float & value) {
 		m_Graphics->setSSAO((bool)value);
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 };
 class SSAO_Samples_Callback : public Callback_Container {
 public:
 	~SSAO_Samples_Callback() {};
-	SSAO_Samples_Callback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
+	SSAO_Samples_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
 	void Callback(const float & value) {
 		m_Graphics->setSSAOSamples((int)value);
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 };
 class SSAO_Strength_Callback : public Callback_Container {
 public:
 	~SSAO_Strength_Callback() {};
-	SSAO_Strength_Callback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
+	SSAO_Strength_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
 	void Callback(const float & value) {
 		m_Graphics->setSSAOStrength((int)value);
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 };
 class SSAO_Radius_Callback : public Callback_Container {
 public:
 	~SSAO_Radius_Callback() {};
-	SSAO_Radius_Callback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
+	SSAO_Radius_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
 	void Callback( const float & value) {
 		m_Graphics->setSSAORadius(value);
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 };
 class Cam_WidthChangeCallback : public Callback_Container {
 public:
 	~Cam_WidthChangeCallback() {};
-	Cam_WidthChangeCallback(System_Graphics_PBR * graphics) : m_Graphics(graphics) {}
+	Cam_WidthChangeCallback(System_Graphics * graphics) : m_Graphics(graphics) {}
 	void Callback(const float & value) {
 		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 };
 class Cam_HeightChangeCallback : public Callback_Container {
 public:
 	~Cam_HeightChangeCallback() {};
-	Cam_HeightChangeCallback(System_Graphics_PBR * lBuffer) : m_Graphics(lBuffer) {}
+	Cam_HeightChangeCallback(System_Graphics * lBuffer) : m_Graphics(lBuffer) {}
 	void Callback(const float & value) {
 		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
 	}
 private:
-	System_Graphics_PBR *m_Graphics;
+	System_Graphics *m_Graphics;
 }; 
 class ShadowQualityChangeCallback : public Callback_Container {
 public:
@@ -90,7 +92,7 @@ private:
 	int *m_pointer;
 };
 
-System_Graphics_PBR::~System_Graphics_PBR()
+System_Graphics::~System_Graphics()
 {
 	if (!m_Initialized) {
 		m_enginePackage->removeCallback(PreferenceState::C_SSAO, m_ssaoCallback);
@@ -110,19 +112,20 @@ System_Graphics_PBR::~System_Graphics_PBR()
 		delete m_QualityChangeCallback;
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
-		delete m_bloomTech;
+		for each (auto * tech in m_fxTechs)
+			delete tech;
 	}
 }
 
-System_Graphics_PBR::System_Graphics_PBR() :
-	m_visualFX(), m_gBuffer(), m_lBuffer(), m_hdrBuffer()
+System_Graphics::System_Graphics() :
+	m_visualFX(), m_gBuffer(), m_lBuffer()
 {
 	m_quadVAO = 0;
 	m_attribID = 0;
 	m_renderSize = vec2(1);
 }
 
-void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
+void System_Graphics::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -130,13 +133,11 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
 		Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
 		Asset_Loader::load_asset(m_shaderSpot_Shadow, "Geometry\\geometryShadowSpot");
-		Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
-		Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_QuadObserver = (void*)(new Primitivee_Observer(m_shapeQuad, m_quadVAO));
+		m_QuadObserver = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
 		m_gBuffer.end();
 
 		m_ssaoCallback = new SSAO_Callback(this);
@@ -171,7 +172,6 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 
 		m_visualFX.initialize(m_enginePackage);
 		m_gBuffer.initialize(m_renderSize, &m_visualFX);
-		m_hdrBuffer.initialize(m_renderSize);
 		m_lBuffer.initialize(m_renderSize, m_gBuffer.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
 
@@ -180,13 +180,15 @@ void System_Graphics_PBR::initialize(EnginePackage * enginePackage)
 
 		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
 		m_lightingTechs.push_back(new IndirectLighting_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer));
-		m_bloomTech = new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX, m_renderSize);
+		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX));
+		m_fxTechs.push_back(new HDR_Tech(enginePackage));
+		m_fxTechs.push_back(new FXAA_Tech());
 
 		m_Initialized = true;
 	}
 }
 
-void System_Graphics_PBR::update(const float & deltaTime)
+void System_Graphics::update(const float & deltaTime)
 {
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 
@@ -208,24 +210,26 @@ void System_Graphics_PBR::update(const float & deltaTime)
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		m_gBuffer.clear();
 		m_lBuffer.clear();
-
 		geometryPass(vis_token);
-
+		
+		// Writing to lighting fbo
 		skyPass();
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
-		m_bloomTech->applyEffect();
-		m_bloomTech->bindForReading();
-		HDRPass();
+		// Chain of post-processing effects ending in default fbo
+		m_lBuffer.bindForReading();
+		for each (auto *tech in m_fxTechs) {
+			tech->applyEffect();
+			tech->bindForReading();
+		}
 
-		finalPass();
 		m_lBuffer.end();
 		m_gBuffer.end();
 	}
 }
 
-void System_Graphics_PBR::setSSAO(const bool & ssao)
+void System_Graphics::setSSAO(const bool & ssao)
 {
 	m_attribs.m_ssao = ssao;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
@@ -233,7 +237,7 @@ void System_Graphics_PBR::setSSAO(const bool & ssao)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics_PBR::setSSAOSamples(const int & samples)
+void System_Graphics::setSSAOSamples(const int & samples)
 {
 	m_attribs.m_aa_samples = samples;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
@@ -241,7 +245,7 @@ void System_Graphics_PBR::setSSAOSamples(const int & samples)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics_PBR::setSSAOStrength(const int & strength)
+void System_Graphics::setSSAOStrength(const int & strength)
 {
 	m_attribs.m_ssao_strength = strength;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
@@ -249,7 +253,7 @@ void System_Graphics_PBR::setSSAOStrength(const int & strength)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics_PBR::setSSAORadius(const float & radius)
+void System_Graphics::setSSAORadius(const float & radius)
 {
 	m_attribs.m_ssao_radius = radius;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
@@ -257,20 +261,19 @@ void System_Graphics_PBR::setSSAORadius(const float & radius)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics_PBR::resize(const vec2 & size)
+void System_Graphics::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	m_gBuffer.resize(size);
 	m_lBuffer.resize(size);
-	m_hdrBuffer.resize(size);
 }
 
-Shadow_Buffer & System_Graphics_PBR::getShadowBuffer()
+Shadow_Buffer & System_Graphics::getShadowBuffer()
 {
 	return m_shadowBuffer;
 }
 
-void System_Graphics_PBR::generateKernal()
+void System_Graphics::generateKernal()
 {
 	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
@@ -292,7 +295,7 @@ void System_Graphics_PBR::generateKernal()
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics_PBR::shadowPass(const Visibility_Token & vis_token)
+void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 {
 	struct PriorityLightList {
 		// Nested Element struct
@@ -415,7 +418,7 @@ void System_Graphics_PBR::shadowPass(const Visibility_Token & vis_token)
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
-void System_Graphics_PBR::geometryPass(const Visibility_Token & vis_token)
+void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 {
 	if (vis_token.find("Anim_Model")) {
 		glDisable(GL_BLEND);
@@ -435,7 +438,7 @@ void System_Graphics_PBR::geometryPass(const Visibility_Token & vis_token)
 	}
 }
 
-void System_Graphics_PBR::skyPass()
+void System_Graphics::skyPass()
 {
 	const size_t &quad_size = m_shapeQuad->getSize();
 	m_lBuffer.bindForWriting();
@@ -453,38 +456,4 @@ void System_Graphics_PBR::skyPass()
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);
-}
-
-void System_Graphics_PBR::HDRPass()
-{
-	const size_t &quad_size = m_shapeQuad->getSize();
-	m_lBuffer.bindForReading();
-	m_hdrBuffer.clear();
-	m_hdrBuffer.bindForWriting();
-
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_STENCIL_TEST);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
-	//glDisable(GL_CULL_FACE);
-
-	m_shaderHDR->bind();
-	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-	glBindVertexArray(0);
-	Asset_Shader::Release();
-}
-
-void System_Graphics_PBR::finalPass()
-{
-	const size_t &quad_size = m_shapeQuad->getSize();
-	m_hdrBuffer.bindForReading();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-
-	m_shaderFXAA->bind();
-	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-	glBindVertexArray(0);
-	Asset_Shader::Release();
 }

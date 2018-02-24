@@ -154,7 +154,7 @@ void Shutdown_Sharing()
 
 #include "Assets\Asset_Material.h"
 #include "Systems\Preferences\Preferences.h"
-#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Graphics.h"
 #include "Systems\Input\Input.h"
 #include "Systems\Logic\Logic.h"
 #include "Systems\World\World.h"
@@ -189,7 +189,7 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_syst
 		// Create all the required systems
 		auto &systems = m_package->m_Systems;
 		systems["Preferences"] = new System_Preferences("preferences");
-		systems["Graphics"] = new System_Graphics_PBR();
+		systems["Graphics"] = new System_Graphics();
 		systems["Input"] = new System_Input();
 		systems["Logic"] = new System_Logic();
 		systems["World"] = new System_World();

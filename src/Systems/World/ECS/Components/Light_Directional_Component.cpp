@@ -5,7 +5,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
-#include "Systems\Graphics\Graphics_PBR.h"
+#include "Systems\Graphics\Graphics.h"
 #include "GLFW\glfw3.h"
 
 
@@ -14,7 +14,7 @@ Light_Directional_Component::~Light_Directional_Component()
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
 		if (m_enginePackage->findSubSystem("Graphics")) {
-			auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics_PBR>("Graphics")->getShadowBuffer();
+			auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
 			for (int x = 0; x < NUM_CASCADES; ++x)
 				shadowmapper.unregisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 		}
@@ -43,7 +43,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics_PBR>("Graphics")->getShadowBuffer();
+		auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			shadowmapper.registerShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 	}

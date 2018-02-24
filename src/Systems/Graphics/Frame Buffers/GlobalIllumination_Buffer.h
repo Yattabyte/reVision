@@ -22,7 +22,7 @@ class EnginePackage;
 
 
 /**
- * A specialized framebuffer used for combining previous rendering phases and applying HDR+Bloom.
+ * A specialized framebuffer used for generating global illumination lighting aka indirect diffuse lighting.
  **/
 class DT_ENGINE_API GlobalIllumination_Buffer
 {

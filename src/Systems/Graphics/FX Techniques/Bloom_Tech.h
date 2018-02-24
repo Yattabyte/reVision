@@ -13,7 +13,7 @@ class VisualFX;
 
 
 /**
- * A lighting technique that calculates direct diffuse and direct specular lighting contribution for directional, point, and spot light types, using PBR techniques.
+ * A post processing technique for generating bloom from a lighting buffer.
  **/
 class Bloom_Tech : public FX_Technique {
 public:
@@ -21,7 +21,7 @@ public:
 	/** Virtual Destructor. */
 	~Bloom_Tech();
 	/** Constructor. */
-	Bloom_Tech(EnginePackage * enginePackage, Lighting_Buffer * lBuffer, VisualFX * visualFX, const vec2 & size);
+	Bloom_Tech(EnginePackage * enginePackage, Lighting_Buffer * lBuffer, VisualFX * visualFX);
 
 
 	// Interface Implementations.
@@ -33,6 +33,9 @@ public:
 	/** Change the strength of the bloom effect.
 	* @param	strength		the new strength of the bloom effect */
 	void setBloomStrength(const int &strength);
+	/** Resize the frame buffer.
+	* @param	size	the new size of the frame buffer */
+	void resize(const vec2 & size);
 
 
 private:
@@ -47,7 +50,7 @@ private:
 	GLuint m_fbo, m_texture, m_texturesGB[2];
 	vec2 m_renderSize;
 	int m_bloomStrength;
-	Callback_Container * m_bloomStrengthChangeCallback;
+	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
 };
 
 #endif // BLOOM_TECHNIQUE
