@@ -12,7 +12,6 @@
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define GI_LIGHT_BOUNCE_COUNT 2 // Light bounces used
 #define GI_TEXTURE_COUNT 4 // 3D textures used
-#define VOLUMESIZE 16
 
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"

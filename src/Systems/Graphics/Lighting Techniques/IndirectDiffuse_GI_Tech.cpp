@@ -47,7 +47,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_QuadObserver = (void*)(new Primitiveee_Observer(m_shapeQuad, m_quadVAO));
-	m_attribBuffer = GI_Attribs_Buffer(VOLUMESIZE, 2.0f, 7.5, 0.75f, 12);
+	m_attribBuffer = GI_Attribs_Buffer(16, .25f, 50, 0.75f, 12);
 
 	GLuint VBO = 0;
 	glGenVertexArrays(1, &m_bounceVAO);
@@ -70,8 +70,11 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, VOLUMESIZE, VOLUMESIZE, VOLUMESIZE, 0, GL_RGB, GL_FLOAT, 0);
+			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			glTexParameteri(GL_TEXTURE_3D, GL_GENERATE_MIPMAP, GL_TRUE);
+			glTexParameterf(GL_TEXTURE_3D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+			glGenerateMipmap(GL_TEXTURE_3D);
+			glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, m_attribBuffer.resolution, m_attribBuffer.resolution, m_attribBuffer.resolution, 0, GL_RGB, GL_FLOAT, 0);
 			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0,
@@ -107,7 +110,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
 	glBindTexture(GL_TEXTURE_3D, 0);
@@ -132,6 +135,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 
 void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & vis_token)
 {
+	const int & size = m_attribBuffer.resolution;
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -149,27 +153,31 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & vis_token)
 	if (vis_token.find("Light_Directional")) {
 		m_shaderDirectional_Bounce->bind();
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-			component->indirectPass(16);
+			component->indirectPass(size);
 	}
 	// Bounce point lights
 	m_sBuffer->BindForReading_GI(SHADOW_REGULAR, GL_TEXTURE0);
 	if (vis_token.find("Light_Point")) {
 		m_shaderPoint_Bounce->bind();
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
-			component->indirectPass(16);
+			component->indirectPass(size);
 	}
 	// Bounce spot lights
 	if (vis_token.find("Light_Spot")) {
 		m_shaderSpot_Bounce->bind();
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-			component->indirectPass(16);
+			component->indirectPass(size);
 	}
 
-	// Perform secondary light bounce
+	/*// Perform secondary light bounce
 	m_shaderGISecondBounce->bind();
 	bindForReading(0, GL_TEXTURE5);
 	bindForWriting(1);
-	glDrawArraysInstanced(GL_POINTS, 0, 1, 32);
+	glDrawArraysInstanced(GL_POINTS, 0, 1, size);*/
+	for (int x = 0; x < 4; ++x) {
+		glBindTexture(GL_TEXTURE_3D, m_textures[0][x]);
+		glGenerateMipmap(GL_TEXTURE_3D);
+	}
 
 	glBindVertexArray(0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -193,10 +201,9 @@ void IndirectDiffuse_GI_Tech::applyLighting(const Visibility_Token & vis_token)
 
 	bindNoise(GL_TEXTURE4);
 	glBindVertexArray(m_quadVAO);
-	bindForReading(1, GL_TEXTURE5);
+	bindForReading(0, GL_TEXTURE5);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-
-
+	
 	glBindVertexArray(0);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
