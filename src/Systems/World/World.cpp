@@ -66,13 +66,15 @@ void System_World::update(const float & deltaTime)
 		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
-		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2));
+		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2)); 
+		auto model4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		model4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\ref_test.obj")));
+		model4->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(-75, 6, 10), glm::rotate(quat(1,0,0,0), glm::radians(90.0f), vec3(0,1,0)))));
 
 		auto wall = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		wall->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		wall->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(100, -7.5, 20))));
-		wall->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2));
 
 		
 

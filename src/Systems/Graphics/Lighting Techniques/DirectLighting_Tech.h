@@ -1,6 +1,13 @@
 #pragma once
 #ifndef DIRECT_LIGHTING_PBR
 #define DIRECT_LIGHTING_PBR
+#ifdef	ENGINE_EXE_EXPORT
+#define DT_ENGINE_API 
+#elif	ENGINE_DLL_EXPORT 
+#define DT_ENGINE_API __declspec(dllexport)
+#else
+#define	DT_ENGINE_API __declspec(dllimport)
+#endif
 
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
@@ -14,7 +21,7 @@ class Shadow_Buffer;
 /**
  * A lighting technique that calculates direct diffuse and direct specular lighting contribution for directional, point, and spot light types, using PBR techniques.
  **/
-class DirectLighting_Tech : public Lighting_Technique {
+class DT_ENGINE_API DirectLighting_Tech : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

@@ -1,6 +1,7 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
-#include "Systems\Graphics\Lighting Techniques\IndirectLighting_Tech.h"
+#include "Systems\Graphics\Lighting Techniques\IndirectDiffuse_GI_Tech.h"
+#include "Systems\Graphics\Lighting Techniques\IndirectSpecular_SSR_Tech.h"
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
@@ -179,7 +180,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
-		m_lightingTechs.push_back(new IndirectLighting_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer));
+		m_lightingTechs.push_back(new IndirectDiffuse_GI_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer)); 
+		m_lightingTechs.push_back(new IndirectSpecular_SSR_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_visualFX));
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX));
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
 		m_fxTechs.push_back(new FXAA_Tech());
@@ -200,6 +202,8 @@ void System_Graphics::update(const float & deltaTime)
 		m_shapeQuad->existsYet() &&
 		m_textureSky->existsYet() &&
 		m_shaderSky->existsYet() &&
+
+
 		m_shaderGeometry->existsYet())
 	{
 		// Regeneration Phase
