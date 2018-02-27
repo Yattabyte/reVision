@@ -68,7 +68,7 @@ public:
 	 * @param	near_plane		the distance of the near plane (defaults to 0.01f)
 	 * @param	far_plane		the distance of the far plane (defaults to 10.0f)
 	 * @param	horizontal_FOV	the horizontal FOV (defaults to 90) */ 
-	Camera(const vec3 & position = vec3(0.0F), const vec2 & size = vec2(1.0f), const float & near_plane = 0.01f, const float & far_plane = 10.0f, const float & horizontal_FOV = 90.0f);
+	Camera(const vec3 & position = vec3(0.0F), const vec2 & size = vec2(1.0f), const float & near_plane = 0.5f, const float & far_plane = 10.0f, const float & horizontal_FOV = 90.0f);
 	/** Copy constructor. */
 	Camera(Camera const & other);
 	/** Assignment operator. */
