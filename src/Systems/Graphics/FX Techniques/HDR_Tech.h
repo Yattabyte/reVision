@@ -8,7 +8,6 @@
 
 using namespace glm;
 class EnginePackage;
-class Callback_Container;
 
 
 /**
@@ -40,7 +39,6 @@ private:
 	GLuint m_texture;
 	vec2 m_renderSize; 
 	EnginePackage * m_enginePackage;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback;
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;

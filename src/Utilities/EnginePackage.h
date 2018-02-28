@@ -50,29 +50,30 @@ public:
 	/** Returns the preference-value associated with the supplied preference-ID.
 	 * @param	targetKey	the ID associated with the desired preference-value
 	 * @return				the value associated with the supplied preference-ID */
-	float getPreference(const unsigned int & targetKey) const {
+	float getPreference(const  PreferenceState::Preference & targetKey) const {
 		return m_PreferenceState.getPreference(targetKey);
 	}
 	/** Sets the supplied preference-value to the supplied preference-ID.
 	 * @param	targetKey	the ID associated with the supplied preference-value
 	 * @param	targetValue	the value to be set to the supplied preference-ID */
-	void setPreference(const unsigned int & targetKey, const float & targetValue) {
+	void setPreference(const PreferenceState::Preference & targetKey, const float & targetValue) {
 		m_PreferenceState.setPreference(targetKey, targetValue);
 	}
-	/** Attaches a callback class to be triggered when the supplied preference updates.
+	/** Attaches a callback method to be triggered when the supplied preference updates.
 	 * @param	targetKey	the preference-ID to which this callback will be attached
-	 * @param	callback	the callback pointer to be attached */
-	void addCallback(const unsigned int & targetKey, Callback_Container * callback) {
-		m_PreferenceState.addCallback(targetKey, callback);
+	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	 * @param	observer	the method to be triggered
+	 * @param	<Observer>	the (auto-deduced) signature of the method 
+	 * @return				optionally returns the preference value held for this target */
+	template <typename Observer>
+	float const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
+		return m_PreferenceState.addPrefCallback(targetKey, pointerID, observer);
 	}
-	/** Removes the supplied callback from getting triggered when the supplied preference updates.
-	 * @param	targetKey	the preference-ID to which this callback was attached
-	 * @param	callback	the callback pointer that was attached 
-	 * @note	- Safety Measures:
-	 *				-# safe to call even if the callback isn't attached 
-	 *				-# will check and remove redundant callbacks (if was attached more than once to this preference) */
-	void removeCallback(const unsigned int & targetKey, Callback_Container * callback) {
-		m_PreferenceState.removeCallback(targetKey, callback);
+	/** Removes a callback method from triggering when a particular preference changes.
+	 * @param	targetKey	the preference key that was listening for changes
+	 * @param	pointerID	the pointer to the object owning the callback to be removed */
+	void removePrefCallback(const PreferenceState::Preference & targetKey, void * pointerID) {
+		m_PreferenceState.removePrefCallback(targetKey, pointerID);
 	}
 
 

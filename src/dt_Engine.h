@@ -11,7 +11,7 @@
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(107) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(108) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -22,7 +22,6 @@
 
 using namespace std;
 class EnginePackage;
-class Callback_Container;
 class GLFWwindow;
 class Camera;
 class System;
@@ -63,7 +62,6 @@ private:
 	bool m_Initialized;	
 	float m_lastTime;	
 	EnginePackage *m_package;
-	Callback_Container *m_drawDistCallback;
 };
 
 #define BUILD_YEAR					(__DATE__[9] - '0') * 10 + (__DATE__[10] - '0') 

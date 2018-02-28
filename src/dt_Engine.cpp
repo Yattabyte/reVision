@@ -70,21 +70,8 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 //	MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
 
-class EN_DrawDistCallback : public Callback_Container {
-public:
-	~EN_DrawDistCallback() {};
-	EN_DrawDistCallback(EnginePackage *pointer) : m_pointer(pointer) {}
-	void Callback(const float &value) {
-		m_pointer->m_Camera.setFarPlane(value);
-		m_pointer->m_Camera.update();
-	}
-private:
-	EnginePackage *m_pointer;
-};
-
 dt_Engine::~dt_Engine()
 {
-	shutdown();
 }
 
 dt_Engine::dt_Engine()
@@ -163,10 +150,10 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_syst
 	if ((!m_Initialized) && Initialize_Sharing()) {
 
 		m_package = new EnginePackage();
-		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);		
-
-		m_drawDistCallback = new EN_DrawDistCallback(m_package);
-		m_package->addCallback(PreferenceState::C_DRAW_DISTANCE, m_drawDistCallback);
+		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);	
+		const float farPlane = m_package->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_package->m_Camera.setFarPlane(f); m_package->m_Camera.update(); });
+		m_package->m_Camera.setFarPlane(farPlane);
+		m_package->m_Camera.update();
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
@@ -227,8 +214,7 @@ void dt_Engine::shutdown()
 {
 	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
-		m_package->removeCallback(PreferenceState::C_DRAW_DISTANCE, m_drawDistCallback);
-		delete m_drawDistCallback;
+		m_package->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 		
 		for each (auto system in m_package->m_Systems)
 			delete system.second;

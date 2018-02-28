@@ -76,7 +76,9 @@ void Lighting_Buffer::resize(const vec2 & size)
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
 	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
+	glBindTexture(GL_TEXTURE_2D, 0);
 
 	// restore default FBO
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

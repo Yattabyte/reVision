@@ -18,7 +18,6 @@
 class EnginePackage;
 class Geometry_Buffer;
 class Lighting_Buffer;
-class Callback_Container;
 class VisualFX;
 
 
@@ -81,7 +80,6 @@ private:
 	void* m_QuadObserver;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
-	Callback_Container * m_widthChangeCallback, *m_heightChangeCallback;
 	SSR_Buffer m_ssrBuffer;
 	GLuint m_ssrUBO;
 };

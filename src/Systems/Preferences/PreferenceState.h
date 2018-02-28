@@ -10,10 +10,11 @@
 #endif
 
 #include "Assets\Asset_Config.h"
-#include "Systems\Preferences\Callback_Interface.h"
 #include <algorithm>
+#include <functional>
 #include <map>
 #include <vector>
+#include <utility>
 
 using namespace std;
 
@@ -32,61 +33,11 @@ public:
 	PreferenceState(const string & filename = "preferences") {
 		LoadFile(filename);
 	}
-
-
-	// Public Methods
-	/** Loads a preference file from disk.
-	 * @param	filename	the relative path to the preference file to load */
-	void LoadFile(const string & filename) {
-		Asset_Loader::load_asset(m_preferences, filename, PreferenceState::Preference_Strings(), false);
-	}
-	/** Saves the preference file to disk, using the same filename as when loaded. */
-	void Save() {
-		m_preferences->saveConfig();
-	}
-	/** Retrieves a value tied to the supplied preference ID.
-	 * @param	targetKey	the preference key to look up
-	 * @return				the value tied to the preference supplied */
-	float getPreference(const unsigned int & targetKey) const {
-		if (m_preferences) 
-			return m_preferences->getValue(targetKey);		
-		return UNDEFINED_CVAL;
-	}
-	/** Sets a value for a preference with the given ID.
-	 * @param	targetKey	the preference key to set the value to
-	 * @param	targetValue	the value to tie to the key supplied */
-	void setPreference(const unsigned int & targetKey, const float & targetValue) {
-		if (m_preferences) {
-			m_preferences->setValue(targetKey, targetValue);
-			if (m_callbacks.find(targetKey) != m_callbacks.end()) 
-				for each (auto &callback in m_callbacks[targetKey])
-					callback->Callback(targetValue);			
-		}
-	}
-	/** Attaches a callback to trigger when a particular preference changes.
-	 * @param	targetKey	the preference key to listen for changes
-	 * @param	callback	the callback that will fire when the supplied preference changes */
-	void addCallback(const unsigned int & targetKey, Callback_Container * callback) {
-		m_callbacks.insert(pair<unsigned int, vector<Callback_Container*>>(targetKey, vector<Callback_Container*>()));
-		m_callbacks[targetKey].push_back(callback);
-		callback->m_preferenceState = this;
-	}
-	/** Removes a callback from triggering when a particular preference changes.
-	* @param	targetKey	the preference key that was listening for changes
-	* @param	callback	the callback that should no longer fire when the supplied preference changes */
-	void removeCallback(const unsigned int & targetKey, Callback_Container * callback) {
-		if (m_callbacks.find(targetKey) != m_callbacks.end()) {
-			auto &callback_list = m_callbacks[targetKey];
-			callback_list.erase(std::remove_if(begin(callback_list), end(callback_list), [callback](const auto *stored_callback) {
-				return (stored_callback == callback);
-			}), end(callback_list));
-		}
-	}
-
+	
 
 	// Public Static Enumerations
 	/** Enumeration for indexing into preferences. */
-	static const enum PREFERENCE_ENUM {
+	static const enum Preference {
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
 		C_BLOOM_STRENGTH,
@@ -107,7 +58,7 @@ public:
 
 	// Public Static Methods
 	/* Retrieve a static list of all user-preferences.
-	 * @return	vector of preference names as strings */
+	* @return	vector of preference names as strings */
 	static vector<string> Preference_Strings() {
 		static const vector<string> preferenceStrings = {
 			"C_WINDOW_WIDTH",
@@ -128,10 +79,65 @@ public:
 		};
 		return preferenceStrings;
 	};
+
+
+	// Public Methods
+	/** Loads a preference file from disk.
+	 * @param	filename	the relative path to the preference file to load */
+	void LoadFile(const string & filename) {
+		Asset_Loader::load_asset(m_preferences, filename, PreferenceState::Preference_Strings(), false);
+	}
+	/** Saves the preference file to disk, using the same filename as when loaded. */
+	void Save() {
+		m_preferences->saveConfig();
+	}
+	/** Retrieves a value tied to the supplied preference ID.
+	 * @param	targetKey	the preference key to look up
+	 * @return				the value tied to the preference supplied */
+	float getPreference(const Preference & targetKey) const {
+		if (m_preferences) 
+			return m_preferences->getValue(targetKey);		
+		return UNDEFINED_CVAL;
+	}
+	/** Sets a value for a preference with the given ID.
+	 * @param	targetKey	the preference key to set the value to
+	 * @param	targetValue	the value to tie to the key supplied */
+	void setPreference(const Preference & targetKey, const float & targetValue) {
+		if (m_preferences) {
+			m_preferences->setValue(targetKey, targetValue);
+			if (m_callbacks.find(targetKey) != m_callbacks.end())
+				for each (const auto &observer in m_callbacks[targetKey])
+					observer.second(targetValue);
+		}
+	}	
+	/** Attaches a callback method to be triggered when the supplied preference updates.
+	 * @param	targetKey	the preference-ID to which this callback will be attached
+	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	 * @param	observer	the method to be triggered
+	 * @param	<Observer>	the (auto-deduced) signature of the method
+	 * @return				optionally returns the preference value held for this target */
+	template <typename Observer>
+	float const addPrefCallback(const Preference & targetKey, void * pointerID, Observer&& observer) {
+		m_callbacks.insert(pair<Preference, map<void*, function<void(float)>>>(targetKey, map<void*, function<void(float)>>()));
+		m_callbacks[targetKey].insert(pair<void*, function<void(float)>>(pointerID, function<void(float)>()));
+		m_callbacks[targetKey][pointerID] = forward<Observer>(observer);
+		return getPreference(targetKey);
+	}
+	/** Removes a callback method from triggering when a particular preference changes.
+	 * @param	targetKey	the preference key that was listening for changes
+	 * @param	pointerID	the pointer to the object owning the callback to be removed */
+	void removePrefCallback(const Preference & targetKey, void * pointerID) {
+		if (m_callbacks.find(targetKey) != m_callbacks.end()) {
+			auto &specific_map = m_callbacks[targetKey];
+			if (specific_map.find(pointerID) != specific_map.end()) 
+				specific_map.erase(specific_map.find(pointerID));			
+		}
+	}
+
 	
 private:
 	Shared_Asset_Config m_preferences;
-	map<unsigned int, vector<Callback_Container*>> m_callbacks;
+	map<Preference, map<void*, function<void(float)>>> m_callbacks;
 };
 
 #endif // PREFERENCE_STATE

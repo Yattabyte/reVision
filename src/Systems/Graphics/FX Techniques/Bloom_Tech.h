@@ -7,7 +7,6 @@
 #include "Assets\Asset_Primitive.h"
 
 class EnginePackage;
-class Callback_Container;
 class Lighting_Buffer;
 class VisualFX;
 
@@ -50,7 +49,6 @@ private:
 	GLuint m_fbo, m_texture, m_texturesGB[2];
 	vec2 m_renderSize;
 	int m_bloomStrength;
-	Callback_Container *m_widthChangeCallback, *m_heightChangeCallback, *m_bloomStrengthChangeCallback;
 };
 
 #endif // BLOOM_TECHNIQUE

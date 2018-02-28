@@ -6,27 +6,6 @@
 #include "Utilities\EnginePackage.h"
 #include <minmax.h>
 
-class Cam_WidthChangeCallback : public Callback_Container {
-public:
-	~Cam_WidthChangeCallback() {};
-	Cam_WidthChangeCallback(IndirectSpecular_SSR_Tech * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
-	}
-private:
-	IndirectSpecular_SSR_Tech *m_Graphics;
-};
-class Cam_HeightChangeCallback : public Callback_Container {
-public:
-	~Cam_HeightChangeCallback() {};
-	Cam_HeightChangeCallback(IndirectSpecular_SSR_Tech * lBuffer) : m_Graphics(lBuffer) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
-	}
-private:
-	IndirectSpecular_SSR_Tech *m_Graphics;
-};
-
 struct Primitiveee_Observer : Asset_Observer {
 	Primitiveee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
 	virtual void Notify_Finalized() {
@@ -38,13 +17,12 @@ struct Primitiveee_Observer : Asset_Observer {
 
 IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
 {
-	delete m_QuadObserver; 
-	delete m_widthChangeCallback;
-	delete m_heightChangeCallback;
-
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	delete m_QuadObserver; 
 }
 
 IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, VisualFX * visualFX)
@@ -63,12 +41,9 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_QuadObserver = (void*)(new Primitiveee_Observer(m_shapeQuad, m_quadVAO));
-	m_widthChangeCallback = new Cam_WidthChangeCallback(this);
-	m_heightChangeCallback = new Cam_HeightChangeCallback(this);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
-	m_renderSize = vec2(m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH), m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT));
+	m_QuadObserver = (void*)(new Primitiveee_Observer(m_shapeQuad, m_quadVAO)); 
+	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);

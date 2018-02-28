@@ -12,36 +12,14 @@ struct Primitive_Observer : Asset_Observer {
 	}
 	GLuint m_vao_id;
 };
-class Cam_WidthChangeCallback : public Callback_Container {
-public:
-	~Cam_WidthChangeCallback() {};
-	Cam_WidthChangeCallback(HDR_Tech * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
-	}
-private:
-	HDR_Tech *m_Graphics;
-};
-class Cam_HeightChangeCallback : public Callback_Container {
-public:
-	~Cam_HeightChangeCallback() {};
-	Cam_HeightChangeCallback(HDR_Tech * lBuffer) : m_Graphics(lBuffer) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
-	}
-private:
-	HDR_Tech *m_Graphics;
-};
-
 
 HDR_Tech::~HDR_Tech()
 {
 	// Destroy OpenGL objects
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
-
-	delete m_widthChangeCallback;
-	delete m_heightChangeCallback;
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	delete m_QuadObserver;
 }
 
@@ -49,12 +27,9 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 {
 	m_fbo = 0;
 	m_texture = 0; 
-	m_enginePackage = enginePackage;
-	m_renderSize = vec2(m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH), m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT));
-	m_widthChangeCallback = new Cam_WidthChangeCallback(this);
-	m_heightChangeCallback = new Cam_HeightChangeCallback(this);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
+	m_enginePackage = enginePackage; 
+	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();

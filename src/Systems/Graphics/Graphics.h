@@ -24,7 +24,6 @@
 #include <vector>
 
 class EnginePackage;
-class Callback_Container;
 class Camera;
 
 
@@ -63,7 +62,10 @@ public:
 	void setSSAORadius(const float & radius);
 	/** Change the size of framebuffers used.
 	 * @param	size		the new size to use */
-	void resize(const vec2 & size);
+	void resize(const vec2 & size);	
+	/** Change the shadow update quality  used.
+	* @param	size		the new size to use */
+	void setShadowUpdateQuality(const float & quality);
 	/** Retrieve the shadow buffer. 
 	 * @return				the shadow map buffer */
 	Shadow_Buffer & getShadowBuffer();
@@ -95,7 +97,6 @@ private:
 	// Public Attributes
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
-	Callback_Container *m_ssaoCallback, *m_ssaoSamplesCallback, *m_ssaoStrengthCallback, *m_ssaoRadiusCallback, *m_widthChangeCallback, *m_heightChangeCallback, *m_QualityChangeCallback;
 	vec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gBuffer;

@@ -54,7 +54,7 @@ void System_World::update(const float & deltaTime)
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 7.5f));
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0,0,1))));
 			
-		/*auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -10))));
 		model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 0));
@@ -66,7 +66,7 @@ void System_World::update(const float & deltaTime)
 		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model3->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(30, 0, 0))));
-		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2)); */
+		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2)); 
 		auto model4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\ref_test.obj")));
 		model4->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, 0, -30), glm::rotate(quat(1,0,0,0), glm::radians(90.0f), vec3(0,1,0)))));

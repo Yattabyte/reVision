@@ -8,7 +8,6 @@
 
 using namespace glm;
 class EnginePackage;
-class Callback_Container;
 
 
 /**

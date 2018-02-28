@@ -22,95 +22,19 @@ struct Primitive_Observer : Asset_Observer
 	}
 	GLuint m_vao_id;
 };
-class SSAO_Callback : public Callback_Container {
-public:
-	~SSAO_Callback() {};
-	SSAO_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->setSSAO((bool)value);
-	}
-private:
-	System_Graphics *m_Graphics;
-};
-class SSAO_Samples_Callback : public Callback_Container {
-public:
-	~SSAO_Samples_Callback() {};
-	SSAO_Samples_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->setSSAOSamples((int)value);
-	}
-private:
-	System_Graphics *m_Graphics;
-};
-class SSAO_Strength_Callback : public Callback_Container {
-public:
-	~SSAO_Strength_Callback() {};
-	SSAO_Strength_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->setSSAOStrength((int)value);
-	}
-private:
-	System_Graphics *m_Graphics;
-};
-class SSAO_Radius_Callback : public Callback_Container {
-public:
-	~SSAO_Radius_Callback() {};
-	SSAO_Radius_Callback(System_Graphics * graphics) : m_Graphics(graphics) {}
-	void Callback( const float & value) {
-		m_Graphics->setSSAORadius(value);
-	}
-private:
-	System_Graphics *m_Graphics;
-};
-class Cam_WidthChangeCallback : public Callback_Container {
-public:
-	~Cam_WidthChangeCallback() {};
-	Cam_WidthChangeCallback(System_Graphics * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
-	}
-private:
-	System_Graphics *m_Graphics;
-};
-class Cam_HeightChangeCallback : public Callback_Container {
-public:
-	~Cam_HeightChangeCallback() {};
-	Cam_HeightChangeCallback(System_Graphics * lBuffer) : m_Graphics(lBuffer) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
-	}
-private:
-	System_Graphics *m_Graphics;
-}; 
-class ShadowQualityChangeCallback : public Callback_Container {
-public:
-	~ShadowQualityChangeCallback() {};
-	ShadowQualityChangeCallback(int * pointer) : m_pointer(pointer) {}
-	void Callback(const float & value) {
-		*m_pointer = (int)value;
-	}
-private:
-	int *m_pointer;
-};
 
 System_Graphics::~System_Graphics()
 {
 	if (!m_Initialized) {
-		m_enginePackage->removeCallback(PreferenceState::C_SSAO, m_ssaoCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->removeCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
-		delete m_QuadObserver;
-		delete m_ssaoCallback;
-		delete m_ssaoSamplesCallback;
-		delete m_ssaoStrengthCallback;
-		delete m_ssaoRadiusCallback;
-		delete m_widthChangeCallback;
-		delete m_heightChangeCallback;
-		delete m_QualityChangeCallback;
+		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_SAMPLES, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+
+		delete m_QuadObserver;		
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
 		for each (auto * tech in m_fxTechs)
@@ -141,26 +65,14 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_QuadObserver = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
 		m_gBuffer.end();
 
-		m_ssaoCallback = new SSAO_Callback(this);
-		m_ssaoSamplesCallback = new SSAO_Samples_Callback(this);
-		m_ssaoStrengthCallback = new SSAO_Strength_Callback(this);
-		m_ssaoRadiusCallback = new SSAO_Radius_Callback(this);
-		m_widthChangeCallback = new Cam_WidthChangeCallback(this);
-		m_heightChangeCallback = new Cam_HeightChangeCallback(this);
-		m_QualityChangeCallback = new ShadowQualityChangeCallback(&m_updateQuality);
-		m_enginePackage->addCallback(PreferenceState::C_SSAO, m_ssaoCallback);
-		m_enginePackage->addCallback(PreferenceState::C_SSAO_SAMPLES, m_ssaoSamplesCallback);
-		m_enginePackage->addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_ssaoStrengthCallback);
-		m_enginePackage->addCallback(PreferenceState::C_SSAO_RADIUS, m_ssaoRadiusCallback);
-		m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
-		m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
-		m_enginePackage->addCallback(PreferenceState::C_SHADOW_QUALITY, m_QualityChangeCallback);
-		m_attribs.m_ssao_radius = m_enginePackage->getPreference(PreferenceState::C_SSAO_RADIUS);
-		m_attribs.m_ssao_strength = m_enginePackage->getPreference(PreferenceState::C_SSAO_BLUR_STRENGTH);
-		m_attribs.m_aa_samples = m_enginePackage->getPreference(PreferenceState::C_SSAO_SAMPLES);
-		m_attribs.m_ssao = m_enginePackage->getPreference(PreferenceState::C_SSAO);
-		m_renderSize = vec2(m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH), m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT));
-		m_updateQuality = m_enginePackage->getPreference(PreferenceState::C_SHADOW_QUALITY);
+		m_attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
+		m_attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
+		m_attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
+		m_attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });
+		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });
+
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -270,6 +182,11 @@ void System_Graphics::resize(const vec2 & size)
 	m_renderSize = size;
 	m_gBuffer.resize(size);
 	m_lBuffer.resize(size);
+}
+
+void System_Graphics::setShadowUpdateQuality(const float & quality)
+{
+	m_updateQuality = quality;
 }
 
 Shadow_Buffer & System_Graphics::getShadowBuffer()

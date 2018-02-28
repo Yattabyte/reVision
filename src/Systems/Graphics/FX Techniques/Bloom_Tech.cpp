@@ -13,46 +13,14 @@ struct Primitive_Observer : Asset_Observer {
 	GLuint m_vao_id;
 };
 
-class Bloom_StrengthChangeCallback : public Callback_Container {
-public:
-	~Bloom_StrengthChangeCallback() {};
-	Bloom_StrengthChangeCallback(Bloom_Tech * lBuffer) : m_LBuffer(lBuffer) {}
-	void Callback(const float & value) {
-		m_LBuffer->setBloomStrength((int)value);
-	}
-private:
-	Bloom_Tech *m_LBuffer;
-};
-class Cam_WidthChangeCallback : public Callback_Container {
-public:
-	~Cam_WidthChangeCallback() {};
-	Cam_WidthChangeCallback(Bloom_Tech * graphics) : m_Graphics(graphics) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(value, m_preferenceState->getPreference(PreferenceState::C_WINDOW_HEIGHT)));
-	}
-private:
-	Bloom_Tech *m_Graphics;
-};
-class Cam_HeightChangeCallback : public Callback_Container {
-public:
-	~Cam_HeightChangeCallback() {};
-	Cam_HeightChangeCallback(Bloom_Tech * lBuffer) : m_Graphics(lBuffer) {}
-	void Callback(const float & value) {
-		m_Graphics->resize(vec2(m_preferenceState->getPreference(PreferenceState::C_WINDOW_WIDTH), value));
-	}
-private:
-	Bloom_Tech *m_Graphics;
-};
-
 Bloom_Tech::~Bloom_Tech()
 {
 	glDeleteTextures(1, &m_texture);
 	glDeleteTextures(2, m_texturesGB);
 	glDeleteFramebuffers(1, &m_fbo);
-	m_enginePackage->removeCallback(PreferenceState::C_WINDOW_HEIGHT, m_bloomStrengthChangeCallback);
-	delete m_bloomStrengthChangeCallback;
-	delete m_widthChangeCallback;
-	delete m_heightChangeCallback;
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	m_enginePackage->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
 	delete m_QuadObserver;
 }
 
@@ -65,15 +33,11 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_Buffer * lBuffer,
 	m_texturesGB[1] = 0;
 	m_lBuffer = lBuffer;
 	m_visualFX = visualFX;
-	m_renderSize = vec2(m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH), m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT));
-	m_widthChangeCallback = new Cam_WidthChangeCallback(this);
-	m_heightChangeCallback = new Cam_HeightChangeCallback(this);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_WIDTH, m_widthChangeCallback);
-	m_enginePackage->addCallback(PreferenceState::C_WINDOW_HEIGHT, m_heightChangeCallback);
-	m_bloomStrength = m_enginePackage->getPreference(PreferenceState::C_BLOOM_STRENGTH);
 
-	m_bloomStrengthChangeCallback = new Bloom_StrengthChangeCallback(this);
-	m_enginePackage->addCallback(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrengthChangeCallback);
+	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+	m_bloomStrength = m_enginePackage->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });
+
 	Asset_Loader::load_asset(m_shaderBloomExtract, "FX\\bloomExtraction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();

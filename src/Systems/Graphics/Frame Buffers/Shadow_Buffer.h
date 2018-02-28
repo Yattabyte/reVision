@@ -18,7 +18,6 @@
 
 using namespace std;
 using namespace glm;
-class Callback_Container;
 class EnginePackage;
 
 
@@ -83,7 +82,6 @@ private:
 	GLuint				m_shadow_radiantflux[SHADOW_MAX];
 	unsigned int		m_shadow_count[SHADOW_MAX];
 	deque<unsigned int>	m_freed_shadow_spots[SHADOW_MAX];
-	Callback_Container *m_largeChangeCallback, *m_RegularChangeCallback;
 	EnginePackage	   *m_enginePackage;
 };
 
