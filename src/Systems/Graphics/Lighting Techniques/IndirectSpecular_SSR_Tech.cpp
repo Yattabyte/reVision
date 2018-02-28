@@ -17,9 +17,9 @@ struct Primitiveee_Observer : Asset_Observer {
 
 IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
 {
+	glDeleteBuffers(1, &m_ssrUBO);
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	delete m_QuadObserver; 

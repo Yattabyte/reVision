@@ -26,11 +26,11 @@ Geometry_Buffer::~Geometry_Buffer()
 {	
 	if (m_Initialized) {
 		// Destroy OpenGL objects
-		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
+		glDeleteTextures(1, &m_noiseID);
 		glDeleteTextures(2, m_texturesGB);
 		glDeleteTextures(1, &m_depth_stencil);
+		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
 		glDeleteFramebuffers(1, &m_fbo);
-
 		delete m_observer;
 	}
 }

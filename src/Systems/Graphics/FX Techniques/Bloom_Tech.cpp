@@ -15,8 +15,8 @@ struct Primitive_Observer : Asset_Observer {
 
 Bloom_Tech::~Bloom_Tech()
 {
-	glDeleteTextures(1, &m_texture);
 	glDeleteTextures(2, m_texturesGB);
+	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);

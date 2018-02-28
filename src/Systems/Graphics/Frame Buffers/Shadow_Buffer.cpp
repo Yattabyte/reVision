@@ -10,10 +10,13 @@ Shadow_Buffer::~Shadow_Buffer()
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_SIZE_REGULAR, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_SIZE_LARGE, this);
 
-		glDeleteFramebuffers(SHADOW_MAX, m_shadow_fbo);
-		glDeleteTextures(SHADOW_MAX, m_shadow_depth);
 		m_freed_shadow_spots[0].clear();
 		m_freed_shadow_spots[1].clear();
+		glDeleteTextures(1, m_shadow_radiantflux);
+		glDeleteTextures(1, m_shadow_worldnormal);
+		glDeleteTextures(1, m_shadow_worldpos);
+		glDeleteTextures(1, m_shadow_depth);
+		glDeleteFramebuffers(SHADOW_MAX, m_shadow_fbo);
 	}
 }
 

@@ -21,8 +21,12 @@ struct Primitiveee_Observer : Asset_Observer {
 IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
 {
 	delete m_QuadObserver; 
+
+	glDeleteBuffers(1, &m_attribSSBO);
+	glDeleteTextures(1, &m_noise32);
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
+	glDeleteVertexArrays(1, &m_bounceVAO);
 }
 
 IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
@@ -58,6 +62,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	glEnableVertexAttribArray(0);
 	glVertexAttribIPointer(0, 1, GL_INT, sizeof(GLint), 0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glDeleteBuffers(1, &VBO);
 	glBindVertexArray(0);
 
 	glGenFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);

@@ -34,6 +34,7 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 
+		glDeleteBuffers(1, &m_attribID);
 		delete m_QuadObserver;		
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
