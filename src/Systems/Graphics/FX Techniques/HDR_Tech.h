@@ -42,7 +42,6 @@ private:
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
-	void* m_QuadObserver;
 };
 
 #endif // HDR_TECHNIQUE

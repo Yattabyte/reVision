@@ -13,16 +13,6 @@
 #include <minmax.h>
 
 
-struct Primitive_Observer : Asset_Observer
-{
-	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
-
 System_Graphics::~System_Graphics()
 {
 	if (!m_Initialized) {
@@ -33,9 +23,9 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
 
 		glDeleteBuffers(1, &m_attribID);
-		delete m_QuadObserver;		
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
 		for each (auto * tech in m_fxTechs)
@@ -55,6 +45,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
+
+		// Load Assets
 		Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 		Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
 		Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
@@ -62,18 +54,20 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
-		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_QuadObserver = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
-		m_gBuffer.end();
 
+		m_quadVAO = Asset_Primitive::Generate_VAO();
+		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+
+		// Load preferences + callbacks
 		m_attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
 		m_attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
 		m_attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
 		m_attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
-		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });
+		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });		
 
+		// Generate attribute buffer
 		glGenBuffers(1, &m_attribID);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
 		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
@@ -83,22 +77,24 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
 		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 		generateKernal();
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
+		// Initiate graphics buffers
 		m_visualFX.initialize(m_enginePackage);
 		m_gBuffer.initialize(m_renderSize, &m_visualFX);
 		m_lBuffer.initialize(m_renderSize, m_gBuffer.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
 
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-
+		// Initiate lighting techniques
 		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
 		m_lightingTechs.push_back(new IndirectDiffuse_GI_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer)); 
 		m_lightingTechs.push_back(new IndirectSpecular_SSR_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_visualFX));
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX));
+
+		// Initiate effects techniques
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
 		m_fxTechs.push_back(new FXAA_Tech());
-
 		m_Initialized = true;
 	}
 }

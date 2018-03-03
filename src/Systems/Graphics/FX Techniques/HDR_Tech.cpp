@@ -4,15 +4,6 @@
 #include <algorithm>
 
 
-struct Primitive_Observer : Asset_Observer {
-	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
-
 HDR_Tech::~HDR_Tech()
 {
 	// Destroy OpenGL objects
@@ -20,7 +11,7 @@ HDR_Tech::~HDR_Tech()
 	glDeleteFramebuffers(1, &m_fbo);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-	delete m_QuadObserver;
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
 }
 
 HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
@@ -28,12 +19,12 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	m_fbo = 0;
 	m_texture = 0; 
 	m_enginePackage = enginePackage; 
-	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_QuadObserver = (void*)(new Primitive_Observer(m_shapeQuad, m_quadVAO));
+	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);

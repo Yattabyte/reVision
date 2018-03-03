@@ -4,15 +4,6 @@
 #include <algorithm>
 #include <random>
 
-struct Primitive_Observer : Asset_Observer
-{
-	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
 
 static void AssignTextureProperties()
 {
@@ -31,7 +22,6 @@ Geometry_Buffer::~Geometry_Buffer()
 		glDeleteTextures(1, &m_depth_stencil);
 		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
 		glDeleteFramebuffers(1, &m_fbo);
-		delete m_observer;
 	}
 }
 
@@ -40,11 +30,12 @@ Geometry_Buffer::Geometry_Buffer()
 	m_Initialized = false;
 	m_fbo = 0;
 	m_depth_stencil = 0;
-	m_vao_Quad = 0;
+	m_quadVAO = 0;
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
 	for (int x = 0; x < 2; ++x)
 		m_texturesGB[x] = 0;
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
 }
 
 void Geometry_Buffer::initialize(const vec2 & size, VisualFX * visualFX)
@@ -53,8 +44,8 @@ void Geometry_Buffer::initialize(const vec2 & size, VisualFX * visualFX)
 		m_visualFX = visualFX;
 		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
-		m_vao_Quad = Asset_Primitive::Generate_VAO();
-		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
+		m_quadVAO = Asset_Primitive::Generate_VAO();
+		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 		m_renderSize = size;
 		
 		// Create the FBO
@@ -195,7 +186,7 @@ void Geometry_Buffer::applyAO()
 		glBindTexture(GL_TEXTURE_2D, m_noiseID);
 
 		m_shaderSSAO->bind();
-		glBindVertexArray(m_vao_Quad);
+		glBindVertexArray(m_quadVAO);
 		const size_t &quad_size = m_shapeQuad->getSize();
 		glDrawArrays(GL_TRIANGLES, 0, quad_size);
 		glBindVertexArray(0);

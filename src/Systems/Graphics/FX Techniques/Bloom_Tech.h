@@ -45,7 +45,6 @@ private:
 	Shared_Asset_Shader m_shaderBloomExtract;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
-	void* m_QuadObserver;
 	GLuint m_fbo, m_texture, m_texturesGB[2];
 	vec2 m_renderSize;
 	int m_bloomStrength;

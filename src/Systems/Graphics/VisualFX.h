@@ -65,9 +65,8 @@ private:
 	bool m_Initialized;
 	EnginePackage *m_enginePackage;
 	Shared_Asset_Primitive m_shapeQuad;
-	void* m_observer;
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
-	GLuint m_vao_Quad, m_fbo_GB;
+	GLuint m_quadVAO, m_fbo_GB;
 };
 
 #endif // VISUALFX

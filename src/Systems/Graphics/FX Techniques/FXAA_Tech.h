@@ -31,7 +31,6 @@ private:
 	// Private Attributes
 	Shared_Asset_Shader m_shaderFXAA;
 	GLuint m_quadVAO;
-	void* m_QuadObserver;
 	Shared_Asset_Primitive m_shapeQuad;
 };
 

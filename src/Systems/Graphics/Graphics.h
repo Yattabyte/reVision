@@ -108,7 +108,6 @@ private:
 	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
 	int m_updateQuality;
-	void* m_QuadObserver;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;

@@ -13,11 +13,11 @@
 #include <vector>
 #include <stdio.h>
 #include <string>
-#include <utility>
 #include <memory>
+#include <map>
+#include <utility>
 
 using namespace std;
-class Asset_Observer;
 class Asset;
 typedef shared_ptr<Asset> Shared_Asset;
 
@@ -31,6 +31,14 @@ typedef shared_ptr<Asset> Shared_Asset;
 class DT_ENGINE_API Asset
 {
 public:
+	// Public Enumerations
+	static const enum Asset_State {
+		CONSTRUCTED,
+		INITIALIZED,
+		FINALIZED
+	};
+
+
 	// (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
 	~Asset();
@@ -44,16 +52,23 @@ public:
 	string getFileName() const;
 	/** Sets the file name of this asset.
 	 * @param	filename	the file name to set this asset to */
-	void setFileName(const string & filename);
-	/** Adds a state observer/listener to this asset.
-	 * @brief				adds asset observers that want to be know when this asset finishes finalizing.
-	 * @param	observer	the observer to add to this asset */
-	void addObserver(Asset_Observer * observer);
-	/** Removes a state observer/listener from this asset.
-	 * @brief				removes the observer specified from this asset.
-	 * @note				will remove all instances from this asset, or none if it doesn't exist. 
-	 * @param	observer	the observer to remove from this asset*/
-	void removeObserver(Asset_Observer * observer);
+	void setFileName(const string & filename);	
+	/** Attaches a callback method to be triggered when the supplied state of this asset changes
+	 * @param	state		the state of this asset to listen to
+	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	 * @param	callback	the method to be triggered
+	 * @param	<Callback>	the (auto-deduced) signature of the method */
+	template <typename Callback>
+	void addCallback(const Asset_State & state, void * pointerID, Callback && callback) {
+		unique_lock<shared_mutex> write_guard(m_mutex);
+		m_callbacks.insert(pair<Asset_State, map<void*, function<void()>>>(state, map<void*, function<void()>>()));
+		m_callbacks[state].insert(pair<void*, function<void()>>(pointerID, function<void()>()));
+		m_callbacks[state][pointerID] = forward<Callback>(callback);
+	}
+	/** Removes a callback method from triggering when the supplied state changes.
+	* @param	targetKey	the preference key that was listening for changes
+	* @param	pointerID	the pointer to the object owning the callback to be removed */
+	void removeCallback(const Asset_State & state, void * pointerID);
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return				true if this asset has finished finalizing, false otherwise. */
@@ -68,29 +83,16 @@ public:
 
 
 protected:
+	// Protected Methods
+	void Queue_Notification(const Asset_State & state);
+
+
 	// Protected Attributes
 	bool m_finalized;
 	string m_filename;
-	vector<Asset_Observer*> m_observers;
+	map<Asset_State, map<void*, function<void()>>> m_callbacks;
 };
 
-/**
- * An abstract class used to tailor a specific response to an asset completing both initializing and finalizing.\n
- * To be appended to an asset's observer list, and will be iterated through at its discretion.
- **/
-struct DT_ENGINE_API Asset_Observer
-{
-	/** Constructor. Takes the asset, and calls its addObserver method on *this*. */
-	Asset_Observer(Asset * asset) : m_asset(asset) { m_asset->addObserver(this); }
-	/** Destructor. Removes the observer from the asset. */
-	~Asset_Observer() { m_asset->removeObserver(this); };
-	/** To be called when the asset finishes finalizing. */
-	virtual void Notify_Finalized() = 0;
-
-
-	// Public Attributes
-	Shared_Asset m_asset;
-};
 
 /**
  * An abstract class for assets work orders.

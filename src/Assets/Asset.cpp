@@ -23,6 +23,14 @@ void Asset::setFileName(const string & fn)
 	m_filename = fn;
 }
 
+void Asset::removeCallback(const Asset_State & state, void * pointerID) {
+	if (m_callbacks.find(state) != m_callbacks.end()) {
+		auto &specific_map = m_callbacks[state];
+		if (specific_map.find(pointerID) != specific_map.end())
+			specific_map.erase(specific_map.find(pointerID));
+	}
+}
+
 bool Asset::existsYet()
 { 
 	shared_lock<shared_mutex> read_guard(m_mutex);
@@ -37,24 +45,16 @@ void Asset::finalize()
 		write_guard.unlock();
 		write_guard.release();
 		shared_lock<shared_mutex> read_guard(m_mutex);
-		Asset_Manager::Queue_Notification(m_observers); // Notify later, guaranteed to be done during rendering loop
+		Queue_Notification(Asset_State::FINALIZED);
 	}
 }
 
-void Asset::addObserver(Asset_Observer * observer)
+void Asset::Queue_Notification(const Asset_State & state)
 {
-	unique_lock<shared_mutex> write_guard(m_mutex);
-	m_observers.push_back(observer);
-	write_guard.unlock();
-	write_guard.release();
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (m_finalized) // If we finalized already, new observer needs to know this is ready to go
-		Asset_Manager::Queue_Notification(m_observers);
-}
+	vector<function<void()>> funcs;
+	funcs.reserve(m_callbacks[state].size());
+	for each (const auto & func in m_callbacks[state]) 
+		funcs.push_back(func.second);	
 
-void Asset::removeObserver(Asset_Observer * observer)
-{
-	m_observers.erase(std::remove_if(begin(m_observers), end(m_observers), [observer](const auto *element) {
-		return (element == observer);
-	}), end(m_observers));
+	Asset_Manager::Queue_Notification(funcs);
 }

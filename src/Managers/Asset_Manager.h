@@ -139,11 +139,10 @@ public:
 		}
 		return false;
 	}
-	/** Appends a list of observers to notify later that their asset has finished finalization
+	/** Appends a list of observers to notify later that their asset has achieved a desired state
 	 * @brief				when the main thread is ready, it will notify all the assets that have queued up.
-	 * @param	observers	the list of observers to notify */
-	static void Queue_Notification(const vector<Asset_Observer*> & observers);
-
+	 * @param	callbacks	the list of observer functions to notify */
+	static void Queue_Notification(const vector<function<void()>> & callbacks);
 	/** Notifies all the queued up observers that their assets have finished finalization.
 	 * @note				is called from the main thread only to ensure proper synchronization. */
 	static void Notify_Observers();
@@ -203,8 +202,8 @@ private:
 	deque<Work_Order*> m_WorkOrders_to_initialize;
 	deque<Work_Order*> m_WorkOrders_to_finalize;
 	shared_mutex m_Mutex_Assets;
-	VectorMap<Shared_Asset> m_AssetMap;		
-	vector<Asset_Observer*> m_observers;
+	VectorMap<Shared_Asset> m_AssetMap;	
+	vector<function<void()>> m_notifyees;
 };
 
 #endif // ASSET_MANAGER

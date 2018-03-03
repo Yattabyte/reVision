@@ -9,24 +9,14 @@
 #include <random>
 
 
-struct Primitiveee_Observer : Asset_Observer {
-	Primitiveee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
-
 IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
 {
-	delete m_QuadObserver; 
-
 	glDeleteBuffers(1, &m_attribSSBO);
 	glDeleteTextures(1, &m_noise32);
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	glDeleteVertexArrays(1, &m_bounceVAO);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
 }
 
 IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
@@ -50,7 +40,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_QuadObserver = (void*)(new Primitiveee_Observer(m_shapeQuad, m_quadVAO));
+	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 	m_attribBuffer = GI_Attribs_Buffer(16, .25f, 50, 0.75f, 12);
 
 	GLuint VBO = 0;

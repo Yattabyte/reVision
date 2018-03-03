@@ -77,7 +77,6 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO;
-	void* m_QuadObserver;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	SSR_Buffer m_ssrBuffer;

@@ -4,12 +4,14 @@
 #include "Utilities\Transform.h"
 #include <minmax.h>
 
+
 inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
 
 Anim_Model_Component::~Anim_Model_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	glDeleteVertexArrays(1, &m_vao_id);
+	if (m_model.get()) m_model->removeCallback(Asset::FINALIZED, this);
 }
 
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
@@ -30,21 +32,36 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	glUnmapBuffer(GL_UNIFORM_BUFFER);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0); 
 	
-	m_vao_id = Asset_Model::Generate_VAO();
+	m_vao_id = Asset_Model::Generate_VAO();	
 }
 
 void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
-	switch (message.GetCommandID())
-	{
+	switch (message.GetCommandID()) {
 	case SET_MODEL_DIR: {
 		if (!message.IsOfType<string>()) break;
 		const auto &payload = message.GetPayload<string>();
-		if (m_observer)
-			m_observer.reset();
+		// Remove callback from old model before loading
+		if (m_model.get()) 
+			m_model->removeCallback(Asset::FINALIZED, this);
+		// Load new model
 		Asset_Loader::load_asset(m_model, payload);
-		m_observer = make_unique<Model_Observer>(m_model, &m_transforms, m_vao_id, &m_uboData, &m_skin, m_uboID, &m_fence);
+		// Attach new callback
+		m_model->addCallback(Asset::FINALIZED, this, [&]() {
+			if (m_model->existsYet()) {
+				m_model->updateVAO(m_vao_id);
+				m_uboData.materialID = m_model->getSkinID(m_skin);
+				m_transforms = m_model->m_animationInfo.meshTransforms;
+				glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+				glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+				glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
+				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				glFlush();
+			}
+		});
 		break;
 	}
 	case SET_MODEL_TRANSFORM: {
@@ -144,23 +161,6 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, transforms), sizeof(mat4) * total, &m_uboData.transforms);
 	}
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-}
-
-void Model_Observer::Notify_Finalized()
-{
-	if (m_asset->existsYet()) {
-		auto &cast_asset = dynamic_pointer_cast<Asset_Model>(m_asset);
-		cast_asset->updateVAO(m_vao_id);
-		m_uboData->materialID = cast_asset->getSkinID(*m_skin);
-		*m_transforms = cast_asset->m_animationInfo.meshTransforms;
-		glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_ubo_id);
-		glBindBuffer(GL_UNIFORM_BUFFER, m_ubo_id);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), m_uboData);
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		*m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
-	}
 }
 
 template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }

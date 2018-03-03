@@ -2,27 +2,15 @@
 #include "Utilities\EnginePackage.h"
 
 
-struct Primitive_Observer : Asset_Observer
-{
-	Primitive_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
-
 VisualFX::~VisualFX()
 {
-	if (m_Initialized) {
-		delete m_observer;
-	}
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
 }
 
 VisualFX::VisualFX()
 {
 	m_Initialized = false;
-	m_vao_Quad = 0;
+	m_quadVAO = 0;
 	m_fbo_GB = 0;
 }
 
@@ -31,8 +19,8 @@ void VisualFX::initialize(EnginePackage * enginePackage)
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
-		m_vao_Quad = Asset_Primitive::Generate_VAO();
-		m_observer = (void*)(new Primitive_Observer(m_shapeQuad, m_vao_Quad));
+		m_quadVAO = Asset_Primitive::Generate_VAO();
+		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 
 		initializeCubeFilter();
 		initializeGausianBlur();
@@ -71,7 +59,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		m_shaderGB->bind();
 		m_shaderGB->Set_Uniform(0, horizontal);
 
-		glBindVertexArray(m_vao_Quad);
+		glBindVertexArray(m_quadVAO);
 		const int quad_size = m_shapeQuad->getSize();
 		glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
@@ -117,7 +105,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		m_shaderGB_A->bind();
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 
-		glBindVertexArray(m_vao_Quad);
+		glBindVertexArray(m_quadVAO);
 		const int quad_size = m_shapeQuad->getSize();
 		glDrawArrays(GL_TRIANGLES, 0, quad_size);
 

@@ -70,10 +70,9 @@ private:
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_vao_Quad;
+	GLuint m_quadVAO;
 	vec2 m_renderSize;
 	bool m_Initialized;
-	void *m_observer;
 };
 
 #endif // GEOMETRY_BUFFER

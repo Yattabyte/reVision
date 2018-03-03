@@ -17,7 +17,6 @@
 
 using namespace glm;
 class Anim_Model_Creator;
-class Model_Observer;
 
 
 /**
@@ -71,10 +70,8 @@ protected:
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
 	vector<BoneInfo> m_transforms;
-	unique_ptr<Model_Observer> m_observer;
 	GLsync m_fence; 
 	friend class Anim_Model_Creator;
-	friend class Model_Observer;
 };
 
 class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
@@ -84,19 +81,6 @@ public:
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
 		return new Anim_Model_Component(id, pid, enginePackage);
 	}
-};
-
-struct DT_ENGINE_API Model_Observer : Asset_Observer
-{
-	Model_Observer(Shared_Asset_Model & asset, vector<BoneInfo> *transforms, const GLuint &vao, Anim_Model_Component::Transform_Buffer * uboData, GLuint *skin, const GLuint &uboID, GLsync *fence) :
-		Asset_Observer(asset.get()), m_vao_id(vao), m_transforms(transforms), m_uboData(uboData), m_skin(skin), m_ubo_id(uboID), m_fence(fence)  {};
-	virtual void Notify_Finalized();
-
-	GLuint m_vao_id, m_ubo_id;
-	GLsync *m_fence;
-	GLuint *m_skin;
-	Anim_Model_Component::Transform_Buffer *m_uboData;
-	vector<BoneInfo> *m_transforms;
 };
 
 #endif // ANIM_MODEL_COMPONENT

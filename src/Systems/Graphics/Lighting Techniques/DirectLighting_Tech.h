@@ -43,7 +43,6 @@ private:
 	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
-	void* m_QuadObserver, *m_ConeObserver, *m_SphereObserver;
 };
 
 #endif // DIRECT_LIGHTING_PBR

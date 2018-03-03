@@ -5,20 +5,11 @@
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 
 
-struct Primitiveee_Observer : Asset_Observer {
-	Primitiveee_Observer(Shared_Asset_Primitive & asset, const GLuint vao) : Asset_Observer(asset.get()), m_vao_id(vao) {};
-	virtual void Notify_Finalized() {
-		if (m_asset->existsYet())
-			dynamic_pointer_cast<Asset_Primitive>(m_asset)->updateVAO(m_vao_id);
-	}
-	GLuint m_vao_id;
-};
-
 DirectLighting_Tech::~DirectLighting_Tech()
 {
-	delete m_QuadObserver;
-	delete m_ConeObserver;
-	delete m_SphereObserver;
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeCone.get()) m_shapeCone->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(Asset::FINALIZED, this);
 }
 
 DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
@@ -36,9 +27,9 @@ DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buf
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
-	m_QuadObserver = (void*)(new Primitiveee_Observer(m_shapeQuad, m_quadVAO));
-	m_ConeObserver = (void*)(new Primitiveee_Observer(m_shapeCone, m_coneVAO));
-	m_SphereObserver = (void*)(new Primitiveee_Observer(m_shapeSphere, m_sphereVAO));
+	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeCone->addCallback(Asset::FINALIZED, this, [&]() { m_shapeCone->updateVAO(m_coneVAO); });
+	m_shapeSphere->addCallback(Asset::FINALIZED, this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); });
 }
 
 void DirectLighting_Tech::updateLighting(const Visibility_Token & vis_token)
