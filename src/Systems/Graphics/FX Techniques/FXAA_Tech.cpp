@@ -3,7 +3,7 @@
 
 FXAA_Tech::~FXAA_Tech()
 {
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
 FXAA_Tech::FXAA_Tech()
@@ -11,7 +11,7 @@ FXAA_Tech::FXAA_Tech()
 	Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA");
 	Asset_Loader::load_asset(m_shapeQuad, "quad"); 
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 }
 
 void FXAA_Tech::applyEffect()

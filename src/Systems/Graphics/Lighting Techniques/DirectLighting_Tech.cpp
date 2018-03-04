@@ -7,9 +7,9 @@
 
 DirectLighting_Tech::~DirectLighting_Tech()
 {
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
-	if (m_shapeCone.get()) m_shapeCone->removeCallback(Asset::FINALIZED, this);
-	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
+	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
 }
 
 DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
@@ -27,9 +27,9 @@ DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buf
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
-	m_shapeCone->addCallback(Asset::FINALIZED, this, [&]() { m_shapeCone->updateVAO(m_coneVAO); });
-	m_shapeSphere->addCallback(Asset::FINALIZED, this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeCone->addCallback(this, [&]() { m_shapeCone->updateVAO(m_coneVAO); });
+	m_shapeSphere->addCallback(this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); });
 }
 
 void DirectLighting_Tech::updateLighting(const Visibility_Token & vis_token)

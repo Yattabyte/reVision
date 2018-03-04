@@ -49,7 +49,7 @@ Camera::Camera(Camera const & other)
 void Camera::operator=(Camera const & other)
 {
 	shared_lock<shared_mutex> rguard(other.data_mutex);
-	lock_guard<shared_mutex> wguard(data_mutex);
+	unique_lock<shared_mutex> wguard(data_mutex);
 	m_cameraBuffer = other.getCameraBuffer();
 	m_frustum = Frustum(other.getFrustum());
 	data_mutex.unlock();
@@ -58,7 +58,7 @@ void Camera::operator=(Camera const & other)
 
 void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
 {
-	lock_guard<shared_mutex> wguard(data_mutex);
+	unique_lock<shared_mutex> wguard(data_mutex);
 	m_cameraBuffer.pMatrix = pMatrix;
 	m_cameraBuffer.vMatrix = vMatrix;
 	m_cameraBuffer.pMatrix_Inverse = glm::inverse(pMatrix);
@@ -69,6 +69,12 @@ void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
 	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &m_cameraBuffer);
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+}
+
+void Camera::setVisibilityToken(const Visibility_Token & vis_token)
+{
+	unique_lock<shared_mutex> wguard(data_mutex);
+	m_vistoken = vis_token;
 }
 
 void Camera::update()

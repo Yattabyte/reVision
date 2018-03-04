@@ -56,40 +56,39 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 	if (Component::compareMSGSender(message)) return;
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
-	switch (message.GetCommandID())
-	{
-	case SET_LIGHT_COLOR: {
-		if (!message.IsOfType<vec3>()) break;
-		const auto &payload = message.GetPayload<vec3>();
-		m_uboData.LightColor = payload;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
-		break;
-	}
-	case SET_LIGHT_INTENSITY: {
-		if (!message.IsOfType<float>()) break;
-		const auto &payload = message.GetPayload<float>();
-		m_uboData.LightIntensity = payload;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
-		break;
-	}
-	case SET_ORIENTATION: {
-		if (!message.IsOfType<quat>()) break;
-		const auto &payload = message.GetPayload<quat>();
-		const mat4 rotation = glm::mat4_cast(payload);
-		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-		update();
-		break;
-	}
-	case SET_TRANSFORM: {
-		if (!message.IsOfType<Transform>()) break;
-		const auto &payload = message.GetPayload<Transform>();
-		const mat4 &rotation = payload.m_modelMatrix;
-		m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-		m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-		update();
-		break;
-	}
+	switch (message.GetCommandID()) {
+		case SET_LIGHT_COLOR: {
+			if (!message.IsOfType<vec3>()) break;
+			const auto &payload = message.GetPayload<vec3>();
+			m_uboData.LightColor = payload;
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
+			break;
+		}
+		case SET_LIGHT_INTENSITY: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			m_uboData.LightIntensity = payload;
+			glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightDirBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
+			break;
+		}
+		case SET_ORIENTATION: {
+			if (!message.IsOfType<quat>()) break;
+			const auto &payload = message.GetPayload<quat>();
+			const mat4 rotation = glm::mat4_cast(payload);
+			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+			update();
+			break;
+		}
+		case SET_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			const mat4 &rotation = payload.m_modelMatrix;
+			m_uboData.LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+			m_uboData.lightV = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+			update();
+			break;
+		}
 	}
 
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
@@ -112,8 +111,8 @@ void Light_Directional_Component::shadowPass()
 	update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 
-	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
-	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
+	const Visibility_Token vis_token = m_camera.getVisibilityToken();
+	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 		component->draw();
 
 	m_shadowUpdateTime = glfwGetTime();
@@ -142,7 +141,7 @@ void Light_Directional_Component::update()
 
 void Light_Directional_Component::calculateCascades()
 {
-	const auto &cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
+	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer(); // returns a copy, no need to mutex
 	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
 	const mat4 LightM = m_uboData.lightV;
 

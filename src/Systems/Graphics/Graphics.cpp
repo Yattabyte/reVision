@@ -23,7 +23,7 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 
 		glDeleteBuffers(1, &m_attribID);
 		for each (auto * tech in m_lightingTechs)
@@ -56,7 +56,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 
 		// Load preferences + callbacks
 		m_attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
@@ -103,8 +103,7 @@ void System_Graphics::update(const float & deltaTime)
 {
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 
-	shared_lock<shared_mutex> read_guard(m_enginePackage->m_Camera.getDataMutex());
-	Visibility_Token &vis_token = m_enginePackage->m_Camera.GetVisibilityToken();
+	const Visibility_Token vis_token = m_enginePackage->m_Camera.getVisibilityToken();
 
 	if (m_Initialized &&
 		vis_token.size() &&
@@ -303,7 +302,7 @@ void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
-		
+
 	PriorityLightList timedList(m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
 	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 		timedList.add(component, "Light_Directional");

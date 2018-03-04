@@ -14,7 +14,7 @@ IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
 	glDeleteFramebuffers(1, &m_fbo);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
 IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, VisualFX * visualFX)
@@ -33,7 +33,7 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 

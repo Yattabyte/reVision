@@ -3,9 +3,11 @@
 #include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\GraphiCS\Frame Buffers\Shadow_Buffer.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
 #include "Managers\Message_Manager.h"
 #include <algorithm>
+#include "GLM\gtc\matrix_transform.hpp"
 #include <random>
 
 
@@ -16,7 +18,13 @@ IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	glDeleteVertexArrays(1, &m_bounceVAO);
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+	if (m_enginePackage) {
+		if (m_enginePackage->findSubSystem("World")) {
+			auto m_world = m_enginePackage->getSubSystem<System_World>("World");
+			m_world->unregisterViewer(&m_camera);
+		}
+	}
 }
 
 IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
@@ -40,8 +48,13 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 	m_attribBuffer = GI_Attribs_Buffer(16, .25f, 50, 0.75f, 12);
+
+	if (m_enginePackage->findSubSystem("World")) {
+		auto m_world = m_enginePackage->getSubSystem<System_World>("World");
+		m_world->registerViewer(&m_camera);
+	}
 
 	GLuint VBO = 0;
 	glGenVertexArrays(1, &m_bounceVAO);
@@ -128,9 +141,8 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
-void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & vis_token)
+void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_token)
 {
-	const int & size = m_attribBuffer.resolution;
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
@@ -145,6 +157,8 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & vis_token)
 	glBindVertexArray(m_bounceVAO);
 	// Bounce directional light
 	m_sBuffer->BindForReading_GI(SHADOW_LARGE, GL_TEXTURE0);
+	const Visibility_Token vis_token = m_camera.getVisibilityToken();
+	const int & size = m_attribBuffer.resolution;
 	if (vis_token.find("Light_Directional")) {
 		m_shaderDirectional_Bounce->bind();
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
@@ -229,7 +243,7 @@ void IndirectDiffuse_GI_Tech::bindNoise(const GLuint textureUnit)
 
 void IndirectDiffuse_GI_Tech::updateData()
 {
-	const auto &cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
+	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
 	const vec2 &size = cameraBuffer.Dimensions;
 	float ar = size.x / size.y;
 	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
@@ -265,8 +279,10 @@ void IndirectDiffuse_GI_Tech::updateData()
 	const vec3 frustumpos = (cameraBuffer.vMatrix_Inverse* vec4(middle, 1.0f));
 	const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
 	m_attribBuffer.updateBBOX(aabb, -aabb, clampedPos);
-	//m_attribBuffer.num_lights = (vis_token.visible_PointLights.size() + vis_token.visible_SpotLights.size());
-
+	vec3 newMin = -aabb + clampedPos;
+	vec3 newMax = aabb + clampedPos;
+	float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
+	m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
 
 	glBindBuffer(GL_UNIFORM_BUFFER, m_attribSSBO);
 	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GI_Attribs_Buffer), &m_attribBuffer);

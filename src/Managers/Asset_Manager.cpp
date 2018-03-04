@@ -83,16 +83,18 @@ VectorMap<Shared_Asset> & Asset_Manager::Get_Assets_Map()
 void Asset_Manager::Queue_Notification(const vector<function<void()>> & callbacks)
 {
 	auto &manager = Get();
-	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
+	unique_lock<shared_mutex> guard(manager.m_Mutex_Callbacks);
 	manager.m_notifyees.insert(end(manager.m_notifyees), begin(callbacks), end(callbacks)); // dump new list of observers onto end of list	
 }
 
 void Asset_Manager::Notify_Observers()
 {
 	auto &manager = Get();
-	unique_lock<shared_mutex> guard(manager.m_Mutex_Assets);
-
+	shared_lock<shared_mutex> read_guard(manager.m_Mutex_Callbacks);
 	for each (const auto & notifyee in manager.m_notifyees)
 		notifyee();
+	read_guard.unlock();
+	read_guard.release();
+	unique_lock<shared_mutex> write_guard(manager.m_Mutex_Callbacks);
 	manager.m_notifyees.clear();
 }

@@ -149,8 +149,8 @@ void Light_Point_Component::shadowPass()
 		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightPointBuffer, p_dir), 4, &m_uboData.p_dir);
 		glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-		shared_lock<shared_mutex> read_guard(m_camera[x].getDataMutex());
-		for each (auto &component in m_camera[x].GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
+		const Visibility_Token vis_token = m_camera[x].getVisibilityToken();
+		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 			component->draw();
 	}
 

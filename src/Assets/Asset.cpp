@@ -23,12 +23,10 @@ void Asset::setFileName(const string & fn)
 	m_filename = fn;
 }
 
-void Asset::removeCallback(const Asset_State & state, void * pointerID) {
-	if (m_callbacks.find(state) != m_callbacks.end()) {
-		auto &specific_map = m_callbacks[state];
-		if (specific_map.find(pointerID) != specific_map.end())
-			specific_map.erase(specific_map.find(pointerID));
-	}
+void Asset::removeCallback(void * pointerID) 
+{
+	if (m_callbacks.find(pointerID) != m_callbacks.end())
+		m_callbacks.erase(m_callbacks.find(pointerID));	
 }
 
 bool Asset::existsYet()
@@ -44,17 +42,14 @@ void Asset::finalize()
 		m_finalized = true;
 		write_guard.unlock();
 		write_guard.release();
+
 		shared_lock<shared_mutex> read_guard(m_mutex);
-		Queue_Notification(Asset_State::FINALIZED);
+		vector<function<void()>> funcs;
+		funcs.reserve(m_callbacks.size());
+		for each (const auto & func in m_callbacks)
+			funcs.push_back(func.second);
+		read_guard.unlock();
+		read_guard.release();
+		Asset_Manager::Queue_Notification(funcs);
 	}
-}
-
-void Asset::Queue_Notification(const Asset_State & state)
-{
-	vector<function<void()>> funcs;
-	funcs.reserve(m_callbacks[state].size());
-	for each (const auto & func in m_callbacks[state]) 
-		funcs.push_back(func.second);	
-
-	Asset_Manager::Queue_Notification(funcs);
 }

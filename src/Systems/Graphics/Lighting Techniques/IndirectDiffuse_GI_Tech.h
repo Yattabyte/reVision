@@ -16,6 +16,7 @@
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Systems\World\Camera.h"
 
 class EnginePackage;
 class Geometry_Buffer;
@@ -47,7 +48,6 @@ private:
 		vec4 BBox_Max;
 		vec4 BBox_Min;
 		int samples;
-		int num_lights;
 		int resolution;
 		float spread;
 		float R_wcs;
@@ -56,7 +56,6 @@ private:
 			BBox_Max = vec4(1);
 			BBox_Min = vec4(-1);
 			samples = 16;
-			num_lights = 1;
 			resolution = 16;
 			spread = 1.0f;
 			R_wcs = 1.0f;
@@ -106,6 +105,7 @@ private:
 	float m_farPlane;
 	GI_Attribs_Buffer m_attribBuffer;
 	GLuint m_attribSSBO;
+	Camera m_camera;
 };
 
 #endif // INDIRECT_LIGHTING_PBR

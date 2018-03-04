@@ -4,7 +4,7 @@
 
 VisualFX::~VisualFX()
 {
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
 VisualFX::VisualFX()
@@ -20,7 +20,7 @@ void VisualFX::initialize(EnginePackage * enginePackage)
 		m_enginePackage = enginePackage;
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 
 		initializeCubeFilter();
 		initializeGausianBlur();

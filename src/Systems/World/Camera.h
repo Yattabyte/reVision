@@ -81,38 +81,41 @@ public:
 	void Bind();
 	/** Change the camera's position in space.
 	 * @param	p			the new position value to use */
-	void setPosition(const vec3 & p) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.EyePosition = p; };
+	void setPosition(const vec3 & p) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.EyePosition = p; };
 	/** Change the camera's orientation in space.
 	 * @param	q			new quaternion value to use */
-	void setOrientation(const quat & q) { lock_guard<shared_mutex> wguard(data_mutex); m_orientation = q; };
+	void setOrientation(const quat & q) { unique_lock<shared_mutex> wguard(data_mutex); m_orientation = q; };
 	/** Change the camera's screen dimensions.
 	 * @brief				this is mostly used here for aspect ratio purposes.
 	 * @param	d			the new screen dimensions */
-	void setDimensions(const vec2 & d) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.Dimensions = d; };
+	void setDimensions(const vec2 & d) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.Dimensions = d; };
 	/** Change the camera's clipping plane / near-plane 
 	 * @brief				this is the closest point the camera can see.
 	 * @param	n			the new near-plane value */
-	void setNearPlane(const float & n) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.NearPlane = n; };
+	void setNearPlane(const float & n) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.NearPlane = n; };
 	/** Change the camera's draw distance / far-plane 
 	 * @brief				this is the furthest point the camera can see.
 	 * @param	f			the new far-plane value */
-	void setFarPlane(const float & f) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FarPlane = f; };
+	void setFarPlane(const float & f) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.FarPlane = f; };
 	/** Change the camera's horizontal FOV.  
 	 * @param	fov			the new horizontal FOV to use */
-	void setHorizontalFOV(const float & fov) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.FOV = fov; };
+	void setHorizontalFOV(const float & fov) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.FOV = fov; };
 	/** Change the camera's gamma.
 	 * @param	gamma		the new gamma value */
-	void setGamma(const float & gamma) { lock_guard<shared_mutex> wguard(data_mutex); m_cameraBuffer.Gamma = gamma; };
+	void setGamma(const float & gamma) { unique_lock<shared_mutex> wguard(data_mutex); m_cameraBuffer.Gamma = gamma; };
 	/** Change the perspective and viewing matrices.
 	 * @param	pMatrix		new perspective matrix
 	 * @param	vMatrix		new viewing matrix */
 	void setMatrices(const mat4 & pMatrix, const mat4 &vMatrix);
-	/** Return a reference to this camera's visibility token.
+	/** Return a copy of this camera's visibility token.
 	 * @return				reference to the visibility token */
-	Visibility_Token &GetVisibilityToken() { return m_vistoken; };
+	const Visibility_Token getVisibilityToken() const { shared_lock<shared_mutex> rguard(data_mutex);  return m_vistoken; };
+	/** Gives this camera a new visibility token.
+	 * @param	vis_token	the new visibility token to give to this camera */
+	void setVisibilityToken(const Visibility_Token & vis_token);
 	/** Returns a copy of this camera's data buffer.
 	 * @return				copy of the camera's data buffer */
-	Camera_Buffer getCameraBuffer() const { return m_cameraBuffer; };
+	const Camera_Buffer getCameraBuffer() const { shared_lock<shared_mutex> rguard(data_mutex);  return m_cameraBuffer; };
 	/** Change whether this camera is active or not.
 	 * @param	b			bool for turning on/off the camera */
 	void enableRendering(const bool & b) { render_enabled = b; };

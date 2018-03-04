@@ -16,7 +16,7 @@ Light_Spot_Component::~Light_Spot_Component()
 	if (m_enginePackage) {
 		if (m_shadowMapper)
 			m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
-		if (m_shadowMapper)
+		if (m_world)
 			m_world->unregisterViewer(&m_camera);
 	}
 }
@@ -147,8 +147,8 @@ void Light_Spot_Component::shadowPass()
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot());
 
-	shared_lock<shared_mutex> read_guard(m_camera.getDataMutex());
-	for each (auto &component in m_camera.GetVisibilityToken().getTypeList<Geometry_Component>("Anim_Model"))
+	const Visibility_Token vis_token = m_camera.getVisibilityToken();
+	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 		component->draw();
 
 	m_shadowUpdateTime = glfwGetTime();
@@ -181,7 +181,7 @@ void Light_Spot_Component::update()
 	m_uboData.ShadowSize = size.x;
 	m_camera.setDimensions(size);
 	m_camera.update();
-	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;
+	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;	
 	m_camera.setMatrices(m_uboData.lightP, final);
 
 	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);

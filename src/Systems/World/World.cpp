@@ -127,11 +127,10 @@ void System_World::unregisterViewer(Camera * c)
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 void System_World::calcVisibility(Camera & camera)
 {
-	unique_lock<shared_mutex> write_guard(camera.getDataMutex());
-	Visibility_Token &vis_token = camera.GetVisibilityToken();
-	const auto &camBuffer = camera.getCameraBuffer();
+	const auto camBuffer = camera.getCameraBuffer();
 	const mat4 &camPMatrix = camBuffer.pMatrix;
 	const mat4 &camVMatrix = camBuffer.vMatrix;
+	Visibility_Token vis_token;
 
 	{
 		vector<const char *> types = { "Anim_Model" };
@@ -163,6 +162,7 @@ void System_World::calcVisibility(Camera & camera)
 			vis_token.insertType(type);
 			vis_token[type] = visible_components;
 		}
-
 	}
+
+	camera.setVisibilityToken(vis_token);
 }

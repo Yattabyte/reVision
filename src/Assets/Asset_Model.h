@@ -74,7 +74,7 @@ typedef shared_ptr<Asset_Model> Shared_Asset_Model;
  **/
 class DT_ENGINE_API Asset_Model : public Asset
 {
-public:
+public:	
 	// (de)Constructors
 	/** Destroy the Model. */
 	~Asset_Model();

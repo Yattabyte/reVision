@@ -31,14 +31,6 @@ typedef shared_ptr<Asset> Shared_Asset;
 class DT_ENGINE_API Asset
 {
 public:
-	// Public Enumerations
-	static const enum Asset_State {
-		CONSTRUCTED,
-		INITIALIZED,
-		FINALIZED
-	};
-
-
 	// (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
 	~Asset();
@@ -53,22 +45,19 @@ public:
 	/** Sets the file name of this asset.
 	 * @param	filename	the file name to set this asset to */
 	void setFileName(const string & filename);	
-	/** Attaches a callback method to be triggered when the supplied state of this asset changes
-	 * @param	state		the state of this asset to listen to
+	/** Attaches a callback method to be triggered when the asset finishes loading.
 	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
 	 * @param	callback	the method to be triggered
 	 * @param	<Callback>	the (auto-deduced) signature of the method */
 	template <typename Callback>
-	void addCallback(const Asset_State & state, void * pointerID, Callback && callback) {
+	void addCallback(void * pointerID, Callback && callback) {
 		unique_lock<shared_mutex> write_guard(m_mutex);
-		m_callbacks.insert(pair<Asset_State, map<void*, function<void()>>>(state, map<void*, function<void()>>()));
-		m_callbacks[state].insert(pair<void*, function<void()>>(pointerID, function<void()>()));
-		m_callbacks[state][pointerID] = forward<Callback>(callback);
+		m_callbacks.insert(pair<void*, function<void()>>(pointerID, function<void()>()));
+		m_callbacks[pointerID] = forward<Callback>(callback);
 	}
-	/** Removes a callback method from triggering when the supplied state changes.
-	* @param	targetKey	the preference key that was listening for changes
-	* @param	pointerID	the pointer to the object owning the callback to be removed */
-	void removeCallback(const Asset_State & state, void * pointerID);
+	/** Removes a callback method from triggering when the asset finishes loading.
+	 * @param	pointerID	the pointer to the object owning the callback to be removed */
+	void removeCallback(void * pointerID);
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return				true if this asset has finished finalizing, false otherwise. */
@@ -83,14 +72,10 @@ public:
 
 
 protected:
-	// Protected Methods
-	void Queue_Notification(const Asset_State & state);
-
-
 	// Protected Attributes
 	bool m_finalized;
 	string m_filename;
-	map<Asset_State, map<void*, function<void()>>> m_callbacks;
+	map<void*, function<void()>> m_callbacks;
 };
 
 

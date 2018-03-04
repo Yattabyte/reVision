@@ -203,6 +203,7 @@ private:
 	deque<Work_Order*> m_WorkOrders_to_finalize;
 	shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;	
+	shared_mutex m_Mutex_Callbacks;
 	vector<function<void()>> m_notifyees;
 };
 

@@ -35,7 +35,7 @@ Geometry_Buffer::Geometry_Buffer()
 		m_textures[x] = 0;
 	for (int x = 0; x < 2; ++x)
 		m_texturesGB[x] = 0;
-	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(Asset::FINALIZED, this);
+	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
 void Geometry_Buffer::initialize(const vec2 & size, VisualFX * visualFX)
@@ -45,7 +45,7 @@ void Geometry_Buffer::initialize(const vec2 & size, VisualFX * visualFX)
 		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(Asset::FINALIZED, this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 		m_renderSize = size;
 		
 		// Create the FBO

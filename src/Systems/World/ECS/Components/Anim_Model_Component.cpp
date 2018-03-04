@@ -11,7 +11,7 @@ Anim_Model_Component::~Anim_Model_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	glDeleteVertexArrays(1, &m_vao_id);
-	if (m_model.get()) m_model->removeCallback(Asset::FINALIZED, this);
+	if (m_model.get()) m_model->removeCallback(this);
 }
 
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
@@ -39,58 +39,58 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
 	switch (message.GetCommandID()) {
-	case SET_MODEL_DIR: {
-		if (!message.IsOfType<string>()) break;
-		const auto &payload = message.GetPayload<string>();
-		// Remove callback from old model before loading
-		if (m_model.get()) 
-			m_model->removeCallback(Asset::FINALIZED, this);
-		// Load new model
-		Asset_Loader::load_asset(m_model, payload);
-		// Attach new callback
-		m_model->addCallback(Asset::FINALIZED, this, [&]() {
-			if (m_model->existsYet()) {
-				m_model->updateVAO(m_vao_id);
-				m_uboData.materialID = m_model->getSkinID(m_skin);
-				m_transforms = m_model->m_animationInfo.meshTransforms;
-				glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-				glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-				glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
+		case SET_MODEL_DIR: {
+			if (!message.IsOfType<string>()) break;
+			const auto &payload = message.GetPayload<string>();
+			// Remove callback from old model before loading
+			if (m_model.get()) 
+				m_model->removeCallback(this);
+			// Load new model
+			Asset_Loader::load_asset(m_model, payload);
+			// Attach new callback
+			m_model->addCallback(this, [&]() {
+				if (m_model->existsYet()) {
+					m_model->updateVAO(m_vao_id);
+					m_uboData.materialID = m_model->getSkinID(m_skin);
+					m_transforms = m_model->m_animationInfo.meshTransforms;
+					glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+					glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+					glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
+					glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				glFlush();
-			}
-		});
-		break;
-	}
-	case SET_MODEL_TRANSFORM: {
-		if (!message.IsOfType<Transform>()) break;
-		const auto &payload = message.GetPayload<Transform>();
-		m_uboData.mMatrix = payload.m_modelMatrix;
-		update();
-		break;
-	}
-	case SET_MODEL_SKIN: {
-		if (!message.IsOfType<GLuint>()) break;
-		const auto &payload = message.GetPayload<GLuint>();
-		m_skin = payload;
-		if (m_model->existsYet()) {
-			m_uboData.materialID = m_model->getSkinID(m_skin);
+					m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+					glFlush();
+				}
+			});
+			break;
+		}
+		case SET_MODEL_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			m_uboData.mMatrix = payload.m_modelMatrix;
 			update();
+			break;
 		}
-		break;
-	}
-	case SET_MODEL_ANIMATION: {
-		if (message.IsOfType<int>()) {
-			m_animation = message.GetPayload<int>();
-			m_playAnim = true;
+		case SET_MODEL_SKIN: {
+			if (!message.IsOfType<GLuint>()) break;
+			const auto &payload = message.GetPayload<GLuint>();
+			m_skin = payload;
+			if (m_model->existsYet()) {
+				m_uboData.materialID = m_model->getSkinID(m_skin);
+				update();
+			}
+			break;
 		}
-		else if (message.IsOfType<bool>()) {
-			m_playAnim = message.GetPayload<bool>();
+		case SET_MODEL_ANIMATION: {
+			if (message.IsOfType<int>()) {
+				m_animation = message.GetPayload<int>();
+				m_playAnim = true;
+			}
+			else if (message.IsOfType<bool>()) {
+				m_playAnim = message.GetPayload<bool>();
+			}
+			break;
 		}
-		break;
-	}
 	}
 }
 
