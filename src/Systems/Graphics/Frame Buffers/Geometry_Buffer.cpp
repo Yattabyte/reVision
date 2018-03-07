@@ -144,25 +144,25 @@ void Geometry_Buffer::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 		glBindTexture(GL_TEXTURE_2D, m_textures[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
-	}
-
-	for (int x = 0; x < 2; ++x) {
-		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
 	}
 
 	// Depth-stencil buffer texture
 	glBindTexture(GL_TEXTURE_2D, m_depth_stencil);
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	
+	for (int x = 0; x < 2; ++x) {
+		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
+		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+	}
+
 
 	// restore default FBO
+	glBindTexture(GL_TEXTURE_2D, 0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 }
 

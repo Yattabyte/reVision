@@ -38,7 +38,6 @@ void DirectLighting_Tech::updateLighting(const Visibility_Token & vis_token)
 
 void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
 {
-	if (!m_shaderDirectional->existsYet()) return;
 	const size_t &quad_size = m_shapeQuad->getSize();
 	const size_t &cone_size = m_shapeCone->getSize();
 	const size_t &sphere_size = m_shapeSphere->getSize();

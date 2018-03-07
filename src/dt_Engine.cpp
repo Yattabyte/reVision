@@ -24,10 +24,10 @@ static void GLFW_Callback_Error(int error, const char * description)
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	EnginePackage &package = *((EnginePackage*)glfwGetWindowUserPointer(window));
-	package.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
-	package.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 	package.m_Camera.setDimensions(vec2(width, height));
 	package.m_Camera.update();
+	package.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
+	package.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
 // Is called when error messages occur within OpenGL driver

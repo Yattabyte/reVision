@@ -79,7 +79,7 @@ void Camera::setVisibilityToken(const Visibility_Token & vis_token)
 
 void Camera::update()
 {
-	shared_lock<shared_mutex> rguard(data_mutex);
+	unique_lock<shared_mutex> wguard(data_mutex);
 
 	// Update Perspective Matrix
 	float ar(m_cameraBuffer.Dimensions.x / m_cameraBuffer.Dimensions.y);

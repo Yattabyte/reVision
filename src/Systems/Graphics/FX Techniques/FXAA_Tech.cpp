@@ -18,7 +18,6 @@ void FXAA_Tech::applyEffect()
 {
 	const size_t &quad_size = m_shapeQuad->getSize();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 
 	m_shaderFXAA->bind();
 	glBindVertexArray(m_quadVAO);

@@ -46,9 +46,18 @@ void System_World::update(const float & deltaTime)
 				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
 				point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));
 				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
-				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));;
+				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));
 			}
 		}*/
+
+		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 15.0f));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
+		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(0, 5, 0)));
+		spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0, 0, 1))));
+		*/
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.80, 0.6)));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 7.5f));
