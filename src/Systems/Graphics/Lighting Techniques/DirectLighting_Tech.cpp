@@ -48,7 +48,7 @@ void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
 	m_lBuffer->bindForWriting();
 
 	m_sBuffer->bindForReading(SHADOW_LARGE, 3);
-	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet()) {
+	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet()) {
 		m_shaderDirectional->bind();
 		glBindVertexArray(m_quadVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
@@ -58,14 +58,14 @@ void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
 	glEnable(GL_STENCIL_TEST);
 	glCullFace(GL_FRONT);
 	m_sBuffer->bindForReading(SHADOW_REGULAR, 3);
-	if (vis_token.find("Light_Point") && m_shaderPoint->existsYet()) {
+	if (vis_token.find("Light_Point") && m_shaderPoint->existsYet() && m_shapeSphere->existsYet()) {
 		m_shaderPoint->bind();
 		glBindVertexArray(m_sphereVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point")) 
 			component->directPass(sphere_size);
 	}
 
-	if (vis_token.find("Light_Spot") && m_shaderSpot->existsYet()) {
+	if (vis_token.find("Light_Spot") && m_shaderSpot->existsYet() && m_shapeCone->existsYet()) {
 		m_shaderSpot->bind();
 		glBindVertexArray(m_coneVAO);
 		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))

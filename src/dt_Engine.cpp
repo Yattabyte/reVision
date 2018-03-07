@@ -67,6 +67,9 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 		errorSeverity = "HIGH";
 		break;
 	}
+	if (type == 1280) {
+		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
+	}
 //	MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
 
@@ -125,8 +128,7 @@ bool Initialize_Sharing()
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
 		GLuint unusedIds = 0;
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, false);
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DEBUG_SEVERITY_MEDIUM, 0, &unusedIds, true);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);
 
 		m_Initialized_Sharing = true;
 	}
@@ -237,8 +239,9 @@ void dt_Engine::tick()
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
-		for each (auto system in m_package->m_Systems)
+		for each (auto system in m_package->m_Systems) 			
 			system.second->update(deltaTime);
+		
 		
 		glfwSwapBuffers(m_package->m_Context_Rendering);
 		glfwPollEvents();

@@ -59,8 +59,8 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 			const aiFace& face = mesh->mFaces[x];
 			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
 				const int index = face.mIndices[b];
-				const aiVector3D vertex = mesh->mVertices[index];
-				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
+				const auto &vertex = mesh->mVertices[index];
+				const auto &uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
 				vertices.push_back(vec3(vertex.x, vertex.y, vertex.z));
 				uv_coords.push_back(vec2(uvmap.x, uvmap.y));
 			}
