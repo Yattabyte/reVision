@@ -160,7 +160,7 @@ bool Light_Spot_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
 }
 
-float Light_Spot_Component::getImportance(const vec3 & position)
+float Light_Spot_Component::getImportance(const vec3 & position) const
 {
 	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
 }

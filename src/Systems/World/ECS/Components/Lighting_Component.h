@@ -39,7 +39,7 @@ public:
 	 * @brief				importance is equal to (distance / size).
 	 * @param	position	the position of the viewer (camera)
 	 * @return				the importance value calculated. */
-	virtual float getImportance(const vec3 &position) = 0;
+	virtual float getImportance(const vec3 &position) const = 0;
 	/** Retrieves the timestamp of the last shadowmap update.
 	 * @return				the shadow update time */
 	double getShadowUpdateTime() const { return m_shadowUpdateTime; }

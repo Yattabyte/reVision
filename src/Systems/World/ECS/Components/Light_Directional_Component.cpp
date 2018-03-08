@@ -124,7 +124,7 @@ bool Light_Directional_Component::isVisible(const mat4 & PMatrix, const mat4 &VM
 	return true;
 }
 
-float Light_Directional_Component::getImportance(const vec3 & position)
+float Light_Directional_Component::getImportance(const vec3 & position) const
 {
 	return 1.0f;
 }

@@ -1,7 +1,5 @@
 #include "dt_Engine.h"
 #include "Systems\World\Camera.h"
-
-#include "Assets\Asset_Model.h"
 #include <thread>
 
 
@@ -18,8 +16,6 @@ int main()
 	dt_Engine engine;
 	thread *m_UpdaterThread;
 	Camera * camera;
-
-	Shared_Asset_Model model;
 
 	if (!engine.initialize())
 		exit(-1);

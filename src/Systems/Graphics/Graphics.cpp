@@ -9,6 +9,7 @@
 #include "Systems\World\Camera.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Utilities\PriorityList.h"
 #include <random>
 #include <minmax.h>
 
@@ -214,81 +215,55 @@ void System_Graphics::generateKernal()
 
 void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 {
-	struct PriorityLightList {
-		// Nested Element struct
-		struct LightElement {
-			double m_updateTime;
-			float m_importance;
-			Lighting_Component *m_ptr;
-			const char * m_lightType;
-			LightElement(const double & time, const float & importance, Lighting_Component * ptr,const char * type) {
-				m_updateTime = time;
-				m_importance = importance;
-				m_ptr = ptr;
-				m_lightType = type;
-			}
-		};
+	/** This is used to prioritize the oldest AND closest lights to the viewer (position) **/
+	class PriorityLightList
+	{
+	public:
+		// (de)Constructors
+		/** Default destructor. */
+		~PriorityLightList() {}
+		/** Construct a priority light list with the given quality and position.
+		 * @param	quality		the max number of final elements
+		 * @param	position	the position of the viewer */
+		PriorityLightList(const unsigned int & quality, const vec3 & position) : m_quality(quality), m_oldest(quality), m_position(position) {}
 
-		// Constructor
-		PriorityLightList(const int &capacity, const vec3 & position) {
-			m_capacity = capacity;
-			m_position = position;
-			m_list.reserve(capacity);
+
+		// Public Methods
+		/** Fill the oldest light list with a new light, and have it sorted.
+		 * @param	light		the light to insert */
+		void insert(Lighting_Component * light) {
+			m_oldest.insert(light->getShadowUpdateTime(), light);
 		}
+		/** Return a list composed of the oldest and the closest lights.
+		 * @return				a double sorted list with the oldest lights and closest lights */
+		const vector<Lighting_Component*> toList() const {
+			PriorityList<float, Lighting_Component*, greater<float>> m_closest(m_quality / 2);
+			vector<Lighting_Component*> outList;
+			outList.reserve(m_quality);
 
-		// Accessors/Updaters
-		void add(Lighting_Component * c, const char * type) {
-			const size_t &listSize = m_list.size();
-			double time = c->getShadowUpdateTime(); 
-			int insertionIndex = listSize;	
-			for (int x = 0; x < listSize; ++x) {
-				if (time < m_list[x].m_updateTime) {
-					insertionIndex = x;
+			for each (const auto &element in m_oldest.toList()) {
+				if (outList.size() < (m_quality / 2))
+					outList.push_back(element);
+				else
+					m_closest.insert(element->getImportance(m_position), element);
+			}
+
+			for each (const auto &element in m_closest.toList()) {
+				if (outList.size() > m_quality)
 					break;
-				}
+				outList.push_back(element);
 			}
-			m_list.insert(m_list.begin() + insertionIndex, LightElement(time, c->getImportance(m_position), c, type));
-			if (m_list.size() > m_capacity) {
-				m_list.reserve(m_capacity);
-				m_list.shrink_to_fit();
-			}		
-		}
-		Visibility_Token toVisToken() {
-			Visibility_Token token;
-			token.insertType("Light_Directional");
-			token.insertType("Light_Point");
-			token.insertType("Light_Spot");
-
-			if (m_list.size()) {
-				// Find the closest element
-				LightElement closest = m_list[0];
-				unsigned int closestSpot = 0;
-				for (unsigned int x = 1, size = m_list.size(); x < size; ++x) {
-					const auto & element = m_list[x];
-					if (element.m_importance > closest.m_importance) {
-						closest = element;
-						closestSpot = x;
-					}
-				}
-				// Push the closest light first
-				token[closest.m_lightType].push_back((Component*)closest.m_ptr);
-				// Get the m_capacity-1 oldest lights
-				for (unsigned int x = 0, size = m_list.size(); x < size && x < m_capacity-1; ++x) {
-					if (x == closestSpot) 
-						continue;
-					const auto & element = m_list[x];
-					token[element.m_lightType].push_back((Component*)element.m_ptr);
-				}
-			}
-			return token;
+			return outList;
 		}
 
-		// Members
-		int m_capacity;
+
+	private:
+		// Private Attributes
+		unsigned int m_quality;
 		vec3 m_position;
-		vector<LightElement> m_list;
+		PriorityList<float, Lighting_Component*, less<float>> m_oldest;
 	};
-
+	
 	// Quit early if we don't have models, or we don't have any lights 
 	// Logically equivalent to continuing while we have at least 1 model and 1 light
 	if ((!vis_token.find("Anim_Model")) ||
@@ -297,25 +272,25 @@ void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 		(!vis_token.find("Light_Spot")))
 		return;
 
+	// Retrieve a sorted list of most important lights to run shadow calc for.
+	const vec3 &camPos = m_enginePackage->m_Camera.getCameraBuffer().EyePosition;
+	PriorityLightList queueDir(m_updateQuality, camPos), queuePoint(m_updateQuality, camPos), queueSpot(m_updateQuality, camPos);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
+		queueDir.insert(component);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		queuePoint.insert(component);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+		queueSpot.insert(component);
+	const auto &dirLights = queueDir.toList();
+	const auto &pointLights = queuePoint.toList();
+	const auto &spotLights = queueSpot.toList();
+
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LEQUAL);
-	glCullFace(GL_BACK);
-
-	PriorityLightList timedList(m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-		timedList.add(component, "Light_Directional");
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
-		timedList.add(component, "Light_Point");
-	for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-		timedList.add(component, "Light_Spot");
-
-
-	const Visibility_Token &priorityLights = timedList.toVisToken();
-	const auto &dirLights = priorityLights.getTypeList<Lighting_Component>("Light_Directional"),
-			   &pointLights = priorityLights.getTypeList<Lighting_Component>("Light_Point"), 
-			   &spotLights = priorityLights.getTypeList<Lighting_Component>("Light_Spot");
+	glCullFace(GL_BACK);	
+	
 	m_shadowBuffer.bindForWriting(SHADOW_LARGE);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_shaderDirectional_Shadow->bind();

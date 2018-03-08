@@ -37,7 +37,7 @@ public:
 	virtual void indirectPass(const int &vertex_count);
 	virtual void shadowPass();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
-	virtual float getImportance(const vec3 &position);
+	virtual float getImportance(const vec3 &position) const;
 	
 
 	/** Sends current data to the GPU. */
