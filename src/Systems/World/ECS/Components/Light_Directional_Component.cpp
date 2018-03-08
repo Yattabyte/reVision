@@ -13,11 +13,9 @@ Light_Directional_Component::~Light_Directional_Component()
 {
 	glDeleteBuffers(1, &m_uboID);
 	if (m_enginePackage) {
-		if (m_enginePackage->findSubSystem("Graphics")) {
-			auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
+		if (m_shadowMapper) 			
 			for (int x = 0; x < NUM_CASCADES; ++x)
-				shadowmapper.unregisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
-		}
+				m_shadowMapper->unregisterShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);		
 		if (m_enginePackage->findSubSystem("World"))
 			m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 	}
@@ -43,9 +41,9 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		auto &shadowmapper = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
 		for (int x = 0; x < NUM_CASCADES; ++x)
-			shadowmapper.registerShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+			m_shadowMapper->registerShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 	}
 	if (m_enginePackage->findSubSystem("World"))
 		m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
@@ -110,6 +108,8 @@ void Light_Directional_Component::shadowPass()
 {
 	update();
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+	for (int x = 0; x < NUM_CASCADES; ++x)
+		m_shadowMapper->clearShadow(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))

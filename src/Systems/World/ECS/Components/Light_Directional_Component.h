@@ -22,6 +22,7 @@
 using namespace glm;
 class Light_Directional_Creator;
 class EnginePackage;
+class Shadow_Buffer;
 
 
 /**
@@ -89,6 +90,7 @@ protected:
 	LightDirBuffer m_uboData;
 	float m_cascadeEnd[5];
 	EnginePackage *m_enginePackage;
+	Shadow_Buffer *m_shadowMapper;
 	Camera m_camera;
 	friend class Light_Directional_Creator;
 };

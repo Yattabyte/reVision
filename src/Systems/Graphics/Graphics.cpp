@@ -292,7 +292,6 @@ void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 	glCullFace(GL_BACK);	
 	
 	m_shadowBuffer.bindForWriting(SHADOW_LARGE);
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	m_shaderDirectional_Shadow->bind();
 	for each (auto &component in dirLights) 
 		component->shadowPass();	
