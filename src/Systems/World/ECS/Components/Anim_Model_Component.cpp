@@ -49,18 +49,16 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			Asset_Loader::load_asset(m_model, payload);
 			// Attach new callback
 			m_model->addCallback(this, [&]() {
-				if (m_model->existsYet()) {
-					m_model->updateVAO(m_vao_id);
-					m_uboData.materialID = m_model->getSkinID(m_skin);
-					m_transforms = m_model->m_animationInfo.meshTransforms;
-					glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-					glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-					glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
-					glBindBuffer(GL_UNIFORM_BUFFER, 0);
+				m_model->updateVAO(m_vao_id);
+				m_uboData.materialID = m_model->getSkinID(m_skin);
+				m_transforms = m_model->m_animationInfo.meshTransforms;
+				glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+				glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+				glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
+				glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
-					m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-					glFlush();
-				}
+				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				glFlush();				
 			});
 			break;
 		}

@@ -317,6 +317,7 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
 		m_gBuffer.bindForWriting();
 		m_shaderGeometry->bind();
 

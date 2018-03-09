@@ -54,6 +54,11 @@ public:
 		unique_lock<shared_mutex> write_guard(m_mutex);
 		m_callbacks.insert(pair<void*, function<void()>>(pointerID, function<void()>()));
 		m_callbacks[pointerID] = forward<Callback>(callback);
+		write_guard.unlock();
+		write_guard.release();
+
+		if (m_finalized)
+			notify();
 	}
 	/** Removes a callback method from triggering when the asset finishes loading.
 	 * @param	pointerID	the pointer to the object owning the callback to be removed */
@@ -65,6 +70,8 @@ public:
 	/** Performs final data processing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
 	virtual void finalize();
+	/** Notifies all observers that the asset is ready. */
+	void notify();
 
 
 	// Public Attributes

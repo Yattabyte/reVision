@@ -25,6 +25,7 @@ void Asset::setFileName(const string & fn)
 
 void Asset::removeCallback(void * pointerID) 
 {
+	unique_lock<shared_mutex> write_guard(m_mutex);
 	if (m_callbacks.find(pointerID) != m_callbacks.end())
 		m_callbacks.erase(m_callbacks.find(pointerID));	
 }
@@ -43,13 +44,18 @@ void Asset::finalize()
 		write_guard.unlock();
 		write_guard.release();
 
-		shared_lock<shared_mutex> read_guard(m_mutex);
-		vector<function<void()>> funcs;
-		funcs.reserve(m_callbacks.size());
-		for each (const auto & func in m_callbacks)
-			funcs.push_back(func.second);
-		read_guard.unlock();
-		read_guard.release();
-		Asset_Manager::Queue_Notification(funcs);
+		notify();
 	}
+}
+
+void Asset::notify()
+{
+	shared_lock<shared_mutex> read_guard(m_mutex);
+	vector<function<void()>> funcs;
+	funcs.reserve(m_callbacks.size());
+	for each (const auto & func in m_callbacks)
+		funcs.push_back(func.second);
+	read_guard.unlock();
+	read_guard.release();
+	Asset_Manager::Queue_Notification(funcs);	
 }
