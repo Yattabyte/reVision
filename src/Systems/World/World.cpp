@@ -60,7 +60,7 @@ void System_World::update(const float & deltaTime)
 		*/
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.80, 0.6)));
-		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 3.5f));
+		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f));
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0,0,1))));
 		
 		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
