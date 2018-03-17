@@ -14,6 +14,7 @@
 #include "Systems\Graphics\Frame Buffers\Geometry_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
+#include "Systems\Graphics\Frame Buffers\Reflection_Buffer.h"
 #include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\VisualFX.h"
@@ -62,7 +63,7 @@ public:
 	void setSSAORadius(const float & radius);
 	/** Change the size of framebuffers used.
 	 * @param	size		the new size to use */
-	void resize(const vec2 & size);	
+	void resize(const ivec2 & size);	
 	/** Change the shadow update quality  used.
 	* @param	size		the new size to use */
 	void setShadowUpdateQuality(const float & quality);
@@ -97,11 +98,12 @@ private:
 	// Public Attributes
 	Renderer_Attribs m_attribs;
 	GLuint m_attribID;
-	vec2 m_renderSize;
+	ivec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gBuffer;
 	Lighting_Buffer m_lBuffer;
 	Shadow_Buffer m_shadowBuffer;
+	Reflection_Buffer m_refBuffer;
 	Shared_Asset_Shader	m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,						
 						m_shaderGeometry, m_shaderSky;
 	Shared_Asset_Primitive m_shapeQuad;

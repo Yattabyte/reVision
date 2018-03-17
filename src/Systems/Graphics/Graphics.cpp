@@ -35,7 +35,7 @@ System_Graphics::~System_Graphics()
 }
 
 System_Graphics::System_Graphics() :
-	m_visualFX(), m_gBuffer(), m_lBuffer()
+	m_visualFX(), m_gBuffer(), m_lBuffer(), m_shadowBuffer(), m_refBuffer()
 {
 	m_quadVAO = 0;
 	m_attribID = 0;
@@ -64,8 +64,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
 		m_attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
 		m_attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });
-		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });		
 
 		// Generate attribute buffer
@@ -82,15 +82,16 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		// Initiate graphics buffers
-		m_visualFX.initialize(m_enginePackage);
-		m_gBuffer.initialize(m_renderSize, &m_visualFX);
-		m_lBuffer.initialize(m_renderSize, m_gBuffer.m_depth_stencil);
+		m_visualFX.initialize(enginePackage);
+		m_gBuffer.initialize(enginePackage, &m_visualFX);
+		m_lBuffer.initialize(enginePackage, m_gBuffer.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
+		m_refBuffer.initialize(enginePackage);
 
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
 		m_lightingTechs.push_back(new IndirectDiffuse_GI_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer)); 
-		m_lightingTechs.push_back(new IndirectSpecular_SSR_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_visualFX));
+		m_lightingTechs.push_back(new IndirectSpecular_SSR_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_refBuffer, &m_visualFX));
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX));
 
 		// Initiate effects techniques
@@ -111,8 +112,6 @@ void System_Graphics::update(const float & deltaTime)
 		m_shapeQuad->existsYet() &&
 		m_textureSky->existsYet() &&
 		m_shaderSky->existsYet() &&
-
-
 		m_shaderGeometry->existsYet())
 	{
 		// Regeneration Phase
@@ -123,10 +122,13 @@ void System_Graphics::update(const float & deltaTime)
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		m_gBuffer.clear();
 		m_lBuffer.clear();
+		m_refBuffer.clear();
 		geometryPass(vis_token);
 		
 		// Writing to lighting fbo
 		skyPass();
+		/*m_lightingTechs[1]->applyLighting(vis_token);*/
+		
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
@@ -174,11 +176,9 @@ void System_Graphics::setSSAORadius(const float & radius)
 	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
-void System_Graphics::resize(const vec2 & size)
+void System_Graphics::resize(const ivec2 & size)
 {
 	m_renderSize = size;
-	m_gBuffer.resize(size);
-	m_lBuffer.resize(size);
 }
 
 void System_Graphics::setShadowUpdateQuality(const float & quality)

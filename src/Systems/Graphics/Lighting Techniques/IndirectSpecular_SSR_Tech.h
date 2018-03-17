@@ -14,10 +14,12 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
+#include "Assets\Asset_Cubemap.h"
 
 class EnginePackage;
 class Geometry_Buffer;
 class Lighting_Buffer;
+class Reflection_Buffer;
 class VisualFX;
 
 
@@ -30,7 +32,7 @@ public:
 	/** Virtual Destructor. */
 	~IndirectSpecular_SSR_Tech();
 	/** Constructor. */
-	IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, VisualFX * visualFX);
+	IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Reflection_Buffer * refBuffer, VisualFX * visualFX);
 
 
 	// Interface Implementations.
@@ -54,14 +56,7 @@ private:
 	};
 
 
-	// Private Methods
-	/** Binds the framebuffer and its render-targets for writing.
-	* @param	bounceSpot		which bounce we are performing */
-	void bindForWriting(const GLuint & bounceSpot);
-	/** Binds the framebuffer and its render-targets for reading.
-	* @param	bounceSpot		which bounce we are performing
-	* @param	textureUnit		which texture unit we are going to start with (minimum GL_TEXTURE0) */
-	void bindForReading(const GLuint & bounceSpot, const GLuint textureUnit);
+	// Private Methods	
 	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness.*/
 	void blurLight();
 	/** Applies the SSR effect using the blurred light MIP chain*/
@@ -71,11 +66,13 @@ private:
 	// Private Attributes
 	Geometry_Buffer * m_gBuffer;
 	Lighting_Buffer * m_lBuffer;
+	Reflection_Buffer * m_refBuffer;
 	EnginePackage * m_enginePackage;
 	VisualFX * m_visualFX;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, TEMP_SHADER;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
+	Shared_Asset_Cubemap TEMP_SKY;
 	GLuint m_quadVAO;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;

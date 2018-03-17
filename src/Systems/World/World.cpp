@@ -40,7 +40,7 @@ void System_World::update(const float & deltaTime)
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
 		hills->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
 
-		for (int x = 0; x < 3; ++x) {
+	/*	for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
 				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
@@ -48,7 +48,7 @@ void System_World::update(const float & deltaTime)
 				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
 				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));
 			}
-		}
+		}*/
 
 		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));

@@ -1,6 +1,7 @@
 #include "Systems\Graphics\Lighting Techniques\IndirectSpecular_SSR_Tech.h"
 #include "Systems\GraphiCS\Frame Buffers\Geometry_Buffer.h"
 #include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
+#include "Systems\GraphiCS\Frame Buffers\Reflection_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
@@ -17,11 +18,12 @@ IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, VisualFX * visualFX)
+IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Reflection_Buffer * refBuffer, VisualFX * visualFX)
 {
 	m_enginePackage = enginePackage;
 	m_gBuffer = gBuffer;
 	m_lBuffer = lBuffer;
+	m_refBuffer = refBuffer;
 	m_visualFX = visualFX;
 	m_fbo = 0;
 	m_texture = 0;
@@ -32,6 +34,12 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\ssr");
 	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
+
+	/******************************************************/
+	/**/Asset_Loader::load_asset(TEMP_SHADER, "ref_sky");/**/
+	/**/Asset_Loader::load_asset(TEMP_SKY, "sky\\");/******/
+	/******************************************************/
+
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
@@ -98,18 +106,20 @@ void IndirectSpecular_SSR_Tech::updateLighting(const Visibility_Token & vis_toke
 
 void IndirectSpecular_SSR_Tech::applyLighting(const Visibility_Token & vis_token)
 {
+	// Get Skybox reflections
+	const int quad_size = m_shapeQuad->getSize();	
+
+	m_refBuffer->bindForWriting();
+	m_gBuffer->bindForReading();
+	TEMP_SHADER->bind();
+	TEMP_SKY->bind(GL_TEXTURE3);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+
 	blurLight();
 	reflectLight();
-}
-
-void IndirectSpecular_SSR_Tech::bindForWriting(const GLuint &bounceSpot)
-{
-	
-}
-
-void IndirectSpecular_SSR_Tech::bindForReading(const GLuint &bounceSpot, const GLuint textureUnit)
-{
-	
 }
 
 void IndirectSpecular_SSR_Tech::blurLight()
@@ -172,6 +182,7 @@ void IndirectSpecular_SSR_Tech::reflectLight()
 	glBindVertexArray(m_quadVAO);
 	m_shaderSSR->bind();
 	m_gBuffer->bindForReading(); // Gbuffer
+	m_refBuffer->bindForReading(GL_TEXTURE3); // Fallback Reflections
 	m_brdfMap->bind(GL_TEXTURE4); // BRDF LUT
 	glBindMultiTextureEXT(GL_TEXTURE5, GL_TEXTURE_2D, m_texture); // blurred light MIP-chain
 	glEnable(GL_BLEND);

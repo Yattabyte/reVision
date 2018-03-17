@@ -49,7 +49,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
-	m_attribBuffer = GI_Attribs_Buffer(16, 2.5f, 100, 1.0f, 16);
+	m_attribBuffer = GI_Attribs_Buffer(16, 0.75, 100, 0.75, 12);
 
 	if (m_enginePackage->findSubSystem("World")) {
 		auto m_world = m_enginePackage->getSubSystem<System_World>("World");

@@ -8,12 +8,11 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define GLEW_STATIC
 
-#include "GL\glew.h"
-#include "glm\glm.hpp"
+#include "Systems\Graphics\Frame Buffers\Frame_Buffer.h"
 
 using namespace glm;
+class EnginePackage;
 class VisualFX;
 
 
@@ -21,42 +20,36 @@ class VisualFX;
  * A specialized framebuffer that accumulates lighting information for a single frame.
  * Supports bloom, accumulates over-brightened lights in a second render-target.
  **/
-class DT_ENGINE_API Lighting_Buffer
+class DT_ENGINE_API Lighting_Buffer : public Frame_Buffer
 {
 public:
 	// (de)Constructors
 	/** Destroy the lighting buffer. */
 	~Lighting_Buffer();
-	/** Destroy the lighting buffer. */
+	/** Construct the lighting buffer. */
 	Lighting_Buffer();
 
 
 	// Public Methods
 	/** Initialize the framebuffer.
-	 * @param	size			the size of the framebuffer
-	 * @param	visualFX		reference to the post-processing utility class
-	 * @param	bloomStrength	intensity / number of passes for the bloom effect
+	 * @param	enginePackage	the engine package
 	 * @param	depthStencil	reference to the depthStencil texture from the gBuffer */
-	void initialize(const vec2 & size, const GLuint & depthStencil);
-	/** Binds and clears out all the render-targets in this framebuffer. */
-	void clear();
+	void initialize(EnginePackage * enginePackage, const GLuint & depthStencil);	
 	/** Binds the framebuffer and its render-targets for writing. */
-	void bindForWriting();
+	virtual void bindForWriting();
 	/** Binds the framebuffer and its render-targets for reading. */
-	void bindForReading();
+	virtual void bindForReading();
 	/** Change the size of the framebuffer object. 
 	 * @param	size			the new size of the framebuffer */
-	void resize(const vec2 & size);
+	virtual void resize(const ivec2 & size);
 	/** Apply blur filter to bloom attachment, finishing the bloom effect. */
 	void end();
 	
 
 private:
 	// Private Attributes
-	GLuint m_fbo, m_texture;
-	vec2 m_renderSize;
-	GLuint m_depth_stencil; // Donated by the geometry buffer
-	bool m_Initialized;
+	GLuint  m_texture, m_depth_stencil; // Donated by the geometry buffer
+	EnginePackage * m_enginePackage;
 };
 
 #endif // LIGHTING_BUFFER
