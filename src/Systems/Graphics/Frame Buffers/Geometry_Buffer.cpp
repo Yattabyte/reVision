@@ -48,8 +48,8 @@ void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visua
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
-		Frame_Buffer::initialize();
 		initialize_noise();
+		Frame_Buffer::initialize();
 		
 		// Create the FBO
 		glGenFramebuffers(1, &m_fbo);

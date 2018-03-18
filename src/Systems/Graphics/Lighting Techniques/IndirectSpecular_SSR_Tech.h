@@ -59,6 +59,8 @@ private:
 	// Private Methods	
 	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness.*/
 	void blurLight();
+	/** Adds to the global env map using the blurred light. */
+	void buildEnvMap();
 	/** Applies the SSR effect using the blurred light MIP chain*/
 	void reflectLight();
 
@@ -69,7 +71,7 @@ private:
 	Reflection_Buffer * m_refBuffer;
 	EnginePackage * m_enginePackage;
 	VisualFX * m_visualFX;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, TEMP_SHADER;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, TEMP_SHADER, TEMP_CUBE_SHADER;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Cubemap TEMP_SKY;
@@ -78,6 +80,9 @@ private:
 	vec2 m_renderSize;
 	SSR_Buffer m_ssrBuffer;
 	GLuint m_ssrUBO;
+
+	mat4 views[6], proj;
+	GLuint m_cube_fbo, m_cube_tex;
 };
 
 #endif // INDIRECT_LIGHTING_SSR
