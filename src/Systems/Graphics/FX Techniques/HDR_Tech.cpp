@@ -66,8 +66,7 @@ void HDR_Tech::applyEffect()
 
 void HDR_Tech::bindForReading()
 {
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
 }
 
 void HDR_Tech::resize(const vec2 & size)

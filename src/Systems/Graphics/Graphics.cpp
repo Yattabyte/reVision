@@ -80,6 +80,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		generateKernal();
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 		// Initiate graphics buffers
 		m_visualFX.initialize(enginePackage);
@@ -126,9 +127,7 @@ void System_Graphics::update(const float & deltaTime)
 		geometryPass(vis_token);
 		
 		// Writing to lighting fbo
-		skyPass();
-		/*m_lightingTechs[1]->applyLighting(vis_token);*/
-		
+		skyPass();		
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 

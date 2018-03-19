@@ -100,41 +100,38 @@ bool Asset_Model::existsYet()
 GLuint Asset_Model::Generate_VAO()
 {
 	GLuint vaoID = 0;
-
 	glGenVertexArrays(1, &vaoID);
-	glBindVertexArray(vaoID);
 	for (unsigned int x = 0; x < NUM_VERTEX_ATTRIBUTES; ++x)
-		glEnableVertexAttribArray(x);
-	glBindVertexArray(0);
-
+		glEnableVertexArrayAttribEXT(vaoID, x);
 	return vaoID;
 }
 
 void Asset_Model::updateVAO(const GLuint & vaoID)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
-	glBindVertexArray(vaoID);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vaoID, 1, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vaoID, 2, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vaoID, 3, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vaoID, 4, 2, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribIFormat(vaoID, 5, 4, GL_INT, 0);
+	glVertexArrayAttribFormat(vaoID, 6, 4, GL_FLOAT, GL_FALSE, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexArrayVertexBuffer(vaoID, 0, m_buffers[0], 0, 12);
+	glVertexArrayVertexBuffer(vaoID, 1, m_buffers[1], 0, 12);
+	glVertexArrayVertexBuffer(vaoID, 2, m_buffers[2], 0, 12);
+	glVertexArrayVertexBuffer(vaoID, 3, m_buffers[3], 0, 12);
+	glVertexArrayVertexBuffer(vaoID, 4, m_buffers[4], 0, 8);
+	glVertexArrayVertexBuffer(vaoID, 5, m_buffers[5], 0, 32);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[2]);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[3]);
-	glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[4]);
-	glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[5]);
-	glVertexAttribIPointer(5, 4, GL_INT, sizeof(VertexBoneData), (const GLvoid*)0);
-	glVertexAttribPointer(6, 4, GL_FLOAT, GL_FALSE, sizeof(VertexBoneData), (const GLvoid*)16);
-
-	glBindVertexArray(0);
+	glVertexArrayAttribBinding(vaoID, 0, 0);
+	glVertexArrayAttribBinding(vaoID, 1, 1);
+	glVertexArrayAttribBinding(vaoID, 2, 2);
+	glVertexArrayAttribBinding(vaoID, 3, 3);
+	glVertexArrayAttribBinding(vaoID, 4, 4);
+	glVertexArrayAttribBinding(vaoID, 5, 5);
+	glVertexArrayAttribBinding(vaoID, 6, 6);	
 }
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)

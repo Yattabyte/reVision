@@ -53,8 +53,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 
 		// Read from desired texture, blur into this frame buffer
 		GLboolean horizontal = false;
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, desiredTexture);
+		glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, desiredTexture);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		m_shaderGB->bind();
 		m_shaderGB->Set_Uniform(0, horizontal);
@@ -98,8 +97,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 
 		// Read from desired texture, blur into this frame buffer
 		GLboolean horizontal = false;
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, desiredTexture);
+		glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, desiredTexture);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ZERO);
 		m_shaderGB_A->bind();

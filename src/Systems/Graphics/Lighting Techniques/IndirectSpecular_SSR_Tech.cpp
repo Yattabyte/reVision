@@ -138,17 +138,6 @@ void IndirectSpecular_SSR_Tech::updateLighting(const Visibility_Token & vis_toke
 
 void IndirectSpecular_SSR_Tech::applyLighting(const Visibility_Token & vis_token)
 {
-	// Get Skybox reflections
-	const int quad_size = m_shapeQuad->getSize();	
-	m_refBuffer->bindForWriting();
-	m_gBuffer->bindForReading();
-	m_shaderCubemap->bind();
-	glBindMultiTextureEXT(GL_TEXTURE3, GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-
 	blurLight();	 
 	buildEnvMap();
 	reflectLight();
@@ -170,8 +159,7 @@ void IndirectSpecular_SSR_Tech::blurLight()
 
 	// Blur MIP chain, reading from 1 MIP level and writing into next
 	m_shaderBlur->bind();
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
 	for (int horizontal = 0; horizontal < 2; ++horizontal) {
 		Asset_Shader::Set_Uniform(0, horizontal);
 		ivec2 read_size = m_renderSize;
@@ -218,8 +206,7 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cube_tex);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glEnable(GL_BLEND);
@@ -228,9 +215,19 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 
 void IndirectSpecular_SSR_Tech::reflectLight()
 {
+	// Use Fallback Reflections
 	const int quad_size = m_shapeQuad->getSize();
-	m_lBuffer->bindForWriting();
+	m_refBuffer->bindForWriting();
+	m_gBuffer->bindForReading();
+	m_shaderCubemap->bind();
+	glBindMultiTextureEXT(GL_TEXTURE3, GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
+	glDisable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glBindVertexArray(m_quadVAO);
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
+	// Apply SSR
+	m_lBuffer->bindForWriting();
 	glBindVertexArray(m_quadVAO);
 	m_shaderSSR->bind();
 	m_gBuffer->bindForReading(); // Gbuffer
@@ -243,6 +240,7 @@ void IndirectSpecular_SSR_Tech::reflectLight()
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
+	// Revert State
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBindVertexArray(0);

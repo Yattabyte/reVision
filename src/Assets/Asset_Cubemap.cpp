@@ -36,8 +36,7 @@ bool Asset_Cubemap::existsYet()
 void Asset_Cubemap::bind(const GLuint & texture_unit)
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	glActiveTexture(texture_unit);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_glTexID);
+	glBindMultiTextureEXT(texture_unit, GL_TEXTURE_CUBE_MAP, m_glTexID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -172,15 +171,8 @@ void Cubemap_WorkOrder::finalizeOrder()
 		auto &gl_tex_ID = m_asset->m_glTexID;
 		auto &size = m_asset->m_size;
 		auto *pixel_data = m_asset->m_pixelData;
-
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		glBindTexture(GL_TEXTURE_2D, 0);
-		float anisotropy = 0.0f, maxAnisotropy = 0.0f;
-		anisotropy = 16.0f;//CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		anisotropy = max(0.0f, min(anisotropy, maxAnisotropy));
-
-		// Create the source texture
+		
+		// Create the final texture
 		glGenTextures(1, &gl_tex_ID);
 		glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -188,31 +180,8 @@ void Cubemap_WorkOrder::finalizeOrder()
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
 		for (int x = 0; x < 6; ++x)
 			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGBA, size.x, size.x, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
-
-		/*// Create the final texture
-		glGenTextures(1, &gl_tex_ID);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_LOD, 0);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LOD, CF_MIP_LODS - 1);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, CF_MIP_LODS - 1);
-		glTexParameterf(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-		for (int x = 0; x < 6; ++x)
-			for (int y = 0; y < 6; ++y)
-				glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, y, GL_RGBA32F, size.x, size.x, 0, GL_RGBA, GL_FLOAT, NULL);
-		glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-		VisualFX::APPLY_FX_CUBE_FILTER(sourceTexture, gl_tex_ID, size.x);
-		glDeleteTextures(1, &sourceTexture);*/
 
 		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -220,5 +189,5 @@ void Cubemap_WorkOrder::finalizeOrder()
 		write_guard.unlock();
 		write_guard.release();
 		m_asset->finalize();
-	}
+	}	
 }

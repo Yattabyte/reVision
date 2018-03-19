@@ -83,8 +83,7 @@ void Bloom_Tech::applyEffect()
 void Bloom_Tech::bindForReading()
 {
 	m_lBuffer->bindForReading();
-	glActiveTexture(GL_TEXTURE1);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
+	glBindMultiTextureEXT(GL_TEXTURE1, GL_TEXTURE_2D, m_texture);
 }
 
 void Bloom_Tech::setBloomStrength(const int & strength)

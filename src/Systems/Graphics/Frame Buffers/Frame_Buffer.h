@@ -44,8 +44,6 @@ public:
 	virtual void initialize() {
 		if (!m_Initialized) {
 			glGenFramebuffers(1, &m_fbo);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
 			m_Initialized = true;
 		}
 	}
@@ -74,14 +72,11 @@ protected:
 	/* Checks if this framebuffer is complete.
 	 * @return true if complete, false otherwise */
 	bool validate() {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-		const GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "" , std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
 			return false;
 		}
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return true;
 	}
 

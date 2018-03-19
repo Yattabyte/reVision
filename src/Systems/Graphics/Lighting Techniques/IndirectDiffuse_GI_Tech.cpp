@@ -58,50 +58,38 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 
 	GLuint VBO = 0;
 	glGenVertexArrays(1, &m_bounceVAO);
-	glBindVertexArray(m_bounceVAO);
 	glGenBuffers(1, &VBO);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(GLint), GLint(0), GL_DYNAMIC_DRAW);
-	glEnableVertexAttribArray(0);
-	glVertexAttribIPointer(0, 1, GL_INT, sizeof(GLint), 0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glEnableVertexArrayAttribEXT(m_bounceVAO, 0);
+	glNamedBufferDataEXT(VBO, sizeof(GLint), GLint(0), GL_DYNAMIC_DRAW);
+	glVertexArrayAttribIFormat(m_bounceVAO, 0, 1, GL_INT, 0);
+	glVertexArrayVertexBuffer(m_bounceVAO, 0, VBO, 0, 4);
+	glVertexArrayAttribBinding(m_bounceVAO, 0, 0);
 	glDeleteBuffers(1, &VBO);
-	glBindVertexArray(0);
 
 	glGenFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	glGenTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
-	for (int bounce = 0; bounce < GI_LIGHT_BOUNCE_COUNT; ++bounce) {
-		glBindFramebuffer(GL_FRAMEBUFFER, m_fbo[bounce]);
+	for (int bounce = 0; bounce < GI_LIGHT_BOUNCE_COUNT; ++bounce) {		
 		for (int channel = 0; channel < GI_TEXTURE_COUNT; ++channel) {
-			glBindTexture(GL_TEXTURE_3D, m_textures[bounce][channel]);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, m_attribBuffer.resolution, m_attribBuffer.resolution, m_attribBuffer.resolution, 0, GL_RGB, GL_FLOAT, 0);
-			glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
+			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB32F, m_attribBuffer.resolution, m_attribBuffer.resolution, m_attribBuffer.resolution, 0, GL_RGB, GL_FLOAT, 0);
+			glNamedFramebufferTextureEXT(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
-		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0,
-			GL_COLOR_ATTACHMENT1,
-			GL_COLOR_ATTACHMENT2,
-			GL_COLOR_ATTACHMENT3
-		};
-		glDrawBuffers(4, Buffers);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
+							GL_COLOR_ATTACHMENT1,
+							GL_COLOR_ATTACHMENT2,
+							GL_COLOR_ATTACHMENT3};
+		glNamedFramebufferDrawBuffers(m_fbo[bounce], 4, Buffers);
+		GLenum Status = glCheckNamedFramebufferStatus(m_fbo[bounce], GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
+			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
+			return;
+		}
 	}
-	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
-
-		// Delete before returning
-		glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
-		glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return;
-	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
 	// Generate Noise Texture
 	std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
@@ -111,14 +99,12 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 		data[x] = vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 
 	glGenTextures(1, &m_noise32);
-	glBindTexture(GL_TEXTURE_3D, m_noise32);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexImage3D(GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
-	glBindTexture(GL_TEXTURE_3D, 0);
+	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
+	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	float near_plane = m_nearPlane;
@@ -226,16 +212,13 @@ void IndirectDiffuse_GI_Tech::bindForWriting(const GLuint &bounceSpot)
 
 void IndirectDiffuse_GI_Tech::bindForReading(const GLuint &bounceSpot, const GLuint textureUnit)
 {
-	for (int x = 0; x < GI_TEXTURE_COUNT; ++x) {
-		glActiveTexture(textureUnit + x);
-		glBindTexture(GL_TEXTURE_3D, m_textures[bounceSpot][x]);
-	}
+	for (int x = 0; x < GI_TEXTURE_COUNT; ++x) 
+		glBindMultiTextureEXT(textureUnit + x, GL_TEXTURE_3D, m_textures[bounceSpot][x]);	
 }
 
 void IndirectDiffuse_GI_Tech::bindNoise(const GLuint textureUnit)
 {
-	glActiveTexture(textureUnit);
-	glBindTexture(GL_TEXTURE_3D, m_noise32);
+	glBindMultiTextureEXT(textureUnit, GL_TEXTURE_3D, m_noise32);
 }
 
 void IndirectDiffuse_GI_Tech::updateData()

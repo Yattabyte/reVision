@@ -46,8 +46,7 @@ bool Asset_Texture::existsYet()
 
 void Asset_Texture::bind(const GLuint & texture_unit)
 {
-	glActiveTexture(texture_unit);
-	glBindTexture(m_type, m_glTexID);
+	glBindMultiTextureEXT(texture_unit, m_type, m_glTexID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
