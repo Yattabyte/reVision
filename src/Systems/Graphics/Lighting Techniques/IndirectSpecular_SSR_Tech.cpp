@@ -35,12 +35,23 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\ssr");
 	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Loader::load_asset(m_shaderCubemap, "Reflection\\reflectionCubemap");
+	Asset_Loader::load_asset(m_shaderCubeProj, "Reflection\\cubeProjection");
+	m_shaderCubeProj->addCallback(this, [&]() {
+		mat4 views[6];
+		views[0] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(0, 1, 0)));
+		views[1] = (glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+		views[2] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(1, 0, 0)));
+		views[3] = (glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(1, 0, 0)));
+		views[4] = (glm::rotate(mat4(1.0f), glm::radians(0.0f), vec3(0, 1, 0)));
+		views[5] = (glm::rotate(mat4(1.0f), glm::radians(180.0f), vec3(0, 1, 0)));
+		mat4 proj = (perspective(2.0f * atanf(tanf(radians(90.0f) / 2.0f)), 1.0f, 0.01f, m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE)));
 
-	/******************************************************/
-	/**/Asset_Loader::load_asset(TEMP_SHADER, "ref_sky");/**/
-	/**/Asset_Loader::load_asset(TEMP_CUBE_SHADER, "dynamic_cube");/**/
-	/**/Asset_Loader::load_asset(TEMP_SKY, "sky\\");/******/
-	/******************************************************/
+		m_shaderCubeProj->bind();
+		m_shaderCubeProj->Set_Uniform_Array(2, views, 6);
+		m_shaderCubeProj->Set_Uniform(8, proj);
+		Asset_Shader::Release();
+	});
 
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
@@ -52,35 +63,20 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	glGenFramebuffers(1, &m_cube_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_cube_fbo);
 	glGenTextures(1, &m_cube_tex);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cube_tex);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	/*glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_LOD, 0);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LOD, 5);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 5);*/
-	for (int x = 0; x < 6; ++x) {
-		//for (int y = 0; y < 6; ++y) {
-			//const unsigned int size = floor(512.0F / pow(2, x));
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGB, 512, 512, 0, GL_RGB, GL_FLOAT, NULL);
-		//}
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, m_cube_tex, 0);		
-	}
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
+	glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGB32F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
+	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB32F, 512, 512, 6 * 6, 0, GL_RGB, GL_FLOAT, NULL);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_cube_tex, 0);
 	glDrawBuffer(GL_COLOR_ATTACHMENT0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
 
-	views[0] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(0, 1, 0)));
-	views[1] = (glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-	views[2] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(1, 0, 0)));
-	views[3] = (glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(1, 0, 0)));
-	views[4] = (glm::rotate(mat4(1.0f), glm::radians(0.0f), vec3(0, 1, 0)));
-	views[5] = (glm::rotate(mat4(1.0f), glm::radians(180.0f), vec3(0, 1, 0)));
-	proj = (perspective(2.0f * atanf(tanf(radians(90.0f) / 2.0f)), 1.0f, 0.01f, m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE)));
-
+	
 	glGenFramebuffers(1, &m_fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
 	glGenTextures(1, &m_texture);
@@ -140,17 +136,14 @@ void IndirectSpecular_SSR_Tech::updateLighting(const Visibility_Token & vis_toke
 	
 }
 
-#include "glm\gtc\matrix_access.hpp"
-#include "GLM\gtc\type_ptr.hpp"
 void IndirectSpecular_SSR_Tech::applyLighting(const Visibility_Token & vis_token)
 {
 	// Get Skybox reflections
 	const int quad_size = m_shapeQuad->getSize();	
 	m_refBuffer->bindForWriting();
 	m_gBuffer->bindForReading();
-	TEMP_SHADER->bind();
-	//TEMP_SKY->bind(GL_TEXTURE3);
-	glBindMultiTextureEXT(GL_TEXTURE3, GL_TEXTURE_CUBE_MAP, m_cube_tex);
+	m_shaderCubemap->bind();
+	glBindMultiTextureEXT(GL_TEXTURE3, GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glBindVertexArray(m_quadVAO);
@@ -216,24 +209,21 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 {
 	// Copy viewport to cubemap
 	const int quad_size = m_shapeQuad->getSize();
-	glViewport(0, 0, 512, 512);
-	TEMP_CUBE_SHADER->bind();
-	TEMP_CUBE_SHADER->Set_Uniform(8, proj);
-	TEMP_CUBE_SHADER->Set_Uniform_Array(2, views, 6);
+	m_shaderCubeProj->bind();
+	glViewport(0, 0, 512, 512);	
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cube_fbo);
 	glBindVertexArray(m_quadVAO);
 	glDisable(GL_BLEND);
 	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	for (int x = 0; x < 6; ++x) {
-		TEMP_CUBE_SHADER->Set_Uniform(1, x);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, m_cube_tex, 0);
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
-	}
+
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+
+	glBindTexture(GL_TEXTURE_CUBE_MAP, m_cube_tex);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glEnable(GL_BLEND);
+	Asset_Shader::Release();
 }
 
 void IndirectSpecular_SSR_Tech::reflectLight()
