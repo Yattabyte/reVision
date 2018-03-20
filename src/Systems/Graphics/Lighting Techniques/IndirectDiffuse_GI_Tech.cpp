@@ -13,6 +13,7 @@
 
 IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
 {
+	glUnmapNamedBuffer(m_attribSSBO);
 	glDeleteBuffers(1, &m_attribSSBO);
 	glDeleteTextures(1, &m_noise32);
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
@@ -57,26 +58,26 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	}
 
 	GLuint VBO = 0;
-	glGenVertexArrays(1, &m_bounceVAO);
-	glGenBuffers(1, &VBO);
-	glEnableVertexArrayAttribEXT(m_bounceVAO, 0);
-	glNamedBufferDataEXT(VBO, sizeof(GLint), GLint(0), GL_DYNAMIC_DRAW);
+	glCreateVertexArrays(1, &m_bounceVAO);
+	glCreateBuffers(1, &VBO);
+	glEnableVertexArrayAttrib(m_bounceVAO, 0);
+	glNamedBufferStorage(VBO, sizeof(GLint), GLint(0), GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	glVertexArrayAttribIFormat(m_bounceVAO, 0, 1, GL_INT, 0);
 	glVertexArrayVertexBuffer(m_bounceVAO, 0, VBO, 0, 4);
 	glVertexArrayAttribBinding(m_bounceVAO, 0, 0);
 	glDeleteBuffers(1, &VBO);
 
-	glGenFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
-	glGenTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
+	glCreateFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
+	glCreateTextures(GL_TEXTURE_3D, GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	for (int bounce = 0; bounce < GI_LIGHT_BOUNCE_COUNT; ++bounce) {		
 		for (int channel = 0; channel < GI_TEXTURE_COUNT; ++channel) {
-			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTextureParameteriEXT(m_textures[bounce][channel], GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB32F, m_attribBuffer.resolution, m_attribBuffer.resolution, m_attribBuffer.resolution, 0, GL_RGB, GL_FLOAT, 0);
-			glNamedFramebufferTextureEXT(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
+			glNamedFramebufferTexture(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
 		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
 							GL_COLOR_ATTACHMENT1,
@@ -98,13 +99,13 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
 		data[x] = vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 
-	glGenTextures(1, &m_noise32);
+	glCreateTextures(GL_TEXTURE_3D, 1, &m_noise32);
 	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
-	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
-	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
-	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteriEXT(m_noise32, GL_TEXTURE_3D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
+	glTextureParameteri(m_noise32, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_noise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	float near_plane = m_nearPlane;
@@ -114,14 +115,10 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	float lambda = 0.4f;
 	m_farPlane = (lambda*cLog) + ((1.0f - lambda)*cUni);
 
-	glGenBuffers(1, &m_attribSSBO);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribSSBO);
-	glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(GI_Attribs_Buffer), &m_attribBuffer, GL_DYNAMIC_COPY);
+	glCreateBuffers(1, &m_attribSSBO);
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_attribSSBO);
-	GLvoid* p = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
-	memcpy(p, &m_attribSSBO, sizeof(GI_Attribs_Buffer));
-	glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-	glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+	glNamedBufferStorage(m_attribSSBO, sizeof(GI_Attribs_Buffer), &m_attribBuffer, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+	m_bufferPtr = glMapNamedBufferRange(m_attribSSBO, 0, sizeof(GI_Attribs_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 }
 
 void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_token)
@@ -129,7 +126,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
 	updateData();
-	bindNoise(GL_TEXTURE4);
+	bindNoise(4);
 	bindForWriting(0);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
@@ -139,7 +136,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 	// Perform primary light bounce
 	glBindVertexArray(m_bounceVAO);
 	// Bounce directional light
-	m_sBuffer->BindForReading_GI(SHADOW_LARGE, GL_TEXTURE0);
+	m_sBuffer->BindForReading_GI(SHADOW_LARGE, 0);
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	const auto & dirList = vis_token.getTypeList<Lighting_Component>("Light_Directional");
 	const auto & pointList = vis_token.getTypeList<Lighting_Component>("Light_Point");
@@ -152,7 +149,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 			component->indirectPass(size);
 	}
 	// Bounce point lights
-	m_sBuffer->BindForReading_GI(SHADOW_REGULAR, GL_TEXTURE0);
+	m_sBuffer->BindForReading_GI(SHADOW_REGULAR, 0);
 	if (vis_token.find("Light_Point")) {
 		m_shaderPoint_Bounce->bind();
 		for each (auto &component in pointList)
@@ -167,7 +164,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 
 	// Perform secondary light bounce
 	m_shaderGISecondBounce->bind();
-	bindForReading(0, GL_TEXTURE5);
+	bindForReading(0, 5);
 	bindForWriting(1);
 	glDrawArraysInstanced(GL_POINTS, 0, 1, size);
 
@@ -191,9 +188,9 @@ void IndirectDiffuse_GI_Tech::applyLighting(const Visibility_Token & vis_token)
 	m_shaderGIReconstruct->bind();
 	const size_t &quad_size = m_shapeQuad->getSize();
 
-	bindNoise(GL_TEXTURE4);
+	bindNoise(4);
 	glBindVertexArray(m_quadVAO);
-	bindForReading(1, GL_TEXTURE5);
+	bindForReading(1, 5);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 	
 	glBindVertexArray(0);
@@ -210,15 +207,15 @@ void IndirectDiffuse_GI_Tech::bindForWriting(const GLuint &bounceSpot)
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void IndirectDiffuse_GI_Tech::bindForReading(const GLuint &bounceSpot, const GLuint textureUnit)
+void IndirectDiffuse_GI_Tech::bindForReading(const GLuint &bounceSpot, const unsigned int & textureUnit)
 {
 	for (int x = 0; x < GI_TEXTURE_COUNT; ++x) 
-		glBindMultiTextureEXT(textureUnit + x, GL_TEXTURE_3D, m_textures[bounceSpot][x]);	
+		glBindTextureUnit(textureUnit + x, m_textures[bounceSpot][x]);
 }
 
 void IndirectDiffuse_GI_Tech::bindNoise(const GLuint textureUnit)
 {
-	glBindMultiTextureEXT(textureUnit, GL_TEXTURE_3D, m_noise32);
+	glBindTextureUnit(textureUnit, m_noise32);
 }
 
 void IndirectDiffuse_GI_Tech::updateData()
@@ -264,7 +261,6 @@ void IndirectDiffuse_GI_Tech::updateData()
 	float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 	m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
 
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribSSBO);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(GI_Attribs_Buffer), &m_attribBuffer);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	GI_Attribs_Buffer *buffer = reinterpret_cast<GI_Attribs_Buffer*>(m_bufferPtr);
+	buffer = &m_attribBuffer;
 }

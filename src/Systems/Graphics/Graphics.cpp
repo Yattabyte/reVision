@@ -69,14 +69,10 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });		
 
 		// Generate attribute buffer
-		glGenBuffers(1, &m_attribID);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_attribID);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(m_attribs), &m_attribs, GL_DYNAMIC_COPY);
+		glCreateBuffers(1, &m_attribID);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);
-		GLvoid* p = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
-		memcpy(p, &m_attribs, sizeof(m_attribs));
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		glNamedBufferStorage(m_attribID, sizeof(Renderer_Attribs), &m_attribs, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		m_bufferPtr = glMapNamedBufferRange(m_attribID, 0, sizeof(Renderer_Attribs), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 		generateKernal();
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -128,6 +124,7 @@ void System_Graphics::update(const float & deltaTime)
 		
 		// Writing to lighting fbo
 		skyPass();		
+		//m_lightingTechs[1]->applyLighting(vis_token);/*
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
@@ -146,33 +143,25 @@ void System_Graphics::update(const float & deltaTime)
 void System_Graphics::setSSAO(const bool & ssao)
 {
 	m_attribs.m_ssao = ssao;
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao = ssao;
 }
 
 void System_Graphics::setSSAOSamples(const int & samples)
 {
 	m_attribs.m_aa_samples = samples;
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_aa_samples = samples;
 }
 
 void System_Graphics::setSSAOStrength(const int & strength)
 {
 	m_attribs.m_ssao_strength = strength;
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao_strength = strength;
 }
 
 void System_Graphics::setSSAORadius(const float & radius)
 {
 	m_attribs.m_ssao_radius = radius;
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao_radius = radius;
 }
 
 void System_Graphics::resize(const ivec2 & size)
@@ -206,10 +195,8 @@ void System_Graphics::generateKernal()
 		scale = 0.1f + (scale*scale) * (1.0f - 0.1f);
 		sample *= scale;
 		m_attribs.kernel[t] = vec4(sample, 1);
+		reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->kernel[t] = m_attribs.kernel[t];
 	}
-	glBindBuffer(GL_UNIFORM_BUFFER, m_attribID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Renderer_Attribs), &m_attribs);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void System_Graphics::shadowPass(const Visibility_Token & vis_token)
@@ -338,7 +325,7 @@ void System_Graphics::skyPass()
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 
-	m_textureSky->bind(GL_TEXTURE0);
+	m_textureSky->bind(0);
 	m_shaderSky->bind();
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);

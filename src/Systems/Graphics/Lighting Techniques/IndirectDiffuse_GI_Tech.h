@@ -82,8 +82,8 @@ private:
 	void bindForWriting(const GLuint & bounceSpot);
 	/** Binds the framebuffer and its render-targets for reading.
 	* @param	bounceSpot		which bounce we are performing
-	* @param	textureUnit		which texture unit we are going to start with (minimum GL_TEXTURE0) */
-	void bindForReading(const GLuint & bounceSpot, const GLuint textureUnit);
+	* @param	textureUnit		which texture unit we are going to start with (minimum 0) */
+	void bindForReading(const GLuint & bounceSpot, const unsigned int & textureUnit);
 	/** Bind the noise texture
 	* @param	textureUnit		the texture unit to bind the noise texture */
 	void bindNoise(const GLuint textureUnit);
@@ -106,6 +106,7 @@ private:
 	GI_Attribs_Buffer m_attribBuffer;
 	GLuint m_attribSSBO;
 	Camera m_camera;
+	void *m_bufferPtr;
 };
 
 #endif // INDIRECT_LIGHTING_PBR

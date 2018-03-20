@@ -25,10 +25,8 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 {
 	m_enginePackage = enginePackage;
 	m_uboID = 0;
-	glGenBuffers(1, &m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightDirBuffer), &m_uboData, GL_DYNAMIC_COPY);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glCreateBuffers(1, &m_uboID);
+	glNamedBufferData(m_uboID, sizeof(LightDirBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
 	float near_plane = -0.1f;
 	float far_plane = - m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);

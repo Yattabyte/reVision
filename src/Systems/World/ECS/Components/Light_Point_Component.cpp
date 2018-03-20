@@ -30,10 +30,8 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_enginePackage = enginePackage;
 	m_uboID = 0;
 	m_squaredRadius = 0;
-	glGenBuffers(1, &m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightPointBuffer), &m_uboData, GL_DYNAMIC_COPY);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glCreateBuffers(1, &m_uboID);
+	glNamedBufferData(m_uboID, sizeof(LightPointBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
 	m_camera[0].setHorizontalFOV(180);
 	m_camera[1].setHorizontalFOV(180);

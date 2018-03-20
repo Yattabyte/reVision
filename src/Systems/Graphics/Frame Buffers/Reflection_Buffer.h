@@ -34,7 +34,7 @@ public:
 	 * @param	enginePackage	the engine package */
 	void initialize(EnginePackage * enginePackage);
 	/** Binds the framebuffer and its render-targets for reading. */
-	void bindForReading(const GLuint & texture_unit);
+	void bindForReading(const unsigned int & texture_unit);
 	/** Change the size of the framebuffer object.
 	* @param	size	the new size of the framebuffer */
 	virtual void resize(const vec2 & size);

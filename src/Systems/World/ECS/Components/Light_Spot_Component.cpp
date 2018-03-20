@@ -27,10 +27,8 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	m_uboID = 0;
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
-	glGenBuffers(1, &m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glCreateBuffers(1, &m_uboID);
+	glNamedBufferData(m_uboID, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
 		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();

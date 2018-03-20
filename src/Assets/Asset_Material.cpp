@@ -3,6 +3,7 @@
 #include "Managers\Message_Manager.h"
 #include "Utilities\Image_Importer.h"
 #include "FreeImage.h"
+#include <math.h>
 
 
 Asset_Material::~Asset_Material()
@@ -279,25 +280,19 @@ void Material_WorkOrder::finalizeOrder()
 		auto &size = m_asset->m_size;
 		auto *materialData = m_asset->m_materialData;
 		auto &mat_spot = m_asset->m_matSpot;
-
-		glGenTextures(1, &gl_array_ID);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, gl_array_ID);
-
-		float anisotropy = 0.0f, maxAnisotropy = 0.0f;
-		anisotropy = 16.0f;// CFG::getPreference(CFG_ENUM::C_TEXTURE_ANISOTROPY);
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAnisotropy);
-		anisotropy = max(0.0f, min(anisotropy, maxAnisotropy));
-
-		glTexStorage3D(GL_TEXTURE_2D_ARRAY, 1, GL_RGBA, (int)size.x, (int)size.y, 3);
-		glTexImage3D(GL_TEXTURE_2D_ARRAY, 0, GL_RGBA, (int)size.x, (int)size.y, 3, 0, GL_RGBA, GL_UNSIGNED_BYTE, materialData);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_GENERATE_MIPMAP, GL_TRUE);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameterf(GL_TEXTURE_2D_ARRAY, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-		glGenerateMipmap(GL_TEXTURE_2D_ARRAY);
-
+		float anisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+		
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &gl_array_ID);
+		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
+		// Uses the smallest dimension of the image
+		glTextureStorage3D(gl_array_ID, floor(log2f((min(size.x, size.y))) + 1), GL_RGBA8, (int)size.x, (int)size.y, 3);
+		glTextureSubImage3D(gl_array_ID, 0, 0, 0, 0, (int)size.x, (int)size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, materialData);
+		glTextureParameteri(gl_array_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(gl_array_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(gl_array_ID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+		glGenerateTextureMipmap(gl_array_ID);
 		Material_Manager::Generate_Handle(mat_spot, gl_array_ID);
-		glBindTexture(GL_TEXTURE_2D_ARRAY, 0);
 		
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();

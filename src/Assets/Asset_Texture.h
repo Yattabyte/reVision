@@ -48,7 +48,7 @@ public:
 	// Public Methods
 	/** Makes this texture active at a specific texture unit
 	 * @param	texture_unit	the texture unit to make this texture active at */
-	void bind(const GLuint & texture_unit);
+	void bind(const unsigned int & texture_unit);
 
 	
 	// Public Attributes

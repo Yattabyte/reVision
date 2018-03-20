@@ -20,14 +20,10 @@ Camera::Camera(const vec3 & position, const vec2 & size, const float & near_plan
 	setOrientation(quat(1, 0, 0, 0));
 	enableRendering(true);
 	ssboCameraID = 0;
-	glGenBuffers(1, &ssboCameraID);
-	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
+	glCreateBuffers(1, &ssboCameraID);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferData(ssboCameraID, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
 	update();
-
-	//Visibility_Manager::registerViewer(this);
 }
 
 Camera::Camera(Camera const & other)
@@ -35,15 +31,11 @@ Camera::Camera(Camera const & other)
 	shared_lock<shared_mutex> rguard(other.data_mutex);
 	m_cameraBuffer = other.getCameraBuffer();
 	ssboCameraID = 0;
-	glGenBuffers(1, &ssboCameraID);
-	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
+	glCreateBuffers(1, &ssboCameraID);
 	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferData(ssboCameraID, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
 	m_frustum = Frustum(other.getFrustum());
 	update();
-
-	//Visibility_Manager::registerViewer(this);
 }
 
 void Camera::operator=(Camera const & other)

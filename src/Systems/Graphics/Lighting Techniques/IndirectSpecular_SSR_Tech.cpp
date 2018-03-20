@@ -60,42 +60,34 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	
 	m_cube_fbo = 0;
 	m_cube_tex = 0;
-	glGenFramebuffers(1, &m_cube_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_cube_fbo);
-	glGenTextures(1, &m_cube_tex);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
-	glTexStorage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 1, GL_RGB32F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
-	glTexImage3D(GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB32F, 512, 512, 6 * 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP_ARRAY, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, m_cube_tex, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
-
-	
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 5);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 5); 
+	glCreateFramebuffers(1, &m_cube_fbo);
+	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_cube_tex);
+	glTextureStorage3D(m_cube_tex, 1, GL_RGB32F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
+	glTextureParameteri(m_cube_tex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_cube_tex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_cube_tex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_cube_tex, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_cube_tex, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	glNamedFramebufferTexture(m_cube_fbo, GL_COLOR_ATTACHMENT0, m_cube_tex, 0);
+	glNamedFramebufferDrawBuffer(m_cube_fbo, GL_COLOR_ATTACHMENT0);
+		
+	glCreateFramebuffers(1, &m_fbo);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_LOD, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LOD, 5);
+	glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
 	for (int x = 0; x < 6; ++x) {
-		ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-		glTexImage2D(GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+		const ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
+		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
+	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
@@ -106,29 +98,21 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return;
 	}
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	glGenBuffers(1, &m_ssrUBO);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_ssrUBO);
+	
+	glCreateBuffers(1, &m_ssrUBO);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(SSR_Buffer), &m_ssrBuffer, GL_DYNAMIC_COPY);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 }
 
 void IndirectSpecular_SSR_Tech::resize(const vec2 & size)
 {
 	m_renderSize = size;
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
 	for (int x = 0; x < 6; ++x) {
-		ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-		glTexImage2D(GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+		const ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
+		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);	
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 }
 
 void IndirectSpecular_SSR_Tech::updateLighting(const Visibility_Token & vis_token)
@@ -159,18 +143,18 @@ void IndirectSpecular_SSR_Tech::blurLight()
 
 	// Blur MIP chain, reading from 1 MIP level and writing into next
 	m_shaderBlur->bind();
-	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
+	glBindTextureUnit(0, m_texture);
 	for (int horizontal = 0; horizontal < 2; ++horizontal) {
 		Asset_Shader::Set_Uniform(0, horizontal);
 		ivec2 read_size = m_renderSize;
 		for (int x = 1; x < 6; ++x) {
 			// Ensure we are reading from MIP level x - 1
 			Asset_Shader::Set_Uniform(1, read_size);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, x - 1);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, x - 1);
+			glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, x - 1);
+			glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, x - 1);
 			// Ensure we are writing to MIP level x
 			ivec2 write_size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, x);
+			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, x);
 
 			glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
 			glDrawArrays(GL_TRIANGLES, 0, quad_size);
@@ -183,10 +167,9 @@ void IndirectSpecular_SSR_Tech::blurLight()
 	}
 
 	// Restore to default
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 5);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindVertexArray(0);
 	Asset_Shader::Release();
@@ -202,11 +185,10 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cube_fbo);
 	glBindVertexArray(m_quadVAO);
 	glDisable(GL_BLEND);
-	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
+	glBindTextureUnit(0, m_texture);
 
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
-	glBindTexture(GL_TEXTURE_CUBE_MAP_ARRAY, 0);
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glEnable(GL_BLEND);
@@ -220,7 +202,7 @@ void IndirectSpecular_SSR_Tech::reflectLight()
 	m_refBuffer->bindForWriting();
 	m_gBuffer->bindForReading();
 	m_shaderCubemap->bind();
-	glBindMultiTextureEXT(GL_TEXTURE3, GL_TEXTURE_CUBE_MAP_ARRAY, m_cube_tex);
+	glBindTextureUnit(3, m_cube_tex);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glBindVertexArray(m_quadVAO);
@@ -231,12 +213,11 @@ void IndirectSpecular_SSR_Tech::reflectLight()
 	glBindVertexArray(m_quadVAO);
 	m_shaderSSR->bind();
 	m_gBuffer->bindForReading(); // Gbuffer
-	m_refBuffer->bindForReading(GL_TEXTURE3); // Fallback Reflections
-	m_brdfMap->bind(GL_TEXTURE4); // BRDF LUT
-	glBindMultiTextureEXT(GL_TEXTURE5, GL_TEXTURE_2D, m_texture); // blurred light MIP-chain
+	m_refBuffer->bindForReading(3); // Fallback Reflections
+	m_brdfMap->bind(4); // BRDF LUT
+	glBindTextureUnit(5, m_texture); // blurred light MIP-chain
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_ONE, GL_ONE); 
-	glBindBuffer(GL_UNIFORM_BUFFER, m_ssrUBO);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 

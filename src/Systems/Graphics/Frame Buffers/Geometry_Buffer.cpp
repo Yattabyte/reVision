@@ -7,10 +7,10 @@
 
 static void AssignTextureProperties(const GLuint & texID)
 {
-	glTextureParameteriEXT(texID, GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteriEXT(texID, GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteriEXT(texID, GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteriEXT(texID, GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTextureParameteri(texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(texID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(texID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
 Geometry_Buffer::~Geometry_Buffer()
@@ -52,17 +52,17 @@ void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visua
 		Frame_Buffer::initialize();
 
 		// Create the gbuffer textures
-		glGenTextures(GBUFFER_NUM_TEXTURES, m_textures);
+		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
 		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 			glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			AssignTextureProperties(m_textures[x]);
-			glNamedFramebufferTexture2DEXT(m_fbo, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
+			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0 + x, m_textures[x], 0);
 		}
 		// Depth-stencil buffer texture
-		glGenTextures(1, &m_depth_stencil);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_depth_stencil);
 		glTextureImage2DEXT(m_depth_stencil, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 		AssignTextureProperties(m_depth_stencil);
-		glNamedFramebufferTexture2DEXT(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
+		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 		validate();
 	}
 }
@@ -70,7 +70,7 @@ void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visua
 void Geometry_Buffer::initialize_noise()
 {
 	if (!m_Initialized) {
-		glGenTextures(2, m_texturesGB);
+		glCreateTextures(GL_TEXTURE_2D, 2, m_texturesGB);
 		for (int x = 0; x < 2; ++x) {
 			glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 1, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			AssignTextureProperties(m_texturesGB[x]);
@@ -84,33 +84,36 @@ void Geometry_Buffer::initialize_noise()
 			glm::vec3 noise( randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);
 			noiseArray[i] = (noise);
 		}
-		glGenTextures(1, &m_noiseID);
-		glTextureImage2DEXT(m_noiseID, GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &noiseArray[0]);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_noiseID);
+		glTextureStorage2D(m_noiseID, 1, GL_RGB16F, 4, 4);
+		glTextureSubImage2D(m_noiseID, 0, 0, 0, 4, 4, GL_RGB, GL_FLOAT, &noiseArray[0]);
 		AssignTextureProperties(m_noiseID);
 	}
 }
 
 void Geometry_Buffer::clear()
 {
-	bindForWriting();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	GLfloat clearDepth = 1.0f;
+	GLint clearStencil = 0;
+	glNamedFramebufferDrawBuffers(m_fbo, GBUFFER_NUM_TEXTURES, DrawBuffers);
+	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
+		glClearNamedFramebufferfv(m_fbo, GL_COLOR, x, clearColor);
+	glClearNamedFramebufferfi(m_fbo, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
 }
 
 void Geometry_Buffer::bindForWriting()
 {
-	GLenum DrawBuffers[] = {
-		GL_COLOR_ATTACHMENT0,
-		GL_COLOR_ATTACHMENT1,
-		GL_COLOR_ATTACHMENT2
-	};
+	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glDrawBuffers(GBUFFER_NUM_TEXTURES, DrawBuffers);
+	glNamedFramebufferDrawBuffers(m_fbo, GBUFFER_NUM_TEXTURES, DrawBuffers);
 }
 
 void Geometry_Buffer::bindForReading()
 {
 	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; i++) 
-		glBindMultiTextureEXT(GL_TEXTURE0 + i, GL_TEXTURE_2D, m_textures[i]);	
+		glBindTextureUnit(i, m_textures[i]);	
 }
 
 void Geometry_Buffer::resize(const ivec2 & size)
@@ -120,12 +123,12 @@ void Geometry_Buffer::resize(const ivec2 & size)
 	// Main textures
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
 		glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
-		glNamedFramebufferTexture2DEXT(m_fbo, GL_COLOR_ATTACHMENT0 + x, GL_TEXTURE_2D, m_textures[x], 0);
+		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0 + x, m_textures[x], 0);
 	}
 
 	// Depth-stencil buffer texture
 	glTextureImage2DEXT(m_depth_stencil, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, size.x, size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
-	glNamedFramebufferTexture2DEXT(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
+	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 	
 	// Gaussian blur textures
 	for (int x = 0; x < 2; ++x) 
@@ -135,7 +138,7 @@ void Geometry_Buffer::resize(const ivec2 & size)
 void Geometry_Buffer::end()
 {
 	// Return the borrowed depth-stencil texture
-	glNamedFramebufferTexture2DEXT(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, m_depth_stencil, 0);
+	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 }
 
 void Geometry_Buffer::applyAO()
@@ -150,9 +153,9 @@ void Geometry_Buffer::applyAO()
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
 
-		glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_IMAGE]);
-		glBindMultiTextureEXT(GL_TEXTURE1, GL_TEXTURE_2D, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
-		glBindMultiTextureEXT(GL_TEXTURE2, GL_TEXTURE_2D, m_noiseID);
+		glBindTextureUnit(0, m_textures[GBUFFER_TEXTURE_TYPE_IMAGE]);
+		glBindTextureUnit(1, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
+		glBindTextureUnit(2, m_noiseID);
 
 		m_shaderSSAO->bind();
 		glBindVertexArray(m_quadVAO);

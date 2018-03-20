@@ -99,10 +99,10 @@ bool Asset_Model::existsYet()
 
 GLuint Asset_Model::Generate_VAO()
 {
-	GLuint vaoID = 0;
-	glGenVertexArrays(1, &vaoID);
+	GLuint vaoID = 0;	
+	glCreateVertexArrays(1, &vaoID);
 	for (unsigned int x = 0; x < NUM_VERTEX_ATTRIBUTES; ++x)
-		glEnableVertexArrayAttribEXT(vaoID, x);
+		glEnableVertexArrayAttrib(vaoID, x);
 	return vaoID;
 }
 
@@ -281,21 +281,14 @@ void Model_WorkOrder::finalizeOrder()
 		auto &data = m_asset->m_data;
 		auto &buffers = m_asset->m_buffers;
 		const size_t &arraySize = data.vs.size();
-
-		glGenBuffers(6, buffers);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data.vs[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data.nm[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[2]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data.tg[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[3]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data.bt[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[4]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec2), &data.uv[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[5]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(VertexBoneData), &data.bones[0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);		
+		constexpr GLbitfield flags = GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		glCreateBuffers(6, buffers);
+		glNamedBufferStorage(buffers[0], arraySize * sizeof(vec3), &data.vs[0][0], flags);
+		glNamedBufferStorage(buffers[1], arraySize * sizeof(vec3), &data.nm[0][0], flags);
+		glNamedBufferStorage(buffers[2], arraySize * sizeof(vec3), &data.tg[0][0], flags);
+		glNamedBufferStorage(buffers[3], arraySize * sizeof(vec3), &data.bt[0][0], flags);
+		glNamedBufferStorage(buffers[4], arraySize * sizeof(vec2), &data.uv[0][0], flags);
+		glNamedBufferStorage(buffers[5], arraySize * sizeof(VertexBoneData), &data.bones[0], flags);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 

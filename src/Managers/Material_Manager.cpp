@@ -13,14 +13,10 @@ void Material_Manager::_startup()
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (!m_Initialized) {
 		m_BufferSSBO = 0;
-		glGenBuffers(1, &m_BufferSSBO);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, m_BufferSSBO);
-		glBufferData(GL_SHADER_STORAGE_BUFFER, sizeof(Material_Buffer), &m_MatBuffer, GL_DYNAMIC_COPY);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_BufferSSBO);
-		GLvoid* p = glMapBuffer(GL_SHADER_STORAGE_BUFFER, GL_WRITE_ONLY);
-		memcpy(p, &m_MatBuffer, sizeof(Material_Buffer));
-		glUnmapBuffer(GL_SHADER_STORAGE_BUFFER);
-		glBindBuffer(GL_SHADER_STORAGE_BUFFER, 0);
+		glCreateBuffers(1, &m_BufferSSBO);
+		glNamedBufferStorage(m_BufferSSBO, sizeof(Material_Buffer), &m_MatBuffer, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		m_bufferPtr = glMapNamedBufferRange(m_BufferSSBO, 0, sizeof(Material_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 0, m_BufferSSBO);	
 		m_Initialized = true;
 	}
 }
@@ -29,6 +25,7 @@ void Material_Manager::_shutdown()
 {
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (m_Initialized) {
+		glUnmapNamedBuffer(m_BufferSSBO);
 		glDeleteBuffers(1, &m_BufferSSBO);
 		m_FreeSpots.clear();
 		m_MatBuffer = Material_Buffer();
@@ -58,9 +55,9 @@ void Material_Manager::Generate_Handle(const GLuint & materialBufferID, const GL
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
 	GLuint64 handle = glGetTextureHandleARB(glTextureID);
 	glMakeTextureHandleResidentARB(handle);
-	glBindBuffer(GL_UNIFORM_BUFFER, manager.m_BufferSSBO);
-	glBufferSubData(GL_UNIFORM_BUFFER, sizeof(GLuint64) * materialBufferID, sizeof(GLuint64), &handle);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	
+	GLuint64 * mappedBuffer = reinterpret_cast<GLuint64*>(manager.m_bufferPtr);
+	mappedBuffer[materialBufferID] = handle;
 	manager.m_MatBuffer.MaterialMaps[materialBufferID] = handle;	
 	manager.m_WorkOrders.push_back(handle);
 }

@@ -33,27 +33,23 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_Buffer * lBuffer,
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	m_bloomStrength = m_enginePackage->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
 
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCreateFramebuffers(1, &m_fbo);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 
-	glGenTextures(2, m_texturesGB);
+	glCreateTextures(GL_TEXTURE_2D, 2, m_texturesGB);
 	for (int x = 0; x < 2; ++x) {
-		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
 }
 
@@ -72,9 +68,7 @@ void Bloom_Tech::applyEffect()
 	m_visualFX->applyGaussianBlur(m_texture, m_texturesGB, m_renderSize, m_bloomStrength);
 
 	// Re-attach our bloom texture (was detached to allow for convolution)
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glBindVertexArray(0);
 	glEnable(GL_DEPTH_TEST);
 	Asset_Shader::Release();
@@ -83,7 +77,7 @@ void Bloom_Tech::applyEffect()
 void Bloom_Tech::bindForReading()
 {
 	m_lBuffer->bindForReading();
-	glBindMultiTextureEXT(GL_TEXTURE1, GL_TEXTURE_2D, m_texture);
+	glBindTextureUnit(1, m_texture);
 }
 
 void Bloom_Tech::setBloomStrength(const int & strength)
@@ -94,14 +88,8 @@ void Bloom_Tech::setBloomStrength(const int & strength)
 void Bloom_Tech::resize(const vec2 & size)
 {
 	m_renderSize = size;
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	for (int x = 0; x < 2; ++x) {
-		glBindTexture(GL_TEXTURE_2D, m_texturesGB[x]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);		
-	}
-	glBindTexture(GL_TEXTURE_2D, 0);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+	for (int x = 0; x < 2; ++x) 
+		glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 }

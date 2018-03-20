@@ -40,11 +40,9 @@ GLuint Asset_Primitive::Generate_VAO()
 {
 	GLuint vaoID = 0;
 
-	glGenVertexArrays(1, &vaoID);
-	glBindVertexArray(vaoID);
-	glEnableVertexAttribArray(0);
-	glEnableVertexAttribArray(1);
-	glBindVertexArray(0);
+	glCreateVertexArrays(1, &vaoID);
+	glEnableVertexArrayAttrib(vaoID, 0);
+	glEnableVertexArrayAttrib(vaoID, 1);
 
 	return vaoID;
 }
@@ -52,15 +50,15 @@ GLuint Asset_Primitive::Generate_VAO()
 void Asset_Primitive::updateVAO(const GLuint & vaoID)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
-	glBindVertexArray(vaoID);
+	
+	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(vaoID, 1, 2, GL_FLOAT, GL_FALSE, 0);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexArrayVertexBuffer(vaoID, 0, m_buffers[0], 0, 12);
+	glVertexArrayVertexBuffer(vaoID, 1, m_buffers[1], 0, 8);
 
-	glBindBuffer(GL_ARRAY_BUFFER, m_buffers[1]);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
-
-	glBindVertexArray(0);
+	glVertexArrayAttribBinding(vaoID, 0, 0);
+	glVertexArrayAttribBinding(vaoID, 1, 1);
 }
 
 size_t Asset_Primitive::getSize()
@@ -128,13 +126,10 @@ void Primitive_WorkOrder::finalizeOrder()
 		auto &uv_data = m_asset->m_dataUV;
 		auto &buffers = m_asset->m_buffers;
 		const size_t &arraySize = data.size();
-
-		glGenBuffers(2, buffers);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[0]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec3), &data[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, buffers[1]);
-		glBufferData(GL_ARRAY_BUFFER, arraySize * sizeof(vec2), &uv_data[0][0], GL_STATIC_DRAW);
-		glBindBuffer(GL_ARRAY_BUFFER, 0);
+		constexpr GLbitfield flags = GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		glCreateBuffers(2, buffers);
+		glNamedBufferStorage(buffers[0], arraySize * sizeof(vec3), &data[0][0], flags);
+		glNamedBufferStorage(buffers[1], arraySize * sizeof(vec2), &uv_data[0][0], flags);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 

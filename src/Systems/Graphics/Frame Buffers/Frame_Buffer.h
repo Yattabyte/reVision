@@ -43,14 +43,14 @@ public:
 	/** Initialize the framebuffer. */
 	virtual void initialize() {
 		if (!m_Initialized) {
-			glGenFramebuffers(1, &m_fbo);
+			glCreateFramebuffers(1, &m_fbo);
 			m_Initialized = true;
 		}
 	}
 	/** Binds and clears out all the render-targets in this framebuffer. */
 	virtual void clear() {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		glClearNamedFramebufferfv(m_fbo, GL_COLOR, 0, clearColor);
 	}
 	/** Binds the framebuffer and its render-targets for writing. */
 	virtual void bindForWriting() {

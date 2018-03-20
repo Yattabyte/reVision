@@ -35,9 +35,7 @@ void VisualFX::initializeCubeFilter()
 
 void VisualFX::initializeGausianBlur()
 {
-	glGenFramebuffers(1, &m_fbo_GB);
-	glBindFramebuffer(GL_FRAMEBUFFER, m_fbo_GB);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	glCreateFramebuffers(1, &m_fbo_GB);
 
 	Asset_Loader::load_asset(m_shaderGB, "FX\\gaussianBlur");
 	Asset_Loader::load_asset(m_shaderGB_A, "FX\\gaussianBlur_Alpha");
@@ -47,13 +45,13 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 {
 	if (desiredTexture && m_shapeQuad->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo_GB);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, flipTextures[0], 0);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, flipTextures[1], 0);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, flipTextures[0], 0);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, flipTextures[1], 0);
 		glViewport(0, 0, size.x, size.y);
 
 		// Read from desired texture, blur into this frame buffer
 		GLboolean horizontal = false;
-		glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, desiredTexture);
+		glBindTextureUnit(0, desiredTexture);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		m_shaderGB->bind();
 		m_shaderGB->Set_Uniform(0, horizontal);
@@ -65,7 +63,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		// Blur remainder of the times minus 1
 		for (int i = 1; i < amount - 1; i++) {
 			horizontal = !horizontal;
-			glBindTexture(GL_TEXTURE_2D, flipTextures[!horizontal]);
+			glBindTextureUnit(0, flipTextures[!horizontal]);
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB->Set_Uniform(0, horizontal);
 
@@ -74,8 +72,8 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 
 		// Last blur back into desired texture
 		horizontal = !horizontal;
-		glBindTexture(GL_TEXTURE_2D, flipTextures[!horizontal]);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, desiredTexture, 0);
+		glBindTextureUnit(0, flipTextures[!horizontal]);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, desiredTexture, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		m_shaderGB->Set_Uniform(0, horizontal);
 
@@ -91,13 +89,13 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 {
 	if (desiredTexture && m_shapeQuad->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo_GB);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, flipTextures[0], 0);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, flipTextures[1], 0);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, flipTextures[0], 0);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, flipTextures[1], 0);
 		glViewport(0, 0, size.x, size.y);
 
 		// Read from desired texture, blur into this frame buffer
 		GLboolean horizontal = false;
-		glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, desiredTexture);
+		glBindTextureUnit(0, desiredTexture);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_ONE, GL_ZERO);
 		m_shaderGB_A->bind();
@@ -110,7 +108,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		// Blur remainder of the times minus 1
 		for (int i = 1; i < amount - 1; i++) {
 			horizontal = !horizontal;
-			glBindTexture(GL_TEXTURE_2D, flipTextures[!horizontal]);
+			glBindTextureUnit(0, flipTextures[!horizontal]);
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB_A->Set_Uniform(0, horizontal);
 
@@ -119,8 +117,8 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 
 		// Last blur back into desired texture
 		horizontal = !horizontal;
-		glBindTexture(GL_TEXTURE_2D, flipTextures[!horizontal]);
-		glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, desiredTexture, 0);
+		glBindTextureUnit(0, flipTextures[!horizontal]);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, desiredTexture, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 

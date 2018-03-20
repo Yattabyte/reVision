@@ -24,14 +24,8 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	m_vao_id = 0;
 	m_skin = 0;
 	m_fence = nullptr;
-	glGenBuffers(1, &m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferData(GL_UNIFORM_BUFFER, sizeof(Transform_Buffer), &m_uboData, GL_DYNAMIC_COPY);
-	GLvoid* p = glMapBuffer(GL_UNIFORM_BUFFER, GL_WRITE_ONLY);
-	memcpy(p, &m_uboData, sizeof(Transform_Buffer));
-	glUnmapBuffer(GL_UNIFORM_BUFFER);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0); 
-	
+	glCreateBuffers(1, &m_uboID);
+	glNamedBufferData(m_uboID, sizeof(Transform_Buffer), &m_uboData, GL_DYNAMIC_COPY);	
 	m_vao_id = Asset_Model::Generate_VAO();	
 }
 

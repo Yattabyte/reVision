@@ -26,19 +26,17 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
-	glGenFramebuffers(1, &m_fbo);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glGenTextures(1, &m_texture);
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_DRAW_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_texture, 0);
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
+	glCreateFramebuffers(1, &m_fbo);
+	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 
-	GLenum Status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
@@ -66,17 +64,13 @@ void HDR_Tech::applyEffect()
 
 void HDR_Tech::bindForReading()
 {
-	glBindMultiTextureEXT(GL_TEXTURE0, GL_TEXTURE_2D, m_texture);
+	glBindTextureUnit(0, m_texture);
 }
 
 void HDR_Tech::resize(const vec2 & size)
 {
 	m_renderSize = size;
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 
-	glBindTexture(GL_TEXTURE_2D, m_texture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-
-	// restore default FBO
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 }

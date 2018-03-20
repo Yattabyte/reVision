@@ -33,10 +33,10 @@ bool Asset_Cubemap::existsYet()
 	return false;
 }
 
-void Asset_Cubemap::bind(const GLuint & texture_unit)
+void Asset_Cubemap::bind(const unsigned int & texture_unit)
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
-	glBindMultiTextureEXT(texture_unit, GL_TEXTURE_CUBE_MAP, m_glTexID);
+	glBindTextureUnit(texture_unit, m_glTexID);
 }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
@@ -173,17 +173,15 @@ void Cubemap_WorkOrder::finalizeOrder()
 		auto *pixel_data = m_asset->m_pixelData;
 		
 		// Create the final texture
-		glGenTextures(1, &gl_tex_ID);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, gl_tex_ID);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &gl_tex_ID);
+		glTextureStorage2D(gl_tex_ID, 1, GL_RGBA8, size.x, size.x);
 		for (int x = 0; x < 6; ++x)
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + x, 0, GL_RGBA, size.x, size.x, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
-
-		glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+			glTextureSubImage3D(gl_tex_ID, 0, 0, 0, x, size.x, size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
+		glTextureParameteri(gl_tex_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(gl_tex_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		glFlush();
 		write_guard.unlock();

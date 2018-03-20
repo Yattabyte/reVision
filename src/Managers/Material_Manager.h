@@ -96,6 +96,7 @@ private:
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
+	void *m_bufferPtr;
 };
 
 #endif // MATERIAL_MANAGER
