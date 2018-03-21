@@ -40,6 +40,12 @@ void System_World::update(const float & deltaTime)
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
 		hills->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
 
+		for (int x = 0; x < 16; ++x)
+			for (int y = 0; y < 16; ++y) {
+				auto refl = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
+				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 25, y * 4)));
+			}
+
 	/*	for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
@@ -134,6 +140,7 @@ void System_World::unregisterViewer(Camera * c)
 
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Systems\World\ECS\Components\Reflector_Component.h"
 void System_World::calcVisibility(Camera & camera)
 {
 	const auto camBuffer = camera.getCameraBuffer();
@@ -161,6 +168,22 @@ void System_World::calcVisibility(Camera & camera)
 		vector<const char *> types = { "Light_Directional", "Light_Spot", "Light_Point" };
 		for each (auto type in types) {
 			const auto &components = getSpecificComponents<Lighting_Component>(type);
+
+			vector<Component*> visible_components;
+
+			for each (auto component in components)
+				if (component->isVisible(camPMatrix, camVMatrix))
+					visible_components.push_back((Component*)component);
+
+			vis_token.insertType(type);
+			vis_token[type] = visible_components;
+		}
+	}
+
+	{
+		vector<const char *> types = { "Reflector" };
+		for each (auto type in types) {
+			const auto &components = getSpecificComponents<Reflector_Component>(type);
 
 			vector<Component*> visible_components;
 

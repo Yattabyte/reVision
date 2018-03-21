@@ -26,6 +26,7 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 
+		glUnmapNamedBuffer(m_attribID);
 		glDeleteBuffers(1, &m_attribID);
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
@@ -177,6 +178,11 @@ void System_Graphics::setShadowUpdateQuality(const float & quality)
 Shadow_Buffer & System_Graphics::getShadowBuffer()
 {
 	return m_shadowBuffer;
+}
+
+Reflection_Buffer & System_Graphics::getReflectionBuffer()
+{
+	return m_refBuffer;
 }
 
 void System_Graphics::generateKernal()

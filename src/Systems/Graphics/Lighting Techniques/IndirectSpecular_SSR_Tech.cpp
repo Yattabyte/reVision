@@ -3,6 +3,7 @@
 #include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
 #include "Systems\GraphiCS\Frame Buffers\Reflection_Buffer.h"
 #include "Systems\Graphics\VisualFX.h"
+#include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
 #include "glm\gtc\matrix_transform.hpp"
@@ -37,6 +38,10 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shaderCubemap, "Reflection\\reflectionCubemap");
 	Asset_Loader::load_asset(m_shaderCubeProj, "Reflection\\cubeProjection");
+	Asset_Loader::load_asset(TEST_SHADER, "test");
+	Asset_Loader::load_asset(m_shapeCube, "box");
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); });
 	m_shaderCubeProj->addCallback(this, [&]() {
 		mat4 views[6];
 		views[0] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(0, 1, 0)));
@@ -102,6 +107,20 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	glCreateBuffers(1, &m_ssrUBO);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
 	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+
+	typedef  struct {
+		uint  count;
+		uint  primCount;
+		uint  first;
+		uint  reserved;
+	} DrawArraysIndirectCommand;
+	DrawArraysIndirectCommand qwe;
+	qwe.count = 36;
+	qwe.primCount = 256;
+	qwe.first = 0;
+	qwe.reserved = 0;
+	glCreateBuffers(1, &testIndirect);
+	glNamedBufferStorage(testIndirect, sizeof(DrawArraysIndirectCommand), &qwe, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 }
 
 void IndirectSpecular_SSR_Tech::resize(const vec2 & size)
@@ -124,7 +143,7 @@ void IndirectSpecular_SSR_Tech::applyLighting(const Visibility_Token & vis_token
 {
 	blurLight();	 
 	buildEnvMap();
-	reflectLight();
+	reflectLight(vis_token);
 }
 
 void IndirectSpecular_SSR_Tech::blurLight()
@@ -195,7 +214,7 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 	Asset_Shader::Release();
 }
 
-void IndirectSpecular_SSR_Tech::reflectLight()
+void IndirectSpecular_SSR_Tech::reflectLight(const Visibility_Token & vis_token)
 {
 	// Use Fallback Reflections
 	const int quad_size = m_shapeQuad->getSize();
@@ -207,6 +226,17 @@ void IndirectSpecular_SSR_Tech::reflectLight()
 	glDisable(GL_BLEND);
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+
+
+	// Reflector test
+	if (m_shapeCube->existsYet() && TEST_SHADER->existsYet()) {
+		TEST_SHADER->bind();
+		glBindVertexArray(m_cubeVAO);
+		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, testIndirect);
+		glDrawArraysIndirect(GL_TRIANGLES, (GLvoid*)0);
+	}
+
+
 
 	// Apply SSR
 	m_lBuffer->bindForWriting();

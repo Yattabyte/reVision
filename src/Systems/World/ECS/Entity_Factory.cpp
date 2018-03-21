@@ -1,9 +1,11 @@
 #include "Systems\World\ECS\Entity_Factory.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\ECS\ECSmessenger.h"
-#include "Systems\World\ECS\Entities\Prop.h"
-#include "Systems\World\ECS\Entities\Sun.h"
+#include "Systems\World\ECS\Entities\Entity.h"
 #include "Systems\World\ECS\Entities\Light.h"
+#include "Systems\World\ECS\Entities\Prop.h"
+#include "Systems\World\ECS\Entities\Reflector.h"
+#include "Systems\World\ECS\Entities\Sun.h"
 
 
 Entity_Factory::~Entity_Factory()
@@ -14,10 +16,11 @@ Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *co
 	m_ECSmessenger(ecsMessenger),
 	m_componentFactory(componentFactory)
 {
-	m_creatorMap["Prop"] = new PropCreator();
-	m_creatorMap["Sun"] = new SunCreator();
 	m_creatorMap["SpotLight"] = new SpotLightCreator();
 	m_creatorMap["PointLight"] = new PointLightCreator();
+	m_creatorMap["Prop"] = new PropCreator();
+	m_creatorMap["Reflector"] = new ReflectorCreator();
+	m_creatorMap["Sun"] = new SunCreator();
 }
 
 ECShandle Entity_Factory::createEntity(const char * type)

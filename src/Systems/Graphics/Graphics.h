@@ -70,6 +70,9 @@ public:
 	/** Retrieve the shadow buffer. 
 	 * @return				the shadow map buffer */
 	Shadow_Buffer & getShadowBuffer();
+	/** Retrieve the reflection buffer. 
+	 * @return				the shadow map buffer */
+	Reflection_Buffer & getReflectionBuffer();
 
 	
 private:

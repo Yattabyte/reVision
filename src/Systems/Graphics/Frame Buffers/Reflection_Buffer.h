@@ -35,14 +35,21 @@ public:
 	void initialize(EnginePackage * enginePackage);
 	/** Binds the framebuffer and its render-targets for reading. */
 	void bindForReading(const unsigned int & texture_unit);
+	/** Binds the framebuffer and its render-targets for writing. */
+	virtual void bindForWriting();
 	/** Change the size of the framebuffer object.
 	* @param	size	the new size of the framebuffer */
 	virtual void resize(const vec2 & size);
+	/**/
+	void  * const addReflector(unsigned int & uboIndex);
 
 
 private:
 	// Private Attributes
 	GLuint m_texture;
+	GLuint m_reflectorUBO;
+	void * m_reflectorBuffer;
+	unsigned int m_count;
 	EnginePackage * m_enginePackage;
 };
 

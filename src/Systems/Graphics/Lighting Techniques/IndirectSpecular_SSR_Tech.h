@@ -62,7 +62,7 @@ private:
 	/** Adds to the global env map using the blurred light. */
 	void buildEnvMap();
 	/** Applies the SSR effect using the blurred light MIP chain*/
-	void reflectLight();
+	void reflectLight(const Visibility_Token & vis_token);
 
 
 	// Private Attributes
@@ -71,14 +71,14 @@ private:
 	Reflection_Buffer * m_refBuffer;
 	EnginePackage * m_enginePackage;
 	VisualFX * m_visualFX;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, TEST_SHADER;
+	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	Shared_Asset_Texture m_brdfMap;
-	GLuint m_quadVAO;
+	GLuint m_quadVAO, m_cubeVAO;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	SSR_Buffer m_ssrBuffer;
-	GLuint m_ssrUBO;
+	GLuint m_ssrUBO, testIndirect;
 	GLuint m_cube_fbo, m_cube_tex;
 };
 
