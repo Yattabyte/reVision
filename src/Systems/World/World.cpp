@@ -43,7 +43,7 @@ void System_World::update(const float & deltaTime)
 		for (int x = 0; x < 16; ++x)
 			for (int y = 0; y < 16; ++y) {
 				auto refl = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
-				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 25, y * 4)));
+				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 0, y * 4)));
 			}
 
 	/*	for (int x = 0; x < 3; ++x) {

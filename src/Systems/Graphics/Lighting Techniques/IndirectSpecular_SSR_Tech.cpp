@@ -108,19 +108,8 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
 	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 
-	typedef  struct {
-		uint  count;
-		uint  primCount;
-		uint  first;
-		uint  reserved;
-	} DrawArraysIndirectCommand;
-	DrawArraysIndirectCommand qwe;
-	qwe.count = 36;
-	qwe.primCount = 256;
-	qwe.first = 0;
-	qwe.reserved = 0;
-	glCreateBuffers(1, &testIndirect);
-	glNamedBufferStorage(testIndirect, sizeof(DrawArraysIndirectCommand), &qwe, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+	GLuint drawData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
+	m_buffer = GL_MappedBuffer(sizeof(GLuint) * 4, &drawData);
 }
 
 void IndirectSpecular_SSR_Tech::resize(const vec2 & size)
@@ -231,8 +220,10 @@ void IndirectSpecular_SSR_Tech::reflectLight(const Visibility_Token & vis_token)
 	// Reflector test
 	if (m_shapeCube->existsYet() && TEST_SHADER->existsYet()) {
 		TEST_SHADER->bind();
-		glBindVertexArray(m_cubeVAO);
-		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, testIndirect);
+		glBindVertexArray(m_cubeVAO);		
+		const size_t primCount = vis_token.specificSize("Reflector");
+		m_buffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
+		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, (GLvoid*)0);
 	}
 

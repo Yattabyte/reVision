@@ -15,6 +15,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Cubemap.h"
+#include "Utilities\GL_MappedBuffer.h"
 
 class EnginePackage;
 class Geometry_Buffer;
@@ -78,8 +79,9 @@ private:
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	SSR_Buffer m_ssrBuffer;
-	GLuint m_ssrUBO, testIndirect;
+	GLuint m_ssrUBO;
 	GLuint m_cube_fbo, m_cube_tex;
+	GL_MappedBuffer m_buffer;
 };
 
 #endif // INDIRECT_LIGHTING_SSR

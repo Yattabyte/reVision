@@ -22,6 +22,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Cubemap.h"
+#include "Utilities\GL_MappedBuffer.h"
 #include <vector>
 
 class EnginePackage;
@@ -76,18 +77,11 @@ public:
 
 	
 private:
-	/** Nested buffer class. */
-	struct Renderer_Attribs {
-		vec4 kernel[MAX_KERNEL_SIZE];
-		float m_ssao_radius;
-		int m_ssao_strength, m_aa_samples;
-		int m_ssao;
-	};
-
-
 	// Public Methods
 	/** Regenerate the noise kernel. */
 	void generateKernal();
+	/** Updates the visibility SSBO with the current vis_token data, binds relevant state. */
+	void updateBuffers(const Visibility_Token & vis_token);
 	/** Regenerates shadowmap's. 
 	 * @param	vis_token	the visible objects in this frame */
 	void shadowPass(const Visibility_Token & vis_token);
@@ -99,8 +93,7 @@ private:
 
 
 	// Public Attributes
-	Renderer_Attribs m_attribs;
-	GLuint m_attribID;
+	GL_MappedBuffer m_visBuffer, m_userBuffer;
 	ivec2 m_renderSize;
 	VisualFX m_visualFX;
 	Geometry_Buffer m_gBuffer;
@@ -113,7 +106,6 @@ private:
 	GLuint m_quadVAO;
 	Shared_Asset_Cubemap m_textureSky;
 	int m_updateQuality;
-	void *m_bufferPtr;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;

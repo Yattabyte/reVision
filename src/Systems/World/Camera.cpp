@@ -1,13 +1,10 @@
 #include "Systems\World\Camera.h"
-//#include "Systems\World_Manager.h"
 #include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 
 
 Camera::~Camera()
 {
-	glDeleteBuffers(1, &ssboCameraID);
-	//Visibility_Manager::unregisterViewer(this);
 }
 
 Camera::Camera(const vec3 & position, const vec2 & size, const float & near_plane, const float & far_plane, const float & horizontal_FOV)
@@ -19,10 +16,8 @@ Camera::Camera(const vec3 & position, const vec2 & size, const float & near_plan
 	setHorizontalFOV(horizontal_FOV);
 	setOrientation(quat(1, 0, 0, 0));
 	enableRendering(true);
-	ssboCameraID = 0;
-	glCreateBuffers(1, &ssboCameraID);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
-	glNamedBufferData(ssboCameraID, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
+	m_buffer = GL_MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
+	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 	update();
 }
 
@@ -30,10 +25,8 @@ Camera::Camera(Camera const & other)
 {
 	shared_lock<shared_mutex> rguard(other.data_mutex);
 	m_cameraBuffer = other.getCameraBuffer();
-	ssboCameraID = 0;
-	glCreateBuffers(1, &ssboCameraID);
-	glBindBufferRange(GL_UNIFORM_BUFFER, 0, ssboCameraID, 0, sizeof(Camera_Buffer));
-	glNamedBufferData(ssboCameraID, sizeof(Camera_Buffer), &m_cameraBuffer, GL_DYNAMIC_COPY);
+	m_buffer = GL_MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
+	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 	m_frustum = Frustum(other.getFrustum());
 	update();
 }
@@ -58,9 +51,7 @@ void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
 	m_frustum.setFrustum(pMatrix * vMatrix);
 
 	// Send data to GPU
-	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &m_cameraBuffer);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
 }
 
 void Camera::setVisibilityToken(const Visibility_Token & vis_token)
@@ -86,12 +77,11 @@ void Camera::update()
 	m_frustum.setFrustum(m_cameraBuffer.pMatrix * m_cameraBuffer.vMatrix);
 
 	// Send data to GPU
-	glBindBuffer(GL_UNIFORM_BUFFER, ssboCameraID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Camera_Buffer), &m_cameraBuffer);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	//m_buffer.fullWrite3X(GL_SHADER_STORAGE_BUFFER, 1, sizeof(Camera_Buffer), &m_cameraBuffer);
+	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
 }
 
 void Camera::Bind()
 {
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, ssboCameraID);
+	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 }

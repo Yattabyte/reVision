@@ -9,6 +9,7 @@
 #include "Systems\World\Camera.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Utilities\PriorityList.h"
 #include <random>
 #include <minmax.h>
@@ -26,8 +27,6 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 
-		glUnmapNamedBuffer(m_attribID);
-		glDeleteBuffers(1, &m_attribID);
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
 		for each (auto * tech in m_fxTechs)
@@ -39,7 +38,6 @@ System_Graphics::System_Graphics() :
 	m_visualFX(), m_gBuffer(), m_lBuffer(), m_shadowBuffer(), m_refBuffer()
 {
 	m_quadVAO = 0;
-	m_attribID = 0;
 	m_renderSize = vec2(1);
 }
 
@@ -59,25 +57,29 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
-
-		// Load preferences + callbacks
-		m_attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
-		m_attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
-		m_attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
-		m_attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
-		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });		
+		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });
 
-		// Generate attribute buffer
-		glCreateBuffers(1, &m_attribID);
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);
-		glNamedBufferStorage(m_attribID, sizeof(Renderer_Attribs), &m_attribs, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-		m_bufferPtr = glMapNamedBufferRange(m_attribID, 0, sizeof(Renderer_Attribs), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		// Generate User SSBO
+		struct Renderer_Attribs {
+			vec4 kernel[MAX_KERNEL_SIZE];
+			float m_ssao_radius;
+			int m_ssao_strength, m_aa_samples;
+			int m_ssao;
+		};
+		Renderer_Attribs attribs;
+		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
+		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
+		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
+		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });		
+		m_userBuffer = GL_MappedBuffer(sizeof(Renderer_Attribs), &attribs);
+		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+		// Generate Visibility SSBO
+		m_visBuffer = GL_MappedBuffer(sizeof(GLuint) * 500, 0);
+		m_visBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 
 		// Initiate graphics buffers
 		m_visualFX.initialize(enginePackage);
@@ -96,6 +98,11 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
 		m_fxTechs.push_back(new FXAA_Tech());
 		m_Initialized = true;
+
+
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 	}
 }
 
@@ -112,6 +119,9 @@ void System_Graphics::update(const float & deltaTime)
 		m_shaderSky->existsYet() &&
 		m_shaderGeometry->existsYet())
 	{
+		// Update buffers and bind initial state
+		updateBuffers(vis_token);
+
 		// Regeneration Phase
 		shadowPass(vis_token);
 		for each (auto *tech in m_lightingTechs)
@@ -143,26 +153,25 @@ void System_Graphics::update(const float & deltaTime)
 
 void System_Graphics::setSSAO(const bool & ssao)
 {
-	m_attribs.m_ssao = ssao;
-	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao = ssao;
+	//float m_ssao_radius;
+	//int m_ssao_strength, m_aa_samples;
+	//int m_ssao;
+	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 3), sizeof(int), &ssao);
 }
 
 void System_Graphics::setSSAOSamples(const int & samples)
 {
-	m_attribs.m_aa_samples = samples;
-	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_aa_samples = samples;
+	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 2), sizeof(int), &samples);
 }
 
 void System_Graphics::setSSAOStrength(const int & strength)
 {
-	m_attribs.m_ssao_strength = strength;
-	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao_strength = strength;
+	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int)), sizeof(int), &strength);
 }
 
 void System_Graphics::setSSAORadius(const float & radius)
 {
-	m_attribs.m_ssao_radius = radius;
-	reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->m_ssao_radius = radius;
+	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE), sizeof(float), &radius);
 }
 
 void System_Graphics::resize(const ivec2 & size)
@@ -187,6 +196,7 @@ Reflection_Buffer & System_Graphics::getReflectionBuffer()
 
 void System_Graphics::generateKernal()
 {
+	vec4 kernel[MAX_KERNEL_SIZE];
 	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
@@ -200,9 +210,25 @@ void System_Graphics::generateKernal()
 		GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
 		scale = 0.1f + (scale*scale) * (1.0f - 0.1f);
 		sample *= scale;
-		m_attribs.kernel[t] = vec4(sample, 1);
-		reinterpret_cast<Renderer_Attribs*>(m_bufferPtr)->kernel[t] = m_attribs.kernel[t];
+		kernel[t] = vec4(sample, 1);
 	}
+
+	// Write to buffer, kernel is first part of this buffer
+	m_userBuffer.write(0, sizeof(vec4)*MAX_KERNEL_SIZE, kernel);
+}
+
+void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
+{
+	// Update reflectors
+	m_visBuffer.checkFence();
+	vector<GLuint> visArray(vis_token.specificSize("Reflector"));
+	unsigned int count = 0;
+	for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector")) 
+		visArray[count++] = component->getBufferIndex();	
+	m_visBuffer.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+
+	m_visBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 }
 
 void System_Graphics::shadowPass(const Visibility_Token & vis_token)
@@ -317,7 +343,6 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 			component->draw();
 
 		Asset_Shader::Release();
-		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, m_attribID);
 		m_gBuffer.applyAO();
 	}
 }

@@ -67,7 +67,7 @@ size_t AnimationInfo::numAnimations() const
 Asset_Model::~Asset_Model()
 {
 	if (existsYet())
-		glDeleteBuffers(7, m_buffers);	
+		glDeleteBuffers(6, m_buffers);	
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }

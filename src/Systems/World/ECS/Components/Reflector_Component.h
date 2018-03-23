@@ -35,23 +35,20 @@ public:
 	// Public Methods
 	/** Sends current data to the GPU. */
 	void update();
+	/** Retrieve the buffer index for this reflector.
+	* @return	the buffer index */
+	const unsigned int getBufferIndex() const;
+
 
 
 protected:
 	/** Nested Buffer class.
 	 * @brief	used for sending data to the gpu. */
-	struct Transform_Buffer {	
-		mat4 mMatrix;
-		vec4 BoxCamPos;
-		int CubeSpot;
-		int Stencil;
-		vec2 padding;
-		Transform_Buffer() {
-			mMatrix = mat4(1.0f);
-			BoxCamPos = vec4(0.0f);
-			CubeSpot = 0;
-			Stencil = 0;
-		}
+	struct Reflection_Struct {
+		mat4 mMatrix = mat4(1.0f);
+		vec4 BoxCamPos = vec4(0.0f);
+		int CubeSpot = 0;
+		vec3 padding;
 	};
 
 
@@ -65,7 +62,7 @@ protected:
 	// Protected Attributes
 	unsigned int m_uboIndex;
 	void * m_uboBuffer;
-	Transform_Buffer m_uboData;
+	Reflection_Struct m_uboData;
 	GLsync m_fence; 
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;

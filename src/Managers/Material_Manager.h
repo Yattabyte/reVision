@@ -11,6 +11,7 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
+#include "Utilities\GL_MappedBuffer.h"
 #include "GL\glew.h"
 #include <deque>
 #include <vector>
@@ -89,14 +90,13 @@ private:
 
 
 	// Public Attributes
-	shared_mutex m_DataMutex;
 	bool m_Initialized; 
-	GLuint m_BufferSSBO;
-	Material_Buffer m_MatBuffer;
+	shared_mutex m_DataMutex;
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
-	void *m_bufferPtr;
+	Material_Buffer m_MatBuffer;
+	GL_MappedBuffer m_buffer;
 };
 
 #endif // MATERIAL_MANAGER

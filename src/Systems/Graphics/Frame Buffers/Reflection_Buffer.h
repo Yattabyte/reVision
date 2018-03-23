@@ -11,6 +11,7 @@
 #define GLEW_STATIC
 
 #include "Systems\Graphics\Frame Buffers\Frame_Buffer.h"
+#include "Utilities\GL_MappedBuffer.h"
 
 class EnginePackage;
 
@@ -47,8 +48,7 @@ public:
 private:
 	// Private Attributes
 	GLuint m_texture;
-	GLuint m_reflectorUBO;
-	void * m_reflectorBuffer;
+	GL_MappedBuffer m_buffer;
 	unsigned int m_count;
 	EnginePackage * m_enginePackage;
 };

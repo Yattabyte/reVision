@@ -51,6 +51,11 @@ public:
 	size_t size() const {
 		return mList.size();
 	}
+	/** Retrieve the size of a list within the map.
+	* @return			the size of the list */
+	const size_t specificSize(const char * name) const {
+		return mList.at(name).size();
+	}
 	/** Check if the given component type. 
 	 * @param	name	the name of the type to retrieve
 	 * @return			true if found, false otherwise */
