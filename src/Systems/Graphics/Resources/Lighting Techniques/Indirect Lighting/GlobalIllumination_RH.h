@@ -13,27 +13,30 @@
 #define GI_LIGHT_BOUNCE_COUNT 2 // Light bounces used
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
-#include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Systems\World\Camera.h"
 
 class EnginePackage;
-class Geometry_Buffer;
-class Lighting_Buffer;
-class Shadow_Buffer;
+class Geometry_FBO;
+class Lighting_FBO;
+class Shadow_FBO;
 
 
-/**
- * A lighting technique that calculates indirect diffuse lighting contribution for directional, point, and spot light types, using PBR techniques.
+ /**
+ * Performs primary and secondary light bounces, using the radiance hints technique.
+ * Responsible for indirect diffuse lighting.
+ * Supports physically based shaders.
+ * Supports directional, point, and spot lights.
  **/
-class DT_ENGINE_API IndirectDiffuse_GI_Tech : public Lighting_Technique {
+class DT_ENGINE_API GlobalIllumination_RH : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~IndirectDiffuse_GI_Tech();
+	~GlobalIllumination_RH();
 	/** Constructor. */
-	IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer);
+	GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO);
 
 
 	// Interface Implementations.
@@ -91,9 +94,9 @@ private:
 	void updateData();
 
 	// Private Attributes
-	Geometry_Buffer * m_gBuffer;
-	Lighting_Buffer * m_lBuffer;
-	Shadow_Buffer * m_sBuffer;
+	Geometry_FBO * m_geometryFBO;
+	Lighting_FBO * m_lightingFBO;
+	Shadow_FBO * m_shadowFBO;
 	EnginePackage * m_enginePackage;
 	Shared_Asset_Shader m_shaderDirectional_Bounce, m_shaderPoint_Bounce, m_shaderSpot_Bounce, m_shaderGISecondBounce, m_shaderGIReconstruct;
 	Shared_Asset_Primitive m_shapeQuad;

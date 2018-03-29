@@ -24,14 +24,14 @@ class EnginePackage;
 /**
  * An engine system that manages the creation and storage of shadowmap's for lights
  **/
-class DT_ENGINE_API Shadow_Buffer
+class DT_ENGINE_API Shadow_FBO
 {
 public:
 	// (de)Constructors
 	/** Destroy the shadow buffer. */
-	~Shadow_Buffer();
+	~Shadow_FBO();
 	/** Construct the shadow buffer. */
-	Shadow_Buffer();
+	Shadow_FBO();
 	
 
 	// Public Methods

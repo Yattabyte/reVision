@@ -16,7 +16,7 @@ Camera::Camera(const vec3 & position, const vec2 & size, const float & near_plan
 	setHorizontalFOV(horizontal_FOV);
 	setOrientation(quat(1, 0, 0, 0));
 	enableRendering(true);
-	m_buffer = GL_MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
+	m_buffer = MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
 	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 	update();
 }
@@ -25,7 +25,7 @@ Camera::Camera(Camera const & other)
 {
 	shared_lock<shared_mutex> rguard(other.data_mutex);
 	m_cameraBuffer = other.getCameraBuffer();
-	m_buffer = GL_MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
+	m_buffer = MappedBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
 	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 	m_frustum = Frustum(other.getFrustum());
 	update();

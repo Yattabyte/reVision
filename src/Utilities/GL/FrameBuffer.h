@@ -21,18 +21,18 @@ using namespace glm;
  * An encapsulation of an OpenGL framebuffer.
  * Requires the implementer to manage the size of the frame buffer, and also add render targets.
  **/
-class DT_ENGINE_API Frame_Buffer
+class DT_ENGINE_API FrameBuffer
 {
 public:
 	// (de)Constructors
 	/** Destroy the lighting buffer. */
-	virtual ~Frame_Buffer() {
+	virtual ~FrameBuffer() {
 		if (m_Initialized && m_fbo != 0)
 			glDeleteFramebuffers(1, &m_fbo);
 
 	}
 	/** Construct the lighting buffer. */
-	Frame_Buffer() {
+	FrameBuffer() {
 		m_Initialized = false;
 		m_fbo = 0;
 		m_renderSize = ivec2(1);

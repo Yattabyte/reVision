@@ -1,6 +1,6 @@
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
-#include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
-#include "Systems\Graphics\VisualFX.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Systems\Graphics\Resources\VisualFX.h"
 #include "Utilities\EnginePackage.h"
 
 
@@ -15,14 +15,14 @@ Bloom_Tech::~Bloom_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_Buffer * lBuffer, VisualFX * visualFX)
+Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO, VisualFX * visualFX)
 {
 	m_enginePackage = enginePackage;
 	m_fbo = 0;
 	m_texture = 0; 
 	m_texturesGB[0] = 0;
 	m_texturesGB[1] = 0;
-	m_lBuffer = lBuffer;
+	m_lightingFBO = lightingFBO;
 	m_visualFX = visualFX;
 
 	Asset_Loader::load_asset(m_shaderBloomExtract, "FX\\bloomExtraction");
@@ -61,7 +61,7 @@ void Bloom_Tech::applyEffect()
 	m_shaderBloomExtract->bind();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glBindVertexArray(m_quadVAO);
-	m_lBuffer->bindForReading();
+	m_lightingFBO->bindForReading();
 	glDrawArrays(GL_TRIANGLES, 0, m_shapeQuad->getSize());
 
 	// Blur bright regions
@@ -76,7 +76,7 @@ void Bloom_Tech::applyEffect()
 
 void Bloom_Tech::bindForReading()
 {
-	m_lBuffer->bindForReading();
+	m_lightingFBO->bindForReading();
 	glBindTextureUnit(1, m_texture);
 }
 

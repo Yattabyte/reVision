@@ -37,7 +37,7 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_camera[1].setHorizontalFOV(180);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowBuffer;
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot1);
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot2);
 	}

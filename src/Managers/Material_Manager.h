@@ -11,7 +11,7 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
-#include "Utilities\GL_MappedBuffer.h"
+#include "Utilities\GL\MappedBuffer.h"
 #include "GL\glew.h"
 #include <deque>
 #include <vector>
@@ -55,9 +55,9 @@ public:
 	static GLuint Generate_ID();
 
 	/** Generates a 64-bit GLuint64 texture handle for the specified texture, and makes it resident on the GPU
-	 * @param	materialBufferID	the material buffer
+	 * @param	materialightingFBOID	the material buffer
 	 * @param	glTextureID			the texture to generate the handle for **/
-	static void Generate_Handle(const GLuint & materialBufferID, const GLuint & glTextureID);
+	static void Generate_Handle(const GLuint & materialightingFBOID, const GLuint & glTextureID);
 
 	/** Tick through the work orders */
 	static void Parse_Work_Orders();
@@ -96,7 +96,7 @@ private:
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
 	Material_Buffer m_MatBuffer;
-	GL_MappedBuffer m_buffer;
+	MappedBuffer m_buffer;
 };
 
 #endif // MATERIAL_MANAGER

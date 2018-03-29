@@ -42,16 +42,6 @@ public:
 
 
 protected:
-	/** Nested Buffer class.
-	 * @brief	used for sending data to the gpu. */
-	struct Reflection_Struct {
-		mat4 mMatrix = mat4(1.0f);
-		vec4 BoxCamPos = vec4(0.0f);
-		int CubeSpot = 0;
-		vec3 padding;
-	};
-
-
 	// (de)Constructors
 	/** Destroys a reflector component. */
 	~Reflector_Component();
@@ -62,7 +52,7 @@ protected:
 	// Protected Attributes
 	unsigned int m_uboIndex;
 	void * m_uboBuffer;
-	Reflection_Struct m_uboData;
+	vec3 m_position;
 	GLsync m_fence; 
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;

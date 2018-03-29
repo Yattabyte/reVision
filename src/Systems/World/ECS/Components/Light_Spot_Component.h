@@ -18,7 +18,7 @@
 #include "Systems\World\Camera.h"
 
 using namespace glm;
-class Shadow_Buffer;
+class Shadow_FBO;
 class System_World;
 class Light_Spot_Creator;
 class EnginePackage;
@@ -96,7 +96,7 @@ protected:
 	GLuint m_uboID;
 	LightSpotBuffer m_uboData;
 	EnginePackage *m_enginePackage;
-	Shadow_Buffer *m_shadowMapper;
+	Shadow_FBO *m_shadowMapper;
 	System_World *m_world;
 	quat m_orientation;
 	float m_squaredRadius;

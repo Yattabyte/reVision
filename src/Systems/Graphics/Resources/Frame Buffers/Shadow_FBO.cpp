@@ -1,10 +1,10 @@
-#include "Systems\Graphics\Frame Buffers\Shadow_Buffer.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
 #include <minmax.h>
 
 
-Shadow_Buffer::~Shadow_Buffer()
+Shadow_FBO::~Shadow_FBO()
 {
 	if (m_Initialized) {
 		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_SIZE_REGULAR, this);
@@ -20,7 +20,7 @@ Shadow_Buffer::~Shadow_Buffer()
 	}
 }
 
-Shadow_Buffer::Shadow_Buffer()
+Shadow_FBO::Shadow_FBO()
 {
 	m_Initialized = false;
 	for (int x = 0; x < SHADOW_MAX; ++x) {
@@ -33,7 +33,7 @@ Shadow_Buffer::Shadow_Buffer()
 	}	
 }
 
-void Shadow_Buffer::initialize(EnginePackage * enginePackage)
+void Shadow_FBO::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -99,7 +99,7 @@ void Shadow_Buffer::initialize(EnginePackage * enginePackage)
 	}
 }
 
-void Shadow_Buffer::registerShadowCaster(const int & shadow_type, int & array_spot)
+void Shadow_FBO::registerShadowCaster(const int & shadow_type, int & array_spot)
 {
 	if (m_freed_shadow_spots[shadow_type].size()) {
 		array_spot = m_freed_shadow_spots[shadow_type].front();
@@ -117,7 +117,7 @@ void Shadow_Buffer::registerShadowCaster(const int & shadow_type, int & array_sp
 	glTextureImage3DEXT(m_shadow_radiantflux[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
 }
 
-void Shadow_Buffer::unregisterShadowCaster(const int & shadow_type, int & array_spot)
+void Shadow_FBO::unregisterShadowCaster(const int & shadow_type, int & array_spot)
 {
 	bool found = false;
 	for (int x = 0, size = m_freed_shadow_spots[shadow_type].size(); x < size; ++x)
@@ -127,25 +127,25 @@ void Shadow_Buffer::unregisterShadowCaster(const int & shadow_type, int & array_
 		m_freed_shadow_spots[shadow_type].push_back(array_spot);
 }
 
-void Shadow_Buffer::bindForWriting(const int & shadow_type)
+void Shadow_FBO::bindForWriting(const int & shadow_type)
 {
 	glViewport(0, 0, m_size[shadow_type].x, m_size[shadow_type].y);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadow_fbo[shadow_type]);
 }
 
-void Shadow_Buffer::bindForReading(const int & shadow_type, const GLuint & ShaderTextureUnit)
+void Shadow_FBO::bindForReading(const int & shadow_type, const GLuint & ShaderTextureUnit)
 {
 	glBindTextureUnit(ShaderTextureUnit, m_shadow_depth[shadow_type]);
 }
 
-void Shadow_Buffer::BindForReading_GI(const int & ShadowSpot, const GLuint & ShaderTextureUnit)
+void Shadow_FBO::BindForReading_GI(const int & ShadowSpot, const GLuint & ShaderTextureUnit)
 {
 	glBindTextureUnit(ShaderTextureUnit, m_shadow_worldpos[ShadowSpot]);
 	glBindTextureUnit(ShaderTextureUnit + 1, m_shadow_worldnormal[ShadowSpot]);
 	glBindTextureUnit(ShaderTextureUnit + 2, m_shadow_radiantflux[ShadowSpot]);
 }
 
-void Shadow_Buffer::clearShadow(const int & shadow_type, const int & layer)
+void Shadow_FBO::clearShadow(const int & shadow_type, const int & layer)
 {
 	const float clearDepth(1.0f);
 	const vec3 clear(0.0f);
@@ -155,7 +155,7 @@ void Shadow_Buffer::clearShadow(const int & shadow_type, const int & layer)
 	glClearTexSubImage(m_shadow_radiantflux[shadow_type], 0, 0, 0, layer, m_size[shadow_type].x, m_size[shadow_type].y, 1.0f, GL_RGB, GL_FLOAT, &clear);
 }
 
-void Shadow_Buffer::setSize(const unsigned int & shadow_type, const float & size)
+void Shadow_FBO::setSize(const unsigned int & shadow_type, const float & size)
 {
 	m_size[shadow_type] = vec2(max(size, 1));
 
@@ -172,7 +172,7 @@ void Shadow_Buffer::setSize(const unsigned int & shadow_type, const float & size
 	glNamedFramebufferTexture(m_shadow_fbo[shadow_type], GL_COLOR_ATTACHMENT2, m_shadow_radiantflux[shadow_type], 0);
 }
 
-vec2 Shadow_Buffer::getSize(const unsigned int & shadow_type)
+vec2 Shadow_FBO::getSize(const unsigned int & shadow_type)
 {
 	return m_size[shadow_type];
 }

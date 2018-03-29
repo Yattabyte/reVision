@@ -10,8 +10,7 @@
 #endif
 #define GLEW_STATIC
 
-#include "Systems\Graphics\Frame Buffers\Frame_Buffer.h"
-#include "Utilities\GL_MappedBuffer.h"
+#include "Utilities\GL\FrameBuffer.h"
 
 class EnginePackage;
 
@@ -20,14 +19,14 @@ class EnginePackage;
 * A specialized framebuffer that accumulates lighting information for a single frame.
 * Supports bloom, accumulates over-brightened lights in a second render-target.
 **/
-class DT_ENGINE_API Reflection_Buffer : public Frame_Buffer
+class DT_ENGINE_API Reflection_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
 	/** Destroy the reflection buffer. */
-	~Reflection_Buffer();
-	/** Construct the lighting buffer. */
-	Reflection_Buffer();
+	~Reflection_FBO();
+	/** Construct the reflection buffer. */
+	Reflection_FBO();
 
 
 	// Public Interface Implementations
@@ -41,15 +40,11 @@ public:
 	/** Change the size of the framebuffer object.
 	* @param	size	the new size of the framebuffer */
 	virtual void resize(const vec2 & size);
-	/**/
-	void  * const addReflector(unsigned int & uboIndex);
 
 
 private:
 	// Private Attributes
 	GLuint m_texture;
-	GL_MappedBuffer m_buffer;
-	unsigned int m_count;
 	EnginePackage * m_enginePackage;
 };
 

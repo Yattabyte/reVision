@@ -1,22 +1,22 @@
-#include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
-#include "Systems\GraphiCS\Frame Buffers\Geometry_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Shadow_Buffer.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 
 
-DirectLighting_Tech::~DirectLighting_Tech()
+DS_Lighting::~DS_Lighting()
 {
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
 }
 
-DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
+DS_Lighting::DS_Lighting(Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO)
 {
-	m_gBuffer = gBuffer;
-	m_lBuffer = lBuffer;
-	m_sBuffer = sBuffer;
+	m_geometryFBO = geometryFBO;
+	m_lightingFBO = lightingFBO;
+	m_shadowFBO = shadowFBO;
 
 	Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
 	Asset_Loader::load_asset(m_shaderPoint, "Lighting\\point");
@@ -32,11 +32,11 @@ DirectLighting_Tech::DirectLighting_Tech(Geometry_Buffer * gBuffer, Lighting_Buf
 	m_shapeSphere->addCallback(this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); });
 }
 
-void DirectLighting_Tech::updateLighting(const Visibility_Token & vis_token)
+void DS_Lighting::updateLighting(const Visibility_Token & vis_token)
 {
 }
 
-void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
+void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 {
 	const size_t &quad_size = m_shapeQuad->getSize();
 	const size_t &cone_size = m_shapeCone->getSize();
@@ -44,10 +44,10 @@ void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
-	m_gBuffer->bindForReading();
-	m_lBuffer->bindForWriting();
+	m_geometryFBO->bindForReading();
+	m_lightingFBO->bindForWriting();
 
-	m_sBuffer->bindForReading(SHADOW_LARGE, 3);
+	m_shadowFBO->bindForReading(SHADOW_LARGE, 3);
 	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet()) {
 		m_shaderDirectional->bind();
 		glBindVertexArray(m_quadVAO);
@@ -57,7 +57,7 @@ void DirectLighting_Tech::applyLighting(const Visibility_Token & vis_token)
 
 	glEnable(GL_STENCIL_TEST);
 	glCullFace(GL_FRONT);
-	m_sBuffer->bindForReading(SHADOW_REGULAR, 3);
+	m_shadowFBO->bindForReading(SHADOW_REGULAR, 3);
 	if (vis_token.find("Light_Point") && m_shaderPoint->existsYet() && m_shapeSphere->existsYet()) {
 		m_shaderPoint->bind();
 		glBindVertexArray(m_sphereVAO);

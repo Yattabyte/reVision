@@ -1,8 +1,8 @@
-#include "Systems\Graphics\Frame Buffers\Lighting_Buffer.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Utilities\EnginePackage.h"
 
 
-Lighting_Buffer::~Lighting_Buffer()
+Lighting_FBO::~Lighting_FBO()
 {
 	if (m_Initialized) {
 		// Destroy OpenGL objects
@@ -12,20 +12,20 @@ Lighting_Buffer::~Lighting_Buffer()
 	}
 }
 
-Lighting_Buffer::Lighting_Buffer()
+Lighting_FBO::Lighting_FBO()
 {\
 	m_depth_stencil = 0;
 	m_texture = 0;
 }
 
-void Lighting_Buffer::initialize(EnginePackage * enginePackage, const GLuint & depthStencil)
+void Lighting_FBO::initialize(EnginePackage * enginePackage, const GLuint & depthStencil)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		m_depth_stencil = depthStencil;
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
-		Frame_Buffer::initialize();
+		FrameBuffer::initialize();
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -39,27 +39,27 @@ void Lighting_Buffer::initialize(EnginePackage * enginePackage, const GLuint & d
 	}
 }
 
-void Lighting_Buffer::bindForWriting()
+void Lighting_FBO::bindForWriting()
 {
-	Frame_Buffer::bindForWriting();
+	FrameBuffer::bindForWriting();
 	// Borrow the G_Buffer's depth-stencil texture
 	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 }
 
-void Lighting_Buffer::bindForReading()
+void Lighting_FBO::bindForReading()
 {
 	glBindTextureUnit(0, m_texture);
 }
 
-void Lighting_Buffer::resize(const ivec2 & size)
+void Lighting_FBO::resize(const ivec2 & size)
 {
-	Frame_Buffer::resize(size);
+	FrameBuffer::resize(size);
 
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 }
 
-void Lighting_Buffer::end()
+void Lighting_FBO::end()
 {
 	// return the G_Buffer's depth-stencil texture
 	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);

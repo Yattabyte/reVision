@@ -1,7 +1,7 @@
-#include "Systems\Graphics\Lighting Techniques\IndirectDiffuse_GI_Tech.h"
-#include "Systems\GraphiCS\Frame Buffers\Geometry_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Shadow_Buffer.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
@@ -11,7 +11,7 @@
 #include <random>
 
 
-IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
+GlobalIllumination_RH::~GlobalIllumination_RH()
 {
 	glUnmapNamedBuffer(m_attribSSBO);
 	glDeleteBuffers(1, &m_attribSSBO);
@@ -28,12 +28,12 @@ IndirectDiffuse_GI_Tech::~IndirectDiffuse_GI_Tech()
 	}
 }
 
-IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Shadow_Buffer *sBuffer)
+GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO)
 {
 	m_enginePackage = enginePackage;
-	m_gBuffer = gBuffer;
-	m_lBuffer = lBuffer;
-	m_sBuffer = sBuffer;
+	m_geometryFBO = geometryFBO;
+	m_lightingFBO = lightingFBO;
+	m_shadowFBO = shadowFBO;
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;
 	m_attribSSBO = 0;
@@ -121,7 +121,7 @@ IndirectDiffuse_GI_Tech::IndirectDiffuse_GI_Tech(EnginePackage * enginePackage, 
 	m_bufferPtr = glMapNamedBufferRange(m_attribSSBO, 0, sizeof(GI_Attribs_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 }
 
-void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_token)
+void GlobalIllumination_RH::updateLighting(const Visibility_Token & cam_vis_token)
 {
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
@@ -136,7 +136,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 	// Perform primary light bounce
 	glBindVertexArray(m_bounceVAO);
 	// Bounce directional light
-	m_sBuffer->BindForReading_GI(SHADOW_LARGE, 0);
+	m_shadowFBO->BindForReading_GI(SHADOW_LARGE, 0);
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	const auto & dirList = vis_token.getTypeList<Lighting_Component>("Light_Directional");
 	const auto & pointList = vis_token.getTypeList<Lighting_Component>("Light_Point");
@@ -149,7 +149,7 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 			component->indirectPass(size);
 	}
 	// Bounce point lights
-	m_sBuffer->BindForReading_GI(SHADOW_REGULAR, 0);
+	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
 	if (vis_token.find("Light_Point")) {
 		m_shaderPoint_Bounce->bind();
 		for each (auto &component in pointList)
@@ -175,15 +175,15 @@ void IndirectDiffuse_GI_Tech::updateLighting(const Visibility_Token & cam_vis_to
 	Asset_Shader::Release();
 }
 
-void IndirectDiffuse_GI_Tech::applyLighting(const Visibility_Token & vis_token)
+void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
 {
 	// Reconstruct GI from data
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
-	m_gBuffer->bindForReading();
-	m_lBuffer->bindForWriting();
+	m_geometryFBO->bindForReading();
+	m_lightingFBO->bindForWriting();
 
 	m_shaderGIReconstruct->bind();
 	const size_t &quad_size = m_shapeQuad->getSize();
@@ -200,25 +200,25 @@ void IndirectDiffuse_GI_Tech::applyLighting(const Visibility_Token & vis_token)
 }
 
 
-void IndirectDiffuse_GI_Tech::bindForWriting(const GLuint &bounceSpot)
+void GlobalIllumination_RH::bindForWriting(const GLuint &bounceSpot)
 {
 	glViewport(0, 0, m_attribBuffer.resolution, m_attribBuffer.resolution);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo[bounceSpot]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-void IndirectDiffuse_GI_Tech::bindForReading(const GLuint &bounceSpot, const unsigned int & textureUnit)
+void GlobalIllumination_RH::bindForReading(const GLuint &bounceSpot, const unsigned int & textureUnit)
 {
 	for (int x = 0; x < GI_TEXTURE_COUNT; ++x) 
 		glBindTextureUnit(textureUnit + x, m_textures[bounceSpot][x]);
 }
 
-void IndirectDiffuse_GI_Tech::bindNoise(const GLuint textureUnit)
+void GlobalIllumination_RH::bindNoise(const GLuint textureUnit)
 {
 	glBindTextureUnit(textureUnit, m_noise32);
 }
 
-void IndirectDiffuse_GI_Tech::updateData()
+void GlobalIllumination_RH::updateData()
 {
 	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
 	const vec2 &size = cameraBuffer.Dimensions;

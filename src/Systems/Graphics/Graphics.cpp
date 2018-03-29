@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\Graphics\Lighting Techniques\DirectLighting_Tech.h"
-#include "Systems\Graphics\Lighting Techniques\IndirectDiffuse_GI_Tech.h"
-#include "Systems\Graphics\Lighting Techniques\IndirectSpecular_SSR_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections_SSR.h"
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
@@ -35,7 +35,7 @@ System_Graphics::~System_Graphics()
 }
 
 System_Graphics::System_Graphics() :
-	m_visualFX(), m_gBuffer(), m_lBuffer(), m_shadowBuffer(), m_refBuffer()
+	m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_shadowBuffer(), m_reflectionFBO()
 {
 	m_quadVAO = 0;
 	m_renderSize = vec2(1);
@@ -73,26 +73,26 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
 		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
 		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });		
-		m_userBuffer = GL_MappedBuffer(sizeof(Renderer_Attribs), &attribs);
+		m_userBuffer = MappedBuffer(sizeof(Renderer_Attribs), &attribs);
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
 
 		// Generate Visibility SSBO
-		m_visBuffer = GL_MappedBuffer(sizeof(GLuint) * 500, 0);
-		m_visBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+		m_vishadowFBO = MappedBuffer(sizeof(GLuint) * 500, 0);
+		m_vishadowFBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 
 		// Initiate graphics buffers
 		m_visualFX.initialize(enginePackage);
-		m_gBuffer.initialize(enginePackage, &m_visualFX);
-		m_lBuffer.initialize(enginePackage, m_gBuffer.m_depth_stencil);
+		m_geometryFBO.initialize(enginePackage, &m_visualFX);
+		m_lightingFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
-		m_refBuffer.initialize(enginePackage);
+		m_reflectionFBO.initialize(enginePackage);
 
 		// Initiate lighting techniques
-		m_lightingTechs.push_back(new DirectLighting_Tech(&m_gBuffer, &m_lBuffer, &m_shadowBuffer));
-		m_lightingTechs.push_back(new IndirectDiffuse_GI_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_shadowBuffer)); 
-		m_lightingTechs.push_back(new IndirectSpecular_SSR_Tech(m_enginePackage, &m_gBuffer, &m_lBuffer, &m_refBuffer, &m_visualFX));
-		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lBuffer, &m_visualFX));
+		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowBuffer));
+		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowBuffer)); 
+		m_lightingTechs.push_back(new Reflections_SSR(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &m_visualFX));
+		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
 
 		// Initiate effects techniques
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
@@ -128,9 +128,9 @@ void System_Graphics::update(const float & deltaTime)
 			tech->updateLighting(vis_token);
 
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		m_gBuffer.clear();
-		m_lBuffer.clear();
-		m_refBuffer.clear();
+		m_geometryFBO.clear();
+		m_lightingFBO.clear();
+		m_reflectionFBO.clear();
 		geometryPass(vis_token);
 		
 		// Writing to lighting fbo
@@ -140,14 +140,14 @@ void System_Graphics::update(const float & deltaTime)
 			tech->applyLighting(vis_token);
 
 		// Chain of post-processing effects ending in default fbo
-		m_lBuffer.bindForReading();
+		m_lightingFBO.bindForReading();
 		for each (auto *tech in m_fxTechs) {
 			tech->applyEffect();
 			tech->bindForReading();
 		}
 
-		m_lBuffer.end();
-		m_gBuffer.end();
+		m_lightingFBO.end();
+		m_geometryFBO.end();
 	}
 }
 
@@ -184,16 +184,6 @@ void System_Graphics::setShadowUpdateQuality(const float & quality)
 	m_updateQuality = quality;
 }
 
-Shadow_Buffer & System_Graphics::getShadowBuffer()
-{
-	return m_shadowBuffer;
-}
-
-Reflection_Buffer & System_Graphics::getReflectionBuffer()
-{
-	return m_refBuffer;
-}
-
 void System_Graphics::generateKernal()
 {
 	vec4 kernel[MAX_KERNEL_SIZE];
@@ -220,14 +210,14 @@ void System_Graphics::generateKernal()
 void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 {
 	// Update reflectors
-	m_visBuffer.checkFence();
+	m_vishadowFBO.checkFence();
 	vector<GLuint> visArray(vis_token.specificSize("Reflector"));
 	unsigned int count = 0;
 	for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector")) 
 		visArray[count++] = component->getBufferIndex();	
-	m_visBuffer.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+	m_vishadowFBO.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 
-	m_visBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_vishadowFBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 }
 
@@ -336,21 +326,21 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
-		m_gBuffer.bindForWriting();
+		m_geometryFBO.bindForWriting();
 		m_shaderGeometry->bind();
 
 		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 			component->draw();
 
 		Asset_Shader::Release();
-		m_gBuffer.applyAO();
+		m_geometryFBO.applyAO();
 	}
 }
 
 void System_Graphics::skyPass()
 {
 	const size_t &quad_size = m_shapeQuad->getSize();
-	m_lBuffer.bindForWriting();
+	m_lightingFBO.bindForWriting();
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_FALSE);

@@ -11,9 +11,9 @@
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 
-
 static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
+
 
 static void GLFW_Callback_Error(int error, const char * description)
 {
@@ -147,7 +147,7 @@ void Shutdown_Sharing()
 #include "Systems\Input\Input.h"
 #include "Systems\Logic\Logic.h"
 #include "Systems\World\World.h"
-bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_systems)
+bool dt_Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 
@@ -173,8 +173,8 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_syst
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
-		glfwMakeContextCurrent(m_package->m_Context_Rendering);		
-		
+		glfwMakeContextCurrent(m_package->m_Context_Rendering);	
+				
 		// Create all the required systems
 		auto &systems = m_package->m_Systems;
 		systems["Preferences"] = new System_Preferences("preferences");
@@ -182,13 +182,7 @@ bool dt_Engine::initialize(const vector<pair<const char *, System*>> &other_syst
 		systems["Input"] = new System_Input();
 		systems["Logic"] = new System_Logic();
 		systems["World"] = new System_World();
-		// Replace base systems with ones provided
-		for each (auto &sys_pair in other_systems) {
-			if (systems.find(sys_pair.first))
-				if (systems[sys_pair.first] != nullptr)
-					delete systems[sys_pair.first];
-			systems[sys_pair.first] = sys_pair.second;
-		}
+
 		// Initialize all systems
 		for each (auto &system in systems)
 			system.second->initialize(m_package);

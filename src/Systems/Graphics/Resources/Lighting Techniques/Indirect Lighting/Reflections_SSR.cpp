@@ -1,8 +1,9 @@
-#include "Systems\Graphics\Lighting Techniques\IndirectSpecular_SSR_Tech.h"
-#include "Systems\GraphiCS\Frame Buffers\Geometry_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Lighting_Buffer.h"
-#include "Systems\GraphiCS\Frame Buffers\Reflection_Buffer.h"
-#include "Systems\Graphics\VisualFX.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections_SSR.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
+#include "Systems\Graphics\Resources\VisualFX.h"
+#include "Systems\Graphics\Graphics.h"
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
@@ -10,7 +11,7 @@
 #include <minmax.h>
 
 
-IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
+Reflections_SSR::~Reflections_SSR()
 {
 	glDeleteBuffers(1, &m_ssrUBO);
 	glDeleteTextures(1, &m_texture);
@@ -20,12 +21,13 @@ IndirectSpecular_SSR_Tech::~IndirectSpecular_SSR_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Reflection_Buffer * refBuffer, VisualFX * visualFX)
+Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO, VisualFX * visualFX)
 {
 	m_enginePackage = enginePackage;
-	m_gBuffer = gBuffer;
-	m_lBuffer = lBuffer;
-	m_refBuffer = refBuffer;
+	m_geometryFBO = geometryFBO;
+	m_lightingFBO = lightingFBO;
+	m_reflectionFBO = reflectionFBO;
+	m_reflectionUBO = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO;
 	m_visualFX = visualFX;
 	m_fbo = 0;
 	m_texture = 0;
@@ -109,10 +111,10 @@ IndirectSpecular_SSR_Tech::IndirectSpecular_SSR_Tech(EnginePackage * enginePacka
 	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 
 	GLuint drawData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
-	m_buffer = GL_MappedBuffer(sizeof(GLuint) * 4, &drawData);
+	m_buffer = MappedBuffer(sizeof(GLuint) * 4, &drawData);
 }
 
-void IndirectSpecular_SSR_Tech::resize(const vec2 & size)
+void Reflections_SSR::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	for (int x = 0; x < 6; ++x) {
@@ -123,19 +125,19 @@ void IndirectSpecular_SSR_Tech::resize(const vec2 & size)
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 }
 
-void IndirectSpecular_SSR_Tech::updateLighting(const Visibility_Token & vis_token)
+void Reflections_SSR::updateLighting(const Visibility_Token & vis_token)
 {
 	
 }
 
-void IndirectSpecular_SSR_Tech::applyLighting(const Visibility_Token & vis_token)
+void Reflections_SSR::applyLighting(const Visibility_Token & vis_token)
 {
 	blurLight();	 
 	buildEnvMap();
 	reflectLight(vis_token);
 }
 
-void IndirectSpecular_SSR_Tech::blurLight()
+void Reflections_SSR::blurLight()
 {
 	const int quad_size = m_shapeQuad->getSize();
 	glBindVertexArray(m_quadVAO);
@@ -144,7 +146,7 @@ void IndirectSpecular_SSR_Tech::blurLight()
 
 	// Copy lighting texture to one with a MIP chain
 	m_shaderCopy->bind();
-	m_lBuffer->bindForReading();
+	m_lightingFBO->bindForReading();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
@@ -184,7 +186,7 @@ void IndirectSpecular_SSR_Tech::blurLight()
 	// Maintain state for next function call: reflectLight()
 }
 
-void IndirectSpecular_SSR_Tech::buildEnvMap() 
+void Reflections_SSR::buildEnvMap() 
 {
 	// Copy viewport to cubemap
 	const int quad_size = m_shapeQuad->getSize();
@@ -203,19 +205,19 @@ void IndirectSpecular_SSR_Tech::buildEnvMap()
 	Asset_Shader::Release();
 }
 
-void IndirectSpecular_SSR_Tech::reflectLight(const Visibility_Token & vis_token)
+void Reflections_SSR::reflectLight(const Visibility_Token & vis_token)
 {
 	// Use Fallback Reflections
 	const int quad_size = m_shapeQuad->getSize();
-	m_refBuffer->bindForWriting();
-	m_gBuffer->bindForReading();
+	m_reflectionUBO->bindBuffer();
+	m_reflectionFBO->bindForWriting();
+	m_geometryFBO->bindForReading();
 	m_shaderCubemap->bind();
 	glBindTextureUnit(3, m_cube_tex);
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-
 
 	// Reflector test
 	if (m_shapeCube->existsYet() && TEST_SHADER->existsYet()) {
@@ -227,14 +229,12 @@ void IndirectSpecular_SSR_Tech::reflectLight(const Visibility_Token & vis_token)
 		glDrawArraysIndirect(GL_TRIANGLES, (GLvoid*)0);
 	}
 
-
-
 	// Apply SSR
-	m_lBuffer->bindForWriting();
+	m_lightingFBO->bindForWriting();
 	glBindVertexArray(m_quadVAO);
 	m_shaderSSR->bind();
-	m_gBuffer->bindForReading(); // Gbuffer
-	m_refBuffer->bindForReading(3); // Fallback Reflections
+	m_geometryFBO->bindForReading(); // Gbuffer
+	m_reflectionFBO->bindForReading(3); // Fallback Reflections
 	m_brdfMap->bind(4); // BRDF LUT
 	glBindTextureUnit(5, m_texture); // blurred light MIP-chain
 	glEnable(GL_BLEND);

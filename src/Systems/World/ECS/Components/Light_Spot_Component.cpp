@@ -21,7 +21,7 @@ Light_Spot_Component::~Light_Spot_Component()
 	}
 }
 
-Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
+Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
 	m_uboID = 0;
@@ -31,7 +31,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	glNamedBufferData(m_uboID, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getShadowBuffer();
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowBuffer;
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 	}
 	if (m_enginePackage->findSubSystem("World")) {

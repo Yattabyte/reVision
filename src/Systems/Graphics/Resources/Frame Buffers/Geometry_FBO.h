@@ -9,7 +9,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\Graphics\Frame Buffers\Frame_Buffer.h"
+#include "Utilities\GL\FrameBuffer.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
@@ -21,14 +21,14 @@ class EnginePackage;
  * A specialized framebuffer that accumulates surface attributes of all rendered objects for a single frame.
  * @brief	Objects render into it, storing their albedo, normal, specular, roughness, height, occlusion, and depth.
  **/
-class DT_ENGINE_API Geometry_Buffer : public Frame_Buffer
+class DT_ENGINE_API Geometry_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
-	/** Destroy the gBuffer. */
-	~Geometry_Buffer();
-	/** Construct the gBuffer. */
-	Geometry_Buffer();
+	/** Destroy the geometryFBO. */
+	~Geometry_FBO();
+	/** Construct the geometryFBO. */
+	Geometry_FBO();
 
 	
 	// Public Methods

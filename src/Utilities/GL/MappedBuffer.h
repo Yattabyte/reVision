@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GL_MAPPEDBUFFER_H
-#define GL_MAPPEDBUFFER_H
+#ifndef MappedBuffer_H
+#define MappedBuffer_H
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -12,11 +12,11 @@
 #include <utility>
 
 
-class GL_MappedBuffer
+class MappedBuffer
 {
 public:
 	// Public (de)Constructors
-	~GL_MappedBuffer() {
+	~MappedBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
@@ -25,20 +25,20 @@ public:
 			glDeleteSync(m_fence);
 	}
 	/** Default. */
-	GL_MappedBuffer() {
+	MappedBuffer() {
 		m_bufferID = 0;
 		m_index = 0;
 		m_bufferPtr = nullptr;
 		m_fence = nullptr;		
 	}
 	/** Explicit Instantion. */
-	GL_MappedBuffer(const GLsizeiptr & size, const void * data) : GL_MappedBuffer() {
+	MappedBuffer(const GLsizeiptr & size, const void * data) : MappedBuffer() {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 	/** Move gl object from 1 instance to another. */
-	GL_MappedBuffer & operator=(GL_MappedBuffer && o) noexcept {
+	MappedBuffer & operator=(MappedBuffer && o) noexcept {
 		m_bufferID = (std::move(o.m_bufferID));
 		m_bufferPtr = (std::move(o.m_bufferPtr));
 		m_fence = (std::move(o.m_fence));
@@ -133,4 +133,4 @@ private:
 	GLuint m_index;
 };
 
-#endif // GL_MAPPEDBUFFER_H
+#endif // MappedBuffer_H

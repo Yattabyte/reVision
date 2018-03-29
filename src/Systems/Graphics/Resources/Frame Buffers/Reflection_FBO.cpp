@@ -1,8 +1,8 @@
-#include "Systems\Graphics\Frame Buffers\Reflection_Buffer.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Utilities\EnginePackage.h"
 
 
-Reflection_Buffer::~Reflection_Buffer()
+Reflection_FBO::~Reflection_FBO()
 {
 	if (m_Initialized) {
 		if (m_texture != 0) glDeleteTextures(1, &m_texture);
@@ -11,21 +11,18 @@ Reflection_Buffer::~Reflection_Buffer()
 	}
 }
 
-Reflection_Buffer::Reflection_Buffer()
+Reflection_FBO::Reflection_FBO()
 {
-	m_count = 0;
 	m_texture = 0;
-	m_buffer = GL_MappedBuffer(100 * 256, 0);
-	m_buffer.bindBufferBase(GL_UNIFORM_BUFFER, 5);
 }
 
-void Reflection_Buffer::initialize(EnginePackage * enginePackage)
+void Reflection_FBO::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
-		Frame_Buffer::initialize();
+		FrameBuffer::initialize();
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -39,28 +36,20 @@ void Reflection_Buffer::initialize(EnginePackage * enginePackage)
 	}
 }
 
-void Reflection_Buffer::bindForReading(const unsigned int & texture_unit)
+void Reflection_FBO::bindForReading(const unsigned int & texture_unit)
 {
 	glBindTextureUnit(texture_unit, m_texture);
 }
 
-void Reflection_Buffer::bindForWriting()
+void Reflection_FBO::bindForWriting()
 {
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	m_buffer.bindBufferBase(GL_UNIFORM_BUFFER, 5);
 }
 
-void Reflection_Buffer::resize(const vec2 & size)
+void Reflection_FBO::resize(const vec2 & size)
 {
-	Frame_Buffer::resize(size);
+	FrameBuffer::resize(size);
 
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
-}
-
-void * const Reflection_Buffer::addReflector(unsigned int & uboIndex)
-{
-	uboIndex = m_count;
-	m_count++;
-	return m_buffer.getBufferPointer();
 }

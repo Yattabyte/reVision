@@ -9,7 +9,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\Graphics\Frame Buffers\Frame_Buffer.h"
+#include "Utilities\GL\FrameBuffer.h"
 
 using namespace glm;
 class EnginePackage;
@@ -20,20 +20,20 @@ class VisualFX;
  * A specialized framebuffer that accumulates lighting information for a single frame.
  * Supports bloom, accumulates over-brightened lights in a second render-target.
  **/
-class DT_ENGINE_API Lighting_Buffer : public Frame_Buffer
+class DT_ENGINE_API Lighting_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
 	/** Destroy the lighting buffer. */
-	~Lighting_Buffer();
+	~Lighting_FBO();
 	/** Construct the lighting buffer. */
-	Lighting_Buffer();
+	Lighting_FBO();
 
 
 	// Public Methods
 	/** Initialize the framebuffer.
 	 * @param	enginePackage	the engine package
-	 * @param	depthStencil	reference to the depthStencil texture from the gBuffer */
+	 * @param	depthStencil	reference to the depthStencil texture from the geometryFBO */
 	void initialize(EnginePackage * enginePackage, const GLuint & depthStencil);	
 	/** Binds the framebuffer and its render-targets for writing. */
 	virtual void bindForWriting();

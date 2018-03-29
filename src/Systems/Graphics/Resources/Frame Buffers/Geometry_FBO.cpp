@@ -1,6 +1,6 @@
-#include "Systems\Graphics\Frame Buffers\Geometry_Buffer.h"
+#include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Utilities\EnginePackage.h"
-#include "Systems\Graphics\VisualFX.h"
+#include "Systems\Graphics\Resources\VisualFX.h"
 #include <algorithm>
 #include <random>
 
@@ -13,7 +13,7 @@ static void AssignTextureProperties(const GLuint & texID)
 	glTextureParameteri(texID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 }
 
-Geometry_Buffer::~Geometry_Buffer()
+Geometry_FBO::~Geometry_FBO()
 {	
 	if (m_Initialized) {
 		// Destroy OpenGL objects
@@ -27,7 +27,7 @@ Geometry_Buffer::~Geometry_Buffer()
 	}
 }
 
-Geometry_Buffer::Geometry_Buffer()
+Geometry_FBO::Geometry_FBO()
 {		
 	m_depth_stencil = 0;
 	m_quadVAO = 0;
@@ -37,7 +37,7 @@ Geometry_Buffer::Geometry_Buffer()
 		m_texturesGB[x] = 0;
 }
 
-void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visualFX)
+void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
@@ -49,7 +49,7 @@ void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visua
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		initialize_noise();
-		Frame_Buffer::initialize();
+		FrameBuffer::initialize();
 
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
@@ -67,7 +67,7 @@ void Geometry_Buffer::initialize(EnginePackage * enginePackage, VisualFX * visua
 	}
 }
 
-void Geometry_Buffer::initialize_noise()
+void Geometry_FBO::initialize_noise()
 {
 	if (!m_Initialized) {
 		glCreateTextures(GL_TEXTURE_2D, 2, m_texturesGB);
@@ -91,7 +91,7 @@ void Geometry_Buffer::initialize_noise()
 	}
 }
 
-void Geometry_Buffer::clear()
+void Geometry_FBO::clear()
 {
 	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -103,22 +103,22 @@ void Geometry_Buffer::clear()
 	glClearNamedFramebufferfi(m_fbo, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
 }
 
-void Geometry_Buffer::bindForWriting()
+void Geometry_FBO::bindForWriting()
 {
 	GLenum DrawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glNamedFramebufferDrawBuffers(m_fbo, GBUFFER_NUM_TEXTURES, DrawBuffers);
 }
 
-void Geometry_Buffer::bindForReading()
+void Geometry_FBO::bindForReading()
 {
 	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; i++) 
 		glBindTextureUnit(i, m_textures[i]);	
 }
 
-void Geometry_Buffer::resize(const ivec2 & size)
+void Geometry_FBO::resize(const ivec2 & size)
 {
-	Frame_Buffer::resize(size);
+	FrameBuffer::resize(size);
 
 	// Main textures
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
@@ -135,13 +135,13 @@ void Geometry_Buffer::resize(const ivec2 & size)
 		glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);	
 }
 
-void Geometry_Buffer::end()
+void Geometry_FBO::end()
 {
 	// Return the borrowed depth-stencil texture
 	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 }
 
-void Geometry_Buffer::applyAO()
+void Geometry_FBO::applyAO()
 {
 	if (m_shapeQuad->existsYet() && m_shaderSSAO->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);

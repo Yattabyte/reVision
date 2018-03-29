@@ -1,5 +1,6 @@
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Systems\Graphics\Graphics.h"
+#include "Systems\Graphics\Resources\Uniform Buffers\Reflection_UBO.h"
 #include "Utilities\EnginePackage.h"
 #include "glm\gtc\matrix_transform.hpp"
 
@@ -13,10 +14,7 @@ Reflector_Component::Reflector_Component(const ECShandle & id, const ECShandle &
 	m_fence = nullptr;
 	m_enginePackage = enginePackage;
 
-	if (m_enginePackage->findSubSystem("Graphics"))
-		m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->getReflectionBuffer().addReflector(m_uboIndex);
-	
-	reinterpret_cast<Reflection_Struct*>(m_uboBuffer)[m_uboIndex] = m_uboData;
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO.addReflector(m_uboIndex);
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
@@ -27,9 +25,10 @@ void Reflector_Component::receiveMessage(const ECSmessage & message)
 		case SET_POSITION: {
 			if (!message.IsOfType<vec3>()) break;
 			const auto &payload = message.GetPayload<vec3>();
-			m_uboData.mMatrix = glm::translate(mat4(1.0f), payload); 
-			m_uboData.BoxCamPos.xyz = payload;
-			reinterpret_cast<Reflection_Struct*>(m_uboBuffer)[m_uboIndex] = m_uboData;
+			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer)[m_uboIndex];
+			uboData->mMatrix = glm::translate(mat4(1.0f), payload);
+			uboData->BoxCamPos.xyz = payload;
+			m_position = payload;
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		}
 	}
@@ -48,7 +47,7 @@ void Reflector_Component::draw()
 
 bool Reflector_Component::isVisible(const mat4 & PMatrix, const mat4 & VMatrix)
 {
-	return Frustum(PMatrix * VMatrix).sphereInFrustum(m_uboData.BoxCamPos.xyz, vec3(1.0f));
+	return Frustum(PMatrix * VMatrix).sphereInFrustum(m_position.xyz, vec3(1.0f));
 }
 
 void Reflector_Component::update()

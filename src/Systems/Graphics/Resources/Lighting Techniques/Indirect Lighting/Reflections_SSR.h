@@ -10,30 +10,36 @@
 #endif
 #define BRDF_SIZE 512
 
-#include "Systems\Graphics\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Cubemap.h"
-#include "Utilities\GL_MappedBuffer.h"
+#include "Utilities\GL\MappedBuffer.h"
 
 class EnginePackage;
-class Geometry_Buffer;
-class Lighting_Buffer;
-class Reflection_Buffer;
+class Geometry_FBO;
+class Lighting_FBO;
+class Reflection_FBO;
+class Reflection_UBO;
 class VisualFX;
 
 
 /**
  * A lighting technique that calculates indirect specular lighting contribution, aka light reflections off of other objects, using the final lighting buffer. Uses PBR techniques.
  **/
-class DT_ENGINE_API IndirectSpecular_SSR_Tech : public Lighting_Technique {
+/**
+ * Performs a reflection pass using the screen as input - using the screen space reflection technique.
+ * Responsible for indirect specular lighting, but not good enough on its own.
+ * Supports physically based shaders.
+ **/
+class DT_ENGINE_API Reflections_SSR : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~IndirectSpecular_SSR_Tech();
+	~Reflections_SSR();
 	/** Constructor. */
-	IndirectSpecular_SSR_Tech(EnginePackage * enginePackage, Geometry_Buffer * gBuffer, Lighting_Buffer * lBuffer, Reflection_Buffer * refBuffer, VisualFX * visualFX);
+	Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO, VisualFX * visualFX);
 
 
 	// Interface Implementations.
@@ -67,9 +73,10 @@ private:
 
 
 	// Private Attributes
-	Geometry_Buffer * m_gBuffer;
-	Lighting_Buffer * m_lBuffer;
-	Reflection_Buffer * m_refBuffer;
+	Geometry_FBO * m_geometryFBO;
+	Lighting_FBO * m_lightingFBO;
+	Reflection_FBO * m_reflectionFBO;
+	Reflection_UBO * m_reflectionUBO;
 	EnginePackage * m_enginePackage;
 	VisualFX * m_visualFX;
 	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, TEST_SHADER;
@@ -81,7 +88,7 @@ private:
 	SSR_Buffer m_ssrBuffer;
 	GLuint m_ssrUBO;
 	GLuint m_cube_fbo, m_cube_tex;
-	GL_MappedBuffer m_buffer;
+	MappedBuffer m_buffer;
 };
 
 #endif // INDIRECT_LIGHTING_SSR
