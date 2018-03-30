@@ -98,7 +98,6 @@ private:
 
 
 	// Private Attributes
-	MappedBuffer m_vishadowFBO, m_userBuffer;
 	ivec2 m_renderSize;
 	int m_updateQuality;
 	VisualFX m_visualFX;
@@ -107,7 +106,8 @@ private:
 						m_shaderGeometry, m_shaderSky;
 	Shared_Asset_Cubemap m_textureSky;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
+	GLuint m_quadVAO; 
+	MappedBuffer m_vishadowFBO, m_userBuffer, m_quadIndirectBuffer;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;

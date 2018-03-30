@@ -173,11 +173,8 @@ void GlobalIllumination_RH::updateLighting(const Visibility_Token & cam_vis_toke
 	bindForWriting(1);
 	glDrawArraysIndirect(GL_POINTS, 0);
 
-	glBindVertexArray(0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	Asset_Shader::Release();
 }
 
 void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
@@ -197,10 +194,8 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
 	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
 	
-	glBindVertexArray(0);
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
-	Asset_Shader::Release();
 }
 
 

@@ -26,6 +26,9 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
+	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -50,16 +53,13 @@ void HDR_Tech::applyEffect()
 	glDisable(GL_STENCIL_TEST);
 	glDepthMask(GL_FALSE);
 	glDisable(GL_BLEND);
-	//glDisable(GL_CULL_FACE);
-
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glClear(GL_COLOR_BUFFER_BIT);
 
 	m_shaderHDR->bind();
 	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, m_shapeQuad->getSize());
-	glBindVertexArray(0);
-	Asset_Shader::Release();
+	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
 }
 
 void HDR_Tech::bindForReading()

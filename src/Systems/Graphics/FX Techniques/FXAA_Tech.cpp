@@ -12,17 +12,15 @@ FXAA_Tech::FXAA_Tech()
 	Asset_Loader::load_asset(m_shapeQuad, "quad"); 
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
 }
 
 void FXAA_Tech::applyEffect()
 {
-	const size_t &quad_size = m_shapeQuad->getSize();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
 	m_shaderFXAA->bind();
 	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-
-	glBindVertexArray(0);
-	Asset_Shader::Release();
+	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
 }

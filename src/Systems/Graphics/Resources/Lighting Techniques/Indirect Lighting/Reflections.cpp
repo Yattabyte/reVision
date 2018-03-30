@@ -169,10 +169,6 @@ void Reflections::blurLight()
 	glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
 	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glBindVertexArray(0);
-	Asset_Shader::Release();
-	// Maintain state for next function call: reflectLight()
 }
 
 void Reflections::buildEnvMap()
@@ -188,7 +184,6 @@ void Reflections::buildEnvMap()
 	glBindVertexArray(m_quadVAO);
 	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
-
 
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
@@ -258,9 +253,7 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 	// Revert State
-	glBindVertexArray(0);
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
-	Asset_Shader::Release();
 }

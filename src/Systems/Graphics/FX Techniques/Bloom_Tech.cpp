@@ -33,6 +33,9 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	m_bloomStrength = m_enginePackage->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
 
+	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -59,19 +62,18 @@ void Bloom_Tech::applyEffect()
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_BLEND);
 	m_shaderBloomExtract->bind();
+	m_lightingFBO->bindForReading();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glBindVertexArray(m_quadVAO);
-	m_lightingFBO->bindForReading();
-	glDrawArrays(GL_TRIANGLES, 0, m_shapeQuad->getSize());
+	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 	// Blur bright regions
 	m_visualFX->applyGaussianBlur(m_texture, m_texturesGB, m_renderSize, m_bloomStrength);
 
 	// Re-attach our bloom texture (was detached to allow for convolution)
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
-	glBindVertexArray(0);
 	glEnable(GL_DEPTH_TEST);
-	Asset_Shader::Release();
 }
 
 void Bloom_Tech::bindForReading()

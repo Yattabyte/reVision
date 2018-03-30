@@ -99,6 +99,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_fxTechs.push_back(new FXAA_Tech());
 		m_Initialized = true;
 
+		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -149,6 +151,7 @@ void System_Graphics::update(const float & deltaTime)
 		m_reflectionFBO.end();
 		m_lightingFBO.end();
 		m_geometryFBO.end();
+		Asset_Shader::Release();
 	}
 }
 
@@ -314,7 +317,6 @@ void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 	for each (auto &component in spotLights) 
 		component->shadowPass();	
 
-	Asset_Shader::Release();	
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 }
 
@@ -333,26 +335,22 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
 			component->draw();
 
-		Asset_Shader::Release();
 		m_geometryFBO.applyAO();
 	}
 }
 
 void System_Graphics::skyPass()
 {
-	const size_t &quad_size = m_shapeQuad->getSize();
-	m_lightingFBO.bindForWriting();
-
 	glDisable(GL_BLEND);
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 
+	m_lightingFBO.bindForWriting();
 	m_textureSky->bind(0);
 	m_shaderSky->bind();
 	glBindVertexArray(m_quadVAO);
-	glDrawArrays(GL_TRIANGLES, 0, quad_size);
-	glBindVertexArray(0);
-	Asset_Shader::Release();
+	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);

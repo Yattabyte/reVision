@@ -5,6 +5,7 @@
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Utilities\GL\MappedBuffer.h"
 
 class EnginePackage;
 class Lighting_FBO;
@@ -45,6 +46,7 @@ private:
 	Shared_Asset_Shader m_shaderBloomExtract;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
+	MappedBuffer m_quadIndirectBuffer;
 	GLuint m_fbo, m_texture, m_texturesGB[2];
 	vec2 m_renderSize;
 	int m_bloomStrength;

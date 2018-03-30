@@ -21,6 +21,8 @@ void VisualFX::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
 
 		initializeCubeFilter();
 		initializeGausianBlur();
@@ -57,8 +59,8 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		m_shaderGB->Set_Uniform(0, horizontal);
 
 		glBindVertexArray(m_quadVAO);
-		const int quad_size = m_shapeQuad->getSize();
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Blur remainder of the times minus 1
 		for (int i = 1; i < amount - 1; i++) {
@@ -66,8 +68,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 			glBindTextureUnit(0, flipTextures[!horizontal]);
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB->Set_Uniform(0, horizontal);
-
-			glDrawArrays(GL_TRIANGLES, 0, quad_size);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 
 		// Last blur back into desired texture
@@ -76,11 +77,8 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, desiredTexture, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		m_shaderGB->Set_Uniform(0, horizontal);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
-
-		glBindVertexArray(0);
-		Asset_Shader::Release();
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
@@ -102,8 +100,8 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 
 		glBindVertexArray(m_quadVAO);
-		const int quad_size = m_shapeQuad->getSize();
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Blur remainder of the times minus 1
 		for (int i = 1; i < amount - 1; i++) {
@@ -112,7 +110,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB_A->Set_Uniform(0, horizontal);
 
-			glDrawArrays(GL_TRIANGLES, 0, quad_size);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 
 		// Last blur back into desired texture
@@ -122,10 +120,8 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glBindVertexArray(0);
-		Asset_Shader::Release();
 		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ONE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}

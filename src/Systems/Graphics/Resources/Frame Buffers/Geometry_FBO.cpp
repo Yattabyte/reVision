@@ -51,6 +51,9 @@ void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX
 		initialize_noise();
 		FrameBuffer::initialize();
 
+		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
 		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
@@ -159,10 +162,8 @@ void Geometry_FBO::applyAO()
 
 		m_shaderSSAO->bind();
 		glBindVertexArray(m_quadVAO);
-		const size_t &quad_size = m_shapeQuad->getSize();
-		glDrawArrays(GL_TRIANGLES, 0, quad_size);
-		glBindVertexArray(0);
-		Asset_Shader::Release();
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
 
