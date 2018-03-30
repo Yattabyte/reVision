@@ -83,7 +83,7 @@ private:
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	GLuint m_cube_fbo, m_cube_tex;
-	MappedBuffer m_cubeIndirectBuffer, m_ssrBuffer;
+	MappedBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer;
 };
 
 #endif // REFLECTIONS

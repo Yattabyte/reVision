@@ -127,10 +127,10 @@ void Light_Point_Component::directPass(const int & vertex_count)
 	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
 }
 
-void Light_Point_Component::indirectPass(const int & vertex_count)
+void Light_Point_Component::indirectPass()
 {
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	glDrawArraysInstanced(GL_POINTS, 0, 1, vertex_count);
+	glDrawArraysIndirect(GL_POINTS, 0);
 }
 
 void Light_Point_Component::shadowPass()

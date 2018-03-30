@@ -110,6 +110,8 @@ private:
 	GLuint m_attribSSBO;
 	Camera m_camera;
 	void *m_bufferPtr;
+
+	MappedBuffer m_pointsIndirectBuffer, m_quadIndirectBuffer;
 };
 
 #endif // GLOBALILLUMINATION_RH

@@ -34,7 +34,7 @@ public:
 	// Interface Implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual void directPass(const int &vertex_count);
-	virtual void indirectPass(const int &vertex_count);
+	virtual void indirectPass();
 	virtual void shadowPass();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	virtual float getImportance(const vec3 &position) const;

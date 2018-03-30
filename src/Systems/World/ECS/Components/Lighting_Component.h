@@ -26,7 +26,7 @@ public:
 	/** Renders the light, performing direct lighting calculations only. */
 	virtual void directPass(const int &vertex_count) {};
 	/** Renders the light, performing indirect lighting calculations only. */
-	virtual void indirectPass(const int &vertex_count) {};
+	virtual void indirectPass() {};
 	/** Renders the light, performing shadow calculations only. */
 	virtual void shadowPass() {};
 	/** Tests if this object is within the viewing frustum of the camera.
