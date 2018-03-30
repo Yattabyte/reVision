@@ -32,7 +32,7 @@ public:
 	// Public Interface Implementations
 	/** Initialize the framebuffer. 
 	 * @param	enginePackage	the engine package */
-	void initialize(EnginePackage * enginePackage);
+	void initialize(EnginePackage * enginePackage, const GLuint & depthStencil);
 	/** Binds the framebuffer and its render-targets for reading. */
 	void bindForReading(const unsigned int & texture_unit);
 	/** Binds the framebuffer and its render-targets for writing. */
@@ -40,11 +40,14 @@ public:
 	/** Change the size of the framebuffer object.
 	* @param	size	the new size of the framebuffer */
 	virtual void resize(const vec2 & size);
+	/** Return the depth-stencil buffer. */
+	void end();
+
 
 
 private:
 	// Private Attributes
-	GLuint m_texture;
+	GLuint m_texture, m_depth_stencil; // Donated by the geometry buffer
 	EnginePackage * m_enginePackage;
 };
 

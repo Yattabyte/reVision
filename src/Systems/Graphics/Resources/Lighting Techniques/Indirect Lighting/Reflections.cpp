@@ -1,8 +1,7 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections_SSR.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\VisualFX.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Managers\Message_Manager.h"
@@ -11,7 +10,7 @@
 #include <minmax.h>
 
 
-Reflections_SSR::~Reflections_SSR()
+Reflections::~Reflections()
 {
 	glDeleteBuffers(1, &m_ssrUBO);
 	glDeleteTextures(1, &m_texture);
@@ -21,29 +20,29 @@ Reflections_SSR::~Reflections_SSR()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO, VisualFX * visualFX)
+Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
 {
 	m_enginePackage = enginePackage;
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 	m_reflectionUBO = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO;
-	m_visualFX = visualFX;
 	m_fbo = 0;
 	m_texture = 0;
 	m_ssrUBO = 0;
+	m_cube_fbo = 0;
+	m_cube_tex = 0;
 
 	Asset_Loader::load_asset(m_shaderCopy, "fx\\copyTexture");
 	Asset_Loader::load_asset(m_shaderBlur, "fx\\gaussianBlur_MIP");
 	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\ssr");
-	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Loader::load_asset(m_shaderFinal, "Lighting\\reflection");
 	Asset_Loader::load_asset(m_shaderCubemap, "Reflection\\reflectionCubemap");
 	Asset_Loader::load_asset(m_shaderCubeProj, "Reflection\\cubeProjection");
 	Asset_Loader::load_asset(TEST_SHADER, "test");
+	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
+	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shapeCube, "box");
-	m_cubeVAO = Asset_Primitive::Generate_VAO();
-	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); });
 	m_shaderCubeProj->addCallback(this, [&]() {
 		mat4 views[6];
 		views[0] = (glm::rotate(mat4(1.0f), glm::radians(90.0f), vec3(0, 1, 0)));
@@ -59,14 +58,13 @@ Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * g
 		m_shaderCubeProj->Set_Uniform(8, proj);
 		Asset_Shader::Release();
 	});
-
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); });
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
-	
-	m_cube_fbo = 0;
-	m_cube_tex = 0;
+
 	glCreateFramebuffers(1, &m_cube_fbo);
 	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_cube_tex);
 	glTextureStorage3D(m_cube_tex, 1, GL_RGB32F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
@@ -77,7 +75,7 @@ Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * g
 	glTextureParameteri(m_cube_tex, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	glNamedFramebufferTexture(m_cube_fbo, GL_COLOR_ATTACHMENT0, m_cube_tex, 0);
 	glNamedFramebufferDrawBuffer(m_cube_fbo, GL_COLOR_ATTACHMENT0);
-		
+
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -105,7 +103,7 @@ Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * g
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		return;
 	}
-	
+
 	glCreateBuffers(1, &m_ssrUBO);
 	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
 	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
@@ -114,7 +112,7 @@ Reflections_SSR::Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * g
 	m_buffer = MappedBuffer(sizeof(GLuint) * 4, &drawData);
 }
 
-void Reflections_SSR::resize(const vec2 & size)
+void Reflections::resize(const vec2 & size)
 {
 	m_renderSize = size;
 	for (int x = 0; x < 6; ++x) {
@@ -125,19 +123,19 @@ void Reflections_SSR::resize(const vec2 & size)
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 }
 
-void Reflections_SSR::updateLighting(const Visibility_Token & vis_token)
+void Reflections::updateLighting(const Visibility_Token & vis_token)
 {
-	
+
 }
 
-void Reflections_SSR::applyLighting(const Visibility_Token & vis_token)
+void Reflections::applyLighting(const Visibility_Token & vis_token)
 {
-	blurLight();	 
+	blurLight();
 	buildEnvMap();
 	reflectLight(vis_token);
 }
 
-void Reflections_SSR::blurLight()
+void Reflections::blurLight()
 {
 	const int quad_size = m_shapeQuad->getSize();
 	glBindVertexArray(m_quadVAO);
@@ -186,12 +184,12 @@ void Reflections_SSR::blurLight()
 	// Maintain state for next function call: reflectLight()
 }
 
-void Reflections_SSR::buildEnvMap() 
+void Reflections::buildEnvMap()
 {
 	// Copy viewport to cubemap
 	const int quad_size = m_shapeQuad->getSize();
 	m_shaderCubeProj->bind();
-	glViewport(0, 0, 512, 512);	
+	glViewport(0, 0, 512, 512);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cube_fbo);
 	glBindVertexArray(m_quadVAO);
 	glDisable(GL_BLEND);
@@ -205,50 +203,69 @@ void Reflections_SSR::buildEnvMap()
 	Asset_Shader::Release();
 }
 
-void Reflections_SSR::reflectLight(const Visibility_Token & vis_token)
+void Reflections::reflectLight(const Visibility_Token & vis_token)
 {
-	// Use Fallback Reflections
-	const int quad_size = m_shapeQuad->getSize();
-	m_reflectionUBO->bindBuffer();
+	// Bind starting state
 	m_reflectionFBO->bindForWriting();
 	m_geometryFBO->bindForReading();
+	glBindTextureUnit(3, m_cube_tex); // Persistent cubemap
+	m_brdfMap->bind(4); // BRDF LUT
+	glBindTextureUnit(5, m_texture); // Blurred light MIP-chain
+	m_reflectionUBO->bindBuffer();
+	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
+	glBindVertexArray(m_quadVAO);
+	const size_t primCount = vis_token.specificSize("Reflector");
+	m_buffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
+	m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	const int quad_size = m_shapeQuad->getSize();
+
+	// Apply persistent cubemap
 	m_shaderCubemap->bind();
-	glBindTextureUnit(3, m_cube_tex);
 	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFunc(GL_ONE, GL_ONE);
+	glDrawArrays(GL_TRIANGLES, 0, quad_size);
+
+	// Stencil out parallax reflectors
+	TEST_SHADER->bind();
+	TEST_SHADER->Set_Uniform(0, true);
+	glBindVertexArray(m_cubeVAO);
+	glEnable(GL_STENCIL_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_CULL_FACE);	
+	glClear(GL_STENCIL_BUFFER_BIT);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+	glStencilFunc(GL_ALWAYS, 0, 0); // Always pass stencil test
+	glDepthMask(GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	
+	// Fill in stenciled region
+	TEST_SHADER->Set_Uniform(0, false);
+	glDisable(GL_DEPTH_TEST);
+	glStencilFunc(GL_NOTEQUAL, 0, 0xFF); // Pass test if stencil value IS NOT 0
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+	// Apply SSR
+	m_shaderSSR->bind();
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_STENCIL_TEST);
 	glBindVertexArray(m_quadVAO);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
-	// Reflector test
-	if (m_shapeCube->existsYet() && TEST_SHADER->existsYet()) {
-		TEST_SHADER->bind();
-		glBindVertexArray(m_cubeVAO);		
-		const size_t primCount = vis_token.specificSize("Reflector");
-		m_buffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
-		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, (GLvoid*)0);
-	}
-
-	// Apply SSR
-	m_lightingFBO->bindForWriting();
-	glBindVertexArray(m_quadVAO);
-	m_shaderSSR->bind();
-	m_geometryFBO->bindForReading(); // Gbuffer
-	m_reflectionFBO->bindForReading(3); // Fallback Reflections
-	m_brdfMap->bind(4); // BRDF LUT
-	glBindTextureUnit(5, m_texture); // blurred light MIP-chain
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_ONE, GL_ONE); 
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
+	// Read reflection colors and correct them based on surface properties
+	m_shaderFinal->bind();
+	m_lightingFBO->bindForWriting(); // Write back to lighting buffer
+	m_reflectionFBO->bindForReading(3); // Read from final reflections
+	glBlendFunc(GL_ONE, GL_ONE);
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
 	// Revert State
-	glDrawBuffer(GL_COLOR_ATTACHMENT0);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glBindVertexArray(0);
 	glEnable(GL_DEPTH_TEST);
-	glBlendFunc(GL_ONE, GL_ZERO);
+	glDepthMask(GL_TRUE);
 	glDisable(GL_BLEND);
-	glCullFace(GL_BACK);
 	Asset_Shader::Release();
 }

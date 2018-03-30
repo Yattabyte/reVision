@@ -40,12 +40,22 @@ void System_World::update(const float & deltaTime)
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
 		hills->receiveMessage(ECSmessage(SET_MODEL_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
 
-		for (int x = 0; x < 16; ++x)
+		/*for (int x = 0; x < 16; ++x)
 			for (int y = 0; y < 16; ++y) {
 				auto refl = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
 				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 0, y * 4)));
-			}
+			}*/
 
+		auto ref1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
+		ref1->receiveMessage(ECSmessage(SET_POSITION, vec3(0, -5, 0)));
+		auto idref2 = m_entityFactory.createEntity("Reflector");
+		auto ref2 = m_entityFactory.getEntity(idref2);
+		ref2->receiveMessage(ECSmessage(SET_POSITION, vec3(4, -5, 0)));
+		auto ref3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
+		ref3->receiveMessage(ECSmessage(SET_POSITION, vec3(8, -5, 0)));
+		m_entityFactory.deleteEntity(idref2);
+		auto ref4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
+		ref4->receiveMessage(ECSmessage(SET_POSITION, vec3(12, -5, 0)));
 	/*	for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));

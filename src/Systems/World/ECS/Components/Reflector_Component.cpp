@@ -7,14 +7,13 @@
 
 Reflector_Component::~Reflector_Component()
 {
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO.removeElement(&m_uboIndex);
 }
 
 Reflector_Component::Reflector_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Component(id, pid)
 { 
-	m_fence = nullptr;
 	m_enginePackage = enginePackage;
-
-	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO.addReflector(m_uboIndex);
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO.addElement(&m_uboIndex);
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 

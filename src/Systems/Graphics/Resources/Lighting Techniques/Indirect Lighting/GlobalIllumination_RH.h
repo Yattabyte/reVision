@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INDIRECT_LIGHTING_PBR
-#define INDIRECT_LIGHTING_PBR
+#ifndef GLOBALILLUMINATION_RH
+#define GLOBALILLUMINATION_RH
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -112,4 +112,4 @@ private:
 	void *m_bufferPtr;
 };
 
-#endif // INDIRECT_LIGHTING_PBR
+#endif // GLOBALILLUMINATION_RH

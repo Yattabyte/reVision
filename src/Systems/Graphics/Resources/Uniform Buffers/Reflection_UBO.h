@@ -8,13 +8,12 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define GLEW_STATIC
 
 #include "Systems\Graphics\Resources\Uniform Buffers\Uniform_Buffer.h"
 
 
 /**
-* The uniform struct used by the uniform buffer
+* The uniform struct used by the reflection UBO
 */
 struct Reflection_Struct {
 	mat4 mMatrix = mat4(1.0f);
@@ -34,13 +33,11 @@ public:
 	~Reflection_UBO() {}
 	/** Construct the reflection buffer. */
 	Reflection_UBO() {
-		m_buffer = MappedBuffer(sizeof(Reflection_Struct) * 256, 0);
+		m_buffer = MappedBuffer(sizeof(Reflection_Struct) * 256, 0, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
-
-	// Public Methods
-	void * const addReflector(unsigned int & uboIndex) {
-		return addElement(uboIndex);
+	virtual	void removeElement(const unsigned int * uboIndex) {
+		replaceWithEnd<Reflection_Struct>(uboIndex);
 	}
 };
 

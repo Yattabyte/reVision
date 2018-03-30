@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections_SSR.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections.h"
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
@@ -85,13 +85,13 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_visualFX.initialize(enginePackage);
 		m_geometryFBO.initialize(enginePackage, &m_visualFX);
 		m_lightingFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
+		m_reflectionFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
 		m_shadowBuffer.initialize(enginePackage);
-		m_reflectionFBO.initialize(enginePackage);
 
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowBuffer));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowBuffer)); 
-		m_lightingTechs.push_back(new Reflections_SSR(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &m_visualFX));
+		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
 
 		// Initiate effects techniques
@@ -146,6 +146,7 @@ void System_Graphics::update(const float & deltaTime)
 			tech->bindForReading();
 		}
 
+		m_reflectionFBO.end();
 		m_lightingFBO.end();
 		m_geometryFBO.end();
 	}

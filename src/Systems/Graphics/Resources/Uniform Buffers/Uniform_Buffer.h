@@ -8,9 +8,9 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define GLEW_STATIC
 
 #include "Utilities\GL\MappedBuffer.h"
+#include <vector>
 
 
 /**
@@ -34,21 +34,41 @@ public:
 	void bindBuffer() {
 		m_buffer.bindBufferBase(GL_UNIFORM_BUFFER, 5);
 	}
+	void * const addElement(unsigned int * uboIndex) {
+		*uboIndex = m_count++;
+		m_indexPointers.push_back(uboIndex);
+		return m_buffer.getBufferPointer();
+	}
+	
+	virtual	void removeElement(const unsigned int * uboIndex) {	}
 
 
 protected:
 	// Protected Methods
-	void * const addElement(unsigned int & uboIndex) {
-		uboIndex = m_count++;
-		return m_buffer.getBufferPointer();
-	}
-	void removeElement(const unsigned int & uboIndex) {
+	template <typename T>
+	void replaceWithEnd(const unsigned int * uboIndex) {
+		if (*uboIndex < m_indexPointers.size() - 1) {
+			// Move the pointer from the last element of the list to the spot we are deleting
+			unsigned int * lastIndex = m_indexPointers.back();
+			m_indexPointers.at(*uboIndex) = lastIndex;
+			m_indexPointers.pop_back();
 
+			// Move the memory from the last index to the old index
+			void * bufferPtr = m_buffer.getBufferPointer();
+			T * oldData = &reinterpret_cast<T*>(bufferPtr)[*uboIndex];
+			T * endData = &reinterpret_cast<T*>(bufferPtr)[*lastIndex];
+			*oldData = *endData;
+
+			// Ensure that the pointers hold the right VALUE for the index the represent
+			*lastIndex = *uboIndex;
+		}
+		m_count--;
 	}
 
 
 	// Protected Attributes
 	unsigned int m_count;
+	std::vector<unsigned int *> m_indexPointers;
 	MappedBuffer m_buffer;
 };
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef DEFERREDLIGHTING
-#define DEFERREDLIGHTING
+#ifndef DS_LIGHTING
+#define DS_LIGHTING
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -48,4 +48,4 @@ private:
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
 };
 
-#endif // DEFERREDLIGHTING
+#endif // DS_LIGHTING

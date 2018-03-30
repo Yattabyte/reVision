@@ -32,10 +32,10 @@ public:
 		m_fence = nullptr;		
 	}
 	/** Explicit Instantion. */
-	MappedBuffer(const GLsizeiptr & size, const void * data) : MappedBuffer() {
+	MappedBuffer(const GLsizeiptr & size, const void * data, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) : MappedBuffer() {
 		glCreateBuffers(1, &m_bufferID);
-		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | mapFlags);
+		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, mapFlags);
 	}
 	/** Move gl object from 1 instance to another. */
 	MappedBuffer & operator=(MappedBuffer && o) noexcept {

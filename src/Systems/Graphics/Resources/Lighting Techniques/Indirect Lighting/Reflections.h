@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INDIRECT_LIGHTING_SSR
-#define INDIRECT_LIGHTING_SSR
+#ifndef REFLECTIONS
+#define REFLECTIONS
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -17,29 +17,26 @@
 #include "Assets\Asset_Cubemap.h"
 #include "Utilities\GL\MappedBuffer.h"
 
-class EnginePackage;
 class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
 class Reflection_UBO;
-class VisualFX;
 
 
-/**
- * A lighting technique that calculates indirect specular lighting contribution, aka light reflections off of other objects, using the final lighting buffer. Uses PBR techniques.
- **/
 /**
  * Performs a reflection pass using the screen as input - using the screen space reflection technique.
- * Responsible for indirect specular lighting, but not good enough on its own.
+ * Also caches the viewport over time into a persistent cubemap, used as a fallback environment map.
+ * Lastly, supports parallax corrected local cubemaps.
+ * Responsible for indirect specular lighting.
  * Supports physically based shaders.
  **/
-class DT_ENGINE_API Reflections_SSR : public Lighting_Technique {
+class DT_ENGINE_API Reflections : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~Reflections_SSR();
+	~Reflections();
 	/** Constructor. */
-	Reflections_SSR(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO, VisualFX * visualFX);
+	Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
 
 
 	// Interface Implementations.
@@ -49,9 +46,10 @@ public:
 
 	// Public Methods
 	/** Resize the frame buffer by the amount specified.
-	 * @param	size	the amount to resize by*/
+	* @param	size	the amount to resize by*/
 	void resize(const vec2 &size);
 
+	
 private:
 	/** Nested buffer object struct for sending data to GPU */
 	struct SSR_Buffer {
@@ -78,8 +76,7 @@ private:
 	Reflection_FBO * m_reflectionFBO;
 	Reflection_UBO * m_reflectionUBO;
 	EnginePackage * m_enginePackage;
-	VisualFX * m_visualFX;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, TEST_SHADER;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, m_shaderFinal, TEST_SHADER;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO, m_cubeVAO;
@@ -91,4 +88,4 @@ private:
 	MappedBuffer m_buffer;
 };
 
-#endif // INDIRECT_LIGHTING_SSR
+#endif // REFLECTIONS
