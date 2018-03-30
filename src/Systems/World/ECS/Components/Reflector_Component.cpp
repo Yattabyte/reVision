@@ -2,6 +2,7 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Uniform Buffers\Reflection_UBO.h"
 #include "Utilities\EnginePackage.h"
+#include "Utilities\Transform.h"
 #include "glm\gtc\matrix_transform.hpp"
 
 
@@ -13,6 +14,8 @@ Reflector_Component::~Reflector_Component()
 Reflector_Component::Reflector_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Component(id, pid)
 { 
 	m_enginePackage = enginePackage;
+	m_position = vec3(0.0f);
+	m_scale = vec3(1.0f);
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO.addElement(&m_uboIndex);
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
@@ -29,34 +32,33 @@ void Reflector_Component::receiveMessage(const ECSmessage & message)
 			uboData->BoxCamPos.xyz = payload;
 			m_position = payload;
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			break;
+		}
+		case SET_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer)[m_uboIndex];
+			uboData->mMatrix = payload.m_modelMatrix;
+			uboData->BoxCamPos.xyz = payload.m_position;			
+			m_position = payload.m_position;
+			m_scale = payload.m_scale;
+			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			break;
+		}
+		case SET_REFLECTOR_RADIUS: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer)[m_uboIndex];
+			uboData->Radius = payload;
+			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			break;
 		}
 	}
 }
 
-void Reflector_Component::draw()
+bool Reflector_Component::isVisible(const mat4 & PMatrix, const mat4 & VMatrix) const
 {
-	if (m_fence != nullptr) {
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED)) && (state != GL_WAIT_FAILED)) {
-
-			// draw stuff //
-		}
-	}
-}
-
-bool Reflector_Component::isVisible(const mat4 & PMatrix, const mat4 & VMatrix)
-{
-	return Frustum(PMatrix * VMatrix).sphereInFrustum(m_position.xyz, vec3(1.0f));
-}
-
-void Reflector_Component::update()
-{
-	/*if (m_fence != nullptr) {
-		auto state = glClientWaitSync(m_fence, 0, 0);
-		while (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED)) && (state != GL_WAIT_FAILED))
-			state = glClientWaitSync(m_fence, 0, 0);
-	}
-	glNamedBufferSubData(m_uboID, 0, sizeof(Reflector_Component::Transform_Buffer), &m_uboData);*/
+	return Frustum(PMatrix * VMatrix).sphereInFrustum(m_position.xyz, m_scale);
 }
 
 const unsigned int Reflector_Component::getBufferIndex() const

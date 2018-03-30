@@ -14,9 +14,9 @@
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\World\Camera.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Systems\World\Camera.h"
 
 class EnginePackage;
 class Geometry_FBO;

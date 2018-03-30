@@ -4,7 +4,6 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\World\ECS\Components\Reflector_Component.h"
-#include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
 #include "glm\gtc\matrix_transform.hpp"
 #include <minmax.h>
@@ -12,7 +11,6 @@
 
 Reflections::~Reflections()
 {
-	glDeleteBuffers(1, &m_ssrUBO);
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
@@ -29,17 +27,16 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_reflectionUBO = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO;
 	m_fbo = 0;
 	m_texture = 0;
-	m_ssrUBO = 0;
 	m_cube_fbo = 0;
 	m_cube_tex = 0;
 
 	Asset_Loader::load_asset(m_shaderCopy, "fx\\copyTexture");
 	Asset_Loader::load_asset(m_shaderBlur, "fx\\gaussianBlur_MIP");
-	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\ssr");
-	Asset_Loader::load_asset(m_shaderFinal, "Lighting\\reflection");
-	Asset_Loader::load_asset(m_shaderCubemap, "Reflection\\reflectionCubemap");
-	Asset_Loader::load_asset(m_shaderCubeProj, "Reflection\\cubeProjection");
-	Asset_Loader::load_asset(TEST_SHADER, "test");
+	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
+	Asset_Loader::load_asset(m_shaderFinal, "Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR");
+	Asset_Loader::load_asset(m_shaderCubemap, "Lighting\\Indirect Lighting\\Reflections (specular)\\cubemap IBL");
+	Asset_Loader::load_asset(m_shaderCubeProj, "Lighting\\Indirect Lighting\\Reflections (specular)\\screen to cubemap");
+	Asset_Loader::load_asset(m_shaderParallax, "Lighting\\Indirect Lighting\\Reflections (specular)\\parallax IBL");
 	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shapeCube, "box");
@@ -96,20 +93,12 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
 		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
-
-		// Delete before returning
-		glDeleteTextures(1, &m_texture);
-		glDeleteFramebuffers(1, &m_fbo);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		return;
 	}
 
-	glCreateBuffers(1, &m_ssrUBO);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
-	glNamedBufferStorage(m_ssrUBO, sizeof(SSR_Buffer), &m_ssrBuffer, GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-
 	GLuint drawData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
-	m_buffer = MappedBuffer(sizeof(GLuint) * 4, &drawData);
+	m_cubeIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, &drawData);
+	SSR_Buffer buffer;
+	m_ssrBuffer = MappedBuffer(sizeof(SSR_Buffer), &buffer);
 }
 
 void Reflections::resize(const vec2 & size)
@@ -212,11 +201,11 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	m_brdfMap->bind(4); // BRDF LUT
 	glBindTextureUnit(5, m_texture); // Blurred light MIP-chain
 	m_reflectionUBO->bindBuffer();
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_ssrUBO);
+	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
 	glBindVertexArray(m_quadVAO);
 	const size_t primCount = vis_token.specificSize("Reflector");
-	m_buffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
-	m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	m_cubeIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
+	m_cubeIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	const int quad_size = m_shapeQuad->getSize();
 
 	// Apply persistent cubemap
@@ -228,8 +217,8 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	glDrawArrays(GL_TRIANGLES, 0, quad_size);
 
 	// Stencil out parallax reflectors
-	TEST_SHADER->bind();
-	TEST_SHADER->Set_Uniform(0, true);
+	m_shaderParallax->bind();
+	m_shaderParallax->Set_Uniform(0, true);
 	glBindVertexArray(m_cubeVAO);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_DEPTH_TEST);
@@ -242,7 +231,7 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
 	
 	// Fill in stenciled region
-	TEST_SHADER->Set_Uniform(0, false);
+	m_shaderParallax->Set_Uniform(0, false);
 	glDisable(GL_DEPTH_TEST);
 	glStencilFunc(GL_NOTEQUAL, 0, 0xFF); // Pass test if stencil value IS NOT 0
 	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);

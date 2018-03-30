@@ -46,7 +46,7 @@ public:
 
 	// Public Methods
 	/** Resize the frame buffer by the amount specified.
-	* @param	size	the amount to resize by*/
+	 * @param	size	the amount to resize by */
 	void resize(const vec2 &size);
 
 	
@@ -76,16 +76,14 @@ private:
 	Reflection_FBO * m_reflectionFBO;
 	Reflection_UBO * m_reflectionUBO;
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, m_shaderFinal, TEST_SHADER;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, m_shaderFinal, m_shaderParallax;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO, m_cubeVAO;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
-	SSR_Buffer m_ssrBuffer;
-	GLuint m_ssrUBO;
 	GLuint m_cube_fbo, m_cube_tex;
-	MappedBuffer m_buffer;
+	MappedBuffer m_cubeIndirectBuffer, m_ssrBuffer;
 };
 
 #endif // REFLECTIONS

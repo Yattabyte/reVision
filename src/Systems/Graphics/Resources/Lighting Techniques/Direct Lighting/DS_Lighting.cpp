@@ -18,9 +18,9 @@ DS_Lighting::DS_Lighting(Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
 	m_lightingFBO = lightingFBO;
 	m_shadowFBO = shadowFBO;
 
-	Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\directional");
-	Asset_Loader::load_asset(m_shaderPoint, "Lighting\\point");
-	Asset_Loader::load_asset(m_shaderSpot, "Lighting\\spot");
+	Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\Direct Lighting\\directional");
+	Asset_Loader::load_asset(m_shaderPoint, "Lighting\\Direct Lighting\\point");
+	Asset_Loader::load_asset(m_shaderSpot, "Lighting\\Direct Lighting\\spot");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shapeCone, "cone");
 	Asset_Loader::load_asset(m_shapeSphere, "sphere");

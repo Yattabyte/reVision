@@ -18,8 +18,9 @@
 struct Reflection_Struct {
 	mat4 mMatrix = mat4(1.0f);
 	vec4 BoxCamPos = vec4(0.0f);
+	float Radius = 1.0f;
 	int CubeSpot = 0;
-	vec3 padding;
+	vec2 padding;
 };
 
 /**

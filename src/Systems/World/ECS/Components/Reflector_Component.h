@@ -28,18 +28,19 @@ class DT_ENGINE_API Reflector_Component : protected Component
 public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	virtual void draw();
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 
 
 	// Public Methods
-	/** Sends current data to the GPU. */
-	void update();
 	/** Retrieve the buffer index for this reflector.
-	* @return	the buffer index */
+	 * @return	the buffer index */
 	const unsigned int getBufferIndex() const;
-
-
+	/** Tests if this object is within the viewing frustum of the camera.
+	 * @brief				a test of general visibility (excluding obstruction of other objects).
+	 * @param	PMatrix		the projection matrix of the camera
+	 * @param	VMatrix		the viewing matrix of the camera
+ 	 * @return				true if this object is within the viewing frustum of the camera, false otherwise */
+	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix) const;
+	
 
 protected:
 	// (de)Constructors
@@ -53,6 +54,7 @@ protected:
 	unsigned int m_uboIndex;
 	void * m_uboBuffer;
 	vec3 m_position;
+	vec3 m_scale;
 	GLsync m_fence; 
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;

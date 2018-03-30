@@ -56,7 +56,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			});
 			break;
 		}
-		case SET_MODEL_TRANSFORM: {
+		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
 			const auto &payload = message.GetPayload<Transform>();
 			m_uboData.mMatrix = payload.m_modelMatrix;

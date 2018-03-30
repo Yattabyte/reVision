@@ -42,11 +42,11 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	ZERO_MEM(m_textures[0]);
 	ZERO_MEM(m_textures[1]);
 
-	Asset_Loader::load_asset(m_shaderDirectional_Bounce, "Lighting\\directional_bounce");
-	Asset_Loader::load_asset(m_shaderPoint_Bounce, "Lighting\\point_bounce");
-	Asset_Loader::load_asset(m_shaderSpot_Bounce, "Lighting\\spot_bounce");
-	Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\gi_second_bounce");
-	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\gi_reconstruction");
+	Asset_Loader::load_asset(m_shaderDirectional_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\directional_bounce");
+	Asset_Loader::load_asset(m_shaderPoint_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\point_bounce");
+	Asset_Loader::load_asset(m_shaderSpot_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\spot_bounce");
+	Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce");
+	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
