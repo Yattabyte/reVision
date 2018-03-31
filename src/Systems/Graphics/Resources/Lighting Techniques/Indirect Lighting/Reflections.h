@@ -80,6 +80,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO, m_cubeVAO;
+	bool m_quadVAOLoaded, m_cubeVAOLoaded;
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	GLuint m_cube_fbo, m_cube_tex;

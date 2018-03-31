@@ -31,6 +31,7 @@ Geometry_FBO::Geometry_FBO()
 {		
 	m_depth_stencil = 0;
 	m_quadVAO = 0;
+	m_vaoLoaded = false;
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
 	for (int x = 0; x < 2; ++x)
@@ -44,8 +45,9 @@ void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX
 		m_visualFX = visualFX;
 		Asset_Loader::load_asset(m_shaderSSAO, "FX\\SSAO");
 		Asset_Loader::load_asset(m_shapeQuad, "quad");
+		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		initialize_noise();
@@ -160,10 +162,12 @@ void Geometry_FBO::applyAO()
 		glBindTextureUnit(1, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
 		glBindTextureUnit(2, m_noiseID);
 
-		m_shaderSSAO->bind();
-		glBindVertexArray(m_quadVAO);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		if (m_vaoLoaded) {
+			m_shaderSSAO->bind();
+			glBindVertexArray(m_quadVAO);
+			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		}
 
 		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
 

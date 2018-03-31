@@ -67,10 +67,10 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 		errorSeverity = "HIGH";
 		break;
 	}
-	if (type == 1280) {
+	//if (type == 1280) {
 		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
-	}
-//	MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
+	//}
+	//MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
 
 dt_Engine::~dt_Engine()
@@ -125,10 +125,10 @@ bool Initialize_Sharing()
 		MSG_Manager::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
 		MSG_Manager::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
 
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
-		GLuint unusedIds = 0;
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);
+		//glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		//glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
+		//GLuint unusedIds = 0;
+		//glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);
 
 		m_Initialized_Sharing = true;
 	}

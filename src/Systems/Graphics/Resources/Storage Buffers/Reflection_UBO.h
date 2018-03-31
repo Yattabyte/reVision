@@ -9,7 +9,9 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\Graphics\Resources\Uniform Buffers\Uniform_Buffer.h"
+#include "Systems\Graphics\Resources\Storage Buffers\Uniform_Buffer.h"
+#include "glm\glm.hpp"
+using namespace glm;
 
 
 /**

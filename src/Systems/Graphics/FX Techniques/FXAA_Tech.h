@@ -33,6 +33,7 @@ private:
 	Shared_Asset_Shader m_shaderFXAA;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
+	bool m_vaoLoaded;
 	MappedBuffer m_quadIndirectBuffer;
 };
 

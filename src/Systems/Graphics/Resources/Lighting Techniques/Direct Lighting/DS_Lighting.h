@@ -46,6 +46,7 @@ private:
 	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
+	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded;
 };
 
 #endif // DS_LIGHTING

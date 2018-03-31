@@ -1,5 +1,8 @@
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
+#include "Systems\Graphics\Graphics.h"
+#include "Systems\Graphics\Resources\Storage Buffers\Geometry_SSBO.h"
+#include "Utilities\EnginePackage.h"
 #include "Utilities\Frustum.h"
 #include "Utilities\Transform.h"
 #include <minmax.h>
@@ -16,6 +19,8 @@ Anim_Model_Component::~Anim_Model_Component()
 
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
 {
+	m_enginePackage = enginePackage;
+	m_vaoLoaded = false;
 	m_animation = 0;
 	m_animTime = 0;
 	m_animStart = 0;
@@ -27,6 +32,9 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	glCreateBuffers(1, &m_uboID);
 	glNamedBufferData(m_uboID, sizeof(Transform_Buffer), &m_uboData, GL_DYNAMIC_COPY);	
 	m_vao_id = Asset_Model::Generate_VAO();	
+
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.addElement(&m_uboIndex);
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL);
 }
 
 void Anim_Model_Component::receiveMessage(const ECSmessage &message)
@@ -40,27 +48,46 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			if (m_model.get()) 
 				m_model->removeCallback(this);
 			// Load new model
+			m_vaoLoaded = false;
 			Asset_Loader::load_asset(m_model, payload);
 			// Attach new callback
 			m_model->addCallback(this, [&]() {
+				if (m_fence != nullptr) {
+					auto state = GL_UNSIGNALED;
+					while (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+						state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+					glDeleteSync(m_fence);
+					m_fence = nullptr;
+				}
+
 				m_model->updateVAO(m_vao_id);
+				m_vaoLoaded = true;
 				m_uboData.materialID = m_model->getSkinID(m_skin);
 				m_transforms = m_model->m_animationInfo.meshTransforms;
-				glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-				glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-				glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
-				glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
+				glNamedBufferSubData(m_uboID, 0, sizeof(Anim_Model_Component::Transform_Buffer), &m_uboData);
+				
+				/*Geometry_Struct * uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex];
+				uboData->materialID = m_model->getSkinID(m_skin);*/
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				glFlush();				
 			});
 			break;
 		}
 		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
 			const auto &payload = message.GetPayload<Transform>();
+			
+			if (m_fence != nullptr) {
+				auto state = GL_UNSIGNALED;
+				while (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+					state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+				glDeleteSync(m_fence);
+				m_fence = nullptr;
+			}
+
 			m_uboData.mMatrix = payload.m_modelMatrix;
 			update();
+
+			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			break;
 		}
 		case SET_MODEL_SKIN: {
@@ -68,8 +95,20 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<GLuint>();
 			m_skin = payload;
 			if (m_model->existsYet()) {
+				if (m_fence != nullptr) {
+					auto state = GL_UNSIGNALED;
+					while (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+						state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+					glDeleteSync(m_fence);
+					m_fence = nullptr;
+				}
+
 				m_uboData.materialID = m_model->getSkinID(m_skin);
 				update();
+
+				/*Geometry_Struct * uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex];
+				uboData->materialID = m_model->getSkinID(m_skin);*/
+				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			}
 			break;
 		}
@@ -78,9 +117,8 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 				m_animation = message.GetPayload<int>();
 				m_playAnim = true;
 			}
-			else if (message.IsOfType<bool>()) {
-				m_playAnim = message.GetPayload<bool>();
-			}
+			else if (message.IsOfType<bool>()) 
+				m_playAnim = message.GetPayload<bool>();			
 			break;
 		}
 	}
@@ -88,18 +126,21 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 
 void Anim_Model_Component::draw()
 {
-	if (!m_model) return;
-	if (m_model->existsYet() && m_fence != nullptr) {
+	// Ensure we have a model pointer, the model exists, and the vao is loaded
+	if (!m_model || !m_model->existsYet() || !m_vaoLoaded) return;
+	shared_lock<shared_mutex> guard(m_model->m_mutex);
+	if (m_fence != nullptr) {
 		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED)) {
-			shared_lock<shared_mutex> guard(m_model->m_mutex);
-			glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-			glBindVertexArray(m_vao_id);
-			glDrawArrays(GL_TRIANGLES, 0, m_model->m_meshSize);
-			glBindVertexArray(0);
+		if (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+			return;
+		else {
+			glDeleteSync(m_fence);
+			m_fence = nullptr;
 		}
 	}
+	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
+	glBindVertexArray(m_vao_id);
+	glDrawArrays(GL_TRIANGLES, 0, m_model->m_meshSize);
 }
 
 bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
@@ -115,9 +156,7 @@ bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 
 void Anim_Model_Component::update()
 {
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
+	glNamedBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(Transform_Buffer), &m_uboData);
 }
 
 void Anim_Model_Component::animate(const double & deltaTime)
@@ -125,12 +164,10 @@ void Anim_Model_Component::animate(const double & deltaTime)
 	if (!m_model->existsYet()) return;
 
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 5, m_uboID);
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
 
 	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animationInfo.Animations.size()) {
 		m_uboData.useBones = 0;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
+		glNamedBufferSubData(m_uboID, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
 	}
 	else {
 		m_uboData.useBones = 1;
@@ -149,10 +186,9 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		const unsigned int total = min(m_transforms.size(), NUM_MAX_BONES);
 		for (int i = 0; i < total; i++)
 			m_uboData.transforms[i] = m_transforms[i].FinalTransformation;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(Transform_Buffer, transforms), sizeof(mat4) * total, &m_uboData.transforms);
+		glNamedBufferSubData(m_uboID, offsetof(Transform_Buffer, useBones), sizeof(int), &m_uboData.useBones);
+		glNamedBufferSubData(m_uboID, offsetof(Transform_Buffer, transforms), sizeof(mat4) * total, &m_uboData.transforms);
 	}
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }

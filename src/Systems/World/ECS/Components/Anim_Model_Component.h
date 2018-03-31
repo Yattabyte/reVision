@@ -65,12 +65,16 @@ protected:
 	int m_animation;
 	bool m_playAnim;
 	float m_animTime, m_animStart;
+	bool m_vaoLoaded;
+	unsigned int m_uboIndex;
+	void * m_uboBuffer;
 	GLuint m_skin;
 	GLuint m_uboID, m_vao_id;
 	Transform_Buffer m_uboData;
 	Shared_Asset_Model m_model;
 	vector<BoneInfo> m_transforms;
-	GLsync m_fence; 
+	GLsync m_fence;
+	EnginePackage *m_enginePackage;
 	friend class Anim_Model_Creator;
 };
 

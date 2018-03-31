@@ -55,10 +55,12 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 		m_shaderCubeProj->Set_Uniform(8, proj);
 		Asset_Shader::Release();
 	});
-	m_cubeVAO = Asset_Primitive::Generate_VAO();
-	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); });
+	m_quadVAOLoaded = false;
+	m_cubeVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
+	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); m_cubeVAOLoaded = true; });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
@@ -121,9 +123,11 @@ void Reflections::updateLighting(const Visibility_Token & vis_token)
 
 void Reflections::applyLighting(const Visibility_Token & vis_token)
 {
-	blurLight();
-	buildEnvMap();
-	reflectLight(vis_token);
+	if (m_quadVAOLoaded && m_cubeVAOLoaded) {
+		blurLight();
+		buildEnvMap();
+		reflectLight(vis_token);
+	}
 }
 
 void Reflections::blurLight()

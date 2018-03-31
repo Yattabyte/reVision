@@ -46,6 +46,7 @@ private:
 	Shared_Asset_Shader m_shaderBloomExtract;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
+	bool m_vaoLoaded;
 	MappedBuffer m_quadIndirectBuffer;
 	GLuint m_fbo, m_texture, m_texturesGB[2];
 	vec2 m_renderSize;

@@ -140,7 +140,6 @@ void Light_Point_Component::shadowPass()
 	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(false));
 	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(true));
 
-
 	for (int x = 0; x < 2; x++) {
 		m_uboData.p_dir = (float(x) * 2.0f) - 1.0f;;
 		glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);

@@ -21,8 +21,9 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	m_enginePackage = enginePackage; 
 	Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
@@ -56,10 +57,12 @@ void HDR_Tech::applyEffect()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glClear(GL_COLOR_BUFFER_BIT);
 
-	m_shaderHDR->bind();
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_vaoLoaded) {
+		m_shaderHDR->bind();
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 }
 
 void HDR_Tech::bindForReading()

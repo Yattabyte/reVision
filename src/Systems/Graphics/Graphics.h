@@ -15,7 +15,8 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\Uniform Buffers\Reflection_UBO.h"
+#include "Systems\Graphics\Resources\Storage Buffers\Geometry_SSBO.h"
+#include "Systems\Graphics\Resources\Storage Buffers\Reflection_UBO.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
@@ -78,7 +79,8 @@ public:
 	Lighting_FBO m_lightingFBO;
 	Shadow_FBO m_shadowBuffer;
 	Reflection_FBO m_reflectionFBO;
-	// Uniform Buffers
+	// Storage Buffers
+	Geometry_SSBO m_geometrySSBO;
 	Reflection_UBO m_reflectionUBO;
 	
 private:
@@ -107,7 +109,8 @@ private:
 	Shared_Asset_Cubemap m_textureSky;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO; 
-	MappedBuffer m_vishadowFBO, m_userBuffer, m_quadIndirectBuffer;
+	bool m_vaoLoaded;
+	MappedBuffer m_vishadowUBO, m_userBuffer, m_quadIndirectBuffer;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;

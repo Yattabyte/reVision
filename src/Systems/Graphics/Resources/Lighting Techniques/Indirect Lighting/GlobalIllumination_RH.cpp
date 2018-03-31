@@ -48,8 +48,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce");
 	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
 	m_attribBuffer = GI_Attribs_Buffer(16, 0.75, 100, 0.75, 12);
 
 	if (m_enginePackage->findSubSystem("World")) {
@@ -187,17 +188,18 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
 	m_geometryFBO->bindForReading();
 	m_lightingFBO->bindForWriting();
 
-	m_shaderGIReconstruct->bind();
-	bindNoise(4);
-	bindForReading(1, 5);
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_vaoLoaded) {
+		m_shaderGIReconstruct->bind();
+		bindNoise(4);
+		bindForReading(1, 5);
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 	
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
 }
-
 
 void GlobalIllumination_RH::bindForWriting(const GLuint &bounceSpot)
 {

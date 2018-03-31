@@ -67,6 +67,7 @@ public:
 private:
 	// Private attributes
 	GLuint m_noiseID, m_quadVAO;
+	bool m_vaoLoaded;
 	EnginePackage * m_enginePackage;
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	

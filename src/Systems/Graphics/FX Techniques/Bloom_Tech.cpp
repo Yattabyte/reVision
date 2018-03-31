@@ -27,8 +27,9 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO
 
 	Asset_Loader::load_asset(m_shaderBloomExtract, "FX\\bloomExtraction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	m_bloomStrength = m_enginePackage->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
@@ -64,9 +65,11 @@ void Bloom_Tech::applyEffect()
 	m_shaderBloomExtract->bind();
 	m_lightingFBO->bindForReading();
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_vaoLoaded) {
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
 	// Blur bright regions
 	m_visualFX->applyGaussianBlur(m_texture, m_texturesGB, m_renderSize, m_bloomStrength);

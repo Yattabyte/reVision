@@ -38,6 +38,7 @@ System_Graphics::System_Graphics() :
 	m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_shadowBuffer(), m_reflectionFBO()
 {
 	m_quadVAO = 0;
+	m_vaoLoaded = false;
 	m_renderSize = vec2(1);
 }
 
@@ -55,8 +56,9 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		Asset_Loader::load_asset(m_shaderSky, "skybox");
 		Asset_Loader::load_asset(m_textureSky, "sky\\");
 
+		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); });
+		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {setShadowUpdateQuality(f); });
@@ -78,8 +80,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		generateKernal();
 
 		// Generate Visibility SSBO
-		m_vishadowFBO = MappedBuffer(sizeof(GLuint) * 500, 0);
-		m_vishadowFBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+		m_vishadowUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
+		m_vishadowUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 
 		// Initiate graphics buffers
 		m_visualFX.initialize(enginePackage);
@@ -214,14 +216,14 @@ void System_Graphics::generateKernal()
 void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 {
 	// Update reflectors
-	m_vishadowFBO.checkFence();
+	m_vishadowUBO.checkFence();
 	vector<GLuint> visArray(vis_token.specificSize("Reflector"));
 	unsigned int count = 0;
 	for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector")) 
 		visArray[count++] = component->getBufferIndex();	
-	m_vishadowFBO.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+	m_vishadowUBO.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 
-	m_vishadowFBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_vishadowUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 }
 
@@ -333,7 +335,7 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		m_shaderGeometry->bind();
 
 		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
-			component->draw();
+			component->draw();		
 
 		m_geometryFBO.applyAO();
 	}
@@ -345,12 +347,14 @@ void System_Graphics::skyPass()
 	glDepthMask(GL_FALSE);
 	glEnable(GL_DEPTH_TEST);
 
-	m_lightingFBO.bindForWriting();
-	m_textureSky->bind(0);
-	m_shaderSky->bind();
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_vaoLoaded) {
+		m_lightingFBO.bindForWriting();
+		m_textureSky->bind(0);
+		m_shaderSky->bind();
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
 	glDisable(GL_DEPTH_TEST);
 	glDisable(GL_STENCIL_TEST);

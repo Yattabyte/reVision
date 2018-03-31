@@ -59,13 +59,13 @@ void System_World::update(const float & deltaTime)
 
 		auto mir1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		mir1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F))));
+		mir1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F,1,20))));
 		auto mir2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		mir2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2, 0), quat(1, 0, 0, 0), vec3(6.0F))));
+		mir2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2, 0), quat(1, 0, 0, 0), vec3(6.0F, 1, 20))));
 		auto mir3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		mir3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F))));
+		mir3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F, 1, 20))));
 		
 	/*	for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {

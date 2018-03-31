@@ -106,7 +106,7 @@ void fetch_default_asset(Shared_Asset_Material & asset)
 	Asset_Manager::Create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::Generate_ID());
 	asset->m_materialData = new GLubyte[12] {	
 		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
-		GLubyte(127), GLubyte(127), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
+		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
 	};
 	asset->m_size = vec2(1);
