@@ -13,6 +13,7 @@
 
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Assets\Asset_Model.h"
+#include "Utilities\Transform.h"
 #include "glm\glm.hpp"
 
 using namespace glm;
@@ -32,33 +33,24 @@ public:
 
 
 	// Public Methods
-	/** Sends current data to the GPU. */
-	void update();
+	/** Retrieve the buffer index for this object.
+	 * @return	the buffer index */
+	const unsigned int getBufferIndex() const;
 	/** Ticks ahead the animation state by the amount of deltaTime. */
 	void animate(const double &deltaTime);
 
 
 protected:
-	/** Nested Buffer class.
-	 * @brief	used for sending data to the gpu. */
-	struct Transform_Buffer {
-		int useBones;  // no padding here;
-		GLuint materialID; vec2 padding1; // for some reason padding here
-		mat4 mMatrix;
-		mat4 transforms[NUM_MAX_BONES];
-		Transform_Buffer() {
-			useBones = 0;
-			materialID = 0;
-			mMatrix = mat4(1.0f);
-		}
-	};
-
-
 	// (de)Constructors
 	/** Destroys an animated model component. */
 	~Anim_Model_Component();
 	/** Constructors an animated model component. */
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+
+	
+	// Protected Functions
+	/** Cause a synchronization point if the sync fence hasn't been passed. */
+	void checkFence();
 
 
 	// Protected Attributes
@@ -69,9 +61,9 @@ protected:
 	unsigned int m_uboIndex;
 	void * m_uboBuffer;
 	GLuint m_skin;
-	GLuint m_uboID, m_vao_id;
-	Transform_Buffer m_uboData;
+	GLuint m_vao_id;
 	Shared_Asset_Model m_model;
+	Transform m_transform;
 	vector<BoneInfo> m_transforms;
 	GLsync m_fence;
 	EnginePackage *m_enginePackage;

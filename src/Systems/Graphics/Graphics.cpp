@@ -80,8 +80,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		generateKernal();
 
 		// Generate Visibility SSBO
-		m_vishadowUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
-		m_vishadowUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+		m_visRefUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
+		m_visGeoUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
 
 		// Initiate graphics buffers
 		m_visualFX.initialize(enginePackage);
@@ -213,17 +213,28 @@ void System_Graphics::generateKernal()
 	m_userBuffer.write(0, sizeof(vec4)*MAX_KERNEL_SIZE, kernel);
 }
 
+// TEMPORARY, NEED TO MOVE BUFFER INDEX INTO GEOMETRY COMPONENT
+#include "Systems\World\ECS\Components\Anim_Model_Component.h"
 void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 {
 	// Update reflectors
-	m_vishadowUBO.checkFence();
-	vector<GLuint> visArray(vis_token.specificSize("Reflector"));
+	m_visRefUBO.checkFence();
+	vector<GLuint> refArray(vis_token.specificSize("Reflector"));
 	unsigned int count = 0;
 	for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector")) 
-		visArray[count++] = component->getBufferIndex();	
-	m_vishadowUBO.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+		refArray[count++] = component->getBufferIndex();
+	m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
+	m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 
-	m_vishadowUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	// Update Geometry
+	m_visGeoUBO.checkFence();
+	vector<GLuint> geoArray(vis_token.specificSize("Anim_Model"));
+	count = 0;
+	for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model"))
+		geoArray[count++] = component->getBufferIndex();
+	m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+	m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+
 	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 }
 
@@ -333,9 +344,14 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		glEnable(GL_CULL_FACE);
 		m_geometryFBO.bindForWriting();
 		m_shaderGeometry->bind();
+		m_geometrySSBO.bindBuffer();
 
-		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
-			component->draw();		
+		int index = 0;
+		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model")) {
+			m_shaderGeometry->Set_Uniform(0, index);
+			component->draw();
+			index++;
+		}
 
 		m_geometryFBO.applyAO();
 	}
