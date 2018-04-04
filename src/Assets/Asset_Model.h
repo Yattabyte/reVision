@@ -10,9 +10,6 @@
 #endif
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
-#define NUM_BONES_PER_VEREX 4
-#define NUM_VERTEX_ATTRIBUTES 6
-#define NUM_MAX_BONES 100
 #define GLEW_STATIC
 #define EXT_MODEL ".obj"
 #define DIRECTORY_MODEL File_Reader::GetCurrentDir() + "\\Models\\"

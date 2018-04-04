@@ -25,14 +25,14 @@ public:
 
 	}
 	/** Construct the uniform buffer. */
-	Uniform_Buffer() {
+	Uniform_Buffer(const GLuint & target = GL_UNIFORM_BUFFER) : m_target(target) {
 		m_count = 0;
 	}
 
 
 	// Public Methods
 	void bindBuffer() {
-		m_buffer.bindBufferBase(GL_UNIFORM_BUFFER, 5);
+		m_buffer.bindBufferBase(m_target, 5);
 	}
 	void * const addElement(unsigned int * uboIndex) {
 		*uboIndex = m_count++;
@@ -68,6 +68,7 @@ protected:
 
 	// Protected Attributes
 	unsigned int m_count;
+	GLuint m_target;
 	std::vector<unsigned int *> m_indexPointers;
 	MappedBuffer m_buffer;
 };

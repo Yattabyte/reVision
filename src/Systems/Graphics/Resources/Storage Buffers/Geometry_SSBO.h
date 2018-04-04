@@ -8,6 +8,7 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
+#define NUM_MAX_BONES 100
 
 #include "Systems\Graphics\Resources\Storage Buffers\Uniform_Buffer.h"
 #include "Assets\Asset_Model.h"
@@ -35,7 +36,7 @@ public:
 	/** Destroy the geometry buffer. */
 	~Geometry_SSBO() {}
 	/** Construct the geometry buffer. */
-	Geometry_SSBO() {
+	Geometry_SSBO() : Uniform_Buffer(GL_SHADER_STORAGE_BUFFER) {
 		m_buffer = MappedBuffer(sizeof(Geometry_Struct) * 256, 0, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 

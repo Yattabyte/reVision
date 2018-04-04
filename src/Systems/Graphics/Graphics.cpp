@@ -141,7 +141,6 @@ void System_Graphics::update(const float & deltaTime)
 		
 		// Writing to lighting fbo
 		skyPass();		
-		//m_lightingTechs[1]->applyLighting(vis_token);/*
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
@@ -241,18 +240,22 @@ void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 			DrawData(const GLuint & c, const GLuint & f) : count(c), first(f) {}
 		};
 
-		vector<GLuint> geoArray(vis_token.specificSize("Anim_Model"));
+		vector<uint> geoArray(vis_token.specificSize("Anim_Model"));
 		vector<DrawData> drawData;
 		drawData.reserve(size);
-		m_visGeoUBO.checkFence();
+		//m_visGeoUBO.checkFence();
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
 			geoArray[count++] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
 			drawData.push_back(DrawData(drawInfo.y, drawInfo.x));
 		}
+		/*m_shaderGeometry->bind();
+		m_shaderGeometry->Set_Uniform_Array(0, geoArray.data(), geoArray.size());
+		Asset_Shader::Release();*/
 
-		m_visGeoUBO.write_immediate(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
-		m_indirectGeo.write_immediate(0, sizeof(DrawData) * size, drawData.data());
+		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
+
+		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
 	}
 }
 

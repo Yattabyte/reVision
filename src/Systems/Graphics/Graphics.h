@@ -115,6 +115,9 @@ private:
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;
 	vector<FX_Technique*> m_fxTechs;
+
+	// temp
+	GLuint tempid;
 };
 
 #endif // SYSTEM_GRAPHICS

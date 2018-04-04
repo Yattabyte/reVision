@@ -113,12 +113,10 @@ void Light_Directional_Component::shadowPass()
 	// Update Geometry
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	const size_t size = vis_token.specificSize("Anim_Model");
-	if (0) {
-
+	if (size) {
 		glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			m_shadowMapper->clearShadow(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
-
 
 		unsigned int count = 0;
 		struct DrawData {
