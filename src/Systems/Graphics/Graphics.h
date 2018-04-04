@@ -82,6 +82,7 @@ public:
 	// Storage Buffers
 	Geometry_SSBO m_geometrySSBO;
 	Reflection_UBO m_reflectionUBO;
+
 	
 private:
 	// Private Methods
@@ -110,14 +111,11 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO; 
 	bool m_vaoLoaded;
-	MappedBuffer m_visRefUBO, m_visGeoUBO, m_indirectGeo, m_userBuffer, m_quadIndirectBuffer;
+	MappedBuffer m_userBuffer, m_visRefUBO, m_visGeoUBO, m_indirectGeo, m_quadIndirectBuffer;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;
 	vector<FX_Technique*> m_fxTechs;
-
-	// temp
-	GLuint tempid;
 };
 
 #endif // SYSTEM_GRAPHICS

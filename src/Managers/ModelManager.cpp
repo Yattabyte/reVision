@@ -4,6 +4,7 @@
 
 ModelManager::~ModelManager()
 {
+	/**@todo deconstructor*/
 }
 
 ModelManager::ModelManager()
@@ -73,6 +74,11 @@ void ModelManager::registerGeometry(const GeometryInfo & data, GLint & offset, G
 	
 	unique_lock<shared_mutex> write_guard(m_mutex);
 	m_currentSize += arraySize;
+}
+
+void ModelManager::unregisterGeometry(const GeometryInfo & data, const GLint & offset, const GLint & count)
+{
+	/**@todo remove geometry*/
 }
 
 void ModelManager::update()

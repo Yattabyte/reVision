@@ -79,6 +79,4 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	glDisable(GL_STENCIL_TEST);
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glDisable(GL_BLEND);
-	glBindVertexArray(0);
-	Asset_Shader::Release();
 }

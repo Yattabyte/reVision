@@ -79,7 +79,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
 
-		// Generate Visibility SSBO
+		// Generate Visibility Buffers
 		m_visRefUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
 		m_visGeoUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
 
@@ -124,19 +124,19 @@ void System_Graphics::update(const float & deltaTime)
 		m_shaderSky->existsYet() &&
 		m_shaderGeometry->existsYet())
 	{
+		// Update and bind prerequisite data
+		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_geometrySSBO.bindBuffer();
-		// Update buffers and bind initial state
 		updateBuffers(vis_token);
-
-		// Regeneration Phase
 		shadowPass(vis_token);
 		for each (auto *tech in m_lightingTechs)
 			tech->updateLighting(vis_token);
-
+		
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		m_geometryFBO.clear();
 		m_lightingFBO.clear();
 		m_reflectionFBO.clear();
+		m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 		geometryPass(vis_token);
 		
 		// Writing to lighting fbo
@@ -160,9 +160,6 @@ void System_Graphics::update(const float & deltaTime)
 
 void System_Graphics::setSSAO(const bool & ssao)
 {
-	//float m_ssao_radius;
-	//int m_ssao_strength, m_aa_samples;
-	//int m_ssao;
 	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 3), sizeof(int), &ssao);
 }
 
@@ -219,43 +216,36 @@ void System_Graphics::generateKernal()
 void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 {
 	// Update reflectors
-	m_visRefUBO.checkFence();
-	vector<GLuint> refArray(vis_token.specificSize("Reflector"));
-	unsigned int count = 0;
-	for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector")) 
-		refArray[count++] = component->getBufferIndex();
-	m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
-	m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+	const size_t r_size = vis_token.specificSize("Reflector");
+	if (r_size) {
+		vector<GLuint> refArray(vis_token.specificSize("Reflector"));
+		unsigned int count = 0;
+		for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector"))
+			refArray[count++] = component->getBufferIndex();
+		m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
+	}
 
 	// Update Geometry
-	const size_t size = vis_token.specificSize("Anim_Model");
-	if (size) {
-		count = 0;
+	const size_t m_size = vis_token.specificSize("Anim_Model");
+	if (m_size) {
+		unsigned int count = 0;
 		struct DrawData {
 			GLuint count;
 			GLuint instanceCount = 1;
 			GLuint first;
 			GLuint baseInstance = 1;
-			DrawData(const GLuint & c, const GLuint & f) : count(c), first(f) {}
+			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
 		};
 
-		vector<uint> geoArray(vis_token.specificSize("Anim_Model"));
-		vector<DrawData> drawData;
-		drawData.reserve(size);
-		//m_visGeoUBO.checkFence();
+		vector<uint> geoArray(m_size);
+		vector<DrawData> drawData(m_size);
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count++] = component->getBufferIndex();
+			geoArray[count] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
-			drawData.push_back(DrawData(drawInfo.y, drawInfo.x));
+			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
 		}
-		/*m_shaderGeometry->bind();
-		m_shaderGeometry->Set_Uniform_Array(0, geoArray.data(), geoArray.size());
-		Asset_Shader::Release();*/
-
 		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
-
-		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
+		m_indirectGeo.write(0, sizeof(DrawData) * m_size, drawData.data());
 	}
 }
 
@@ -356,18 +346,19 @@ void System_Graphics::shadowPass(const Visibility_Token & vis_token)
 
 void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 {
-	if (vis_token.find("Anim_Model")) {
+	const size_t size = vis_token.specificSize("Anim_Model");
+	if (size) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
+
 		m_shaderGeometry->bind();
 		m_geometryFBO.bindForWriting();
 		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
-		const size_t size = vis_token.specificSize("Anim_Model");	
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);

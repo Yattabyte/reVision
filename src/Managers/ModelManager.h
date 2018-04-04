@@ -23,9 +23,9 @@ struct GeometryInfo;
 
 
 /**
-* An encapsulation of an OpenGL framebuffer.
-* Requires the implementer to manage the size of the frame buffer, and also add render targets.
-**/
+ * An encapsulation of an OpenGL framebuffer.
+ * Requires the implementer to manage the size of the frame buffer, and also add render targets.
+ **/
 class DT_ENGINE_API ModelManager
 {
 public:
@@ -39,23 +39,34 @@ public:
 	// Public Functions
 	/** Initialzie the model manager. */
 	void initialize();
-
+	/** Submit some continuous geometric data into this buffer. 
+	 * @param	data	the data to submit
+	 * @param	offset	the offset of the data (gets updated) 
+	 * @param	count	the count of the data (gets updated) */
 	void registerGeometry(const GeometryInfo & data, GLint &offset, GLint &count);
+	/** Remove some continuous geometric data from this buffer. 
+	 * @param	data	the data to remove
+	 * @param	offset	the offset of the data 
+	 * @param	count	the count of the data */
+	void unregisterGeometry(const GeometryInfo & data, const GLint &offset, const GLint &count);
+	/** Update the buffer's VAO from the main thread. */
 	void update();
+	/** Retreive this buffer's VAO ID */
 	const GLuint & getVAO() const;
 
 
 private:
 	// Private Functions
+	/** Expand this buffer's underlying container (performs a copy operation and generates a new buffer). */
 	void expandToFit(const size_t &arraySize);
+
 
 	// Private Attributes
 	GLuint m_vaoID;
 	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES];
 	GLuint m_maxCapacity;
 	GLuint m_currentSize;
-	bool m_outOfDate;
-	
+	bool m_outOfDate;	
 	shared_mutex m_mutex;
 };
 
@@ -63,6 +74,7 @@ struct VertexBoneData
 {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
+
 
 	~VertexBoneData();
 	VertexBoneData();

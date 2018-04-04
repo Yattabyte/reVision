@@ -28,7 +28,6 @@
 #include <vector>
 
 
-
 struct BoneInfo
 {
 	mat4 BoneOffset;

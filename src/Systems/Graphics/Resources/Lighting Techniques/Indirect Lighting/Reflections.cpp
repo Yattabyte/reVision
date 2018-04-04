@@ -192,7 +192,6 @@ void Reflections::buildEnvMap()
 	glEnable(GL_DEPTH_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glEnable(GL_BLEND);
-	Asset_Shader::Release();
 }
 
 void Reflections::reflectLight(const Visibility_Token & vis_token)

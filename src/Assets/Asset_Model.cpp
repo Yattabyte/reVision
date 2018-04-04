@@ -33,6 +33,9 @@ Asset_Model::~Asset_Model()
 {
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
+
+	if (existsYet())
+		Asset_Manager::Get_Model_Manager()->unregisterGeometry(m_data, m_offset, m_count);
 }
 
 Asset_Model::Asset_Model(const string & filename) : Asset(filename)
@@ -120,8 +123,7 @@ void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 	if (vertices.size() >= 1) {
 		const vec3 &vector = vertices.at(0);
 		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
-		for (int x = 1, total = vertices.size(); x < total; ++x)
-		{
+		for (int x = 1, total = vertices.size(); x < total; ++x) {
 			const vec3 &vertex = vertices.at(x);
 			if (vertex.x < minX)
 				minX = vertex.x;

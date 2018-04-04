@@ -40,6 +40,8 @@ public:
 		m_buffer = MappedBuffer(sizeof(Geometry_Struct) * 256, 0, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
+	
+	// Interface Implementations
 	virtual	void removeElement(const unsigned int * uboIndex) {
 		replaceWithEnd<Geometry_Struct>(uboIndex);
 	}

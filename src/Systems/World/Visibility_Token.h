@@ -54,7 +54,8 @@ public:
 	/** Retrieve the size of a list within the map.
 	* @return			the size of the list */
 	const size_t specificSize(const char * name) const {
-		return mList.at(name).size();
+		try { return mList.at(name).size();	}
+		catch (std::out_of_range e) { return 0; };
 	}
 	/** Check if the given component type. 
 	 * @param	name	the name of the type to retrieve

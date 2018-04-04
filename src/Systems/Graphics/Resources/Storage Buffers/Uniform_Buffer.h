@@ -31,15 +31,22 @@ public:
 
 
 	// Public Methods
+	/** Binds this buffer to its target slot. */
 	void bindBuffer() {
 		m_buffer.bindBufferBase(m_target, 5);
 	}
+	/** Add an element to this buffers list. 
+	 * @param	uboIndex	the element to add to this list */
 	void * const addElement(unsigned int * uboIndex) {
 		*uboIndex = m_count++;
 		m_indexPointers.push_back(uboIndex);
 		return m_buffer.getBufferPointer();
 	}
 	
+
+	// Public Interface
+	/** Remove an element from this buffers list. *
+	 * @param	uboIndex	the element to remove from this list */
 	virtual	void removeElement(const unsigned int * uboIndex) {	}
 
 

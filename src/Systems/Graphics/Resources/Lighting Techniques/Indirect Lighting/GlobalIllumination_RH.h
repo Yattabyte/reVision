@@ -93,6 +93,7 @@ private:
 	/** Recalculate underlying data */
 	void updateData();
 
+
 	// Private Attributes
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
@@ -111,7 +112,6 @@ private:
 	GLuint m_attribSSBO;
 	Camera m_camera;
 	void *m_bufferPtr;
-
 	MappedBuffer m_pointsIndirectBuffer, m_quadIndirectBuffer;
 };
 
