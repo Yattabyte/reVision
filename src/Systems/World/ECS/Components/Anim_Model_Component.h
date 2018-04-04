@@ -30,6 +30,7 @@ public:
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual void draw();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
+	virtual const ivec2 getDrawInfo() const;
 
 
 	// Public Methods
@@ -61,7 +62,6 @@ protected:
 	unsigned int m_uboIndex;
 	void * m_uboBuffer;
 	GLuint m_skin;
-	GLuint m_vao_id;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	vector<BoneInfo> m_transforms;

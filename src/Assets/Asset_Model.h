@@ -31,22 +31,7 @@
 #include <vector>
 
 
-struct VertexBoneData
-{
-	int IDs[NUM_BONES_PER_VEREX];
-	float Weights[NUM_BONES_PER_VEREX];
 
-	~VertexBoneData();
-	VertexBoneData();
-	VertexBoneData(const VertexBoneData & vbd);
-	void Reset();
-	void AddBoneData(const int & BoneID, const float & Weight);
-};
-struct GeometryInfo {
-	vector<vec3> vs, nm, tg, bt;
-	vector<vec2> uv;
-	vector<VertexBoneData> bones;
-};
 struct BoneInfo
 {
 	mat4 BoneOffset;
@@ -89,13 +74,6 @@ public:
 
 
 	// Public Methods
-	/** Generates a vertex array object, formed to match models' object data .
-	 * @return			a vertex array object resident on the GPU */
-	static GLuint Generate_VAO();		
-	/** Updates a vertex array object's state with this models' data. 
-	 * @brief			using the supplied vertex array object, updates its internal data on the GPU with this model's underlying data.
-	 * @param	vaoID	the vertex array object's ID on the GPU */
-	void updateVAO(const GLuint & vaoID);
 	/** Returns the material ID for a skin given an index into this list
 	 * @note			Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index	into this model's skin list. 
@@ -109,7 +87,7 @@ public:
 	GeometryInfo						m_data;
 	AnimationInfo						m_animationInfo;
 	vec3								m_bboxMin, m_bboxMax;
-	GLuint								m_buffers[NUM_VERTEX_ATTRIBUTES];
+	GLint								m_offset, m_count;
 	GLsync								m_fence;
 };
 

@@ -33,7 +33,7 @@ static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int heigh
 // Is called when error messages occur within OpenGL driver
 static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
 {
-	string errorType;
+	/*string errorType;
 	string errorSeverity;
 	string errorMessage = string(message, length);
 	switch (type) {
@@ -68,7 +68,7 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 		break;
 	}
 	//if (type == 1280) {
-		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
+		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));*/
 	//}
 	//MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
@@ -233,9 +233,9 @@ void dt_Engine::tick()
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
+		Asset_Manager::Get_Model_Manager()->update();
 		for each (auto system in m_package->m_Systems) 			
-			system.second->update(deltaTime);
-		
+			system.second->update(deltaTime);		
 		
 		glfwSwapBuffers(m_package->m_Context_Rendering);
 		glfwPollEvents();
@@ -256,7 +256,6 @@ void dt_Engine::tickThreaded()
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->updateThreaded(deltaTime);
-			//glFinish();
 		}
 		stay_alive = !shouldClose();
 	}

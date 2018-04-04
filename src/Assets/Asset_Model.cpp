@@ -5,41 +5,6 @@
 #include <minmax.h>
 
 
-VertexBoneData::~VertexBoneData()
-{
-}
-
-VertexBoneData::VertexBoneData()
-{
-	Reset();
-}
-
-VertexBoneData::VertexBoneData(const VertexBoneData & vbd) 
-{
-	Reset();
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++) {
-		IDs[i] = vbd.IDs[i];
-		Weights[i] = vbd.Weights[i];
-	}
-}
-
-void VertexBoneData::Reset()
-{
-	ZERO_MEM(IDs);
-	ZERO_MEM(Weights);
-}
-
-void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
-{
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++)
-		if (Weights[i] == 0.0) {
-			IDs[i] = BoneID;
-			Weights[i] = Weight;
-			return;
-		}
-	assert(0);
-}
-
 AnimationInfo::~AnimationInfo() 
 {
 }
@@ -66,8 +31,6 @@ size_t AnimationInfo::numAnimations() const
 
 Asset_Model::~Asset_Model()
 {
-	if (existsYet())
-		glDeleteBuffers(6, m_buffers);	
 	if (m_fence != nullptr)
 		glDeleteSync(m_fence);
 }
@@ -77,8 +40,8 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_meshSize = 0;
 	m_bboxMin = vec3(0.0f);
 	m_bboxMax = vec3(0.0f);
-	for each (auto &buffer in m_buffers)
-		buffer = -1;
+	m_offset = 0;
+	m_count = 0;
 	m_fence = nullptr;
 }
 
@@ -95,43 +58,6 @@ bool Asset_Model::existsYet()
 			return true;
 	}
 	return false;
-}
-
-GLuint Asset_Model::Generate_VAO()
-{
-	GLuint vaoID = 0;	
-	glCreateVertexArrays(1, &vaoID);
-	for (unsigned int x = 0; x < NUM_VERTEX_ATTRIBUTES; ++x)
-		glEnableVertexArrayAttrib(vaoID, x);
-	return vaoID;
-}
-
-void Asset_Model::updateVAO(const GLuint & vaoID)
-{
-	shared_lock<shared_mutex> guard(m_mutex);
-
-	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 1, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 2, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 3, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 4, 2, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribIFormat(vaoID, 5, 4, GL_INT, 0);
-	glVertexArrayAttribFormat(vaoID, 6, 4, GL_FLOAT, GL_FALSE, 0);
-
-	glVertexArrayVertexBuffer(vaoID, 0, m_buffers[0], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 1, m_buffers[1], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 2, m_buffers[2], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 3, m_buffers[3], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 4, m_buffers[4], 0, 8);
-	glVertexArrayVertexBuffer(vaoID, 5, m_buffers[5], 0, 32);
-
-	glVertexArrayAttribBinding(vaoID, 0, 0);
-	glVertexArrayAttribBinding(vaoID, 1, 1);
-	glVertexArrayAttribBinding(vaoID, 2, 2);
-	glVertexArrayAttribBinding(vaoID, 3, 3);
-	glVertexArrayAttribBinding(vaoID, 4, 4);
-	glVertexArrayAttribBinding(vaoID, 5, 5);
-	glVertexArrayAttribBinding(vaoID, 6, 6);	
 }
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
@@ -277,21 +203,8 @@ void Model_WorkOrder::finalizeOrder()
 {
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		
-		auto &data = m_asset->m_data;
-		auto &buffers = m_asset->m_buffers;
-		const size_t &arraySize = data.vs.size();
-		constexpr GLbitfield flags = GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-		glCreateBuffers(6, buffers);
-		glNamedBufferStorage(buffers[0], arraySize * sizeof(vec3), &data.vs[0][0], flags);
-		glNamedBufferStorage(buffers[1], arraySize * sizeof(vec3), &data.nm[0][0], flags);
-		glNamedBufferStorage(buffers[2], arraySize * sizeof(vec3), &data.tg[0][0], flags);
-		glNamedBufferStorage(buffers[3], arraySize * sizeof(vec3), &data.bt[0][0], flags);
-		glNamedBufferStorage(buffers[4], arraySize * sizeof(vec2), &data.uv[0][0], flags);
-		glNamedBufferStorage(buffers[5], arraySize * sizeof(VertexBoneData), &data.bones[0], flags);
+		Asset_Manager::Get_Model_Manager()->registerGeometry(m_asset->m_data, m_asset->m_offset, m_asset->m_count);
 		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
-
 		write_guard.unlock();
 		write_guard.release();
 		m_asset->finalize();

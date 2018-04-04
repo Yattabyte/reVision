@@ -45,6 +45,10 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 	if (m_enginePackage->findSubSystem("World"))
 		m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
+
+
+	m_visGeoUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
+	m_indirectGeo = MappedBuffer(sizeof(GLuint) * 4000, 0);
 }
 
 void Light_Directional_Component::receiveMessage(const ECSmessage &message)
@@ -102,18 +106,49 @@ void Light_Directional_Component::indirectPass()
 	glDrawArraysIndirect(GL_POINTS, 0);
 }
 
+#include "Systems\World\ECS\Components\Anim_Model_Component.h"
 void Light_Directional_Component::shadowPass()
 {
 	update();
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	for (int x = 0; x < NUM_CASCADES; ++x)
-		m_shadowMapper->clearShadow(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
-
+	// Update Geometry
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
-	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
-		component->draw();
+	const size_t size = vis_token.specificSize("Anim_Model");
+	if (0) {
 
-	m_shadowUpdateTime = glfwGetTime();
+		glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
+		for (int x = 0; x < NUM_CASCADES; ++x)
+			m_shadowMapper->clearShadow(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
+
+
+		unsigned int count = 0;
+		struct DrawData {
+			GLuint count;
+			GLuint instanceCount = 1;
+			GLuint first;
+			GLuint baseInstance = 0;
+			DrawData(const GLuint & c, const GLuint & f) : count(c), first(f) {}
+		};
+
+		vector<GLuint> geoArray(vis_token.specificSize("Anim_Model"));
+		vector<DrawData> drawData;
+		drawData.reserve(size);
+		m_visGeoUBO.checkFence();
+		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
+			geoArray[count++] = component->getBufferIndex();
+			const ivec2 drawInfo = component->getDrawInfo();
+			drawData.push_back(DrawData(drawInfo.y, drawInfo.x));
+		}
+
+		m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
+
+		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+
+		m_shadowUpdateTime = glfwGetTime();
+	}
 }
 
 bool Light_Directional_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)

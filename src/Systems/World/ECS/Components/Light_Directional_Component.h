@@ -92,6 +92,7 @@ protected:
 	EnginePackage *m_enginePackage;
 	Shadow_FBO *m_shadowMapper;
 	Camera m_camera;
+	MappedBuffer m_visGeoUBO, m_indirectGeo;
 	friend class Light_Directional_Creator;
 };
 

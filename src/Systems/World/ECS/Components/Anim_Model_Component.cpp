@@ -11,7 +11,6 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 
 Anim_Model_Component::~Anim_Model_Component()
 {
-	glDeleteVertexArrays(1, &m_vao_id);
 	if (m_model.get()) m_model->removeCallback(this);
 	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.removeElement(&m_uboIndex);
 }
@@ -24,10 +23,8 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	m_animTime = 0;
 	m_animStart = 0;
 	m_playAnim = false;
-	m_vao_id = 0;
 	m_skin = 0;
 	m_fence = nullptr;
-	m_vao_id = Asset_Model::Generate_VAO();	
 
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.addElement(&m_uboIndex);
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL);
@@ -62,7 +59,6 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 				checkFence();
 				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
 				m_transforms = m_model->m_animationInfo.meshTransforms;
-				m_model->updateVAO(m_vao_id);
 				m_vaoLoaded = true;
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			});
@@ -104,7 +100,6 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 
 void Anim_Model_Component::draw()
 {
-	// Ensure we have a model pointer, the model exists, and the vao is loaded
 	if (!m_model || !m_model->existsYet() || !m_vaoLoaded) return;
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 	if (m_fence != nullptr) {
@@ -116,8 +111,7 @@ void Anim_Model_Component::draw()
 			m_fence = nullptr;
 		}
 	}
-	glBindVertexArray(m_vao_id);
-	glDrawArrays(GL_TRIANGLES, 0, m_model->m_meshSize);
+
 }
 
 bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
@@ -132,6 +126,15 @@ bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 const unsigned int Anim_Model_Component::getBufferIndex() const
 {
 	return m_uboIndex;
+}
+
+const ivec2 Anim_Model_Component::getDrawInfo() const
+{
+	if (m_model && m_model->existsYet()) {
+		shared_lock<shared_mutex> guard(m_model->m_mutex);
+		return ivec2(m_model->m_offset, m_model->m_count);
+	}
+	return ivec2(0);
 }
 
 void Anim_Model_Component::animate(const double & deltaTime)

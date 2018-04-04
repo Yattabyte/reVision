@@ -103,6 +103,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 
 		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 		m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+		m_indirectGeo = MappedBuffer(sizeof(GLuint) * 4000, 0);
 
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -123,6 +124,7 @@ void System_Graphics::update(const float & deltaTime)
 		m_shaderSky->existsYet() &&
 		m_shaderGeometry->existsYet())
 	{
+		m_geometrySSBO.bindBuffer();
 		// Update buffers and bind initial state
 		updateBuffers(vis_token);
 
@@ -225,17 +227,33 @@ void System_Graphics::updateBuffers(const Visibility_Token & vis_token)
 		refArray[count++] = component->getBufferIndex();
 	m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
 	m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 
 	// Update Geometry
-	m_visGeoUBO.checkFence();
-	vector<GLuint> geoArray(vis_token.specificSize("Anim_Model"));
-	count = 0;
-	for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model"))
-		geoArray[count++] = component->getBufferIndex();
-	m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
-	m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+	const size_t size = vis_token.specificSize("Anim_Model");
+	if (size) {
+		count = 0;
+		struct DrawData {
+			GLuint count;
+			GLuint instanceCount = 1;
+			GLuint first;
+			GLuint baseInstance = 1;
+			DrawData(const GLuint & c, const GLuint & f) : count(c), first(f) {}
+		};
 
-	m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+		vector<GLuint> geoArray(vis_token.specificSize("Anim_Model"));
+		vector<DrawData> drawData;
+		drawData.reserve(size);
+		m_visGeoUBO.checkFence();
+		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
+			geoArray[count++] = component->getBufferIndex();
+			const ivec2 drawInfo = component->getDrawInfo();
+			drawData.push_back(DrawData(drawInfo.y, drawInfo.x));
+		}
+
+		m_visGeoUBO.write_immediate(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
+		m_indirectGeo.write_immediate(0, sizeof(DrawData) * size, drawData.data());
+	}
 }
 
 void System_Graphics::shadowPass(const Visibility_Token & vis_token)
@@ -342,18 +360,16 @@ void System_Graphics::geometryPass(const Visibility_Token & vis_token)
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
-		m_geometryFBO.bindForWriting();
 		m_shaderGeometry->bind();
-		m_geometrySSBO.bindBuffer();
+		m_geometryFBO.bindForWriting();
+		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
-		int index = 0;
-		for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model")) {
-			m_shaderGeometry->Set_Uniform(0, index);
-			component->draw();
-			index++;
-		}
+		const size_t size = vis_token.specificSize("Anim_Model");	
+		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
-		m_geometryFBO.applyAO();
+		m_geometryFBO.applyAO();		
 	}
 }
 

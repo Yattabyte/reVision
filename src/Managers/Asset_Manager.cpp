@@ -7,6 +7,7 @@ Asset_Manager::Asset_Manager()
 
 void Asset_Manager::_startup()
 {
+	m_modelManager.initialize();
 	m_Workers.reserve(4);
 	for (unsigned int x = 0; x < 4; ++x) {
 		m_Workers.push_back(std::make_shared<Assets_Worker>());
@@ -97,4 +98,10 @@ void Asset_Manager::Notify_Observers()
 	read_guard.release();
 	unique_lock<shared_mutex> write_guard(manager.m_Mutex_Callbacks);
 	manager.m_notifyees.clear();
+}
+
+ModelManager * Asset_Manager::Get_Model_Manager()
+{
+	auto &manager = Get();
+	return &manager.m_modelManager;
 }

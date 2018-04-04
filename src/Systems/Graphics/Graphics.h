@@ -110,7 +110,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO; 
 	bool m_vaoLoaded;
-	MappedBuffer m_visRefUBO, m_visGeoUBO, m_userBuffer, m_quadIndirectBuffer;
+	MappedBuffer m_visRefUBO, m_visGeoUBO, m_indirectGeo, m_userBuffer, m_quadIndirectBuffer;
 
 	// Rendering Techniques
 	vector<Lighting_Technique*> m_lightingTechs;

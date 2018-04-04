@@ -22,6 +22,7 @@
 #endif
 
 #include "Assets\Asset.h"
+#include "Managers\ModelManager.h"
 #include "Utilities\MappedChar.h"
 #include <shared_mutex>
 #include <thread>
@@ -147,6 +148,8 @@ public:
 	 * @note				is called from the main thread only to ensure proper synchronization. */
 	static void Notify_Observers();
 
+	static ModelManager * Get_Model_Manager();
+
 
 private:
 	/** Nested Asset Worker
@@ -205,6 +208,8 @@ private:
 	VectorMap<Shared_Asset> m_AssetMap;	
 	shared_mutex m_Mutex_Callbacks;
 	vector<function<void()>> m_notifyees;
+	// Sub-managers
+	ModelManager m_modelManager;
 };
 
 #endif // ASSET_MANAGER
