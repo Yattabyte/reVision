@@ -35,7 +35,7 @@ DS_Lighting::DS_Lighting(Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
 	m_shapeSphere->addCallback(this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); m_sphereVAOLoaded = true;  });
 }
 
-void DS_Lighting::updateLighting(const Visibility_Token & vis_token)
+void DS_Lighting::updateData(const Visibility_Token & vis_token)
 {
 }
 

@@ -15,12 +15,12 @@ public:
 	/** Virtual Destructor. */
 	virtual ~Lighting_Technique() {};
 	/** Constructor. */
-	Lighting_Technique() {}
+	Lighting_Technique() {};
 
 
-	// Public Methods
+	// Public Interface Methods
 	/** Update underlying data and do any pre-lighting rendering passes necessary */
-	virtual void updateLighting(const Visibility_Token & vis_token) = 0;
+	virtual void updateData(const Visibility_Token & vis_token) = 0;
 	/** Apply this lighting technique. */
 	virtual void applyLighting(const Visibility_Token & vis_token) = 0;
 };

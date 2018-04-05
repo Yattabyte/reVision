@@ -40,7 +40,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void updateLighting(const Visibility_Token & vis_token);
+	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	
 
 
@@ -84,7 +84,7 @@ private:
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	GLuint m_cube_fbo, m_cube_tex;
-	MappedBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer;
+	MappedBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer, m_visRefUBO;
 };
 
 #endif // REFLECTIONS

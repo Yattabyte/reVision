@@ -39,7 +39,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowBuffer;
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowFBO;
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			m_shadowMapper->registerShadowCaster(SHADOW_LARGE, m_uboData.Shadow_Spot[x].x);
 	}

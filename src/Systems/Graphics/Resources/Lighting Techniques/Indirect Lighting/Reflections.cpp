@@ -103,6 +103,7 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
 	SSR_Buffer buffer;
 	m_ssrBuffer = MappedBuffer(sizeof(SSR_Buffer), &buffer);
+	m_visRefUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
 }
 
 void Reflections::resize(const vec2 & size)
@@ -116,9 +117,16 @@ void Reflections::resize(const vec2 & size)
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 }
 
-void Reflections::updateLighting(const Visibility_Token & vis_token)
+void Reflections::updateData(const Visibility_Token & vis_token)
 {
-
+	const size_t r_size = vis_token.specificSize("Reflector");
+	if (r_size) {
+		vector<GLuint> refArray(vis_token.specificSize("Reflector"));
+		unsigned int count = 0;
+		for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector"))
+			refArray[count++] = component->getBufferIndex();
+		m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
+	}
 }
 
 void Reflections::applyLighting(const Visibility_Token & vis_token)
@@ -220,6 +228,7 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	// Stencil out parallax reflectors
 	m_shaderParallax->bind();
 	m_shaderParallax->Set_Uniform(0, true);
+	m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);	

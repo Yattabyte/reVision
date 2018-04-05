@@ -31,7 +31,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	glNamedBufferData(m_uboID, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
 	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowBuffer;
+		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowFBO;
 		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
 	}
 	if (m_enginePackage->findSubSystem("World")) {

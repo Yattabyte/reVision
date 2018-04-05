@@ -127,7 +127,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
 }
 
-void GlobalIllumination_RH::updateLighting(const Visibility_Token & cam_vis_token)
+void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 {
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);

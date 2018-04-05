@@ -40,7 +40,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void updateLighting(const Visibility_Token & vis_token);
+	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	
 
 
