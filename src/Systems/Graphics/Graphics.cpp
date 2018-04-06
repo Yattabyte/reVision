@@ -7,8 +7,9 @@
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
-#include "Utilities\EnginePackage.h"
 #include "Systems\World\Camera.h"
+#include "Managers\Material_Manager.h"
+#include "Utilities\EnginePackage.h"
 #include <random>
 #include <minmax.h>
 
@@ -88,6 +89,7 @@ void System_Graphics::update(const float & deltaTime)
 	const Visibility_Token vis_token = m_enginePackage->m_Camera.getVisibilityToken();
 	if (m_Initialized && vis_token.size())	{		
 		// Update and bind prerequisite data
+		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_geometrySSBO.bindBuffer();
 		for each (auto *tech in m_geometryTechs)

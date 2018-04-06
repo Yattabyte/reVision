@@ -77,7 +77,6 @@ void Camera::update()
 	m_frustum.setFrustum(m_cameraBuffer.pMatrix * m_cameraBuffer.vMatrix);
 
 	// Send data to GPU
-	//m_buffer.fullWrite3X(GL_SHADER_STORAGE_BUFFER, 1, sizeof(Camera_Buffer), &m_cameraBuffer);
 	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
 }
 

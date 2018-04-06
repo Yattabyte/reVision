@@ -11,7 +11,7 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\MappedBuffer_Exp.h"
 #include "GL\glew.h"
 #include <deque>
 #include <vector>
@@ -50,6 +50,9 @@ public:
 	/** Shut down and flush out the material manager */
 	static void Shut_Down() { (Get())._shutdown(); }
 
+	/** Make this buffer active. */
+	static void Bind();
+
 	/** Generates a material ID 
 	 * @return	a new material ID */
 	static GLuint Generate_ID();
@@ -64,19 +67,6 @@ public:
 
 
 private:
-	/**
-	 * Nested Material Buffer
-	 * @brief is kind of pointless, but this can be made much better
-	 * @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
-	 **/
-	static struct Material_Buffer
-	{
-		Material_Buffer() {
-			ZERO_MEM(MaterialMaps);
-		}
-		GLuint64 MaterialMaps[MAX_NUM_MAPPED_TEXTURES]; // The bindless texture handles
-	};
-
 	// (de)Constructors
 	~Material_Manager() {};
 	Material_Manager();
@@ -95,8 +85,7 @@ private:
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
-	Material_Buffer m_MatBuffer;
-	MappedBuffer m_buffer;
+	MappedBuffer_Exp m_buffer;
 };
 
 #endif // MATERIAL_MANAGER

@@ -16,8 +16,8 @@ Model_Technique::Model_Technique(EnginePackage * enginePackage, Geometry_FBO * g
 	m_enginePackage = enginePackage;
 	m_geometryFBO = geometryFBO;
 	m_shadowFBO = shadowFBO;
-	m_visGeoUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
-	m_indirectGeo = MappedBuffer(sizeof(GLuint) * 4000, 0);
+	m_visGeoUBO = MappedBuffer_Exp();
+	m_indirectGeo = MappedBuffer_Exp();
 
 	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
@@ -66,9 +66,9 @@ void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
 		m_shaderGeometry->bind();
 		m_geometryFBO->bindForWriting();
 		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
-		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
 		m_geometryFBO->applyAO();
@@ -143,9 +143,6 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 		queuePoint.insert(component);
 	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 		queueSpot.insert(component);
-	const auto &dirLights = queueDir.toList();
-	const auto &pointLights = queuePoint.toList();
-	const auto &spotLights = queueSpot.toList();
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
@@ -155,15 +152,15 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 
 	m_shadowFBO->bindForWriting(SHADOW_LARGE);
 	m_shaderDirectional_Shadow->bind();
-	for each (auto &component in dirLights)
+	for each (auto &component in queueDir.toList())
 		component->shadowPass();
 
 	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 	m_shaderPoint_Shadow->bind();
-	for each (auto &component in pointLights)
+	for each (auto &component in queuePoint.toList())
 		component->shadowPass();
 
 	m_shaderSpot_Shadow->bind();
-	for each (auto &component in spotLights)
+	for each (auto &component in queueSpot.toList())
 		component->shadowPass();
 }

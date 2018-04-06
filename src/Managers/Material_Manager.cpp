@@ -11,7 +11,7 @@ void Material_Manager::_startup()
 {
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (!m_Initialized) {
-		m_buffer = MappedBuffer(sizeof(Material_Buffer), &m_MatBuffer);
+		m_buffer = MappedBuffer_Exp();
 		m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 		m_Initialized = true;
 	}
@@ -22,9 +22,15 @@ void Material_Manager::_shutdown()
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (m_Initialized) {
 		m_FreeSpots.clear();
-		m_MatBuffer = Material_Buffer();
 		m_Initialized = false;
 	}
+}
+
+void Material_Manager::Bind()
+{
+	auto &manager = Get();
+	shared_lock<shared_mutex> readGuard(manager.m_DataMutex);
+	manager.m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 GLuint Material_Manager::Generate_ID()
@@ -45,14 +51,10 @@ GLuint Material_Manager::Generate_ID()
 void Material_Manager::Generate_Handle(const GLuint & materialightingFBOID, const GLuint & glTextureID)
 {
 	auto &manager = Get();
+	const GLuint64 handle = glGetTextureHandleARB(glTextureID);
+
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
-	GLuint64 handle = glGetTextureHandleARB(glTextureID);
-	glMakeTextureHandleResidentARB(handle);
-	
-	//GLuint64 * mappedBuffer = reinterpret_cast<GLuint64*>(manager.m_bufferPtr);
-	//mappedBuffer[materialightingFBOID] = handle;
 	manager.m_buffer.write(sizeof(GLuint64) * materialightingFBOID, sizeof(GLuint64), &handle);
-	manager.m_MatBuffer.MaterialMaps[materialightingFBOID] = handle;	
 	manager.m_WorkOrders.push_back(handle);
 }
 
