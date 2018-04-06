@@ -55,5 +55,5 @@ void System_Logic::update(const float & deltaTime)
 	// Update the engine package
 	m_enginePackage->m_Camera.setPosition(m_transform.m_position);
 	m_enginePackage->m_Camera.setOrientation(m_transform.m_orientation);
-	m_enginePackage->m_Camera.update();
+	//m_enginePackage->m_Camera.update();
 }

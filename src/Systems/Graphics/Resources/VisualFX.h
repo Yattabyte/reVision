@@ -14,7 +14,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
 class EnginePackage;
@@ -69,7 +69,7 @@ private:
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
 	GLuint m_quadVAO, m_fbo_GB;
 	bool m_vaoLoaded;
-	MappedBuffer m_quadIndirectBuffer;
+	StaticBuffer m_quadIndirectBuffer;
 };
 
 #endif // VISUALFX

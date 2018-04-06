@@ -1,7 +1,6 @@
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\Graphics\Resources\Storage Buffers\Geometry_SSBO.h"
 #include "Utilities\EnginePackage.h"
 #include "Utilities\Frustum.h"
 #include <minmax.h>
@@ -57,7 +56,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			// Attach new callback
 			m_model->addCallback(this, [&]() {
 				checkFence();
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
 				m_transforms = m_model->m_animationInfo.meshTransforms;
 				m_vaoLoaded = true;
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -69,7 +68,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<Transform>();
 			
 			checkFence();
-			(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
+			(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
 			m_transform = payload;
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
@@ -81,7 +80,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			m_skin = payload;
 			if (m_model->existsYet()) {
 				checkFence();
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			}
 			break;
@@ -142,7 +141,7 @@ void Anim_Model_Component::animate(const double & deltaTime)
 	if (!m_model->existsYet()) return;
 	
 	checkFence();
-	Geometry_Struct *const uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer)[m_uboIndex];
+	Geometry_Struct *const uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 
 	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animationInfo.Animations.size()) 

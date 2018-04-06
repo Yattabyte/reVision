@@ -19,7 +19,7 @@ ModelManager::ModelManager()
 void ModelManager::initialize()
 {
 	// Create VBO's
-	constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+	constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT;// | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 	glCreateBuffers(NUM_VERTEX_ATTRIBUTES, m_vboIDS);
 	glNamedBufferStorage(m_vboIDS[0], m_maxCapacity * sizeof(vec3), 0, flags);
 	glNamedBufferStorage(m_vboIDS[1], m_maxCapacity * sizeof(vec3), 0, flags);
@@ -110,7 +110,7 @@ void ModelManager::expandToFit(const size_t & arraySize)
 		m_maxCapacity += arraySize * 1.5;
 
 		// Create the new VBO's
-		constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT;// | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		GLuint newVBOIDS[NUM_VERTEX_ATTRIBUTES];
 		glCreateBuffers(NUM_VERTEX_ATTRIBUTES, newVBOIDS);
 		glNamedBufferStorage(newVBOIDS[0], m_maxCapacity * sizeof(vec3), 0, flags);

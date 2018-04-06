@@ -14,7 +14,7 @@ Skybox::Skybox(Lighting_FBO * lightingFBO)
 	Asset_Loader::load_asset(m_textureSky, "sky\\");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

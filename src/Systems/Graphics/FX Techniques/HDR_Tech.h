@@ -5,7 +5,7 @@
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
 class EnginePackage;
@@ -44,7 +44,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_vaoLoaded;
-	MappedBuffer m_quadIndirectBuffer;
+	StaticBuffer m_quadIndirectBuffer;
 };
 
 #endif // HDR_TECHNIQUE

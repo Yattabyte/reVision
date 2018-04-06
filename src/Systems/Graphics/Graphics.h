@@ -15,14 +15,14 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\Storage Buffers\Geometry_SSBO.h"
 #include "Systems\Graphics\Resources\Storage Buffers\Reflection_UBO.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\VectorBuffer.h"
 #include <vector>
 
 class EnginePackage;
@@ -72,9 +72,8 @@ public:
 	Shadow_FBO m_shadowFBO;
 	Reflection_FBO m_reflectionFBO;
 	// Storage Buffers
-	Geometry_SSBO m_geometrySSBO;
 	Reflection_UBO m_reflectionUBO;
-
+	VectorBuffer<Geometry_Struct> m_geometrySSBO;
 	
 private:
 	// Private Methods
@@ -85,7 +84,7 @@ private:
 	// Private Attributes
 	ivec2 m_renderSize;
 	VisualFX m_visualFX;
-	MappedBuffer m_userBuffer;
+	StaticBuffer m_userBuffer;
 
 	// Rendering Techniques
 	vector<Geometry_Technique*> m_geometryTechs;

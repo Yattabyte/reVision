@@ -28,7 +28,7 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);

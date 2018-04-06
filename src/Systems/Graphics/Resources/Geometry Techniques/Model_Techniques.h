@@ -11,7 +11,7 @@
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Assets\Asset_Shader.h"
-#include "Utilities\GL\MappedBuffer_Exp.h"
+#include "Utilities\GL\DynamicBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO; 
@@ -42,7 +42,7 @@ private:
 	EnginePackage * m_enginePackage;
 	Geometry_FBO * m_geometryFBO;
 	Shadow_FBO * m_shadowFBO;
-	MappedBuffer_Exp m_visGeoUBO, m_indirectGeo;
+	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
 };
 

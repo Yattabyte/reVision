@@ -9,7 +9,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 #include <vector>
 
 
@@ -77,7 +77,7 @@ protected:
 	unsigned int m_count;
 	GLuint m_target;
 	std::vector<unsigned int *> m_indexPointers;
-	MappedBuffer m_buffer;
+	StaticBuffer m_buffer;
 };
 
 #endif // UNIFORM_BUFFER

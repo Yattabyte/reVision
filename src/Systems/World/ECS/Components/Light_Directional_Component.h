@@ -18,6 +18,7 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Utilities\GL\DynamicBuffer.h"
 
 using namespace glm;
 class Light_Directional_Creator;
@@ -92,7 +93,7 @@ protected:
 	EnginePackage *m_enginePackage;
 	Shadow_FBO *m_shadowMapper;
 	Camera m_camera;
-	MappedBuffer m_visGeoUBO, m_indirectGeo;
+	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	friend class Light_Directional_Creator;
 };
 

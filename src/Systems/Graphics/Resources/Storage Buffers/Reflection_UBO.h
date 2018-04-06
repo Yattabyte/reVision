@@ -36,7 +36,7 @@ public:
 	~Reflection_UBO() {}
 	/** Construct the reflection buffer. */
 	Reflection_UBO() {
-		m_buffer = MappedBuffer(sizeof(Reflection_Struct) * 256, 0, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
+		m_buffer = StaticBuffer(sizeof(Reflection_Struct) * 256, 0, GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	}
 
 	

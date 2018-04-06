@@ -98,12 +98,12 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	}
 
 	GLuint cubeData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
-	m_cubeIndirectBuffer = MappedBuffer( sizeof(GLuint) * 4, cubeData);
+	m_cubeIndirectBuffer = StaticBuffer( sizeof(GLuint) * 4, cubeData);
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 	SSR_Buffer buffer;
-	m_ssrBuffer = MappedBuffer(sizeof(SSR_Buffer), &buffer);
-	m_visRefUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
+	m_ssrBuffer = StaticBuffer(sizeof(SSR_Buffer), &buffer);
+	m_visRefUBO = StaticBuffer(sizeof(GLuint) * 500, 0);
 }
 
 void Reflections::resize(const vec2 & size)

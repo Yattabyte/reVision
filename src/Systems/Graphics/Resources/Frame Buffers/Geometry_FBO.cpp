@@ -54,7 +54,7 @@ void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX
 		FrameBuffer::initialize();
 
 		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-		m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);

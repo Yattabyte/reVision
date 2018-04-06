@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MAPPEDBUFFER_EXP_H
-#define MAPPEDBUFFER_EXP_H
+#ifndef DYNAMICBUFFER_H
+#define DYNAMICBUFFER_H
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -13,11 +13,11 @@
 #include <utility>
 
 
-class MappedBuffer_Exp
+class DynamicBuffer
 {
 public:
 	// Public (de)Constructors
-	~MappedBuffer_Exp() {
+	~DynamicBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
@@ -26,7 +26,7 @@ public:
 			glDeleteSync(m_fence);
 	}
 	/** Default. */
-	MappedBuffer_Exp(const GLsizeiptr & size = 0, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
+	DynamicBuffer(const GLsizeiptr & size = 0, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
 		m_maxCapacity = size;
 		m_mapFlags = mapFlags;
 		m_bufferID = 0;
@@ -36,7 +36,7 @@ public:
 		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Move gl object from 1 instance to another. */
-	MappedBuffer_Exp & operator=(MappedBuffer_Exp && o) noexcept {
+	DynamicBuffer & operator=(DynamicBuffer && o) noexcept {
 		m_bufferID = (std::move(o.m_bufferID));
 		m_bufferPtr = (std::move(o.m_bufferPtr));
 		m_fence = (std::move(o.m_fence));
@@ -150,4 +150,4 @@ private:
 	GLbitfield m_mapFlags;
 };
 
-#endif // MAPPEDBUFFER_EXP_H
+#endif // DYNAMICBUFFER_H

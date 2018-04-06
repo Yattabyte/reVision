@@ -56,7 +56,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });		
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {m_renderSize = ivec2(f, m_renderSize.y); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {m_renderSize = ivec2(m_renderSize.x, f); });
-		m_userBuffer = MappedBuffer(sizeof(Renderer_Attribs), &attribs);
+		m_userBuffer = StaticBuffer(sizeof(Renderer_Attribs), &attribs);
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
 
@@ -75,9 +75,9 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO)); 
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
 
 		// Initiate effects techniques
+		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
 		m_fxTechs.push_back(new FXAA_Tech());
 		m_Initialized = true;
@@ -91,7 +91,7 @@ void System_Graphics::update(const float & deltaTime)
 		// Update and bind prerequisite data
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-		m_geometrySSBO.bindBuffer();
+		m_geometrySSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 		for each (auto *tech in m_geometryTechs)
 			tech->updateData(vis_token); 
 		for each (auto *tech in m_lightingTechs)

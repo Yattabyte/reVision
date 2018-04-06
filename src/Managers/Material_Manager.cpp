@@ -11,7 +11,7 @@ void Material_Manager::_startup()
 {
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (!m_Initialized) {
-		m_buffer = MappedBuffer_Exp();
+		m_buffer = DynamicBuffer();
 		m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 		m_Initialized = true;
 	}

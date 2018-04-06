@@ -10,6 +10,7 @@
 #endif
 #define GLEW_STATIC
 #define NUM_VERTEX_ATTRIBUTES 6
+#define NUM_MAX_BONES 100
 #define NUM_BONES_PER_VEREX 4
 
 #include "GL\glew.h"
@@ -20,6 +21,16 @@
 using namespace std;
 using namespace glm;
 struct GeometryInfo;
+
+/**
+* The uniform struct used by the geometry SSBO
+*/
+struct Geometry_Struct {
+	int useBones = 0;  // no padding here;
+	GLuint materialID = 0; vec2 padding1; // for some reason padding here
+	mat4 mMatrix = mat4(1.0f);
+	mat4 transforms[NUM_MAX_BONES];
+};
 
 
 /**

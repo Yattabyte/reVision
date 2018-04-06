@@ -14,6 +14,7 @@
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Assets\Asset_Model.h"
 #include "Utilities\Transform.h"
+#include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
 
 using namespace glm;
@@ -60,7 +61,7 @@ protected:
 	float m_animTime, m_animStart;
 	bool m_vaoLoaded;
 	unsigned int m_uboIndex;
-	void * m_uboBuffer;
+	VB_Ptr * m_uboBuffer;
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;

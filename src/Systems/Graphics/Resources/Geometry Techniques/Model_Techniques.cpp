@@ -16,8 +16,6 @@ Model_Technique::Model_Technique(EnginePackage * enginePackage, Geometry_FBO * g
 	m_enginePackage = enginePackage;
 	m_geometryFBO = geometryFBO;
 	m_shadowFBO = shadowFBO;
-	m_visGeoUBO = MappedBuffer_Exp();
-	m_indirectGeo = MappedBuffer_Exp();
 
 	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 

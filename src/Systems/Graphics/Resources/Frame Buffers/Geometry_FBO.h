@@ -10,7 +10,7 @@
 #endif
 
 #include "Utilities\GL\FrameBuffer.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
@@ -72,7 +72,7 @@ private:
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	
 	Shared_Asset_Primitive m_shapeQuad;
-	MappedBuffer m_quadIndirectBuffer;
+	StaticBuffer m_quadIndirectBuffer;
 };
 
 #endif // GEOMETRY_BUFFER

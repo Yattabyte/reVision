@@ -11,7 +11,7 @@
 
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\Frustum.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 #include "glm\gtc\quaternion.hpp"
@@ -136,7 +136,7 @@ public:
 private:
 	// Private Attributes
 	mutable shared_mutex data_mutex;
-	MappedBuffer m_buffer;
+	StaticBuffer m_buffer;
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
 	Visibility_Token m_vistoken;

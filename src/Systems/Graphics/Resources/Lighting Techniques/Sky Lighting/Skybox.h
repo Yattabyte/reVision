@@ -13,7 +13,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Cubemap.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 class Lighting_FBO;
 
@@ -43,7 +43,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_vaoLoaded;
-	MappedBuffer m_quadIndirectBuffer;
+	StaticBuffer m_quadIndirectBuffer;
 };
 
 #endif // SKYBOX

@@ -45,10 +45,6 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 	if (m_enginePackage->findSubSystem("World"))
 		m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
-
-
-	m_visGeoUBO = MappedBuffer(sizeof(GLuint) * 500, 0);
-	m_indirectGeo = MappedBuffer(sizeof(GLuint) * 4000, 0);
 }
 
 void Light_Directional_Component::receiveMessage(const ECSmessage &message)

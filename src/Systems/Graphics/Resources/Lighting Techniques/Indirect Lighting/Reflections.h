@@ -15,7 +15,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Cubemap.h"
-#include "Utilities\GL\MappedBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 class Geometry_FBO;
 class Lighting_FBO;
@@ -84,7 +84,7 @@ private:
 	GLuint m_fbo, m_texture;
 	vec2 m_renderSize;
 	GLuint m_cube_fbo, m_cube_tex;
-	MappedBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer, m_visRefUBO;
+	StaticBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer, m_visRefUBO;
 };
 
 #endif // REFLECTIONS

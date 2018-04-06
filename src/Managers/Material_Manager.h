@@ -11,7 +11,7 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
-#include "Utilities\GL\MappedBuffer_Exp.h"
+#include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"
 #include <deque>
 #include <vector>
@@ -85,7 +85,7 @@ private:
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
-	MappedBuffer_Exp m_buffer;
+	DynamicBuffer m_buffer;
 };
 
 #endif // MATERIAL_MANAGER

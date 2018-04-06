@@ -122,9 +122,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_bufferPtr = glMapNamedBufferRange(m_attribSSBO, 0, sizeof(GI_Attribs_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 
 	GLuint pointData[4] = { 1, m_attribBuffer.resolution, 0, 0 }; // count, primCount, first, reserved
-	m_pointsIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, pointData);
+	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, pointData);
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = MappedBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 }
 
 void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
