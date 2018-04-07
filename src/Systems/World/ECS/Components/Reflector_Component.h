@@ -12,6 +12,7 @@
 #define GLM_SWIZZLE_XYZ
 
 #include "Systems\World\ECS\Components\Component.h"
+#include "Utilities\GL\VectorBuffer.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 
@@ -52,7 +53,7 @@ protected:
 
 	// Protected Attributes
 	unsigned int m_uboIndex;
-	void * m_uboBuffer;
+	VB_Ptr * m_uboBuffer;
 	vec3 m_position;
 	vec3 m_scale;
 	GLsync m_fence; 

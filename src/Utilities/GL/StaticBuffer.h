@@ -36,6 +36,7 @@ public:
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | mapFlags);
 		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, mapFlags);
+		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Move gl object from 1 instance to another. */
 	StaticBuffer & operator=(StaticBuffer && o) noexcept {

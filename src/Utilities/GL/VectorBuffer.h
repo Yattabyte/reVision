@@ -40,6 +40,23 @@ public:
 		m_ptrContainer.pointer = glMapNamedBufferRange(m_bufferID, 0, sizeHint, flags);
 		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
+	/** Move gl object from 1 instance to another. */
+	VectorBuffer & operator=(VectorBuffer && o) noexcept {
+		m_count = (std::move(o.m_count));
+		m_indexPointers = (std::move(o.m_indexPointers));
+		m_bufferID = (std::move(o.m_bufferID));
+		m_ptrContainer = (std::move(o.m_ptrContainer));
+		m_fence = (std::move(o.m_fence));
+		m_maxCapacity = (std::move(o.m_maxCapacity));
+
+		o.m_count = 0;
+		o.m_indexPointers = 0;
+		o.m_bufferID = 0;
+		o.m_ptrContainer = 0;
+		o.m_fence = nullptr;
+		o.m_maxCapacity = 0;
+		return *this;
+	}
 		
 
 	// Public Methods
@@ -85,7 +102,7 @@ private:
 			m_fence = nullptr;
 		}
 	}
-	/** Create a sync fence, use if this buffers data was just changed. */
+	/** Create a sync fence, to be called after changing buffer data. */
 	void placeFence() {
 		if (m_fence)
 			glDeleteSync(m_fence);

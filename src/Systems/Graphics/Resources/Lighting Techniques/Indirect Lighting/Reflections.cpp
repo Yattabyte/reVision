@@ -16,6 +16,8 @@ Reflections::~Reflections()
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+	if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
+	if (m_shaderCubeProj.get()) m_shaderCubeProj->removeCallback(this);
 }
 
 Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
@@ -24,7 +26,6 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
-	m_reflectionUBO = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionUBO;
 	m_fbo = 0;
 	m_texture = 0;
 	m_cube_fbo = 0;
@@ -210,7 +211,6 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	glBindTextureUnit(3, m_cube_tex); // Persistent cubemap
 	m_brdfMap->bind(4); // BRDF LUT
 	glBindTextureUnit(5, m_texture); // Blurred light MIP-chain
-	m_reflectionUBO->bindBuffer();
 	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
 	const size_t primCount = vis_token.specificSize("Reflector");
 	m_cubeIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);

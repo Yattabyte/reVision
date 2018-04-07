@@ -116,19 +116,21 @@ bool Initialize_Sharing()
 		glewExperimental = GL_TRUE;
 		glewInit();
 
-		MSG_Manager::Statement(	"Engine Version: " +
-						DT_ENGINE_VER_MAJOR + "." +
-						DT_ENGINE_VER_MINOR + "." +
-						DT_ENGINE_VER_PATCH	);
+		MSG_Manager::Statement(	
+			"Engine Version: " +
+			DT_ENGINE_VER_MAJOR + "." +
+			DT_ENGINE_VER_MINOR + "." +
+			DT_ENGINE_VER_PATCH	
+		);
 		MSG_Manager::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
 		MSG_Manager::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 		MSG_Manager::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
 		MSG_Manager::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
 
-		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+		/*glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 		glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
 		GLuint unusedIds = 0;
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);
+		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);*/
 
 		m_Initialized_Sharing = true;
 	}

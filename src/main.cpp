@@ -12,7 +12,7 @@ static void Tick_Secondary(dt_Engine &engine) {
 }
 
 int main()
-{
+{	
 	dt_Engine engine;
 	thread *m_UpdaterThread;
 	Camera * camera;
@@ -26,7 +26,7 @@ int main()
 
 	while (!(engine.shouldClose())) {
 		camera->Bind();
-		camera->update();
+		//camera->update();
 		Tick_Primary(engine);
 	}
 

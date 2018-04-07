@@ -74,7 +74,6 @@ private:
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Reflection_FBO * m_reflectionFBO;
-	Reflection_UBO * m_reflectionUBO;
 	EnginePackage * m_enginePackage;
 	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, m_shaderFinal, m_shaderParallax;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;

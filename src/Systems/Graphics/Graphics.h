@@ -15,7 +15,6 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\Storage Buffers\Reflection_UBO.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
@@ -27,6 +26,22 @@
 
 class EnginePackage;
 class Camera;
+
+
+struct Geometry_Struct {
+	int useBones = 0;  // no padding here;
+	GLuint materialID = 0; vec2 padding1; // for some reason padding here
+	mat4 mMatrix = mat4(1.0f);
+	mat4 transforms[NUM_MAX_BONES];
+};
+
+struct Reflection_Struct {
+	mat4 mMatrix = mat4(1.0f);
+	vec4 BoxCamPos = vec4(0.0f);
+	float Radius = 1.0f;
+	int CubeSpot = 0;
+	vec2 padding;
+};
 
 
 /**
@@ -72,8 +87,8 @@ public:
 	Shadow_FBO m_shadowFBO;
 	Reflection_FBO m_reflectionFBO;
 	// Storage Buffers
-	Reflection_UBO m_reflectionUBO;
 	VectorBuffer<Geometry_Struct> m_geometrySSBO;
+	VectorBuffer<Reflection_Struct> m_reflectionSSBO;
 	
 private:
 	// Private Methods

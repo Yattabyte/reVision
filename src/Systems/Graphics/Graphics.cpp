@@ -110,6 +110,7 @@ void System_Graphics::update(const float & deltaTime)
 			tech->renderGeometry(vis_token);
 		
 		// Lighting
+		m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
