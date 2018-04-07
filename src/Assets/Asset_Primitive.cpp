@@ -126,7 +126,7 @@ void Primitive_WorkOrder::finalizeOrder()
 		auto &uv_data = m_asset->m_dataUV;
 		auto &buffers = m_asset->m_buffers;
 		const size_t &arraySize = data.size();
-		constexpr GLbitfield flags = GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		constexpr GLbitfield flags = GL_CLIENT_STORAGE_BIT;
 		glCreateBuffers(2, buffers);
 		glNamedBufferStorage(buffers[0], arraySize * sizeof(vec3), &data[0][0], flags);
 		glNamedBufferStorage(buffers[1], arraySize * sizeof(vec2), &uv_data[0][0], flags);
