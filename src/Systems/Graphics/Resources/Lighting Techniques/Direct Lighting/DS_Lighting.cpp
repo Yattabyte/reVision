@@ -33,10 +33,17 @@ DS_Lighting::DS_Lighting(Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true;  });
 	m_shapeCone->addCallback(this, [&]() { m_shapeCone->updateVAO(m_coneVAO); m_coneVAOLoaded = true;  });
 	m_shapeSphere->addCallback(this, [&]() { m_shapeSphere->updateVAO(m_sphereVAO); m_sphereVAOLoaded = true;  });
+
+	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+	m_indirectDir = StaticBuffer(sizeof(GLuint) * 4, quadData);
 }
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
 {
+	const auto list = vis_token.getTypeList<Lighting_Component>("Light_Directional");
+	const GLuint m_size = list.size();
+	if (m_size) 
+		m_indirectDir.write(sizeof(GLuint), sizeof(GLuint), &m_size);	
 }
 
 void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
@@ -54,8 +61,8 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet() && m_quadVAOLoaded) {
 		m_shaderDirectional->bind();
 		glBindVertexArray(m_quadVAO);
-		for each (auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
-			component->directPass(quad_size);
+		m_indirectDir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 
 	glEnable(GL_STENCIL_TEST);

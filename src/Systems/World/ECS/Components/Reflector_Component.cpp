@@ -16,40 +16,34 @@ Reflector_Component::Reflector_Component(const ECShandle & id, const ECShandle &
 	m_position = vec3(0.0f);
 	m_scale = vec3(1.0f);
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionSSBO.addElement(&m_uboIndex);
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
 void Reflector_Component::receiveMessage(const ECSmessage & message)
 {
 	if (Component::compareMSGSender(message)) return;
+	Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+
 	switch (message.GetCommandID()) {
 		case SET_POSITION: {
 			if (!message.IsOfType<vec3>()) break;
 			const auto &payload = message.GetPayload<vec3>();
-			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 			uboData->mMatrix = glm::translate(mat4(1.0f), payload);
 			uboData->BoxCamPos.xyz = payload;
-			m_position = payload;
-			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			break;
 		}
 		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
 			const auto &payload = message.GetPayload<Transform>();
-			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 			uboData->mMatrix = payload.m_modelMatrix;
 			uboData->BoxCamPos.xyz = payload.m_position;			
 			m_position = payload.m_position;
 			m_scale = payload.m_scale;
-			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			break;
 		}
 		case SET_REFLECTOR_RADIUS: {
 			if (!message.IsOfType<float>()) break;
 			const auto &payload = message.GetPayload<float>();
-			Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 			uboData->Radius = payload;
-			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			break;
 		}
 	}

@@ -148,10 +148,16 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 	glDepthFunc(GL_LEQUAL);
 	glCullFace(GL_BACK);
 
+	// Bind Geometry VAO once
+	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+
+	int count = 0;
 	m_shadowFBO->bindForWriting(SHADOW_LARGE);
 	m_shaderDirectional_Shadow->bind();
-	for each (auto &component in queueDir.toList())
+	for each (auto &component in queueDir.toList()) {
+		m_shaderDirectional_Shadow->Set_Uniform(0, count++);
 		component->shadowPass();
+	}
 
 	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 	m_shaderPoint_Shadow->bind();

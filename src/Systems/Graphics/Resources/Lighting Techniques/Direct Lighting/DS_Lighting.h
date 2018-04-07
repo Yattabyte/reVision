@@ -12,6 +12,8 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\DynamicBuffer.h"
 
 class Geometry_FBO;
 class Lighting_FBO;
@@ -46,7 +48,8 @@ private:
 	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
-	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded;
+	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded; 
+	StaticBuffer m_indirectDir;
 };
 
 #endif // DS_LIGHTING

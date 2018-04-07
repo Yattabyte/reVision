@@ -34,7 +34,21 @@ struct Geometry_Struct {
 	mat4 mMatrix = mat4(1.0f);
 	mat4 transforms[NUM_MAX_BONES];
 };
+struct Directional_Struct
+{
+	mat4 lightV = mat4(1.0f);
+	vec3 LightColor = vec3(1.0f); float padding1;
+	vec3 LightDirection = vec3(0, -1, 0); float padding2;
+	float ShadowSize = 0;
+	float LightIntensity = 0;
+	int CascadeIndex = 0;
+	int Use_Shadows = 0;
 
+	// These need to be padded to 16 bytes each, because of layout std140 rules for array elements
+	int Shadow_Spot[4]; // first element used only
+	float CascadeEndClipSpace[4]; // first element used only
+	mat4 lightP[4]; // these are good already
+};
 struct Reflection_Struct {
 	mat4 mMatrix = mat4(1.0f);
 	vec4 BoxCamPos = vec4(0.0f);
@@ -88,6 +102,7 @@ public:
 	Reflection_FBO m_reflectionFBO;
 	// Storage Buffers
 	VectorBuffer<Geometry_Struct> m_geometrySSBO;
+	VectorBuffer<Directional_Struct> m_lightDirSSBO;
 	VectorBuffer<Reflection_Struct> m_reflectionSSBO;
 	
 private:

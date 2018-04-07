@@ -56,7 +56,6 @@ protected:
 	VB_Ptr * m_uboBuffer;
 	vec3 m_position;
 	vec3 m_scale;
-	GLsync m_fence; 
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;
 };

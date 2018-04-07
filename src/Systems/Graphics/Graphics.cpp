@@ -98,6 +98,7 @@ void System_Graphics::update(const float & deltaTime)
 			tech->updateData(vis_token);
 
 		// Shadows
+		m_lightDirSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6); // PASS INTO RESPECTIVE TECHNIQUES
 		for each (auto *tech in m_geometryTechs)
 			tech->renderShadows(vis_token);
 		
@@ -110,7 +111,8 @@ void System_Graphics::update(const float & deltaTime)
 			tech->renderGeometry(vis_token);
 		
 		// Lighting
-		m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+		m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES
+		m_lightDirSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6); // PASS INTO RESPECTIVE TECHNIQUES
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 
