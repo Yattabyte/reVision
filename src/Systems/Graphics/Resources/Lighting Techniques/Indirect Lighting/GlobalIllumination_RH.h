@@ -91,7 +91,7 @@ private:
 	* @param	textureUnit		the texture unit to bind the noise texture */
 	void bindNoise(const GLuint textureUnit);
 	/** Recalculate underlying data */
-	void updateData();
+	void update();
 
 
 	// Private Attributes
@@ -112,7 +112,7 @@ private:
 	GLuint m_attribSSBO;
 	Camera m_camera;
 	void *m_bufferPtr;
-	StaticBuffer m_pointsIndirectBuffer, m_quadIndirectBuffer;
+	StaticBuffer m_pointsIndirectBuffer, m_pointsSecondIndirectBuffer, m_quadIndirectBuffer;
 };
 
 #endif // GLOBALILLUMINATION_RH

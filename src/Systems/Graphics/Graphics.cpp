@@ -92,6 +92,7 @@ void System_Graphics::update(const float & deltaTime)
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_geometrySSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+		m_lightDirSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6); // PASS INTO RESPECTIVE TECHNIQUES
 		for each (auto *tech in m_geometryTechs)
 			tech->updateData(vis_token); 
 		for each (auto *tech in m_lightingTechs)

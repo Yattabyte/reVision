@@ -86,12 +86,12 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 
 void Light_Directional_Component::directPass(const int & vertex_count)
 {
-	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
+	
 }
 
 void Light_Directional_Component::indirectPass()
 {
-	glDrawArraysIndirect(GL_POINTS, 0);
+	
 }
 
 void Light_Directional_Component::shadowPass()

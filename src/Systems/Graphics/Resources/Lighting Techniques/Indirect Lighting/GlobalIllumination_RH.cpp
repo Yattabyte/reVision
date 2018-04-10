@@ -117,12 +117,23 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_farPlane = (lambda*cLog) + ((1.0f - lambda)*cUni);
 
 	glCreateBuffers(1, &m_attribSSBO);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, m_attribSSBO);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, m_attribSSBO);
 	glNamedBufferStorage(m_attribSSBO, sizeof(GI_Attribs_Buffer), &m_attribBuffer, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 	m_bufferPtr = glMapNamedBufferRange(m_attribSSBO, 0, sizeof(GI_Attribs_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
 
-	GLuint pointData[4] = { 1, m_attribBuffer.resolution, 0, 0 }; // count, primCount, first, reserved
-	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, pointData);
+	// each draw will instance all the lights
+	// DrawID (each element in array) changes layer
+	// InstanceID (instances of each draw call) changes which directional light used
+	struct DrawData {
+		GLuint count = 1; // drawing points = 1 vertex
+		GLuint instanceCount = 0; // = number of directional lights
+		GLuint first = 0;
+		GLuint baseInstance = 0;
+	};
+	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
+	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
+	GLuint secondBounceData[4] = { 1, m_attribBuffer.resolution, 0, 0 }; // count, primCount, first, reserved
+	m_pointsSecondIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 }
@@ -131,7 +142,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 {
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
-	updateData();
+	update();
 	bindNoise(4);
 	bindForWriting(0);
 	glEnable(GL_BLEND);
@@ -148,11 +159,14 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	const auto & pointList = vis_token.getTypeList<Lighting_Component>("Light_Point");
 	const auto & spotList = vis_token.getTypeList<Lighting_Component>("Light_Spot");
 
+	const GLuint dirDraws = m_attribBuffer.resolution * dirList.size();
+	m_pointsIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
+
 	// Bounce directional lights
-	if (dirList.size()) {
+	if (dirList.size()) {		
 		m_shaderDirectional_Bounce->bind();
-		for each (auto &component in dirList)
-			component->indirectPass();
+		m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirList.size());
+		glDrawArraysIndirect(GL_POINTS, 0);
 	}
 	// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
@@ -169,6 +183,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	}
 
 	// Perform secondary light bounce
+	m_pointsSecondIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	m_shaderGISecondBounce->bind();
 	bindForReading(0, 5);
 	bindForWriting(1);
@@ -219,7 +234,7 @@ void GlobalIllumination_RH::bindNoise(const GLuint textureUnit)
 	glBindTextureUnit(textureUnit, m_noise32);
 }
 
-void GlobalIllumination_RH::updateData()
+void GlobalIllumination_RH::update()
 {
 	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
 	const vec2 &size = cameraBuffer.Dimensions;
