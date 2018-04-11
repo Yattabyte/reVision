@@ -13,19 +13,12 @@
 
 GlobalIllumination_RH::~GlobalIllumination_RH()
 {
-	glUnmapNamedBuffer(m_attribSSBO);
-	glDeleteBuffers(1, &m_attribSSBO);
 	glDeleteTextures(1, &m_noise32);
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	glDeleteVertexArrays(1, &m_bounceVAO);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-	if (m_enginePackage) {
-		if (m_enginePackage->findSubSystem("World")) {
-			auto m_world = m_enginePackage->getSubSystem<System_World>("World");
-			m_world->unregisterViewer(&m_camera);
-		}
-	}
+	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
 GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO)
@@ -36,7 +29,6 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_shadowFBO = shadowFBO;
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;
-	m_attribSSBO = 0;
 	m_noise32 = 0;
 	ZERO_MEM(m_fbo);
 	ZERO_MEM(m_textures[0]);
@@ -51,12 +43,31 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
-	m_attribBuffer = GI_Attribs_Buffer(16, 0.75, 100, 0.75, 12);
+	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
 
-	if (m_enginePackage->findSubSystem("World")) {
-		auto m_world = m_enginePackage->getSubSystem<System_World>("World");
-		m_world->registerViewer(&m_camera);
-	}
+	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {ivec2(f, m_renderSize.y); });
+	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
+	
+	m_resolution = 16;
+	GI_Attribs_Buffer attribData(m_resolution, 0.75, 100, 0.75, 12);
+	m_attribBuffer = StaticBuffer(sizeof(GI_Attribs_Buffer), &attribData);
+
+	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
+	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
+
+	GLuint secondBounceData[4] = { 1, m_resolution, 0, 0 }; // count, primCount, first, reserved
+	m_pointsSecondIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
+
+	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+
+	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
+	const float near_plane = m_nearPlane;
+	const float far_plane = -m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
+	const float cLog = near_plane * powf((far_plane / near_plane), (1.0f / 4.0f));
+	const float cUni = near_plane + ((far_plane - near_plane) * 1.0f / 4.0f);
+	const float lambda = 0.4f;
+	m_farPlane = (lambda*cLog) + ((1.0f - lambda)*cUni);
 
 	GLuint VBO = 0;
 	glCreateVertexArrays(1, &m_bounceVAO);
@@ -77,7 +88,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB32F, m_attribBuffer.resolution, m_attribBuffer.resolution, m_attribBuffer.resolution, 0, GL_RGB, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB32F, m_resolution, m_resolution, m_resolution, 0, GL_RGB, GL_FLOAT, 0);
 			glNamedFramebufferTexture(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
 		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
@@ -99,76 +110,100 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	vec3 data[32 * 32 * 32];
 	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
 		data[x] = vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
-
 	glCreateTextures(GL_TEXTURE_3D, 1, &m_noise32);
 	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
 	glTextureParameteri(m_noise32, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteri(m_noise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-
-	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
-	float near_plane = m_nearPlane;
-	float far_plane = -m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
-	float cLog = near_plane * powf((far_plane / near_plane), (1.0f / 4.0f));
-	float cUni = near_plane + ((far_plane - near_plane) * 1.0f / 4.0f);
-	float lambda = 0.4f;
-	m_farPlane = (lambda*cLog) + ((1.0f - lambda)*cUni);
-
-	glCreateBuffers(1, &m_attribSSBO);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, m_attribSSBO);
-	glNamedBufferStorage(m_attribSSBO, sizeof(GI_Attribs_Buffer), &m_attribBuffer, GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-	m_bufferPtr = glMapNamedBufferRange(m_attribSSBO, 0, sizeof(GI_Attribs_Buffer), GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-
-	// each draw will instance all the lights
-	// DrawID (each element in array) changes layer
-	// InstanceID (instances of each draw call) changes which directional light used
-	struct DrawData {
-		GLuint count = 1; // drawing points = 1 vertex
-		GLuint instanceCount = 0; // = number of directional lights
-		GLuint first = 0;
-		GLuint baseInstance = 0;
-	};
-	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
-	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
-	GLuint secondBounceData[4] = { 1, m_attribBuffer.resolution, 0, 0 }; // count, primCount, first, reserved
-	m_pointsSecondIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+	glTextureParameteri(m_noise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);	
 }
 
 void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 {
+	// Update GI buffer
+	{
+		const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
+		const vec2 &size = cameraBuffer.Dimensions;
+		const float ar = size.x / size.y;
+		const float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
+		const float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
+		const float points[4] = { 
+			m_nearPlane * tanHalfHFOV,
+			m_farPlane  * tanHalfHFOV,
+			m_nearPlane * tanHalfVFOV,
+			m_farPlane  * tanHalfVFOV 
+		};
+		const vec3 frustumCorners[8] = {
+			// near face
+			vec3(points[0], points[2], m_nearPlane),
+			vec3(-points[0], points[2], m_nearPlane),
+			vec3(points[0], -points[2], m_nearPlane),
+			vec3(-points[0], -points[2], m_nearPlane),
+			// far face
+			vec3(points[1], points[3], m_farPlane),
+			vec3(-points[1], points[3], m_farPlane),
+			vec3(points[1], -points[3], m_farPlane),
+			vec3(-points[1], -points[3], m_farPlane)
+		};
+		// Find the middle of current view frustum chunk
+		const vec3 middle(0, 0, ((m_farPlane - m_nearPlane) / 2.0f) + m_nearPlane);
+		// Measure distance from middle to the furthest point of frustum slice
+		// Used for make a bounding sphere, but then converted into a bounding box
+		const vec3 aabb(glm::length(frustumCorners[7] - middle));
+		const vec3 volumeUnitSize = (aabb - -aabb) / float(m_resolution);
+		const vec3 frustumpos = (cameraBuffer.vMatrix_Inverse* vec4(middle, 1.0f));
+		const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
+		const vec3 newMin = -aabb + clampedPos;
+		const vec3 newMax = aabb + clampedPos;
+		const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
+		m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
+	
+		m_attribBuffer.write(0, sizeof(vec3), &newMax);
+		m_attribBuffer.write(sizeof(vec4), sizeof(vec3), &newMin);
+	}
+
+	// Update Draw call buffers
+	{
+		const Visibility_Token &vis_token = m_camera.getVisibilityToken();
+		const GLuint dirSize = vis_token.specificSize("Light_Directional");
+		//const GLuint pointSize = vis_token.specificSize("Light_Point");
+		//const GLuint spotSize = vis_token.specificSize("Light_Spot");
+		const GLuint dirDraws = m_resolution * dirSize;
+		//const GLuint pointDraws = m_attribBuffer.resolution * pointSize;
+		//const GLuint spotDraws = m_attribBuffer.resolution * spotSize);
+		m_pointsIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
+		if (m_shaderDirectional_Bounce) {
+			m_shaderDirectional_Bounce->bind();
+			m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirSize);
+		}
+		Asset_Shader::Release();
+	}
+}
+
+void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)
+{
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
-	update();
-	bindNoise(4);
-	bindForWriting(0);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
 	glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
-
-	// Perform primary light bounce
-	m_shadowFBO->BindForReading_GI(SHADOW_LARGE, 0);
 	glBindVertexArray(m_bounceVAO);
-	m_pointsIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-	const auto & dirList = vis_token.getTypeList<Lighting_Component>("Light_Directional");
-	const auto & pointList = vis_token.getTypeList<Lighting_Component>("Light_Point");
-	const auto & spotList = vis_token.getTypeList<Lighting_Component>("Light_Spot");
 
-	const GLuint dirDraws = m_attribBuffer.resolution * dirList.size();
-	m_pointsIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
-
+	m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+	m_shadowFBO->BindForReading_GI(SHADOW_LARGE, 0);
+	bindNoise(4);
+	bindForWriting(0);
+	
 	// Bounce directional lights
-	if (dirList.size()) {		
+	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
+	if (vis_token.specificSize("Light_Directional")) {
+		m_pointsIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_shaderDirectional_Bounce->bind();
-		m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirList.size());
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
-	// Bounce point lights
+	/*// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
 	if (pointList.size()) {
 		m_shaderPoint_Bounce->bind();
@@ -180,7 +215,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 		m_shaderSpot_Bounce->bind();
 		for each (auto &component in spotList)
 			component->indirectPass();
-	}
+	}*/
 
 	// Perform secondary light bounce
 	m_pointsSecondIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -189,15 +224,8 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	bindForWriting(1);
 	glDrawArraysIndirect(GL_POINTS, 0);
 
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
-}
-
-void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
-{
 	// Reconstruct GI from data
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_geometryFBO->bindForReading();
@@ -205,7 +233,6 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
 
 	if (m_vaoLoaded) {
 		m_shaderGIReconstruct->bind();
-		bindNoise(4);
 		bindForReading(1, 5);
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -218,7 +245,7 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & vis_token)
 
 void GlobalIllumination_RH::bindForWriting(const GLuint &bounceSpot)
 {
-	glViewport(0, 0, m_attribBuffer.resolution, m_attribBuffer.resolution);
+	glViewport(0, 0, m_resolution, m_resolution);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo[bounceSpot]);
 	glClear(GL_COLOR_BUFFER_BIT);
 }
@@ -232,51 +259,4 @@ void GlobalIllumination_RH::bindForReading(const GLuint &bounceSpot, const unsig
 void GlobalIllumination_RH::bindNoise(const GLuint textureUnit)
 {
 	glBindTextureUnit(textureUnit, m_noise32);
-}
-
-void GlobalIllumination_RH::update()
-{
-	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
-	const vec2 &size = cameraBuffer.Dimensions;
-	float ar = size.x / size.y;
-	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
-	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
-
-	float points[4] = { m_nearPlane * tanHalfHFOV,
-		m_farPlane  * tanHalfHFOV,
-		m_nearPlane * tanHalfVFOV,
-		m_farPlane  * tanHalfVFOV };
-
-	vec3 frustumCorners[8] = {
-		// near face
-		vec3(points[0], points[2], m_nearPlane),
-		vec3(-points[0], points[2], m_nearPlane),
-		vec3(points[0], -points[2], m_nearPlane),
-		vec3(-points[0], -points[2], m_nearPlane),
-		// far face
-		vec3(points[1], points[3], m_farPlane),
-		vec3(-points[1], points[3], m_farPlane),
-		vec3(points[1], -points[3], m_farPlane),
-		vec3(-points[1], -points[3], m_farPlane)
-	};
-
-	// Find the middle of current view frustum chunk
-	vec3 middle(0, 0, ((m_farPlane - m_nearPlane) / 2.0f) + m_nearPlane);
-
-	// Measure distance from middle to the furthest point of frustum slice
-	// Use to make a bounding sphere, but then convert into a bounding box
-	float radius = glm::length(frustumCorners[7] - middle);
-	vec3 aabb(radius);
-
-	const vec3 volumeUnitSize = (aabb - -aabb) / float(m_attribBuffer.resolution);
-	const vec3 frustumpos = (cameraBuffer.vMatrix_Inverse* vec4(middle, 1.0f));
-	const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
-	m_attribBuffer.updateBBOX(aabb, -aabb, clampedPos);
-	vec3 newMin = -aabb + clampedPos;
-	vec3 newMax = aabb + clampedPos;
-	float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
-	m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
-
-	GI_Attribs_Buffer *buffer = reinterpret_cast<GI_Attribs_Buffer*>(m_bufferPtr);
-	buffer = &m_attribBuffer;
 }

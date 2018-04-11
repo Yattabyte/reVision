@@ -17,6 +17,7 @@
 #include "Systems\World\Camera.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO;
@@ -48,24 +49,15 @@ private:
 	/** Nested buffer object struct for sending data to GPU */
 	struct GI_Attribs_Buffer
 	{
-		vec4 BBox_Max;
-		vec4 BBox_Min;
-		int samples;
-		int resolution;
-		float spread;
-		float R_wcs;
-		float factor;
-		GI_Attribs_Buffer() {
-			BBox_Max = vec4(1);
-			BBox_Min = vec4(-1);
-			samples = 16;
-			resolution = 16;
-			spread = 1.0f;
-			R_wcs = 1.0f;
-			factor = 1.0f;
-		};
-		GI_Attribs_Buffer(const int &res, const float &rad, const float &wrld, const float &blend, const int &smp) : GI_Attribs_Buffer()
-		{
+		vec4 BBox_Max = vec4(1);
+		vec4 BBox_Min = vec4(-1);
+		int samples = 16;
+		int resolution = 16;
+		float spread = 1.0f;
+		float R_wcs = 1.0f;
+		float factor = 1.0f;
+		GI_Attribs_Buffer() {};
+		GI_Attribs_Buffer(const int &res, const float &rad, const float &wrld, const float &blend, const int &smp) {
 			resolution = res;
 			spread = rad;
 			R_wcs = wrld;
@@ -90,8 +82,6 @@ private:
 	/** Bind the noise texture
 	* @param	textureUnit		the texture unit to bind the noise texture */
 	void bindNoise(const GLuint textureUnit);
-	/** Recalculate underlying data */
-	void update();
 
 
 	// Private Attributes
@@ -108,11 +98,10 @@ private:
 	GLuint m_noise32;
 	float m_nearPlane;
 	float m_farPlane;
-	GI_Attribs_Buffer m_attribBuffer;
-	GLuint m_attribSSBO;
+	ivec2 m_renderSize;
+	GLuint m_resolution;
 	Camera m_camera;
-	void *m_bufferPtr;
-	StaticBuffer m_pointsIndirectBuffer, m_pointsSecondIndirectBuffer, m_quadIndirectBuffer;
+	StaticBuffer m_attribBuffer, m_pointsIndirectBuffer, m_pointsSecondIndirectBuffer, m_quadIndirectBuffer;
 };
 
 #endif // GLOBALILLUMINATION_RH

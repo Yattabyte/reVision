@@ -48,7 +48,6 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 
 void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 {
-	const size_t &quad_size = m_shapeQuad->getSize();
 	const size_t &cone_size = m_shapeCone->getSize();
 	const size_t &sphere_size = m_shapeSphere->getSize();
 	glEnable(GL_BLEND);

@@ -127,6 +127,7 @@ void Reflections::updateData(const Visibility_Token & vis_token)
 		for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector"))
 			refArray[count++] = component->getBufferIndex();
 		m_visRefUBO.write(0, sizeof(GLuint)*refArray.size(), refArray.data());
+		m_cubeIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &r_size);
 	}
 }
 
@@ -212,8 +213,6 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	m_brdfMap->bind(4); // BRDF LUT
 	glBindTextureUnit(5, m_texture); // Blurred light MIP-chain
 	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
-	const size_t primCount = vis_token.specificSize("Reflector");
-	m_cubeIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &primCount);
 
 	// Apply persistent cubemap
 	m_shaderCubemap->bind();
