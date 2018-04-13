@@ -74,6 +74,7 @@ public:
 	VectorBuffer<Geometry_Struct>		m_geometrySSBO;
 	VectorBuffer<Directional_Struct>	m_lightDirSSBO;
 	VectorBuffer<Point_Struct>			m_lightPointSSBO;
+	VectorBuffer<Spot_Struct>			m_lightSpotSSBO;
 	VectorBuffer<Reflection_Struct>		m_reflectionSSBO;
 	
 

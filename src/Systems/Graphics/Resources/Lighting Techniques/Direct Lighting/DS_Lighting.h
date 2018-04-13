@@ -36,7 +36,7 @@ public:
 	/** Constructor. */
 	DS_Lighting(
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, 
-		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO
+		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
 	);
 
 
@@ -54,13 +54,14 @@ private:
 	// Shared SSBO's
 	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
 	VectorBuffer<Point_Struct> * m_lightPointSSBO;
+	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 
 	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
 	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded; 
-	StaticBuffer m_indirectDir, m_indirectPoint;
-	DynamicBuffer m_visPoints;
+	StaticBuffer m_indirectDir, m_indirectPoint, m_indirectSpot;
+	DynamicBuffer m_visPoints, m_visSpots;
 };
 
 #endif // DS_LIGHTING

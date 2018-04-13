@@ -44,10 +44,6 @@ public:
 
 	/** Sends current data to the GPU. */
 	void update();
-	/** Retrieves the front or rear shadow spot.
-	 * @param	front	set to true to retrieve the front, or false for the back
-	 * @return			the shadow spot requested */
-	GLuint getShadowSpot(const bool &front) const;
 
 
 protected:

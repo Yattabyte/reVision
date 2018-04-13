@@ -13,7 +13,7 @@ Model_Technique::~Model_Technique()
 
 Model_Technique::Model_Technique(
 	EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
-	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO
+	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
 ) {
 	m_enginePackage = enginePackage;
 
@@ -24,6 +24,7 @@ Model_Technique::Model_Technique(
 	// SSBO's
 	m_lightDirSSBO = lightDirSSBO;
 	m_lightPointSSBO = lightPointSSBO;
+	m_lightSpotSSBO = lightSpotSSBO;
 
 	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
@@ -174,9 +175,8 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 	for each (auto &component in queuePoint.toList()) 
 		component->shadowPass();	
 
-	count = 0;
 	m_shaderSpot_Shadow->bind();
-	for each (auto &component in queueSpot.toList()) {
-		component->shadowPass();
-	}
+	m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+	for each (auto &component in queueSpot.toList()) 
+		component->shadowPass();	
 }

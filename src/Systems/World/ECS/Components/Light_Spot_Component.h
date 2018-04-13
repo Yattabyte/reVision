@@ -16,6 +16,7 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Utilities\GL\DynamicBuffer.h"
 
 using namespace glm;
 class Shadow_FBO;
@@ -43,48 +44,9 @@ public:
 	// Public Methods
 	/** Sends current data to the GPU. */
 	void update();
-	/** Retrieves the shadow spot for this light
-	* @return	the shadow spot requested */
-	GLuint getShadowSpot() const;
 
 
 protected:
-	/** Nested Buffer class.
-	 * @brief	used for sending data to the gpu. */
-	struct LightSpotBuffer
-	{
-		mat4 mMatrix;
-		mat4 lightV;
-		mat4 lightP;
-		vec3 LightColor; float padding1;
-		vec3 LightPosition; float padding2;
-		vec3 LightDirection; float padding3;
-		float ShadowSize;
-		float LightIntensity;
-		float LightRadius;
-		float LightCutoff;
-		int Shadow_Spot;
-		int Use_Shadows;
-		int LightStencil;
-
-		LightSpotBuffer() {
-			mMatrix = mat4(1.0f);
-			lightV = mat4(1.0f);
-			lightP = mat4(1.0f);
-			LightColor = vec3(1.0f);
-			LightPosition = vec3(0.0f);
-			LightDirection = vec3(0, -1, 0);
-			ShadowSize = 0;
-			LightIntensity = 0;
-			LightRadius = 0;
-			LightCutoff = 0;
-			Shadow_Spot = 0;
-			Use_Shadows = 0;
-			LightStencil = 0;
-		}
-	};
-
-
 	// (de)Constructors
 	/** Destroys a spot light component. */
 	~Light_Spot_Component();
@@ -93,14 +55,19 @@ protected:
 
 
 	// Protected Attributes
-	GLuint m_uboID;
-	LightSpotBuffer m_uboData;
+	// Shared Objects
 	EnginePackage *m_enginePackage;
 	Shadow_FBO *m_shadowMapper;
 	System_World *m_world;
-	quat m_orientation;
+	// Cached Attributes
+	float m_radius;
 	float m_squaredRadius;
+	mat4 m_lightVMatrix;
+	vec3 m_lightPos;
+	int m_shadowSpot;
+	quat m_orientation;
 	Camera m_camera;
+	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	friend class Light_Spot_Creator;
 };
 

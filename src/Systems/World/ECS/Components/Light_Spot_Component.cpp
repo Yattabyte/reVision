@@ -12,183 +12,170 @@
 
 Light_Spot_Component::~Light_Spot_Component()
 {
-	glDeleteBuffers(1, &m_uboID);
-	if (m_enginePackage) {
-		if (m_shadowMapper)
-			m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
-		if (m_world)
-			m_world->unregisterViewer(&m_camera);
-	}
+	m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_shadowSpot);
+	m_world->unregisterViewer(&m_camera);	
 }
 
 Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
-	m_uboID = 0;
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
-	glCreateBuffers(1, &m_uboID);
-	glNamedBufferData(m_uboID, sizeof(LightSpotBuffer), &m_uboData, GL_DYNAMIC_COPY);
 
-	if (m_enginePackage->findSubSystem("Graphics")) {
-		m_shadowMapper = &m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_shadowFBO;
-		m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_uboData.Shadow_Spot);
-	}
-	if (m_enginePackage->findSubSystem("World")) {
-		m_world = m_enginePackage->getSubSystem<System_World>("World");
-		m_world->registerViewer(&m_camera);
-	}
+	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	m_uboBuffer = graphics->m_lightSpotSSBO.addElement(&m_uboIndex);
+	m_shadowMapper = &graphics->m_shadowFBO;
+	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpot);
+	
+	m_world = m_enginePackage->getSubSystem<System_World>("World");
+	m_world->registerViewer(&m_camera);	
+
+	// Write data to our index spot
+	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	uboData->Shadow_Spot = m_shadowSpot;
+	uboData->ShadowSize = m_shadowMapper->getSize(SHADOW_REGULAR).x;
 }
 
 void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 {
 	if (Component::compareMSGSender(message)) return;
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
+	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 
 	switch (message.GetCommandID()) {
-	case SET_LIGHT_COLOR: {
-		if (!message.IsOfType<vec3>()) break;
-		const auto &payload = message.GetPayload<vec3>();
-		m_uboData.LightColor = payload;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightColor), sizeof(vec3), &m_uboData.LightColor);
-		break;
+		case SET_LIGHT_COLOR: {
+			if (!message.IsOfType<vec3>()) break;
+			const auto &payload = message.GetPayload<vec3>();
+			uboData->LightColor = payload;
+			break;
+		}
+		case SET_LIGHT_INTENSITY: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			uboData->LightIntensity = payload;
+			break;
+		}
+		case SET_LIGHT_RADIUS: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			m_radius = payload;
+			m_squaredRadius = payload * payload;
+			m_camera.setFarPlane(m_squaredRadius);
+			uboData->LightRadius = payload;
+			update();
+			break;
+		}
+		case SET_LIGHT_CUTOFF: {
+			if (!message.IsOfType<float>()) break;
+			const auto &payload = message.GetPayload<float>();
+			uboData->LightCutoff = cosf(glm::radians(payload));
+			m_camera.setHorizontalFOV(payload * 2.0f);
+			update();
+			break;
+		}
+		case SET_ORIENTATION: {
+			if (!message.IsOfType<quat>()) break;
+			const auto &payload = message.GetPayload<quat>();
+			m_orientation = payload;
+			update();
+			break;
+		}
+		case SET_POSITION: {
+			if (!message.IsOfType<vec3>()) break;
+			const auto &payload = message.GetPayload<vec3>();
+			m_lightPos = payload;
+			uboData->LightPosition = payload;
+			update();
+			break;
+		}
+		case SET_TRANSFORM: {
+			if (!message.IsOfType<Transform>()) break;
+			const auto &payload = message.GetPayload<Transform>();
+			uboData->LightPosition = payload.m_position;
+			m_lightPos = payload.m_position;
+			update();
+			break;
+		}
 	}
-	case SET_LIGHT_INTENSITY: {
-		if (!message.IsOfType<float>()) break;
-		const auto &payload = message.GetPayload<float>();
-		m_uboData.LightIntensity = payload;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightIntensity), sizeof(float), &m_uboData.LightIntensity);
-		break;
-	}
-	case SET_LIGHT_RADIUS: {
-		if (!message.IsOfType<float>()) break;
-		const auto &payload = message.GetPayload<float>();
-		m_uboData.LightRadius = payload;
-		m_squaredRadius = payload * payload;
-		m_camera.setFarPlane(m_squaredRadius);
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightRadius), sizeof(float), &m_uboData.LightRadius);
-		update();
-		break;
-	}
-	case SET_LIGHT_CUTOFF: {
-		if (!message.IsOfType<float>()) break;
-		const auto &payload = message.GetPayload<float>();
-		m_uboData.LightCutoff = cosf(glm::radians(payload));
-		m_camera.setHorizontalFOV(payload * 2.0f);
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightCutoff), sizeof(float), &m_uboData.LightCutoff);
-		update();
-		break;
-	}
-	case SET_ORIENTATION: {
-		if (!message.IsOfType<quat>()) break;
-		const auto &payload = message.GetPayload<quat>();
-		m_orientation = payload;
-		update();
-		break;
-	}
-	case SET_POSITION: {
-		if (!message.IsOfType<vec3>()) break;
-		const auto &payload = message.GetPayload<vec3>();
-		m_uboData.LightPosition = payload;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-		update();
-		break;
-	}
-	case SET_TRANSFORM: {
-		if (!message.IsOfType<Transform>()) break;
-		const auto &payload = message.GetPayload<Transform>();
-		m_uboData.LightPosition = payload.m_position;
-		m_orientation = payload.m_orientation;
-		glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightPosition), sizeof(float), &m_uboData.LightPosition);
-		update();
-		break;
-	}
-	}
-
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 void Light_Spot_Component::directPass(const int & vertex_count)
 {
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	m_uboData.LightStencil = 1;
-	glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightStencil), 4, &m_uboData.LightStencil);
-
-	// Draw only into depth-stencil buffer
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glStencilFunc(GL_ALWAYS, 0, 0);
-	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
-
-	// Now draw into color buffers
-	m_uboData.LightStencil = 0;
-	glBufferSubData(GL_UNIFORM_BUFFER, offsetof(LightSpotBuffer, LightStencil), 4, &m_uboData.LightStencil);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
-	glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-	glDrawArrays(GL_TRIANGLES, 0, vertex_count);
+	
 }
 
 void Light_Spot_Component::indirectPass()
 {
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	glDrawArraysIndirect(GL_POINTS, 0);
 }
 
 void Light_Spot_Component::shadowPass()
 {
 	update();
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot());
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
+	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
+	if (size) {
+		glUniform1i(0, getBufferIndex());
+		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
-	const Visibility_Token vis_token = m_camera.getVisibilityToken();
-	for each (auto &component in vis_token.getTypeList<Geometry_Component>("Anim_Model"))
-		component->draw();
-
-	m_shadowUpdateTime = glfwGetTime();
+		m_shadowUpdateTime = glfwGetTime();
+	}
 }
 
 bool Light_Spot_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
 {
-	Frustum frustum(PMatrix * VMatrix * m_uboData.lightV);
-	return frustum.sphereInFrustum(m_uboData.LightPosition, vec3(m_squaredRadius));
+	Frustum frustum(PMatrix * VMatrix * m_lightVMatrix);
+	return frustum.sphereInFrustum(m_lightPos, vec3(m_squaredRadius));
 }
 
 float Light_Spot_Component::getImportance(const vec3 & position) const
 {
-	return m_uboData.LightRadius / glm::length(position - m_uboData.LightPosition);
+	return m_radius / glm::length(position - m_lightPos);
 }
 
+#include "Systems\World\ECS\Components\Anim_Model_Component.h"
 void Light_Spot_Component::update()
 {
+	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+
 	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_uboData.LightPosition);
+	const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
 	const mat4 rot = glm::mat4_cast(m_orientation);
 	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
 	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-	m_uboData.LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-	m_uboData.lightV = final;
-	m_uboData.mMatrix = (trans * rot) * scl;
+	m_lightVMatrix = final;
+	uboData->lightV = final;
+	uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+	uboData->mMatrix = (trans * rot) * scl;
 
 	// Calculate perspective matrix
-	const vec2 &size = m_shadowMapper->getSize(SHADOW_REGULAR);
-	m_uboData.ShadowSize = size.x;
-	m_camera.setDimensions(size);
+	m_camera.setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
 	m_camera.update();
-	m_uboData.lightP = m_camera.getCameraBuffer().pMatrix;	
-	m_camera.setMatrices(m_uboData.lightP, final);
+	const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+	uboData->lightP = lightP;
+	m_camera.setMatrices(lightP, final);
 
-	glBindBuffer(GL_UNIFORM_BUFFER, m_uboID);
-	glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(LightSpotBuffer), &m_uboData);
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-}
-
-GLuint Light_Spot_Component::getShadowSpot() const
-{
-	return m_uboData.Shadow_Spot;
+	// Update render list
+	const Visibility_Token vis_token = m_camera.getVisibilityToken();
+	const size_t size = vis_token.specificSize("Anim_Model");
+	if (size) {
+		struct DrawData {
+			GLuint count;
+			GLuint instanceCount = 1;
+			GLuint first;
+			GLuint baseInstance = 0;
+			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
+		};
+		vector<GLuint> geoArray(size);
+		vector<DrawData> drawData(size);
+		m_visGeoUBO.checkFence();
+		unsigned int count = 0;
+		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
+			geoArray[count] = component->getBufferIndex();
+			const ivec2 drawInfo = component->getDrawInfo();
+			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
+		}
+		m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
+	}
 }

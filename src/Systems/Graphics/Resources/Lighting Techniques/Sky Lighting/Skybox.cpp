@@ -11,7 +11,7 @@ Skybox::Skybox(Lighting_FBO * lightingFBO)
 {
 	m_lightingFBO = lightingFBO;
 	Asset_Loader::load_asset(m_shaderSky, "skybox");
-	Asset_Loader::load_asset(m_textureSky, "sky\\");
+	Asset_Loader::load_asset(m_textureSky, "night\\");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);

@@ -75,8 +75,8 @@ private:
 	ivec2 m_renderSize;
 	GLuint m_resolution;
 	Camera m_camera;
-	StaticBuffer m_attribBuffer, m_Indirect_Slices_Dir, m_Indirect_Slices_Point, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
-	DynamicBuffer m_visPoints;
+	StaticBuffer m_attribBuffer, m_Indirect_Slices_Dir, m_Indirect_Slices_Point, m_Indirect_Slices_Spot, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
+	DynamicBuffer m_visPoints, m_visSpots;
 };
 
 #endif // GLOBALILLUMINATION_RH

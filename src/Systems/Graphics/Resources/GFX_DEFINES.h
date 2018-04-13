@@ -69,6 +69,23 @@ struct Point_Struct {
 	int Use_Shadows = 1;
 };
 
+/** Spot lights use this for their lighting + transform data. */
+struct Spot_Struct {
+	mat4 mMatrix = mat4(1.0f);
+	mat4 lightV = mat4(1.0f);
+	mat4 lightP = mat4(1.0f);
+	vec3 LightColor = vec3(1.0f); float padding1;
+	vec3 LightPosition = vec3(0.0f); float padding2;
+	vec3 LightDirection = vec3(0, -1, 0); float padding3;
+	float ShadowSize = 0;
+	float LightIntensity = 0;
+	float LightRadius = 0;
+	float LightCutoff = 0;
+	int Shadow_Spot = 0;
+	int Use_Shadows = 0;
+	vec2 padding;
+};
+
 /** Reflectors use this for their transform data. */
 struct Reflection_Struct {
 	mat4 mMatrix = mat4(1.0f);

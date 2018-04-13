@@ -56,6 +56,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
 	m_Indirect_Slices_Dir = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 	m_Indirect_Slices_Point = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
+	m_Indirect_Slices_Spot = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 
 	GLuint secondBounceData[4] = { 1, m_resolution, 0, 0 }; // count, primCount, first, reserved
 	m_IndirectSecondLayersBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
@@ -64,6 +65,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 	m_visPoints = DynamicBuffer(sizeof(GLuint) * 10, 0);
+	m_visSpots = DynamicBuffer(sizeof(GLuint) * 10, 0);
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	const float near_plane = m_nearPlane;
@@ -170,16 +172,17 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	// Update Draw call buffers
 	{
 		const Visibility_Token &vis_token = m_camera.getVisibilityToken();
+		const GLuint dirSize = vis_token.specificSize("Light_Directional");
+		const GLuint pointSize = vis_token.specificSize("Light_Point");
+		const GLuint spotSize = vis_token.specificSize("Light_Spot");
 
-		if (m_shaderDirectional_Bounce->existsYet()) {
-			const GLuint dirSize = vis_token.specificSize("Light_Directional");
+		if (m_shaderDirectional_Bounce->existsYet() && dirSize) {
 			const GLuint dirDraws = m_resolution * dirSize;
 			m_Indirect_Slices_Dir.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
 			m_shaderDirectional_Bounce->bind();
 			m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirSize);
 		}
-		if (m_shaderPoint_Bounce->existsYet()) {
-			const GLuint pointSize = vis_token.specificSize("Light_Point");
+		if (m_shaderPoint_Bounce->existsYet() && pointSize) {
 			const GLuint pointDraws = m_resolution * pointSize;
 			vector<GLuint> visArray(pointSize);
 			unsigned int count = 0;
@@ -189,6 +192,17 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 			m_Indirect_Slices_Point.write(sizeof(GLuint), sizeof(GLuint), &pointDraws);
 			m_shaderPoint_Bounce->bind();
 			m_shaderPoint_Bounce->Set_Uniform(0, (int)pointSize);
+		}
+		if (m_shaderSpot_Bounce->existsYet() && spotSize) {
+			const GLuint spotDraws = m_resolution * spotSize;
+			vector<GLuint> visArray(spotSize);
+			unsigned int count = 0;
+			for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+				visArray[count++] = component->getBufferIndex();
+			m_visSpots.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+			m_Indirect_Slices_Spot.write(sizeof(GLuint), sizeof(GLuint), &spotDraws);
+			m_shaderSpot_Bounce->bind();
+			m_shaderSpot_Bounce->Set_Uniform(0, (int)spotSize);
 		}
 		Asset_Shader::Release();
 	}
@@ -224,12 +238,13 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 		m_shaderPoint_Bounce->bind();
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
-	/*// Bounce spot lights
-	if (spotList.size()) {
+	// Bounce spot lights
+	if (vis_token.specificSize("Light_Spot")) {
+		m_Indirect_Slices_Spot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
 		m_shaderSpot_Bounce->bind();
-		for each (auto &component in spotList)
-			component->indirectPass();
-	}*/
+		glDrawArraysIndirect(GL_POINTS, 0);
+	}
 
 	// Perform secondary light bounce
 	m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

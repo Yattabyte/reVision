@@ -101,22 +101,19 @@ void Light_Point_Component::directPass(const int & vertex_count)
 
 void Light_Point_Component::indirectPass()
 {
-	/*glBindBufferBase(GL_UNIFORM_BUFFER, 6, m_uboID);
-	glDrawArraysIndirect(GL_POINTS, 0);*/
 }
 
 void Light_Point_Component::shadowPass()
 {
 	update();
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(0));
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, getShadowSpot(1));
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[0]);
+	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[1]);
 	
 	for (int x = 0; x < 2; ++x) {
 		const size_t size = m_camera[x].getVisibilityToken().specificSize("Anim_Model");
 		if (size) {
 			glUniform1i(0, getBufferIndex());
-			float dir = (float(x) * 2.0f) - 1.0f;
-			glUniform1f(1, dir); // update p_dir
+			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
 
 			// Draw render lists
 			m_visGeoUBO[x].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
@@ -156,7 +153,7 @@ void Light_Point_Component::update()
 	for (int x = 0; x < 2; ++x) {
 		m_camera[x].setPosition(m_lightPos);
 
-		// Can the following 2 lines be moved to initialization only?
+		/** @todo  Can the following 2 lines be moved to initialization only? */
 		m_camera[x].setDimensions(size);
 		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
 		m_camera[x].update();
@@ -185,9 +182,4 @@ void Light_Point_Component::update()
 			m_indirectGeo[x].write(0, sizeof(DrawData) * size, drawData.data());
 		}
 	}
-}
-
-GLuint Light_Point_Component::getShadowSpot(const bool & front) const
-{
-	return m_shadowSpots[!front];
 }

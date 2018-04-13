@@ -31,7 +31,7 @@ public:
 	/** Constructor. */
 	Model_Technique(
 		EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
-		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO
+		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
 	);
 
 
@@ -51,6 +51,7 @@ private:
 	// Shared SSBO's
 	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
 	VectorBuffer<Point_Struct> * m_lightPointSSBO;
+	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
 };

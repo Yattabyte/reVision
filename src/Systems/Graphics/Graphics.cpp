@@ -63,11 +63,11 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_shadowFBO.initialize(enginePackage);
 
 		// Initiate geometry techniques
-		m_geometryTechs.push_back(new Model_Technique(enginePackage, &m_geometryFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO));
+		m_geometryTechs.push_back(new Model_Technique(enginePackage, &m_geometryFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
 
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO));
+		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO)); 
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
