@@ -24,10 +24,6 @@ class DT_ENGINE_API Lighting_Component : protected Component
 {
 public:
 	// Public Methods
-	/** Renders the light, performing direct lighting calculations only. */
-	virtual void directPass(const int &vertex_count) {};
-	/** Renders the light, performing indirect lighting calculations only. */
-	virtual void indirectPass() {};
 	/** Renders the light, performing shadow calculations only. */
 	virtual void shadowPass() {};
 	/** Tests if this object is within the viewing frustum of the camera.
@@ -43,7 +39,7 @@ public:
 	virtual float getImportance(const vec3 &position) const = 0;
 	/** Retrieves the timestamp of the last shadowmap update.
 	 * @return				the shadow update time */
-	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
+	const double getShadowUpdateTime() const { return m_shadowUpdateTime; }
 	/** Retrieve the buffer index for this light.
 	 * @return	the buffer index */
 	const unsigned int getBufferIndex() const {	return m_uboIndex; }

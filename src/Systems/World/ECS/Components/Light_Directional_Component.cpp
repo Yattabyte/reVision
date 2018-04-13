@@ -84,16 +84,6 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-void Light_Directional_Component::directPass(const int & vertex_count)
-{
-	
-}
-
-void Light_Directional_Component::indirectPass()
-{
-	
-}
-
 void Light_Directional_Component::shadowPass()
 {
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");

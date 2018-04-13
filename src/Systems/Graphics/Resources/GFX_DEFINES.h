@@ -60,13 +60,13 @@ struct Point_Struct {
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightPosition = vec3(0.0f); float padding2;
 	float p_far = 0;
-	float p_dir = 0;
 	float ShadowSize = 0;
 	float LightIntensity = 1;
 	float LightRadius = 1;
 	int Shadow_Spot1 = 0;
 	int Shadow_Spot2 = 0;
 	int Use_Shadows = 1;
+	float padding;
 };
 
 /** Spot lights use this for their lighting + transform data. */

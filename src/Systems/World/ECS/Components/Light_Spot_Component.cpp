@@ -98,21 +98,12 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-void Light_Spot_Component::directPass(const int & vertex_count)
-{
-	
-}
-
-void Light_Spot_Component::indirectPass()
-{
-}
-
 void Light_Spot_Component::shadowPass()
 {
 	update();
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (size) {
+		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
 		glUniform1i(0, getBufferIndex());
 		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

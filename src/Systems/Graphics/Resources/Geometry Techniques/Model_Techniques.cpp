@@ -160,6 +160,7 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 	// Bind Geometry VAO once
 	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
+	// Directional lights
 	int count = 0;
 	m_shadowFBO->bindForWriting(SHADOW_LARGE);
 	m_shaderDirectional_Shadow->bind();
@@ -169,12 +170,14 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 		component->shadowPass();
 	}
 
+	// Point Lights
 	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 	m_shaderPoint_Shadow->bind();
 	m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 	for each (auto &component in queuePoint.toList()) 
 		component->shadowPass();	
 
+	// Spot Lights
 	m_shaderSpot_Shadow->bind();
 	m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 	for each (auto &component in queueSpot.toList()) 

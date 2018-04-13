@@ -25,9 +25,6 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_lightPos = vec3(0.0f);
 	m_lightVMatrix = mat4(1.0f);
 
-	m_camera[0].setHorizontalFOV(180);
-	m_camera[1].setHorizontalFOV(180);
-
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
 	m_uboBuffer = graphics->m_lightPointSSBO.addElement(&m_uboIndex);
 	m_shadowMapper = &graphics->m_shadowFBO;
@@ -35,9 +32,13 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpots[1]);
 
 	m_world = m_enginePackage->getSubSystem<System_World>("World");
-	m_world->registerViewer(&m_camera[0]);
-	m_world->registerViewer(&m_camera[1]);	
-
+	for (int x = 0; x < 2; ++x) {
+		m_camera[x].setHorizontalFOV(180);
+		m_camera[x].setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
+		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
+		m_world->registerViewer(&m_camera[x]);
+	}
+	
 	// Write data to our index spot
 	Point_Struct * uboData = &reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot1 = m_shadowSpots[0];
@@ -94,15 +95,6 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-void Light_Point_Component::directPass(const int & vertex_count)
-{
-	
-}
-
-void Light_Point_Component::indirectPass()
-{
-}
-
 void Light_Point_Component::shadowPass()
 {
 	update();
@@ -151,11 +143,7 @@ void Light_Point_Component::update()
 	// Update cameras to face the right direction
 	const vec2 &size = m_shadowMapper->getSize(SHADOW_REGULAR);
 	for (int x = 0; x < 2; ++x) {
-		m_camera[x].setPosition(m_lightPos);
-
-		/** @todo  Can the following 2 lines be moved to initialization only? */
-		m_camera[x].setDimensions(size);
-		m_camera[x].setOrientation(glm::rotate(quat(1, 0, 0, 0), glm::radians(180.0f * x), vec3(0, 1, 0)));
+		m_camera[x].setPosition(m_lightPos);		
 		m_camera[x].update();
 
 		// Update render list
