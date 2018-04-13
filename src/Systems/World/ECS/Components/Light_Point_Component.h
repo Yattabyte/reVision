@@ -16,6 +16,8 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Utilities\GL\DynamicBuffer.h"
+#include "Utilities\GL\VectorBuffer.h"
 
 using namespace glm;
 class Shadow_FBO;
@@ -49,41 +51,6 @@ public:
 
 
 protected:
-	/** Nested Buffer class.
-	 * @brief	used for sending data to the gpu. */
-	struct LightPointBuffer {
-		mat4 mMatrix;
-		mat4 lightV;
-		vec3 LightColor; float padding1;
-		vec3 LightPosition; float padding2;
-		float p_far;
-		float p_dir;
-		float ShadowSize;
-		float LightIntensity;
-		float LightRadius;
-		int Shadow_Spot1;
-		int Shadow_Spot2;
-		int Use_Shadows;
-		int LightStencil;
-
-		LightPointBuffer() {
-			mMatrix = mat4(1.0f);
-			lightV = mat4(1.0f);
-			LightColor = vec3(1.0f);
-			LightPosition = vec3(0.0f);
-			p_far = 0;
-			p_dir = 0;
-			ShadowSize = 0;
-			LightIntensity = 0;
-			LightRadius = 0;
-			Shadow_Spot1 = 0;
-			Shadow_Spot2 = 0;
-			Use_Shadows = 0;
-			LightStencil = 0;
-		}
-	};
-
-
 	// (de)Constructors
 	/** Destroys a point light component. */
 	~Light_Point_Component();
@@ -92,13 +59,18 @@ protected:
 
 
 	// Protected Attributes
-	GLuint m_uboID;
-	LightPointBuffer m_uboData;
+	// Shared Objects
 	EnginePackage *m_enginePackage;
 	Shadow_FBO *m_shadowMapper;
 	System_World *m_world;
+	// Cached attributes
+	float m_radius;
 	float m_squaredRadius;
+	mat4 m_lightVMatrix; 
+	vec3 m_lightPos;
+	int m_shadowSpots[2];
 	Camera m_camera[2];
+	DynamicBuffer m_visGeoUBO[2], m_indirectGeo[2];
 	friend class Light_Point_Creator;
 };
 

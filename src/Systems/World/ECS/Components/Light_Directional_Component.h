@@ -8,8 +8,6 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define LIGHT_TYPE_DIRECTIONAL 0
-#define NUM_CASCADES 4
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 #include "glm\glm.hpp"
@@ -18,6 +16,7 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
 
@@ -59,13 +58,11 @@ protected:
 
 
 	// Protected Attributes
-	unsigned int m_uboIndex;
-	VB_Ptr * m_uboBuffer;
+	EnginePackage *m_enginePackage;
+	Shadow_FBO *m_shadowMapper;
 	mat4 m_mMatrix;
 	float m_cascadeEnd[5];
 	int m_shadowSpots[NUM_CASCADES];
-	EnginePackage *m_enginePackage;
-	Shadow_FBO *m_shadowMapper;
 	Camera m_camera;
 	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	friend class Light_Directional_Creator;

@@ -8,7 +8,6 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define MAX_KERNEL_SIZE 128 // Don't manipulate this, set the usable to a different value < than this
 
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
@@ -18,6 +17,7 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -26,36 +26,6 @@
 
 class EnginePackage;
 class Camera;
-
-
-struct Geometry_Struct {
-	int useBones = 0;  // no padding here;
-	GLuint materialID = 0; vec2 padding1; // for some reason padding here
-	mat4 mMatrix = mat4(1.0f);
-	mat4 transforms[NUM_MAX_BONES];
-};
-struct Directional_Struct
-{
-	mat4 lightV = mat4(1.0f);
-	vec3 LightColor = vec3(1.0f); float padding1;
-	vec3 LightDirection = vec3(0, -1, 0); float padding2;
-	float ShadowSize = 0;
-	float LightIntensity = 0;
-	int CascadeIndex = 0;
-	int Use_Shadows = 0;
-
-	// These need to be padded to 16 bytes each, because of layout std140 rules for array elements
-	int Shadow_Spot[4]; // first element used only
-	float CascadeEndClipSpace[4]; // first element used only
-	mat4 lightP[4]; // these are good already
-};
-struct Reflection_Struct {
-	mat4 mMatrix = mat4(1.0f);
-	vec4 BoxCamPos = vec4(0.0f);
-	float Radius = 1.0f;
-	int CubeSpot = 0;
-	vec2 padding;
-};
 
 
 /**
@@ -101,10 +71,12 @@ public:
 	Shadow_FBO m_shadowFBO;
 	Reflection_FBO m_reflectionFBO;
 	// Storage Buffers
-	VectorBuffer<Geometry_Struct> m_geometrySSBO;
-	VectorBuffer<Directional_Struct> m_lightDirSSBO;
-	VectorBuffer<Reflection_Struct> m_reflectionSSBO;
+	VectorBuffer<Geometry_Struct>		m_geometrySSBO;
+	VectorBuffer<Directional_Struct>	m_lightDirSSBO;
+	VectorBuffer<Point_Struct>			m_lightPointSSBO;
+	VectorBuffer<Reflection_Struct>		m_reflectionSSBO;
 	
+
 private:
 	// Private Methods
 	/** Regenerate the noise kernel. */

@@ -1,6 +1,7 @@
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"
 #include "Utilities\Frustum.h"
 #include <minmax.h>

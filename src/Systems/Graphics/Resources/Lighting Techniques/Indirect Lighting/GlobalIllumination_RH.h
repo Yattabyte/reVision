@@ -8,8 +8,6 @@
 #else
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
-#define ZERO_MEM(a) memset(a, 0, sizeof(a))
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define GI_LIGHT_BOUNCE_COUNT 2 // Light bounces used
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
@@ -18,6 +16,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\DynamicBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO;
@@ -46,31 +45,6 @@ public:
 
 
 private:
-	/** Nested buffer object struct for sending data to GPU */
-	struct GI_Attribs_Buffer
-	{
-		vec4 BBox_Max = vec4(1);
-		vec4 BBox_Min = vec4(-1);
-		int samples = 16;
-		int resolution = 16;
-		float spread = 1.0f;
-		float R_wcs = 1.0f;
-		float factor = 1.0f;
-		GI_Attribs_Buffer() {};
-		GI_Attribs_Buffer(const int &res, const float &rad, const float &wrld, const float &blend, const int &smp) {
-			resolution = res;
-			spread = rad;
-			R_wcs = wrld;
-			factor = blend;
-			samples = smp;
-		}
-		void updateBBOX(const vec3 &max, const vec3&min, const vec3& pos) {
-			BBox_Max = vec4(max + pos, 1.0f);
-			BBox_Min = vec4(min + pos, 1.0f);
-		}
-	};
-
-
 	// Private Methods
 	/** Binds the framebuffer and its render-targets for writing.
 	* @param	bounceSpot		which bounce we are performing */
@@ -101,7 +75,8 @@ private:
 	ivec2 m_renderSize;
 	GLuint m_resolution;
 	Camera m_camera;
-	StaticBuffer m_attribBuffer, m_pointsIndirectBuffer, m_pointsSecondIndirectBuffer, m_quadIndirectBuffer;
+	StaticBuffer m_attribBuffer, m_Indirect_Slices_Dir, m_Indirect_Slices_Point, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
+	DynamicBuffer m_visPoints;
 };
 
 #endif // GLOBALILLUMINATION_RH

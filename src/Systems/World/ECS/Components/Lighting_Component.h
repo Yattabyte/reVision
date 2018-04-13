@@ -14,6 +14,7 @@
 #include "glm\glm.hpp"
 
 using namespace glm;
+class VB_Ptr;
 
 
 /**
@@ -43,6 +44,9 @@ public:
 	/** Retrieves the timestamp of the last shadowmap update.
 	 * @return				the shadow update time */
 	double getShadowUpdateTime() const { return m_shadowUpdateTime; }
+	/** Retrieve the buffer index for this light.
+	 * @return	the buffer index */
+	const unsigned int getBufferIndex() const {	return m_uboIndex; }
 
 
 protected:
@@ -55,6 +59,8 @@ protected:
 
 	// Protected Attributes
 	double m_shadowUpdateTime;
+	unsigned int m_uboIndex;
+	VB_Ptr * m_uboBuffer;
 };
 
 #endif // LIGHTING_COMPONENT

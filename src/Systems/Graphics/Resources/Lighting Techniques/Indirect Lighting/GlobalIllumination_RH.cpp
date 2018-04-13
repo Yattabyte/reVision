@@ -2,6 +2,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
@@ -49,17 +50,20 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
 	
 	m_resolution = 16;
-	GI_Attribs_Buffer attribData(m_resolution, 0.75, 100, 0.75, 12);
-	m_attribBuffer = StaticBuffer(sizeof(GI_Attribs_Buffer), &attribData);
+	GI_Radiance_Struct attribData(m_resolution, 0.75, 100, 0.75, 12);
+	m_attribBuffer = StaticBuffer(sizeof(GI_Radiance_Struct), &attribData);
 
 	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
-	m_pointsIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
+	m_Indirect_Slices_Dir = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
+	m_Indirect_Slices_Point = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 
 	GLuint secondBounceData[4] = { 1, m_resolution, 0, 0 }; // count, primCount, first, reserved
-	m_pointsSecondIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
+	m_IndirectSecondLayersBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+
+	m_visPoints = DynamicBuffer(sizeof(GLuint) * 10, 0);
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	const float near_plane = m_nearPlane;
@@ -166,16 +170,25 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	// Update Draw call buffers
 	{
 		const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-		const GLuint dirSize = vis_token.specificSize("Light_Directional");
-		//const GLuint pointSize = vis_token.specificSize("Light_Point");
-		//const GLuint spotSize = vis_token.specificSize("Light_Spot");
-		const GLuint dirDraws = m_resolution * dirSize;
-		//const GLuint pointDraws = m_attribBuffer.resolution * pointSize;
-		//const GLuint spotDraws = m_attribBuffer.resolution * spotSize);
-		m_pointsIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
-		if (m_shaderDirectional_Bounce) {
+
+		if (m_shaderDirectional_Bounce->existsYet()) {
+			const GLuint dirSize = vis_token.specificSize("Light_Directional");
+			const GLuint dirDraws = m_resolution * dirSize;
+			m_Indirect_Slices_Dir.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
 			m_shaderDirectional_Bounce->bind();
 			m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirSize);
+		}
+		if (m_shaderPoint_Bounce->existsYet()) {
+			const GLuint pointSize = vis_token.specificSize("Light_Point");
+			const GLuint pointDraws = m_resolution * pointSize;
+			vector<GLuint> visArray(pointSize);
+			unsigned int count = 0;
+			for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+				visArray[count++] = component->getBufferIndex();
+			m_visPoints.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
+			m_Indirect_Slices_Point.write(sizeof(GLuint), sizeof(GLuint), &pointDraws);
+			m_shaderPoint_Bounce->bind();
+			m_shaderPoint_Bounce->Set_Uniform(0, (int)pointSize);
 		}
 		Asset_Shader::Release();
 	}
@@ -199,18 +212,19 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 	// Bounce directional lights
 	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
 	if (vis_token.specificSize("Light_Directional")) {
-		m_pointsIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_Indirect_Slices_Dir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_shaderDirectional_Bounce->bind();
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
-	/*// Bounce point lights
+	// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
-	if (pointList.size()) {
+	if (vis_token.specificSize("Light_Point")) {
+		m_Indirect_Slices_Point.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
 		m_shaderPoint_Bounce->bind();
-		for each (auto &component in pointList)
-			component->indirectPass();
+		glDrawArraysIndirect(GL_POINTS, 0);
 	}
-	// Bounce spot lights
+	/*// Bounce spot lights
 	if (spotList.size()) {
 		m_shaderSpot_Bounce->bind();
 		for each (auto &component in spotList)
@@ -218,7 +232,7 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 	}*/
 
 	// Perform secondary light bounce
-	m_pointsSecondIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	m_shaderGISecondBounce->bind();
 	bindForReading(0, 5);
 	bindForWriting(1);

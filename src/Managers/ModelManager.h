@@ -10,7 +10,6 @@
 #endif
 #define GLEW_STATIC
 #define NUM_VERTEX_ATTRIBUTES 6
-#define NUM_MAX_BONES 100
 #define NUM_BONES_PER_VEREX 4
 
 #include "GL\glew.h"

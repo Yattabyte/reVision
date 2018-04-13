@@ -10,10 +10,12 @@
 #endif
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
+#include "Utilities\GL\VectorBuffer.h"
 
 class Geometry_FBO;
 class Lighting_FBO;
@@ -32,7 +34,10 @@ public:
 	/** Virtual Destructor. */
 	~DS_Lighting();
 	/** Constructor. */
-	DS_Lighting(Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO);
+	DS_Lighting(
+		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, 
+		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO
+	);
 
 
 	// Interface Implementations.
@@ -42,14 +47,20 @@ public:
 
 private:
 	// Private Attributes
+	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Shadow_FBO * m_shadowFBO;
+	// Shared SSBO's
+	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
+	VectorBuffer<Point_Struct> * m_lightPointSSBO;
+
 	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere;
 	GLuint m_quadVAO, m_coneVAO, m_sphereVAO;
 	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded; 
-	StaticBuffer m_indirectDir;
+	StaticBuffer m_indirectDir, m_indirectPoint;
+	DynamicBuffer m_visPoints;
 };
 
 #endif // DS_LIGHTING

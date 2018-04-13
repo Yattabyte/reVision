@@ -67,15 +67,15 @@ void System_World::update(const float & deltaTime)
 		mir3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
 		mir3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F, 1, 20))));
 		
-	/*	for (int x = 0; x < 3; ++x) {
+		for (int x = 0; x < 3; ++x) {
 			for (int y = 0; y < 2; ++y) {
 				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
-				point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 5.0f));
+				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.0, 1.0)));
+				point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f));
 				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
 				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));
 			}
-		}*/
+		}
 
 		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
@@ -87,7 +87,7 @@ void System_World::update(const float & deltaTime)
 		*/
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.80, 0.6)));
-		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f));
+		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 1.0f)); // OLD INTENSITY WAS 8.0
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0,0,1))));
 		
 		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));

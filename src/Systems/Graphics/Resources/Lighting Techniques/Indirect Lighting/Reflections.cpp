@@ -122,7 +122,7 @@ void Reflections::updateData(const Visibility_Token & vis_token)
 {
 	const size_t r_size = vis_token.specificSize("Reflector");
 	if (r_size) {
-		vector<GLuint> refArray(vis_token.specificSize("Reflector"));
+		vector<GLuint> refArray(r_size);
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Reflector_Component>("Reflector"))
 			refArray[count++] = component->getBufferIndex();

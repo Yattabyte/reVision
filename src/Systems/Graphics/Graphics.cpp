@@ -43,20 +43,15 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_enginePackage = enginePackage;
 
 		// Generate User SSBO
-		struct Renderer_Attribs {
-			vec4 kernel[MAX_KERNEL_SIZE];
-			float m_ssao_radius;
-			int m_ssao_strength, m_aa_samples;
-			int m_ssao;
-		};
-		Renderer_Attribs attribs;
+		
+		Renderer_Struct attribs;
 		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
 		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
 		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
 		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });		
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {m_renderSize = ivec2(f, m_renderSize.y); });
 		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {m_renderSize = ivec2(m_renderSize.x, f); });
-		m_userBuffer = StaticBuffer(sizeof(Renderer_Attribs), &attribs);
+		m_userBuffer = StaticBuffer(sizeof(Renderer_Struct), &attribs);
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
 
@@ -68,11 +63,11 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_shadowFBO.initialize(enginePackage);
 
 		// Initiate geometry techniques
-		m_geometryTechs.push_back(new Model_Technique(enginePackage, &m_geometryFBO, &m_shadowFBO));
+		m_geometryTechs.push_back(new Model_Technique(enginePackage, &m_geometryFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO));
 
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO));
+		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO)); 
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
@@ -98,7 +93,6 @@ void System_Graphics::update(const float & deltaTime)
 			tech->updateData(vis_token);
 
 		// Shadows
-		m_lightDirSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6); // PASS INTO RESPECTIVE TECHNIQUES
 		for each (auto *tech in m_geometryTechs)
 			tech->renderShadows(vis_token);
 		
@@ -112,7 +106,6 @@ void System_Graphics::update(const float & deltaTime)
 		
 		// Lighting
 		m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES
-		m_lightDirSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6); // PASS INTO RESPECTIVE TECHNIQUES
 		for each (auto *tech in m_lightingTechs)
 			tech->applyLighting(vis_token);
 

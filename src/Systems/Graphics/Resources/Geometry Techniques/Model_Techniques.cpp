@@ -11,11 +11,19 @@ Model_Technique::~Model_Technique()
 {
 }
 
-Model_Technique::Model_Technique(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO)
-{
+Model_Technique::Model_Technique(
+	EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
+	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO
+) {
 	m_enginePackage = enginePackage;
+
+	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_shadowFBO = shadowFBO;
+
+	// SSBO's
+	m_lightDirSSBO = lightDirSSBO;
+	m_lightPointSSBO = lightPointSSBO;
 
 	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
@@ -154,6 +162,7 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 	int count = 0;
 	m_shadowFBO->bindForWriting(SHADOW_LARGE);
 	m_shaderDirectional_Shadow->bind();
+	m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 	for each (auto &component in queueDir.toList()) {
 		m_shaderDirectional_Shadow->Set_Uniform(0, count++);
 		component->shadowPass();
@@ -161,10 +170,13 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 
 	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 	m_shaderPoint_Shadow->bind();
-	for each (auto &component in queuePoint.toList())
-		component->shadowPass();
+	m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+	for each (auto &component in queuePoint.toList()) 
+		component->shadowPass();	
 
+	count = 0;
 	m_shaderSpot_Shadow->bind();
-	for each (auto &component in queueSpot.toList())
+	for each (auto &component in queueSpot.toList()) {
 		component->shadowPass();
+	}
 }
