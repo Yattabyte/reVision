@@ -73,7 +73,14 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			uboData->LightRadius = payload;
 			m_camera[0].setFarPlane(m_squaredRadius);
 			m_camera[1].setFarPlane(m_squaredRadius);
-			update();
+			m_camera[0].update();
+			m_camera[1].update();
+			// Calculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
+			uboData->lightV = m_lightVMatrix;
+			uboData->mMatrix = trans * scl;
 			break;
 		}
 		case SET_POSITION: {
@@ -81,7 +88,12 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<vec3>();
 			uboData->LightPosition = payload;
 			m_lightPos = payload;
-			update();
+			// Calculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
+			uboData->lightV = m_lightVMatrix;
+			uboData->mMatrix = trans * scl;
 			break;
 		}
 		case SET_TRANSFORM: {
@@ -89,7 +101,12 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<Transform>();
 			uboData->LightPosition = payload.m_position;
 			m_lightPos = payload.m_position;
-			update();
+			// Calculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
+			uboData->lightV = m_lightVMatrix;
+			uboData->mMatrix = trans * scl;
 			break;
 		}
 	}
@@ -97,18 +114,15 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 
 void Light_Point_Component::shadowPass()
 {
-	update();
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[0]);
-	m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[1]);
+	glUniform1i(0, getBufferIndex());
 	
 	for (int x = 0; x < 2; ++x) {
 		const size_t size = m_camera[x].getVisibilityToken().specificSize("Anim_Model");
 		if (size) {
-			glUniform1i(0, getBufferIndex());
 			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
 
 			// Draw render lists
-			m_visGeoUBO[x].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_visGeoUBO[x].bindBufferBase(GL_UNIFORM_BUFFER, 3);
 			m_indirectGeo[x].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
@@ -131,15 +145,6 @@ float Light_Point_Component::getImportance(const vec3 & position) const
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 void Light_Point_Component::update()
 {
-	Point_Struct * uboData = &reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-
-	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
-	uboData->lightV = m_lightVMatrix;
-	uboData->mMatrix = trans * scl;
-
 	// Update cameras to face the right direction
 	const vec2 &size = m_shadowMapper->getSize(SHADOW_REGULAR);
 	for (int x = 0; x < 2; ++x) {
@@ -150,6 +155,8 @@ void Light_Point_Component::update()
 		const Visibility_Token vis_token = m_camera[x].getVisibilityToken();
 		const size_t size = vis_token.specificSize("Anim_Model");
 		if (size) {
+			// Clear out the shadows which we will update next shadow pass
+			m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[x]);
 			struct DrawData {
 				GLuint count;
 				GLuint instanceCount = 1;
@@ -157,16 +164,15 @@ void Light_Point_Component::update()
 				GLuint baseInstance = 0;
 				DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
 			};
-			vector<GLuint> geoArray(size);
+			vector<ivec4> geoArray(size);
 			vector<DrawData> drawData(size);
-			m_visGeoUBO[x].checkFence();
 			unsigned int count = 0;
 			for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-				geoArray[count] = component->getBufferIndex();
+				geoArray[count] = ivec4(component->getBufferIndex());
 				const ivec2 drawInfo = component->getDrawInfo();
 				drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
 			}
-			m_visGeoUBO[x].write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+			m_visGeoUBO[x].write(0, sizeof(ivec4)*geoArray.size(), geoArray.data());
 			m_indirectGeo[x].write(0, sizeof(DrawData) * size, drawData.data());
 		}
 	}

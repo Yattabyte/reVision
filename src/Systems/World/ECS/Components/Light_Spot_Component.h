@@ -37,11 +37,7 @@ public:
 	virtual void shadowPass();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	virtual float getImportance(const vec3 &position) const;
-
-
-	// Public Methods
-	/** Sends current data to the GPU. */
-	void update();
+	virtual void update();
 
 
 protected:

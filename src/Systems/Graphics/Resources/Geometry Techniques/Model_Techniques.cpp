@@ -36,54 +36,6 @@ Model_Technique::Model_Technique(
 
 void Model_Technique::updateData(const Visibility_Token & vis_token)
 {
-	const size_t m_size = vis_token.specificSize("Anim_Model");
-	if (m_size) {
-		unsigned int count = 0;
-		struct DrawData {
-			GLuint count;
-			GLuint instanceCount = 1;
-			GLuint first;
-			GLuint baseInstance = 1;
-			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
-		};
-
-		vector<uint> geoArray(m_size);
-		vector<DrawData> drawData(m_size);
-		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count] = component->getBufferIndex();
-			const ivec2 drawInfo = component->getDrawInfo();
-			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
-		}
-		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
-		m_indirectGeo.write(0, sizeof(DrawData) * m_size, drawData.data());
-	}
-}
-
-void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
-{
-	const size_t size = vis_token.specificSize("Anim_Model");
-	if (size) {
-		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
-		glDepthFunc(GL_LEQUAL);
-		glCullFace(GL_BACK);
-		glEnable(GL_CULL_FACE);
-
-		m_shaderGeometry->bind();
-		m_geometryFBO->bindForWriting();
-		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-
-		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
-
-		m_geometryFBO->applyAO();
-	}
-}
-
-void Model_Technique::renderShadows(const Visibility_Token & vis_token)
-{
 	/** This is used to prioritize the oldest AND closest lights to the viewer (position) **/
 	class PriorityLightList
 	{
@@ -150,7 +102,64 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 		queuePoint.insert(component);
 	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 		queueSpot.insert(component);
+	m_queueDir = queueDir.toList();
+	m_queuePoint = queuePoint.toList();
+	m_queueSpot = queueSpot.toList();
+	for each (const auto &c in m_queueDir)
+		c->update();
+	for each (const auto &c in m_queuePoint)
+		c->update();
+	for each (const auto &c in m_queueSpot)
+		c->update();
 
+	const size_t m_size = vis_token.specificSize("Anim_Model");
+	if (m_size) {
+		unsigned int count = 0;
+		struct DrawData {
+			GLuint count;
+			GLuint instanceCount = 1;
+			GLuint first;
+			GLuint baseInstance = 1;
+			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
+		};
+
+		vector<uint> geoArray(m_size);
+		vector<DrawData> drawData(m_size);
+		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
+			geoArray[count] = component->getBufferIndex();
+			const ivec2 drawInfo = component->getDrawInfo();
+			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
+		}
+		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
+		m_indirectGeo.write(0, sizeof(DrawData) * m_size, drawData.data());
+	}
+}
+
+void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
+{
+	const size_t size = vis_token.specificSize("Anim_Model");
+	if (size) {
+		glDisable(GL_BLEND);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+		glDepthFunc(GL_LEQUAL);
+		glCullFace(GL_BACK);
+		glEnable(GL_CULL_FACE);
+
+		m_shaderGeometry->bind();
+		m_geometryFBO->bindForWriting();
+		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+
+		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+
+		m_geometryFBO->applyAO();
+	}
+}
+
+void Model_Technique::renderShadows(const Visibility_Token & vis_token)
+{
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -161,25 +170,22 @@ void Model_Technique::renderShadows(const Visibility_Token & vis_token)
 	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
 	// Directional lights
-	int count = 0;
 	m_shadowFBO->bindForWriting(SHADOW_LARGE);
 	m_shaderDirectional_Shadow->bind();
 	m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in queueDir.toList()) {
-		m_shaderDirectional_Shadow->Set_Uniform(0, count++);
-		component->shadowPass();
-	}
+	for each (auto &component in m_queueDir) 
+		component->shadowPass();	
 
 	// Point Lights
 	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 	m_shaderPoint_Shadow->bind();
 	m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in queuePoint.toList()) 
+	for each (auto &component in m_queuePoint)
 		component->shadowPass();	
 
 	// Spot Lights
 	m_shaderSpot_Shadow->bind();
 	m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in queueSpot.toList()) 
+	for each (auto &component in m_queueSpot) 
 		component->shadowPass();	
 }

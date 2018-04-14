@@ -37,6 +37,8 @@ public:
 	 * @param	position	the position of the viewer (camera)
 	 * @return				the importance value calculated. */
 	virtual float getImportance(const vec3 &position) const = 0;
+	/** Update this component, and send updated data to the GPU. */
+	virtual void update() = 0;
 	/** Retrieves the timestamp of the last shadowmap update.
 	 * @return				the shadow update time */
 	const double getShadowUpdateTime() const { return m_shadowUpdateTime; }

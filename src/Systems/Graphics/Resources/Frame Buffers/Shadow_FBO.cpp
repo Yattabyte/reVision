@@ -60,7 +60,7 @@ void Shadow_FBO::initialize(EnginePackage * enginePackage)
 			glNamedFramebufferTexture(m_shadow_fbo[x], GL_DEPTH_ATTACHMENT, m_shadow_depth[x], 0);
 
 			// Create the World Position buffer
-			glTextureImage3DEXT(m_shadow_worldpos[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_shadow_worldpos[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
 			glTextureParameteri(m_shadow_worldpos[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_worldpos[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_worldpos[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -68,7 +68,7 @@ void Shadow_FBO::initialize(EnginePackage * enginePackage)
 			glNamedFramebufferTexture(m_shadow_fbo[x], GL_COLOR_ATTACHMENT0, m_shadow_worldpos[x], 0);
 
 			// Create the World Normal buffer
-			glTextureImage3DEXT(m_shadow_worldnormal[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_shadow_worldnormal[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
 			glTextureParameteri(m_shadow_worldnormal[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_worldnormal[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_worldnormal[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -76,7 +76,7 @@ void Shadow_FBO::initialize(EnginePackage * enginePackage)
 			glNamedFramebufferTexture(m_shadow_fbo[x], GL_COLOR_ATTACHMENT1, m_shadow_worldnormal[x], 0);
 
 			// Create the Radiant Flux buffer
-			glTextureImage3DEXT(m_shadow_radiantflux[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_shadow_radiantflux[x], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[x].x, m_size[x].y, 1, 0, GL_RGB, GL_FLOAT, NULL);
 			glTextureParameteri(m_shadow_radiantflux[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_radiantflux[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTextureParameteri(m_shadow_radiantflux[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -112,9 +112,9 @@ void Shadow_FBO::registerShadowCaster(const int & shadow_type, int & array_spot)
 
 	// Adjust the layer count every time a new light is added (preserve memory rather than preallocating memory for shadows that don't exist	
 	glTextureImage3DEXT(m_shadow_depth[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTextureImage3DEXT(m_shadow_worldpos[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);	
-	glTextureImage3DEXT(m_shadow_worldnormal[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureImage3DEXT(m_shadow_radiantflux[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_worldpos[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_worldnormal[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_radiantflux[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
 }
 
 void Shadow_FBO::unregisterShadowCaster(const int & shadow_type, int & array_spot)
@@ -162,13 +162,13 @@ void Shadow_FBO::setSize(const unsigned int & shadow_type, const float & size)
 	glTextureImage3DEXT(m_shadow_depth[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadow_fbo[shadow_type], GL_DEPTH_ATTACHMENT, m_shadow_depth[shadow_type], 0);
 
-	glTextureImage3DEXT(m_shadow_worldpos[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_worldpos[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadow_fbo[shadow_type], GL_COLOR_ATTACHMENT0, m_shadow_worldpos[shadow_type], 0);
 
-	glTextureImage3DEXT(m_shadow_worldnormal[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_worldnormal[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadow_fbo[shadow_type], GL_COLOR_ATTACHMENT1, m_shadow_worldnormal[shadow_type], 0);
 
-	glTextureImage3DEXT(m_shadow_radiantflux[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB32F, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadow_radiantflux[shadow_type], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size[shadow_type].x, m_size[shadow_type].y, m_shadow_count[shadow_type], 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadow_fbo[shadow_type], GL_COLOR_ATTACHMENT2, m_shadow_radiantflux[shadow_type], 0);
 }
 

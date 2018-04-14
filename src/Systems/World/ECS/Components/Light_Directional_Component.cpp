@@ -88,16 +88,15 @@ void Light_Directional_Component::shadowPass()
 {
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (size) {
-		update();
-
-		// Clear out the shadows which we will update
-		for (int x = 0; x < NUM_CASCADES; ++x)
-			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
+		glUniform1i(0, getBufferIndex());
 
 		// Draw render lists
-		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_visGeoUBO.bindBufferBase(GL_UNIFORM_BUFFER, 3);
 		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+		for (int x = 0; x < 4; ++x) {
+			glUniform1i(1, x);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+		}
 
 		m_shadowUpdateTime = glfwGetTime();
 	}
@@ -123,6 +122,9 @@ void Light_Directional_Component::update()
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	const size_t size = vis_token.specificSize("Anim_Model");
 	if (size) {
+		// Clear out the shadows which we will update next shadow pass
+		for (int x = 0; x < NUM_CASCADES; ++x)
+			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
 		struct DrawData {
 			GLuint count;
 			GLuint instanceCount = 1;
@@ -130,16 +132,15 @@ void Light_Directional_Component::update()
 			GLuint baseInstance = 0;
 			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
 		};
-		vector<GLuint> geoArray(size);
+		vector<ivec4> geoArray(size);
 		vector<DrawData> drawData(size);
-		m_visGeoUBO.checkFence();
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count] = component->getBufferIndex();
+			geoArray[count] = ivec4(component->getBufferIndex());
 			const ivec2 drawInfo = component->getDrawInfo();
 			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
 		}
-		m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+		m_visGeoUBO.write(0, sizeof(ivec4)*geoArray.size(), geoArray.data());
 		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
 	}
 }

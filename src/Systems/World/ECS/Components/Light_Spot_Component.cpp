@@ -34,6 +34,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot = m_shadowSpot;
 	uboData->ShadowSize = m_shadowMapper->getSize(SHADOW_REGULAR).x;
+	m_camera.setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
 }
 
 void Light_Spot_Component::receiveMessage(const ECSmessage &message)
@@ -61,7 +62,12 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			m_squaredRadius = payload * payload;
 			m_camera.setFarPlane(m_squaredRadius);
 			uboData->LightRadius = payload;
-			update();
+
+			// Recalculate perspective matrix
+			m_camera.update();
+			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+			uboData->lightP = lightP;
+			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
 		case SET_LIGHT_CUTOFF: {
@@ -69,14 +75,34 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<float>();
 			uboData->LightCutoff = cosf(glm::radians(payload));
 			m_camera.setHorizontalFOV(payload * 2.0f);
-			update();
+
+			// Recalculate perspective matrix
+			m_camera.update();
+			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+			uboData->lightP = lightP;
+			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
 		case SET_ORIENTATION: {
 			if (!message.IsOfType<quat>()) break;
 			const auto &payload = message.GetPayload<quat>();
-			m_orientation = payload;
-			update();
+			m_orientation = payload;			
+
+			// Recalculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 rot = glm::mat4_cast(m_orientation);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+			m_lightVMatrix = final;
+			uboData->lightV = final;
+			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+			uboData->mMatrix = (trans * rot) * scl;
+
+			// Recalculate perspective matrix
+			m_camera.update();
+			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+			uboData->lightP = lightP;
+			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
 		case SET_POSITION: {
@@ -84,7 +110,22 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<vec3>();
 			m_lightPos = payload;
 			uboData->LightPosition = payload;
-			update();
+
+			// Recalculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 rot = glm::mat4_cast(m_orientation);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+			m_lightVMatrix = final;
+			uboData->lightV = final;
+			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+			uboData->mMatrix = (trans * rot) * scl;
+
+			// Recalculate perspective matrix
+			m_camera.update();
+			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+			uboData->lightP = lightP;
+			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
 		case SET_TRANSFORM: {
@@ -92,7 +133,22 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<Transform>();
 			uboData->LightPosition = payload.m_position;
 			m_lightPos = payload.m_position;
-			update();
+
+			// Recalculate view matrix
+			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+			const mat4 rot = glm::mat4_cast(m_orientation);
+			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+			m_lightVMatrix = final;
+			uboData->lightV = final;
+			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+			uboData->mMatrix = (trans * rot) * scl;
+
+			// Recalculate perspective matrix
+			m_camera.update();
+			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+			uboData->lightP = lightP;
+			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
 	}
@@ -100,12 +156,10 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 
 void Light_Spot_Component::shadowPass()
 {
-	update();
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (size) {
-		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
 		glUniform1i(0, getBufferIndex());
-		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_visGeoUBO.bindBufferBase(GL_UNIFORM_BUFFER, 3);
 		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
@@ -127,29 +181,11 @@ float Light_Spot_Component::getImportance(const vec3 & position) const
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 void Light_Spot_Component::update()
 {
-	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-
-	// Calculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-	const mat4 rot = glm::mat4_cast(m_orientation);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-	m_lightVMatrix = final;
-	uboData->lightV = final;
-	uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-	uboData->mMatrix = (trans * rot) * scl;
-
-	// Calculate perspective matrix
-	m_camera.setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
-	m_camera.update();
-	const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-	uboData->lightP = lightP;
-	m_camera.setMatrices(lightP, final);
-
 	// Update render list
 	const Visibility_Token vis_token = m_camera.getVisibilityToken();
 	const size_t size = vis_token.specificSize("Anim_Model");
 	if (size) {
+		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
 		struct DrawData {
 			GLuint count;
 			GLuint instanceCount = 1;
@@ -157,16 +193,15 @@ void Light_Spot_Component::update()
 			GLuint baseInstance = 0;
 			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
 		};
-		vector<GLuint> geoArray(size);
+		vector<ivec4> geoArray(size);
 		vector<DrawData> drawData(size);
-		m_visGeoUBO.checkFence();
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count] = component->getBufferIndex();
+			geoArray[count] = ivec4(component->getBufferIndex());
 			const ivec2 drawInfo = component->getDrawInfo();
 			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
 		}
-		m_visGeoUBO.write(0, sizeof(GLuint)*geoArray.size(), geoArray.data());
+		m_visGeoUBO.write(0, sizeof(ivec4)*geoArray.size(), geoArray.data());
 		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
 	}
 }

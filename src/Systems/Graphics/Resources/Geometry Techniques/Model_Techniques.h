@@ -18,7 +18,7 @@
 class EnginePackage;
 class Geometry_FBO; 
 class Shadow_FBO;
-
+class Lighting_Component;
 
 /**
  * Renders models (animated or static props which support skeletons)
@@ -54,6 +54,7 @@ private:
 	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	Shared_Asset_Shader m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
+	vector<Lighting_Component*> m_queueDir, m_queuePoint, m_queueSpot;
 };
 
 #endif // MODEL_TECHNIQUE

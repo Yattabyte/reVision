@@ -38,11 +38,10 @@ public:
 	virtual void shadowPass();
 	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	virtual float getImportance(const vec3 &position) const;
+	virtual	void update();
 
 
 	// Public Methods
-	/** Sends current data to the GPU. */
-	void update();
 	/** Recalculates the shadowmap cascades. */
 	void calculateCascades();
 
