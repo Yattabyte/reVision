@@ -70,7 +70,7 @@ void Model_Technique::updateData(const Visibility_Token & vis_token)
 			}
 
 			for each (const auto &element in m_closest.toList()) {
-				if (outList.size() > m_quality)
+				if (outList.size() >= m_quality)
 					break;
 				outList.push_back(element);
 			}

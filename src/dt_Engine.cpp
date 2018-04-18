@@ -57,15 +57,15 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 			break;
 	}
 	switch (severity) {
-	case GL_DEBUG_SEVERITY_LOW:
-		errorSeverity = "LOW";
-		break;
-	case GL_DEBUG_SEVERITY_MEDIUM:
-		errorSeverity = "MEDIUM";
-		break;
-	case GL_DEBUG_SEVERITY_HIGH:
-		errorSeverity = "HIGH";
-		break;
+		case GL_DEBUG_SEVERITY_LOW:
+			errorSeverity = "LOW";
+			break;
+		case GL_DEBUG_SEVERITY_MEDIUM:
+			errorSeverity = "MEDIUM";
+			break;
+		case GL_DEBUG_SEVERITY_HIGH:
+			errorSeverity = "HIGH";
+			break;
 	}
 	//if (type == 1280) {
 		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
@@ -150,6 +150,7 @@ void Shutdown_Sharing()
 #include "Systems\Input\Input.h"
 #include "Systems\Logic\Logic.h"
 #include "Systems\World\World.h"
+#include "Systems\PerfCounter\PerfCounter.h"
 bool dt_Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
@@ -182,6 +183,7 @@ bool dt_Engine::initialize()
 		auto &systems = m_package->m_Systems;
 		systems["Preferences"] = new System_Preferences("preferences");
 		systems["Graphics"] = new System_Graphics();
+		systems["PerfCounter"] = new System_PerfCounter();
 		systems["Input"] = new System_Input();
 		systems["Logic"] = new System_Logic();
 		systems["World"] = new System_World();
