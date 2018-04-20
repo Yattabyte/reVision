@@ -12,8 +12,10 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Assets\Asset_Shader.h"
+#include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\GL\StaticBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO; 
@@ -52,8 +54,12 @@ private:
 	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
 	VectorBuffer<Point_Struct> * m_lightPointSSBO;
 	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
-	DynamicBuffer m_visGeoUBO, m_indirectGeo;
-	Shared_Asset_Shader m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
+	DynamicBuffer m_visGeoUBO, m_indirectGeo, m_indirectGeo2;
+	Shared_Asset_Shader m_shaderCull, m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
+	Shared_Asset_Primitive m_shapeCube;
+	bool m_cubeVAOLoaded;
+	GLuint m_cubeVAO;
+	StaticBuffer m_cubeIndirect;
 	vector<Lighting_Component*> m_queueDir, m_queuePoint, m_queueSpot;
 };
 

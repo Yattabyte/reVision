@@ -69,6 +69,7 @@ void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX
 		AssignTextureProperties(m_depth_stencil);
 		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 		validate();
+		clear();
 	}
 }
 

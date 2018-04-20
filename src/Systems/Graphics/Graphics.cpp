@@ -98,7 +98,7 @@ void System_Graphics::update(const float & deltaTime)
 		
 		// Geometry
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		m_geometryFBO.clear();
+		//m_geometryFBO.clear();
 		m_lightingFBO.clear();
 		m_reflectionFBO.clear();		
 		for each (auto *tech in m_geometryTechs)

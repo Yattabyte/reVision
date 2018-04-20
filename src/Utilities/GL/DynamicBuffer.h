@@ -87,6 +87,11 @@ public:
 	T castPointer() {
 		return reinterpret_cast<T>(m_bufferPtr);
 	}
+	/** Expand this buffer to fit the size provided.
+	 * @param	size	the size to expand up to (if not already larger) */
+	void setMaxSize(const GLsizeiptr & size) {
+		expandToFit(0, size);
+	}
 	/** Write the supplied data to GPU memory
 	 * @param	offset	byte offset from the beginning
 	 * @param	size	the size of the data to write

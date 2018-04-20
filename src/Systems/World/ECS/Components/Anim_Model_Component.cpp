@@ -58,6 +58,12 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			m_model->addCallback(this, [&]() {
 				checkFence();
 				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
+				vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
+				vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
+				mat4 matTrans = glm::translate(mat4(1.0f), bboxPos);
+				mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
+				mat4 matFinal = (matTrans * matScale);
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
 				m_transforms = m_model->m_animationInfo.meshTransforms;
 				m_vaoLoaded = true;
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
@@ -66,10 +72,19 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 		}
 		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			
+			const auto &payload = message.GetPayload<Transform>();			
 			checkFence();
 			(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
+			if (m_model && m_model->existsYet()) {
+				vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
+				vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
+				mat4 matTrans = glm::translate(mat4(1.0f), bboxPos);
+				mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
+				mat4 matFinal =  (matTrans * matScale);
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
+			}
+			else
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = payload.m_modelMatrix;			
 			m_transform = payload;
 			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 

@@ -28,10 +28,23 @@ Model_Technique::Model_Technique(
 
 	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
+	// Asset Loading
+	Asset_Loader::load_asset(m_shaderCull, "Geometry\\culling");
 	Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
 	Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
 	Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
 	Asset_Loader::load_asset(m_shaderSpot_Shadow, "Geometry\\geometryShadowSpot");
+
+	// Cube Loading
+	Asset_Loader::load_asset(m_shapeCube, "box");
+	m_cubeVAOLoaded = false;
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_shapeCube->addCallback(this, [&]() {
+		m_shapeCube->updateVAO(m_cubeVAO);
+		m_cubeVAOLoaded = true;
+		GLuint data[4] = { m_shapeCube->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
+		m_cubeIndirect = StaticBuffer(sizeof(GLuint) * 4, data);
+	});
 }
 
 void Model_Technique::updateData(const Visibility_Token & vis_token)
@@ -125,6 +138,7 @@ void Model_Technique::updateData(const Visibility_Token & vis_token)
 
 		vector<uint> geoArray(m_size);
 		vector<DrawData> drawData(m_size);
+		vector<uint> emptyDrawData(m_size*4);
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
 			geoArray[count] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
@@ -132,28 +146,51 @@ void Model_Technique::updateData(const Visibility_Token & vis_token)
 		}
 		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
 		m_indirectGeo.write(0, sizeof(DrawData) * m_size, drawData.data());
+		m_cubeIndirect.write(sizeof(GLuint), sizeof(GLuint), &m_size);		
+		m_indirectGeo2.write(0, m_size * 4, emptyDrawData.data());
 	}
 }
 
 void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
 {
 	const size_t size = vis_token.specificSize("Anim_Model");
-	if (size) {
+	if (size && m_cubeVAOLoaded) {
+		// Set up state
 		glDisable(GL_BLEND);
-		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
 		glCullFace(GL_BACK);
 		glEnable(GL_CULL_FACE);
-
-		m_shaderGeometry->bind();
 		m_geometryFBO->bindForWriting();
 		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
+		// Render bounding boxes for all models using last frame's depth buffer
+		// ** CURRENTLY COPYING indirectGeo into indirectGeo2 when fragments that pass the depth test **
+		// ** So that we only get buffer entries for objects that are at least somewhat visible
+		// ** Objects that completely fail the depth test will have zero'd out entries
+		// ** However, this isn't completely working yet
+		glBindVertexArray(m_cubeVAO);
+		m_shaderCull->bind();
+		glDepthMask(GL_FALSE);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		m_cubeIndirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectGeo.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		m_indirectGeo2.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Allow depth/color writes, clear out gbuffer for new geometry pass
+		glDepthMask(GL_TRUE);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		m_geometryFBO->clear();
+
+		// Render only the objects that passed the previous depth test (modified indirect draw buffer)
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		m_shaderGeometry->bind();
+		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, 0);
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
+		m_indirectGeo2.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
-
 		m_geometryFBO->applyAO();
 	}
 }
