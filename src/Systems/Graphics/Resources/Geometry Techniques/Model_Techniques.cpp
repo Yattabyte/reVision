@@ -138,7 +138,7 @@ void Model_Technique::updateData(const Visibility_Token & vis_token)
 
 		vector<uint> geoArray(m_size);
 		vector<DrawData> drawData(m_size);
-		vector<uint> emptyDrawData(m_size*4);
+		vector<DrawData> emptyDrawData(m_size);
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
 			geoArray[count] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
@@ -147,7 +147,7 @@ void Model_Technique::updateData(const Visibility_Token & vis_token)
 		m_visGeoUBO.write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
 		m_indirectGeo.write(0, sizeof(DrawData) * m_size, drawData.data());
 		m_cubeIndirect.write(sizeof(GLuint), sizeof(GLuint), &m_size);		
-		m_indirectGeo2.write(0, m_size * 4, emptyDrawData.data());
+		m_indirectGeo2.write(0, sizeof(DrawData) * m_size, emptyDrawData.data());
 	}
 }
 
@@ -158,18 +158,15 @@ void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
 		// Set up state
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
-		glCullFace(GL_BACK);
-		glEnable(GL_CULL_FACE);
 		m_geometryFBO->bindForWriting();
 		m_visGeoUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		// Render bounding boxes for all models using last frame's depth buffer
-		// ** CURRENTLY COPYING indirectGeo into indirectGeo2 when fragments that pass the depth test **
-		// ** So that we only get buffer entries for objects that are at least somewhat visible
-		// ** Objects that completely fail the depth test will have zero'd out entries
-		// ** However, this isn't completely working yet
 		glBindVertexArray(m_cubeVAO);
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glPolygonOffset(-1, -1);
 		m_shaderCull->bind();
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -182,6 +179,10 @@ void Model_Technique::renderGeometry(const Visibility_Token & vis_token)
 		glDepthMask(GL_TRUE);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		m_geometryFBO->clear();
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);   
+		glPolygonOffset(0, 0);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 
 		// Render only the objects that passed the previous depth test (modified indirect draw buffer)
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
