@@ -171,63 +171,25 @@ void System_World::unregisterViewer(Camera * c)
 	}), end(m_viewers));
 }
 
-#include "Systems\World\ECS\Components\Geometry_Component.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
-#include "Systems\World\ECS\Components\Reflector_Component.h"
 void System_World::calcVisibility(Camera & camera)
 {
 	const auto camBuffer = camera.getCameraBuffer();
+	const float &radius = camBuffer.FarPlane;
+	const vec3 &eyePos = camBuffer.EyePosition;
 	const mat4 &camPMatrix = camBuffer.pMatrix;
 	const mat4 &camVMatrix = camBuffer.vMatrix;
 	Visibility_Token vis_token;
 
-	{
-		vector<const char *> types = { "Anim_Model" };
-		for each (auto type in types) {
-			const auto &components = getSpecificComponents<Geometry_Component>(type);
+	for each (const auto &type in vector<const char *>{ "Anim_Model", "Light_Directional", "Light_Spot", "Light_Point", "Reflector" }) {
+		vector<Component*> visible_components;
+		
+		for each (auto component in getSpecificComponents<Component>(type))
+			if (component->isVisible(radius, eyePos, camPMatrix, camVMatrix))
+				visible_components.push_back(component);
 
-			vector<Component*> visible_components;
-
-			for each (auto component in components)
-				if (component->isVisible(camPMatrix, camVMatrix))
-					visible_components.push_back((Component*)component);
-
-			vis_token.insertType(type);
-			vis_token[type] = visible_components;
-		}
-	}
-
-	{
-		vector<const char *> types = { "Light_Directional", "Light_Spot", "Light_Point" };
-		for each (auto type in types) {
-			const auto &components = getSpecificComponents<Lighting_Component>(type);
-
-			vector<Component*> visible_components;
-
-			for each (auto component in components)
-				if (component->isVisible(camPMatrix, camVMatrix))
-					visible_components.push_back((Component*)component);
-
-			vis_token.insertType(type);
-			vis_token[type] = visible_components;
-		}
-	}
-
-	{
-		vector<const char *> types = { "Reflector" };
-		for each (auto type in types) {
-			const auto &components = getSpecificComponents<Reflector_Component>(type);
-
-			vector<Component*> visible_components;
-
-			for each (auto component in components)
-				if (component->isVisible(camPMatrix, camVMatrix))
-					visible_components.push_back((Component*)component);
-
-			vis_token.insertType(type);
-			vis_token[type] = visible_components;
-		}
-	}
+		vis_token.insertType(type);
+		vis_token[type] = visible_components;
+	}	
 
 	camera.setVisibilityToken(vis_token);
 }

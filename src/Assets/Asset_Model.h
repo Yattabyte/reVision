@@ -82,7 +82,8 @@ public:
 	vector<Shared_Asset_Material>		m_skins;
 	GeometryInfo						m_data;
 	AnimationInfo						m_animationInfo;
-	vec3								m_bboxMin, m_bboxMax;
+	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
+	float								m_radius;
 	GLint								m_offset, m_count;
 	GLsync								m_fence;
 };

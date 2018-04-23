@@ -25,13 +25,7 @@ class DT_ENGINE_API Lighting_Component : protected Component
 public:
 	// Public Methods
 	/** Renders the light, performing shadow calculations only. */
-	virtual void shadowPass() {};
-	/** Tests if this object is within the viewing frustum of the camera.
-	 * @brief				a test of general visibility (excluding obstruction of other objects). 
-	 * @param	PMatrix		the projection matrix of the camera
-	 * @param	VMatrix		the viewing matrix of the camera
-	 * @return				true if this object is within the viewing frustum of the camera, false otherwise */
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix) = 0;
+	virtual void shadowPass() {};	
 	/** Generates an 'importance' value for this light.
 	 * @brief				importance is equal to (distance / size).
 	 * @param	position	the position of the viewer (camera)

@@ -14,9 +14,7 @@
 #include "Systems\World\ECS\Components\Component.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "GL\glew.h"
-#include "glm\glm.hpp"
 
-using namespace glm;
 class Reflector_Creator;
 class EnginePackage;
 
@@ -29,18 +27,13 @@ class DT_ENGINE_API Reflector_Component : protected Component
 public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
 
 
 	// Public Methods
 	/** Retrieve the buffer index for this reflector.
 	 * @return	the buffer index */
 	const unsigned int getBufferIndex() const;
-	/** Tests if this object is within the viewing frustum of the camera.
-	 * @brief				a test of general visibility (excluding obstruction of other objects).
-	 * @param	PMatrix		the projection matrix of the camera
-	 * @param	VMatrix		the viewing matrix of the camera
- 	 * @return				true if this object is within the viewing frustum of the camera, false otherwise */
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix) const;
 	
 
 protected:

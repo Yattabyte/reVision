@@ -84,6 +84,12 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
+bool Light_Directional_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+{
+	// Directional lights are infinite as they simulate the sun.
+	return true;
+}
+
 void Light_Directional_Component::shadowPass()
 {
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
@@ -100,12 +106,6 @@ void Light_Directional_Component::shadowPass()
 
 		m_shadowUpdateTime = glfwGetTime();
 	}
-}
-
-bool Light_Directional_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
-{
-	// Directional lights are infinite as they simulate the sun.
-	return true;
 }
 
 float Light_Directional_Component::getImportance(const vec3 & position) const

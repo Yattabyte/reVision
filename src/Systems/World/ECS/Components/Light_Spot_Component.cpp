@@ -154,6 +154,12 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
+bool Light_Spot_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+{
+	const float distance = glm::distance(m_lightPos, eyePosition);
+	return radius + m_radius > distance;
+}
+
 void Light_Spot_Component::shadowPass()
 {
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
@@ -165,12 +171,6 @@ void Light_Spot_Component::shadowPass()
 
 		m_shadowUpdateTime = glfwGetTime();
 	}
-}
-
-bool Light_Spot_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
-{
-	Frustum frustum(PMatrix * VMatrix * m_lightVMatrix);
-	return frustum.sphereInFrustum(m_lightPos, vec3(m_squaredRadius));
 }
 
 float Light_Spot_Component::getImportance(const vec3 & position) const

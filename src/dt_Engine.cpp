@@ -207,6 +207,8 @@ bool dt_Engine::initialize()
 		Asset_Manager::Start_Up();
 
 		m_Initialized = true;
+		m_frameCount = 0;
+		m_frameAccumulator = 0;
 	}
 	return m_Initialized;
 }
@@ -234,6 +236,18 @@ void dt_Engine::tick()
 	if (m_Initialized && !glfwWindowShouldClose(m_package->m_Context_Rendering)) {
 		deltaTime = thisTime - m_lastTime;
 		m_lastTime = thisTime;
+
+		// performance heuristics
+		m_frameCount++;
+		if (m_frameCount >= 100) {
+			m_frameAccumulator /= 100.0f;
+			MSG_Manager::Statement("Avg Frametime = " + to_string(m_frameAccumulator*1000.0f) + " ms");
+			m_frameAccumulator = deltaTime;
+			m_frameCount = 0;
+		}
+		else 
+			m_frameAccumulator += deltaTime;		
+		// end performance heuristics
 
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		Asset_Manager::Notify_Observers();

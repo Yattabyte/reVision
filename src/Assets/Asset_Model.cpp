@@ -43,6 +43,8 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_meshSize = 0;
 	m_bboxMin = vec3(0.0f);
 	m_bboxMax = vec3(0.0f);
+	m_bboxCenter = vec3(0.0f);
+	m_radius = 0.0f;
 	m_offset = 0;
 	m_count = 0;
 	m_fence = nullptr;
@@ -118,7 +120,7 @@ namespace Asset_Loader {
  * @param	vertices	the vertices of the mesh to derive the AABB from
  * @param	minOut	output reference containing the minimum extents of the AABB
  * @param	maxOut	output reference containing the maximum extents of the AABB */
-void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
+void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut, vec3 & centerOut, float & radiusOut)
 {
 	if (vertices.size() >= 1) {
 		const vec3 &vector = vertices.at(0);
@@ -141,6 +143,8 @@ void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut)
 
 		minOut = vec3(minX, minY, minZ);
 		maxOut = vec3(maxX, maxY, maxZ);
+		centerOut = ((maxOut - minOut) / 2.0f) + minOut;
+		radiusOut = glm::distance(minOut, maxOut) / 2.0f;
 	}
 }
 
@@ -189,7 +193,7 @@ void Model_WorkOrder::initializeOrder()
 	m_asset->m_animationInfo.setScene(scene);
 	m_asset->m_meshSize = gi.vs.size(); // Final vertex size (needed for draw arrays call)
 	gi.bones.resize(gi.vs.size());
-	calculate_AABB(gi.vs, m_asset->m_bboxMin, m_asset->m_bboxMax);
+	calculate_AABB(gi.vs, m_asset->m_bboxMin, m_asset->m_bboxMax, m_asset->m_bboxCenter, m_asset->m_radius);
 	initializeBones(m_asset, scene);
 
 	// Generate all the required skins

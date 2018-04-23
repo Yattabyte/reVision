@@ -35,8 +35,8 @@ class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual void receiveMessage(const ECSmessage &message);
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
 	virtual void shadowPass();
-	virtual bool isVisible(const mat4 & PMatrix, const mat4 &VMatrix);
 	virtual float getImportance(const vec3 &position) const;
 	virtual void update();
 

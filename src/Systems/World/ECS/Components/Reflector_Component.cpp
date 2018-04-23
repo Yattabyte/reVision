@@ -50,7 +50,7 @@ void Reflector_Component::receiveMessage(const ECSmessage & message)
 	}
 }
 
-bool Reflector_Component::isVisible(const mat4 & PMatrix, const mat4 & VMatrix) const
+bool Reflector_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 & VMatrix) const
 {
 	return Frustum(PMatrix * VMatrix).sphereInFrustum(m_position.xyz, m_scale);
 }

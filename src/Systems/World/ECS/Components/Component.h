@@ -10,8 +10,10 @@
 #endif
 
 #include "Systems\World\ECS\ECSmessage.h"
+#include "glm\glm.hpp"
 #include <utility>
 
+using namespace glm;
 class ECSmessenger;
 class ComponentCreator;
 class EnginePackage;
@@ -28,6 +30,12 @@ public:
 	 * @brief				a handy way to interface with components.
 	 * @param	message		the message to send to this component */
 	virtual void receiveMessage(const ECSmessage & message);
+	/** Tests if this object is within the viewing frustum of the camera.
+	 * @brief				a test of general visibility (excluding obstruction of other objects).
+	 * @param	PMatrix		the projection matrix of the camera
+	 * @param	VMatrix		the viewing matrix of the camera
+	 * @return				true if this object is within the viewing frustum of the camera, false otherwise */
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const { return true; }
 
 
 protected:

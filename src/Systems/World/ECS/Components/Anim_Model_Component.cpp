@@ -4,6 +4,7 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"
 #include "Utilities\Frustum.h"
+#include "glm\gtx\component_wise.hpp"
 #include <minmax.h>
 
 
@@ -113,6 +114,18 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
+bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+{
+	if (m_model) {
+		shared_lock<shared_mutex> guard(m_model->m_mutex);
+		const float bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
+		const vec3 bspherePosition_World = m_model->m_bboxCenter + bsphereRadius + m_transform.m_position;
+		const float distance = glm::distance(bspherePosition_World, eyePosition);
+		return radius + bsphereRadius > distance;
+	}
+	return false;
+}
+
 void Anim_Model_Component::draw()
 {
 	if (!m_model || !m_model->existsYet() || !m_vaoLoaded) return;
@@ -127,15 +140,6 @@ void Anim_Model_Component::draw()
 		}
 	}
 
-}
-
-bool Anim_Model_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
-{
-	if (m_model) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		return Frustum(PMatrix * VMatrix * m_transform.m_modelMatrix).AABBInFrustom(m_model->m_bboxMin, m_model->m_bboxMax);
-	}
-	return false;
 }
 
 const unsigned int Anim_Model_Component::getBufferIndex() const

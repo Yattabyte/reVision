@@ -112,6 +112,12 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
+bool Light_Point_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+{
+	const float distance = glm::distance(m_lightPos, eyePosition);
+	return radius + m_radius > distance;
+}
+
 void Light_Point_Component::shadowPass()
 {
 	glUniform1i(0, getBufferIndex());
@@ -129,12 +135,6 @@ void Light_Point_Component::shadowPass()
 			m_shadowUpdateTime = glfwGetTime();
 		}
 	}
-}
-
-bool Light_Point_Component::isVisible(const mat4 & PMatrix, const mat4 &VMatrix)
-{
-	Frustum frustum(PMatrix * VMatrix * m_lightVMatrix);
-	return frustum.sphereInFrustum(m_lightPos, vec3(m_squaredRadius));
 }
 
 float Light_Point_Component::getImportance(const vec3 & position) const
