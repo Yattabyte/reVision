@@ -19,8 +19,10 @@ public:
 
 
 	// Public Interface Methods
-	/** Update underlying data and do any pre-lighting rendering passes necessary */
+	/** Update underlying data and send it to the GPU. */
 	virtual void updateData(const Visibility_Token & vis_token) = 0;
+	/** Apply pre-lighting rendering passes. */
+	virtual void applyPrePass(const Visibility_Token & vis_token) = 0;
 	/** Apply this lighting technique. */
 	virtual void applyLighting(const Visibility_Token & vis_token) = 0;
 };

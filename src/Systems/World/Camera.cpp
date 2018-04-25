@@ -27,7 +27,6 @@ Camera::Camera(Camera const & other)
 	m_cameraBuffer = other.getCameraBuffer();
 	m_buffer = StaticBuffer(sizeof(Camera_Buffer), &m_cameraBuffer);
 	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
-	m_frustum = Frustum(other.getFrustum());
 	update();
 }
 
@@ -36,7 +35,6 @@ void Camera::operator=(Camera const & other)
 	shared_lock<shared_mutex> rguard(other.data_mutex);
 	unique_lock<shared_mutex> wguard(data_mutex);
 	m_cameraBuffer = other.getCameraBuffer();
-	m_frustum = Frustum(other.getFrustum());
 	data_mutex.unlock();
 	update();
 }
@@ -48,7 +46,6 @@ void Camera::setMatrices(const mat4 & pMatrix, const mat4 & vMatrix)
 	m_cameraBuffer.vMatrix = vMatrix;
 	m_cameraBuffer.pMatrix_Inverse = glm::inverse(pMatrix);
 	m_cameraBuffer.vMatrix_Inverse = glm::inverse(vMatrix);
-	m_frustum.setFrustum(pMatrix * vMatrix);
 
 	// Send data to GPU
 	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
@@ -73,9 +70,7 @@ void Camera::update()
 	// Update Viewing Matrix
 	m_cameraBuffer.vMatrix = glm::mat4_cast(m_orientation) * translate(mat4(1.0f), -m_cameraBuffer.EyePosition);
 	m_cameraBuffer.vMatrix_Inverse = glm::inverse(m_cameraBuffer.vMatrix);
-
-	m_frustum.setFrustum(m_cameraBuffer.pMatrix * m_cameraBuffer.vMatrix);
-
+	
 	// Send data to GPU
 	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
 }

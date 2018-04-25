@@ -3,6 +3,8 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Utilities\EnginePackage.h"
+#include "Utilities\PriorityList.h"
 
 
 DS_Lighting::~DS_Lighting()
@@ -10,13 +12,19 @@ DS_Lighting::~DS_Lighting()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
+
+	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 }
 
 DS_Lighting::DS_Lighting(
+	EnginePackage * enginePackage,
 	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO,
 	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
 )
 {
+	m_enginePackage = enginePackage;
+	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
+
 	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
@@ -31,6 +39,9 @@ DS_Lighting::DS_Lighting(
 	Asset_Loader::load_asset(m_shaderDirectional, "Lighting\\Direct Lighting\\directional");
 	Asset_Loader::load_asset(m_shaderPoint, "Lighting\\Direct Lighting\\point");
 	Asset_Loader::load_asset(m_shaderSpot, "Lighting\\Direct Lighting\\spot");
+	Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
+	Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
+	Asset_Loader::load_asset(m_shaderSpot_Shadow, "Geometry\\geometryShadowSpot");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shapeCone, "cone");
 	Asset_Loader::load_asset(m_shapeSphere, "sphere");
@@ -69,6 +80,82 @@ DS_Lighting::DS_Lighting(
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
 {
+	/** This is used to prioritize the oldest AND closest lights to the viewer (position) **/
+	class PriorityLightList
+	{
+	public:
+		// (de)Constructors
+		/** Default destructor. */
+		~PriorityLightList() {}
+		/** Construct a priority light list with the given quality and position.
+		* @param	quality		the max number of final elements
+		* @param	position	the position of the viewer */
+		PriorityLightList(const unsigned int & quality, const vec3 & position) : m_quality(quality), m_oldest(quality), m_position(position) {}
+
+
+		// Public Methods
+		/** Fill the oldest light list with a new light, and have it sorted.
+		* @param	light		the light to insert */
+		void insert(Lighting_Component * light) {
+			m_oldest.insert(light->getShadowUpdateTime(), light);
+		}
+		/** Return a list composed of the oldest and the closest lights.
+		* @return				a double sorted list with the oldest lights and closest lights */
+		const vector<Lighting_Component*> toList() const {
+			PriorityList<float, Lighting_Component*, greater<float>> m_closest(m_quality / 2);
+			vector<Lighting_Component*> outList;
+			outList.reserve(m_quality);
+
+			for each (const auto &element in m_oldest.toList()) {
+				if (outList.size() < (m_quality / 2))
+					outList.push_back(element);
+				else
+					m_closest.insert(element->getImportance(m_position), element);
+			}
+
+			for each (const auto &element in m_closest.toList()) {
+				if (outList.size() >= m_quality)
+					break;
+				outList.push_back(element);
+			}
+			return outList;
+		}
+
+
+	private:
+		// Private Attributes
+		unsigned int m_quality;
+		vec3 m_position;
+		PriorityList<float, Lighting_Component*, less<float>> m_oldest;
+	};
+
+	// Quit early if we don't have models, or we don't have any lights 
+	// Logically equivalent to continuing while we have at least 1 model and 1 light
+	if ((!vis_token.find("Anim_Model")) ||
+		(!vis_token.find("Light_Directional")) &&
+		(!vis_token.find("Light_Point")) &&
+		(!vis_token.find("Light_Spot")))
+		return;
+
+	// Retrieve a sorted list of most important lights to run shadow calc for.
+	const vec3 &camPos = m_enginePackage->m_Camera.getCameraBuffer().EyePosition;
+	PriorityLightList queueDir(m_updateQuality, camPos), queuePoint(m_updateQuality, camPos), queueSpot(m_updateQuality, camPos);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
+		queueDir.insert(component);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		queuePoint.insert(component);
+	for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+		queueSpot.insert(component);
+	m_queueDir = queueDir.toList();
+	m_queuePoint = queuePoint.toList();
+	m_queueSpot = queueSpot.toList();
+	for each (const auto &c in m_queueDir)
+		c->update();
+	for each (const auto &c in m_queuePoint)
+		c->update();
+	for each (const auto &c in m_queueSpot)
+		c->update();
+
 	const GLuint dirSize = vis_token.getTypeList<Lighting_Component>("Light_Directional").size();
 	const GLuint pointSize = vis_token.getTypeList<Lighting_Component>("Light_Point").size();
 	const GLuint spotSize = vis_token.getTypeList<Lighting_Component>("Light_Spot").size();
@@ -91,6 +178,39 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 		m_visSpots.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectSpot.write(sizeof(GLuint), sizeof(GLuint), &spotSize);
 	}
+}
+
+void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
+{ 
+	// Render Shadows
+	glDisable(GL_BLEND);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+	glCullFace(GL_BACK);
+
+	// Bind Geometry VAO once
+	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+
+	// Directional lights
+	m_shadowFBO->bindForWriting(SHADOW_LARGE);
+	m_shaderDirectional_Shadow->bind();
+	m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+	for each (auto &component in m_queueDir)
+		component->shadowPass();
+
+	// Point Lights
+	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
+	m_shaderPoint_Shadow->bind();
+	m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+	for each (auto &component in m_queuePoint)
+		component->shadowPass();
+
+	// Spot Lights
+	m_shaderSpot_Shadow->bind();
+	m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+	for each (auto &component in m_queueSpot)
+		component->shadowPass();
 }
 
 void DS_Lighting::applyLighting(const Visibility_Token & vis_token)

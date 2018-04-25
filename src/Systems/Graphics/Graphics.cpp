@@ -63,11 +63,11 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_shadowFBO.initialize(enginePackage);
 
 		// Initiate geometry techniques
-		m_geometryTechs.push_back(new Model_Technique(enginePackage, &m_geometryFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
+		m_geometryTechs.push_back(new Model_Technique(&m_geometryFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
 
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(&m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
+		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO)); 
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
@@ -83,44 +83,19 @@ void System_Graphics::update(const float & deltaTime)
 {
 	const Visibility_Token vis_token = m_enginePackage->m_Camera.getVisibilityToken();
 	if (m_Initialized && vis_token.size())	{		
-		// Update and bind prerequisite data
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-		m_geometrySSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);	
-		for each (auto *tech in m_geometryTechs)
-			tech->updateData(vis_token); 
-		for each (auto *tech in m_lightingTechs)
-			tech->updateData(vis_token);
+		m_geometrySSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 
-		// Shadows
-		for each (auto *tech in m_geometryTechs)
-			tech->renderShadows(vis_token);
+		send2GPU(vis_token);
+		updateOnGPU(vis_token);
+		renderFrame(vis_token);
 		
-		// Geometry
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		//m_geometryFBO.clear();
-		m_lightingFBO.clear();
-		m_reflectionFBO.clear();		
-		for each (auto *tech in m_geometryTechs)
-			tech->renderGeometry(vis_token);
-		
-		// Lighting
-		m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES
-		for each (auto *tech in m_lightingTechs)
-			tech->applyLighting(vis_token);
-
-		// Post Processing
-		m_lightingFBO.bindForReading();
-		for each (auto *tech in m_fxTechs) {
-			tech->applyEffect();
-			tech->bindForReading();
-		}
-
-		// End and reset
 		m_reflectionFBO.end();
 		m_lightingFBO.end();
 		m_geometryFBO.end();
 		Asset_Shader::Release();
+
 	}
 }
 
@@ -165,4 +140,50 @@ void System_Graphics::generateKernal()
 
 	// Write to buffer, kernel is first part of this buffer
 	m_userBuffer.write(0, sizeof(vec4)*MAX_KERNEL_SIZE, kernel);
+}
+
+void System_Graphics::send2GPU(const Visibility_Token & vis_token)
+{
+	/* Update and bind prerequisite data */
+	// Geometry Data
+	for each (auto *tech in m_geometryTechs)
+		tech->updateData(vis_token);
+	// Lighting Data
+	for each (auto *tech in m_lightingTechs)
+		tech->updateData(vis_token);
+}
+
+void System_Graphics::updateOnGPU(const Visibility_Token & vis_token)
+{
+	// Update Render Lists
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+	for each (auto *tech in m_geometryTechs)
+		tech->applyPrePass(vis_token);
+	// Shadows & Global Illumination
+	for each (auto *tech in m_lightingTechs)
+		tech->applyPrePass(vis_token);
+}
+
+void System_Graphics::renderFrame(const Visibility_Token & vis_token)
+{
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+	//m_geometryFBO.clear();
+	m_lightingFBO.clear();
+	m_reflectionFBO.clear();
+
+	// Geometry
+	for each (auto *tech in m_geometryTechs)
+		tech->renderGeometry(vis_token);
+
+	// Lighting
+	m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES
+	for each (auto *tech in m_lightingTechs)
+		tech->applyLighting(vis_token);
+
+	// Post Processing
+	m_lightingFBO.bindForReading();
+	for each (auto *tech in m_fxTechs) {
+		tech->applyEffect();
+		tech->bindForReading();
+	}
 }

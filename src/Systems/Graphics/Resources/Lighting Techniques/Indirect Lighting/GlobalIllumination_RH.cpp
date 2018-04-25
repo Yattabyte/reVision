@@ -208,7 +208,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	}
 }
 
-void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)
+void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 {
 	// Prepare rendering state
 	glDisable(GL_DEPTH_TEST);
@@ -222,7 +222,7 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 	m_shadowFBO->BindForReading_GI(SHADOW_LARGE, 0);
 	bindNoise(4);
 	bindForWriting(0);
-	
+
 	// Bounce directional lights
 	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
 	if (vis_token.specificSize("Light_Directional")) {
@@ -253,23 +253,31 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 	bindForWriting(1);
 	glDrawArraysIndirect(GL_POINTS, 0);
 
-	// Reconstruct GI from data
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	m_geometryFBO->bindForReading();
-	m_lightingFBO->bindForWriting();
+	glDisable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+}
 
+void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)
+{
+	// Reconstruct GI from data
 	if (m_vaoLoaded) {
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+		m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		m_geometryFBO->bindForReading();
+		m_lightingFBO->bindForWriting();
+		bindNoise(4);
+
 		m_shaderGIReconstruct->bind();
 		bindForReading(1, 5);
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-	}
-	
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+	}	
 }
 
 void GlobalIllumination_RH::bindForWriting(const GLuint &bounceSpot)

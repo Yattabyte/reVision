@@ -131,6 +131,10 @@ void Reflections::updateData(const Visibility_Token & vis_token)
 	}
 }
 
+void Reflections::applyPrePass(const Visibility_Token & vis_token)
+{
+}
+
 void Reflections::applyLighting(const Visibility_Token & vis_token)
 {
 	if (m_quadVAOLoaded && m_cubeVAOLoaded) {

@@ -63,7 +63,6 @@ public:
 	void setSSAORadius(const float & radius);
 	
 
-public:
 	// Public Attributes
 	// Frame Buffers
 	Geometry_FBO m_geometryFBO;
@@ -82,6 +81,14 @@ private:
 	// Private Methods
 	/** Regenerate the noise kernel. */
 	void generateKernal();
+	/** Sends data to GPU in one pass.
+	 * For example, sending updated mat4's into buffers. */
+	void send2GPU(const Visibility_Token & vis_token);
+	/** Perform pre-passes and update data present on the GPU. 
+	 * For example, performing GPU accelerated occlusion culling or shadow mapping. */
+	void updateOnGPU(const Visibility_Token & vis_token);
+	/** Render a single frame. */
+	void renderFrame(const Visibility_Token & vis_token);
 
 
 	// Private Attributes

@@ -3,7 +3,6 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Frustum.h"
 #include "glm\gtx\component_wise.hpp"
 #include <minmax.h>
 

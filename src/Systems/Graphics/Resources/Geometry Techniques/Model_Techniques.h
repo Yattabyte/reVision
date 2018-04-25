@@ -17,10 +17,8 @@
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\GL\StaticBuffer.h"
 
-class EnginePackage;
 class Geometry_FBO; 
 class Shadow_FBO;
-class Lighting_Component;
 
 /**
  * Renders models (animated or static props which support skeletons)
@@ -31,22 +29,19 @@ public:
 	/** Virtual Destructor. */
 	~Model_Technique();
 	/** Constructor. */
-	Model_Technique(
-		EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
+	Model_Technique( Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
 		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
 	);
 
 
 	// Public Interface Implementations
 	virtual void updateData(const Visibility_Token & vis_token);
+	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void renderGeometry(const Visibility_Token & vis_token);
-	virtual void renderShadows(const Visibility_Token & vis_token);
 
 
 private:
 	// Private Attributes
-	int m_updateQuality;
-	EnginePackage * m_enginePackage;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Shadow_FBO * m_shadowFBO;
@@ -55,12 +50,11 @@ private:
 	VectorBuffer<Point_Struct> * m_lightPointSSBO;
 	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 	DynamicBuffer m_visGeoUBO, m_indirectGeo, m_indirectGeo2;
-	Shared_Asset_Shader m_shaderCull, m_shaderGeometry, m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow;
+	Shared_Asset_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Asset_Primitive m_shapeCube;
 	bool m_cubeVAOLoaded;
 	GLuint m_cubeVAO;
 	StaticBuffer m_cubeIndirect;
-	vector<Lighting_Component*> m_queueDir, m_queuePoint, m_queueSpot;
 };
 
 #endif // MODEL_TECHNIQUE

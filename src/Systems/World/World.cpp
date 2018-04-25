@@ -30,6 +30,7 @@ void System_World::initialize(EnginePackage * enginePackage)
 
 void System_World::update(const float & deltaTime)
 {	
+	// Temporary level loading logic until a map format is chosen
 	static bool loaded = false;
 	if (!loaded) {
 		auto sponza = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));

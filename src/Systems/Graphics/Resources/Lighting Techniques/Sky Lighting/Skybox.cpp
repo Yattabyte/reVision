@@ -24,6 +24,10 @@ void Skybox::updateData(const Visibility_Token & vis_token)
 {
 }
 
+void Skybox::applyPrePass(const Visibility_Token & vis_token)
+{
+}
+
 void Skybox::applyLighting(const Visibility_Token & vis_token)
 {
 	// Proceed only when vao is ready (everything else is safe)

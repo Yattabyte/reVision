@@ -10,7 +10,6 @@
 #endif
 
 #include "Systems\World\Visibility_Token.h"
-#include "Utilities\Frustum.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
@@ -123,9 +122,6 @@ public:
 	/** Retrieve whether or not this camera is active.
 	 * @return				true if this camera has rendering enabled, false otherwise */
 	bool shouldRender() const { return render_enabled; }
-	/** Returns a copy of the viewing frustum.
-	 * @return				copy of the viewing frustum */
-	Frustum getFrustum() const { return m_frustum; };
 	/** Retrieves the mutex associated with data changes. 
 	 * @return				the data mutex */
 	shared_mutex & getDataMutex() const { return data_mutex; };
@@ -140,7 +136,6 @@ private:
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
 	Visibility_Token m_vistoken;
-	Frustum m_frustum;
 	bool render_enabled;
 };
 
