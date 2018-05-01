@@ -12,6 +12,7 @@ DS_Lighting::~DS_Lighting()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
+	if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 
 	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 }
@@ -42,15 +43,21 @@ DS_Lighting::DS_Lighting(
 	Asset_Loader::load_asset(m_shaderDirectional_Shadow, "Geometry\\geometryShadowDir");
 	Asset_Loader::load_asset(m_shaderPoint_Shadow, "Geometry\\geometryShadowPoint");
 	Asset_Loader::load_asset(m_shaderSpot_Shadow, "Geometry\\geometryShadowSpot");
+	Asset_Loader::load_asset(m_shaderDirectional_Cull, "Geometry\\cullingDir");
+	Asset_Loader::load_asset(m_shaderPoint_Cull, "Geometry\\cullingPoint");
+	Asset_Loader::load_asset(m_shaderSpot_Cull, "Geometry\\cullingSpot");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	Asset_Loader::load_asset(m_shapeCone, "cone");
 	Asset_Loader::load_asset(m_shapeSphere, "sphere");
+	Asset_Loader::load_asset(m_shapeCube, "box");
 	m_quadVAOLoaded = false; 
 	m_coneVAOLoaded = false;
 	m_sphereVAOLoaded = false;
+	m_cubeVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
 
 	// Asset-Loaded Callbacks
 	m_shapeQuad->addCallback(this, [&]() { 
@@ -71,6 +78,10 @@ DS_Lighting::DS_Lighting(
 		GLuint data[4] = { m_shapeSphere->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
 		m_indirectPoint = StaticBuffer(sizeof(GLuint) * 4, data);
 	});
+	m_shapeCube->addCallback(this, [&]() {
+		m_shapeCube->updateVAO(m_cubeVAO);
+		m_cubeVAOLoaded = true;
+	});
 
 	// Draw Buffers
 	//m_visDirs = DynamicBuffer(sizeof(GLuint) * 10, 0); We always render ALL directional lights
@@ -81,8 +92,7 @@ DS_Lighting::DS_Lighting(
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
 {
 	/** This is used to prioritize the oldest AND closest lights to the viewer (position) **/
-	class PriorityLightList
-	{
+	class PriorityLightList {
 	public:
 		// (de)Constructors
 		/** Default destructor. */
@@ -159,7 +169,6 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 	const GLuint dirSize = vis_token.getTypeList<Lighting_Component>("Light_Directional").size();
 	const GLuint pointSize = vis_token.getTypeList<Lighting_Component>("Light_Point").size();
 	const GLuint spotSize = vis_token.getTypeList<Lighting_Component>("Light_Spot").size();
-
 	if (dirSize && m_quadVAOLoaded)
 		m_indirectDir.write(sizeof(GLuint), sizeof(GLuint), &dirSize);
 	if (pointSize && m_sphereVAOLoaded) {
@@ -182,11 +191,52 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 
 void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 { 
-	// Render Shadows
-	glDisable(GL_BLEND);
-	glDepthMask(GL_TRUE);
+	/******************** 
+	  Occlusion Culling 
+	********************/
+	// Set up state
+	glEnable(GL_POLYGON_OFFSET_FILL);
 	glEnable(GL_DEPTH_TEST);
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);
 	glDepthFunc(GL_LEQUAL);
+	glDepthMask(GL_FALSE);
+	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+	glPolygonOffset(-1, -1);
+
+
+	if (m_cubeVAOLoaded) {
+		glBindVertexArray(m_cubeVAO);
+		// Draw bounding boxes for each camera
+		m_shaderDirectional_Cull->bind();
+		m_shadowFBO->bindForWriting(SHADOW_LARGE);
+		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (const auto &c in m_queueDir)
+			c->occlusionPass();
+		m_shaderPoint_Cull->bind();
+		m_shadowFBO->bindForWriting(SHADOW_REGULAR);
+		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (const auto &c in m_queuePoint)
+			c->occlusionPass();
+		m_shaderSpot_Cull->bind();
+		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (const auto &c in m_queueSpot)
+			c->occlusionPass();
+	}
+
+	// Undo state changes
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
+	glPolygonOffset(0, 0);
+	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+	glDepthMask(GL_TRUE);
+	glEnable(GL_CULL_FACE);
+	glDisable(GL_POLYGON_OFFSET_FILL);
+	
+
+	/******************** 
+		Render Shadows 
+	********************/
+	glDisable(GL_BLEND);
 	glCullFace(GL_BACK);
 
 	// Bind Geometry VAO once

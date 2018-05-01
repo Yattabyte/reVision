@@ -29,7 +29,7 @@ class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
 public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual void draw();
 	virtual const ivec2 getDrawInfo() const;
 

@@ -16,8 +16,6 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
-#include "Utilities\GL\DynamicBuffer.h"
-#include "Utilities\GL\VectorBuffer.h"
 
 using namespace glm;
 class Shadow_FBO;
@@ -35,7 +33,8 @@ class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual void occlusionPass();
 	virtual void shadowPass();
 	virtual float getImportance(const vec3 &position) const;
 	virtual void update();
@@ -61,7 +60,6 @@ protected:
 	vec3 m_lightPos;
 	int m_shadowSpots[2];
 	Camera m_camera[2];
-	DynamicBuffer m_visGeoUBO[2], m_indirectGeo[2];
 	friend class Light_Point_Creator;
 };
 

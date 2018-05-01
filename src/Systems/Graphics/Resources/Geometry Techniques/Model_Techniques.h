@@ -19,6 +19,8 @@
 
 class Geometry_FBO; 
 class Shadow_FBO;
+class Camera;
+
 
 /**
  * Renders models (animated or static props which support skeletons)
@@ -35,9 +37,13 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void updateData(const Visibility_Token & vis_token);
-	virtual void applyPrePass(const Visibility_Token & vis_token);
-	virtual void renderGeometry(const Visibility_Token & vis_token);
+	virtual void updateData(const vector<Camera*> & viewers);
+	virtual void renderGeometry(Camera & viewers);
+	virtual void occlusionCullBuffers(Camera & camera);
+
+
+	// Public methods
+	static void writeCameraBuffers(Camera & camera);
 
 
 private:
@@ -49,12 +55,10 @@ private:
 	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
 	VectorBuffer<Point_Struct> * m_lightPointSSBO;
 	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
-	DynamicBuffer m_visGeoUBO, m_indirectGeo, m_indirectGeo2;
 	Shared_Asset_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Asset_Primitive m_shapeCube;
 	bool m_cubeVAOLoaded;
 	GLuint m_cubeVAO;
-	StaticBuffer m_cubeIndirect;
 };
 
 #endif // MODEL_TECHNIQUE

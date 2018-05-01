@@ -33,9 +33,13 @@ void System_World::update(const float & deltaTime)
 	// Temporary level loading logic until a map format is chosen
 	static bool loaded = false;
 	if (!loaded) {
-		auto sponza = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		/*auto sponza = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		sponza->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
-		sponza->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2.5, 0))));
+		sponza->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2.5, 0))));*/
+
+		auto castle = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		castle->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
+		castle->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -5, -20))));
 
 		auto hills = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
@@ -47,7 +51,7 @@ void System_World::update(const float & deltaTime)
 				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 0, y * 4)));
 			}*/
 
-		auto ref1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
+		/*auto ref1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
 		ref1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-12, -2, 0), quat(1, 0, 0, 0), vec3(4.0F))));
 		ref1->receiveMessage(ECSmessage(SET_REFLECTOR_RADIUS, 2.0f));
 		auto idref2 = m_entityFactory.createEntity("Reflector");
@@ -88,7 +92,7 @@ void System_World::update(const float & deltaTime)
 				spot->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25))); 
 				spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0, 0, 1))));
 			}
-		}
+		}*/
 
 		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
@@ -100,10 +104,10 @@ void System_World::update(const float & deltaTime)
 		*/
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.75, 0.75, 0.9)));
-		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 1.0f)); // OLD INTENSITY WAS 8.0
+		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f)); // OLD INTENSITY WAS 8.0
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));
 		
-		auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		/*auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		model1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, -10))));
 		model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 0));
@@ -123,7 +127,7 @@ void System_World::update(const float & deltaTime)
 		auto wall = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		wall->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
 		wall->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(100, -7.5, 20))));
+		wall->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(100, -7.5, 20))));*/
 
 		
 
@@ -177,15 +181,13 @@ void System_World::calcVisibility(Camera & camera)
 	const auto camBuffer = camera.getCameraBuffer();
 	const float &radius = camBuffer.FarPlane;
 	const vec3 &eyePos = camBuffer.EyePosition;
-	const mat4 &camPMatrix = camBuffer.pMatrix;
-	const mat4 &camVMatrix = camBuffer.vMatrix;
 	Visibility_Token vis_token;
 
 	for each (const auto &type in vector<const char *>{ "Anim_Model", "Light_Directional", "Light_Spot", "Light_Point", "Reflector" }) {
 		vector<Component*> visible_components;
 		
 		for each (auto component in getSpecificComponents<Component>(type))
-			if (component->isVisible(radius, eyePos, camPMatrix, camVMatrix))
+			if (component->isVisible(radius, eyePos))
 				visible_components.push_back(component);
 
 		vis_token.insertType(type);

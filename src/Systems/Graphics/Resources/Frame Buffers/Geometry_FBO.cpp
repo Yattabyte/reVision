@@ -155,13 +155,14 @@ void Geometry_FBO::applyAO()
 
 		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
+		glDisable(GL_BLEND);
+		//glBlendEquation(GL_FUNC_ADD);
+		//glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 
-		glBindTextureUnit(0, m_textures[GBUFFER_TEXTURE_TYPE_IMAGE]);
 		glBindTextureUnit(1, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
 		glBindTextureUnit(2, m_noiseID);
+		glBindTextureUnit(3, m_depth_stencil);
 
 		if (m_vaoLoaded) {
 			m_shaderSSAO->bind();
@@ -172,6 +173,7 @@ void Geometry_FBO::applyAO()
 
 		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
 
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);
 		glBlendFunc(GL_ONE, GL_ZERO);

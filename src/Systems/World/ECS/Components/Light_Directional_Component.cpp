@@ -12,7 +12,7 @@ Light_Directional_Component::~Light_Directional_Component()
 {
 	for (int x = 0; x < NUM_CASCADES; ++x)
 		m_shadowMapper->unregisterShadowCaster(SHADOW_LARGE, m_shadowSpots[x]);
-	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);	
+	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
 Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
@@ -38,8 +38,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 		uboData->Shadow_Spot[x] = m_shadowSpots[x];
 	}
 		
-	if (m_enginePackage->findSubSystem("World"))
-		m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
+	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
 }
 
 void Light_Directional_Component::receiveMessage(const ECSmessage &message)
@@ -83,21 +82,40 @@ void Light_Directional_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-bool Light_Directional_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+bool Light_Directional_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	// Directional lights are infinite as they simulate the sun.
 	return true;
+}
+
+void Light_Directional_Component::occlusionPass()
+{
+	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
+	if (size) {
+		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
+		m_camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		glUniform1i(0, getBufferIndex());
+		for (int x = 0; x < 4; ++x) {
+			glUniform1i(1, x);
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+		}
+	}
 }
 
 void Light_Directional_Component::shadowPass()
 {
 	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (size) {
+		// Clear out the shadows
+		for (int x = 0; x < NUM_CASCADES; ++x)
+			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
+
 		glUniform1i(0, getBufferIndex());
 
-		// Draw render lists
-		m_visGeoUBO.bindBufferBase(GL_UNIFORM_BUFFER, 3);
-		m_indirectGeo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		// Draw render lists		
+		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
+		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		for (int x = 0; x < 4; ++x) {
 			glUniform1i(1, x);
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
@@ -112,36 +130,13 @@ float Light_Directional_Component::getImportance(const vec3 & position) const
 	return 1.0f;
 }
 
-#include "Systems\World\ECS\Components\Anim_Model_Component.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 void Light_Directional_Component::update()
 {
 	calculateCascades();
 
-	// Update render list
-	const Visibility_Token vis_token = m_camera.getVisibilityToken();
-	const size_t size = vis_token.specificSize("Anim_Model");
-	if (size) {
-		// Clear out the shadows which we will update next shadow pass
-		for (int x = 0; x < NUM_CASCADES; ++x)
-			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
-		struct DrawData {
-			GLuint count;
-			GLuint instanceCount = 1;
-			GLuint first;
-			GLuint baseInstance = 0;
-			DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
-		};
-		vector<ivec4> geoArray(size);
-		vector<DrawData> drawData(size);
-		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count] = ivec4(component->getBufferIndex());
-			const ivec2 drawInfo = component->getDrawInfo();
-			drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
-		}
-		m_visGeoUBO.write(0, sizeof(ivec4)*geoArray.size(), geoArray.data());
-		m_indirectGeo.write(0, sizeof(DrawData) * size, drawData.data());
-	}
+	// Update render lists
+	Model_Technique::writeCameraBuffers(m_camera);
 }
 
 void Light_Directional_Component::calculateCascades()
@@ -149,6 +144,8 @@ void Light_Directional_Component::calculateCascades()
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer(); // returns a copy, no need to mutex
 	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
+	m_camera.setPosition(cameraBuffer.EyePosition);
+	m_camera.setFarPlane(cameraBuffer.FarPlane);
 
 	const vec2 &size = cameraBuffer.Dimensions;
 	float ar = size.x / size.y;

@@ -45,12 +45,24 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		// Generate User SSBO
 		
 		Renderer_Struct attribs;
-		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {setSSAO(f); });
-		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {setSSAOSamples(f); });
-		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {setSSAOStrength(f); });
-		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {setSSAORadius(f); });		
-		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {m_renderSize = ivec2(f, m_renderSize.y); });
-		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {m_renderSize = ivec2(m_renderSize.x, f); });
+		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
+			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 3), sizeof(int), &f);
+		});
+		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {
+			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 2), sizeof(int), &f);
+		});
+		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {
+			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int)), sizeof(int), &f);
+		});
+		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {
+			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE), sizeof(float), &f);
+		});		
+		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+			m_renderSize = ivec2(f, m_renderSize.y); 
+		});
+		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+			m_renderSize = ivec2(m_renderSize.x, f); 
+		});
 		m_userBuffer = StaticBuffer(sizeof(Renderer_Struct), &attribs);
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		generateKernal();
@@ -90,33 +102,12 @@ void System_Graphics::update(const float & deltaTime)
 		send2GPU(vis_token);
 		updateOnGPU(vis_token);
 		renderFrame(vis_token);
-		
+
 		m_reflectionFBO.end();
 		m_lightingFBO.end();
 		m_geometryFBO.end();
 		Asset_Shader::Release();
-
 	}
-}
-
-void System_Graphics::setSSAO(const bool & ssao)
-{
-	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 3), sizeof(int), &ssao);
-}
-
-void System_Graphics::setSSAOSamples(const int & samples)
-{
-	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 2), sizeof(int), &samples);
-}
-
-void System_Graphics::setSSAOStrength(const int & strength)
-{
-	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int)), sizeof(int), &strength);
-}
-
-void System_Graphics::setSSAORadius(const float & radius)
-{
-	m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE), sizeof(float), &radius);
 }
 
 void System_Graphics::generateKernal()
@@ -144,10 +135,8 @@ void System_Graphics::generateKernal()
 
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)
 {
-	/* Update and bind prerequisite data */
 	// Geometry Data
-	for each (auto *tech in m_geometryTechs)
-		tech->updateData(vis_token);
+	Model_Technique::writeCameraBuffers(m_enginePackage->m_Camera);
 	// Lighting Data
 	for each (auto *tech in m_lightingTechs)
 		tech->updateData(vis_token);
@@ -158,7 +147,7 @@ void System_Graphics::updateOnGPU(const Visibility_Token & vis_token)
 	// Update Render Lists
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	for each (auto *tech in m_geometryTechs)
-		tech->applyPrePass(vis_token);
+		tech->occlusionCullBuffers(m_enginePackage->m_Camera);
 	// Shadows & Global Illumination
 	for each (auto *tech in m_lightingTechs)
 		tech->applyPrePass(vis_token);
@@ -173,7 +162,7 @@ void System_Graphics::renderFrame(const Visibility_Token & vis_token)
 
 	// Geometry
 	for each (auto *tech in m_geometryTechs)
-		tech->renderGeometry(vis_token);
+		tech->renderGeometry(m_enginePackage->m_Camera);
 
 	// Lighting
 	m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES

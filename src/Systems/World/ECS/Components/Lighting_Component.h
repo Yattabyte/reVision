@@ -24,6 +24,8 @@ class DT_ENGINE_API Lighting_Component : protected Component
 {
 public:
 	// Public Methods
+	/** Renders the light, performing occlusion calculations only. */
+	virtual void occlusionPass() {};
 	/** Renders the light, performing shadow calculations only. */
 	virtual void shadowPass() {};	
 	/** Generates an 'importance' value for this light.

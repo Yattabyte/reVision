@@ -50,7 +50,7 @@ void Reflector_Component::receiveMessage(const ECSmessage & message)
 	}
 }
 
-bool Reflector_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 & VMatrix) const
+bool Reflector_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_position, eyePosition);
 	return radius + glm::length(m_scale) > distance;

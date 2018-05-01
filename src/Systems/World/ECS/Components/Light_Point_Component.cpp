@@ -14,7 +14,7 @@ Light_Point_Component::~Light_Point_Component()
 	m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_shadowSpots[0]);
 	m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_shadowSpots[1]);
 	m_world->unregisterViewer(&m_camera[0]);
-	m_world->unregisterViewer(&m_camera[1]);	
+	m_world->unregisterViewer(&m_camera[1]);
 }
 
 Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
@@ -111,10 +111,24 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-bool Light_Point_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+bool Light_Point_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
+}
+
+void Light_Point_Component::occlusionPass()
+{
+	glUniform1i(0, getBufferIndex());
+	for (int x = 0; x < 2; ++x) {
+		const size_t size = m_camera[x].getVisibilityToken().specificSize("Anim_Model");
+		if (size) {
+			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
+			m_camera[x].getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_camera[x].getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+		}
+	}
 }
 
 void Light_Point_Component::shadowPass()
@@ -124,11 +138,14 @@ void Light_Point_Component::shadowPass()
 	for (int x = 0; x < 2; ++x) {
 		const size_t size = m_camera[x].getVisibilityToken().specificSize("Anim_Model");
 		if (size) {
+			// Clear out the shadows
+			m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[x]);
+
 			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
 
 			// Draw render lists
-			m_visGeoUBO[x].bindBufferBase(GL_UNIFORM_BUFFER, 3);
-			m_indirectGeo[x].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_camera[x].getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_camera[x].getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER); // make this 1 after culling implemented
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
 			m_shadowUpdateTime = glfwGetTime();
@@ -141,38 +158,15 @@ float Light_Point_Component::getImportance(const vec3 & position) const
 	return m_radius / glm::length(position - m_lightPos);
 }
 
-#include "Systems\World\ECS\Components\Anim_Model_Component.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 void Light_Point_Component::update()
 {
 	// Update cameras to face the right direction
-	const vec2 &size = m_shadowMapper->getSize(SHADOW_REGULAR);
 	for (int x = 0; x < 2; ++x) {
 		m_camera[x].setPosition(m_lightPos);		
-		m_camera[x].update();
+		m_camera[x].update(); 
 
 		// Update render list
-		const Visibility_Token vis_token = m_camera[x].getVisibilityToken();
-		const size_t size = vis_token.specificSize("Anim_Model");
-		if (size) {
-			// Clear out the shadows which we will update next shadow pass
-			m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[x]);
-			struct DrawData {
-				GLuint count;
-				GLuint instanceCount = 1;
-				GLuint first;
-				GLuint baseInstance = 0;
-				DrawData(const GLuint & c = 0, const GLuint & f = 0) : count(c), first(f) {}
-			};
-			vector<ivec4> geoArray(size);
-			vector<DrawData> drawData(size);
-			unsigned int count = 0;
-			for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-				geoArray[count] = ivec4(component->getBufferIndex());
-				const ivec2 drawInfo = component->getDrawInfo();
-				drawData[count++] = DrawData(drawInfo.y, drawInfo.x);
-			}
-			m_visGeoUBO[x].write(0, sizeof(ivec4)*geoArray.size(), geoArray.data());
-			m_indirectGeo[x].write(0, sizeof(DrawData) * size, drawData.data());
-		}
+		Model_Technique::writeCameraBuffers(m_camera[x]);
 	}
 }

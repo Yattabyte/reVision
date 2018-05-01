@@ -11,6 +11,8 @@
 
 #include "Systems\World\Visibility_Token.h"
 
+class Camera;
+
 
 /**
  * A base class for geometry rendering techniques
@@ -26,11 +28,11 @@ public:
 
 	// Public Interface Methods
 	/** Pepare this technique ahead of time. */
-	virtual void updateData(const Visibility_Token & vis_token) = 0;
+	virtual void updateData(const vector<Camera*> & viewers) = 0;
 	/** Apply occlusion-culling rendering passes. */
-	virtual void applyPrePass(const Visibility_Token & vis_token) = 0;
+	virtual void occlusionCullBuffers(Camera & camera) = 0;
 	/** Render geometry to the framebuffer using this technique. */
-	virtual void renderGeometry(const Visibility_Token & vis_token) = 0;
+	virtual void renderGeometry(Camera & camera) = 0;
 };
 
 #endif // GEOMETRY_TECHNIQUE

@@ -17,8 +17,6 @@
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
-#include "Utilities\GL\DynamicBuffer.h"
-#include "Utilities\GL\VectorBuffer.h"
 
 using namespace glm;
 class Light_Directional_Creator;
@@ -35,7 +33,8 @@ class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual void occlusionPass();
 	virtual void shadowPass();
 	virtual float getImportance(const vec3 &position) const;
 	virtual	void update();
@@ -61,7 +60,6 @@ protected:
 	float m_cascadeEnd[5];
 	int m_shadowSpots[NUM_CASCADES];
 	Camera m_camera;
-	DynamicBuffer m_visGeoUBO, m_indirectGeo;
 	friend class Light_Directional_Creator;
 };
 

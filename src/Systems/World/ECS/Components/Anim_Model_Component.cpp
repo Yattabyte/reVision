@@ -113,7 +113,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 	}
 }
 
-bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const
+bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	if (m_model) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);

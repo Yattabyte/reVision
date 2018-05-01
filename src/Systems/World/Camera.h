@@ -11,6 +11,7 @@
 
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 #include "glm\gtc\quaternion.hpp"
@@ -122,9 +123,15 @@ public:
 	/** Retrieve whether or not this camera is active.
 	 * @return				true if this camera has rendering enabled, false otherwise */
 	bool shouldRender() const { return render_enabled; }
-	/** Retrieves the mutex associated with data changes. 
+	/** Retrieve the mutex associated with data changes. 
 	 * @return				the data mutex */
 	shared_mutex & getDataMutex() const { return data_mutex; };
+	/** Retrieve the visible geometry index buffer which indexes into the main geometry buffer. 
+	 * @return				the visible index buffer for animated models */
+	DynamicBuffer & getVisibleIndexBuffer() { return m_visibleBuffer; }
+	/** Retrieve the indirect render buffer.
+	 * @return				the render buffer requested */
+	DynamicBuffer & getRenderBuffer() { return m_renderBuffer; }
 	/** Recalculates matrices and sends data to the GPU. */
 	void update();
 
@@ -133,6 +140,7 @@ private:
 	// Private Attributes
 	mutable shared_mutex data_mutex;
 	StaticBuffer m_buffer;
+	DynamicBuffer m_visibleBuffer, m_renderBuffer;
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
 	Visibility_Token m_vistoken;

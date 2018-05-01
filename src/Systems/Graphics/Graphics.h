@@ -22,6 +22,7 @@
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\GL\DynamicBuffer.h"
 #include <vector>
 
 class EnginePackage;
@@ -48,27 +49,12 @@ public:
 	virtual void updateThreaded(const float & deltaTime) {};
 
 
-	// Public Methods
-	/** Enable or Disable screen-space ambient occlusion.
-	 * @param	ssao		true or false */
-	void setSSAO(const bool & ssao);
-	/** Change the number of samples used in screen-space ambient occlusion. 
-	 * @param	samples		the number of samples to use */
-	void setSSAOSamples(const int & samples);
-	/** Change the strength of the screen-space ambient occlusion. 
-	 * @param	strength	the strength to use */
-	void setSSAOStrength(const int & strength);
-	/** Change the radius of the screen-space ambient occlusion.
-	 * @param	radius		the radius to use*/
-	void setSSAORadius(const float & radius);
-	
-
 	// Public Attributes
 	// Frame Buffers
-	Geometry_FBO m_geometryFBO;
-	Lighting_FBO m_lightingFBO;
-	Shadow_FBO m_shadowFBO;
-	Reflection_FBO m_reflectionFBO;
+	Geometry_FBO	m_geometryFBO;
+	Lighting_FBO	m_lightingFBO;
+	Shadow_FBO		m_shadowFBO;
+	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
 	VectorBuffer<Geometry_Struct>		m_geometrySSBO;
 	VectorBuffer<Directional_Struct>	m_lightDirSSBO;
@@ -92,14 +78,14 @@ private:
 
 
 	// Private Attributes
-	ivec2 m_renderSize;
-	VisualFX m_visualFX;
-	StaticBuffer m_userBuffer;
+	ivec2			m_renderSize;
+	VisualFX		m_visualFX;
+	StaticBuffer	m_userBuffer;
 
 	// Rendering Techniques
 	vector<Geometry_Technique*> m_geometryTechs;
 	vector<Lighting_Technique*> m_lightingTechs;
-	vector<FX_Technique*> m_fxTechs;
+	vector<FX_Technique*>		m_fxTechs;
 };
 
 #endif // SYSTEM_GRAPHICS

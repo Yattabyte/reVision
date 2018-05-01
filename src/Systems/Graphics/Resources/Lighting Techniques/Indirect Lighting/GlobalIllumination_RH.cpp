@@ -5,6 +5,7 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\World.h"
+#include "Systems\Graphics\Graphics.h"
 #include "Utilities\EnginePackage.h"
 #include "Managers\Message_Manager.h"
 #include <algorithm>

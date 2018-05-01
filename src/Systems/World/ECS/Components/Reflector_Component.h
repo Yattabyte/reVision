@@ -27,7 +27,7 @@ class DT_ENGINE_API Reflector_Component : protected Component
 public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition, const mat4 & PMatrix, const mat4 &VMatrix) const;
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 
 
 	// Public Methods
