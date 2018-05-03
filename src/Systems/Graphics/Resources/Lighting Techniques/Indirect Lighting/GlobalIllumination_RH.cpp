@@ -23,12 +23,20 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
-GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO)
+GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO * shadowFBO, VectorBuffer<Directional_Struct>* lightDirSSBO, VectorBuffer<Point_Struct>* lightPointSSBO, VectorBuffer<Spot_Struct>* lightSpotSSBO)
 {
 	m_enginePackage = enginePackage;
+
+	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_shadowFBO = shadowFBO;
+
+	// SSBO's
+	m_lightDirSSBO = lightDirSSBO;
+	m_lightPointSSBO = lightPointSSBO;
+	m_lightSpotSSBO = lightSpotSSBO;
+
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;
 	m_noise32 = 0;
@@ -95,7 +103,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB32F, m_resolution, m_resolution, m_resolution, 0, GL_RGB, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB16F, m_resolution, m_resolution, m_resolution, 0, GL_RGB, GL_FLOAT, 0);
 			glNamedFramebufferTexture(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
 		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
@@ -118,7 +126,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
 		data[x] = vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 	glCreateTextures(GL_TEXTURE_3D, 1, &m_noise32);
-	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB32F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
+	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
@@ -227,23 +235,26 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 	// Bounce directional lights
 	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
 	if (vis_token.specificSize("Light_Directional")) {
-		m_Indirect_Slices_Dir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_shaderDirectional_Bounce->bind();
+		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		m_Indirect_Slices_Dir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
 	// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
 	if (vis_token.specificSize("Light_Point")) {
-		m_Indirect_Slices_Point.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
 		m_shaderPoint_Bounce->bind();
+		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
+		m_Indirect_Slices_Point.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
 	// Bounce spot lights
 	if (vis_token.specificSize("Light_Spot")) {
-		m_Indirect_Slices_Spot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
 		m_shaderSpot_Bounce->bind();
+		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
+		m_Indirect_Slices_Spot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
 
@@ -269,10 +280,10 @@ void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token
 		m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		m_geometryFBO->bindForReading();
 		m_lightingFBO->bindForWriting();
-		bindNoise(4);
+		bindNoise(5);
 
 		m_shaderGIReconstruct->bind();
-		bindForReading(1, 5);
+		bindForReading(1, 6);
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);

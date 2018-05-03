@@ -94,8 +94,8 @@ void Light_Directional_Component::occlusionPass()
 	if (size) {
 		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
 		m_camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glUniform1i(0, getBufferIndex());
 		for (int x = 0; x < 4; ++x) {
+			glUniform1i(0, m_shadowSpots[x]);
 			glUniform1i(1, x);
 			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
 		}
@@ -152,7 +152,7 @@ void Light_Directional_Component::calculateCascades()
 	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
 	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
 	const float shadowSize = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_LARGE);
-	uboData->ShadowSize = shadowSize;
+	uboData->ShadowSize_Recip = 1.0f / shadowSize;
 
 	for (int i = 0; i < NUM_CASCADES; i++) {
 		float points[4] = { m_cascadeEnd[i] * tanHalfHFOV,
@@ -189,7 +189,8 @@ void Light_Directional_Component::calculateCascades()
 
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 		mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
-		uboData->lightP[i] = pMatrix;
+		//uboData->lightP[i] = m_mMatrix * pMatrix;
+		uboData->lightVP[i] = pMatrix * m_mMatrix;
 
 		if (i == 0)
 			m_camera.setMatrices(pMatrix, mat4(1.0f));

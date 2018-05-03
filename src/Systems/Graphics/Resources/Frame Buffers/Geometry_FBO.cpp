@@ -59,7 +59,7 @@ void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
 		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
-			glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			AssignTextureProperties(m_textures[x]);
 			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0 + x, m_textures[x], 0);
 		}
@@ -78,7 +78,7 @@ void Geometry_FBO::initialize_noise()
 	if (!m_Initialized) {
 		glCreateTextures(GL_TEXTURE_2D, 2, m_texturesGB);
 		for (int x = 0; x < 2; ++x) {
-			glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 1, GL_RGBA32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 1, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 			AssignTextureProperties(m_texturesGB[x]);
 		}
 
@@ -119,7 +119,8 @@ void Geometry_FBO::bindForWriting()
 void Geometry_FBO::bindForReading()
 {
 	for (unsigned int i = 0; i < GBUFFER_NUM_TEXTURES; i++) 
-		glBindTextureUnit(i, m_textures[i]);	
+		glBindTextureUnit(i, m_textures[i]);
+	glBindTextureUnit(3, m_depth_stencil);
 }
 
 void Geometry_FBO::resize(const ivec2 & size)
@@ -128,7 +129,7 @@ void Geometry_FBO::resize(const ivec2 & size)
 
 	// Main textures
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
-		glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_textures[x], GL_TEXTURE_2D, 0, GL_RGBA16F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0 + x, m_textures[x], 0);
 	}
 
@@ -138,7 +139,7 @@ void Geometry_FBO::resize(const ivec2 & size)
 	
 	// Gaussian blur textures
 	for (int x = 0; x < 2; ++x) 
-		glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGBA32F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);	
+		glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGBA16F, size.x, size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 }
 
 void Geometry_FBO::end()
@@ -151,13 +152,14 @@ void Geometry_FBO::applyAO()
 {
 	if (m_shapeQuad->existsYet() && m_shaderSSAO->existsYet()) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
 
-		glDepthMask(GL_FALSE);
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		//glBlendEquation(GL_FUNC_ADD);
 		//glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
+		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 
 		glBindTextureUnit(1, m_textures[GBUFFER_TEXTURE_TYPE_VIEWNORMAL]);
@@ -171,8 +173,9 @@ void Geometry_FBO::applyAO()
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 
-		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
+		//m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
 
+		glDepthMask(GL_TRUE);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
 		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);

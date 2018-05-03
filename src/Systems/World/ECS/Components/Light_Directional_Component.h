@@ -56,9 +56,9 @@ protected:
 	// Protected Attributes
 	EnginePackage *m_enginePackage;
 	Shadow_FBO *m_shadowMapper;
-	mat4 m_mMatrix;
 	float m_cascadeEnd[5];
 	int m_shadowSpots[NUM_CASCADES];
+	mat4 m_mMatrix;
 	Camera m_camera;
 	friend class Light_Directional_Creator;
 };

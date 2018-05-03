@@ -12,11 +12,13 @@
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\World\Camera.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
+#include "Utilities\GL\VectorBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO;
@@ -36,7 +38,7 @@ public:
 	/** Virtual Destructor. */
 	~GlobalIllumination_RH();
 	/** Constructor. */
-	GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO);
+	GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO);
 
 
 	// Interface Implementations.
@@ -60,10 +62,15 @@ private:
 
 
 	// Private Attributes
+	EnginePackage * m_enginePackage;
+	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Shadow_FBO * m_shadowFBO;
-	EnginePackage * m_enginePackage;
+	// Shared SSBO's
+	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
+	VectorBuffer<Point_Struct> * m_lightPointSSBO;
+	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 	Shared_Asset_Shader m_shaderDirectional_Bounce, m_shaderPoint_Bounce, m_shaderSpot_Bounce, m_shaderGISecondBounce, m_shaderGIReconstruct;
 	Shared_Asset_Primitive m_shapeQuad;
 	bool m_vaoLoaded;

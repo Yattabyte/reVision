@@ -42,7 +42,7 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	Point_Struct * uboData = &reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot1 = m_shadowSpots[0];
 	uboData->Shadow_Spot2 = m_shadowSpots[1];
-	uboData->ShadowSize = m_shadowMapper->getSize(SHADOW_REGULAR).x;
+	uboData->ShadowSize_Recip = 1.0f / m_shadowMapper->getSize(SHADOW_REGULAR).x;
 }
 
 void Light_Point_Component::receiveMessage(const ECSmessage &message)

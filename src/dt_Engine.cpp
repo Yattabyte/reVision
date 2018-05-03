@@ -101,7 +101,7 @@ bool Initialize_Sharing()
 		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
-		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
+		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DT_DESIRED_OGL_VER_MAJOR);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DT_DESIRED_OGL_VER_MINOR);
 		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
@@ -165,7 +165,7 @@ bool dt_Engine::initialize()
 		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
-		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
+		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DT_DESIRED_OGL_VER_MAJOR);
 		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DT_DESIRED_OGL_VER_MINOR);
 		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
@@ -202,6 +202,7 @@ bool dt_Engine::initialize()
 				
 		glfwSetWindowUserPointer(m_package->m_Context_Rendering, m_package);
 		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_Windowresize);		
+		glfwSwapInterval(0);
 
 		Material_Manager::Start_Up();
 		Asset_Manager::Start_Up();

@@ -18,7 +18,7 @@ System_Graphics::~System_Graphics()
 {
 	if (!m_Initialized) {
 		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_SAMPLES, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_QUALITY, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
@@ -46,16 +46,16 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		
 		Renderer_Struct attribs;
 		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
-			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 3), sizeof(int), &f);
+			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao), sizeof(int), &f);
 		});
-		attribs.m_aa_samples = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_SAMPLES, this, [&](const float &f) {
-			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int) * 2), sizeof(int), &f);
+		attribs.m_aa_quality = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) {
+			m_userBuffer.write(offsetof(Renderer_Struct, m_aa_quality), sizeof(int), &f);
 		});
 		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {
-			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE) + (sizeof(int)), sizeof(int), &f);
+			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao_strength), sizeof(int), &f);
 		});
 		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {
-			m_userBuffer.write((sizeof(vec4) * MAX_KERNEL_SIZE), sizeof(float), &f);
+			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao_radius), sizeof(float), &f);
 		});		
 		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = ivec2(f, m_renderSize.y); 
@@ -80,7 +80,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		// Initiate lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
 		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
-		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO)); 
+		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightDirSSBO, &m_lightPointSSBO, &m_lightSpotSSBO));
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
 		// Initiate effects techniques
@@ -112,7 +112,7 @@ void System_Graphics::update(const float & deltaTime)
 
 void System_Graphics::generateKernal()
 {
-	vec4 kernel[MAX_KERNEL_SIZE];
+	vec4 new_kernel[MAX_KERNEL_SIZE];
 	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
@@ -126,11 +126,11 @@ void System_Graphics::generateKernal()
 		GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
 		scale = 0.1f + (scale*scale) * (1.0f - 0.1f);
 		sample *= scale;
-		kernel[t] = vec4(sample, 1);
+		new_kernel[t] = vec4(sample, 1);
 	}
 
 	// Write to buffer, kernel is first part of this buffer
-	m_userBuffer.write(0, sizeof(vec4)*MAX_KERNEL_SIZE, kernel);
+	m_userBuffer.write(offsetof(Renderer_Struct, kernel[0]), sizeof(vec4)*MAX_KERNEL_SIZE, new_kernel);
 }
 
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)

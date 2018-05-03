@@ -67,7 +67,7 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 
 	glCreateFramebuffers(1, &m_cube_fbo);
 	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_cube_tex);
-	glTextureStorage3D(m_cube_tex, 1, GL_RGB32F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
+	glTextureStorage3D(m_cube_tex, 1, GL_RGB16F, 512, 512, 6 * 6 /*6 sides and 6 cubemaps*/);
 	glTextureParameteri(m_cube_tex, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTextureParameteri(m_cube_tex, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(m_cube_tex, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -213,9 +213,9 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	// Bind starting state
 	m_reflectionFBO->bindForWriting();
 	m_geometryFBO->bindForReading();
-	glBindTextureUnit(3, m_cube_tex); // Persistent cubemap
-	m_brdfMap->bind(4); // BRDF LUT
-	glBindTextureUnit(5, m_texture); // Blurred light MIP-chain
+	glBindTextureUnit(4, m_cube_tex); // Persistent cubemap
+	m_brdfMap->bind(5); // BRDF LUT
+	glBindTextureUnit(6, m_texture); // Blurred light MIP-chain
 	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
 
 	// Apply persistent cubemap
@@ -262,7 +262,7 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	// Read reflection colors and correct them based on surface properties
 	m_shaderFinal->bind();
 	m_lightingFBO->bindForWriting(); // Write back to lighting buffer
-	m_reflectionFBO->bindForReading(3); // Read from final reflections
+	m_reflectionFBO->bindForReading(4); // Read from final reflections
 	glBlendFunc(GL_ONE, GL_ONE);
 	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);

@@ -32,7 +32,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	// Write data to our index spot
 	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot = m_shadowSpot;
-	uboData->ShadowSize = m_shadowMapper->getSize(SHADOW_REGULAR).x;
+	uboData->ShadowSize_Recip = 1.0f / m_shadowMapper->getSize(SHADOW_REGULAR).x;
 	m_camera.setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
 }
 

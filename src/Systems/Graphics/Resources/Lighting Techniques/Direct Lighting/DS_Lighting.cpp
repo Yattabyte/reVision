@@ -203,16 +203,16 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 	glDepthMask(GL_FALSE);
 	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 	glPolygonOffset(-1, -1);
-
-
+	// Draw bounding boxes for light
 	if (m_cubeVAOLoaded) {
 		glBindVertexArray(m_cubeVAO);
-		// Draw bounding boxes for each camera
 		m_shaderDirectional_Cull->bind();
 		m_shadowFBO->bindForWriting(SHADOW_LARGE);
-		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-		for each (const auto &c in m_queueDir)
+		for each (const auto &c in m_queueDir) {
+			// Bind only the matrices
+			m_lightDirSSBO->bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 6, offsetof(Directional_Struct, lightVP) * c->getBufferIndex(), sizeof(mat4x4) * NUM_CASCADES);
 			c->occlusionPass();
+		}
 		m_shaderPoint_Cull->bind();
 		m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
@@ -223,7 +223,6 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		for each (const auto &c in m_queueSpot)
 			c->occlusionPass();
 	}
-
 	// Undo state changes
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
 	glPolygonOffset(0, 0);
@@ -275,7 +274,7 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	// Directional Lighting
 	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet() && m_quadVAOLoaded) {
 		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);	// SSBO light attribute array (directional)
-		m_shadowFBO->bindForReading(SHADOW_LARGE, 3);					// Shadow maps (large maps)
+		m_shadowFBO->bindForReading(SHADOW_LARGE, 4);					// Shadow maps (large maps)
 		m_shaderDirectional->bind();									// Shader (directional)
 		m_indirectDir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
 		glBindVertexArray(m_quadVAO);									// Quad VAO
@@ -285,7 +284,7 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	// Setup common state for next 2 lights
 	glEnable(GL_STENCIL_TEST);
 	glCullFace(GL_FRONT);
-	m_shadowFBO->bindForReading(SHADOW_REGULAR, 3);
+	m_shadowFBO->bindForReading(SHADOW_REGULAR, 4);
 
 	// Point Lighting
 	if (vis_token.find("Light_Point") && m_shaderPoint->existsYet() && m_shapeSphere->existsYet() && m_sphereVAOLoaded) {

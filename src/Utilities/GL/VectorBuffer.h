@@ -70,7 +70,15 @@ public:
 	 * @param	index	the binding point index to use */
 	void bindBufferBase(const GLenum & target, const GLuint & index) {
 		glBindBufferBase(target, index, m_bufferID);
-	}	
+	}
+	/** Bind this buffer to a particular binding point for shaders, within a given range.
+	 * @param	target	the target type of this buffer
+	 * @param	index	the binding point index to use
+	 * @param	offset	the offset to start the binding at
+	 * @param	size	the size of the buffer to bind */
+	void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) {
+		glBindBufferRange(target, index, m_bufferID, offset, size );
+	}
 	/** Add an element to this buffers list. 
 	 * @param	uboIndex	the element to add to this list
 	 * @return	container holding the current buffer pointer (underlying pointer subject to change) */

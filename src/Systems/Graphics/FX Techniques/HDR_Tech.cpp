@@ -32,7 +32,7 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
-	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -74,6 +74,6 @@ void HDR_Tech::resize(const vec2 & size)
 {
 	m_renderSize = size;
 
-	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB32F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 }

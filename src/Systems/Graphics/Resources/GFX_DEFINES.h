@@ -21,10 +21,10 @@ using namespace glm;
 /** Graphics class uses this for viewport data. */
 struct Renderer_Struct {
 	#define MAX_KERNEL_SIZE 128
-	vec4 kernel[MAX_KERNEL_SIZE];
 	float m_ssao_radius;
-	int m_ssao_strength, m_aa_samples;
+	int m_ssao_strength, m_aa_quality;
 	int m_ssao;
+	vec4 kernel[MAX_KERNEL_SIZE];
 };
 
 /** Animated models uses this for transform + bone data. */
@@ -43,7 +43,7 @@ struct Directional_Struct {
 	mat4 lightV = mat4(1.0f);
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightDirection = vec3(0, -1, 0); float padding2;
-	float ShadowSize = 0;
+	float ShadowSize_Recip = 0;
 	float LightIntensity = 0;
 	int CascadeIndex = 0;
 	int Use_Shadows = 1;
@@ -51,7 +51,7 @@ struct Directional_Struct {
 	// These need to be padded to 16 bytes each, because of layout std140 rules for array elements
 	int Shadow_Spot[NUM_CASCADES]; // first element used only
 	float CascadeEndClipSpace[NUM_CASCADES]; // first element used only
-	mat4 lightP[NUM_CASCADES]; // these are good already
+	mat4 lightVP[NUM_CASCADES]; // these are good already
 };
 
 /** Point lights use this for their lighting + transform data. */
@@ -61,7 +61,7 @@ struct Point_Struct {
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightPosition = vec3(0.0f); float padding2;
 	float p_far = 0;
-	float ShadowSize = 0;
+	float ShadowSize_Recip = 0;
 	float LightIntensity = 1;
 	float LightRadius = 1;
 	int Shadow_Spot1 = 0;
@@ -78,7 +78,7 @@ struct Spot_Struct {
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightPosition = vec3(0.0f); float padding2;
 	vec3 LightDirection = vec3(0, -1, 0); float padding3;
-	float ShadowSize = 0;
+	float ShadowSize_Recip = 0;
 	float LightIntensity = 0;
 	float LightRadius = 0;
 	float LightCutoff = 0;
