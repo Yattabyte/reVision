@@ -78,7 +78,7 @@ void Geometry_FBO::initialize_noise()
 	if (!m_Initialized) {
 		glCreateTextures(GL_TEXTURE_2D, 2, m_texturesGB);
 		for (int x = 0; x < 2; ++x) {
-			glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 1, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage2DEXT(m_texturesGB[x], GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, NULL);
 			AssignTextureProperties(m_texturesGB[x]);
 		}
 
@@ -150,7 +150,7 @@ void Geometry_FBO::end()
 
 void Geometry_FBO::applyAO()
 {
-	if (m_shapeQuad->existsYet() && m_shaderSSAO->existsYet()) {
+	if (m_shaderSSAO->existsYet() && m_shapeQuad->existsYet() && m_vaoLoaded) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
@@ -166,20 +166,18 @@ void Geometry_FBO::applyAO()
 		glBindTextureUnit(2, m_noiseID);
 		glBindTextureUnit(3, m_depth_stencil);
 
-		if (m_vaoLoaded) {
-			m_shaderSSAO->bind();
-			glBindVertexArray(m_quadVAO);
-			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
+		m_shaderSSAO->bind();
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
-		//m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glDisable(GL_BLEND);
+		m_visualFX->applyGaussianBlur_Alpha(m_textures[GBUFFER_TEXTURE_TYPE_SPECULAR], m_texturesGB, m_renderSize, 5);
 
 		glDepthMask(GL_TRUE);
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glEnable(GL_DEPTH_TEST);
-		glBlendFuncSeparate(GL_ONE, GL_ZERO, GL_ONE, GL_ZERO);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_BLEND);
 	}
 }

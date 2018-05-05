@@ -31,7 +31,7 @@ void Skybox::applyPrePass(const Visibility_Token & vis_token)
 void Skybox::applyLighting(const Visibility_Token & vis_token)
 {
 	// Proceed only when vao is ready (everything else is safe)
-	if (m_vaoLoaded) {
+	if (m_vaoLoaded && m_shaderSky->existsYet()) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);

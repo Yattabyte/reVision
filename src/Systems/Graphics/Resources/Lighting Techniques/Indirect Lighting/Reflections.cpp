@@ -150,37 +150,41 @@ void Reflections::blurLight()
 	glDisable(GL_BLEND);
 
 	// Copy lighting texture to one with a MIP chain
-	m_shaderCopy->bind();
-	m_lightingFBO->bindForReading();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glClear(GL_COLOR_BUFFER_BIT);
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_shaderCopy->existsYet()) {
+		m_shaderCopy->bind();
+		m_lightingFBO->bindForReading();
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glClear(GL_COLOR_BUFFER_BIT);
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
 	// Blur MIP chain, reading from 1 MIP level and writing into next
-	m_shaderBlur->bind();
-	glBindTextureUnit(0, m_texture);
-	for (int horizontal = 0; horizontal < 2; ++horizontal) {
-		Asset_Shader::Set_Uniform(0, horizontal);
-		ivec2 read_size = m_renderSize;
-		for (int x = 1; x < 6; ++x) {
-			// Ensure we are reading from MIP level x - 1
-			Asset_Shader::Set_Uniform(1, read_size);
-			glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, x - 1);
-			glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, x - 1);
-			// Ensure we are writing to MIP level x
-			ivec2 write_size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, x);
+	if (m_shaderBlur->existsYet()) {
+		m_shaderBlur->bind();
+		glBindTextureUnit(0, m_texture);
+		for (int horizontal = 0; horizontal < 2; ++horizontal) {
+			Asset_Shader::Set_Uniform(0, horizontal);
+			ivec2 read_size = m_renderSize;
+			for (int x = 1; x < 6; ++x) {
+				// Ensure we are reading from MIP level x - 1
+				Asset_Shader::Set_Uniform(1, read_size);
+				glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, x - 1);
+				glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, x - 1);
+				// Ensure we are writing to MIP level x
+				ivec2 write_size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
+				glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, x);
 
-			glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-			read_size = write_size;
+				glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
+				glDrawArraysIndirect(GL_TRIANGLES, 0);
+				read_size = write_size;
+			}
+			// Blend second pass
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_ONE, GL_ONE);
 		}
-		// Blend second pass
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
 	}
 
 	// Restore to default
@@ -192,20 +196,22 @@ void Reflections::blurLight()
 void Reflections::buildEnvMap()
 {
 	// Copy viewport to cubemap
-	const int quad_size = m_shapeQuad->getSize();
-	m_shaderCubeProj->bind();
-	glViewport(0, 0, 512, 512);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cube_fbo);
-	glDisable(GL_BLEND);
-	glBindTextureUnit(0, m_texture);
+	if (m_shaderCubeProj->existsYet()) {
+		const int quad_size = m_shapeQuad->getSize();
+		m_shaderCubeProj->bind();
+		glViewport(0, 0, 512, 512);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cube_fbo);
+		glDisable(GL_BLEND);
+		glBindTextureUnit(0, m_texture);
 
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-	glEnable(GL_DEPTH_TEST);
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	glEnable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
+		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glEnable(GL_BLEND);
+	}
 }
 
 void Reflections::reflectLight(const Visibility_Token & vis_token)
@@ -219,53 +225,61 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
 
 	// Apply persistent cubemap
-	m_shaderCubemap->bind();
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_shaderCubemap->existsYet()) {
+		m_shaderCubemap->bind();
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
-	// Stencil out parallax reflectors
-	m_shaderParallax->bind();
-	m_shaderParallax->Set_Uniform(0, true);
-	m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-	glEnable(GL_STENCIL_TEST);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_CULL_FACE);	
-	glClear(GL_STENCIL_BUFFER_BIT);
-	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-	glStencilFunc(GL_ALWAYS, 0, 0); // Always pass stencil test
-	glDepthMask(GL_FALSE);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glBindVertexArray(m_cubeVAO);
-	m_cubeIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
-	
-	// Fill in stenciled region
-	m_shaderParallax->Set_Uniform(0, false);
-	glDisable(GL_DEPTH_TEST);
-	glStencilFunc(GL_NOTEQUAL, 0, 0xFF); // Pass test if stencil value IS NOT 0
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (vis_token.specificSize("Reflector") && m_shaderParallax->existsYet()) {
+		// Stencil out parallax reflectors
+		m_shaderParallax->bind();
+		m_shaderParallax->Set_Uniform(0, true);
+		m_visRefUBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		glEnable(GL_STENCIL_TEST);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+		glStencilFunc(GL_ALWAYS, 0, 0); // Always pass stencil test
+		glDepthMask(GL_FALSE);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glBindVertexArray(m_cubeVAO);
+		m_cubeIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Fill in stenciled region
+		m_shaderParallax->Set_Uniform(0, false);
+		glDisable(GL_DEPTH_TEST);
+		glStencilFunc(GL_NOTEQUAL, 0, 0xFF); // Pass test if stencil value IS NOT 0
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glDisable(GL_STENCIL_TEST);
+		glEnable(GL_CULL_FACE);
+	}
 
 	// Apply SSR
-	m_shaderSSR->bind();
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_STENCIL_TEST);
-	glBindVertexArray(m_quadVAO);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_shaderSSR->existsYet()) {
+		m_shaderSSR->bind();
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
 	// Read reflection colors and correct them based on surface properties
-	m_shaderFinal->bind();
-	m_lightingFBO->bindForWriting(); // Write back to lighting buffer
-	m_reflectionFBO->bindForReading(4); // Read from final reflections
-	glBlendFunc(GL_ONE, GL_ONE);
-	m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);
+	if (m_shaderFinal->existsYet()) {
+		m_shaderFinal->bind();
+		m_lightingFBO->bindForWriting(); // Write back to lighting buffer
+		m_reflectionFBO->bindForReading(4); // Read from final reflections
+		glBlendFunc(GL_ONE, GL_ONE);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 
 	// Revert State
 	glEnable(GL_DEPTH_TEST);

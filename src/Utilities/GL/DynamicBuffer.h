@@ -26,13 +26,13 @@ public:
 			glDeleteSync(m_fence);
 	}
 	/** Default. */
-	DynamicBuffer(const GLsizeiptr & size = 0, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
+	DynamicBuffer(const GLsizeiptr & size = 64, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
 		m_maxCapacity = size;
 		m_mapFlags = mapFlags;
 		m_bufferID = 0;
 		glCreateBuffers(1, &m_bufferID);
-		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | mapFlags);
-		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, mapFlags);
+		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
+		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, m_mapFlags);
 		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Move gl object from 1 instance to another. */

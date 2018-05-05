@@ -73,9 +73,6 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
-	m_visPoints = DynamicBuffer(sizeof(GLuint) * 10, 0);
-	m_visSpots = DynamicBuffer(sizeof(GLuint) * 10, 0);
-
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	const float near_plane = m_nearPlane;
 	const float far_plane = -m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
@@ -234,7 +231,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 
 	// Bounce directional lights
 	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-	if (vis_token.specificSize("Light_Directional")) {
+	if (vis_token.specificSize("Light_Directional") && m_shaderDirectional_Bounce->existsYet()) {
 		m_shaderDirectional_Bounce->bind();
 		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		m_Indirect_Slices_Dir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -242,7 +239,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 	}
 	// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
-	if (vis_token.specificSize("Light_Point")) {
+	if (vis_token.specificSize("Light_Point") && m_shaderPoint_Bounce->existsYet()) {
 		m_shaderPoint_Bounce->bind();
 		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
@@ -250,7 +247,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 		glDrawArraysIndirect(GL_POINTS, 0);
 	}
 	// Bounce spot lights
-	if (vis_token.specificSize("Light_Spot")) {
+	if (vis_token.specificSize("Light_Spot") && m_shaderSpot_Bounce->existsYet()) {
 		m_shaderSpot_Bounce->bind();
 		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
@@ -259,11 +256,13 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 	}
 
 	// Perform secondary light bounce
-	m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-	m_shaderGISecondBounce->bind();
-	bindForReading(0, 5);
-	bindForWriting(1);
-	glDrawArraysIndirect(GL_POINTS, 0);
+	if (m_shaderGISecondBounce->existsYet()) {
+		m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_shaderGISecondBounce->bind();
+		bindForReading(0, 5);
+		bindForWriting(1);
+		glDrawArraysIndirect(GL_POINTS, 0);
+	}
 
 	glDisable(GL_BLEND);
 	glEnable(GL_DEPTH_TEST);
@@ -272,7 +271,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)
 {
 	// Reconstruct GI from data
-	if (m_vaoLoaded) {
+	if (m_vaoLoaded && m_shaderGIReconstruct->existsYet()) {
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);

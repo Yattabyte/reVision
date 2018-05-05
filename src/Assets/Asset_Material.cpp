@@ -286,7 +286,7 @@ void Material_WorkOrder::finalizeOrder()
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &gl_array_ID);
 		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
 		// Uses the smallest dimension of the image
-		glTextureStorage3D(gl_array_ID, floor(log2f((min(size.x, size.y))) + 1), GL_RGBA8, (int)size.x, (int)size.y, 3);
+		glTextureStorage3D(gl_array_ID, floor(log2f((min(size.x, size.y))) + 1), GL_RGBA16F, (int)size.x, (int)size.y, 3);
 		glTextureSubImage3D(gl_array_ID, 0, 0, 0, 0, (int)size.x, (int)size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, materialData);
 		glTextureParameteri(gl_array_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(gl_array_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

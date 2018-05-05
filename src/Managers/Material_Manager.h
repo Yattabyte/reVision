@@ -85,7 +85,7 @@ private:
 	unsigned int m_Count;
 	deque<unsigned int> m_FreeSpots;
 	vector<GLuint64> m_WorkOrders;
-	DynamicBuffer m_buffer;
+	DynamicBuffer * m_buffer;
 };
 
 #endif // MATERIAL_MANAGER

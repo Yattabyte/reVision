@@ -82,11 +82,6 @@ DS_Lighting::DS_Lighting(
 		m_shapeCube->updateVAO(m_cubeVAO);
 		m_cubeVAOLoaded = true;
 	});
-
-	// Draw Buffers
-	//m_visDirs = DynamicBuffer(sizeof(GLuint) * 10, 0); We always render ALL directional lights
-	m_visPoints = DynamicBuffer(sizeof(GLuint) * 10, 0);
-	m_visSpots = DynamicBuffer(sizeof(GLuint) * 10, 0);
 }
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
@@ -194,17 +189,18 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 	/******************** 
 	  Occlusion Culling 
 	********************/
-	// Set up state
-	glEnable(GL_POLYGON_OFFSET_FILL);
-	glEnable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-	glDisable(GL_CULL_FACE);
-	glDepthFunc(GL_LEQUAL);
-	glDepthMask(GL_FALSE);
-	glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-	glPolygonOffset(-1, -1);
-	// Draw bounding boxes for light
-	if (m_cubeVAOLoaded) {
+	if (m_cubeVAOLoaded && m_shaderDirectional_Cull->existsYet() && m_shaderPoint_Cull->existsYet() && m_shaderSpot_Cull->existsYet()) {
+		// Set up state
+		glEnable(GL_POLYGON_OFFSET_FILL);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
+		glDepthFunc(GL_LEQUAL);
+		glDepthMask(GL_FALSE);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glPolygonOffset(-1, -1);
+
+		// Draw bounding boxes for light
 		glBindVertexArray(m_cubeVAO);
 		m_shaderDirectional_Cull->bind();
 		m_shadowFBO->bindForWriting(SHADOW_LARGE);
@@ -222,44 +218,47 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queueSpot)
 			c->occlusionPass();
+
+		// Undo state changes
+		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
+		glPolygonOffset(0, 0);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+		glDepthMask(GL_TRUE);
+		glEnable(GL_CULL_FACE);
+		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
-	// Undo state changes
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
-	glPolygonOffset(0, 0);
-	glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-	glDepthMask(GL_TRUE);
-	glEnable(GL_CULL_FACE);
-	glDisable(GL_POLYGON_OFFSET_FILL);
 	
 
 	/******************** 
 		Render Shadows 
 	********************/
-	glDisable(GL_BLEND);
-	glCullFace(GL_BACK);
+	if (m_shaderDirectional_Shadow->existsYet() && m_shaderPoint_Shadow->existsYet() && m_shaderSpot_Shadow->existsYet()) {
+		glDisable(GL_BLEND);
+		glCullFace(GL_BACK);
 
-	// Bind Geometry VAO once
-	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		// Bind Geometry VAO once
+		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
-	// Directional lights
-	m_shadowFBO->bindForWriting(SHADOW_LARGE);
-	m_shaderDirectional_Shadow->bind();
-	m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in m_queueDir)
-		component->shadowPass();
+		// Directional lights
+		m_shadowFBO->bindForWriting(SHADOW_LARGE);
+		m_shaderDirectional_Shadow->bind();
+		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (auto &component in m_queueDir)
+			component->shadowPass();
 
-	// Point Lights
-	m_shadowFBO->bindForWriting(SHADOW_REGULAR);
-	m_shaderPoint_Shadow->bind();
-	m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in m_queuePoint)
-		component->shadowPass();
+		// Point Lights
+		m_shadowFBO->bindForWriting(SHADOW_REGULAR);
+		m_shaderPoint_Shadow->bind();
+		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (auto &component in m_queuePoint)
+			component->shadowPass();
 
-	// Spot Lights
-	m_shaderSpot_Shadow->bind();
-	m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-	for each (auto &component in m_queueSpot)
-		component->shadowPass();
+		// Spot Lights
+		m_shaderSpot_Shadow->bind();
+		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (auto &component in m_queueSpot)
+			component->shadowPass();
+	}
 }
 
 void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
@@ -272,7 +271,7 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	m_lightingFBO->bindForWriting();
 
 	// Directional Lighting
-	if (vis_token.find("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet() && m_quadVAOLoaded) {
+	if (vis_token.specificSize("Light_Directional") && m_shaderDirectional->existsYet() && m_shapeQuad->existsYet() && m_quadVAOLoaded) {
 		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);	// SSBO light attribute array (directional)
 		m_shadowFBO->bindForReading(SHADOW_LARGE, 4);					// Shadow maps (large maps)
 		m_shaderDirectional->bind();									// Shader (directional)
@@ -287,7 +286,7 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	m_shadowFBO->bindForReading(SHADOW_REGULAR, 4);
 
 	// Point Lighting
-	if (vis_token.find("Light_Point") && m_shaderPoint->existsYet() && m_shapeSphere->existsYet() && m_sphereVAOLoaded) {
+	if (vis_token.specificSize("Light_Point") && m_shaderPoint->existsYet() && m_shapeSphere->existsYet() && m_sphereVAOLoaded) {
 		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);	// SSBO light attribute array (points)
 		m_shaderPoint->bind();											// Shader (points)
@@ -311,11 +310,11 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	}
 
 	// Spot Lighting
-	if (vis_token.find("Light_Spot") && m_shaderSpot->existsYet() && m_shapeCone->existsYet() && m_coneVAOLoaded) {
+	if (vis_token.specificSize("Light_Spot") && m_shaderSpot->existsYet() && m_shapeCone->existsYet() && m_coneVAOLoaded) {
 		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);			// SSBO visible light indices
 		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);	// SSBO light attribute array (spots)
 		m_shaderSpot->bind();											// Shader (spots)
-		m_indirectSpot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
+		m_indirectSpot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
 		glBindVertexArray(m_coneVAO);									// Cone VAO
 
 		// Draw only into depth-stencil buffer

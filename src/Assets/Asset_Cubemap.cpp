@@ -174,7 +174,7 @@ void Cubemap_WorkOrder::finalizeOrder()
 		
 		// Create the final texture
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &gl_tex_ID);
-		glTextureStorage2D(gl_tex_ID, 1, GL_RGBA8, size.x, size.x);
+		glTextureStorage2D(gl_tex_ID, 1, GL_RGBA16F, size.x, size.x);
 		for (int x = 0; x < 6; ++x)
 			glTextureSubImage3D(gl_tex_ID, 0, 0, 0, x, size.x, size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
 		glTextureParameteri(gl_tex_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

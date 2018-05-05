@@ -11,8 +11,8 @@ void Material_Manager::_startup()
 {
 	unique_lock<shared_mutex> writeGuard(m_DataMutex);
 	if (!m_Initialized) {
-		m_buffer = DynamicBuffer();
-		m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
+		m_buffer = new DynamicBuffer();
+		m_buffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 		m_Initialized = true;
 	}
 }
@@ -30,7 +30,7 @@ void Material_Manager::Bind()
 {
 	auto &manager = Get();
 	shared_lock<shared_mutex> readGuard(manager.m_DataMutex);
-	manager.m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
+	manager.m_buffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 GLuint Material_Manager::Generate_ID()
@@ -54,7 +54,7 @@ void Material_Manager::Generate_Handle(const GLuint & materialightingFBOID, cons
 	const GLuint64 handle = glGetTextureHandleARB(glTextureID);
 
 	unique_lock<shared_mutex> writeGuard(manager.m_DataMutex);
-	manager.m_buffer.write(sizeof(GLuint64) * materialightingFBOID, sizeof(GLuint64), &handle);
+	manager.m_buffer->write(sizeof(GLuint64) * materialightingFBOID, sizeof(GLuint64), &handle);
 	manager.m_WorkOrders.push_back(handle);
 }
 

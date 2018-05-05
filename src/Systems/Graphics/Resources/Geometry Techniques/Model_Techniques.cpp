@@ -46,7 +46,7 @@ void Model_Technique::updateData(const vector<Camera*> & viewers)
 void Model_Technique::renderGeometry(Camera & camera)
 {
 	const size_t size = camera.getVisibilityToken().specificSize("Anim_Model");
-	if (size) {
+	if (size && m_shaderGeometry->existsYet()) {
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
 		glDepthFunc(GL_LEQUAL);
@@ -68,7 +68,8 @@ void Model_Technique::renderGeometry(Camera & camera)
 
 void Model_Technique::occlusionCullBuffers(Camera & camera)
 {
-	if (m_cubeVAOLoaded) {
+	const size_t size = camera.getVisibilityToken().specificSize("Anim_Model");
+	if (m_shaderCull->existsYet() && m_cubeVAOLoaded && size) {
 		// Set up state
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -85,17 +86,15 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 		// Draw bounding boxes for each camera
-		const size_t size = camera.getVisibilityToken().specificSize("Anim_Model");
-		if (size) {
-			// Main geometry UBO bound to '5', the buffer below indexes into that
-			camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-
-			/* Copy draw parameters for visible fragments */
-			// Write to this buffer
-			camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-			// Draw 'size' number of bounding boxes
-			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
-		}		
+		// Main geometry UBO bound to '5', the buffer below indexes into that
+		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		
+		/* Copy draw parameters for visible fragments */
+		// Write to this buffer
+		camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		// Draw 'size' number of bounding boxes
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+		
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);

@@ -250,7 +250,6 @@ void dt_Engine::tick()
 			m_frameAccumulator += deltaTime;		
 		// end performance heuristics
 
-		glfwMakeContextCurrent(m_package->m_Context_Rendering);
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
 		Asset_Manager::Get_Model_Manager()->update();
@@ -264,6 +263,7 @@ void dt_Engine::tick()
 
 void dt_Engine::tickThreaded()
 {
+	glfwMakeContextCurrent(m_Context_Sharing);
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
 	bool stay_alive = true;
 	while (stay_alive) {
@@ -271,7 +271,6 @@ void dt_Engine::tickThreaded()
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
-			glfwMakeContextCurrent(m_Context_Sharing);
 			Asset_Manager::Finalize_Orders();
 			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)

@@ -50,14 +50,14 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 
 void HDR_Tech::applyEffect()
 {
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_STENCIL_TEST);
-	glDepthMask(GL_FALSE);
-	glDisable(GL_BLEND);
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	glClear(GL_COLOR_BUFFER_BIT);
+	if (m_shaderHDR->existsYet() && m_vaoLoaded) {
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_STENCIL_TEST);
+		glDepthMask(GL_FALSE);
+		glDisable(GL_BLEND);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glClear(GL_COLOR_BUFFER_BIT);
 
-	if (m_vaoLoaded) {
 		m_shaderHDR->bind();
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

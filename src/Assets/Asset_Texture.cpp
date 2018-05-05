@@ -164,14 +164,14 @@ void Texture_WorkOrder::finalizeOrder()
 		glCreateTextures(type, 1, &gl_tex_ID);
 		switch (type) {
 			case GL_TEXTURE_1D: {
-				glTextureStorage1D(gl_tex_ID, 1, GL_RGBA8, size.x);
+				glTextureStorage1D(gl_tex_ID, 1, GL_RGBA16F, size.x);
 				glTextureSubImage1D(gl_tex_ID, 0, 0, size.x, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data);
 				glTextureParameteri(gl_tex_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(gl_tex_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			}
 			case GL_TEXTURE_2D: {
-				glTextureStorage2D(gl_tex_ID, 1, GL_RGBA8, size.x, size.y);
+				glTextureStorage2D(gl_tex_ID, 1, GL_RGBA16F, size.x, size.y);
 				glTextureSubImage2D(gl_tex_ID, 0, 0, 0, size.x, size.y, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data);
 				if (anis)
 					glTextureParameterf(gl_tex_ID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
@@ -187,7 +187,7 @@ void Texture_WorkOrder::finalizeOrder()
 				break;
 			}
 			case GL_TEXTURE_2D_ARRAY: {
-				glTextureStorage3D(gl_tex_ID, 1, GL_RGBA8, size.x, size.y, 0);
+				glTextureStorage3D(gl_tex_ID, 1, GL_RGBA16F, size.x, size.y, 0);
 				glTextureSubImage3D(gl_tex_ID, 0, 0, 0, 0, size.x, size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data);
 				glTextureParameteri(gl_tex_ID, GL_GENERATE_MIPMAP, GL_TRUE);
 				glTextureParameteri(gl_tex_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

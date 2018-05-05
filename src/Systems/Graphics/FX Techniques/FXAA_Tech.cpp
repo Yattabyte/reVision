@@ -19,7 +19,7 @@ FXAA_Tech::FXAA_Tech()
 
 void FXAA_Tech::applyEffect()
 {
-	if (m_vaoLoaded) {
+	if (m_shaderFXAA->existsYet() && m_vaoLoaded) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		m_shaderFXAA->bind();
 		glBindVertexArray(m_quadVAO);

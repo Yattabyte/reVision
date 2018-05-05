@@ -59,24 +59,24 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO
 
 void Bloom_Tech::applyEffect()
 {
-	// Extract bright regions from lighting buffer
-	glDisable(GL_DEPTH_TEST);
-	glDisable(GL_BLEND);
-	m_shaderBloomExtract->bind();
-	m_lightingFBO->bindForReading();
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
-	if (m_vaoLoaded) {
+	if (m_shaderBloomExtract->existsYet() && m_vaoLoaded) {
+		// Extract bright regions from lighting buffer
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		m_shaderBloomExtract->bind();
+		m_lightingFBO->bindForReading();
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+
+		// Blur bright regions
+		m_visualFX->applyGaussianBlur(m_texture, m_texturesGB, m_renderSize, m_bloomStrength);
+
+		// Re-attach our bloom texture (was detached to allow for convolution)
+		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+		glEnable(GL_DEPTH_TEST);
 	}
-
-	// Blur bright regions
-	m_visualFX->applyGaussianBlur(m_texture, m_texturesGB, m_renderSize, m_bloomStrength);
-
-	// Re-attach our bloom texture (was detached to allow for convolution)
-	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void Bloom_Tech::bindForReading()
