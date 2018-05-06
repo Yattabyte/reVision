@@ -54,12 +54,12 @@ void Model_Technique::renderGeometry(Camera & camera)
 		glCullFace(GL_BACK);
 		m_geometryFBO->clear();
 		m_geometryFBO->bindForWriting();
-		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_shaderGeometry->bind();
+		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
 		// Render only the objects that passed the previous depth test (modified indirect draw buffer)      
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
-		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
-		m_shaderGeometry->bind();
+		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 		m_geometryFBO->applyAO();

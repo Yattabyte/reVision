@@ -52,6 +52,7 @@ struct Directional_Struct {
 	int Shadow_Spot[NUM_CASCADES]; // first element used only
 	float CascadeEndClipSpace[NUM_CASCADES]; // first element used only
 	mat4 lightVP[NUM_CASCADES]; // these are good already
+	mat4 inverseVP[NUM_CASCADES]; // these are good already
 };
 
 /** Point lights use this for their lighting + transform data. */
@@ -74,7 +75,8 @@ struct Point_Struct {
 struct Spot_Struct {
 	mat4 mMatrix = mat4(1.0f);
 	mat4 lightV = mat4(1.0f);
-	mat4 lightP = mat4(1.0f);
+	mat4 lightPV = mat4(1.0f);
+	mat4 inversePV = mat4(1.0f);
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightPosition = vec3(0.0f); float padding2;
 	vec3 LightDirection = vec3(0, -1, 0); float padding3;

@@ -118,7 +118,7 @@ bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosit
 	if (m_model) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
 		const float bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
-		const vec3 bspherePosition_World = m_model->m_bboxCenter + bsphereRadius + m_transform.m_position;
+		const vec3 bspherePosition_World = m_model->m_bboxCenter + m_transform.m_position;
 		const float distance = glm::distance(bspherePosition_World, eyePosition);
 		return radius + bsphereRadius > distance;
 	}

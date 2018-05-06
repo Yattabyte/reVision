@@ -77,7 +77,6 @@ private:
 	vec2				m_size[SHADOW_MAX];
 	GLuint				m_shadow_fbo[SHADOW_MAX];
 	GLuint				m_shadow_depth[SHADOW_MAX];
-	GLuint				m_shadow_worldpos[SHADOW_MAX];
 	GLuint				m_shadow_worldnormal[SHADOW_MAX];
 	GLuint				m_shadow_radiantflux[SHADOW_MAX];
 	unsigned int		m_shadow_count[SHADOW_MAX];

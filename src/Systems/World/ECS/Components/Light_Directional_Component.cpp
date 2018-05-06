@@ -188,9 +188,11 @@ void Light_Directional_Component::calculateCascades()
 		vec3 newMax = aabb + clampedPos;
 
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
-		mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
+		const mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
+		const mat4 pvMatrix = pMatrix * m_mMatrix;
 		//uboData->lightP[i] = m_mMatrix * pMatrix;
-		uboData->lightVP[i] = pMatrix * m_mMatrix;
+		uboData->lightVP[i] = pvMatrix;
+		uboData->inverseVP[i] = inverse(pvMatrix);
 
 		if (i == 0)
 			m_camera.setMatrices(pMatrix, mat4(1.0f));

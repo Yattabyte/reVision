@@ -70,16 +70,16 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			m_squaredRadius = payload * payload;
 			uboData->p_far = m_squaredRadius;
 			uboData->LightRadius = payload;
-			m_camera[0].setFarPlane(m_squaredRadius);
-			m_camera[1].setFarPlane(m_squaredRadius);
-			m_camera[0].update();
-			m_camera[1].update();
 			// Calculate view matrix
 			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
 			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
 			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
 			uboData->lightV = m_lightVMatrix;
 			uboData->mMatrix = trans * scl;
+			for (int x = 0; x < 2; ++x) {
+				m_camera[x].setFarPlane(m_squaredRadius);
+				m_camera[x].update();
+			}
 			break;
 		}
 		case SET_POSITION: {
@@ -93,6 +93,8 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
 			uboData->lightV = m_lightVMatrix;
 			uboData->mMatrix = trans * scl;
+			for (int x = 0; x < 2; ++x) 
+				m_camera[x].setPosition(payload);			
 			break;
 		}
 		case SET_TRANSFORM: {
@@ -106,6 +108,8 @@ void Light_Point_Component::receiveMessage(const ECSmessage &message)
 			m_lightVMatrix = glm::translate(mat4(1.0f), -m_lightPos);
 			uboData->lightV = m_lightVMatrix;
 			uboData->mMatrix = trans * scl;
+			for (int x = 0; x < 2; ++x)
+				m_camera[x].setPosition(payload.m_position);
 			break;
 		}
 	}
@@ -134,18 +138,20 @@ void Light_Point_Component::occlusionPass()
 void Light_Point_Component::shadowPass()
 {
 	glUniform1i(0, getBufferIndex());
-	
+
+	// Clear out the shadows
+	for (int x = 0; x < 2; ++x)
+		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[x]);
+
 	for (int x = 0; x < 2; ++x) {
 		const size_t size = m_camera[x].getVisibilityToken().specificSize("Anim_Model");
 		if (size) {
-			// Clear out the shadows
-			m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpots[x]);
-
 			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
 
 			// Draw render lists
+			glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 			m_camera[x].getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-			m_camera[x].getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER); // make this 1 after culling implemented
+			m_camera[x].getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
 			m_shadowUpdateTime = glfwGetTime();
@@ -163,9 +169,6 @@ void Light_Point_Component::update()
 {
 	// Update cameras to face the right direction
 	for (int x = 0; x < 2; ++x) {
-		m_camera[x].setPosition(m_lightPos);		
-		m_camera[x].update(); 
-
 		// Update render list
 		Model_Technique::writeCameraBuffers(m_camera[x]);
 	}

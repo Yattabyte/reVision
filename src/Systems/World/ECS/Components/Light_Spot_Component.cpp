@@ -65,7 +65,9 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			// Recalculate perspective matrix
 			m_camera.update();
 			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			uboData->lightP = lightP;
+			const mat4 lightPV = lightP * m_lightVMatrix;
+			uboData->lightPV = lightPV;
+			uboData->inversePV = glm::inverse(lightPV);
 			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
@@ -78,7 +80,9 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			// Recalculate perspective matrix
 			m_camera.update();
 			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			uboData->lightP = lightP;
+			const mat4 lightPV = lightP * m_lightVMatrix;
+			uboData->lightPV = lightPV;
+			uboData->inversePV = glm::inverse(lightPV);
 			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
@@ -100,7 +104,9 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			// Recalculate perspective matrix
 			m_camera.update();
 			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			uboData->lightP = lightP;
+			const mat4 lightPV = lightP * m_lightVMatrix;
+			uboData->lightPV = lightPV;
+			uboData->inversePV = glm::inverse(lightPV);
 			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
@@ -124,7 +130,9 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			// Recalculate perspective matrix
 			m_camera.update();
 			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			uboData->lightP = lightP;
+			const mat4 lightPV = lightP * m_lightVMatrix;
+			uboData->lightPV = lightPV;
+			uboData->inversePV = glm::inverse(lightPV);
 			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
@@ -147,7 +155,9 @@ void Light_Spot_Component::receiveMessage(const ECSmessage &message)
 			// Recalculate perspective matrix
 			m_camera.update();
 			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			uboData->lightP = lightP;
+			const mat4 lightPV = lightP * m_lightVMatrix;
+			uboData->lightPV = lightPV;
+			uboData->inversePV = glm::inverse(lightPV);
 			m_camera.setMatrices(lightP, m_lightVMatrix);
 			break;
 		}
@@ -179,6 +189,9 @@ void Light_Spot_Component::shadowPass()
 		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
 
 		glUniform1i(0, getBufferIndex());
+
+		// Draw render lists
+		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER); // make this 1 after culling implemented
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
