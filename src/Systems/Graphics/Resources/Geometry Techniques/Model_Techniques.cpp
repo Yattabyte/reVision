@@ -57,7 +57,7 @@ void Model_Technique::renderGeometry(Camera & camera)
 		m_shaderGeometry->bind();
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
-		// Render only the objects that passed the previous depth test (modified indirect draw buffer)      
+		// Render only the objects that passed the previous depth test (modified indirect draw buffer)     
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -75,12 +75,10 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
-		m_geometryFBO->bindForWriting();
+		m_geometryFBO->bindDepthWriting();
 
 		// Render bounding boxes for all models using last frame's depth buffer
 		glBindVertexArray(m_cubeVAO);
-		glEnable(GL_POLYGON_OFFSET_FILL);
-		glPolygonOffset(-1, -1);
 		m_shaderCull->bind();
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
@@ -93,8 +91,7 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		// Write to this buffer
 		camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		// Draw 'size' number of bounding boxes
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
-		
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);		
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
@@ -102,8 +99,6 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		glDepthMask(GL_TRUE);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		glPolygonOffset(0, 0);
-		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 }
 
@@ -127,7 +122,10 @@ void Model_Technique::writeCameraBuffers(Camera & camera)
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
 			geoArray[count] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
-			emptyDrawData[count++] = DrawData(drawInfo.y, drawInfo.x, 0);
+			if (!component->containsPoint(camera.getPosition()))
+				emptyDrawData[count++] = DrawData(drawInfo.y, drawInfo.x, 0);
+			else
+				emptyDrawData[count++] = DrawData(drawInfo.y, drawInfo.x, 1);
 		}
 
 		camera.getVisibleIndexBuffer().write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());

@@ -143,7 +143,7 @@ void Shutdown_Sharing()
 	Material_Manager::Shut_Down();
 	Asset_Manager::Shut_Down();
 }
-
+ 
 #include "Assets\Asset_Material.h"
 #include "Systems\Preferences\Preferences.h"
 #include "Systems\Graphics\Graphics.h"
@@ -157,6 +157,7 @@ bool dt_Engine::initialize()
 		m_package = new EnginePackage();
 		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);	
 		const float farPlane = m_package->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_package->m_Camera.setFarPlane(f); m_package->m_Camera.update(); });
+		//m_package->m_Camera.setNearPlane(1.0f);
 		m_package->m_Camera.setFarPlane(farPlane);
 		m_package->m_Camera.update();
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());

@@ -102,7 +102,7 @@ struct Reflection_Struct {
 struct GI_Radiance_Struct {
 	vec4 BBox_Max = vec4(1);
 	vec4 BBox_Min = vec4(-1);
-	int samples = 16;
+	int samples =  16;
 	int resolution = 16;
 	float spread = 1.0f;
 	float R_wcs = 1.0f;

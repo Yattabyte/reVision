@@ -19,26 +19,15 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 {
 	m_enginePackage = enginePackage;
 	m_vaoLoaded = false;
-	m_animation = 0;
+	m_animation = -1;
 	m_animTime = 0;
 	m_animStart = 0;
 	m_playAnim = false;
 	m_skin = 0;
-	m_fence = nullptr;
+	m_bsphereRadius = 0;
+	m_bspherePos = vec3(0.0f);
 
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.addElement(&m_uboIndex);
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, NULL);
-}
-
- void Anim_Model_Component::checkFence() {
-	// Check if we should cause a synchronization point
-	if (m_fence != nullptr) {
-		auto state = GL_UNSIGNALED;
-		while (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED || state == GL_WAIT_FAILED)
-			state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-		glDeleteSync(m_fence);
-		m_fence = nullptr;
-	}
 }
 
 void Anim_Model_Component::receiveMessage(const ECSmessage &message)
@@ -56,37 +45,22 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			Asset_Loader::load_asset(m_model, payload);
 			// Attach new callback
 			m_model->addCallback(this, [&]() {
-				checkFence();
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
-				vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
-				vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
-				mat4 matTrans = glm::translate(mat4(1.0f), bboxPos);
-				mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
-				mat4 matFinal = (matTrans * matScale);
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
 				m_transforms = m_model->m_animationInfo.meshTransforms;
+				updateBSphere();
 				m_vaoLoaded = true;
-				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			});
 			break;
 		}
 		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();			
-			checkFence();
+			const auto &payload = message.GetPayload<Transform>();
 			(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
-			if (m_model && m_model->existsYet()) {
-				vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
-				vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
-				mat4 matTrans = glm::translate(mat4(1.0f), bboxPos);
-				mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
-				mat4 matFinal =  (matTrans * matScale);
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
-			}
+			if (m_model && m_model->existsYet()) 
+				updateBSphere();			
 			else
 				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = payload.m_modelMatrix;			
 			m_transform = payload;
-			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 
 			break;
 		}
@@ -94,11 +68,8 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<GLuint>()) break;
 			const auto &payload = message.GetPayload<GLuint>();
 			m_skin = payload;
-			if (m_model->existsYet()) {
-				checkFence();
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
-				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-			}
+			if (m_model->existsYet()) 
+				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
 			break;
 		}
 		case SET_MODEL_ANIMATION: {
@@ -116,11 +87,17 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	if (m_model) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		const float bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
-		const vec3 bspherePosition_World = m_model->m_bboxCenter + m_transform.m_position;
-		const float distance = glm::distance(bspherePosition_World, eyePosition);
-		return radius + bsphereRadius > distance;
+		const float distance = glm::distance(m_bspherePos, eyePosition);
+		return radius + m_bsphereRadius > distance;
+	}
+	return false;
+}
+
+bool Anim_Model_Component::containsPoint(const vec3 & point) const
+{
+	if (m_model) {
+		const float distance = glm::distance(m_bspherePos, point);
+		return m_bsphereRadius > distance;
 	}
 	return false;
 }
@@ -129,16 +106,6 @@ void Anim_Model_Component::draw()
 {
 	if (!m_model || !m_model->existsYet() || !m_vaoLoaded) return;
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
-	if (m_fence != nullptr) {
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
-			return;
-		else {
-			glDeleteSync(m_fence);
-			m_fence = nullptr;
-		}
-	}
-
 }
 
 const unsigned int Anim_Model_Component::getBufferIndex() const
@@ -155,11 +122,28 @@ const ivec2 Anim_Model_Component::getDrawInfo() const
 	return ivec2(0);
 }
 
+
+void Anim_Model_Component::updateBSphere()
+{
+	if (m_model) {
+		shared_lock<shared_mutex> guard(m_model->m_mutex);
+		vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
+		vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
+		mat4 matTrans = glm::translate(mat4(1.0f), bboxPos + m_transform.m_position);
+		mat4 matRot = glm::mat4_cast(m_transform.m_orientation);
+		mat4 matScale = glm::scale(mat4(1.0f), bboxScale * m_transform.m_scale);
+		mat4 matFinal = (matTrans * matRot * matScale);
+		(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
+		m_bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
+		m_bspherePos = m_model->m_bboxCenter + m_transform.m_position;
+	}
+}
+
+
 void Anim_Model_Component::animate(const double & deltaTime)
 {
 	if (!m_model->existsYet()) return;
 	
-	checkFence();
 	Geometry_Struct *const uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 
@@ -181,7 +165,6 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		for (unsigned int i = 0, total = min(m_transforms.size(), NUM_MAX_BONES); i < total; i++)
 			uboData->transforms[i] = m_transforms[i].FinalTransformation;		
 	}
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
 template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }

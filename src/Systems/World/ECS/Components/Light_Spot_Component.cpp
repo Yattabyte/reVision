@@ -20,6 +20,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	m_enginePackage = enginePackage;
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
+	m_visSize = 0;
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
 	m_uboBuffer = graphics->m_lightSpotSSBO.addElement(&m_uboIndex);
@@ -172,29 +173,27 @@ bool Light_Spot_Component::isVisible(const float & radius, const vec3 & eyePosit
 
 void Light_Spot_Component::occlusionPass()
 {
-	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
-	if (size) {
+	m_visSize = m_camera.getVisibilityToken().specificSize("Anim_Model");
+	if (m_visSize) {
 		glUniform1i(0, getBufferIndex());
 		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, m_visSize);
 	}
 }
 
 void Light_Spot_Component::shadowPass()
 {
-	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
-	if (size) {
+	if (m_visSize) {
 		// Clear out the shadows
 		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
-
 		glUniform1i(0, getBufferIndex());
 
 		// Draw render lists
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER); // make this 1 after culling implemented
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+		m_camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
 
 		m_shadowUpdateTime = glfwGetTime();
 	}

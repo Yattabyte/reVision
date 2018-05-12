@@ -30,6 +30,7 @@ public:
 	// Interface implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual bool containsPoint(const vec3 & point) const;
 	virtual void draw();
 	virtual const ivec2 getDrawInfo() const;
 
@@ -49,11 +50,11 @@ protected:
 	/** Constructors an animated model component. */
 	Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 
-	
-	// Protected Functions
-	/** Cause a synchronization point if the sync fence hasn't been passed. */
-	void checkFence();
 
+	// Protected functions
+	/** Update this component's bounding sphere */
+	void updateBSphere();
+	
 
 	// Protected Attributes
 	int m_animation;
@@ -61,12 +62,13 @@ protected:
 	float m_animTime, m_animStart;
 	bool m_vaoLoaded;
 	unsigned int m_uboIndex;
+	float m_bsphereRadius;
+	vec3 m_bspherePos;
 	VB_Ptr * m_uboBuffer;
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	vector<BoneInfo> m_transforms;
-	GLsync m_fence;
 	EnginePackage *m_enginePackage;
 	friend class Anim_Model_Creator;
 };

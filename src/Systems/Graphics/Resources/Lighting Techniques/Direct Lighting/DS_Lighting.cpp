@@ -191,14 +191,12 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 	********************/
 	if (m_cubeVAOLoaded && m_shaderDirectional_Cull->existsYet() && m_shaderPoint_Cull->existsYet() && m_shaderSpot_Cull->existsYet()) {
 		// Set up state
-		glEnable(GL_POLYGON_OFFSET_FILL);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glPolygonOffset(-1, -1);
 
 		// Draw bounding boxes for light
 		glBindVertexArray(m_cubeVAO);
@@ -206,7 +204,7 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		m_shadowFBO->bindForWriting(SHADOW_LARGE);
 		for each (const auto &c in m_queueDir) {
 			// Bind only the matrices
-			m_lightDirSSBO->bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 6, offsetof(Directional_Struct, lightVP) * c->getBufferIndex(), sizeof(mat4x4) * NUM_CASCADES);
+			m_lightDirSSBO->bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 6, offsetof(Directional_Struct, lightVP) + (sizeof(Directional_Struct) * c->getBufferIndex()), sizeof(mat4x4) * NUM_CASCADES);
 			c->occlusionPass();
 		}
 		m_shaderPoint_Cull->bind();
@@ -216,16 +214,15 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 			c->occlusionPass();
 		m_shaderSpot_Cull->bind();
 		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-		for each (const auto &c in m_queueSpot)
+		for each (const auto &c in m_queueSpot) 		
 			c->occlusionPass();
+		
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
-		glPolygonOffset(0, 0);
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glDepthMask(GL_TRUE);
 		glEnable(GL_CULL_FACE);
-		glDisable(GL_POLYGON_OFFSET_FILL);
 	}
 	
 

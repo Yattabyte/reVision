@@ -56,11 +56,12 @@ protected:
 	// Cached Attributes
 	float m_radius;
 	float m_squaredRadius;
-	mat4 m_lightVMatrix;
+	mat4 m_lightVMatrix, m_lightPV;
 	vec3 m_lightPos;
 	int m_shadowSpot;
 	quat m_orientation;
 	Camera m_camera;
+	size_t m_visSize;
 	friend class Light_Spot_Creator;
 };
 

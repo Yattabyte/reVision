@@ -181,3 +181,10 @@ void Geometry_FBO::applyAO()
 		glEnable(GL_DEPTH_TEST);
 	}
 }
+
+void Geometry_FBO::bindDepthWriting()
+{
+	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+	glNamedFramebufferDrawBuffer(m_fbo, GL_NONE);
+}

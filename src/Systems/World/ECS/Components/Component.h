@@ -32,10 +32,12 @@ public:
 	virtual void receiveMessage(const ECSmessage & message);
 	/** Tests if this object is within the viewing frustum of the camera.
 	 * @brief				a test of general visibility (excluding obstruction of other objects).
-	 * @param	PMatrix		the projection matrix of the camera
-	 * @param	VMatrix		the viewing matrix of the camera
-	 * @return				true if this object is within the viewing frustum of the camera, false otherwise */
+	 * @param	radius		the radius of the camera
+	 * @param	eyePosition	the viewing position of the camera
+	 * @return				true if this object is within the viewing range of the camera, false otherwise */
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const { return true; }
+	virtual bool containsPoint(const vec3 & point) const { return false; }
+
 
 
 protected:

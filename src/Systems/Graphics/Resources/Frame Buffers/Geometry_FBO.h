@@ -51,6 +51,7 @@ public:
 	void end();
 	/** Generate ambient occlusion for the frame. */
 	void applyAO();
+	void bindDepthWriting();
 
 
 	// Public attributes
