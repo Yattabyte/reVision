@@ -10,11 +10,9 @@
 #endif
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\DS_Technique.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
-#include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
 
 class EnginePackage;
@@ -51,26 +49,17 @@ public:
 
 private:
 	// Private Attributes
+	vector<DS_Technique*> m_techniques;
 	EnginePackage * m_enginePackage;
 	int m_updateQuality;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Shadow_FBO * m_shadowFBO;
-	// Shared SSBO's
-	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
-	VectorBuffer<Point_Struct> * m_lightPointSSBO;
-	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
 
-	Shared_Asset_Shader m_shaderDirectional, m_shaderPoint, m_shaderSpot,
-						m_shaderDirectional_Shadow, m_shaderPoint_Shadow, m_shaderSpot_Shadow,
-						m_shaderDirectional_Cull, m_shaderPoint_Cull, m_shaderSpot_Cull;
-	Shared_Asset_Primitive m_shapeQuad, m_shapeCone, m_shapeSphere, m_shapeCube;
-	GLuint m_quadVAO, m_coneVAO, m_sphereVAO, m_cubeVAO;
-	bool m_quadVAOLoaded, m_coneVAOLoaded, m_sphereVAOLoaded, m_cubeVAOLoaded;
-	StaticBuffer m_indirectDir, m_indirectPoint, m_indirectSpot;
-	DynamicBuffer m_visPoints, m_visSpots;
-	vector<Lighting_Component*> m_queueDir, m_queuePoint, m_queueSpot;
+	Shared_Asset_Primitive m_shapeCube;
+	GLuint m_cubeVAO;
+	bool m_cubeVAOLoaded;
 };
 
 #endif // DS_LIGHTING

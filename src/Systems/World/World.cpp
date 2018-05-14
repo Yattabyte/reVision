@@ -58,13 +58,13 @@ void System_World::update(const float & deltaTime)
 		point->receiveMessage(ECSmessage(SET_POSITION, vec3(10, 5, -20)));*/
 
 		for (int x = 0; x < 3; ++x) {
-			/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
+			auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
 			point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0.0, 1.0)));
 			point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 			point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			point->receiveMessage(ECSmessage(SET_POSITION, vec3(-20, -2.5, -20 + ((x - 1) * 20))));*/
-			/*
-			auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
+			point->receiveMessage(ECSmessage(SET_POSITION, vec3(-20, -2.5, -20 + ((x - 1) * 20))));
+			
+			/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
 			spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.5, 1, 0.0)));
 			spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 			spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
@@ -79,11 +79,11 @@ void System_World::update(const float & deltaTime)
 		}
 		
 		for (int x = 0; x < 3; ++x) {
-			/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
+			auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
 			point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0.0, 1.0)));
 			point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 			point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			point->receiveMessage(ECSmessage(SET_POSITION, vec3(20, -2.5, -20 + ((x - 1) * 20))));*/
+			point->receiveMessage(ECSmessage(SET_POSITION, vec3(20, -2.5, -20 + ((x - 1) * 20))));
 
 			/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
 			spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.5, 1, 0.0)));
