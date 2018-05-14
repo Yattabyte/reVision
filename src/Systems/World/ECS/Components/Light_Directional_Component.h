@@ -58,6 +58,7 @@ protected:
 	Shadow_FBO *m_shadowMapper;
 	float m_cascadeEnd[5];
 	int m_shadowSpots[NUM_CASCADES];
+	size_t m_visSize;
 	mat4 m_mMatrix;
 	Camera m_camera;
 	friend class Light_Directional_Creator;

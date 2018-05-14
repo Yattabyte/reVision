@@ -129,8 +129,9 @@ void Light_Point_Component::occlusionPass()
 		if (size) {
 			glUniform1f(1, (float(x) * 2.0f) - 1.0f); // update p_dir
 			m_camera[x].getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_camera[x].getCullingBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_camera[x].getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 		}
 	}
 }

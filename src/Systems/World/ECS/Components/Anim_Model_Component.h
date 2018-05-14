@@ -31,8 +31,8 @@ public:
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual bool containsPoint(const vec3 & point) const;
-	virtual void draw();
 	virtual const ivec2 getDrawInfo() const;
+	virtual const unsigned int getMeshSize() const;
 
 
 	// Public Methods

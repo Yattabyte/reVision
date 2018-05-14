@@ -177,8 +177,9 @@ void Light_Spot_Component::occlusionPass()
 	if (m_visSize) {
 		glUniform1i(0, getBufferIndex());
 		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_camera.getCullingBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, m_visSize);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
 	}
 }
 

@@ -22,11 +22,12 @@ class DT_ENGINE_API Geometry_Component : protected Component
 {
 public:
 	// Public Methods
-	/** Renders the model to the current framebuffer. */
-	virtual void draw() = 0;
 	/** Retrieves the offset and vertex count of this geometry.
-	 * @return offset and vertex count as a vector */
+	 * @return		offset and vertex count as a vector */
 	virtual const ivec2 getDrawInfo() const = 0;
+	/** Retrieves the mesh size of this piece of geometry. 
+	 * @return		the vertex count of this mesh */
+	virtual const unsigned int getMeshSize() const = 0;
 
 
 protected:

@@ -86,12 +86,9 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		// Draw bounding boxes for each camera
 		// Main geometry UBO bound to '5', the buffer below indexes into that
 		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		
-		/* Copy draw parameters for visible fragments */
-		// Write to this buffer
+		camera.getCullingBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		// Draw 'size' number of bounding boxes
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);		
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
@@ -104,31 +101,31 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 
 void Model_Technique::writeCameraBuffers(Camera & camera)
 {
-	struct DrawData {
-		GLuint count;
-		GLuint instanceCount = 1;
-		GLuint first;
-		GLuint baseInstance = 1;
-		DrawData(const GLuint & c = 0, const GLuint & f = 0, const GLuint & i = 1) : count(c), instanceCount(i), first(f) {}
-	};
-
 	const Visibility_Token vis_token = camera.getVisibilityToken();
 	const size_t size = vis_token.specificSize("Anim_Model");
 	if (size) {
-		vector<uint> geoArray(size);
-		vector<DrawData> emptyDrawData(size);
+		// Draw parameter order = { COUNT, INSTANCE_COUNT, FIRST, BASE_INSTANCE }
+		vector<ivec4> cullingDrawData(size);
+		vector<ivec4> renderingDrawData(size);
+		vector<uint> visibleIndices(size);
 
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
-			geoArray[count] = component->getBufferIndex();
 			const ivec2 drawInfo = component->getDrawInfo();
-			if (!component->containsPoint(camera.getPosition()))
-				emptyDrawData[count++] = DrawData(drawInfo.y, drawInfo.x, 0);
-			else
-				emptyDrawData[count++] = DrawData(drawInfo.y, drawInfo.x, 1);
+			visibleIndices[count] = component->getBufferIndex();
+			// Check mesh complexity and if viewer not within BSphere
+			if ((component->getMeshSize() >= 100) && !(component->containsPoint(camera.getPosition()))) { // Allow
+				cullingDrawData[count] = ivec4(36, 1, 0, 0);
+				renderingDrawData[count++] = ivec4(drawInfo.y, 0, drawInfo.x, 1);
+			}
+			else { // Skip				
+				cullingDrawData[count] = ivec4(36, 0, 0, 0);
+				renderingDrawData[count++] = ivec4(drawInfo.y, 1, drawInfo.x, 1);
+			}
 		}
 
-		camera.getVisibleIndexBuffer().write(0, sizeof(GLuint) * geoArray.size(), geoArray.data());
-		camera.getRenderBuffer().write(0, sizeof(DrawData) * size, emptyDrawData.data());
+		camera.getVisibleIndexBuffer().write(0, sizeof(uint) * size, visibleIndices.data());
+		camera.getCullingBuffer().write(0, sizeof(ivec4) * size, cullingDrawData.data());
+		camera.getRenderBuffer().write(0, sizeof(ivec4) * size, renderingDrawData.data());
 	}
 }

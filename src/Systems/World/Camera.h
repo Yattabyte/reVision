@@ -66,7 +66,7 @@ public:
 	/** Construct the camera. 
 	 * @param	position		the position of the camera (defaults to 0)
 	 * @param	size			the size of the screen (defaults to 1)
-	 * @param	near_plane		the distance of the near plane (defaults to 0.01f)
+	 * @param	near_plane		the distance of the near plane (defaults to 0.5f)
 	 * @param	far_plane		the distance of the far plane (defaults to 10.0f)
 	 * @param	horizontal_FOV	the horizontal FOV (defaults to 90) */ 
 	Camera(const vec3 & position = vec3(0.0F), const vec2 & size = vec2(1.0f), const float & near_plane = 0.5f, const float & far_plane = 10.0f, const float & horizontal_FOV = 90.0f);
@@ -132,6 +132,9 @@ public:
 	/** Retrieve the visible geometry index buffer which indexes into the main geometry buffer. 
 	 * @return				the visible index buffer for animated models */
 	DynamicBuffer & getVisibleIndexBuffer() { return m_visibleBuffer; }
+	/** Retrieve the indirect culling buffer.
+	 * @return				the culling buffer requested */
+	DynamicBuffer & getCullingBuffer() { return m_cullingBuffer; }
 	/** Retrieve the indirect render buffer.
 	 * @return				the render buffer requested */
 	DynamicBuffer & getRenderBuffer() { return m_renderBuffer; }
@@ -143,7 +146,7 @@ private:
 	// Private Attributes
 	mutable shared_mutex data_mutex;
 	StaticBuffer m_buffer;
-	DynamicBuffer m_visibleBuffer, m_renderBuffer;
+	DynamicBuffer m_visibleBuffer, m_cullingBuffer, m_renderBuffer;
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
 	Visibility_Token m_vistoken;

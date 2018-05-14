@@ -68,7 +68,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			if (!message.IsOfType<GLuint>()) break;
 			const auto &payload = message.GetPayload<GLuint>();
 			m_skin = payload;
-			if (m_model->existsYet()) 
+			if (m_model && m_model->existsYet()) 
 				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
 			break;
 		}
@@ -86,7 +86,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 
 bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
-	if (m_model) {
+	if (m_model && m_model->existsYet()) {
 		const float distance = glm::distance(m_bspherePos, eyePosition);
 		return radius + m_bsphereRadius > distance;
 	}
@@ -100,12 +100,6 @@ bool Anim_Model_Component::containsPoint(const vec3 & point) const
 		return m_bsphereRadius > distance;
 	}
 	return false;
-}
-
-void Anim_Model_Component::draw()
-{
-	if (!m_model || !m_model->existsYet() || !m_vaoLoaded) return;
-	shared_lock<shared_mutex> guard(m_model->m_mutex);
 }
 
 const unsigned int Anim_Model_Component::getBufferIndex() const
@@ -122,10 +116,18 @@ const ivec2 Anim_Model_Component::getDrawInfo() const
 	return ivec2(0);
 }
 
+const unsigned int Anim_Model_Component::getMeshSize() const
+{
+	if (m_model && m_model->existsYet()) {
+		shared_lock<shared_mutex> guard(m_model->m_mutex);
+		return m_model->m_meshSize;
+	}
+	return 0;
+}
 
 void Anim_Model_Component::updateBSphere()
 {
-	if (m_model) {
+	if (m_model && m_model->existsYet()) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
 		vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
 		vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
@@ -142,7 +144,7 @@ void Anim_Model_Component::updateBSphere()
 
 void Anim_Model_Component::animate(const double & deltaTime)
 {
-	if (!m_model->existsYet()) return;
+	if (!m_model || !m_model->existsYet()) return;
 	
 	Geometry_Struct *const uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	shared_lock<shared_mutex> guard(m_model->m_mutex);

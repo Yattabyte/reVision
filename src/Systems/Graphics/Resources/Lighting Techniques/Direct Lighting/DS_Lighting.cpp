@@ -202,11 +202,9 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		glBindVertexArray(m_cubeVAO);
 		m_shaderDirectional_Cull->bind();
 		m_shadowFBO->bindForWriting(SHADOW_LARGE);
-		for each (const auto &c in m_queueDir) {
-			// Bind only the matrices
-			m_lightDirSSBO->bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 6, offsetof(Directional_Struct, lightVP) + (sizeof(Directional_Struct) * c->getBufferIndex()), sizeof(mat4x4) * NUM_CASCADES);
-			c->occlusionPass();
-		}
+		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		for each (const auto &c in m_queueDir) 
+			c->occlusionPass();		
 		m_shaderPoint_Cull->bind();
 		m_shadowFBO->bindForWriting(SHADOW_REGULAR);
 		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
@@ -215,8 +213,7 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		m_shaderSpot_Cull->bind();
 		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queueSpot) 		
-			c->occlusionPass();
-		
+			c->occlusionPass();		
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);

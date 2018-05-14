@@ -18,6 +18,8 @@ Light_Directional_Component::~Light_Directional_Component()
 Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
+	m_visSize = 0;
+	m_mMatrix = mat4(1.0f);
 
 	float near_plane = -0.1f;
 	float far_plane = - m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
@@ -90,22 +92,22 @@ bool Light_Directional_Component::isVisible(const float & radius, const vec3 & e
 
 void Light_Directional_Component::occlusionPass()
 {
-	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
-	if (size) {
-		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
+	m_visSize = m_camera.getVisibilityToken().specificSize("Anim_Model");
+	if (m_visSize) {
+		glUniform1i(0, getBufferIndex());
+		m_camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_camera.getCullingBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		for (int x = 0; x < 4; ++x) {
-			glUniform1i(0, m_shadowSpots[x]);
 			glUniform1i(1, x);
-			glDrawArraysInstanced(GL_TRIANGLES, 0, 36, size);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
 		}
 	}
 }
 
 void Light_Directional_Component::shadowPass()
 {
-	const size_t size = m_camera.getVisibilityToken().specificSize("Anim_Model");
-	if (size) {
+	if (m_visSize) {
 		// Clear out the shadows
 		for (int x = 0; x < NUM_CASCADES; ++x)
 			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
@@ -118,7 +120,7 @@ void Light_Directional_Component::shadowPass()
 		m_camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		for (int x = 0; x < 4; ++x) {
 			glUniform1i(1, x);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
 		}
 
 		m_shadowUpdateTime = glfwGetTime();
@@ -190,7 +192,6 @@ void Light_Directional_Component::calculateCascades()
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 		const mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
 		const mat4 pvMatrix = pMatrix * m_mMatrix;
-		//uboData->lightP[i] = m_mMatrix * pMatrix;
 		uboData->lightVP[i] = pvMatrix;
 		uboData->inverseVP[i] = inverse(pvMatrix);
 

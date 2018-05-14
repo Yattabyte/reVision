@@ -85,7 +85,6 @@ public:
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
-	GLsync								m_fence;
 };
 
 /**

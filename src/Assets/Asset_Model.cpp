@@ -31,9 +31,6 @@ size_t AnimationInfo::numAnimations() const
 
 Asset_Model::~Asset_Model()
 {
-	if (m_fence != nullptr)
-		glDeleteSync(m_fence);
-
 	if (existsYet())
 		Asset_Manager::Get_Model_Manager()->unregisterGeometry(m_data, m_offset, m_count);
 }
@@ -47,22 +44,11 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_radius = 0.0f;
 	m_offset = 0;
 	m_count = 0;
-	m_fence = nullptr;
 }
 
 bool Asset_Model::existsYet()
 {
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
+	return Asset::existsYet();
 }
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
@@ -210,7 +196,6 @@ void Model_WorkOrder::finalizeOrder()
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		Asset_Manager::Get_Model_Manager()->registerGeometry(m_asset->m_data, m_asset->m_offset, m_asset->m_count);
-		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 		write_guard.unlock();
 		write_guard.release();
 		m_asset->finalize();
