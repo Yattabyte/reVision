@@ -23,7 +23,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	m_visSize = 0;
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
-	m_uboBuffer = graphics->m_lightSpotSSBO.addElement(&m_uboIndex);
+	m_uboBuffer = graphics->m_lightBuffers.m_lightSpotSSBO.addElement(&m_uboIndex);
 	m_shadowMapper = &graphics->m_shadowFBO;
 	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpot);
 	

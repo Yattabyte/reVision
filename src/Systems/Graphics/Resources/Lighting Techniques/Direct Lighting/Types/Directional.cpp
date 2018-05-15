@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 
 
@@ -7,10 +7,11 @@ Directional_Tech::~Directional_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Directional_Tech::Directional_Tech(Shadow_FBO * shadowFBO, VectorBuffer<Directional_Struct> * lightDirSSBO)
+Directional_Tech::Directional_Tech(Shadow_FBO * shadowFBO, Light_Buffers * lightBuffers)
 {
 	m_shadowFBO = shadowFBO;
-	m_lightSSBO = lightDirSSBO;
+	m_lightSSBO = &lightBuffers->m_lightDirSSBO;
+	m_size = 0;
 
 	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\directional");
 	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingDir");

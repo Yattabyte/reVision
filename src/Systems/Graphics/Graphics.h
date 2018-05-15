@@ -17,7 +17,7 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
-#include "Systems\Graphics\Resources\GFX_DEFINES.h"
+#include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -56,10 +56,8 @@ public:
 	Shadow_FBO		m_shadowFBO;
 	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
+	Light_Buffers	m_lightBuffers;
 	VectorBuffer<Geometry_Struct>		m_geometrySSBO;
-	VectorBuffer<Directional_Struct>	m_lightDirSSBO;
-	VectorBuffer<Point_Struct>			m_lightPointSSBO;
-	VectorBuffer<Spot_Struct>			m_lightSpotSSBO;
 	VectorBuffer<Reflection_Struct>		m_reflectionSSBO;
 	
 

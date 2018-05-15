@@ -1,41 +1,42 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Point_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Spot.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 
 
-Point_Tech::~Point_Tech()
+Spot_Tech::~Spot_Tech()
 {
-	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
+	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 }
 
-Point_Tech::Point_Tech(Shadow_FBO * shadowFBO, VectorBuffer<Point_Struct> * lightPointSSBO)
+Spot_Tech::Spot_Tech(Shadow_FBO * shadowFBO, Light_Buffers * lightBuffers)
 {
 	m_shadowFBO = shadowFBO;
-	m_lightSSBO = lightPointSSBO;
+	m_lightSSBO = &lightBuffers->m_lightSpotSSBO;
+	m_size = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\point");
-	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingPoint");
-	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowPoint");
+	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\spot");
+	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingSpot");
+	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowSpot");
 
 	// Primitive Loading
-	Asset_Loader::load_asset(m_shapeSphere, "sphere");
-	m_sphereVAOLoaded = false;
-	m_sphereVAO = Asset_Primitive::Generate_VAO();
-	m_shapeSphere->addCallback(this, [&]() {
-		m_shapeSphere->updateVAO(m_sphereVAO);
-		m_sphereVAOLoaded = true;
-		GLuint data[4] = { m_shapeSphere->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
+	Asset_Loader::load_asset(m_shapeCone, "cone");
+	m_coneVAOLoaded = false;
+	m_coneVAO = Asset_Primitive::Generate_VAO();
+	m_shapeCone->addCallback(this, [&]() {
+		m_shapeCone->updateVAO(m_coneVAO);
+		m_coneVAOLoaded = true;
+		GLuint data[4] = { m_shapeCone->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, data);
 	});
 }
 
-void Point_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
 {	
-	m_size = vis_token.specificSize("Light_Point");
-	if (m_size && m_sphereVAOLoaded) {
+	m_size = vis_token.specificSize("Light_Spot");
+	if (m_size && m_coneVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos);
 
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 			queue.insert(component);
 
 		m_queue = queue.toList();
@@ -44,14 +45,14 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 
 		vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
 	}
 }
 
-void Point_Tech::renderOcclusionCulling()
+void Spot_Tech::renderOcclusionCulling()
 {
 	if (m_size && m_shader_Cull->existsYet()) {
 		m_shader_Cull->bind();
@@ -62,7 +63,7 @@ void Point_Tech::renderOcclusionCulling()
 	}
 }
 
-void Point_Tech::renderShadows()
+void Spot_Tech::renderShadows()
 {
 	if (m_size && m_shader_Shadow->existsYet()) {
 		m_shader_Shadow->bind();
@@ -73,18 +74,18 @@ void Point_Tech::renderShadows()
 	}
 }
 
-void Point_Tech::renderLighting()
+void Spot_Tech::renderLighting()
 {
-	if (m_size && m_shader_Lighting->existsYet() && m_sphereVAOLoaded) {
+	if (m_size && m_shader_Lighting->existsYet() && m_coneVAOLoaded) {
 		glEnable(GL_STENCIL_TEST);
 		glCullFace(GL_FRONT);
 
-		m_shader_Lighting->bind();										// Shader (points)
+		m_shader_Lighting->bind();										// Shader (spots)
 		m_shadowFBO->bindForReading(SHADOW_REGULAR, 4);					// Shadow maps (regular maps)
 		m_visShapes.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
-		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);		// SSBO light attribute array (points)
+		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);		// SSBO light attribute array (spots)
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_sphereVAO);									// Cone VAO
+		glBindVertexArray(m_coneVAO);									// Cone VAO
 
 		// Draw only into depth-stencil buffer
 		glEnable(GL_DEPTH_TEST);

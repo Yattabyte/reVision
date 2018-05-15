@@ -23,7 +23,7 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
-GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO * shadowFBO, VectorBuffer<Directional_Struct>* lightDirSSBO, VectorBuffer<Point_Struct>* lightPointSSBO, VectorBuffer<Spot_Struct>* lightSpotSSBO)
+GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, Light_Buffers * lightBuffers)
 {
 	m_enginePackage = enginePackage;
 
@@ -33,9 +33,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_shadowFBO = shadowFBO;
 
 	// SSBO's
-	m_lightDirSSBO = lightDirSSBO;
-	m_lightPointSSBO = lightPointSSBO;
-	m_lightSpotSSBO = lightSpotSSBO;
+	m_lightDirSSBO = &lightBuffers->m_lightDirSSBO;
+	m_lightPointSSBO = &lightBuffers->m_lightPointSSBO;
+	m_lightSpotSSBO = &lightBuffers->m_lightSpotSSBO;
 
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;

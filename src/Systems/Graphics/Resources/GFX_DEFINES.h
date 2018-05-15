@@ -45,14 +45,21 @@ struct Directional_Struct {
 	vec3 LightDirection = vec3(0, -1, 0); float padding2;
 	float ShadowSize_Recip = 0;
 	float LightIntensity = 0;
-	int CascadeIndex = 0;
-	int Use_Shadows = 1;
+	
 
 	// These need to be padded to 16 bytes each, because of layout std140 rules for array elements
 	int Shadow_Spot[NUM_CASCADES]; // first element used only
 	float CascadeEndClipSpace[NUM_CASCADES]; // first element used only
+	vec2 padding3; // end of scalars, pad by 2
 	mat4 lightVP[NUM_CASCADES]; // these are good already
 	mat4 inverseVP[NUM_CASCADES]; // these are good already
+};
+
+/** Cheap Directional lights use this for their lighting + transform data. */
+struct Directional_Cheap_Struct {
+	vec3 LightColor = vec3(1.0f); float padding1;
+	vec3 LightDirection = vec3(0, -1, 0); float padding2;
+	float LightIntensity = 0; vec3 padding3;
 };
 
 /** Point lights use this for their lighting + transform data. */
@@ -68,7 +75,7 @@ struct Point_Struct {
 	int Shadow_Spot1 = 0;
 	int Shadow_Spot2 = 0;
 	int Use_Shadows = 1;
-	float padding;
+	float padding3;
 };
 
 /** Spot lights use this for their lighting + transform data. */
@@ -85,8 +92,7 @@ struct Spot_Struct {
 	float LightRadius = 0;
 	float LightCutoff = 0;
 	int Shadow_Spot = 0;
-	int Use_Shadows = 0;
-	vec2 padding;
+	vec3 padding;
 };
 
 /** Reflectors use this for their transform data. */

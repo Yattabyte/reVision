@@ -25,7 +25,7 @@ Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShand
 	m_lightVMatrix = mat4(1.0f);
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
-	m_uboBuffer = graphics->m_lightPointSSBO.addElement(&m_uboIndex);
+	m_uboBuffer = graphics->m_lightBuffers.m_lightPointSSBO.addElement(&m_uboIndex);
 	m_shadowMapper = &graphics->m_shadowFBO;
 	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpots[0]);
 	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpots[1]);

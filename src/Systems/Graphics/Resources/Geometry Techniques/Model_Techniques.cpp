@@ -10,18 +10,10 @@ Model_Technique::~Model_Technique()
 {
 }
 
-Model_Technique::Model_Technique(
-	Geometry_FBO * geometryFBO, Shadow_FBO * shadowFBO,
-	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
-) {
+Model_Technique::Model_Technique(Geometry_FBO * geometryFBO) 
+{
 	// FBO's
 	m_geometryFBO = geometryFBO;
-	m_shadowFBO = shadowFBO;
-
-	// SSBO's
-	m_lightDirSSBO = lightDirSSBO;
-	m_lightPointSSBO = lightPointSSBO;
-	m_lightSpotSSBO = lightSpotSSBO;
 	
 	// Asset Loading
 	Asset_Loader::load_asset(m_shaderCull, "Geometry\\culling");

@@ -6,6 +6,7 @@
 #include "Systems\World\ECS\Entities\Prop.h"
 #include "Systems\World\ECS\Entities\Reflector.h"
 #include "Systems\World\ECS\Entities\Sun.h"
+#include "Systems\World\ECS\Entities\Sun_Cheap.h"
 
 
 Entity_Factory::~Entity_Factory()
@@ -21,6 +22,7 @@ Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *co
 	m_creatorMap["Prop"] = new PropCreator();
 	m_creatorMap["Reflector"] = new ReflectorCreator();
 	m_creatorMap["Sun"] = new SunCreator();
+	m_creatorMap["Sun_Cheap"] = new SunCheapCreator();
 }
 
 ECShandle Entity_Factory::createEntity(const char * type)

@@ -11,7 +11,7 @@
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\DS_Technique.h"
-#include "Systems\Graphics\Resources\GFX_DEFINES.h"
+#include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\VectorBuffer.h"
 
@@ -37,7 +37,7 @@ public:
 	DS_Lighting(
 		EnginePackage * enginePackage,
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, 
-		VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
+		Light_Buffers * lightBuffers
 	);
 
 

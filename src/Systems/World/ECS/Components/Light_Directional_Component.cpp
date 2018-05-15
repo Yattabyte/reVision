@@ -32,7 +32,7 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
-	m_uboBuffer = graphics->m_lightDirSSBO.addElement(&m_uboIndex);
+	m_uboBuffer = graphics->m_lightBuffers.m_lightDirSSBO.addElement(&m_uboIndex);
 	m_shadowMapper = &graphics->m_shadowFBO;
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	for (int x = 0; x < NUM_CASCADES; ++x) {

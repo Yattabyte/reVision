@@ -6,9 +6,10 @@
 #include "Utilities\EnginePackage.h"
 
 // Begin includes for specific lighting techniques
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional_Tech.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Spot_Tech.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Point_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Spot.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Point.h"
 // End includes for specific lighting techniques
 
 DS_Lighting::~DS_Lighting()
@@ -21,7 +22,7 @@ DS_Lighting::~DS_Lighting()
 DS_Lighting::DS_Lighting(
 	EnginePackage * enginePackage,
 	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO,
-	VectorBuffer<Directional_Struct> * lightDirSSBO, VectorBuffer<Point_Struct> *lightPointSSBO, VectorBuffer<Spot_Struct> *lightSpotSSBO
+	Light_Buffers * lightBuffers
 )
 {
 	m_enginePackage = enginePackage;
@@ -43,9 +44,10 @@ DS_Lighting::DS_Lighting(
 		m_cubeVAOLoaded = true;
 	});
 
-	m_techniques.push_back(new Directional_Tech(shadowFBO, lightDirSSBO));
-	m_techniques.push_back(new Spot_Tech(shadowFBO, lightSpotSSBO));
-	m_techniques.push_back(new Point_Tech(shadowFBO, lightPointSSBO));
+	m_techniques.push_back(new Directional_Tech(shadowFBO, lightBuffers));
+	m_techniques.push_back(new Directional_Tech_Cheap(lightBuffers));
+	m_techniques.push_back(new Spot_Tech(shadowFBO, lightBuffers));
+	m_techniques.push_back(new Point_Tech(shadowFBO, lightBuffers));
 }
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)

@@ -10,7 +10,7 @@
 #endif
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\DS_Technique.h"
-#include "Systems\Graphics\Resources\GFX_DEFINES.h"
+#include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\DynamicBuffer.h"
@@ -29,7 +29,7 @@ public:
 	/** Destructor. */
 	~Point_Tech();
 	/** Constructor. */
-	Point_Tech(Shadow_FBO * shadowFBO, VectorBuffer<Point_Struct> * lightPointSSBO);
+	Point_Tech(Shadow_FBO * shadowFBO, Light_Buffers * lightBuffers);
 
 
 	// Interface Implementations
