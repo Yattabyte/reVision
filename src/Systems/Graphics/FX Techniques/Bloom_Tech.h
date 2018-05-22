@@ -25,6 +25,7 @@ public:
 
 
 	// Interface Implementations.
+	virtual const char * getName() const { return "Bloom_Tech"; }
 	virtual void applyEffect();	
 	virtual void bindForReading();
 

@@ -22,23 +22,34 @@ using namespace glm;
  * An interface for specific deferred shading lighting techniques.
  * To be used only by the DS_Lighting class.
  **/
-class DT_ENGINE_API DS_Technique {
+class DT_ENGINE_API Light_Tech {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	virtual ~DS_Technique() {}
+	virtual ~Light_Tech() {}
 	/** Constructor. */
-	DS_Technique() {}
+	Light_Tech() {}
 
 
 	// Interface Declarations
-	/** Perform updates, calculations, and memory writes. 
-	 * @param	vis_token	the visibility token */
+	/** Return string name of this technique.
+	 * @return	string name of this technique */
+	virtual const char * getName() const = 0;
+	/** Perform updates, calculations, and memory writes for direct lighting
+	 * @param	vis_token		the visibility token
+	 * @param	updateQuality	the number of lights to allow per update
+	 * @param	camPos			the position of the viewer in 3D space */
 	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos) = 0;
+	/** Perform updates, calculations, and memory writes for indirect lighting
+	 * @param	vis_token			the visibility token
+	 * @param	bounceResolution	the resolution of the bounce buffer */
+	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution) = 0;
 	/** Apply occlusion culling for this category of lights. */
 	virtual void renderOcclusionCulling() = 0;
 	/** Apply a shadowing pass for this category of lights. */
 	virtual void renderShadows() = 0;
+	/** Apply a bounce pass for this category of lights. */
+	virtual void renderLightBounce() = 0;
 	/** Apply a lighting pass for this category of lights. */
 	virtual void renderLighting() = 0;
 };

@@ -19,9 +19,8 @@ class EnginePackage;
 
 
 /**
-* An engine system responsible for rendering. Creates Geometry_FBO, Lighting_FBO, Shadow_FBO, and VisualFX
-* @note	performs physically based rendering techniques.
-**/
+ * A performance counter
+ **/
 class DT_ENGINE_API System_PerfCounter : public System
 {
 public:

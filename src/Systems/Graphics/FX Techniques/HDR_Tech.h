@@ -24,6 +24,7 @@ public:
 
 
 	// Interface Implementations.
+	virtual const char * getName() const { return "HDR_Tech"; }
 	virtual void applyEffect();	
 	virtual void bindForReading();
 

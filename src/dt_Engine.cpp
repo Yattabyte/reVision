@@ -75,6 +75,9 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 
 dt_Engine::~dt_Engine()
 {
+	if (m_Initialized) {
+		m_package->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+	}
 }
 
 dt_Engine::dt_Engine()
@@ -155,6 +158,7 @@ bool dt_Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 		m_package = new EnginePackage();
+		m_package->m_Camera.setHorizontalFOV(110.0f);
 		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);	
 		const float farPlane = m_package->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_package->m_Camera.setFarPlane(f); m_package->m_Camera.update(); });
 		//m_package->m_Camera.setNearPlane(1.0f);

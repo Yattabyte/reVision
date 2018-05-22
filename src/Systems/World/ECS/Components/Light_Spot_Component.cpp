@@ -1,17 +1,18 @@
 #include "Systems\World\ECS\Components\Light_Spot_Component.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
-#include "Utilities\EnginePackage.h"
-#include "Systems\World\World.h"
 #include "Systems\World\ECS\ECSmessage.h"
+#include "Systems\World\World.h"
+#include "Utilities\EnginePackage.h"
 #include "Utilities\Transform.h"
 #include "Systems\Graphics\Graphics.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
 #include "GLFW\glfw3.h"
 #include <math.h>
 
 
 Light_Spot_Component::~Light_Spot_Component()
 {
-	m_shadowMapper->unregisterShadowCaster(SHADOW_REGULAR, m_shadowSpot);
+	m_spotTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
 }
 
@@ -23,9 +24,9 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	m_visSize = 0;
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	m_spotTech = graphics->getBaseTech<Spot_Tech>("Spot_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightSpotSSBO.addElement(&m_uboIndex);
-	m_shadowMapper = &graphics->m_shadowFBO;
-	m_shadowMapper->registerShadowCaster(SHADOW_REGULAR, m_shadowSpot);
+	m_spotTech->registerShadowCaster(m_shadowSpot);
 	
 	m_world = m_enginePackage->getSubSystem<System_World>("World");
 	m_world->registerViewer(&m_camera);	
@@ -33,8 +34,8 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	// Write data to our index spot
 	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot = m_shadowSpot;
-	uboData->ShadowSize_Recip = 1.0f / m_shadowMapper->getSize(SHADOW_REGULAR).x;
-	m_camera.setDimensions(m_shadowMapper->getSize(SHADOW_REGULAR));
+	uboData->ShadowSize_Recip = 1.0f / m_spotTech->getSize().x;
+	m_camera.setDimensions(m_spotTech->getSize());
 }
 
 void Light_Spot_Component::receiveMessage(const ECSmessage &message)
@@ -187,7 +188,7 @@ void Light_Spot_Component::shadowPass()
 {
 	if (m_visSize) {
 		// Clear out the shadows
-		m_shadowMapper->clearShadow(SHADOW_REGULAR, m_shadowSpot);
+		m_spotTech->clearShadow(m_shadowSpot);
 		glUniform1i(0, getBufferIndex());
 
 		// Draw render lists

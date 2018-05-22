@@ -1,28 +1,20 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
-#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Utilities\EnginePackage.h"
 
-// Begin includes for specific lighting techniques
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Directional_Cheap.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Spot.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\Point.h"
-// End includes for specific lighting techniques
 
 DS_Lighting::~DS_Lighting()
 {
 	if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
-
 	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 }
 
 DS_Lighting::DS_Lighting(
 	EnginePackage * enginePackage,
-	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO,
-	Light_Buffers * lightBuffers
+	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
+	vector<Light_Tech*> * baseTechs
 )
 {
 	m_enginePackage = enginePackage;
@@ -31,7 +23,9 @@ DS_Lighting::DS_Lighting(
 	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
-	m_shadowFBO = shadowFBO;
+
+	// Base Techniques
+	m_baseTechs = baseTechs;
 
 	// Load Assets
 	Asset_Loader::load_asset(m_shapeCube, "box");
@@ -43,11 +37,6 @@ DS_Lighting::DS_Lighting(
 		m_shapeCube->updateVAO(m_cubeVAO);
 		m_cubeVAOLoaded = true;
 	});
-
-	m_techniques.push_back(new Directional_Tech(shadowFBO, lightBuffers));
-	m_techniques.push_back(new Directional_Tech_Cheap(lightBuffers));
-	m_techniques.push_back(new Spot_Tech(shadowFBO, lightBuffers));
-	m_techniques.push_back(new Point_Tech(shadowFBO, lightBuffers));
 }
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
@@ -55,7 +44,7 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 	// Quit early if we don't have models
 	if (!vis_token.find("Anim_Model")) return;
 
-	for each (auto technique in m_techniques)
+	for each (auto technique in *m_baseTechs)
 		technique->updateData(vis_token, m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
 }
 
@@ -76,7 +65,7 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		// Draw model bounding boxes
 		glBindVertexArray(m_cubeVAO);
 
-		for each (auto technique in m_techniques)
+		for each (auto technique in *m_baseTechs)
 			technique->renderOcclusionCulling();
 
 		// Undo state changes
@@ -91,13 +80,15 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 		Render Shadows 
 	********************/
 	glDisable(GL_BLEND);
-	glCullFace(GL_BACK);
-
+	glCullFace(GL_FRONT);
+	
 	// Bind Geometry VAO once
 	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
-	for each (auto technique in m_techniques)
+	for each (auto technique in *m_baseTechs)
 		technique->renderShadows();	
+
+	glCullFace(GL_BACK);
 }
 
 void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
@@ -109,7 +100,7 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	m_geometryFBO->bindForReading();
 	m_lightingFBO->bindForWriting();
 
-	for each (auto technique in m_techniques)
+	for each (auto technique in *m_baseTechs)
 		technique->renderLighting();
 
 	// Revert State

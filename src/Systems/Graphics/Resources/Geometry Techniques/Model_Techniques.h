@@ -36,7 +36,7 @@ public:
 
 
 	// Public methods
-	static void writeCameraBuffers(Camera & camera);
+	static void writeCameraBuffers(Camera & camera, const unsigned int & instanceCount = 1);
 
 
 private:

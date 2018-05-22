@@ -1,17 +1,18 @@
 #include "Systems\World\ECS\Components\Light_Directional_Component.h"
 #include "Systems\World\ECS\Components\Geometry_Component.h"
-#include "Utilities\EnginePackage.h"
-#include "Systems\World\World.h"
 #include "Systems\World\ECS\ECSmessage.h"
+#include "Systems\World\World.h"
+#include "Utilities\EnginePackage.h"
 #include "Utilities\Transform.h"
 #include "Systems\Graphics\Graphics.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
 #include "GLFW\glfw3.h"
 
 
 Light_Directional_Component::~Light_Directional_Component()
 {
 	for (int x = 0; x < NUM_CASCADES; ++x)
-		m_shadowMapper->unregisterShadowCaster(SHADOW_LARGE, m_shadowSpots[x]);
+		m_directionalTech->unregisterShadowCaster(m_shadowSpots[x]);
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
@@ -32,13 +33,15 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	}
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	m_directionalTech = graphics->getBaseTech<Directional_Tech>("Directional_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightDirSSBO.addElement(&m_uboIndex);
-	m_shadowMapper = &graphics->m_shadowFBO;
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	for (int x = 0; x < NUM_CASCADES; ++x) {
-		m_shadowMapper->registerShadowCaster(SHADOW_LARGE, m_shadowSpots[x]);
+		m_directionalTech->registerShadowCaster(m_shadowSpots[x]);
 		uboData->Shadow_Spot[x] = m_shadowSpots[x];
 	}
+	m_shadowSize = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL);
+	uboData->ShadowSize_Recip = 1.0f / m_shadowSize;
 		
 	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
 }
@@ -110,7 +113,7 @@ void Light_Directional_Component::shadowPass()
 	if (m_visSize) {
 		// Clear out the shadows
 		for (int x = 0; x < NUM_CASCADES; ++x)
-			m_shadowMapper->clearShadow(SHADOW_LARGE, m_shadowSpots[x]);
+			m_directionalTech->clearShadow(m_shadowSpots[x]);
 
 		glUniform1i(0, getBufferIndex());
 
@@ -152,9 +155,7 @@ void Light_Directional_Component::calculateCascades()
 	const vec2 &size = cameraBuffer.Dimensions;
 	float ar = size.x / size.y;
 	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
-	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
-	const float shadowSize = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_LARGE);
-	uboData->ShadowSize_Recip = 1.0f / shadowSize;
+	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));	
 
 	for (int i = 0; i < NUM_CASCADES; i++) {
 		float points[4] = { m_cascadeEnd[i] * tanHalfHFOV,
@@ -183,7 +184,7 @@ void Light_Directional_Component::calculateCascades()
 		float radius = glm::length(frustumCorners[7] - middle);
 		vec3 aabb(radius);
 
-		const vec3 volumeUnitSize = (aabb - -aabb) / shadowSize;
+		const vec3 volumeUnitSize = (aabb - -aabb) / m_shadowSize;
 		const vec3 frustumpos = (m_mMatrix * CamInv * vec4(middle, 1.0f)).xyz;
 		const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
 		vec3 newMin = -aabb + clampedPos;

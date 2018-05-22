@@ -16,6 +16,9 @@ public:
 
 
 	// Public Methods
+	/** Return string name of this technique.
+	 * @return	string name of this technique */
+	virtual const char * getName() const = 0;
 	/** Apply this lighting technique. */
 	virtual void applyEffect() = 0;
 	/** Bind the output textures of this effect as input textures for something else to use. */

@@ -129,11 +129,13 @@ void Anim_Model_Component::updateBSphere()
 {
 	if (m_model && m_model->existsYet()) {
 		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		vec3 bboxPos = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f) + m_model->m_bboxMin;
-		vec3 bboxScale = ((m_model->m_bboxMax - m_model->m_bboxMin) / 2.0f);
-		mat4 matTrans = glm::translate(mat4(1.0f), bboxPos + m_transform.m_position);
+		const vec3 bboxMax_World = (m_model->m_bboxMax * m_transform.m_scale) + m_transform.m_position;
+		const vec3 bboxMin_World = (m_model->m_bboxMin * m_transform.m_scale) + m_transform.m_position;
+		const vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;	
+		const vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
+		mat4 matTrans = glm::translate(mat4(1.0f), bboxCenter);
 		mat4 matRot = glm::mat4_cast(m_transform.m_orientation);
-		mat4 matScale = glm::scale(mat4(1.0f), bboxScale * m_transform.m_scale);
+		mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
 		mat4 matFinal = (matTrans * matRot * matScale);
 		(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
 		m_bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);

@@ -1,4 +1,11 @@
 #include "Systems\Graphics\Graphics.h"
+#include "Systems\World\Camera.h"
+#include "Managers\Material_Manager.h"
+#include "Utilities\EnginePackage.h"
+#include <random>
+#include <minmax.h>
+
+// Begin incldues for specific techniques
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Sky Lighting\Skybox.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
@@ -7,11 +14,14 @@
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
-#include "Systems\World\Camera.h"
-#include "Managers\Material_Manager.h"
-#include "Utilities\EnginePackage.h"
-#include <random>
-#include <minmax.h>
+// End includes for specific techniques
+
+// Begin includes for specific lighting techniques
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point.h"
+// End includes for specific lighting techniques
 
 
 System_Graphics::~System_Graphics()
@@ -23,7 +33,6 @@ System_Graphics::~System_Graphics()
 		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
@@ -32,7 +41,7 @@ System_Graphics::~System_Graphics()
 	}
 }
 
-System_Graphics::System_Graphics() : m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_shadowFBO(), m_reflectionFBO(), m_renderSize(vec2(1.0f)) {}
+System_Graphics::System_Graphics() : m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_reflectionFBO(), m_renderSize(vec2(1.0f)) {}
 
 void System_Graphics::initialize(EnginePackage * enginePackage)
 {
@@ -72,21 +81,29 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_geometryFBO.initialize(enginePackage, &m_visualFX);
 		m_lightingFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
 		m_reflectionFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
-		m_shadowFBO.initialize(enginePackage);
 
-		// Initiate geometry techniques
+		// Initiate base lighting techniques
+		m_baseTechs.push_back(new Directional_Tech(enginePackage, &m_lightBuffers));
+		m_baseTechs.push_back(new Spot_Tech(enginePackage, &m_lightBuffers));
+		m_baseTechs.push_back(new Point_Tech(enginePackage, &m_lightBuffers));
+		m_baseTechs.push_back(new Directional_Tech_Cheap(&m_lightBuffers));
+		for each(auto * tech in m_baseTechs)
+			m_techMap[tech->getName()] = tech;
+
+		// Initiate specialized geometry techniques
 		m_geometryTechs.push_back(new Model_Technique(&m_geometryFBO));
 
-		// Initiate lighting techniques
+		// Initiate specialized lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightBuffers));
-		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_shadowFBO, &m_lightBuffers));
+		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
+		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
-		// Initiate effects techniques
+		// Initiate specialized effects techniques
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
 		m_fxTechs.push_back(new HDR_Tech(enginePackage));
 		m_fxTechs.push_back(new FXAA_Tech());
+
 		m_Initialized = true;
 	}
 }

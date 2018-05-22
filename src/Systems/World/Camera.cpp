@@ -63,8 +63,9 @@ void Camera::update()
 
 	// Update Perspective Matrix
 	float ar(m_cameraBuffer.Dimensions.x / m_cameraBuffer.Dimensions.y);
-	float verticalFOV = 2.0f * atanf(tanf(radians(m_cameraBuffer.FOV) / 2.0f) / ar);
-	m_cameraBuffer.pMatrix = perspective(verticalFOV, ar, m_cameraBuffer.NearPlane, m_cameraBuffer.FarPlane);
+	float horizontalRad = glm::radians(m_cameraBuffer.FOV);
+	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
+	m_cameraBuffer.pMatrix = glm::perspective(verticalRad, ar, m_cameraBuffer.NearPlane, m_cameraBuffer.FarPlane);
 	m_cameraBuffer.pMatrix_Inverse = glm::inverse(m_cameraBuffer.pMatrix);
 
 	// Update Viewing Matrix

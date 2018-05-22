@@ -12,18 +12,16 @@
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Light_Buffers.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\World\Camera.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
-#include "Utilities\GL\VectorBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO;
 class Lighting_FBO;
-class Shadow_FBO;
 
 
  /**
@@ -38,7 +36,11 @@ public:
 	/** Virtual Destructor. */
 	~GlobalIllumination_RH();
 	/** Constructor. */
-	GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, Light_Buffers * lightBuffers);
+	GlobalIllumination_RH(
+		EnginePackage * enginePackage, 
+		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
+		vector<Light_Tech*> * baseTechs
+	);
 
 
 	// Interface Implementations.
@@ -63,15 +65,11 @@ private:
 
 	// Private Attributes
 	EnginePackage * m_enginePackage;
+	vector<Light_Tech*> * m_baseTechs;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
-	Shadow_FBO * m_shadowFBO;
-	// Shared SSBO's
-	VectorBuffer<Directional_Struct> * m_lightDirSSBO;
-	VectorBuffer<Point_Struct> * m_lightPointSSBO;
-	VectorBuffer<Spot_Struct> * m_lightSpotSSBO;
-	Shared_Asset_Shader m_shaderDirectional_Bounce, m_shaderPoint_Bounce, m_shaderSpot_Bounce, m_shaderGISecondBounce, m_shaderGIReconstruct;
+	Shared_Asset_Shader m_shaderPoint_Bounce, m_shaderGISecondBounce, m_shaderGIReconstruct;
 	Shared_Asset_Primitive m_shapeQuad;
 	bool m_vaoLoaded;
 	GLuint m_quadVAO, m_bounceVAO;
@@ -83,8 +81,8 @@ private:
 	ivec2 m_renderSize;
 	GLuint m_resolution;
 	Camera m_camera;
-	StaticBuffer m_attribBuffer, m_Indirect_Slices_Dir, m_Indirect_Slices_Point, m_Indirect_Slices_Spot, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
-	DynamicBuffer m_visPoints, m_visSpots;
+	StaticBuffer m_attribBuffer, m_Indirect_Slices_Point, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
+	DynamicBuffer m_visPoints;
 };
 
 #endif // GLOBALILLUMINATION_RH

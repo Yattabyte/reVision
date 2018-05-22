@@ -18,7 +18,7 @@
 #include "Systems\World\Camera.h"
 
 using namespace glm;
-class Shadow_FBO;
+class Spot_Tech;
 class System_World;
 class Light_Spot_Creator;
 class EnginePackage;
@@ -51,7 +51,7 @@ protected:
 	// Protected Attributes
 	// Shared Objects
 	EnginePackage *m_enginePackage;
-	Shadow_FBO *m_shadowMapper;
+	Spot_Tech * m_spotTech;
 	System_World *m_world;
 	// Cached Attributes
 	float m_radius;

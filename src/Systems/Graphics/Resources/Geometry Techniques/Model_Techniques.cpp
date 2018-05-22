@@ -1,6 +1,5 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
-#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
@@ -91,7 +90,7 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 	}
 }
 
-void Model_Technique::writeCameraBuffers(Camera & camera)
+void Model_Technique::writeCameraBuffers(Camera & camera, const unsigned int & instanceCount)
 {
 	const Visibility_Token vis_token = camera.getVisibilityToken();
 	const size_t size = vis_token.specificSize("Anim_Model");
@@ -107,12 +106,12 @@ void Model_Technique::writeCameraBuffers(Camera & camera)
 			visibleIndices[count] = component->getBufferIndex();
 			// Check mesh complexity and if viewer not within BSphere
 			if ((component->getMeshSize() >= 100) && !(component->containsPoint(camera.getPosition()))) { // Allow
-				cullingDrawData[count] = ivec4(36, 1, 0, 0);
+				cullingDrawData[count] = ivec4(36, instanceCount, 0, 1);
 				renderingDrawData[count++] = ivec4(drawInfo.y, 0, drawInfo.x, 1);
 			}
 			else { // Skip				
-				cullingDrawData[count] = ivec4(36, 0, 0, 0);
-				renderingDrawData[count++] = ivec4(drawInfo.y, 1, drawInfo.x, 1);
+				cullingDrawData[count] = ivec4(36, 0, 0, 1);
+				renderingDrawData[count++] = ivec4(drawInfo.y, instanceCount, drawInfo.x, 1);
 			}
 		}
 

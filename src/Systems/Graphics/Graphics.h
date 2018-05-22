@@ -12,10 +12,10 @@
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
-#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
@@ -23,6 +23,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
+#include "Utilities\MappedChar.h"
 #include <vector>
 
 class EnginePackage;
@@ -30,7 +31,7 @@ class Camera;
 
 
 /**
- * An engine system responsible for rendering. Creates Geometry_FBO, Lighting_FBO, Shadow_FBO, and VisualFX
+ * An engine system responsible for rendering. Creates Geometry_FBO, Lighting_FBO, and VisualFX
  * @note	performs physically based rendering techniques.
  **/
 class DT_ENGINE_API System_Graphics : public System
@@ -41,6 +42,15 @@ public:
 	~System_Graphics();
 	/** Construct the rendering system. */
 	System_Graphics();
+
+	
+	// Public Functions
+	/** Returns a type-casted technique that matches the given name.
+	 * @param	c	a const char array name of the desired technique to find
+	 * @return		the technique requested */
+	template <typename T> T * getBaseTech(const char * c) {
+		return (T*)m_techMap[c];
+	}
 	
 
 	// Interface Implementations
@@ -53,7 +63,6 @@ public:
 	// Frame Buffers
 	Geometry_FBO	m_geometryFBO;
 	Lighting_FBO	m_lightingFBO;
-	Shadow_FBO		m_shadowFBO;
 	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
 	Light_Buffers	m_lightBuffers;
@@ -84,6 +93,9 @@ private:
 	vector<Geometry_Technique*> m_geometryTechs;
 	vector<Lighting_Technique*> m_lightingTechs;
 	vector<FX_Technique*>		m_fxTechs;
+	// Base light type techniques
+	vector<Light_Tech*>			m_baseTechs;
+	MappedChar<void*>			m_techMap;
 };
 
 #endif // SYSTEM_GRAPHICS

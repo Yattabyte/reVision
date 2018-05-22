@@ -18,7 +18,7 @@
 #include "Systems\World\Camera.h"
 
 using namespace glm;
-class Shadow_FBO;
+class Point_Tech;
 class System_World;
 class Light_Point_Creator;
 class EnginePackage;
@@ -48,26 +48,32 @@ protected:
 	Light_Point_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
 
 
+	// Protected Functions
+	/** Recalculate matrices. */
+	void updateViews();
+
+
 	// Protected Attributes
 	// Shared Objects
-	EnginePackage *m_enginePackage;
-	Shadow_FBO *m_shadowMapper;
-	System_World *m_world;
+	EnginePackage * m_enginePackage;
+	Point_Tech * m_pointTech;
+	System_World * m_world;
 	// Cached attributes
 	float m_radius;
 	float m_squaredRadius;
 	mat4 m_lightVMatrix; 
 	vec3 m_lightPos;
-	int m_shadowSpots[2];
-	Camera m_camera[2];
+	int m_shadowSpot;
+	Camera m_camera;
+	size_t m_visSize;
 	friend class Light_Point_Creator;
 };
 
 class DT_ENGINE_API Light_Point_Creator : public ComponentCreator
 {
 public:
-	Light_Point_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
+	Light_Point_Creator(ECSmessenger * ecsMessenger) : ComponentCreator(ecsMessenger) {}
+	virtual Component* Create(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) {
 		return new Light_Point_Component(id, pid, enginePackage);
 	}
 };

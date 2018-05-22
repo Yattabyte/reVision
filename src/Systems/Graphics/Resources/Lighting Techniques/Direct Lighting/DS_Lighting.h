@@ -10,15 +10,14 @@
 #endif
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\DS_Technique.h"
-#include "Systems\Graphics\Resources\Light_Buffers.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\MappedChar.h"
 
 class EnginePackage;
 class Geometry_FBO;
 class Lighting_FBO;
-class Shadow_FBO;
 class Lighting_Component;
 
 
@@ -36,9 +35,18 @@ public:
 	/** Constructor. */
 	DS_Lighting(
 		EnginePackage * enginePackage,
-		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, 
-		Light_Buffers * lightBuffers
+		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
+		vector<Light_Tech*> * baseTechs
 	);
+
+
+	// Public Functions
+	/** Returns a type-casted technique that matches the given name.
+	* @param	c	a const char array name of the desired technique to find
+	* @return		the technique requested */
+	template <typename T> T * getTechnique(const char * c) {
+		return (T*)m_techMap[c];
+	}
 
 
 	// Interface Implementations.
@@ -49,14 +57,13 @@ public:
 
 private:
 	// Private Attributes
-	vector<DS_Technique*> m_techniques;
 	EnginePackage * m_enginePackage;
+	vector<Light_Tech*> * m_baseTechs;
 	int m_updateQuality;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
-	Shadow_FBO * m_shadowFBO;
-
+	// Primitives
 	Shared_Asset_Primitive m_shapeCube;
 	GLuint m_cubeVAO;
 	bool m_cubeVAOLoaded;

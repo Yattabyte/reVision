@@ -37,7 +37,7 @@ public:
 	// Public Methods
 	/** Searches for a subsystem with the given name.
 	 * @param	c	a const char array name of the desired system to find
-	 * @return		true if it can find the system, false otherwise */
+	 * @return		the system requested */
 	bool findSubSystem(const char * c) { 
 		return m_Systems.find(c);
 	}
@@ -50,7 +50,7 @@ public:
 	/** Returns the preference-value associated with the supplied preference-ID.
 	 * @param	targetKey	the ID associated with the desired preference-value
 	 * @return				the value associated with the supplied preference-ID */
-	float getPreference(const  PreferenceState::Preference & targetKey) const {
+	float getPreference(const PreferenceState::Preference & targetKey) const {
 		return m_PreferenceState.getPreference(targetKey);
 	}
 	/** Sets the supplied preference-value to the supplied preference-ID.

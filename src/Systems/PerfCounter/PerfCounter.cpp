@@ -6,6 +6,10 @@
 
 System_PerfCounter::~System_PerfCounter()
 {
+	if (m_Initialized) {
+		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	}
 }
 
 System_PerfCounter::System_PerfCounter()

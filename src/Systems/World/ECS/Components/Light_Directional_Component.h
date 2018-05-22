@@ -19,9 +19,9 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 
 using namespace glm;
+class Directional_Tech;
 class Light_Directional_Creator;
 class EnginePackage;
-class Shadow_FBO;
 
 
 /**
@@ -55,10 +55,11 @@ protected:
 
 	// Protected Attributes
 	EnginePackage *m_enginePackage;
-	Shadow_FBO *m_shadowMapper;
+	Directional_Tech * m_directionalTech;
 	float m_cascadeEnd[5];
 	int m_shadowSpots[NUM_CASCADES];
 	size_t m_visSize;
+	float m_shadowSize;
 	mat4 m_mMatrix;
 	Camera m_camera;
 	friend class Light_Directional_Creator;

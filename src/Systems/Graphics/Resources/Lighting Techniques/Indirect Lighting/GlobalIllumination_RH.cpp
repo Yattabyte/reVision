@@ -1,7 +1,6 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
-#include "Systems\Graphics\Resources\Frame Buffers\Shadow_FBO.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\World.h"
@@ -21,21 +20,20 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	glDeleteVertexArrays(1, &m_bounceVAO);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 }
 
-GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Shadow_FBO *shadowFBO, Light_Buffers * lightBuffers)
+GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, vector<Light_Tech*> * baseTechs)
 {
 	m_enginePackage = enginePackage;
 
 	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
-	m_shadowFBO = shadowFBO;
 
-	// SSBO's
-	m_lightDirSSBO = &lightBuffers->m_lightDirSSBO;
-	m_lightPointSSBO = &lightBuffers->m_lightPointSSBO;
-	m_lightSpotSSBO = &lightBuffers->m_lightSpotSSBO;
+	// Base Techniques
+	m_baseTechs = baseTechs;
 
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;
@@ -44,9 +42,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	ZERO_MEM(m_textures[0]);
 	ZERO_MEM(m_textures[1]);
 
-	Asset_Loader::load_asset(m_shaderDirectional_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\directional_bounce");
 	Asset_Loader::load_asset(m_shaderPoint_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\point_bounce");
-	Asset_Loader::load_asset(m_shaderSpot_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\spot_bounce");
 	Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce");
 	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
@@ -59,13 +55,11 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
 	
 	m_resolution = 16;
-	GI_Radiance_Struct attribData(m_resolution, 0.75, 100, 0.75, 12);
+	GI_Radiance_Struct attribData(16, m_resolution, 0.001, 0, 25.0f);
 	m_attribBuffer = StaticBuffer(sizeof(GI_Radiance_Struct), &attribData);
 
 	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
-	m_Indirect_Slices_Dir = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 	m_Indirect_Slices_Point = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
-	m_Indirect_Slices_Spot = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 
 	GLuint secondBounceData[4] = { 1, m_resolution, 0, 0 }; // count, primCount, first, reserved
 	m_IndirectSecondLayersBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
@@ -100,7 +94,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTextureParameteri(m_textures[bounce][channel], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGB16F, m_resolution, m_resolution, m_resolution, 0, GL_RGB, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, m_resolution, m_resolution, m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 			glNamedFramebufferTexture(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
 		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
@@ -170,24 +164,24 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 		const vec3 newMax = aabb + clampedPos;
 		const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 		m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
+		m_camera.setPosition(clampedPos);
+		m_camera.setFarPlane(aabb.x);
 	
 		m_attribBuffer.write(0, sizeof(vec3), &newMax);
 		m_attribBuffer.write(sizeof(vec4), sizeof(vec3), &newMin);
+		m_attribBuffer.write(offsetof(GI_Radiance_Struct, R_wcs), sizeof(float), &volumeUnitSize.x);
 	}
 
 	// Update Draw call buffers
+	for each (auto technique in *m_baseTechs)
+		technique->updateDataGI(m_camera.getVisibilityToken(), m_resolution);
+
+
 	{
 		const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-		const GLuint dirSize = vis_token.specificSize("Light_Directional");
 		const GLuint pointSize = vis_token.specificSize("Light_Point");
 		const GLuint spotSize = vis_token.specificSize("Light_Spot");
 
-		if (m_shaderDirectional_Bounce->existsYet() && dirSize) {
-			const GLuint dirDraws = m_resolution * dirSize;
-			m_Indirect_Slices_Dir.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
-			m_shaderDirectional_Bounce->bind();
-			m_shaderDirectional_Bounce->Set_Uniform(0, (int)dirSize);
-		}
 		if (m_shaderPoint_Bounce->existsYet() && pointSize) {
 			const GLuint pointDraws = m_resolution * pointSize;
 			vector<GLuint> visArray(pointSize);
@@ -198,17 +192,6 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 			m_Indirect_Slices_Point.write(sizeof(GLuint), sizeof(GLuint), &pointDraws);
 			m_shaderPoint_Bounce->bind();
 			m_shaderPoint_Bounce->Set_Uniform(0, (int)pointSize);
-		}
-		if (m_shaderSpot_Bounce->existsYet() && spotSize) {
-			const GLuint spotDraws = m_resolution * spotSize;
-			vector<GLuint> visArray(spotSize);
-			unsigned int count = 0;
-			for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
-				visArray[count++] = component->getBufferIndex();
-			m_visSpots.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-			m_Indirect_Slices_Spot.write(sizeof(GLuint), sizeof(GLuint), &spotDraws);
-			m_shaderSpot_Bounce->bind();
-			m_shaderSpot_Bounce->Set_Uniform(0, (int)spotSize);
 		}
 		Asset_Shader::Release();
 	}
@@ -225,19 +208,13 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 	glBindVertexArray(m_bounceVAO);
 
 	m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-	m_shadowFBO->BindForReading_GI(SHADOW_LARGE, 0);
-	bindNoise(4);
 	bindForWriting(0);
+	bindNoise(4);
 
-	// Bounce directional lights
-	const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-	if (vis_token.specificSize("Light_Directional") && m_shaderDirectional_Bounce->existsYet()) {
-		m_shaderDirectional_Bounce->bind();
-		m_lightDirSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-		m_Indirect_Slices_Dir.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_POINTS, 0);
-	}
-	// Bounce point lights
+	for each (auto technique in *m_baseTechs)
+		technique->renderLightBounce();
+
+	/*// Bounce point lights
 	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
 	if (vis_token.specificSize("Light_Point") && m_shaderPoint_Bounce->existsYet()) {
 		m_shaderPoint_Bounce->bind();
@@ -253,7 +230,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
 		m_Indirect_Slices_Spot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_POINTS, 0);
-	}
+	}*/
 
 	// Perform secondary light bounce
 	if (m_shaderGISecondBounce->existsYet()) {

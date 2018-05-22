@@ -9,7 +9,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Types\DS_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
@@ -20,7 +20,7 @@
 * An interface for specific deferred shading lighting techniques.
 * To be used only by the DS_Lighting class.
 **/
-class DT_ENGINE_API Directional_Tech_Cheap : public DS_Technique {
+class DT_ENGINE_API Directional_Tech_Cheap : public Light_Tech {
 public:
 	// (de)Constructors
 	/** Destructor. */
@@ -30,9 +30,12 @@ public:
 
 
 	// Interface Implementations
+	virtual const char * getName() const { return "Directional_Tech_Cheap"; }
 	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
+	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution);
 	virtual void renderOcclusionCulling();
 	virtual void renderShadows();
+	virtual void renderLightBounce();
 	virtual void renderLighting();
 
 

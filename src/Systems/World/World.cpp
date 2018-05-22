@@ -33,188 +33,100 @@ void System_World::update(const float & deltaTime)
 	// Temporary level loading logic until a map format is chosen
 	static bool loaded = false;
 	if (!loaded) {
-		/*auto sponza = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		sponza->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Sponza\\sponza.obj")));
-		sponza->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2.5, 0))));*/
-
-		auto castle = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		castle->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
-		castle->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -5, -20))));
 
 		auto hills = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
 		hills->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
+
+		auto wall1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall1->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		wall1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2))));
+
+		auto wall2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall2->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(22, -10, 0), quat(1, 0, 0, 0), vec3(2))));
+
+		auto wall3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall3->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+
+		auto wall4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall4->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+
+		auto wall5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall5->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall5->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall5->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(20, -11, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 0, 1)), vec3(2))));
+
+		auto wall6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall6->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall6->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall6->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+
+		auto wall7 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		wall7->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
+		wall7->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
+		wall7->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
 
 		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.75, 0.75, 0.9)));
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f)); // OLD INTENSITY WAS 8.0
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));
 		
-
 		/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0.0, 1.0)));
+		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1.0)));
 		point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 		point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-		point->receiveMessage(ECSmessage(SET_POSITION, vec3(10, 5, -20)));*/
-
-		for (int x = 0; x < 3; ++x) {
-			/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-			point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0.0, 1.0)));
-			point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-			point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			point->receiveMessage(ECSmessage(SET_POSITION, vec3(-20, -2.5, -20 + ((x - 1) * 20))));*/
-			
-			auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.5, 1, 0.0)));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
-			spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-20, -2.5, -20 + ((x-1)* 20))));
-			spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));
-
-			auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-			model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-			model1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-5, -2.5, -20 + ((x - 1) * 20)))));
-			//model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, x));
-		}
-		
-		for (int x = 0; x < 3; ++x) {
-			/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-			point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0.0, 1.0)));
-			point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-			point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			point->receiveMessage(ECSmessage(SET_POSITION, vec3(20, -2.5, -20 + ((x - 1) * 20))));*/
-
-			auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.5, 1, 0.0)));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-			spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
-			spot->receiveMessage(ECSmessage(SET_POSITION, vec3(20, -2.5, -20 + ((x - 1) * 20))));
-			spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(1,0,0,0), glm::radians(180.0f), vec3(0,1,0))));
-
-			auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-			model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-			model1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(10, -2.5, -20 + ((x - 1) * 20)))));
-		//	model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, x));
-		}
-		
-		for (int x = 0; x < 10; ++x) {
-			for (int y = 0; y < 10; ++y) {
-				auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-				model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-				model1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3((x - 4.5) * 2, -2.5, -20 + ((y - 4.5) * 5)))));
-				//model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, (x + y) % 3));
-			}
-		}
-
-		//auto wall = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		//wall->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		//wall->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		//wall->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-25, -7.5, -20))));
-
-		//auto model4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		//model4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\ref_test.obj")));
-		//model4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-25, -7.5, -40), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
-
-		//spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0, 0, 1))));
-		
-		
-		/*for (int x = 0; x < 16; ++x)
-			for (int y = 0; y < 16; ++y) {
-				auto refl = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
-				refl->receiveMessage(ECSmessage(SET_POSITION, vec3(x * 4, 0, y * 4)));
-			}*/
-
-		/*auto ref1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
-		ref1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-12, -2, 0), quat(1, 0, 0, 0), vec3(4.0F))));
-		ref1->receiveMessage(ECSmessage(SET_REFLECTOR_RADIUS, 2.0f));
-		auto idref2 = m_entityFactory.createEntity("Reflector");
-		auto ref2 = m_entityFactory.getEntity(idref2);
-		ref2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2, 0), quat(1, 0, 0, 0), vec3(4.0F))));
-		ref2->receiveMessage(ECSmessage(SET_REFLECTOR_RADIUS, 3.0f));
-		auto ref3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Reflector"));
-		ref3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(12, -2, 0), quat(1, 0, 0, 0), vec3(4.0F))));
-		ref3->receiveMessage(ECSmessage(SET_REFLECTOR_RADIUS, 4.0f));
-
-		auto mir1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		mir1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F,1,20))));
-		auto mir2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		mir2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -2, 0), quat(1, 0, 0, 0), vec3(6.0F, 1, 20))));
-		auto mir3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		mir3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\MirrorTest.obj")));
-		mir3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(12, -2, 0), quat(1, 0, 0, 0), vec3(6.0F, 1, 20))));
-		
-		for (int x = 0; x < 3; ++x) {
-			for (int y = 0; y < 2; ++y) {
-				auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-				point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.0, 1.0)));
-				point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f));
-				point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 5.0f));
-				point->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25)));
-			}
-		}
-
-		for (int x = 0; x < 3; ++x) {
-			for (int y = 0; y < 2; ++y) {
-				auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
-				spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.5, 0.75, 1.0)));
-				spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f));
-				spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 15.0f));
-				spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
-				spot->receiveMessage(ECSmessage(SET_POSITION, vec3((x - 1) * 25, 5, (y) * 25))); 
-				spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0, 0, 1))));
-			}
-		}*/
+		point->receiveMessage(ECSmessage(SET_POSITION, vec3(0,0,0)));*/
 
 		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1, 0.75, 0.5)));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1)));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 15.0f));
+		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
-		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(0, 5, 0)));
-		spot->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(-45.0f), vec3(0, 0, 1))));
-		*/
-		
-		/*auto model1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		model1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		model1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, -10))));
-		model1->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 0));
-		auto model2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		model2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		model2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-30, 0, 0))));
-		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 1));
-		model2->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, true)); 
-		auto model3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		model3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		model3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(30, 0, 0))));
-		model3->receiveMessage(ECSmessage(SET_MODEL_ANIMATION, 2)); 
-		auto model4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		model4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\ref_test.obj")));
-		model4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, -30), glm::rotate(quat(1,0,0,0), glm::radians(90.0f), vec3(0,1,0)))));
+		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-40, 0, 0)));
+		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));*/
 
-		auto wall = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(100, -7.5, 20))));*/
+		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		h->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
+		h->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		h->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-6, 0, 0), quat(1,0,0,0), vec3(0.1))));
 
-		
+		auto m1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m1->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-5, 0, 0))));
 
-		/*for (int x = 0; x < 3; ++x) {
-			auto spot = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("SpotLight"));
-			spot->receiveMessage(ECSmessage(0, vec3(0.5, 0.75, 1)));
-			spot->receiveMessage(ECSmessage(1, 20.0f));
-			spot->receiveMessage(ECSmessage(2, 10.0f));
-			spot->receiveMessage(ECSmessage(3, 45.0f));
-			spot->receiveMessage(ECSmessage(4, vec3(x-1, 0, 5)));
-			spot->receiveMessage(ECSmessage(5, glm::rotate(quat(1,0,0,0), glm::radians((x-1)*90.0f), vec3(0, 1, 0))));
-			auto model = m_entityFactory.GetEntity(m_entityFactory.CreateEntity("Prop"));
-			model->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-			model->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3((x - 1)*2.5f, -2.5, 2.5), quat(1, 0, 0, 0), vec3(0.5f))));
-		}
-		*/
+		auto m2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m2->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
+
+		auto m3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m3->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(2, 0, -5))));
+
+		auto m4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m4->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
+
+		auto m5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m5->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m5->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m5->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1)))));
+
+		auto m6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		m6->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
+		m6->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
+		m6->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-30, 0, 0))));
+	
 		loaded = true;
 	}
 

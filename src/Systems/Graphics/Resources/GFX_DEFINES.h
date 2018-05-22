@@ -66,16 +66,14 @@ struct Directional_Cheap_Struct {
 struct Point_Struct {
 	mat4 mMatrix = mat4(1.0f);
 	mat4 lightV = mat4(1.0f);
+	mat4 lightPV[6];
+	mat4 inversePV[6];
 	vec3 LightColor = vec3(1.0f); float padding1;
 	vec3 LightPosition = vec3(0.0f); float padding2;
-	float p_far = 0;
 	float ShadowSize_Recip = 0;
 	float LightIntensity = 1;
 	float LightRadius = 1;
-	int Shadow_Spot1 = 0;
-	int Shadow_Spot2 = 0;
-	int Use_Shadows = 1;
-	float padding3;
+	int Shadow_Spot;
 };
 
 /** Spot lights use this for their lighting + transform data. */
@@ -114,12 +112,12 @@ struct GI_Radiance_Struct {
 	float R_wcs = 1.0f;
 	float factor = 1.0f;
 
-	GI_Radiance_Struct(const int &res, const float &rad, const float &wrld, const float &blend, const int &smp) {
+	GI_Radiance_Struct(const int &smp, const int &res, const float &rad, const float &wrld, const float &blend) {
+		samples = smp;
 		resolution = res;
 		spread = rad;
 		R_wcs = wrld;
 		factor = blend;
-		samples = smp;
 	}
 };
 
