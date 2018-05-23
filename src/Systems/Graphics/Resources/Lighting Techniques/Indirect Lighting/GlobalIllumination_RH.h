@@ -17,7 +17,6 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\DynamicBuffer.h"
 
 class EnginePackage;
 class Geometry_FBO;
@@ -52,14 +51,14 @@ public:
 private:
 	// Private Methods
 	/** Binds the framebuffer and its render-targets for writing.
-	* @param	bounceSpot		which bounce we are performing */
+	 * @param	bounceSpot		which bounce we are performing */
 	void bindForWriting(const GLuint & bounceSpot);
 	/** Binds the framebuffer and its render-targets for reading.
-	* @param	bounceSpot		which bounce we are performing
-	* @param	textureUnit		which texture unit we are going to start with (minimum 0) */
+	 * @param	bounceSpot		which bounce we are performing
+	 * @param	textureUnit		which texture unit we are going to start with (minimum 0) */
 	void bindForReading(const GLuint & bounceSpot, const unsigned int & textureUnit);
-	/** Bind the noise texture
-	* @param	textureUnit		the texture unit to bind the noise texture */
+	/** Bind the noise texture.
+	 * @param	textureUnit		the texture unit to bind the noise texture */
 	void bindNoise(const GLuint textureUnit);
 
 
@@ -69,7 +68,7 @@ private:
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
-	Shared_Asset_Shader m_shaderPoint_Bounce, m_shaderGISecondBounce, m_shaderGIReconstruct;
+	Shared_Asset_Shader m_shaderGISecondBounce, m_shaderGIReconstruct;
 	Shared_Asset_Primitive m_shapeQuad;
 	bool m_vaoLoaded;
 	GLuint m_quadVAO, m_bounceVAO;
@@ -81,8 +80,7 @@ private:
 	ivec2 m_renderSize;
 	GLuint m_resolution;
 	Camera m_camera;
-	StaticBuffer m_attribBuffer, m_Indirect_Slices_Point, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
-	DynamicBuffer m_visPoints;
+	StaticBuffer m_attribBuffer, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
 };
 
 #endif // GLOBALILLUMINATION_RH

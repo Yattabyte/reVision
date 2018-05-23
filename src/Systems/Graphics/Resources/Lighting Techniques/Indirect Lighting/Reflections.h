@@ -39,7 +39,7 @@ public:
 	Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
 
 
-	// Interface Implementations.
+	// Interface Implementations
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	
@@ -63,11 +63,11 @@ private:
 
 
 	// Private Methods	
-	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness.*/
+	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness. */
 	void blurLight();
 	/** Adds to the global env map using the blurred light. */
 	void buildEnvMap();
-	/** Applies the SSR effect using the blurred light MIP chain*/
+	/** Applies the SSR effect using the blurred light MIP chain. */
 	void reflectLight(const Visibility_Token & vis_token);
 
 

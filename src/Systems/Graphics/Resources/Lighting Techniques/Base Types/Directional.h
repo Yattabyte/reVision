@@ -33,13 +33,17 @@ public:
 	Directional_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers);
 
 
-	/***/
+	/** Get the size of the shadows used by this light type.
+	 * @return				the shadowmap size */
 	vec2 getSize() const;
-	/***/
+	/** Register a new shadow caster to this category of lights. 
+	 * @param	array_spot	updated index into the shadowmap array */
 	void registerShadowCaster(int & array_spot);
-	/***/
+	/** Remove a shadow caster from this category of lights.
+	 * @param	array_spot	the index to remove from the shadowmap array */
 	void unregisterShadowCaster(int & array_spot);
-	/***/
+	/** Clear the shadows from this shadowmap starting at the layer specified.
+	 * @param	layer		the layer to begin clearing at */
 	void clearShadow(const int & layer);
 
 
@@ -55,7 +59,8 @@ public:
 
 private:
 	// Private Functions
-	/***/
+	/** Set the shadowmap size.
+	 * @param	size	the size to set the shadowmaps for this category of lights */
 	void setSize(const float & size);
 
 

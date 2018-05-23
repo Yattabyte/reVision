@@ -11,8 +11,7 @@
 
 Light_Directional_Component::~Light_Directional_Component()
 {
-	for (int x = 0; x < NUM_CASCADES; ++x)
-		m_directionalTech->unregisterShadowCaster(m_shadowSpots[x]);
+	m_directionalTech->unregisterShadowCaster(m_shadowSpot);
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
@@ -36,10 +35,10 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	m_directionalTech = graphics->getBaseTech<Directional_Tech>("Directional_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightDirSSBO.addElement(&m_uboIndex);
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-	for (int x = 0; x < NUM_CASCADES; ++x) {
-		m_directionalTech->registerShadowCaster(m_shadowSpots[x]);
-		uboData->Shadow_Spot[x] = m_shadowSpots[x];
-	}
+
+	m_directionalTech->registerShadowCaster(m_shadowSpot);
+	uboData->Shadow_Spot = m_shadowSpot;
+	
 	m_shadowSize = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL);
 	uboData->ShadowSize_Recip = 1.0f / m_shadowSize;
 		
@@ -112,8 +111,7 @@ void Light_Directional_Component::shadowPass()
 {
 	if (m_visSize) {
 		// Clear out the shadows
-		for (int x = 0; x < NUM_CASCADES; ++x)
-			m_directionalTech->clearShadow(m_shadowSpots[x]);
+		m_directionalTech->clearShadow(m_shadowSpot);
 
 		glUniform1i(0, getBufferIndex());
 

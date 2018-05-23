@@ -230,15 +230,15 @@ void Point_Tech::setSize(const float & size)
 {
 	m_shadowSize = vec2(max(size, 1));
 
-	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadowFBO, GL_DEPTH_ATTACHMENT, m_shadowDepth, 0);
 
-	glTextureImage3DEXT(m_shadowDistance, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R8, m_shadowSize.x, m_shadowSize.y, m_shadowCount, 0, GL_RED, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadowDistance, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RED, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT0, m_shadowDistance, 0);
 
-	glTextureImage3DEXT(m_shadowWNormal, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadowWNormal, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT1, m_shadowWNormal, 0);
 
-	glTextureImage3DEXT(m_shadowRFlux, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount, 0, GL_RGB, GL_FLOAT, NULL);
+	glTextureImage3DEXT(m_shadowRFlux, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT2, m_shadowRFlux, 0);
 }

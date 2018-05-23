@@ -188,3 +188,8 @@ void Geometry_FBO::bindDepthWriting()
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_NONE);
 }
+
+void Geometry_FBO::bindDepthReading(const unsigned int & textureUnit)
+{
+	glBindTextureUnit(textureUnit, m_depth_stencil);
+}

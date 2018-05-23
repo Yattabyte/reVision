@@ -42,7 +42,6 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	ZERO_MEM(m_textures[0]);
 	ZERO_MEM(m_textures[1]);
 
-	Asset_Loader::load_asset(m_shaderPoint_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\point_bounce");
 	Asset_Loader::load_asset(m_shaderGISecondBounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce");
 	Asset_Loader::load_asset(m_shaderGIReconstruct, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
@@ -58,10 +57,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	GI_Radiance_Struct attribData(16, m_resolution, 0.001, 0, 25.0f);
 	m_attribBuffer = StaticBuffer(sizeof(GI_Radiance_Struct), &attribData);
 
-	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
-	m_Indirect_Slices_Point = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
-
-	GLuint secondBounceData[4] = { 1, m_resolution, 0, 0 }; // count, primCount, first, reserved
+	GLuint secondBounceData[4] = { 6, m_resolution, 0, 0 }; // count, primCount, first, reserved
 	m_IndirectSecondLayersBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
@@ -175,74 +171,41 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	// Update Draw call buffers
 	for each (auto technique in *m_baseTechs)
 		technique->updateDataGI(m_camera.getVisibilityToken(), m_resolution);
-
-
-	{
-		const Visibility_Token &vis_token = m_camera.getVisibilityToken();
-		const GLuint pointSize = vis_token.specificSize("Light_Point");
-		const GLuint spotSize = vis_token.specificSize("Light_Spot");
-
-		if (m_shaderPoint_Bounce->existsYet() && pointSize) {
-			const GLuint pointDraws = m_resolution * pointSize;
-			vector<GLuint> visArray(pointSize);
-			unsigned int count = 0;
-			for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
-				visArray[count++] = component->getBufferIndex();
-			m_visPoints.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-			m_Indirect_Slices_Point.write(sizeof(GLuint), sizeof(GLuint), &pointDraws);
-			m_shaderPoint_Bounce->bind();
-			m_shaderPoint_Bounce->Set_Uniform(0, (int)pointSize);
-		}
-		Asset_Shader::Release();
-	}
 }
 
 void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 {
-	// Prepare rendering state
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_ONE, GL_ONE);
-	glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
-	glBindVertexArray(m_bounceVAO);
+	// Generate GI from lights
+	if (m_vaoLoaded) {
+		// Prepare rendering state
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
+		glBindVertexArray(m_quadVAO);
 
-	m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-	bindForWriting(0);
-	bindNoise(4);
+		m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		bindForWriting(0);
+		bindNoise(4);
+		m_geometryFBO->bindDepthReading(3);
 
-	for each (auto technique in *m_baseTechs)
-		technique->renderLightBounce();
+		// Perform primary light bounce
+		for each (auto technique in *m_baseTechs)
+			technique->renderLightBounce();
 
-	/*// Bounce point lights
-	m_shadowFBO->BindForReading_GI(SHADOW_REGULAR, 0);
-	if (vis_token.specificSize("Light_Point") && m_shaderPoint_Bounce->existsYet()) {
-		m_shaderPoint_Bounce->bind();
-		m_lightPointSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-		m_visPoints.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
-		m_Indirect_Slices_Point.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_POINTS, 0);
+		// Perform secondary light bounce
+		if (m_shaderGISecondBounce->existsYet()) {
+			m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_shaderGISecondBounce->bind();
+			bindForReading(0, 5);
+			bindForWriting(1);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		}
+
+		glDisable(GL_BLEND);
+		glEnable(GL_DEPTH_TEST);
 	}
-	// Bounce spot lights
-	if (vis_token.specificSize("Light_Spot") && m_shaderSpot_Bounce->existsYet()) {
-		m_shaderSpot_Bounce->bind();
-		m_lightSpotSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
-		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3); // SSBO visible light indices
-		m_Indirect_Slices_Spot.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_POINTS, 0);
-	}*/
-
-	// Perform secondary light bounce
-	if (m_shaderGISecondBounce->existsYet()) {
-		m_IndirectSecondLayersBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		m_shaderGISecondBounce->bind();
-		bindForReading(0, 5);
-		bindForWriting(1);
-		glDrawArraysIndirect(GL_POINTS, 0);
-	}
-
-	glDisable(GL_BLEND);
-	glEnable(GL_DEPTH_TEST);
 }
 
 void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)

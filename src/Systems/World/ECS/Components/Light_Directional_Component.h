@@ -57,7 +57,7 @@ protected:
 	EnginePackage *m_enginePackage;
 	Directional_Tech * m_directionalTech;
 	float m_cascadeEnd[5];
-	int m_shadowSpots[NUM_CASCADES];
+	int m_shadowSpot;
 	size_t m_visSize;
 	float m_shadowSize;
 	mat4 m_mMatrix;

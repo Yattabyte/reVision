@@ -45,12 +45,9 @@ struct Directional_Struct {
 	vec3 LightDirection = vec3(0, -1, 0); float padding2;
 	float ShadowSize_Recip = 0;
 	float LightIntensity = 0;
-	
-
-	// These need to be padded to 16 bytes each, because of layout std140 rules for array elements
-	int Shadow_Spot[NUM_CASCADES]; // first element used only
+	int Shadow_Spot = 0;
 	float CascadeEndClipSpace[NUM_CASCADES]; // first element used only
-	vec2 padding3; // end of scalars, pad by 2
+	float padding3; // end of scalars, pad by 2
 	mat4 lightVP[NUM_CASCADES]; // these are good already
 	mat4 inverseVP[NUM_CASCADES]; // these are good already
 };

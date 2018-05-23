@@ -51,7 +51,10 @@ public:
 	void end();
 	/** Generate ambient occlusion for the frame. */
 	void applyAO();
+	/** Bind the depth buffer for writing. */
 	void bindDepthWriting();
+	/** Bind the depth buffer for reading, to the target specified. */
+	void bindDepthReading(const unsigned int & textureUnit);
 
 
 	// Public attributes

@@ -30,7 +30,7 @@ public:
 	Skybox(Lighting_FBO * lightingFBO);
 
 
-	// Interface Implementations.
+	// Interface Implementations
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	

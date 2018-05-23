@@ -22,7 +22,6 @@
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\MappedChar.h"
 #include <vector>
 
@@ -66,8 +65,8 @@ public:
 	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
 	Light_Buffers	m_lightBuffers;
-	VectorBuffer<Geometry_Struct>		m_geometrySSBO;
-	VectorBuffer<Reflection_Struct>		m_reflectionSSBO;
+	VectorBuffer<Geometry_Struct>	m_geometrySSBO;
+	VectorBuffer<Reflection_Struct>	m_reflectionSSBO;
 	
 
 private:

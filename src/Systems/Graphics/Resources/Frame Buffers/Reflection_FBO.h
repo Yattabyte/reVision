@@ -16,9 +16,9 @@ class EnginePackage;
 
 
 /**
-* A specialized framebuffer that accumulates lighting information for a single frame.
-* Supports bloom, accumulates over-brightened lights in a second render-target.
-**/
+ * A specialized framebuffer that accumulates lighting information for a single frame.
+ * Supports bloom, accumulates over-brightened lights in a second render-target.
+ **/
 class DT_ENGINE_API Reflection_FBO : public FrameBuffer
 {
 public:

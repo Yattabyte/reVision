@@ -80,7 +80,7 @@ Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers
 	}
 
 	// Light Bounce Initialization
-	GLuint firstBounceData[4] = { 1, 0, 0, 0 }; // count, primCount, first, reserved
+	GLuint firstBounceData[4] = { 6, 0, 0, 0 }; // count, primCount, first, reserved
 	m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 }
 
@@ -193,7 +193,7 @@ void Spot_Tech::renderLightBounce()
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		m_visSpots.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_POINTS, 0);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 }
 

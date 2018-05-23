@@ -34,11 +34,11 @@ public:
 
 	
 	// Public Methods
-	/** Initialize  the component factory
+	/** Initialize  the component factory.
 	 * @param	enginePackage	pointer to the engine package
 	 * @param	ecsMessenger	pointer to the entity-component messenger system */
 	void initialize(EnginePackage * enginePackage, ECSmessenger * ecsMessange);
-	/** Creates a component of the supplied type and returns its handle 
+	/** Creates a component of the supplied type and returns its handle.
 	 * @param	type			the type of component to create
 	 * @param	parent_ID		the handle of the parent to pass to the component
 	 * @return					the handle of the created component */	 
@@ -57,12 +57,12 @@ public:
 	const vector<Component*> & getComponentsByType(const char * type);
 	/** Removes all components from the system. */
 	void flush();	
-	/** Checks the map to see if it has any entries of a specific type
+	/** Checks the map to see if it has any entries of a specific type.
 	 * @param	key				the type to check
 	 * @return					true if it finds the key in the map, false otherwise */
 	bool find(const char * key) const;
 	/** Returns the data lock for the system. 
-	 * @return					the mutex for this factory*/
+	 * @return					the mutex for this factory */
 	shared_mutex & getDataLock();
 
 
