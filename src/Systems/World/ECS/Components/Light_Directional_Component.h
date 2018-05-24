@@ -26,7 +26,7 @@ class EnginePackage;
 
 /**
  * A renderable light component that mimics the sun.
- * Uses cascaded shadowmaps.
+ * Uses 4 cascaded shadowmaps.
  **/
 class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {

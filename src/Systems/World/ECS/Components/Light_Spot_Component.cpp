@@ -21,6 +21,7 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	m_enginePackage = enginePackage;
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
+	m_lightPos = vec3(0.0f);
 	m_visSize = 0;
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");

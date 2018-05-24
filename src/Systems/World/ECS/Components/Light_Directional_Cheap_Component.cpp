@@ -1,9 +1,8 @@
 #include "Systems\World\ECS\Components\Light_Directional_Cheap_Component.h"
-#include "Utilities\EnginePackage.h"
 #include "Systems\World\ECS\ECSmessage.h"
-#include "Utilities\Transform.h"
 #include "Systems\Graphics\Graphics.h"
-#include "GLFW\glfw3.h"
+#include "Utilities\EnginePackage.h"
+#include "Utilities\Transform.h"
 
 
 Light_Directional_Cheap_Component::~Light_Directional_Cheap_Component()
@@ -58,19 +57,7 @@ bool Light_Directional_Cheap_Component::isVisible(const float & radius, const ve
 	return true;
 }
 
-void Light_Directional_Cheap_Component::occlusionPass()
-{
-}
-
-void Light_Directional_Cheap_Component::shadowPass()
-{	
-}
-
 float Light_Directional_Cheap_Component::getImportance(const vec3 & position) const
 {
 	return 0.0f;
-}
-
-void Light_Directional_Cheap_Component::update()
-{
 }

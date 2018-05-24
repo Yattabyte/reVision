@@ -23,7 +23,9 @@ public:
 	VectorBuffer<Directional_Struct>		m_lightDirSSBO;
 	VectorBuffer<Directional_Cheap_Struct>	m_lightDirCheapSSBO;
 	VectorBuffer<Point_Struct>				m_lightPointSSBO;
+	VectorBuffer<Point_Cheap_Struct>		m_lightPointCheapSSBO;
 	VectorBuffer<Spot_Struct>				m_lightSpotSSBO;
+	VectorBuffer<Spot_Cheap_Struct>			m_lightSpotCheapSSBO;
 
 
 private:

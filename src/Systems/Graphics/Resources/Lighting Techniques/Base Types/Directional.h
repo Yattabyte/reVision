@@ -21,9 +21,8 @@
 class EnginePackage;
 
 /**
-* An interface for specific deferred shading lighting techniques.
-* To be used only by the DS_Lighting class.
-**/
+ * A deferred shading lighting technique that manages directional lights.
+ */
 class DT_ENGINE_API Directional_Tech : public Light_Tech {
 public:
 	// (de)Constructors

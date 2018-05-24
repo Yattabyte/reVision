@@ -26,6 +26,19 @@ public:
 };
 
 /**
+ * Creates a Cheap Spot Light entity, composed of only a cheap spot light component.
+ **/
+class DT_ENGINE_API SpotLightCheapCreator : public EntityCreator
+{
+public:
+	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessenger, componentFactory);
+		entity->addComponent("Light_Spot_Cheap");
+		return entity;
+	}
+};
+
+/**
  * Creates a Point Light entity, composed of only a point light component.
  **/
 class DT_ENGINE_API PointLightCreator : public EntityCreator
@@ -34,6 +47,19 @@ public:
 	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {
 		Entity *entity = EntityCreator::create(id, ecsMessenger, componentFactory);
 		entity->addComponent("Light_Point");
+		return entity;
+	}
+};
+
+/**
+ * Creates a Cheap Point Light entity, composed of only a cheap point light component.
+ **/
+class DT_ENGINE_API PointLightCheapCreator : public EntityCreator
+{
+public:
+	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {
+		Entity *entity = EntityCreator::create(id, ecsMessenger, componentFactory);
+		entity->addComponent("Light_Point_Cheap");
 		return entity;
 	}
 };

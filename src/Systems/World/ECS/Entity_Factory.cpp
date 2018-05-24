@@ -18,7 +18,9 @@ Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *co
 	m_componentFactory(componentFactory)
 {
 	m_creatorMap["SpotLight"] = new SpotLightCreator();
+	m_creatorMap["SpotLight_Cheap"] = new SpotLightCheapCreator();
 	m_creatorMap["PointLight"] = new PointLightCreator();
+	m_creatorMap["PointLight_Cheap"] = new PointLightCheapCreator();
 	m_creatorMap["Prop"] = new PropCreator();
 	m_creatorMap["Reflector"] = new ReflectorCreator();
 	m_creatorMap["Sun"] = new SunCreator();

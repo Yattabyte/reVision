@@ -19,6 +19,7 @@ Light_Point_Component::~Light_Point_Component()
 Light_Point_Component::Light_Point_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
 {
 	m_enginePackage = enginePackage;
+	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = vec3(0.0f);
 	m_lightVMatrix = mat4(1.0f);

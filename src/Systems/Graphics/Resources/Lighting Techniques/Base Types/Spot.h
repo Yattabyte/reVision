@@ -22,9 +22,8 @@
 class EnginePackage;
 
 /**
-* An interface for specific deferred shading lighting techniques.
-* To be used only by the Graphics class and its supporting techniques.
-**/
+ * A deferred shading lighting technique that manages spot lights.
+ **/
 class DT_ENGINE_API Spot_Tech : public Light_Tech {
 public:
 	// (de)Constructors

@@ -78,19 +78,19 @@ void System_World::update(const float & deltaTime)
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f)); // OLD INTENSITY WAS 8.0
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));
 		
-		/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight"));
-		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1.0)));
+		auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight_Cheap"));
+		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0, 1.0)));
 		point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 		point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-		point->receiveMessage(ECSmessage(SET_POSITION, vec3(0,0,0)));*/
+		point->receiveMessage(ECSmessage(SET_POSITION, vec3(0,0,0)));
 
-		/*auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight"));
+		auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight_Cheap"));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1)));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
 		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-40, 0, 0)));
-		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));*/
+		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));
 
 		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		h->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
@@ -162,7 +162,7 @@ void System_World::calcVisibility(Camera & camera)
 	const vec3 &eyePos = camBuffer.EyePosition;
 	Visibility_Token vis_token;
 
-	for each (const auto &type in vector<const char *>{ "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Point", "Reflector" }) {
+	for each (const auto &type in vector<const char *>{ "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
 		vector<Component*> visible_components;
 		
 		for each (auto component in getSpecificComponents<Component>(type))

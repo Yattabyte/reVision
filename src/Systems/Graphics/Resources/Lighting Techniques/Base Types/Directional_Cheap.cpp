@@ -1,5 +1,6 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional_Cheap.h"
 
+
 Directional_Tech_Cheap::~Directional_Tech_Cheap()
 {
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
@@ -29,22 +30,6 @@ void Directional_Tech_Cheap::updateData(const Visibility_Token & vis_token, cons
 	m_size = vis_token.specificSize("Light_Directional_Cheap");
 	if (m_size && m_quadVAOLoaded) 
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
-}
-
-void Directional_Tech_Cheap::updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution)
-{
-}
-
-void Directional_Tech_Cheap::renderOcclusionCulling()
-{
-}
-
-void Directional_Tech_Cheap::renderShadows()
-{	
-}
-
-void Directional_Tech_Cheap::renderLightBounce()
-{
 }
 
 void Directional_Tech_Cheap::renderLighting()

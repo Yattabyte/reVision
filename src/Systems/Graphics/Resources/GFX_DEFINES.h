@@ -73,6 +73,16 @@ struct Point_Struct {
 	int Shadow_Spot;
 };
 
+/** Cheap Point lights use this for their lighting + transform data. */
+struct Point_Cheap_Struct {
+	mat4 mMatrix = mat4(1.0f);
+	vec3 LightColor = vec3(1.0f); float padding1;
+	vec3 LightPosition = vec3(0.0f); float padding2;
+	float LightIntensity = 1;
+	float LightRadius = 1;
+	vec2 padding3;
+};
+
 /** Spot lights use this for their lighting + transform data. */
 struct Spot_Struct {
 	mat4 mMatrix = mat4(1.0f);
@@ -87,7 +97,19 @@ struct Spot_Struct {
 	float LightRadius = 0;
 	float LightCutoff = 0;
 	int Shadow_Spot = 0;
-	vec3 padding;
+	vec3 padding4;
+};
+
+/** Cheap Spot lights use this for their lighting + transform data. */
+struct Spot_Cheap_Struct {
+	mat4 mMatrix = mat4(1.0f);
+	vec3 LightColor = vec3(1.0f); float padding1;
+	vec3 LightPosition = vec3(0.0f); float padding2;
+	vec3 LightDirection = vec3(0, -1, 0); float padding3;
+	float LightIntensity = 0;
+	float LightRadius = 0;
+	float LightCutoff = 0;
+	float padding4;
 };
 
 /** Reflectors use this for their transform data. */

@@ -13,7 +13,7 @@
 
 
 /**
- * Creates a Sun entity, composed of only a directional light component.
+ * Creates a Cheap Sun entity, composed of only a cheap directional light component.
  **/
 class DT_ENGINE_API SunCheapCreator : public EntityCreator
 {

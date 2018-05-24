@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LIGHT_DIRECTIONAL_CHEAP_COMPONENT
-#define LIGHT_DIRECTIONAL_CHEAP_COMPONENT
+#ifndef LIGHT_SPOT_CHEAP_COMPONENT
+#define LIGHT_SPOT_CHEAP_COMPONENT
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -18,17 +18,17 @@
 
 
 using namespace glm;
-class Light_Directional_Cheap_Creator;
+class Light_Spot_Cheap_Creator;
 class EnginePackage;
 
 /**
- * A renderable light component that mimics the sun.
+ * A renderable light component that mimics a flashlight.
  * A cheap variation, no shadows or GI.
  **/
-class DT_ENGINE_API Light_Directional_Cheap_Component : protected Lighting_Component
+class DT_ENGINE_API Light_Spot_Cheap_Component : protected Lighting_Component
 {
 public:
-	// Interface implementations
+	// Interface Implementations
 	virtual void receiveMessage(const ECSmessage &message);
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual float getImportance(const vec3 &position) const;
@@ -39,23 +39,33 @@ public:
 
 protected:
 	// (de)Constructors
-	/** Destroys a cheap directional light component. */
-	~Light_Directional_Cheap_Component();
-	/** Constructs a cheap directional light component. */
-	Light_Directional_Cheap_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	/** Destroys a spot light component. */
+	~Light_Spot_Cheap_Component();
+	/** Constructs a spot light component. */
+	Light_Spot_Cheap_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+
+
+	// Protected Functions
+	/** Recalculate matrices. */
+	void updateViews();
 
 
 	// Protected Attributes
-	friend class Light_Directional_Cheap_Creator;
+	// Cached Attributes
+	float m_radius;
+	float m_squaredRadius;
+	quat m_orientation;
+	vec3 m_lightPos;
+	friend class Light_Spot_Cheap_Creator;
 };
 
-class DT_ENGINE_API Light_Directional_Cheap_Creator : public ComponentCreator
+class DT_ENGINE_API Light_Spot_Cheap_Creator : public ComponentCreator
 {
 public:
-	Light_Directional_Cheap_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
+	Light_Spot_Cheap_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
 	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
-		return new Light_Directional_Cheap_Component(id, pid, enginePackage);
+		return new Light_Spot_Cheap_Component(id, pid, enginePackage);
 	}
 };
 
-#endif // LIGHT_DIRECTIONAL_CHEAP_COMPONENT
+#endif // LIGHT_SPOT_CHEAP_COMPONENT

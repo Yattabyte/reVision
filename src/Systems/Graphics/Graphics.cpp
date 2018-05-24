@@ -20,7 +20,9 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional_Cheap.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot_Cheap.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point_Cheap.h"
 // End includes for specific lighting techniques
 
 
@@ -87,6 +89,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_baseTechs.push_back(new Spot_Tech(enginePackage, &m_lightBuffers));
 		m_baseTechs.push_back(new Point_Tech(enginePackage, &m_lightBuffers));
 		m_baseTechs.push_back(new Directional_Tech_Cheap(&m_lightBuffers));
+		m_baseTechs.push_back(new Spot_Cheap_Tech(&m_lightBuffers));
+		m_baseTechs.push_back(new Point_Tech_Cheap(&m_lightBuffers));
 		for each(auto * tech in m_baseTechs)
 			m_techMap[tech->getName()] = tech;
 

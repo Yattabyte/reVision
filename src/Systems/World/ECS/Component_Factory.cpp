@@ -5,7 +5,9 @@
 #include "Systems\World\ECS\Components\Light_Directional_Component.h"
 #include "Systems\World\ECS\Components\Light_Directional_Cheap_Component.h"
 #include "Systems\World\ECS\Components\Light_Spot_Component.h"
+#include "Systems\World\ECS\Components\Light_Spot_Cheap_Component.h"
 #include "Systems\World\ECS\Components\Light_Point_Component.h"
+#include "Systems\World\ECS\Components\Light_Point_Cheap_Component.h"
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 
 
@@ -28,7 +30,9 @@ void Component_Factory::initialize(EnginePackage * enginePackage, ECSmessenger *
 		m_creatorMap["Light_Directional"] = new Light_Directional_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Directional_Cheap"] = new Light_Directional_Cheap_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Spot"] = new Light_Spot_Creator(m_ECSmessenger);
+		m_creatorMap["Light_Spot_Cheap"] = new Light_Spot_Cheap_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Point"] = new Light_Point_Creator(m_ECSmessenger);
+		m_creatorMap["Light_Point_Cheap"] = new Light_Point_Cheap_Creator(m_ECSmessenger);
 		m_creatorMap["Reflector"] = new Reflector_Creator(m_ECSmessenger);
 
 		m_Initialized = true;
