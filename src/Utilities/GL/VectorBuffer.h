@@ -26,8 +26,6 @@ public:
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
 		}
-		if (m_fence)
-			glDeleteSync(m_fence);
 	}
 	/** Default. */
 	VectorBuffer(const GLsizeiptr & sizeHint = 512) {
@@ -38,7 +36,6 @@ public:
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, sizeHint, 0, GL_DYNAMIC_STORAGE_BIT | flags);
 		m_ptrContainer.pointer = glMapNamedBufferRange(m_bufferID, 0, sizeHint, flags);
-		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 	/** Move gl object from 1 instance to another. */
 	VectorBuffer & operator=(VectorBuffer && o) noexcept {
@@ -46,14 +43,12 @@ public:
 		m_indexPointers = (std::move(o.m_indexPointers));
 		m_bufferID = (std::move(o.m_bufferID));
 		m_ptrContainer = (std::move(o.m_ptrContainer));
-		m_fence = (std::move(o.m_fence));
 		m_maxCapacity = (std::move(o.m_maxCapacity));
 
 		o.m_count = 0;
 		o.m_indexPointers = 0;
 		o.m_bufferID = 0;
 		o.m_ptrContainer = 0;
-		o.m_fence = nullptr;
 		o.m_maxCapacity = 0;
 		return *this;
 	}
@@ -98,24 +93,7 @@ public:
 
 
 private:
-	// Private Methods
-	/** Cause a synchronization point if the sync fence hasn't been passed. */
-	void checkFence() {
-		// Check if we should cause a synchronization point
-		if (m_fence != nullptr) {
-			auto state = GL_UNSIGNALED;
-			while (state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED || state == GL_WAIT_FAILED)
-				state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-			glDeleteSync(m_fence);
-			m_fence = nullptr;
-		}
-	}
-	/** Create a sync fence, to be called after changing buffer data. */
-	void placeFence() {
-		if (m_fence)
-			glDeleteSync(m_fence);
-		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	}
+	// Private Methods	
 	/* Expands this buffer's container if it can't fit the specified range to write into
 	 * @note Technically creates a new a new buffer to replace the old one and copies the old data
 	 * @param	offset	byte offset from the beginning
@@ -127,7 +105,6 @@ private:
 			m_maxCapacity += offset + (size * 1.5);
 
 			// Create new buffer
-			checkFence();
 			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 			GLuint newBuffer = 0;
 			glCreateBuffers(1, &newBuffer);
@@ -144,7 +121,6 @@ private:
 			// Migrate new buffer
 			m_bufferID = newBuffer;
 			m_ptrContainer.pointer = glMapNamedBufferRange(m_bufferID, 0, m_maxCapacity, flags);
-			placeFence();
 		}
 	}
 	/** */
@@ -172,7 +148,6 @@ private:
 	std::vector<unsigned int *> m_indexPointers;
 	GLuint m_bufferID;
 	VB_Ptr m_ptrContainer;
-	GLsync m_fence;
 	GLuint m_maxCapacity;
 };
 

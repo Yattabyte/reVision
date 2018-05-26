@@ -10,30 +10,12 @@ Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
 		glDeleteBuffers(2, m_buffers);
-	if (m_fence != nullptr)
-		glDeleteSync(m_fence);
 }
 
 Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 {
 	for each (auto &buffer in m_buffers)
 		buffer = -1;
-	m_fence = nullptr;
-}
-
-bool Asset_Primitive::existsYet()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
 }
 
 GLuint Asset_Primitive::Generate_VAO()
@@ -130,8 +112,6 @@ void Primitive_WorkOrder::finalizeOrder()
 		glCreateBuffers(2, buffers);
 		glNamedBufferStorage(buffers[0], arraySize * sizeof(vec3), &data[0][0], flags);
 		glNamedBufferStorage(buffers[1], arraySize * sizeof(vec2), &uv_data[0][0], flags);
-		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
 
 		write_guard.unlock();
 		write_guard.release();

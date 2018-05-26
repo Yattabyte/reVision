@@ -15,7 +15,7 @@
 /**
  * Creates a Reflector entity, stores reflection information about what it sees around it
  **/
-class DT_ENGINE_API ReflectorCreator : public EntityCreator
+class DT_ENGINE_API Creator_Reflector : public EntityCreator
 {
 public:
 	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {

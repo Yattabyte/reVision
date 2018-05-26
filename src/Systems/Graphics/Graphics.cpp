@@ -53,8 +53,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		m_enginePackage = enginePackage;
 
-		// Generate User SSBO
-		
+		// Generate User SSBO		
 		Renderer_Struct attribs;
 		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao), sizeof(int), &f);

@@ -78,7 +78,7 @@ void System_World::update(const float & deltaTime)
 		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f)); // OLD INTENSITY WAS 8.0
 		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));
 		
-		auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight_Cheap"));
+		/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight_Cheap"));
 		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0, 1.0)));
 		point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
 		point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
@@ -90,7 +90,7 @@ void System_World::update(const float & deltaTime)
 		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
 		spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
 		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-40, 0, 0)));
-		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));
+		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));*/
 
 		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
 		h->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));

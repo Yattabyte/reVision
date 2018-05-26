@@ -17,7 +17,6 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	glDeleteTextures(1, &m_noise32);
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
-	glDeleteVertexArrays(1, &m_bounceVAO);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
@@ -70,17 +69,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	const float cUni = near_plane + ((far_plane - near_plane) * 1.0f / 4.0f);
 	const float lambda = 0.4f;
 	m_farPlane = (lambda*cLog) + ((1.0f - lambda)*cUni);
-
-	GLuint VBO = 0;
-	glCreateVertexArrays(1, &m_bounceVAO);
-	glCreateBuffers(1, &VBO);
-	glEnableVertexArrayAttrib(m_bounceVAO, 0);
-	glNamedBufferStorage(VBO, sizeof(GLint), GLint(0), GL_CLIENT_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT);
-	glVertexArrayAttribIFormat(m_bounceVAO, 0, 1, GL_INT, 0);
-	glVertexArrayVertexBuffer(m_bounceVAO, 0, VBO, 0, 4);
-	glVertexArrayAttribBinding(m_bounceVAO, 0, 0);
-	glDeleteBuffers(1, &VBO);
-
+	
 	glCreateFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	glCreateTextures(GL_TEXTURE_3D, GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	for (int bounce = 0; bounce < GI_LIGHT_BOUNCE_COUNT; ++bounce) {		

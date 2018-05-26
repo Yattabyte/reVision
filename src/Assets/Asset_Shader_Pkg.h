@@ -38,12 +38,6 @@ public:
 	Asset_Shader_Pkg(const string & filename);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
-
 	// Public Methods
 	/** Retrieves this package's content as a string.
 	 * @return	package contents */

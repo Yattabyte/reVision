@@ -63,12 +63,6 @@ public:
 	Asset_Model(const string & filename);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return			true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
-
 	// Public Methods
 	/** Returns the material ID for a skin given an index into this list
 	 * @note			Clamps to the skin list size, so it won't go out of bounds

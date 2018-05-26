@@ -45,7 +45,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			Asset_Loader::load_asset(m_model, payload);
 			// Attach new callback
 			m_model->addCallback(this, [&]() {
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
+				(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
 				m_transforms = m_model->m_animationInfo.meshTransforms;
 				updateBSphere();
 				m_vaoLoaded = true;
@@ -55,11 +55,11 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 		case SET_TRANSFORM: {
 			if (!message.IsOfType<Transform>()) break;
 			const auto &payload = message.GetPayload<Transform>();
-			(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
+			(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
 			if (m_model && m_model->existsYet()) 
 				updateBSphere();			
 			else
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = payload.m_modelMatrix;			
+				(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = payload.m_modelMatrix;			
 			m_transform = payload;
 
 			break;
@@ -69,7 +69,7 @@ void Anim_Model_Component::receiveMessage(const ECSmessage &message)
 			const auto &payload = message.GetPayload<GLuint>();
 			m_skin = payload;
 			if (m_model && m_model->existsYet()) 
-				(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
+				(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
 			break;
 		}
 		case SET_MODEL_ANIMATION: {
@@ -137,18 +137,17 @@ void Anim_Model_Component::updateBSphere()
 		mat4 matRot = glm::mat4_cast(m_transform.m_orientation);
 		mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
 		mat4 matFinal = (matTrans * matRot * matScale);
-		(&reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
+		(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
 		m_bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
 		m_bspherePos = m_model->m_bboxCenter + m_transform.m_position;
 	}
 }
 
-
 void Anim_Model_Component::animate(const double & deltaTime)
 {
 	if (!m_model || !m_model->existsYet()) return;
 	
-	Geometry_Struct *const uboData = &reinterpret_cast<Geometry_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	Geometry_Dynamic_Struct *const uboData = &reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 
 	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animationInfo.Animations.size()) 

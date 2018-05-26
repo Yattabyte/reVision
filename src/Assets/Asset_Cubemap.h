@@ -35,12 +35,6 @@ public:
 	/** Construct the Cubemap. */
 	Asset_Cubemap(const std::string & filename);
 
-
-	// Interface implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return					true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
 	
 	// Public Methods
 	/** Makes this texture active at a specific texture unit.
@@ -52,7 +46,6 @@ public:
 	GLuint m_glTexID;
 	vec2 m_size;
 	GLubyte	* m_pixelData[6];
-	GLsync m_fence;
 };
 
 /**

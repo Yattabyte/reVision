@@ -46,11 +46,6 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_count = 0;
 }
 
-bool Asset_Model::existsYet()
-{
-	return Asset::existsYet();
-}
-
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
 	shared_lock<shared_mutex> guard(m_mutex);

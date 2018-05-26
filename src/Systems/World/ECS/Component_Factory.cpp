@@ -2,6 +2,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\ECS\ECSmessenger.h"
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
+#include "Systems\World\ECS\Components\Static_Model_Component.h"
 #include "Systems\World\ECS\Components\Light_Directional_Component.h"
 #include "Systems\World\ECS\Components\Light_Directional_Cheap_Component.h"
 #include "Systems\World\ECS\Components\Light_Spot_Component.h"
@@ -27,6 +28,7 @@ void Component_Factory::initialize(EnginePackage * enginePackage, ECSmessenger *
 		m_ECSmessenger = ecsMessenger;
 
 		m_creatorMap["Anim_Model"] = new Anim_Model_Creator(m_ECSmessenger);
+		m_creatorMap["Static_Model"] = new Static_Model_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Directional"] = new Light_Directional_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Directional_Cheap"] = new Light_Directional_Cheap_Creator(m_ECSmessenger);
 		m_creatorMap["Light_Spot"] = new Light_Spot_Creator(m_ECSmessenger);

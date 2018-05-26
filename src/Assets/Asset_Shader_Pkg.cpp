@@ -13,11 +13,6 @@ Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
 	m_packageText = "";
 }
 
-bool Asset_Shader_Pkg::existsYet()
-{
-	return Asset::existsYet();
-}
-
 string Asset_Shader_Pkg::getPackageText() const
 {
 	return m_packageText;

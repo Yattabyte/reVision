@@ -66,7 +66,7 @@ public:
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return				true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
+	bool existsYet();
 	/** Performs final data processing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
 	virtual void finalize();

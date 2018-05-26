@@ -41,12 +41,6 @@ public:
 	Asset_Shader(const string & filename);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return	true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
-
 	// Public Methods
 	/** Make this shader program active */
 	void bind();
@@ -97,7 +91,6 @@ public:
 	// Public Attributes
 	GLuint m_glProgramID, m_glVertexID, m_glFragmentID, m_glGeometryID; // OpenGL ID's
 	string m_vertexText, m_fragmentText, m_geometryText; // Text Data
-	GLsync m_fence;
 };
 
 

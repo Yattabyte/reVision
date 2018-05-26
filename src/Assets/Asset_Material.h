@@ -51,12 +51,6 @@ public:
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return				true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
-
 	// Public Methods
 	/** Apply a specific set of textures to be used as a material.
 	 * @param	tx	an array of MAX_PHYSICAL_IMAGES length, formatted as a list of material textures (albedo/normal/metalness/roughness/height/occlusion) */
@@ -76,7 +70,6 @@ public:
 	// Public Attributes
 	GLuint m_glArrayID;
 	GLuint m_matSpot;
-	GLsync m_fence;
 	GLubyte * m_materialData;
 	vec2 m_size;
 	string m_textures[MAX_PHYSICAL_IMAGES];

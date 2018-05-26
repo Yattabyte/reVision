@@ -12,14 +12,11 @@ Asset_Material::~Asset_Material()
 		glDeleteTextures(1, &m_glArrayID);
 	if (m_materialData)
 		delete m_materialData;
-	if (m_fence != nullptr)
-		glDeleteSync(m_fence);
 }
 
 Asset_Material::Asset_Material(const string & filename) : Asset(filename)
 {
 	m_glArrayID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
-	m_fence = nullptr;
 }
 
 Asset_Material::Asset_Material(const std::string & filename, const GLuint & spot) : Asset_Material(filename)
@@ -32,21 +29,6 @@ Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], cons
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 		m_textures[x] = tx[x];
 	m_matSpot = spot;
-}
-
-bool Asset_Material::existsYet()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
 }
 
 void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
@@ -294,8 +276,6 @@ void Material_WorkOrder::finalizeOrder()
 		glGenerateTextureMipmap(gl_array_ID);
 		Material_Manager::Generate_Handle(mat_spot, gl_array_ID);
 		
-		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
 		write_guard.unlock();
 		write_guard.release();
 		m_asset->finalize();

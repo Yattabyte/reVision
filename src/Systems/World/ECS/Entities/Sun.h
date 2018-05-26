@@ -15,7 +15,7 @@
 /**
  * Creates a Sun entity, composed of only a directional light component.
  **/
-class DT_ENGINE_API SunCreator : public EntityCreator
+class DT_ENGINE_API Creator_Sun : public EntityCreator
 {
 public:
 	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {

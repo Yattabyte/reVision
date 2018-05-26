@@ -7,30 +7,12 @@ Asset_Cubemap::~Asset_Cubemap()
 {
 	if (existsYet())
 		glDeleteTextures(1, &m_glTexID);
-	if (m_fence != nullptr)
-		glDeleteSync(m_fence);
 }
 
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 {
 	m_glTexID = 0;
 	m_size = vec2(0);
-	m_fence = nullptr;
-}
-
-bool Asset_Cubemap::existsYet()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
 }
 
 void Asset_Cubemap::bind(const unsigned int & texture_unit)
@@ -182,8 +164,7 @@ void Cubemap_WorkOrder::finalizeOrder()
 		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
+		
 		write_guard.unlock();
 		write_guard.release();
 		m_asset->finalize();

@@ -2,8 +2,8 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\ECS\ECSmessenger.h"
 #include "Systems\World\ECS\Entities\Entity.h"
-#include "Systems\World\ECS\Entities\Light.h"
-#include "Systems\World\ECS\Entities\Prop.h"
+#include "Systems\World\ECS\Entities\Lights.h"
+#include "Systems\World\ECS\Entities\Props.h"
 #include "Systems\World\ECS\Entities\Reflector.h"
 #include "Systems\World\ECS\Entities\Sun.h"
 #include "Systems\World\ECS\Entities\Sun_Cheap.h"
@@ -17,14 +17,15 @@ Entity_Factory::Entity_Factory(ECSmessenger *ecsMessenger, Component_Factory *co
 	m_ECSmessenger(ecsMessenger),
 	m_componentFactory(componentFactory)
 {
-	m_creatorMap["SpotLight"] = new SpotLightCreator();
-	m_creatorMap["SpotLight_Cheap"] = new SpotLightCheapCreator();
-	m_creatorMap["PointLight"] = new PointLightCreator();
-	m_creatorMap["PointLight_Cheap"] = new PointLightCheapCreator();
-	m_creatorMap["Prop"] = new PropCreator();
-	m_creatorMap["Reflector"] = new ReflectorCreator();
-	m_creatorMap["Sun"] = new SunCreator();
-	m_creatorMap["Sun_Cheap"] = new SunCheapCreator();
+	m_creatorMap["Prop"] = new Creator_Prop();
+	m_creatorMap["Prop_Static"] = new Creator_Prop_Static();
+	m_creatorMap["SpotLight"] = new Creator_SpotLight();
+	m_creatorMap["SpotLight_Cheap"] = new Creator_SpotLight_Cheap();
+	m_creatorMap["PointLight"] = new Creator_PointLight();
+	m_creatorMap["PointLight_Cheap"] = new Creator_PointLight_Cheap();
+	m_creatorMap["Reflector"] = new Creator_Reflector();
+	m_creatorMap["Sun"] = new Creator_Sun();
+	m_creatorMap["Sun_Cheap"] = new Creator_Sun_Cheap();
 }
 
 ECShandle Entity_Factory::createEntity(const char * type)

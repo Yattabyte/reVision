@@ -37,12 +37,6 @@ public:
 	Asset_Primitive(const string & filename);
 
 
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return			true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
-
-
 	// Public Methods
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return			a vertex array object resident on the GPU */
@@ -60,7 +54,6 @@ public:
 	GLuint m_buffers[2];
 	vector<vec3> m_dataVertex;
 	vector<vec2> m_dataUV;
-	GLsync m_fence;
 };
 
 /**

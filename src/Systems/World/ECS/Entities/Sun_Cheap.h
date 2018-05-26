@@ -15,7 +15,7 @@
 /**
  * Creates a Cheap Sun entity, composed of only a cheap directional light component.
  **/
-class DT_ENGINE_API SunCheapCreator : public EntityCreator
+class DT_ENGINE_API Creator_Sun_Cheap : public EntityCreator
 {
 public:
 	virtual Entity* create(const ECShandle & id, ECSmessenger * ecsMessenger, Component_Factory * componentFactory) {

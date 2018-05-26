@@ -37,12 +37,6 @@ public:
 	Asset_Texture(const string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
-	
-
-	// Interface Implementations
-	/** Returns whether or not this asset has completed finalizing.
-	* @return					true if this asset has finished finalizing, false otherwise. */
-	virtual bool existsYet();
 
 
 	// Public Methods
@@ -55,7 +49,6 @@ public:
 	GLuint m_glTexID, m_type;
 	vec2 m_size;
 	GLubyte	* m_pixelData;
-	GLsync m_fence;
 	bool m_mipmap;
 	bool m_anis;
 };

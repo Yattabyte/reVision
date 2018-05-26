@@ -28,13 +28,21 @@ struct Renderer_Struct {
 };
 
 /** Animated models uses this for transform + bone data. */
-struct Geometry_Struct {
+struct Geometry_Dynamic_Struct {
 	#define NUM_MAX_BONES 100
-	int useBones = 0;  // no padding here;
-	GLuint materialID = 0; vec2 padding1; // for some reason padding here
+	int useBones = 0; 
+	GLuint materialID = 0; vec2 padding1; 
 	mat4 mMatrix = mat4(1.0f);
 	mat4 bBoxMatrix = mat4(1.0f);
 	mat4 transforms[NUM_MAX_BONES];
+};
+
+/** Static models uses this for transform data. */
+struct Geometry_Static_Struct {
+	int useBones = 0; 
+	GLuint materialID = 0; vec2 padding1; 
+	mat4 mMatrix = mat4(1.0f);
+	mat4 bBoxMatrix = mat4(1.0f);
 };
 
 /** Directional lights use this for their lighting + transform data. */

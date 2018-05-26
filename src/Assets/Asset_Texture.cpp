@@ -7,8 +7,6 @@ Asset_Texture::~Asset_Texture()
 {
 	if (existsYet())
 		glDeleteTextures(1, &m_glTexID);
-	if (m_fence != nullptr)
-		glDeleteSync(m_fence);
 }
 
 Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
@@ -19,7 +17,6 @@ Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
 	m_pixelData = nullptr;
 	m_mipmap = false;
 	m_anis = false;
-	m_fence = nullptr;
 }
 
 Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
@@ -29,22 +26,7 @@ Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bo
 	m_anis = a;
 }
 
-bool Asset_Texture::existsYet()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	if (Asset::existsYet() && m_fence != nullptr) {
-		read_guard.unlock();
-		read_guard.release();
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		const auto state = glClientWaitSync(m_fence, 0, 0);
-		if (((state == GL_ALREADY_SIGNALED) || (state == GL_CONDITION_SATISFIED))
-			&& (state != GL_WAIT_FAILED))
-			return true;
-	}
-	return false;
-}
-
-void Asset_Texture::bind(const unsigned & texture_unit)
+void Asset_Texture::bind(const unsigned int & texture_unit)
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
 }
@@ -156,12 +138,15 @@ void Texture_WorkOrder::finalizeOrder()
 	if (!m_asset->existsYet()) {
 		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
 		auto &gl_tex_ID = m_asset->m_glTexID;
-		auto &type = m_asset->m_type;
-		auto &size = m_asset->m_size;
-		auto &pixel_data = m_asset->m_pixelData;
-		auto &anis = m_asset->m_anis;
-		auto &mipmap = m_asset->m_mipmap;
+		const auto &type = m_asset->m_type;
 		glCreateTextures(type, 1, &gl_tex_ID);
+		write_guard.unlock();
+		write_guard.release();
+		shared_lock<shared_mutex> read_guard(m_asset->m_mutex);
+		const auto &size = m_asset->m_size;
+		const auto &pixel_data = m_asset->m_pixelData;
+		const auto &anis = m_asset->m_anis;
+		const auto &mipmap = m_asset->m_mipmap;
 		switch (type) {
 			case GL_TEXTURE_1D: {
 				glTextureStorage1D(gl_tex_ID, 1, GL_RGBA16F, size.x);
@@ -196,11 +181,8 @@ void Texture_WorkOrder::finalizeOrder()
 				break;
 			}
 		}
-
-		m_asset->m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		glFlush();
-		write_guard.unlock();
-		write_guard.release();
+		read_guard.unlock();
+		read_guard.release();
 		m_asset->finalize();
 	}
 }

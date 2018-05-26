@@ -65,7 +65,7 @@ public:
 	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
 	Light_Buffers	m_lightBuffers;
-	VectorBuffer<Geometry_Struct>	m_geometrySSBO;
+	VectorBuffer<Geometry_Dynamic_Struct>	m_geometrySSBO;
 	VectorBuffer<Reflection_Struct>	m_reflectionSSBO;
 	
 
