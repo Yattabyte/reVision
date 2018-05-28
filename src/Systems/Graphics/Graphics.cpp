@@ -6,7 +6,8 @@
 #include <minmax.h>
 
 // Begin incldues for specific techniques
-#include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Sky Lighting\Skybox.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
@@ -94,7 +95,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 			m_techMap[tech->getName()] = tech;
 
 		// Initiate specialized geometry techniques
-		m_geometryTechs.push_back(new Model_Technique(&m_geometryFBO));
+		m_geometryTechs.push_back(new Model_Static_Technique(&m_geometryFBO, &m_geometryBuffers.m_geometryStaticSSBO));
+		m_geometryTechs.push_back(new Model_Technique(&m_geometryFBO, &m_geometryBuffers.m_geometryDynamicSSBO));
 
 		// Initiate specialized lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
@@ -117,7 +119,6 @@ void System_Graphics::update(const float & deltaTime)
 	if (m_Initialized && vis_token.size())	{		
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-		m_geometrySSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 
 		send2GPU(vis_token);
 		updateOnGPU(vis_token);
@@ -156,6 +157,7 @@ void System_Graphics::generateKernal()
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)
 {
 	// Geometry Data
+	Model_Static_Technique::writeCameraBuffers(m_enginePackage->m_Camera);
 	Model_Technique::writeCameraBuffers(m_enginePackage->m_Camera);
 	// Lighting Data
 	for each (auto *tech in m_lightingTechs)
@@ -176,13 +178,14 @@ void System_Graphics::updateOnGPU(const Visibility_Token & vis_token)
 void System_Graphics::renderFrame(const Visibility_Token & vis_token)
 {
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	//m_geometryFBO.clear();
+	m_geometryFBO.clear();
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
 
 	// Geometry
 	for each (auto *tech in m_geometryTechs)
 		tech->renderGeometry(m_enginePackage->m_Camera);
+	m_geometryFBO.applyAO();
 
 	// Lighting
 	m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES

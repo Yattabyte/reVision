@@ -1,6 +1,6 @@
 #pragma once
-#ifndef MODEL_TECHNIQUE
-#define MODEL_TECHNIQUE
+#ifndef MODEL_STATIC_TECHNIQUE
+#define MODEL_STATIC_TECHNIQUE
 #ifdef	ENGINE_EXE_EXPORT
 #define DT_ENGINE_API 
 #elif	ENGINE_DLL_EXPORT 
@@ -10,6 +10,8 @@
 #endif
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
+#include "Systems\Graphics\Resources\GFX_DEFINES.h"
+#include "Utilities\GL\VectorBuffer.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
@@ -18,15 +20,15 @@ class Camera;
 
 
 /**
- * Renders models (animated or static props which support skeletons)
+ * Renders static models
  **/
-class DT_ENGINE_API Model_Technique : public Geometry_Technique {
+class DT_ENGINE_API Model_Static_Technique : public Geometry_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~Model_Technique();
+	~Model_Static_Technique();
 	/** Constructor. */
-	Model_Technique(Geometry_FBO * geometryFBO);
+	Model_Static_Technique(Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Static_Struct> * geometrySSBO);
 
 
 	// Public Interface Implementations
@@ -43,6 +45,7 @@ private:
 	// Private Attributes
 	// Shared Attribute Pointers
 	Geometry_FBO * m_geometryFBO;
+	VectorBuffer<Geometry_Static_Struct> * m_geometryStaticSSBO;
 	// Assets
 	Shared_Asset_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Asset_Primitive m_shapeCube;
@@ -50,4 +53,4 @@ private:
 	GLuint m_cubeVAO;
 };
 
-#endif // MODEL_TECHNIQUE
+#endif // MODEL_STATIC_TECHNIQUE

@@ -9,7 +9,7 @@
 #define	DT_ENGINE_API __declspec(dllimport)
 #endif
 
-#include "Systems\World\ECS\ECSdefines.h"
+#include "Systems\World\ECS\ECS_DEFINES.h"
 #include <stdio.h>
 #include <string>
 #include <utility>

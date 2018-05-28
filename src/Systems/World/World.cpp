@@ -1,7 +1,7 @@
 #include "Systems\World\World.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\EnginePackage.h"
-#include "Systems\World\ECS\ECSdefines.h"
+#include "Systems\World\ECS\ECS_DEFINES.h"
 #include "Utilities\Transform.h"
 #include <algorithm>
 
@@ -92,37 +92,37 @@ void System_World::update(const float & deltaTime)
 		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-40, 0, 0)));
 		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));*/
 
-		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		h->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
 		h->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		h->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-6, 0, 0), quat(1,0,0,0), vec3(0.1))));
 
-		auto m1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m1->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-5, 0, 0))));
 
-		auto m2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m2->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
 
-		auto m3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m3->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(2, 0, -5))));
 
-		auto m4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m4->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
 
-		auto m5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m5->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m5->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m5->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1)))));
 
-		auto m6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
+		auto m6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
 		m6->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
 		m6->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
 		m6->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-30, 0, 0))));
@@ -162,7 +162,7 @@ void System_World::calcVisibility(Camera & camera)
 	const vec3 &eyePos = camBuffer.EyePosition;
 	Visibility_Token vis_token;
 
-	for each (const auto &type in vector<const char *>{ "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
+	for each (const auto &type in vector<const char *>{ "Static_Model", "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
 		vector<Component*> visible_components;
 		
 		for each (auto component in getSpecificComponents<Component>(type))

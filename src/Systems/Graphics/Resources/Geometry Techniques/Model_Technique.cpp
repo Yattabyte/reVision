@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\World\ECS\Components\Anim_Model_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
@@ -7,12 +7,14 @@
 
 Model_Technique::~Model_Technique()
 {
+	m_shapeCube->removeCallback(this);
 }
 
-Model_Technique::Model_Technique(Geometry_FBO * geometryFBO) 
+Model_Technique::Model_Technique(Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Dynamic_Struct> * geometrySSBO)
 {
 	// FBO's
 	m_geometryFBO = geometryFBO;
+	m_geometryDynamicSSBO = geometrySSBO;
 	
 	// Asset Loading
 	Asset_Loader::load_asset(m_shaderCull, "Geometry\\culling");
@@ -30,8 +32,6 @@ Model_Technique::Model_Technique(Geometry_FBO * geometryFBO)
 
 void Model_Technique::updateData(const vector<Camera*> & viewers)
 {
-	
-
 }
 
 void Model_Technique::renderGeometry(Camera & camera)
@@ -43,17 +43,16 @@ void Model_Technique::renderGeometry(Camera & camera)
 		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		m_geometryFBO->clear();
 		m_geometryFBO->bindForWriting();
 		m_shaderGeometry->bind();
+		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
 		// Render only the objects that passed the previous depth test (modified indirect draw buffer)     
-		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
-		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		camera.getRenderBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		const auto &visBuffers = camera.getVisibilityBuffers();		
+		visBuffers.m_buffer_Index[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		visBuffers.m_buffer_Render[CAM_GEOMETRY_DYNAMIC].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
-		m_geometryFBO->applyAO();
 	}
 }
 
@@ -67,6 +66,7 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 		m_geometryFBO->bindDepthWriting();
+		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 
 		// Render bounding boxes for all models using last frame's depth buffer
 		glBindVertexArray(m_cubeVAO);
@@ -76,10 +76,12 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 
 		// Draw bounding boxes for each camera
 		// Main geometry UBO bound to '5', the buffer below indexes into that
-		camera.getVisibleIndexBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		camera.getCullingBuffer().bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		camera.getRenderBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		const auto &visBuffers = camera.getVisibilityBuffers();
+		visBuffers.m_buffer_Index[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		visBuffers.m_buffer_Culling[CAM_GEOMETRY_DYNAMIC].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		visBuffers.m_buffer_Render[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
+		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 
 		// Undo state changes
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
@@ -115,8 +117,9 @@ void Model_Technique::writeCameraBuffers(Camera & camera, const unsigned int & i
 			}
 		}
 
-		camera.getVisibleIndexBuffer().write(0, sizeof(uint) * size, visibleIndices.data());
-		camera.getCullingBuffer().write(0, sizeof(ivec4) * size, cullingDrawData.data());
-		camera.getRenderBuffer().write(0, sizeof(ivec4) * size, renderingDrawData.data());
+		auto &visBuffers = camera.getVisibilityBuffers();
+		visBuffers.m_buffer_Index[CAM_GEOMETRY_DYNAMIC].write(0, sizeof(uint) * size, visibleIndices.data());
+		visBuffers.m_buffer_Culling[CAM_GEOMETRY_DYNAMIC].write(0, sizeof(ivec4) * size, cullingDrawData.data());
+		visBuffers.m_buffer_Render[CAM_GEOMETRY_DYNAMIC].write(0, sizeof(ivec4) * size, renderingDrawData.data());
 	}
 }

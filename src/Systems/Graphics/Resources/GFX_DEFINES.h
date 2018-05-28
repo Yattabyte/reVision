@@ -39,8 +39,7 @@ struct Geometry_Dynamic_Struct {
 
 /** Static models uses this for transform data. */
 struct Geometry_Static_Struct {
-	int useBones = 0; 
-	GLuint materialID = 0; vec2 padding1; 
+	GLuint materialID = 0; vec3 padding1; 
 	mat4 mMatrix = mat4(1.0f);
 	mat4 bBoxMatrix = mat4(1.0f);
 };

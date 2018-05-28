@@ -10,7 +10,7 @@
 Static_Model_Component::~Static_Model_Component()
 {
 	if (m_model.get()) m_model->removeCallback(this);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.removeElement(&m_uboIndex);
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
 Static_Model_Component::Static_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
@@ -21,7 +21,7 @@ Static_Model_Component::Static_Model_Component(const ECShandle &id, const ECShan
 	m_bsphereRadius = 0;
 	m_bspherePos = vec3(0.0f);
 
-	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.addElement(&m_uboIndex);
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.addElement(&m_uboIndex);
 }
 
 void Static_Model_Component::receiveMessage(const ECSmessage &message)

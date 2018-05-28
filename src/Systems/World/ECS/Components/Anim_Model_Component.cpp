@@ -12,7 +12,7 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 Anim_Model_Component::~Anim_Model_Component()
 {
 	if (m_model.get()) m_model->removeCallback(this);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.removeElement(&m_uboIndex);
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.removeElement(&m_uboIndex);
 }
 
 Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
@@ -27,7 +27,7 @@ Anim_Model_Component::Anim_Model_Component(const ECShandle &id, const ECShandle 
 	m_bsphereRadius = 0;
 	m_bspherePos = vec3(0.0f);
 
-	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometrySSBO.addElement(&m_uboIndex);
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.addElement(&m_uboIndex);
 }
 
 void Anim_Model_Component::receiveMessage(const ECSmessage &message)

@@ -10,6 +10,7 @@
 #endif
 
 #include "Systems\World\Visibility_Token.h"
+#include "Systems\World\ECS\ECS_DEFINES.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"
@@ -18,39 +19,12 @@
 #include <shared_mutex>
 
 using namespace std;
-using namespace glm;
 
-
-/** A means for sharing camera data with both the program and the GPU in one data structure. */
-struct Camera_Buffer
-{
-	// Public Constructor
-	/** Zero-Initializer constructor. */
-	Camera_Buffer() {
-		pMatrix = mat4(1.0f);
-		vMatrix = mat4(1.0f);
-		pMatrix_Inverse = mat4(1.0f);
-		vMatrix_Inverse = mat4(1.0f);
-		EyePosition = vec3(0.0f);
-		Dimensions = vec2(1.0f);
-		NearPlane = 0.01f;
-		FarPlane = 1.0f;
-		FOV = 1.0f;
-		Gamma = 1.0f;
-	}
-
-
-	// Public Attributes
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition; float padding;
-	vec2 Dimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-	float Gamma;
+struct Camera_VisBuffers {
+	#define CAM_NUM_GEOMETRY 2
+	#define CAM_GEOMETRY_STATIC 0
+	#define CAM_GEOMETRY_DYNAMIC 1
+	DynamicBuffer m_buffer_Index[CAM_NUM_GEOMETRY], m_buffer_Culling[CAM_NUM_GEOMETRY], m_buffer_Render[CAM_NUM_GEOMETRY];
 };
 
 
@@ -129,15 +103,9 @@ public:
 	/** Retrieve the mutex associated with data changes. 
 	 * @return				the data mutex */
 	shared_mutex & getDataMutex() const { return data_mutex; };
-	/** Retrieve the visible geometry index buffer which indexes into the main geometry buffer. 
-	 * @return				the visible index buffer for animated models */
-	DynamicBuffer & getVisibleIndexBuffer() { return m_visibleBuffer; }
-	/** Retrieve the indirect culling buffer.
-	 * @return				the culling buffer requested */
-	DynamicBuffer & getCullingBuffer() { return m_cullingBuffer; }
-	/** Retrieve the indirect render buffer.
-	 * @return				the render buffer requested */
-	DynamicBuffer & getRenderBuffer() { return m_renderBuffer; }
+	/** Retrieve the visibility buffers used for rendering. 
+	 * @return				this cameras' visibility buffers */
+	Camera_VisBuffers & getVisibilityBuffers() { return m_visBuffers; }
 	/** Recalculates matrices and sends data to the GPU. */
 	void update();
 
@@ -146,7 +114,7 @@ private:
 	// Private Attributes
 	mutable shared_mutex data_mutex;
 	StaticBuffer m_buffer;
-	DynamicBuffer m_visibleBuffer, m_cullingBuffer, m_renderBuffer;
+	Camera_VisBuffers m_visBuffers;
 	Camera_Buffer m_cameraBuffer;
 	quat m_orientation;
 	Visibility_Token m_vistoken;

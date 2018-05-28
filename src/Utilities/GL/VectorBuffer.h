@@ -57,13 +57,13 @@ public:
 	// Public Methods
 	/** Bind this buffer.
 	* @param	target	the target type of this buffer */
-	void bindBuffer(const GLenum & target) {
+	void bindBuffer(const GLenum & target) const {
 		glBindBuffer(target, m_bufferID);
 	}
 	/** Bind this buffer to a particular binding point for shaders.
 	 * @param	target	the target type of this buffer
 	 * @param	index	the binding point index to use */
-	void bindBufferBase(const GLenum & target, const GLuint & index) {
+	void bindBufferBase(const GLenum & target, const GLuint & index) const {
 		glBindBufferBase(target, index, m_bufferID);
 	}
 	/** Bind this buffer to a particular binding point for shaders, within a given range.
@@ -71,7 +71,7 @@ public:
 	 * @param	index	the binding point index to use
 	 * @param	offset	the offset to start the binding at
 	 * @param	size	the size of the buffer to bind */
-	void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) {
+	void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const {
 		glBindBufferRange(target, index, m_bufferID, offset, size );
 	}
 	/** Add an element to this buffers list. 

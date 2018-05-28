@@ -47,13 +47,13 @@ public:
 	// Public Methods
 	/** Bind this buffer.
 	* @param	target	the target type of this buffer */
-	void bindBuffer(const GLenum & target) {
+	void bindBuffer(const GLenum & target) const {
 		glBindBuffer(target, m_bufferID);
 	}
 	/** Bind this buffer to a particular binding point for shaders.
 	 * @param	target	the target type of this buffer
 	 * @param	index	the binding point index to use */
-	void bindBufferBase(const GLenum & target, const GLuint & index) {
+	void bindBufferBase(const GLenum & target, const GLuint & index) const {
 		glBindBufferBase(target, index, m_bufferID);
 	}
 	/** Cast this buffer's pointer to a type, as to allow modifying its underlying data. 

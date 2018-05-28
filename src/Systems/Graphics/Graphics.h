@@ -13,11 +13,12 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\Geometry Techniques\Model_Techniques.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
+#include "Systems\Graphics\Resources\Geometry_Buffers.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -65,7 +66,7 @@ public:
 	Reflection_FBO	m_reflectionFBO;
 	// Storage Buffers
 	Light_Buffers	m_lightBuffers;
-	VectorBuffer<Geometry_Dynamic_Struct>	m_geometrySSBO;
+	Geometry_Buffers m_geometryBuffers;
 	VectorBuffer<Reflection_Struct>	m_reflectionSSBO;
 	
 

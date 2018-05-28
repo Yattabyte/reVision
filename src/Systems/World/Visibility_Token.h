@@ -10,7 +10,7 @@
 #endif
 
 #include "Systems\World\ECS\Components\Component.h"
-#include "Systems\World\ECS\ECSdefines.h"
+#include "Systems\World\ECS\ECS_DEFINES.h"
 #include "Utilities\MappedChar.h"
 
 
