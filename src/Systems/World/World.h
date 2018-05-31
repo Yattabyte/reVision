@@ -12,7 +12,6 @@
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
 #include "Systems\World\Animator.h"
-#include "Systems\World\ECS\ECSmessenger.h"
 #include "Systems\World\ECS\Entity_Factory.h"
 #include "Systems\World\ECS\Component_Factory.h"
 
@@ -65,7 +64,6 @@ private:
 	// Private Attributes
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
-	ECSmessenger m_ECSmessenger;
 	shared_mutex m_lock;
 	vector<Camera*> m_viewers;
 	Animator m_animator;

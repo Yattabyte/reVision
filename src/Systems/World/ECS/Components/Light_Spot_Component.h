@@ -16,6 +16,7 @@
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Utilities\Transform.h"
 
 using namespace glm;
 class Spot_Tech;
@@ -32,7 +33,7 @@ class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
 {
 public:
 	// Interface Implementations
-	virtual void receiveMessage(const ECSmessage &message);
+	virtual const char * getName() const { return "Light_Spot"; }
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual void occlusionPass();
 	virtual void shadowPass();
@@ -45,7 +46,12 @@ protected:
 	/** Destroys a spot light component. */
 	~Light_Spot_Component();
 	/** Constructs a spot light component. */
-	Light_Spot_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	Light_Spot_Component(EnginePackage *enginePackage);
+
+
+	// Protected Functions
+	/** Recalculate matrices. */
+	void updateViews();
 
 
 	// Protected Attributes
@@ -63,14 +69,33 @@ protected:
 	Camera m_camera;
 	size_t m_visSize;
 	friend class Light_Spot_Creator;
+
+
+private:
+	// Private Functions
+	/** Set the light color to use.
+	 * @param	color		the color to use */
+	void setColor(const vec3 & color);
+	/** Set the light intensity to use.
+	 * @param	intensity	the intensity to use */
+	void setIntensity(const float & intensity);
+	/** Set the light radius to use.
+	 * @param	radius		the radius to use */
+	void setRadius(const float & radius);
+	/** Set the light cutoff to use.
+	 * @param	cutoff		the cutoff to use */
+	void setCutoff(const float & cutoff);
+	/** Set the transformation for this component.
+	 * @param	transform	the transform to use */
+	void setTransform(const Transform & transform);
 };
 
 class DT_ENGINE_API Light_Spot_Creator : public ComponentCreator
 {
 public:
-	Light_Spot_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
-		return new Light_Spot_Component(id, pid, enginePackage);
+	Light_Spot_Creator() : ComponentCreator() {}
+	virtual Component* create(EnginePackage *enginePackage) {
+		return new Light_Spot_Component(enginePackage);
 	}
 };
 

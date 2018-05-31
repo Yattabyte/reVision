@@ -17,6 +17,7 @@
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
+#include "Utilities\Transform.h"
 
 using namespace glm;
 class Directional_Tech;
@@ -32,7 +33,7 @@ class DT_ENGINE_API Light_Directional_Component : protected Lighting_Component
 {
 public:
 	// Interface implementations
-	virtual void receiveMessage(const ECSmessage &message);
+	virtual const char * getName() const { return "Light_Directional"; }
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual void occlusionPass();
 	virtual void shadowPass();
@@ -50,7 +51,7 @@ protected:
 	/** Destroys a directional light component. */
 	~Light_Directional_Component();
 	/** Constructs a directional light component. */
-	Light_Directional_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	Light_Directional_Component(EnginePackage *enginePackage);
 
 
 	// Protected Attributes
@@ -63,14 +64,27 @@ protected:
 	mat4 m_mMatrix;
 	Camera m_camera;
 	friend class Light_Directional_Creator;
+
+
+private:
+	// Private Functions
+	/** Set the light color to use. 
+	 * @param	color		the color to use */
+	void setColor(const vec3 & color);
+	/** Set the light intensity to use.
+	 * @param	intensity	the intensity to use */
+	void setIntensity(const float & intensity);
+	/** Set the transformation for this component.
+	 * @param	transform	the transform to use */
+	void setTransform(const Transform & transform);
 };
 
 class DT_ENGINE_API Light_Directional_Creator : public ComponentCreator
 {
 public:
-	Light_Directional_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
-		return new Light_Directional_Component(id, pid, enginePackage);
+	Light_Directional_Creator() : ComponentCreator() {}
+	virtual Component* create(EnginePackage *enginePackage) {
+		return new Light_Directional_Component(enginePackage);
 	}
 };
 

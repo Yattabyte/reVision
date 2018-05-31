@@ -15,6 +15,7 @@
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Utilities\Transform.h"
 
 
 using namespace glm;
@@ -29,7 +30,7 @@ class DT_ENGINE_API Light_Point_Cheap_Component : protected Lighting_Component
 {
 public:
 	// Interface Implementations
-	virtual void receiveMessage(const ECSmessage &message);
+	virtual const char * getName() const { return "Light_Point_Cheap"; }
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual float getImportance(const vec3 &position) const;
 	virtual void occlusionPass() {}
@@ -42,7 +43,7 @@ protected:
 	/** Destroys a cheap point light component. */
 	~Light_Point_Cheap_Component();
 	/** Constructs a cheap point light component. */
-	Light_Point_Cheap_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	Light_Point_Cheap_Component(EnginePackage *enginePackage);
 	
 
 	// Protected Functions
@@ -55,14 +56,30 @@ protected:
 	float m_radius, m_squaredRadius;
 	vec3 m_lightPos;
 	friend class Light_Point_Cheap_Creator;
+
+
+private:
+	// Private Functions
+	/** Set the light color to use.
+	 * @param	color		the color to use */
+	void setColor(const vec3 & color);
+	/** Set the light intensity to use.
+	 * @param	intensity	the intensity to use */
+	void setIntensity(const float & intensity);
+	/** Set the light radius to use.
+	 * @param	radius		the radius to use */
+	void setRadius(const float & radius);
+	/** Set the transformation for this component.
+	 * @param	transform	the transform to use */
+	void setTransform(const Transform & transform);
 };
 
 class DT_ENGINE_API Light_Point_Cheap_Creator : public ComponentCreator
 {
 public:
-	Light_Point_Cheap_Creator(ECSmessenger * ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) {
-		return new Light_Point_Cheap_Component(id, pid, enginePackage);
+	Light_Point_Cheap_Creator() : ComponentCreator() {}
+	virtual Component* create(EnginePackage * enginePackage) {
+		return new Light_Point_Cheap_Component(enginePackage);
 	}
 };
 

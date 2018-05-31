@@ -3,7 +3,6 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Transform.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
 #include "GLFW\glfw3.h"
@@ -15,7 +14,7 @@ Light_Directional_Component::~Light_Directional_Component()
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 }
 
-Light_Directional_Component::Light_Directional_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
+Light_Directional_Component::Light_Directional_Component(EnginePackage *enginePackage)
 {
 	m_enginePackage = enginePackage;
 	m_visSize = 0;
@@ -43,47 +42,33 @@ Light_Directional_Component::Light_Directional_Component(const ECShandle & id, c
 	uboData->ShadowSize_Recip = 1.0f / m_shadowSize;
 		
 	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
+	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
+		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+	};
+	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setIntensity(payload.toType<float>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
 }
 
-void Light_Directional_Component::receiveMessage(const ECSmessage &message)
+void Light_Directional_Component::setColor(const vec3 & color)
 {
-	if (Component::compareMSGSender(message)) return;
-	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
+}
 
-	switch (message.GetCommandID()) {
-		case SET_LIGHT_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			uboData->LightColor = payload;
-			break;
-		}
-		case SET_LIGHT_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightIntensity = payload;
-			break;
-		}
-		case SET_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			const mat4 rotation = glm::mat4_cast(payload);
-			uboData->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_mMatrix = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-			uboData->lightV = m_mMatrix;
-			update();
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			const mat4 &rotation = payload.m_modelMatrix;
-			uboData->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			m_mMatrix = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
-			uboData->lightV = m_mMatrix;
-			update();
-			break;
-		}
-	}
+void Light_Directional_Component::setIntensity(const float & intensity)
+{
+	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
+}
+
+void Light_Directional_Component::setTransform(const Transform & transform)
+{
+	const mat4 &rotation = transform.m_modelMatrix;
+	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+	m_mMatrix = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->lightV = m_mMatrix;
 }
 
 bool Light_Directional_Component::isVisible(const float & radius, const vec3 & eyePosition) const

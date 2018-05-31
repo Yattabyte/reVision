@@ -34,8 +34,8 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~Geometry_Component() {};
-	/** Constructor. Takes in component ID and parent ID. */
-	Geometry_Component(const ECShandle & id, const ECShandle & pid) : Component(id, pid) {};
+	/** Constructor. */
+	Geometry_Component() {};
 };
 
 #endif // GEOMETRY_COMPONENT

@@ -2,53 +2,40 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Transform.h"
 
 
 Light_Directional_Cheap_Component::~Light_Directional_Cheap_Component()
 {
 }
 
-Light_Directional_Cheap_Component::Light_Directional_Cheap_Component(const ECShandle & id, const ECShandle & pid, EnginePackage *enginePackage) : Lighting_Component(id, pid)
+Light_Directional_Cheap_Component::Light_Directional_Cheap_Component(EnginePackage *enginePackage)
 {
 	m_uboBuffer = enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.addElement(&m_uboIndex);
+	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
+		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+	};
+	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setIntensity(payload.toType<float>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
 }
 
-void Light_Directional_Cheap_Component::receiveMessage(const ECSmessage &message)
+void Light_Directional_Cheap_Component::setColor(const vec3 & color)
 {
-	if (Component::compareMSGSender(message)) return;
-	Directional_Cheap_Struct * uboData = &reinterpret_cast<Directional_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	(&reinterpret_cast<Directional_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
+}
 
-	switch (message.GetCommandID()) {
-		case SET_LIGHT_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			uboData->LightColor = payload;
-			break;
-		}
-		case SET_LIGHT_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightIntensity = payload;
-			break;
-		}
-		case SET_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			const mat4 rotation = glm::mat4_cast(payload);
-			uboData->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			update();
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			const mat4 &rotation = payload.m_modelMatrix;
-			uboData->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-			update();
-			break;
-		}
-	}
+void Light_Directional_Cheap_Component::setIntensity(const float & intensity)
+{
+	(&reinterpret_cast<Directional_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
+}
+
+void Light_Directional_Cheap_Component::setTransform(const Transform & transform)
+{
+	const mat4 &rotation = transform.m_modelMatrix;
+	(&reinterpret_cast<Directional_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;	
 }
 
 bool Light_Directional_Cheap_Component::isVisible(const float & radius, const vec3 & eyePosition) const

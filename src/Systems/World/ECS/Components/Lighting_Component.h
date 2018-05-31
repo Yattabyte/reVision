@@ -47,8 +47,8 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Lighting_Component() {};
-	/** Constructor. Takes in component ID and parent ID. */
-	Lighting_Component(const ECShandle & id, const ECShandle & pid) : Component(id, pid) { m_shadowUpdateTime = 0; };
+	/** Constructor. */
+	Lighting_Component() { m_shadowUpdateTime = 0; };
 
 
 	// Protected Attributes

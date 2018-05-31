@@ -15,6 +15,7 @@
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "Utilities\Transform.h"
 
 
 using namespace glm;
@@ -29,7 +30,7 @@ class DT_ENGINE_API Light_Directional_Cheap_Component : protected Lighting_Compo
 {
 public:
 	// Interface implementations
-	virtual void receiveMessage(const ECSmessage &message);
+	virtual const char * getName() const { return "Light_Directional_Cheap"; }
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual float getImportance(const vec3 &position) const;
 	virtual void occlusionPass() {}
@@ -42,19 +43,32 @@ protected:
 	/** Destroys a cheap directional light component. */
 	~Light_Directional_Cheap_Component();
 	/** Constructs a cheap directional light component. */
-	Light_Directional_Cheap_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	Light_Directional_Cheap_Component(EnginePackage *enginePackage);
 
 
 	// Protected Attributes
 	friend class Light_Directional_Cheap_Creator;
+
+
+private:
+	// Private Functions
+	/** Set the light color to use.
+	* @param	color		the color to use */
+	void setColor(const vec3 & color);
+	/** Set the light intensity to use.
+	* @param	intensity	the intensity to use */
+	void setIntensity(const float & intensity);
+	/** Set the transformation for this component.
+	* @param	transform	the transform to use */
+	void setTransform(const Transform & transform);
 };
 
 class DT_ENGINE_API Light_Directional_Cheap_Creator : public ComponentCreator
 {
 public:
-	Light_Directional_Cheap_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
-		return new Light_Directional_Cheap_Component(id, pid, enginePackage);
+	Light_Directional_Cheap_Creator() : ComponentCreator() {}
+	virtual Component* create(EnginePackage *enginePackage) {
+		return new Light_Directional_Cheap_Component(enginePackage);
 	}
 };
 

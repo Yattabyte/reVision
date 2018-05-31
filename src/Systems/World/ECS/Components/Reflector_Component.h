@@ -13,6 +13,7 @@
 
 #include "Systems\World\ECS\Components\Component.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\Transform.h"
 #include "GL\glew.h"
 
 class Reflector_Creator;
@@ -26,7 +27,7 @@ class DT_ENGINE_API Reflector_Component : protected Component
 {
 public:
 	// Interface implementations
-	virtual void receiveMessage(const ECSmessage &message);
+	virtual const char * getName() const { return "Reflector"; }
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 
 
@@ -41,7 +42,7 @@ protected:
 	/** Destroys a reflector component. */
 	~Reflector_Component();
 	/** Constructors a reflector component. */
-	Reflector_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage);
+	Reflector_Component(EnginePackage *enginePackage);
 
 
 	// Protected Attributes
@@ -51,14 +52,24 @@ protected:
 	vec3 m_scale;
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;
+
+
+private:
+	// Private Functions
+	/** Set the reflector radius to use.
+	 * @param	radius		the radius to use */
+	void setRadius(const float & radius);
+	/** Set the transformation for this component.
+	 * @param	transform	the transform to use */
+	void setTransform(const Transform & transform);
 };
 
 class DT_ENGINE_API Reflector_Creator : public ComponentCreator
 {
 public:
-	Reflector_Creator(ECSmessenger *ecsMessenger) : ComponentCreator(ecsMessenger) {}
-	virtual Component* Create(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) {
-		return new Reflector_Component(id, pid, enginePackage);
+	Reflector_Creator() : ComponentCreator() {}
+	virtual Component* create(EnginePackage *enginePackage) {
+		return new Reflector_Component(enginePackage);
 	}
 };
 

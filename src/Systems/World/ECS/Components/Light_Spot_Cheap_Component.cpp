@@ -2,20 +2,69 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Transform.h"
 
 
 Light_Spot_Cheap_Component::~Light_Spot_Cheap_Component()
 {
 }
 
-Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Lighting_Component(id, pid)
+Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(EnginePackage * enginePackage)
 {
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = vec3(0.0f);
 	m_orientation = quat(1, 0, 0, 0);
 	m_uboBuffer = enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.addElement(&m_uboIndex);
+
+
+	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
+		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+	};
+	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setIntensity(payload.toType<float>());
+	};
+	m_commandMap["Set_Light_Radius"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setRadius(payload.toType<float>());
+	};
+	m_commandMap["Set_Light_Cutoff"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setCutoff(payload.toType<float>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
+}
+
+void Light_Spot_Cheap_Component::setColor(const vec3 & color)
+{
+	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
+}
+
+void Light_Spot_Cheap_Component::setIntensity(const float & intensity)
+{
+	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
+}
+
+void Light_Spot_Cheap_Component::setRadius(const float & radius)
+{
+	m_radius = radius;
+	m_squaredRadius = radius * radius;
+	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightRadius = radius;
+	updateViews();
+}
+
+void Light_Spot_Cheap_Component::setCutoff(const float & cutoff)
+{
+	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightCutoff = cosf(glm::radians(cutoff));
+	updateViews();
+}
+
+void Light_Spot_Cheap_Component::setTransform(const Transform & transform)
+{
+	Spot_Cheap_Struct * uboData = &reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	uboData->LightPosition = transform.m_position;
+	m_lightPos = transform.m_position;
+	m_orientation = transform.m_orientation;
+	updateViews();
 }
 
 void Light_Spot_Cheap_Component::updateViews()
@@ -28,65 +77,6 @@ void Light_Spot_Cheap_Component::updateViews()
 	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
 	uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
 	uboData->mMatrix = (trans * rot) * scl;
-}
-
-void Light_Spot_Cheap_Component::receiveMessage(const ECSmessage &message)
-{
-	if (Component::compareMSGSender(message)) return;
-	Spot_Cheap_Struct * uboData = &reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-
-	switch (message.GetCommandID()) {
-		case SET_LIGHT_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			uboData->LightColor = payload;
-			break;
-		}
-		case SET_LIGHT_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightIntensity = payload;
-			break;
-		}
-		case SET_LIGHT_RADIUS: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_radius = payload;
-			m_squaredRadius = payload * payload;
-			uboData->LightRadius = payload;
-			break;
-		}
-		case SET_LIGHT_CUTOFF: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightCutoff = cosf(glm::radians(payload));
-			break;
-		}
-		case SET_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			m_orientation = payload;		
-			updateViews();
-			break;
-		}
-		case SET_POSITION: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_lightPos = payload;
-			uboData->LightPosition = payload;
-			updateViews();
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			uboData->LightPosition = payload.m_position;
-			m_lightPos = payload.m_position;
-			m_orientation = payload.m_orientation;
-			updateViews();
-			break;
-		}
-	}
 }
 
 bool Light_Spot_Cheap_Component::isVisible(const float & radius, const vec3 & eyePosition) const

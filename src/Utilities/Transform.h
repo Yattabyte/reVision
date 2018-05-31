@@ -29,12 +29,19 @@ struct DT_ENGINE_API Transform
 	/** Constructs a transformation object with any of the supplied parameters.
 	 * @param position		the desired position
 	 * @param orientation	the desired orientation
-	 * @param scale			the desired scale
-	 */
+	 * @param scale			the desired scale */
 	Transform(const vec3 &position = vec3(0.0f), const quat &orientation = quat(1, 0, 0, 0), const vec3 &scale = vec3(1.0f)) {
 		m_position = position;
 		m_orientation = orientation;
 		m_scale = scale;
+		update();
+	}
+	/** Constructs a transformation object with only orientation.
+	* @param orientation	the desired orientation	*/
+	Transform(const quat &orientation) {
+		m_position = vec3(0.0f);
+		m_orientation = orientation;
+		m_scale = vec3(1.0f);
 		update();
 	}
 

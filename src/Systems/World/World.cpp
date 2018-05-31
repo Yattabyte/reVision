@@ -11,8 +11,7 @@ System_World::~System_World()
 }
 
 System_World::System_World() : 
-	m_ECSmessenger(&m_entityFactory, &m_componentFactory),
-	m_entityFactory(&m_ECSmessenger, &m_componentFactory),
+	m_entityFactory(&m_componentFactory),
 	m_animator(Animator(this))
 {
 
@@ -22,110 +21,111 @@ void System_World::initialize(EnginePackage * enginePackage)
 {
 	if (!m_Initialized) {
 		m_enginePackage = enginePackage;
-		m_componentFactory.initialize(m_enginePackage, &m_ECSmessenger);	
+		m_componentFactory.initialize(m_enginePackage);	
 
 		m_Initialized = true;
 	}
 }
 
 void System_World::update(const float & deltaTime)
-{	
+{
 	// Temporary level loading logic until a map format is chosen
 	static bool loaded = false;
 	if (!loaded) {
+		Entity * hills = m_entityFactory.createEntity("Prop");
+		hills->sendCommand("Load_Model", string("Test\\hills.obj"));
+		hills->sendCommand("Change_Transform", Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30)));
 
-		auto hills = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		hills->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\hills.obj")));
-		hills->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30))));
+		Entity * wall1 = m_entityFactory.createEntity("Prop");
+		wall1->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall1->sendCommand("Change_Skin", 0);
+		wall1->sendCommand("Change_Transform", Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
 
-		auto wall1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall1->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		wall1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2))));
+		Entity * wall2 = m_entityFactory.createEntity("Prop");
+		wall2->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall2->sendCommand("Change_Skin", 1);
+		wall2->sendCommand("Change_Transform", Transform(vec3(22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
 
-		auto wall2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall2->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(22, -10, 0), quat(1, 0, 0, 0), vec3(2))));
+		Entity * wall3 = m_entityFactory.createEntity("Prop");
+		wall3->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall3->sendCommand("Change_Skin", 1);
+		wall3->sendCommand("Change_Transform", Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		auto wall3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall3->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+		Entity * wall4 = m_entityFactory.createEntity("Prop");
+		wall4->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall4->sendCommand("Change_Skin", 1);
+		wall4->sendCommand("Change_Transform", Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		auto wall4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall4->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+		Entity * wall5 = m_entityFactory.createEntity("Prop");
+		wall5->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall5->sendCommand("Change_Skin", 1);
+		wall5->sendCommand("Change_Transform", Transform(vec3(20, -11, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 0, 1)), vec3(2)));
 
-		auto wall5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall5->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall5->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall5->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(20, -11, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 0, 1)), vec3(2))));
+		Entity * wall6 = m_entityFactory.createEntity("Prop");
+		wall6->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall6->sendCommand("Change_Skin", 1);
+		wall6->sendCommand("Change_Transform", Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		auto wall6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall6->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall6->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall6->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
+		Entity * wall7 = m_entityFactory.createEntity("Prop");
+		wall7->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall7->sendCommand("Change_Skin", 1);
+		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		auto wall7 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop"));
-		wall7->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\wall.obj")));
-		wall7->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(1)));
-		wall7->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2))));
-
-		auto sun = m_entityFactory.getEntity(m_entityFactory.createEntity("Sun"));
-		sun->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0.75, 0.75, 0.9)));
-		sun->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 8.0f)); // OLD INTENSITY WAS 8.0
-		sun->receiveMessage(ECSmessage(SET_ORIENTATION, glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));
+		/*Entity * sun = m_entityFactory.createEntity("Sun");
+		sun->sendCommand("Change_Light_Color", vec3(0.75, 0.75, 0.9));
+		sun->sendCommand("Change_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
+		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));*/
 		
-		/*auto point = m_entityFactory.getEntity(m_entityFactory.createEntity("PointLight_Cheap"));
-		point->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(0, 0, 1.0)));
-		point->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-		point->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-		point->receiveMessage(ECSmessage(SET_POSITION, vec3(0,0,0)));
+		/*auto point = m_entityFactory.createEntity("PointLight_Cheap");
+		point->sendCommand("Change_Light_Color", vec3(0, 0, 1.0));
+		point->sendCommand("Change_Light_Intensity", 15.0f);
+		point->sendCommand("Change_Light_Radius", 10.0f);
+		point->sendCommand("Change_Transform", Transform(vec3(0,0,0)));*/
 
-		auto spot = m_entityFactory.getEntity(m_entityFactory.createEntity("SpotLight_Cheap"));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_COLOR, vec3(1)));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_INTENSITY, 15.0f));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_RADIUS, 10.0f));
-		spot->receiveMessage(ECSmessage(SET_LIGHT_CUTOFF, 45.0f));
-		spot->receiveMessage(ECSmessage(SET_POSITION, vec3(-40, 0, 0)));
-		spot->receiveMessage(ECSmessage(SET_ORIENTATION, quat(1, 0, 0, 0)));*/
 
-		auto h = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		h->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("castleWall.obj")));
-		h->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		h->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-6, 0, 0), quat(1,0,0,0), vec3(0.1))));
+		//Entity * ref = m_entityFactory.createEntity("Reflector");
 
-		auto m1 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m1->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m1->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m1->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-5, 0, 0))));
+		auto spot = m_entityFactory.createEntity("SpotLight_Cheap");
+		spot->sendCommand("Change_Light_Color", vec3(1));
+		spot->sendCommand("Change_Light_Intensity", 15.0f);
+		spot->sendCommand("Change_Light_Radius", 10.0f);
+		spot->sendCommand("Change_Light_Cutoff", 45.0f);
+		spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));
 
-		auto m2 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m2->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m2->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m2->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
+		Entity * h = m_entityFactory.createEntity("Prop");
+		h->sendCommand("Load_Model", string("castleWall.obj"));
+		h->sendCommand("Change_Skin", 0);
+		h->sendCommand("Change_Transform", Transform(vec3(-6, 0, 0), quat(1,0,0,0), vec3(0.1)));
 
-		auto m3 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m3->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m3->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m3->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(2, 0, -5))));
+		Entity * m1 = m_entityFactory.createEntity("Prop_Static");
+		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m1->sendCommand("Change_Skin", 0);
+		m1->sendCommand("Change_Transform", Transform(vec3(-5, 0, 0)));
 
-		auto m4 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m4->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m4->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m4->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)))));
+		Entity * m2 = m_entityFactory.createEntity("Prop_Static");
+		m2->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m2->sendCommand("Change_Skin", 0);
+		m2->sendCommand("Change_Transform", Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
 
-		auto m5 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m5->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m5->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m5->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1)))));
+		Entity * m3 = m_entityFactory.createEntity("Prop_Static");
+		m3->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m3->sendCommand("Change_Skin", 0);
+		m3->sendCommand("Change_Transform", Transform(vec3(2, 0, -5)));
 
-		auto m6 = m_entityFactory.getEntity(m_entityFactory.createEntity("Prop_Static"));
-		m6->receiveMessage(ECSmessage(SET_MODEL_DIR, std::string("Test\\AnimationTest.fbx")));
-		m6->receiveMessage(ECSmessage(SET_MODEL_SKIN, GLuint(0)));
-		m6->receiveMessage(ECSmessage(SET_TRANSFORM, Transform(vec3(-30, 0, 0))));
+		Entity * m4 = m_entityFactory.createEntity("Prop_Static");
+		m4->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m4->sendCommand("Change_Skin", 0);
+		m4->sendCommand("Change_Transform", Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
+
+		Entity * m5 = m_entityFactory.createEntity("Prop_Static");
+		m5->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m5->sendCommand("Change_Skin", 0);
+		m5->sendCommand("Change_Transform", Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1))));
+
+		Entity * m6 = m_entityFactory.createEntity("Prop");
+		m6->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m6->sendCommand("Change_Skin", 0);
+		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, 0)));
 	
 		loaded = true;
 	}

@@ -14,7 +14,6 @@
 #include <deque>
 
 using namespace std;
-class ECSmessenger;
 class Component_Factory;
 
 
@@ -28,23 +27,18 @@ public:
 	/** Destroy the factory. */
 	~Entity_Factory();
 	/** Construct the factory.
-	 * @param	ecsMessenger		pointer to the entity-component messenger system 
 	 * @param	componentFactory	pointer to the component factory */
-	Entity_Factory(ECSmessenger * ecsMessenger, Component_Factory * componentFactory);
+	Entity_Factory(Component_Factory * componentFactory);
 
 
 	// Public Methods
 	/** Creates an entity of the supplied type and returns its handle.
 	 * @param	type				the type-name of the entity to create
-	 * @return						the ECShandle of the entity created */
-	ECShandle createEntity(const char * type);
+	 * @return						the newly created entity */
+	Entity * createEntity(const char * type);
 	/** Delete the entity of the given handle.
 	 * @param	id					the handle of the entity to delete */
-	void deleteEntity(const ECShandle & id);
-	/** Retrieve the actual entity that matches the supplied ID.
-	 * @param	id					the handle of the entity to retrieve
-	 * @return						the entity who matches the handle provided */
-	Entity * getEntity(const ECShandle & id);
+	void deleteEntity(const char * type, Entity * entity);
 	/** Retrieves an array of entities that match the category specified.
 	 * @brief						Guaranteed to return at least a zero-length vector. Types that don't exist are created.
 	 * @param	type				the type-name of the entity list to retrieve
@@ -59,8 +53,6 @@ private:
 	VectorMap<Entity*> m_levelEntities; 
 	MappedChar<deque<unsigned int>> m_freeSpots;
 	MappedChar<EntityCreator*> m_creatorMap;
-	ECSmessenger *m_ECSmessenger;
-	Component_Factory *m_componentFactory;
 };
 
 #endif // ENTITY_FACTORY

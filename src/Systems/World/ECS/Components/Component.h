@@ -10,11 +10,12 @@
 #endif
 
 #include "Systems\World\ECS\ECSmessage.h"
+#include "Utilities\MappedChar.h"
 #include "glm\glm.hpp"
 #include <utility>
+#include <functional>
 
 using namespace glm;
-class ECSmessenger;
 class ComponentCreator;
 class EnginePackage;
 
@@ -26,10 +27,14 @@ class EnginePackage;
 class DT_ENGINE_API Component
 {
 public:
-	/** Have this component accept a message.
-	 * @brief				a handy way to interface with components.
-	 * @param	message		the message to send to this component */
-	virtual void receiveMessage(const ECSmessage & message);
+	/** Returns the name of this component class. */
+	virtual const char * getName() const {	return "Component";	}
+	template <typename DATA_TYPE>
+	void sendCommand(const char * command, const DATA_TYPE & obj) {
+		// Run the command if it exists, and pass it the payload
+		if (m_commandMap.find(command))
+			m_commandMap[command](ECS_Command(obj));
+	}
 	/** Tests if this object is within the viewing frustum of the camera.
 	 * @brief				a test of general visibility (excluding obstruction of other objects).
 	 * @param	radius		the radius of the camera
@@ -44,19 +49,12 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~Component() {};
-	/** Constructor. 
-	 * @param	id			handle for this component (into component factory)
-	 * @param	pid			handle for the parent entity (into entity factory) */
-	Component(const ECShandle & id, const ECShandle & pid) : m_ID(id), m_parentID(pid) {};
-	/** Tests a message to determine if it originated from this component.
-	 * @param	message		the message to test
-	 * @return				true if this component is the sender, false otherwise */
-	bool compareMSGSender(const ECSmessage & message);
+	/** Constructor. */
+	Component() {};
 
 
 	// Protected Attributes
-	ECShandle m_ID, m_parentID;
-	ECSmessenger *m_ECSmessenger;
+	MappedChar<function<void(const ECS_Command&)>> m_commandMap;
 	friend class ComponentCreator;
 };
 
@@ -70,23 +68,17 @@ public:
 	/** Virtual Destructor. */
 	virtual ~ComponentCreator(void) {};
 	/** Constructor. */
-	ComponentCreator(ECSmessenger * ecsMessenger) : m_ECSmessenger(ecsMessenger) {};
+	ComponentCreator() {};
 
 
 	// Public Methods
 	/** Destroy the component.
 	 * @param	component	the component to delete */
-	void Destroy(Component * component) { delete component; };
+	void destroy(Component * component) { delete component; };
 	/** Creates an component.
-	 * @param	id				the handle identifier for the component
-	 * @param	pid				the handle identifier for the parent entity
 	 * @param	enginePackage	pointer to the engine package	
 	 * @return					the component created */
-	virtual Component* Create(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) { return new Component(id, pid); };
-	
-
-	// Public Attributes
-	ECSmessenger *m_ECSmessenger;
+	virtual Component* create(EnginePackage * enginePackage) { return new Component(); };
 };
 
 #endif // COMPONENT

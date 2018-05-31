@@ -6,8 +6,6 @@
 #include <map>
 #include <vector>
 
-typedef std::pair<const char *, unsigned int> ECShandle;
-
 using namespace glm;
 
 static enum ECS_MESSAGE_COMMAND_TYPES {
@@ -16,11 +14,6 @@ static enum ECS_MESSAGE_COMMAND_TYPES {
 	SET_ORIENTATION,
 	SET_SCALE,
 	SET_TRANSFORM,
-
-	// MODEL
-	SET_MODEL_DIR,
-	SET_MODEL_SKIN,
-	SET_MODEL_ANIMATION,
 
 	// LIGHTING
 	SET_LIGHT_COLOR,

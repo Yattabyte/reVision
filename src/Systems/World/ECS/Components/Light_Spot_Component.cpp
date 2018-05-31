@@ -3,7 +3,6 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Transform.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
 #include "GLFW\glfw3.h"
@@ -16,7 +15,7 @@ Light_Spot_Component::~Light_Spot_Component()
 	m_world->unregisterViewer(&m_camera);
 }
 
-Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Lighting_Component(id, pid)
+Light_Spot_Component::Light_Spot_Component(EnginePackage * enginePackage)
 {
 	m_enginePackage = enginePackage;
 	m_squaredRadius = 0;
@@ -37,134 +36,80 @@ Light_Spot_Component::Light_Spot_Component(const ECShandle & id, const ECShandle
 	uboData->Shadow_Spot = m_shadowSpot;
 	uboData->ShadowSize_Recip = 1.0f / m_spotTech->getSize().x;
 	m_camera.setDimensions(m_spotTech->getSize());
+
+	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
+		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+	};
+	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setIntensity(payload.toType<float>());
+	};
+	m_commandMap["Set_Light_Radius"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setRadius(payload.toType<float>());
+	};
+	m_commandMap["Set_Light_Cutoff"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setCutoff(payload.toType<float>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
 }
 
-void Light_Spot_Component::receiveMessage(const ECSmessage &message)
+void Light_Spot_Component::setColor(const vec3 & color)
 {
-	if (Component::compareMSGSender(message)) return;
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
+}
+
+void Light_Spot_Component::setIntensity(const float & intensity)
+{
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
+}
+
+void Light_Spot_Component::setRadius(const float & radius)
+{
+	m_radius = radius;
+	m_squaredRadius = radius * radius;
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightRadius = radius;
+	m_camera.setFarPlane(m_squaredRadius);
+	updateViews();
+}
+
+void Light_Spot_Component::setCutoff(const float & cutoff)
+{
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightCutoff = cosf(glm::radians(cutoff));
+	m_camera.setHorizontalFOV(cutoff * 2.0f);
+	updateViews();
+}
+
+void Light_Spot_Component::setTransform(const Transform & transform)
+{
 	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	uboData->LightPosition = transform.m_position;
+	m_lightPos = transform.m_position;
+	m_orientation = transform.m_orientation;
+	m_camera.setPosition(transform.m_position);
 
-	switch (message.GetCommandID()) {
-		case SET_LIGHT_COLOR: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			uboData->LightColor = payload;
-			break;
-		}
-		case SET_LIGHT_INTENSITY: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightIntensity = payload;
-			break;
-		}
-		case SET_LIGHT_RADIUS: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			m_radius = payload;
-			m_squaredRadius = payload * payload;
-			m_camera.setFarPlane(m_squaredRadius);
-			uboData->LightRadius = payload;
+	// Recalculate view matrix
+	const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
+	const mat4 rot = glm::mat4_cast(m_orientation);
+	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
+	const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
+	m_lightVMatrix = final;
+	uboData->lightV = final;
+	uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+	uboData->mMatrix = (trans * rot) * scl;
 
-			// Recalculate perspective matrix
-			m_camera.update();
-			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			const mat4 lightPV = lightP * m_lightVMatrix;
-			uboData->lightPV = lightPV;
-			uboData->inversePV = glm::inverse(lightPV);
-			m_camera.setMatrices(lightP, m_lightVMatrix);
-			break;
-		}
-		case SET_LIGHT_CUTOFF: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->LightCutoff = cosf(glm::radians(payload));
-			m_camera.setHorizontalFOV(payload * 2.0f);
+	updateViews();
+}
 
-			// Recalculate perspective matrix
-			m_camera.update();
-			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			const mat4 lightPV = lightP * m_lightVMatrix;
-			uboData->lightPV = lightPV;
-			uboData->inversePV = glm::inverse(lightPV);
-			m_camera.setMatrices(lightP, m_lightVMatrix);
-			break;
-		}
-		case SET_ORIENTATION: {
-			if (!message.IsOfType<quat>()) break;
-			const auto &payload = message.GetPayload<quat>();
-			m_orientation = payload;			
-
-			// Recalculate view matrix
-			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-			const mat4 rot = glm::mat4_cast(m_orientation);
-			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-			m_lightVMatrix = final;
-			uboData->lightV = final;
-			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-			uboData->mMatrix = (trans * rot) * scl;
-
-			// Recalculate perspective matrix
-			m_camera.update();
-			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			const mat4 lightPV = lightP * m_lightVMatrix;
-			uboData->lightPV = lightPV;
-			uboData->inversePV = glm::inverse(lightPV);
-			m_camera.setMatrices(lightP, m_lightVMatrix);
-			break;
-		}
-		case SET_POSITION: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			m_lightPos = payload;
-			uboData->LightPosition = payload;
-			m_camera.setPosition(payload);
-
-			// Recalculate view matrix
-			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-			const mat4 rot = glm::mat4_cast(m_orientation);
-			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-			m_lightVMatrix = final;
-			uboData->lightV = final;
-			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-			uboData->mMatrix = (trans * rot) * scl;
-
-			// Recalculate perspective matrix
-			m_camera.update();
-			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			const mat4 lightPV = lightP * m_lightVMatrix;
-			uboData->lightPV = lightPV;
-			uboData->inversePV = glm::inverse(lightPV);
-			m_camera.setMatrices(lightP, m_lightVMatrix);
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			uboData->LightPosition = payload.m_position;
-			m_lightPos = payload.m_position;
-
-			// Recalculate view matrix
-			const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-			const mat4 rot = glm::mat4_cast(m_orientation);
-			const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-			const mat4 final = glm::inverse(trans * rot * glm::rotate(mat4(1.0f), glm::radians(-90.0f), vec3(0, 1, 0)));
-			m_lightVMatrix = final;
-			uboData->lightV = final;
-			uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
-			uboData->mMatrix = (trans * rot) * scl;
-
-			// Recalculate perspective matrix
-			m_camera.update();
-			const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
-			const mat4 lightPV = lightP * m_lightVMatrix;
-			uboData->lightPV = lightPV;
-			uboData->inversePV = glm::inverse(lightPV);
-			m_camera.setMatrices(lightP, m_lightVMatrix);
-			break;
-		}
-	}
+void Light_Spot_Component::updateViews()
+{
+	// Recalculate perspective matrix
+	m_camera.update();
+	const mat4 lightP = m_camera.getCameraBuffer().pMatrix;
+	const mat4 lightPV = lightP * m_lightVMatrix;
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->lightPV = lightPV;
+	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->inversePV = glm::inverse(lightPV);
+	m_camera.setMatrices(lightP, m_lightVMatrix);
 }
 
 bool Light_Spot_Component::isVisible(const float & radius, const vec3 & eyePosition) const

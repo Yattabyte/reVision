@@ -13,7 +13,7 @@ Static_Model_Component::~Static_Model_Component()
 	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
-Static_Model_Component::Static_Model_Component(const ECShandle &id, const ECShandle &pid, EnginePackage *enginePackage) : Geometry_Component(id, pid)
+Static_Model_Component::Static_Model_Component(EnginePackage *enginePackage)
 {
 	m_enginePackage = enginePackage;
 	m_vaoLoaded = false;
@@ -22,50 +22,15 @@ Static_Model_Component::Static_Model_Component(const ECShandle &id, const ECShan
 	m_bspherePos = vec3(0.0f);
 
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.addElement(&m_uboIndex);
-}
-
-void Static_Model_Component::receiveMessage(const ECSmessage &message)
-{
-	if (Component::compareMSGSender(message)) return;
-	switch (message.GetCommandID()) {
-		case SET_MODEL_DIR: {
-			if (!message.IsOfType<string>()) break;
-			const auto &payload = message.GetPayload<string>();
-			// Remove callback from old model before loading
-			if (m_model.get()) 
-				m_model->removeCallback(this);
-			// Load new model
-			m_vaoLoaded = false;
-			Asset_Loader::load_asset(m_model, payload);
-			// Attach new callback
-			m_model->addCallback(this, [&]() {
-				(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);		
-				updateBSphere();
-				m_vaoLoaded = true;
-			});
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = payload.m_modelMatrix;
-			if (m_model && m_model->existsYet()) 
-				updateBSphere();			
-			else
-				(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = payload.m_modelMatrix;			
-			m_transform = payload;
-
-			break;
-		}
-		case SET_MODEL_SKIN: {
-			if (!message.IsOfType<GLuint>()) break;
-			const auto &payload = message.GetPayload<GLuint>();
-			m_skin = payload;
-			if (m_model && m_model->existsYet()) 
-				(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);			
-			break;
-		}
-	}
+	m_commandMap["Set_Model_Directory"] = [&](const ECS_Command & payload) { 
+		if (payload.isType<string>()) setModelDirectory(payload.toType<string>()); 
+	};
+	m_commandMap["Set_Skin"] = [&](const ECS_Command & payload) {
+		if (payload.isType<int>()) setSkin(payload.toType<int>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
 }
 
 bool Static_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
@@ -125,4 +90,37 @@ void Static_Model_Component::updateBSphere()
 		m_bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
 		m_bspherePos = m_model->m_bboxCenter + m_transform.m_position;
 	}
+}
+
+void Static_Model_Component::setModelDirectory(const string & directory)
+{
+	// Remove callback from old model before loading
+	if (m_model.get())
+		m_model->removeCallback(this);
+	// Load new model
+	m_vaoLoaded = false;
+	Asset_Loader::load_asset(m_model, directory);
+	// Attach new callback
+	m_model->addCallback(this, [&]() {
+		(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
+		updateBSphere();
+		m_vaoLoaded = true;
+	});
+}
+
+void Static_Model_Component::setSkin(const unsigned int & index)
+{
+	m_skin = index;
+	if (m_model && m_model->existsYet())
+		(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
+}
+
+void Static_Model_Component::setTransform(const Transform & transform)
+{
+	(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = transform.m_modelMatrix;
+	if (m_model && m_model->existsYet())
+		updateBSphere();
+	else
+		(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = transform.m_modelMatrix;
+	m_transform = transform;
 }

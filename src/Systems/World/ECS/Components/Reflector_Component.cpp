@@ -2,7 +2,6 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"
-#include "Utilities\Transform.h"
 #include "glm\gtc\matrix_transform.hpp"
 
 
@@ -11,43 +10,33 @@ Reflector_Component::~Reflector_Component()
 	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
-Reflector_Component::Reflector_Component(const ECShandle & id, const ECShandle & pid, EnginePackage * enginePackage) : Component(id, pid)
+Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
 { 
 	m_enginePackage = enginePackage;
 	m_position = vec3(0.0f);
 	m_scale = vec3(1.0f);
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionSSBO.addElement(&m_uboIndex);
+
+	m_commandMap["Set_Reflector_Radius"] = [&](const ECS_Command & payload) {
+		if (payload.isType<float>()) setRadius(payload.toType<float>());
+	};
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
 }
 
-void Reflector_Component::receiveMessage(const ECSmessage & message)
+void Reflector_Component::setRadius(const float & radius)
 {
-	if (Component::compareMSGSender(message)) return;
-	Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->Radius = radius;
+}
 
-	switch (message.GetCommandID()) {
-		case SET_POSITION: {
-			if (!message.IsOfType<vec3>()) break;
-			const auto &payload = message.GetPayload<vec3>();
-			uboData->mMatrix = glm::translate(mat4(1.0f), payload);
-			uboData->BoxCamPos.xyz = payload;
-			break;
-		}
-		case SET_TRANSFORM: {
-			if (!message.IsOfType<Transform>()) break;
-			const auto &payload = message.GetPayload<Transform>();
-			uboData->mMatrix = payload.m_modelMatrix;
-			uboData->BoxCamPos.xyz = payload.m_position;			
-			m_position = payload.m_position;
-			m_scale = payload.m_scale;
-			break;
-		}
-		case SET_REFLECTOR_RADIUS: {
-			if (!message.IsOfType<float>()) break;
-			const auto &payload = message.GetPayload<float>();
-			uboData->Radius = payload;
-			break;
-		}
-	}
+void Reflector_Component::setTransform(const Transform & transform)
+{
+	Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
+	uboData->mMatrix = transform.m_modelMatrix;
+	uboData->BoxCamPos.xyz = transform.m_position;
+	m_position = transform.m_position;
+	m_scale = transform.m_scale;
 }
 
 bool Reflector_Component::isVisible(const float & radius, const vec3 & eyePosition) const
