@@ -33,6 +33,8 @@ public:
 		if (m_commandMap.find(command))
 			m_commandMap[command](ECS_Command(obj));
 	}
+	/** Returns true if this component is loaded, false otherwise. */
+	virtual bool isLoaded() const { return this ? true : false; }
 	
 
 protected:
@@ -68,9 +70,7 @@ public:
 	virtual void destroy(Entity * entity);
 	/** Creates an entity
 	 * @return	the entity created. */
-	virtual Entity* create() { 
-		return new Entity();
-	};
+	virtual Entity* create() = 0;
 
 
 protected:

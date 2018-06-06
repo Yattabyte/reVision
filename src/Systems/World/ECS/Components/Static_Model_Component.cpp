@@ -33,6 +33,13 @@ Static_Model_Component::Static_Model_Component(EnginePackage *enginePackage)
 	};
 }
 
+bool Static_Model_Component::isLoaded() const
+{
+	if (m_model)
+		return m_model->existsYet();
+	return false;
+}
+
 bool Static_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
 {
 	if (m_model && m_model->existsYet()) {

@@ -16,6 +16,13 @@
 /** A prop entity. */
 class DT_ENGINE_API Prop_Entity : public Entity
 {
+public:
+	/** Returns true if this component is loaded, false otherwise. */
+	virtual bool isLoaded() const {
+		return m_prop->isLoaded();
+	}
+
+
 protected:
 	// (de)Constructors
 	~Prop_Entity() {}
@@ -79,6 +86,13 @@ public:
 /** A static prop entity. */
 class DT_ENGINE_API Prop_Static_Entity : public Entity 
 {
+public:
+	/** Returns true if this component is loaded, false otherwise. */
+	virtual bool isLoaded() const {
+		return m_prop->isLoaded();
+	}
+
+
 protected:
 	// (de)Constructors
 	~Prop_Static_Entity() {}

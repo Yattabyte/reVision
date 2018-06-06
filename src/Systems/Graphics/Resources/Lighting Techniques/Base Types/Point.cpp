@@ -167,6 +167,10 @@ void Point_Tech::renderOcclusionCulling()
 	}
 }
 
+void Point_Tech::renderStaticShadows()
+{
+}
+
 void Point_Tech::renderShadows()
 {
 	if (m_size && m_shader_Shadow->existsYet()) {

@@ -60,6 +60,11 @@ void Entity_Factory::deleteEntity(const char * type, Entity * entity)
 	}
 }
 
+VectorMap<Entity*>& Entity_Factory::getEntities()
+{
+	return m_levelEntities;
+}
+
 vector<Entity*>& Entity_Factory::getEntitiesByType(const char * type)
 {
 	return m_levelEntities[type];

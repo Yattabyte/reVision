@@ -35,12 +35,16 @@ public:
 		if (m_commandMap.find(command))
 			m_commandMap[command](ECS_Command(obj));
 	}
+	/** Returns true if this component is loaded, false otherwise. */
+	virtual bool isLoaded() const { return this ? true : false; }
 	/** Tests if this object is within the viewing frustum of the camera.
 	 * @brief				a test of general visibility (excluding obstruction of other objects).
 	 * @param	radius		the radius of the camera
 	 * @param	eyePosition	the viewing position of the camera
 	 * @return				true if this object is within the viewing range of the camera, false otherwise */
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const { return true; }
+	/** Tests if this object can contain the 3D point specified.
+	 * @param	point		the point to test */
 	virtual bool containsPoint(const vec3 & point) const { return false; }
 
 

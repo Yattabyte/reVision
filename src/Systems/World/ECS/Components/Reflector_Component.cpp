@@ -1,4 +1,5 @@
 #include "Systems\World\ECS\Components\Reflector_Component.h"
+#include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"

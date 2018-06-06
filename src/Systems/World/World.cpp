@@ -14,7 +14,8 @@ System_World::System_World() :
 	m_entityFactory(&m_componentFactory),
 	m_animator(Animator(this))
 {
-
+	m_loaded = false;
+	m_worldChanged = false;
 }
 
 void System_World::initialize(EnginePackage * enginePackage)
@@ -29,9 +30,66 @@ void System_World::initialize(EnginePackage * enginePackage)
 
 void System_World::update(const float & deltaTime)
 {
+	checkWorld();
+	loadWorld();
+	m_animator.animate(deltaTime);
+}
+
+void System_World::updateThreaded(const float & deltaTime)
+{
+	calcVisibility(m_enginePackage->m_Camera);
+	shared_lock<shared_mutex> readGuard(m_lock);
+	for each (auto &camera in m_viewers)
+		calcVisibility(*camera);
+}
+
+void System_World::registerViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.push_back(c);
+}
+
+void System_World::unregisterViewer(Camera * c)
+{
+	unique_lock<shared_mutex> writeGuard(m_lock);
+	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto * camera) {
+		return (camera == c);
+	}), end(m_viewers));
+}
+
+bool System_World::isWorldLoaded() const
+{
+	if (m_worldChanged)
+		return false;
+	return m_loaded;
+}
+
+void System_World::calcVisibility(Camera & camera)
+{
+	const auto camBuffer = camera.getCameraBuffer();
+	const float &radius = camBuffer.FarPlane;
+	const vec3 &eyePos = camBuffer.EyePosition;
+	Visibility_Token vis_token;
+
+	for each (const auto &type in vector<const char *>{ "Static_Model", "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
+		vector<Component*> visible_components;
+		
+		for each (auto component in getSpecificComponents<Component>(type))
+			if (component->isVisible(radius, eyePos))
+				visible_components.push_back(component);
+
+		vis_token.insertType(type);
+		vis_token[type] = visible_components;
+	}	
+
+	camera.setVisibilityToken(vis_token);
+}
+
+void System_World::loadWorld()
+{
 	// Temporary level loading logic until a map format is chosen
-	static bool loaded = false;
-	if (!loaded) {
+	static bool temp_loaded = false;
+	if (!temp_loaded) {
 		Entity * hills = m_entityFactory.createEntity("Prop");
 		hills->sendCommand("Load_Model", string("Test\\hills.obj"));
 		hills->sendCommand("Change_Transform", Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30)));
@@ -71,11 +129,11 @@ void System_World::update(const float & deltaTime)
 		wall7->sendCommand("Change_Skin", 1);
 		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		/*Entity * sun = m_entityFactory.createEntity("Sun");
+		Entity * sun = m_entityFactory.createEntity("Sun");
 		sun->sendCommand("Change_Light_Color", vec3(0.75, 0.75, 0.9));
 		sun->sendCommand("Change_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
-		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0,0,1))));*/
-		
+		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0, 0, 1))));
+
 		/*auto point = m_entityFactory.createEntity("PointLight_Cheap");
 		point->sendCommand("Change_Light_Color", vec3(0, 0, 1.0));
 		point->sendCommand("Change_Light_Intensity", 15.0f);
@@ -85,17 +143,17 @@ void System_World::update(const float & deltaTime)
 
 		//Entity * ref = m_entityFactory.createEntity("Reflector");
 
-		auto spot = m_entityFactory.createEntity("SpotLight_Cheap");
+		/*auto spot = m_entityFactory.createEntity("SpotLight_Cheap");
 		spot->sendCommand("Change_Light_Color", vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
 		spot->sendCommand("Change_Light_Radius", 10.0f);
 		spot->sendCommand("Change_Light_Cutoff", 45.0f);
-		spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));
+		spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));*/
 
 		Entity * h = m_entityFactory.createEntity("Prop");
 		h->sendCommand("Load_Model", string("castleWall.obj"));
 		h->sendCommand("Change_Skin", 0);
-		h->sendCommand("Change_Transform", Transform(vec3(-6, 0, 0), quat(1,0,0,0), vec3(0.1)));
+		h->sendCommand("Change_Transform", Transform(vec3(-6, 0, 0), quat(1, 0, 0, 0), vec3(0.1)));
 
 		Entity * m1 = m_entityFactory.createEntity("Prop_Static");
 		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
@@ -126,52 +184,22 @@ void System_World::update(const float & deltaTime)
 		m6->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
 		m6->sendCommand("Change_Skin", 0);
 		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, 0)));
-	
-		loaded = true;
+
+		temp_loaded = true;
+		m_loaded = false;
+		m_worldChanged = true;
 	}
-
-	m_animator.animate(deltaTime);
 }
 
-void System_World::updateThreaded(const float & deltaTime)
+void System_World::checkWorld()
 {
-	calcVisibility(m_enginePackage->m_Camera);
-	shared_lock<shared_mutex> readGuard(m_lock);
-	for each (auto &camera in m_viewers)
-		calcVisibility(*camera);
-}
-
-void System_World::registerViewer(Camera * c)
-{
-	unique_lock<shared_mutex> writeGuard(m_lock);
-	m_viewers.push_back(c);
-}
-
-void System_World::unregisterViewer(Camera * c)
-{
-	unique_lock<shared_mutex> writeGuard(m_lock);
-	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto * camera) {
-		return (camera == c);
-	}), end(m_viewers));
-}
-
-void System_World::calcVisibility(Camera & camera)
-{
-	const auto camBuffer = camera.getCameraBuffer();
-	const float &radius = camBuffer.FarPlane;
-	const vec3 &eyePos = camBuffer.EyePosition;
-	Visibility_Token vis_token;
-
-	for each (const auto &type in vector<const char *>{ "Static_Model", "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
-		vector<Component*> visible_components;
+	if (m_worldChanged || !m_loaded) {
+		for each (const auto pair in m_entityFactory.getEntities()) 
+			for each (auto entity in pair.second) 
+				if (!entity->isLoaded())
+					return;		
 		
-		for each (auto component in getSpecificComponents<Component>(type))
-			if (component->isVisible(radius, eyePos))
-				visible_components.push_back(component);
-
-		vis_token.insertType(type);
-		vis_token[type] = visible_components;
-	}	
-
-	camera.setVisibilityToken(vis_token);
+		m_loaded = true;
+		m_worldChanged = false;
+	}
 }

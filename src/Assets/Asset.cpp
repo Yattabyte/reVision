@@ -30,7 +30,7 @@ void Asset::removeCallback(void * pointerID)
 		m_callbacks.erase(m_callbacks.find(pointerID));	
 }
 
-bool Asset::existsYet()
+bool Asset::existsYet() const
 { 
 	shared_lock<shared_mutex> read_guard(m_mutex);
 	return m_finalized;

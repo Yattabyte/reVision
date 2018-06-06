@@ -51,7 +51,8 @@ public:
 	virtual const char * getName() const { return "Spot_Tech"; }
 	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution);
-	virtual void renderOcclusionCulling();
+	virtual void renderOcclusionCulling(); 
+	virtual void renderStaticShadows();
 	virtual void renderShadows();
 	virtual void renderLightBounce();
 	virtual void renderLighting();

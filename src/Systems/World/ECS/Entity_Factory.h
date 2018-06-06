@@ -39,6 +39,9 @@ public:
 	/** Delete the entity of the given handle.
 	 * @param	id					the handle of the entity to delete */
 	void deleteEntity(const char * type, Entity * entity);
+	/** Retrieves reference to the level entities vector-map
+	 * @return						the entire level entity vector-map */
+	VectorMap<Entity*> & getEntities();
 	/** Retrieves an array of entities that match the category specified.
 	 * @brief						Guaranteed to return at least a zero-length vector. Types that don't exist are created.
 	 * @param	type				the type-name of the entity list to retrieve

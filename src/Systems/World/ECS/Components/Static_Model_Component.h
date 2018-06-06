@@ -29,6 +29,7 @@ class DT_ENGINE_API Static_Model_Component : protected Geometry_Component
 public:
 	// Interface implementations
 	virtual const char * getName() const { return "Static_Model"; }
+	virtual bool isLoaded() const;
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual bool containsPoint(const vec3 & point) const;
 	virtual const ivec2 getDrawInfo() const;

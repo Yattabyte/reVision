@@ -169,6 +169,10 @@ void Spot_Tech::renderOcclusionCulling()
 	}
 }
 
+void Spot_Tech::renderStaticShadows()
+{
+}
+
 void Spot_Tech::renderShadows()
 {
 	if (m_size && m_shader_Shadow->existsYet()) {

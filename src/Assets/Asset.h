@@ -66,7 +66,7 @@ public:
 	/** Returns whether or not this asset has completed finalizing.
 	 * @note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	 * @return				true if this asset has finished finalizing, false otherwise. */
-	bool existsYet();
+	bool existsYet() const;
 	/** Performs final data processing.
 	 * @note	Virtual, each asset can re-implement if they have specific finalizing criteria. */
 	virtual void finalize();
@@ -75,7 +75,7 @@ public:
 
 
 	// Public Attributes
-	shared_mutex m_mutex;	/** public mutex, to encourage safe access of asset. */
+	mutable shared_mutex m_mutex;	/** public mutex, to encourage safe access of asset. */
 
 
 protected:
