@@ -22,8 +22,8 @@ using namespace std;
 
 struct Camera_VisBuffers {
 	#define CAM_NUM_GEOMETRY 2
-	#define CAM_GEOMETRY_STATIC 0
-	#define CAM_GEOMETRY_DYNAMIC 1
+	#define CAM_GEOMETRY_STATIC 1
+	#define CAM_GEOMETRY_DYNAMIC 0
 	DynamicBuffer m_buffer_Index[CAM_NUM_GEOMETRY], m_buffer_Culling[CAM_NUM_GEOMETRY], m_buffer_Render[CAM_NUM_GEOMETRY];
 };
 

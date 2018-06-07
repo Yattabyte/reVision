@@ -34,11 +34,11 @@ class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual const char * getName() const { return "Light_Point"; }
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
-	virtual void occlusionPass();
-	virtual void shadowPass();
 	virtual float getImportance(const vec3 &position) const;
-	virtual void update();
+	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual void occlusionPass(const unsigned int & type);
+	virtual void shadowPass(const unsigned int & type);
+	virtual void update(const unsigned int & type);
 
 
 protected:

@@ -44,7 +44,7 @@ public:
 	void unregisterShadowCaster(int & array_spot);
 	/** Clear the shadows from this shadowmap starting at the layer specified.
 	 * @param	layer		the layer to begin clearing at */
-	void clearShadow(const int & layer);
+	void clearShadow(const unsigned int & type, const int & layer);
 
 
 	// Interface Implementations
@@ -70,22 +70,23 @@ private:
 
 	// Private Attributes
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_Shadow, m_shader_Bounce;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_CullStatic, m_shader_Shadow, m_shader_ShadowStatic, m_shader_Bounce;
 	Shared_Asset_Primitive m_shapeCone;
 	GLuint m_coneVAO;
 	bool m_coneVAOLoaded;
 	VectorBuffer<Spot_Struct> * m_lightSSBO;
 	DynamicBuffer m_visShapes;
 	StaticBuffer m_indirectShape;
-	vector<Lighting_Component*> m_queue;
+	vector<Lighting_Component*> m_lightList, m_queue;
 	size_t m_size;
 
 
 	// Shadows
 	vec2 m_shadowSize;
-	GLuint m_shadowFBO, m_shadowDepth, m_shadowWNormal, m_shadowRFlux;
+	GLuint m_shadowFBO[2], m_shadowDepth[2], m_shadowWNormal[2], m_shadowRFlux[2];
 	GLuint m_shadowCount;
 	deque<unsigned int>	m_freedShadowSpots;
+	bool m_regenSShadows;
 
 
 	// Bounces

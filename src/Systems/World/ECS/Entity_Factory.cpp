@@ -26,22 +26,16 @@ Entity_Factory::Entity_Factory(Component_Factory *componentFactory)
 
 Entity * Entity_Factory::createEntity(const char * type)
 {
-	m_levelEntities.insert(type);
-	Entity *entity;
-	unsigned int spot;
+	Entity *entity = m_creatorMap[type]->create();
 
+	m_levelEntities.insert(type);
 	if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
-		spot = m_freeSpots[type].front();
-		m_levelEntities[type][spot] = nullptr;
+		m_levelEntities[type][m_freeSpots[type].front()] = entity;
 		m_freeSpots[type].pop_front();
 	}
-	else {
-		spot = m_levelEntities[type].size();
-		m_levelEntities[type].push_back(nullptr);
-	}
+	else 
+		m_levelEntities[type].push_back(entity);	
 
-	entity = m_creatorMap[type]->create();
-	m_levelEntities[type][spot] = entity;
 	return entity;
 }
 

@@ -131,18 +131,23 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 	m_size = vis_token.specificSize("Light_Point");
 	if (m_size && m_sphereVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
-		PriorityLightList queue(updateQuality, camPos);
+		PriorityLightList queue(updateQuality, camPos); 
+		const auto lightList = vis_token.getTypeList<Lighting_Component>("Light_Point");
 
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		for each (const auto &component in lightList)
 			queue.insert(component);
 
 		m_queue = queue.toList();
 		for each (const auto &c in m_queue)
-			c->update();
+			c->update(CAM_GEOMETRY_DYNAMIC);
 
+		/*if (m_regenSShadows)
+			for each (const auto &c in lightList)
+				c->update(CAM_GEOMETRY_STATIC);*/
+	
 		vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point"))
+		for each (const auto &component in lightList)
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
@@ -162,7 +167,7 @@ void Point_Tech::renderOcclusionCulling()
 		glNamedFramebufferDrawBuffer(m_shadowFBO, GL_NONE);
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queue)
-			c->occlusionPass();
+			c->occlusionPass(CAM_GEOMETRY_DYNAMIC);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 }
@@ -181,7 +186,7 @@ void Point_Tech::renderShadows()
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO);
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (auto &component in m_queue)
-			component->shadowPass();
+			component->shadowPass(CAM_GEOMETRY_DYNAMIC);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 }

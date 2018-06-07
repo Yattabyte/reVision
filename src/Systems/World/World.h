@@ -54,8 +54,7 @@ public:
 		shared_lock<shared_mutex> read_lock(m_componentFactory.getDataLock());
 		return *(vector<T*>*)(&m_componentFactory.getComponentsByType(type));
 	}
-	/** Returns true if the world is loaded, as far as its entities are concerned, otherwise false. */
-	bool isWorldLoaded() const;
+	void notifyWhenLoaded(bool * notifyee);
 
 
 private:
@@ -72,6 +71,7 @@ private:
 	vector<Camera*> m_viewers;
 	Animator m_animator;
 	bool m_loaded, m_worldChanged;
+	vector<bool *> m_loadNotifiers;
 };
 
 #endif // SYSTEM_WORLD

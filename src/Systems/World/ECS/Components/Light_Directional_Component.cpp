@@ -77,7 +77,7 @@ bool Light_Directional_Component::isVisible(const float & radius, const vec3 & e
 	return true;
 }
 
-void Light_Directional_Component::occlusionPass()
+void Light_Directional_Component::occlusionPass(const unsigned int & type)
 {
 	m_visSize = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (m_visSize) {
@@ -93,7 +93,7 @@ void Light_Directional_Component::occlusionPass()
 	}
 }
 
-void Light_Directional_Component::shadowPass()
+void Light_Directional_Component::shadowPass(const unsigned int & type)
 {
 	if (m_visSize) {
 		// Clear out the shadows
@@ -121,12 +121,20 @@ float Light_Directional_Component::getImportance(const vec3 & position) const
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
-void Light_Directional_Component::update()
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
+void Light_Directional_Component::update(const unsigned int & type)
 {
 	calculateCascades();
 
 	// Update render lists
-	Model_Technique::writeCameraBuffers(m_camera);
+	switch (type) {
+		case CAM_GEOMETRY_DYNAMIC:
+			Model_Technique::writeCameraBuffers(m_camera);
+			break;
+		case CAM_GEOMETRY_STATIC:
+			Model_Static_Technique::writeCameraBuffers(m_camera);
+			break;
+	}
 }
 
 void Light_Directional_Component::calculateCascades()

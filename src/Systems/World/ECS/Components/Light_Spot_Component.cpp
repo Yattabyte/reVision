@@ -21,7 +21,8 @@ Light_Spot_Component::Light_Spot_Component(EnginePackage * enginePackage)
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
 	m_lightPos = vec3(0.0f);
-	m_visSize = 0;
+	m_visSize[0] = 0; 
+	m_visSize[1] = 0;
 
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
 	m_spotTech = graphics->getBaseTech<Spot_Tech>("Spot_Tech");
@@ -118,32 +119,31 @@ bool Light_Spot_Component::isVisible(const float & radius, const vec3 & eyePosit
 	return radius + m_radius > distance;
 }
 
-void Light_Spot_Component::occlusionPass()
+void Light_Spot_Component::occlusionPass(const unsigned int & type)
 {
-	m_visSize = m_camera.getVisibilityToken().specificSize("Anim_Model");
-	if (m_visSize) {
+	if (m_visSize[type]) {
 		glUniform1i(0, getBufferIndex());
 		const auto &visBuffers = m_camera.getVisibilityBuffers();
-		visBuffers.m_buffer_Index[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		visBuffers.m_buffer_Culling[CAM_GEOMETRY_DYNAMIC].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		visBuffers.m_buffer_Render[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
+		visBuffers.m_buffer_Index[type].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		visBuffers.m_buffer_Culling[type].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		visBuffers.m_buffer_Render[type].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize[type], 0);
 	}
 }
 
-void Light_Spot_Component::shadowPass()
+void Light_Spot_Component::shadowPass(const unsigned int & type)
 {
-	if (m_visSize) {
+	if (m_visSize[type]) {
 		// Clear out the shadows
-		m_spotTech->clearShadow(m_shadowSpot);
+		m_spotTech->clearShadow(type, m_shadowSpot);
 		glUniform1i(0, getBufferIndex());
 
 		// Draw render lists
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		const auto &visBuffers = m_camera.getVisibilityBuffers();
-		visBuffers.m_buffer_Index[CAM_GEOMETRY_DYNAMIC].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		visBuffers.m_buffer_Render[CAM_GEOMETRY_DYNAMIC].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize, 0);
+		visBuffers.m_buffer_Index[type].bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		visBuffers.m_buffer_Render[type].bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visSize[type], 0);
 
 		m_shadowUpdateTime = glfwGetTime();
 	}
@@ -155,8 +155,20 @@ float Light_Spot_Component::getImportance(const vec3 & position) const
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
-void Light_Spot_Component::update()
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
+void Light_Spot_Component::update(const unsigned int & type)
 {
 	// Update render lists
-	Model_Technique::writeCameraBuffers(m_camera);
+	const char * string_type;
+	switch (type) {
+		case CAM_GEOMETRY_DYNAMIC:
+			Model_Technique::writeCameraBuffers(m_camera);
+			string_type = "Anim_Model";
+			break;
+		case CAM_GEOMETRY_STATIC:
+			Model_Static_Technique::writeCameraBuffers(m_camera);
+			string_type = "Static_Model";
+			break;
+	}
+	m_visSize[type] = m_camera.getVisibilityToken().specificSize(string_type);
 }

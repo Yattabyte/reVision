@@ -100,9 +100,9 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 
 		// Initiate specialized lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
+		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs, &m_geometryBuffers));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
-		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+		//m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 
 		// Initiate specialized effects techniques
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));

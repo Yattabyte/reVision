@@ -176,8 +176,8 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 
 		m_attribBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		bindForWriting(0);
-		bindNoise(4);
-		m_geometryFBO->bindDepthReading(3);
+		bindNoise(7);
+		m_geometryFBO->bindDepthReading(6);
 
 		// Perform primary light bounce
 		for each (auto technique in *m_baseTechs)

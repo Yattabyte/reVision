@@ -19,6 +19,7 @@ class EnginePackage;
 class Geometry_FBO;
 class Lighting_FBO;
 class Lighting_Component;
+class Geometry_Buffers;
 
 
 /**
@@ -36,7 +37,8 @@ public:
 	DS_Lighting(
 		EnginePackage * enginePackage,
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
-		vector<Light_Tech*> * baseTechs
+		vector<Light_Tech*> * baseTechs,
+		Geometry_Buffers * geometryBuffers
 	);
 
 
@@ -63,6 +65,8 @@ private:
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
+	// Shared Buffers
+	Geometry_Buffers * m_geometryBuffers;
 	// Primitives
 	Shared_Asset_Primitive m_shapeCube;
 	GLuint m_cubeVAO;

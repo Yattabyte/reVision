@@ -113,7 +113,7 @@ bool Light_Point_Component::isVisible(const float & radius, const vec3 & eyePosi
 	return radius + m_radius > distance;
 }
 
-void Light_Point_Component::occlusionPass()
+void Light_Point_Component::occlusionPass(const unsigned int & type)
 {
 	m_visSize = m_camera.getVisibilityToken().specificSize("Anim_Model");
 	if (m_visSize) {
@@ -126,7 +126,7 @@ void Light_Point_Component::occlusionPass()
 	}	
 }
 
-void Light_Point_Component::shadowPass()
+void Light_Point_Component::shadowPass(const unsigned int & type)
 {
 	if (m_visSize) {
 		// Clear out the shadows
@@ -149,8 +149,16 @@ float Light_Point_Component::getImportance(const vec3 & position) const
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
-void Light_Point_Component::update()
+#include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
+void Light_Point_Component::update(const unsigned int & type)
 {
 	// Update render lists
-	Model_Technique::writeCameraBuffers(m_camera, 6);
+	switch (type) {
+		case CAM_GEOMETRY_DYNAMIC:
+			Model_Technique::writeCameraBuffers(m_camera);
+			break;
+		case CAM_GEOMETRY_STATIC:
+			Model_Static_Technique::writeCameraBuffers(m_camera);
+			break;
+	}
 }

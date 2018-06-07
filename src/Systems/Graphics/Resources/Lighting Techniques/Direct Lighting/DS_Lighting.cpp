@@ -1,6 +1,7 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Systems\Graphics\Resources\Geometry_Buffers.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Utilities\EnginePackage.h"
 
@@ -14,7 +15,8 @@ DS_Lighting::~DS_Lighting()
 DS_Lighting::DS_Lighting(
 	EnginePackage * enginePackage,
 	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
-	vector<Light_Tech*> * baseTechs
+	vector<Light_Tech*> * baseTechs,
+	Geometry_Buffers * geometryBuffers
 )
 {
 	m_enginePackage = enginePackage;
@@ -23,6 +25,9 @@ DS_Lighting::DS_Lighting(
 	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
+
+	// Buffers
+	m_geometryBuffers = geometryBuffers;
 
 	// Base Techniques
 	m_baseTechs = baseTechs;
@@ -49,7 +54,10 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 }
 
 void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
-{ 
+{
+	m_geometryBuffers->m_geometryDynamicSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+	m_geometryBuffers->m_geometryStaticSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+
 	/******************** 
 	  Occlusion Culling 
 	********************/
@@ -100,8 +108,8 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	m_geometryFBO->bindForReading();
 	m_lightingFBO->bindForWriting();
 
-	for each (auto technique in *m_baseTechs)
-		technique->renderLighting();
+	//for each (auto technique in *m_baseTechs)
+	//	technique->renderLighting();
 
 	// Revert State
 	glCullFace(GL_BACK);

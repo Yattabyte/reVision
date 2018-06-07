@@ -45,7 +45,7 @@ void Model_Technique::renderGeometry(Camera & camera)
 		glCullFace(GL_BACK);
 		m_geometryFBO->bindForWriting();
 		m_shaderGeometry->bind();
-		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
 
 		// Render only the objects that passed the previous depth test (modified indirect draw buffer)     
@@ -66,7 +66,7 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 		glDisable(GL_CULL_FACE);
 		glDepthFunc(GL_LEQUAL);
 		m_geometryFBO->bindDepthWriting();
-		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+		m_geometryDynamicSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 
 		// Render bounding boxes for all models using last frame's depth buffer
 		glBindVertexArray(m_cubeVAO);

@@ -57,11 +57,9 @@ void System_World::unregisterViewer(Camera * c)
 	}), end(m_viewers));
 }
 
-bool System_World::isWorldLoaded() const
+void System_World::notifyWhenLoaded(bool * notifyee)
 {
-	if (m_worldChanged)
-		return false;
-	return m_loaded;
+	m_loadNotifiers.push_back(notifyee);
 }
 
 void System_World::calcVisibility(Camera & camera)
@@ -96,7 +94,6 @@ void System_World::loadWorld()
 
 		Entity * wall1 = m_entityFactory.createEntity("Prop");
 		wall1->sendCommand("Load_Model", string("Test\\wall.obj"));
-		wall1->sendCommand("Change_Skin", 0);
 		wall1->sendCommand("Change_Transform", Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
 
 		Entity * wall2 = m_entityFactory.createEntity("Prop");
@@ -129,11 +126,11 @@ void System_World::loadWorld()
 		wall7->sendCommand("Change_Skin", 1);
 		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		Entity * sun = m_entityFactory.createEntity("Sun");
+		/*Entity * sun = m_entityFactory.createEntity("Sun");
 		sun->sendCommand("Change_Light_Color", vec3(0.75, 0.75, 0.9));
 		sun->sendCommand("Change_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
 		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0, 0, 1))));
-
+*/
 		/*auto point = m_entityFactory.createEntity("PointLight_Cheap");
 		point->sendCommand("Change_Light_Color", vec3(0, 0, 1.0));
 		point->sendCommand("Change_Light_Intensity", 15.0f);
@@ -143,47 +140,44 @@ void System_World::loadWorld()
 
 		//Entity * ref = m_entityFactory.createEntity("Reflector");
 
-		/*auto spot = m_entityFactory.createEntity("SpotLight_Cheap");
+		auto spot = m_entityFactory.createEntity("SpotLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
 		spot->sendCommand("Change_Light_Radius", 10.0f);
 		spot->sendCommand("Change_Light_Cutoff", 45.0f);
-		spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));*/
+		spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));
 
 		Entity * h = m_entityFactory.createEntity("Prop");
 		h->sendCommand("Load_Model", string("castleWall.obj"));
-		h->sendCommand("Change_Skin", 0);
 		h->sendCommand("Change_Transform", Transform(vec3(-6, 0, 0), quat(1, 0, 0, 0), vec3(0.1)));
 
-		Entity * m1 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m1 = m_entityFactory.createEntity("Prop");
 		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m1->sendCommand("Change_Skin", 0);
 		m1->sendCommand("Change_Transform", Transform(vec3(-5, 0, 0)));
 
-		Entity * m2 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m2 = m_entityFactory.createEntity("Prop");
 		m2->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m2->sendCommand("Change_Skin", 0);
 		m2->sendCommand("Change_Transform", Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
 
-		Entity * m3 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m3 = m_entityFactory.createEntity("Prop");
 		m3->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m3->sendCommand("Change_Skin", 0);
 		m3->sendCommand("Change_Transform", Transform(vec3(2, 0, -5)));
 
-		Entity * m4 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m4 = m_entityFactory.createEntity("Prop");
 		m4->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m4->sendCommand("Change_Skin", 0);
 		m4->sendCommand("Change_Transform", Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
 
-		Entity * m5 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m5 = m_entityFactory.createEntity("Prop");
 		m5->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m5->sendCommand("Change_Skin", 0);
 		m5->sendCommand("Change_Transform", Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1))));
 
 		Entity * m6 = m_entityFactory.createEntity("Prop");
 		m6->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m6->sendCommand("Change_Skin", 0);
-		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, 0)));
+		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, -5)));
+
+		Entity * m7 = m_entityFactory.createEntity("Prop");
+		m7->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m7->sendCommand("Change_Transform", Transform(vec3(-30, 0, 5)));
 
 		temp_loaded = true;
 		m_loaded = false;
@@ -193,7 +187,7 @@ void System_World::loadWorld()
 
 void System_World::checkWorld()
 {
-	if (m_worldChanged || !m_loaded) {
+	if (m_worldChanged && !m_loaded) {
 		for each (const auto pair in m_entityFactory.getEntities()) 
 			for each (auto entity in pair.second) 
 				if (!entity->isLoaded())
@@ -201,5 +195,8 @@ void System_World::checkWorld()
 		
 		m_loaded = true;
 		m_worldChanged = false;
+
+		for each (bool * notifyee in m_loadNotifiers) 
+			*notifyee = true;		
 	}
 }

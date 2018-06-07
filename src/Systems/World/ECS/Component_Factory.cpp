@@ -40,22 +40,19 @@ void Component_Factory::initialize(EnginePackage * enginePackage)
 
 Component * Component_Factory::createComponent(const char * type)
 {
-	unique_lock<shared_mutex> write_lock(m_dataLock);
+	Component * component = m_creatorMap[type]->create(m_enginePackage);
 
+	unique_lock<shared_mutex> write_lock(m_dataLock);
 	m_levelComponents.insert(type);
-	unsigned int spot;
 
 	if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
-		spot = m_freeSpots[type].front();
+		m_levelComponents[type][m_freeSpots[type].front()] = component;
 		m_freeSpots[type].pop_front();
-		m_levelComponents[type][spot] = m_creatorMap[type]->create(m_enginePackage);
 	}
-	else {
-		spot = m_levelComponents[type].size();
-		m_levelComponents[type].push_back(m_creatorMap[type]->create(m_enginePackage));
-	}
+	else 
+		m_levelComponents[type].push_back(component);	
 
-	return m_levelComponents[type][spot];
+	return component;
 }
 
 void Component_Factory::deleteComponent(Component * component)
