@@ -34,9 +34,10 @@
 # Directories
 CMakeFiles/
 Debug/
-include/
 x64/
 x32/
+Documentation/
+.vs/
 
 # Other
 CMakeCache.txt
@@ -53,10 +54,9 @@ CMakeCache.txt
 *.cmake
 *.sln
 *.db
-.vs/Delta/v15/.suo
-.vs/Delta/v15/Solution.VC.db-shm
-.vs/Delta/v15/Solution.VC.db-wal
+*.suo
+*.VC.db-shm
+*.db-shm
 *.log
 *.ipch
 Doxyfile.out
-Documentation/

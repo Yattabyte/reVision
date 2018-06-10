@@ -11,7 +11,7 @@ endforeach()
 ############
 #   EXEC   #
 ############
-set (Module reVision_test)
+set (Module reVision)
 # Create a library using those source files	
 add_executable			(${Module} 	${ROOT})	
 # Set working directory to the project directory
@@ -21,5 +21,5 @@ set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT
 												PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 target_compile_Definitions (${Module} PRIVATE ENGINE_EXE_EXPORT)
 set_target_properties(${Module} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)$(Configuration)")
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision_test)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 

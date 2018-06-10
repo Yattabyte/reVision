@@ -57,26 +57,7 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 					
 # add all sub-projects and plugins here
 add_subdirectory( src )
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision_test)
-
-
-# Generates an "includes" folder with only the headers
-macro(GENERATE_INCLUDES GLOBPAT)
-	file(GLOB_RECURSE COPY_FILES
-    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}/src/
-    ${GLOBPAT})
-	list (REMOVE_ITEM COPY_FILES "main.cpp") # remove main file
-	add_custom_target(Generate_Includes ALL COMMENT "Copying files")
-	foreach(FILENAME ${COPY_FILES}) 	
-		set(SRC "src/${FILENAME}")
-		set(DST "include/${FILENAME}")	
-		add_custom_command(
-			TARGET Generate_Includes
-			COMMAND ${CMAKE_COMMAND} -E copy ${SRC} ${DST}
-		)
-	endforeach()	
-endmacro()
-GENERATE_INCLUDES("src/*.h")	
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 
 # Generates the documentation folder and runs doxygen
 macro(GENERATE_DOCUMENTATION)
@@ -95,6 +76,5 @@ GENERATE_DOCUMENTATION()
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 # ALL_BUILD, ZERO_CHECK, and other build functions' folder
 set_property (GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER Build_Functions)
-set_property (TARGET Generate_Includes PROPERTY FOLDER "Build_Functions")
 set_property (TARGET Generate_Documentation PROPERTY FOLDER "Build_Functions")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")

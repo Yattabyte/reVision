@@ -105,8 +105,8 @@ bool Initialize_Sharing()
 		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
 		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DT_DESIRED_OGL_VER_MAJOR);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DT_DESIRED_OGL_VER_MINOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
 		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -121,10 +121,7 @@ bool Initialize_Sharing()
 		glewInit();
 
 		MSG_Manager::Statement(	
-			"Engine Version: " +
-			DT_ENGINE_VER_MAJOR + "." +
-			DT_ENGINE_VER_MINOR + "." +
-			DT_ENGINE_VER_PATCH	
+			"Engine Version: " + string(ENGINE_VERSION)
 		);
 		MSG_Manager::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
 		MSG_Manager::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
@@ -171,8 +168,8 @@ bool Engine::initialize()
 		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 		glfwWindowHint(GLFW_ALPHA_BITS, 0);
 		glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DT_DESIRED_OGL_VER_MAJOR);
-		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DT_DESIRED_OGL_VER_MINOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
+		glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
 		glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
 		glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 		glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
