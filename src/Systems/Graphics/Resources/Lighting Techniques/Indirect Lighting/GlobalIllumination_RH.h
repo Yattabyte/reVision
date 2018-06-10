@@ -1,13 +1,6 @@
 #pragma once
-#ifndef GLOBALILLUMINATION_RH
-#define GLOBALILLUMINATION_RH
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef GLOBALILLUMINATION_RH_H
+#define GLOBALILLUMINATION_RH_H
 #define GI_LIGHT_BOUNCE_COUNT 2 // Light bounces used
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
@@ -29,7 +22,7 @@ class Lighting_FBO;
  * Supports physically based shaders.
  * Supports directional, point, and spot lights.
  **/
-class DT_ENGINE_API GlobalIllumination_RH : public Lighting_Technique {
+class GlobalIllumination_RH : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -83,4 +76,4 @@ private:
 	StaticBuffer m_attribBuffer, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;
 };
 
-#endif // GLOBALILLUMINATION_RH
+#endif // GLOBALILLUMINATION_RH_H

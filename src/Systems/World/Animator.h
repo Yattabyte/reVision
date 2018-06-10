@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ANIMATOR
-#define ANIMATOR
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ANIMATOR_H
+#define ANIMATOR_H
 
 class System_World;
 
@@ -15,7 +8,7 @@ class System_World;
 /**
  * A utility that controls animation-supporting objects.
  **/
-class DT_ENGINE_API Animator 
+class Animator 
 {
 public:
 	// (de)Constructors
@@ -36,4 +29,4 @@ private:
 	System_World *m_world;
 };
 
-#endif // ANIMATOR
+#endif // ANIMATOR_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef PREFERENCE_STATE
-#define PREFERENCE_STATE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef PREFERENCE_STATE_H
+#define PREFERENCE_STATE_H
 
 #include "Assets\Asset_Config.h"
 #include <algorithm>
@@ -22,7 +15,7 @@ using namespace std;
 /**
  * A container class that holds the preference state for the engine, such as window size and graphics options.
  **/
-class DT_ENGINE_API PreferenceState
+class PreferenceState
 {
 public:
 	// (de)Constructors
@@ -142,4 +135,4 @@ private:
 	map<Preference, map<void*, function<void(float)>>> m_callbacks;
 };
 
-#endif // PREFERENCE_STATE
+#endif // PREFERENCE_STATE_H

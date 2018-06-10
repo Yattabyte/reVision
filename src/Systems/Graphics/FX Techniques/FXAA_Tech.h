@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FXAA_TECHNIQUE
-#define FXAA_TECHNIQUE
+#ifndef FXAA_TECHNIQUE_H
+#define FXAA_TECHNIQUE_H
 
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
@@ -38,4 +38,4 @@ private:
 	StaticBuffer m_quadIndirectBuffer;
 };
 
-#endif // FXAA_TECHNIQUE
+#endif // FXAA_TECHNIQUE_H

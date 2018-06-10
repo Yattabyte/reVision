@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SPOT_CHEAP_TECH
-#define SPOT_CHEAP_TECH
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SPOT_CHEAP_TECH_H
+#define SPOT_CHEAP_TECH_H
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
@@ -22,7 +15,7 @@ class EnginePackage;
 /**
  * A deferred shading lighting technique that manages cheap spot lights.
  **/
-class DT_ENGINE_API Spot_Cheap_Tech : public Light_Tech {
+class Spot_Cheap_Tech : public Light_Tech {
 public:
 	// (de)Constructors
 	/** Destructor. */
@@ -53,4 +46,4 @@ private:
 	size_t m_size;
 };
 
-#endif // SPOT_CHEAP_TECH
+#endif // SPOT_CHEAP_TECH_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef DS_TECHNIQUE
-#define DS_TECHNIQUE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHT_TECH_H
+#define LIGHT_TECH_H
 
 #include "GL\glew.h"
 #include "Systems\World\Visibility_Token.h"
@@ -22,7 +15,7 @@ using namespace glm;
  * An interface for specific deferred shading lighting techniques.
  * To be used only by the DS_Lighting class.
  **/
-class DT_ENGINE_API Light_Tech {
+class Light_Tech {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -106,4 +99,4 @@ private:
 	PriorityList<float, Lighting_Component*, less<float>> m_oldest;
 };
 
-#endif // DS_TECHNIQUE
+#endif // LIGHT_TECH_H

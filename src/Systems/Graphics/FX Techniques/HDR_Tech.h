@@ -1,6 +1,6 @@
 #pragma once
-#ifndef HDR_TECHNIQUE
-#define HDR_TECHNIQUE
+#ifndef HDR_TECHNIQUE_H
+#define HDR_TECHNIQUE_H
 
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
@@ -48,4 +48,4 @@ private:
 	StaticBuffer m_quadIndirectBuffer;
 };
 
-#endif // HDR_TECHNIQUE
+#endif // HDR_TECHNIQUE_H

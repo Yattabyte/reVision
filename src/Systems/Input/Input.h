@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_INPUT
-#define SYSTEM_INPUT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_INPUT_H
+#define SYSTEM_INPUT_H
 
 #include "Systems\System_Interface.h"
 #include "Systems\Input\InputBinding.h"
@@ -19,7 +12,7 @@ class GLFWwindow;
 /**
  * An engine system responsible for receiving user input from various peripheral devices, and converting it into standardized engine inputs.
  **/
-class DT_ENGINE_API System_Input : public System
+class System_Input : public System
 {
 public:
 	// (de)Constructors
@@ -41,4 +34,4 @@ private:
 	InputBinding m_binds; 
 };
 
-#endif // SYSTEM_INPUT
+#endif // SYSTEM_INPUT_H

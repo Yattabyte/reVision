@@ -1,13 +1,6 @@
 #pragma once
-#ifndef LIGHT_POINT_CHEAP_COMPONENT
-#define LIGHT_POINT_CHEAP_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHT_POINT_CHEAP_COMPONENT_H
+#define LIGHT_POINT_CHEAP_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 #include "glm\glm.hpp"
@@ -26,7 +19,7 @@ class EnginePackage;
  * A renderable light component that mimics a light-bulb.
  * A cheap variation, no shadows or GI.
  **/
-class DT_ENGINE_API Light_Point_Cheap_Component : protected Lighting_Component
+class Light_Point_Cheap_Component : protected Lighting_Component
 {
 public:
 	// Interface Implementations
@@ -74,7 +67,7 @@ private:
 	void setTransform(const Transform & transform);
 };
 
-class DT_ENGINE_API Light_Point_Cheap_Creator : public ComponentCreator
+class Light_Point_Cheap_Creator : public ComponentCreator
 {
 public:
 	Light_Point_Cheap_Creator() : ComponentCreator() {}
@@ -83,4 +76,4 @@ public:
 	}
 };
 
-#endif // LIGHT_POINT_CHEAP_COMPONENT
+#endif // LIGHT_POINT_CHEAP_COMPONENT_H

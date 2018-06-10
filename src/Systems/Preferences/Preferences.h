@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_PREFERENCES
-#define SYSTEM_PREFERENCES
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_PREFERENCES_H
+#define SYSTEM_PREFERENCES_H
 
 #include "Systems\System_Interface.h"
 #include <string>
@@ -18,7 +11,7 @@ class EnginePackage;
 /**
  * An engine system that loads and updates preference state.
  **/
-class DT_ENGINE_API System_Preferences : public System
+class System_Preferences : public System
 {
 public:
 	// (de)Constructors
@@ -40,4 +33,4 @@ private:
 	std::string m_fileName;
 };
 
-#endif // SYSTEM_PREFERENCES
+#endif // SYSTEM_PREFERENCES_H

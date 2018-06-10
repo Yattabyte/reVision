@@ -1,13 +1,6 @@
 #pragma once
-#ifndef MODEL_TECHNIQUE
-#define MODEL_TECHNIQUE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MODEL_TECHNIQUE_H
+#define MODEL_TECHNIQUE_H
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
@@ -22,7 +15,7 @@ class Camera;
 /**
  * Renders models (animated or static props which support skeletons)
  **/
-class DT_ENGINE_API Model_Technique : public Geometry_Technique {
+class Model_Technique : public Geometry_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -53,4 +46,4 @@ private:
 	GLuint m_cubeVAO;
 };
 
-#endif // MODEL_TECHNIQUE
+#endif // MODEL_TECHNIQUE_H

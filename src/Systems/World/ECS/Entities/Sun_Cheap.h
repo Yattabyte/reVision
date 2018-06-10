@@ -1,20 +1,13 @@
 #pragma once
-#ifndef SUN_CHEAP
-#define SUN_CHEAP
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SUN_CHEAP_H
+#define SUN_CHEAP_H
 
 #include "Systems\World\ECS\Entities\Entity.h"
 #include "Utilities\Transform.h"
 
 
 /** A cheap sun entity. */
-class DT_ENGINE_API Sun_Cheap_Entity : public Entity
+class Sun_Cheap_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -53,7 +46,7 @@ private:
 /**
  * Creates a Cheap Sun entity, composed of only a cheap directional light component.
  **/
-class DT_ENGINE_API Creator_Sun_Cheap : public EntityCreator
+class Creator_Sun_Cheap : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -73,4 +66,4 @@ public:
 	}
 };
 
-#endif // SUN_CHEAP
+#endif // SUN_CHEAP_H

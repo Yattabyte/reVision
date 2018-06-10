@@ -1,13 +1,6 @@
 #pragma once
-#ifndef POINT_TECH
-#define POINT_TECH
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef POINT_TECH_H
+#define POINT_TECH_H
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
@@ -24,7 +17,7 @@ class EnginePackage;
 /**
  * A deferred shading lighting technique that manages point lights.
  **/
-class DT_ENGINE_API Point_Tech : public Light_Tech {
+class Point_Tech : public Light_Tech {
 public:
 	// (de)Constructors
 	/** Destructor. */
@@ -85,4 +78,4 @@ private:
 	bool m_regenSShadows;
 };
 
-#endif // POINT_TECH
+#endif // POINT_TECH_H

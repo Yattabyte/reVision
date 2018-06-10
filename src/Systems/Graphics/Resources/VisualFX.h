@@ -1,13 +1,6 @@
 #pragma once
-#ifndef VISUALFX
-#define VISUALFX
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef VISUALFX_H
+#define VISUALFX_H
 #define GLEW_STATIC
 
 #include "Assets\Asset_Shader.h"
@@ -23,7 +16,7 @@ class EnginePackage;
 /**
  * A utility class that applies graphical effects/filters to images, such as Gaussian blur.
  **/
-class DT_ENGINE_API VisualFX
+class VisualFX
 {
 public:
 	// (de)Constructors
@@ -72,4 +65,4 @@ private:
 	StaticBuffer m_quadIndirectBuffer;
 };
 
-#endif // VISUALFX
+#endif // VISUALFX_H

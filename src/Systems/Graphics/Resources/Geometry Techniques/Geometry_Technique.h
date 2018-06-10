@@ -1,13 +1,6 @@
 #pragma once
-#ifndef GEOMETRY_TECHNIQUE
-#define GEOMETRY_TECHNIQUE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef GEOMETRY_TECHNIQUE_H
+#define GEOMETRY_TECHNIQUE_H
 
 #include "Systems\World\Visibility_Token.h"
 
@@ -17,7 +10,7 @@ class Camera;
 /**
  * A base class for geometry rendering techniques
  **/
-class DT_ENGINE_API Geometry_Technique {
+class Geometry_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -35,4 +28,4 @@ public:
 	virtual void renderGeometry(Camera & camera) = 0;
 };
 
-#endif // GEOMETRY_TECHNIQUE
+#endif // GEOMETRY_TECHNIQUE_H

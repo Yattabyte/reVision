@@ -1,19 +1,19 @@
-#include "dt_Engine.h"
+#include "Engine.h"
 #include "Systems\World\Camera.h"
 #include <thread>
 
 
-static void Tick_Primary(dt_Engine &engine) {
+static void Tick_Primary(Engine &engine) {
 	engine.tick();
 }
 
-static void Tick_Secondary(dt_Engine &engine) {
+static void Tick_Secondary(Engine &engine) {
 	engine.tickThreaded();
 }
 
 int main()
 {	
-	dt_Engine engine;
+	Engine engine;
 	thread *m_UpdaterThread;
 	Camera * camera;
 

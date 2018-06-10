@@ -1,13 +1,6 @@
 #pragma once
-#ifndef COMPONENT
-#define COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef COMPONENT_H
+#define COMPONENT_H
 
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Utilities\MappedChar.h"
@@ -24,7 +17,7 @@ class EnginePackage;
  * A base class which is extend-able to create a specific component type.
  * Created by the component factory.
  **/
-class DT_ENGINE_API Component
+class Component
 {
 public:
 	/** Returns the name of this component class. */
@@ -68,7 +61,7 @@ protected:
 /**
  * An interface to direct the creation of specific components.
  **/
-class DT_ENGINE_API ComponentCreator
+class ComponentCreator
 {
 public:
 	// (de)Constructors
@@ -88,4 +81,4 @@ public:
 	virtual Component* create(EnginePackage * enginePackage) { return new Component(); };
 };
 
-#endif // COMPONENT
+#endif // COMPONENT_H

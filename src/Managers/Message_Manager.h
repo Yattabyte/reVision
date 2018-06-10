@@ -1,13 +1,6 @@
 #pragma once
-#ifndef MESSAGE_MANAGER
-#define MESSAGE_MANAGER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MESSAGE_MANAGER_H
+#define MESSAGE_MANAGER_H
 
 #include <string>
 #include <shared_mutex>
@@ -20,7 +13,7 @@ using namespace std;
 * Provides some message reporting functionality for the engine.
 * Holds a log of text in case they need to be access by any external UI
 **/
-class DT_ENGINE_API MSG_Manager
+class MSG_Manager
 {
 public:
 	// Public Methods
@@ -87,4 +80,4 @@ private:
 
 
 
-#endif // MESSAGE_MANAGER
+#endif // MESSAGE_MANAGER_H

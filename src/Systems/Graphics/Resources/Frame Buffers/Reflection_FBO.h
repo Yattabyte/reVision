@@ -1,13 +1,6 @@
 #pragma once
-#ifndef REFLECTION_BUFFER
-#define REFLECTION_BUFFER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef REFLECTION_BUFFER_H
+#define REFLECTION_BUFFER_H
 #define GLEW_STATIC
 
 #include "Utilities\GL\FrameBuffer.h"
@@ -19,7 +12,7 @@ class EnginePackage;
  * A specialized framebuffer that accumulates lighting information for a single frame.
  * Supports bloom, accumulates over-brightened lights in a second render-target.
  **/
-class DT_ENGINE_API Reflection_FBO : public FrameBuffer
+class Reflection_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
@@ -51,4 +44,4 @@ private:
 	EnginePackage * m_enginePackage;
 };
 
-#endif // REFLECTION_BUFFER
+#endif // REFLECTION_BUFFER_H

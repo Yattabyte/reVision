@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_GRAPHICS
-#define SYSTEM_GRAPHICS
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_GRAPHICS_H
+#define SYSTEM_GRAPHICS_H
 
 #include "Systems\System_Interface.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
@@ -34,7 +27,7 @@ class Camera;
  * An engine system responsible for rendering. Creates Geometry_FBO, Lighting_FBO, and VisualFX
  * @note	performs physically based rendering techniques.
  **/
-class DT_ENGINE_API System_Graphics : public System
+class System_Graphics : public System
 {
 public: 
 	// (de)Constructors
@@ -98,4 +91,4 @@ private:
 	MappedChar<void*>			m_techMap;
 };
 
-#endif // SYSTEM_GRAPHICS
+#endif // SYSTEM_GRAPHICS_H

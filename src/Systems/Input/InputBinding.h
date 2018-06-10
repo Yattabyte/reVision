@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_INPUT_BINDING
-#define SYSTEM_INPUT_BINDING
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_INPUT_BINDING_H
+#define SYSTEM_INPUT_BINDING_H
 
 #include "Systems\System_Interface.h"
 #include "Assets\Asset_Config.h"
@@ -18,7 +11,7 @@
 /**
  * Responsible for loading a particular key-binding configuration
  **/
-class DT_ENGINE_API InputBinding
+class InputBinding
 {
 public: 
 	// (de)Constructors
@@ -40,4 +33,4 @@ private:
 	Shared_Asset_Config bindings;
 };
 
-#endif // SYSTEM_INPUT_BINDING
+#endif // SYSTEM_INPUT_BINDING_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef CAMERA
-#define CAMERA
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef CAMERA_H
+#define CAMERA_H
 
 #include "Systems\World\Visibility_Token.h"
 #include "Systems\World\ECS\ECS_DEFINES.h"
@@ -31,7 +24,7 @@ struct Camera_VisBuffers {
 /**
  * An object that defines where and how a scene should be viewed.
  **/
-class DT_ENGINE_API Camera
+class Camera
 {
 public:
 	// Constructors
@@ -121,4 +114,4 @@ private:
 	bool render_enabled;
 };
 
-#endif // CAMERA
+#endif // CAMERA_H

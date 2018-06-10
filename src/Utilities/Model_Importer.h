@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	MODELIMPORTER
-#define	MODELIMPORTER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	MODELIMPORTER_H
+#define	MODELIMPORTER_H
 
 #include "btBulletCollisionCommon.h"
 #include "glm\common.hpp"
@@ -22,7 +15,7 @@ using namespace glm;
  * A static helper class used for importing models.
  * Uses the Assimp model importer: http://assimp.sourceforge.net/
  **/
-class DT_ENGINE_API Model_Importer 
+class Model_Importer 
 {
 public:
 	/** Reads the model from disk and retrieves its vertices.
@@ -40,4 +33,4 @@ public:
 	static int import_Model(const string & fulldirectory, unsigned int pFlags, vector<vec3> & vertices, vector<vec2> & uv_coords);
 };
 
-#endif // MODELIMPORTER
+#endif // MODELIMPORTER_H

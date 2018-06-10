@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_SHADER
-#define	ASSET_SHADER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_SHADER_H
+#define	ASSET_SHADER_H
 #define EXT_SHADER_VERTEX ".vsh"
 #define EXT_SHADER_FRAGMENT ".fsh"
 #define EXT_SHADER_GEOMETRY ".gsh"
@@ -31,7 +24,7 @@ typedef shared_ptr<Asset_Shader> Shared_Asset_Shader;
  * Supports vertex, fragment, and geometry shaders.\n
  * Also provides support for explicitly setting uniform values for a given attribute location.
  **/
-class DT_ENGINE_API Asset_Shader : public Asset
+class Asset_Shader : public Asset
 {
 public:	
 	// (de)Constructors
@@ -99,7 +92,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded = true);
 };
 
 /**
@@ -142,4 +135,4 @@ private:
 	Shared_Asset_Shader m_asset;
 };
 
-#endif // ASSET_SHADER
+#endif // ASSET_SHADER_H

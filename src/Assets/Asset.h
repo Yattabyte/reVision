@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET
-#define	ASSET
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_H
+#define	ASSET_H
 
 #include <shared_mutex>
 #include <vector>
@@ -28,7 +21,7 @@ typedef shared_ptr<Asset> Shared_Asset;
  * @note	is an abstract class instead of interface to reduce redundant code.
  * @usage	Should be created once, and its pointer passed around using shared pointers.
  **/
-class DT_ENGINE_API Asset
+class Asset
 {
 public:
 	// (de)Constructors
@@ -90,7 +83,7 @@ protected:
  * An abstract class for assets work orders.
  * @brief	Each asset should implement a specific work order specialized for their own data.
  **/
-class DT_ENGINE_API Work_Order
+class Work_Order
 {
 public:
 	// (de)Constructor
@@ -109,4 +102,4 @@ public:
 	virtual void finalizeOrder() = 0;
 };
 
-#endif // ASSET
+#endif // ASSET_H

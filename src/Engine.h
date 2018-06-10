@@ -1,17 +1,10 @@
 #pragma once
-#ifndef DT_ENGINE
-#define DT_ENGINE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ENGINE_H
+#define ENGINE_H
 #define DT_DESIRED_OGL_VER_MAJOR	4
 #define DT_DESIRED_OGL_VER_MINOR	5
 #define DT_ENGINE_VER_PATCH			to_string(BUILD_YEAR) + to_string(BUILD_MONTH) + to_string(BUILD_DAY) + to_string(BUILD_HOUR)
-#define DT_ENGINE_VER_MINOR			to_string(166) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
+#define DT_ENGINE_VER_MINOR			to_string(167) // INCREMENT ON BACKWARDS COMPATIBLE CHANGES
 #define DT_ENGINE_VER_MAJOR			to_string(0) // INCREMENT ON INCOMPATIBLE CHANGES
 #define GLEW_STATIC
 
@@ -31,14 +24,14 @@ class System;
  * The main game engine object. Encapsulates the entire engine state.
  * The engine is responsible for storing all the system pointers for use through its life.
  **/
-class DT_ENGINE_API dt_Engine
+class Engine
 {
 public:
 	// Constructors
 	/** Destroys the engine. */
-	~dt_Engine();
+	~Engine();
 	/** Zero-initialize the engine. */
-	dt_Engine();
+	Engine();
 	/** Initializes the engine, and makes this context active for the calling thread.
 	 * @return	true if successfully initialized */
 	bool initialize();
@@ -228,4 +221,4 @@ private:
  *		- Transform
  */
 
-#endif // DT_ENGINE
+#endif // ENGINE_H

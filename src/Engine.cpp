@@ -1,4 +1,4 @@
-#include "dt_Engine.h"
+#include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
 #include "Utilities\EnginePackage.h"
@@ -73,14 +73,14 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 	//MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
 }
 
-dt_Engine::~dt_Engine()
+Engine::~Engine()
 {
 	if (m_Initialized) {
 		m_package->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 	}
 }
 
-dt_Engine::dt_Engine()
+Engine::Engine()
 {
 	m_Initialized = false;	
 	m_lastTime = 0;
@@ -154,7 +154,7 @@ void Shutdown_Sharing()
 #include "Systems\Logic\Logic.h"
 #include "Systems\World\World.h"
 #include "Systems\PerfCounter\PerfCounter.h"
-bool dt_Engine::initialize()
+bool Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
 		m_package = new EnginePackage();
@@ -219,7 +219,7 @@ bool dt_Engine::initialize()
 	return m_Initialized;
 }
 
-void dt_Engine::shutdown()
+void Engine::shutdown()
 {
 	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
@@ -235,7 +235,7 @@ void dt_Engine::shutdown()
 	}
 }
 
-void dt_Engine::tick()
+void Engine::tick()
 {
  	float deltaTime = 0;
 	float thisTime = glfwGetTime();
@@ -266,7 +266,7 @@ void dt_Engine::tick()
 	}
 }
 
-void dt_Engine::tickThreaded()
+void Engine::tickThreaded()
 {
 	glfwMakeContextCurrent(m_Context_Sharing);
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
@@ -285,12 +285,12 @@ void dt_Engine::tickThreaded()
 	}
 }
 
-bool dt_Engine::shouldClose()
+bool Engine::shouldClose()
 {
 	return glfwWindowShouldClose(m_package->m_Context_Rendering);
 }
 
-Camera * dt_Engine::getCamera() 
+Camera * Engine::getCamera() 
 { 
 	return &m_package->m_Camera; 
 }

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LIGHTING_TECHNIQUE
-#define LIGHTING_TECHNIQUE
+#ifndef LIGHTING_TECHNIQUE_H
+#define LIGHTING_TECHNIQUE_H
 
 #include "Systems\World\Visibility_Token.h"
 
@@ -27,4 +27,4 @@ public:
 	virtual void applyLighting(const Visibility_Token & vis_token) = 0;
 };
 
-#endif // LIGHTING_TECHNIQUE
+#endif // LIGHTING_TECHNIQUE_H

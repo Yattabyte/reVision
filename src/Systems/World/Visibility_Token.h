@@ -1,13 +1,6 @@
 #pragma once
-#ifndef VISIBILITY_TOKEN
-#define VISIBILITY_TOKEN
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef VISIBILITY_TOKEN_H
+#define VISIBILITY_TOKEN_H
 
 #include "Systems\World\ECS\Components\Component.h"
 #include "Systems\World\ECS\ECS_DEFINES.h"
@@ -69,4 +62,4 @@ public:
 	VectorMap<Component*> mList;
 };
 
-#endif // VISIBILITY_TOKEN
+#endif // VISIBILITY_TOKEN_H

@@ -1,20 +1,13 @@
 #pragma once
-#ifndef PROP
-#define PROP
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef PROPS_H
+#define PROPS_H
 
 #include "Systems\World\ECS\Entities\Entity.h"
 #include "Utilities\Transform.h"
 
 
 /** A prop entity. */
-class DT_ENGINE_API Prop_Entity : public Entity
+class Prop_Entity : public Entity
 {
 public:
 	/** Returns true if this component is loaded, false otherwise. */
@@ -63,7 +56,7 @@ private:
 /**
  * Creates a Prop entity, composed of an animated model component
  **/
-class DT_ENGINE_API Creator_Prop : public EntityCreator
+class Creator_Prop : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -84,7 +77,7 @@ public:
 };
 
 /** A static prop entity. */
-class DT_ENGINE_API Prop_Static_Entity : public Entity 
+class Prop_Static_Entity : public Entity 
 {
 public:
 	/** Returns true if this component is loaded, false otherwise. */
@@ -128,7 +121,7 @@ private:
 /**
 * Creates a Prop entity, composed of an animated model component
 **/
-class DT_ENGINE_API Creator_Prop_Static : public EntityCreator
+class Creator_Prop_Static : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -148,4 +141,4 @@ public:
 	}
 };
 
-#endif // PROP
+#endif // PROPS_H

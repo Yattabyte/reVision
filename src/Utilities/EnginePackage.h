@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ENGINE_PACKAGE
-#define ENGINE_PACKAGE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ENGINE_PACKAGE_H
+#define ENGINE_PACKAGE_H
 
 #include "Systems\World\Camera.h"
 #include "Systems\Input\ActionState.h"
@@ -24,7 +17,7 @@ class System;
  * Holds the engine state in a manner that can be shared among the entire program.
  * Useful for sharing systems, configurations, and preferences all throughout.
  **/
-class DT_ENGINE_API EnginePackage
+class EnginePackage
 {
 public:
 	// (de)Constructors
@@ -86,4 +79,4 @@ public:
 	MappedChar<System*>			m_Systems;
 };
 
-#endif // ENGINE_PACKAGE
+#endif // ENGINE_PACKAGE_H

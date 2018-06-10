@@ -1,13 +1,6 @@
 #pragma once
-#ifndef CUSTOMMAP
-#define CUSTOMMAP
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MAPPEDCHAR_H
+#define MAPPEDCHAR_H
 
 #include <map>
 #include <vector>
@@ -22,7 +15,7 @@ using namespace std;
  * @param	<T>		any type to store.
  **/
 template <typename T>
-class DT_ENGINE_API MappedChar {
+class MappedChar {
 private:
 	// Nested Private Members
 	struct compare_string { bool operator()(const char * a, const char * b) const { return strcmp(a, b) < 0; } };
@@ -96,10 +89,10 @@ public:
  * Extends the MappedChar class, but exists to shorten 'MappedChar<vector<T>> myMap' down to 'VectorMap<T> myMap'
  **/
 template <typename T>
-class DT_ENGINE_API VectorMap : public MappedChar<vector<T>> {
+class VectorMap : public MappedChar<vector<T>> {
 public:
 	~VectorMap() {};
 	VectorMap() {};
 };
 
-#endif // CUSTOMMAP
+#endif // MAPPEDCHAR_H

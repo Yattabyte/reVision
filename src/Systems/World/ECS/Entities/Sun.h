@@ -1,20 +1,13 @@
 #pragma once
-#ifndef SUN
-#define SUN
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SUN_H
+#define SUN_H
 
 #include "Systems\World\ECS\Entities\Entity.h"
 #include "Utilities\Transform.h"
 
 
 /** A sun entity. */
-class DT_ENGINE_API Sun_Entity : public Entity
+class Sun_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -53,7 +46,7 @@ private:
 /**
  * Creates a Sun entity, composed of only a directional light component.
  **/
-class DT_ENGINE_API Creator_Sun : public EntityCreator
+class Creator_Sun : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -73,4 +66,4 @@ public:
 	}
 };
 
-#endif // SUN
+#endif // SUN_H

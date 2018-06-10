@@ -1,18 +1,11 @@
 #pragma once
-#ifndef LIGHT_BUFFERS
-#define LIGHT_BUFFERS
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHT_BUFFERS_H
+#define LIGHT_BUFFERS_H
 
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\GL\VectorBuffer.h"
 
-class DT_ENGINE_API Light_Buffers {
+class Light_Buffers {
 public:
 	// Constructors
 	~Light_Buffers()						{};
@@ -33,4 +26,4 @@ private:
 	Light_Buffers(const Light_Buffers &); // Never copy this class
 };
 
-#endif // LIGHT_BUFFERS
+#endif // LIGHT_BUFFERS_H

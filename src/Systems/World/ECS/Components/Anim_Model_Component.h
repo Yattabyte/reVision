@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ANIM_MODEL_COMPONENT
-#define ANIM_MODEL_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ANIM_MODEL_COMPONENT_H
+#define ANIM_MODEL_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 
@@ -24,7 +17,7 @@ class Anim_Model_Creator;
 /**
  * A renderable model component that supports animation.
  **/
-class DT_ENGINE_API Anim_Model_Component : protected Geometry_Component
+class Anim_Model_Component : protected Geometry_Component
 {
 public:
 	// Interface implementations
@@ -90,7 +83,7 @@ private:
 	void setTransform(const Transform & transform);
 };
 
-class DT_ENGINE_API Anim_Model_Creator : public ComponentCreator
+class Anim_Model_Creator : public ComponentCreator
 {
 public:
 	Anim_Model_Creator() : ComponentCreator() {}
@@ -99,4 +92,4 @@ public:
 	}
 };
 
-#endif // ANIM_MODEL_COMPONENT
+#endif // ANIM_MODEL_COMPONENT_H

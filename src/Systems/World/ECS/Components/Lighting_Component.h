@@ -1,13 +1,6 @@
 #pragma once
-#ifndef LIGHTING_COMPONENT
-#define LIGHTING_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHTING_COMPONENT_H
+#define LIGHTING_COMPONENT_H
 
 #include "Systems\World\ECS\Components\Component.h"
 #include "Systems\World\Visibility_Token.h"
@@ -20,7 +13,7 @@ class VB_Ptr;
 /**
  * An interface for lighting related components.
  **/
-class DT_ENGINE_API Lighting_Component : protected Component
+class Lighting_Component : protected Component
 {
 public:
 	// Public Methods
@@ -57,4 +50,4 @@ protected:
 	VB_Ptr * m_uboBuffer;
 };
 
-#endif // LIGHTING_COMPONENT
+#endif // LIGHTING_COMPONENT_H

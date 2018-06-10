@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_MATERIAL
-#define	ASSET_MATERIAL
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_MATERIAL_H
+#define	ASSET_MATERIAL_H
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 #define EXT_MATERIAL ".mat"
@@ -37,7 +30,7 @@ typedef shared_ptr<Asset_Material> Shared_Asset_Material;
  * - Supports omission of any or all of the files
  * - Expects all textures in a material to be the same dimension, and will forcefully resize them (in memory)
  **/
-class DT_ENGINE_API Asset_Material : public Asset
+class Asset_Material : public Asset
 {
 public:
 	// (de)Constructors
@@ -80,10 +73,10 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
+	 void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
 	
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Material & user, const std::string & material_filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Material & user, const std::string & material_filename, const bool & threaded = true);
 };
 
 /**
@@ -104,4 +97,4 @@ private:
 	Shared_Asset_Material m_asset;	
 };
 
-#endif // ASSET_MATERIAL
+#endif // ASSET_MATERIAL_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef TRANSFORMATION
-#define TRANSFORMATION
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef TRANSFORMATION_H
+#define TRANSFORMATION_H
 #define GLM_ENABLE_EXPERIMENTAL 
 
 #include "glm\glm.hpp"
@@ -23,7 +16,7 @@ using namespace glm;
  * A 3D transformation object. 
  * Takes in position, orientation, and scaling attributes, and calculates a transformation matrix.
  **/
-struct DT_ENGINE_API Transform 
+struct Transform 
 {
 	// (de)Constructors
 	/** Constructs a transformation object with any of the supplied parameters.
@@ -66,4 +59,4 @@ struct DT_ENGINE_API Transform
 	mat4x4 m_inverseModelMatrix;
 };
 
-#endif // TRANSFORMATION
+#endif // TRANSFORMATION_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef REFLECTOR_COMPONENT
-#define REFLECTOR_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef REFLECTOR_COMPONENT_H
+#define REFLECTOR_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 
@@ -23,7 +16,7 @@ class EnginePackage;
 /**
  * An object that records the world around it and uses it to project reflections.
  **/
-class DT_ENGINE_API Reflector_Component : protected Component
+class Reflector_Component : protected Component
 {
 public:
 	// Interface implementations
@@ -64,7 +57,7 @@ private:
 	void setTransform(const Transform & transform);
 };
 
-class DT_ENGINE_API Reflector_Creator : public ComponentCreator
+class Reflector_Creator : public ComponentCreator
 {
 public:
 	Reflector_Creator() : ComponentCreator() {}
@@ -73,4 +66,4 @@ public:
 	}
 };
 
-#endif // REFLECTOR_COMPONENT
+#endif // REFLECTOR_COMPONENT_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_CUBEMAP
-#define	ASSET_CUBEMAP
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_CUBEMAP_H
+#define	ASSET_CUBEMAP_H
 #define EXT_CUBEMAP ".png"
 #define DIRECTORY_CUBEMAP File_Reader::GetCurrentDir() + "\\Textures\\Cubemaps\\"
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
@@ -26,7 +19,7 @@ typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
 /**
  * Represents an OpenGL cubemap texture object.
  **/
-class DT_ENGINE_API Asset_Cubemap : public Asset
+class Asset_Cubemap : public Asset
 {
 public:
 	// (de)Constructors
@@ -53,7 +46,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists. */
-	DT_ENGINE_API void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded = true);
 };
 
 /**
@@ -73,5 +66,5 @@ private:
 	string m_filename;
 	Shared_Asset_Cubemap m_asset;
 };
-#endif // ASSET_CUBEMAP
+#endif // ASSET_CUBEMAP_H
 

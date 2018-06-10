@@ -1,6 +1,6 @@
 #pragma once
-#ifndef GFX_DEFINES
-#define GFX_DEFINES
+#ifndef GFX_DEFINES_H
+#define GFX_DEFINES_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 #define GLEW_STATIC
@@ -147,4 +147,4 @@ struct GI_Radiance_Struct {
 	}
 };
 
-#endif // GFX_DEFINES
+#endif // GFX_DEFINES_H

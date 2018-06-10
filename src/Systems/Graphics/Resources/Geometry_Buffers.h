@@ -1,18 +1,11 @@
 #pragma once
-#ifndef GEOMETRY_BUFFERS
-#define GEOMETRY_BUFFERS
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef GEOMETRY_BUFFERS_H
+#define GEOMETRY_BUFFERS_H
 
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\GL\VectorBuffer.h"
 
-class DT_ENGINE_API Geometry_Buffers {
+class Geometry_Buffers {
 public:
 	// Constructors
 	~Geometry_Buffers()						{};
@@ -29,4 +22,4 @@ private:
 	Geometry_Buffers(const Geometry_Buffers &); // Never copy this class
 };
 
-#endif // GEOMETRY_BUFFERS
+#endif // GEOMETRY_BUFFERS_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ENTITY
-#define ENTITY
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ENTITY_H
+#define ENTITY_H
 #define GLEW_STATIC
 
 #include "Systems\World\ECS\ECSmessage.h"
@@ -23,7 +16,7 @@ class Component;
  * A super object composed of components.\n
  * Because of this, we don't re-implement entities, instead we re-implement entity-creators to dish out the components needed per entity.
  **/
-class DT_ENGINE_API Entity
+class Entity
 {
 public:
 	// Public Methods
@@ -57,7 +50,7 @@ protected:
 /**
  * An interface to direct the creation of specific entities.
  **/
-class DT_ENGINE_API EntityCreator
+class EntityCreator
 {
 public:
 	// (de)Constructors
@@ -89,4 +82,4 @@ private:
 	Component_Factory *m_componentFactory;
 };
 
-#endif // ENTITY
+#endif // ENTITY_H

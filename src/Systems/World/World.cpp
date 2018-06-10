@@ -126,11 +126,11 @@ void System_World::loadWorld()
 		wall7->sendCommand("Change_Skin", 1);
 		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		/*Entity * sun = m_entityFactory.createEntity("Sun");
+		Entity * sun = m_entityFactory.createEntity("Sun");
 		sun->sendCommand("Change_Light_Color", vec3(0.75, 0.75, 0.9));
 		sun->sendCommand("Change_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
 		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0, 0, 1))));
-*/
+
 		/*auto point = m_entityFactory.createEntity("PointLight_Cheap");
 		point->sendCommand("Change_Light_Color", vec3(0, 0, 1.0));
 		point->sendCommand("Change_Light_Intensity", 15.0f);
@@ -140,12 +140,12 @@ void System_World::loadWorld()
 
 		//Entity * ref = m_entityFactory.createEntity("Reflector");
 
-		auto spot = m_entityFactory.createEntity("PointLight");
+		/*auto spot = m_entityFactory.createEntity("PointLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
 		spot->sendCommand("Change_Light_Radius", 10.0f);
 		spot->sendCommand("Change_Light_Cutoff", 45.0f);
-		//spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));
+		//spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));*/
 
 		Entity * h = m_entityFactory.createEntity("Prop");
 		h->sendCommand("Load_Model", string("castleWall.obj"));

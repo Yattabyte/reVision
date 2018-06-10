@@ -1,13 +1,6 @@
 #pragma once
-#ifndef GEOMETRY_BUFFER
-#define GEOMETRY_BUFFER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef GEOMETRY_BUFFER_H
+#define GEOMETRY_BUFFER_H
 
 #include "Utilities\GL\FrameBuffer.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -22,7 +15,7 @@ class EnginePackage;
  * A specialized framebuffer that accumulates surface attributes of all rendered objects for a single frame.
  * @brief	Objects render into it, storing their albedo, normal, specular, roughness, height, occlusion, and depth.
  **/
-class DT_ENGINE_API Geometry_FBO : public FrameBuffer
+class Geometry_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
@@ -79,4 +72,4 @@ private:
 	StaticBuffer m_quadIndirectBuffer;
 };
 
-#endif // GEOMETRY_BUFFER
+#endif // GEOMETRY_BUFFER_H

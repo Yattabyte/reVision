@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	FILEREADER
-#define	FILEREADER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	FILEREADER_H
+#define	FILEREADER_H
 
 #include "GLM\common.hpp"
 #include "GLM\gtc\quaternion.hpp"
@@ -48,7 +41,7 @@ namespace File_Reader {
 		};
 		
 		// Updates the @property token using the @input string. Returns true if it got any data from it
-		DT_ENGINE_API bool getProperty(istringstream & string_stream, Property & property, string & input = string(""));
+		 bool getProperty(istringstream & string_stream, Property & property, string & input = string(""));
 
 		
 		/*********************************************************************
@@ -100,14 +93,14 @@ namespace File_Reader {
 	 * @param	returnFile		a reference string to append the data retrieved
 	 * @param	fileDirectory	the absolute directory of the file stored as a string
 	 * @return					true if succeeded, false otherwise */
-	DT_ENGINE_API bool ReadFileFromDisk(string & returnFile, const string & fileDirectory);	
+	 bool ReadFileFromDisk(string & returnFile, const string & fileDirectory);	
 	/** Quickly checks if a supplied file or folder exists on disk.
 	* @param	fileName		the absolute directory of the file
 	* @return					true if the file exists, false otherwise */
-	DT_ENGINE_API bool FileExistsOnDisk(const string & fileName);	
+	 bool FileExistsOnDisk(const string & fileName);	
 	/** Retrieves the application's running directory.
 	* @return					string of the absolute directory that this executable ran from */
-	DT_ENGINE_API string GetCurrentDir();
+	 string GetCurrentDir();
 };
 
-#endif // FILEREADER
+#endif // FILEREADER_H

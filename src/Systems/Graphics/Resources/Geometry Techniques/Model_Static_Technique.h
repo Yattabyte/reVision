@@ -1,13 +1,6 @@
 #pragma once
-#ifndef MODEL_STATIC_TECHNIQUE
-#define MODEL_STATIC_TECHNIQUE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MODEL_STATIC_TECHNIQUE_H
+#define MODEL_STATIC_TECHNIQUE_H
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
@@ -22,7 +15,7 @@ class Camera;
 /**
  * Renders static models
  **/
-class DT_ENGINE_API Model_Static_Technique : public Geometry_Technique {
+class Model_Static_Technique : public Geometry_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -53,4 +46,4 @@ private:
 	GLuint m_cubeVAO;
 };
 
-#endif // MODEL_STATIC_TECHNIQUE
+#endif // MODEL_STATIC_TECHNIQUE_H

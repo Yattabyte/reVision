@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_MODEL
-#define	ASSET_MODEL
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_MODEL_H
+#define	ASSET_MODEL_H
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define GLEW_STATIC
@@ -53,7 +46,7 @@ typedef shared_ptr<Asset_Model> Shared_Asset_Model;
 /**
  * A 3D geometric mesh meant to be used in 3D rendering.
  **/
-class DT_ENGINE_API Asset_Model : public Asset
+class Asset_Model : public Asset
 {
 public:	
 	// (de)Constructors
@@ -86,7 +79,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded = true);
 };
 
 /**
@@ -121,4 +114,4 @@ private:
 	string m_filename;
 	Shared_Asset_Model m_asset;
 };
-#endif // ASSET_MODEL
+#endif // ASSET_MODEL_H

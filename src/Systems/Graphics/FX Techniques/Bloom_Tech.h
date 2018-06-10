@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BLOOM_TECHNIQUE
-#define BLOOM_TECHNIQUE
+#ifndef BLOOM_TECHNIQUE_H
+#define BLOOM_TECHNIQUE_H
 
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
@@ -54,4 +54,4 @@ private:
 	int m_bloomStrength;
 };
 
-#endif // BLOOM_TECHNIQUE
+#endif // BLOOM_TECHNIQUE_H

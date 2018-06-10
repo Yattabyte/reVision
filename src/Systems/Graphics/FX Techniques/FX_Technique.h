@@ -1,6 +1,6 @@
 #pragma once
-#ifndef FX_TECHNIQUE
-#define FX_TECHNIQUE
+#ifndef FX_TECHNIQUE_H
+#define FX_TECHNIQUE_H
 
 
 /**
@@ -25,4 +25,4 @@ public:
 	virtual void bindForReading() = 0;
 };
 
-#endif // FX_TECHNIQUE
+#endif // FX_TECHNIQUE_H

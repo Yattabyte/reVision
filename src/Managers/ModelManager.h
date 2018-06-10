@@ -1,13 +1,6 @@
 #pragma once
-#ifndef MODELMANAGER
-#define MODELMANAGER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MODELMANAGER_H
+#define MODELMANAGER_H
 #define GLEW_STATIC
 #define NUM_VERTEX_ATTRIBUTES 6
 #define NUM_BONES_PER_VEREX 4
@@ -21,16 +14,12 @@ using namespace std;
 using namespace glm;
 struct GeometryInfo;
 
-/**
-* The uniform struct used by the geometry SSBO
-*/
-
 
 /**
  * An encapsulation of an OpenGL framebuffer.
  * Requires the implementer to manage the size of the frame buffer, and also add render targets.
  **/
-class DT_ENGINE_API ModelManager
+class ModelManager
 {
 public:
 	// (de)Constructors
@@ -92,4 +81,4 @@ struct GeometryInfo {
 	vector<VertexBoneData> bones;
 };
 
-#endif // MODELMANAGER
+#endif // MODELMANAGER_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ENTITY_FACTORY
-#define ENTITY_FACTORY
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ENTITY_FACTORY_H
+#define ENTITY_FACTORY_H
 
 #include "Systems\World\ECS\Entities\Entity.h"
 #include "Utilities\MappedChar.h"
@@ -20,7 +13,7 @@ class Component_Factory;
 /**
  * A utility that handles the creation and storage of all level entities
  **/
-class DT_ENGINE_API Entity_Factory
+class Entity_Factory
 {
 public:
 	// (de)Constructors
@@ -58,4 +51,4 @@ private:
 	MappedChar<EntityCreator*> m_creatorMap;
 };
 
-#endif // ENTITY_FACTORY
+#endif // ENTITY_FACTORY_H

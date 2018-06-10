@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SKYBOX
-#define SKYBOX
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SKYBOX_H
+#define SKYBOX_H
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Assets\Asset_Shader.h"
@@ -21,7 +14,7 @@ class Lighting_FBO;
 /**
  * A lighting technique that applies a screen space skybox effect.
  **/
-class DT_ENGINE_API Skybox : public Lighting_Technique {
+class Skybox : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -47,4 +40,4 @@ private:
 	StaticBuffer m_quadIndirectBuffer;
 };
 
-#endif // SKYBOX
+#endif // SKYBOX_H

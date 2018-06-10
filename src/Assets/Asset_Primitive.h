@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_PRIMITIVE
-#define	ASSET_PRIMITIVE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_PRIMITIVE_H
+#define	ASSET_PRIMITIVE_H
 #define EXT_PRIMITIVE ".obj"
 #define DIRECTORY_PRIMITIVE File_Reader::GetCurrentDir() + "\\Primitives\\"
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
@@ -27,7 +20,7 @@ typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
 /**
  * A basic geometric shape to be used in basic visual processing, such as a quad or a sphere.
  **/
-class DT_ENGINE_API Asset_Primitive : public Asset
+class Asset_Primitive : public Asset
 {
 public:
 	// (de)Constructors
@@ -61,7 +54,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded = true);
 };
 
 /**
@@ -81,4 +74,4 @@ private:
 	string m_filename;
 	Shared_Asset_Primitive m_asset;
 };
-#endif // ASSET_PRIMITIVE
+#endif // ASSET_PRIMITIVE_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef LIGHT_SPOT_COMPONENT
-#define LIGHT_SPOT_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHT_SPOT_COMPONENT_H
+#define LIGHT_SPOT_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 #include "glm\glm.hpp"
@@ -29,7 +22,7 @@ class EnginePackage;
  * A renderable light component that mimics a flashlight.
  * Uses a single shadow map.
  **/
-class DT_ENGINE_API Light_Spot_Component : protected Lighting_Component
+class Light_Spot_Component : protected Lighting_Component
 {
 public:
 	// Interface Implementations
@@ -90,7 +83,7 @@ private:
 	void setTransform(const Transform & transform);
 };
 
-class DT_ENGINE_API Light_Spot_Creator : public ComponentCreator
+class Light_Spot_Creator : public ComponentCreator
 {
 public:
 	Light_Spot_Creator() : ComponentCreator() {}
@@ -99,4 +92,4 @@ public:
 	}
 };
 
-#endif // LIGHT_SPOT_COMPONENT
+#endif // LIGHT_SPOT_COMPONENT_H

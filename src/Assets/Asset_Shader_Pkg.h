@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_SHADER_PKG
-#define	ASSET_SHADER_PKG
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_SHADER_PKG_H
+#define	ASSET_SHADER_PKG_H
 #define EXT_PACKAGE ".pkg"
 #define DIRECTORY_SHADER_PKG File_Reader::GetCurrentDir() + "\\Shaders\\"
 
@@ -28,7 +21,7 @@ typedef shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
  * An accessory asset for shaders that stores code blocks for other shaders to use.
  * @brief	no functionality on its own, but can recursively import more code blocks for other shaders and itself.
  **/
-class DT_ENGINE_API Asset_Shader_Pkg : public Asset
+class Asset_Shader_Pkg : public Asset
 {
 public:
 	// (de)Constructors
@@ -53,7 +46,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Shader_Pkg & user, const string & filename, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Shader_Pkg & user, const string & filename, const bool & threaded = true);
 };
 
 /**
@@ -85,4 +78,4 @@ private:
 	Shared_Asset_Shader_Pkg m_asset;
 };
 
-#endif // ASSET_SHADER_PKG
+#endif // ASSET_SHADER_PKG_H

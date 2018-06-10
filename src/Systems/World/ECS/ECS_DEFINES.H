@@ -1,6 +1,6 @@
 #pragma once
-#ifndef ECS_DEFINES
-#define ECS_DEFINES
+#ifndef ECS_DEFINES_H
+#define ECS_DEFINES_H
 #include "glm\glm.hpp"
 #include <cstring>
 #include <map>
@@ -40,4 +40,4 @@ struct Camera_Buffer {
 	float Gamma = 1.0f;
 };
 
-#endif // ECS_DEFINES
+#endif // ECS_DEFINES_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_LOGIC
-#define SYSTEM_LOGIC
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_LOGIC_H
+#define SYSTEM_LOGIC_H
 
 #include "Systems\System_Interface.h"
 #include "Utilities\Transform.h"
@@ -19,7 +12,7 @@ class EnginePackage;
  * An engine system that controls updating game-state every tick
  * @todo	add physics and stuff
  **/
-class DT_ENGINE_API System_Logic : public System
+class System_Logic : public System
 {
 public:
 	// (de)Constructors
@@ -41,4 +34,4 @@ private:
 	vec3 m_rotation;
 };
 
-#endif // SYSTEM_LOGIC
+#endif // SYSTEM_LOGIC_H

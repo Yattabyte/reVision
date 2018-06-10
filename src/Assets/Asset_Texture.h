@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_TEXTURE
-#define	ASSET_TEXTURE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_TEXTURE_H
+#define	ASSET_TEXTURE_H
 #define EXT_TEXTURE	".png"
 #define DIRECTORY_TEXTURE File_Reader::GetCurrentDir() + "\\Textures\\"
 #define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
@@ -27,7 +20,7 @@ typedef shared_ptr<Asset_Texture> Shared_Asset_Texture;
  * An encapsulation of an OpenGL texture object.\n
  * Supports MIP-mapping and anisotropic filtering.
  **/
-class DT_ENGINE_API Asset_Texture : public Asset
+class Asset_Texture : public Asset
 {
 public:
 	// (de)Constructors
@@ -58,7 +51,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists */
-	DT_ENGINE_API void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 };
 
 /**
@@ -79,4 +72,4 @@ private:
 	Shared_Asset_Texture m_asset;
 };
 
-#endif // ASSET_TEXTURE
+#endif // ASSET_TEXTURE_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef GEOMETRY_COMPONENT
-#define GEOMETRY_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef GEOMETRY_COMPONENT_H
+#define GEOMETRY_COMPONENT_H
 
 #include "Systems\World\ECS\Components\Component.h"
 #include "glm\glm.hpp"
@@ -18,7 +11,7 @@ using namespace glm;
 /**
  * An interface for renderable components with a 3D mesh to implement.
  **/
-class DT_ENGINE_API Geometry_Component : protected Component
+class Geometry_Component : protected Component
 {
 public:
 	// Public Methods
@@ -38,4 +31,4 @@ protected:
 	Geometry_Component() {};
 };
 
-#endif // GEOMETRY_COMPONENT
+#endif // GEOMETRY_COMPONENT_H

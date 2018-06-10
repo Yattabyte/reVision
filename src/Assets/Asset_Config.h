@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	ASSET_CONFIG
-#define	ASSET_CONFIG
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	ASSET_CONFIG_H
+#define	ASSET_CONFIG_H
 #define EXT_CONFIG ".cfg"
 #define DIRECTORY_CONFIG File_Reader::GetCurrentDir() + "\\Configs\\"
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
@@ -26,7 +19,7 @@ typedef shared_ptr<Asset_Config> Shared_Asset_Config;
 /**
  * A registry for configuration name-value pairs.
  **/
-class DT_ENGINE_API Asset_Config : public Asset
+class Asset_Config : public Asset
 {
 public: 
 	// (de)Constructors
@@ -59,7 +52,7 @@ public:
  **/
 namespace Asset_Loader {
 	/** Attempts to create an asset from disk or share one if it already exists. */
-	DT_ENGINE_API void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
+	 void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 };
 
 /**
@@ -79,4 +72,4 @@ private:
 	string m_filename;
 	Shared_Asset_Config m_asset;
 };
-#endif //ASSET_CONFIG
+#endif //ASSET_CONFIG_H

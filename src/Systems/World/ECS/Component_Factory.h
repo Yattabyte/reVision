@@ -1,13 +1,6 @@
 #pragma once
-#ifndef COMPONENT_FACTORY
-#define COMPONENT_FACTORY
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef COMPONENT_FACTORY_H
+#define COMPONENT_FACTORY_H
 
 #include "Systems\World\ECS\Components\Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
@@ -23,7 +16,7 @@ class EnginePackage;
 /**
  * A utility that handles the creation and storage of all level components
  **/
-class DT_ENGINE_API Component_Factory {
+class Component_Factory {
 public:
 	// (de)Constructors
 	/** Destroy the factory. */
@@ -69,4 +62,4 @@ private:
 	EnginePackage *m_enginePackage;
 };
 
-#endif // COMPONENT_FACTORY
+#endif // COMPONENT_FACTORY_H

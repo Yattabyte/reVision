@@ -1,13 +1,6 @@
 #pragma once
-#ifndef LIGHTING_BUFFER
-#define LIGHTING_BUFFER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHTING_BUFFER_H
+#define LIGHTING_BUFFER_H
 
 #include "Utilities\GL\FrameBuffer.h"
 
@@ -20,7 +13,7 @@ class VisualFX;
  * A specialized framebuffer that accumulates lighting information for a single frame.
  * Supports bloom, accumulates over-brightened lights in a second render-target.
  **/
-class DT_ENGINE_API Lighting_FBO : public FrameBuffer
+class Lighting_FBO : public FrameBuffer
 {
 public:
 	// (de)Constructors
@@ -52,4 +45,4 @@ private:
 	EnginePackage * m_enginePackage;
 };
 
-#endif // LIGHTING_BUFFER
+#endif // LIGHTING_BUFFER_H

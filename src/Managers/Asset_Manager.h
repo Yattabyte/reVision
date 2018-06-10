@@ -11,15 +11,8 @@
 */
 
 #pragma once
-#ifndef ASSET_MANAGER
-#define ASSET_MANAGER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ASSET_MANAGER_H
+#define ASSET_MANAGER_H
 
 #include "Assets\Asset.h"
 #include "Managers\ModelManager.h"
@@ -43,7 +36,7 @@ using namespace std;
  *		- Can store and retrieve assets from different threads.
  *		- Supports multi-threading
  **/
-class DT_ENGINE_API Asset_Manager {
+class Asset_Manager {
 public:
 	// Public Methods
 	/** Singleton GET method.
@@ -212,4 +205,4 @@ private:
 	ModelManager m_modelManager;
 };
 
-#endif // ASSET_MANAGER
+#endif // ASSET_MANAGER_H

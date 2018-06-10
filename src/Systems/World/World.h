@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_WORLD
-#define SYSTEM_WORLD
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_WORLD_H
+#define SYSTEM_WORLD_H
 
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
@@ -21,7 +14,7 @@ class EnginePackage;
 /**
  * An engine system representing a world / level state.
  **/
-class DT_ENGINE_API System_World : public System
+class System_World : public System
 {
 public:
 	// (de)Constructors
@@ -74,4 +67,4 @@ private:
 	vector<bool *> m_loadNotifiers;
 };
 
-#endif // SYSTEM_WORLD
+#endif // SYSTEM_WORLD_H

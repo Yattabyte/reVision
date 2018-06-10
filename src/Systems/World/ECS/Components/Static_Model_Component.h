@@ -1,13 +1,6 @@
 #pragma once
-#ifndef STATIC_MODEL_COMPONENT
-#define STATIC_MODEL_COMPONENT
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef STATIC_MODEL_COMPONENT_H
+#define STATIC_MODEL_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 
@@ -24,7 +17,7 @@ class Static_Model_Creator;
 /**
  * A renderable model component that supports animation.
  **/
-class DT_ENGINE_API Static_Model_Component : protected Geometry_Component
+class Static_Model_Component : protected Geometry_Component
 {
 public:
 	// Interface implementations
@@ -81,7 +74,7 @@ private:
 	void setTransform(const Transform & transform);
 };
 
-class DT_ENGINE_API Static_Model_Creator : public ComponentCreator
+class Static_Model_Creator : public ComponentCreator
 {
 public:
 	Static_Model_Creator() : ComponentCreator() {}
@@ -90,4 +83,4 @@ public:
 	}
 };
 
-#endif // STATIC_MODEL_COMPONENT
+#endif // STATIC_MODEL_COMPONENT_H

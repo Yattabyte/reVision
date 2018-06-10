@@ -1,13 +1,6 @@
 #pragma once
-#ifndef REFLECTIONS
-#define REFLECTIONS
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef REFLECTIONS_H
+#define REFLECTIONS_H
 #define BRDF_SIZE 512
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
@@ -30,7 +23,7 @@ class Reflection_UBO;
  * Responsible for indirect specular lighting.
  * Supports physically based shaders.
  **/
-class DT_ENGINE_API Reflections : public Lighting_Technique {
+class Reflections : public Lighting_Technique {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -87,4 +80,4 @@ private:
 	StaticBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer, m_visRefUBO;
 };
 
-#endif // REFLECTIONS
+#endif // REFLECTIONS_H

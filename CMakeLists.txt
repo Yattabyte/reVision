@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0)
-# Project Name: Delta
-project(Delta)
+# Project Name: reVision
+project(reVision)
 
 # Get dependency directory locations from the user
 set (ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
@@ -57,7 +57,7 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 					
 # add all sub-projects and plugins here
 add_subdirectory( src )
-set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT dt_exec)
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision_test)
 
 
 # Generates an "includes" folder with only the headers

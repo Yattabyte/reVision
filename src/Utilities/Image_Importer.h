@@ -1,13 +1,6 @@
 #pragma once
-#ifndef	IMAGEIMPORTER
-#define	IMAGEIMPORTER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef	IMAGEIMPORTER_H
+#define	IMAGEIMPORTER_H
 
 #include "GL\glew.h"
 #include "GLM\common.hpp"
@@ -22,7 +15,7 @@ class FIBITMAP;
  * A static helper class used for importing images.
  * Uses the FreeImage texture importer: http://freeimage.sourceforge.net/
  **/
-class DT_ENGINE_API Image_Importer 
+class Image_Importer 
 {
 public:
 	/** Retrieve an image from disk. 
@@ -53,4 +46,4 @@ public:
 	static GLubyte * parse_Image_4_channel(FIBITMAP * bitmap, const ivec2 & dimensions);
 };
 
-#endif // IMAGEIMPORTER
+#endif // IMAGEIMPORTER_H

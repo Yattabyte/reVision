@@ -1,13 +1,6 @@
 #pragma once
-#ifndef FRAME_BUFFER
-#define FRAME_BUFFER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef FRAME_BUFFER_H
+#define FRAME_BUFFER_H
 #define GLEW_STATIC
 
 #include "GL\glew.h"
@@ -21,7 +14,7 @@ using namespace glm;
  * An encapsulation of an OpenGL framebuffer.
  * Requires the implementer to manage the size of the frame buffer, and also add render targets.
  **/
-class DT_ENGINE_API FrameBuffer
+class FrameBuffer
 {
 public:
 	// (de)Constructors
@@ -87,4 +80,4 @@ protected:
 	ivec2 m_renderSize;
 };
 
-#endif // FRAME_BUFFER
+#endif // FRAME_BUFFER_H

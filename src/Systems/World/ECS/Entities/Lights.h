@@ -1,13 +1,6 @@
 #pragma once
-#ifndef LIGHTS
-#define LIGHTS
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef LIGHTS_H
+#define LIGHTS_H
 
 #include "Systems\World\ECS\Entities\Entity.h"
 #include "Systems\World\ECS\Components\Component.h"
@@ -15,7 +8,7 @@
 
 
 /** A spot light entity. */
-class DT_ENGINE_API SpotLight_Entity : public Entity
+class SpotLight_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -64,7 +57,7 @@ private:
 /**
  * Creates a Spot Light entity, composed of only a spot light component.
  **/
-class DT_ENGINE_API Creator_SpotLight : public EntityCreator
+class Creator_SpotLight : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -85,7 +78,7 @@ public:
 };
 
 /** A cheap spot light entity. */
-class DT_ENGINE_API SpotLight_Cheap_Entity : public Entity
+class SpotLight_Cheap_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -134,7 +127,7 @@ private:
 /**
  * Creates a Cheap Spot Light entity, composed of only a cheap spot light component.
  **/
-class DT_ENGINE_API Creator_SpotLight_Cheap : public EntityCreator
+class Creator_SpotLight_Cheap : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -155,7 +148,7 @@ public:
 };
 
 /** A point light entity. */
-class DT_ENGINE_API PointLight_Entity : public Entity
+class PointLight_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -199,7 +192,7 @@ private:
 /**
  * Creates a Point Light entity, composed of only a point light component.
  **/
-class DT_ENGINE_API Creator_PointLight : public EntityCreator
+class Creator_PointLight : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -220,7 +213,7 @@ public:
 };
 
 /** A cheap point light entity. */
-class DT_ENGINE_API PointLight_Cheap_Entity : public Entity
+class PointLight_Cheap_Entity : public Entity
 {
 protected:
 	// (de)Constructors
@@ -264,7 +257,7 @@ private:
 /**
  * Creates a Cheap Point Light entity, composed of only a cheap point light component.
  **/
-class DT_ENGINE_API Creator_PointLight_Cheap : public EntityCreator
+class Creator_PointLight_Cheap : public EntityCreator
 {
 public:
 	/** Constructor.
@@ -284,4 +277,4 @@ public:
 	}
 };
 
-#endif // LIGHTS
+#endif // LIGHTS_H

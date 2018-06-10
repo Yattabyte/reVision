@@ -1,13 +1,6 @@
 #pragma once
-#ifndef POINT_CHEAP_TECH
-#define POINT_CHEAP_TECH
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef POINT_CHEAP_TECH_H
+#define POINT_CHEAP_TECH_H
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
@@ -20,7 +13,7 @@
 /**
  * A deferred shading lighting technique that manages cheap point lights.
  **/
-class DT_ENGINE_API Point_Tech_Cheap : public Light_Tech {
+class Point_Tech_Cheap : public Light_Tech {
 public:
 	// (de)Constructors
 	/** Destructor. */
@@ -51,4 +44,4 @@ private:
 	size_t m_size;
 };
 
-#endif // POINT_CHEAP_TECH
+#endif // POINT_CHEAP_TECH_H

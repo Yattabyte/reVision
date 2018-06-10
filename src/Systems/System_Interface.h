@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_INTERFACE
-#define SYSTEM_INTERFACE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_INTERFACE_H
+#define SYSTEM_INTERFACE_H
 
 class EnginePackage;
 
@@ -15,7 +8,7 @@ class EnginePackage;
 /**
  * An abstract class representing an engine system. 
  **/
-class DT_ENGINE_API System
+class System
 {
 public:
 	// (de)Constructors
@@ -41,4 +34,4 @@ protected:
 	EnginePackage *m_enginePackage;
 };
 
-#endif // SYSTEM_INTERFACE
+#endif // SYSTEM_INTERFACE_H

@@ -1,13 +1,6 @@
 #pragma once
-#ifndef MATERIAL_MANAGER
-#define MATERIAL_MANAGER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef MATERIAL_MANAGER_H
+#define MATERIAL_MANAGER_H
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
@@ -33,7 +26,7 @@ using namespace std;
  *			- transform into sampler
  * - Uses bindless textures to circumvent slow texture binding 
  **/
-class DT_ENGINE_API Material_Manager 
+class Material_Manager 
 {
 public:
 	// Public Methods
@@ -88,4 +81,4 @@ private:
 	DynamicBuffer * m_buffer;
 };
 
-#endif // MATERIAL_MANAGER
+#endif // MATERIAL_MANAGER_H

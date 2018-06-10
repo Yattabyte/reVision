@@ -1,13 +1,6 @@
 #pragma once
-#ifndef SYSTEM_PERFCOUNTER
-#define SYSTEM_PERFCOUNTER
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef SYSTEM_PERFCOUNTER_H
+#define SYSTEM_PERFCOUNTER_H
 
 #include "Systems\System_Interface.h"
 #include "Assets\Asset_Texture.h"
@@ -21,7 +14,7 @@ class EnginePackage;
 /**
  * A performance counter
  **/
-class DT_ENGINE_API System_PerfCounter : public System
+class System_PerfCounter : public System
 {
 public:
 	// (de)Constructors
@@ -53,4 +46,4 @@ private:
 	mat4 m_projMatrix;
 };
 
-#endif // SYSTEM_PERFCOUNTER
+#endif // SYSTEM_PERFCOUNTER_H

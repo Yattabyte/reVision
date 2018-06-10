@@ -1,13 +1,6 @@
 #pragma once
-#ifndef ECSMESSAGE
-#define ECSMESSAGE
-#ifdef	ENGINE_EXE_EXPORT
-#define DT_ENGINE_API 
-#elif	ENGINE_DLL_EXPORT 
-#define DT_ENGINE_API __declspec(dllexport)
-#else
-#define	DT_ENGINE_API __declspec(dllimport)
-#endif
+#ifndef ECSMESSAGE_H
+#define ECSMESSAGE_H
 
 #include <stdio.h>
 #include <string>
@@ -43,4 +36,4 @@ struct ECS_Command {
 	std::unique_ptr<Command_Base> m_data;
 };
 
-#endif // ECSMESSAGE
+#endif // ECSMESSAGE_H
