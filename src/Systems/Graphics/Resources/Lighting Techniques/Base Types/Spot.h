@@ -43,6 +43,7 @@ public:
 	 * @param	array_spot	the index to remove from the shadowmap array */
 	void unregisterShadowCaster(int & array_spot);
 	/** Clear the shadows from this shadowmap starting at the layer specified.
+	 * @param	type		the type of shadow to clear (dynamic or static (0-1))
 	 * @param	layer		the layer to begin clearing at */
 	void clearShadow(const unsigned int & type, const int & layer);
 
@@ -52,7 +53,6 @@ public:
 	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution);
 	virtual void renderOcclusionCulling(); 
-	virtual void renderStaticShadows();
 	virtual void renderShadows();
 	virtual void renderLightBounce();
 	virtual void renderLighting();

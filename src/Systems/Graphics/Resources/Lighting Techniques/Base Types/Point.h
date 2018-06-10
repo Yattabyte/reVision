@@ -42,8 +42,9 @@ public:
 	 * @param	array_spot	the index to remove from the shadowmap array */
 	void unregisterShadowCaster(int & array_spot);
 	/** Clear the shadows from this shadowmap starting at the layer specified.
+	 * @param	type		the type of shadow to clear (dynamic or static (0-1))
 	 * @param	layer		the layer to begin clearing at */
-	void clearShadow(const int & layer);
+	void clearShadow(const unsigned int & type, const int & layer);
 
 
 	// Interface Implementations
@@ -51,7 +52,6 @@ public:
 	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution);
 	virtual void renderOcclusionCulling();
-	virtual void renderStaticShadows();
 	virtual void renderShadows();
 	virtual void renderLightBounce();
 	virtual void renderLighting();
@@ -66,22 +66,23 @@ private:
 
 	// Private Attributes
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_Shadow;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_CullStatic, m_shader_Shadow, m_shader_ShadowStatic;
 	Shared_Asset_Primitive m_shapeSphere;
 	GLuint m_sphereVAO;
 	bool m_sphereVAOLoaded;
 	VectorBuffer<Point_Struct> * m_lightSSBO;
 	DynamicBuffer m_visShapes;
 	StaticBuffer m_indirectShape;
-	vector<Lighting_Component*> m_queue;
+	vector<Lighting_Component*> m_lightList, m_queue;
 	size_t m_size;
 
 
 	// Shadows
 	vec2 m_shadowSize;
-	GLuint m_shadowFBO, m_shadowDepth, m_shadowDistance, m_shadowWNormal, m_shadowRFlux;
+	GLuint m_shadowFBO[2], m_shadowDepth[2], m_shadowDistance[2], m_shadowWNormal[2], m_shadowRFlux[2];
 	GLuint m_shadowCount;
 	deque<unsigned int>	m_freedShadowSpots;
+	bool m_regenSShadows;
 };
 
 #endif // POINT_TECH

@@ -108,8 +108,8 @@ void DS_Lighting::applyLighting(const Visibility_Token & vis_token)
 	m_geometryFBO->bindForReading();
 	m_lightingFBO->bindForWriting();
 
-	//for each (auto technique in *m_baseTechs)
-	//	technique->renderLighting();
+	for each (auto technique in *m_baseTechs)
+		technique->renderLighting();
 
 	// Revert State
 	glCullFace(GL_BACK);

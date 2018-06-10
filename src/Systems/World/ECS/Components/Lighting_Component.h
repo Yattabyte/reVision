@@ -28,7 +28,7 @@ public:
 	 * @brief				importance is equal to (distance / size).
 	 * @param	position	the position of the viewer (camera)
 	 * @return				the importance value calculated. */
-	virtual float getImportance(const vec3 &position) const = 0;
+	virtual float getImportance(const vec3 & position) const = 0;
 	/** Renders the light, performing occlusion calculations only. */
 	virtual void occlusionPass(const unsigned int & type) {};
 	/** Renders the light, performing shadow calculations only. */

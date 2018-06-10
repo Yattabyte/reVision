@@ -34,7 +34,7 @@ class DT_ENGINE_API Light_Point_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual const char * getName() const { return "Light_Point"; }
-	virtual float getImportance(const vec3 &position) const;
+	virtual float getImportance(const vec3 & position) const;
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);
 	virtual void shadowPass(const unsigned int & type);
@@ -66,7 +66,7 @@ protected:
 	vec3 m_lightPos;
 	int m_shadowSpot;
 	Camera m_camera;
-	size_t m_visSize;
+	size_t m_visSize[2];
 	friend class Light_Point_Creator;
 
 

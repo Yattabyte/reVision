@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point.h"
+#include "Systems\World\World.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
 #include <minmax.h>
@@ -18,7 +19,9 @@ Point_Tech::Point_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffe
 
 	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\point");
 	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingPoint");
-	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowPoint");
+	Asset_Loader::load_asset(m_shader_CullStatic, "Geometry\\culling_static_Point");
+	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowPoint"); 
+	Asset_Loader::load_asset(m_shader_ShadowStatic, "Geometry\\geometryShadow_static_Point");
 
 	// Primitive Loading
 	Asset_Loader::load_asset(m_shapeSphere, "sphere");
@@ -31,65 +34,69 @@ Point_Tech::Point_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffe
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, data);
 	});
 
+	m_regenSShadows = false;
+	m_enginePackage->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenSShadows);
+
 	// Initialize Shadows
 	m_shadowSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) {setSize(f); });
 	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
-	m_shadowFBO = 0;
-	m_shadowDepth = 0;
-	m_shadowDistance = 0;
-	m_shadowWNormal = 0;
-	m_shadowRFlux = 0;
-	glCreateFramebuffers(1, &m_shadowFBO);
-	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowDepth);
-	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowDistance);
-	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowWNormal);
-	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowRFlux);
+	for (int x = 0; x < 2; ++x) {
+		m_shadowFBO[x] = 0;
+		m_shadowDepth[x] = 0;
+		m_shadowDistance[x] = 0;
+		m_shadowWNormal[x] = 0;
+		m_shadowRFlux[x] = 0;
+		glCreateFramebuffers(1, &m_shadowFBO[x]);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowDepth[x]);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowDistance[x]);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowWNormal[x]);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_shadowRFlux[x]);
 
-	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTextureParameteri(m_shadowDepth, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowDepth, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowDepth, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowDepth, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowDepth, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowDepth, GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-	glNamedFramebufferTexture(m_shadowFBO, GL_DEPTH_ATTACHMENT, m_shadowDepth, 0);
+		glTextureImage3DEXT(m_shadowDepth[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTextureParameteri(m_shadowDepth[x], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_shadowDepth[x], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_shadowDepth[x], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowDepth[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowDepth[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowDepth[x], GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_DEPTH_ATTACHMENT, m_shadowDepth[x], 0);
 
-	// Create the Shadow depth-distance buffer
-	glTextureImage3DEXT(m_shadowDistance, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RED, GL_FLOAT, NULL);
-	glTextureParameteri(m_shadowDistance, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowDistance, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(m_shadowDistance, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowDistance, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowDistance, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT0, m_shadowDistance, 0);
+		// Create the Shadow depth-distance buffer
+		glTextureImage3DEXT(m_shadowDistance[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RED, GL_FLOAT, NULL);
+		glTextureParameteri(m_shadowDistance[x], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_shadowDistance[x], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_shadowDistance[x], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowDistance[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowDistance[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT0, m_shadowDistance[x], 0);
 
-	// Create the World Normal buffer
-	glTextureImage3DEXT(m_shadowWNormal, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureParameteri(m_shadowWNormal, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_shadowWNormal, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteri(m_shadowWNormal, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowWNormal, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowWNormal, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT1, m_shadowWNormal, 0);
+		// Create the World Normal buffer
+		glTextureImage3DEXT(m_shadowWNormal[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureParameteri(m_shadowWNormal[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_shadowWNormal[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_shadowWNormal[x], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowWNormal[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowWNormal[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT1, m_shadowWNormal[x], 0);
 
-	// Create the Radiant Flux buffer
-	glTextureImage3DEXT(m_shadowRFlux, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureParameteri(m_shadowRFlux, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_shadowRFlux, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteri(m_shadowRFlux, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowRFlux, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_shadowRFlux, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT2, m_shadowRFlux, 0);
+		// Create the Radiant Flux buffer
+		glTextureImage3DEXT(m_shadowRFlux[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT2, m_shadowRFlux[x], 0);
 
-	GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-	glNamedFramebufferDrawBuffers(m_shadowFBO, 3, Buffers);
+		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		glNamedFramebufferDrawBuffers(m_shadowFBO[x], 3, Buffers);
 
-	GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Point light Technique", errorString);
-		return;
+		GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO[x], GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
+			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Point light Technique", errorString);
+		}
 	}
 }
 
@@ -110,10 +117,12 @@ void Point_Tech::registerShadowCaster(int & array_spot)
 	}
 
 	// Adjust the layer count every time a new light is added (preserve memory rather than preallocating memory for shadows that don't exist)
-	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTextureImage3DEXT(m_shadowDistance, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RED, GL_FLOAT, NULL);
-	glTextureImage3DEXT(m_shadowWNormal, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureImage3DEXT(m_shadowRFlux, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+	for (int x = 0; x < 2; ++x) {
+		glTextureImage3DEXT(m_shadowDepth[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_shadowDistance[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RED, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_shadowWNormal[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_shadowRFlux[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+	}
 }
 
 void Point_Tech::unregisterShadowCaster(int & array_spot)
@@ -132,22 +141,22 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 	if (m_size && m_sphereVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos); 
-		const auto lightList = vis_token.getTypeList<Lighting_Component>("Light_Point");
+		m_lightList = vis_token.getTypeList<Lighting_Component>("Light_Point");
 
-		for each (const auto &component in lightList)
+		for each (const auto &component in m_lightList)
 			queue.insert(component);
 
 		m_queue = queue.toList();
 		for each (const auto &c in m_queue)
 			c->update(CAM_GEOMETRY_DYNAMIC);
 
-		/*if (m_regenSShadows)
-			for each (const auto &c in lightList)
-				c->update(CAM_GEOMETRY_STATIC);*/
+		if (m_regenSShadows)
+			for each (const auto &c in m_lightList)
+				c->update(CAM_GEOMETRY_STATIC);
 	
 		vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
-		for each (const auto &component in lightList)
+		for each (const auto &component in m_lightList)
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
@@ -163,17 +172,19 @@ void Point_Tech::renderOcclusionCulling()
 	if (m_size && m_shader_Cull->existsYet()) {
 		m_shader_Cull->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO);
-		glNamedFramebufferDrawBuffer(m_shadowFBO, GL_NONE);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[0]);
+		glNamedFramebufferDrawBuffer(m_shadowFBO[0], GL_NONE);
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queue)
 			c->occlusionPass(CAM_GEOMETRY_DYNAMIC);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		if (m_regenSShadows) {
+			m_shader_CullStatic->bind();
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[1]);
+			glNamedFramebufferDrawBuffer(m_shadowFBO[1], GL_NONE);
+			for each (auto & c in m_lightList)
+				c->occlusionPass(CAM_GEOMETRY_STATIC);
+		}
 	}
-}
-
-void Point_Tech::renderStaticShadows()
-{
 }
 
 void Point_Tech::renderShadows()
@@ -182,12 +193,19 @@ void Point_Tech::renderShadows()
 		m_shader_Shadow->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
-		glNamedFramebufferDrawBuffers(m_shadowFBO, 3, Buffers);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO);
+		glNamedFramebufferDrawBuffers(m_shadowFBO[0], 3, Buffers);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[0]);
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (auto &component in m_queue)
 			component->shadowPass(CAM_GEOMETRY_DYNAMIC);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		if (m_regenSShadows && m_shader_ShadowStatic->existsYet()) {
+			m_shader_ShadowStatic->bind();
+			glNamedFramebufferDrawBuffers(m_shadowFBO[1], 3, Buffers);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[1]);
+			for each (auto &component in m_lightList)
+				component->shadowPass(CAM_GEOMETRY_STATIC);
+			m_regenSShadows = false;
+		}
 	}
 }
 
@@ -202,7 +220,8 @@ void Point_Tech::renderLighting()
 		glCullFace(GL_FRONT);
 
 		m_shader_Lighting->bind();										// Shader (points)
-		glBindTextureUnit(4, m_shadowDistance);							// Shadow maps (regular maps)
+		glBindTextureUnit(4, m_shadowDistance[0]);						// Shadow maps (dynamic)
+		glBindTextureUnit(5, m_shadowDistance[1]);						// Shadow maps (static)
 		m_visShapes.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);		// SSBO light attribute array (points)
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
@@ -225,29 +244,32 @@ void Point_Tech::renderLighting()
 	}
 }
 
-void Point_Tech::clearShadow(const int & layer)
+void Point_Tech::clearShadow(const unsigned int & type, const int & layer)
 {
 	const float clearDepth(1.0f);
 	const vec3 clear(0.0f);
-	glClearTexSubImage(m_shadowDepth, 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
-	glClearTexSubImage(m_shadowDistance, 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clearDepth);
-	glClearTexSubImage(m_shadowWNormal, 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clear);
-	glClearTexSubImage(m_shadowRFlux, 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clear);	
+	glClearTexSubImage(m_shadowDepth[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
+	glClearTexSubImage(m_shadowDistance[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clearDepth);
+	glClearTexSubImage(m_shadowWNormal[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clear);
+	glClearTexSubImage(m_shadowRFlux[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clear);
 }
 
 void Point_Tech::setSize(const float & size)
 {
 	m_shadowSize = vec2(max(size, 1));
 
-	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glNamedFramebufferTexture(m_shadowFBO, GL_DEPTH_ATTACHMENT, m_shadowDepth, 0);
+	for (int x = 0; x < 2; ++x) {
+		glTextureImage3DEXT(m_shadowDepth[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_DEPTH_ATTACHMENT, m_shadowDepth[x], 0);
 
-	glTextureImage3DEXT(m_shadowDistance, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RED, GL_FLOAT, NULL);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT0, m_shadowDistance, 0);
+		glTextureImage3DEXT(m_shadowDistance[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RED, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT0, m_shadowDistance[x], 0);
 
-	glTextureImage3DEXT(m_shadowWNormal, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT1, m_shadowWNormal, 0);
+		glTextureImage3DEXT(m_shadowWNormal[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT1, m_shadowWNormal[x], 0);
 
-	glTextureImage3DEXT(m_shadowRFlux, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glNamedFramebufferTexture(m_shadowFBO, GL_COLOR_ATTACHMENT2, m_shadowRFlux, 0);
+		glTextureImage3DEXT(m_shadowRFlux[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT2, m_shadowRFlux[x], 0);
+		m_regenSShadows = true;
+	}
 }

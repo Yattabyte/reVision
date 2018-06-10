@@ -29,6 +29,9 @@ class DT_ENGINE_API Component
 public:
 	/** Returns the name of this component class. */
 	virtual const char * getName() const {	return "Component";	}
+	/** Sends a command to this component to execute.
+	 * @param	command		the string command name
+	 * @param	obj			any arguments needed */
 	template <typename DATA_TYPE>
 	void sendCommand(const char * command, const DATA_TYPE & obj) {
 		// Run the command if it exists, and pass it the payload

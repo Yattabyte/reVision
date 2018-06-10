@@ -46,8 +46,6 @@ public:
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution) = 0;
 	/** Apply occlusion culling for this category of lights. */
 	virtual void renderOcclusionCulling() = 0;
-	/** Apply a static-shadowing pass for this category of lights. */
-	virtual void renderStaticShadows() = 0;
 	/** Apply a shadowing pass for this category of lights. */
 	virtual void renderShadows() = 0;
 	/** Apply a bounce pass for this category of lights. */

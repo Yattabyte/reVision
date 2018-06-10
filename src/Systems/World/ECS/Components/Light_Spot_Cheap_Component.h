@@ -31,7 +31,7 @@ class DT_ENGINE_API Light_Spot_Cheap_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual const char * getName() const { return "Light_Spot_Cheap"; }
-	virtual float getImportance(const vec3 &position) const;
+	virtual float getImportance(const vec3 & position) const;
 	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type) {}
 	virtual void shadowPass(const unsigned int & type) {}
