@@ -178,7 +178,8 @@ bool Engine::initialize()
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing);
+		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing); 
+		glfwSetWindowIcon(m_package->m_Context_Rendering, 0, NULL);
 		glfwMakeContextCurrent(m_package->m_Context_Rendering);	
 				
 		// Create all the required systems

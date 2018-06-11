@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.169";
+constexpr char ENGINE_VERSION[]	= "0.169.B";
 
 #include <map>
 #include <shared_mutex>
@@ -56,7 +56,7 @@ private:
 	EnginePackage *m_package;
 };
 
-/*! \mainpage Project Delta
+/*! \mainpage Project reVision
  * 
  *  \section info_sec Information
  * 

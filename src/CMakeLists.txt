@@ -1,5 +1,5 @@
 # Get source files for this project
-file (GLOB_RECURSE ROOT RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp" "*.h")
+file (GLOB_RECURSE ROOT RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "*.cpp" "*.h" "*.rc")
 # Generate source groups mimicking the folder structure
 foreach(source IN LISTS ROOT)
     get_filename_component(source_path "${source}" PATH)
