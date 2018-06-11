@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.168";
+constexpr char ENGINE_VERSION[]	= "0.169";
 
 #include <map>
 #include <shared_mutex>

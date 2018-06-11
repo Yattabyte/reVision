@@ -11,7 +11,7 @@ Spot_Cheap_Tech::Spot_Cheap_Tech(Light_Buffers * lightBuffers)
 	m_lightSSBO = &lightBuffers->m_lightSpotCheapSSBO;
 	m_size = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\spot_cheap");
+	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Spot\\Light_Cheap");
 
 	// Primitive Loading
 	Asset_Loader::load_asset(m_shapeCone, "cone");

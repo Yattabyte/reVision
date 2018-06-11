@@ -20,6 +20,6 @@ set_target_properties 	(${Module} PROPERTIES 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT
 												ARCHIVE_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
 												PDB_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR})
 target_compile_Definitions (${Module} PRIVATE ENGINE_EXE_EXPORT)
-set_target_properties(${Module} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)$(Configuration)")
+set_target_properties(${Module} PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app")
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 

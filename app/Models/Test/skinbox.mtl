@@ -1,0 +1,28 @@
+# Blender MTL File: 'skinbox.blend'
+# Material Count: 2
+
+newmtl Material
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Test\\test_normal.png
+map_Kd Test\\test_diffuse3.png
+map_Ks Test\\test_metalness.png
+map_Ns Test\\test_roughness.png
+
+newmtl Material2
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Bump Test\\test_normal.png
+map_Kd Test\\test_diffuse3.png
+map_Ks Test\\test_metalness.png
+map_Ns Test\\test_roughness.png

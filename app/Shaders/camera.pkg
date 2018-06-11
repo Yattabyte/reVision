@@ -1,0 +1,13 @@
+layout (std430, binding = 1) readonly buffer Camera_Buffer
+{		
+	mat4 pMatrix;
+	mat4 vMatrix;
+	mat4 pMatrix_Inverse;
+	mat4 vMatrix_Inverse;
+	vec3 EyePosition;
+	vec2 CameraDimensions;
+	float NearPlane;
+	float FarPlane;
+	float FOV;
+	float Gamma;
+};

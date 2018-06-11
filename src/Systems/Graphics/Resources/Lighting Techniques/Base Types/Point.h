@@ -59,7 +59,7 @@ private:
 
 	// Private Attributes
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_CullStatic, m_shader_Shadow, m_shader_ShadowStatic;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_CullDynamic, m_shader_CullStatic, m_shader_ShadowDynamic, m_shader_ShadowStatic;
 	Shared_Asset_Primitive m_shapeSphere;
 	GLuint m_sphereVAO;
 	bool m_sphereVAOLoaded;

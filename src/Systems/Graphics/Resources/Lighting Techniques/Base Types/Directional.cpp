@@ -17,12 +17,12 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	m_size = 0;
 	m_sizeGI = 0;
 
-	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingDir");
-	Asset_Loader::load_asset(m_shader_CullStatic, "Geometry\\culling_static_Dir");
-	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowDir");
-	Asset_Loader::load_asset(m_shader_ShadowStatic, "Geometry\\geometryShadow_static_Dir");
-	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\directional");
-	Asset_Loader::load_asset(m_shader_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\directional_bounce");
+	Asset_Loader::load_asset(m_shader_CullDynamic, "Base Lights\\Directional\\Culling_Dynamic");
+	Asset_Loader::load_asset(m_shader_CullStatic, "Base Lights\\Directional\\Culling_Static");
+	Asset_Loader::load_asset(m_shader_ShadowDynamic, "Base Lights\\Directional\\Shadow_Dynamic");
+	Asset_Loader::load_asset(m_shader_ShadowStatic, "Base Lights\\Directional\\Shadow_Static");
+	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Directional\\Light");
+	Asset_Loader::load_asset(m_shader_Bounce, "Base Lights\\Directional\\Bounce");
 
 	// Primitive Loading
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
@@ -153,9 +153,9 @@ void Directional_Tech::updateDataGI(const Visibility_Token & vis_token, const un
 
 void Directional_Tech::renderOcclusionCulling()
 {
-	if (m_size && m_shader_Cull->existsYet()) {
+	if (m_size && m_shader_CullDynamic->existsYet()) {
 		// Cull dynamic geometry
-		m_shader_Cull->bind();
+		m_shader_CullDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO);
 		glNamedFramebufferDrawBuffer(m_shadowFBO, GL_NONE);
@@ -173,9 +173,9 @@ void Directional_Tech::renderOcclusionCulling()
 
 void Directional_Tech::renderShadows()
 {
-	if (m_size && m_shader_Shadow->existsYet()) {
+	if (m_size && m_shader_ShadowDynamic->existsYet()) {
 		// Render dynamic geometry
-		m_shader_Shadow->bind();
+		m_shader_ShadowDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_shadowFBO, 3, Buffers);

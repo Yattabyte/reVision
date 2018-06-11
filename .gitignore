@@ -51,6 +51,7 @@ CMakeCache.txt
 *.TMP
 *.vcxproj
 *.vcxproj.filters
+*.vcxproj.user
 *.cmake
 *.sln
 *.db
@@ -60,3 +61,5 @@ CMakeCache.txt
 *.log
 *.ipch
 Doxyfile.out
+app/nsight_profiler.cfg
+app/reVision.exe - Shortcut.lnk

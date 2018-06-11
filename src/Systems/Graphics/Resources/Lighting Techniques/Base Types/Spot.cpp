@@ -17,12 +17,12 @@ Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers
 	m_size = 0;
 	m_sizeGI = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\spot");
-	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingSpot");
-	Asset_Loader::load_asset(m_shader_CullStatic, "Geometry\\culling_static_Spot");
-	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowSpot");
-	Asset_Loader::load_asset(m_shader_ShadowStatic, "Geometry\\geometryShadow_static_Spot");
-	Asset_Loader::load_asset(m_shader_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\spot_bounce");
+	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Spot\\Light");
+	Asset_Loader::load_asset(m_shader_CullDynamic, "Base Lights\\Spot\\Culling_Dynamic");
+	Asset_Loader::load_asset(m_shader_CullStatic, "Base Lights\\Spot\\Culling_Static");
+	Asset_Loader::load_asset(m_shader_ShadowDynamic, "Base Lights\\Spot\\Shadow_Dynamic");
+	Asset_Loader::load_asset(m_shader_ShadowStatic, "Base Lights\\Spot\\Shadow_Static");
+	Asset_Loader::load_asset(m_shader_Bounce, "Base Lights\\Spot\\Bounce");
 
 	// Primitive Loading
 	Asset_Loader::load_asset(m_shapeCone, "cone");
@@ -172,9 +172,9 @@ void Spot_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned 
 
 void Spot_Tech::renderOcclusionCulling()
 {
-	if (m_size && m_shader_Cull->existsYet()) {
+	if (m_size && m_shader_CullDynamic->existsYet()) {
 		// Cull dynamic geometry
-		m_shader_Cull->bind();
+		m_shader_CullDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[0]);
 		glNamedFramebufferDrawBuffer(m_shadowFBO[0], GL_NONE);
@@ -194,9 +194,9 @@ void Spot_Tech::renderOcclusionCulling()
 
 void Spot_Tech::renderShadows()
 {
-	if (m_size && m_shader_Shadow->existsYet()) {
+	if (m_size && m_shader_ShadowDynamic->existsYet()) {
 		// Render dynamic geometry
-		m_shader_Shadow->bind();
+		m_shader_ShadowDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_shadowFBO[0], 3, Buffers);

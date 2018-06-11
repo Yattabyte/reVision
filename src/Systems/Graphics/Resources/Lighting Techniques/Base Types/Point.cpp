@@ -17,11 +17,11 @@ Point_Tech::Point_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffe
 	m_lightSSBO = &lightBuffers->m_lightPointSSBO;
 	m_size = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\point");
-	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingPoint");
-	Asset_Loader::load_asset(m_shader_CullStatic, "Geometry\\culling_static_Point");
-	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowPoint"); 
-	Asset_Loader::load_asset(m_shader_ShadowStatic, "Geometry\\geometryShadow_static_Point");
+	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Point\\Light");
+	Asset_Loader::load_asset(m_shader_CullDynamic, "Base Lights\\Point\\Culling_Dynamic");
+	Asset_Loader::load_asset(m_shader_CullStatic, "Base Lights\\Point\\Culling_Static");
+	Asset_Loader::load_asset(m_shader_ShadowDynamic, "Base Lights\\Point\\Shadow_Dynamic"); 
+	Asset_Loader::load_asset(m_shader_ShadowStatic, "Base Lights\\Point\\Shadow_Static");
 
 	// Primitive Loading
 	Asset_Loader::load_asset(m_shapeSphere, "sphere");
@@ -169,9 +169,9 @@ void Point_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned
 
 void Point_Tech::renderOcclusionCulling()
 {
-	if (m_size && m_shader_Cull->existsYet()) {
+	if (m_size && m_shader_CullDynamic->existsYet()) {
 		// Cull dynamic geometry
-		m_shader_Cull->bind();
+		m_shader_CullDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[0]);
 		glNamedFramebufferDrawBuffer(m_shadowFBO[0], GL_NONE);
@@ -191,9 +191,9 @@ void Point_Tech::renderOcclusionCulling()
 
 void Point_Tech::renderShadows()
 {
-	if (m_size && m_shader_Shadow->existsYet()) {
+	if (m_size && m_shader_ShadowDynamic->existsYet()) {
 		// Render dynamic geometry
-		m_shader_Shadow->bind();
+		m_shader_ShadowDynamic->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_shadowFBO[0], 3, Buffers);
