@@ -5,14 +5,6 @@
 #include <minmax.h>
 
 
-AnimationInfo::~AnimationInfo() 
-{
-}
-
-AnimationInfo::AnimationInfo()
-{
-}
-
 // Scene gets destroyed at the end of asset creation
 // We need to copy animation related information
 void AnimationInfo::setScene(const aiScene * scene) 

@@ -52,7 +52,7 @@ protected:
 	Directional_Tech * m_directionalTech;
 	float m_cascadeEnd[5];
 	int m_shadowSpot;
-	size_t m_visSize;
+	size_t m_visSize[2];
 	float m_shadowSize;
 	mat4 m_mMatrix;
 	Camera m_camera;

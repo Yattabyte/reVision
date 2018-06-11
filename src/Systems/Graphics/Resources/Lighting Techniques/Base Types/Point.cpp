@@ -170,6 +170,7 @@ void Point_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned
 void Point_Tech::renderOcclusionCulling()
 {
 	if (m_size && m_shader_Cull->existsYet()) {
+		// Cull dynamic geometry
 		m_shader_Cull->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[0]);
@@ -177,7 +178,8 @@ void Point_Tech::renderOcclusionCulling()
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queue)
 			c->occlusionPass(CAM_GEOMETRY_DYNAMIC);
-		if (m_regenSShadows) {
+		if (m_regenSShadows && m_shader_CullStatic->existsYet()) {
+			// Cull static geometry
 			m_shader_CullStatic->bind();
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[1]);
 			glNamedFramebufferDrawBuffer(m_shadowFBO[1], GL_NONE);
@@ -190,6 +192,7 @@ void Point_Tech::renderOcclusionCulling()
 void Point_Tech::renderShadows()
 {
 	if (m_size && m_shader_Shadow->existsYet()) {
+		// Render dynamic geometry
 		m_shader_Shadow->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
@@ -199,6 +202,7 @@ void Point_Tech::renderShadows()
 		for each (auto &component in m_queue)
 			component->shadowPass(CAM_GEOMETRY_DYNAMIC);
 		if (m_regenSShadows && m_shader_ShadowStatic->existsYet()) {
+			// Render static geometry
 			m_shader_ShadowStatic->bind();
 			glNamedFramebufferDrawBuffers(m_shadowFBO[1], 3, Buffers);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[1]);

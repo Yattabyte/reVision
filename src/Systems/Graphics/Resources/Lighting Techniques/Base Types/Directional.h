@@ -58,7 +58,7 @@ private:
 
 	// Private Attributes
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_Shadow, m_shader_Bounce;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_Cull, m_shader_CullStatic, m_shader_Shadow, m_shader_ShadowStatic, m_shader_Bounce;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;

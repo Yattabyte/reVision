@@ -18,7 +18,9 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	m_sizeGI = 0;
 
 	Asset_Loader::load_asset(m_shader_Cull, "Geometry\\cullingDir");
+	Asset_Loader::load_asset(m_shader_CullStatic, "Geometry\\culling_static_Dir");
 	Asset_Loader::load_asset(m_shader_Shadow, "Geometry\\geometryShadowDir");
+	Asset_Loader::load_asset(m_shader_ShadowStatic, "Geometry\\geometryShadow_static_Dir");
 	Asset_Loader::load_asset(m_shader_Lighting, "Lighting\\Direct Lighting\\directional");
 	Asset_Loader::load_asset(m_shader_Bounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\directional_bounce");
 
@@ -122,18 +124,16 @@ void Directional_Tech::updateData(const Visibility_Token & vis_token, const int 
 	if (m_size && m_quadVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos);
-		const auto lightList = vis_token.getTypeList<Lighting_Component>("Light_Directional");
 
-		for each (const auto &component in lightList)
+		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
 			queue.insert(component);
 
 		m_queue = queue.toList();
 		for each (const auto &c in m_queue)
 			c->update(CAM_GEOMETRY_DYNAMIC);
 
-		/*if (m_regenSShadows)
-			for each (const auto &c in lightList)
-				c->update(CAM_GEOMETRY_STATIC);*/
+		for each (const auto &c in m_queue)
+			c->update(CAM_GEOMETRY_STATIC);
 
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
 	}
@@ -154,6 +154,7 @@ void Directional_Tech::updateDataGI(const Visibility_Token & vis_token, const un
 void Directional_Tech::renderOcclusionCulling()
 {
 	if (m_size && m_shader_Cull->existsYet()) {
+		// Cull dynamic geometry
 		m_shader_Cull->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO);
@@ -161,12 +162,19 @@ void Directional_Tech::renderOcclusionCulling()
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (const auto &c in m_queue)
 			c->occlusionPass(CAM_GEOMETRY_DYNAMIC);
+		if (m_shader_CullStatic->existsYet()) {
+			// Cull static geometry
+			m_shader_CullStatic->bind();
+			for each (auto & c in m_queue)
+				c->occlusionPass(CAM_GEOMETRY_STATIC);
+		}		
 	}
 }
 
 void Directional_Tech::renderShadows()
 {
 	if (m_size && m_shader_Shadow->existsYet()) {
+		// Render dynamic geometry
 		m_shader_Shadow->bind();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
@@ -175,6 +183,12 @@ void Directional_Tech::renderShadows()
 		m_lightSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 		for each (auto &component in m_queue)
 			component->shadowPass(CAM_GEOMETRY_DYNAMIC);
+		if (m_shader_ShadowStatic->existsYet()) {
+			// Render static geometry
+			m_shader_ShadowStatic->bind();
+			for each (auto &component in m_queue)
+				component->shadowPass(CAM_GEOMETRY_STATIC);
+		}
 	}
 }
 

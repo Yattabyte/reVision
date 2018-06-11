@@ -20,27 +20,28 @@
 #include <string>
 #include <vector>
 
+class Asset_Model;
+typedef shared_ptr<Asset_Model> Shared_Asset_Model;
 
 struct BoneInfo
 {
 	mat4 BoneOffset;
 	mat4 FinalTransformation;
 };
+
 struct AnimationInfo {
 	vector<aiAnimation*> Animations;
 	aiNode * RootNode;
 	vector<BoneInfo> meshTransforms;
 	map<string, int> boneMap;
 
-	~AnimationInfo();
-	AnimationInfo();
+	~AnimationInfo() {}
+	AnimationInfo() {}
 	// Scene gets destroyed at the end of asset creation
 	// We need to copy animation related information
 	void setScene(const aiScene * scene);
 	size_t numAnimations() const;
 };
-class Asset_Model;
-typedef shared_ptr<Asset_Model> Shared_Asset_Model;
 
 
 /**

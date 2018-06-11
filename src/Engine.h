@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.167.A";
+constexpr char ENGINE_VERSION[]	= "0.168";
 
 #include <map>
 #include <shared_mutex>
@@ -35,7 +35,7 @@ public:
 	bool initialize();
 	/** Shuts down the engine and ceases all threaded activities ASAP. */
 	void shutdown();
-	/** Ticks the engine's overall simulation by a frame from the main thread */
+	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread. */
 	void tickThreaded();

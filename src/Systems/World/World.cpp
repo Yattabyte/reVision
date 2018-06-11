@@ -121,7 +121,7 @@ void System_World::loadWorld()
 		wall6->sendCommand("Change_Skin", 1);
 		wall6->sendCommand("Change_Transform", Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		Entity * wall7 = m_entityFactory.createEntity("Prop");
+		Entity * wall7 = m_entityFactory.createEntity("Prop_Static");
 		wall7->sendCommand("Load_Model", string("Test\\wall.obj"));
 		wall7->sendCommand("Change_Skin", 1);
 		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
@@ -136,7 +136,6 @@ void System_World::loadWorld()
 		point->sendCommand("Change_Light_Intensity", 15.0f);
 		point->sendCommand("Change_Light_Radius", 10.0f);
 		point->sendCommand("Change_Transform", Transform(vec3(0,0,0)));*/
-
 
 		//Entity * ref = m_entityFactory.createEntity("Reflector");
 
