@@ -36,7 +36,7 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	});
 
 	// Initialize Shadows
-	m_shadowSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) {setSize(f); });
+	m_shadowSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { setSize(f); }	);
 	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	m_shadowFBO = 0;

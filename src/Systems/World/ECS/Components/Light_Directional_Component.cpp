@@ -152,8 +152,8 @@ void Light_Directional_Component::calculateCascades()
 
 	const vec2 &size = cameraBuffer.Dimensions;
 	float ar = size.x / size.y;
-	float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
-	float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));	
+	float tanHalfHFOV = glm::radians(cameraBuffer.FOV) / 2.0f;
+	float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 
 	for (int i = 0; i < NUM_CASCADES; i++) {
 		float points[4] = { m_cascadeEnd[i] * tanHalfHFOV,

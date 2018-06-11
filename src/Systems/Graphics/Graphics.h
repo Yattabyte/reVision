@@ -81,6 +81,7 @@ private:
 	ivec2			m_renderSize;
 	VisualFX		m_visualFX;
 	StaticBuffer	m_userBuffer;
+	bool			m_ssao;
 
 	// Rendering Techniques
 	vector<Geometry_Technique*> m_geometryTechs;

@@ -53,11 +53,13 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 		m_enginePackage = enginePackage;
+		m_ssao = true;
 
 		// Generate User SSBO		
 		Renderer_Struct attribs;
 		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao), sizeof(int), &f);
+			m_ssao = (bool)(f);
 		});
 		attribs.m_aa_quality = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_aa_quality), sizeof(int), &f);
@@ -185,7 +187,10 @@ void System_Graphics::renderFrame(const Visibility_Token & vis_token)
 	// Geometry
 	for each (auto *tech in m_geometryTechs)
 		tech->renderGeometry(m_enginePackage->m_Camera);
-	m_geometryFBO.applyAO();
+	
+	// Ambient Occlusion
+	if (m_ssao)
+		m_geometryFBO.applyAO();
 
 	// Lighting
 	m_reflectionSSBO.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5); // PASS INTO RESPECTIVE TECHNIQUES
