@@ -17,8 +17,8 @@ layout (std430, binding = 5) readonly buffer Reflection_Buffer {
 	Reflection_Struct buffers[];
 };
 
-out vec3 CubeWorldPos;
-out flat uint BufferIndex;
+layout (location = 0) out vec3 CubeWorldPos;
+layout (location = 1) flat out uint BufferIndex;
 
 void main(void)
 {	

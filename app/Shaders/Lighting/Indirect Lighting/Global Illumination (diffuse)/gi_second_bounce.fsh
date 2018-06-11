@@ -11,7 +11,6 @@ struct Volume_Data
 	float factor;
 };
 
-
 layout (std430, binding = 7) readonly buffer GI_Volume_Attribs
 {			
 	Volume_Data volume_data;
@@ -27,7 +26,6 @@ layout (binding = 5) uniform sampler3D VolumeMap1;
 layout (binding = 6) uniform sampler3D VolumeMap2;
 layout (binding = 7) uniform sampler3D VolumeMap3;
 layout (binding = 8) uniform sampler3D VolumeMap4;
-
 
 vec4 SHBasis (const in vec3 dir) 
 { 

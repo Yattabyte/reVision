@@ -4,7 +4,7 @@
 layout (binding = 4) uniform sampler2D ReflectionMap;
 layout (binding = 5) uniform sampler2D EnvironmentBRDF;
 layout (location = 0) out vec3 LightingColor;
-in vec2 TexCoord;
+layout (location = 0) in vec2 TexCoord;
 
 vec3 Fresnel_Schlick_Roughness(vec3 f0, float AdotB, float roughness)
 {

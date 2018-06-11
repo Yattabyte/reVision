@@ -7,8 +7,8 @@ layout (max_vertices = 6) out;
 // X = Layer count, Y = Light Count
 layout (location = 0) uniform int LightCount = 0;
 
-in int In_InstanceID[];
-flat out int BufferIndex;
+layout (location = 0) in int In_InstanceID[];
+layout (location = 0) flat out int BufferIndex;
 
 void main()
 {

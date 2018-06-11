@@ -7,9 +7,9 @@ layout (triangle_strip, max_vertices = 108) out;
 layout (location = 2) uniform mat4 View[6];
 layout (location = 8) uniform mat4 Proj;
 
-in vec3 vinput[];
-out vec2 TexCoord;
-out flat int Read_Index;
+layout (location = 0) in vec3 vinput[];
+layout (location = 0) out vec2 TexCoord;
+layout (location = 1) flat out int Read_Index;
 
 void main()
 {				

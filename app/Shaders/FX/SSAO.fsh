@@ -2,7 +2,7 @@
 #pragma optionNV (unroll all)
 #package "camera"
 
-out vec4 SSAOColor; 
+layout (location = 0) out vec4 SSAOColor; 
 
 layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D NoiseMap;

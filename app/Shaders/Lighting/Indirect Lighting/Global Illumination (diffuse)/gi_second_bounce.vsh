@@ -1,7 +1,7 @@
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
 
-layout(location = 0) in vec3 vertex;
+layout (location = 0) in vec3 vertex;
 
 void main()
 {

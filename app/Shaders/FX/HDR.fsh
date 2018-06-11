@@ -1,12 +1,11 @@
 #version 460
 #package "camera"
 
+layout (location = 0) in vec2 TexCoord;
 layout (location = 0) out vec3 HDRColor;
 layout (binding = 0) uniform sampler2D LightMap;
 layout (binding = 1) uniform sampler2D BloomMap;
 layout (location = 0) uniform float Exposure = 1.0;
-
-in vec2 TexCoord;
 
 void main()
 {		

@@ -10,8 +10,8 @@ layout (location = ) uniform float FXAA_REDUCE_MUL		= 1.0 / 8.0;
 layout (location = 0) uniform float FXAA_SPAN_MAX		= 7.0;
 layout (location = 1) uniform float FXAA_REDUCE_MIN 	= 1.0 / 15.0;
 layout (location = 2) uniform float FXAA_REDUCE_MUL		= 1.0 / 7.0;
-in vec2 TexOffset;
-in vec2 TexCoord;
+layout (location = 0) in vec2 TexOffset;
+layout (location = 1) in vec2 TexCoord;
 
 void main()
 {			

@@ -2,7 +2,7 @@
 
 layout (location = 0) uniform sampler2D LightTexture;
 layout (location = 0) out vec3 BloomColor;
-in vec2 TexCoord;
+layout (location = 0) in vec2 TexCoord;
 
 void main()
 {	

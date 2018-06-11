@@ -3,7 +3,7 @@
 
 layout (binding = 4) uniform samplerCubeArray SkyMap;
 layout (location = 0) out vec3 LocalReflectionOut;  
-in vec2 TexCoord;
+layout (location = 0) in vec2 TexCoord;
 
 vec3 CalculateReflections(in vec3 ViewPos, in vec3 ViewNormal, in float Roughness)
 {		

@@ -3,8 +3,8 @@
 
 layout(location = 0) in vec3 vertex;
 
-out vec2 TexOffset;
-out vec2 TexCoord;
+layout (location = 0) out vec2 TexOffset;
+layout (location = 1) out vec2 TexCoord;
 
 void main()
 {		

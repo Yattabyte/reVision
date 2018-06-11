@@ -1,8 +1,6 @@
 #version 460
 #package "Lighting\gi_defines"
 
-flat in int BufferIndex;
-
 struct Light_Struct {
 	mat4 mMatrix;
 	mat4 lightV; 
@@ -23,6 +21,8 @@ layout (std430, binding = 3) readonly buffer Visibility_Buffer {
 layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
+
+layout (location = 0) flat in int BufferIndex;
 
 layout (binding = 0) uniform sampler2DArray ShadowPos;		// RSM position
 layout (binding = 1) uniform sampler2DArray ShadowNormal; 	// RSM normals

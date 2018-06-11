@@ -27,8 +27,7 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-flat in uint BufferIndex;
-in mat4 LightMVP;
+layout (location = 0) flat in uint BufferIndex;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (binding = 5) uniform sampler2DArray ShadowStaticMap;
 layout (location = 0) uniform bool UseStencil = true;

@@ -12,8 +12,8 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-in vec2 TexCoord;
-in flat uint BufferIndex;
+layout (location = 0) in vec2 TexCoord;
+layout (location = 1) flat in uint BufferIndex;
 
 layout (location = 0) out vec3 LightingColor;
 

@@ -3,8 +3,8 @@
 
 layout (location = 0) in vec3 vertex;
 
-out vec2 TexCoord;
-flat out uint BufferIndex;
+layout (location = 0) out vec2 TexCoord;
+layout (location = 1) flat out uint BufferIndex;
 
 void main()
 {	

@@ -1,7 +1,7 @@
 #version 460
 
 layout(location = 0) in vec3 vertex;
-out vec2 TexCoord;
+layout (location = 0) out vec2 TexCoord;
 
 void main()
 {

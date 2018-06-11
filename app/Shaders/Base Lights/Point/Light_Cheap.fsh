@@ -19,7 +19,7 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-in flat uint BufferIndex;
+layout (location = 0) in flat uint BufferIndex;
 
 layout (location = 0) uniform bool UseStencil = true;
 layout (location = 0) out vec3 LightingColor; 

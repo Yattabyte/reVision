@@ -45,4 +45,3 @@ void main()
 	MaterialMap 				= sampler2DArray(MaterialMaps[buffers[indexes[gl_DrawID]].materialID]);
 	gl_Position           		= pMatrix * vMatrix * buffers[indexes[gl_DrawID]].mMatrix * vec4(vertex,1.0);			
 }
-

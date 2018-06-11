@@ -23,9 +23,9 @@ layout (binding = 7) uniform sampler3D VolumeMap2;
 layout (binding = 8) uniform sampler3D VolumeMap3;
 layout (binding = 9) uniform sampler3D VolumeMap4;
 
-layout (location = 0) out vec3 LightingColor;
+layout (location = 0) in vec2 TexCoord;
 
-in vec2 TexCoord;
+layout (location = 0) out vec3 LightingColor;
 
 vec3 Fresnel_Schlick_Roughness(in vec3 f0, in float AdotB, in float roughness)
 {

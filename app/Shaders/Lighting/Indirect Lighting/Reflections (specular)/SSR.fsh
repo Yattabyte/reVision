@@ -13,7 +13,7 @@ layout (std140, binding = 6) uniform SSR_Buffer
 
 layout (binding = 6) uniform sampler2D LightMap;
 layout (location = 0) out vec4 ReflectionColor;
-in vec2 TexCoord;
+layout (location = 0) in vec2 TexCoord;
 
 vec3 CalcViewPositionFromDepth(in vec2 TexCoord, in float Depth)
 {

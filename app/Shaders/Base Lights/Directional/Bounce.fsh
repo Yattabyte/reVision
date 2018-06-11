@@ -2,8 +2,6 @@
 #define NUM_CASCADES 4
 #package "camera"
 
-flat in int InstanceID;
-
 struct Light_Struct {
 	mat4 lightV;
 	vec4 LightColor;
@@ -36,6 +34,8 @@ layout (std430, binding = 7) readonly buffer GI_Volume_Attribs
 {			
 	Volume_Data volume_data;
 };
+
+layout (location = 0) flat in int InstanceID;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 

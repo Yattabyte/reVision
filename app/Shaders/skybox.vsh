@@ -3,7 +3,7 @@
 
 layout(location = 0) in vec3 vertex;
 
-out vec3 vecView;
+layout (location = 0) out vec3 vecView;
 
 void main()
 {	

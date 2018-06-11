@@ -2,8 +2,7 @@
 #extension GL_ARB_shader_viewport_layer_array : require
 
 layout (location = 0) in vec3 vertex;
-
-flat out int InstanceID;
+layout (location = 0) flat out int InstanceID;
 
 layout (location = 0) uniform int LightCount = 0;
 

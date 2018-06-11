@@ -3,7 +3,7 @@
 
 layout(location = 0) in vec3 vertex;
 
-flat out int BufferIndex;
+layout (location = 0) flat out int BufferIndex;
 
 layout (location = 0) uniform int LightCount = 0;
 

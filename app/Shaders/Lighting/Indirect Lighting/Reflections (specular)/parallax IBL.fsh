@@ -1,10 +1,6 @@
 #version 460
 #package "Lighting\lighting_pbr"
 
-layout (binding = 4) uniform samplerCubeArray TemporaryMap;
-layout (location = 0) out vec4 LightingColor;
-layout (location = 0) uniform bool useStencil = false;
-
 struct Reflection_Struct {
 	mat4 mMatrix;
 	vec4 BoxCamPos;
@@ -18,8 +14,13 @@ layout (std430, binding = 5) readonly buffer Reflection_Buffer {
 	Reflection_Struct buffers[];
 };
 
-in vec3 CubeWorldPos;
-in flat uint BufferIndex;
+layout (location = 0) in vec3 CubeWorldPos;
+layout (location = 1) flat in uint BufferIndex;
+
+layout (binding = 4) uniform samplerCubeArray TemporaryMap;
+layout (location = 0) out vec4 LightingColor;
+layout (location = 0) uniform bool useStencil = false;
+
 
 vec2 CalcTexCoord()
 {

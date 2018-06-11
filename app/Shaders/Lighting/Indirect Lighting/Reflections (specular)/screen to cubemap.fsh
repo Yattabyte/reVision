@@ -1,10 +1,10 @@
 #version 460
 
 layout (location = 0) uniform sampler2D screenTexture;
-out vec3 ColorLod;
+layout (location = 0) out vec3 ColorLod;
 
-in vec2 TexCoord;
-in flat int Read_Index;
+layout (location = 0) in vec2 TexCoord;
+layout (location = 1) flat in int Read_Index;
 
 void main()
 {		

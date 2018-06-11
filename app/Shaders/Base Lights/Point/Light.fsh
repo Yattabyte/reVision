@@ -25,7 +25,7 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-in flat uint BufferIndex;
+layout (location = 0) in flat uint BufferIndex;
 
 layout (binding = 4) uniform samplerCubeArray ShadowMap;
 layout (binding = 5) uniform samplerCubeArray ShadowMap_Static;

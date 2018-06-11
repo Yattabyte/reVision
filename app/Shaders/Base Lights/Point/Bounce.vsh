@@ -2,7 +2,7 @@
 
 layout(location = 0) in vec4 vertex;
 
-out int In_InstanceID;
+layout (location = 0) out int In_InstanceID;
 
 void main()
 {

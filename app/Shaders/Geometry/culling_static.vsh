@@ -22,4 +22,3 @@ void main()
 	gl_Position = pMatrix * vMatrix * buffers[indexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
 	id = gl_DrawID;
 }
-

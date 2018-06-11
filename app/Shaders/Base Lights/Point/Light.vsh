@@ -24,7 +24,7 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-flat out uint BufferIndex;
+layout (location = 0) flat out uint BufferIndex;
 
 void main()
 {		

@@ -22,8 +22,8 @@ layout (std430, binding = 6) readonly buffer Light_Buffer {
 	Light_Struct buffers[];
 };
 
-in vec2 TexCoord;
-in flat uint BufferIndex;
+layout (location = 0) in vec2 TexCoord;
+layout (location = 1) in flat uint BufferIndex;
 
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) out vec3 LightingColor;
