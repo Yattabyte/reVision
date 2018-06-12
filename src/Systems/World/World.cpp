@@ -94,11 +94,12 @@ void System_World::loadWorld()
 
 		Entity * wall1 = m_entityFactory.createEntity("Prop");
 		wall1->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall1->sendCommand("Change_Skin", 0);
 		wall1->sendCommand("Change_Transform", Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
 
 		Entity * wall2 = m_entityFactory.createEntity("Prop");
 		wall2->sendCommand("Load_Model", string("Test\\wall.obj"));
-		wall2->sendCommand("Change_Skin", 1);
+		wall2->sendCommand("Change_Skin", 2);
 		wall2->sendCommand("Change_Transform", Transform(vec3(22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
 
 		Entity * wall3 = m_entityFactory.createEntity("Prop");
@@ -106,11 +107,11 @@ void System_World::loadWorld()
 		wall3->sendCommand("Change_Skin", 1);
 		wall3->sendCommand("Change_Transform", Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		Entity * wall4 = m_entityFactory.createEntity("Prop");
+	/*	Entity * wall4 = m_entityFactory.createEntity("Prop");
 		wall4->sendCommand("Load_Model", string("Test\\wall.obj"));
 		wall4->sendCommand("Change_Skin", 1);
 		wall4->sendCommand("Change_Transform", Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
-
+		*/
 		Entity * wall5 = m_entityFactory.createEntity("Prop");
 		wall5->sendCommand("Load_Model", string("Test\\wall.obj"));
 		wall5->sendCommand("Change_Skin", 1);
@@ -121,7 +122,7 @@ void System_World::loadWorld()
 		wall6->sendCommand("Change_Skin", 1);
 		wall6->sendCommand("Change_Transform", Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-		Entity * wall7 = m_entityFactory.createEntity("Prop_Static");
+		Entity * wall7 = m_entityFactory.createEntity("Prop");
 		wall7->sendCommand("Load_Model", string("Test\\wall.obj"));
 		wall7->sendCommand("Change_Skin", 1);
 		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
@@ -147,8 +148,8 @@ void System_World::loadWorld()
 		//spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));*/
 
 		Entity * h = m_entityFactory.createEntity("Prop");
-		h->sendCommand("Load_Model", string("castleWall.obj"));
-		h->sendCommand("Change_Transform", Transform(vec3(-6, 0, 0), quat(1, 0, 0, 0), vec3(0.1)));
+		h->sendCommand("Load_Model", string("Test\\ref_test.obj"));
+		h->sendCommand("Change_Transform", Transform(vec3(015, 0, 22), quat(1, 0, 0, 0), vec3(1)));
 
 		Entity * m1 = m_entityFactory.createEntity("Prop");
 		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
@@ -160,13 +161,13 @@ void System_World::loadWorld()
 
 		Entity * m3 = m_entityFactory.createEntity("Prop");
 		m3->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m3->sendCommand("Change_Transform", Transform(vec3(2, 0, -5)));
+		m3->sendCommand("Change_Transform", Transform(vec3(18, 0, -5)));
 
-		Entity * m4 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m4 = m_entityFactory.createEntity("Prop");
 		m4->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
 		m4->sendCommand("Change_Transform", Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
 
-		Entity * m5 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m5 = m_entityFactory.createEntity("Prop");
 		m5->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
 		m5->sendCommand("Change_Transform", Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1))));
 
@@ -174,7 +175,7 @@ void System_World::loadWorld()
 		m6->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
 		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, -5)));
 
-		Entity * m7 = m_entityFactory.createEntity("Prop_Static");
+		Entity * m7 = m_entityFactory.createEntity("Prop");
 		m7->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
 		m7->sendCommand("Change_Transform", Transform(vec3(-30, 0, 5)));
 

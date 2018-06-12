@@ -32,13 +32,13 @@ vec3 CalcViewPositionFromDepth(in vec2 TexCoord, in float Depth)
 
 vec3 CalcViewPosition(in vec2 TexCoord)
 {
-	return CalcViewPositionFromDepth(TexCoord, texture(ColorMap, TexCoord).w);
+	return CalcViewPositionFromDepth(TexCoord, texture(DepthMap, TexCoord).r);
 }
 
 void CalcPosition(in vec2 TexCoord, out vec3 View, out vec3 World)
 { 
 	// Combine UV & depth into XY & Z (NDC)
-    vec3 rawPosition 				= vec3(TexCoord, texture(ColorMap, TexCoord).w);
+    vec3 rawPosition 				= vec3(TexCoord, texture(DepthMap, TexCoord).r);
    
     // Convert from (0, 1) range to (-1, 1)
     vec4 ScreenSpacePosition 		= vec4( rawPosition * 2 - 1, 1);

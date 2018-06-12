@@ -21,7 +21,7 @@ void main(void)
 	LightingColor						= vec3(0.0f);	
 	ViewData data;
 	GetFragmentData(TexCoord, data);	
-	if (data.View_Depth >= 1.0f) 			discard;	
+	if (data.View_Depth >= 1.0f) 		discard;	
 	const vec3 View_Direction			= normalize(EyePosition - data.World_Pos.xyz);	
 	const vec3 Reflection				= texture(ReflectionMap, TexCoord).rgb;		
 	

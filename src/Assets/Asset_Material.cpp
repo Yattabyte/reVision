@@ -209,15 +209,15 @@ void Material_WorkOrder::initializeOrder()
 		materialData[arrayIndex] = GLubyte(255);
 	// Second texture has straight pointing normal with empty fourth channel
 	for (unsigned int x = 0, second_size = size_mult * 4; x < second_size; x += 4, arrayIndex += 4) {
-		materialData[arrayIndex + 0] = GLubyte(127);
-		materialData[arrayIndex + 1] = GLubyte(127);
+		materialData[arrayIndex + 0] = GLubyte(128);
+		materialData[arrayIndex + 1] = GLubyte(128);
 		materialData[arrayIndex + 2] = GLubyte(255);
 		materialData[arrayIndex + 3] = GLubyte(0);
 	}
 	// Third texture has quarter metalness (mostly dielectric), half roughness, no height, and full ambience
 	for (unsigned int x = 0, third_size = size_mult * 4; x < third_size; x += 4, arrayIndex += 4) {
 		materialData[arrayIndex + 0] = GLubyte(63);
-		materialData[arrayIndex + 1] = GLubyte(127);
+		materialData[arrayIndex + 1] = GLubyte(128);
 		materialData[arrayIndex + 2] = GLubyte(0);
 		materialData[arrayIndex + 3] = GLubyte(255);
 	}
@@ -274,6 +274,12 @@ void Material_WorkOrder::finalizeOrder()
 		glTextureParameteri(gl_array_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTextureParameteri(gl_array_ID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
 		glGenerateTextureMipmap(gl_array_ID);
+
+		GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		auto state = glClientWaitSync(fence, 0, 0);
+		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
+			state = glClientWaitSync(fence, 0, 0);
+		glDeleteSync(fence);
 		Material_Manager::Generate_Handle(mat_spot, gl_array_ID);
 		
 		write_guard.unlock();

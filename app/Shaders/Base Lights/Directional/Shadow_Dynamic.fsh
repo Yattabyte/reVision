@@ -17,7 +17,6 @@ void main()
 	vec3 BumpMapNormal 			= normalize(texture(MaterialMap, vec3(TexCoord0, 1)).xyz * 2.0 - 1.0);
 	vec3 WorldNormal			= normalize(WorldTBN * BumpMapNormal);	
 	
-	gl_FragDepth 				= gl_FragCoord.z;
 	WorldNormalOut				= WorldNormal;	
 	RadiantFluxOut				= GColor.xyz * ColorModifier;
 }

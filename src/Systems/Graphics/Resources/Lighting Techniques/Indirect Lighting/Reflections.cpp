@@ -223,14 +223,14 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 	m_brdfMap->bind(5); // BRDF LUT
 	glBindTextureUnit(6, m_texture); // Blurred light MIP-chain
 	m_ssrBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 6);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
+	glBlendEquation(GL_FUNC_ADD);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 
 	// Apply persistent cubemap
 	if (m_shaderCubemap->existsYet()) {
 		m_shaderCubemap->bind();
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -245,7 +245,6 @@ void Reflections::reflectLight(const Visibility_Token & vis_token)
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
-		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 		glStencilFunc(GL_ALWAYS, 0, 0); // Always pass stencil test
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);

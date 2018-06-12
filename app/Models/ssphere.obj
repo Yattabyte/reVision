@@ -1,6 +1,6 @@
-# Blender v2.77 (sub 0) OBJ File: 'sphere.blend'
+# Blender v2.77 (sub 0) OBJ File: 'ssphere.blend'
 # www.blender.org
-mtllib sphere.mtl
+mtllib ssphere.mtl
 o Sphere_Sphere.003
 v -0.098017 0.995185 0.000000
 v -0.195090 0.980785 0.000000
@@ -6004,7 +6004,7 @@ vn -0.976100 -0.194800 0.096100
 vn -0.470300 0.881300 0.046300
 vn -0.952500 -0.289800 0.093800
 vn -0.553900 0.830700 0.054500
-usemtl None
+usemtl Sphere
 s 1
 f 1858/1/1 27/2/2 58/3/3
 f 16/4/4 45/5/5 46/6/6

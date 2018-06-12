@@ -45,8 +45,8 @@ layout (location = 3) out vec4 GI_Out4;
 layout (binding = 0) uniform sampler2DArray ShadowPos;		// RSM position
 layout (binding = 1) uniform sampler2DArray ShadowNormal; 	// RSM normals
 layout (binding = 2) uniform sampler2DArray ShadowFlux;  	// RSM vpl flux
-layout (binding = 3) uniform sampler2D CameraDepth;		  	// Camera depth buffer
-layout (binding = 4) uniform sampler3D Noise;       		// A pre-computed 3D noise texture (32X32X32). Value range (r,g,b): [0,1] 
+layout (binding = 6) uniform sampler2D CameraDepth;		  	// Camera depth buffer
+layout (binding = 7) uniform sampler3D Noise;       		// A pre-computed 3D noise texture (32X32X32). Value range (r,g,b): [0,1] 
 // #define DEPTH_OCCL    // if defined, depth-based RSM sample occlusion is enabled.
 
 
