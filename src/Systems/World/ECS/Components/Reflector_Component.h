@@ -39,6 +39,7 @@ protected:
 
 
 	// Protected Attributes
+	bool m_regenCubemap;
 	unsigned int m_uboIndex;
 	VB_Ptr * m_uboBuffer;
 	vec3 m_position;

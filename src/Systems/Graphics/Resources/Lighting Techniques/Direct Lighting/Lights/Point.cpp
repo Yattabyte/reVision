@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
 #include "Systems\World\World.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"

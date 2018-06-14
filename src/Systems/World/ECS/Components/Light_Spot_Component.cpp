@@ -4,7 +4,7 @@
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
 #include "GLFW\glfw3.h"
 #include <math.h>
 

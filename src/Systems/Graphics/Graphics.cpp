@@ -18,12 +18,12 @@
 // End includes for specific techniques
 
 // Begin includes for specific lighting techniques
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional_Cheap.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot_Cheap.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Point_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point_Cheap.h"
 // End includes for specific lighting techniques
 
 

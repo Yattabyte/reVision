@@ -3,7 +3,7 @@
 #define DS_LIGHTING_H
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\MappedChar.h"

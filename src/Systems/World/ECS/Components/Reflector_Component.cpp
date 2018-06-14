@@ -1,5 +1,6 @@
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
+#include "Systems\World\World.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\EnginePackage.h"
@@ -17,6 +18,9 @@ Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
 	m_position = vec3(0.0f);
 	m_scale = vec3(1.0f);
 	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_reflectionSSBO.addElement(&m_uboIndex);
+
+	m_regenCubemap = false;
+	m_enginePackage->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenCubemap);
 
 	m_commandMap["Set_Reflector_Radius"] = [&](const ECS_Command & payload) {
 		if (payload.isType<float>()) setRadius(payload.toType<float>());

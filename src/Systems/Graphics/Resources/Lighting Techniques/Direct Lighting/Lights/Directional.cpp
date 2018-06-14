@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\EnginePackage.h"
 #include <minmax.h>

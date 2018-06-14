@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional_Cheap.h"
 
 
 Directional_Tech_Cheap::~Directional_Tech_Cheap()

@@ -8,7 +8,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Systems\Graphics\Resources\Geometry_Buffers.h"

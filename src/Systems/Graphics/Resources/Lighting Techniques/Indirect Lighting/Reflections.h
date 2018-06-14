@@ -4,16 +4,17 @@
 #define BRDF_SIZE 512
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflectors\Reflector_Tech.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
-#include "Assets\Asset_Cubemap.h"
 #include "Utilities\GL\StaticBuffer.h"
 
 class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
 class Reflection_UBO;
+class Reflector_Component;
 
 
 /**
@@ -36,48 +37,22 @@ public:
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	
-
-
-	// Public Methods
-	/** Resize the frame buffer by the amount specified.
-	 * @param	size	the amount to resize by */
-	void resize(const vec2 &size);
-
+	
 	
 private:
-	/** Nested buffer object struct for sending data to GPU */
-	struct SSR_Buffer {
-		int maxSteps = 16;
-		float maxDistance = 50.0f;
-		float numMips = 6;
-		float fadeStart = 0.40;
-		float fadeEnd = 0.9f;
-	};
-
-
-	// Private Methods	
-	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness. */
-	void blurLight();
-	/** Adds to the global env map using the blurred light. */
-	void buildEnvMap();
-	/** Applies the SSR effect using the blurred light MIP chain. */
-	void reflectLight(const Visibility_Token & vis_token);
-
-
 	// Private Attributes
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Reflection_FBO * m_reflectionFBO;
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR, m_shaderCubemap, m_shaderCubeProj, m_shaderFinal, m_shaderParallax;
+	Shared_Asset_Shader m_shaderFinal, m_shaderParallax;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO, m_cubeVAO;
 	bool m_quadVAOLoaded, m_cubeVAOLoaded;
-	GLuint m_fbo, m_texture;
-	vec2 m_renderSize;
-	GLuint m_cube_fbo, m_cube_tex;
-	StaticBuffer m_cubeIndirectBuffer, m_quadIndirectBuffer, m_ssrBuffer, m_visRefUBO;
+	StaticBuffer m_quadIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
+	vector<Reflector_Component*> m_refList;
+	vector<Reflector_Tech*> m_refTechs;
 };
 
 #endif // REFLECTIONS_H

@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Spot_Cheap.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot_Cheap.h"
 
 
 Spot_Cheap_Tech::~Spot_Cheap_Tech()

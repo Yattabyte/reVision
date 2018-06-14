@@ -2,7 +2,7 @@
 #ifndef POINT_TECH_H
 #define POINT_TECH_H
 
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"

@@ -5,7 +5,7 @@
 #define GI_TEXTURE_COUNT 4 // 3D textures used
 
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Base Types\Light_Tech.h"
+#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
 #include "Systems\World\Camera.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"

@@ -1,7 +1,7 @@
 #version 460
 #package "Lighting\lighting_pbr"
 
-layout (binding = 4) uniform samplerCubeArray SkyMap;
+layout (binding = 4) uniform samplerCube SkyMap;
 layout (location = 0) out vec4 LocalReflectionOut;  
 layout (location = 0) in vec2 TexCoord;
 
@@ -10,7 +10,7 @@ vec3 CalculateReflections(in vec3 ViewPos, in vec3 ViewNormal, in float Roughnes
 	vec3 ReflectDir					= (reflect(ViewPos, ViewNormal));
 		 ReflectDir 				= normalize(vMatrix_Inverse * vec4(ReflectDir,0)).xyz;
 	const float level 				= Roughness * 5.0f;
-	return 							texture(SkyMap, vec4(ReflectDir.x, -ReflectDir.y, -ReflectDir.z, level)).xyz;		
+	return 							pow(texture(SkyMap, vec3(ReflectDir.x, -ReflectDir.y, ReflectDir.z)).xyz, vec3(2.2f));		
 }
 
 void main()
@@ -20,5 +20,5 @@ void main()
 	if (data.View_Depth >= 1.0f) discard;
 	
 	vec3 Reflection					= CalculateReflections(data.View_Pos.xyz, data.View_Normal, data.Roughness);
-	LocalReflectionOut				= vec4(Reflection, 0.5f);
+	LocalReflectionOut				= vec4(Reflection, 1.0f);
 }
