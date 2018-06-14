@@ -1,15 +1,13 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflectors\Sky_Ref.h"
 
+
 Sky_Ref_Tech::~Sky_Ref_Tech()
 {
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Sky_Ref_Tech::Sky_Ref_Tech(EnginePackage * enginePackage)
+Sky_Ref_Tech::Sky_Ref_Tech()
 {
-	// Copy Pointers
-	m_enginePackage = enginePackage;
-
 	Asset_Loader::load_asset(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect");
 	Asset_Loader::load_asset(m_textureSky, "sky\\");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");	

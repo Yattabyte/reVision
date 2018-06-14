@@ -28,7 +28,7 @@ SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Li
 
 	Asset_Loader::load_asset(m_shaderCopy, "fx\\copyTexture");
 	Asset_Loader::load_asset(m_shaderBlur, "fx\\gaussianBlur_MIP");
-	Asset_Loader::load_asset(m_shaderSSR, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
+	Asset_Loader::load_asset(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
@@ -71,10 +71,10 @@ SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Li
 
 void SSR_Tech::applyEffect()
 {
-	if (m_quadVAOLoaded && m_shaderSSR->existsYet()) {
+	if (m_quadVAOLoaded && m_shaderEffect->existsYet()) {
 		updateMipChain();
 
-		m_shaderSSR->bind();
+		m_shaderEffect->bind();
 		m_reflectionFBO->bindForWriting();
 		m_geometryFBO->bindForReading();
 		glBindTextureUnit(6, m_texture); // Blurred light MIP-chain

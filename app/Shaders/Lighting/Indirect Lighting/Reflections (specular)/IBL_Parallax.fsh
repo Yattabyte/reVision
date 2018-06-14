@@ -17,7 +17,7 @@ layout (std430, binding = 5) readonly buffer Reflection_Buffer {
 layout (location = 0) in vec3 CubeWorldPos;
 layout (location = 1) flat in uint BufferIndex;
 
-layout (binding = 4) uniform samplerCubeArray TemporaryMap;
+layout (binding = 4) uniform samplerCube TemporaryMap;
 layout (location = 0) out vec4 LightingColor;
 layout (location = 0) uniform bool useStencil = false;
 
@@ -54,7 +54,8 @@ vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal,
 										buffers[indexes[BufferIndex]].mMatrix,
 										buffers[indexes[BufferIndex]].BoxCamPos.xyz, 
 										WorldPos.xyz	);	
-	return							texture(TemporaryMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;		
+	//return							vec3(10,0,0);//texture(TemporaryMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;	
+	return							texture(TemporaryMap, CorrectedDir).xyz;		
 }
 
 void main(void)
@@ -68,8 +69,8 @@ void main(void)
 	const float Distance				= length(buffers[indexes[BufferIndex]].BoxCamPos.xyz - data.World_Pos.xyz);	
 	const float range 					= (1.0f / buffers[indexes[BufferIndex]].Radius);
 	const float Attenuation 			= 1.0f - (Distance * Distance) * (range * range);	
-	if (Attenuation <= 0.0f) 			return;// Discard if outside of radius
+	if (Attenuation <= 0.0f) 			return; // Discard if outside of radius
 	
 	const vec3 ReflectionColor			= CalculateReflections(data.World_Pos.xyz, data.View_Pos.xyz, data.View_Normal, data.Roughness);
-	LightingColor						= vec4(10, 0, 0, Attenuation);	
+	LightingColor						= vec4(ReflectionColor, Attenuation);	
 }

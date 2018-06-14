@@ -14,7 +14,6 @@ class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
 class Reflection_UBO;
-class Reflector_Component;
 
 
 /**
@@ -45,13 +44,12 @@ private:
 	Lighting_FBO * m_lightingFBO;
 	Reflection_FBO * m_reflectionFBO;
 	EnginePackage * m_enginePackage;
-	Shared_Asset_Shader m_shaderFinal, m_shaderParallax;
-	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
+	Shared_Asset_Shader m_shaderFinal;
+	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
-	GLuint m_quadVAO, m_cubeVAO;
-	bool m_quadVAOLoaded, m_cubeVAOLoaded;
-	StaticBuffer m_quadIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
-	vector<Reflector_Component*> m_refList;
+	GLuint m_quadVAO;
+	bool m_quadVAOLoaded;
+	StaticBuffer m_quadIndirectBuffer;
 	vector<Reflector_Tech*> m_refTechs;
 };
 

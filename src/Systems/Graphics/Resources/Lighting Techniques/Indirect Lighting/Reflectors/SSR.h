@@ -15,7 +15,7 @@ class Reflection_FBO;
 
 
 /**
- * A reflection technique that uses the user's viewport to generate reflections
+ * A reflection technique that uses the skybox to generate reflections
  */
 class SSR_Tech : public Reflector_Tech {
 public:
@@ -27,6 +27,7 @@ public:
 
 
 	// Interface Implementations
+	virtual void updateData(const Visibility_Token & vis_token) {};
 	virtual void applyPrePass() {};
 	virtual void applyEffect();
 
@@ -58,7 +59,7 @@ private:
 	bool m_quadVAOLoaded;
 	GLuint m_quadVAO, m_fbo, m_texture;
 	ivec2 m_renderSize;
-	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderSSR;
+	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderEffect;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer, m_ssrBuffer;
 

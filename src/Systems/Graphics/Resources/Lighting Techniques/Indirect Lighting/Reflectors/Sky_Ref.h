@@ -9,7 +9,6 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
 
 
 /**
@@ -21,17 +20,17 @@ public:
 	/** Destructor. */
 	~Sky_Ref_Tech();
 	/** Constructor. */
-	Sky_Ref_Tech(EnginePackage * enginePackage);
+	Sky_Ref_Tech();
 
 
 	// Interface Implementations
+	virtual void updateData(const Visibility_Token & vis_token) {};
 	virtual void applyPrePass() {};
 	virtual void applyEffect();
 
 
 private:
 	// Private Attributes
-	EnginePackage * m_enginePackage;
 	bool m_quadVAOLoaded;
 	GLuint m_quadVAO;
 	Shared_Asset_Shader m_shaderEffect;
