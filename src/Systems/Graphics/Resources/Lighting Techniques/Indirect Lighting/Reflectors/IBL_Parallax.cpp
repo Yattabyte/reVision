@@ -131,14 +131,12 @@ void IBL_Parallax_Tech::applyEffect()
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
+		glClear(GL_STENCIL_BUFFER_BIT);
 		
 		// Draw only into depth-stencil buffer
 		m_shaderEffect->Set_Uniform(0, true);
-		glClear(GL_STENCIL_BUFFER_BIT);
 		glDisable(GL_CULL_FACE);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
@@ -148,8 +146,6 @@ void IBL_Parallax_Tech::applyEffect()
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		

@@ -14,12 +14,11 @@ layout (std430, binding = 5) readonly buffer Reflection_Buffer {
 	Reflection_Struct buffers[];
 };
 
-layout (location = 0) in vec3 CubeWorldPos;
-layout (location = 1) flat in uint BufferIndex;
+layout (location = 0) flat in uint BufferIndex;
 
 layout (binding = 4) uniform samplerCubeArray TemporaryMap;
 layout (location = 0) out vec4 LightingColor;
-layout (location = 0) uniform bool useStencil = false;
+layout (location = 0) uniform bool UseStencil = false;
 
 
 vec2 CalcTexCoord()
@@ -59,8 +58,8 @@ vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal,
 
 void main(void)
 {   
-	LightingColor						= vec4(0, 0, 0, 1.0f);	
-	if (useStencil) 					return;
+	LightingColor						= vec4(0.0f);	
+	if (UseStencil) 					return;
 	
 	ViewData data;
 	GetFragmentData(CalcTexCoord(), data);
@@ -69,6 +68,12 @@ void main(void)
 	const float range 					= (1.0f / buffers[indexes[BufferIndex]].Radius);
 	const float Attenuation 			= 1.0F;//1.0f - (Distance * Distance) * (range * range);	
 	if (Attenuation <= 0.0f) 			return; // Discard if outside of radius
+	
+	const vec3 BBoxMin 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz - vec3(21.0f);
+	const vec3 BBoxMax 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz + vec3(21.0f);
+	if (data.World_Pos.x < BBoxMin.x || data.World_Pos.y < BBoxMin.y || data.World_Pos.z < BBoxMin.z
+	|| data.World_Pos.x > BBoxMax.x || data.World_Pos.y > BBoxMax.y || data.World_Pos.z > BBoxMax.z)
+		discard;
 	
 	const vec3 ReflectionColor			= CalculateReflections(data.World_Pos.xyz, data.View_Pos.xyz, data.View_Normal, data.Roughness);
 	LightingColor						= vec4(ReflectionColor, Attenuation);	
