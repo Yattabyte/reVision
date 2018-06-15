@@ -138,9 +138,15 @@ void System_World::loadWorld()
 		point->sendCommand("Change_Light_Radius", 10.0f);
 		point->sendCommand("Change_Transform", Transform(vec3(0,0,0)));*/
 
+
+		Entity * ref2 = m_entityFactory.createEntity("Reflector");
+		ref2->sendCommand("Change_Reflector_Radius", 10.0f);
+		ref2->sendCommand("Change_Transform", Transform(vec3(44, 15, 0), quat(1, 0, 0, 0), vec3(21)));
+
 		Entity * ref = m_entityFactory.createEntity("Reflector");
 		ref->sendCommand("Change_Reflector_Radius", 10.0f);
-		ref->sendCommand("Change_Transform", Transform(vec3(0, 0, 0), quat(1, 0, 0, 0), vec3(100)));
+		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), quat(1, 0, 0, 0), vec3(21)));
+
 
 		/*auto spot = m_entityFactory.createEntity("PointLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));

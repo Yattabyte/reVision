@@ -76,10 +76,8 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	glNamedFramebufferDrawBuffers(m_shadowFBO, 2, Buffers);
 
 	GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Directional light  Technique", errorString);
-	}
+	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Directional light  Technique", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
 
 	// Light Bounce Initialization
 	GLuint firstBounceData[4] = { 6, 0, 0, 0 }; // count, primCount, first, reserved

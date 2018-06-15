@@ -27,6 +27,7 @@ public:
 
 
 	// Interface Implementations
+	virtual const char * getName() const { return "SSR_Tech"; }
 	virtual void updateData(const Visibility_Token & vis_token) {};
 	virtual void applyPrePass() {};
 	virtual void applyEffect();

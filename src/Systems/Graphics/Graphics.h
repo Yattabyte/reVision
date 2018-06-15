@@ -6,7 +6,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
+#include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
 #include "Systems\Graphics\FX Techniques\FX_Technique.h"
@@ -43,6 +43,12 @@ public:
 	 * @return		the technique requested */
 	template <typename T> T * getBaseTech(const char * c) {
 		return (T*)m_techMap[c];
+	}
+	/** Returns a type-casted lighting technique that matches the given name.
+	 * @param	c	a const char array name of the desired technique to find
+	 * @return		the technique requested */
+	template <typename T> T * getLightingTech(const char * c) {
+		return (T*)m_lightingTechMap[c];
 	}
 	
 
@@ -90,6 +96,7 @@ private:
 	// Base light type techniques
 	vector<Light_Tech*>			m_baseTechs;
 	MappedChar<void*>			m_techMap;
+	MappedChar<void*>			m_lightingTechMap;
 };
 
 #endif // SYSTEM_GRAPHICS_H

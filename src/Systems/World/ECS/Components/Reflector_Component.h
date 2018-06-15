@@ -5,6 +5,7 @@
 #define GLM_SWIZZLE_XYZ
 
 #include "Systems\World\ECS\Components\Component.h"
+#include "Systems\World\Camera.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\Transform.h"
 #include "GL\glew.h"
@@ -28,7 +29,7 @@ public:
 	/** Retrieve the buffer index for this reflector.
 	 * @return	the buffer index */
 	const unsigned int getBufferIndex() const;
-	
+	void bindCamera(const unsigned int & index) const;
 
 protected:
 	// (de)Constructors
@@ -41,8 +42,10 @@ protected:
 	// Protected Attributes
 	unsigned int m_uboIndex;
 	VB_Ptr * m_uboBuffer;
+	float m_radius;
 	vec3 m_position;
 	vec3 m_scale;
+	Camera m_cameras[6];
 	EnginePackage *m_enginePackage;
 	friend class Reflector_Creator;
 

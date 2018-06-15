@@ -57,10 +57,8 @@ SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Li
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
-	}
+	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
 	
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);

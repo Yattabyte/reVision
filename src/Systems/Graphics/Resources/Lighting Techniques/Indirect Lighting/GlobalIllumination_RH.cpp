@@ -88,11 +88,8 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 							GL_COLOR_ATTACHMENT3};
 		glNamedFramebufferDrawBuffers(m_fbo[bounce], 4, Buffers);
 		GLenum Status = glCheckNamedFramebufferStatus(m_fbo[bounce], GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
-			return;
-		}
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 	// Generate Noise Texture

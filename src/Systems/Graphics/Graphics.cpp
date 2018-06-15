@@ -105,6 +105,8 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs, &m_geometryBuffers));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
 		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+		for each(auto * tech in m_lightingTechs)
+			m_lightingTechMap[tech->getName()] = tech;
 
 		// Initiate specialized effects techniques
 		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));

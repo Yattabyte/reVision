@@ -17,8 +17,8 @@ HDR_Tech::~HDR_Tech()
 HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 {
 	m_fbo = 0;
-	m_texture = 0; 
-	m_enginePackage = enginePackage; 
+	m_texture = 0;
+	m_enginePackage = enginePackage;
 	Asset_Loader::load_asset(m_shaderHDR, "FX\\HDR");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
 	m_vaoLoaded = false;
@@ -41,11 +41,8 @@ HDR_Tech::HDR_Tech(EnginePackage * enginePackage)
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 
 	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-		std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", errorString);
-		return;
-	}
+	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 }
 
 void HDR_Tech::applyEffect()

@@ -80,10 +80,8 @@ Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers
 		glNamedFramebufferDrawBuffers(m_shadowFBO[x], 2, Buffers);
 
 		GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO[x], GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-			std::string errorString = std::string(reinterpret_cast<char const *>(glewGetErrorString(Status)));
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Spot light Technique", errorString);
-		}
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Spot light Technique", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
 	}
 
 	// Light Bounce Initialization
@@ -205,13 +203,13 @@ void Spot_Tech::renderShadows()
 		for each (auto &component in m_queue)
 			component->shadowPass(CAM_GEOMETRY_DYNAMIC);
 		if (m_regenSShadows && m_shader_ShadowStatic->existsYet()) {
+			m_regenSShadows = false;
 			// Render static geometry
 			m_shader_ShadowStatic->bind();
 			glNamedFramebufferDrawBuffers(m_shadowFBO[1], 3, Buffers);
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_shadowFBO[1]);
 			for each (auto &component in m_lightList)
 				component->shadowPass(CAM_GEOMETRY_STATIC);
-			m_regenSShadows = false;
 		}
 	}
 }

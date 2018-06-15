@@ -24,7 +24,13 @@ public:
 	IBL_Parallax_Tech(EnginePackage * enginePackage);
 
 
+	// Public Functions
+	void addElement();
+	void removeElement(const unsigned int & index);
+
+
 	// Interface Implementations
+	virtual const char * getName() const { return "IBL_Parallax_Tech"; }
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass();
 	virtual void applyEffect();
@@ -34,13 +40,16 @@ private:
 	// Private Attributes
 	EnginePackage * m_enginePackage;
 	bool m_regenCubemap;
-	bool m_cubeVAOLoaded;
-	GLuint m_cubeVAO;
-	Shared_Asset_Shader m_shaderEffect;
-	Shared_Asset_Primitive m_shapeCube;
-	StaticBuffer m_cubeIndirectBuffer, m_visRefUBO;
+	bool m_quadVAOLoaded, m_cubeVAOLoaded;
+	GLuint m_quadVAO, m_cubeVAO;
+	Shared_Asset_Shader m_shaderEffect, m_shaderCopy;
+	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
+	StaticBuffer m_quadIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
 	vector<Reflector_Component*> m_refList;
 	size_t m_size;
+	GLuint m_fbo, m_texture;
+	GLuint m_reflectorCount;
+	
 
 };
 #endif // IBL_PARALLAX_H

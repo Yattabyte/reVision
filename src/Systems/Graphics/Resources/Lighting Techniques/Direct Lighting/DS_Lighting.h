@@ -45,6 +45,7 @@ public:
 
 
 	// Interface Implementations
+	virtual const char * getName() const { return "DS_Lighting"; }
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	

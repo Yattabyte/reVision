@@ -1,6 +1,6 @@
 #version 460
 
-layout(location = 0) in vec3 vertex;
+layout (location = 0) in vec3 vertex;
 
 layout (location = 0) out vec2 TexCoord;
 

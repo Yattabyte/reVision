@@ -17,7 +17,7 @@ layout (std430, binding = 5) readonly buffer Reflection_Buffer {
 layout (location = 0) in vec3 CubeWorldPos;
 layout (location = 1) flat in uint BufferIndex;
 
-layout (binding = 4) uniform samplerCube TemporaryMap;
+layout (binding = 4) uniform samplerCubeArray TemporaryMap;
 layout (location = 0) out vec4 LightingColor;
 layout (location = 0) uniform bool useStencil = false;
 
@@ -32,10 +32,9 @@ vec3 ParallaxCorrectCubemap(in vec3 ReflectDir, in mat4 bboxMat, in vec3 bboxPos
 	mat4 InvBBoxMat					= inverse(bboxMat);
 	vec3 RayLS						= mat3(InvBBoxMat) * ReflectDir;
     vec3 PositionLS 				= (InvBBoxMat * vec4(WorldPos, 1)).xyz;
-    vec3 Unitary					= vec3(1);
 	
-	vec3 MaxPlaneIntersection 		= (Unitary - PositionLS) / RayLS;
-    vec3 MinPlaneIntersection 		= (-Unitary - PositionLS) / RayLS;
+	vec3 MaxPlaneIntersection 		= (vec3(1) - PositionLS) / RayLS;
+    vec3 MinPlaneIntersection 		= (vec3(-1) - PositionLS) / RayLS;
    
     vec3 LargestIntersection		= max(MaxPlaneIntersection, MinPlaneIntersection);	
 	float ClosestPoint				= min(min(LargestIntersection.x, LargestIntersection.y), LargestIntersection.z);
@@ -54,13 +53,13 @@ vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal,
 										buffers[indexes[BufferIndex]].mMatrix,
 										buffers[indexes[BufferIndex]].BoxCamPos.xyz, 
 										WorldPos.xyz	);	
-	//return							vec3(10,0,0);//texture(TemporaryMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;	
-	return							texture(TemporaryMap, CorrectedDir).xyz;		
+	//return							texture(TemporaryMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;	
+	return							texture(TemporaryMap, vec4(CorrectedDir, buffers[indexes[BufferIndex]].CubeSpot)).xyz;		
 }
 
 void main(void)
 {   
-	LightingColor						= vec4(0);	
+	LightingColor						= vec4(0, 0, 0, 1.0f);	
 	if (useStencil) 					return;
 	
 	ViewData data;
@@ -68,7 +67,7 @@ void main(void)
 	
 	const float Distance				= length(buffers[indexes[BufferIndex]].BoxCamPos.xyz - data.World_Pos.xyz);	
 	const float range 					= (1.0f / buffers[indexes[BufferIndex]].Radius);
-	const float Attenuation 			= 1.0f - (Distance * Distance) * (range * range);	
+	const float Attenuation 			= 1.0F;//1.0f - (Distance * Distance) * (range * range);	
 	if (Attenuation <= 0.0f) 			return; // Discard if outside of radius
 	
 	const vec3 ReflectionColor			= CalculateReflections(data.World_Pos.xyz, data.View_Pos.xyz, data.View_Normal, data.Roughness);

@@ -25,8 +25,7 @@ int main()
 	m_UpdaterThread->detach();
 
 	while (!(engine.shouldClose())) {
-		camera->Bind();
-		//camera->update();
+		camera->bind();
 		Tick_Primary(engine);
 	}
 

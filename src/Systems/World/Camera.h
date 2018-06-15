@@ -45,8 +45,8 @@ public:
 
 	// Public Methods
 	/** Bind this camera's shader storage buffer object (SSBO).
-	 * @brief				this makes the camera visible to all shaders at spot 1. */
-	void Bind();
+	 * @brief				this makes the camera visible to all shaders at index '1' */
+	void bind() const;
 	/** Retrieve the camera's position in world space.
 	 * @return				the camera's world position */
 	const vec3 getPosition() const { shared_lock<shared_mutex> rguard(data_mutex);  return m_cameraBuffer.EyePosition; }

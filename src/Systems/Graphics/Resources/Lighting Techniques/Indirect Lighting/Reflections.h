@@ -32,7 +32,17 @@ public:
 	Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
 
 
+	// Public Functions
+	/** Returns a type-casted reflector technique that matches the given name.
+	 * @param	c	a const char array name of the desired technique to find
+	 * @return		the technique requested */
+	template <typename T> T * getReflectorTech(const char * c) {
+		return (T*)m_refTechMap[c];
+	}
+
+
 	// Interface Implementations
+	virtual const char * getName() const { return "Reflections"; }
 	virtual void updateData(const Visibility_Token & vis_token);
 	virtual void applyPrePass(const Visibility_Token & vis_token);
 	virtual void applyLighting(const Visibility_Token & vis_token);	
@@ -51,6 +61,7 @@ private:
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 	vector<Reflector_Tech*> m_refTechs;
+	MappedChar<void*> m_refTechMap;
 };
 
 #endif // REFLECTIONS_H

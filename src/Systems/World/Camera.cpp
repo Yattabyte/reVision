@@ -76,7 +76,7 @@ void Camera::update()
 	m_buffer.write_immediate(0, sizeof(Camera_Buffer), &m_cameraBuffer);
 }
 
-void Camera::Bind()
+void Camera::bind() const
 {
 	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 1);
 }

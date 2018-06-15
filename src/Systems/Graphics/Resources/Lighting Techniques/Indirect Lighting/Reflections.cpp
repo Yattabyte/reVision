@@ -39,8 +39,10 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 	m_refTechs.push_back(new Sky_Ref_Tech());
-	m_refTechs.push_back(new  IBL_Parallax_Tech(m_enginePackage));
+	m_refTechs.push_back(new IBL_Parallax_Tech(m_enginePackage));
 	m_refTechs.push_back(new SSR_Tech(m_enginePackage, geometryFBO, lightingFBO, reflectionFBO));
+	for each(auto * tech in m_refTechs)
+		m_refTechMap[tech->getName()] = tech;
 }
 
 void Reflections::updateData(const Visibility_Token & vis_token)
