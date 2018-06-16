@@ -122,10 +122,11 @@ struct Spot_Cheap_Struct {
 /** Reflectors use this for their transform data. */
 struct Reflection_Struct {
 	mat4 mMatrix = mat4(1.0f);
+	mat4 rotMatrix = mat4(1.0f);
 	vec4 BoxCamPos = vec4(0.0f);
-	float Radius = 1.0f;
+	vec4 BoxScale = vec4(0.0f);
 	int CubeSpot = 0;
-	vec2 padding;
+	vec3 padding;
 };
 
 /** GI radiance hints class uses this for its viewport data. */

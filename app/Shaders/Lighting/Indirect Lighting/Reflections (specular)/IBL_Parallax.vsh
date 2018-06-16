@@ -6,8 +6,9 @@ layout (location = 0) in vec3 vertex;
 
 struct Reflection_Struct {
 	mat4 mMatrix;
+	mat4 rotMatrix;
 	vec4 BoxCamPos;
-	float Radius;
+	vec4 BoxScale;
 	int CubeSpot;
 };
 layout (std430, binding = 3) readonly buffer Visibility_Buffer {

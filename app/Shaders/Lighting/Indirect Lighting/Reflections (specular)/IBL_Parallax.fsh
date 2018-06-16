@@ -3,8 +3,9 @@
 
 struct Reflection_Struct {
 	mat4 mMatrix;
+	mat4 rotMatrix;
 	vec4 BoxCamPos;
-	float Radius;
+	vec4 BoxScale;
 	int CubeSpot;
 };
 layout (std430, binding = 3) readonly buffer Visibility_Buffer {
@@ -64,17 +65,14 @@ void main(void)
 	ViewData data;
 	GetFragmentData(CalcTexCoord(), data);
 	
-	const float Distance				= length(buffers[indexes[BufferIndex]].BoxCamPos.xyz - data.World_Pos.xyz);	
-	const float range 					= (1.0f / buffers[indexes[BufferIndex]].Radius);
-	const float Attenuation 			= 1.0F;//1.0f - (Distance * Distance) * (range * range);	
-	if (Attenuation <= 0.0f) 			return; // Discard if outside of radius
-	
-	const vec3 BBoxMin 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz - vec3(21.0f);
-	const vec3 BBoxMax 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz + vec3(21.0f);
-	if (data.World_Pos.x < BBoxMin.x || data.World_Pos.y < BBoxMin.y || data.World_Pos.z < BBoxMin.z
-	|| data.World_Pos.x > BBoxMax.x || data.World_Pos.y > BBoxMax.y || data.World_Pos.z > BBoxMax.z)
+	vec4 rotWorldPos					= buffers[indexes[BufferIndex]].rotMatrix * vec4(data.World_Pos.xyz, 1.0f);
+	rotWorldPos.xyz /= rotWorldPos.w;
+	const vec3 BBoxMin 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz - buffers[indexes[BufferIndex]].BoxScale.xyz;
+	const vec3 BBoxMax 					= buffers[indexes[BufferIndex]].BoxCamPos.xyz + buffers[indexes[BufferIndex]].BoxScale.xyz;
+	if (rotWorldPos.x < BBoxMin.x || rotWorldPos.y < BBoxMin.y || rotWorldPos.z < BBoxMin.z
+	|| rotWorldPos.x > BBoxMax.x || rotWorldPos.y > BBoxMax.y || rotWorldPos.z > BBoxMax.z)
 		discard;
 	
 	const vec3 ReflectionColor			= CalculateReflections(data.World_Pos.xyz, data.View_Pos.xyz, data.View_Normal, data.Roughness);
-	LightingColor						= vec4(ReflectionColor, Attenuation);	
+	LightingColor						= vec4(ReflectionColor, 1.0f);	
 }

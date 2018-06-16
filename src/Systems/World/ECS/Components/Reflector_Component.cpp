@@ -27,10 +27,6 @@ Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
 	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->CubeSpot = m_uboIndex;
 	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->addElement();
 		
-	
-	m_commandMap["Set_Reflector_Radius"] = [&](const ECS_Command & payload) {
-		if (payload.isType<float>()) setRadius(payload.toType<float>());
-	};
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
@@ -48,17 +44,13 @@ Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
 	}
 }
 
-void Reflector_Component::setRadius(const float & radius)
-{
-	m_radius = radius;
-	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->Radius = radius;
-}
-
 void Reflector_Component::setTransform(const Transform & transform)
 {
 	Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->mMatrix = transform.m_modelMatrix;
+	uboData->rotMatrix = glm::inverse(glm::toMat4(transform.m_orientation));
 	uboData->BoxCamPos.xyz = transform.m_position;
+	uboData->BoxScale.xyz = transform.m_scale;
 	m_position = transform.m_position;
 	m_scale = transform.m_scale;
 

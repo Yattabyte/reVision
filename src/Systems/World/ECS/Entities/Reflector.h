@@ -14,7 +14,6 @@ protected:
 	virtual ~Reflector_Entity() {};
 	/** Constructor. */
 	Reflector_Entity() {
-		m_commandMap["Change_Reflector_Radius"] = [&](const ECS_Command & payload) {changeRadius(payload); };
 		m_commandMap["Change_Transform"] = [&](const ECS_Command & payload) {changeTransform(payload); };
 	}
 
@@ -27,10 +26,6 @@ protected:
 private:
 	// Private Functions
 	// Forward Commands
-	void changeRadius(const ECS_Command & payload) {
-		if (payload.isType<float>())
-			m_light->sendCommand("Set_Reflector_Radius", payload.toType<float>());
-	}
 	void changeTransform(const ECS_Command & payload) {
 		if (payload.isType<Transform>())
 			m_light->sendCommand("Set_Transform", payload.toType<Transform>());
