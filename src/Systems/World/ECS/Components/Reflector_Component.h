@@ -42,7 +42,6 @@ protected:
 	// Protected Attributes
 	unsigned int m_uboIndex;
 	VB_Ptr * m_uboBuffer;
-	float m_radius;
 	vec3 m_position;
 	vec3 m_scale;
 	Camera m_cameras[6];
@@ -52,9 +51,6 @@ protected:
 
 private:
 	// Private Functions
-	/** Set the reflector radius to use.
-	 * @param	radius		the radius to use */
-	void setRadius(const float & radius);
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);

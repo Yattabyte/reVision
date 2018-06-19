@@ -19,7 +19,6 @@ Reflector_Component::~Reflector_Component()
 Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
 { 
 	m_enginePackage = enginePackage;
-	m_radius = 1.0f;
 	m_position = vec3(0.0f);
 	m_scale = vec3(1.0f);
 	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
@@ -53,10 +52,11 @@ void Reflector_Component::setTransform(const Transform & transform)
 	uboData->BoxScale.xyz = transform.m_scale;
 	m_position = transform.m_position;
 	m_scale = transform.m_scale;
+	const float largest = pow(max(max(m_scale.x, m_scale.y), m_scale.z), 2.0f);
 
 	for (int x = 0; x < 6; ++x) {
 		m_cameras[x].setPosition(m_position);
-		m_cameras[x].setFarPlane(max(max(max(m_scale.x, m_scale.y), m_scale.z), m_radius*m_radius));
+		m_cameras[x].setFarPlane(largest);
 		m_cameras[x].update();
 	}
 }

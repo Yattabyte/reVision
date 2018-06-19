@@ -3,6 +3,7 @@
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Systems\World\World.h"
 #include "Utilities\EnginePackage.h"
+#include <minmax.h>
 
 
 IBL_Parallax_Tech::~IBL_Parallax_Tech()
@@ -17,10 +18,11 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
 	m_enginePackage = enginePackage;
 
 	Asset_Loader::load_asset(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax");
+	Asset_Loader::load_asset(m_shaderConvolute, "Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution");
 	Asset_Loader::load_asset(m_shaderCopy, "Utilities\\2D_To_Cubemap");
 	Asset_Loader::load_asset(m_shapeQuad, "quad");
-	Asset_Loader::load_asset(m_shapeCube, "box"); 
-	
+	Asset_Loader::load_asset(m_shapeCube, "box");
+
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
@@ -42,12 +44,19 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
 	m_texture = 0;
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_texture);
-	glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB16F, 512.0f, 512.0f, 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_LOD, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LOD, 5);
+	glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	for (int x = 0; x < 6; ++x) {
+		const ivec2 size(floor(512.0f / pow(2, x)));
+		glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
+	}
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 	const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
@@ -58,12 +67,19 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
 void IBL_Parallax_Tech::addElement()
 {
 	m_reflectorCount++;
-	glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB16F, 512.0f, 512.0f, m_reflectorCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
-	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_texture, GL_TEXTURE_MIN_LOD, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LOD, 5);
+	glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
+	glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	for (int x = 0; x < 6; ++x) {
+		const ivec2 size(floor(512.0f / pow(2, x)));
+		glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, m_reflectorCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
+	}
 }
 
 void IBL_Parallax_Tech::removeElement(const unsigned int & index)
@@ -88,8 +104,10 @@ void IBL_Parallax_Tech::applyPrePass()
 {
 	if (m_quadVAOLoaded && m_regenCubemap && m_shaderCopy->existsYet()) {
 		m_regenCubemap = false;
-		float width = m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH);
-		float height = m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT);
+
+		// Get the renderer size, and then change it to the cubemap size
+		const float width = m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH);
+		const float height = m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT);
 		m_enginePackage->setPreference(PreferenceState::C_WINDOW_WIDTH, 512.0f);
 		m_enginePackage->setPreference(PreferenceState::C_WINDOW_HEIGHT, 512.0f);
 
@@ -97,9 +115,14 @@ void IBL_Parallax_Tech::applyPrePass()
 		vector<Reflector_Component*> listCopy = m_refList;
 		for each (const auto & component in listCopy) {
 			const int componentIndex = component->getBufferIndex() * 6;
+
+			// Render 6 faces
 			for (int x = 0; x < 6; ++x) {
+				// Render frame from reflector's perspective
 				component->bindCamera(x);
 				graphics->update(0.0f);
+
+				// Copy lighting frame into cube-face
 				graphics->m_lightingFBO.bindForReading();
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 				m_shaderCopy->bind();
@@ -108,11 +131,38 @@ void IBL_Parallax_Tech::applyPrePass()
 				m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
+
+			// Once cubemap is generated, convolute it
+			m_shaderConvolute->bind();
+			m_shaderConvolute->Set_Uniform(0, componentIndex);
+			glBindTextureUnit(0, m_texture);
+			ivec2 read_size = ivec2(512);
+			for (int r = 1; r < 6; ++r) {
+				m_shaderConvolute->Set_Uniform(2, float(r)/5.0f);
+
+				// Ensure we are reading from MIP level r - 1
+				glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, r - 1);
+				glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, r - 1);
+				// Ensure we are writing to MIP level r
+				ivec2 write_size(floor(512.0f / pow(2, r)));
+				glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, r);
+				glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
+				// Convolute the 6 faces for this roughness level
+				for (int x = 0; x < 6; ++x) {
+					m_shaderConvolute->Set_Uniform(1, x);
+					glDrawArraysIndirect(GL_TRIANGLES, 0);
+				}
+				read_size = write_size;
+			}
+			glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
+			glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
+			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 		}
+
+		// Revert state, change renderer size back to previous values
 		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 		Asset_Shader::Release();
 		m_enginePackage->m_Camera.bind();
-
 		m_enginePackage->setPreference(PreferenceState::C_WINDOW_WIDTH, width);
 		m_enginePackage->setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 	}

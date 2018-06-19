@@ -54,7 +54,7 @@ vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal,
 										buffers[indexes[BufferIndex]].BoxCamPos.xyz, 
 										WorldPos.xyz	);	
 	//return							texture(TemporaryMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;	
-	return							texture(TemporaryMap, vec4(CorrectedDir, buffers[indexes[BufferIndex]].CubeSpot)).xyz;		
+	return							textureLod(TemporaryMap, vec4(CorrectedDir, buffers[indexes[BufferIndex]].CubeSpot), Roughness * 5.0f).xyz;		
 }
 
 void main(void)

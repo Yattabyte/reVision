@@ -143,7 +143,7 @@ void System_World::loadWorld()
 		ref2->sendCommand("Change_Transform", Transform(vec3(44, 15, 0), quat(1, 0, 0, 0), vec3(21)));
 
 		Entity * ref = m_entityFactory.createEntity("Reflector");
-		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(45.0f), vec3(0, 1, 0)), vec3(21)));
+		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), quat(1, 0, 0, 0), vec3(21)));
 		
 		/*auto spot = m_entityFactory.createEntity("PointLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));
@@ -154,7 +154,7 @@ void System_World::loadWorld()
 
 		Entity * h = m_entityFactory.createEntity("Prop");
 		h->sendCommand("Load_Model", string("Test\\ref_test.obj"));
-		h->sendCommand("Change_Transform", Transform(vec3(015, 0, 22), quat(1, 0, 0, 0), vec3(1)));
+		h->sendCommand("Change_Transform", Transform(vec3(015, 0, -18), quat(1, 0, 0, 0), vec3(1)));
 
 		Entity * m1 = m_entityFactory.createEntity("Prop");
 		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));

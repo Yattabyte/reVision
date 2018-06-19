@@ -42,7 +42,7 @@ private:
 	bool m_regenCubemap;
 	bool m_quadVAOLoaded, m_cubeVAOLoaded;
 	GLuint m_quadVAO, m_cubeVAO;
-	Shared_Asset_Shader m_shaderEffect, m_shaderCopy;
+	Shared_Asset_Shader m_shaderEffect, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	StaticBuffer m_quadIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
 	vector<Reflector_Component*> m_refList;
