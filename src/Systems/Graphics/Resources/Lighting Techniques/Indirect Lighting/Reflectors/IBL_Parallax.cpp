@@ -114,7 +114,7 @@ void IBL_Parallax_Tech::applyPrePass()
 		auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
 		vector<Reflector_Component*> listCopy = m_refList;
 		for each (const auto & component in listCopy) {
-			const int componentIndex = component->getBufferIndex() * 6;
+			const int componentIndex = component->getBufferIndex();
 
 			// Render 6 faces
 			for (int x = 0; x < 6; ++x) {
@@ -126,7 +126,7 @@ void IBL_Parallax_Tech::applyPrePass()
 				graphics->m_lightingFBO.bindForReading();
 				glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 				m_shaderCopy->bind();
-				m_shaderCopy->Set_Uniform(0, x + componentIndex);
+				m_shaderCopy->Set_Uniform(0, x + (componentIndex*6));
 				glBindVertexArray(m_quadVAO);
 				m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
