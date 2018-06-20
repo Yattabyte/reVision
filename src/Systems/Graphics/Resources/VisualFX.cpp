@@ -100,7 +100,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 		m_shaderGB_A->bind();
 		m_shaderGB_A->Set_Uniform(0, horizontal);
-		m_shaderGB->Set_Uniform(1, size);
+		m_shaderGB_A->Set_Uniform(1, size);
 
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

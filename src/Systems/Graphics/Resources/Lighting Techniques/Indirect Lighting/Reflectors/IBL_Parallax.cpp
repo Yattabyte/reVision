@@ -104,7 +104,7 @@ void IBL_Parallax_Tech::updateData(const Visibility_Token & vis_token)
 
 void IBL_Parallax_Tech::applyPrePass()
 {
-	if (m_quadVAOLoaded && m_regenCubemap && m_shaderCopy->existsYet()) {
+	if (m_quadVAOLoaded && m_regenCubemap && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet()) {
 		m_regenCubemap = false;
 
 		// Get the renderer size, and then change it to the cubemap size

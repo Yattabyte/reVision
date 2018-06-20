@@ -121,11 +121,11 @@ void SSR_Tech::updateMipChain()
 		m_shaderBlur->bind();
 		glBindTextureUnit(0, m_texture);
 		for (int horizontal = 0; horizontal < 2; ++horizontal) {
-			Asset_Shader::Set_Uniform(0, horizontal);
+			m_shaderBlur->Set_Uniform(0, horizontal);
 			ivec2 read_size = m_renderSize;
 			for (int x = 1; x < 6; ++x) {
 				// Ensure we are reading from MIP level x - 1
-				Asset_Shader::Set_Uniform(1, read_size);
+				m_shaderBlur->Set_Uniform(1, read_size);
 				glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, x - 1);
 				glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, x - 1);
 				// Ensure we are writing to MIP level x

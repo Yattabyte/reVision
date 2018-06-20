@@ -143,9 +143,7 @@ void Directional_Tech::updateDataGI(const Visibility_Token & vis_token, const un
 	if (m_sizeGI && m_shader_Bounce->existsYet()) {
 		const GLuint dirDraws = bounceResolution * m_sizeGI;
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);
-		m_shader_Bounce->bind();
 		m_shader_Bounce->Set_Uniform(0, (int)m_sizeGI);
-		Asset_Shader::Release();
 	}
 }
 

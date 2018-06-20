@@ -1,6 +1,5 @@
 #include "Assets\Asset_Shader.h"
 #include "Managers\Message_Manager.h"
-#include "GLM\gtc\type_ptr.hpp"
 #include <fstream>
 
 
@@ -31,76 +30,6 @@ void Asset_Shader::Release()
 {
 	glUseProgram(0);
 }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const bool & b) { glUniform1i(i, b); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const int & o) { glUniform1i(i, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const double & o) { glUniform1d(i, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const float & o) { glUniform1f(i, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec2 & o) { glUniform2f(i, o.x, o.y); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec3 & o) { glUniform3f(i, o.x, o.y, o.z); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec4 & o) { glUniform4f(i, o.x, o.y, o.z, o.w); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const ivec2 & o) { glUniform2i(i, o.x, o.y); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const ivec3 & o) { glUniform3i(i, o.x, o.y, o.z); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const ivec4 & o) { glUniform4i(i, o.x, o.y, o.z, o.w); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const mat3 & o) { glUniformMatrix3fv(i, 1, GL_FALSE, &o[0][0]); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const mat4 & o) { glUniformMatrix4fv(i, 1, GL_FALSE, &o[0][0]); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const int * o) { glUniform1iv(i, 1, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const double * o) { glUniform1dv(i, 1, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const float * o) { glUniform1fv(i, 1, o); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec2 * o) { glUniform2fv(i, 1, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec3 * o) { glUniform3fv(i, 1, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const vec4 * o) { glUniform4fv(i, 1, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const mat3 * o) { glUniformMatrix3fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform(const GLuint & i, const mat4 * o) { glUniformMatrix4fv(i, 1, GL_FALSE, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const int & o, const int & size) { glUniform1iv(i, size, &o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const double & o, const int & size) { glUniform1dv(i, size, &o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const float & o, const int & size) { glUniform1fv(i, size, &o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec2 & o, const int & size) { glUniform2fv(i, size, glm::value_ptr(o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec3 & o, const int & size) { glUniform3fv(i, size, glm::value_ptr(o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec4 & o, const int & size) { glUniform4fv(i, size, glm::value_ptr(o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const mat4 & o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const int * o, const int & size) { glUniform1iv(i, size, o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const double * o, const int & size) { glUniform1dv(i, size, o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const float * o, const int & size) { glUniform1fv(i, size, o); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec2 * o, const int & size) { glUniform2fv(i, size, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec3 * o, const int & size) { glUniform3fv(i, size, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const vec4 * o, const int & size) { glUniform4fv(i, size, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform_Array(const GLuint & i, const mat4 * o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(*o)); }
-
-void Asset_Shader::Set_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
 
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
  * @brief Uses hard-coded values

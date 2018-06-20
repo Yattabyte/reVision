@@ -162,9 +162,7 @@ void Spot_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned 
 			visArray[count++] = component->getBufferIndex();
 		m_visSpots.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &spotDraws);
-		m_shader_Bounce->bind();
 		m_shader_Bounce->Set_Uniform(0, (int)m_sizeGI);
-		Asset_Shader::Release();
 	}
 }
 
