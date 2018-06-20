@@ -35,6 +35,8 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+	GLuint quad6Data[4] = { 6, 6, 0, 0 }; // count, primCount, first, reserved
+	m_quad6FaceIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data);
 	GLuint cubeData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
 	m_cubeIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, cubeData);
 	m_visRefUBO = StaticBuffer(sizeof(GLuint) * 500, 0);
@@ -136,24 +138,23 @@ void IBL_Parallax_Tech::applyPrePass()
 			m_shaderConvolute->bind();
 			m_shaderConvolute->Set_Uniform(0, componentIndex);
 			glBindTextureUnit(0, m_texture);
-			ivec2 read_size = ivec2(512);
-			for (int r = 1; r < 6; ++r) {
-				m_shaderConvolute->Set_Uniform(2, float(r)/5.0f);
+			m_quad6FaceIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			for (float r = 1; r < 6; ++r) {
+				// Ensure we are writing to MIP level r
+				const float write_size = max(1.0f, (floor(512.0f / pow(2, r))));
+				glViewport(0, 0, write_size, write_size);
+				m_shaderConvolute->Set_Uniform(1, r /5.0f);
+				glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, r);
 
 				// Ensure we are reading from MIP level r - 1
-				glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, r - 1);
-				glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, r - 1);
-				// Ensure we are writing to MIP level r
-				ivec2 write_size(floor(512.0f / pow(2, r)));
-				glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, r);
-				glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
-				// Convolute the 6 faces for this roughness level
-				for (int x = 0; x < 6; ++x) {
-					m_shaderConvolute->Set_Uniform(1, x);
-					glDrawArraysIndirect(GL_TRIANGLES, 0);
-				}
-				read_size = write_size;
+				glTextureParameterf(m_texture, GL_TEXTURE_BASE_LEVEL, r - 1.0f);
+				glTextureParameterf(m_texture, GL_TEXTURE_MAX_LEVEL, r - 1.0f);
+
+				// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
+				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
+
+			// Reset texture, so it can be used for other component reflections
 			glTextureParameteri(m_texture, GL_TEXTURE_BASE_LEVEL, 0);
 			glTextureParameteri(m_texture, GL_TEXTURE_MAX_LEVEL, 5);
 			glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);

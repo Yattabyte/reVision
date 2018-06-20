@@ -1,13 +1,18 @@
 #version 460
 #define M_PI 3.1415926535897932384626433832795
 
+// Uniform Inputs
 layout (binding = 0) uniform samplerCubeArray CubeMapSampler;
 layout (location = 0) uniform int cubeIndex = 0;
-layout (location = 1) uniform int cubeFace = 0;
-layout (location = 2) uniform float roughness = 1.0f;
+layout (location = 1) uniform float roughness = 1.0f;
+
+// Inputs
+layout (location = 0) in vec2 TexCoord;
+layout (location = 1) flat in int cubeFace;
+
+// Outputs
 layout (location = 0) out vec3 fragColor;  
 
-layout (location = 0) in vec2 TexCoord;
 
 // Hammersley function (return random low-discrepency points)
 vec2 Hammersley(uint i, uint N)

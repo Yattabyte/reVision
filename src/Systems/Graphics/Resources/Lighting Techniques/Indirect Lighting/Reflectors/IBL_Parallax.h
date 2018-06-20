@@ -44,7 +44,7 @@ private:
 	GLuint m_quadVAO, m_cubeVAO;
 	Shared_Asset_Shader m_shaderEffect, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
-	StaticBuffer m_quadIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
+	StaticBuffer m_quadIndirectBuffer, m_quad6FaceIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
 	vector<Reflector_Component*> m_refList;
 	size_t m_size;
 	GLuint m_fbo, m_texture;
