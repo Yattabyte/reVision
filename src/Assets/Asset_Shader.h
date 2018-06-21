@@ -28,11 +28,12 @@ typedef shared_ptr<Asset_Shader> Shared_Asset_Shader;
 class Asset_Shader : public Asset
 {
 public:	
-	// (de)Constructors
 	/** Destroy the Shader. */
 	~Asset_Shader();
-	/** Construct the Shader. */
-	Asset_Shader(const string & filename);
+
+
+	/** Attempts to create an asset from disk or share one if it already exists */
+	static void Create(Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded = true);
 
 
 	// Public Methods
@@ -127,15 +128,12 @@ public:
 	// Public Attributes
 	GLuint m_glProgramID, m_glVertexID, m_glFragmentID, m_glGeometryID; // OpenGL ID's
 	string m_vertexText, m_fragmentText, m_geometryText; // Text Data
-};
 
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded = true);
+private:
+	/** Construct the Shader. */
+	Asset_Shader(const string & filename);
+	friend class Asset_Manager;
 };
 
 /**

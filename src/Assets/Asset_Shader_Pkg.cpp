@@ -4,6 +4,20 @@
 #include <fstream>
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Shader_Pkg & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Shader_Pkg>(userAsset, ""))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Shader_Pkg>(userAsset, "");
+	Asset_Manager::Add_Work_Order(new Shader_Pkg_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Shader_Pkg::~Asset_Shader_Pkg()
 {
 }
@@ -13,44 +27,28 @@ Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
 	m_packageText = "";
 }
 
+void Asset_Shader_Pkg::Create(Shared_Asset_Shader_Pkg & userAsset, const string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Shader_Pkg>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
+	bool found = File_Reader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
+	if (!found) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_PACKAGE);
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Shader_Pkg, Shader_Pkg_WorkOrder>(userAsset, threaded, fullDirectory, filename);
+}
+
 string Asset_Shader_Pkg::getPackageText() const
 {
 	return m_packageText;
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Shader_Pkg & asset)
-{	
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Shader_Pkg>(asset, ""))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Shader_Pkg>(asset, "");
-	Asset_Manager::Add_Work_Order(new Shader_Pkg_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Shader_Pkg & user, const string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Shader_Pkg>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
-		bool found = File_Reader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
-		if (!found) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_PACKAGE);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Shader_Pkg, Shader_Pkg_WorkOrder>(user, threaded, fullDirectory, filename);
-	}
 }
 
 void Shader_Pkg_WorkOrder::initializeOrder()
@@ -82,7 +80,7 @@ void Shader_Pkg_WorkOrder::parse()
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 		Shared_Asset_Shader_Pkg package;
-		Asset_Loader::load_asset(package, directory, false);
+		Asset_Shader_Pkg::Create(package, directory, false);
 		string left = input.substr(0, spot);
 		string right = input.substr(spot + 1 + qspot2);
 		input = left + package->getPackageText() + right;

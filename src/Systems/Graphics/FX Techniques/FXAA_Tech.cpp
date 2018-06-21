@@ -8,8 +8,8 @@ FXAA_Tech::~FXAA_Tech()
 
 FXAA_Tech::FXAA_Tech()
 {
-	Asset_Loader::load_asset(m_shaderFXAA, "FX\\FXAA");
-	Asset_Loader::load_asset(m_shapeQuad, "quad"); 
+	Asset_Shader::Create(m_shaderFXAA, "FX\\FXAA");
+	Asset_Primitive::Create(m_shapeQuad, "quad"); 
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO(); 
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

@@ -33,15 +33,14 @@ typedef shared_ptr<Asset_Material> Shared_Asset_Material;
 class Asset_Material : public Asset
 {
 public:
-	// (de)Constructors
 	/** Destroy the Material. */
 	~Asset_Material();
-	/** Construct the Material. */
-	Asset_Material(const std::string & filename);
-	/** Construct the Material with a specific index.*/
-	Asset_Material(const std::string & filename, const GLuint & spot);
-	/** Construct the Material with a manual set of textures, and a specific index. */
-	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
+	
+
+	/** Attempts to create an asset from disk or share one if it already exists */
+	static void Create(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
+	/** Attempts to create an asset from disk or share one if it already exists */
+	static void Create(Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded = true);
 
 
 	// Public Methods
@@ -66,17 +65,16 @@ public:
 	GLubyte * m_materialData;
 	vec2 m_size;
 	string m_textures[MAX_PHYSICAL_IMAGES];
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
-	
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Material & user, const std::string & material_filename, const bool & threaded = true);
+
+private:
+	/** Construct the Material. */
+	Asset_Material(const std::string & filename);
+	/** Construct the Material with a specific index.*/
+	Asset_Material(const std::string & filename, const GLuint & spot);
+	/** Construct the Material with a manual set of textures, and a specific index. */
+	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
+	friend class Asset_Manager;
 };
 
 /**

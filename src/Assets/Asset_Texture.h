@@ -23,13 +23,11 @@ typedef shared_ptr<Asset_Texture> Shared_Asset_Texture;
 class Asset_Texture : public Asset
 {
 public:
-	// (de)Constructors
 	/** Destroy the Texture. */
 	~Asset_Texture();
-	/** Construct the Texture. */
-	Asset_Texture(const string & filename);
-	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
-	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);
+
+
+	static void Create(Shared_Asset_Texture & userAsset, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 
 
 	// Public Methods
@@ -44,14 +42,14 @@ public:
 	GLubyte	* m_pixelData;
 	bool m_mipmap;
 	bool m_anis;
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
+
+private:
+	/** Construct the Texture. */
+	Asset_Texture(const string & filename);
+	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
+	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);/** Attempts to create an asset from disk or share one if it already exists */
+	friend class Asset_Manager;
 };
 
 /**

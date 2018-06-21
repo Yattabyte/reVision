@@ -8,9 +8,9 @@ Sky_Ref_Tech::~Sky_Ref_Tech()
 
 Sky_Ref_Tech::Sky_Ref_Tech()
 {
-	Asset_Loader::load_asset(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect");
-	Asset_Loader::load_asset(m_textureSky, "sky\\");
-	Asset_Loader::load_asset(m_shapeQuad, "quad");	
+	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect");
+	Asset_Cubemap::Create(m_textureSky, "sky\\");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
 	
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();

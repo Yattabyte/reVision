@@ -21,6 +21,30 @@ size_t AnimationInfo::numAnimations() const
 	return Animations.size(); 
 }
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Model & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(userAsset, "defaultModel"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Model>(userAsset, "defaultModel");
+	userAsset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.uv = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	userAsset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_bboxMin = vec3(-1);
+	userAsset->m_bboxMax = vec3(1);
+	userAsset->m_data.bones.resize(6);
+	userAsset->m_skins.resize(1);
+	Asset_Material::Create(userAsset->m_skins[0], "defaultMaterial");
+	Asset_Manager::Add_Work_Order(new Model_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Model::~Asset_Model()
 {
 	if (existsYet())
@@ -38,54 +62,27 @@ Asset_Model::Asset_Model(const string & filename) : Asset(filename)
 	m_count = 0;
 }
 
+ void Asset_Model::Create(Shared_Asset_Model & userAsset, const string & filename, const bool & threaded)
+{
+	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = DIRECTORY_MODEL + filename;
+	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Model, Model_WorkOrder>(userAsset, threaded, fullDirectory, filename);
+}
+
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Model & asset)
-{	
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(asset, "defaultModel"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Model>(asset, "defaultModel");
-	asset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->m_data.uv= vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	asset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->m_bboxMin = vec3(-1);
-	asset->m_bboxMax = vec3(1);
-	asset->m_data.bones.resize(6);
-	asset->m_skins.resize(1);
-	Asset_Loader::load_asset(asset->m_skins[0], "defaultMaterial");
-	Asset_Manager::Add_Work_Order(new Model_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Model>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
-		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Model, Model_WorkOrder>(user, threaded, fullDirectory, filename);
-	}
 }
 
 /** Calculates a Axis Aligned Bounding Box from a set of vertices.\n
@@ -285,12 +282,12 @@ void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial, co
 		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	Asset_Loader::load_asset(modelMaterial, material_textures);
+	Asset_Material::Create(modelMaterial, material_textures);
 }
 
 void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial)
 {
 	std::string materialFilename = m_filename.substr(m_filename.find("Models\\"));
 	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));
-	Asset_Loader::load_asset(modelMaterial, materialFilename);
+	Asset_Material::Create(modelMaterial, materialFilename);
 }

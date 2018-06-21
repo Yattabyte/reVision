@@ -3,6 +3,22 @@
 #include <fstream>
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Shader & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(userAsset, "defaultShader"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Shader>(userAsset, "defaultShader");
+	userAsset->m_vertexText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
+	userAsset->m_fragmentText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+	Asset_Manager::Add_Work_Order(new Shader_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Shader::~Asset_Shader()
 {
 	if (existsYet()) 
@@ -20,6 +36,29 @@ Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
 	m_geometryText = "";
 }
 
+void Asset_Shader::Create(Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = DIRECTORY_SHADER + filename;
+	bool found_vertex = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
+	bool found_fragement = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
+	if (!found_vertex)
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
+	if (!found_fragement)
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
+	if (!(found_vertex && found_fragement)) {
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Shader, Shader_WorkOrder>(userAsset, threaded, fullDirectory, filename);
+}
+
 void Asset_Shader::bind()
 {
 	shared_lock<shared_mutex> read_guard(m_mutex);
@@ -29,47 +68,6 @@ void Asset_Shader::bind()
 void Asset_Shader::Release()
 {
 	glUseProgram(0);
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Shader & asset)
-{	
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(asset, "defaultShader"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Shader>(asset, "defaultShader");
-	asset->m_vertexText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	asset->m_fragmentText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	Asset_Manager::Add_Work_Order(new Shader_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Shader & user, const string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Shader>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
-		bool found_vertex = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
-		bool found_fragement = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
-		if (!found_vertex)
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
-		if (!found_fragement)
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
-		if ( !(found_vertex && found_fragement) ) {
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Shader, Shader_WorkOrder>(user, threaded, fullDirectory, filename);
-	}
 }
 
 void Shader_WorkOrder::initializeOrder()
@@ -111,7 +109,7 @@ void Shader_WorkOrder::Parse()
 			directory = directory.substr(qspot1+1, qspot2-1 - qspot1);
 
 			Shared_Asset_Shader_Pkg package;
-			Asset_Loader::load_asset(package, directory, false);		
+			Asset_Shader_Pkg::Create(package, directory, false);
 			string left = input.substr(0, spot);
 			string right = input.substr(spot+1 + qspot2);
 			input = left + package->getPackageText() + right;

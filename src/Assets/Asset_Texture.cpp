@@ -3,6 +3,24 @@
 #include "FreeImage.h"
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Texture & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(userAsset, "defaultTexture"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Texture>(userAsset, "defaultTexture");
+	userAsset->m_pixelData = new GLubyte[4];
+	for (int x = 0; x < 4; ++x)
+		userAsset->m_pixelData[x] = GLubyte(255);
+	userAsset->m_size = vec2(1);
+	Asset_Manager::Add_Work_Order(new Texture_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet())
@@ -26,47 +44,27 @@ Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bo
 	m_anis = a;
 }
 
+void Asset_Texture::Create(Shared_Asset_Texture & userAsset, const string & filename, const bool & mipmap, const bool & anis, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const string &fullDirectory = DIRECTORY_TEXTURE + filename;
+	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Texture, Texture_WorkOrder>(userAsset, threaded, fullDirectory, filename, GL_TEXTURE_2D, mipmap, anis);
+}
+
 void Asset_Texture::bind(const unsigned int & texture_unit)
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Texture & asset)
-{
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(asset, "defaultTexture"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Texture>(asset, "defaultTexture");
-	asset->m_pixelData = new GLubyte[4];
-	for (int x = 0; x < 4; ++x)
-		asset->m_pixelData[x] = GLubyte(255);
-	asset->m_size = vec2(1);
-	Asset_Manager::Add_Work_Order(new Texture_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Texture & user, const string & filename, const bool & mipmap, const bool & anis, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Texture>(user, filename))
-			return;
-		
-		// Check if the file/directory exists on disk
-		const string &fullDirectory = DIRECTORY_TEXTURE + filename;
-		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Texture, Texture_WorkOrder>(user, threaded, fullDirectory, filename, GL_TEXTURE_2D, mipmap, anis);
-	}
 }
 
 void Texture_WorkOrder::initializeOrder()

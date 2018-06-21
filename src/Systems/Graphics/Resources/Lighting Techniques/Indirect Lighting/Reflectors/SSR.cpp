@@ -26,10 +26,10 @@ SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Li
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 
-	Asset_Loader::load_asset(m_shaderCopy, "fx\\copyTexture");
-	Asset_Loader::load_asset(m_shaderBlur, "fx\\gaussianBlur_MIP");
-	Asset_Loader::load_asset(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Shader::Create(m_shaderCopy, "fx\\copyTexture");
+	Asset_Shader::Create(m_shaderBlur, "fx\\gaussianBlur_MIP");
+	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
 
 	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });

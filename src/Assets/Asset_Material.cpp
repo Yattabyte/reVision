@@ -6,6 +6,26 @@
 #include <math.h>
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Material & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Material>(userAsset, "defaultMaterial"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Material>(userAsset, "defaultMaterial", Material_Manager::Generate_ID());
+	userAsset->m_materialData = new GLubyte[12]{
+		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
+		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
+		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
+	};
+	userAsset->m_size = vec2(1);
+	Asset_Manager::Add_Work_Order(new Material_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Material::~Asset_Material()
 {
 	if (existsYet())
@@ -29,6 +49,57 @@ Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], cons
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 		m_textures[x] = tx[x];
 	m_matSpot = spot;
+}
+
+void Asset_Material::Create(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded)
+{
+	// Check if a copy already exists
+	shared_mutex &mutex_IO_assets = Asset_Manager::Get_Mutex_Assets();
+	auto &assets_materials = (Asset_Manager::Get_Assets_List<Asset_Material>());
+	{
+		shared_lock<shared_mutex> guard(mutex_IO_assets);
+		for each (auto &asset in assets_materials) {
+			bool identical = true;
+			shared_lock<shared_mutex> asset_guard(asset->m_mutex);
+			const Shared_Asset_Material derived_asset = dynamic_pointer_cast<Asset_Material>(asset);
+			if (derived_asset) {
+				for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
+					if (derived_asset->m_textures[x] != textures[x]) {
+						identical = false;
+						break;
+					}
+				}
+				if (identical) {
+					asset_guard.unlock();
+					asset_guard.release();
+					userAsset = derived_asset;
+					// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
+					return;
+				}
+			}
+		}
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(userAsset, threaded, "", textures, Material_Manager::Generate_ID());
+}
+
+void Asset_Material::Create(Shared_Asset_Material & userAsset, const std::string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Material>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
+	if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(userAsset, threaded, fullDirectory, filename, Material_Manager::Generate_ID());
 }
 
 void Asset_Material::setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES])
@@ -72,78 +143,6 @@ void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo
 				}
 			}
 		}
-	}
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Material & asset)
-{
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Material>(asset, "defaultMaterial"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Material>(asset, "defaultMaterial", Material_Manager::Generate_ID());
-	asset->m_materialData = new GLubyte[12] {	
-		GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255), // Albedo with full alpha
-		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), // Straight pointing normal with empty fourth channel
-		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)  // Quarter metalness (mostly dielectric), half roughness, no height, and full ambience (no occlusion)
-	};
-	asset->m_size = vec2(1);
-	Asset_Manager::Add_Work_Order(new Material_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Material & user, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded) {
-		// Check if a copy already exists
-		shared_mutex &mutex_IO_assets = Asset_Manager::Get_Mutex_Assets();
-		auto &assets_materials = (Asset_Manager::Get_Assets_List<Asset_Material>());
-		{
-			shared_lock<shared_mutex> guard(mutex_IO_assets);
-			for each (auto &asset in assets_materials) {
-				bool identical = true;
-				shared_lock<shared_mutex> asset_guard(asset->m_mutex);
-				const Shared_Asset_Material derived_asset = dynamic_pointer_cast<Asset_Material>(asset);
-				if (derived_asset) {
-					for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
-						if (derived_asset->m_textures[x] != textures[x]) {
-							identical = false;
-							break;
-						}
-					}
-					if (identical) {
-						asset_guard.unlock();
-						asset_guard.release();
-						user = derived_asset;
-						// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-						return;
-					}
-				}
-			}
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, "", textures, Material_Manager::Generate_ID());
-	}
-
-	void load_asset(Shared_Asset_Material & user, const std::string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Material>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Material, Material_WorkOrder>(user, threaded, fullDirectory, filename, Material_Manager::Generate_ID());
 	}
 }
 

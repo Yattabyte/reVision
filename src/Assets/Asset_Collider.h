@@ -9,6 +9,7 @@
 #include <btBulletDynamicsCommon.h>
 
 class Asset_Collider;
+class Asset_Manager;
 typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
 
 
@@ -18,23 +19,22 @@ typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
 class Asset_Collider : public Asset
 {
 public:
-	// (de)Constructors
 	/** Destroy the Collider. */
 	~Asset_Collider();
-	/** Construct the Collider. */
-	Asset_Collider(const string & filename);
+
+
+	/** Attempts to create an asset from disk or share one if it already exists. */
+	static void Create(Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded = true);
 
 
 	// Public Attributes
 	btCollisionShape * m_shape;
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	 void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded = true);
+
+private:
+	/** Construct the Collider. */
+	Asset_Collider(const string & filename);
+	friend class Asset_Manager;
 };
 
 /**

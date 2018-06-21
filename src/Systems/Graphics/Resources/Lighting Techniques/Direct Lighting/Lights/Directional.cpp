@@ -17,15 +17,17 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	m_size = 0;
 	m_sizeGI = 0;
 
-	Asset_Loader::load_asset(m_shader_CullDynamic, "Base Lights\\Directional\\Culling_Dynamic");
-	Asset_Loader::load_asset(m_shader_CullStatic, "Base Lights\\Directional\\Culling_Static");
-	Asset_Loader::load_asset(m_shader_ShadowDynamic, "Base Lights\\Directional\\Shadow_Dynamic");
-	Asset_Loader::load_asset(m_shader_ShadowStatic, "Base Lights\\Directional\\Shadow_Static");
-	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Directional\\Light");
-	Asset_Loader::load_asset(m_shader_Bounce, "Base Lights\\Directional\\Bounce");
+	Asset_Shader::Create(m_shader_CullDynamic, "Base Lights\\Directional\\Culling_Dynamic");
+	Asset_Shader::Create(m_shader_CullStatic, "Base Lights\\Directional\\Culling_Static");
+	Asset_Shader::Create(m_shader_ShadowDynamic, "Base Lights\\Directional\\Shadow_Dynamic");
+	Asset_Shader::Create(m_shader_ShadowStatic, "Base Lights\\Directional\\Shadow_Static");
+	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Directional\\Light");
+	Asset_Shader::Create(m_shader_Bounce, "Base Lights\\Directional\\Bounce");
+	
+	Asset_Manager::Create("shader", m_shader_Lighting, "Base Lights\\Directional\\Light");
 
 	// Primitive Loading
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() {

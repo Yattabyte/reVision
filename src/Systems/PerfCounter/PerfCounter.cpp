@@ -20,9 +20,9 @@ System_PerfCounter::System_PerfCounter()
 void System_PerfCounter::initialize(EnginePackage * enginePackage)
 {
 	m_enginePackage = enginePackage;
-	Asset_Loader::load_asset(m_numberTexture, "numbers.png");
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
-	Asset_Loader::load_asset(m_shader, "Utilities\\numberPrint");
+	Asset_Texture::Create(m_numberTexture, "numbers.png");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
+	Asset_Shader::Create(m_shader, "Utilities\\numberPrint");
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() {
 		m_shapeQuad->updateVAO(m_quadVAO);

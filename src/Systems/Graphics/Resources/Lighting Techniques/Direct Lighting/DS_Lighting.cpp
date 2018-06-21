@@ -33,7 +33,7 @@ DS_Lighting::DS_Lighting(
 	m_baseTechs = baseTechs;
 
 	// Load Assets
-	Asset_Loader::load_asset(m_shapeCube, "box");
+	Asset_Primitive::Create(m_shapeCube, "box");
 	m_cubeVAOLoaded = false;
 	m_cubeVAO = Asset_Primitive::Generate_VAO();
 

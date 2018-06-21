@@ -80,7 +80,7 @@ public:
 	/** Loads a preference file from disk.
 	 * @param	filename	the relative path to the preference file to load */
 	void LoadFile(const string & filename) {
-		Asset_Loader::load_asset(m_preferences, filename, PreferenceState::Preference_Strings(), false);
+		Asset_Config::Create(m_preferences, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void Save() {

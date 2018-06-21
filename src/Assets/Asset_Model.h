@@ -50,11 +50,12 @@ struct AnimationInfo {
 class Asset_Model : public Asset
 {
 public:	
-	// (de)Constructors
 	/** Destroy the Model. */
 	~Asset_Model();
-	/** Construct the Model. */
-	Asset_Model(const string & filename);
+
+
+	/** Attempts to create an asset from disk or share one if it already exists. */
+	static void Create(Shared_Asset_Model & userAsset, const string & filename, const bool & threaded = true);
 
 
 	// Public Methods
@@ -73,14 +74,12 @@ public:
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Model & user, const string & filename, const bool & threaded = true);
+
+private:
+	/** Construct the Model. */
+	Asset_Model(const string & filename);
+	friend class Asset_Manager;
 };
 
 /**

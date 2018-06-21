@@ -140,14 +140,13 @@ public:
 	/** Notifies all the queued up observers that their assets have finished finalization.
 	 * @note				is called from the main thread only to ensure proper synchronization. */
 	static void Notify_Observers();
-
+	/** Returns the Model Manager. */
 	static ModelManager * Get_Model_Manager();
 
 
 private:
 	/** Nested Asset Worker
 	 * @brief is kind of pointless, but this can be made much better
-	 * @todo make the material buffer have add/remove functions, and control sending its data to the GPU. Also store removed spots here.
 	 **/
 	static class Assets_Worker
 	{

@@ -4,6 +4,21 @@
 #include "assimp\postprocess.h"
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Collider & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(userAsset, "defaultCollider"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Collider>(userAsset, "defaultCollider");
+	userAsset->m_shape = new btBoxShape(btVector3(1, 1, 1));
+	Asset_Manager::Add_Work_Order(new Collider_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Collider::~Asset_Collider()
 {
 	if (m_shape != nullptr)
@@ -15,39 +30,22 @@ Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 	m_shape = nullptr;
 }
 
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Collider & asset)
+void Asset_Collider::Create(Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(asset, "defaultCollider"))
+	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(userAsset, filename))
 		return;
-	
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Collider>(asset, "defaultCollider");
-	asset->m_shape = new btBoxShape(btVector3(1, 1, 1));
-	Asset_Manager::Add_Work_Order(new Collider_WorkOrder(asset, ""), true);
-}
 
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Collider & user, const string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
-		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Collider, Collider_WorkOrder>(user, threaded, fullDirectory, filename);
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
+	if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		fetch_default_asset(userAsset);
+		return;
 	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Collider, Collider_WorkOrder>(userAsset, threaded, fullDirectory, filename);
 }
 
 void Collider_WorkOrder::initializeOrder()

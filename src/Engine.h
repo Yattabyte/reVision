@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.172";
+constexpr char ENGINE_VERSION[]	= "0.173";
 
 #include <map>
 #include <shared_mutex>
@@ -101,7 +101,6 @@ private:
  * This section contains all of the asset types the engine currently supports.\n
  * All assets require doing the following:
  *		- Re-implementing the base asset class
- *		- Overloading the load_asset function in the Asset_Loader namespace
  *		- Define a custom work order class tailored for use in the asset loader (re-implement base work order).
  *		<br>
  *		

@@ -17,11 +17,11 @@ Model_Technique::Model_Technique(Geometry_FBO * geometryFBO, VectorBuffer<Geomet
 	m_geometryDynamicSSBO = geometrySSBO;
 	
 	// Asset Loading
-	Asset_Loader::load_asset(m_shaderCull, "Geometry\\culling");
-	Asset_Loader::load_asset(m_shaderGeometry, "Geometry\\geometry");
+	Asset_Shader::Create(m_shaderCull, "Geometry\\culling");
+	Asset_Shader::Create(m_shaderGeometry, "Geometry\\geometry");
 
 	// Cube Loading
-	Asset_Loader::load_asset(m_shapeCube, "box");
+	Asset_Primitive::Create(m_shapeCube, "box");
 	m_cubeVAOLoaded = false;
 	m_cubeVAO = Asset_Primitive::Generate_VAO();
 	m_shapeCube->addCallback(this, [&]() {

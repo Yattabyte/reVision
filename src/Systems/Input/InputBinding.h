@@ -19,7 +19,7 @@ public:
 	~InputBinding() {}
 	/** Construct a key-binding.
 	 * @param	filename	an optional relative path to a key-bind file to load. Defaults to binds.cfg */
-	InputBinding(const std::string & filename = "binds") { Asset_Loader::load_asset(bindings, filename, ActionState::Action_Strings(), false); }
+	InputBinding(const std::string & filename = "binds") { Asset_Config::Create(bindings, filename, ActionState::Action_Strings(), false); }
 
 
 	// Public Methods

@@ -22,11 +22,10 @@ typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
 class Asset_Cubemap : public Asset
 {
 public:
-	// (de)Constructors
 	/** Destroy the Cubemap. */
 	~Asset_Cubemap();
-	/** Construct the Cubemap. */
-	Asset_Cubemap(const std::string & filename);
+	/** Attempts to create an asset from disk or share one if it already exists. */
+	static void Create(Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
 
 	
 	// Public Methods
@@ -39,14 +38,12 @@ public:
 	GLuint m_glTexID;
 	vec2 m_size;
 	GLubyte	* m_pixelData[6];
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	 void load_asset(Shared_Asset_Cubemap & user, const string & filename, const bool & threaded = true);
+
+private:
+	/** Construct the Cubemap. */
+	Asset_Cubemap(const std::string & filename);
+	friend class Asset_Manager;
 };
 
 /**

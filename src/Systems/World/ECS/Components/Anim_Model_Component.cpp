@@ -115,7 +115,7 @@ void Anim_Model_Component::setModelDirectory(const string & directory)
 		m_model->removeCallback(this);
 	// Load new model
 	m_vaoLoaded = false;
-	Asset_Loader::load_asset(m_model, directory);
+	Asset_Model::Create(m_model, directory);
 	// Attach new callback
 	m_model->addCallback(this, [&]() {
 		(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);

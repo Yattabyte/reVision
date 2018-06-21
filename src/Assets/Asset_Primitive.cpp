@@ -6,6 +6,22 @@
 #include "ASSIMP\scene.h"
 
 
+/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
+ * @brief Uses hard-coded values
+ * @param	asset	a shared pointer to fill with the default asset */
+void fetch_default_asset(Shared_Asset_Primitive & userAsset)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(userAsset, "defaultPrimitive"))
+		return;
+
+	// Create hard-coded alternative
+	Asset_Manager::Create_New_Asset<Asset_Primitive>(userAsset, "defaultPrimitive");
+	userAsset->m_dataVertex = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_dataUV = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	Asset_Manager::Add_Work_Order(new Primitive_WorkOrder(userAsset, ""), true);
+}
+
 Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
@@ -16,6 +32,24 @@ Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 {
 	for each (auto &buffer in m_buffers)
 		buffer = -1;
+}
+
+void Asset_Primitive::Create(Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
+	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		fetch_default_asset(userAsset);
+		return;
+	}
+
+	// Create the asset
+	Asset_Manager::Submit_New_Asset<Asset_Primitive, Primitive_WorkOrder>(userAsset, threaded, fullDirectory, filename);
 }
 
 GLuint Asset_Primitive::Generate_VAO()
@@ -47,42 +81,6 @@ size_t Asset_Primitive::getSize()
 {
 	shared_lock<shared_mutex> guard(m_mutex);
 	return m_dataVertex.size();
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Primitive & asset)
-{
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(asset, "defaultPrimitive"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Primitive>(asset, "defaultPrimitive");
-	asset->m_dataVertex = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	asset->m_dataUV = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	Asset_Manager::Add_Work_Order(new Primitive_WorkOrder(asset, ""), true);
-}
-
-namespace Asset_Loader {
-	void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded)
-	{
-		// Check if a copy already exists
-		if (Asset_Manager::Query_Existing_Asset<Asset_Primitive>(user, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			fetch_default_asset(user);
-			return;
-		}
-
-		// Create the asset
-		Asset_Manager::Submit_New_Asset<Asset_Primitive, Primitive_WorkOrder>(user, threaded, fullDirectory, filename);
-	}
 }
 
 void Primitive_WorkOrder::initializeOrder()

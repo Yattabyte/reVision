@@ -22,11 +22,12 @@ typedef shared_ptr<Asset_Config> Shared_Asset_Config;
 class Asset_Config : public Asset
 {
 public: 
-	// (de)Constructors
 	/** Destroy the Config. */
 	~Asset_Config();
-	/** Construct the config with a particular set of variable names. */
-	Asset_Config(const string & filename, const vector<string> & strings);
+
+
+	/** Attempts to create an asset from disk or share one if it already exists. */
+	static void Create(Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 
 	
 	// Public Methods
@@ -45,15 +46,13 @@ public:
 	// Public Attributes
 	map<unsigned int, float> m_configuration;
 	vector<string> m_strings;
-}; 
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	 void load_asset(Shared_Asset_Config & user, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
-};
+
+private:
+	/** Construct the config with a particular set of variable names. */
+	Asset_Config(const string & filename, const vector<string> & strings);
+	friend class Asset_Manager;
+}; 
 
 /**
  * Implements a work order for Configuration Assets.

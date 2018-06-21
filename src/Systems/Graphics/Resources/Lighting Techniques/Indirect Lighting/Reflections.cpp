@@ -26,9 +26,9 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 	
-	Asset_Loader::load_asset(m_shaderFinal, "Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR");
-	Asset_Loader::load_asset(m_brdfMap, "brdfLUT.png");
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Shader::Create(m_shaderFinal, "Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR");
+	Asset_Texture::Create(m_brdfMap, "brdfLUT.png");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
 
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();

@@ -11,10 +11,10 @@ Directional_Tech_Cheap::Directional_Tech_Cheap(Light_Buffers * lightBuffers)
 	m_lightSSBO = &lightBuffers->m_lightDirCheapSSBO;
 	m_size = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Directional\\Light_Cheap");
+	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Directional\\Light_Cheap");
 
 	// Primitive Loading
-	Asset_Loader::load_asset(m_shapeQuad, "quad");
+	Asset_Primitive::Create(m_shapeQuad, "quad");
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() {

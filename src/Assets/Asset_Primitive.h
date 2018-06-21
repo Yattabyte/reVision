@@ -23,11 +23,12 @@ typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
 class Asset_Primitive : public Asset
 {
 public:
-	// (de)Constructors
 	/** Destroy the Primitive. */
 	~Asset_Primitive();
-	/** Construct the Primitive. */
-	Asset_Primitive(const string & filename);
+
+
+	/** Attempts to create an asset from disk or share one if it already exists */
+	static void Create(Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
 
 
 	// Public Methods
@@ -47,14 +48,12 @@ public:
 	GLuint m_buffers[2];
 	vector<vec3> m_dataVertex;
 	vector<vec2> m_dataUV;
-};
 
-/**
- * Namespace that provides functionality for loading assets.
- **/
-namespace Asset_Loader {
-	/** Attempts to create an asset from disk or share one if it already exists */
-	 void load_asset(Shared_Asset_Primitive & user, const string & filename, const bool & threaded = true);
+
+private:
+	/** Construct the Primitive. */
+	Asset_Primitive(const string & filename);
+	friend class Asset_Manager;
 };
 
 /**

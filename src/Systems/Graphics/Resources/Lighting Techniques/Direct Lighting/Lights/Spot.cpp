@@ -17,15 +17,15 @@ Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers
 	m_size = 0;
 	m_sizeGI = 0;
 
-	Asset_Loader::load_asset(m_shader_Lighting, "Base Lights\\Spot\\Light");
-	Asset_Loader::load_asset(m_shader_CullDynamic, "Base Lights\\Spot\\Culling_Dynamic");
-	Asset_Loader::load_asset(m_shader_CullStatic, "Base Lights\\Spot\\Culling_Static");
-	Asset_Loader::load_asset(m_shader_ShadowDynamic, "Base Lights\\Spot\\Shadow_Dynamic");
-	Asset_Loader::load_asset(m_shader_ShadowStatic, "Base Lights\\Spot\\Shadow_Static");
-	Asset_Loader::load_asset(m_shader_Bounce, "Base Lights\\Spot\\Bounce");
+	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Spot\\Light");
+	Asset_Shader::Create(m_shader_CullDynamic, "Base Lights\\Spot\\Culling_Dynamic");
+	Asset_Shader::Create(m_shader_CullStatic, "Base Lights\\Spot\\Culling_Static");
+	Asset_Shader::Create(m_shader_ShadowDynamic, "Base Lights\\Spot\\Shadow_Dynamic");
+	Asset_Shader::Create(m_shader_ShadowStatic, "Base Lights\\Spot\\Shadow_Static");
+	Asset_Shader::Create(m_shader_Bounce, "Base Lights\\Spot\\Bounce");
 
 	// Primitive Loading
-	Asset_Loader::load_asset(m_shapeCone, "cone");
+	Asset_Primitive::Create(m_shapeCone, "cone");
 	m_coneVAOLoaded = false;
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_shapeCone->addCallback(this, [&]() {
