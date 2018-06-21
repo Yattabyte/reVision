@@ -45,6 +45,7 @@ protected:
 
 
 	// Protected Attributes
+	EnginePackage * m_enginePackage;
 	// Cached attributes
 	float m_radius, m_squaredRadius;
 	vec3 m_lightPos;

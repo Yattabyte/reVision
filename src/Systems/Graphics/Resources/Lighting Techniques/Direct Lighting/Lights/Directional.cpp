@@ -23,8 +23,6 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	Asset_Shader::Create(m_shader_ShadowStatic, "Base Lights\\Directional\\Shadow_Static");
 	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Directional\\Light");
 	Asset_Shader::Create(m_shader_Bounce, "Base Lights\\Directional\\Bounce");
-	
-	Asset_Manager::Create("shader", m_shader_Lighting, "Base Lights\\Directional\\Light");
 
 	// Primitive Loading
 	Asset_Primitive::Create(m_shapeQuad, "quad");

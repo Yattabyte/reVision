@@ -6,15 +6,17 @@
 
 Light_Spot_Cheap_Component::~Light_Spot_Cheap_Component()
 {
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.removeElement(&m_uboIndex);
 }
 
 Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(EnginePackage * enginePackage)
 {
+	m_enginePackage = enginePackage;
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = vec3(0.0f);
 	m_orientation = quat(1, 0, 0, 0);
-	m_uboBuffer = enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.addElement(&m_uboIndex);
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.addElement(&m_uboIndex);
 
 
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {

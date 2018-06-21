@@ -6,10 +6,12 @@
 
 Light_Point_Cheap_Component::~Light_Point_Cheap_Component()
 {
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointCheapSSBO.removeElement(&m_uboIndex);
 }
 
 Light_Point_Cheap_Component::Light_Point_Cheap_Component(EnginePackage *enginePackage)
 {
+	m_enginePackage = enginePackage;
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = vec3(0.0f);

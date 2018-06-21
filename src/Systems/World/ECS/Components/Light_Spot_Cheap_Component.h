@@ -46,6 +46,7 @@ protected:
 
 	// Protected Attributes
 	// Cached Attributes
+	EnginePackage * m_enginePackage;
 	float m_radius;
 	float m_squaredRadius;
 	quat m_orientation;

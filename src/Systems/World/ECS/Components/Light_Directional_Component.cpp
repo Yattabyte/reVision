@@ -12,6 +12,7 @@ Light_Directional_Component::~Light_Directional_Component()
 {
 	m_directionalTech->unregisterShadowCaster(m_shadowSpot);
 	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
 }
 
 Light_Directional_Component::Light_Directional_Component(EnginePackage *enginePackage)

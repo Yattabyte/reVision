@@ -54,17 +54,20 @@ private:
 	// Private Methods
 	void calcVisibility(Camera & camera);
 	void loadWorld();
+	void unloadWorld();
 	void checkWorld();
 
 
 	// Private Attributes
 	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
-	shared_mutex m_lock;
+	shared_mutex m_viewerLock;
 	vector<Camera*> m_viewers;
 	Animator m_animator;
-	bool m_loaded, m_worldChanged;
 	vector<bool *> m_loadNotifiers;
+
+	shared_mutex m_stateLock;
+	bool m_loaded, m_worldChanged;
 };
 
 #endif // SYSTEM_WORLD_H

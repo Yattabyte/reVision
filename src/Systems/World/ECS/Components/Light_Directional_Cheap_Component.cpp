@@ -6,11 +6,13 @@
 
 Light_Directional_Cheap_Component::~Light_Directional_Cheap_Component()
 {
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.removeElement(&m_uboIndex);
 }
 
 Light_Directional_Cheap_Component::Light_Directional_Cheap_Component(EnginePackage *enginePackage)
 {
-	m_uboBuffer = enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.addElement(&m_uboIndex);
+	m_enginePackage = enginePackage;
+	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.addElement(&m_uboIndex);
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
 	};

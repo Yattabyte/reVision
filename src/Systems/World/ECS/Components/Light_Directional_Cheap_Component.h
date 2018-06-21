@@ -40,6 +40,7 @@ protected:
 
 
 	// Protected Attributes
+	EnginePackage * m_enginePackage;
 	friend class Light_Directional_Cheap_Creator;
 
 

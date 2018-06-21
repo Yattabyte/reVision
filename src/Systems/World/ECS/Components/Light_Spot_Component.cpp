@@ -13,6 +13,7 @@ Light_Spot_Component::~Light_Spot_Component()
 {
 	m_spotTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
+	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotSSBO.removeElement(&m_uboIndex);
 }
 
 Light_Spot_Component::Light_Spot_Component(EnginePackage * enginePackage)

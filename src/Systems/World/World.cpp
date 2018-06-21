@@ -37,21 +37,24 @@ void System_World::update(const float & deltaTime)
 
 void System_World::updateThreaded(const float & deltaTime)
 {
-	calcVisibility(m_enginePackage->m_Camera);
-	shared_lock<shared_mutex> readGuard(m_lock);
-	for each (auto &camera in m_viewers)
-		calcVisibility(*camera);
+	shared_lock<shared_mutex> readGuard(m_stateLock);
+	if (!m_worldChanged && m_loaded) {
+		calcVisibility(m_enginePackage->m_Camera);
+		shared_lock<shared_mutex> readGuard(m_viewerLock);
+		for each (auto &camera in m_viewers)
+			calcVisibility(*camera);
+	}
 }
 
 void System_World::registerViewer(Camera * c)
 {
-	unique_lock<shared_mutex> writeGuard(m_lock);
+	unique_lock<shared_mutex> writeGuard(m_viewerLock);
 	m_viewers.push_back(c);
 }
 
 void System_World::unregisterViewer(Camera * c)
 {
-	unique_lock<shared_mutex> writeGuard(m_lock);
+	unique_lock<shared_mutex> writeGuard(m_viewerLock);
 	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto * camera) {
 		return (camera == c);
 	}), end(m_viewers));
@@ -144,7 +147,7 @@ void System_World::loadWorld()
 
 		Entity * ref = m_entityFactory.createEntity("Reflector");
 		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), quat(1, 0, 0, 0), vec3(21)));
-		
+				
 		/*auto spot = m_entityFactory.createEntity("PointLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
@@ -187,7 +190,22 @@ void System_World::loadWorld()
 		temp_loaded = true;
 		m_loaded = false;
 		m_worldChanged = true;
+
+		unloadWorld();
 	}
+}
+
+void System_World::unloadWorld()
+{
+	lock_guard<shared_mutex> state_writeGuard(m_stateLock);
+	m_worldChanged = true;
+	m_loaded = false;
+
+	lock_guard<shared_mutex> view_writeGuard(m_viewerLock);
+	m_viewers.clear();
+
+	m_entityFactory.flush();
+	m_componentFactory.flush();
 }
 
 void System_World::checkWorld()

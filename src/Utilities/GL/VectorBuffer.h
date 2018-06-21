@@ -118,7 +118,7 @@ private:
 	}
 	/** */
 	void replaceWithEnd(const unsigned int * uboIndex) {
-		if (*uboIndex < m_indexPointers.size() - 1) {
+		if ((*uboIndex) < (m_indexPointers.size() - 2)) {
 			// Move the pointer from the last element of the list to the spot we are deleting
 			unsigned int * lastIndex = m_indexPointers.back();
 			m_indexPointers.at(*uboIndex) = lastIndex;

@@ -19,7 +19,7 @@ protected:
 
 
 	// Protected Attributes
-	Component * m_light;
+	Component * m_reflector;
 	friend class Creator_Reflector;
 
 
@@ -28,7 +28,7 @@ private:
 	// Forward Commands
 	void changeTransform(const ECS_Command & payload) {
 		if (payload.isType<Transform>())
-			m_light->sendCommand("Set_Transform", payload.toType<Transform>());
+			m_reflector->sendCommand("Set_Transform", payload.toType<Transform>());
 	}
 };
 
@@ -45,12 +45,12 @@ public:
 
 	virtual void destroy(Entity * e) {
 		Reflector_Entity * entity = (Reflector_Entity*)e;
-		unMakeComponent(entity->m_light);
+		unMakeComponent(entity->m_reflector);
 		delete entity;
 	}
 	virtual Entity* create() {
 		Reflector_Entity *entity = new Reflector_Entity();
-		entity->m_light = makeComponent("Reflector");
+		entity->m_reflector = makeComponent("Reflector");
 		return entity;
 	}
 };
