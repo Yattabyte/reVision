@@ -118,7 +118,8 @@ private:
 	}
 	/** */
 	void replaceWithEnd(const unsigned int * uboIndex) {
-		if ((*uboIndex) < (m_indexPointers.size() - 2)) {
+		// Migrate last element of array into this index, replacing it.
+		if ((*uboIndex) < (m_indexPointers.size() - 1)) {
 			// Move the pointer from the last element of the list to the spot we are deleting
 			unsigned int * lastIndex = m_indexPointers.back();
 			m_indexPointers.at(*uboIndex) = lastIndex;
@@ -131,6 +132,10 @@ private:
 
 			// Ensure that the pointers hold the right VALUE for the index the represent
 			*lastIndex = *uboIndex;
+		}
+		// This element is the last element, remove it.
+		else {
+			m_indexPointers.pop_back();
 		}
 		m_count--;
 	}

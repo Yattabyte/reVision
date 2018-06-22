@@ -110,7 +110,7 @@ void System_World::loadWorld()
 		wall3->sendCommand("Change_Skin", 1);
 		wall3->sendCommand("Change_Transform", Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
 
-	/*	Entity * wall4 = m_entityFactory.createEntity("Prop");
+		/*	Entity * wall4 = m_entityFactory.createEntity("Prop");
 		wall4->sendCommand("Load_Model", string("Test\\wall.obj"));
 		wall4->sendCommand("Change_Skin", 1);
 		wall4->sendCommand("Change_Transform", Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
@@ -147,7 +147,7 @@ void System_World::loadWorld()
 
 		Entity * ref = m_entityFactory.createEntity("Reflector");
 		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), quat(1, 0, 0, 0), vec3(21)));
-				
+
 		/*auto spot = m_entityFactory.createEntity("PointLight");
 		spot->sendCommand("Change_Light_Color", vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
@@ -185,7 +185,7 @@ void System_World::loadWorld()
 
 		Entity * m7 = m_entityFactory.createEntity("Prop");
 		m7->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m7->sendCommand("Change_Transform", Transform(vec3(-30, 0, 5)));
+		m7->sendCommand("Change_Transform", Transform(vec3(-30, 0, 5)));		
 
 		temp_loaded = true;
 		m_loaded = false;
@@ -201,11 +201,11 @@ void System_World::unloadWorld()
 	m_worldChanged = true;
 	m_loaded = false;
 
-	lock_guard<shared_mutex> view_writeGuard(m_viewerLock);
-	m_viewers.clear();
-
 	m_entityFactory.flush();
 	m_componentFactory.flush();
+
+	lock_guard<shared_mutex> view_writeGuard(m_viewerLock);
+	m_viewers.clear();
 }
 
 void System_World::checkWorld()

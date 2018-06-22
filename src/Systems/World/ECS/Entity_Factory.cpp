@@ -50,6 +50,8 @@ void Entity_Factory::deleteEntity(const char * type, Entity * entity)
 			m_creatorMap[type]->destroy(entity);
 			m_freeSpots.insert(type);
 			m_freeSpots[type].push_back(oldIndex);
+			m_levelEntities[type].erase(itt, itt + 1);
+			return;
 		}
 	}
 }

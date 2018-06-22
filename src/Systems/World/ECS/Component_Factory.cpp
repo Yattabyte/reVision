@@ -68,6 +68,8 @@ void Component_Factory::deleteComponent(Component * component)
 			m_creatorMap[type]->destroy(component);
 			m_freeSpots.insert(type);
 			m_freeSpots[type].push_back(oldIndex);
+			m_levelComponents[type].erase(itt, itt+1);
+			return;
 		}
 	}
 }
