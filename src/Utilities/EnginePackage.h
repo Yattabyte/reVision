@@ -71,7 +71,6 @@ public:
 
 
 	// Public Attributes
-	shared_mutex				m_EngineMutex;
 	GLFWwindow				*	m_Context_Rendering;
 	Camera						m_Camera;
 	ActionState					m_ActionState;

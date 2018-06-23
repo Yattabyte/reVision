@@ -156,7 +156,6 @@ bool Engine::initialize()
 	if ((!m_Initialized) && Initialize_Sharing()) {
 		m_package = new EnginePackage();
 		m_package->m_Camera.setHorizontalFOV(110.0f);
-		unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);	
 		const float farPlane = m_package->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_package->m_Camera.setFarPlane(f); m_package->m_Camera.update(); });
 		//m_package->m_Camera.setNearPlane(1.0f);
 		m_package->m_Camera.setFarPlane(farPlane);
@@ -219,7 +218,6 @@ bool Engine::initialize()
 
 void Engine::shutdown()
 {
-	unique_lock<shared_mutex> write_lock(m_package->m_EngineMutex);
 	if (m_Initialized) {
 		m_package->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 		
@@ -228,8 +226,6 @@ void Engine::shutdown()
 		m_package->m_Systems.clear();
 
 		m_Initialized = false;
-		write_lock.unlock();
-		write_lock.release();
 	}
 }
 
@@ -275,7 +271,6 @@ void Engine::tickThreaded()
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			Asset_Manager::Finalize_Orders();
-			shared_lock<shared_mutex> read_lock(m_package->m_EngineMutex);
 			for each (auto system in m_package->m_Systems)
 				system.second->updateThreaded(deltaTime);
 		}

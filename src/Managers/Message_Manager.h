@@ -18,7 +18,7 @@ class MSG_Manager
 public:
 	// Public Methods
 	/** Singleton GET method.
-	 * @return	static Material_Manager instance */
+	 * @return	static Msg_Manager instance */
 	static MSG_Manager &Get() {
 		static MSG_Manager instance;
 		return instance;
