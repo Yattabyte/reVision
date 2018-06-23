@@ -13,7 +13,7 @@
 
 using namespace glm;
 class Light_Directional_Cheap_Creator;
-class EnginePackage;
+class Engine;
 
 /**
  * A renderable light component that mimics the sun.
@@ -36,11 +36,11 @@ protected:
 	/** Destroys a cheap directional light component. */
 	~Light_Directional_Cheap_Component();
 	/** Constructs a cheap directional light component. */
-	Light_Directional_Cheap_Component(EnginePackage *enginePackage);
+	Light_Directional_Cheap_Component(Engine *engine);
 
 
 	// Protected Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	friend class Light_Directional_Cheap_Creator;
 
 
@@ -61,8 +61,8 @@ class Light_Directional_Cheap_Creator : public ComponentCreator
 {
 public:
 	Light_Directional_Cheap_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Light_Directional_Cheap_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Light_Directional_Cheap_Component(engine);
 	}
 };
 

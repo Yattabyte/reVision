@@ -8,7 +8,7 @@
 #include "Assets\Asset_Primitive.h"
 
 class VisualFX;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -27,9 +27,9 @@ public:
 	
 	// Public Methods
 	/** Initialize the framebuffer.
-	 * @param	enginePackage	the engine package
+	 * @param	engine	the engine pointer
 	 * @param	visualFX		reference to the post-processing utility class */
-	void initialize(EnginePackage * enginePackage, VisualFX * visualFX);
+	void initialize(Engine * engine, VisualFX * visualFX);
 	void initialize_noise();
 	/** Binds and clears out all the render-targets in this framebuffer. */
 	virtual void clear();
@@ -65,7 +65,7 @@ private:
 	// Private attributes
 	GLuint m_noiseID, m_quadVAO;
 	bool m_vaoLoaded;
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderSSAO;	
 	Shared_Asset_Primitive m_shapeQuad;

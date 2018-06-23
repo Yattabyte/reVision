@@ -5,7 +5,7 @@
 #include "Systems\System_Interface.h"
 #include <string>
 
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -23,7 +23,7 @@ public:
 
 
 	// Interface Implementations
-	virtual void initialize(EnginePackage * package);
+	virtual void initialize(Engine * engine);
 	virtual void update(const float & deltaTime) {}
 	virtual void updateThreaded(const float & deltaTime) {}
 

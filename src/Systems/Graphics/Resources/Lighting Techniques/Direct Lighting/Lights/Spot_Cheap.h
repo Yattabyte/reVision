@@ -10,7 +10,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 
-class EnginePackage;
+class Engine;
 
 /**
  * A deferred shading lighting technique that manages cheap spot lights.

@@ -10,7 +10,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -28,8 +28,8 @@ public:
 	
 	// Public Methods
 	/** Initialize this utility and all its filters.
-	 * @param	enginePackage	the engine package*/
-	void initialize(EnginePackage * enginePackage);	
+	 * @param	engine	the engine pointer */
+	void initialize(Engine * engine);	
 	/** Apply a Gaussian blur filter to the desired texture.
 	 * @note					requires two other textures to flip between to apply the filter
 	 * @param	desiredTexture	ID of the texture to filter
@@ -57,7 +57,7 @@ private:
 	
 	// Private Attributes
 	bool m_Initialized;
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
 	GLuint m_quadVAO, m_fbo_GB;

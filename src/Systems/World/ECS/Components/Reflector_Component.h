@@ -11,7 +11,7 @@
 #include "GL\glew.h"
 
 class Reflector_Creator;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -36,7 +36,7 @@ protected:
 	/** Destroys a reflector component. */
 	~Reflector_Component();
 	/** Constructors a reflector component. */
-	Reflector_Component(EnginePackage *enginePackage);
+	Reflector_Component(Engine *engine);
 
 
 	// Protected Attributes
@@ -45,7 +45,7 @@ protected:
 	vec3 m_position;
 	vec3 m_scale;
 	Camera m_cameras[6];
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	friend class Reflector_Creator;
 
 
@@ -60,8 +60,8 @@ class Reflector_Creator : public ComponentCreator
 {
 public:
 	Reflector_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Reflector_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Reflector_Component(engine);
 	}
 };
 

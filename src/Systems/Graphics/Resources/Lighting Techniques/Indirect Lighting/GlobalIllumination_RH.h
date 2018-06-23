@@ -11,7 +11,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
-class EnginePackage;
+class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
 
@@ -29,7 +29,7 @@ public:
 	~GlobalIllumination_RH();
 	/** Constructor. */
 	GlobalIllumination_RH(
-		EnginePackage * enginePackage, 
+		Engine * engine, 
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
 		vector<Light_Tech*> * baseTechs
 	);
@@ -57,7 +57,7 @@ private:
 
 
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	vector<Light_Tech*> * m_baseTechs;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;

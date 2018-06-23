@@ -1,18 +1,18 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include <minmax.h>
 
 
 Directional_Tech::~Directional_Tech()
 {
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
+	m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
 }
 
-Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers)
+Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightDirSSBO;
 	m_size = 0;
 	m_sizeGI = 0;
@@ -36,7 +36,7 @@ Directional_Tech::Directional_Tech(EnginePackage * enginePackage, Light_Buffers 
 	});
 
 	// Initialize Shadows
-	m_shadowSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { setSize(f); }	);
+	m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { setSize(f); }	);
 	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	m_shadowFBO = 0;

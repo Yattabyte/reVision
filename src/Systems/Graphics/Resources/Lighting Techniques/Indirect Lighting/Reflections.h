@@ -29,7 +29,7 @@ public:
 	/** Virtual Destructor. */
 	~Reflections();
 	/** Constructor. */
-	Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
+	Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
 
 
 	// Public Functions
@@ -53,7 +53,7 @@ private:
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Reflection_FBO * m_reflectionFBO;
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Shared_Asset_Shader m_shaderFinal;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;

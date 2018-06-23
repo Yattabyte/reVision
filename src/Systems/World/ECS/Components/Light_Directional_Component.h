@@ -15,7 +15,7 @@
 using namespace glm;
 class Directional_Tech;
 class Light_Directional_Creator;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -44,11 +44,11 @@ protected:
 	/** Destroys a directional light component. */
 	~Light_Directional_Component();
 	/** Constructs a directional light component. */
-	Light_Directional_Component(EnginePackage *enginePackage);
+	Light_Directional_Component(Engine *engine);
 
 
 	// Protected Attributes
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	Directional_Tech * m_directionalTech;
 	float m_cascadeEnd[5];
 	int m_shadowSpot;
@@ -76,8 +76,8 @@ class Light_Directional_Creator : public ComponentCreator
 {
 public:
 	Light_Directional_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Light_Directional_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Light_Directional_Component(engine);
 	}
 };
 

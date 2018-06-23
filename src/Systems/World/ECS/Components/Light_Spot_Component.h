@@ -15,7 +15,7 @@ using namespace glm;
 class Spot_Tech;
 class System_World;
 class Light_Spot_Creator;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -39,7 +39,7 @@ protected:
 	/** Destroys a spot light component. */
 	~Light_Spot_Component();
 	/** Constructs a spot light component. */
-	Light_Spot_Component(EnginePackage *enginePackage);
+	Light_Spot_Component(Engine *engine);
 
 
 	// Protected Functions
@@ -49,7 +49,7 @@ protected:
 
 	// Protected Attributes
 	// Shared Objects
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	Spot_Tech * m_spotTech;
 	System_World *m_world;
 	// Cached Attributes
@@ -87,8 +87,8 @@ class Light_Spot_Creator : public ComponentCreator
 {
 public:
 	Light_Spot_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Light_Spot_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Light_Spot_Component(engine);
 	}
 };
 

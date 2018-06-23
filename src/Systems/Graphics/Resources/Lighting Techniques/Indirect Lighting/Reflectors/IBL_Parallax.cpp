@@ -2,7 +2,7 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\World\ECS\Components\Reflector_Component.h"
 #include "Systems\World\World.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include <minmax.h>
 
 
@@ -12,10 +12,10 @@ IBL_Parallax_Tech::~IBL_Parallax_Tech()
 	if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 }
 
-IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
+IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 {
 	// Copy Pointers
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 
 	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax");
 	Asset_Shader::Create(m_shaderConvolute, "Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution");
@@ -31,7 +31,7 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(EnginePackage * enginePackage)
 	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); m_cubeVAOLoaded = true; });
 
 	m_regenCubemap = false;
-	m_enginePackage->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenCubemap);
+	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenCubemap);
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
@@ -108,12 +108,12 @@ void IBL_Parallax_Tech::applyPrePass()
 		m_regenCubemap = false;
 
 		// Get the renderer size, and then change it to the cubemap size
-		const float width = m_enginePackage->getPreference(PreferenceState::C_WINDOW_WIDTH);
-		const float height = m_enginePackage->getPreference(PreferenceState::C_WINDOW_HEIGHT);
-		m_enginePackage->setPreference(PreferenceState::C_WINDOW_WIDTH, 512.0f);
-		m_enginePackage->setPreference(PreferenceState::C_WINDOW_HEIGHT, 512.0f);
+		const float width = m_engine->getPreference(PreferenceState::C_WINDOW_WIDTH);
+		const float height = m_engine->getPreference(PreferenceState::C_WINDOW_HEIGHT);
+		m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, 512.0f);
+		m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, 512.0f);
 
-		auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+		auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 		vector<Reflector_Component*> listCopy = m_refList;
 		for each (const auto & component in listCopy) {
 			const int componentIndex = component->getBufferIndex();
@@ -163,9 +163,9 @@ void IBL_Parallax_Tech::applyPrePass()
 		// Revert state, change renderer size back to previous values
 		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 		Asset_Shader::Release();
-		m_enginePackage->m_Camera.bind();
-		m_enginePackage->setPreference(PreferenceState::C_WINDOW_WIDTH, width);
-		m_enginePackage->setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
+		m_engine->m_Camera->bind();
+		m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, width);
+		m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 	}
 }
 

@@ -5,7 +5,7 @@
 
 #include "Utilities\GL\FrameBuffer.h"
 
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -24,8 +24,9 @@ public:
 
 	// Public Interface Implementations
 	/** Initialize the framebuffer. 
-	 * @param	enginePackage	the engine package */
-	void initialize(EnginePackage * enginePackage, const GLuint & depthStencil);
+	 * @param	engine			the engine pointer,
+	 * @oaram	depthStencil	the depth-stencil texture */
+	void initialize(Engine * engine, const GLuint & depthStencil);
 	/** Binds the framebuffer and its render-targets for reading. */
 	void bindForReading(const unsigned int & texture_unit);
 	/** Binds the framebuffer and its render-targets for writing. */
@@ -41,7 +42,7 @@ public:
 private:
 	// Private Attributes
 	GLuint m_texture, m_depth_stencil; // Donated by the geometry buffer
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 };
 
 #endif // REFLECTION_BUFFER_H

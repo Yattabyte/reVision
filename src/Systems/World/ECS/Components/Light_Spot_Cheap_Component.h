@@ -13,7 +13,7 @@
 
 using namespace glm;
 class Light_Spot_Cheap_Creator;
-class EnginePackage;
+class Engine;
 
 /**
  * A renderable light component that mimics a flashlight.
@@ -36,7 +36,7 @@ protected:
 	/** Destroys a spot light component. */
 	~Light_Spot_Cheap_Component();
 	/** Constructs a spot light component. */
-	Light_Spot_Cheap_Component(EnginePackage *enginePackage);
+	Light_Spot_Cheap_Component(Engine *engine);
 
 
 	// Protected Functions
@@ -46,7 +46,7 @@ protected:
 
 	// Protected Attributes
 	// Cached Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	float m_radius;
 	float m_squaredRadius;
 	quat m_orientation;
@@ -77,8 +77,8 @@ class Light_Spot_Cheap_Creator : public ComponentCreator
 {
 public:
 	Light_Spot_Cheap_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Light_Spot_Cheap_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Light_Spot_Cheap_Component(engine);
 	}
 };
 

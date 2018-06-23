@@ -15,7 +15,7 @@ using namespace glm;
 class Point_Tech;
 class System_World;
 class Light_Point_Creator;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -39,7 +39,7 @@ protected:
 	/** Destroys a point light component. */
 	~Light_Point_Component();
 	/** Constructs a point light component. */
-	Light_Point_Component(EnginePackage *enginePackage);
+	Light_Point_Component(Engine *engine);
 
 
 	// Protected Functions
@@ -49,7 +49,7 @@ protected:
 
 	// Protected Attributes
 	// Shared Objects
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Point_Tech * m_pointTech;
 	System_World * m_world;
 	// Cached attributes
@@ -83,8 +83,8 @@ class Light_Point_Creator : public ComponentCreator
 {
 public:
 	Light_Point_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage * enginePackage) {
-		return new Light_Point_Component(enginePackage);
+	virtual Component* create(Engine * engine) {
+		return new Light_Point_Component(engine);
 	}
 };
 

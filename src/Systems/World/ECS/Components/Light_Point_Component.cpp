@@ -4,7 +4,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "GLFW\glfw3.h"
 #include <math.h>
 
@@ -13,12 +13,12 @@ Light_Point_Component::~Light_Point_Component()
 {
 	m_pointTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointSSBO.removeElement(&m_uboIndex);
+	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Point_Component::Light_Point_Component(EnginePackage *enginePackage)
+Light_Point_Component::Light_Point_Component(Engine *engine)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = vec3(0.0f);
@@ -26,12 +26,12 @@ Light_Point_Component::Light_Point_Component(EnginePackage *enginePackage)
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
 
-	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_pointTech = graphics->getBaseTech<Point_Tech>("Point_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightPointSSBO.addElement(&m_uboIndex);
 	m_pointTech->registerShadowCaster(m_shadowSpot);
 
-	m_world = m_enginePackage->getSubSystem<System_World>("World");
+	m_world = m_engine->getSubSystem<System_World>("World");
 	m_world->registerViewer(&m_camera);
 	m_camera.setHorizontalFOV(90.0f);
 	m_camera.setDimensions(m_pointTech->getSize());

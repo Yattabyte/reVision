@@ -7,7 +7,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
-class EnginePackage;
+class Engine;
 class Lighting_FBO;
 class VisualFX;
 
@@ -21,7 +21,7 @@ public:
 	/** Virtual Destructor. */
 	~Bloom_Tech();
 	/** Constructor. */
-	Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO, VisualFX * visualFX);
+	Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * visualFX);
 
 
 	// Interface Implementations.
@@ -41,7 +41,7 @@ public:
 
 private:
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Lighting_FBO * m_lightingFBO;
 	VisualFX *m_visualFX;
 	Shared_Asset_Shader m_shaderBloomExtract;

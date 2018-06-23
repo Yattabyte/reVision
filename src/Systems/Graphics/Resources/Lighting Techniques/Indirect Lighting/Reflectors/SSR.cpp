@@ -2,7 +2,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Managers\Message_Manager.h"
 #include <minmax.h>
 
@@ -12,16 +12,16 @@ SSR_Tech::~SSR_Tech()
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
 
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
+SSR_Tech::SSR_Tech(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
 {
 	// Copy Pointers
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
@@ -31,8 +31,8 @@ SSR_Tech::SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Li
 	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\SSR");
 	Asset_Primitive::Create(m_shapeQuad, "quad");
 
-	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();

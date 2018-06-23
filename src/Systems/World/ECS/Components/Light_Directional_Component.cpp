@@ -2,7 +2,7 @@
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\World.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
 #include "GLFW\glfw3.h"
@@ -11,19 +11,19 @@
 Light_Directional_Component::~Light_Directional_Component()
 {
 	m_directionalTech->unregisterShadowCaster(m_shadowSpot);
-	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
+	m_engine->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
+	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Directional_Component::Light_Directional_Component(EnginePackage *enginePackage)
+Light_Directional_Component::Light_Directional_Component(Engine *engine)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
 	m_mMatrix = mat4(1.0f);
 
 	float near_plane = -0.1f;
-	float far_plane = - m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
+	float far_plane = - m_engine->getPreference(PreferenceState::C_DRAW_DISTANCE);
 	m_cascadeEnd[0] = near_plane;
 	for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 		float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
@@ -32,7 +32,7 @@ Light_Directional_Component::Light_Directional_Component(EnginePackage *enginePa
 		m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
 	}
 
-	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_directionalTech = graphics->getBaseTech<Directional_Tech>("Directional_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightDirSSBO.addElement(&m_uboIndex);
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
@@ -40,10 +40,10 @@ Light_Directional_Component::Light_Directional_Component(EnginePackage *enginePa
 	m_directionalTech->registerShadowCaster(m_shadowSpot);
 	uboData->Shadow_Spot = m_shadowSpot;
 	
-	m_shadowSize = m_enginePackage->getPreference(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL);
+	m_shadowSize = m_engine->getPreference(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL);
 	uboData->ShadowSize_Recip = 1.0f / m_shadowSize;
 		
-	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
+	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
 	};
@@ -146,7 +146,7 @@ void Light_Directional_Component::update(const unsigned int & type)
 void Light_Directional_Component::calculateCascades()
 {
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-	const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer(); // returns a copy, no need to mutex
+	const auto cameraBuffer = m_engine->m_Camera->getCameraBuffer(); // returns a copy, no need to mutex
 	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
 	m_camera.setPosition(cameraBuffer.EyePosition);
 	m_camera.setFarPlane(cameraBuffer.FarPlane);

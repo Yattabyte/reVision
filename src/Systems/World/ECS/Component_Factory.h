@@ -10,7 +10,7 @@
 #include <shared_mutex>
 
 using namespace std;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -27,8 +27,8 @@ public:
 	
 	// Public Methods
 	/** Initialize  the component factory.
-	 * @param	enginePackage	pointer to the engine package */
-	void initialize(EnginePackage * enginePackage);
+	 * @param	engine	pointer to the engine pointer */
+	void initialize(Engine * engine);
 	/** Creates a component of the supplied type and returns its handle.
 	 * @param	type			the type of component to create
 	 * @return					the newely created component */	 
@@ -59,7 +59,7 @@ private:
 	MappedChar<deque<unsigned int>> m_freeSpots;
 	MappedChar<ComponentCreator*> m_creatorMap;
 	mutable shared_mutex m_dataLock;
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 };
 
 #endif // COMPONENT_FACTORY_H

@@ -2,7 +2,7 @@
 #ifndef SYSTEM_INTERFACE_H
 #define SYSTEM_INTERFACE_H
 
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -17,8 +17,8 @@ public:
 	/** Constructor. */
 	System() { m_Initialized = false; }
 	/** Initializes the system.
-	 * @param	enginePackage	the engine package */
-	virtual void initialize(EnginePackage * enginePackage) = 0;
+	 * @param	engine	the engine pointer */
+	virtual void initialize(Engine * engine) = 0;
 	/** Tell the system to update, typically called within the main loop.
 	 * @param	deltaTime		the time since last update */
 	virtual void update(const float & deltaTime) = 0;
@@ -31,7 +31,7 @@ public:
 protected:
 	// Protected Attributes
 	bool m_Initialized;
-	EnginePackage *m_enginePackage;
+	Engine * m_engine;
 };
 
 #endif // SYSTEM_INTERFACE_H

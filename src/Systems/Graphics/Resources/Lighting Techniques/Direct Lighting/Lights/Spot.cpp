@@ -1,18 +1,18 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
 #include "Systems\World\World.h"
 #include "Managers\Message_Manager.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include <minmax.h>
 
 Spot_Tech::~Spot_Tech()
 {
 	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this);
+	m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this);
 }
 
-Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers)
+Spot_Tech::Spot_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightSpotSSBO;
 	m_size = 0;
 	m_sizeGI = 0;
@@ -36,10 +36,10 @@ Spot_Tech::Spot_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers
 	});
 
 	m_regenSShadows = false;
-	m_enginePackage->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenSShadows);
+	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenSShadows);
 
 	// Initialize Shadows
-	m_shadowSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this, [&](const float &f) {setSize(f); });
+	m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this, [&](const float &f) {setSize(f); });
 	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	for (int x = 0; x < 2; ++x) {

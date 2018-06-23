@@ -42,7 +42,7 @@ protected:
 	/** Destroys an animated model component. */
 	~Anim_Model_Component();
 	/** Constructors an animated model component. */
-	Anim_Model_Component(EnginePackage *enginePackage);
+	Anim_Model_Component(Engine *engine);
 
 
 	// Protected functions
@@ -63,7 +63,7 @@ protected:
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	vector<BoneInfo> m_transforms;
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	friend class Anim_Model_Creator;
 
 
@@ -87,8 +87,8 @@ class Anim_Model_Creator : public ComponentCreator
 {
 public:
 	Anim_Model_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Anim_Model_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Anim_Model_Component(engine);
 	}
 };
 

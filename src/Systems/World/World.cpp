@@ -1,6 +1,6 @@
 #include "Systems\World\World.h"
 #include "Systems\World\Visibility_Token.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Systems\World\ECS\ECS_DEFINES.h"
 #include "Utilities\Transform.h"
 #include <algorithm>
@@ -18,11 +18,11 @@ System_World::System_World() :
 	m_worldChanged = false;
 }
 
-void System_World::initialize(EnginePackage * enginePackage)
+void System_World::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
-		m_componentFactory.initialize(m_enginePackage);	
+		m_engine = engine;
+		m_componentFactory.initialize(m_engine);	
 
 		m_Initialized = true;
 	}
@@ -39,7 +39,7 @@ void System_World::updateThreaded(const float & deltaTime)
 {
 	shared_lock<shared_mutex> stateGuard(m_stateLock);
 	//if (!m_worldChanged && m_loaded) {
-		calcVisibility(m_enginePackage->m_Camera);
+		calcVisibility(*m_engine->m_Camera);
 		shared_lock<shared_mutex> viewerGuard(m_viewerLock);
 		for each (auto &camera in m_viewers)
 			calcVisibility(*camera);
@@ -191,7 +191,7 @@ void System_World::loadWorld()
 		m_loaded = false;
 		m_worldChanged = true;
 
-		unloadWorld();
+		//unloadWorld();
 	}
 }
 

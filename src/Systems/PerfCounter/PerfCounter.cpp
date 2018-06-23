@@ -1,5 +1,5 @@
 #include "Systems\PerfCounter\PerfCounter.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "GLFW\glfw3.h"
 #include "glm\gtc\matrix_transform.hpp"
 
@@ -7,8 +7,8 @@
 System_PerfCounter::~System_PerfCounter()
 {
 	if (m_Initialized) {
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	}
 }
 
@@ -17,9 +17,9 @@ System_PerfCounter::System_PerfCounter()
 	m_quadVAOLoaded = false;
 }
 
-void System_PerfCounter::initialize(EnginePackage * enginePackage)
+void System_PerfCounter::initialize(Engine * engine)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	Asset_Texture::Create(m_numberTexture, "numbers.png");
 	Asset_Primitive::Create(m_shapeQuad, "quad");
 	Asset_Shader::Create(m_shader, "Utilities\\numberPrint");
@@ -28,8 +28,8 @@ void System_PerfCounter::initialize(EnginePackage * enginePackage)
 		m_shapeQuad->updateVAO(m_quadVAO);
 		m_quadVAOLoaded = true;
 	});
-	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(vec2(m_renderSize.x, f)); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(vec2(m_renderSize.x, f)); });
 	resize(m_renderSize);
 }
 

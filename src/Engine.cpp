@@ -1,7 +1,7 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Managers\Asset_Manager.h"
 #include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
@@ -23,11 +23,11 @@ static void GLFW_Callback_Error(int error, const char * description)
 // Is called when the window resizes
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
-	EnginePackage &package = *((EnginePackage*)glfwGetWindowUserPointer(window));
-	package.m_Camera.setDimensions(vec2(width, height));
-	package.m_Camera.update();
-	package.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
-	package.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
+	Engine & engine = *((Engine*)glfwGetWindowUserPointer(window));
+	engine.m_Camera->setDimensions(vec2(width, height));
+	engine.m_Camera->update();
+	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
+	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
 // Is called when error messages occur within OpenGL driver
@@ -76,7 +76,7 @@ static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLu
 Engine::~Engine()
 {
 	if (m_Initialized) {
-		m_package->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+		removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 	}
 }
 
@@ -154,12 +154,12 @@ void Shutdown_Sharing()
 bool Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
-		m_package = new EnginePackage();
-		m_package->m_Camera.setHorizontalFOV(110.0f);
-		const float farPlane = m_package->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_package->m_Camera.setFarPlane(f); m_package->m_Camera.update(); });
-		//m_package->m_Camera.setNearPlane(1.0f);
-		m_package->m_Camera.setFarPlane(farPlane);
-		m_package->m_Camera.update();
+		m_Camera = new Camera();
+		m_Camera->setHorizontalFOV(110.0f);
+		const float farPlane = addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_Camera->setFarPlane(f); m_Camera->update(); });
+		//m_Camera->setNearPlane(1.0f);
+		m_Camera->setFarPlane(farPlane);
+		m_Camera->update();
 		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
@@ -177,33 +177,32 @@ bool Engine::initialize()
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-		m_package->m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing); 
-		glfwSetWindowIcon(m_package->m_Context_Rendering, 0, NULL);
-		glfwMakeContextCurrent(m_package->m_Context_Rendering);	
+		m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing); 
+		glfwSetWindowIcon(m_Context_Rendering, 0, NULL);
+		glfwMakeContextCurrent(m_Context_Rendering);	
 				
 		// Create all the required systems
-		auto &systems = m_package->m_Systems;
-		systems["Preferences"] = new System_Preferences("preferences");
-		systems["Graphics"] = new System_Graphics();
-		systems["PerfCounter"] = new System_PerfCounter();
-		systems["Input"] = new System_Input();
-		systems["Logic"] = new System_Logic();
-		systems["World"] = new System_World();
+		m_Systems["Preferences"] = new System_Preferences("preferences");
+		m_Systems["Graphics"] = new System_Graphics();
+		m_Systems["PerfCounter"] = new System_PerfCounter();
+		m_Systems["Input"] = new System_Input();
+		m_Systems["Logic"] = new System_Logic();
+		m_Systems["World"] = new System_World();
 
 		// Initialize all systems
-		for each (auto &system in systems)
-			system.second->initialize(m_package);
+		for each (auto &system in m_Systems)
+			system.second->initialize(this);
 
-		const float window_width = m_package->getPreference(PreferenceState::C_WINDOW_WIDTH);
-		const float window_height = m_package->getPreference(PreferenceState::C_WINDOW_HEIGHT);
+		const float window_width = getPreference(PreferenceState::C_WINDOW_WIDTH);
+		const float window_height = getPreference(PreferenceState::C_WINDOW_HEIGHT);
 		const int maxWidth = mainMode->width, maxHeight = mainMode->height;
-		glfwSetWindowSize(m_package->m_Context_Rendering, window_width, window_height);
-		glfwSetWindowPos(m_package->m_Context_Rendering, (maxWidth - window_width) / 2, (maxHeight - window_height) / 2);
-		glfwSetInputMode(m_package->m_Context_Rendering, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
-		glfwSetCursorPos(m_package->m_Context_Rendering, 0, 0);
+		glfwSetWindowSize(m_Context_Rendering, window_width, window_height);
+		glfwSetWindowPos(m_Context_Rendering, (maxWidth - window_width) / 2, (maxHeight - window_height) / 2);
+		glfwSetInputMode(m_Context_Rendering, GLFW_CURSOR, GLFW_CURSOR_DISABLED); 
+		glfwSetCursorPos(m_Context_Rendering, 0, 0);
 				
-		glfwSetWindowUserPointer(m_package->m_Context_Rendering, m_package);
-		glfwSetWindowSizeCallback(m_package->m_Context_Rendering, GLFW_Callback_Windowresize);		
+		glfwSetWindowUserPointer(m_Context_Rendering, this);
+		glfwSetWindowSizeCallback(m_Context_Rendering, GLFW_Callback_Windowresize);		
 		glfwSwapInterval(0);
 
 		Material_Manager::Start_Up();
@@ -219,11 +218,11 @@ bool Engine::initialize()
 void Engine::shutdown()
 {
 	if (m_Initialized) {
-		m_package->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
+		removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 		
-		for each (auto system in m_package->m_Systems)
+		for each (auto system in m_Systems)
 			delete system.second;
-		m_package->m_Systems.clear();
+		m_Systems.clear();
 
 		m_Initialized = false;
 	}
@@ -233,7 +232,7 @@ void Engine::tick()
 {
  	float deltaTime = 0;
 	float thisTime = glfwGetTime();
-	if (m_Initialized && !glfwWindowShouldClose(m_package->m_Context_Rendering)) {
+	if (m_Initialized && !glfwWindowShouldClose(m_Context_Rendering)) {
 		deltaTime = thisTime - m_lastTime;
 		m_lastTime = thisTime;
 
@@ -252,10 +251,10 @@ void Engine::tick()
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
 		Asset_Manager::Get_Model_Manager()->update();
-		for each (auto system in m_package->m_Systems) 			
+		for each (auto system in m_Systems) 			
 			system.second->update(deltaTime);		
 		
-		glfwSwapBuffers(m_package->m_Context_Rendering);
+		glfwSwapBuffers(m_Context_Rendering);
 		glfwPollEvents();
 	}
 }
@@ -271,7 +270,7 @@ void Engine::tickThreaded()
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			Asset_Manager::Finalize_Orders();
-			for each (auto system in m_package->m_Systems)
+			for each (auto system in m_Systems)
 				system.second->updateThreaded(deltaTime);
 		}
 		stay_alive = !shouldClose();
@@ -280,10 +279,10 @@ void Engine::tickThreaded()
 
 bool Engine::shouldClose()
 {
-	return glfwWindowShouldClose(m_package->m_Context_Rendering);
+	return glfwWindowShouldClose(m_Context_Rendering);
 }
 
 Camera * Engine::getCamera() 
 { 
-	return &m_package->m_Camera; 
+	return m_Camera; 
 }

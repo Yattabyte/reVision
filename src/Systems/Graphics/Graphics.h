@@ -19,7 +19,7 @@
 #include "Utilities\MappedChar.h"
 #include <vector>
 
-class EnginePackage;
+class Engine;
 class Camera;
 
 
@@ -53,7 +53,7 @@ public:
 	
 
 	// Interface Implementations
-	virtual void initialize(EnginePackage * enginePackage);
+	virtual void initialize(Engine * engine);
 	virtual void update(const float & deltaTime);
 	virtual void updateThreaded(const float & deltaTime) {};
 

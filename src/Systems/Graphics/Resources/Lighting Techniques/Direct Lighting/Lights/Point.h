@@ -12,7 +12,7 @@
 #include <deque>
 
 
-class EnginePackage;
+class Engine;
 
 /**
  * A deferred shading lighting technique that manages point lights.
@@ -23,7 +23,7 @@ public:
 	/** Destructor. */
 	~Point_Tech();
 	/** Constructor. */
-	Point_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers);
+	Point_Tech(Engine * engine, Light_Buffers * lightBuffers);
 
 	/** Get the size of the shadows used by this light type.
 	 * @return				the shadowmap size */
@@ -58,7 +58,7 @@ private:
 
 
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_CullDynamic, m_shader_CullStatic, m_shader_ShadowDynamic, m_shader_ShadowStatic;
 	Shared_Asset_Primitive m_shapeSphere;
 	GLuint m_sphereVAO;

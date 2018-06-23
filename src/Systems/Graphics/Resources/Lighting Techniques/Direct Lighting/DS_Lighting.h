@@ -8,7 +8,7 @@
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\MappedChar.h"
 
-class EnginePackage;
+class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
 class Lighting_Component;
@@ -28,7 +28,7 @@ public:
 	~DS_Lighting();
 	/** Constructor. */
 	DS_Lighting(
-		EnginePackage * enginePackage,
+		Engine * engine,
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
 		vector<Light_Tech*> * baseTechs,
 		Geometry_Buffers * geometryBuffers
@@ -53,7 +53,7 @@ public:
 
 private:
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	vector<Light_Tech*> * m_baseTechs;
 	int m_updateQuality;
 	// Shared FBO's

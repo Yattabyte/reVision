@@ -19,10 +19,10 @@ Component_Factory::Component_Factory()
 	m_Initialized = false;
 }
 
-void Component_Factory::initialize(EnginePackage * enginePackage)
+void Component_Factory::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
+		m_engine = engine;
 
 		m_creatorMap["Anim_Model"] = new Anim_Model_Creator();
 		m_creatorMap["Static_Model"] = new Static_Model_Creator();
@@ -40,7 +40,7 @@ void Component_Factory::initialize(EnginePackage * enginePackage)
 
 Component * Component_Factory::createComponent(const char * type)
 {
-	Component * component = m_creatorMap[type]->create(m_enginePackage);
+	Component * component = m_creatorMap[type]->create(m_engine);
 
 	unique_lock<shared_mutex> write_lock(m_dataLock);
 	m_levelComponents.insert(type);

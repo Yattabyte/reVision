@@ -8,7 +8,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 
 
 /**

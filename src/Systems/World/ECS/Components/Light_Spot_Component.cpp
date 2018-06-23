@@ -2,7 +2,7 @@
 #include "Systems\World\ECS\Components\Geometry_Component.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\World\World.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
 #include "GLFW\glfw3.h"
@@ -13,24 +13,24 @@ Light_Spot_Component::~Light_Spot_Component()
 {
 	m_spotTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotSSBO.removeElement(&m_uboIndex);
+	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Spot_Component::Light_Spot_Component(EnginePackage * enginePackage)
+Light_Spot_Component::Light_Spot_Component(Engine * engine)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_squaredRadius = 0;
 	m_orientation = quat(1, 0, 0, 0);
 	m_lightPos = vec3(0.0f);
 	m_visSize[0] = 0; 
 	m_visSize[1] = 0;
 
-	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_spotTech = graphics->getBaseTech<Spot_Tech>("Spot_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightSpotSSBO.addElement(&m_uboIndex);
 	m_spotTech->registerShadowCaster(m_shadowSpot);
 	
-	m_world = m_enginePackage->getSubSystem<System_World>("World");
+	m_world = m_engine->getSubSystem<System_World>("World");
 	m_world->registerViewer(&m_camera);	
 
 	// Write data to our index spot

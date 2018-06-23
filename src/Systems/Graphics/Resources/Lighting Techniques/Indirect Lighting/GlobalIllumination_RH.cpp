@@ -5,7 +5,7 @@
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\World.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Managers\Message_Manager.h"
 #include <algorithm>
 #include "GLM\gtc\matrix_transform.hpp"
@@ -18,14 +18,14 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	glDeleteTextures(GI_LIGHT_BOUNCE_COUNT * GI_TEXTURE_COUNT, m_textures[0]);
 	glDeleteFramebuffers(GI_LIGHT_BOUNCE_COUNT, m_fbo);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-	m_enginePackage->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	m_engine->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 }
 
-GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, vector<Light_Tech*> * baseTechs)
+GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, vector<Light_Tech*> * baseTechs)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 
 	// FBO's
 	m_geometryFBO = geometryFBO;
@@ -47,10 +47,10 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
-	m_enginePackage->getSubSystem<System_World>("World")->registerViewer(&m_camera);
+	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);
 
-	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {ivec2(f, m_renderSize.y); });
-	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {ivec2(f, m_renderSize.y); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
 	
 	m_resolution = 16;
 	GI_Radiance_Struct attribData(16, m_resolution, 0.001, 0, 25.0f);
@@ -64,7 +64,7 @@ GlobalIllumination_RH::GlobalIllumination_RH(EnginePackage * enginePackage, Geom
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	const float near_plane = m_nearPlane;
-	const float far_plane = -m_enginePackage->getPreference(PreferenceState::C_DRAW_DISTANCE);
+	const float far_plane = -m_engine->getPreference(PreferenceState::C_DRAW_DISTANCE);
 	const float cLog = near_plane * powf((far_plane / near_plane), (1.0f / 4.0f));
 	const float cUni = near_plane + ((far_plane - near_plane) * 1.0f / 4.0f);
 	const float lambda = 0.4f;
@@ -111,7 +111,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 {
 	// Update GI buffer
 	{
-		const auto cameraBuffer = m_enginePackage->m_Camera.getCameraBuffer();
+		const auto cameraBuffer = m_engine->m_Camera->getCameraBuffer();
 		const vec2 &size = cameraBuffer.Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));

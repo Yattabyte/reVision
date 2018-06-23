@@ -13,7 +13,7 @@
 
 using namespace glm;
 class Light_Point_Cheap_Creator;
-class EnginePackage;
+class Engine;
 
 /**
  * A renderable light component that mimics a light-bulb.
@@ -36,7 +36,7 @@ protected:
 	/** Destroys a cheap point light component. */
 	~Light_Point_Cheap_Component();
 	/** Constructs a cheap point light component. */
-	Light_Point_Cheap_Component(EnginePackage *enginePackage);
+	Light_Point_Cheap_Component(Engine *engine);
 	
 
 	// Protected Functions
@@ -45,7 +45,7 @@ protected:
 
 
 	// Protected Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	// Cached attributes
 	float m_radius, m_squaredRadius;
 	vec3 m_lightPos;
@@ -72,8 +72,8 @@ class Light_Point_Cheap_Creator : public ComponentCreator
 {
 public:
 	Light_Point_Cheap_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage * enginePackage) {
-		return new Light_Point_Cheap_Component(enginePackage);
+	virtual Component* create(Engine * engine) {
+		return new Light_Point_Cheap_Component(engine);
 	}
 };
 

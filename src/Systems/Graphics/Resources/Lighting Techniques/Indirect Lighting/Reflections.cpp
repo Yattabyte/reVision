@@ -3,7 +3,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "glm\gtc\matrix_transform.hpp"
 #include <minmax.h>
 
@@ -19,9 +19,9 @@ Reflections::~Reflections()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
+Reflections::Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
@@ -39,8 +39,8 @@ Reflections::Reflections(EnginePackage * enginePackage, Geometry_FBO * geometryF
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 	m_refTechs.push_back(new Sky_Ref_Tech());
-	m_refTechs.push_back(new IBL_Parallax_Tech(m_enginePackage));
-	m_refTechs.push_back(new SSR_Tech(m_enginePackage, geometryFBO, lightingFBO, reflectionFBO));
+	m_refTechs.push_back(new IBL_Parallax_Tech(m_engine));
+	m_refTechs.push_back(new SSR_Tech(m_engine, geometryFBO, lightingFBO, reflectionFBO));
 	for each(auto * tech in m_refTechs)
 		m_refTechMap[tech->getName()] = tech;
 }

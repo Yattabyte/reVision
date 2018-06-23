@@ -5,7 +5,7 @@
 #include "Utilities\GL\FrameBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 class VisualFX;
 
 
@@ -25,9 +25,9 @@ public:
 
 	// Public Methods
 	/** Initialize the framebuffer.
-	 * @param	enginePackage	the engine package
+	 * @param	engine	the engine pointer
 	 * @param	depthStencil	reference to the depthStencil texture from the geometryFBO */
-	void initialize(EnginePackage * enginePackage, const GLuint & depthStencil);	
+	void initialize(Engine * engine, const GLuint & depthStencil);	
 	/** Binds the framebuffer and its render-targets for writing. */
 	virtual void bindForWriting();
 	/** Binds the framebuffer and its render-targets for reading. */
@@ -42,7 +42,7 @@ public:
 private:
 	// Private Attributes
 	GLuint  m_texture, m_depth_stencil; // Donated by the geometry buffer
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 };
 
 #endif // LIGHTING_BUFFER_H

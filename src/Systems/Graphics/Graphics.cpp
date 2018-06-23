@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\World\Camera.h"
 #include "Managers\Material_Manager.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include <random>
 #include <minmax.h>
 
@@ -30,12 +30,12 @@
 System_Graphics::~System_Graphics()
 {
 	if (!m_Initialized) {
-		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_QUALITY, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_SSAO, this);
+		m_engine->removePrefCallback(PreferenceState::C_SSAO_QUALITY, this);
+		m_engine->removePrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 
 		for each (auto * tech in m_lightingTechs)
 			delete tech;
@@ -46,34 +46,34 @@ System_Graphics::~System_Graphics()
 
 System_Graphics::System_Graphics() : m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_reflectionFBO(), m_renderSize(vec2(1.0f)) {}
 
-void System_Graphics::initialize(EnginePackage * enginePackage)
+void System_Graphics::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
 		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 		glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-		m_enginePackage = enginePackage;
+		m_engine = engine;
 		m_ssao = true;
 
 		// Generate User SSBO		
 		Renderer_Struct attribs;
-		attribs.m_ssao = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
+		attribs.m_ssao = m_engine->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao), sizeof(int), &f);
 			m_ssao = (bool)(f);
 		});
-		attribs.m_aa_quality = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) {
+		attribs.m_aa_quality = m_engine->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_aa_quality), sizeof(int), &f);
 		});
-		attribs.m_ssao_strength = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {
+		attribs.m_ssao_strength = m_engine->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao_strength), sizeof(int), &f);
 		});
-		attribs.m_ssao_radius = m_enginePackage->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {
+		attribs.m_ssao_radius = m_engine->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) {
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao_radius), sizeof(float), &f);
 		});		
-		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = ivec2(f, m_renderSize.y); 
 		});
-		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 			m_renderSize = ivec2(m_renderSize.x, f); 
 		});
 		m_userBuffer = StaticBuffer(sizeof(Renderer_Struct), &attribs);
@@ -81,15 +81,15 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 		generateKernal();
 
 		// Initiate graphics buffers
-		m_visualFX.initialize(enginePackage);
-		m_geometryFBO.initialize(enginePackage, &m_visualFX);
-		m_lightingFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
-		m_reflectionFBO.initialize(enginePackage, m_geometryFBO.m_depth_stencil);
+		m_visualFX.initialize(engine);
+		m_geometryFBO.initialize(engine, &m_visualFX);
+		m_lightingFBO.initialize(engine, m_geometryFBO.m_depth_stencil);
+		m_reflectionFBO.initialize(engine, m_geometryFBO.m_depth_stencil);
 
 		// Initiate base lighting techniques
-		m_baseTechs.push_back(new Directional_Tech(enginePackage, &m_lightBuffers));
-		m_baseTechs.push_back(new Spot_Tech(enginePackage, &m_lightBuffers));
-		m_baseTechs.push_back(new Point_Tech(enginePackage, &m_lightBuffers));
+		m_baseTechs.push_back(new Directional_Tech(engine, &m_lightBuffers));
+		m_baseTechs.push_back(new Spot_Tech(engine, &m_lightBuffers));
+		m_baseTechs.push_back(new Point_Tech(engine, &m_lightBuffers));
 		m_baseTechs.push_back(new Directional_Tech_Cheap(&m_lightBuffers));
 		m_baseTechs.push_back(new Spot_Cheap_Tech(&m_lightBuffers));
 		m_baseTechs.push_back(new Point_Tech_Cheap(&m_lightBuffers));
@@ -102,15 +102,15 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 
 		// Initiate specialized lighting techniques
 		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
-		m_lightingTechs.push_back(new DS_Lighting(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs, &m_geometryBuffers));
-		m_lightingTechs.push_back(new GlobalIllumination_RH(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
-		m_lightingTechs.push_back(new Reflections(m_enginePackage, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+		m_lightingTechs.push_back(new DS_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, &m_baseTechs, &m_geometryBuffers));
+		m_lightingTechs.push_back(new GlobalIllumination_RH(m_engine, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
+		m_lightingTechs.push_back(new Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 		for each(auto * tech in m_lightingTechs)
 			m_lightingTechMap[tech->getName()] = tech;
 
 		// Initiate specialized effects techniques
-		m_fxTechs.push_back(new Bloom_Tech(enginePackage, &m_lightingFBO, &m_visualFX));
-		m_fxTechs.push_back(new HDR_Tech(enginePackage));
+		m_fxTechs.push_back(new Bloom_Tech(engine, &m_lightingFBO, &m_visualFX));
+		m_fxTechs.push_back(new HDR_Tech(engine));
 		m_fxTechs.push_back(new FXAA_Tech());
 
 		m_Initialized = true;
@@ -119,7 +119,7 @@ void System_Graphics::initialize(EnginePackage * enginePackage)
 
 void System_Graphics::update(const float & deltaTime)
 {
-	const Visibility_Token vis_token = m_enginePackage->m_Camera.getVisibilityToken();
+	const Visibility_Token vis_token = m_engine->m_Camera->getVisibilityToken();
 	if (m_Initialized && vis_token.size())	{		
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -161,8 +161,8 @@ void System_Graphics::generateKernal()
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)
 {
 	// Geometry Data
-	Model_Static_Technique::writeCameraBuffers(m_enginePackage->m_Camera);
-	Model_Technique::writeCameraBuffers(m_enginePackage->m_Camera);
+	Model_Static_Technique::writeCameraBuffers(*m_engine->m_Camera);
+	Model_Technique::writeCameraBuffers(*m_engine->m_Camera);
 	// Lighting Data
 	for each (auto *tech in m_lightingTechs)
 		tech->updateData(vis_token);
@@ -173,7 +173,7 @@ void System_Graphics::updateOnGPU(const Visibility_Token & vis_token)
 	// Update Render Lists
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	for each (auto *tech in m_geometryTechs)
-		tech->occlusionCullBuffers(m_enginePackage->m_Camera);
+		tech->occlusionCullBuffers(*m_engine->m_Camera);
 	// Shadows & Global Illumination
 	for each (auto *tech in m_lightingTechs)
 		tech->applyPrePass(vis_token);
@@ -188,7 +188,7 @@ void System_Graphics::renderFrame(const Visibility_Token & vis_token)
 
 	// Geometry
 	for each (auto *tech in m_geometryTechs)
-		tech->renderGeometry(m_enginePackage->m_Camera);
+		tech->renderGeometry(*m_engine->m_Camera);
 	
 	// Ambient Occlusion
 	if (m_ssao)

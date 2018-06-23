@@ -40,7 +40,7 @@ protected:
 	/** Destroys a static model component. */
 	~Static_Model_Component();
 	/** Constructors an animated model component. */
-	Static_Model_Component(EnginePackage *enginePackage);
+	Static_Model_Component(Engine *engine);
 
 
 	// Protected functions
@@ -57,7 +57,7 @@ protected:
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
-	EnginePackage *m_enginePackage;
+	Engine *m_engine;
 	friend class Static_Model_Creator;
 
 
@@ -78,8 +78,8 @@ class Static_Model_Creator : public ComponentCreator
 {
 public:
 	Static_Model_Creator() : ComponentCreator() {}
-	virtual Component* create(EnginePackage *enginePackage) {
-		return new Static_Model_Component(enginePackage);
+	virtual Component* create(Engine *engine) {
+		return new Static_Model_Component(engine);
 	}
 };
 

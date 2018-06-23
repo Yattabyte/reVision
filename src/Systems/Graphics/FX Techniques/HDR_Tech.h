@@ -8,7 +8,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -20,7 +20,7 @@ public:
 	/** Virtual Destructor. */
 	~HDR_Tech();
 	/** Constructor. */
-	HDR_Tech(EnginePackage * enginePackage);
+	HDR_Tech(Engine * engine);
 
 
 	// Interface Implementations.
@@ -40,7 +40,7 @@ private:
 	GLuint m_fbo;
 	GLuint m_texture;
 	vec2 m_renderSize; 
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;

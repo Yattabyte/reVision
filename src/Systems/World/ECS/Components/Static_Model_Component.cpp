@@ -2,7 +2,7 @@
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "glm\gtx\component_wise.hpp"
 #include <minmax.h>
 
@@ -10,18 +10,18 @@
 Static_Model_Component::~Static_Model_Component()
 {
 	if (m_model.get()) m_model->removeCallback(this);
-	m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
+	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
-Static_Model_Component::Static_Model_Component(EnginePackage *enginePackage)
+Static_Model_Component::Static_Model_Component(Engine *engine)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_vaoLoaded = false;
 	m_skin = 0;
 	m_bsphereRadius = 0;
 	m_bspherePos = vec3(0.0f);
 
-	m_uboBuffer = m_enginePackage->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.addElement(&m_uboIndex);
+	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.addElement(&m_uboIndex);
 	m_commandMap["Set_Model_Directory"] = [&](const ECS_Command & payload) { 
 		if (payload.isType<string>()) setModelDirectory(payload.toType<string>()); 
 	};

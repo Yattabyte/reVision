@@ -1,7 +1,7 @@
 #include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 
 
 Bloom_Tech::~Bloom_Tech()
@@ -9,15 +9,15 @@ Bloom_Tech::~Bloom_Tech()
 	glDeleteTextures(2, m_texturesGB);
 	glDeleteTextures(1, &m_texture);
 	glDeleteFramebuffers(1, &m_fbo);
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+	m_engine->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO, VisualFX * visualFX)
+Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * visualFX)
 {
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_fbo = 0;
 	m_texture = 0; 
 	m_texturesGB[0] = 0;
@@ -30,9 +30,9 @@ Bloom_Tech::Bloom_Tech(EnginePackage * enginePackage, Lighting_FBO * lightingFBO
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
-	m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
-	m_bloomStrength = m_enginePackage->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+	m_bloomStrength = m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
 
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);

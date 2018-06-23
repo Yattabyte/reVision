@@ -4,15 +4,18 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.175";
+constexpr char ENGINE_VERSION[]	= "0.176";
 
+#include "Systems\World\Camera.h"
+#include "Systems\Input\ActionState.h"
+#include "Systems\Preferences\PreferenceState.h"
+#include "Utilities\MappedChar.h"
 #include <map>
 #include <shared_mutex>
 #include <thread>
 #include <vector>
 
 using namespace std;
-class EnginePackage;
 class GLFWwindow;
 class Camera;
 class System;
@@ -30,6 +33,9 @@ public:
 	~Engine();
 	/** Zero-initialize the engine. */
 	Engine();
+
+
+	// Public Methods
 	/** Initializes the engine, and makes this context active for the calling thread.
 	 * @return	true if successfully initialized */
 	bool initialize();
@@ -42,10 +48,68 @@ public:
 	/** Checks if the engine wants to shut down.
 	 * @return	true if engine should shut down */
 	bool shouldClose();
+	/** Searches for a subsystem with the given name.
+	 * @param	c	a const char array name of the desired system to find
+	 * @return		the system requested */
+	bool findSubSystem(const char * c) { 
+		return m_Systems.find(c);
+	}
+	/** Returns a type-casted subsystem that matches the given name.
+	 * @param	c	a const char array name of the desired system to find
+	 * @return		true if it can find the system, false otherwise */
+	template <typename T> T * getSubSystem(const char * c) {
+		return (T*)m_Systems[c];
+	}
+	/** Returns the preference-value associated with the supplied preference-ID.
+	 * @param	targetKey	the ID associated with the desired preference-value
+	 * @return				the value associated with the supplied preference-ID */
+	float getPreference(const PreferenceState::Preference & targetKey) const {
+		return m_PreferenceState.getPreference(targetKey);
+	}
+	/** Sets the supplied preference-value to the supplied preference-ID.
+	 * @param	targetKey	the ID associated with the supplied preference-value
+	 * @param	targetValue	the value to be set to the supplied preference-ID */
+	void setPreference(const PreferenceState::Preference & targetKey, const float & targetValue) {
+		m_PreferenceState.setPreference(targetKey, targetValue);
+	}
+	/** Attaches a callback method to be triggered when the supplied preference updates.
+	 * @param	targetKey	the preference-ID to which this callback will be attached
+	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	 * @param	observer	the method to be triggered
+	 * @param	<Observer>	the (auto-deduced) signature of the method 
+	 * @return				optionally returns the preference value held for this target */
+	template <typename Observer>
+	float const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
+		return m_PreferenceState.addPrefCallback(targetKey, pointerID, observer);
+	}
+	/** Removes a callback method from triggering when a particular preference changes.
+	 * @param	targetKey	the preference key that was listening for changes
+	 * @param	pointerID	the pointer to the object owning the callback to be removed */
+	void removePrefCallback(const PreferenceState::Preference & targetKey, void * pointerID) {
+		m_PreferenceState.removePrefCallback(targetKey, pointerID);
+	}
+
+
+
+
+
+
+
+
+
+
 	/** Returns the main camera belonging to this engine's viewport.
 	 * @return	a pointer to the main camera */
 	Camera * getCamera();	
 	
+
+public:
+	GLFWwindow * m_Context_Rendering;
+	Camera * m_Camera;
+	ActionState	m_ActionState;
+	PreferenceState	m_PreferenceState;
+	MappedChar<System*>	m_Systems;
+
 
 private:
 	// Public Attributes
@@ -53,7 +117,6 @@ private:
 	float m_lastTime; 
 	float m_frameAccumulator;
 	int m_frameCount;
-	EnginePackage *m_package;
 };
 
 /*! \mainpage Project reVision
@@ -183,7 +246,7 @@ private:
  * The rules for this section are pretty slack, however it shouldn't include 1-time use classes that \n
  * could just as easily be nested and void documenting.
  * They include:
- *		- EnginePackage
+ *		- Engine
  *		- File_Reader
  *		- Image_Importer
  *		- Model_Importer

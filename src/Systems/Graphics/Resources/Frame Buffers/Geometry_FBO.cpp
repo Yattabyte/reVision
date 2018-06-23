@@ -1,5 +1,5 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
 #include <algorithm>
 #include <random>
@@ -22,8 +22,8 @@ Geometry_FBO::~Geometry_FBO()
 		glDeleteTextures(1, &m_depth_stencil);
 		glDeleteTextures(GBUFFER_NUM_TEXTURES, m_textures);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	}
 }
 
@@ -38,18 +38,18 @@ Geometry_FBO::Geometry_FBO()
 		m_texturesGB[x] = 0;
 }
 
-void Geometry_FBO::initialize(EnginePackage * enginePackage, VisualFX * visualFX)
+void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
+		m_engine = engine;
 		m_visualFX = visualFX;
 		Asset_Shader::Create(m_shaderSSAO, "FX\\SSAO");
 		Asset_Primitive::Create(m_shapeQuad, "quad");
 		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
-		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		initialize_noise();
 		FrameBuffer::initialize();
 

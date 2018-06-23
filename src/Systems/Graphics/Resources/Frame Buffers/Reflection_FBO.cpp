@@ -1,13 +1,13 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 
 
 Reflection_FBO::~Reflection_FBO()
 {
 	if (m_Initialized) {
 		if (m_texture != 0) glDeleteTextures(1, &m_texture);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_enginePackage->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	}
 }
 
@@ -16,13 +16,13 @@ Reflection_FBO::Reflection_FBO()
 	m_texture = 0;
 }
 
-void Reflection_FBO::initialize(EnginePackage * enginePackage, const GLuint & depthStencil)
+void Reflection_FBO::initialize(Engine * engine, const GLuint & depthStencil)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
+		m_engine = engine;
 		m_depth_stencil = depthStencil;
-		m_renderSize.x = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_enginePackage->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		FrameBuffer::initialize();
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);

@@ -8,7 +8,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
@@ -23,7 +23,7 @@ public:
 	/** Destructor. */
 	~SSR_Tech();
 	/** Constructor. */
-	SSR_Tech(EnginePackage * enginePackage, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
+	SSR_Tech(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO);
 
 
 	// Interface Implementations
@@ -53,7 +53,7 @@ private:
 
 
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
 	Reflection_FBO * m_reflectionFBO;

@@ -10,7 +10,7 @@
 
 using namespace glm;
 class ComponentCreator;
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -76,9 +76,9 @@ public:
 	 * @param	component	the component to delete */
 	void destroy(Component * component) { delete component; };
 	/** Creates an component.
-	 * @param	enginePackage	pointer to the engine package	
-	 * @return					the component created */
-	virtual Component* create(EnginePackage * enginePackage) { return new Component(); };
+	 * @param	engine	pointer to the engine pointer	
+	 * @return			the component created */
+	virtual Component* create(Engine * engine) { return new Component(); };
 };
 
 #endif // COMPONENT_H

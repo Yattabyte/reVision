@@ -11,7 +11,7 @@
 #include <deque>
 
 
-class EnginePackage;
+class Engine;
 
 /**
  * A deferred shading lighting technique that manages directional lights.
@@ -22,7 +22,7 @@ public:
 	/** Destructor. */
 	~Directional_Tech();
 	/** Constructor. */
-	Directional_Tech(EnginePackage * enginePackage, Light_Buffers * lightBuffers);
+	Directional_Tech(Engine * engine, Light_Buffers * lightBuffers);
 
 
 	/** Get the size of the shadows used by this light type.
@@ -57,7 +57,7 @@ private:
 
 
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_CullDynamic, m_shader_CullStatic, m_shader_ShadowDynamic, m_shader_ShadowStatic, m_shader_Bounce;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;

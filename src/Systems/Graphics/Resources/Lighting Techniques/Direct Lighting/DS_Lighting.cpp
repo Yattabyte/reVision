@@ -3,24 +3,24 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Geometry_Buffers.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 
 
 DS_Lighting::~DS_Lighting()
 {
 	if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
-	m_enginePackage->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+	m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 }
 
 DS_Lighting::DS_Lighting(
-	EnginePackage * enginePackage,
+	Engine * engine,
 	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
 	vector<Light_Tech*> * baseTechs,
 	Geometry_Buffers * geometryBuffers
 )
 {
-	m_enginePackage = enginePackage;
-	m_updateQuality = m_enginePackage->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
+	m_engine = engine;
+	m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
 	// FBO's
 	m_geometryFBO = geometryFBO;
@@ -50,7 +50,7 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 	if (!vis_token.find("Anim_Model")) return;
 
 	for each (auto technique in *m_baseTechs)
-		technique->updateData(vis_token, m_updateQuality, m_enginePackage->m_Camera.getCameraBuffer().EyePosition);
+		technique->updateData(vis_token, m_updateQuality, m_engine->m_Camera->getCameraBuffer().EyePosition);
 }
 
 void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)

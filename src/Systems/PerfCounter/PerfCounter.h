@@ -8,7 +8,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Utilities\GL\StaticBuffer.h"
 
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -25,7 +25,7 @@ public:
 
 
 	// Interface Implementations
-	virtual void initialize(EnginePackage * enginePackage);
+	virtual void initialize(Engine * engine);
 	virtual void update(const float & deltaTime);
 	virtual void updateThreaded(const float & deltaTime) {};
 

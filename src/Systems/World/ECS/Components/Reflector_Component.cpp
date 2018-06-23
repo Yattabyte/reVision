@@ -4,24 +4,24 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflectors\IBL_Parallax.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 #include "glm\gtc\matrix_transform.hpp"
 #include <minmax.h>
 
 
 Reflector_Component::~Reflector_Component()
 {
-	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->removeElement(m_uboIndex);
 	graphics->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
-Reflector_Component::Reflector_Component(EnginePackage * enginePackage)
+Reflector_Component::Reflector_Component(Engine * engine)
 { 
-	m_enginePackage = enginePackage;
+	m_engine = engine;
 	m_position = vec3(0.0f);
 	m_scale = vec3(1.0f);
-	auto graphics = m_enginePackage->getSubSystem<System_Graphics>("Graphics");
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_uboBuffer = graphics->m_reflectionSSBO.addElement(&m_uboIndex);
 	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->CubeSpot = m_uboIndex;
 	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->addElement();

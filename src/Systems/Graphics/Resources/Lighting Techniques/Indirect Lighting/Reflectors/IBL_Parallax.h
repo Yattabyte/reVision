@@ -8,7 +8,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
-class EnginePackage;
+class Engine;
 class Reflector_Component;
 
 
@@ -21,7 +21,7 @@ public:
 	/** Destructor. */
 	~IBL_Parallax_Tech();
 	/** Constructor. */
-	IBL_Parallax_Tech(EnginePackage * enginePackage);
+	IBL_Parallax_Tech(Engine * engine);
 
 
 	// Public Functions
@@ -38,7 +38,7 @@ public:
 
 private:
 	// Private Attributes
-	EnginePackage * m_enginePackage;
+	Engine * m_engine;
 	bool m_regenCubemap;
 	bool m_quadVAOLoaded, m_cubeVAOLoaded;
 	GLuint m_quadVAO, m_cubeVAO;

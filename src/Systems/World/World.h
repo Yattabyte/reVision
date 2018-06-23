@@ -8,7 +8,7 @@
 #include "Systems\World\ECS\Entity_Factory.h"
 #include "Systems\World\ECS\Component_Factory.h"
 
-class EnginePackage;
+class Engine;
 
 
 /**
@@ -25,7 +25,7 @@ public:
 
 
 	// Interface Implementations
-	virtual void initialize(EnginePackage * enginePackage);
+	virtual void initialize(Engine * engine);
 	virtual void update(const float & deltaTime);
 	virtual void updateThreaded(const float & deltaTime);
 

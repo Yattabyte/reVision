@@ -1,5 +1,5 @@
 #include "Systems\Graphics\Resources\VisualFX.h"
-#include "Utilities\EnginePackage.h"
+#include "Engine.h"
 
 
 VisualFX::~VisualFX()
@@ -15,10 +15,10 @@ VisualFX::VisualFX()
 	m_fbo_GB = 0;
 }
 
-void VisualFX::initialize(EnginePackage * enginePackage)
+void VisualFX::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
-		m_enginePackage = enginePackage;
+		m_engine = engine;
 		Asset_Primitive::Create(m_shapeQuad, "quad");
 		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
