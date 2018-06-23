@@ -39,7 +39,7 @@ void System_World::updateThreaded(const float & deltaTime)
 {
 	shared_lock<shared_mutex> stateGuard(m_stateLock);
 	//if (!m_worldChanged && m_loaded) {
-		calcVisibility(*m_engine->m_Camera);
+		calcVisibility(*m_engine->getCamera());
 		shared_lock<shared_mutex> viewerGuard(m_viewerLock);
 		for each (auto &camera in m_viewers)
 			calcVisibility(*camera);

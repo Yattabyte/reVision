@@ -163,7 +163,7 @@ void IBL_Parallax_Tech::applyPrePass()
 		// Revert state, change renderer size back to previous values
 		glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 		Asset_Shader::Release();
-		m_engine->m_Camera->bind();
+		m_engine->getCamera()->bind();
 		m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, width);
 		m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 	}

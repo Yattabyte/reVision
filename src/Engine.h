@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.176";
+constexpr char ENGINE_VERSION[]	= "0.176.A";
 
 #include "Systems\World\Camera.h"
 #include "Systems\Input\ActionState.h"
@@ -88,27 +88,14 @@ public:
 	void removePrefCallback(const PreferenceState::Preference & targetKey, void * pointerID) {
 		m_PreferenceState.removePrefCallback(targetKey, pointerID);
 	}
-
-
-
-
-
-
-
-
-
-
-	/** Returns the main camera belonging to this engine's viewport.
-	 * @return	a pointer to the main camera */
-	Camera * getCamera();	
-	
-
-public:
-	GLFWwindow * m_Context_Rendering;
-	Camera * m_Camera;
-	ActionState	m_ActionState;
-	PreferenceState	m_PreferenceState;
-	MappedChar<System*>	m_Systems;
+	/** Returns this engine's rendering context. */
+	GLFWwindow * getRenderingContext() { return m_Context_Rendering; }
+	/** Returns this engine's main camera. */
+	Camera * getCamera() { return m_Camera; }
+	/** Returns this engine's action state. */
+	ActionState & getActionState() { return m_ActionState; }
+	/** Returns this engine's preference state. */
+	PreferenceState & getPreferenceState() { return m_PreferenceState; }
 
 
 private:
@@ -117,6 +104,11 @@ private:
 	float m_lastTime; 
 	float m_frameAccumulator;
 	int m_frameCount;
+	GLFWwindow * m_Context_Rendering;
+	Camera * m_Camera;
+	ActionState	m_ActionState;
+	PreferenceState	m_PreferenceState;
+	MappedChar<System*>	m_Systems;
 };
 
 /*! \mainpage Project reVision

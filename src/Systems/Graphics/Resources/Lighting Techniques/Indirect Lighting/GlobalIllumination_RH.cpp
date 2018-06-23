@@ -111,7 +111,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 {
 	// Update GI buffer
 	{
-		const auto cameraBuffer = m_engine->m_Camera->getCameraBuffer();
+		const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer();
 		const vec2 &size = cameraBuffer.Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));

@@ -119,7 +119,7 @@ void System_Graphics::initialize(Engine * engine)
 
 void System_Graphics::update(const float & deltaTime)
 {
-	const Visibility_Token vis_token = m_engine->m_Camera->getVisibilityToken();
+	const Visibility_Token vis_token = m_engine->getCamera()->getVisibilityToken();
 	if (m_Initialized && vis_token.size())	{		
 		Material_Manager::Bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -161,8 +161,8 @@ void System_Graphics::generateKernal()
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)
 {
 	// Geometry Data
-	Model_Static_Technique::writeCameraBuffers(*m_engine->m_Camera);
-	Model_Technique::writeCameraBuffers(*m_engine->m_Camera);
+	Model_Static_Technique::writeCameraBuffers(*m_engine->getCamera());
+	Model_Technique::writeCameraBuffers(*m_engine->getCamera());
 	// Lighting Data
 	for each (auto *tech in m_lightingTechs)
 		tech->updateData(vis_token);
@@ -173,7 +173,7 @@ void System_Graphics::updateOnGPU(const Visibility_Token & vis_token)
 	// Update Render Lists
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	for each (auto *tech in m_geometryTechs)
-		tech->occlusionCullBuffers(*m_engine->m_Camera);
+		tech->occlusionCullBuffers(*m_engine->getCamera());
 	// Shadows & Global Illumination
 	for each (auto *tech in m_lightingTechs)
 		tech->applyPrePass(vis_token);
@@ -188,7 +188,7 @@ void System_Graphics::renderFrame(const Visibility_Token & vis_token)
 
 	// Geometry
 	for each (auto *tech in m_geometryTechs)
-		tech->renderGeometry(*m_engine->m_Camera);
+		tech->renderGeometry(*m_engine->getCamera());
 	
 	// Ambient Occlusion
 	if (m_ssao)

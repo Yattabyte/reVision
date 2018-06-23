@@ -22,6 +22,8 @@ void System_Input::initialize(Engine * engine)
 
 void System_Input::update(const float & deltaTime)
 {
+	auto & actionState = m_engine->getActionState();
+	auto * renderingContext = m_engine->getRenderingContext();
 	const auto bindings = m_binds.getBindings();
 	if (!bindings.get()) return;
 	const auto &bind_map = bindings.get()->m_configuration;
@@ -30,11 +32,11 @@ void System_Input::update(const float & deltaTime)
 		const auto &action = pair.first;
 		const auto &input_button = (int)pair.second;
 		// If Key is pressed, set state to 1, otherwise set to 0
-		m_engine->m_ActionState.at(action) = (glfwGetKey(m_engine->m_Context_Rendering, input_button)) ? 1.0f : 0.0f;
+		actionState.at(action) = (glfwGetKey(renderingContext, input_button)) ? 1.0f : 0.0f;
 	}
 	double mouseX, mouseY;
-	glfwGetCursorPos(m_engine->m_Context_Rendering, &mouseX, &mouseY);
-	m_engine->m_ActionState.at(ActionState::LOOK_X) = mouseX;
-	m_engine->m_ActionState.at(ActionState::LOOK_Y) = mouseY;
-	glfwSetCursorPos(m_engine->m_Context_Rendering, 0, 0);
+	glfwGetCursorPos(renderingContext, &mouseX, &mouseY);
+	actionState.at(ActionState::LOOK_X) = mouseX;
+	actionState.at(ActionState::LOOK_Y) = mouseY;
+	glfwSetCursorPos(renderingContext, 0, 0);
 }

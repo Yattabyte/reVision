@@ -24,8 +24,9 @@ void System_Logic::initialize(Engine * engine)
 // Noclip type camera
 void System_Logic::update(const float & deltaTime)
 {
+	auto & actionState = m_engine->getActionState();
 	// Determine how much the camera should rotate
-	m_rotation += 25.0f * deltaTime * vec3(m_engine->m_ActionState.at(ActionState::LOOK_X), m_engine->m_ActionState.at(ActionState::LOOK_Y), 0);
+	m_rotation += 25.0f * deltaTime * vec3(actionState.at(ActionState::LOOK_X), actionState.at(ActionState::LOOK_Y), 0);
 	m_rotation.x = fmodf(m_rotation.x, 360.0f);
 	if (m_rotation.x < 0.0f)
 		m_rotation.x += 360.0f;
@@ -40,20 +41,20 @@ void System_Logic::update(const float & deltaTime)
 	const float velocity = 50.0f;
 	const float moveAmount = velocity * deltaTime;
 	vec3 deltaPosition(0.0f);
-	if (m_engine->m_ActionState.at(ActionState::FORWARD) > 0.5f)
+	if (actionState.at(ActionState::FORWARD) > 0.5f)
 		deltaPosition += vec3(0, 0, -moveAmount);
-	if (m_engine->m_ActionState.at(ActionState::BACK) > 0.5f)
+	if (actionState.at(ActionState::BACK) > 0.5f)
 		deltaPosition += vec3(0, 0, moveAmount);
-	if (m_engine->m_ActionState.at(ActionState::LEFT) > 0.5f)
+	if (actionState.at(ActionState::LEFT) > 0.5f)
 		deltaPosition += vec3(-moveAmount, 0, 0);
-	if (m_engine->m_ActionState.at(ActionState::RIGHT) > 0.5f)
+	if (actionState.at(ActionState::RIGHT) > 0.5f)
 		deltaPosition += vec3(moveAmount, 0, 0);
 	// Make the translation amount be relative to the camera's orientation
 	vec4 rotatedPosition = glm::inverse(rotationMatrix) * vec4(deltaPosition, 1.0f);
 	m_transform.m_position += vec3(rotatedPosition / rotatedPosition.w);
 
 	// Update the engine pointer
-	m_engine->m_Camera->setPosition(m_transform.m_position);
-	m_engine->m_Camera->setOrientation(m_transform.m_orientation);
-	m_engine->m_Camera->update();
+	m_engine->getCamera()->setPosition(m_transform.m_position);
+	m_engine->getCamera()->setOrientation(m_transform.m_orientation);
+	m_engine->getCamera()->update();
 }

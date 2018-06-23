@@ -146,7 +146,7 @@ void Light_Directional_Component::update(const unsigned int & type)
 void Light_Directional_Component::calculateCascades()
 {
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-	const auto cameraBuffer = m_engine->m_Camera->getCameraBuffer(); // returns a copy, no need to mutex
+	const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer(); // returns a copy, no need to mutex
 	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
 	m_camera.setPosition(cameraBuffer.EyePosition);
 	m_camera.setFarPlane(cameraBuffer.FarPlane);

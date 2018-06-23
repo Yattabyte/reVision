@@ -50,7 +50,7 @@ void DS_Lighting::updateData(const Visibility_Token & vis_token)
 	if (!vis_token.find("Anim_Model")) return;
 
 	for each (auto technique in *m_baseTechs)
-		technique->updateData(vis_token, m_updateQuality, m_engine->m_Camera->getCameraBuffer().EyePosition);
+		technique->updateData(vis_token, m_updateQuality, m_engine->getCamera()->getCameraBuffer().EyePosition);
 }
 
 void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)

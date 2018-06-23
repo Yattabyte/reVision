@@ -24,8 +24,8 @@ static void GLFW_Callback_Error(int error, const char * description)
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	Engine & engine = *((Engine*)glfwGetWindowUserPointer(window));
-	engine.m_Camera->setDimensions(vec2(width, height));
-	engine.m_Camera->update();
+	engine.getCamera()->setDimensions(vec2(width, height));
+	engine.getCamera()->update();
 	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
 	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
@@ -282,7 +282,3 @@ bool Engine::shouldClose()
 	return glfwWindowShouldClose(m_Context_Rendering);
 }
 
-Camera * Engine::getCamera() 
-{ 
-	return m_Camera; 
-}
