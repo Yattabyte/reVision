@@ -282,7 +282,7 @@ void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial, co
 		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	Asset_Material::Create(modelMaterial, material_textures);
+	Asset_Material::Create_All(modelMaterial, material_textures);
 }
 
 void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial)

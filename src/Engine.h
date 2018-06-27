@@ -4,11 +4,12 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.176.A";
+constexpr char ENGINE_VERSION[]	= "0.177";
 
 #include "Systems\World\Camera.h"
 #include "Systems\Input\ActionState.h"
 #include "Systems\Preferences\PreferenceState.h"
+#include "AssetManager.h"
 #include "Utilities\MappedChar.h"
 #include <map>
 #include <shared_mutex>
@@ -96,6 +97,8 @@ public:
 	ActionState & getActionState() { return m_ActionState; }
 	/** Returns this engine's preference state. */
 	PreferenceState & getPreferenceState() { return m_PreferenceState; }
+	/** Returns this engine's asset manager. */
+	AssetManager & getAssetManager() { return *m_AssetManager; }
 
 
 private:
@@ -108,6 +111,7 @@ private:
 	Camera * m_Camera;
 	ActionState	m_ActionState;
 	PreferenceState	m_PreferenceState;
+	AssetManager * m_AssetManager;
 	MappedChar<System*>	m_Systems;
 };
 

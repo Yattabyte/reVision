@@ -51,7 +51,7 @@ Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], cons
 	m_matSpot = spot;
 }
 
-void Asset_Material::Create(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded)
+void Asset_Material::Create_All(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded)
 {
 	// Check if a copy already exists
 	shared_mutex &mutex_IO_assets = Asset_Manager::Get_Mutex_Assets();

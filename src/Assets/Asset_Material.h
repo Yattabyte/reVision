@@ -38,7 +38,7 @@ public:
 	
 
 	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
+	static void Create_All(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
 	/** Attempts to create an asset from disk or share one if it already exists */
 	static void Create(Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded = true);
 

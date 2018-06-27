@@ -154,6 +154,7 @@ void Shutdown_Sharing()
 bool Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
+		m_AssetManager = new AssetManager();
 		m_Camera = new Camera();
 		m_Camera->setHorizontalFOV(110.0f);
 		const float farPlane = addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_Camera->setFarPlane(f); m_Camera->update(); });
@@ -248,6 +249,7 @@ void Engine::tick()
 			m_frameAccumulator += deltaTime;		
 		// end performance heuristics
 
+		m_AssetManager->notifyObservers();
 		Asset_Manager::Notify_Observers();
 		Material_Manager::Parse_Work_Orders();
 		Asset_Manager::Get_Model_Manager()->update();
@@ -269,6 +271,7 @@ void Engine::tickThreaded()
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
+			m_AssetManager->finalizeOrders();
 			Asset_Manager::Finalize_Orders();
 			for each (auto system in m_Systems)
 				system.second->updateThreaded(deltaTime);

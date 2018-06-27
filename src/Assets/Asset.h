@@ -76,8 +76,8 @@ protected:
 	bool m_finalized;
 	string m_filename;
 	map<void*, function<void()>> m_callbacks;
+	friend class AssetManager;
 };
-
 
 /**
  * An abstract class for assets work orders.
@@ -87,7 +87,7 @@ class Work_Order
 {
 public:
 	// (de)Constructor
-	/** Generic default constructor .*/
+	/** Generic default constructor. */
 	Work_Order() {};
 	/** Virtual destructor. */
 	virtual ~Work_Order() {};
