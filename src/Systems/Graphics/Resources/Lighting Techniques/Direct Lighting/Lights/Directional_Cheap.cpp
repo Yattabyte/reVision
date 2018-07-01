@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional_Cheap.h"
+#include "Engine.h"
 
 
 Directional_Tech_Cheap::~Directional_Tech_Cheap()
@@ -6,22 +7,23 @@ Directional_Tech_Cheap::~Directional_Tech_Cheap()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Directional_Tech_Cheap::Directional_Tech_Cheap(Light_Buffers * lightBuffers)
+Directional_Tech_Cheap::Directional_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers)
 {
 	m_lightSSBO = &lightBuffers->m_lightDirCheapSSBO;
 	m_size = 0;
 
-	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Directional\\Light_Cheap");
+	engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light_Cheap"), true);
 
 	// Primitive Loading
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() {
+	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
 		m_shapeQuad->updateVAO(m_quadVAO);
 		m_quadVAOLoaded = true;
-		GLuint data[4] = { m_shapeQuad->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
-		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, data);
+		GLuint data = m_shapeQuad->getSize();
+		m_indirectShape.write(0, sizeof(GLuint), &data);
 	});
 }
 

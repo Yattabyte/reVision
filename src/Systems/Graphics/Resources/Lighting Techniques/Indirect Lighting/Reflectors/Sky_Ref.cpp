@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflectors\Sky_Ref.h"
+#include "Engine.h"
 
 
 Sky_Ref_Tech::~Sky_Ref_Tech()
@@ -6,11 +7,11 @@ Sky_Ref_Tech::~Sky_Ref_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Sky_Ref_Tech::Sky_Ref_Tech()
+Sky_Ref_Tech::Sky_Ref_Tech(Engine * engine)
 {
-	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect");
-	Asset_Cubemap::Create(m_textureSky, "sky\\");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect"), true);
+	engine->createAsset(m_textureSky, string("sky\\"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();

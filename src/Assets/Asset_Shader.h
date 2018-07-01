@@ -7,7 +7,7 @@
 #define DIRECTORY_SHADER File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
@@ -32,11 +32,17 @@ public:
 	~Asset_Shader();
 
 
-	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create(Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded = true);
-
-
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Shader & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded = true);
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */
@@ -131,49 +137,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Shader. */
 	Asset_Shader(const string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Shader Assets.
- **/
-class Shader_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Shader work order */
-	Shader_WorkOrder(Shared_Asset_Shader & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Shader_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
 	// Private Methods
-	/** Parse for shader package inclusions. */
-	void Parse();
-	/** Creates and compiles all available shader types for this program. */
-	void Compile();
-	/* Creates and compiles a single shader file.
-	 * @param	ID	the ID of the shader to compile
-	 * @param	source	the text source to use
-	 * @param	type	the shader type for this to become
-	 * @note	self reports errors should they occur.	*/
-	void Compile_Single_Shader(GLuint & ID, const char * source, const GLenum & type);
-	/** Generates an OpenGL shader program ID for this class, and attempts to attach any available shaders. */
-	void GenerateProgram();
-	/** Attempts to link and validate the shader program. */
-	void LinkProgram();
-	/** Reads in a text file from disk.
-	 * @param	returnFile	reference string to return the text file to
-	 * @param	fileDirectory	absolute path to the file to read from
-	 * @return	true if the file exists, false otherwise */
-	bool FetchFileFromDisk(string & returnFile, const string & fileDirectory);
-	
-	
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Shader & userAsset);
+
+
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Shader m_asset;
+	friend class AssetManager;
 };
 
 #endif // ASSET_SHADER_H

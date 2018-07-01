@@ -1,4 +1,4 @@
-#include "AssetManager.h"
+#include "Managers\AssetManager.h"
 
 /** Begin Asset Includes **/
 #include "Assets/Asset.h"
@@ -13,23 +13,23 @@
 #include "Assets/Asset_Texture.h"
 /** End Asset Includes **/
 
+ 
 
 AssetManager::AssetManager()
 {
-	registerAssetCreator(typeid(Shared_Asset_Collider).name(), function<void(Shared_Asset_Collider&, const string&, const bool &)>(Asset_Collider::Create));
-	registerAssetCreator(typeid(Shared_Asset_Config).name(), function<void(Shared_Asset_Config&, const string&, const vector<string> &, const bool &)>(Asset_Config::Create));
-	registerAssetCreator(typeid(Shared_Asset_Cubemap).name(), function<void(Shared_Asset_Cubemap&, const string&, const bool &&)>(Asset_Cubemap::Create));
-	registerAssetCreator(typeid(Shared_Asset_Material).name(), function<void(Shared_Asset_Material&, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool &)>(Asset_Material::Create_All));
-	registerAssetCreator(typeid(Shared_Asset_Material).name(), function<void(Shared_Asset_Material&, const string&, const bool &)>(Asset_Material::Create));
-	registerAssetCreator(typeid(Shared_Asset_Model).name(), function<void(Shared_Asset_Model&, const string&, const bool &)>(Asset_Model::Create));
-	registerAssetCreator(typeid(Shared_Asset_Primitive).name(), function<void(Shared_Asset_Primitive&, const string&, const bool &)>(Asset_Primitive::Create));
-	registerAssetCreator(typeid(Shared_Asset_Shader).name(), function<void(Shared_Asset_Shader&, const string&, const bool &)>(Asset_Shader::Create));
-	registerAssetCreator(typeid(Shared_Asset_Shader_Pkg).name(), function<void(Shared_Asset_Shader_Pkg&, const string&, const bool &)>(Asset_Shader_Pkg::Create));
+	registerAssetCreator(typeid(Shared_Asset_Collider).name(), function<void(AssetManager&, Shared_Asset_Collider&, const string&, const bool &)>(Asset_Collider::Create));
+	registerAssetCreator(typeid(Shared_Asset_Config).name(), function<void(AssetManager&, Shared_Asset_Config&, const string&, const vector<string> &, const bool &)>(Asset_Config::Create));
+	registerAssetCreator(typeid(Shared_Asset_Cubemap).name(), function<void(AssetManager&, Shared_Asset_Cubemap&, const string&, const bool &&)>(Asset_Cubemap::Create));
+	registerAssetCreator(typeid(Shared_Asset_Material).name(), function<void(AssetManager&, Shared_Asset_Material&, const string&, const bool &, const string(&)[MAX_PHYSICAL_IMAGES])>(Asset_Material::Create));
+	registerAssetCreator(typeid(Shared_Asset_Model).name(), function<void(AssetManager&, Shared_Asset_Model&, ModelManager&, const string&, const bool &)>(Asset_Model::Create));
+	registerAssetCreator(typeid(Shared_Asset_Primitive).name(), function<void(AssetManager&, Shared_Asset_Primitive&, const string&, const bool &)>(Asset_Primitive::Create));
+	registerAssetCreator(typeid(Shared_Asset_Shader).name(), function<void(AssetManager&, Shared_Asset_Shader&, const string&, const bool &)>(Asset_Shader::Create));
+	registerAssetCreator(typeid(Shared_Asset_Shader_Pkg).name(), function<void(AssetManager&, Shared_Asset_Shader_Pkg&, const string&, const bool &)>(Asset_Shader_Pkg::Create));
 	registerAssetCreator(typeid(Shared_Asset_Texture).name(), function<void(AssetManager&, Shared_Asset_Texture&, const string&, const GLuint &, const bool &, const bool &, const bool &)>(Asset_Texture::Create));
 	
 
-	m_Workers.reserve(1);
-	for (unsigned int x = 0; x < 1; ++x) {
+	m_Workers.reserve(4);
+	for (unsigned int x = 0; x < 4; ++x) {
 		m_Workers.push_back(std::make_shared<Asset_Worker>());
 		auto &worker = m_Workers[x];
 		unique_lock<shared_mutex> writeGuard(worker->m_mutex);
@@ -64,13 +64,9 @@ void AssetManager::initializeOrders(shared_ptr<Asset_Worker> & worker)
 }
 void AssetManager::finalizeOrders() 
 {
-	{
-		shared_lock<shared_mutex> worker_readGuard(m_Mutex_Workorders);
-		if (!m_Work_toFinish.size())
-			return;
-	}
-
 	unique_lock<shared_mutex> worker_writeGuard(m_Mutex_Workorders);
+	if (!m_Work_toFinish.size())
+		return;
 	auto * workOrder = m_Work_toFinish.front();
 	m_Work_toFinish.pop_front();
 	workOrder->finish();
@@ -84,7 +80,7 @@ void AssetManager::submitNotifyee(const function<void()> & callBack)
 
 void AssetManager::notifyObservers()
 {
-	for each (auto & notifyee in m_notifyees)
+	for each (const auto & notifyee in m_notifyees)
 		notifyee();
 	m_notifyees.clear();
 }

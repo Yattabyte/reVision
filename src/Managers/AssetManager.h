@@ -49,13 +49,12 @@ public:
 	// Public Methods
 	/** Creates an asset or uses a cached copy if it has already been created.
 	 * @param	sharedAsset		the cointainer to place the asset
-	 * @param	filename		the filename to use for creation/lookup
 	 * @param	args			the rest of the arguments to be used for initialization
 	 */
 	template <typename SharedAsset, typename... Args>
-	void create(SharedAsset & sharedAsset, const string & filename, Args&&... ax) {
+	void create(SharedAsset & sharedAsset, Args&&... ax) {
 		// Get the asset's name from the template, and join this pointer with the the asset and arguments into a single list
-		forwardMapArguments(typeid(SharedAsset).name(), *this, sharedAsset, filename, forward<Args>(ax)...);
+		forwardMapArguments(typeid(SharedAsset).name(), *this, sharedAsset, forward<Args>(ax)...);
 	}
 	/** Queries if an asset already exists with the given filename, fetching if true.
 	 * @brief				Searches for and updates the supplied container with the desired asset if it already exists.
@@ -80,6 +79,14 @@ public:
 		}
 		return false;
 	}
+	/** A template for creating assets and forwarding their arguments, also adds to the map. 
+	 * @param	userAsset	the asset container
+	 * @param	ax			the constructor arguments */
+	template <typename Asset_T, typename... Args>
+	void createNewAsset(shared_ptr<Asset_T> & userAsset, Args&&... ax) {
+		userAsset = shared_ptr<Asset_T>(new Asset_T(forward<Args>(ax)...));
+		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
+	}
 	/** Submits an asset for physical creation, and optionally whether to thread it or not. To be called by asset creation functions.
 	 * @param	userAsset	the asset container
 	 * @param	threaded	flag to create in a separate thread
@@ -90,6 +97,17 @@ public:
 	template <typename Asset_T, typename Init_Callback, typename Fin_Callback, typename... Args>
 	void submitNewAsset(shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin, Args&&...ax) {
 		createNewAsset(userAsset, forward<Args>(ax)...);
+		submitNewWorkOrder(userAsset, threaded, ini, fin);
+	}
+	/** Submits an asset for physical creation, and optionally whether to thread it or not. To be called by asset creation functions.
+	 * @param	userAsset	the asset container
+	 * @param	threaded	flag to create in a separate thread
+	 * @param	ini			lambda initialization function
+	 * @param	fin			lambda finalization function
+	 * @param	ax			args to forward to the asset constructor
+	 */
+	template <typename Asset_T, typename Init_Callback, typename Fin_Callback>
+	void submitNewWorkOrder(shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin) {
 		if (threaded) {
 			unique_lock<shared_mutex> worker_writeGuard(m_Mutex_Workorders);
 			m_Work_toStart.push_back(new WorkOrder_Specialized<void>(ini, fin));
@@ -138,14 +156,6 @@ private:
 
 
 	// Private Methods
-	/** A template for creating assets and forwarding their arguments, also adds to the map. 
-	 * @param	userAsset	the asset container
-	 * @param	ax			the constructor arguments */
-	template <typename Asset_T, typename... Args>
-	void createNewAsset(shared_ptr<Asset_T> & userAsset, Args&&... ax) {
-		userAsset = shared_ptr<Asset_T>(new Asset_T(forward<Args>(ax)...));
-		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
-	}
 	/** A template for registrating new asset creators. 
 	 * @param	type	the name to use
 	 * @param	f		the creator function to use */

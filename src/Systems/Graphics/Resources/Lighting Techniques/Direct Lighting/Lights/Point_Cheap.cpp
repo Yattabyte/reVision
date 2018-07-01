@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point_Cheap.h"
+#include "Engine.h"
 
 
 Point_Tech_Cheap::~Point_Tech_Cheap()
@@ -6,15 +7,15 @@ Point_Tech_Cheap::~Point_Tech_Cheap()
 	if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
 }
 
-Point_Tech_Cheap::Point_Tech_Cheap(Light_Buffers * lightBuffers)
+Point_Tech_Cheap::Point_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers)
 {
 	m_lightSSBO = &lightBuffers->m_lightPointCheapSSBO;
 	m_size = 0;
 
-	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Point\\Light_Cheap");
+	engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light_Cheap"), true);
 
 	// Primitive Loading
-	Asset_Primitive::Create(m_shapeSphere, "sphere");
+	engine->createAsset(m_shapeSphere, string("sphere"), true);
 	m_sphereVAOLoaded = false;
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
 	m_shapeSphere->addCallback(this, [&]() {

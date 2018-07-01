@@ -7,6 +7,8 @@
 #include "Systems\Input\ActionState.h"
 #include <string>
 
+class Engine;
+
 
 /**
  * Responsible for loading a particular key-binding configuration
@@ -18,14 +20,15 @@ public:
 	/** Destroy the binding (not from disk) */
 	~InputBinding() {}
 	/** Construct a key-binding.
-	 * @param	filename	an optional relative path to a key-bind file to load. Defaults to binds.cfg */
-	InputBinding(const std::string & filename = "binds") { Asset_Config::Create(bindings, filename, ActionState::Action_Strings(), false); }
+	 * @param	engine		the engine
+	 * @param	filename	a relative path to a key-bind file to load */
+	InputBinding(Engine * engine, const std::string & filename);
 
 
 	// Public Methods
 	/** Retrieve the key-bindings.
 	 * @return	the configuration asset used */
-	const Shared_Asset_Config & getBindings() const { return bindings; };
+	const Shared_Asset_Config & getBindings() const;
 	
 
 private:

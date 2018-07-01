@@ -5,92 +5,12 @@
 #include <minmax.h>
 
 
-// Scene gets destroyed at the end of asset creation
-// We need to copy animation related information
-void AnimationInfo::setScene(const aiScene * scene) 
-{
-	Animations.resize(scene->mNumAnimations);
-	for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
-		Animations[x] = new aiAnimation(*scene->mAnimations[x]);
-
-	RootNode = new aiNode(*scene->mRootNode);
-}
-
-size_t AnimationInfo::numAnimations() const 
-{
-	return Animations.size(); 
-}
-
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Model & userAsset)
-{
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(userAsset, "defaultModel"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Model>(userAsset, "defaultModel");
-	userAsset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.uv = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	userAsset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_bboxMin = vec3(-1);
-	userAsset->m_bboxMax = vec3(1);
-	userAsset->m_data.bones.resize(6);
-	userAsset->m_skins.resize(1);
-	Asset_Material::Create(userAsset->m_skins[0], "defaultMaterial");
-	Asset_Manager::Add_Work_Order(new Model_WorkOrder(userAsset, ""), true);
-}
-
-Asset_Model::~Asset_Model()
-{
-	if (existsYet())
-		Asset_Manager::Get_Model_Manager()->unregisterGeometry(m_data, m_offset, m_count);
-}
-
-Asset_Model::Asset_Model(const string & filename) : Asset(filename)
-{
-	m_meshSize = 0;
-	m_bboxMin = vec3(0.0f);
-	m_bboxMax = vec3(0.0f);
-	m_bboxCenter = vec3(0.0f);
-	m_radius = 0.0f;
-	m_offset = 0;
-	m_count = 0;
-}
-
- void Asset_Model::Create(Shared_Asset_Model & userAsset, const string & filename, const bool & threaded)
-{
-	if (Asset_Manager::Query_Existing_Asset<Asset_Model>(userAsset, filename))
-		return;
-
-	// Check if the file/directory exists on disk
-	const std::string &fullDirectory = DIRECTORY_MODEL + filename;
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		fetch_default_asset(userAsset);
-		return;
-	}
-
-	// Create the asset
-	Asset_Manager::Submit_New_Asset<Asset_Model, Model_WorkOrder>(userAsset, threaded, fullDirectory, filename);
-}
-
-GLuint Asset_Model::getSkinID(const unsigned int & desired)
-{
-	shared_lock<shared_mutex> guard(m_mutex);
-	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
-}
-
 /** Calculates a Axis Aligned Bounding Box from a set of vertices.\n
  * Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
  * @param	vertices	the vertices of the mesh to derive the AABB from
  * @param	minOut	output reference containing the minimum extents of the AABB
  * @param	maxOut	output reference containing the maximum extents of the AABB */
-void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut, vec3 & centerOut, float & radiusOut)
+inline void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut, vec3 & centerOut, float & radiusOut)
 {
 	if (vertices.size() >= 1) {
 		const vec3 &vector = vertices.at(0);
@@ -118,74 +38,10 @@ void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut,
 	}
 }
 
-void Model_WorkOrder::initializeOrder()
-{	
-	Assimp::Importer &importer = *new Assimp::Importer();
-	const aiScene* scene = importer.ReadFile(m_filename,
-		aiProcess_LimitBoneWeights |
-		aiProcess_Triangulate |
-		aiProcess_CalcTangentSpace /*|
-								   aiProcess_SplitLargeMeshes |
-								   aiProcess_OptimizeMeshes |
-								   aiProcess_OptimizeGraph |
-								   aiProcess_GenSmoothNormals
-								   aiProcess_ImproveCacheLocality*/);
-								   // Scene cannot be read
-	if (!scene) {
-		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, m_filename);
-		fetch_default_asset(m_asset);
-		return;
-	}
-
-	unique_lock<shared_mutex> m_asset_guard(m_asset->m_mutex);
-	GeometryInfo &gi = m_asset->m_data;
-
-	// Combine mesh data into single struct
-	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-		const aiMesh *mesh = scene->mMeshes[a];
-		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-			const aiFace& face = mesh->mFaces[x];
-			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-				const int index = face.mIndices[b];
-				const aiVector3D vertex = mesh->mVertices[index];
-				const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-				gi.vs.push_back(vec3(vertex.x, vertex.y, vertex.z));
-				gi.nm.push_back(glm::normalize(vec3(normal.x, normal.y, normal.z)));
-				gi.tg.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z) - vec3(normal.x, normal.y, normal.z) * glm::dot(vec3(normal.x, normal.y, normal.z), vec3(tangent.x, tangent.y, tangent.z))));
-				gi.bt.push_back(vec3(bitangent.x, bitangent.y, bitangent.z));
-				gi.uv.push_back(vec2(uvmap.x, uvmap.y));
-			}
-		}
-	}
-	m_asset->m_animationInfo.setScene(scene);
-	m_asset->m_meshSize = gi.vs.size(); // Final vertex size (needed for draw arrays call)
-	gi.bones.resize(gi.vs.size());
-	calculate_AABB(gi.vs, m_asset->m_bboxMin, m_asset->m_bboxMax, m_asset->m_bboxCenter, m_asset->m_radius);
-	initializeBones(m_asset, scene);
-
-	// Generate all the required skins
-	m_asset->m_skins.resize(max(1, (scene->mNumMaterials - 1)));
-	if (scene->mNumMaterials > 1) 		
-		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
-			generateMaterial(m_asset->m_skins[x - 1], scene->mMaterials[x]);	
-	else
-		generateMaterial(m_asset->m_skins[0]);
-}
-
-void Model_WorkOrder::finalizeOrder()
-{
-	if (!m_asset->existsYet()) {
-		unique_lock<shared_mutex> write_guard(m_asset->m_mutex);
-		Asset_Manager::Get_Model_Manager()->registerGeometry(m_asset->m_data, m_asset->m_offset, m_asset->m_count);
-		write_guard.unlock();
-		write_guard.release();
-		m_asset->finalize();
-	}
-}
-mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
+/** Convert an aiMatrix to glm::mat4x4.
+ * @param	d	the aiMatrix to convert from
+ * @return		the glm::mat4x4 converted to */
+inline mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 {
 	return mat4(d.a1, d.b1, d.c1, d.d1,
 		d.a2, d.b2, d.c2, d.d2,
@@ -193,7 +49,10 @@ mat4 inline aiMatrixtoMat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-void Model_WorkOrder::initializeBones(Shared_Asset_Model & model, const aiScene * scene)
+/** Initialize a model's bones.
+ * @param	model	the model to use
+ * @param	scene	the scene to use */
+inline void initialize_bones(Shared_Asset_Model & model, const aiScene * scene)
 {
 	vector<BoneInfo> &boneInfo = model->m_animationInfo.meshTransforms;
 	map<string, int> &m_BoneMapping = model->m_animationInfo.boneMap;
@@ -218,7 +77,7 @@ void Model_WorkOrder::initializeBones(Shared_Asset_Model & model, const aiScene 
 				BoneIndex = m_BoneMapping[BoneName];
 
 			m_BoneMapping[BoneName] = BoneIndex;
-			boneInfo[BoneIndex].BoneOffset = aiMatrixtoMat4x4(mesh->mBones[B]->mOffsetMatrix);
+			boneInfo[BoneIndex].BoneOffset = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
 
 			for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
 				int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
@@ -235,7 +94,11 @@ void Model_WorkOrder::initializeBones(Shared_Asset_Model & model, const aiScene 
 	}
 }
 
-void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
+/** Initialize a model's material, where each texture is specified individually. 
+ * @param	assetManager	the asset manager to use
+ * @param	modelMaterial	the material asset to load into
+ * @param	sceneMaterial	the scene material to use as a guide */
+inline void generate_material(AssetManager & assetManager, Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
 {
 	// Get the aiStrings for all the textures for a material
 	aiString	albedo, normal, metalness, roughness, height, ao;
@@ -282,12 +145,179 @@ void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial, co
 		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	Asset_Material::Create_All(modelMaterial, material_textures);
+	assetManager.create(modelMaterial, string(""), true, material_textures);
 }
 
-void Model_WorkOrder::generateMaterial(Shared_Asset_Material & modelMaterial)
+/** Initialize a model's materials, using the model's name as a lookup to an external material file.
+ * @param	assetManager	the asset manager to use
+ * @param	modelMaterial	the material asset to load into
+ * @param	filename		the model's filename to use as a guide */
+inline void generate_material(AssetManager & assetManager, Shared_Asset_Material & modelMaterial, const string & filename)
 {
-	std::string materialFilename = m_filename.substr(m_filename.find("Models\\"));
+	std::string materialFilename = filename.substr(filename.find("Models\\"));
 	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));
-	Asset_Material::Create(modelMaterial, materialFilename);
+	assetManager.create(modelMaterial, materialFilename, true);
+}
+
+// Scene gets destroyed at the end of asset creation
+// We need to copy animation related information
+void AnimationInfo::setScene(const aiScene * scene) 
+{
+	Animations.resize(scene->mNumAnimations);
+	for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
+		Animations[x] = new aiAnimation(*scene->mAnimations[x]);
+
+	RootNode = new aiNode(*scene->mRootNode);
+}
+
+size_t AnimationInfo::numAnimations() const 
+{
+	return Animations.size(); 
+}
+
+Asset_Model::~Asset_Model()
+{
+	if (existsYet())
+		m_modelManager->unregisterGeometry(m_data, m_offset, m_count);
+}
+
+Asset_Model::Asset_Model(const string & filename, ModelManager * modelManager) : Asset(filename)
+{
+	m_meshSize = 0;
+	m_bboxMin = vec3(0.0f);
+	m_bboxMax = vec3(0.0f);
+	m_bboxCenter = vec3(0.0f);
+	m_radius = 0.0f;
+	m_offset = 0;
+	m_count = 0;
+	m_modelManager = modelManager;
+}
+
+void Asset_Model::CreateDefault(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset)
+{
+	// Check if a copy already exists
+	if (assetManager.queryExistingAsset(userAsset, "defaultModel"))
+		return;
+	
+	// Create hard-coded alternative
+	assetManager.createNewAsset(userAsset, "defaultModel", &modelManager);
+	userAsset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.uv = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	userAsset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_bboxMin = vec3(-1);
+	userAsset->m_bboxMax = vec3(1);
+	userAsset->m_data.bones.resize(6);
+	userAsset->m_skins.resize(1);
+	assetManager.create(userAsset->m_skins[0], "defaultMaterial", true);
+
+	// Create the asset
+	assetManager.submitNewWorkOrder(userAsset, true,
+		/* Initialization. */
+		[]() {},
+		/* Finalization. */
+		[&assetManager, &userAsset]() { Finalize(assetManager, userAsset); }
+	);
+}
+
+void Asset_Model::Create(AssetManager & assetManager, Shared_Asset_Model & userAsset, ModelManager & modelManager, const string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (assetManager.queryExistingAsset(userAsset, filename))
+		return;
+
+	// Check if the file/directory exists on disk
+	const std::string &fullDirectory = DIRECTORY_MODEL + filename;
+	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
+		CreateDefault(assetManager, modelManager, userAsset);
+		return;
+	}
+	
+	// Create the asset
+	assetManager.submitNewAsset(userAsset, threaded,
+		/* Initialization. */
+		[&assetManager, &modelManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, modelManager, userAsset, fullDirectory); },
+		/* Finalization. */
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		/* Constructor Arguments. */
+		filename, &modelManager
+	);
+}
+
+void Asset_Model::Initialize(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset, const string & fullDirectory)
+{
+	Assimp::Importer &importer = *new Assimp::Importer();
+	const aiScene* scene = importer.ReadFile(fullDirectory,
+		aiProcess_LimitBoneWeights |
+		aiProcess_Triangulate |
+		aiProcess_CalcTangentSpace /*|
+								   aiProcess_SplitLargeMeshes |
+								   aiProcess_OptimizeMeshes |
+								   aiProcess_OptimizeGraph |
+								   aiProcess_GenSmoothNormals
+								   aiProcess_ImproveCacheLocality*/);
+								   // Scene cannot be read
+	if (!scene) {
+		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fullDirectory);
+		CreateDefault(assetManager, modelManager, userAsset);
+		return;
+	}
+
+	unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+	GeometryInfo &gi = userAsset->m_data;
+
+	// Combine mesh data into single struct
+	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
+		const aiMesh *mesh = scene->mMeshes[a];
+		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+			const aiFace& face = mesh->mFaces[x];
+			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
+				const int index = face.mIndices[b];
+				const aiVector3D vertex = mesh->mVertices[index];
+				const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
+				gi.vs.push_back(vec3(vertex.x, vertex.y, vertex.z));
+				gi.nm.push_back(glm::normalize(vec3(normal.x, normal.y, normal.z)));
+				gi.tg.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z) - vec3(normal.x, normal.y, normal.z) * glm::dot(vec3(normal.x, normal.y, normal.z), vec3(tangent.x, tangent.y, tangent.z))));
+				gi.bt.push_back(vec3(bitangent.x, bitangent.y, bitangent.z));
+				gi.uv.push_back(vec2(uvmap.x, uvmap.y));
+			}
+		}
+	}
+	userAsset->m_animationInfo.setScene(scene);
+	userAsset->m_meshSize = gi.vs.size(); // Final vertex size (needed for draw arrays call)
+	gi.bones.resize(gi.vs.size());
+	calculate_AABB(gi.vs, userAsset->m_bboxMin, userAsset->m_bboxMax, userAsset->m_bboxCenter, userAsset->m_radius);
+	initialize_bones(userAsset, scene);
+
+	// Generate all the required skins
+	userAsset->m_skins.resize(max(1, (scene->mNumMaterials - 1)));
+	if (scene->mNumMaterials > 1)
+		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
+			generate_material(assetManager, userAsset->m_skins[x - 1], scene->mMaterials[x]);
+	else
+		generate_material(assetManager, userAsset->m_skins[0], fullDirectory);
+}
+
+void Asset_Model::Finalize(AssetManager & assetManager, Shared_Asset_Model & userAsset)
+{
+	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	userAsset->m_finalized = true;
+	userAsset->m_modelManager->registerGeometry(userAsset->m_data, userAsset->m_offset, userAsset->m_count);
+	write_guard.unlock();
+	write_guard.release();
+	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	for each (auto qwe in userAsset->m_callbacks)
+		assetManager.submitNotifyee(qwe.second);
+	/* To Do: Finalize call here*/
+}
+
+GLuint Asset_Model::getSkinID(const unsigned int & desired)
+{
+	shared_lock<shared_mutex> guard(m_mutex);
+	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
 }

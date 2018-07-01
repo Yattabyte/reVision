@@ -41,9 +41,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 	ZERO_MEM(m_textures[0]);
 	ZERO_MEM(m_textures[1]);
 
-	Asset_Shader::Create(m_shaderGISecondBounce, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce");
-	Asset_Shader::Create(m_shaderGIReconstruct, "Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderGISecondBounce, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce"), true);
+	engine->createAsset(m_shaderGIReconstruct, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

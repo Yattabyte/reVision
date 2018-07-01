@@ -1,5 +1,6 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Sky Lighting\Skybox.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
+#include "Engine.h"
 
 
 Skybox::~Skybox()
@@ -7,12 +8,12 @@ Skybox::~Skybox()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-Skybox::Skybox(Lighting_FBO * lightingFBO)
+Skybox::Skybox(Engine * engine, Lighting_FBO * lightingFBO)
 {
 	m_lightingFBO = lightingFBO;
-	Asset_Shader::Create(m_shaderSky, "skybox");
-	Asset_Cubemap::Create(m_textureSky, "sky\\");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderSky, string("skybox"), true);
+	engine->createAsset(m_textureSky, string("sky\\"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 	m_vaoLoaded = false;

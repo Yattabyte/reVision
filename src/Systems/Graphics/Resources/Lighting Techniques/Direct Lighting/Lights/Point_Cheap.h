@@ -19,7 +19,7 @@ public:
 	/** Destructor. */
 	~Point_Tech_Cheap();
 	/** Constructor. */
-	Point_Tech_Cheap(Light_Buffers * lightBuffers);
+	Point_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers);
 	
 
 	// Interface Implementations

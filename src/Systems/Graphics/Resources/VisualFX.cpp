@@ -19,7 +19,7 @@ void VisualFX::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
 		m_engine = engine;
-		Asset_Primitive::Create(m_shapeQuad, "quad");
+		engine->createAsset(m_shapeQuad, string("quad"), true);
 		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
@@ -41,8 +41,8 @@ void VisualFX::initializeGausianBlur()
 {
 	glCreateFramebuffers(1, &m_fbo_GB);
 
-	Asset_Shader::Create(m_shaderGB, "FX\\gaussianBlur");
-	Asset_Shader::Create(m_shaderGB_A, "FX\\gaussianBlur_Alpha");
+	m_engine->createAsset(m_shaderGB, string("FX\\gaussianBlur"), true);
+	m_engine->createAsset(m_shaderGB_A, string("FX\\gaussianBlur_Alpha"), true);
 }
 
 void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const vec2 & size, const int & amount)

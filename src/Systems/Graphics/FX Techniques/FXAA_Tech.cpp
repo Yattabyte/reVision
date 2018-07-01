@@ -1,4 +1,5 @@
 #include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
+#include "Engine.h"
 
 
 FXAA_Tech::~FXAA_Tech()
@@ -6,10 +7,10 @@ FXAA_Tech::~FXAA_Tech()
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 }
 
-FXAA_Tech::FXAA_Tech()
+FXAA_Tech::FXAA_Tech(Engine * engine)
 {
-	Asset_Shader::Create(m_shaderFXAA, "FX\\FXAA");
-	Asset_Primitive::Create(m_shapeQuad, "quad"); 
+	engine->createAsset(m_shaderFXAA, string("FX\\FXAA"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO(); 
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

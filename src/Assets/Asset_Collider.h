@@ -4,7 +4,7 @@
 #define DIRECTORY_COLLIDER File_Reader::GetCurrentDir() + "\\Models\\"
 #define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include <btBulletDynamicsCommon.h>
 
@@ -23,8 +23,17 @@ public:
 	~Asset_Collider();
 
 
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	static void Create(Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded = true);
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Collider & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded = true);
+	
 
 
 	// Public Attributes
@@ -32,27 +41,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Collider. */
 	Asset_Collider(const string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Collider Assets.
- **/
-class Collider_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Collider work order. */
-	Collider_WorkOrder(Shared_Asset_Collider & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Collider_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Collider & userAsset);
+
+
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Collider m_asset;
+	friend class AssetManager;
 };
 
 #endif // ASSET_COLLIDER_H

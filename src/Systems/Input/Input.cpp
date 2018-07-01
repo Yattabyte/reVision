@@ -8,8 +8,8 @@ System_Input::~System_Input()
 {
 }
 
-System_Input::System_Input(const InputBinding & binds) : m_binds(binds)
-{
+System_Input::System_Input(Engine * engine, const std::string & filename) : m_binds(InputBinding(engine, filename))
+{	
 }
 
 void System_Input::initialize(Engine * engine)

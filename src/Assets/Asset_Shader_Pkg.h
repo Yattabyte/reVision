@@ -5,7 +5,7 @@
 #define DIRECTORY_SHADER_PKG File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
@@ -27,12 +27,18 @@ public:
 	/** Destroy the Shader Package. */
 	~Asset_Shader_Pkg();	
 
-
-	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create(Shared_Asset_Shader_Pkg & userAsset, const string & filename, const bool & threaded = true);
-
-
+	
 	// Public Methods
+	/** Creates a default asset.
+	* @param	assetManager	the asset manager to use
+	* @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Shader_Pkg & userAsset);
+	/** Begins the creation process for this asset.
+	* @param	assetManager	the asset manager to use
+	* @param	userAsset		the desired asset container
+	* @param	filename		the filename to use
+	* @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Shader_Pkg & userAsset, const string & filename, const bool & threaded = true);
 	/** Retrieves this package's content as a string.
 	 * @return	package contents */
 	string getPackageText() const;
@@ -43,38 +49,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Shader Package. */
 	Asset_Shader_Pkg(const string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Shader Package Assets.
- **/
-class Shader_Pkg_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Shader_Pkg work order */
-	Shader_Pkg_WorkOrder(Shared_Asset_Shader_Pkg & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Shader_Pkg_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
 	// Private Methods
-	/** Reads in a text file from disk.
-	 * @param	returnFile	reference string to return the text file to
-	 * @param	fileDirectory	absolute path to the file to read from
-	 * @return	true if the file exists, false otherwise */
-	bool fetchFileFromDisk(string & returnFile, const string & fileDirectory);
-
-	/** Parses the document for further inclusions and imports when necessary. */
-	void parse();
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Shader_Pkg & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Shader_Pkg & userAsset);
 
 
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Shader_Pkg m_asset;
+	friend class AssetManager;
 };
 
 #endif // ASSET_SHADER_PKG_H

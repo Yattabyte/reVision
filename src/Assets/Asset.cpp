@@ -1,5 +1,4 @@
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
 #include <algorithm>
 
 
@@ -43,19 +42,5 @@ void Asset::finalize()
 		m_finalized = true;
 		write_guard.unlock();
 		write_guard.release();
-
-		notify();
 	}
-}
-
-void Asset::notify()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	vector<function<void()>> funcs;
-	funcs.reserve(m_callbacks.size());
-	for each (const auto & func in m_callbacks)
-		funcs.push_back(func.second);
-	read_guard.unlock();
-	read_guard.release();
-	Asset_Manager::Queue_Notification(funcs);	
 }

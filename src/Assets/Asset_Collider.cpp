@@ -4,21 +4,6 @@
 #include "assimp\postprocess.h"
 
 
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
- * @brief Uses hard-coded values
- * @param	asset	a shared pointer to fill with the default asset */
-void fetch_default_asset(Shared_Asset_Collider & userAsset)
-{
-	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(userAsset, "defaultCollider"))
-		return;
-
-	// Create hard-coded alternative
-	Asset_Manager::Create_New_Asset<Asset_Collider>(userAsset, "defaultCollider");
-	userAsset->m_shape = new btBoxShape(btVector3(1, 1, 1));
-	Asset_Manager::Add_Work_Order(new Collider_WorkOrder(userAsset, ""), true);
-}
-
 Asset_Collider::~Asset_Collider()
 {
 	if (m_shape != nullptr)
@@ -30,40 +15,69 @@ Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 	m_shape = nullptr;
 }
 
-void Asset_Collider::Create(Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
+void Asset_Collider::CreateDefault(AssetManager & assetManager, Shared_Asset_Collider & userAsset)
 {
 	// Check if a copy already exists
-	if (Asset_Manager::Query_Existing_Asset<Asset_Collider>(userAsset, filename))
+	if (assetManager.queryExistingAsset(userAsset, "defaultCollider"))
+		return;
+
+	// Create hard-coded alternative
+	assetManager.createNewAsset(userAsset, "defaultCollider");
+	userAsset->m_shape = new btBoxShape(btVector3(1, 1, 1));
+	assetManager.submitNewWorkOrder(userAsset, true,
+		/* Initialization. */
+		[]() {},
+		/* Finalization. */
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+	);
+}
+
+void Asset_Collider::Create(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
+{
+	// Check if a copy already exists
+	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
 	if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		fetch_default_asset(userAsset);
+		CreateDefault(assetManager, userAsset);
 		return;
 	}
 
 	// Create the asset
-	Asset_Manager::Submit_New_Asset<Asset_Collider, Collider_WorkOrder>(userAsset, threaded, fullDirectory, filename);
+	assetManager.submitNewAsset(userAsset, threaded,
+		/* Initialization. */
+		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		/* Finalization. */
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		filename
+	);
 }
 
-void Collider_WorkOrder::initializeOrder()
+void Asset_Collider::Initialize(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & fullDirectory)
 {
 	// Attempt to create the asset
 	vector<btScalar> points;
-	if (!Model_Importer::import_Model(m_filename, aiProcess_Triangulate, points)) {
-		fetch_default_asset(m_asset);
+	if (!Model_Importer::import_Model(fullDirectory, aiProcess_Triangulate, points)) {
+		CreateDefault(assetManager, userAsset);
 		return;
 	}
 
 	btConvexHullShape *shape = new btConvexHullShape(&points[0], points.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
-	m_asset->m_shape = shape;
+	userAsset->m_shape = shape;
 }
 
-void Collider_WorkOrder::finalizeOrder()
+void Asset_Collider::Finalize(AssetManager & assetManager, Shared_Asset_Collider & userAsset)
 {
-	if (!m_asset->existsYet()) 
-		m_asset->finalize();	
+	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	userAsset->m_finalized = true;
+	write_guard.unlock();
+	write_guard.release();
+	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	for each (auto qwe in userAsset->m_callbacks)
+		assetManager.submitNotifyee(qwe.second);
+	/* To Do: Finalize call here*/
 }

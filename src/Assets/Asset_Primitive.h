@@ -6,7 +6,7 @@
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
@@ -27,11 +27,17 @@ public:
 	~Asset_Primitive();
 
 
-	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create(Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
-
-
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Primitive & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return			a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();
@@ -51,26 +57,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Primitive. */
 	Asset_Primitive(const string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Primitive Assets.
- **/
-class Primitive_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Primitive work order */
-	Primitive_WorkOrder(Shared_Asset_Primitive & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Primitive_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset);
+
+
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Primitive m_asset;
+	friend class AssetManager;
 };
+
 #endif // ASSET_PRIMITIVE_H

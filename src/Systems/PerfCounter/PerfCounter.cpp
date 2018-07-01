@@ -20,9 +20,9 @@ System_PerfCounter::System_PerfCounter()
 void System_PerfCounter::initialize(Engine * engine)
 {
 	m_engine = engine;
-	engine->getAssetManager().create(m_numberTexture, "numbers.png", GL_TEXTURE_2D, false, false, true);
-	Asset_Primitive::Create(m_shapeQuad, "quad");
-	Asset_Shader::Create(m_shader, "Utilities\\numberPrint");
+	engine->createAsset(m_numberTexture, string("numbers.png"), GL_TEXTURE_2D, false, false, true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
+	engine->createAsset(m_shader, string("Utilities\\numberPrint"), true);
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() {
 		m_shapeQuad->updateVAO(m_quadVAO);

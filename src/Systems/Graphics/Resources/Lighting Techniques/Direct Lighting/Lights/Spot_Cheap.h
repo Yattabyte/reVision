@@ -21,7 +21,7 @@ public:
 	/** Destructor. */
 	~Spot_Cheap_Tech();
 	/** Constructor. */
-	Spot_Cheap_Tech(Light_Buffers * lightBuffers);
+	Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers);
 
 
 	// Interface Implementations

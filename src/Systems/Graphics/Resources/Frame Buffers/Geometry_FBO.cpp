@@ -43,8 +43,8 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 	if (!m_Initialized) {
 		m_engine = engine;
 		m_visualFX = visualFX;
-		Asset_Shader::Create(m_shaderSSAO, "FX\\SSAO");
-		Asset_Primitive::Create(m_shapeQuad, "quad");
+		engine->createAsset(m_shaderSSAO, string("FX\\SSAO"), true);
+		engine->createAsset(m_shapeQuad, string("quad"), true);
 		m_vaoLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

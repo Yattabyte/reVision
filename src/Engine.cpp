@@ -1,8 +1,6 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
-#include "Engine.h"
-#include "Managers\Asset_Manager.h"
 #include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
 #include <string>
@@ -80,7 +78,7 @@ Engine::~Engine()
 	}
 }
 
-Engine::Engine()
+Engine::Engine() : m_PreferenceState(this)
 {
 	m_Initialized = false;	
 	m_lastTime = 0;
@@ -141,7 +139,6 @@ bool Initialize_Sharing()
 void Shutdown_Sharing()
 {
 	Material_Manager::Shut_Down();
-	Asset_Manager::Shut_Down();
 }
  
 #include "Assets\Asset_Material.h"
@@ -154,7 +151,6 @@ void Shutdown_Sharing()
 bool Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing()) {
-		m_AssetManager = new AssetManager();
 		m_Camera = new Camera();
 		m_Camera->setHorizontalFOV(110.0f);
 		const float farPlane = addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_Camera->setFarPlane(f); m_Camera->update(); });
@@ -178,7 +174,7 @@ bool Engine::initialize()
 		glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-		m_Context_Rendering = glfwCreateWindow(1, 1, "Delta", NULL, m_Context_Sharing); 
+		m_Context_Rendering = glfwCreateWindow(1, 1, "reVision", NULL, m_Context_Sharing); 
 		glfwSetWindowIcon(m_Context_Rendering, 0, NULL);
 		glfwMakeContextCurrent(m_Context_Rendering);	
 				
@@ -186,7 +182,7 @@ bool Engine::initialize()
 		m_Systems["Preferences"] = new System_Preferences("preferences");
 		m_Systems["Graphics"] = new System_Graphics();
 		m_Systems["PerfCounter"] = new System_PerfCounter();
-		m_Systems["Input"] = new System_Input();
+		m_Systems["Input"] = new System_Input(this);
 		m_Systems["Logic"] = new System_Logic();
 		m_Systems["World"] = new System_World();
 
@@ -207,7 +203,7 @@ bool Engine::initialize()
 		glfwSwapInterval(0);
 
 		Material_Manager::Start_Up();
-		Asset_Manager::Start_Up();
+		m_modelManager.initialize();
 
 		m_Initialized = true;
 		m_frameCount = 0;
@@ -249,10 +245,9 @@ void Engine::tick()
 			m_frameAccumulator += deltaTime;		
 		// end performance heuristics
 
-		m_AssetManager->notifyObservers();
-		Asset_Manager::Notify_Observers();
+		m_AssetManager.notifyObservers();
 		Material_Manager::Parse_Work_Orders();
-		Asset_Manager::Get_Model_Manager()->update();
+		m_modelManager.update();
 		for each (auto system in m_Systems) 			
 			system.second->update(deltaTime);		
 		
@@ -271,8 +266,7 @@ void Engine::tickThreaded()
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
-			m_AssetManager->finalizeOrders();
-			Asset_Manager::Finalize_Orders();
+			m_AssetManager.finalizeOrders();
 			for each (auto system in m_Systems)
 				system.second->updateThreaded(deltaTime);
 		}

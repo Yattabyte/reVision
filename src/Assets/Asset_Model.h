@@ -11,7 +11,8 @@
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\ModelManager.h"
+#include "Managers\AssetManager.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"
 #include "glm\common.hpp"
@@ -54,11 +55,18 @@ public:
 	~Asset_Model();
 
 
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	static void Create(Shared_Asset_Model & userAsset, const string & filename, const bool & threaded = true);
-
-
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	modelManager	the model manager to use
+	 * @param	filename		the filename to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Model & userAsset, ModelManager & modelManager, const string & filename, const bool & threaded = true);
 	/** Returns the material ID for a skin given an index into this list
 	 * @note			Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index	into this model's skin list. 
@@ -74,44 +82,24 @@ public:
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
+	ModelManager						*m_modelManager;
 
 
 private:
+	// Private Constructors
 	/** Construct the Model. */
-	Asset_Model(const string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Model Assets.
- **/
-class Model_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Model work order */
-	Model_WorkOrder(Shared_Asset_Model & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Model_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
+	Asset_Model(const string & filename, ModelManager * modelManager);
 
 
-private:
 	// Private Methods
-	/** Generates and parses the bones for our model.
-	 * @param	model	the model to load the bones onto
-	 * @param	scene	the model scene to load the bones from **/
-	void initializeBones(Shared_Asset_Model & model, const aiScene * scene);	
-	/** Generates and parses the materials for our model from the model scene.
-	 * @param	modelMaterial	the material asset to load the model material into
-	 * @param	sceneMaterial	the model scene material to parse from **/
-	void generateMaterial(Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial);
-	/** Generates and parses the materials for our model as a last resort.
-	 * @brief	attempts to load a material from disk as it doesn't have any aiMaterial's to load from.
-	 * @param	modelMaterial	the material asset to load the model material into */
-	void generateMaterial(Shared_Asset_Material & modelMaterial);
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Model & userAsset);
 
 
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Model m_asset;
+	friend class AssetManager;
 };
+
 #endif // ASSET_MODEL_H

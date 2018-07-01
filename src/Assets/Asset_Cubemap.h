@@ -6,7 +6,7 @@
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
@@ -24,11 +24,19 @@ class Asset_Cubemap : public Asset
 public:
 	/** Destroy the Cubemap. */
 	~Asset_Cubemap();
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	static void Create(Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
 
-	
+
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
@@ -41,27 +49,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Cubemap. */
 	Asset_Cubemap(const std::string & filename);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Cubemap Assets.
- **/
-class Cubemap_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Cubemap work order. */
-	Cubemap_WorkOrder(Shared_Asset_Cubemap & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Cubemap_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset);
+
+
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Cubemap m_asset;
+	friend class AssetManager;
 };
 #endif // ASSET_CUBEMAP_H
 

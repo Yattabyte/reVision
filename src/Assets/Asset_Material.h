@@ -8,7 +8,7 @@
 #define ABS_DIRECTORY_MAT_TEX(filename) File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
@@ -37,16 +37,17 @@ public:
 	~Asset_Material();
 	
 
-	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create_All(Shared_Asset_Material & userAsset, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
-	/** Attempts to create an asset from disk or share one if it already exists */
-	static void Create(Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded = true);
-
-
 	// Public Methods
-	/** Apply a specific set of textures to be used as a material.
-	 * @param	tx	an array of MAX_PHYSICAL_IMAGES length, formatted as a list of material textures (albedo/normal/metalness/roughness/height/occlusion) */
-	void setTextures(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Material & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use 
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES]);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	 * @brief				Updates the appropriate supplied @string's with a path to the appropriate file
 	 * @param	filename	the absolute file path of the '.mat' file to read from
@@ -68,31 +69,24 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Material. */
 	Asset_Material(const std::string & filename);
 	/** Construct the Material with a specific index.*/
 	Asset_Material(const std::string & filename, const GLuint & spot);
 	/** Construct the Material with a manual set of textures, and a specific index. */
 	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot);
-	friend class Asset_Manager;
-};
-
-/**
- * Implements a work order for Material Assets.
- **/
-class Material_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Material work order */
-	Material_WorkOrder(Shared_Asset_Material & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Material_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
 
 
-private:
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Material & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Material & userAsset);
+
+
 	// Private Attributes
-	string m_filename;
-	Shared_Asset_Material m_asset;	
+	friend class AssetManager;
 };
 
 #endif // ASSET_MATERIAL_H

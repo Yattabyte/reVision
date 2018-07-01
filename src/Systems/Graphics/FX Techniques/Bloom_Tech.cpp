@@ -25,8 +25,8 @@ Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * v
 	m_lightingFBO = lightingFBO;
 	m_visualFX = visualFX;
 
-	Asset_Shader::Create(m_shaderBloomExtract, "FX\\bloomExtraction");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderBloomExtract, string("FX\\bloomExtraction"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

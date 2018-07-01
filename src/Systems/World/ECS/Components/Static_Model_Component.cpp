@@ -106,7 +106,7 @@ void Static_Model_Component::setModelDirectory(const string & directory)
 		m_model->removeCallback(this);
 	// Load new model
 	m_vaoLoaded = false;
-	Asset_Model::Create(m_model, directory);
+	m_engine->createAsset(m_model, m_engine->getModelManager(), directory, true);
 	// Attach new callback
 	m_model->addCallback(this, [&]() {
 		(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);

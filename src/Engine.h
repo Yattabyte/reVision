@@ -4,12 +4,14 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.177";
+constexpr char ENGINE_VERSION[]	= "0.178";
 
+#include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Input\ActionState.h"
 #include "Systems\Preferences\PreferenceState.h"
-#include "AssetManager.h"
+#include "Managers\AssetManager.h"
+#include "Managers\ModelManager.h"
 #include "Utilities\MappedChar.h"
 #include <map>
 #include <shared_mutex>
@@ -89,6 +91,14 @@ public:
 	void removePrefCallback(const PreferenceState::Preference & targetKey, void * pointerID) {
 		m_PreferenceState.removePrefCallback(targetKey, pointerID);
 	}
+	/** Creates an asset or uses a cached copy if it has already been created.
+	 * @param	sharedAsset		the cointainer to place the asset
+	 * @param	args			the rest of the arguments to be used for initialization
+	 */
+	template <typename SharedAsset, typename... Args>
+	void createAsset(SharedAsset & sharedAsset, Args&&... ax) {
+		m_AssetManager.create(sharedAsset, forward<Args>(ax)...);
+	}
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() { return m_Context_Rendering; }
 	/** Returns this engine's main camera. */
@@ -97,8 +107,8 @@ public:
 	ActionState & getActionState() { return m_ActionState; }
 	/** Returns this engine's preference state. */
 	PreferenceState & getPreferenceState() { return m_PreferenceState; }
-	/** Returns this engine's asset manager. */
-	AssetManager & getAssetManager() { return *m_AssetManager; }
+	/** Returns this engine's model manager. */
+	ModelManager & getModelManager() { return m_modelManager; }
 
 
 private:
@@ -109,10 +119,11 @@ private:
 	int m_frameCount;
 	GLFWwindow * m_Context_Rendering;
 	Camera * m_Camera;
+	AssetManager m_AssetManager;
 	ActionState	m_ActionState;
 	PreferenceState	m_PreferenceState;
-	AssetManager * m_AssetManager;
 	MappedChar<System*>	m_Systems;
+	ModelManager m_modelManager;
 };
 
 /*! \mainpage Project reVision

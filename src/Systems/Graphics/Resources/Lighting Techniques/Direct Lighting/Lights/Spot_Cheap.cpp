@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot_Cheap.h"
+#include "Engine.h"
 
 
 Spot_Cheap_Tech::~Spot_Cheap_Tech()
@@ -6,15 +7,15 @@ Spot_Cheap_Tech::~Spot_Cheap_Tech()
 	if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 }
 
-Spot_Cheap_Tech::Spot_Cheap_Tech(Light_Buffers * lightBuffers)
+Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
 	m_lightSSBO = &lightBuffers->m_lightSpotCheapSSBO;
 	m_size = 0;
 
-	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Spot\\Light_Cheap");
+	engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light_Cheap"), true);
 
 	// Primitive Loading
-	Asset_Primitive::Create(m_shapeCone, "cone");
+	engine->createAsset(m_shapeCone, string("cone"), true);
 	m_coneVAOLoaded = false;
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_shapeCone->addCallback(this, [&]() {

@@ -17,11 +17,11 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 	// Copy Pointers
 	m_engine = engine;
 
-	Asset_Shader::Create(m_shaderEffect, "Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax");
-	Asset_Shader::Create(m_shaderConvolute, "Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution");
-	Asset_Shader::Create(m_shaderCopy, "Utilities\\2D_To_Cubemap");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
-	Asset_Primitive::Create(m_shapeCube, "box");
+	engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax"), true);
+	engine->createAsset(m_shaderConvolute, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution"), true);
+	engine->createAsset(m_shaderCopy, string("Utilities\\2D_To_Cubemap"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
+	engine->createAsset(m_shapeCube, string("box"), true);
 
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();

@@ -19,8 +19,8 @@ HDR_Tech::HDR_Tech(Engine * engine)
 	m_fbo = 0;
 	m_texture = 0;
 	m_engine = engine;
-	Asset_Shader::Create(m_shaderHDR, "FX\\HDR");
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderHDR, string("FX\\HDR"), true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 	m_vaoLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });

@@ -19,8 +19,9 @@ public:
 	/** Destroy the input system. */
 	~System_Input();
 	/** Construct the input system. 
-	 * @param	bind_interface	an optional bindingInterface. Will default to loading binds.cfg*/
-	System_Input(const InputBinding & bind_interface = InputBinding());
+	 * @param	engine			the engine
+	 * @param	filename		an optional relative path to a key-bind file to load. Will default to loading binds.cfg*/
+	System_Input(Engine * engine, const std::string & filename = "binds");
 
 
 	// Interface Implementations

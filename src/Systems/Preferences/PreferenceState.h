@@ -10,6 +10,7 @@
 #include <utility>
 
 using namespace std;
+class Engine;
 
 
 /**
@@ -20,12 +21,11 @@ class PreferenceState
 public:
 	// (de)Constructors
 	/** Destroy the preference state. */
-	~PreferenceState() {}
+	~PreferenceState();
 	/** Construct the preference state.
-	* @param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	PreferenceState(const string & filename = "preferences") {
-		LoadFile(filename);
-	}
+	 * @param	engine		the engine
+	 * @param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
+	PreferenceState(Engine * engine, const string & filename = "preferences");
 	
 
 	// Public Static Enumerations
@@ -79,32 +79,17 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	 * @param	filename	the relative path to the preference file to load */
-	void LoadFile(const string & filename) {
-		Asset_Config::Create(m_preferences, filename, PreferenceState::Preference_Strings(), false);
-	}
+	void LoadFile(const string & filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
-	void Save() {
-		m_preferences->saveConfig();
-	}
+	void Save();
 	/** Retrieves a value tied to the supplied preference ID.
 	 * @param	targetKey	the preference key to look up
 	 * @return				the value tied to the preference supplied */
-	float getPreference(const Preference & targetKey) const {
-		if (m_preferences) 
-			return m_preferences->getValue(targetKey);		
-		return UNDEFINED_CVAL;
-	}
+	float getPreference(const Preference & targetKey) const;
 	/** Sets a value for a preference with the given ID.
 	 * @param	targetKey	the preference key to set the value to
 	 * @param	targetValue	the value to tie to the key supplied */
-	void setPreference(const Preference & targetKey, const float & targetValue) {
-		if (m_preferences) {
-			m_preferences->setValue(targetKey, targetValue);
-			if (m_callbacks.find(targetKey) != m_callbacks.end())
-				for each (const auto &observer in m_callbacks[targetKey])
-					observer.second(targetValue);
-		}
-	}	
+	void setPreference(const Preference & targetKey, const float & targetValue);
 	/** Attaches a callback method to be triggered when the supplied preference updates.
 	 * @param	targetKey	the preference-ID to which this callback will be attached
 	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
@@ -131,6 +116,7 @@ public:
 
 	
 private:
+	Engine * m_engine;
 	Shared_Asset_Config m_preferences;
 	map<Preference, map<void*, function<void(float)>>> m_callbacks;
 };

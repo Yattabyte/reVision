@@ -33,7 +33,7 @@ DS_Lighting::DS_Lighting(
 	m_baseTechs = baseTechs;
 
 	// Load Assets
-	Asset_Primitive::Create(m_shapeCube, "box");
+	engine->createAsset(m_shapeCube, string("box"), true);
 	m_cubeVAOLoaded = false;
 	m_cubeVAO = Asset_Primitive::Generate_VAO();
 
@@ -91,7 +91,7 @@ void DS_Lighting::applyPrePass(const Visibility_Token & vis_token)
 	glCullFace(GL_FRONT);
 	
 	// Bind Geometry VAO once
-	glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+	glBindVertexArray(m_engine->getModelManager().getVAO());
 
 	for each (auto technique in *m_baseTechs)
 		technique->renderShadows();	

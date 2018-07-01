@@ -17,14 +17,14 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	m_lightSSBO = &lightBuffers->m_lightPointSSBO;
 	m_size = 0;
 
-	Asset_Shader::Create(m_shader_Lighting, "Base Lights\\Point\\Light");
-	Asset_Shader::Create(m_shader_CullDynamic, "Base Lights\\Point\\Culling_Dynamic");
-	Asset_Shader::Create(m_shader_CullStatic, "Base Lights\\Point\\Culling_Static");
-	Asset_Shader::Create(m_shader_ShadowDynamic, "Base Lights\\Point\\Shadow_Dynamic");
-	Asset_Shader::Create(m_shader_ShadowStatic, "Base Lights\\Point\\Shadow_Static");
+	engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light"), true);
+	engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Point\\Culling_Dynamic"), true);
+	engine->createAsset(m_shader_CullStatic, string("Base Lights\\Point\\Culling_Static"), true);
+	engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Point\\Shadow_Dynamic"), true);
+	engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Point\\Shadow_Static"), true);
 
 	// Primitive Loading
-	Asset_Primitive::Create(m_shapeSphere, "sphere");
+	engine->createAsset(m_shapeSphere, string("sphere"));
 	m_sphereVAOLoaded = false;
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
 	m_shapeSphere->addCallback(this, [&]() {

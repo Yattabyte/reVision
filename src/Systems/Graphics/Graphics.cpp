@@ -90,18 +90,18 @@ void System_Graphics::initialize(Engine * engine)
 		m_baseTechs.push_back(new Directional_Tech(engine, &m_lightBuffers));
 		m_baseTechs.push_back(new Spot_Tech(engine, &m_lightBuffers));
 		m_baseTechs.push_back(new Point_Tech(engine, &m_lightBuffers));
-		m_baseTechs.push_back(new Directional_Tech_Cheap(&m_lightBuffers));
-		m_baseTechs.push_back(new Spot_Cheap_Tech(&m_lightBuffers));
-		m_baseTechs.push_back(new Point_Tech_Cheap(&m_lightBuffers));
+		m_baseTechs.push_back(new Directional_Tech_Cheap(engine, &m_lightBuffers));
+		m_baseTechs.push_back(new Spot_Cheap_Tech(engine, &m_lightBuffers));
+		m_baseTechs.push_back(new Point_Tech_Cheap(engine, &m_lightBuffers));
 		for each(auto * tech in m_baseTechs)
 			m_techMap[tech->getName()] = tech;
 
 		// Initiate specialized geometry techniques
-		m_geometryTechs.push_back(new Model_Static_Technique(&m_geometryFBO, &m_geometryBuffers.m_geometryStaticSSBO));
-		m_geometryTechs.push_back(new Model_Technique(&m_geometryFBO, &m_geometryBuffers.m_geometryDynamicSSBO));
+		m_geometryTechs.push_back(new Model_Static_Technique(engine, &m_geometryFBO, &m_geometryBuffers.m_geometryStaticSSBO));
+		m_geometryTechs.push_back(new Model_Technique(engine, &m_geometryFBO, &m_geometryBuffers.m_geometryDynamicSSBO));
 
 		// Initiate specialized lighting techniques
-		m_lightingTechs.push_back(new Skybox(&m_lightingFBO));
+		m_lightingTechs.push_back(new Skybox(engine, &m_lightingFBO));
 		m_lightingTechs.push_back(new DS_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, &m_baseTechs, &m_geometryBuffers));
 		m_lightingTechs.push_back(new GlobalIllumination_RH(m_engine, &m_geometryFBO, &m_lightingFBO, &m_baseTechs));
 		m_lightingTechs.push_back(new Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
@@ -111,7 +111,7 @@ void System_Graphics::initialize(Engine * engine)
 		// Initiate specialized effects techniques
 		m_fxTechs.push_back(new Bloom_Tech(engine, &m_lightingFBO, &m_visualFX));
 		m_fxTechs.push_back(new HDR_Tech(engine));
-		m_fxTechs.push_back(new FXAA_Tech());
+		m_fxTechs.push_back(new FXAA_Tech(engine));
 
 		m_Initialized = true;
 	}

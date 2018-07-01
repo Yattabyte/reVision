@@ -21,7 +21,7 @@ public:
 	/** Virtual Destructor. */
 	~Model_Static_Technique();
 	/** Constructor. */
-	Model_Static_Technique(Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Static_Struct> * geometrySSBO);
+	Model_Static_Technique(Engine * engine, Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Static_Struct> * geometrySSBO);
 
 
 	// Public Interface Implementations
@@ -36,6 +36,7 @@ public:
 
 private:
 	// Private Attributes
+	Engine * m_engine;
 	// Shared Attribute Pointers
 	Geometry_FBO * m_geometryFBO;
 	VectorBuffer<Geometry_Static_Struct> * m_geometryStaticSSBO;

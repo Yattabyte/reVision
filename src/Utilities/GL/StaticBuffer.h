@@ -27,12 +27,18 @@ public:
 		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | mapFlags);
 		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, mapFlags);
 	}
+	/** Explicit Instantion. */
+	StaticBuffer(StaticBuffer && other) : m_bufferID(0), m_bufferPtr(nullptr) {
+		*this = std::move(other);
+	}
 	/** Move gl object from 1 instance to another. */
-	StaticBuffer & operator=(StaticBuffer && o) noexcept {
-		m_bufferID = (std::move(o.m_bufferID));
-		m_bufferPtr = (std::move(o.m_bufferPtr));
-		o.m_bufferID = 0;
-		o.m_bufferPtr = nullptr;
+	StaticBuffer & operator=(StaticBuffer && other) {
+		if (this != &other) {
+			m_bufferID = other.m_bufferID;
+			m_bufferPtr = other.m_bufferPtr;
+			other.m_bufferID = 0;
+			other.m_bufferPtr = nullptr;
+		}
 		return *this;
 	}
 		

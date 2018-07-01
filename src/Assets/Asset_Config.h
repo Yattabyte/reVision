@@ -7,7 +7,7 @@
 #define UNDEFINED_CVAL -12345.67890f // Undefined preference
 
 #include "Assets\Asset.h"
-#include "Managers\Asset_Manager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include <map>
 #include <vector>
@@ -26,11 +26,18 @@ public:
 	~Asset_Config();
 
 
-	/** Attempts to create an asset from disk or share one if it already exists. */
-	static void Create(Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
-
-	
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Config & userAsset);
+	/** Begins the creation process for this asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container
+	 * @param	filename		the filename to use
+	 * @param	cfg_strings		the configuration strings to use
+	 * @param	threaded		create in a separate thread */
+	static void Create(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 	/** Assigns the specified value to the specified key.
 	 * @param	cfg_key		the key to apply this new value to
 	 * @param	cfg_value	the new value to give to this key */
@@ -49,26 +56,20 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the config with a particular set of variable names. */
 	Asset_Config(const string & filename, const vector<string> & strings);
-	friend class Asset_Manager;
+
+
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Config & userAsset);
+
+
+	// Private Attributes
+	friend class AssetManager;
 }; 
 
-/**
- * Implements a work order for Configuration Assets.
- **/
-class Config_WorkOrder : public Work_Order {
-public:
-	/** Constructs an Asset_Config work order. */
-	Config_WorkOrder(Shared_Asset_Config & asset, const std::string & filename) : m_asset(asset), m_filename(filename) {};
-	~Config_WorkOrder() {};
-	virtual void initializeOrder();
-	virtual void finalizeOrder();
-
-
-private:
-	// Private Attributes
-	string m_filename;
-	Shared_Asset_Config m_asset;
-};
 #endif //ASSET_CONFIG_H

@@ -20,7 +20,7 @@ public:
 	/** Virtual Destructor. */
 	~FXAA_Tech();
 	/** Constructor. */
-	FXAA_Tech();
+	FXAA_Tech(Engine * engine);
 
 
 	// Interface Implementations.

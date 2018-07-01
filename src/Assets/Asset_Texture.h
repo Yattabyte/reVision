@@ -6,7 +6,7 @@
 #define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 #include "Assets\Asset.h"
-#include "AssetManager.h"
+#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
@@ -28,6 +28,10 @@ public:
 
 
 	// Public Methods
+	/** Creates a default asset.
+	 * @param	assetManager	the asset manager to use
+	 * @param	userAsset		the desired asset container */
+	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Texture & userAsset);
 	/** Begins the creation process for this asset.
 	 * @param	assetManager	the asset manager to use
 	 * @param	userAsset		the desired asset container
@@ -36,11 +40,7 @@ public:
 	 * @param	mipmap			use mipmaps
 	 * @param	anis			use 16x anistropic filtering
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Texture & userAsset, const string & filename, const GLuint & type = GL_TEXTURE, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
-	/** Initializes the asset. */
-	static void Initialize();
-	/** Finalizes the asset. */
-	static void Finalize();
+	static void Create(AssetManager & assetManager, Shared_Asset_Texture & userAsset, const string & filename, const GLuint & type = GL_TEXTURE, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);	
 	/** Makes this texture active at a specific texture unit
 	 * @param	texture_unit	the texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
@@ -55,11 +55,21 @@ public:
 
 
 private:
+	// Private Constructors
 	/** Construct the Texture. */
 	Asset_Texture(const string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
 	Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a);/** Attempts to create an asset from disk or share one if it already exists */
-	friend class Asset_Manager;
+
+
+	// Private Methods
+	/** Initializes the asset. */
+	static void Initialize(AssetManager & assetManager, Shared_Asset_Texture & userAsset, const string & fullDirectory);
+	/** Finalizes the asset. */
+	static void Finalize(AssetManager & assetManager, Shared_Asset_Texture & userAsset);
+
+
+	// Private Attributes
 	friend class AssetManager;
 };
 

@@ -9,6 +9,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 using namespace glm;
+class Engine;
 
 
 /**
@@ -20,7 +21,7 @@ public:
 	/** Destructor. */
 	~Sky_Ref_Tech();
 	/** Constructor. */
-	Sky_Ref_Tech();
+	Sky_Ref_Tech(Engine * engine);
 
 
 	// Interface Implementations

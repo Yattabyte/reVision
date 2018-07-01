@@ -9,6 +9,7 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 class Lighting_FBO;
+class Engine;
 
 
 /**
@@ -20,7 +21,7 @@ public:
 	/** Virtual Destructor. */
 	~Skybox();
 	/** Constructor. */
-	Skybox(Lighting_FBO * lightingFBO);
+	Skybox(Engine * engine, Lighting_FBO * lightingFBO);
 
 
 	// Interface Implementations

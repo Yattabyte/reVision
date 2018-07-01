@@ -26,9 +26,9 @@ Reflections::Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_F
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 	
-	Asset_Shader::Create(m_shaderFinal, "Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR");
-	engine->getAssetManager().create(m_brdfMap, "brdfLUT.png", GL_TEXTURE_2D, false, false, true);
-	Asset_Primitive::Create(m_shapeQuad, "quad");
+	engine->createAsset(m_shaderFinal, string("Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR"), true);
+	engine->createAsset(m_brdfMap, string("brdfLUT.png"), GL_TEXTURE_2D, false, false, true);
+	engine->createAsset(m_shapeQuad, string("quad"), true);
 
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
@@ -38,7 +38,7 @@ Reflections::Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_F
 	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
 	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
-	m_refTechs.push_back(new Sky_Ref_Tech());
+	m_refTechs.push_back(new Sky_Ref_Tech(engine));
 	m_refTechs.push_back(new IBL_Parallax_Tech(m_engine));
 	m_refTechs.push_back(new SSR_Tech(m_engine, geometryFBO, lightingFBO, reflectionFBO));
 	for each(auto * tech in m_refTechs)

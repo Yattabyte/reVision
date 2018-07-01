@@ -3,6 +3,7 @@
 #include "Systems\World\ECS\Components\Static_Model_Component.h"
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include "Systems\World\Camera.h"
+#include "Engine.h"
 
 
 Model_Static_Technique::~Model_Static_Technique()
@@ -10,18 +11,20 @@ Model_Static_Technique::~Model_Static_Technique()
 	m_shapeCube->removeCallback(this);
 }
 
-Model_Static_Technique::Model_Static_Technique(Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Static_Struct> * geometrySSBO)
+Model_Static_Technique::Model_Static_Technique(Engine * engine, Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Static_Struct> * geometrySSBO)
 {
+	m_engine = engine;
+
 	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_geometryStaticSSBO = geometrySSBO;
 	
 	// Asset Loading
-	Asset_Shader::Create(m_shaderCull, "Geometry\\culling_static");
-	Asset_Shader::Create(m_shaderGeometry, "Geometry\\geometry_static");
+	engine->createAsset(m_shaderCull, string("Geometry\\culling_static"), true);
+	engine->createAsset(m_shaderGeometry, string("Geometry\\geometry_static"), true);
 
 	// Cube Loading
-	Asset_Primitive::Create(m_shapeCube, "box");
+	engine->createAsset(m_shapeCube, string("box"), true);
 	m_cubeVAOLoaded = false;
 	m_cubeVAO = Asset_Primitive::Generate_VAO();
 	m_shapeCube->addCallback(this, [&]() {
@@ -46,7 +49,7 @@ void Model_Static_Technique::renderGeometry(Camera & camera)
 		m_geometryFBO->bindForWriting();
 		m_shaderGeometry->bind();
 		m_geometryStaticSSBO->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-		glBindVertexArray(Asset_Manager::Get_Model_Manager()->getVAO());
+		glBindVertexArray(m_engine->getModelManager().getVAO());
 
 		// Render only the objects that passed the previous depth test (modified indirect draw buffer)     
 		const auto &visBuffers = camera.getVisibilityBuffers();		
