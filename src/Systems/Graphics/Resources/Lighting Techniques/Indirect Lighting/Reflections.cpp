@@ -21,23 +21,28 @@ Reflections::~Reflections()
 
 Reflections::Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 	
-	engine->createAsset(m_shaderFinal, string("Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR"), true);
-	engine->createAsset(m_brdfMap, string("brdfLUT.png"), GL_TEXTURE_2D, false, false, true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderFinal, string("Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR"), true);
+	m_engine->createAsset(m_brdfMap, string("brdfLUT.png"), GL_TEXTURE_2D, false, false, true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
 
+	// Primitive Construction
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
-	
-		
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});	
 
+	// Reflection Techniques
 	m_refTechs.push_back(new Sky_Ref_Tech(engine));
 	m_refTechs.push_back(new IBL_Parallax_Tech(m_engine));
 	m_refTechs.push_back(new SSR_Tech(m_engine, geometryFBO, lightingFBO, reflectionFBO));
@@ -76,6 +81,7 @@ void Reflections::applyLighting(const Visibility_Token & vis_token)
 		m_reflectionFBO->bindForReading(4); // Read from final reflections
 		m_brdfMap->bind(5); // BRDF LUT
 		glBlendFunc(GL_ONE, GL_ONE);
+		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}

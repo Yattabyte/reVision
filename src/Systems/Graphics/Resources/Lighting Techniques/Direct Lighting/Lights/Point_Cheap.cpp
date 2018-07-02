@@ -9,20 +9,23 @@ Point_Tech_Cheap::~Point_Tech_Cheap()
 
 Point_Tech_Cheap::Point_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
+	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightPointCheapSSBO;
 	m_size = 0;
 
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light_Cheap"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeSphere, string("sphere"), true);
 
-	// Primitive Loading
-	engine->createAsset(m_shapeSphere, string("sphere"), true);
+	// Primitive Construction
 	m_sphereVAOLoaded = false;
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeSphere->addCallback(this, [&]() mutable {
-		m_shapeSphere->updateVAO(m_sphereVAO);
 		m_sphereVAOLoaded = true;
-		GLuint data = m_shapeSphere->getSize();
+		m_shapeSphere->updateVAO(m_sphereVAO);
+		const GLuint data = m_shapeSphere->getSize();
 		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 }
@@ -36,7 +39,7 @@ void Point_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int 
 		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point_Cheap"))
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 	}
 }
 

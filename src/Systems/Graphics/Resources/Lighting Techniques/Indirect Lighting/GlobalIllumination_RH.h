@@ -64,7 +64,7 @@ private:
 	Lighting_FBO * m_lightingFBO;
 	Shared_Asset_Shader m_shaderGISecondBounce, m_shaderGIReconstruct;
 	Shared_Asset_Primitive m_shapeQuad;
-	bool m_vaoLoaded;
+	bool m_quadVAOLoaded;
 	GLuint m_quadVAO;
 	GLuint m_fbo[GI_LIGHT_BOUNCE_COUNT]; // 1 fbo per light bounce
 	GLuint m_textures[GI_LIGHT_BOUNCE_COUNT][GI_TEXTURE_COUNT]; // 4 textures per light bounce

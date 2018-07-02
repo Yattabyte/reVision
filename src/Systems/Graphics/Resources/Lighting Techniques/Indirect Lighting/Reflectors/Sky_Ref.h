@@ -33,6 +33,7 @@ public:
 
 private:
 	// Private Attributes
+	Engine * m_engine;
 	bool m_quadVAOLoaded;
 	GLuint m_quadVAO;
 	Shared_Asset_Shader m_shaderEffect;

@@ -9,21 +9,24 @@ Directional_Tech_Cheap::~Directional_Tech_Cheap()
 
 Directional_Tech_Cheap::Directional_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
+	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightDirCheapSSBO;
 	m_size = 0;
 
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light_Cheap"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
 
-	// Primitive Loading
-	engine->createAsset(m_shapeQuad, string("quad"), true);
+	// Primitive Construction
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeQuad->addCallback(this, [&]() mutable {
-		m_shapeQuad->updateVAO(m_quadVAO);
 		m_quadVAOLoaded = true;
-		GLuint data = m_shapeQuad->getSize();
-		m_indirectShape.write(0, sizeof(GLuint), &data);
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint data = m_shapeQuad->getSize();
+		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 }
 
@@ -31,7 +34,7 @@ void Directional_Tech_Cheap::updateData(const Visibility_Token & vis_token, cons
 {	
 	m_size = vis_token.specificSize("Light_Directional_Cheap");
 	if (m_size && m_quadVAOLoaded) 
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 }
 
 void Directional_Tech_Cheap::renderLighting()

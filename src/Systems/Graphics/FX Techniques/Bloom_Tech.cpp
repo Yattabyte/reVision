@@ -17,6 +17,7 @@ Bloom_Tech::~Bloom_Tech()
 
 Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * visualFX)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_fbo = 0;
 	m_texture = 0; 
@@ -25,18 +26,27 @@ Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * v
 	m_lightingFBO = lightingFBO;
 	m_visualFX = visualFX;
 
-	engine->createAsset(m_shaderBloomExtract, string("FX\\bloomExtraction"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	m_vaoLoaded = false;
+	// Asset Loading
+	m_engine->createAsset(m_shaderBloomExtract, string("FX\\bloomExtraction"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+
+	// Primitive Construction
+	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable { 
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO); 
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
+
+	// Preference Callbacks
 	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 	m_bloomStrength = m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
-
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
-
+	
+	// GL Loading
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -55,11 +65,16 @@ Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * v
 		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_texturesGB[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	}
+
+	// Error Reporting
+	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 }
 
 void Bloom_Tech::applyEffect()
 {
-	if (m_shaderBloomExtract->existsYet() && m_vaoLoaded) {
+	if (m_shaderBloomExtract->existsYet() && m_quadVAOLoaded) {
 		// Extract bright regions from lighting buffer
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

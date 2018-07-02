@@ -44,7 +44,7 @@ private:
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
-	bool m_vaoLoaded;
+	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

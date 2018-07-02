@@ -19,28 +19,25 @@ DS_Lighting::DS_Lighting(
 	Geometry_Buffers * geometryBuffers
 )
 {
+	// Default Parameters
 	m_engine = engine;
-	m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
-
-	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
-
-	// Buffers
 	m_geometryBuffers = geometryBuffers;
-
-	// Base Techniques
 	m_baseTechs = baseTechs;
 
+	// Preference Callbacks
+	m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
+
 	// Load Assets
-	engine->createAsset(m_shapeCube, string("box"), true);
-	m_cubeVAOLoaded = false;
-	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_engine->createAsset(m_shapeCube, string("box"), true);
 
 	// Primitive Loading
-	m_shapeCube->addCallback(this, [&]() {
-		m_shapeCube->updateVAO(m_cubeVAO);
+	m_cubeVAOLoaded = false;
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_shapeCube->addCallback(this, [&]() mutable {
 		m_cubeVAOLoaded = true;
+		m_shapeCube->updateVAO(m_cubeVAO);
 	});
 }
 

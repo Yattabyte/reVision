@@ -9,20 +9,23 @@ Spot_Cheap_Tech::~Spot_Cheap_Tech()
 
 Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
+	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightSpotCheapSSBO;
 	m_size = 0;
 
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light_Cheap"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeCone, string("cone"), true);
 
 	// Primitive Loading
-	engine->createAsset(m_shapeCone, string("cone"), true);
 	m_coneVAOLoaded = false;
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeCone->addCallback(this, [&]() mutable {
-		m_shapeCone->updateVAO(m_coneVAO);
 		m_coneVAOLoaded = true;
-		GLuint data = m_shapeCone->getSize();
+		m_shapeCone->updateVAO(m_coneVAO);
+		const GLuint data = m_shapeCone->getSize();
 		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 }
@@ -36,7 +39,7 @@ void Spot_Cheap_Tech::updateData(const Visibility_Token & vis_token, const int &
 		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot_Cheap"))
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 	}
 }
 

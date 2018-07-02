@@ -14,36 +14,48 @@ IBL_Parallax_Tech::~IBL_Parallax_Tech()
 
 IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 {
-	// Copy Pointers
+	// Default Parameters
 	m_engine = engine;
-
-	engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax"), true);
-	engine->createAsset(m_shaderConvolute, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution"), true);
-	engine->createAsset(m_shaderCopy, string("Utilities\\2D_To_Cubemap"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	engine->createAsset(m_shapeCube, string("box"), true);
-
-	m_quadVAOLoaded = false;
-	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
-	m_cubeVAOLoaded = false;
-	m_cubeVAO = Asset_Primitive::Generate_VAO();
-	m_shapeCube->addCallback(this, [&]() { m_shapeCube->updateVAO(m_cubeVAO); m_cubeVAOLoaded = true; });
-
-	m_regenCubemap = false;
-	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenCubemap);
-
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
-	GLuint quad6Data[4] = { 6, 6, 0, 0 }; // count, primCount, first, reserved
-	m_quad6FaceIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data);
-	GLuint cubeData[4] = { 36, 0, 0, 0 }; // count, primCount, first, reserved
-	m_cubeIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, cubeData);
 	m_visRefUBO = StaticBuffer(sizeof(GLuint) * 500, 0);
-	
 	m_reflectorCount = 0;
 	m_fbo = 0;
 	m_texture = 0;
+
+	// Asset Loading
+	m_engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax"), true);
+	m_engine->createAsset(m_shaderConvolute, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution"), true);
+	m_engine->createAsset(m_shaderCopy, string("Utilities\\2D_To_Cubemap"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shapeCube, string("box"), true);
+
+	// Primitive Construction
+	m_quadVAOLoaded = false;
+	m_quadVAO = Asset_Primitive::Generate_VAO();
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_quad6FaceIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable { 
+		m_quadVAOLoaded = true; 
+		m_shapeQuad->updateVAO(m_quadVAO); 
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+		const GLuint quad6Data[4] = { m_shapeQuad->getSize(), 6, 0, 0 }; // count, primCount, first, reserved
+		m_quad6FaceIndirectBuffer.write(0, sizeof(GLuint) * 4, quad6Data);
+	});
+	m_cubeVAOLoaded = false;
+	m_cubeVAO = Asset_Primitive::Generate_VAO();
+	m_cubeIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeCube->addCallback(this, [&]() mutable { 
+		m_cubeVAOLoaded = true; 
+		m_shapeCube->updateVAO(m_cubeVAO); 
+		const GLuint cubeData[4] = { m_shapeCube->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
+		m_cubeIndirectBuffer.write(0, sizeof(GLuint) * 4, cubeData);
+	});
+
+	// Callbacks
+	m_regenCubemap = false;
+	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenCubemap);
+	
+	// GL Loading
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_texture);
 	glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -61,6 +73,8 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 	}
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
+
+	// Error Checking
 	const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "IBL_Parallax_Tech", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));			

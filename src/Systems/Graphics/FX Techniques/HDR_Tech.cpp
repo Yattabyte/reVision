@@ -16,20 +16,31 @@ HDR_Tech::~HDR_Tech()
 
 HDR_Tech::HDR_Tech(Engine * engine)
 {
+	// Default Parameters
+	m_engine = engine;
 	m_fbo = 0;
 	m_texture = 0;
-	m_engine = engine;
-	engine->createAsset(m_shaderHDR, string("FX\\HDR"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	m_vaoLoaded = false;
+
+	// Asset Loading
+	m_engine->createAsset(m_shaderHDR, string("FX\\HDR"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+
+	// Primitive Construction
+	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable { 
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
+
+	// Preference Callbacks
 	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
-
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
-
+	
+	// GL loading
 	glCreateFramebuffers(1, &m_fbo);
 	glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -40,6 +51,7 @@ HDR_Tech::HDR_Tech(Engine * engine)
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 
+	// Error Reporting
 	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
@@ -47,7 +59,7 @@ HDR_Tech::HDR_Tech(Engine * engine)
 
 void HDR_Tech::applyEffect()
 {
-	if (m_shaderHDR->existsYet() && m_vaoLoaded) {
+	if (m_shaderHDR->existsYet() && m_quadVAOLoaded) {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_STENCIL_TEST);
 		glDepthMask(GL_FALSE);

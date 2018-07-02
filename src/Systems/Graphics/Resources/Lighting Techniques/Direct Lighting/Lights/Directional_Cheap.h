@@ -8,6 +8,7 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 /**
  * A deferred shading lighting technique that manages cheap directional lights
  **/
@@ -32,6 +33,7 @@ public:
 
 private:
 	// Private Attributes
+	Engine * m_engine;
 	VectorBuffer<Directional_Cheap_Struct> * m_lightSSBO; 
 	Shared_Asset_Shader m_shader_Lighting;
 	Shared_Asset_Primitive m_shapeQuad;

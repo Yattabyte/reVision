@@ -13,23 +13,22 @@ Model_Technique::~Model_Technique()
 
 Model_Technique::Model_Technique(Engine * engine, Geometry_FBO * geometryFBO, VectorBuffer<Geometry_Dynamic_Struct> * geometrySSBO)
 {
+	// Default Parameters
 	m_engine = engine;
-
-	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_geometryDynamicSSBO = geometrySSBO;
 	
 	// Asset Loading
-	engine->createAsset(m_shaderCull, string("Geometry\\culling"), true);
-	engine->createAsset(m_shaderGeometry, string("Geometry\\geometry"), true);
+	m_engine->createAsset(m_shaderCull, string("Geometry\\culling"), true);
+	m_engine->createAsset(m_shaderGeometry, string("Geometry\\geometry"), true);
+	m_engine->createAsset(m_shapeCube, string("box"), true);
 
-	// Cube Loading
-	engine->createAsset(m_shapeCube, string("box"), true);
+	// Primitive Construction
 	m_cubeVAOLoaded = false;
 	m_cubeVAO = Asset_Primitive::Generate_VAO();
-	m_shapeCube->addCallback(this, [&]() {
-		m_shapeCube->updateVAO(m_cubeVAO);
+	m_shapeCube->addCallback(this, [&]() mutable {
 		m_cubeVAOLoaded = true;
+		m_shapeCube->updateVAO(m_cubeVAO);
 	});
 }
 

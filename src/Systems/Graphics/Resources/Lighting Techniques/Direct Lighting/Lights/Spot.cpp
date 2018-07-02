@@ -12,30 +12,33 @@ Spot_Tech::~Spot_Tech()
 
 Spot_Tech::Spot_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightSpotSSBO;
 	m_size = 0;
 	m_sizeGI = 0;
 
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light"), true);
-	engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Spot\\Culling_Dynamic"), true);
-	engine->createAsset(m_shader_CullStatic, string("Base Lights\\Spot\\Culling_Static"), true);
-	engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Spot\\Shadow_Dynamic"), true);
-	engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Spot\\Shadow_Static"), true);
-	engine->createAsset(m_shader_Bounce, string("Base Lights\\Spot\\Bounce"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light"), true);
+	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Spot\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Spot\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Spot\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Spot\\Shadow_Static"), true);
+	m_engine->createAsset(m_shader_Bounce, string("Base Lights\\Spot\\Bounce"), true);
+	m_engine->createAsset(m_shapeCone, string("cone"));
 
-	// Primitive Loading
-	engine->createAsset(m_shapeCone, string("cone"));
+	// Primitive Construction
 	m_coneVAOLoaded = false;
 	m_coneVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeCone->addCallback(this, [&]() mutable {
-		m_shapeCone->updateVAO(m_coneVAO);
 		m_coneVAOLoaded = true;
-		GLuint data = m_shapeCone->getSize();
+		m_shapeCone->updateVAO(m_coneVAO);
+		const GLuint data = m_shapeCone->getSize();
 		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 
+	// Callbacks
 	m_regenSShadows = false;
 	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenSShadows);
 
@@ -148,7 +151,7 @@ void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updat
 		for each (const auto &component in m_lightList)
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 	}
 }
 

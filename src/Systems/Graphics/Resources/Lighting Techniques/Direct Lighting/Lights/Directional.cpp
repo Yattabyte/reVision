@@ -12,27 +12,29 @@ Directional_Tech::~Directional_Tech()
 
 Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightDirSSBO;
 	m_size = 0;
 	m_sizeGI = 0;
 
-	engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Directional\\Culling_Dynamic"), true);
-	engine->createAsset(m_shader_CullStatic, string("Base Lights\\Directional\\Culling_Static"), true);
-	engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Directional\\Shadow_Dynamic"), true);
-	engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Directional\\Shadow_Static"), true);
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light"), true);
-	engine->createAsset(m_shader_Bounce, string("Base Lights\\Directional\\Bounce"), true);
-
-	// Primitive Loading
+	// Asset Loading
+	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Directional\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Directional\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Directional\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Directional\\Shadow_Static"), true);
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light"), true);
+	m_engine->createAsset(m_shader_Bounce, string("Base Lights\\Directional\\Bounce"), true);
 	engine->createAsset(m_shapeQuad, string("quad"));
+
+	// Primitive Construction
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeQuad->addCallback(this, [&]() mutable {
-		m_shapeQuad->updateVAO(m_quadVAO);
 		m_quadVAOLoaded = true;
-		GLuint data = m_shapeQuad->getSize();
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint data = m_shapeQuad->getSize();
 		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 
@@ -76,6 +78,7 @@ Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers
 	GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 	glNamedFramebufferDrawBuffers(m_shadowFBO, 2, Buffers);
 
+	// Error Checking
 	GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
 		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Directional light  Technique", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
@@ -134,7 +137,7 @@ void Directional_Tech::updateData(const Visibility_Token & vis_token, const int 
 		for each (const auto &c in m_queue)
 			c->update(CAM_GEOMETRY_STATIC);
 
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 	}
 }
 

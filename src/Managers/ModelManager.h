@@ -16,8 +16,7 @@ struct GeometryInfo;
 
 
 /**
- * An encapsulation of an OpenGL framebuffer.
- * Requires the implementer to manage the size of the frame buffer, and also add render targets.
+ * A single storage point for all model geometry. Maintains a single vertex array object.
  **/
 class ModelManager
 {

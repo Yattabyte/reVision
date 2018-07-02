@@ -33,12 +33,13 @@ public:
 
 private:
 	// Private Attributes
+	Engine * m_engine;
 	Lighting_FBO * m_lightingFBO;
 	Shared_Asset_Shader	m_shaderSky;
 	Shared_Asset_Cubemap m_textureSky;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
-	bool m_vaoLoaded;
+	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

@@ -31,7 +31,7 @@ Geometry_FBO::Geometry_FBO()
 {		
 	m_depth_stencil = 0;
 	m_quadVAO = 0;
-	m_vaoLoaded = false;
+	m_quadVAOLoaded = false;
 	for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x)
 		m_textures[x] = 0;
 	for (int x = 0; x < 2; ++x)
@@ -43,18 +43,21 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 	if (!m_Initialized) {
 		m_engine = engine;
 		m_visualFX = visualFX;
-		engine->createAsset(m_shaderSSAO, string("FX\\SSAO"), true);
-		engine->createAsset(m_shapeQuad, string("quad"), true);
-		m_vaoLoaded = false;
+		m_engine->createAsset(m_shaderSSAO, string("FX\\SSAO"), true);
+		m_engine->createAsset(m_shapeQuad, string("quad"), true);
+		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_shapeQuad->addCallback(this, [&]() mutable {
+			m_quadVAOLoaded = true;
+			m_shapeQuad->updateVAO(m_quadVAO);
+			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+		});
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
 		initialize_noise();
 		FrameBuffer::initialize();
-
-		GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
@@ -150,7 +153,7 @@ void Geometry_FBO::end()
 
 void Geometry_FBO::applyAO()
 {
-	if (m_shaderSSAO->existsYet() && m_shapeQuad->existsYet() && m_vaoLoaded) {
+	if (m_shaderSSAO->existsYet() && m_shapeQuad->existsYet() && m_quadVAOLoaded) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
 		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, 0, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);

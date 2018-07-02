@@ -13,28 +13,31 @@ Point_Tech::~Point_Tech()
 
 Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_lightSSBO = &lightBuffers->m_lightPointSSBO;
 	m_size = 0;
 
-	engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light"), true);
-	engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Point\\Culling_Dynamic"), true);
-	engine->createAsset(m_shader_CullStatic, string("Base Lights\\Point\\Culling_Static"), true);
-	engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Point\\Shadow_Dynamic"), true);
-	engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Point\\Shadow_Static"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light"), true);
+	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Point\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Point\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Point\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Point\\Shadow_Static"), true);
+	m_engine->createAsset(m_shapeSphere, string("sphere"));
 
-	// Primitive Loading
-	engine->createAsset(m_shapeSphere, string("sphere"));
+	// Primitive Construction
 	m_sphereVAOLoaded = false;
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
 	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
 	m_shapeSphere->addCallback(this, [&]() mutable {
-		m_shapeSphere->updateVAO(m_sphereVAO);
 		m_sphereVAOLoaded = true;
-		GLuint data = m_shapeSphere->getSize();
+		m_shapeSphere->updateVAO(m_sphereVAO);
+		const GLuint data = m_shapeSphere->getSize();
 		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 
+	// Callbacks
 	m_regenSShadows = false;
 	m_engine->getSubSystem<System_World>("World")->notifyWhenLoaded(&m_regenSShadows);
 
@@ -158,7 +161,7 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 		for each (const auto &component in m_lightList)
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 	}
 }
 

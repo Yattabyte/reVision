@@ -34,6 +34,7 @@ public:
 
 private:
 	// Private Attributes
+	Engine * m_engine;
 	VectorBuffer<Point_Cheap_Struct> * m_lightSSBO;
 	Shared_Asset_Shader m_shader_Lighting;
 	Shared_Asset_Primitive m_shapeSphere;

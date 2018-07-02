@@ -10,15 +10,25 @@ Skybox::~Skybox()
 
 Skybox::Skybox(Engine * engine, Lighting_FBO * lightingFBO)
 {
+	// Default Parameters
+	m_engine = engine;
 	m_lightingFBO = lightingFBO;
-	engine->createAsset(m_shaderSky, string("skybox"), true);
-	engine->createAsset(m_textureSky, string("sky\\"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
-	m_vaoLoaded = false;
+
+	// Asset Loading
+	m_engine->createAsset(m_shaderSky, string("skybox"), true);
+	m_engine->createAsset(m_textureSky, string("sky\\"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+
+	// Primitive Construction
+	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
 }
 
 void Skybox::updateData(const Visibility_Token & vis_token)
@@ -32,7 +42,7 @@ void Skybox::applyPrePass(const Visibility_Token & vis_token)
 void Skybox::applyLighting(const Visibility_Token & vis_token)
 {
 	// Proceed only when vao is ready (everything else is safe)
-	if (m_vaoLoaded && m_shaderSky->existsYet()) {
+	if (m_quadVAOLoaded && m_shaderSky->existsYet()) {
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);

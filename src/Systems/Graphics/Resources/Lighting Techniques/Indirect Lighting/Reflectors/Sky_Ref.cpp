@@ -9,16 +9,24 @@ Sky_Ref_Tech::~Sky_Ref_Tech()
 
 Sky_Ref_Tech::Sky_Ref_Tech(Engine * engine)
 {
-	engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect"), true);
-	engine->createAsset(m_textureSky, string("sky\\"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
+	// Default Parameters
+	m_engine = engine;
+
+	// Asset Loadiug
+	m_engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect"), true);
+	m_engine->createAsset(m_textureSky, string("sky\\"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
 	
+	// Primitive Construction
 	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
-
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
+		m_quadVAOLoaded = true; 
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
 }
 
 void Sky_Ref_Tech::applyEffect()

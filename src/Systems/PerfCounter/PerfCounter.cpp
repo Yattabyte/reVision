@@ -9,25 +9,34 @@ System_PerfCounter::~System_PerfCounter()
 	if (m_Initialized) {
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	}
 }
 
 System_PerfCounter::System_PerfCounter()
 {
+	// Default Parameters
 	m_quadVAOLoaded = false;
 }
 
 void System_PerfCounter::initialize(Engine * engine)
 {
+	// Default Parameters
 	m_engine = engine;
-	engine->createAsset(m_numberTexture, string("numbers.png"), GL_TEXTURE_2D, false, false, true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	engine->createAsset(m_shader, string("Utilities\\numberPrint"), true);
+
+	// Asset Loading
+	m_engine->createAsset(m_numberTexture, string("numbers.png"), GL_TEXTURE_2D, false, false, true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shader, string("Utilities\\numberPrint"), true);
+
+	// Primitive Construction
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() {
-		m_shapeQuad->updateVAO(m_quadVAO);
+	m_shapeQuad->addCallback(this, [&]() mutable {
 		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
 	});
+
+	// Preference Callbacks
 	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(vec2(m_renderSize.x, f)); });
 	resize(m_renderSize);

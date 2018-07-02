@@ -25,15 +25,11 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 
 GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, vector<Light_Tech*> * baseTechs)
 {
+	// Default Parameters
 	m_engine = engine;
-
-	// FBO's
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
-
-	// Base Techniques
 	m_baseTechs = baseTechs;
-
 	m_nearPlane = -0.1f;
 	m_farPlane = -1.0f;
 	m_noise32 = 0;
@@ -41,26 +37,37 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 	ZERO_MEM(m_textures[0]);
 	ZERO_MEM(m_textures[1]);
 
-	engine->createAsset(m_shaderGISecondBounce, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce"), true);
-	engine->createAsset(m_shaderGIReconstruct, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
-	m_vaoLoaded = false;
+	// Asset Loading
+	m_engine->createAsset(m_shaderGISecondBounce, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce"), true);
+	m_engine->createAsset(m_shaderGIReconstruct, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+
+	// Primitive Construction
+	m_quadVAOLoaded = false;
 	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_vaoLoaded = true; });
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
+
+	// Camera Registration
 	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);
 
+	// Preference Callbacks
 	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {ivec2(f, m_renderSize.y); });
 	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
-	
+
+	// Buffer Initializations
 	m_resolution = 16;
 	GI_Radiance_Struct attribData(16, m_resolution, 0.001, 0, 25.0f);
 	m_attribBuffer = StaticBuffer(sizeof(GI_Radiance_Struct), &attribData);
-
 	GLuint secondBounceData[4] = { 6, m_resolution, 0, 0 }; // count, primCount, first, reserved
 	m_IndirectSecondLayersBuffer = StaticBuffer(sizeof(GLuint) * 4, secondBounceData);
 
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+
 
 	// Pretend we have 4 cascades, and make the desired far plane only as far as the first would go
 	const float near_plane = m_nearPlane;
@@ -162,7 +169,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 {
 	// Generate GI from lights
-	if (m_vaoLoaded) {
+	if (m_quadVAOLoaded) {
 		// Prepare rendering state
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
@@ -197,7 +204,7 @@ void GlobalIllumination_RH::applyPrePass(const Visibility_Token & cam_vis_token)
 void GlobalIllumination_RH::applyLighting(const Visibility_Token & cam_vis_token)
 {
 	// Reconstruct GI from data
-	if (m_vaoLoaded && m_shaderGIReconstruct->existsYet()) {
+	if (m_quadVAOLoaded && m_shaderGIReconstruct->existsYet()) {
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
