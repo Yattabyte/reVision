@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
-#include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
 #include <string>
 
@@ -136,11 +135,6 @@ bool Initialize_Sharing()
 	return m_Initialized_Sharing;
 }
 
-void Shutdown_Sharing()
-{
-	Material_Manager::Shut_Down();
-}
- 
 #include "Assets\Asset_Material.h"
 #include "Systems\Preferences\Preferences.h"
 #include "Systems\Graphics\Graphics.h"
@@ -202,8 +196,8 @@ bool Engine::initialize()
 		glfwSetWindowSizeCallback(m_Context_Rendering, GLFW_Callback_Windowresize);		
 		glfwSwapInterval(0);
 
-		Material_Manager::Start_Up();
 		m_modelManager.initialize();
+		m_materialManager.initialize();
 
 		m_Initialized = true;
 		m_frameCount = 0;
@@ -245,12 +239,16 @@ void Engine::tick()
 			m_frameAccumulator += deltaTime;		
 		// end performance heuristics
 
+		// Tick managers
 		m_AssetManager.notifyObservers();
-		Material_Manager::Parse_Work_Orders();
 		m_modelManager.update();
+		m_materialManager.parseWorkOrders();
+
+		// Tick Systems
 		for each (auto system in m_Systems) 			
 			system.second->update(deltaTime);		
 		
+		// End Frame
 		glfwSwapBuffers(m_Context_Rendering);
 		glfwPollEvents();
 	}

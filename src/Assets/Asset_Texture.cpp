@@ -44,7 +44,7 @@ void Asset_Texture::CreateDefault(AssetManager & assetManager, Shared_Asset_Text
 		/* Initialization. */
 		[]() {},	
 		/* Finalization. */
-		[&assetManager, &userAsset]() { Finalize(assetManager, userAsset); }
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
 	);
 }
 

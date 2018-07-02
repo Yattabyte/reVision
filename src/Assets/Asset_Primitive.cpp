@@ -34,7 +34,7 @@ void Asset_Primitive::CreateDefault(AssetManager & assetManager, Shared_Asset_Pr
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() { Finalize(assetManager, userAsset); }
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
 	);
 }
 

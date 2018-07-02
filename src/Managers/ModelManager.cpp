@@ -5,7 +5,7 @@
 
 ModelManager::~ModelManager()
 {
-	/**@todo deconstructor*/
+	/** @todo destructor */
 }
 
 ModelManager::ModelManager()

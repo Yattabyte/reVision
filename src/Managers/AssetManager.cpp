@@ -14,14 +14,18 @@
 /** End Asset Includes **/
 
  
+AssetManager::~AssetManager()
+{
+	/** @todo destructor */
+}
 
 AssetManager::AssetManager()
 {
 	registerAssetCreator(typeid(Shared_Asset_Collider).name(), function<void(AssetManager&, Shared_Asset_Collider&, const string&, const bool &)>(Asset_Collider::Create));
 	registerAssetCreator(typeid(Shared_Asset_Config).name(), function<void(AssetManager&, Shared_Asset_Config&, const string&, const vector<string> &, const bool &)>(Asset_Config::Create));
 	registerAssetCreator(typeid(Shared_Asset_Cubemap).name(), function<void(AssetManager&, Shared_Asset_Cubemap&, const string&, const bool &&)>(Asset_Cubemap::Create));
-	registerAssetCreator(typeid(Shared_Asset_Material).name(), function<void(AssetManager&, Shared_Asset_Material&, const string&, const bool &, const string(&)[MAX_PHYSICAL_IMAGES])>(Asset_Material::Create));
-	registerAssetCreator(typeid(Shared_Asset_Model).name(), function<void(AssetManager&, Shared_Asset_Model&, ModelManager&, const string&, const bool &)>(Asset_Model::Create));
+	registerAssetCreator(typeid(Shared_Asset_Material).name(), function<void(AssetManager&, Shared_Asset_Material&, MaterialManager&, const string&, const bool &, const string(&)[MAX_PHYSICAL_IMAGES])>(Asset_Material::Create));
+	registerAssetCreator(typeid(Shared_Asset_Model).name(), function<void(AssetManager&, Shared_Asset_Model&, ModelManager&, MaterialManager&, const string&, const bool &)>(Asset_Model::Create));
 	registerAssetCreator(typeid(Shared_Asset_Primitive).name(), function<void(AssetManager&, Shared_Asset_Primitive&, const string&, const bool &)>(Asset_Primitive::Create));
 	registerAssetCreator(typeid(Shared_Asset_Shader).name(), function<void(AssetManager&, Shared_Asset_Shader&, const string&, const bool &)>(Asset_Shader::Create));
 	registerAssetCreator(typeid(Shared_Asset_Shader_Pkg).name(), function<void(AssetManager&, Shared_Asset_Shader_Pkg&, const string&, const bool &)>(Asset_Shader_Pkg::Create));

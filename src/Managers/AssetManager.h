@@ -42,7 +42,9 @@ class AssetManager
 {
 public:
 	// (de)Constructors
-	~AssetManager() {}
+	/** Destroy the asset manager. */
+	~AssetManager();
+	/** Destroy the asset manager. */
 	AssetManager();
 
 

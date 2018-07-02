@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.178.B";
+constexpr char ENGINE_VERSION[]	= "0.179";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
@@ -12,6 +12,7 @@ constexpr char ENGINE_VERSION[]	= "0.178.B";
 #include "Systems\Preferences\PreferenceState.h"
 #include "Managers\AssetManager.h"
 #include "Managers\ModelManager.h"
+#include "Managers\MaterialManager.h"
 #include "Utilities\MappedChar.h"
 #include <map>
 #include <shared_mutex>
@@ -109,6 +110,8 @@ public:
 	PreferenceState & getPreferenceState() { return m_PreferenceState; }
 	/** Returns this engine's model manager. */
 	ModelManager & getModelManager() { return m_modelManager; }
+	/** Returns this engine's material manager. */
+	MaterialManager & getMaterialManager() { return m_materialManager; }
 
 
 private:
@@ -124,6 +127,7 @@ private:
 	PreferenceState	m_PreferenceState;
 	MappedChar<System*>	m_Systems;
 	ModelManager m_modelManager;
+	MaterialManager m_materialManager;
 };
 
 /*! \mainpage Project reVision

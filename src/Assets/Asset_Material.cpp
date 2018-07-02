@@ -1,5 +1,4 @@
 #include "Assets\Asset_Material.h"
-#include "Managers\Material_Manager.h"
 #include "Managers\Message_Manager.h"
 #include "Utilities\Image_Importer.h"
 #include "FreeImage.h"
@@ -31,14 +30,14 @@ Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], cons
 	m_matSpot = spot;
 }
 
-void Asset_Material::CreateDefault(AssetManager & assetManager, Shared_Asset_Material & userAsset)
+void Asset_Material::CreateDefault(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset)
 {
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultMaterial"))
 		return;
 
 	// Create hard-coded alternative
-	assetManager.createNewAsset(userAsset, "defaultMaterial", Material_Manager::Generate_ID());
+	assetManager.createNewAsset(userAsset, "defaultMaterial", materialManager.generateID());
 	userAsset->m_materialData = new GLubyte[192]{
 		// Albedo with full alpha
 		GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(255),
@@ -77,11 +76,11 @@ void Asset_Material::CreateDefault(AssetManager & assetManager, Shared_Asset_Mat
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() { Finalize(assetManager, userAsset); }
+		[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); }
 	);
 }
 
-void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material & userAsset, const std::string & filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES])
+void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material & userAsset, MaterialManager & materialManager, const std::string & filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES])
 {
 	if (filename != "") {
 		// Check if a copy already exists
@@ -92,7 +91,7 @@ void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material &
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
 			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			CreateDefault(assetManager, userAsset);
+			CreateDefault(assetManager, materialManager, userAsset);
 			return;
 		}
 
@@ -101,9 +100,9 @@ void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material &
 			/* Initialization. */
 			[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
 			/* Finalization. */
-			[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+			[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); },
 			/* Constructor Arguments. */
-			filename, Material_Manager::Generate_ID()
+			filename, materialManager.generateID()
 		);
 	}
 	else {
@@ -111,9 +110,9 @@ void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material &
 			/* Initialization. */
 			[&assetManager, &userAsset]() mutable { Asset_Material::Initialize(assetManager, userAsset, ""); },
 			/* Finalization. */
-			[&assetManager, &userAsset]() mutable { Asset_Material::Finalize(assetManager, userAsset); },
+			[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); },
 			/* Constructor Arguments. */
-			textures, Material_Manager::Generate_ID()
+			textures, materialManager.generateID()
 		);
 	}
 }
@@ -225,7 +224,7 @@ void Asset_Material::Initialize(AssetManager & assetManager, Shared_Asset_Materi
 		}
 }
 
-void Asset_Material::Finalize(AssetManager & assetManager, Shared_Asset_Material & userAsset)
+void Asset_Material::Finalize(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset)
 {
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
@@ -251,7 +250,7 @@ void Asset_Material::Finalize(AssetManager & assetManager, Shared_Asset_Material
 	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
 		state = glClientWaitSync(fence, 0, 0);
 	glDeleteSync(fence);
-	Material_Manager::Generate_Handle(mat_spot, gl_array_ID);
+	materialManager.generateHandle(mat_spot, gl_array_ID);
 
 	write_guard.unlock();
 	write_guard.release();

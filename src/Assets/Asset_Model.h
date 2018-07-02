@@ -11,8 +11,9 @@
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
-#include "Managers\ModelManager.h"
 #include "Managers\AssetManager.h"
+#include "Managers\ModelManager.h"
+#include "Managers\MaterialManager.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"
 #include "glm\common.hpp"
@@ -59,14 +60,14 @@ public:
 	/** Creates a default asset.
 	 * @param	assetManager	the asset manager to use
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset);
+	static void CreateDefault(AssetManager & assetManager, ModelManager & modelManager, MaterialManager & materialManager, Shared_Asset_Model & userAsset);
 	/** Begins the creation process for this asset.
 	 * @param	assetManager	the asset manager to use
 	 * @param	userAsset		the desired asset container
 	 * @param	modelManager	the model manager to use
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Model & userAsset, ModelManager & modelManager, const string & filename, const bool & threaded = true);
+	static void Create(AssetManager & assetManager, Shared_Asset_Model & userAsset, ModelManager & modelManager, MaterialManager & materialManager, const string & filename, const bool & threaded = true);
 	/** Returns the material ID for a skin given an index into this list
 	 * @note			Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index	into this model's skin list. 
@@ -93,7 +94,7 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, ModelManager & modelManager, Shared_Asset_Model & userAsset, const string & fullDirectory);
+	static void Initialize(AssetManager & assetManager, ModelManager & modelManager, MaterialManager & materialManager, Shared_Asset_Model & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(AssetManager & assetManager, Shared_Asset_Model & userAsset);
 

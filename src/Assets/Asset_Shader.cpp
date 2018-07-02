@@ -155,7 +155,7 @@ void Asset_Shader::CreateDefault(AssetManager & assetManager, Shared_Asset_Shade
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() { Finalize(assetManager, userAsset); }
+		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
 	);
 }
 

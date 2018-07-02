@@ -1,6 +1,6 @@
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\World\Camera.h"
-#include "Managers\Material_Manager.h"
+#include "Managers\MaterialManager.h"
 #include "Engine.h"
 #include <random>
 #include <minmax.h>
@@ -120,8 +120,8 @@ void System_Graphics::initialize(Engine * engine)
 void System_Graphics::update(const float & deltaTime)
 {
 	const Visibility_Token vis_token = m_engine->getCamera()->getVisibilityToken();
-	if (m_Initialized && vis_token.size())	{		
-		Material_Manager::Bind();
+	if (m_Initialized && vis_token.size())	{	
+		m_engine->getMaterialManager().bind();
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 
 		send2GPU(vis_token);
