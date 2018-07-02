@@ -33,7 +33,7 @@ Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers
 		m_shapeQuad->updateVAO(m_quadVAO);
 		m_quadVAOLoaded = true;
 		GLuint data = m_shapeQuad->getSize();
-		m_indirectShape.write(0, sizeof(GLuint), &data);
+		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 
 	// Initialize Shadows

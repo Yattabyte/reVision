@@ -18,11 +18,12 @@ Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	engine->createAsset(m_shapeCone, string("cone"), true);
 	m_coneVAOLoaded = false;
 	m_coneVAO = Asset_Primitive::Generate_VAO();
-	m_shapeCone->addCallback(this, [&]() {
+	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeCone->addCallback(this, [&]() mutable {
 		m_shapeCone->updateVAO(m_coneVAO);
 		m_coneVAOLoaded = true;
-		GLuint data[4] = { m_shapeCone->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
-		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, data);
+		GLuint data = m_shapeCone->getSize();
+		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 }
 

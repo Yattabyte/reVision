@@ -27,11 +27,12 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	engine->createAsset(m_shapeSphere, string("sphere"));
 	m_sphereVAOLoaded = false;
 	m_sphereVAO = Asset_Primitive::Generate_VAO();
-	m_shapeSphere->addCallback(this, [&]() {
+	m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeSphere->addCallback(this, [&]() mutable {
 		m_shapeSphere->updateVAO(m_sphereVAO);
 		m_sphereVAOLoaded = true;
-		GLuint data[4] = { m_shapeSphere->getSize(), 0, 0, 0 }; // count, primCount, first, reserved
-		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, data);
+		GLuint data = m_shapeSphere->getSize();
+		m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 	});
 
 	m_regenSShadows = false;

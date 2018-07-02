@@ -206,11 +206,11 @@ void Asset_Model::CreateDefault(AssetManager & assetManager, ModelManager & mode
 	userAsset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	userAsset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
 	userAsset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_bboxMin = vec3(-1);
-	userAsset->m_bboxMax = vec3(1);
+	userAsset->m_meshSize = 6; // Final vertex size (needed for draw arrays call)
 	userAsset->m_data.bones.resize(6);
 	userAsset->m_skins.resize(1);
-	assetManager.create(userAsset->m_skins[0], "defaultMaterial", true);
+	calculate_AABB(userAsset->m_data.vs, userAsset->m_bboxMin, userAsset->m_bboxMax, userAsset->m_bboxCenter, userAsset->m_radius);
+	assetManager.create(userAsset->m_skins[0], string("defaultMaterial"), true);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
