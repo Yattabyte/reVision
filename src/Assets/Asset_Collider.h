@@ -4,12 +4,11 @@
 #define DIRECTORY_COLLIDER File_Reader::GetCurrentDir() + "\\Models\\"
 #define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include <btBulletDynamicsCommon.h>
 
+class Engine;
 class Asset_Collider;
-class Asset_Manager;
 typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
 
 
@@ -24,15 +23,15 @@ public:
 
 
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Collider & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Collider & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded = true);
 	
 
 
@@ -48,9 +47,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Collider & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, Shared_Asset_Collider & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Collider & userAsset);
 
 
 	// Private Attributes

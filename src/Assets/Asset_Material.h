@@ -8,13 +8,12 @@
 #define ABS_DIRECTORY_MAT_TEX(filename) File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
-#include "Managers\MaterialManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
 using namespace glm;
+class Engine;
 class Asset_Material;
 typedef shared_ptr<Asset_Material> Shared_Asset_Material;
 
@@ -40,16 +39,15 @@ public:
 
 	// Public Methods
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Material & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
-	 * @param	materialManager	the material manager to use
 	 * @param	filename		the filename to use 
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Material & userAsset, MaterialManager & materialManager, const std::string & material_filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES]);
+	static void Create(Engine * engine, Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES]);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	 * @brief				Updates the appropriate supplied @string's with a path to the appropriate file
 	 * @param	filename	the absolute file path of the '.mat' file to read from
@@ -82,9 +80,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Material & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Material & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Material & userAsset);
 
 
 	// Private Attributes

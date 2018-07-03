@@ -7,11 +7,11 @@
 #define UNDEFINED_CVAL -12345.67890f // Undefined preference
 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include <map>
 #include <vector>
 
+class Engine;
 class Asset_Config;
 typedef shared_ptr<Asset_Config> Shared_Asset_Config;
 
@@ -28,16 +28,16 @@ public:
 
 	// Public Methods
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Config & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Config & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	cfg_strings		the configuration strings to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
 	/** Assigns the specified value to the specified key.
 	 * @param	cfg_key		the key to apply this new value to
 	 * @param	cfg_value	the new value to give to this key */
@@ -63,9 +63,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Config & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, Shared_Asset_Config & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Config & userAsset);
 
 
 	// Private Attributes

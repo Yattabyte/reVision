@@ -1,6 +1,6 @@
 #include "Asset_Collider.h"
-#include "Managers\Message_Manager.h"
 #include "Utilities\Model_Importer.h"
+#include "Engine.h"
 #include "assimp\postprocess.h"
 
 
@@ -15,8 +15,10 @@ Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
 	m_shape = nullptr;
 }
 
-void Asset_Collider::CreateDefault(AssetManager & assetManager, Shared_Asset_Collider & userAsset)
+void Asset_Collider::CreateDefault(Engine * engine, Shared_Asset_Collider & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultCollider"))
 		return;
@@ -28,12 +30,14 @@ void Asset_Collider::CreateDefault(AssetManager & assetManager, Shared_Asset_Col
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Collider::Create(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
+void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -41,27 +45,27 @@ void Asset_Collider::Create(AssetManager & assetManager, Shared_Asset_Collider &
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
 	if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		filename
 	);
 }
 
-void Asset_Collider::Initialize(AssetManager & assetManager, Shared_Asset_Collider & userAsset, const string & fullDirectory)
+void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAsset, const string & fullDirectory)
 {
 	// Attempt to create the asset
 	vector<btScalar> points;
-	if (!Model_Importer::import_Model(fullDirectory, aiProcess_Triangulate, points)) {
-		CreateDefault(assetManager, userAsset);
+	if (!Model_Importer::import_Model(engine->getMessageManager(), fullDirectory, aiProcess_Triangulate, points)) {
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
@@ -70,8 +74,10 @@ void Asset_Collider::Initialize(AssetManager & assetManager, Shared_Asset_Collid
 	userAsset->m_shape = shape;
 }
 
-void Asset_Collider::Finalize(AssetManager & assetManager, Shared_Asset_Collider & userAsset)
+void Asset_Collider::Finalize(Engine * engine, Shared_Asset_Collider & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	write_guard.unlock();

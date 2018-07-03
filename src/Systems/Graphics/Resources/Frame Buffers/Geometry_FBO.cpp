@@ -41,10 +41,15 @@ Geometry_FBO::Geometry_FBO()
 void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 {
 	if (!m_Initialized) {
+		// Default Parameters
 		m_engine = engine;
 		m_visualFX = visualFX;
+
+		// Asset Loading
 		m_engine->createAsset(m_shaderSSAO, string("FX\\SSAO"), true);
 		m_engine->createAsset(m_shapeQuad, string("quad"), true);
+
+		// Primitive Construction
 		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
@@ -54,11 +59,14 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
+
+		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
+
+		// GL Loading
 		initialize_noise();
 		FrameBuffer::initialize();
-
 		// Create the gbuffer textures
 		glCreateTextures(GL_TEXTURE_2D, GBUFFER_NUM_TEXTURES, m_textures);
 		for (int x = 0; x < GBUFFER_NUM_TEXTURES; ++x) {
@@ -71,7 +79,9 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 		glTextureImage2DEXT(m_depth_stencil, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 		AssignTextureProperties(m_depth_stencil);
 		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
-		validate();
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+			engine->reportError(MessageManager::FBO_INCOMPLETE, "", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
 		clear();
 	}
 }

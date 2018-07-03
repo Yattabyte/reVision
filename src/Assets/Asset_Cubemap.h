@@ -6,12 +6,12 @@
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
 using namespace glm;
+class Engine;
 class Asset_Cubemap;
 typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
 
@@ -28,15 +28,15 @@ public:
 
 	// Public Methods
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
@@ -56,9 +56,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset);
 
 
 	// Private Attributes

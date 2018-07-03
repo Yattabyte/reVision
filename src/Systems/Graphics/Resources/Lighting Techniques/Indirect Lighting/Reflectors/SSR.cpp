@@ -3,7 +3,6 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Engine.h"
-#include "Managers\Message_Manager.h"
 #include <minmax.h>
 
 
@@ -20,24 +19,34 @@ SSR_Tech::~SSR_Tech()
 
 SSR_Tech::SSR_Tech(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, Reflection_FBO * reflectionFBO)
 {
-	// Copy Pointers
+	// Default Parameters
 	m_engine = engine;
 	m_geometryFBO = geometryFBO;
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 
-	engine->createAsset(m_shaderCopy, string("fx\\copyTexture"), true);
-	engine->createAsset(m_shaderBlur, string("fx\\gaussianBlur_MIP"), true);
-	engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\SSR"), true);
-	engine->createAsset(m_shapeQuad, string("quad"), true);
+	// Asset Loading
+	m_engine->createAsset(m_shaderCopy, string("fx\\copyTexture"), true);
+	m_engine->createAsset(m_shaderBlur, string("fx\\gaussianBlur_MIP"), true);
+	m_engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\SSR"), true);
+	m_engine->createAsset(m_shapeQuad, string("quad"), true);
 
+	// Primitive Construction
+	m_quadVAOLoaded = false;
+	m_quadVAO = Asset_Primitive::Generate_VAO();
+	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+	m_shapeQuad->addCallback(this, [&]() mutable {
+		m_quadVAOLoaded = true;
+		m_shapeQuad->updateVAO(m_quadVAO);
+		const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+	});
+	
+	// Preference Callbacks
 	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
 	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
 
-	m_quadVAOLoaded = false;
-	m_quadVAO = Asset_Primitive::Generate_VAO();
-	m_shapeQuad->addCallback(this, [&]() { m_shapeQuad->updateVAO(m_quadVAO); m_quadVAOLoaded = true; });
-
+	// GL Loading
 	m_fbo = 0;
 	glCreateFramebuffers(1, &m_fbo);
 	m_texture = 0;
@@ -56,14 +65,13 @@ SSR_Tech::SSR_Tech(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * l
 	}
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
-	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
-	
-	GLuint quadData[4] = { 6, 1, 0, 0 }; // count, primCount, first, reserved
-	m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 
-	SSR_Buffer buffer;
+	// Error Reporting
+	const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
+		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+	
+	const SSR_Buffer buffer;
 	m_ssrBuffer = StaticBuffer(sizeof(SSR_Buffer), &buffer);
 }
 

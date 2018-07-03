@@ -6,13 +6,13 @@
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <vector>
 
-using namespace glm;
+using namespace glm; 
+class Engine;
 class Asset_Primitive;
 typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
 
@@ -29,15 +29,15 @@ public:
 
 	// Public Methods
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Primitive & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Primitive & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return			a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();
@@ -64,9 +64,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Primitive & userAsset);
 
 
 	// Private Attributes

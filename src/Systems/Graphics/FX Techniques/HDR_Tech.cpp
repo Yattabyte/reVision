@@ -1,5 +1,4 @@
 #include "Systems\Graphics\FX Techniques\HDR_Tech.h"
-#include "Managers\Message_Manager.h"
 #include "Engine.h"
 #include <algorithm>
 
@@ -52,9 +51,9 @@ HDR_Tech::HDR_Tech(Engine * engine)
 	glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
 
 	// Error Reporting
-	GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+	const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 }
 
 void HDR_Tech::applyEffect()

@@ -1,6 +1,6 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Shader_Pkg.h"
-#include "Managers\Message_Manager.h"
+#include "Engine.h"
 #include <fstream>
 
 /** Read a file from disk.
@@ -24,9 +24,9 @@ inline bool fetch_file_from_disk(string & returnFile, const string & fileDirecto
 }
 
 /** Parse the shader, looking for any directives that require us to modify the document.
- * @param	assetManager	the asset manager to use
+ * @param	engine			the engine being used
  * @param	userAsset		the asset we are loading from */
-inline void parse(AssetManager & assetManager, Shared_Asset_Shader & userAsset)
+inline void parse(Engine * engine, Shared_Asset_Shader & userAsset)
 {
 	string *text[3] = { &userAsset->m_vertexText, &userAsset->m_fragmentText, &userAsset->m_geometryText };
 	for (int x = 0; x < 3; ++x) {
@@ -43,7 +43,7 @@ inline void parse(AssetManager & assetManager, Shared_Asset_Shader & userAsset)
 			directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 			Shared_Asset_Shader_Pkg package;
-			assetManager.create(package, directory, false);
+			engine->createAsset(package, directory, false);
 			string left = input.substr(0, spot);
 			string right = input.substr(spot + 1 + qspot2);
 			input = left + package->getPackageText() + right;
@@ -55,11 +55,12 @@ inline void parse(AssetManager & assetManager, Shared_Asset_Shader & userAsset)
 }
 
 /** Compile a single shader object.
+ * @param	engine		the engine to be used
  * @param	filename	the shader filename
  * @param	ID			the shader ID to update
  * @param	source		the char array representing the document
  * @param	type		the shader type */
-inline void compile_single_shader(const string & filename, GLuint & ID, const char * source, const GLenum & type)
+inline void compile_single_shader(Engine * engine, const string & filename, GLuint & ID, const char * source, const GLenum & type)
 {
 	if (strlen(source) > 0) {
 		ID = glCreateShader(type);
@@ -71,18 +72,19 @@ inline void compile_single_shader(const string & filename, GLuint & ID, const ch
 		if (!success) {
 			GLchar InfoLog[1024];
 			glGetShaderInfoLog(ID, sizeof(InfoLog), NULL, InfoLog);
-			MSG_Manager::Error(MSG_Manager::SHADER_INCOMPLETE, filename, string(InfoLog, 1024));
+			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, string(InfoLog, 1024));
 		}
 	}
 }
 
 /** Compile all the shaders representing a shader program.
+ * @param	engine		the engine to be used
  * @param	userAsset	the shader asset to compile */
-inline void compile(Shared_Asset_Shader & userAsset)
+inline void compile(Engine * engine, Shared_Asset_Shader & userAsset)
 {
-	compile_single_shader(userAsset->getFileName(), userAsset->m_glVertexID, userAsset->m_vertexText.c_str(), GL_VERTEX_SHADER);
-	compile_single_shader(userAsset->getFileName(), userAsset->m_glFragmentID, userAsset->m_fragmentText.c_str(), GL_FRAGMENT_SHADER);
-	compile_single_shader(userAsset->getFileName(), userAsset->m_glGeometryID, userAsset->m_geometryText.c_str(), GL_GEOMETRY_SHADER);
+	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glVertexID, userAsset->m_vertexText.c_str(), GL_VERTEX_SHADER);
+	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glFragmentID, userAsset->m_fragmentText.c_str(), GL_FRAGMENT_SHADER);
+	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glGeometryID, userAsset->m_geometryText.c_str(), GL_GEOMETRY_SHADER);
 }
 
 /** Generate the shader program.
@@ -100,8 +102,9 @@ void generate_program(Shared_Asset_Shader & userAsset)
 }
 
 /** Link the shader program.
+ * @param	engine		the engine to be used
  * @param	userAsset	the shader asset to link for */
-inline void link_program(Shared_Asset_Shader & userAsset)
+inline void link_program(Engine * engine, Shared_Asset_Shader & userAsset)
 {
 	// Link and validate, retrieve any errors
 	glLinkProgram(userAsset->m_glProgramID);
@@ -110,7 +113,7 @@ inline void link_program(Shared_Asset_Shader & userAsset)
 	if (success == 0) {
 		GLchar ErrorLog[1024];
 		glGetProgramInfoLog(userAsset->m_glProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		MSG_Manager::Error(MSG_Manager::PROGRAM_INCOMPLETE, userAsset->getFileName(), string(ErrorLog, 1024));
+		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset->getFileName(), string(ErrorLog, 1024));
 	}
 	glValidateProgram(userAsset->m_glProgramID);
 
@@ -140,8 +143,10 @@ Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
 	m_geometryText = "";
 }
 
-void Asset_Shader::CreateDefault(AssetManager & assetManager, Shared_Asset_Shader & userAsset)
+void Asset_Shader::CreateDefault(Engine * engine, Shared_Asset_Shader & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultShader"))
 		return;
@@ -155,13 +160,15 @@ void Asset_Shader::CreateDefault(AssetManager & assetManager, Shared_Asset_Shade
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
 
-void Asset_Shader::Create(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded)
+void Asset_Shader::Create(Engine * engine, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -171,26 +178,26 @@ void Asset_Shader::Create(AssetManager & assetManager, Shared_Asset_Shader & use
 	bool found_vertex = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
 	bool found_fragement = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
 	if (!found_vertex)
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
 	if (!found_fragement)
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
 	if (!(found_vertex && found_fragement)) {
-		CreateDefault(assetManager, userAsset);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename
 	);
 }
 
-void Asset_Shader::Initialize(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & fullDirectory)
+void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const string & fullDirectory)
 {
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	bool found_vertex = fetch_file_from_disk(userAsset->m_vertexText, fullDirectory + EXT_SHADER_VERTEX);
@@ -200,24 +207,26 @@ void Asset_Shader::Initialize(AssetManager & assetManager, Shared_Asset_Shader &
 	write_guard.release();
 
 	if (!found_vertex)
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_VERTEX);
+		engine->reportError(MessageManager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_VERTEX);
 	if (!found_fragement)
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_FRAGMENT);
+		engine->reportError(MessageManager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_FRAGMENT);
 	if (!(found_vertex + found_fragement + found_geometry)) {
 		// handle this?
 	}
 
 	// parse
-	parse(assetManager, userAsset);
+	parse(engine, userAsset);
 }
 
-void Asset_Shader::Finalize(AssetManager & assetManager, Shared_Asset_Shader & userAsset)
+void Asset_Shader::Finalize(Engine * engine, Shared_Asset_Shader & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
-	compile(userAsset);
+	compile(engine, userAsset);
 	generate_program(userAsset);
-	link_program(userAsset);
+	link_program(engine, userAsset);
 
 	write_guard.unlock();
 	write_guard.release();

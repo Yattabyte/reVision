@@ -1,5 +1,5 @@
 #include "Assets\Asset_Texture.h"
-#include "Managers\Message_Manager.h"
+#include "Engine.h"
 #include "FreeImage.h"
 
 
@@ -26,8 +26,10 @@ Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bo
 	m_anis = a;
 }
 
-void Asset_Texture::CreateDefault(AssetManager & assetManager, Shared_Asset_Texture & userAsset)
+void Asset_Texture::CreateDefault(Engine * engine, Shared_Asset_Texture & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultTexture"))
 		return;
@@ -44,12 +46,14 @@ void Asset_Texture::CreateDefault(AssetManager & assetManager, Shared_Asset_Text
 		/* Initialization. */
 		[]() {},	
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Texture::Create(AssetManager & assetManager, Shared_Asset_Texture & userAsset, const string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
+void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, const string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -57,38 +61,38 @@ void Asset_Texture::Create(AssetManager & assetManager, Shared_Asset_Texture & u
 	// Check if the file/directory exists on disk
 	const string &fullDirectory = DIRECTORY_TEXTURE + filename;
 	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename, type, mipmap, anis
 	);
 }
 
-void Asset_Texture::Initialize(AssetManager & assetManager, Shared_Asset_Texture & userAsset, const string & fullDirectory)
+void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset, const string & fullDirectory)
 {
 	const char * file = fullDirectory.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
 	if (format == -1) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	if (format == FIF_UNKNOWN) {
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-			MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fullDirectory, "Using default texture.");
-			CreateDefault(assetManager, userAsset);
+			engine->reportError(MessageManager::FILE_CORRUPT, fullDirectory, "Using default texture.");
+			CreateDefault(engine, userAsset);
 			return;
 		}
 	}
@@ -99,7 +103,7 @@ void Asset_Texture::Initialize(AssetManager & assetManager, Shared_Asset_Texture
 	//Load
 	if (format == FIF_GIF) {
 		mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-		MSG_Manager::Statement("GIF loading unsupported, using first frame...");
+		engine->reportMessage("GIF loading unsupported, using first frame...");
 		bitmap = FreeImage_LockPage(mbitmap, 0);
 	}
 	else
@@ -137,8 +141,10 @@ void Asset_Texture::Initialize(AssetManager & assetManager, Shared_Asset_Texture
 		userAsset->m_type = GL_TEXTURE_1D;	
 }
 
-void Asset_Texture::Finalize(AssetManager & assetManager, Shared_Asset_Texture & userAsset)
+void Asset_Texture::Finalize(Engine * engine, Shared_Asset_Texture & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	glCreateTextures(userAsset->m_type, 1, &userAsset->m_glTexID);
 	userAsset->m_finalized = true;

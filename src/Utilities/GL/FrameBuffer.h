@@ -5,7 +5,6 @@
 
 #include "GL\glew.h"
 #include "glm\glm.hpp"
-#include "Managers\Message_Manager.h"
 
 using namespace glm;
 
@@ -61,19 +60,6 @@ public:
 	
 
 protected:
-	// Protected Methods
-	/* Checks if this framebuffer is complete.
-	 * @return true if complete, false otherwise */
-	bool validate() {
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) {
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "" , std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
-			return false;
-		}
-		return true;
-	}
-
-
 	// Protected Attributes
 	bool m_Initialized;
 	GLuint m_fbo;

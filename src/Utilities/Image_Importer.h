@@ -2,6 +2,7 @@
 #ifndef	IMAGEIMPORTER_H
 #define	IMAGEIMPORTER_H
 
+#include "Managers\MessageManager.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 #include <string>
@@ -20,10 +21,11 @@ class Image_Importer
 public:
 	/** Retrieve an image from disk. 
 	 * Reports its errors into the messaging system. Safely fails.
-	 * @param	fileName	the string absolute directory to the image file to import
-	 * @return				a 32bit FIBITMAP* pointer containing the image if successfull, nullptr otherwise.  
-	 * @note				requires manually deleting the FIBITMAP pointer when no longer needed! */
-	static FIBITMAP * import_Image(const std::string& fileName);
+	 * @param	messageManager	the message manager, used for error reporting
+	 * @param	fileName		the string absolute directory to the image file to import
+	 * @return					a 32bit FIBITMAP* pointer containing the image if successfull, nullptr otherwise.  
+	 * @note					requires manually deleting the FIBITMAP pointer when no longer needed! */
+	static FIBITMAP * import_Image(MessageManager & messageManager, const std::string& fileName);
 	/** Parses the supplied image into a pixel array using the supplied dimensions, interpreted as a mono-chromatic image (all red channel).
 	 * @param	bitmap		the bitmap pointer containing the image to parse
 	 * @param	dimensions	the dimensions of the image as an (integer) vec2

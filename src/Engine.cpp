@@ -1,7 +1,6 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
-#include "Managers\Message_Manager.h"
 #include <string>
 
 // OpenGL Dependent Systems //
@@ -12,9 +11,11 @@ static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
 
 
+#include <iostream>
+#include <string>
 static void GLFW_Callback_Error(int error, const char * description)
 {
-	MSG_Manager::Error(MSG_Manager::GLFW_ERROR, "(" + to_string(error) + "): " + description);
+	cout << string("Unhandled GLFW Error (" + to_string(error) + "): " + description);
 }
 
 // Is called when the window resizes
@@ -27,49 +28,6 @@ static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int heigh
 	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
-// Is called when error messages occur within OpenGL driver
-static void APIENTRY OpenGL_DebugMessageCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam)
-{
-	string errorType;
-	string errorSeverity;
-	string errorMessage = string(message, length);
-	switch (type) {
-		case GL_DEBUG_TYPE_ERROR:
-			errorType = "ERROR";
-			break;
-		case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-			errorType = "DEPRECATED_BEHAVIOR";
-			break;
-		case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-			errorType = "UNDEFINED_BEHAVIOR";
-			break;
-		case GL_DEBUG_TYPE_PORTABILITY:
-			errorType = "PORTABILITY";
-			break;
-		case GL_DEBUG_TYPE_PERFORMANCE:
-			errorType = "PERFORMANCE";
-			break;
-		case GL_DEBUG_TYPE_OTHER:
-			errorType = "OTHER";
-			break;
-	}
-	switch (severity) {
-		case GL_DEBUG_SEVERITY_LOW:
-			errorSeverity = "LOW";
-			break;
-		case GL_DEBUG_SEVERITY_MEDIUM:
-			errorSeverity = "MEDIUM";
-			break;
-		case GL_DEBUG_SEVERITY_HIGH:
-			errorSeverity = "HIGH";
-			break;
-	}
-	//if (type == 1280) {
-		MSG_Manager::Statement(errorMessage +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
-	//}
-	//MSG_Manager::Error(OPENGL_ERROR, errorMessage, +"\nType: " + errorType + ", Severity: " + errorSeverity + ", id: " + std::to_string(id));
-}
-
 Engine::~Engine()
 {
 	if (m_Initialized) {
@@ -77,20 +35,20 @@ Engine::~Engine()
 	}
 }
 
-Engine::Engine() : m_PreferenceState(this)
+Engine::Engine() : m_AssetManager(this), m_PreferenceState(this)
 {
 	m_Initialized = false;	
 	m_lastTime = 0;
 }
 
-bool Initialize_Sharing()
+bool Initialize_Sharing(Engine * engine)
 {
 	if (!m_Initialized_Sharing) {
 
 		glfwSetErrorCallback(GLFW_Callback_Error);
 		if (!glfwInit()) {
 			glfwTerminate();
-			MSG_Manager::Error(MSG_Manager::OTHER_ERROR, "Unable to initialize!");
+			engine->reportError(MessageManager::OTHER_ERROR, "Unable to initialize!");
 			return false;
 		}
 
@@ -117,19 +75,12 @@ bool Initialize_Sharing()
 		glewExperimental = GL_TRUE;
 		glewInit();
 
-		MSG_Manager::Statement(	
-			"Engine Version: " + string(ENGINE_VERSION)
-		);
-		MSG_Manager::Statement("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-		MSG_Manager::Statement("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-		MSG_Manager::Statement("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-		MSG_Manager::Statement("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
-
-		/*glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-		glDebugMessageCallback(OpenGL_DebugMessageCallback, nullptr);
-		GLuint unusedIds = 0;
-		glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, &unusedIds, true);*/
-
+		engine->reportMessage("Engine Version: " + string(ENGINE_VERSION));
+		engine->reportMessage("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+		engine->reportMessage("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+		engine->reportMessage("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+		engine->reportMessage("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+		
 		m_Initialized_Sharing = true;
 	}
 	return m_Initialized_Sharing;
@@ -144,7 +95,7 @@ bool Initialize_Sharing()
 #include "Systems\PerfCounter\PerfCounter.h"
 bool Engine::initialize()
 {
-	if ((!m_Initialized) && Initialize_Sharing()) {
+	if ((!m_Initialized) && Initialize_Sharing(this)) {
 		m_Camera = new Camera();
 		m_Camera->setHorizontalFOV(110.0f);
 		const float farPlane = addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_Camera->setFarPlane(f); m_Camera->update(); });
@@ -231,7 +182,7 @@ void Engine::tick()
 		m_frameCount++;
 		if (m_frameCount >= 100) {
 			m_frameAccumulator /= 100.0f;
-			MSG_Manager::Statement("Avg Frametime = " + to_string(m_frameAccumulator*1000.0f) + " ms");
+			reportMessage("Avg Frametime = " + to_string(m_frameAccumulator*1000.0f) + " ms");
 			m_frameAccumulator = deltaTime;
 			m_frameCount = 0;
 		}
@@ -275,5 +226,15 @@ void Engine::tickThreaded()
 bool Engine::shouldClose()
 {
 	return glfwWindowShouldClose(m_Context_Rendering);
+}
+
+void Engine::reportMessage(const string & input)
+{
+	m_messageManager.statement(input);
+}
+
+void Engine::reportError(const int & error_number, const string & input, const string & additional_input)
+{
+	m_messageManager.error(error_number, input, additional_input);
 }
 

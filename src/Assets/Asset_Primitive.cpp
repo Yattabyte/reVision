@@ -1,6 +1,6 @@
 #include "Assets\Asset_Primitive.h"
-#include "Managers\Message_Manager.h"
 #include "Utilities\Model_Importer.h"
+#include "Engine.h"
 #include "ASSIMP\Importer.hpp"
 #include "ASSIMP\postprocess.h"
 #include "ASSIMP\scene.h"
@@ -18,8 +18,10 @@ Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
 		buffer = -1;
 }
 
-void Asset_Primitive::CreateDefault(AssetManager & assetManager, Shared_Asset_Primitive & userAsset)
+void Asset_Primitive::CreateDefault(Engine * engine, Shared_Asset_Primitive & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultPrimitive"))
 		return;
@@ -34,12 +36,14 @@ void Asset_Primitive::CreateDefault(AssetManager & assetManager, Shared_Asset_Pr
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Primitive::Create(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded)
+void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -47,28 +51,28 @@ void Asset_Primitive::Create(AssetManager & assetManager, Shared_Asset_Primitive
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
 	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename
 	);
 }
 
-void Asset_Primitive::Initialize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset, const string & fullDirectory)
+void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const string & fullDirectory)
 {
 	vector<vec3> vertices;
 	vector<vec2> uv_coords;
-	if (!Model_Importer::import_Model(fullDirectory, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
-		CreateDefault(assetManager, userAsset);
+	if (!Model_Importer::import_Model(engine->getMessageManager(), fullDirectory, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
@@ -77,8 +81,10 @@ void Asset_Primitive::Initialize(AssetManager & assetManager, Shared_Asset_Primi
 	userAsset->m_dataUV = uv_coords;
 }
 
-void Asset_Primitive::Finalize(AssetManager & assetManager, Shared_Asset_Primitive & userAsset)
+void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	glCreateBuffers(2, userAsset->m_buffers);

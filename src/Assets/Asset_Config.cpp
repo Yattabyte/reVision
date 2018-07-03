@@ -1,5 +1,5 @@
 #include "Assets\Asset_Config.h"
-#include "Managers\Message_Manager.h"
+#include "Engine.h"
 #include <fstream>
 
 
@@ -48,8 +48,10 @@ Asset_Config::Asset_Config(const string & filename, const vector<string> & strin
 /** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
 * @brief Uses hard-coded values
 * @param	asset	a shared pointer to fill with the default asset */
-void Asset_Config::CreateDefault(AssetManager & assetManager, Shared_Asset_Config & userAsset)
+void Asset_Config::CreateDefault(Engine * engine, Shared_Asset_Config & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultConfig"))
 		return;
@@ -62,12 +64,14 @@ void Asset_Config::CreateDefault(AssetManager & assetManager, Shared_Asset_Confi
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Config::Create(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & filename, const vector<string>& cfg_strings, const bool & threaded)
+void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, const string & filename, const vector<string>& cfg_strings, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -75,23 +79,23 @@ void Asset_Config::Create(AssetManager & assetManager, Shared_Asset_Config & use
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
 	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename, cfg_strings
 	);
 }
 
-void Asset_Config::Initialize(AssetManager & assetManager, Shared_Asset_Config & userAsset, const string & fullDirectory)
+void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const string & fullDirectory)
 {
 	ifstream file_stream(fullDirectory);
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
@@ -107,8 +111,10 @@ void Asset_Config::Initialize(AssetManager & assetManager, Shared_Asset_Config &
 	}
 }
 
-void Asset_Config::Finalize(AssetManager & assetManager, Shared_Asset_Config & userAsset)
+void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	write_guard.unlock();

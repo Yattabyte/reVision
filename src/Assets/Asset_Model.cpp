@@ -1,5 +1,5 @@
 #include "Assets\Asset_Model.h"
-#include "Managers\Message_Manager.h"
+#include "Engine.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
 #include <minmax.h>
@@ -95,11 +95,10 @@ inline void initialize_bones(Shared_Asset_Model & model, const aiScene * scene)
 }
 
 /** Initialize a model's material, where each texture is specified individually. 
- * @param	assetManager	the asset manager to use
- * @param	materialManager	the material manager to use
+* @param	engine			the engine being used
  * @param	modelMaterial	the material asset to load into
  * @param	sceneMaterial	the scene material to use as a guide */
-inline void generate_material(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
+inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
 {
 	// Get the aiStrings for all the textures for a material
 	aiString	albedo, normal, metalness, roughness, height, ao;
@@ -146,19 +145,18 @@ inline void generate_material(AssetManager & assetManager, MaterialManager & mat
 		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 	};
 
-	assetManager.create(modelMaterial, materialManager, string(""), true, material_textures);
+	engine->createAsset(modelMaterial, string(""), true, material_textures);
 }
 
 /** Initialize a model's materials, using the model's name as a lookup to an external material file.
- * @param	assetManager	the asset manager to use
- * @param	materialManager	the material manager to use
+* @param	engine			the engine being used
  * @param	modelMaterial	the material asset to load into
  * @param	filename		the model's filename to use as a guide */
-inline void generate_material(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & modelMaterial, const string & filename)
+inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const string & filename)
 {
 	std::string materialFilename = filename.substr(filename.find("Models\\"));
 	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));
-	assetManager.create(modelMaterial, materialManager, materialFilename, true);
+	engine->createAsset(modelMaterial, materialFilename, true);
 }
 
 // Scene gets destroyed at the end of asset creation
@@ -195,8 +193,11 @@ Asset_Model::Asset_Model(const string & filename, ModelManager * modelManager) :
 	m_modelManager = modelManager;
 }
 
-void Asset_Model::CreateDefault(AssetManager & assetManager, ModelManager & modelManager, MaterialManager & materialManager, Shared_Asset_Model & userAsset)
+void Asset_Model::CreateDefault(Engine * engine, Shared_Asset_Model & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+	ModelManager & modelManager = engine->getModelManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultModel"))
 		return;
@@ -212,19 +213,22 @@ void Asset_Model::CreateDefault(AssetManager & assetManager, ModelManager & mode
 	userAsset->m_data.bones.resize(6);
 	userAsset->m_skins.resize(1);
 	calculate_AABB(userAsset->m_data.vs, userAsset->m_bboxMin, userAsset->m_bboxMax, userAsset->m_bboxCenter, userAsset->m_radius);
-	assetManager.create(userAsset->m_skins[0], materialManager, string("defaultMaterial"), true);
+	engine->createAsset(userAsset->m_skins[0], string("defaultMaterial"), true);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Model::Create(AssetManager & assetManager, Shared_Asset_Model & userAsset, ModelManager & modelManager, MaterialManager & materialManager, const string & filename, const bool & threaded)
+void Asset_Model::Create(Engine * engine, Shared_Asset_Model & userAsset, const string & filename, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+	ModelManager & modelManager = engine->getModelManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -232,23 +236,23 @@ void Asset_Model::Create(AssetManager & assetManager, Shared_Asset_Model & userA
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = DIRECTORY_MODEL + filename;
 	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, modelManager, materialManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 	
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &modelManager, &materialManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, modelManager, materialManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename, &modelManager
 	);
 }
 
-void Asset_Model::Initialize(AssetManager & assetManager, ModelManager & modelManager, MaterialManager & materialManager, Shared_Asset_Model & userAsset, const string & fullDirectory)
+void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, const string & fullDirectory)
 {
 	Assimp::Importer &importer = *new Assimp::Importer();
 	const aiScene* scene = importer.ReadFile(fullDirectory,
@@ -262,8 +266,8 @@ void Asset_Model::Initialize(AssetManager & assetManager, ModelManager & modelMa
 								   aiProcess_ImproveCacheLocality*/);
 								   // Scene cannot be read
 	if (!scene) {
-		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fullDirectory);
-		CreateDefault(assetManager, modelManager, materialManager, userAsset);
+		engine->reportError(MessageManager::FILE_CORRUPT, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 
@@ -300,13 +304,15 @@ void Asset_Model::Initialize(AssetManager & assetManager, ModelManager & modelMa
 	userAsset->m_skins.resize(max(1, (scene->mNumMaterials - 1)));
 	if (scene->mNumMaterials > 1)
 		for (int x = 1; x < scene->mNumMaterials; ++x) // ignore scene material [0] 
-			generate_material(assetManager, materialManager, userAsset->m_skins[x - 1], scene->mMaterials[x]);
+			generate_material(engine, userAsset->m_skins[x - 1], scene->mMaterials[x]);
 	else
-		generate_material(assetManager, materialManager, userAsset->m_skins[0], fullDirectory);
+		generate_material(engine, userAsset->m_skins[0], fullDirectory);
 }
 
-void Asset_Model::Finalize(AssetManager & assetManager, Shared_Asset_Model & userAsset)
+void Asset_Model::Finalize(Engine * engine, Shared_Asset_Model & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	userAsset->m_modelManager->registerGeometry(userAsset->m_data, userAsset->m_offset, userAsset->m_count);

@@ -33,7 +33,9 @@ void Reflection_FBO::initialize(Engine * engine, const GLuint & depthStencil)
 		glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
 		glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
-		validate();
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			engine->reportError(MessageManager::FBO_INCOMPLETE, "", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 }
 

@@ -1,26 +1,25 @@
 #include "Utilities\Image_Importer.h"
-#include "Managers\Message_Manager.h"
 #include "FreeImage.h"
 
 
-FIBITMAP * Image_Importer::import_Image(const std::string & fileName)
+FIBITMAP * Image_Importer::import_Image(MessageManager & messageManager, const std::string & fileName)
 {
 	const char * file = fileName.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	GLubyte* textureData = nullptr;
 
 	if (format == -1) 
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fileName);
+		messageManager.error(MessageManager::FILE_MISSING, fileName);
 	else if (format == FIF_UNKNOWN) {
-		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fileName);
+		messageManager.error(MessageManager::FILE_CORRUPT, fileName);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format)) 
-			MSG_Manager::Statement("Failure, could not recover the file!");		
+			messageManager.statement("Failure, could not recover the file!");		
 		else 
-			MSG_Manager::Statement("Successfully resolved the texture file's format!");		
+			messageManager.statement("Successfully resolved the texture file's format!");
 	}
 	else if (format == FIF_GIF) 
-		MSG_Manager::Statement("GIF loading unsupported!");
+		messageManager.statement("GIF loading unsupported!");
 	else {
 		FIBITMAP *bitmap = FreeImage_Load(format, file);
 		FIBITMAP *bitmap32;

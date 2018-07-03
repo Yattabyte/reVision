@@ -1,8 +1,9 @@
 #include "Assets\Asset_Material.h"
-#include "Managers\Message_Manager.h"
 #include "Utilities\Image_Importer.h"
+#include "Engine.h"
 #include "FreeImage.h"
 #include <math.h>
+#include <minmax.h>
 
 
 Asset_Material::~Asset_Material()
@@ -30,8 +31,11 @@ Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], cons
 	m_matSpot = spot;
 }
 
-void Asset_Material::CreateDefault(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset)
+void Asset_Material::CreateDefault(Engine * engine, Shared_Asset_Material & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+	MaterialManager & materialManager = engine->getMaterialManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultMaterial"))
 		return;
@@ -76,12 +80,15 @@ void Asset_Material::CreateDefault(AssetManager & assetManager, MaterialManager 
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); }
+		[engine, &materialManager, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material & userAsset, MaterialManager & materialManager, const std::string & filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES])
+void Asset_Material::Create(Engine * engine, Shared_Asset_Material & userAsset, const std::string & filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES])
 {
+	AssetManager & assetManager = engine->getAssetManager();
+	MaterialManager & materialManager = engine->getMaterialManager();
+
 	if (filename != "") {
 		// Check if a copy already exists
 		if (assetManager.queryExistingAsset(userAsset, filename))
@@ -90,17 +97,17 @@ void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material &
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
 		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			CreateDefault(assetManager, materialManager, userAsset);
+			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+			CreateDefault(engine, userAsset);
 			return;
 		}
 
 		// Create the asset
 		assetManager.submitNewAsset(userAsset, threaded,
 			/* Initialization. */
-			[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+			[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 			/* Finalization. */
-			[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); },
+			[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 			/* Constructor Arguments. */
 			filename, materialManager.generateID()
 		);
@@ -108,16 +115,16 @@ void Asset_Material::Create(AssetManager & assetManager, Shared_Asset_Material &
 	else {
 		assetManager.submitNewAsset<Asset_Material>(userAsset, threaded,
 			/* Initialization. */
-			[&assetManager, &userAsset]() mutable { Asset_Material::Initialize(assetManager, userAsset, ""); },
+			[engine, &userAsset]() mutable { Asset_Material::Initialize(engine, userAsset, ""); },
 			/* Finalization. */
-			[&assetManager, &materialManager, &userAsset]() mutable { Finalize(assetManager, materialManager, userAsset); },
+			[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 			/* Constructor Arguments. */
 			textures, materialManager.generateID()
 		);
 	}
 }
 
-void Asset_Material::Initialize(AssetManager & assetManager, Shared_Asset_Material & userAsset, const string & fullDirectory)
+void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAsset, const string & fullDirectory)
 {
 	if (fullDirectory != "") {
 		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
@@ -133,7 +140,7 @@ void Asset_Material::Initialize(AssetManager & assetManager, Shared_Asset_Materi
 
 	// Load all images
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		bitmaps[x] = Image_Importer::import_Image(userAsset->m_textures[x]);
+		bitmaps[x] = Image_Importer::import_Image(engine->getMessageManager(), userAsset->m_textures[x]);
 
 	// unlock
 	read_guard.unlock();
@@ -224,8 +231,11 @@ void Asset_Material::Initialize(AssetManager & assetManager, Shared_Asset_Materi
 		}
 }
 
-void Asset_Material::Finalize(AssetManager & assetManager, MaterialManager & materialManager, Shared_Asset_Material & userAsset)
+void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+	MaterialManager & materialManager = engine->getMaterialManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	auto &gl_array_ID = userAsset->m_glArrayID;

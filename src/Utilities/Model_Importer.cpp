@@ -1,16 +1,15 @@
 #include "Utilities\File_Reader.h"
-#include "Managers\Message_Manager.h"
 #include "Utilities\Model_Importer.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
 #include "assimp\scene.h"
 
 
-int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFlags, vector<btScalar> & points)
+int Model_Importer::import_Model(MessageManager & messageMananger, const string & fulldirectory, unsigned int pFlags, vector<btScalar> & points)
 {
 	// Check if the file exists
 	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fulldirectory);
+		messageMananger.error(MessageManager::FILE_MISSING, fulldirectory);
 		return 0;
 	}
 
@@ -18,7 +17,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 	const aiScene* scene = importer.ReadFile(fulldirectory, pFlags);
 	// Check if the file is corrupted
 	if (!scene) {
-		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fulldirectory);
+		messageMananger.error(MessageManager::FILE_CORRUPT, fulldirectory);
 		return -1;
 	}
 
@@ -37,11 +36,11 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 	return 1;
 }
 
-int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFlags, vector<vec3> & vertices, vector<vec2> & uv_coords)
+int Model_Importer::import_Model(MessageManager & messageMananger, const string & fulldirectory, unsigned int pFlags, vector<vec3> & vertices, vector<vec2> & uv_coords)
 {
 	// Check if the file exists
 	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fulldirectory);
+		messageMananger.error(MessageManager::FILE_MISSING, fulldirectory);
 		return 0;
 	}
 
@@ -49,7 +48,7 @@ int Model_Importer::import_Model(const string & fulldirectory, unsigned int pFla
 	const aiScene* scene = importer.ReadFile(fulldirectory, pFlags);
 	// Check if the file is corrupted
 	if (!scene) {
-		MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fulldirectory);
+		messageMananger.error(MessageManager::FILE_CORRUPT, fulldirectory);
 		return -1;
 	}
 

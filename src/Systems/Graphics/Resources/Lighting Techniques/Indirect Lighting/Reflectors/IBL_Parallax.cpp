@@ -77,7 +77,7 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 	// Error Checking
 	const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
-		MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "IBL_Parallax_Tech", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));			
+		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "IBL_Parallax_Tech", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 }
 
 void IBL_Parallax_Tech::addElement()

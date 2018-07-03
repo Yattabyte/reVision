@@ -6,9 +6,8 @@
 #include "Systems\World\World.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Engine.h"
-#include "Managers\Message_Manager.h"
-#include <algorithm>
 #include "GLM\gtc\matrix_transform.hpp"
+#include <algorithm>
 #include <random>
 
 
@@ -89,14 +88,14 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 			glTextureImage3DEXT(m_textures[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, m_resolution, m_resolution, m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 			glNamedFramebufferTexture(m_fbo[bounce], GL_COLOR_ATTACHMENT0 + channel, m_textures[bounce][channel], 0);
 		}
-		GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
+		const GLenum Buffers[] = {GL_COLOR_ATTACHMENT0,
 							GL_COLOR_ATTACHMENT1,
 							GL_COLOR_ATTACHMENT2,
 							GL_COLOR_ATTACHMENT3};
 		glNamedFramebufferDrawBuffers(m_fbo[bounce], 4, Buffers);
-		GLenum Status = glCheckNamedFramebufferStatus(m_fbo[bounce], GL_FRAMEBUFFER);
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo[bounce], GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 	// Generate Noise Texture

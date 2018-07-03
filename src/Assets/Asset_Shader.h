@@ -7,7 +7,6 @@
 #define DIRECTORY_SHADER File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Managers\AssetManager.h"
 #include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
@@ -16,6 +15,7 @@
 
 using namespace glm;
 using namespace std;
+class Engine;
 class Asset_Shader;
 typedef shared_ptr<Asset_Shader> Shared_Asset_Shader;
 
@@ -34,15 +34,15 @@ public:
 
 	// Public Methods
 	/** Creates a default asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(AssetManager & assetManager, Shared_Asset_Shader & userAsset);
+	static void CreateDefault(Engine * engine, Shared_Asset_Shader & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	assetManager	the asset manager to use
+	 * @param	engine			the engine being used
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded = true);
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */
@@ -144,9 +144,9 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(AssetManager & assetManager, Shared_Asset_Shader & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const string & fullDirectory);
 	/** Finalizes the asset. */
-	static void Finalize(AssetManager & assetManager, Shared_Asset_Shader & userAsset);
+	static void Finalize(Engine * engine, Shared_Asset_Shader & userAsset);
 
 
 	// Private Attributes

@@ -1,6 +1,5 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
 #include "Systems\World\World.h"
-#include "Managers\Message_Manager.h"
 #include "Engine.h"
 #include <minmax.h>
 
@@ -93,12 +92,12 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 		glTextureParameteri(m_shadowRFlux[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glNamedFramebufferTexture(m_shadowFBO[x], GL_COLOR_ATTACHMENT2, m_shadowRFlux[x], 0);
 
-		GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		const GLenum Buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_shadowFBO[x], 3, Buffers);
 
-		GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO[x], GL_FRAMEBUFFER);
+		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO[x], GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
-			MSG_Manager::Error(MSG_Manager::FBO_INCOMPLETE, "Point light Technique", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Point light Technique", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 }
 

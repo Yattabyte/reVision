@@ -10,6 +10,8 @@
 #include <thread>
 
 
+class Engine;
+
 /** Base class that represents a function, but does nothing else */
 struct FuncBase {};
 
@@ -45,7 +47,7 @@ public:
 	/** Destroy the asset manager. */
 	~AssetManager();
 	/** Destroy the asset manager. */
-	AssetManager();
+	AssetManager(Engine * engine);
 
 
 	// Public Methods
@@ -55,8 +57,8 @@ public:
 	 */
 	template <typename SharedAsset, typename... Args>
 	void create(SharedAsset & sharedAsset, Args&&... ax) {
-		// Get the asset's name from the template, and join this pointer with the the asset and arguments into a single list
-		forwardMapArguments(typeid(SharedAsset).name(), *this, sharedAsset, forward<Args>(ax)...);
+		// Get the asset's name from the template, and forward the engine pointer, asset container, and extra arguments to the creator function
+		forwardMapArguments(typeid(SharedAsset).name(), m_engine, sharedAsset, forward<Args>(ax)...);
 	}
 	/** Queries if an asset already exists with the given filename, fetching if true.
 	 * @brief				Searches for and updates the supplied container with the desired asset if it already exists.
@@ -175,7 +177,8 @@ private:
 	void initializeOrders(shared_ptr<Asset_Worker> & worker);
 
 
-	// Private Attributes	
+	// Private Attributes
+	Engine * m_engine;
 	MappedChar<FuncBase *> m_CreatorMap;
 	shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;

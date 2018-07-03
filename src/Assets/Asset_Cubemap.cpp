@@ -1,5 +1,5 @@
 #include "Assets\Asset_Cubemap.h"
-#include "Managers\Message_Manager.h"
+#include "Engine.h"
 #include "FreeImage.h"
 
 
@@ -15,8 +15,10 @@ Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 	m_size = vec2(0);
 }
 
-void Asset_Cubemap::CreateDefault(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset)
+void Asset_Cubemap::CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, "defaultCubemap"))
 		return;
@@ -36,12 +38,14 @@ void Asset_Cubemap::CreateDefault(AssetManager & assetManager, Shared_Asset_Cube
 		/* Initialization. */
 		[]() {},
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); }
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
 	);
 }
 
-void Asset_Cubemap::Create(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded)
+void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	// Check if a copy already exists
 	if (assetManager.queryExistingAsset(userAsset, filename))
 		return;
@@ -49,23 +53,23 @@ void Asset_Cubemap::Create(AssetManager & assetManager, Shared_Asset_Cubemap & u
 	// Check if the file/directory exists on disk
 	const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
 	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
-		MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-		CreateDefault(assetManager, userAsset);
+		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		CreateDefault(engine, userAsset);
 		return;
 	}
 	
 	// Create the asset
 	assetManager.submitNewAsset(userAsset, threaded,
 		/* Initialization. */
-		[&assetManager, &userAsset, fullDirectory]() mutable { Initialize(assetManager, userAsset, fullDirectory); },
+		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
 		/* Finalization. */
-		[&assetManager, &userAsset]() mutable { Finalize(assetManager, userAsset); },
+		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
 		/* Constructor Arguments. */
 		filename
 	);
 }
 
-void Asset_Cubemap::Initialize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset, const string & fullDirectory)
+void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & fullDirectory)
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
@@ -91,16 +95,16 @@ void Asset_Cubemap::Initialize(AssetManager & assetManager, Shared_Asset_Cubemap
 		}
 
 		if (format == -1) {
-			MSG_Manager::Error(MSG_Manager::FILE_MISSING, fullDirectory);
-			CreateDefault(assetManager, userAsset);
+			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+			CreateDefault(engine, userAsset);
 			return;
 		}
 
 		if (format == FIF_UNKNOWN) {
 			format = FreeImage_GetFIFFromFilename(file);
 			if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-				MSG_Manager::Error(MSG_Manager::FILE_CORRUPT, fullDirectory, "Using default texture.");
-				CreateDefault(assetManager, userAsset);
+				engine->reportError(MessageManager::FILE_CORRUPT, fullDirectory, "Using default texture.");
+				CreateDefault(engine, userAsset);
 				return;
 			}
 		}
@@ -111,7 +115,7 @@ void Asset_Cubemap::Initialize(AssetManager & assetManager, Shared_Asset_Cubemap
 		//Load
 		if (format == FIF_GIF) {
 			mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-			MSG_Manager::Statement("GIF loading unsupported, using first frame...");
+			engine->reportMessage("GIF loading unsupported, using first frame...");
 			bitmap = FreeImage_LockPage(mbitmap, 0);
 		}
 		else
@@ -149,8 +153,10 @@ void Asset_Cubemap::Initialize(AssetManager & assetManager, Shared_Asset_Cubemap
 	}
 }
 
-void Asset_Cubemap::Finalize(AssetManager & assetManager, Shared_Asset_Cubemap & userAsset)
+void Asset_Cubemap::Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset)
 {
+	AssetManager & assetManager = engine->getAssetManager();
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_finalized = true;
 	auto &gl_tex_ID = userAsset->m_glTexID;
