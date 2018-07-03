@@ -37,10 +37,6 @@ bool Asset::existsYet() const
 
 void Asset::finalize()
 {
-	if (!m_finalized) {
-		unique_lock<shared_mutex> write_guard(m_mutex);
-		m_finalized = true;
-		write_guard.unlock();
-		write_guard.release();
-	}
+	unique_lock<shared_mutex> write_guard(m_mutex);
+	m_finalized = true;	
 }

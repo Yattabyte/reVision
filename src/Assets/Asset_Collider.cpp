@@ -77,13 +77,10 @@ void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAss
 void Asset_Collider::Finalize(Engine * engine, Shared_Asset_Collider & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
-
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	write_guard.unlock();
-	write_guard.release();
+	userAsset->finalize();
+	
+	// Notify Completion
 	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
 }

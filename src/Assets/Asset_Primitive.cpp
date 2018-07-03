@@ -83,20 +83,25 @@ void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userA
 
 void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAsset)
 {
-	AssetManager & assetManager = engine->getAssetManager();
+	AssetManager & assetManager = engine->getAssetManager();	
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	glCreateBuffers(2, userAsset->m_buffers);
-	glNamedBufferStorage(userAsset->m_buffers[0], userAsset->m_dataVertex.size() * sizeof(vec3), &userAsset->m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
-	glNamedBufferStorage(userAsset->m_buffers[1], userAsset->m_dataVertex.size() * sizeof(vec2), &userAsset->m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);
+	// Create buffers
+	{
+		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		glCreateBuffers(2, userAsset->m_buffers);
+	}
 
-	write_guard.unlock();
-	write_guard.release();
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
+	// Load Buffers
+	{
+		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		glNamedBufferStorage(userAsset->m_buffers[0], userAsset->m_dataVertex.size() * sizeof(vec3), &userAsset->m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
+		glNamedBufferStorage(userAsset->m_buffers[1], userAsset->m_dataVertex.size() * sizeof(vec2), &userAsset->m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);
+		
+		// Notify Completion
+		for each (auto qwe in userAsset->m_callbacks)
+			assetManager.submitNotifyee(qwe.second);
+	}
 }
 
 GLuint Asset_Primitive::Generate_VAO()

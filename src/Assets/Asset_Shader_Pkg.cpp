@@ -125,15 +125,12 @@ void Asset_Shader_Pkg::Initialize(Engine * engine, Shared_Asset_Shader_Pkg & use
 void Asset_Shader_Pkg::Finalize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	write_guard.unlock();
-	write_guard.release();
+	// Notify Completion
 	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
 }
 
 string Asset_Shader_Pkg::getPackageText() const

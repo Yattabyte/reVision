@@ -144,50 +144,56 @@ void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset
 void Asset_Texture::Finalize(Engine * engine, Shared_Asset_Texture & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
+	userAsset->finalize();
+		
+	// Create Texture
+	{
+		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		glCreateTextures(userAsset->m_type, 1, &userAsset->m_glTexID);
+	}
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	glCreateTextures(userAsset->m_type, 1, &userAsset->m_glTexID);
-	userAsset->m_finalized = true;
-	write_guard.unlock();
-	write_guard.release();
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-	switch (userAsset->m_type) {
-		case GL_TEXTURE_1D: {
-			glTextureStorage1D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x);
-			glTextureSubImage1D(userAsset->m_glTexID, 0, 0, userAsset->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
-			glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			break;
-		}
-		case GL_TEXTURE_2D: {
-			glTextureStorage2D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.y);
-			glTextureSubImage2D(userAsset->m_glTexID, 0, 0, 0, userAsset->m_size.x, userAsset->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
-			if (userAsset->m_anis)
-				glTextureParameterf(userAsset->m_glTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
-			if (userAsset->m_mipmap) {
+	// Load Texture
+	{
+		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		switch (userAsset->m_type) {
+			case GL_TEXTURE_1D: {
+				glTextureStorage1D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x);
+				glTextureSubImage1D(userAsset->m_glTexID, 0, 0, userAsset->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
+				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+				break;
+			}
+			case GL_TEXTURE_2D: {
+				glTextureStorage2D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.y);
+				glTextureSubImage2D(userAsset->m_glTexID, 0, 0, 0, userAsset->m_size.x, userAsset->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
+				if (userAsset->m_anis)
+					glTextureParameterf(userAsset->m_glTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+				if (userAsset->m_mipmap) {
+					glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+					glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+					glGenerateTextureMipmap(userAsset->m_glTexID);
+				}
+				else {
+					glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+					glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+				}
+				break;
+			}
+			case GL_TEXTURE_2D_ARRAY: {
+				glTextureStorage3D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.y, 0);
+				glTextureSubImage3D(userAsset->m_glTexID, 0, 0, 0, 0, userAsset->m_size.x, userAsset->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
+				glTextureParameteri(userAsset->m_glTexID, GL_GENERATE_MIPMAP, GL_TRUE);
 				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glGenerateTextureMipmap(userAsset->m_glTexID);
+				break;
 			}
-			else {
-				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-				glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			}
-			break;
 		}
-		case GL_TEXTURE_2D_ARRAY: {
-			glTextureStorage3D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.y, 0);
-			glTextureSubImage3D(userAsset->m_glTexID, 0, 0, 0, 0, userAsset->m_size.x, userAsset->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData);
-			glTextureParameteri(userAsset->m_glTexID, GL_GENERATE_MIPMAP, GL_TRUE);
-			glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-			glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glGenerateTextureMipmap(userAsset->m_glTexID);
-			break;
-		}
+
+		// Notify Completion
+		for each (auto qwe in userAsset->m_callbacks)
+			assetManager.submitNotifyee(qwe.second);
 	}
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);	
-	/* To Do: Finalize call here*/
 }
 
 void Asset_Texture::bind(const unsigned int & texture_unit)

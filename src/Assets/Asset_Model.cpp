@@ -311,17 +311,16 @@ void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, co
 
 void Asset_Model::Finalize(Engine * engine, Shared_Asset_Model & userAsset)
 {
-	AssetManager & assetManager = engine->getAssetManager();
+	AssetManager & assetManager = engine->getAssetManager();	
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	userAsset->m_modelManager->registerGeometry(userAsset->m_data, userAsset->m_offset, userAsset->m_count);
-	write_guard.unlock();
-	write_guard.release();
+	// Register geometry
 	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	userAsset->m_modelManager->registerGeometry(userAsset->m_data, userAsset->m_offset, userAsset->m_count);
+
+	// Notify Completion
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
 }
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)

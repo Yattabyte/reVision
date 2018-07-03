@@ -156,31 +156,30 @@ void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset
 void Asset_Cubemap::Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
-
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	auto &gl_tex_ID = userAsset->m_glTexID;
-	auto &size = userAsset->m_size;
-	auto *pixel_data = userAsset->m_pixelData;
+	userAsset->finalize();
 
 	// Create the final texture
-	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &gl_tex_ID);
-	glTextureStorage2D(gl_tex_ID, 1, GL_RGBA16F, size.x, size.x);
-	for (int x = 0; x < 6; ++x)
-		glTextureSubImage3D(gl_tex_ID, 0, 0, 0, x, size.x, size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, pixel_data[x]);
-	glTextureParameteri(gl_tex_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTextureParameteri(gl_tex_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(gl_tex_ID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	{
+		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &userAsset->m_glTexID);
+	}
 
-	write_guard.unlock();
-	write_guard.release();
+	// Load the final texture
+	{
+		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		glTextureStorage2D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.x);
+		for (int x = 0; x < 6; ++x)
+			glTextureSubImage3D(userAsset->m_glTexID, 0, 0, 0, x, userAsset->m_size.x, userAsset->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData[x]);
+		glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(userAsset->m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
+		// Notify completion
+		for each (auto qwe in userAsset->m_callbacks)
+			assetManager.submitNotifyee(qwe.second);
+	}
 }
 
 

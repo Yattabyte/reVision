@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.180";
+constexpr char ENGINE_VERSION[]	= "0.180.A";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
@@ -124,7 +124,7 @@ public:
 
 
 private:
-	// Public Attributes
+	// Private Attributes
 	bool m_Initialized;	
 	float m_lastTime; 
 	float m_frameAccumulator;

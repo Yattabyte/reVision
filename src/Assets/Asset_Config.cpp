@@ -114,15 +114,12 @@ void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, 
 void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	write_guard.unlock();
-	write_guard.release();
+	// Notify completion
 	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
 }
 
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)

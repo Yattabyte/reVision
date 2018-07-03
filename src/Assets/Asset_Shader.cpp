@@ -220,20 +220,23 @@ void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, 
 
 void Asset_Shader::Finalize(Engine * engine, Shared_Asset_Shader & userAsset)
 {
-	AssetManager & assetManager = engine->getAssetManager();
+	AssetManager & assetManager = engine->getAssetManager();	
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	compile(engine, userAsset);
-	generate_program(userAsset);
-	link_program(engine, userAsset);
+	// Create Shader Program
+	{
+		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		compile(engine, userAsset);
+		generate_program(userAsset);
+		link_program(engine, userAsset);
+	}
 
-	write_guard.unlock();
-	write_guard.release();
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
+	// Notify Completion
+	{
+		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		for each (auto qwe in userAsset->m_callbacks)
+			assetManager.submitNotifyee(qwe.second); 
+	}
 }
 
 void Asset_Shader::bind()

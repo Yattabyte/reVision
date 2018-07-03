@@ -235,39 +235,41 @@ void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset
 {
 	AssetManager & assetManager = engine->getAssetManager();
 	MaterialManager & materialManager = engine->getMaterialManager();
+	userAsset->finalize();
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_finalized = true;
-	auto &gl_array_ID = userAsset->m_glArrayID;
-	auto &size = userAsset->m_size;
-	auto *materialData = userAsset->m_materialData;
-	auto &mat_spot = userAsset->m_matSpot;
-	float anisotropy;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+	// Create Material
+	{
+		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		userAsset->m_finalized = true;
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &userAsset->m_glArrayID);
+	}
+	{
+		// Load material
+		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		float anisotropy;
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
+		// Uses the smallest dimension of the image
+		glTextureStorage3D(userAsset->m_glArrayID, floor(log2f((min(userAsset->m_size.x, userAsset->m_size.y))) + 1), GL_RGBA16F, (int)userAsset->m_size.x, (int)userAsset->m_size.y, 3);
+		glTextureSubImage3D(userAsset->m_glArrayID, 0, 0, 0, 0, (int)userAsset->m_size.x, (int)userAsset->m_size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_materialData);
+		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+		glGenerateTextureMipmap(userAsset->m_glArrayID);
 
-	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &gl_array_ID);
-	// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
-	// Uses the smallest dimension of the image
-	glTextureStorage3D(gl_array_ID, floor(log2f((min(size.x, size.y))) + 1), GL_RGBA16F, (int)size.x, (int)size.y, 3);
-	glTextureSubImage3D(gl_array_ID, 0, 0, 0, 0, (int)size.x, (int)size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, materialData);
-	glTextureParameteri(gl_array_ID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(gl_array_ID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTextureParameteri(gl_array_ID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-	glGenerateTextureMipmap(gl_array_ID);
+		// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
+		// That IS a problem, because once the handle is issued, the texture object CAN NOT and MUST NOT be changed!!!
+		GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		auto state = glClientWaitSync(fence, 0, 0);
+		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
+			state = glClientWaitSync(fence, 0, 0);
+		glDeleteSync(fence);
+		materialManager.generateHandle(userAsset->m_matSpot, userAsset->m_glArrayID);
 
-	GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	auto state = glClientWaitSync(fence, 0, 0);
-	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-		state = glClientWaitSync(fence, 0, 0);
-	glDeleteSync(fence);
-	materialManager.generateHandle(mat_spot, gl_array_ID);
-
-	write_guard.unlock();
-	write_guard.release();
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
-	/* To Do: Finalize call here*/
+		// Notify Completion
+		for each (auto qwe in userAsset->m_callbacks)
+			assetManager.submitNotifyee(qwe.second); 
+	}
 }
 
 void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
