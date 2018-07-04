@@ -62,7 +62,7 @@ protected:
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
-	vector<BoneInfo> m_transforms;
+	vector<BoneTransform> m_transforms;
 	Engine *m_engine;
 	friend class Anim_Model_Creator;
 

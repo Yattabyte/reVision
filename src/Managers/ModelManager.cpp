@@ -144,37 +144,3 @@ const GLuint & ModelManager::getVAO() const
 	return m_vaoID;
 }
 
-VertexBoneData::~VertexBoneData()
-{
-}
-
-VertexBoneData::VertexBoneData()
-{
-	Reset();
-}
-
-VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
-{
-	Reset();
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++) {
-		IDs[i] = vbd.IDs[i];
-		Weights[i] = vbd.Weights[i];
-	}
-}
-
-void VertexBoneData::Reset()
-{
-	ZERO_MEM(IDs);
-	ZERO_MEM(Weights);
-}
-
-void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
-{
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++)
-		if (Weights[i] == 0.0) {
-			IDs[i] = BoneID;
-			Weights[i] = Weight;
-			return;
-		}
-	assert(0);
-}

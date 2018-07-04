@@ -3,8 +3,8 @@
 #define MODELMANAGER_H
 #define GLEW_STATIC
 #define NUM_VERTEX_ATTRIBUTES 6
-#define NUM_BONES_PER_VEREX 4
 
+#include "Utilities\IO\Model_IO.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 #include <shared_mutex>
@@ -62,18 +62,6 @@ private:
 	shared_mutex m_mutex;
 };
 
-struct VertexBoneData
-{
-	int IDs[NUM_BONES_PER_VEREX];
-	float Weights[NUM_BONES_PER_VEREX];
-
-
-	~VertexBoneData();
-	VertexBoneData();
-	VertexBoneData(const VertexBoneData & vbd);
-	void Reset();
-	void AddBoneData(const int & BoneID, const float & Weight);
-};
 struct GeometryInfo {
 	vector<vec3> vs, nm, tg, bt;
 	vector<vec2> uv;

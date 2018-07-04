@@ -7,7 +7,7 @@
 #include <minmax.h>
 
 
-inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
+inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
 
 Anim_Model_Component::~Anim_Model_Component()
 {
@@ -119,7 +119,7 @@ void Anim_Model_Component::setModelDirectory(const string & directory)
 	// Attach new callback
 	m_model->addCallback(this, [&]() {
 		(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
-		m_transforms = m_model->m_animationInfo.meshTransforms;
+		m_transforms = m_model->m_boneTransforms;
 		updateBSphere();
 		m_vaoLoaded = true;
 	});
@@ -157,23 +157,23 @@ void Anim_Model_Component::animate(const double & deltaTime)
 	Geometry_Dynamic_Struct *const uboData = &reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	shared_lock<shared_mutex> guard(m_model->m_mutex);
 
-	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animationInfo.Animations.size()) 
+	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animations.size())
 		uboData->useBones = 0;	
 	else {
 		uboData->useBones = 1;
 		if (m_playAnim)
 			m_animTime += deltaTime;
-		const float TicksPerSecond = m_model->m_animationInfo.Animations[m_animation]->mTicksPerSecond != 0
-			? m_model->m_animationInfo.Animations[m_animation]->mTicksPerSecond
+		const float TicksPerSecond = m_model->m_animations[m_animation]->mTicksPerSecond != 0
+			? m_model->m_animations[m_animation]->mTicksPerSecond
 			: 25.0f;
 		const float TimeInTicks = m_animTime * TicksPerSecond;
-		const float AnimationTime = fmod(TimeInTicks, m_model->m_animationInfo.Animations[m_animation]->mDuration);
+		const float AnimationTime = fmod(TimeInTicks, m_model->m_animations[m_animation]->mDuration);
 		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
 
-		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_animationInfo.RootNode, m_model, mat4(1.0f));
+		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_rootNode, m_model, mat4(1.0f));
 
 		for (unsigned int i = 0, total = min(m_transforms.size(), NUM_MAX_BONES); i < total; i++)
-			uboData->transforms[i] = m_transforms[i].FinalTransformation;		
+			uboData->transforms[i] = m_transforms[i].final;		
 	}
 }
 
@@ -220,10 +220,10 @@ inline DesiredType InterpolateKeys(const float &AnimationTime, const unsigned in
 	return Result;
 }
 
-inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
+inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
 {
 	const string NodeName(parentNode->mName.data);
-	const aiAnimation* pAnimation = model->m_animationInfo.Animations[animation_ID];
+	const aiAnimation* pAnimation = model->m_animations[animation_ID];
 	const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 	mat4 NodeTransformation = convertType<aiMatrix4x4, mat4>(parentNode->mTransformation);
 
@@ -241,11 +241,11 @@ inline void ReadNodeHeirarchy(vector<BoneInfo> &transforms, const float &animati
 	}
 
 	const mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->m_animationInfo.RootNode->mTransformation));
-	const map<string, int> &BoneMap = model->m_animationInfo.boneMap;
+	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->m_rootNode->mTransformation));
+	const map<string, int> &BoneMap = model->m_boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		int BoneIndex = BoneMap.at(NodeName);
-		transforms.at(BoneIndex).FinalTransformation = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).BoneOffset;
+		transforms.at(BoneIndex).final = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).offset;
 	}
 
 	for (unsigned int i = 0; i < parentNode->mNumChildren; i++)

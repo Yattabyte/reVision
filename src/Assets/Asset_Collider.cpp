@@ -1,5 +1,5 @@
 #include "Asset_Collider.h"
-#include "Utilities\Model_Importer.h"
+#include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
 #include "assimp\postprocess.h"
 
@@ -63,13 +63,19 @@ void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, 
 void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAsset, const string & fullDirectory)
 {
 	// Attempt to create the asset
-	vector<btScalar> points;
-	if (!Model_Importer::import_Model(engine->getMessageManager(), fullDirectory, aiProcess_Triangulate, points)) {
+	Model_Geometry dataContainer;
+	if (!Model_IO::Import_Model(engine, fullDirectory, import_hull, dataContainer)) {
 		CreateDefault(engine, userAsset);
 		return;
 	}
-
-	btConvexHullShape *shape = new btConvexHullShape(&points[0], points.size(), sizeof(btScalar) * 3);
+	vector<btScalar> orderedPoints;
+	orderedPoints.reserve(dataContainer.vertices.size() * 3);
+	for each (const auto & vertex in dataContainer.vertices) {
+		orderedPoints.push_back(vertex.x);
+		orderedPoints.push_back(vertex.y);
+		orderedPoints.push_back(vertex.z);
+	}
+	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], orderedPoints.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
 	userAsset->m_shape = shape;
 }

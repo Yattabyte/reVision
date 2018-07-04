@@ -1,9 +1,6 @@
 #include "Assets\Asset_Primitive.h"
-#include "Utilities\Model_Importer.h"
+#include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
-#include "ASSIMP\Importer.hpp"
-#include "ASSIMP\postprocess.h"
-#include "ASSIMP\scene.h"
 
 
 Asset_Primitive::~Asset_Primitive()
@@ -69,16 +66,17 @@ void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset
 
 void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const string & fullDirectory)
 {
-	vector<vec3> vertices;
-	vector<vec2> uv_coords;
-	if (!Model_Importer::import_Model(engine->getMessageManager(), fullDirectory, aiProcess_LimitBoneWeights | aiProcess_Triangulate, vertices, uv_coords)) {
+	Model_Geometry dataContainer;
+	if (!Model_IO::Import_Model(engine, fullDirectory, import_primitive, dataContainer)) {
+		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load primitive asset, using default asset...");
 		CreateDefault(engine, userAsset);
 		return;
 	}
 
+
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_dataVertex = vertices;
-	userAsset->m_dataUV = uv_coords;
+	userAsset->m_dataVertex = dataContainer.vertices;
+	userAsset->m_dataUV = dataContainer.texCoords;
 }
 
 void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAsset)

@@ -25,27 +25,6 @@ class ModelManager;
 class Asset_Model;
 typedef shared_ptr<Asset_Model> Shared_Asset_Model;
 
-struct BoneInfo
-{
-	mat4 BoneOffset;
-	mat4 FinalTransformation;
-};
-
-struct AnimationInfo {
-	vector<aiAnimation*> Animations;
-	aiNode * RootNode;
-	vector<BoneInfo> meshTransforms;
-	map<string, int> boneMap;
-
-	~AnimationInfo() {}
-	AnimationInfo() {}
-	// Scene gets destroyed at the end of asset creation
-	// We need to copy animation related information
-	void setScene(const aiScene * scene);
-	size_t numAnimations() const;
-};
-
-
 /**
  * A 3D geometric mesh meant to be used in 3D rendering.
  **/
@@ -79,7 +58,10 @@ public:
 	int									m_meshSize;
 	vector<Shared_Asset_Material>		m_skins;
 	GeometryInfo						m_data;
-	AnimationInfo						m_animationInfo;
+	vector<BoneTransform>				m_boneTransforms;
+	map<string, int>					m_boneMap;
+	vector<aiAnimation*>				m_animations;
+	aiNode								*m_rootNode;
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
