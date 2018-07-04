@@ -9,6 +9,8 @@
 #include <shared_mutex>
 #include <thread>
 
+constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8;
+
 
 class Engine;
 
@@ -23,19 +25,25 @@ struct FuncHolder : public FuncBase {
 	function<void(Args...)> m_function;
 };
 
-struct WorkOrder_Base {
-	virtual void start() = 0;
-	virtual void finish() = 0;
+struct Asset_Work_Order  {
+	Asset_Work_Order(const function<void(void)> & i, const function<void(void)> & f) : m_ini(i), m_fin(f) {}
+	void start() { m_ini(); }
+	void finish() { m_fin(); }
+
+	function<void(void)> m_ini, m_fin;
 };
 
+/*
 template <typename... Args>
-struct WorkOrder_Specialized : public WorkOrder_Base {
-	WorkOrder_Specialized(const function<void(Args...)> & i, const function<void(Args...)> & f) : m_ini(i), m_fin(f) {}
-	virtual void start() { m_ini(); }
+struct Asset_Work_Order : public Asset_Work_Order {
+	Asset_Work_Order(const function<void(Args...)> & i, const function<void(Args...)> & f) : m_ini(i), m_fin(f) {}
+	template <typename... ExtraArgs>
+	virtual void start(ExtraArgs&&... ax) { m_ini(std::forward<ExtraArgs>(ax)...); }
 	virtual void finish() { m_fin(); }
 
 	function<void(Args...)> m_ini, m_fin;
 };
+*/
 
 /** 
  * Manages the storage and retrieval of assets.
@@ -114,7 +122,7 @@ public:
 	void submitNewWorkOrder(shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin) {
 		if (threaded) {
 			unique_lock<shared_mutex> worker_writeGuard(m_Mutex_Workorders);
-			m_Work_toStart.push_back(new WorkOrder_Specialized<void>(ini, fin));
+			m_Work_toStart.push_back(new Asset_Work_Order(ini, fin));
 		}
 		else {
 			ini();
@@ -130,35 +138,6 @@ public:
 
 
 private:
-	// Private Structures
-	struct Asset_Worker {
-		Asset_Worker() {
-			m_alive = true;
-			m_thread = nullptr;
-		}
-		~Asset_Worker() {
-			{
-				unique_lock<shared_mutex> writeLock(m_mutex);
-				m_alive = false;
-			}
-			shared_lock<shared_mutex> readLock(m_mutex);
-			if (m_thread != nullptr) {
-				if (m_thread->joinable())
-					m_thread->join();
-				readLock.unlock();
-				readLock.release();
-				unique_lock<shared_mutex> writeLock(m_mutex);
-				delete m_thread;
-			}
-		}
-		
-
-		bool m_alive;
-		thread *m_thread;
-		shared_mutex m_mutex;
-	};
-
-
 	// Private Methods
 	/** A template for registrating new asset creators. 
 	 * @param	type	the name to use
@@ -174,7 +153,7 @@ private:
 	void forwardMapArguments(const char * type, Args&&... ax) {
 		((FuncHolder<Args...>*)(m_CreatorMap[type]))->m_function(forward<Args>(ax)...);
 	}
-	void initializeOrders(shared_ptr<Asset_Worker> & worker);
+	void initializeOrders();
 
 
 	// Private Attributes
@@ -183,9 +162,11 @@ private:
 	shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;
 	shared_mutex m_Mutex_Workorders;
-	deque<WorkOrder_Base*> m_Work_toStart, m_Work_toFinish;
-	vector<shared_ptr<Asset_Worker>> m_Workers;	
+	deque<Asset_Work_Order*> m_Work_toStart, m_Work_toFinish;
+	shared_mutex m_workerNotificationMutex;
+	vector<thread*> m_Workers;
 	vector<function<void()>> m_notifyees;
+	bool m_running;
 };
 
 #endif // ASSETMANAGER_H
