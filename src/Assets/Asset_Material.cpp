@@ -1,7 +1,6 @@
 #include "Assets\Asset_Material.h"
-#include "Utilities\Image_Importer.h"
+#include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
-#include "FreeImage.h"
 #include <math.h>
 #include <minmax.h>
 
@@ -133,102 +132,67 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 			userAsset->m_textures[x] = ABS_DIRECTORY_MAT_TEX(userAsset->m_textures[x]);
 	}
 
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	Image_Data dataContainers[MAX_PHYSICAL_IMAGES];
 	ivec2 material_dimensions = ivec2(1);
-	GLubyte *textureData[MAX_PHYSICAL_IMAGES];
-	FIBITMAP *bitmaps[MAX_PHYSICAL_IMAGES];
 
 	// Load all images
-	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		bitmaps[x] = Image_Importer::import_Image(engine->getMessageManager(), userAsset->m_textures[x]);
-
-	// unlock
+	constexpr GLubyte defaultMaterial[MAX_PHYSICAL_IMAGES][4] = {
+		{ GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255) },
+		{ GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(0) },
+		{ GLubyte(63), GLubyte(0), GLubyte(0), GLubyte(0) },
+		{ GLubyte(128), GLubyte(0), GLubyte(0), GLubyte(0) },
+		{ GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(0) },
+		{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0) } 
+	};
+	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
+		if (!Image_IO::Import_Image(engine, userAsset->m_textures[x], dataContainers[x])) {
+			dataContainers[x].pixelData = new GLubyte[4];
+			for (int p = 0; p < 4; ++p)
+				dataContainers[x].pixelData[p] = defaultMaterial[x][p];
+			dataContainers[x].dimensions = ivec2(1);
+			dataContainers[x].pitch = 4;
+			dataContainers[x].bpp = 32;
+		}
 	read_guard.unlock();
 	read_guard.release();
 
 	// Find the largest dimensions
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
-		if (bitmaps[x]) {
-			const ivec2 dimensions(FreeImage_GetWidth(bitmaps[x]), FreeImage_GetHeight(bitmaps[x]));
-			if (material_dimensions.x < dimensions.x)
-				material_dimensions.x = dimensions.x;
-			if (material_dimensions.y < dimensions.y)
-				material_dimensions.y = dimensions.y;
-		}
+		const ivec2 & dimensions = dataContainers[x].dimensions;
+		if (material_dimensions.x < dimensions.x)
+			material_dimensions.x = dimensions.x;
+		if (material_dimensions.y < dimensions.y)
+			material_dimensions.y = dimensions.y;
 	}
 
 	// Force all images to be the same size
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		if (bitmaps[x]) {
-			FIBITMAP *temp = FreeImage_Rescale(bitmaps[x], material_dimensions.x, material_dimensions.y);
-			FreeImage_Unload(bitmaps[x]);
-			bitmaps[x] = temp;
-		}
+		Image_IO::Resize_Image(material_dimensions, dataContainers[x]);
 
-	// Fetch and format the raw data
-	textureData[0] = Image_Importer::parse_Image_4_channel(bitmaps[0], material_dimensions);
-	textureData[1] = Image_Importer::parse_Image_3_channel(bitmaps[1], material_dimensions);
-	for (int x = 2; x < MAX_PHYSICAL_IMAGES; ++x)
-		textureData[x] = Image_Importer::parse_Image_1_channel(bitmaps[x], material_dimensions);
-
-	// Zero initialize the material data to compensate for any holes / missing images
-	const unsigned int size_mult = material_dimensions.x * material_dimensions.y;
-	const unsigned int data_size = (size_mult * 4) + // Albedo size
-		(size_mult * 4) + // Normal size
-		(size_mult * 4); // Metalness, roughness, height, and ao size
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_size = material_dimensions;
-	userAsset->m_materialData = new GLubyte[data_size];
-	GLubyte *materialData = userAsset->m_materialData;
+	// Merge data into single array
+	const unsigned int pixelsPerImage = material_dimensions.x * material_dimensions.y * 4;
+	GLubyte * materialData = new GLubyte[(pixelsPerImage) * 3]();
 	unsigned int arrayIndex = 0;
-	// First texture has white albedo with full alpha
-	for (unsigned int x = 0, first_size = size_mult * 4; x < first_size; ++x, ++arrayIndex)
-		materialData[arrayIndex] = GLubyte(255);
-	// Second texture has straight pointing normal with empty fourth channel
-	for (unsigned int x = 0, second_size = size_mult * 4; x < second_size; x += 4, arrayIndex += 4) {
-		materialData[arrayIndex + 0] = GLubyte(128);
-		materialData[arrayIndex + 1] = GLubyte(128);
-		materialData[arrayIndex + 2] = GLubyte(255);
-		materialData[arrayIndex + 3] = GLubyte(0);
-	}
-	// Third texture has quarter metalness (mostly dielectric), half roughness, no height, and full ambience
-	for (unsigned int x = 0, third_size = size_mult * 4; x < third_size; x += 4, arrayIndex += 4) {
-		materialData[arrayIndex + 0] = GLubyte(63);
-		materialData[arrayIndex + 1] = GLubyte(128);
-		materialData[arrayIndex + 2] = GLubyte(0);
-		materialData[arrayIndex + 3] = GLubyte(255);
-	}
-
-	// Fill in remaining data with images
-	arrayIndex = 0;
-	if (bitmaps[0]) // Albedo
-		for (unsigned int x = 0, size = size_mult * 4; x < size; ++x, ++arrayIndex)
-			materialData[arrayIndex] = textureData[0][x];
-	arrayIndex = (size_mult * 4);
-	if (bitmaps[1]) // Normal
-		for (unsigned int x = 0, size = size_mult * 3; x < size; x += 3, arrayIndex += 4) {
-			materialData[arrayIndex + 0] = textureData[1][x + 0];
-			materialData[arrayIndex + 1] = textureData[1][x + 1];
-			materialData[arrayIndex + 2] = textureData[1][x + 2];
-		}
-	arrayIndex = (size_mult * 4) * 2;
-	for (unsigned int x = 0, size = size_mult; x < size; ++x, arrayIndex += 4) {
-		if (bitmaps[2]) // Metalness
-			materialData[arrayIndex + 0] = textureData[2][x];
-		if (bitmaps[3]) // Roughness
-			materialData[arrayIndex + 1] = textureData[3][x];
-		if (bitmaps[4]) // Height
-			materialData[arrayIndex + 2] = textureData[4][x];
-		if (bitmaps[5]) // AO
-			materialData[arrayIndex + 3] = textureData[5][x];
+	for (unsigned int x = 0, size = pixelsPerImage; x < size; ++x, ++arrayIndex)		
+		materialData[arrayIndex] = dataContainers[0].pixelData[x]; // ALBEDO	
+	for (unsigned int x = 0, size = pixelsPerImage; x < size;  ++x, ++arrayIndex) 
+		materialData[arrayIndex] = dataContainers[1].pixelData[x]; // NORMAL
+	for (unsigned int x = 0, size = pixelsPerImage; x < size; x += 4, arrayIndex += 4) {
+		materialData[arrayIndex + 0] = dataContainers[2].pixelData[x]; // METALNESS
+		materialData[arrayIndex + 1] = dataContainers[3].pixelData[x]; // ROUGHNESS
+		materialData[arrayIndex + 2] = dataContainers[4].pixelData[x]; // HEIGHT
+		materialData[arrayIndex + 3] = dataContainers[5].pixelData[x]; // AO
 	}
 
 	// Delete old data
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		if (bitmaps[x]) {
-			delete textureData[x];
-			FreeImage_Unload(bitmaps[x]);
-		}
+		delete dataContainers[x].pixelData;
+
+	// Assign data to asset
+	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	userAsset->m_size = material_dimensions;
+	userAsset->m_materialData = materialData;
 }
 
 void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset)

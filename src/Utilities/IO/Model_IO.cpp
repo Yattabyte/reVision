@@ -80,24 +80,20 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 		aiProcess_ImproveCacheLocality*/
 	);
 
+	// Check if scene imported successfully
 	if (!scene) {
 		engine->reportError(MessageManager::FILE_CORRUPT, fulldirectory);
 		return false;
 	}
-	if (importFlags & import_animation) {
-		data_container.animations.resize(scene->mNumAnimations);
-		for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
-			data_container.animations[x] = new aiAnimation(*scene->mAnimations[x]);
-		data_container.rootNode = new aiNode(*scene->mRootNode);
-	}
 
+	// Import geometry
 	if (importFlags & (import_vertices | import_normals | import_tangents | import_bitangents | import_texcoords)) {
 		for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-			const aiMesh *mesh = scene->mMeshes[a];
+			const aiMesh * mesh = scene->mMeshes[a];
 			for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
-				const aiFace& face = mesh->mFaces[x];
+				const aiFace & face = mesh->mFaces[x];
 				for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-					const int index = face.mIndices[b];
+					const int & index = face.mIndices[b];
 					if (importFlags & import_vertices)
 						data_container.vertices.push_back(vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
 					if (importFlags & import_normals) {
@@ -121,11 +117,17 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 			}
 		}
 	}
+
+	// Import animations
 	if (importFlags & import_animation) {
+		data_container.animations.resize(scene->mNumAnimations);
+		for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
+			data_container.animations[x] = new aiAnimation(*scene->mAnimations[x]);
+		data_container.rootNode = new aiNode(*scene->mRootNode);
 		data_container.bones.resize(data_container.vertices.size());
 		int vertexOffset = 0;
 		for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
-			const aiMesh *mesh = scene->mMeshes[a];
+			const aiMesh * mesh = scene->mMeshes[a];
 
 			for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
 				int BoneIndex = 0;
@@ -155,12 +157,13 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 			}
 		}
 	}
+
+	// Import Materials
 	if (importFlags & import_materials) {
 		data_container.materials.resize(scene->mNumMaterials);
 		for (int x = 0, total = scene->mNumMaterials; x < total; ++x)
 			data_container.materials[x] = new aiMaterial(*scene->mMaterials[x]);
 	}
-
 
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);

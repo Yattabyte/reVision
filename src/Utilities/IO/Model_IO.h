@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	MODELIO_H
-#define	MODELIO_H
+#ifndef	MODEL_IO_H
+#define	MODEL_IO_H
 #define NUM_BONES_PER_VEREX 4
 #include "glm\common.hpp"
 #include "glm\gtc\matrix_transform.hpp"
@@ -14,6 +14,7 @@ class Engine;
 class aiAnimation;
 class aiNode;
 class aiMaterial;
+
 
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
@@ -53,7 +54,8 @@ enum Model_IO_Flags {
 
 	import_hull			= 0b0000'0001,
 	import_primitive	= 0b0001'0001,
-	import_model		= 0b0111'1111
+	import_model		= 0b0111'1111,
+	import_all			= 0b1111'1111
 };
 
 /** 
@@ -63,7 +65,13 @@ enum Model_IO_Flags {
 class Model_IO
 {
 public:
+	/** Import a model from disk.
+	 * @param	engine			the engine to import to
+	 * @param	fulldirectory	the path to the file
+	 * @param	importFlags		bitflags directing how to import the model
+	 * @param	importedData	the container to place the imported data within
+	 * @return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine * engine, const string & fulldirectory, const unsigned int & importFlags, Model_Geometry & importedData);
 };
 
-#endif // MODELIMPORTER_H
+#endif // MODEL_IO_H

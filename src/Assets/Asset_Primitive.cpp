@@ -68,7 +68,7 @@ void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userA
 {
 	Model_Geometry dataContainer;
 	if (!Model_IO::Import_Model(engine, fullDirectory, import_primitive, dataContainer)) {
-		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load primitive asset, using default asset...");
+		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load primitive asset, using default...");
 		CreateDefault(engine, userAsset);
 		return;
 	}

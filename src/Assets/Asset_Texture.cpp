@@ -1,12 +1,13 @@
 #include "Assets\Asset_Texture.h"
+#include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
-#include "FreeImage.h"
 
 
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet())
 		glDeleteTextures(1, &m_glTexID);
+	delete m_pixelData;
 }
 
 Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
@@ -79,65 +80,18 @@ void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, co
 
 void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset, const string & fullDirectory)
 {
-	const char * file = fullDirectory.c_str();
-	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
-
-	if (format == -1) {
-		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+	Image_Data dataContainer;
+	if (!Image_IO::Import_Image(engine, fullDirectory, dataContainer)) {
+		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load texture asset, using default...");
 		CreateDefault(engine, userAsset);
 		return;
 	}
 
-	if (format == FIF_UNKNOWN) {
-		format = FreeImage_GetFIFFromFilename(file);
-		if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-			engine->reportError(MessageManager::FILE_CORRUPT, fullDirectory, "Using default texture.");
-			CreateDefault(engine, userAsset);
-			return;
-		}
-	}
-
-	FIBITMAP* bitmap, *bitmap32;
-	FIMULTIBITMAP* mbitmap;
-
-	//Load
-	if (format == FIF_GIF) {
-		mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-		engine->reportMessage("GIF loading unsupported, using first frame...");
-		bitmap = FreeImage_LockPage(mbitmap, 0);
-	}
-	else
-		bitmap = FreeImage_Load(format, file);
-
-	int bitsPerPixel = FreeImage_GetBPP(bitmap);
-	if (bitsPerPixel == 32)
-		bitmap32 = bitmap;
-	else
-		bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
-
-	vec2 size = vec2(FreeImage_GetWidth(bitmap32), FreeImage_GetHeight(bitmap32));
-	userAsset->m_size = size;
-	userAsset->m_pixelData = new GLubyte[4 * (int)size.x*(int)size.y];
+	unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+	userAsset->m_size = dataContainer.dimensions;
+	userAsset->m_pixelData = dataContainer.pixelData;
 	GLubyte *textureData = userAsset->m_pixelData;
-	char* pixels = (char *)FreeImage_GetBits(bitmap32);
-
-	for (int j = 0, total = (int)size.x*(int)size.y; j < total; j++) {
-		GLubyte blue = pixels[j * 4 + 0],
-			green = pixels[j * 4 + 1],
-			red = pixels[j * 4 + 2],
-			alpha = pixels[j * 4 + 3];
-		textureData[j * 4 + 0] = red;
-		textureData[j * 4 + 1] = green;
-		textureData[j * 4 + 2] = blue;
-		textureData[j * 4 + 3] = alpha;
-	}
-
-	//Unload
-	FreeImage_Unload(bitmap32);
-	if (bitsPerPixel != 32)
-		FreeImage_Unload(bitmap);
-
-	if (size.x < 1.5f || size.y < 1.5f)
+	if (dataContainer.dimensions.x < 1.5f || dataContainer.dimensions.y < 1.5f)
 		userAsset->m_type = GL_TEXTURE_1D;	
 }
 
