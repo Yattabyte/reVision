@@ -1,6 +1,10 @@
 #include "Assets\Asset_Config.h"
+#include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 #include <fstream>
+#define EXT_CONFIG ".cfg"
+#define DIRECTORY_CONFIG Engine::Get_Current_Dir() + "\\Configs\\"
+#define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
 
 /** Attempts to retrieve a string between quotation marks "<string>"
@@ -78,7 +82,7 @@ void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, cons
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

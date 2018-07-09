@@ -1,10 +1,7 @@
 #pragma once
 #ifndef	ASSET_COLLIDER_H
 #define	ASSET_COLLIDER_H
-#define DIRECTORY_COLLIDER File_Reader::GetCurrentDir() + "\\Models\\"
-#define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include <btBulletDynamicsCommon.h>
 
 class Engine;

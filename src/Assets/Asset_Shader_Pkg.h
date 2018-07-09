@@ -1,11 +1,8 @@
 #pragma once
 #ifndef	ASSET_SHADER_PKG_H
 #define	ASSET_SHADER_PKG_H
-#define EXT_PACKAGE ".pkg"
-#define DIRECTORY_SHADER_PKG File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
 #include <string>

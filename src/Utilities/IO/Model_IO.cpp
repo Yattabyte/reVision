@@ -1,5 +1,4 @@
 #include "Utilities\IO\Model_IO.h"
-#include "Utilities\File_Reader.h"
 #include "Engine.h"
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
@@ -61,7 +60,7 @@ inline mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const unsigned int & importFlags, Model_Geometry & data_container)
 {
 	// Check if the file exists
-	if (!File_Reader::FileExistsOnDisk(fulldirectory)) {
+	if (!Engine::File_Exists(fulldirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
 		return false;
 	}

@@ -100,7 +100,7 @@ namespace File_Reader {
 	 bool FileExistsOnDisk(const string & fileName);	
 	/** Retrieves the application's running directory.
 	* @return					string of the absolute directory that this executable ran from */
-	 string GetCurrentDir();
+	 string Get_Current_Dir();
 };
 
 #endif // FILEREADER_H

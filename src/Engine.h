@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.182";
+constexpr char ENGINE_VERSION[]	= "0.183";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
@@ -101,7 +101,13 @@ public:
 	void createAsset(SharedAsset & sharedAsset, Args&&... ax) {
 		m_AssetManager.create(sharedAsset, forward<Args>(ax)...);
 	}
+	/** Forward a message to the message manager.
+	 * @param	input				the message to report */
 	void reportMessage(const string & input);
+	/** Forward an error to the message manager.
+	 * @param	error_number		the error number
+	 * @param	input				the error to report
+	 * @param	additional_input	additional input */
 	void reportError(const int & error_number, const string & input, const string & additional_input = "");
 
 	// Getters
@@ -121,6 +127,16 @@ public:
 	MaterialManager & getMaterialManager() { return m_materialManager; }
 	/** Returns this engine's message manager. */
 	MessageManager & getMessageManager() { return m_messageManager; }
+
+
+	// Static Methods
+	/** Retrieves the application's running directory.
+	* @return					string of the absolute directory that this executable ran from */
+	static string Get_Current_Dir();
+	/** Check if a given file exists.
+	* @param	name			the full file path
+	* @return					true if the file exists, false otherwise */
+	static bool File_Exists(const string & name);
 
 
 private:

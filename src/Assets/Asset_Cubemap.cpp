@@ -1,6 +1,9 @@
 #include "Assets\Asset_Cubemap.h"
 #include "Engine.h"
 #include "FreeImage.h"
+#define EXT_CUBEMAP ".png"
+#define DIRECTORY_CUBEMAP Engine::Get_Current_Dir() + "\\Textures\\Cubemaps\\"
+#define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 
 Asset_Cubemap::~Asset_Cubemap()
@@ -52,7 +55,7 @@ void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, co
 
 	// Check if the file/directory exists on disk
 	const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

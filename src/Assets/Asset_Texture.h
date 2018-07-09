@@ -1,12 +1,8 @@
 #pragma once
 #ifndef	ASSET_TEXTURE_H
 #define	ASSET_TEXTURE_H
-#define EXT_TEXTURE	".png"
-#define DIRECTORY_TEXTURE File_Reader::GetCurrentDir() + "\\Textures\\"
-#define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

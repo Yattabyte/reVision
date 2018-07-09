@@ -1,12 +1,8 @@
 #pragma once
 #ifndef	ASSET_CUBEMAP_H
 #define	ASSET_CUBEMAP_H
-#define EXT_CUBEMAP ".png"
-#define DIRECTORY_CUBEMAP File_Reader::GetCurrentDir() + "\\Textures\\Cubemaps\\"
-#define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

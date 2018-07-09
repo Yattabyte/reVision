@@ -1,27 +1,12 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Shader_Pkg.h"
+#include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
-#include <fstream>
+#define EXT_SHADER_VERTEX ".vsh"
+#define EXT_SHADER_FRAGMENT ".fsh"
+#define EXT_SHADER_GEOMETRY ".gsh"
+#define DIRECTORY_SHADER Engine::Get_Current_Dir() + "\\Shaders\\"
 
-/** Read a file from disk.
- * @param	returnFile		the destination to load the text into
- * @param	fileDirectory	the file directory to load from
- * @return					returns true if file read successfull, false otherwise */
-inline bool fetch_file_from_disk(string & returnFile, const string & fileDirectory)
-{
-	struct stat buffer;
-	if (stat(fileDirectory.c_str(), &buffer))
-		return false;
-
-	ifstream file(fileDirectory);
-	while (!file.eof()) {
-		string temp;
-		std::getline(file, temp);
-		returnFile.append(temp + '\n');
-	}
-
-	return true;
-}
 
 /** Parse the shader, looking for any directives that require us to modify the document.
  * @param	engine			the engine being used
@@ -175,8 +160,8 @@ void Asset_Shader::Create(Engine * engine, Shared_Asset_Shader & userAsset, cons
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = DIRECTORY_SHADER + filename;
-	bool found_vertex = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_VERTEX);
-	bool found_fragement = File_Reader::FileExistsOnDisk(fullDirectory + EXT_SHADER_FRAGMENT);
+	bool found_vertex = Engine::File_Exists(fullDirectory + EXT_SHADER_VERTEX);
+	bool found_fragement = Engine::File_Exists(fullDirectory + EXT_SHADER_FRAGMENT);
 	if (!found_vertex)
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
 	if (!found_fragement)
@@ -200,18 +185,15 @@ void Asset_Shader::Create(Engine * engine, Shared_Asset_Shader & userAsset, cons
 void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const string & fullDirectory)
 {
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	bool found_vertex = fetch_file_from_disk(userAsset->m_vertexText, fullDirectory + EXT_SHADER_VERTEX);
-	bool found_fragement = fetch_file_from_disk(userAsset->m_fragmentText, fullDirectory + EXT_SHADER_FRAGMENT);
-	bool found_geometry = fetch_file_from_disk(userAsset->m_geometryText, fullDirectory + EXT_SHADER_GEOMETRY);
+	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, userAsset->m_vertexText);
+	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, userAsset->m_fragmentText);
+	const bool found_geometry = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_GEOMETRY, userAsset->m_geometryText);
 	write_guard.unlock();
 	write_guard.release();
 
-	if (!found_vertex)
-		engine->reportError(MessageManager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_VERTEX);
-	if (!found_fragement)
-		engine->reportError(MessageManager::FILE_MISSING, userAsset->getFileName() + EXT_SHADER_FRAGMENT);
-	if (!(found_vertex + found_fragement + found_geometry)) {
-		// handle this?
+	if (!(found_vertex && found_fragement)) {
+		CreateDefault(engine, userAsset);
+		return;
 	}
 
 	// parse

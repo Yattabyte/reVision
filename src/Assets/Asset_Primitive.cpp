@@ -1,6 +1,9 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
+#define EXT_PRIMITIVE ".obj"
+#define DIRECTORY_PRIMITIVE Engine::Get_Current_Dir() + "\\Primitives\\"
+#define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 
 Asset_Primitive::~Asset_Primitive()
@@ -47,7 +50,7 @@ void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

@@ -2,6 +2,10 @@
 #include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
 #include <minmax.h>
+#define EXT_MODEL ".obj"
+#define DIRECTORY_MODEL Engine::Get_Current_Dir() + "\\Models\\"
+#define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
+#define DIRECTORY_MODEL_MAT_TEX Engine::Get_Current_Dir() + "\\Textures\\Environment\\" 
 
 
 /** Calculates a Axis Aligned Bounding Box from a set of vertices.\n
@@ -162,7 +166,7 @@ void Asset_Model::Create(Engine * engine, Shared_Asset_Model & userAsset, const 
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = DIRECTORY_MODEL + filename;
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

@@ -260,7 +260,7 @@ namespace File_Reader {
 		return (stat(name.c_str(), &buffer) == 0);		
 	}
 
-	string GetCurrentDir()
+	string Get_Current_Dir()
 	{
 		// Technique to return the running directory of the application
 		char cCurrentPath[FILENAME_MAX];

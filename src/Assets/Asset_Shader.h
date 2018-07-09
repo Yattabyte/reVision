@@ -1,13 +1,8 @@
 #pragma once
 #ifndef	ASSET_SHADER_H
 #define	ASSET_SHADER_H
-#define EXT_SHADER_VERTEX ".vsh"
-#define EXT_SHADER_FRAGMENT ".fsh"
-#define EXT_SHADER_GEOMETRY ".gsh"
-#define DIRECTORY_SHADER File_Reader::GetCurrentDir() + "\\Shaders\\"
 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include "glm\glm.hpp"
 #include "GL\glew.h"
 #include "GLM\gtc\type_ptr.hpp"

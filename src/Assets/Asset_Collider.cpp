@@ -1,7 +1,9 @@
 #include "Asset_Collider.h"
+#include "Utilities\IO\Text_IO.h"
 #include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
-#include "assimp\postprocess.h"
+#define DIRECTORY_COLLIDER Engine::Get_Current_Dir() + "\\Models\\"
+#define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
 
 
 Asset_Collider::~Asset_Collider()
@@ -44,7 +46,7 @@ void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, 
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
-	if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+	if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

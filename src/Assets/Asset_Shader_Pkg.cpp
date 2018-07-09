@@ -1,7 +1,9 @@
 #include "Assets\Asset_Shader_Pkg.h"
+#include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 #include "GLM\gtc\type_ptr.hpp"
-#include <fstream>
+#define EXT_PACKAGE ".pkg"
+#define DIRECTORY_SHADER_PKG Engine::Get_Current_Dir() + "\\Shaders\\"
 
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
  * @param	engine			the engine being used
@@ -29,26 +31,6 @@ inline void parse(Engine * engine, Shared_Asset_Shader_Pkg & userAsset)
 	}
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_packageText = input;
-}
-
-/** Read a file from disk.
- * @param	returnFile		the destination to load the text into
- * @param	fileDirectory	the file directory to load from
- * @return					returns true if file read successfull, false otherwise */
-inline bool fetch_file_from_disk(string & returnFile, const string & fileDirectory)
-{
-	struct stat buffer;
-	if (stat(fileDirectory.c_str(), &buffer))
-		return false;
-
-	ifstream file(fileDirectory);
-	while (!file.eof()) {
-		string temp;
-		std::getline(file, temp);
-		returnFile.append(temp + '\n');
-	}
-
-	return true;
 }
 
 Asset_Shader_Pkg::~Asset_Shader_Pkg()
@@ -90,7 +72,7 @@ void Asset_Shader_Pkg::Create(Engine * engine, Shared_Asset_Shader_Pkg & userAss
 
 	// Check if the file/directory exists on disk
 	const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
-	bool found = File_Reader::FileExistsOnDisk(fullDirectory + EXT_PACKAGE);
+	const bool found = Engine::File_Exists(fullDirectory + EXT_PACKAGE);
 	if (!found) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_PACKAGE);
 		CreateDefault(engine, userAsset);
@@ -111,7 +93,7 @@ void Asset_Shader_Pkg::Create(Engine * engine, Shared_Asset_Shader_Pkg & userAss
 void Asset_Shader_Pkg::Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const string & fullDirectory)
 {
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
-	bool found = fetch_file_from_disk(userAsset->m_packageText, fullDirectory + EXT_PACKAGE);
+	const bool found = Text_IO::Import_Text(engine, fullDirectory + EXT_PACKAGE, userAsset->m_packageText);
 	write_guard.unlock();
 	write_guard.release();
 

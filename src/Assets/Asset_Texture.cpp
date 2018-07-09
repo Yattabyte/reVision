@@ -1,6 +1,10 @@
 #include "Assets\Asset_Texture.h"
 #include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
+#define EXT_TEXTURE	".png"
+#define DIRECTORY_TEXTURE Engine::Get_Current_Dir() + "\\Textures\\"
+#define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
+
 
 
 Asset_Texture::~Asset_Texture()
@@ -61,7 +65,7 @@ void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, co
 
 	// Check if the file/directory exists on disk
 	const string &fullDirectory = DIRECTORY_TEXTURE + filename;
-	if (!File_Reader::FileExistsOnDisk(fullDirectory)) {
+	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
 		return;

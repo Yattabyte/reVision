@@ -3,9 +3,6 @@
 #define	ASSET_MATERIAL_H
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
-#define EXT_MATERIAL ".mat"
-#define ABS_DIRECTORY_MATERIAL(filename) File_Reader::GetCurrentDir() + "\\Materials\\" + filename + EXT_MATERIAL
-#define ABS_DIRECTORY_MAT_TEX(filename) File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" + filename
 
 #include "Assets\Asset.h"
 #include "Utilities\File_Reader.h"

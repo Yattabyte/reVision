@@ -1,6 +1,7 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
+#include <direct.h>
 #include <string>
 
 // OpenGL Dependent Systems //
@@ -236,5 +237,21 @@ void Engine::reportMessage(const string & input)
 void Engine::reportError(const int & error_number, const string & input, const string & additional_input)
 {
 	m_messageManager.error(error_number, input, additional_input);
+}
+
+string Engine::Get_Current_Dir()
+{
+	// Technique to return the running directory of the application
+	char cCurrentPath[FILENAME_MAX];
+	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
+		cCurrentPath[sizeof(cCurrentPath) - 1] = '/0';
+	return string(cCurrentPath);
+}
+
+bool Engine::File_Exists(const string & name)
+{
+	// Technique to return whether or not a given file or folder exists
+	struct stat buffer;
+	return (stat(name.c_str(), &buffer) == 0);
 }
 

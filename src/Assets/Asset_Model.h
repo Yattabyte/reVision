@@ -4,10 +4,6 @@
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 #define GLEW_STATIC
-#define EXT_MODEL ".obj"
-#define DIRECTORY_MODEL File_Reader::GetCurrentDir() + "\\Models\\"
-#define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
-#define DIRECTORY_MODEL_MAT_TEX File_Reader::GetCurrentDir() + "\\Textures\\Environment\\" 
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"

@@ -3,6 +3,9 @@
 #include "Engine.h"
 #include <math.h>
 #include <minmax.h>
+#define EXT_MATERIAL ".mat"
+#define ABS_DIRECTORY_MATERIAL(filename) Engine::Get_Current_Dir() + "\\Materials\\" + filename + EXT_MATERIAL
+#define ABS_DIRECTORY_MAT_TEX(filename) Engine::Get_Current_Dir() + "\\Textures\\Environment\\" + filename
 
 
 Asset_Material::~Asset_Material()
@@ -95,7 +98,7 @@ void Asset_Material::Create(Engine * engine, Shared_Asset_Material & userAsset, 
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!File_Reader::FileExistsOnDisk(fullDirectory) || (filename == "") || (filename == " ")) {
+		if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
 			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 			CreateDefault(engine, userAsset);
 			return;
