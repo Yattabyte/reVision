@@ -1,6 +1,6 @@
 #include "Assets\Asset_Cubemap.h"
+#include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
-#include "FreeImage.h"
 #define EXT_CUBEMAP ".png"
 #define DIRECTORY_CUBEMAP Engine::Get_Current_Dir() + "\\Textures\\Cubemaps\\"
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
@@ -77,82 +77,28 @@ void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
 	for (int sides = 0; sides < 6; ++sides) {
-		std::string specific_side_directory;
+		std::string specific_side_directory = "";
 		const char * file;
-		FREE_IMAGE_FORMAT format;
 
 		for (int x = 0; x < 3; ++x) {
 			specific_side_directory = fullDirectory + side_suffixes[sides] + extensions[x];
-			file = specific_side_directory.c_str();
-			format = FreeImage_GetFileType(file, 0);
-			if (format != -1)
+			if (Engine::File_Exists(specific_side_directory))
 				break;
-		}
-
-		for (int x = 0; x < 3; ++x) {
 			specific_side_directory = fullDirectory + "\\" + side_suffixes[sides] + extensions[x];
-			file = specific_side_directory.c_str();
-			format = FreeImage_GetFileType(file, 0);
-			if (format != -1)
+			if (Engine::File_Exists(specific_side_directory))
 				break;
 		}
 
-		if (format == -1) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		Image_Data dataContainer;
+		if (!Image_IO::Import_Image(engine, specific_side_directory, dataContainer)) {
+			engine->reportError(MessageManager::OTHER_ERROR, "Failed to load cubemap asset, using default...");
 			CreateDefault(engine, userAsset);
 			return;
-		}
-
-		if (format == FIF_UNKNOWN) {
-			format = FreeImage_GetFIFFromFilename(file);
-			if (!FreeImage_FIFSupportsReading(format)) { // Attempt to resolve texture file format
-				engine->reportError(MessageManager::FILE_CORRUPT, fullDirectory, "Using default texture.");
-				CreateDefault(engine, userAsset);
-				return;
-			}
-		}
-
-		FIBITMAP* bitmap, *bitmap32;
-		FIMULTIBITMAP* mbitmap;
-
-		//Load
-		if (format == FIF_GIF) {
-			mbitmap = FreeImage_OpenMultiBitmap(FIF_GIF, file, false, true, false, GIF_PLAYBACK);
-			engine->reportMessage("GIF loading unsupported, using first frame...");
-			bitmap = FreeImage_LockPage(mbitmap, 0);
-		}
-		else
-			bitmap = FreeImage_Load(format, file);
-
-		int bitsPerPixel = FreeImage_GetBPP(bitmap);
-		if (bitsPerPixel == 32)
-			bitmap32 = bitmap;
-		else
-			bitmap32 = FreeImage_ConvertTo32Bits(bitmap);
-
-		vec2 size = vec2(FreeImage_GetWidth(bitmap32), FreeImage_GetHeight(bitmap32));
-		userAsset->m_size = size;
-		GLubyte* textureData = new GLubyte[4 * (int)size.x*(int)size.y];
-		char* pixels = (char *)FreeImage_GetBits(bitmap32);
-
-		for (int j = 0, total = (int)size.x*(int)size.y; j < total; j++) {
-			const GLubyte
-				&blue = pixels[j * 4 + 0],
-				&green = pixels[j * 4 + 1],
-				&red = pixels[j * 4 + 2],
-				&alpha = pixels[j * 4 + 3];
-
-			textureData[j * 4 + 0] = red;
-			textureData[j * 4 + 1] = green;
-			textureData[j * 4 + 2] = blue;
-			textureData[j * 4 + 3] = alpha;
-		}
-
-		//Unload
-		FreeImage_Unload(bitmap32);
-		if (bitsPerPixel != 32)
-			FreeImage_Unload(bitmap);
-		userAsset->m_pixelData[sides] = textureData;
+		}	
+		
+		unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+		userAsset->m_size = dataContainer.dimensions;
+		userAsset->m_pixelData[sides] = dataContainer.pixelData;
 	}
 }
 

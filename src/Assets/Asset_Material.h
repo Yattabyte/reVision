@@ -5,7 +5,6 @@
 #define MAX_DIGITAL_IMAGES 3
 
 #include "Assets\Asset.h"
-#include "Utilities\File_Reader.h"
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 

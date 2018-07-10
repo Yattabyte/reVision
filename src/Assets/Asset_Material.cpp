@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include <math.h>
 #include <minmax.h>
+#include <fstream>
+#include <sstream>
 #define EXT_MATERIAL ".mat"
 #define ABS_DIRECTORY_MATERIAL(filename) Engine::Get_Current_Dir() + "\\Materials\\" + filename + EXT_MATERIAL
 #define ABS_DIRECTORY_MAT_TEX(filename) Engine::Get_Current_Dir() + "\\Textures\\Environment\\" + filename
@@ -238,7 +240,21 @@ void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset
 			assetManager.submitNotifyee(qwe.second); 
 	}
 }
-
+bool getString(istringstream & string_stream, string & target, string & input = string(""))
+{
+	string_stream >> input;
+	if (input == "string") {
+		int size = 0; string_stream >> size;
+		target.reserve(size);
+		for (int x = 0; x < size; ++x) {
+			string v;
+			string_stream >> v;
+			target += v;
+		}
+	}
+	else return false;
+	return true;
+}
 void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
 {
 	std::ifstream file_stream(filename);
@@ -251,17 +267,17 @@ void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo
 				const size_t propertycount = 6;
 
 				for (int x = 0; x < propertycount; ++x) {
-					File_Reader::DocParser::Property property;
+					string string;
 					std::getline(file_stream, line);
 					std::istringstream string_stream(line);
 					string_stream >> line;
-					if (getProperty(string_stream, property)) {
-						if (line == "albedo") albedo = property.s;
-						else if (line == "normal") normal = property.s;
-						else if (line == "metalness") metalness = property.s;
-						else if (line == "roughness") roughness = property.s;
-						else if (line == "height") height = property.s;
-						else if (line == "occlusion") occlusion = property.s;
+					if (getString(string_stream, string)) {
+						if (line == "albedo") albedo = string;
+						else if (line == "normal") normal = string;
+						else if (line == "metalness") metalness = string;
+						else if (line == "roughness") roughness = string;
+						else if (line == "height") height = string;
+						else if (line == "occlusion") occlusion = string;
 						else if (line == "}") break;
 						else break;
 					}

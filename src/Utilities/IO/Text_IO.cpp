@@ -19,3 +19,9 @@ bool Text_IO::Import_Text(Engine * engine, const string & fulldirectory, string 
 
 	return true;
 }
+
+void Text_IO::Export_Text(const string & fulldirectory, const string & exportedData)
+{
+	ofstream out(fulldirectory);
+	out << exportedData.c_str();
+}

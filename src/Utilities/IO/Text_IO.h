@@ -19,6 +19,7 @@ public:
 	 * @param	importedData	the container to place the imported data within
 	 * @return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Text(Engine * engine, const string & fulldirectory, string & importedData);
+	static void Export_Text(const string & fulldirectory, const string & exportedData);
 };
 
 #endif // TEXT_IO_H

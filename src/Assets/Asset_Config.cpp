@@ -143,11 +143,7 @@ float Asset_Config::getValue(const unsigned int & cfg_key)
 void Asset_Config::saveConfig()
 {
 	string output;
-
 	for each (const auto &value in m_configuration) 
 		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
-
-	string directory = ABS_DIRECTORY_CONFIG(getFileName());
-	ofstream out(directory);
-	out << output.c_str();
+	Text_IO::Export_Text(ABS_DIRECTORY_CONFIG(getFileName()), output);
 }
