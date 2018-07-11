@@ -56,7 +56,7 @@ public:
 	GeometryInfo						m_data;
 	vector<BoneTransform>				m_boneTransforms;
 	map<string, int>					m_boneMap;
-	vector<aiAnimation*>				m_animations;
+	vector<Animation>					m_animations;
 	aiNode								*m_rootNode;
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;

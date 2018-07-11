@@ -119,9 +119,36 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 
 	// Import animations
 	if (importFlags & import_animation) {
+		// Copy Animations
 		data_container.animations.resize(scene->mNumAnimations);
-		for (int x = 0, total = scene->mNumAnimations; x < total; ++x)
-			data_container.animations[x] = new aiAnimation(*scene->mAnimations[x]);
+		for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
+			auto * animation = scene->mAnimations[a];
+			data_container.animations[a] = Animation(animation->mNumChannels, animation->mTicksPerSecond, animation->mDuration);
+
+			// Copy Channels
+			data_container.animations[a].channels.resize(animation->mNumChannels);
+			for (int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
+				auto * channel = scene->mAnimations[a]->mChannels[c];
+				data_container.animations[a].channels[c] = new Node_Animation(string(channel->mNodeName.data), channel->mNumScalingKeys, channel->mNumRotationKeys, channel->mNumPositionKeys);
+
+				// Copy Keys
+				data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
+				for (int n = 0; n < channel->mNumScalingKeys; ++n) {
+					auto & key = channel->mScalingKeys[n];
+					data_container.animations[a].channels[c]->scalingKeys[n] = Vec3_Key(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				}
+				data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
+				for (int n = 0; n < channel->mNumRotationKeys; ++n) {
+					auto & key = channel->mRotationKeys[n];
+					data_container.animations[a].channels[c]->rotationKeys[n] = Quat_Key(key.mTime, quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+				}
+				data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
+				for (int n = 0; n < channel->mNumPositionKeys; ++n) {
+					auto & key = channel->mPositionKeys[n];
+					data_container.animations[a].channels[c]->positionKeys[n] = Vec3_Key(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+				}
+			}
+		}
 		data_container.rootNode = new aiNode(*scene->mRootNode);
 		data_container.bones.resize(data_container.vertices.size());
 		int vertexOffset = 0;

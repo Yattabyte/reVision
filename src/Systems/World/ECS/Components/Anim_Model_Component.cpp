@@ -163,11 +163,11 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		uboData->useBones = 1;
 		if (m_playAnim)
 			m_animTime += deltaTime;
-		const float TicksPerSecond = m_model->m_animations[m_animation]->mTicksPerSecond != 0
-			? m_model->m_animations[m_animation]->mTicksPerSecond
+		const float TicksPerSecond = m_model->m_animations[m_animation].ticksPerSecond != 0
+			? m_model->m_animations[m_animation].ticksPerSecond
 			: 25.0f;
 		const float TimeInTicks = m_animTime * TicksPerSecond;
-		const float AnimationTime = fmod(TimeInTicks, m_model->m_animations[m_animation]->mDuration);
+		const float AnimationTime = fmod(TimeInTicks, m_model->m_animations[m_animation].duration);
 		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
 
 		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_rootNode, m_model, mat4(1.0f));
@@ -183,39 +183,37 @@ template <> inline mat4 convertType(const aiMatrix4x4 &t) { return mat4(t.a1, t.
 template <typename T> inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
 template <> inline quat valueMix(const quat &t1, const quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
 
-inline const aiNodeAnim* FindNodeAnim(const aiAnimation* pAnimation, const string &NodeName)
+inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const string &NodeName)
 {
-	for (unsigned int i = 0; i < pAnimation->mNumChannels; i++) {
-		const aiNodeAnim* pNodeAnim = pAnimation->mChannels[i];
-		if (string(pNodeAnim->mNodeName.data) == NodeName) 
+	for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
+		const Node_Animation * pNodeAnim = pAnimation.channels[i];
+		if (pNodeAnim->nodeName == NodeName)
 			return pNodeAnim;		
 	}
 	return nullptr;
 }
 
-template <typename T>
-inline int FindKey(const float &AnimationTime, const unsigned int &count, const T *keys) 
+template <typename KeyType>
+inline int FindKey(const float &AnimationTime, const unsigned int &count, const vector<KeyType> & keys)
 {
 	for (unsigned int i = 0; i < count; i++)
-		if (AnimationTime < (float)(keys[i + 1]).mTime)
+		if (AnimationTime < (float)(keys[i + 1]).time)
 			return i;
 	return 0;
 }
 
-template <typename KeyType, typename FromType, typename DesiredType>
-inline DesiredType InterpolateKeys(const float &AnimationTime, const unsigned int &keyCount, KeyType *keys) {
+template <typename KeyType, typename ValueType>
+inline ValueType InterpolateKeys(const float &AnimationTime, const unsigned int &keyCount, const vector<KeyType> & keys) {
 	assert(keyCount > 0);
-	DesiredType &Result = convertType<FromType, DesiredType>(keys[0].mValue);
+	const ValueType &Result = keys[0].value;
 	if (keyCount > 1) { // Ensure we have 2 values to interpolate between
 		unsigned int Index = FindKey<KeyType>(AnimationTime, keyCount - 1, keys);
 		unsigned int NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
 		const KeyType &Key = keys[Index];
 		const KeyType &NextKey = keys[NextIndex];
-		const float DeltaTime = (float)(NextKey.mTime - Key.mTime);
-		const float Factor = clamp((AnimationTime - (float)Key.mTime) / DeltaTime, 0.0f, 1.0f);
-		const DesiredType Start = convertType<FromType, DesiredType>(Key.mValue);
-		const DesiredType End = convertType<FromType, DesiredType>(NextKey.mValue);
-		return valueMix(Start, End, Factor);
+		const float DeltaTime = (float)(NextKey.time - Key.time);
+		const float Factor = clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
+		return valueMix(Key.value, NextKey.value, Factor);
 	}
 	return Result;
 }
@@ -223,19 +221,19 @@ inline DesiredType InterpolateKeys(const float &AnimationTime, const unsigned in
 inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
 {
 	const string NodeName(parentNode->mName.data);
-	const aiAnimation* pAnimation = model->m_animations[animation_ID];
-	const aiNodeAnim* pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+	const Animation &pAnimation = model->m_animations[animation_ID];
+	const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 	mat4 NodeTransformation = convertType<aiMatrix4x4, mat4>(parentNode->mTransformation);
 
 	// Interpolate scaling, rotation, and translation.
 	// Generate their matrices and apply their transformations.
 	if (pNodeAnim) {
-		const vec3 Scaling = InterpolateKeys<aiVectorKey, aiVector3D, vec3>
-							(animation_time, pNodeAnim->mNumScalingKeys, pNodeAnim->mScalingKeys);
-		const quat Rotation = InterpolateKeys<aiQuatKey, aiQuaternion, quat>
-							(animation_time, pNodeAnim->mNumRotationKeys, pNodeAnim->mRotationKeys);
-		const vec3 Translation = InterpolateKeys<aiVectorKey, aiVector3D, vec3>
-							(animation_time, pNodeAnim->mNumPositionKeys, pNodeAnim->mPositionKeys);
+		const vec3 Scaling = InterpolateKeys<Vec3_Key, vec3>
+							(animation_time, pNodeAnim->numScalingKeys, pNodeAnim->scalingKeys);
+		const quat Rotation = InterpolateKeys<Quat_Key, quat>
+							(animation_time, pNodeAnim->numRotationKeys, pNodeAnim->rotationKeys);
+		const vec3 Translation = InterpolateKeys<Vec3_Key, vec3>
+							(animation_time, pNodeAnim->numPositionKeys, pNodeAnim->positionKeys);
 		
 		NodeTransformation = glm::translate(mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(mat4(1.0f), Scaling);
 	}

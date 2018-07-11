@@ -161,6 +161,7 @@ void System_World::loadWorld()
 
 		Entity * m1 = m_entityFactory.createEntity("Prop");
 		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m1->sendCommand("Change_Animation", 1);
 		m1->sendCommand("Change_Transform", Transform(vec3(-5, 0, 0)));
 
 		Entity * m2 = m_entityFactory.createEntity("Prop");
