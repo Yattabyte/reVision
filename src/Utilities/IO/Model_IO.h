@@ -13,14 +13,11 @@ using namespace glm;
 class Engine;
 class aiAnimation;
 class aiNode;
-class aiMaterial;
 
 
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
-
-
 	~VertexBoneData();
 	VertexBoneData();
 	VertexBoneData(const VertexBoneData & vbd);
@@ -28,18 +25,28 @@ struct VertexBoneData {
 	void AddBoneData(const int & BoneID, const float & Weight);
 };
 struct BoneTransform { mat4 offset, final; };
+struct Material {
+	string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
+	Material(const string & al = "albedo" , const string & n = "normal", const string & m = "metalness", const string & r = "roughness", const string & h = "height", const string & a = "ao")
+		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
+};
 struct Model_Geometry {
+	// Per Vertex Attributes
 	vector<vec3> vertices;
 	vector<vec3> normals;
 	vector<vec3> tangents;
 	vector<vec3> bitangents;
 	vector<vec2> texCoords;
+
+	// Materials
+	vector<Material> materials;
+
+	// Animation
 	vector<VertexBoneData> bones;
 	vector<BoneTransform> boneTransforms;
 	map<string, int> boneMap;
 	vector<aiAnimation*> animations;
 	aiNode * rootNode;
-	vector<aiMaterial*> materials;
 };
 
 /* Import Directives */

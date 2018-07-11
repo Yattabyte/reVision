@@ -159,9 +159,53 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 
 	// Import Materials
 	if (importFlags & import_materials) {
-		data_container.materials.resize(scene->mNumMaterials);
-		for (int x = 0, total = scene->mNumMaterials; x < total; ++x)
-			data_container.materials[x] = new aiMaterial(*scene->mMaterials[x]);
+		if (scene->mNumMaterials > 1)
+			for (int x = 1, total = scene->mNumMaterials; x < total; ++x) {
+				auto * sceneMaterial = scene->mMaterials[x];
+				// Get the aiStrings for all the textures for a material
+				aiString	albedo, normal, metalness, roughness, height, ao;
+				aiReturn	albedo_exists = sceneMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
+							normal_exists = sceneMaterial->GetTexture(aiTextureType_NORMALS, 0, &normal),
+							metalness_exists = sceneMaterial->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
+							roughness_exists = sceneMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughness),
+							height_exists = sceneMaterial->GetTexture(aiTextureType_HEIGHT, 0, &height),
+							ao_exists = sceneMaterial->GetTexture(aiTextureType_AMBIENT, 0, &ao);
+
+				// Assuming the diffuse element exists, generate some fallback texture elements
+				std::string templateTexture, extension = ".png";
+				if (albedo_exists == AI_SUCCESS) {
+					std::string minusD = albedo.C_Str();
+					int exspot = minusD.find_last_of(".");
+					extension = minusD.substr(exspot, minusD.length());
+					int diffuseStart = minusD.find("diff");
+					if (diffuseStart > -1)
+						minusD = minusD.substr(0, diffuseStart);
+					else
+						minusD = minusD.substr(0, exspot) + "_";
+					templateTexture = minusD;
+				}
+
+				// Importer might not distinguish between height and normal maps
+				if (normal_exists != AI_SUCCESS && height_exists == AI_SUCCESS) {
+					std::string norm_string(height.C_Str());
+					const int norm_spot = norm_string.find_last_of("norm");
+					if (norm_spot > -1) {
+						// Normal map confirmed to be in height map spot, move it over
+						normal = height;
+						normal_exists = AI_SUCCESS;
+						height_exists = AI_FAILURE;
+					}
+				}
+
+				data_container.materials.push_back(Material(
+					(albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
+					(normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
+					(metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
+					(roughness_exists == AI_SUCCESS ? roughness.C_Str() : templateTexture + "roughness" + extension),
+					(height_exists == AI_SUCCESS ? height.C_Str() : templateTexture + "height" + extension),
+					(ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
+				));
+			}
 	}
 
 	// Free Importer Resource

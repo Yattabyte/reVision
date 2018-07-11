@@ -45,51 +45,16 @@ inline void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & 
 * @param	engine			the engine being used
 * @param	modelMaterial	the material asset to load into
 * @param	sceneMaterial	the scene material to use as a guide */
-inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const aiMaterial * sceneMaterial)
+inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const Material & material)
 {
-	// Get the aiStrings for all the textures for a material
-	aiString	albedo, normal, metalness, roughness, height, ao;
-	aiReturn	albedo_exists = sceneMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
-				normal_exists = sceneMaterial->GetTexture(aiTextureType_NORMALS, 0, &normal),
-				metalness_exists = sceneMaterial->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
-				roughness_exists = sceneMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughness),
-				height_exists = sceneMaterial->GetTexture(aiTextureType_HEIGHT, 0, &height),
-				ao_exists = sceneMaterial->GetTexture(aiTextureType_AMBIENT, 0, &ao);
-
-	// Assuming the diffuse element exists, generate some fallback texture elements
-	std::string templateTexture, extension = ".png";
-	if (albedo_exists == AI_SUCCESS) {
-		std::string minusD = albedo.C_Str();
-		int exspot = minusD.find_last_of(".");
-		extension = minusD.substr(exspot, minusD.length());
-		int diffuseStart = minusD.find("diff");
-		if (diffuseStart > -1)
-			minusD = minusD.substr(0, diffuseStart);
-		else
-			minusD = minusD.substr(0, exspot) + "_";
-		templateTexture = minusD;
-	}
-
-	// Importer might not distinguish between height and normal maps
-	if (normal_exists != AI_SUCCESS && height_exists == AI_SUCCESS) {
-		std::string norm_string(height.C_Str());
-		const int norm_spot = norm_string.find_last_of("norm");
-		if (norm_spot > -1) {
-			// Normal map confirmed to be in height map spot, move it over
-			normal = height;
-			normal_exists = AI_SUCCESS;
-			height_exists = AI_FAILURE;
-		}
-	}
-
 	// Get texture names
 	std::string material_textures[6] = {
-		/*ALBEDO*/						DIRECTORY_MODEL_MAT_TEX + (albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
-		/*NORMAL*/						DIRECTORY_MODEL_MAT_TEX + (normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
-		/*METALNESS*/					DIRECTORY_MODEL_MAT_TEX + (metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
-		/*ROUGHNESS*/					DIRECTORY_MODEL_MAT_TEX + (roughness_exists == AI_SUCCESS ? roughness.C_Str() : templateTexture + "roughness" + extension),
-		/*HEIGHT*/						DIRECTORY_MODEL_MAT_TEX + (height_exists == AI_SUCCESS ? height.C_Str() : templateTexture + "height" + extension),
-		/*AO*/							DIRECTORY_MODEL_MAT_TEX + (ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
+		DIRECTORY_MODEL_MAT_TEX + material.albedo,
+		DIRECTORY_MODEL_MAT_TEX + material.normal,
+		DIRECTORY_MODEL_MAT_TEX + material.metalness,
+		DIRECTORY_MODEL_MAT_TEX + material.roughness,
+		DIRECTORY_MODEL_MAT_TEX + material.height,
+		DIRECTORY_MODEL_MAT_TEX + material.ao
 	};
 
 	engine->createAsset(modelMaterial, string(""), true, material_textures);
@@ -208,10 +173,10 @@ void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, co
 	calculate_AABB(userAsset->m_data.vs, userAsset->m_bboxMin, userAsset->m_bboxMax, userAsset->m_bboxCenter, userAsset->m_radius);
 
 	// Generate all the required skins
-	userAsset->m_skins.resize(max(1, (dataContainer.materials.size() - 1)));
-	if (dataContainer.materials.size() > 1)
-		for (int x = 1; x < dataContainer.materials.size(); ++x) // ignore scene material [0] 
-			generate_material(engine, userAsset->m_skins[x - 1], dataContainer.materials[x]);
+	userAsset->m_skins.resize(max(1, (dataContainer.materials.size())));
+	if (dataContainer.materials.size())
+		for (int x = 0; x < dataContainer.materials.size(); ++x)
+			generate_material(engine, userAsset->m_skins[x], dataContainer.materials[x]);
 	else
 		generate_material(engine, userAsset->m_skins[0], fullDirectory);
 }
