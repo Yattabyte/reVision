@@ -106,6 +106,9 @@ public:
 	 * @param	importedData	the container to place the imported data within
 	 * @return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine * engine, const string & fulldirectory, const unsigned int & importFlags, Model_Geometry & importedData);
+	/** Get the plugin version.
+	 * @return the plugin version */
+	static const string Get_Version();
 };
 
 #endif // MODEL_IO_H

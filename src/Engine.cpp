@@ -2,18 +2,21 @@
 #include "Systems\World\Camera.h"
 #include "Systems\System_Interface.h"
 #include <direct.h>
+#include <iostream>
 #include <string>
 
 // OpenGL Dependent Systems //
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 
+// Importers used //
+#include "Utilities\IO\Image_IO.h"
+#include "Utilities\IO\Model_IO.h"
+
 static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
 
 
-#include <iostream>
-#include <string>
 static void GLFW_Callback_Error(int error, const char * description)
 {
 	cout << string("Unhandled GLFW Error (" + to_string(error) + "): " + description);
@@ -46,16 +49,16 @@ bool Initialize_Sharing(Engine * engine)
 {
 	if (!m_Initialized_Sharing) {
 
+		engine->reportMessage("Starting Initialization...");
 		glfwSetErrorCallback(GLFW_Callback_Error);
 		if (!glfwInit()) {
 			glfwTerminate();
-			engine->reportError(MessageManager::OTHER_ERROR, "Unable to initialize!");
+			engine->reportError(MessageManager::OTHER_ERROR, "GLFW unable to initialize, shutting down...");
 			return false;
 		}
 
-		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-
 		// Create an invisible window for asset sharing
+		const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
 		glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 		glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
@@ -73,14 +76,27 @@ bool Initialize_Sharing(Engine * engine)
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 		m_Context_Sharing = glfwCreateWindow(512, 512, "", NULL, NULL);
 		glfwMakeContextCurrent(m_Context_Sharing);
-		glewExperimental = GL_TRUE;
-		glewInit();
+		glewExperimental = GL_TRUE;		
+		if (glewInit() != GLEW_OK) {
+			glfwTerminate();
+			engine->reportError(MessageManager::OTHER_ERROR, "GLEW unable to initialize, shutting down...");
+			return false;
+		}
+		engine->reportMessage("...success!\n");
 
+		engine->reportMessage("**************************************************");
 		engine->reportMessage("Engine Version: " + string(ENGINE_VERSION));
-		engine->reportMessage("Using OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-		engine->reportMessage("Using GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+		engine->reportMessage("ASSIMP Version: " + Model_IO::Get_Version());
+		engine->reportMessage("Bullet Version: N/A");
+		engine->reportMessage("FreeImage Version: " + Image_IO::Get_Version());
+		engine->reportMessage("GLEW Version: " + string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+		engine->reportMessage("GLFW Version: " + string(glfwGetVersionString()));
+		engine->reportMessage("GLM Version: " + to_string(GLM_VERSION_MAJOR) + "." + to_string(GLM_VERSION_MINOR) + "." + to_string(GLM_VERSION_PATCH) + "." + to_string(GLM_VERSION_REVISION));
+		engine->reportMessage("OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+		engine->reportMessage("GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
 		engine->reportMessage("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
 		engine->reportMessage("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+		engine->reportMessage("**************************************************");
 		
 		m_Initialized_Sharing = true;
 	}

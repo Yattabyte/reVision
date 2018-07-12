@@ -95,3 +95,8 @@ void Image_IO::Resize_Image(const ivec2 newSize, Image_Data & importedData)
 			FreeImage_Unload(bitmap);
 		}
 }
+
+const string Image_IO::Get_Version()
+{
+	return string(FreeImage_GetVersion());
+}

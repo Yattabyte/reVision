@@ -3,6 +3,7 @@
 #include "assimp\Importer.hpp"
 #include "assimp\postprocess.h"
 #include "assimp\scene.h"
+#include "assimp\version.h"
 #include <shared_mutex>
 #include <minmax.h>
 
@@ -251,6 +252,11 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);
 	return true;
+}
+
+const string Model_IO::Get_Version()
+{
+	return to_string(aiGetVersionMajor()) + "." + to_string(aiGetVersionMinor()) + "." + to_string(aiGetVersionRevision());
 }
 
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))

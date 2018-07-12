@@ -39,6 +39,9 @@ public:
  	 * @param	newSize			the desired image size
 	 * @param	importedData	the container holding the image data (gets updated with new data) */
 	static void Resize_Image(const ivec2 newSize, Image_Data & importedData);
+	/** Get the plugin version.
+	 * @return the plugin version */
+	static const string Get_Version();
 
 
 private:
