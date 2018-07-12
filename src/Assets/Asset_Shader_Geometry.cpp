@@ -1,19 +1,20 @@
-#include "Assets\Asset_Shader.h"
+#include "Assets\Asset_Shader_Geometry.h"
 #include "Assets\Asset_Shader_Pkg.h"
 #include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 #define EXT_SHADER_VERTEX ".vsh"
 #define EXT_SHADER_FRAGMENT ".fsh"
+#define EXT_SHADER_GEOMETRY ".gsh"
 #define DIRECTORY_SHADER Engine::Get_Current_Dir() + "\\Shaders\\"
 
 
 /** Parse the shader, looking for any directives that require us to modify the document.
  * @param	engine			the engine being used
  * @param	userAsset		the asset we are loading from */
-inline void parse(Engine * engine, Shared_Asset_Shader & userAsset)
+inline void parse(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
-	string *text[2] = { &userAsset->m_vertexText, &userAsset->m_fragmentText };
-	for (int x = 0; x < 2; ++x) {
+	string *text[3] = { &userAsset->m_vertexText, &userAsset->m_fragmentText, &userAsset->m_geometryText };
+	for (int x = 0; x < 3; ++x) {
 		if (*text[x] == "") continue;
 		string input = *text[x];
 		// Find Package to include
@@ -64,15 +65,16 @@ inline void compile_single_shader(Engine * engine, const string & filename, GLui
 /** Compile all the shaders representing a shader program.
  * @param	engine		the engine to be used
  * @param	userAsset	the shader asset to compile */
-inline void compile(Engine * engine, Shared_Asset_Shader & userAsset)
+inline void compile(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
 	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glVertexID, userAsset->m_vertexText.c_str(), GL_VERTEX_SHADER);
 	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glFragmentID, userAsset->m_fragmentText.c_str(), GL_FRAGMENT_SHADER);
+	compile_single_shader(engine, userAsset->getFileName(), userAsset->m_glGeometryID, userAsset->m_geometryText.c_str(), GL_GEOMETRY_SHADER);
 }
 
 /** Generate the shader program.
  * @param	userAsset	the shader asset to generate for */
-void generate_program(Shared_Asset_Shader & userAsset)
+void generate_program(Shared_Asset_Shader_Geometry & userAsset)
 {
 	userAsset->m_glProgramID = glCreateProgram();
 
@@ -80,12 +82,14 @@ void generate_program(Shared_Asset_Shader & userAsset)
 		glAttachShader(userAsset->m_glProgramID, userAsset->m_glVertexID);
 	if (userAsset->m_glFragmentID != 0)
 		glAttachShader(userAsset->m_glProgramID, userAsset->m_glFragmentID);
+	if (userAsset->m_glGeometryID != 0)
+		glAttachShader(userAsset->m_glProgramID, userAsset->m_glGeometryID);
 }
 
 /** Link the shader program.
  * @param	engine		the engine to be used
  * @param	userAsset	the shader asset to link for */
-inline void link_program(Engine * engine, Shared_Asset_Shader & userAsset)
+inline void link_program(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
 	// Link and validate, retrieve any errors
 	glLinkProgram(userAsset->m_glProgramID);
@@ -103,24 +107,28 @@ inline void link_program(Engine * engine, Shared_Asset_Shader & userAsset)
 		glDeleteShader(userAsset->m_glVertexID);
 	if (userAsset->m_glFragmentID != 0)
 		glDeleteShader(userAsset->m_glFragmentID);
+	if (userAsset->m_glGeometryID != 0)
+		glDeleteShader(userAsset->m_glGeometryID);
 }
 
-Asset_Shader::~Asset_Shader()
+Asset_Shader_Geometry::~Asset_Shader_Geometry()
 {
 	if (existsYet()) 
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader::Asset_Shader(const string & filename) : Asset(filename)
+Asset_Shader_Geometry::Asset_Shader_Geometry(const string & filename) : Asset_Shader(filename)
 {
 	m_glProgramID = 0;
 	m_glVertexID = 0;
 	m_glFragmentID = 0;
+	m_glGeometryID = 0;
 	m_vertexText = "";
 	m_fragmentText = "";
+	m_geometryText = "";
 }
 
-void Asset_Shader::CreateDefault(Engine * engine, Shared_Asset_Shader & userAsset)
+void Asset_Shader_Geometry::CreateDefault(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -142,7 +150,7 @@ void Asset_Shader::CreateDefault(Engine * engine, Shared_Asset_Shader & userAsse
 }
 
 
-void Asset_Shader::Create(Engine * engine, Shared_Asset_Shader & userAsset, const string & filename, const bool & threaded)
+void Asset_Shader_Geometry::Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -174,11 +182,12 @@ void Asset_Shader::Create(Engine * engine, Shared_Asset_Shader & userAsset, cons
 	);
 }
 
-void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const string & fullDirectory)
+void Asset_Shader_Geometry::Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & fullDirectory)
 {
 	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
 	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, userAsset->m_vertexText);
 	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, userAsset->m_fragmentText);
+	const bool found_geometry = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_GEOMETRY, userAsset->m_geometryText);
 	write_guard.unlock();
 	write_guard.release();
 
@@ -191,7 +200,7 @@ void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, 
 	parse(engine, userAsset);
 }
 
-void Asset_Shader::Finalize(Engine * engine, Shared_Asset_Shader & userAsset)
+void Asset_Shader_Geometry::Finalize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
 	AssetManager & assetManager = engine->getAssetManager();	
 	userAsset->finalize();
@@ -210,15 +219,4 @@ void Asset_Shader::Finalize(Engine * engine, Shared_Asset_Shader & userAsset)
 		for each (auto qwe in userAsset->m_callbacks)
 			assetManager.submitNotifyee(qwe.second); 
 	}
-}
-
-void Asset_Shader::bind()
-{
-	shared_lock<shared_mutex> read_guard(m_mutex);
-	glUseProgram(m_glProgramID);
-}
-
-void Asset_Shader::Release()
-{
-	glUseProgram(0);
 }

@@ -10,6 +10,7 @@
 #include "Assets/Asset_Model.h"
 #include "Assets/Asset_Primitive.h"
 #include "Assets/Asset_Shader.h"
+#include "Assets\Asset_Shader_Geometry.h"
 #include "Assets/Asset_Shader_Pkg.h"
 #include "Assets/Asset_Texture.h"
 /** End Asset Includes **/
@@ -43,6 +44,7 @@ AssetManager::AssetManager(Engine * engine) : m_engine(engine)
 	registerAssetCreator(typeid(Shared_Asset_Model).name(), function<void(Engine*, Shared_Asset_Model&, const string&, const bool &)>(Asset_Model::Create));
 	registerAssetCreator(typeid(Shared_Asset_Primitive).name(), function<void(Engine*, Shared_Asset_Primitive&, const string&, const bool &)>(Asset_Primitive::Create));
 	registerAssetCreator(typeid(Shared_Asset_Shader).name(), function<void(Engine*, Shared_Asset_Shader&, const string&, const bool &)>(Asset_Shader::Create));
+	registerAssetCreator(typeid(Shared_Asset_Shader_Geometry).name(), function<void(Engine*, Shared_Asset_Shader_Geometry&, const string&, const bool &)>(Asset_Shader_Geometry::Create));
 	registerAssetCreator(typeid(Shared_Asset_Shader_Pkg).name(), function<void(Engine*, Shared_Asset_Shader_Pkg&, const string&, const bool &)>(Asset_Shader_Pkg::Create));
 	registerAssetCreator(typeid(Shared_Asset_Texture).name(), function<void(Engine*, Shared_Asset_Texture&, const string&, const GLuint &, const bool &, const bool &, const bool &)>(Asset_Texture::Create));
 	

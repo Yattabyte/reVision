@@ -124,19 +124,20 @@ public:
 	static void Change_Uniform_Array(const GLuint & i, const vec4 * o, const int & size) { glUniform4fv(i, size, glm::value_ptr(*o)); }
 	static void Change_Uniform_Array(const GLuint & i, const mat4 * o, const int & size) { glUniformMatrix4fv(i, size, GL_FALSE, glm::value_ptr(*o)); }
 	static void Change_Uniform_Mat_Array(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glUniformMatrix4fv(i, size, transpose, o); }
-
 	
+
 	// Public Attributes
-	GLuint m_glProgramID, m_glVertexID, m_glFragmentID, m_glGeometryID; // OpenGL ID's
-	string m_vertexText, m_fragmentText, m_geometryText; // Text Data
+	GLuint m_glProgramID, m_glVertexID, m_glFragmentID; // OpenGL ID's
+	string m_vertexText, m_fragmentText; // Text Data
 
 
-private:
-	// Private Constructors
+protected:
+	// Protected Constructors
 	/** Construct the Shader. */
 	Asset_Shader(const string & filename);
 
 
+private:
 	// Private Methods
 	/** Initializes the asset. */
 	static void Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const string & fullDirectory);
