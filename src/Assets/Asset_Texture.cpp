@@ -6,7 +6,6 @@
 #define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
 
-
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet())

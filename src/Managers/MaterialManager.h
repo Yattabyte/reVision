@@ -10,8 +10,8 @@
 #include <vector>
 #include <shared_mutex>
 
-using namespace std;
 
+using namespace std;
 
 /**
  * Manages the creation and storage of materials, and to a lesser degree their destruction. * 

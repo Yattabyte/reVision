@@ -7,9 +7,9 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
+
 class VisualFX;
 class Engine;
-
 
 /**
  * A specialized framebuffer that accumulates surface attributes of all rendered objects for a single frame.

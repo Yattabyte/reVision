@@ -8,8 +8,8 @@
 #include "Systems\World\ECS\Entity_Factory.h"
 #include "Systems\World\ECS\Component_Factory.h"
 
-class Engine;
 
+class Engine;
 
 /**
  * An engine system representing a world / level state.

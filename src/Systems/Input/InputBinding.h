@@ -7,8 +7,8 @@
 #include "Systems\Input\ActionState.h"
 #include <string>
 
-class Engine;
 
+class Engine;
 
 /**
  * Responsible for loading a particular key-binding configuration

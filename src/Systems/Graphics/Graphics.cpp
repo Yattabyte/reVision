@@ -12,18 +12,18 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\DS_Lighting.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\GlobalIllumination_RH.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections.h"
-#include "Systems\Graphics\FX Techniques\Bloom_Tech.h"
-#include "Systems\Graphics\FX Techniques\HDR_Tech.h"
-#include "Systems\Graphics\FX Techniques\FXAA_Tech.h"
+#include "Systems\Graphics\Resources\FX Techniques\Bloom_Tech.h"
+#include "Systems\Graphics\Resources\FX Techniques\HDR_Tech.h"
+#include "Systems\Graphics\Resources\FX Techniques\FXAA_Tech.h"
 // End includes for specific techniques
 
 // Begin includes for specific lighting techniques
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional_Cheap.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot_Cheap.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point_Cheap.h"
+#include "Systems\Graphics\Resources\Lights\Directional.h"
+#include "Systems\Graphics\Resources\Lights\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lights\Spot.h"
+#include "Systems\Graphics\Resources\Lights\Spot_Cheap.h"
+#include "Systems\Graphics\Resources\Lights\Point.h"
+#include "Systems\Graphics\Resources\Lights\Point_Cheap.h"
 // End includes for specific lighting techniques
 
 

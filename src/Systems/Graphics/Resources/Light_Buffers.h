@@ -5,7 +5,9 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\GL\VectorBuffer.h"
 
-class Light_Buffers {
+
+class Light_Buffers 
+{
 public:
 	// Constructors
 	~Light_Buffers()						{};

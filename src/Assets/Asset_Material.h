@@ -8,11 +8,11 @@
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
+
 using namespace glm;
 class Engine;
 class Asset_Material;
 typedef shared_ptr<Asset_Material> Shared_Asset_Material;
-
 
 /**
  * A collection of texture surfaces that are used together to approximate a real surface.

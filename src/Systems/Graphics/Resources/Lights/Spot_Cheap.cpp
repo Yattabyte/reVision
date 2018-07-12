@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot_Cheap.h"
+#include "Systems\Graphics\Resources\Lights\Spot_Cheap.h"
 #include "Engine.h"
 
 

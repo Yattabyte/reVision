@@ -8,9 +8,9 @@
 #include "Assets\Asset_Cubemap.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 class Lighting_FBO;
 class Engine;
-
 
 /**
  * A lighting technique that applies a screen space skybox effect.

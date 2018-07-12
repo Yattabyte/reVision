@@ -5,6 +5,7 @@
 #include "GL\glew.h"
 #include "Systems\World\Visibility_Token.h"
 
+
 /**
  * An interface for specific reflection techniques.
  **/

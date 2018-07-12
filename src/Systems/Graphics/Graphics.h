@@ -8,8 +8,8 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Reflection_FBO.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Geometry_Technique.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Lighting_Technique.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Light_Tech.h"
-#include "Systems\Graphics\FX Techniques\FX_Technique.h"
+#include "Systems\Graphics\Resources\Lights\Light_Tech.h"
+#include "Systems\Graphics\Resources\FX Techniques\FX_Technique.h"
 #include "Systems\Graphics\Resources\Light_Buffers.h"
 #include "Systems\Graphics\Resources\Geometry_Buffers.h"
 #include "Systems\Graphics\Resources\VisualFX.h"
@@ -19,9 +19,9 @@
 #include "Utilities\MappedChar.h"
 #include <vector>
 
+
 class Engine;
 class Camera;
-
 
 /**
  * An engine system responsible for rendering. Creates Geometry_FBO, Lighting_FBO, and VisualFX

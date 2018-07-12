@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional_Cheap.h"
+#include "Systems\Graphics\Resources\Lights\Directional_Cheap.h"
 #include "Engine.h"
 
 

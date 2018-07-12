@@ -6,9 +6,9 @@
 #include "Utilities\MappedChar.h"
 #include <deque>
 
+
 using namespace std;
 class Component_Factory;
-
 
 /**
  * A utility that handles the creation and storage of all level entities

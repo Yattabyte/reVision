@@ -12,11 +12,11 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\Transform.h"
 
+
 using namespace glm;
 class Directional_Tech;
 class Light_Directional_Creator;
 class Engine;
-
 
 /**
  * A renderable light component that mimics the sun.

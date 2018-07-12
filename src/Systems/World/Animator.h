@@ -2,8 +2,8 @@
 #ifndef ANIMATOR_H
 #define ANIMATOR_H
 
-class System_World;
 
+class System_World;
 
 /**
  * A utility that controls animation-supporting objects.

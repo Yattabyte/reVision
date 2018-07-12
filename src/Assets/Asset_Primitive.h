@@ -7,11 +7,11 @@
 #include "GLM\common.hpp"
 #include <vector>
 
+
 using namespace glm; 
 class Engine;
 class Asset_Primitive;
 typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
-
 
 /**
  * A basic geometric shape to be used in basic visual processing, such as a quad or a sphere.

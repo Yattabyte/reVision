@@ -8,10 +8,10 @@
 #include <utility>
 #include <functional>
 
+
 using namespace glm;
 class ComponentCreator;
 class Engine;
-
 
 /**
  * A base class which is extend-able to create a specific component type.

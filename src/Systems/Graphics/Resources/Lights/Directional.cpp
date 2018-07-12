@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
+#include "Systems\Graphics\Resources\Lights\Directional.h"
 #include "Engine.h"
 #include <minmax.h>
 

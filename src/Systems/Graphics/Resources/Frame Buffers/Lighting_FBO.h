@@ -4,10 +4,10 @@
 
 #include "Utilities\GL\FrameBuffer.h"
 
+
 using namespace glm;
 class Engine;
 class VisualFX;
-
 
 /**
  * A specialized framebuffer that accumulates lighting information for a single frame.

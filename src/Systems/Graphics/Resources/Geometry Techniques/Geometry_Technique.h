@@ -4,8 +4,8 @@
 
 #include "Systems\World\Visibility_Token.h"
 
-class Camera;
 
+class Camera;
 
 /**
  * A base class for geometry rendering techniques

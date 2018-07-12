@@ -10,10 +10,10 @@
 #include <shared_mutex>
 #include <vector>
 
+
 using namespace std;
 using namespace glm;
 struct GeometryInfo;
-
 
 /**
  * A single storage point for all model geometry. Maintains a single vertex array object.

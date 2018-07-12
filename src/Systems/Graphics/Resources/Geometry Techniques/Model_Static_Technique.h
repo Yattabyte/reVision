@@ -8,9 +8,9 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 
+
 class Geometry_FBO; 
 class Camera;
-
 
 /**
  * Renders static models

@@ -7,8 +7,8 @@
 #include <utility>
 #include <memory>
 
-using namespace std;
 
+using namespace std;
 
 /** Payload concept/interface. */
 struct Command_Base {

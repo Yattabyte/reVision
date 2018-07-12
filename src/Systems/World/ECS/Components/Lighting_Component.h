@@ -6,9 +6,9 @@
 #include "Systems\World\Visibility_Token.h"
 #include "glm\glm.hpp"
 
+
 using namespace glm;
 class VB_Ptr;
-
 
 /**
  * An interface for lighting related components.

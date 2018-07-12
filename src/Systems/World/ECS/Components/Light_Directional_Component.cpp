@@ -4,7 +4,7 @@
 #include "Systems\World\World.h"
 #include "Engine.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Directional.h"
+#include "Systems\Graphics\Resources\Lights\Directional.h"
 #include "GLFW\glfw3.h"
 
 

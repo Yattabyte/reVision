@@ -9,10 +9,10 @@
 #include <string>
 #include <vector>
 
+
 using namespace std;
 using namespace glm;
 class Engine;
-
 
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];

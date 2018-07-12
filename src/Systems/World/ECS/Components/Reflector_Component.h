@@ -10,9 +10,9 @@
 #include "Utilities\Transform.h"
 #include "GL\glew.h"
 
+
 class Reflector_Creator;
 class Engine;
-
 
 /**
  * An object that records the world around it and uses it to project reflections.

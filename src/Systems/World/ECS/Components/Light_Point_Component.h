@@ -11,12 +11,12 @@
 #include "Systems\World\Camera.h"
 #include "Utilities\Transform.h"
 
+
 using namespace glm;
 class Point_Tech;
 class System_World;
 class Light_Point_Creator;
 class Engine;
-
 
 /**
  * A renderable light component that mimics a light-bulb.

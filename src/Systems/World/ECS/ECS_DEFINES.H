@@ -6,6 +6,7 @@
 #include <map>
 #include <vector>
 
+
 using namespace glm;
 
 static enum ECS_MESSAGE_COMMAND_TYPES {
@@ -24,7 +25,6 @@ static enum ECS_MESSAGE_COMMAND_TYPES {
 	// Reflectors
 	SET_REFLECTOR_RADIUS,
 };
-
 
 /** A means for sharing camera data with both the program and the GPU in one data structure. */
 struct Camera_Buffer {

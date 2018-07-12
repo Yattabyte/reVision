@@ -2,9 +2,9 @@
 #ifndef STATICBUFFER_H
 #define STATICBUFFER_H
 
+
 #include "GL\glew.h"
 #include <utility>
-
 
 class StaticBuffer
 {

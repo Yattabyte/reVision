@@ -9,8 +9,8 @@
 #include "glm\gtx\quaternion.hpp"
 #include "glm\gtc\matrix_access.hpp"
 
-using namespace glm;
 
+using namespace glm;
 
 /**
  * A 3D transformation object. 

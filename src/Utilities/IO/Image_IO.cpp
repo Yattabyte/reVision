@@ -2,6 +2,7 @@
 #include "Engine.h"
 #include "FreeImage.h"
 
+
 GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size) 
 {
 	GLubyte * newPixels = new GLubyte[size * 4];

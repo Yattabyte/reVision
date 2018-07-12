@@ -7,12 +7,12 @@
 #include "GL\glew.h"
 #include <string>
 
+
 using namespace glm;
 using namespace std;
 class Engine;
 class Asset_Shader_Pkg;
 typedef shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
-
 
 /**
  * An accessory asset for shaders that stores code blocks for other shaders to use.

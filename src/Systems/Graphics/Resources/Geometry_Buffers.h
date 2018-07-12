@@ -5,6 +5,7 @@
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\GL\VectorBuffer.h"
 
+
 class Geometry_Buffers {
 public:
 	// Constructors

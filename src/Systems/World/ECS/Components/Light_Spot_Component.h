@@ -11,12 +11,12 @@
 #include "Systems\World\Camera.h"
 #include "Utilities\Transform.h"
 
+
 using namespace glm;
 class Spot_Tech;
 class System_World;
 class Light_Spot_Creator;
 class Engine;
-
 
 /**
  * A renderable light component that mimics a flashlight.

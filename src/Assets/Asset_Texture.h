@@ -6,11 +6,11 @@
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
+
 using namespace glm;
 class Engine;
 class Asset_Texture;
 typedef shared_ptr<Asset_Texture> Shared_Asset_Texture;
-
 
 /**
  * An encapsulation of an OpenGL texture object.\n

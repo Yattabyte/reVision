@@ -5,11 +5,11 @@
 #include "GL/glew.h"
 #include <string>
 
+
 using namespace std;
 using namespace glm;
 class Engine;
 class FIBITMAP;
-
 
 struct Image_Data {
 	GLubyte * pixelData = nullptr;

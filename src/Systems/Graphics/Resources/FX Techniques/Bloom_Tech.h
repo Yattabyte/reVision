@@ -2,15 +2,15 @@
 #ifndef BLOOM_TECHNIQUE_H
 #define BLOOM_TECHNIQUE_H
 
-#include "Systems\Graphics\FX Techniques\FX_Technique.h"
+#include "Systems\Graphics\Resources\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 class Engine;
 class Lighting_FBO;
 class VisualFX;
-
 
 /**
  * A post processing technique for generating bloom from a lighting buffer.

@@ -9,12 +9,12 @@
 #include "GLM\gtc\type_ptr.hpp"
 #include <string>
 
+
 using namespace glm;
 using namespace std;
 class Engine;
 class Asset_Shader_Geometry;
 typedef shared_ptr<Asset_Shader_Geometry> Shared_Asset_Shader_Geometry;
-
 
 /**
  * An encapsulation of an OpenGL shader program.\n

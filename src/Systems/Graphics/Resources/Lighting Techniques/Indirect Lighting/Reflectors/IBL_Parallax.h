@@ -7,10 +7,10 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 using namespace glm;
 class Engine;
 class Reflector_Component;
-
 
 /**
  * A reflection technique that uses run-time generated cubemaps, applied in real-time

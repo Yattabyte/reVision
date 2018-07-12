@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.185";
+constexpr char ENGINE_VERSION[]	= "0.186";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
@@ -20,11 +20,11 @@ constexpr char ENGINE_VERSION[]	= "0.185";
 #include <thread>
 #include <vector>
 
+
 using namespace std;
 class GLFWwindow;
 class Camera;
 class System;
-
 
 /**
  * The main game engine object. Encapsulates the entire engine state.

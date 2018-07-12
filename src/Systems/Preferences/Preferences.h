@@ -5,8 +5,8 @@
 #include "Systems\System_Interface.h"
 #include <string>
 
-class Engine;
 
+class Engine;
 
 /**
  * An engine system that loads and updates preference state.

@@ -5,8 +5,8 @@
 
 #include "Utilities\GL\FrameBuffer.h"
 
-class Engine;
 
+class Engine;
 
 /**
  * A specialized framebuffer that accumulates lighting information for a single frame.

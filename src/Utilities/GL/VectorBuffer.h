@@ -5,6 +5,7 @@
 #include "GL\glew.h"
 #include <utility>
 
+
 struct VB_Ptr {
 	void * pointer;
 };

@@ -6,11 +6,11 @@
 #include "GL\glew.h"
 #include "GLM\common.hpp"
 
+
 using namespace glm;
 class Engine;
 class Asset_Cubemap;
 typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
-
 
 /**
  * Represents an OpenGL cubemap texture object.

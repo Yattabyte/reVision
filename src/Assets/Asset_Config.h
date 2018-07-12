@@ -7,10 +7,10 @@
 #include <map>
 #include <vector>
 
+
 class Engine;
 class Asset_Config;
 typedef shared_ptr<Asset_Config> Shared_Asset_Config;
-
 
 /**
  * A registry for configuration name-value pairs.

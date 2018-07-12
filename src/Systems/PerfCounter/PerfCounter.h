@@ -8,8 +8,8 @@
 #include "Assets\Asset_Shader.h"
 #include "Utilities\GL\StaticBuffer.h"
 
-class Engine;
 
+class Engine;
 
 /**
  * A performance counter

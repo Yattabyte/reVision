@@ -8,9 +8,9 @@
 #include "Assets\Asset_Cubemap.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 using namespace glm;
 class Engine;
-
 
 /**
  * A reflection technique that uses the user's viewport to generate reflections

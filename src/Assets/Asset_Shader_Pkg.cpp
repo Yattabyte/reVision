@@ -5,6 +5,7 @@
 #define EXT_PACKAGE ".pkg"
 #define DIRECTORY_SHADER_PKG Engine::Get_Current_Dir() + "\\Shaders\\"
 
+
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
  * @param	engine			the engine being used
  * @param	userAsset		the asset we are loading from */

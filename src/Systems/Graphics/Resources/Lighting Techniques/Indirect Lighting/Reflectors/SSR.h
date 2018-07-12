@@ -7,12 +7,12 @@
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 using namespace glm;
 class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
-
 
 /**
  * A reflection technique that uses the skybox to generate reflections

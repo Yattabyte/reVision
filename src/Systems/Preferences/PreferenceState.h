@@ -9,9 +9,9 @@
 #include <vector>
 #include <utility>
 
+
 using namespace std;
 class Engine;
-
 
 /**
  * A container class that holds the preference state for the engine, such as window size and graphics options.

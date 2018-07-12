@@ -11,6 +11,7 @@
 #include "glm\gtc\quaternion.hpp"
 #include <shared_mutex>
 
+
 using namespace std;
 
 struct Camera_VisBuffers {

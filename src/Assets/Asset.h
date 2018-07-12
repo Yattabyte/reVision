@@ -10,10 +10,10 @@
 #include <map>
 #include <utility>
 
+
 using namespace std;
 class Asset;
 typedef shared_ptr<Asset> Shared_Asset;
-
 
 /**
  * An abstract base-class for assets.

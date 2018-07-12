@@ -10,11 +10,11 @@
 #include "Assets\Asset_Texture.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 class Geometry_FBO;
 class Lighting_FBO;
 class Reflection_FBO;
 class Reflection_UBO;
-
 
 /**
  * Performs a reflection pass using the screen as input - using the screen space reflection technique.

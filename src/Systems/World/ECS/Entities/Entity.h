@@ -8,6 +8,7 @@
 #include "GL\glew.h"
 #include <functional>
 
+
 class Component_Factory;
 class EntityCreator;
 class Component;

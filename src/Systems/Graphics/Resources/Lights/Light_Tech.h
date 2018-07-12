@@ -7,9 +7,9 @@
 #include "Systems\World\ECS\Components\Lighting_Component.h"
 #include <vector>
 
+
 using namespace std;
 using namespace glm;
-
 
 /**
  * An interface for specific deferred shading lighting techniques.

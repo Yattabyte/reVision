@@ -2,14 +2,14 @@
 #ifndef FXAA_TECHNIQUE_H
 #define FXAA_TECHNIQUE_H
 
-#include "Systems\Graphics\FX Techniques\FX_Technique.h"
+#include "Systems\Graphics\Resources\FX Techniques\FX_Technique.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 using namespace glm;
 class Engine;
-
 
 /**
  * A post-processing technique for applying fxaa to the currently bound 2D image.

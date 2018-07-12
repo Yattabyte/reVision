@@ -6,8 +6,8 @@
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 
-using namespace glm;
 
+using namespace glm;
 
 /**
  * An encapsulation of an OpenGL framebuffer.

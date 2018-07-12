@@ -5,9 +5,9 @@
 #include "Systems\System_Interface.h"
 #include "Systems\Input\InputBinding.h"
 
+
 class Engine;
 class GLFWwindow;
-
 
 /**
  * An engine system responsible for receiving user input from various peripheral devices, and converting it into standardized engine inputs.

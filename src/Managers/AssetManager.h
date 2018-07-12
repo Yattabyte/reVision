@@ -9,9 +9,8 @@
 #include <shared_mutex>
 #include <thread>
 
+
 constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8;
-
-
 class Engine;
 
 /** Base class that represents a function, but does nothing else */

@@ -6,8 +6,8 @@
 #include <shared_mutex>
 #include <deque>
 
-using namespace std;
 
+using namespace std;
 
 /**
  * Provides some message reporting functionality for the engine.

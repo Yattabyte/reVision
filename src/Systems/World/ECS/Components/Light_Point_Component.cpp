@@ -3,7 +3,7 @@
 #include "Systems\World\World.h"
 #include "Systems\World\ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Point.h"
+#include "Systems\Graphics\Resources\Lights\Point.h"
 #include "Engine.h"
 #include "GLFW\glfw3.h"
 #include <math.h>

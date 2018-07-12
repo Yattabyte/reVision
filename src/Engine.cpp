@@ -13,9 +13,9 @@
 #include "Utilities\IO\Image_IO.h"
 #include "Utilities\IO\Model_IO.h"
 
+
 static bool				m_Initialized_Sharing = false;
 static GLFWwindow	*	m_Context_Sharing = nullptr;
-
 
 static void GLFW_Callback_Error(int error, const char * description)
 {

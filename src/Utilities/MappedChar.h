@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-using namespace std;
 
+using namespace std;
 
 /**
  * A std::map that uses a constant char array as the keys, and stores values of type <T>.\n

@@ -4,8 +4,8 @@
 
 #include <vector>
 
-using namespace std;
 
+using namespace std;
 
 /**
  * A list which provides automatic insertion sort functionality.

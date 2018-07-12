@@ -9,9 +9,9 @@
 #include "glm\glm.hpp"
 #include "Utilities\GL\StaticBuffer.h"
 
+
 using namespace glm;
 class Engine;
-
 
 /**
  * A utility class that applies graphical effects/filters to images, such as Gaussian blur.

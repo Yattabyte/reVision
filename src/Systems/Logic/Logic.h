@@ -5,8 +5,8 @@
 #include "Systems\System_Interface.h"
 #include "Utilities\Transform.h"
 
-class Engine;
 
+class Engine;
 
 /**
  * An engine system that controls updating game-state every tick

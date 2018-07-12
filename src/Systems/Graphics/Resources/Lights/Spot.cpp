@@ -1,4 +1,4 @@
-#include "Systems\Graphics\Resources\Lighting Techniques\Direct Lighting\Lights\Spot.h"
+#include "Systems\Graphics\Resources\Lights\Spot.h"
 #include "Systems\World\World.h"
 #include "Engine.h"
 #include <minmax.h>

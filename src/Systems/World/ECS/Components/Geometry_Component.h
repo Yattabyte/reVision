@@ -5,8 +5,8 @@
 #include "Systems\World\ECS\Components\Component.h"
 #include "glm\glm.hpp"
 
-using namespace glm;
 
+using namespace glm;
 
 /**
  * An interface for renderable components with a 3D mesh to implement.

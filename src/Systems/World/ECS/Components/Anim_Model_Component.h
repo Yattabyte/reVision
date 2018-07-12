@@ -10,9 +10,9 @@
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
 
+
 using namespace glm;
 class Anim_Model_Creator;
-
 
 /**
  * A renderable model component that supports animation.

@@ -4,10 +4,10 @@
 #include "Assets\Asset.h"
 #include <btBulletDynamicsCommon.h>
 
+
 class Engine;
 class Asset_Collider;
 typedef shared_ptr<Asset_Collider> Shared_Asset_Collider;
-
 
 /** 
  * A 3D mesh tuned for use in physics simulations instead of rendering.

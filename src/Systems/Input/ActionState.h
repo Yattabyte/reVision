@@ -5,8 +5,8 @@
 #include <map>
 #include <vector>
 
-using namespace std;
 
+using namespace std;
 
 /**
  * A container class that holds the action state for the engine, such as forward/back/left/right and amount
