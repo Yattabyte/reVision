@@ -10,7 +10,6 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 
-using namespace glm;
 class Engine;
 
 /**
@@ -36,14 +35,14 @@ public:
 	 * @param	flipTextures	array of 2 other textures to ping-pong the effect between
 	 * @param	size			the size of the textures provided (must all be the same)
 	 * @param	amount			the intensity (number of passes to perform) */
-	void applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const vec2 & size, const int & amount);
+	void applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const glm::vec2 & size, const int & amount);
 	/** applyGaussianBlur_Alpha to the alpha channel of the desired texture.
 	 * @note					requires two other textures to flip between to apply the filter
 	 * @param	desiredTexture	ID of the texture to filter
 	 * @param	flipTextures	array of 2 other textures to ping-pong the effect between
 	 * @param	size			the size of the textures provided (must all be the same)
 	 * @param	amount			the intensity (number of passes to perform) */
-	void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint * flipTextures, const vec2 & size, const int & amount);
+	void applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint * flipTextures, const glm::vec2 & size, const int & amount);
 	//void applyCubeFilter(const GLuint &sourceTexture, const GLuint & destinationTexture, const float &size);
 
 

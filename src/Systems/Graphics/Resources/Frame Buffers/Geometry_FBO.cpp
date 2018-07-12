@@ -46,8 +46,8 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 		m_visualFX = visualFX;
 
 		// Asset Loading
-		m_engine->createAsset(m_shaderSSAO, string("FX\\SSAO"), true);
-		m_engine->createAsset(m_shapeQuad, string("quad"), true);
+		m_engine->createAsset(m_shaderSSAO, std::string("FX\\SSAO"), true);
+		m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 		// Primitive Construction
 		m_quadVAOLoaded = false;
@@ -61,8 +61,8 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 		});
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 
 		// GL Loading
 		initialize_noise();
@@ -98,7 +98,7 @@ void Geometry_FBO::initialize_noise()
 		// Prepare the noise texture and kernal	
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 		std::default_random_engine generator;
-		vec3 noiseArray[16];
+		glm::vec3 noiseArray[16];
 		for (GLuint i = 0; i < 16; i++) {
 			glm::vec3 noise( randomFloats(generator) * 2.0 - 1.0, randomFloats(generator) * 2.0 - 1.0, 0.0f);
 			noiseArray[i] = (noise);
@@ -136,7 +136,7 @@ void Geometry_FBO::bindForReading()
 	glBindTextureUnit(3, m_depth_stencil);
 }
 
-void Geometry_FBO::resize(const ivec2 & size)
+void Geometry_FBO::resize(const glm::ivec2 & size)
 {
 	FrameBuffer::resize(size);
 

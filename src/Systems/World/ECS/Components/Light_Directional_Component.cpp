@@ -20,7 +20,7 @@ Light_Directional_Component::Light_Directional_Component(Engine *engine)
 	m_engine = engine;
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
-	m_mMatrix = mat4(1.0f);
+	m_mMatrix = glm::mat4(1.0f);
 
 	float near_plane = -0.1f;
 	float far_plane = - m_engine->getPreference(PreferenceState::C_DRAW_DISTANCE);
@@ -45,7 +45,7 @@ Light_Directional_Component::Light_Directional_Component(Engine *engine)
 		
 	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
-		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
 	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
 		if (payload.isType<float>()) setIntensity(payload.toType<float>());
@@ -55,7 +55,7 @@ Light_Directional_Component::Light_Directional_Component(Engine *engine)
 	};
 }
 
-void Light_Directional_Component::setColor(const vec3 & color)
+void Light_Directional_Component::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
@@ -67,13 +67,13 @@ void Light_Directional_Component::setIntensity(const float & intensity)
 
 void Light_Directional_Component::setTransform(const Transform & transform)
 {
-	const mat4 &rotation = transform.m_modelMatrix;
-	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightDirection = glm::normalize(rotation * vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
-	m_mMatrix = glm::inverse(rotation * glm::mat4_cast(glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1.0f, 0))));
+	const glm::mat4 &rotation = transform.m_modelMatrix;
+	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightDirection = glm::normalize(rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
+	m_mMatrix = glm::inverse(rotation * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->lightV = m_mMatrix;
 }
 
-bool Light_Directional_Component::isVisible(const float & radius, const vec3 & eyePosition) const
+bool Light_Directional_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	// Directional lights are infinite as they simulate the sun.
 	return true;
@@ -117,7 +117,7 @@ void Light_Directional_Component::shadowPass(const unsigned int & type)
 	}
 }
 
-float Light_Directional_Component::getImportance(const vec3 & position) const
+float Light_Directional_Component::getImportance(const glm::vec3 & position) const
 {
 	return 1.0f;
 }
@@ -146,12 +146,12 @@ void Light_Directional_Component::update(const unsigned int & type)
 void Light_Directional_Component::calculateCascades()
 {
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-	const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer(); // returns a copy, no need to mutex
-	const mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
+	const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer(); // returns a copy, no need to std::mutex
+	const glm::mat4 CamInv = glm::inverse(cameraBuffer.vMatrix);
 	m_camera.setPosition(cameraBuffer.EyePosition);
 	m_camera.setFarPlane(cameraBuffer.FarPlane);
 
-	const vec2 &size = cameraBuffer.Dimensions;
+	const glm::vec2 &size = cameraBuffer.Dimensions;
 	float ar = size.x / size.y;
 	float tanHalfHFOV = glm::radians(cameraBuffer.FOV) / 2.0f;
 	float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
@@ -162,46 +162,46 @@ void Light_Directional_Component::calculateCascades()
 			m_cascadeEnd[i] * tanHalfVFOV,
 			m_cascadeEnd[i + 1] * tanHalfVFOV };
 
-		vec3 frustumCorners[8] = {
+		glm::vec3 frustumCorners[8] = {
 			// near face
-			vec3(points[0], points[2], m_cascadeEnd[i]),
-			vec3(-points[0], points[2], m_cascadeEnd[i]),
-			vec3(points[0], -points[2], m_cascadeEnd[i]),
-			vec3(-points[0], -points[2], m_cascadeEnd[i]),
+			glm::vec3(points[0], points[2], m_cascadeEnd[i]),
+			glm::vec3(-points[0], points[2], m_cascadeEnd[i]),
+			glm::vec3(points[0], -points[2], m_cascadeEnd[i]),
+			glm::vec3(-points[0], -points[2], m_cascadeEnd[i]),
 			// far face
-			vec3(points[1], points[3], m_cascadeEnd[i + 1]),
-			vec3(-points[1], points[3], m_cascadeEnd[i + 1]),
-			vec3(points[1], -points[3], m_cascadeEnd[i + 1]),
-			vec3(-points[1], -points[3], m_cascadeEnd[i + 1])
+			glm::vec3(points[1], points[3], m_cascadeEnd[i + 1]),
+			glm::vec3(-points[1], points[3], m_cascadeEnd[i + 1]),
+			glm::vec3(points[1], -points[3], m_cascadeEnd[i + 1]),
+			glm::vec3(-points[1], -points[3], m_cascadeEnd[i + 1])
 		};
 
 		// Find the middle of current view frustum chunk
-		vec3 middle(0, 0, ((m_cascadeEnd[i + 1] - m_cascadeEnd[i]) / 2.0f) + m_cascadeEnd[i]);
+		glm::vec3 middle(0, 0, ((m_cascadeEnd[i + 1] - m_cascadeEnd[i]) / 2.0f) + m_cascadeEnd[i]);
 
 		// Measure distance from middle to the furthest point of frustum slice
 		// Use to make a bounding sphere, but then convert into a bounding box
 		float radius = glm::length(frustumCorners[7] - middle);
-		vec3 aabb(radius);
+		glm::vec3 aabb(radius);
 
-		const vec3 volumeUnitSize = (aabb - -aabb) / m_shadowSize;
-		const vec3 frustumpos = (m_mMatrix * CamInv * vec4(middle, 1.0f)).xyz;
-		const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
-		vec3 newMin = -aabb + clampedPos;
-		vec3 newMax = aabb + clampedPos;
+		const glm::vec3 volumeUnitSize = (aabb - -aabb) / m_shadowSize;
+		const glm::vec3 frustumpos = (m_mMatrix * CamInv * glm::vec4(middle, 1.0f)).xyz;
+		const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
+		glm::vec3 newMin = -aabb + clampedPos;
+		glm::vec3 newMax = aabb + clampedPos;
 
 		float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
-		const mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
-		const mat4 pvMatrix = pMatrix * m_mMatrix;
+		const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
+		const glm::mat4 pvMatrix = pMatrix * m_mMatrix;
 		uboData->lightVP[i] = pvMatrix;
 		uboData->inverseVP[i] = inverse(pvMatrix);
 
 		if (i == 0)
-			m_camera.setMatrices(pMatrix, mat4(1.0f));
+			m_camera.setMatrices(pMatrix, glm::mat4(1.0f));
 	}
 
 	for (int x = 0; x < NUM_CASCADES; ++x) {
-		const vec4 v1 = vec4(0, 0, m_cascadeEnd[x + 1], 1.0f);
-		const vec4 v2 = cameraBuffer.pMatrix * v1;
+		const glm::vec4 v1 = glm::vec4(0, 0, m_cascadeEnd[x + 1], 1.0f);
+		const glm::vec4 v2 = cameraBuffer.pMatrix * v1;
 		uboData->CascadeEndClipSpace[x] = v2.z;
 	}
 }

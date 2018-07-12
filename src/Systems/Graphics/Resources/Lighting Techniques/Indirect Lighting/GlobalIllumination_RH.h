@@ -31,7 +31,7 @@ public:
 	GlobalIllumination_RH(
 		Engine * engine, 
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
-		vector<Light_Tech*> * baseTechs
+		std::vector<Light_Tech*> * baseTechs
 	);
 
 
@@ -58,7 +58,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine;
-	vector<Light_Tech*> * m_baseTechs;
+	std::vector<Light_Tech*> * m_baseTechs;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;
 	Lighting_FBO * m_lightingFBO;
@@ -71,7 +71,7 @@ private:
 	GLuint m_noise32;
 	float m_nearPlane;
 	float m_farPlane;
-	ivec2 m_renderSize;
+	glm::ivec2 m_renderSize;
 	GLuint m_resolution;
 	Camera m_camera;
 	StaticBuffer m_attribBuffer, m_IndirectSecondLayersBuffer, m_quadIndirectBuffer;

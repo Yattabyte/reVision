@@ -9,7 +9,6 @@
 #include <functional>
 
 
-using namespace glm;
 class ComponentCreator;
 class Engine;
 
@@ -23,7 +22,7 @@ public:
 	/** Returns the name of this component class. */
 	virtual const char * getName() const {	return "Component";	}
 	/** Sends a command to this component to execute.
-	 * @param	command		the string command name
+	 * @param	command		the std::string command name
 	 * @param	obj			any arguments needed */
 	template <typename DATA_TYPE>
 	void sendCommand(const char * command, const DATA_TYPE & obj) {
@@ -38,10 +37,10 @@ public:
 	 * @param	radius		the radius of the camera
 	 * @param	eyePosition	the viewing position of the camera
 	 * @return				true if this object is within the viewing range of the camera, false otherwise */
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const { return true; }
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const { return true; }
 	/** Tests if this object can contain the 3D point specified.
 	 * @param	point		the point to test */
-	virtual bool containsPoint(const vec3 & point) const { return false; }
+	virtual bool containsPoint(const glm::vec3 & point) const { return false; }
 
 
 
@@ -54,7 +53,7 @@ protected:
 
 
 	// Protected Attributes
-	MappedChar<function<void(const ECS_Command&)>> m_commandMap;
+	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
 	friend class ComponentCreator;
 };
 

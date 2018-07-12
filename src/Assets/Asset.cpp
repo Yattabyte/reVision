@@ -6,37 +6,37 @@ Asset::~Asset()
 {
 }
 
-Asset::Asset(const string & filename)
+Asset::Asset(const std::string & filename)
 {	
 	m_finalized = false;
 	m_filename = filename;
 }
 
-string Asset::getFileName() const
+std::string Asset::getFileName() const
 {
 	return m_filename;
 }
 
-void Asset::setFileName(const string & fn)
+void Asset::setFileName(const std::string & fn)
 {
 	m_filename = fn;
 }
 
 void Asset::removeCallback(void * pointerID) 
 {
-	unique_lock<shared_mutex> write_guard(m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	if (m_callbacks.find(pointerID) != m_callbacks.end())
 		m_callbacks.erase(m_callbacks.find(pointerID));	
 }
 
 bool Asset::existsYet() const
 { 
-	shared_lock<shared_mutex> read_guard(m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	return m_finalized;
 }
 
 void Asset::finalize()
 {
-	unique_lock<shared_mutex> write_guard(m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	m_finalized = true;	
 }

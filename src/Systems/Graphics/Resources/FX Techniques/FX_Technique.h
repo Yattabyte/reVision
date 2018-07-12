@@ -16,8 +16,8 @@ public:
 
 
 	// Public Methods
-	/** Return string name of this technique.
-	 * @return	string name of this technique */
+	/** Return std::string name of this technique.
+	 * @return	std::string name of this technique */
 	virtual const char * getName() const = 0;
 	/** Apply this lighting technique. */
 	virtual void applyEffect() = 0;

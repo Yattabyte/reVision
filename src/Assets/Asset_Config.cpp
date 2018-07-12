@@ -7,11 +7,11 @@
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
 
-/** Attempts to retrieve a string between quotation marks "<string>"
- * @return	the string between quotation marks*/
-inline string get_between_quotes(string & s)
+/** Attempts to retrieve a std::string between quotation marks "<std::string>"
+ * @return	the std::string between quotation marks*/
+inline std::string get_between_quotes(std::string & s)
 {
-	string output = s;
+	std::string output = s;
 	int spot1 = s.find_first_of("\"");
 	if (spot1 >= 0) {
 		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
@@ -26,12 +26,12 @@ inline string get_between_quotes(string & s)
 }
 
 /** Checks if the supplied value is a parameter in the CFG_STRING list.
- * @param	s	the string to check for in the list
+ * @param	s	the std::string to check for in the list
  * @param	m_strings	the list of strings to check for an occurrence of our value within
  * @return	the index of the value in the list if found, otherwise -1. */
-inline int find_CFG_Property(const string & s, const vector<string> & m_strings)
+inline int find_CFG_Property(const std::string & s, const std::vector<std::string> & m_strings)
 {
-	string UPPER_STRING;
+	std::string UPPER_STRING;
 	for each (const auto &c in s)
 		UPPER_STRING += toupper(c);
 	bool success = false;
@@ -45,7 +45,7 @@ Asset_Config::~Asset_Config()
 {
 }
 
-Asset_Config::Asset_Config(const string & filename, const vector<string> & strings) : Asset(filename), m_strings(strings)
+Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings)
 {
 }
 
@@ -61,7 +61,7 @@ void Asset_Config::CreateDefault(Engine * engine, Shared_Asset_Config & userAsse
 		return;
 
 	// Create hard-coded alternative
-	assetManager.createNewAsset(userAsset, "defaultConfig", vector<string>());
+	assetManager.createNewAsset(userAsset, "defaultConfig", std::vector<std::string>());
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -72,7 +72,7 @@ void Asset_Config::CreateDefault(Engine * engine, Shared_Asset_Config & userAsse
 	);
 }
 
-void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, const string & filename, const vector<string>& cfg_strings, const bool & threaded)
+void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -99,16 +99,16 @@ void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, cons
 	);
 }
 
-void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const string & fullDirectory)
+void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const std::string & fullDirectory)
 {
-	ifstream file_stream(fullDirectory);
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::ifstream file_stream(fullDirectory);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	for (std::string line; std::getline(file_stream, line); ) {
 		if (line.length()) {
-			const string cfg_property = get_between_quotes(line);
+			const std::string cfg_property = get_between_quotes(line);
 			int spot = find_CFG_Property(cfg_property, userAsset->m_strings);
 			if (spot >= 0) {
-				string cfg_value = get_between_quotes(line);
+				std::string cfg_value = get_between_quotes(line);
 				userAsset->setValue(spot, atof(cfg_value.c_str()));
 			}
 		}
@@ -121,7 +121,7 @@ void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
 	userAsset->finalize();
 
 	// Notify completion
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
 }
@@ -129,7 +129,7 @@ void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 {
 	// Try inserting the value by key in case the key doesn't exist.
-	m_configuration.insert(pair<int, float>(cfg_key, cfg_value));
+	m_configuration.insert(std::pair<int, float>(cfg_key, cfg_value));
 	m_configuration[cfg_key] = cfg_value;
 }
 
@@ -142,8 +142,8 @@ float Asset_Config::getValue(const unsigned int & cfg_key)
 
 void Asset_Config::saveConfig()
 {
-	string output;
+	std::string output;
 	for each (const auto &value in m_configuration) 
-		output += "\"" + m_strings[value.first] + "\" \"" + to_string(value.second) + "\"\n";
+		output += "\"" + m_strings[value.first] + "\" \"" + std::to_string(value.second) + "\"\n";
 	Text_IO::Export_Text(ABS_DIRECTORY_CONFIG(getFileName()), output);
 }

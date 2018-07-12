@@ -15,7 +15,7 @@ DS_Lighting::~DS_Lighting()
 DS_Lighting::DS_Lighting(
 	Engine * engine,
 	Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO,
-	vector<Light_Tech*> * baseTechs,
+	std::vector<Light_Tech*> * baseTechs,
 	Geometry_Buffers * geometryBuffers
 )
 {
@@ -30,7 +30,7 @@ DS_Lighting::DS_Lighting(
 	m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 
 	// Load Assets
-	m_engine->createAsset(m_shapeCube, string("box"), true);
+	m_engine->createAsset(m_shapeCube, std::string("box"), true);
 
 	// Primitive Loading
 	m_cubeVAOLoaded = false;

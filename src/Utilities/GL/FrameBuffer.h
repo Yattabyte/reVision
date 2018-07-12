@@ -7,8 +7,6 @@
 #include "glm\glm.hpp"
 
 
-using namespace glm;
-
 /**
  * An encapsulation of an OpenGL framebuffer.
  * Requires the implementer to manage the size of the frame buffer, and also add render targets.
@@ -27,7 +25,7 @@ public:
 	FrameBuffer() {
 		m_Initialized = false;
 		m_fbo = 0;
-		m_renderSize = ivec2(1);
+		m_renderSize = glm::ivec2(1);
 	}
 
 
@@ -54,7 +52,7 @@ public:
 	}  
 	/** Change the size of the framebuffer object. 
 	 * @param	size	the new size of the framebuffer */
-	virtual void resize(const ivec2 & size) {
+	virtual void resize(const glm::ivec2 & size) {
 		m_renderSize = size;
 	}
 	
@@ -63,7 +61,7 @@ protected:
 	// Protected Attributes
 	bool m_Initialized;
 	GLuint m_fbo;
-	ivec2 m_renderSize;
+	glm::ivec2 m_renderSize;
 };
 
 #endif // FRAME_BUFFER_H

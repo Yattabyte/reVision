@@ -42,7 +42,7 @@ Component * Component_Factory::createComponent(const char * type)
 {
 	Component * component = m_creatorMap[type]->create(m_engine);
 
-	unique_lock<shared_mutex> write_lock(m_dataLock);
+	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 	m_levelComponents.insert(type);
 
 	if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
@@ -57,7 +57,7 @@ Component * Component_Factory::createComponent(const char * type)
 
 void Component_Factory::deleteComponent(Component * component)
 {
-	unique_lock<shared_mutex> write_lock(m_dataLock);
+	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 	const char * type = component->getName();
 	if (!component || !m_levelComponents.find(type) || !m_creatorMap.find(type))
 		return;
@@ -74,15 +74,15 @@ void Component_Factory::deleteComponent(Component * component)
 	}
 }
 
-const vector<Component*>& Component_Factory::getComponentsByType(const char * type)
+const std::vector<Component*>& Component_Factory::getComponentsByType(const char * type)
 {
-	shared_lock<shared_mutex> read_lock(m_dataLock);
+	std::shared_lock<std::shared_mutex> read_lock(m_dataLock);
 	return m_levelComponents[type];
 }
 
 void Component_Factory::flush()
 {
-	unique_lock<shared_mutex> write_lock(m_dataLock);
+	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 
 	for each (auto pair in m_levelComponents) {
 		for each (auto *component in pair.second) {
@@ -95,11 +95,11 @@ void Component_Factory::flush()
 
 bool Component_Factory::find(const char * key) const
 {
-	shared_lock<shared_mutex> read_lock(m_dataLock);
+	std::shared_lock<std::shared_mutex> read_lock(m_dataLock);
 	return m_levelComponents.find(key);
 }
 
-shared_mutex & Component_Factory::getDataLock()
+std::shared_mutex & Component_Factory::getDataLock()
 {
 	return m_dataLock;
 }

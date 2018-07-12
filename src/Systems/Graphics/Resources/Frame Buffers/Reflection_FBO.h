@@ -33,7 +33,7 @@ public:
 	virtual void bindForWriting();
 	/** Change the size of the framebuffer object.
 	* @param	size	the new size of the framebuffer */
-	virtual void resize(const vec2 & size);
+	virtual void resize(const glm::vec2 & size);
 	/** Return the depth-stencil buffer. */
 	void end();
 

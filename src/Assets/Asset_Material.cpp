@@ -18,7 +18,7 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const string & filename) : Asset(filename)
+Asset_Material::Asset_Material(const std::string & filename) : Asset(filename)
 {
 	m_glArrayID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
 }
@@ -77,7 +77,7 @@ void Asset_Material::CreateDefault(Engine * engine, Shared_Asset_Material & user
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),	GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),	GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)
 	};
-	userAsset->m_size = vec2(4);
+	userAsset->m_size = glm::vec2(4);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -128,17 +128,17 @@ void Asset_Material::Create(Engine * engine, Shared_Asset_Material & userAsset, 
 	}
 }
 
-void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAsset, const string & fullDirectory)
+void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAsset, const std::string & fullDirectory)
 {
 	if (fullDirectory != "") {
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		Asset_Material::Get_PBR_Properties(fullDirectory, userAsset->m_textures[0], userAsset->m_textures[1], userAsset->m_textures[2], userAsset->m_textures[3], userAsset->m_textures[4], userAsset->m_textures[5]);
 		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 			userAsset->m_textures[x] = ABS_DIRECTORY_MAT_TEX(userAsset->m_textures[x]);
 	}
 
 	Image_Data dataContainers[MAX_PHYSICAL_IMAGES];
-	ivec2 material_dimensions = ivec2(1);
+	glm::ivec2 material_dimensions = glm::ivec2(1);
 
 	// Load all images
 	constexpr GLubyte defaultMaterial[MAX_PHYSICAL_IMAGES][4] = {
@@ -149,13 +149,13 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 		{ GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(0) },
 		{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0) } 
 	};
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
 		if (!Image_IO::Import_Image(engine, userAsset->m_textures[x], dataContainers[x])) {
 			dataContainers[x].pixelData = new GLubyte[4];
 			for (int p = 0; p < 4; ++p)
 				dataContainers[x].pixelData[p] = defaultMaterial[x][p];
-			dataContainers[x].dimensions = ivec2(1);
+			dataContainers[x].dimensions = glm::ivec2(1);
 			dataContainers[x].pitch = 4;
 			dataContainers[x].bpp = 32;
 		}
@@ -164,7 +164,7 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 
 	// Find the largest dimensions
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
-		const ivec2 & dimensions = dataContainers[x].dimensions;
+		const glm::ivec2 & dimensions = dataContainers[x].dimensions;
 		if (material_dimensions.x < dimensions.x)
 			material_dimensions.x = dimensions.x;
 		if (material_dimensions.y < dimensions.y)
@@ -195,7 +195,7 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 		delete dataContainers[x].pixelData;
 
 	// Assign data to asset
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_size = material_dimensions;
 	userAsset->m_materialData = materialData;
 }
@@ -208,13 +208,13 @@ void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset
 
 	// Create Material
 	{
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		userAsset->m_finalized = true;
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &userAsset->m_glArrayID);
 	}
 	{
 		// Load material
-		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 		float anisotropy;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
 		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
@@ -240,14 +240,14 @@ void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset
 			assetManager.submitNotifyee(qwe.second); 
 	}
 }
-bool getString(istringstream & string_stream, string & target, string & input = string(""))
+bool getString(std::istringstream & string_stream, std::string & target, std::string & input = std::string(""))
 {
 	string_stream >> input;
-	if (input == "string") {
+	if (input == "std::string") {
 		int size = 0; string_stream >> size;
 		target.reserve(size);
 		for (int x = 0; x < size; ++x) {
-			string v;
+			std::string v;
 			string_stream >> v;
 			target += v;
 		}
@@ -255,7 +255,7 @@ bool getString(istringstream & string_stream, string & target, string & input = 
 	else return false;
 	return true;
 }
-void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo, string & normal, string & metalness, string & roughness, string & height, string & occlusion)
+void Asset_Material::Get_PBR_Properties(const std::string & filename, std::string & albedo, std::string & normal, std::string & metalness, std::string & roughness, std::string & height, std::string & occlusion)
 {
 	std::ifstream file_stream(filename);
 	for (std::string line; std::getline(file_stream, line); ) {
@@ -267,7 +267,7 @@ void Asset_Material::Get_PBR_Properties(const string & filename, string & albedo
 				const size_t propertycount = 6;
 
 				for (int x = 0; x < propertycount; ++x) {
-					string string;
+					std::string string;
 					std::getline(file_stream, line);
 					std::istringstream string_stream(line);
 					string_stream >> line;

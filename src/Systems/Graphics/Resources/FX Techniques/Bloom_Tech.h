@@ -36,7 +36,7 @@ public:
 	void setBloomStrength(const int &strength);
 	/** Resize the frame buffer.
 	* @param	size	the new size of the frame buffer */
-	void resize(const vec2 & size);
+	void resize(const glm::vec2 & size);
 
 
 private:
@@ -50,7 +50,7 @@ private:
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 	GLuint m_fbo, m_texture, m_texturesGB[2];
-	vec2 m_renderSize;
+	glm::vec2 m_renderSize;
 	int m_bloomStrength;
 };
 

@@ -74,7 +74,7 @@ private:
 	/** Regenerate the noise kernel. */
 	void generateKernal();
 	/** Sends data to GPU in one pass.
-	 * For example, sending updated mat4's into buffers. */
+	 * For example, sending updated glm::mat4's into buffers. */
 	void send2GPU(const Visibility_Token & vis_token);
 	/** Perform pre-passes and update data present on the GPU. 
 	 * For example, performing GPU accelerated occlusion culling or shadow mapping. */
@@ -84,17 +84,17 @@ private:
 
 
 	// Private Attributes
-	ivec2			m_renderSize;
+	glm::ivec2			m_renderSize;
 	VisualFX		m_visualFX;
 	StaticBuffer	m_userBuffer;
 	bool			m_ssao;
 
 	// Rendering Techniques
-	vector<Geometry_Technique*> m_geometryTechs;
-	vector<Lighting_Technique*> m_lightingTechs;
-	vector<FX_Technique*>		m_fxTechs;
+	std::vector<Geometry_Technique*> m_geometryTechs;
+	std::vector<Lighting_Technique*> m_lightingTechs;
+	std::vector<FX_Technique*>		m_fxTechs;
 	// Base light type techniques
-	vector<Light_Tech*>			m_baseTechs;
+	std::vector<Light_Tech*>			m_baseTechs;
 	MappedChar<void*>			m_techMap;
 	MappedChar<void*>			m_lightingTechMap;
 };

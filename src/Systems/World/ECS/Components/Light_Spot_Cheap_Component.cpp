@@ -14,13 +14,13 @@ Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(Engine * engine)
 	m_engine = engine;
 	m_radius = 0;
 	m_squaredRadius = 0;
-	m_lightPos = vec3(0.0f);
-	m_orientation = quat(1, 0, 0, 0);
+	m_lightPos = glm::vec3(0.0f);
+	m_orientation = glm::quat(1, 0, 0, 0);
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.addElement(&m_uboIndex);
 
 
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
-		if (payload.isType<vec3>()) setColor(payload.toType<vec3>());
+		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
 	m_commandMap["Set_Light_Intensity"] = [&](const ECS_Command & payload) {
 		if (payload.isType<float>()) setIntensity(payload.toType<float>());
@@ -36,7 +36,7 @@ Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(Engine * engine)
 	};
 }
 
-void Light_Spot_Cheap_Component::setColor(const vec3 & color)
+void Light_Spot_Cheap_Component::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
@@ -74,20 +74,20 @@ void Light_Spot_Cheap_Component::updateViews()
 	Spot_Cheap_Struct * uboData = &reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	
 	// Recalculate view matrix
-	const mat4 trans = glm::translate(mat4(1.0f), m_lightPos);
-	const mat4 rot = glm::mat4_cast(m_orientation);
-	const mat4 scl = glm::scale(mat4(1.0f), vec3(m_squaredRadius));
-	uboData->LightDirection = (rot * vec4(1, 0, 0, 0)).xyz;
+	const glm::mat4 trans = glm::translate(glm::mat4(1.0f), m_lightPos);
+	const glm::mat4 rot = glm::mat4_cast(m_orientation);
+	const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(m_squaredRadius));
+	uboData->LightDirection = (rot * glm::vec4(1, 0, 0, 0)).xyz;
 	uboData->mMatrix = (trans * rot) * scl;
 }
 
-bool Light_Spot_Cheap_Component::isVisible(const float & radius, const vec3 & eyePosition) const
+bool Light_Spot_Cheap_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
 }
 
-float Light_Spot_Cheap_Component::getImportance(const vec3 & position) const
+float Light_Spot_Cheap_Component::getImportance(const glm::vec3 & position) const
 {
 	return 0.0f;
 }

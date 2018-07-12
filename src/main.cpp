@@ -6,14 +6,14 @@
 int main()
 {	
 	Engine engine;
-	thread *m_UpdaterThread;
+	std::thread *m_UpdaterThread;
 	Camera * camera;
 
 	if (!engine.initialize())
 		exit(-1);
 
 	camera = engine.getCamera();
-	m_UpdaterThread = new thread(&Engine::tickThreaded, &engine);
+	m_UpdaterThread = new std::thread(&Engine::tickThreaded, &engine);
 	m_UpdaterThread->detach();
 
 	while (!(engine.shouldClose())) {

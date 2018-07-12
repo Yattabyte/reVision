@@ -15,7 +15,7 @@ Asset_Cubemap::~Asset_Cubemap()
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 {
 	m_glTexID = 0;
-	m_size = vec2(0);
+	m_size = glm::vec2(0);
 }
 
 void Asset_Cubemap::CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAsset)
@@ -34,7 +34,7 @@ void Asset_Cubemap::CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAs
 	userAsset->m_pixelData[3] = new GLubyte[4]{ GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255) };
 	userAsset->m_pixelData[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
 	userAsset->m_pixelData[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
-	userAsset->m_size = vec2(1);
+	userAsset->m_size = glm::vec2(1);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -45,7 +45,7 @@ void Asset_Cubemap::CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAs
 	);
 }
 
-void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded)
+void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -54,7 +54,7 @@ void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, co
 		return;
 
 	// Check if the file/directory exists on disk
-	const string &fullDirectory = DIRECTORY_CUBEMAP + filename;
+	const std::string &fullDirectory = DIRECTORY_CUBEMAP + filename;
 	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
@@ -72,7 +72,7 @@ void Asset_Cubemap::Create(Engine * engine, Shared_Asset_Cubemap & userAsset, co
 	);
 }
 
-void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & fullDirectory)
+void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & fullDirectory)
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
@@ -96,7 +96,7 @@ void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset
 			return;
 		}	
 		
-		unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> m_asset_guard(userAsset->m_mutex);
 		userAsset->m_size = dataContainer.dimensions;
 		userAsset->m_pixelData[sides] = dataContainer.pixelData;
 	}
@@ -109,13 +109,13 @@ void Asset_Cubemap::Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset)
 
 	// Create the final texture
 	{
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &userAsset->m_glTexID);
 	}
 
 	// Load the final texture
 	{
-		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 		glTextureStorage2D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x, userAsset->m_size.x);
 		for (int x = 0; x < 6; ++x)
 			glTextureSubImage3D(userAsset->m_glTexID, 0, 0, 0, x, userAsset->m_size.x, userAsset->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_pixelData[x]);
@@ -134,6 +134,6 @@ void Asset_Cubemap::Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset)
 
 void Asset_Cubemap::bind(const unsigned int & texture_unit)
 {
-	shared_lock<shared_mutex> read_guard(m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

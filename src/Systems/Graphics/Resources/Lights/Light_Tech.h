@@ -8,9 +8,6 @@
 #include <vector>
 
 
-using namespace std;
-using namespace glm;
-
 /**
  * An interface for specific deferred shading lighting techniques.
  * To be used only by the DS_Lighting class.
@@ -25,14 +22,14 @@ public:
 
 
 	// Interface Declarations
-	/** Return string name of this technique.
-	 * @return	string name of this technique */
+	/** Return std::string name of this technique.
+	 * @return	std::string name of this technique */
 	virtual const char * getName() const = 0;
 	/** Perform updates, calculations, and memory writes for direct lighting
 	 * @param	vis_token		the visibility token
 	 * @param	updateQuality	the number of lights to allow per update
 	 * @param	camPos			the position of the viewer in 3D space */
-	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos) = 0;
+	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos) = 0;
 	/** Perform updates, calculations, and memory writes for indirect lighting
 	 * @param	vis_token			the visibility token
 	 * @param	bounceResolution	the resolution of the bounce buffer */
@@ -59,7 +56,7 @@ public:
 	/** Construct a priority light list with the given quality and position.
 	* @param	quality		the max number of final elements
 	* @param	position	the position of the viewer */
-	PriorityLightList(const unsigned int & quality, const vec3 & position) : m_quality(quality), m_oldest(quality), m_position(position) {}
+	PriorityLightList(const unsigned int & quality, const glm::vec3 & position) : m_quality(quality), m_oldest(quality), m_position(position) {}
 
 
 	// Public Methods
@@ -70,9 +67,9 @@ public:
 	}
 	/** Return a list composed of the oldest and the closest lights.
 	* @return				a double sorted list with the oldest lights and closest lights */
-	const vector<Lighting_Component*> toList() const {
-		PriorityList<float, Lighting_Component*, greater<float>> m_closest(m_quality / 2);
-		vector<Lighting_Component*> outList;
+	const std::vector<Lighting_Component*> toList() const {
+		PriorityList<float, Lighting_Component*, std::greater<float>> m_closest(m_quality / 2);
+		std::vector<Lighting_Component*> outList;
 		outList.reserve(m_quality);
 
 		for each (const auto &element in m_oldest.toList()) {
@@ -95,8 +92,8 @@ public:
 private:
 	// Private Attributes
 	unsigned int m_quality;
-	vec3 m_position;
-	PriorityList<float, Lighting_Component*, less<float>> m_oldest;
+	glm::vec3 m_position;
+	PriorityList<float, Lighting_Component*, std::less<float>> m_oldest;
 };
 
 #endif // LIGHT_TECH_H

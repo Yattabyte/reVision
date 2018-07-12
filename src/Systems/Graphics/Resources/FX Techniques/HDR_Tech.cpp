@@ -21,8 +21,8 @@ HDR_Tech::HDR_Tech(Engine * engine)
 	m_texture = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderHDR, string("FX\\HDR"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderHDR, std::string("FX\\HDR"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -36,8 +36,8 @@ HDR_Tech::HDR_Tech(Engine * engine)
 	});
 
 	// Preference Callbacks
-	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
 	
 	// GL loading
 	glCreateFramebuffers(1, &m_fbo);
@@ -78,7 +78,7 @@ void HDR_Tech::bindForReading()
 	glBindTextureUnit(0, m_texture);
 }
 
-void HDR_Tech::resize(const vec2 & size)
+void HDR_Tech::resize(const glm::vec2 & size)
 {
 	m_renderSize = size;
 

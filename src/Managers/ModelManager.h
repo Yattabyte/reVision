@@ -11,8 +11,6 @@
 #include <vector>
 
 
-using namespace std;
-using namespace glm;
 struct GeometryInfo;
 
 /**
@@ -59,13 +57,13 @@ private:
 	GLuint m_maxCapacity;
 	GLuint m_currentSize;
 	bool m_outOfDate;	
-	shared_mutex m_mutex;
+	std::shared_mutex m_mutex;
 };
 
 struct GeometryInfo {
-	vector<vec3> vs, nm, tg, bt;
-	vector<vec2> uv;
-	vector<VertexBoneData> bones;
+	std::vector<glm::vec3> vs, nm, tg, bt;
+	std::vector<glm::vec2> uv;
+	std::vector<VertexBoneData> bones;
 };
 
 #endif // MODELMANAGER_H

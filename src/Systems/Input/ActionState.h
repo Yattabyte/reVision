@@ -6,12 +6,10 @@
 #include <vector>
 
 
-using namespace std;
-
 /**
  * A container class that holds the action state for the engine, such as forward/back/left/right and amount
  **/
-class ActionState : public map<unsigned int, float>
+class ActionState : public std::map<unsigned int, float>
 {
 public:
 	// (de)Constructors
@@ -20,7 +18,7 @@ public:
 	/** Construct the action state. */
 	ActionState() {
 		for (unsigned int x = 0; x < ACTION_COUNT; ++x)
-			insert(pair<unsigned int, float>(x, 0.0f));
+			insert(std::pair<unsigned int, float>(x, 0.0f));
 	}
 
 
@@ -42,9 +40,9 @@ public:
 
 	// Public Static Methods
 	/* Retrieve a static list of all input-actions.
-	 * @return	vector of action names as strings */
-	static vector<string> Action_Strings() {
-		static const vector<string> actionStrings = {
+	 * @return	std::vector of action names as strings */
+	static std::vector<std::string> Action_Strings() {
+		static const std::vector<std::string> actionStrings = {
 			"FORWARD",
 			"BACK",
 			"LEFT",

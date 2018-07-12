@@ -15,9 +15,9 @@ Skybox::Skybox(Engine * engine, Lighting_FBO * lightingFBO)
 	m_lightingFBO = lightingFBO;
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderSky, string("skybox"), true);
-	m_engine->createAsset(m_textureSky, string("sky\\"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderSky, std::string("skybox"), true);
+	m_engine->createAsset(m_textureSky, std::string("sky\\"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;

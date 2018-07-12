@@ -18,13 +18,13 @@ Spot_Tech::Spot_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	m_sizeGI = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light"), true);
-	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Spot\\Culling_Dynamic"), true);
-	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Spot\\Culling_Static"), true);
-	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Spot\\Shadow_Dynamic"), true);
-	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Spot\\Shadow_Static"), true);
-	m_engine->createAsset(m_shader_Bounce, string("Base Lights\\Spot\\Bounce"), true);
-	m_engine->createAsset(m_shapeCone, string("cone"));
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Spot\\Light"), true);
+	m_engine->createAsset(m_shader_CullDynamic, std::string("Base Lights\\Spot\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, std::string("Base Lights\\Spot\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, std::string("Base Lights\\Spot\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, std::string("Base Lights\\Spot\\Shadow_Static"), true);
+	m_engine->createAsset(m_shader_Bounce, std::string("Base Lights\\Spot\\Bounce"), true);
+	m_engine->createAsset(m_shapeCone, std::string("cone"));
 
 	// Primitive Construction
 	m_coneVAOLoaded = false;
@@ -43,7 +43,7 @@ Spot_Tech::Spot_Tech(Engine * engine, Light_Buffers * lightBuffers)
 
 	// Initialize Shadows
 	m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this, [&](const float &f) {setSize(f); });
-	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
+	m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	for (int x = 0; x < 2; ++x) {
 		m_shadowFBO[x] = 0;
@@ -92,7 +92,7 @@ Spot_Tech::Spot_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 }
 
-vec2 Spot_Tech::getSize() const
+glm::vec2 Spot_Tech::getSize() const
 {
 	return m_shadowSize;
 }
@@ -126,7 +126,7 @@ void Spot_Tech::unregisterShadowCaster(int & array_spot)
 		m_freedShadowSpots.push_back(array_spot);
 }
 
-void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Spot");
 	if (m_size && m_coneVAOLoaded) {
@@ -145,7 +145,7 @@ void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updat
 			for each (const auto &c in m_lightList)
 				c->update(CAM_GEOMETRY_STATIC);
 
-		vector<GLuint> visArray(m_size);
+		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in m_lightList)
 			visArray[count++] = component->getBufferIndex();
@@ -159,7 +159,7 @@ void Spot_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned 
 	m_sizeGI = vis_token.specificSize("Light_Spot");
 	if (m_sizeGI && m_shader_Bounce->existsYet()) {
 		const GLuint spotDraws = bounceResolution * m_sizeGI;
-		vector<GLuint> visArray(m_sizeGI);
+		std::vector<GLuint> visArray(m_sizeGI);
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
 			visArray[count++] = component->getBufferIndex();
@@ -273,7 +273,7 @@ void Spot_Tech::BindForReading_GI(const GLuint & ShaderTextureUnit)
 void Spot_Tech::clearShadow(const unsigned int & type, const int & layer)
 {
 	const float clearDepth(1.0f);
-	const vec3 clear(0.0f);
+	const glm::vec3 clear(0.0f);
 	glClearTexSubImage(m_shadowDepth[type], 0, 0, 0, layer, m_shadowSize.x, m_shadowSize.y, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	glClearTexSubImage(m_shadowWNormal[type], 0, 0, 0, layer, m_shadowSize.x, m_shadowSize.y, 1, GL_RGB, GL_FLOAT, &clear);
 	glClearTexSubImage(m_shadowRFlux[type], 0, 0, 0, layer, m_shadowSize.x, m_shadowSize.y, 1, GL_RGB, GL_FLOAT, &clear);
@@ -281,7 +281,7 @@ void Spot_Tech::clearShadow(const unsigned int & type, const int & layer)
 
 void Spot_Tech::setSize(const float & size)
 {
-	m_shadowSize = vec2(max(size, 1));
+	m_shadowSize = glm::vec2(max(size, 1));
 
 	for (int x = 0; x < 2; ++x) {
 		glTextureImage3DEXT(m_shadowDepth[x], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);

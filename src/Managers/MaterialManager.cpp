@@ -3,7 +3,7 @@
 
 MaterialManager::~MaterialManager() 
 {
-	unique_lock<shared_mutex> writeGuard(m_DataMutex);
+	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	if (m_Initialized) {
 		m_FreeSpots.clear();
 		m_Initialized = false;
@@ -19,7 +19,7 @@ MaterialManager::MaterialManager()
 
 void MaterialManager::initialize()
 {
-	unique_lock<shared_mutex> writeGuard(m_DataMutex);
+	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	if (!m_Initialized) {
 		m_buffer = new DynamicBuffer();
 		m_buffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
@@ -29,13 +29,13 @@ void MaterialManager::initialize()
 
 void MaterialManager::bind()
 {
-	shared_lock<shared_mutex> readGuard(m_DataMutex);
+	std::shared_lock<std::shared_mutex> readGuard(m_DataMutex);
 	m_buffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
 }
 
 GLuint MaterialManager::generateID()
 {
-	unique_lock<shared_mutex> writeGuard(m_DataMutex);
+	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	GLuint arraySpot = m_Count;
 	if (m_FreeSpots.size()) {
 		arraySpot = m_FreeSpots.front();
@@ -50,7 +50,7 @@ void MaterialManager::generateHandle(const GLuint & materialightingFBOID, const 
 {
 	const GLuint64 handle = glGetTextureHandleARB(glTextureID);
 
-	unique_lock<shared_mutex> writeGuard(m_DataMutex);
+	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	m_buffer->write(sizeof(GLuint64) * materialightingFBOID, sizeof(GLuint64), &handle);
 	m_WorkOrders.push_back(handle);
 }
@@ -58,7 +58,7 @@ void MaterialManager::generateHandle(const GLuint & materialightingFBOID, const 
 void MaterialManager::parseWorkOrders()
 {
 	// Parse work orders
-	unique_lock<shared_mutex> writeGuard(m_DataMutex);
+	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	for each (const auto &handle in m_WorkOrders)
 		glMakeTextureHandleResidentARB(handle);
 	m_WorkOrders.clear();

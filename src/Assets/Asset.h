@@ -11,9 +11,8 @@
 #include <utility>
 
 
-using namespace std;
 class Asset;
-typedef shared_ptr<Asset> Shared_Asset;
+typedef std::shared_ptr<Asset> Shared_Asset;
 
 /**
  * An abstract base-class for assets.
@@ -28,23 +27,23 @@ public:
 	/** Destroy the asset only when all references are destroyed. */
 	~Asset();
 	/** Create asset that uses the specified file-path. */
-	Asset(const string & filename = "");
+	Asset(const std::string & filename = "");
 
 
 	// Public Methods	
 	/** Gets the file name of this asset.
 	 * @return				the file name belonging to this asset */
-	string getFileName() const;
+	std::string getFileName() const;
 	/** Sets the file name of this asset.
 	 * @param	filename	the file name to set this asset to */
-	void setFileName(const string & filename);	
+	void setFileName(const std::string & filename);	
 	/** Attaches a callback method to be triggered when the asset finishes loading.
 	 * @param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
 	 * @param	callback	the method to be triggered
 	 * @param	<Callback>	the (auto-deduced) signature of the method */
 	template <typename Callback>
 	void addCallback(void * pointerID, Callback && callback) {
-		unique_lock<shared_mutex> write_guard(m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		m_callbacks[pointerID] = std::forward<Callback>(callback);
 		write_guard.unlock();
 		write_guard.release();
@@ -62,14 +61,14 @@ public:
 
 
 	// Public Attributes
-	mutable shared_mutex m_mutex;	/** public mutex, to encourage safe access of asset. */
+	mutable std::shared_mutex m_mutex;	/** public std::mutex, to encourage safe access of asset. */
 
 
 protected:
 	// Protected Attributes
 	bool m_finalized;
-	string m_filename;
-	map<void*, function<void()>> m_callbacks;
+	std::string m_filename;
+	std::map<void*, std::function<void()>> m_callbacks;
 	friend class AssetManager;
 };
 

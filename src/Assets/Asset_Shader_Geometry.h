@@ -10,11 +10,9 @@
 #include <string>
 
 
-using namespace glm;
-using namespace std;
 class Engine;
 class Asset_Shader_Geometry;
-typedef shared_ptr<Asset_Shader_Geometry> Shared_Asset_Shader_Geometry;
+typedef std::shared_ptr<Asset_Shader_Geometry> Shared_Asset_Shader_Geometry;
 
 /**
  * An encapsulation of an OpenGL shader program.\n
@@ -38,23 +36,23 @@ public:
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & filename, const bool & threaded = true);
 
 	
 	// Public Attributes
 	GLuint m_glGeometryID; // OpenGL ID's
-	string m_geometryText; // Text Data
+	std::string m_geometryText; // Text Data
 
 
 private:
 	// Private Constructors
 	/** Construct the Shader. */
-	Asset_Shader_Geometry(const string & filename);
+	Asset_Shader_Geometry(const std::string & filename);
 
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset);
 

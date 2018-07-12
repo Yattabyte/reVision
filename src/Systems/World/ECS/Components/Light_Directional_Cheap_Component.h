@@ -11,7 +11,6 @@
 #include "Utilities\Transform.h"
 
 
-using namespace glm;
 class Light_Directional_Cheap_Creator;
 class Engine;
 
@@ -24,8 +23,8 @@ class Light_Directional_Cheap_Component : protected Lighting_Component
 public:
 	// Interface implementations
 	virtual const char * getName() const { return "Light_Directional_Cheap"; }
-	virtual float getImportance(const vec3 & position) const;
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual float getImportance(const glm::vec3 & position) const;
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type) {}
 	virtual void shadowPass(const unsigned int & type) {}
 	virtual	void update(const unsigned int & type) {}
@@ -48,7 +47,7 @@ private:
 	// Private Functions
 	/** Set the light color to use.
 	* @param	color		the color to use */
-	void setColor(const vec3 & color);
+	void setColor(const glm::vec3 & color);
 	/** Set the light intensity to use.
 	* @param	intensity	the intensity to use */
 	void setIntensity(const float & intensity);

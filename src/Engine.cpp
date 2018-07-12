@@ -19,14 +19,14 @@ static GLFWwindow	*	m_Context_Sharing = nullptr;
 
 static void GLFW_Callback_Error(int error, const char * description)
 {
-	cout << string("Unhandled GLFW Error (" + to_string(error) + "): " + description);
+	std::cout << std::string("Unhandled GLFW Error (" + std::to_string(error) + "): " + description);
 }
 
 // Is called when the window resizes
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	Engine & engine = *((Engine*)glfwGetWindowUserPointer(window));
-	engine.getCamera()->setDimensions(vec2(width, height));
+	engine.getCamera()->setDimensions(glm::vec2(width, height));
 	engine.getCamera()->update();
 	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
 	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -85,17 +85,17 @@ bool Initialize_Sharing(Engine * engine)
 		engine->reportMessage("...success!\n");
 
 		engine->reportMessage("**************************************************");
-		engine->reportMessage("Engine Version: " + string(ENGINE_VERSION));
+		engine->reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
 		engine->reportMessage("ASSIMP Version: " + Model_IO::Get_Version());
 		engine->reportMessage("Bullet Version: N/A");
 		engine->reportMessage("FreeImage Version: " + Image_IO::Get_Version());
-		engine->reportMessage("GLEW Version: " + string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
-		engine->reportMessage("GLFW Version: " + string(glfwGetVersionString()));
-		engine->reportMessage("GLM Version: " + to_string(GLM_VERSION_MAJOR) + "." + to_string(GLM_VERSION_MINOR) + "." + to_string(GLM_VERSION_PATCH) + "." + to_string(GLM_VERSION_REVISION));
-		engine->reportMessage("OpenGL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-		engine->reportMessage("GLSL Version: " + string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-		engine->reportMessage("GL implementation provided by: " + string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-		engine->reportMessage("Using GPU: " + string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+		engine->reportMessage("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+		engine->reportMessage("GLFW Version: " + std::string(glfwGetVersionString()));
+		engine->reportMessage("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+		engine->reportMessage("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+		engine->reportMessage("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+		engine->reportMessage("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+		engine->reportMessage("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
 		engine->reportMessage("**************************************************");
 		
 		m_Initialized_Sharing = true;
@@ -199,7 +199,7 @@ void Engine::tick()
 		m_frameCount++;
 		if (m_frameCount >= 100) {
 			m_frameAccumulator /= 100.0f;
-			reportMessage("Avg Frametime = " + to_string(m_frameAccumulator*1000.0f) + " ms");
+			reportMessage("Avg Frametime = " + std::to_string(m_frameAccumulator*1000.0f) + " ms");
 			m_frameAccumulator = deltaTime;
 			m_frameCount = 0;
 		}
@@ -245,26 +245,26 @@ bool Engine::shouldClose()
 	return glfwWindowShouldClose(m_Context_Rendering);
 }
 
-void Engine::reportMessage(const string & input)
+void Engine::reportMessage(const std::string & input)
 {
 	m_messageManager.statement(input);
 }
 
-void Engine::reportError(const int & error_number, const string & input, const string & additional_input)
+void Engine::reportError(const int & error_number, const std::string & input, const std::string & additional_input)
 {
 	m_messageManager.error(error_number, input, additional_input);
 }
 
-string Engine::Get_Current_Dir()
+std::string Engine::Get_Current_Dir()
 {
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
 	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
 		cCurrentPath[sizeof(cCurrentPath) - 1] = '/0';
-	return string(cCurrentPath);
+	return std::string(cCurrentPath);
 }
 
-bool Engine::File_Exists(const string & name)
+bool Engine::File_Exists(const std::string & name)
 {
 	// Technique to return whether or not a given file or folder exists
 	struct stat buffer;

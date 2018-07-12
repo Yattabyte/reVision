@@ -11,26 +11,26 @@
  * @param	userAsset		the asset we are loading from */
 inline void parse(Engine * engine, Shared_Asset_Shader_Pkg & userAsset)
 {
-	string input = userAsset->m_packageText;
+	std::string input = userAsset->m_packageText;
 	if (input == "") return;
 	// Find Package to include
 	int spot = input.find("#package");
-	while (spot != string::npos) {
-		string directory = input.substr(spot);
+	while (spot != std::string::npos) {
+		std::string directory = input.substr(spot);
 
 		unsigned int qspot1 = directory.find("\"");
 		unsigned int qspot2 = directory.find("\"", qspot1 + 1);
-		// find string quotes and remove them
+		// find std::string quotes and remove them
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 		Shared_Asset_Shader_Pkg package;
 		engine->createAsset(package, directory, false);
-		string left = input.substr(0, spot);
-		string right = input.substr(spot + 1 + qspot2);
+		std::string left = input.substr(0, spot);
+		std::string right = input.substr(spot + 1 + qspot2);
 		input = left + package->getPackageText() + right;
 		spot = input.find("#package");
 	}
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_packageText = input;
 }
 
@@ -38,7 +38,7 @@ Asset_Shader_Pkg::~Asset_Shader_Pkg()
 {
 }
 
-Asset_Shader_Pkg::Asset_Shader_Pkg(const string & filename) : Asset(filename)
+Asset_Shader_Pkg::Asset_Shader_Pkg(const std::string & filename) : Asset(filename)
 {	
 	m_packageText = "";
 }
@@ -63,7 +63,7 @@ void Asset_Shader_Pkg::CreateDefault(Engine * engine, Shared_Asset_Shader_Pkg & 
 	);
 }
 
-void Asset_Shader_Pkg::Create(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const string & filename, const bool & threaded)
+void Asset_Shader_Pkg::Create(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -91,9 +91,9 @@ void Asset_Shader_Pkg::Create(Engine * engine, Shared_Asset_Shader_Pkg & userAss
 	);
 }
 
-void Asset_Shader_Pkg::Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const string & fullDirectory)
+void Asset_Shader_Pkg::Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & fullDirectory)
 {
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	const bool found = Text_IO::Import_Text(engine, fullDirectory + EXT_PACKAGE, userAsset->m_packageText);
 	write_guard.unlock();
 	write_guard.release();
@@ -111,12 +111,12 @@ void Asset_Shader_Pkg::Finalize(Engine * engine, Shared_Asset_Shader_Pkg & userA
 	userAsset->finalize();
 
 	// Notify Completion
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
 }
 
-string Asset_Shader_Pkg::getPackageText() const
+std::string Asset_Shader_Pkg::getPackageText() const
 {
 	return m_packageText;
 }

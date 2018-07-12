@@ -9,8 +9,8 @@
 
 
 struct Importer_Pool {
-	shared_mutex pool_mutex;
-	vector<Assimp::Importer*> pool;
+	std::shared_mutex pool_mutex;
+	std::vector<Assimp::Importer*> pool;
 
 
 	Importer_Pool() {
@@ -20,7 +20,7 @@ struct Importer_Pool {
 
 	Assimp::Importer * rentImporter() {
 		// Start Reading Pool
-		unique_lock<shared_mutex> pool_readGuard(pool_mutex);
+		std::unique_lock<std::shared_mutex> pool_readGuard(pool_mutex);
 
 		// Check if any of our importers are free to be used
 		if (pool.size()) {
@@ -35,7 +35,7 @@ struct Importer_Pool {
 
 	void returnImporter(Assimp::Importer * returnedImporter) {
 		// Start Reading Pool
-		unique_lock<shared_mutex> pool_readGuard(pool_mutex);
+		std::unique_lock<std::shared_mutex> pool_readGuard(pool_mutex);
 
 		// Check if we have enough importers, free extra
 		if (pool.size() >= 4)
@@ -47,12 +47,12 @@ struct Importer_Pool {
 
 static Importer_Pool importer_pool;
 
-/** Convert an aiMatrix to glm::mat4x4.
+/** Convert an aiMatrix to glm::mat4.
  * @param	d	the aiMatrix to convert from
- * @return		the glm::mat4x4 converted to */ 
-inline mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
+ * @return		the glm::mat4 converted to */ 
+inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 {
-	return mat4(d.a1, d.b1, d.c1, d.d1,
+	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
 		d.a2, d.b2, d.c2, d.d2,
 		d.a3, d.b3, d.c3, d.d3,
 		d.a4, d.b4, d.c4, d.d4);
@@ -60,7 +60,7 @@ inline mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 
 inline Node * copy_node(const aiNode * oldNode) 
 {
-	Node * newNode = new Node(string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
+	Node * newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
 	newNode->children.resize(oldNode->mNumChildren);
 	for (int c = 0; c < oldNode->mNumChildren; ++c) 
@@ -68,7 +68,7 @@ inline Node * copy_node(const aiNode * oldNode)
 	return newNode;
 }
 
-bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const unsigned int & importFlags, Model_Geometry & data_container)
+bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, const unsigned int & importFlags, Model_Geometry & data_container)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(fulldirectory)) {
@@ -105,22 +105,22 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 				for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
 					const int & index = face.mIndices[b];
 					if (importFlags & import_vertices)
-						data_container.vertices.push_back(vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
+						data_container.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
 					if (importFlags & import_normals) {
 						const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-						data_container.normals.push_back(glm::normalize(vec3(normal.x, normal.y, normal.z)));
+						data_container.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
 					}
 					if (importFlags & import_tangents) {
 						const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-						data_container.tangents.push_back(glm::normalize(vec3(tangent.x, tangent.y, tangent.z)));
+						data_container.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
 					}
 					if (importFlags & import_bitangents) {
 						const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
-						data_container.bitangents.push_back(glm::normalize(vec3(bitangent.x, bitangent.y, bitangent.z)));
+						data_container.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 					}
 					if (importFlags & import_texcoords) {
 						const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
-						data_container.texCoords.push_back(vec2(uvmap.x, uvmap.y));
+						data_container.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
 					}
 				}
 
@@ -140,23 +140,23 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 			data_container.animations[a].channels.resize(animation->mNumChannels);
 			for (int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
 				auto * channel = scene->mAnimations[a]->mChannels[c];
-				data_container.animations[a].channels[c] = new Node_Animation(string(channel->mNodeName.data));
+				data_container.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
 
 				// Copy Keys
 				data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
 				for (int n = 0; n < channel->mNumScalingKeys; ++n) {
 					auto & key = channel->mScalingKeys[n];
-					data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<vec3>(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
 				for (int n = 0; n < channel->mNumRotationKeys; ++n) {
 					auto & key = channel->mRotationKeys[n];
-					data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<quat>(key.mTime, quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
 				for (int n = 0; n < channel->mNumPositionKeys; ++n) {
 					auto & key = channel->mPositionKeys[n];
-					data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<vec3>(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 			}
 		}
@@ -171,7 +171,7 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 
 			for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
 				int BoneIndex = 0;
-				string BoneName(mesh->mBones[B]->mName.data);
+				std::string BoneName(mesh->mBones[B]->mName.data);
 
 				if (data_container.boneMap.find(BoneName) == data_container.boneMap.end()) {
 					BoneIndex = data_container.boneTransforms.size();
@@ -254,9 +254,9 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 	return true;
 }
 
-const string Model_IO::Get_Version()
+const std::string Model_IO::Get_Version()
 {
-	return to_string(aiGetVersionMajor()) + "." + to_string(aiGetVersionMinor()) + "." + to_string(aiGetVersionRevision());
+	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))

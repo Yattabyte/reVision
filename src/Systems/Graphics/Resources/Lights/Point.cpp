@@ -18,12 +18,12 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	m_size = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light"), true);
-	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Point\\Culling_Dynamic"), true);
-	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Point\\Culling_Static"), true);
-	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Point\\Shadow_Dynamic"), true);
-	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Point\\Shadow_Static"), true);
-	m_engine->createAsset(m_shapeSphere, string("sphere"));
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Point\\Light"), true);
+	m_engine->createAsset(m_shader_CullDynamic, std::string("Base Lights\\Point\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, std::string("Base Lights\\Point\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, std::string("Base Lights\\Point\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, std::string("Base Lights\\Point\\Shadow_Static"), true);
+	m_engine->createAsset(m_shapeSphere, std::string("sphere"));
 
 	// Primitive Construction
 	m_sphereVAOLoaded = false;
@@ -42,7 +42,7 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 
 	// Initialize Shadows
 	m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) {setSize(f); });
-	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
+	m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	for (int x = 0; x < 2; ++x) {
 		m_shadowFBO[x] = 0;
@@ -101,7 +101,7 @@ Point_Tech::Point_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	}
 }
 
-vec2 Point_Tech::getSize() const
+glm::vec2 Point_Tech::getSize() const
 {
 	return m_shadowSize;
 }
@@ -136,7 +136,7 @@ void Point_Tech::unregisterShadowCaster(int & array_spot)
 		m_freedShadowSpots.push_back(array_spot);
 }
 
-void Point_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Point_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Point");
 	if (m_size && m_sphereVAOLoaded) {
@@ -155,7 +155,7 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 			for each (const auto &c in m_lightList)
 				c->update(CAM_GEOMETRY_STATIC);
 	
-		vector<GLuint> visArray(m_size);
+		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in m_lightList)
 			visArray[count++] = component->getBufferIndex();
@@ -252,7 +252,7 @@ void Point_Tech::renderLighting()
 void Point_Tech::clearShadow(const unsigned int & type, const int & layer)
 {
 	const float clearDepth(1.0f);
-	const vec3 clear(0.0f);
+	const glm::vec3 clear(0.0f);
 	glClearTexSubImage(m_shadowDepth[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	glClearTexSubImage(m_shadowDistance[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clearDepth);
 	glClearTexSubImage(m_shadowWNormal[type], 0, 0, 0, layer * 6, m_shadowSize.x, m_shadowSize.y, 6.0, GL_RGB, GL_FLOAT, &clear);
@@ -261,7 +261,7 @@ void Point_Tech::clearShadow(const unsigned int & type, const int & layer)
 
 void Point_Tech::setSize(const float & size)
 {
-	m_shadowSize = vec2(max(size, 1));
+	m_shadowSize = glm::vec2(max(size, 1));
 
 	for (int x = 0; x < 2; ++x) {
 		glTextureImage3DEXT(m_shadowDepth[x], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 6, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);

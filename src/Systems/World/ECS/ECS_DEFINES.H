@@ -7,8 +7,6 @@
 #include <vector>
 
 
-using namespace glm;
-
 static enum ECS_MESSAGE_COMMAND_TYPES {
 	// SPATIAL
 	SET_POSITION,
@@ -28,12 +26,12 @@ static enum ECS_MESSAGE_COMMAND_TYPES {
 
 /** A means for sharing camera data with both the program and the GPU in one data structure. */
 struct Camera_Buffer {
-	mat4 pMatrix = mat4(1.0f);
-	mat4 vMatrix = mat4(1.0f);
-	mat4 pMatrix_Inverse = mat4(1.0f);
-	mat4 vMatrix_Inverse = mat4(1.0f);
-	vec3 EyePosition = vec3(0.0f); float padding;
-	vec2 Dimensions = vec2(1.0f);
+	glm::mat4 pMatrix = glm::mat4(1.0f);
+	glm::mat4 vMatrix = glm::mat4(1.0f);
+	glm::mat4 pMatrix_Inverse = glm::mat4(1.0f);
+	glm::mat4 vMatrix_Inverse = glm::mat4(1.0f);
+	glm::vec3 EyePosition = glm::vec3(0.0f); float padding;
+	glm::vec2 Dimensions = glm::vec2(1.0f);
 	float NearPlane = 0.01f;
 	float FarPlane = 1.0f;
 	float FOV = 1.0f;

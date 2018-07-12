@@ -8,7 +8,6 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 
-using namespace glm;
 class Engine;
 class Reflector_Component;
 
@@ -45,7 +44,7 @@ private:
 	Shared_Asset_Shader m_shaderEffect, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeQuad, m_shapeCube;
 	StaticBuffer m_quadIndirectBuffer, m_quad6FaceIndirectBuffer, m_cubeIndirectBuffer, m_visRefUBO;
-	vector<Reflector_Component*> m_refList;
+	std::vector<Reflector_Component*> m_refList;
 	size_t m_size;
 	GLuint m_fbo, m_texture;
 	GLuint m_reflectorCount;

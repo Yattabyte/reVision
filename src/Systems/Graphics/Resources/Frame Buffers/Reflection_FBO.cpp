@@ -21,8 +21,8 @@ void Reflection_FBO::initialize(Engine * engine, const GLuint & depthStencil)
 	if (!m_Initialized) {
 		m_engine = engine;
 		m_depth_stencil = depthStencil;
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(ivec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 		FrameBuffer::initialize();
 
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
@@ -51,7 +51,7 @@ void Reflection_FBO::bindForWriting()
 	glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 }
 
-void Reflection_FBO::resize(const vec2 & size)
+void Reflection_FBO::resize(const glm::vec2 & size)
 {
 	FrameBuffer::resize(size);
 

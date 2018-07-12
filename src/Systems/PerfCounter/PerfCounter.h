@@ -32,7 +32,7 @@ public:
 
 private:
 	// Private Methods
-	void resize(const ivec2 s);
+	void resize(const glm::ivec2 s);
 
 
 	// Private Attributes
@@ -42,8 +42,8 @@ private:
 	GLuint m_quadVAO;	
 	bool m_quadVAOLoaded;
 	StaticBuffer m_indirectQuad;
-	ivec2 m_renderSize;
-	mat4 m_projMatrix;
+	glm::ivec2 m_renderSize;
+	glm::mat4 m_projMatrix;
 };
 
 #endif // SYSTEM_PERFCOUNTER_H

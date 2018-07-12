@@ -8,7 +8,6 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 
-using namespace glm;
 class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
@@ -47,7 +46,7 @@ private:
 	// Private Functions
 	/** Resize the frame buffer by the amount specified.
 	 * @param	size	the amount to resize by */
-	void resize(const ivec2 & size);
+	void resize(const glm::ivec2 & size);
 	/** Binds the light buffer for reading and convolute's it into several MIPs, representing increasing roughness. */
 	void updateMipChain();	
 
@@ -59,7 +58,7 @@ private:
 	Reflection_FBO * m_reflectionFBO;
 	bool m_quadVAOLoaded;
 	GLuint m_quadVAO, m_fbo, m_texture;
-	ivec2 m_renderSize;
+	glm::ivec2 m_renderSize;
 	Shared_Asset_Shader m_shaderCopy, m_shaderBlur, m_shaderEffect;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer, m_ssrBuffer;

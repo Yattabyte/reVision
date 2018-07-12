@@ -22,7 +22,7 @@ GlobalIllumination_RH::~GlobalIllumination_RH()
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 }
 
-GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, vector<Light_Tech*> * baseTechs)
+GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, std::vector<Light_Tech*> * baseTechs)
 {
 	// Default Parameters
 	m_engine = engine;
@@ -37,9 +37,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 	ZERO_MEM(m_textures[1]);
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderGISecondBounce, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce"), true);
-	m_engine->createAsset(m_shaderGIReconstruct, string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderGISecondBounce, std::string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_second_bounce"), true);
+	m_engine->createAsset(m_shaderGIReconstruct, std::string("Lighting\\Indirect Lighting\\Global Illumination (diffuse)\\gi_reconstruction"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -56,8 +56,8 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);
 
 	// Preference Callbacks
-	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {ivec2(f, m_renderSize.y); });
-	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {ivec2(m_renderSize.x, f); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {glm::ivec2(f, m_renderSize.y); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {glm::ivec2(m_renderSize.x, f); });
 
 	// Buffer Initializations
 	m_resolution = 16;
@@ -101,9 +101,9 @@ GlobalIllumination_RH::GlobalIllumination_RH(Engine * engine, Geometry_FBO * geo
 	// Generate Noise Texture
 	std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
-	vec3 data[32 * 32 * 32];
+	glm::vec3 data[32 * 32 * 32];
 	for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
-		data[x] = vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
+		data[x] = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 	glCreateTextures(GL_TEXTURE_3D, 1, &m_noise32);
 	glTextureImage3DEXT(m_noise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
 	glTextureParameteri(m_noise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
@@ -118,7 +118,7 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	// Update GI buffer
 	{
 		const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer();
-		const vec2 &size = cameraBuffer.Dimensions;
+		const glm::vec2 &size = cameraBuffer.Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
 		const float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
@@ -128,35 +128,35 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 			m_nearPlane * tanHalfVFOV,
 			m_farPlane  * tanHalfVFOV 
 		};
-		const vec3 frustumCorners[8] = {
+		const glm::vec3 frustumCorners[8] = {
 			// near face
-			vec3(points[0], points[2], m_nearPlane),
-			vec3(-points[0], points[2], m_nearPlane),
-			vec3(points[0], -points[2], m_nearPlane),
-			vec3(-points[0], -points[2], m_nearPlane),
+			glm::vec3(points[0], points[2], m_nearPlane),
+			glm::vec3(-points[0], points[2], m_nearPlane),
+			glm::vec3(points[0], -points[2], m_nearPlane),
+			glm::vec3(-points[0], -points[2], m_nearPlane),
 			// far face
-			vec3(points[1], points[3], m_farPlane),
-			vec3(-points[1], points[3], m_farPlane),
-			vec3(points[1], -points[3], m_farPlane),
-			vec3(-points[1], -points[3], m_farPlane)
+			glm::vec3(points[1], points[3], m_farPlane),
+			glm::vec3(-points[1], points[3], m_farPlane),
+			glm::vec3(points[1], -points[3], m_farPlane),
+			glm::vec3(-points[1], -points[3], m_farPlane)
 		};
 		// Find the middle of current view frustum chunk
-		const vec3 middle(0, 0, ((m_farPlane - m_nearPlane) / 2.0f) + m_nearPlane);
+		const glm::vec3 middle(0, 0, ((m_farPlane - m_nearPlane) / 2.0f) + m_nearPlane);
 		// Measure distance from middle to the furthest point of frustum slice
 		// Used for make a bounding sphere, but then converted into a bounding box
-		const vec3 aabb(glm::length(frustumCorners[7] - middle));
-		const vec3 volumeUnitSize = (aabb - -aabb) / float(m_resolution);
-		const vec3 frustumpos = (cameraBuffer.vMatrix_Inverse* vec4(middle, 1.0f));
-		const vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
-		const vec3 newMin = -aabb + clampedPos;
-		const vec3 newMax = aabb + clampedPos;
+		const glm::vec3 aabb(glm::length(frustumCorners[7] - middle));
+		const glm::vec3 volumeUnitSize = (aabb - -aabb) / float(m_resolution);
+		const glm::vec3 frustumpos = (cameraBuffer.vMatrix_Inverse* glm::vec4(middle, 1.0f));
+		const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
+		const glm::vec3 newMin = -aabb + clampedPos;
+		const glm::vec3 newMax = aabb + clampedPos;
 		const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
-		m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), mat4(1.0f));
+		m_camera.setMatrices(glm::ortho(l, r, b, t, n, f), glm::mat4(1.0f));
 		m_camera.setPosition(clampedPos);
 		m_camera.setFarPlane(aabb.x);
 	
-		m_attribBuffer.write(0, sizeof(vec3), &newMax);
-		m_attribBuffer.write(sizeof(vec4), sizeof(vec3), &newMin);
+		m_attribBuffer.write(0, sizeof(glm::vec3), &newMax);
+		m_attribBuffer.write(sizeof(glm::vec4), sizeof(glm::vec3), &newMin);
 		m_attribBuffer.write(offsetof(GI_Radiance_Struct, R_wcs), sizeof(float), &volumeUnitSize.x);
 	}
 

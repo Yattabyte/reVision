@@ -15,7 +15,7 @@ GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size)
 	return newPixels;
 }
 
-FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const string & fulldirectory)
+FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & fulldirectory)
 {
 	const char * file = fulldirectory.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
@@ -44,7 +44,7 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const string & fulldirectory
 	return bitmap;
 }
 
-bool Image_IO::Import_Image(Engine * engine, const string & fulldirectory, Image_Data & data_container)
+bool Image_IO::Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & data_container)
 {
 	FIBITMAP * bitmap = Import_Bitmap(engine, fulldirectory);
 	if (!bitmap) return false;
@@ -55,7 +55,7 @@ bool Image_IO::Import_Image(Engine * engine, const string & fulldirectory, Image
 
 void Image_IO::Load_Pixel_Data(FIBITMAP * bitmap, Image_Data & data_container)
 {
-	const ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
+	const glm::ivec2 dimensions(FreeImage_GetWidth(bitmap), FreeImage_GetHeight(bitmap));
 	const unsigned int size_mult = unsigned int(dimensions.x * dimensions.y);
 
 	// Always create rgba format
@@ -75,7 +75,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP * bitmap, Image_Data & data_container)
 	data_container.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const ivec2 newSize, Image_Data & importedData)
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData)
 {
 	// Make sure new sizes AREN'T zero
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y) 
@@ -97,7 +97,7 @@ void Image_IO::Resize_Image(const ivec2 newSize, Image_Data & importedData)
 		}
 }
 
-const string Image_IO::Get_Version()
+const std::string Image_IO::Get_Version()
 {
-	return string(FreeImage_GetVersion());
+	return std::string(FreeImage_GetVersion());
 }

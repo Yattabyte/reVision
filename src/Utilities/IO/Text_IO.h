@@ -5,7 +5,6 @@
 #include <string>
 
 
-using namespace std;
 class Engine;
 
 /** 
@@ -19,8 +18,8 @@ public:
 	 * @param	fulldirectory	the path to the file
 	 * @param	importedData	the container to place the imported data within
 	 * @return					true on successfull import, false otherwise (error reported to engine) */
-	static bool Import_Text(Engine * engine, const string & fulldirectory, string & importedData);
-	static void Export_Text(const string & fulldirectory, const string & exportedData);
+	static bool Import_Text(Engine * engine, const std::string & fulldirectory, std::string & importedData);
+	static void Export_Text(const std::string & fulldirectory, const std::string & exportedData);
 };
 
 #endif // TEXT_IO_H

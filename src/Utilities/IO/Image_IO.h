@@ -6,14 +6,12 @@
 #include <string>
 
 
-using namespace std;
-using namespace glm;
 class Engine;
 class FIBITMAP;
 
 struct Image_Data {
 	GLubyte * pixelData = nullptr;
-	ivec2 dimensions = ivec2(0);
+	glm::ivec2 dimensions = glm::ivec2(0);
 	int pitch = 0;
 	unsigned int bpp = 0;
 };
@@ -30,7 +28,7 @@ public:
 	 * @param	fulldirectory	the path to the file
 	 * @param	importedData	the container to place the imported data within
 	 * @return					true on successfull import, false otherwise (error reported to engine) */
-	static bool Import_Image(Engine * engine, const string & fulldirectory, Image_Data & importedData);
+	static bool Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & importedData);
 	/** Load pixel data from a bitmap object.
 	 * @param	bitmap			the FreeImage bitmap to read from
 	 * @param	importedData	the container to place the imported data within */
@@ -38,10 +36,10 @@ public:
 	/** Resize and update an image.
  	 * @param	newSize			the desired image size
 	 * @param	importedData	the container holding the image data (gets updated with new data) */
-	static void Resize_Image(const ivec2 newSize, Image_Data & importedData);
+	static void Resize_Image(const glm::ivec2 newSize, Image_Data & importedData);
 	/** Get the plugin version.
 	 * @return the plugin version */
-	static const string Get_Version();
+	static const std::string Get_Version();
 
 
 private:
@@ -49,7 +47,7 @@ private:
 	 * @param	engine			the engine to import to
 	 * @param	fulldirectory	the path to the file
 	 * @return					the free image bitmap object */
-	static FIBITMAP * Import_Bitmap(Engine * engine, const string & fulldirectory);
+	static FIBITMAP * Import_Bitmap(Engine * engine, const std::string & fulldirectory);
 };
 
 #endif // IMAGE_IO_H

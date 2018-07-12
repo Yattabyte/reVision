@@ -20,7 +20,7 @@
 class Engine;
 class ModelManager;
 class Asset_Model;
-typedef shared_ptr<Asset_Model> Shared_Asset_Model;
+typedef std::shared_ptr<Asset_Model> Shared_Asset_Model;
 
 /**
  * A 3D geometric mesh meant to be used in 3D rendering.
@@ -43,7 +43,7 @@ public:
 	 * @param	modelManager	the model manager to use
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Model & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Model & userAsset, const std::string & filename, const bool & threaded = true);
 	/** Returns the material ID for a skin given an index into this list
 	 * @note			Clamps to the skin list size, so it won't go out of bounds
 	 * @param	index	into this model's skin list. 
@@ -53,13 +53,13 @@ public:
 
 	// Public Attributes
 	int									m_meshSize;
-	vector<Shared_Asset_Material>		m_skins;
+	std::vector<Shared_Asset_Material>		m_skins;
 	GeometryInfo						m_data;
-	vector<BoneTransform>				m_boneTransforms;
-	map<string, int>					m_boneMap;
-	vector<Animation>					m_animations;
+	std::vector<BoneTransform>				m_boneTransforms;
+	std::map<std::string, int>					m_boneMap;
+	std::vector<Animation>					m_animations;
 	Node								*m_rootNode;
-	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
+	glm::vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
 	ModelManager						*m_modelManager;
@@ -68,12 +68,12 @@ public:
 private:
 	// Private Constructors
 	/** Construct the Model. */
-	Asset_Model(const string & filename, ModelManager * modelManager);
+	Asset_Model(const std::string & filename, ModelManager * modelManager);
 
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Model & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Model & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Model & userAsset);
 

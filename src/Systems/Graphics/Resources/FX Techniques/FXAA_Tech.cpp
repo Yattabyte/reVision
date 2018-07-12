@@ -13,8 +13,8 @@ FXAA_Tech::FXAA_Tech(Engine * engine)
 	m_engine = engine;
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderFXAA, string("FX\\FXAA"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderFXAA, std::string("FX\\FXAA"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;

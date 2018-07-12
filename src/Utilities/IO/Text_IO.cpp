@@ -3,16 +3,16 @@
 #include <fstream>
 
 
-bool Text_IO::Import_Text(Engine * engine, const string & fulldirectory, string & data_container)
+bool Text_IO::Import_Text(Engine * engine, const std::string & fulldirectory, std::string & data_container)
 {
 	if (!Engine::File_Exists(fulldirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
 		return false;
 	}
 
-	ifstream file(fulldirectory);
+	std::ifstream file(fulldirectory);
 	while (!file.eof()) {
-		string temp;
+		std::string temp;
 		std::getline(file, temp);
 		data_container.append(temp + '\n');
 	}
@@ -20,8 +20,8 @@ bool Text_IO::Import_Text(Engine * engine, const string & fulldirectory, string 
 	return true;
 }
 
-void Text_IO::Export_Text(const string & fulldirectory, const string & exportedData)
+void Text_IO::Export_Text(const std::string & fulldirectory, const std::string & exportedData)
 {
-	ofstream out(fulldirectory);
+	std::ofstream out(fulldirectory);
 	out << exportedData.c_str();
 }

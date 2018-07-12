@@ -5,15 +5,13 @@
 #include <vector>
 
 
-using namespace std;
-
 /**
  * A list which provides automatic insertion sort functionality.
  * @param	<T_key>		the sorting key type
  * @param	<T_elmt>	the element to store type
  * @param	<T_compare>	the comparator type, defaults to less (an ascending list)
  **/
-template <typename T_key, typename T_elmt, typename T_compare = less<T_key>>
+template <typename T_key, typename T_elmt, typename T_compare = std::less<T_key>>
 class PriorityList
 {
 private:
@@ -26,7 +24,7 @@ private:
 		Element() : m_key(0), m_value(0) {}
 		Element(const T_key & key, const T_elmt & value) : m_key(key), m_value(value) {}
 	};
-	vector<Element> m_list;
+	std::vector<Element> m_list;
 	T_compare m_comparator;
 
 
@@ -62,8 +60,8 @@ public:
 	}
 	/** Create a final list of elements only.
 	 * @return			a sorted list of elements */
-	const vector<T_elmt> toList() const {
-		vector<T_elmt> outList;
+	const std::vector<T_elmt> toList() const {
+		std::vector<T_elmt> outList;
 		outList.reserve(m_list.size());
 		for each (const auto &element in m_list)
 			outList.push_back(element.m_value);

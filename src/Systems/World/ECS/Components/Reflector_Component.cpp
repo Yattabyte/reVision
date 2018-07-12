@@ -19,8 +19,8 @@ Reflector_Component::~Reflector_Component()
 Reflector_Component::Reflector_Component(Engine * engine)
 { 
 	m_engine = engine;
-	m_position = vec3(0.0f);
-	m_scale = vec3(1.0f);
+	m_position = glm::vec3(0.0f);
+	m_scale = glm::vec3(1.0f);
 	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_uboBuffer = graphics->m_reflectionSSBO.addElement(&m_uboIndex);
 	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->CubeSpot = m_uboIndex;
@@ -29,13 +29,13 @@ Reflector_Component::Reflector_Component(Engine * engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
-	quat quats[6];
-	quats[0] = glm::lookAt(vec3(0), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0));
-	quats[1] = glm::lookAt(vec3(0), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0));
-	quats[2] = glm::lookAt(vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
-	quats[3] = glm::lookAt(vec3(0), glm::vec3(0, -1, 0), glm::vec3(0, 0, -1));
-	quats[4] = glm::lookAt(vec3(0), glm::vec3(0, 0, 1), glm::vec3(0, -1, 0));
-	quats[5] = glm::lookAt(vec3(0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+	glm::quat quats[6];
+	quats[0] = glm::lookAt(glm::vec3(0), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0));
+	quats[1] = glm::lookAt(glm::vec3(0), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0));
+	quats[2] = glm::lookAt(glm::vec3(0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
+	quats[3] = glm::lookAt(glm::vec3(0), glm::vec3(0, -1, 0), glm::vec3(0, 0, -1));
+	quats[4] = glm::lookAt(glm::vec3(0), glm::vec3(0, 0, 1), glm::vec3(0, -1, 0));
+	quats[5] = glm::lookAt(glm::vec3(0), glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
 	for (int x = 0; x < 6; ++x) {
 		m_cameras[x].setFarPlane(1000.0f);
 		m_cameras[x].setOrientation(quats[x]);
@@ -61,7 +61,7 @@ void Reflector_Component::setTransform(const Transform & transform)
 	}
 }
 
-bool Reflector_Component::isVisible(const float & radius, const vec3 & eyePosition) const
+bool Reflector_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_position, eyePosition);
 	return radius + glm::length(m_scale) > distance;

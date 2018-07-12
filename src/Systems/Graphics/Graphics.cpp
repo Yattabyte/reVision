@@ -44,7 +44,7 @@ System_Graphics::~System_Graphics()
 	}
 }
 
-System_Graphics::System_Graphics() : m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_reflectionFBO(), m_renderSize(vec2(1.0f)) {}
+System_Graphics::System_Graphics() : m_visualFX(), m_geometryFBO(), m_lightingFBO(), m_reflectionFBO(), m_renderSize(glm::vec2(1.0f)) {}
 
 void System_Graphics::initialize(Engine * engine)
 {
@@ -71,10 +71,10 @@ void System_Graphics::initialize(Engine * engine)
 			m_userBuffer.write(offsetof(Renderer_Struct, m_ssao_radius), sizeof(float), &f);
 		});		
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
-			m_renderSize = ivec2(f, m_renderSize.y); 
+			m_renderSize = glm::ivec2(f, m_renderSize.y); 
 		});
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
-			m_renderSize = ivec2(m_renderSize.x, f); 
+			m_renderSize = glm::ivec2(m_renderSize.x, f); 
 		});
 		m_userBuffer = StaticBuffer(sizeof(Renderer_Struct), &attribs);
 		m_userBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -137,7 +137,7 @@ void System_Graphics::update(const float & deltaTime)
 
 void System_Graphics::generateKernal()
 {
-	vec4 new_kernel[MAX_KERNEL_SIZE];
+	glm::vec4 new_kernel[MAX_KERNEL_SIZE];
 	std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 	std::default_random_engine generator;
 	for (int i = 0, t = 0; i < MAX_KERNEL_SIZE; i++, t++) {
@@ -151,11 +151,11 @@ void System_Graphics::generateKernal()
 		GLfloat scale = GLfloat(i) / (GLfloat)(MAX_KERNEL_SIZE);
 		scale = 0.1f + (scale*scale) * (1.0f - 0.1f);
 		sample *= scale;
-		new_kernel[t] = vec4(sample, 1);
+		new_kernel[t] = glm::vec4(sample, 1);
 	}
 
 	// Write to buffer, kernel is first part of this buffer
-	m_userBuffer.write(offsetof(Renderer_Struct, kernel[0]), sizeof(vec4)*MAX_KERNEL_SIZE, new_kernel);
+	m_userBuffer.write(offsetof(Renderer_Struct, kernel[0]), sizeof(glm::vec4)*MAX_KERNEL_SIZE, new_kernel);
 }
 
 void System_Graphics::send2GPU(const Visibility_Token & vis_token)

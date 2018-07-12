@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "0.186";
+constexpr char ENGINE_VERSION[]	= "0.187";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"
@@ -17,11 +17,11 @@ constexpr char ENGINE_VERSION[]	= "0.186";
 #include "Utilities\MappedChar.h"
 #include <map>
 #include <shared_mutex>
+#include <string>
 #include <thread>
 #include <vector>
 
 
-using namespace std;
 class GLFWwindow;
 class Camera;
 class System;
@@ -99,16 +99,16 @@ public:
 	 */
 	template <typename SharedAsset, typename... Args>
 	void createAsset(SharedAsset & sharedAsset, Args&&... ax) {
-		m_AssetManager.create(sharedAsset, forward<Args>(ax)...);
+		m_AssetManager.create(sharedAsset, std::forward<Args>(ax)...);
 	}
 	/** Forward a message to the message manager.
 	 * @param	input				the message to report */
-	void reportMessage(const string & input);
+	void reportMessage(const std::string & input);
 	/** Forward an error to the message manager.
 	 * @param	error_number		the error number
 	 * @param	input				the error to report
 	 * @param	additional_input	additional input */
-	void reportError(const int & error_number, const string & input, const string & additional_input = "");
+	void reportError(const int & error_number, const std::string & input, const std::string & additional_input = "");
 
 	// Getters
 	/** Returns this engine's rendering context. */
@@ -131,12 +131,12 @@ public:
 
 	// Static Methods
 	/** Retrieves the application's running directory.
-	* @return					string of the absolute directory that this executable ran from */
-	static string Get_Current_Dir();
+	* @return					std::string of the absolute directory that this executable ran from */
+	static std::string Get_Current_Dir();
 	/** Check if a given file exists.
 	* @param	name			the full file path
 	* @return					true if the file exists, false otherwise */
-	static bool File_Exists(const string & name);
+	static bool File_Exists(const std::string & name);
 
 
 private:
@@ -164,7 +164,7 @@ private:
  * 
  *  \section standards_sec Standards/Conventions used
  *  - All member attributes shall be prefixed with 'm_' followed by the rest in camel case, leading with a lowercase character
- *		- vec3 m_currentPosition;
+ *		- glm::vec3 m_currentPosition;
  *	- All member functions are camel cased with a leading lower case character
  *		- void createObject ( ... );
  *	- Static methods are camel cased with a leading upper case character and underscores between words '_'

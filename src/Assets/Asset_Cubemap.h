@@ -7,10 +7,9 @@
 #include "GLM\common.hpp"
 
 
-using namespace glm;
 class Engine;
 class Asset_Cubemap;
-typedef shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
+typedef std::shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
 
 /**
  * Represents an OpenGL cubemap texture object.
@@ -32,7 +31,7 @@ public:
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & filename, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit.
 	 * @param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
@@ -40,7 +39,7 @@ public:
 	
 	// Public Attributes
 	GLuint m_glTexID;
-	vec2 m_size;
+	glm::vec2 m_size;
 	GLubyte	* m_pixelData[6];
 
 
@@ -52,7 +51,7 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset);
 

@@ -11,7 +11,6 @@
 #include "glm\glm.hpp"
 
 
-using namespace glm;
 class Static_Model_Creator;
 
 /**
@@ -23,9 +22,9 @@ public:
 	// Interface implementations
 	virtual const char * getName() const { return "Static_Model"; }
 	virtual bool isLoaded() const;
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
-	virtual bool containsPoint(const vec3 & point) const;
-	virtual const ivec2 getDrawInfo() const;
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
+	virtual bool containsPoint(const glm::vec3 & point) const;
+	virtual const glm::ivec2 getDrawInfo() const;
 	virtual const unsigned int getMeshSize() const;
 
 
@@ -52,7 +51,7 @@ protected:
 	bool m_vaoLoaded;
 	unsigned int m_uboIndex;
 	float m_bsphereRadius;
-	vec3 m_bspherePos;
+	glm::vec3 m_bspherePos;
 	VB_Ptr * m_uboBuffer;
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
@@ -65,7 +64,7 @@ private:
 	// Private Functions
 	/** Set the model directory and load the file. 
 	 * @param	directory	the model directory */
-	void setModelDirectory(const string & directory);
+	void setModelDirectory(const std::string & directory);
 	/** Set the model skin index to use.
 	 * @param	index		the index to use */
 	void setSkin(const unsigned int & index);

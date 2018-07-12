@@ -13,28 +13,28 @@
  * @param	userAsset		the asset we are loading from */
 inline void parse(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
 {
-	string *text[3] = { &userAsset->m_vertexText, &userAsset->m_fragmentText, &userAsset->m_geometryText };
+	std::string *text[3] = { &userAsset->m_vertexText, &userAsset->m_fragmentText, &userAsset->m_geometryText };
 	for (int x = 0; x < 3; ++x) {
 		if (*text[x] == "") continue;
-		string input = *text[x];
+		std::string input = *text[x];
 		// Find Package to include
 		int spot = input.find("#package");
-		while (spot != string::npos) {
-			string directory = input.substr(spot);
+		while (spot != std::string::npos) {
+			std::string directory = input.substr(spot);
 
 			unsigned int qspot1 = directory.find("\"");
 			unsigned int qspot2 = directory.find("\"", qspot1 + 1);
-			// find string quotes and remove them
+			// find std::string quotes and remove them
 			directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
 			Shared_Asset_Shader_Pkg package;
 			engine->createAsset(package, directory, false);
-			string left = input.substr(0, spot);
-			string right = input.substr(spot + 1 + qspot2);
+			std::string left = input.substr(0, spot);
+			std::string right = input.substr(spot + 1 + qspot2);
 			input = left + package->getPackageText() + right;
 			spot = input.find("#package");
 		}
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		*text[x] = input;
 	}
 }
@@ -45,7 +45,7 @@ inline void parse(Engine * engine, Shared_Asset_Shader_Geometry & userAsset)
  * @param	ID			the shader ID to update
  * @param	source		the char array representing the document
  * @param	type		the shader type */
-inline void compile_single_shader(Engine * engine, const string & filename, GLuint & ID, const char * source, const GLenum & type)
+inline void compile_single_shader(Engine * engine, const std::string & filename, GLuint & ID, const char * source, const GLenum & type)
 {
 	if (strlen(source) > 0) {
 		ID = glCreateShader(type);
@@ -57,7 +57,7 @@ inline void compile_single_shader(Engine * engine, const string & filename, GLui
 		if (!success) {
 			GLchar InfoLog[1024];
 			glGetShaderInfoLog(ID, sizeof(InfoLog), NULL, InfoLog);
-			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, string(InfoLog, 1024));
+			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(InfoLog, 1024));
 		}
 	}
 }
@@ -98,7 +98,7 @@ inline void link_program(Engine * engine, Shared_Asset_Shader_Geometry & userAss
 	if (success == 0) {
 		GLchar ErrorLog[1024];
 		glGetProgramInfoLog(userAsset->m_glProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset->getFileName(), string(ErrorLog, 1024));
+		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset->getFileName(), std::string(ErrorLog, 1024));
 	}
 	glValidateProgram(userAsset->m_glProgramID);
 
@@ -117,7 +117,7 @@ Asset_Shader_Geometry::~Asset_Shader_Geometry()
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader_Geometry::Asset_Shader_Geometry(const string & filename) : Asset_Shader(filename)
+Asset_Shader_Geometry::Asset_Shader_Geometry(const std::string & filename) : Asset_Shader(filename)
 {
 	m_glProgramID = 0;
 	m_glVertexID = 0;
@@ -138,8 +138,8 @@ void Asset_Shader_Geometry::CreateDefault(Engine * engine, Shared_Asset_Shader_G
 
 	// Create hard-coded alternative
 	assetManager.createNewAsset(userAsset, "defaultShader");
-	userAsset->m_vertexText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	userAsset->m_fragmentText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+	userAsset->m_vertexText = "#version 430\n\nlayout(location = 0) in glm::vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = glm::vec4(vertex, 1.0);\n}";
+	userAsset->m_fragmentText = "#version 430\n\nlayout (location = 0) out glm::vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = glm::vec4(1.0f);\n}";
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
 		/* Initialization. */
@@ -150,7 +150,7 @@ void Asset_Shader_Geometry::CreateDefault(Engine * engine, Shared_Asset_Shader_G
 }
 
 
-void Asset_Shader_Geometry::Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & filename, const bool & threaded)
+void Asset_Shader_Geometry::Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -182,9 +182,9 @@ void Asset_Shader_Geometry::Create(Engine * engine, Shared_Asset_Shader_Geometry
 	);
 }
 
-void Asset_Shader_Geometry::Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const string & fullDirectory)
+void Asset_Shader_Geometry::Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & fullDirectory)
 {
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, userAsset->m_vertexText);
 	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, userAsset->m_fragmentText);
 	const bool found_geometry = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_GEOMETRY, userAsset->m_geometryText);
@@ -207,7 +207,7 @@ void Asset_Shader_Geometry::Finalize(Engine * engine, Shared_Asset_Shader_Geomet
 
 	// Create Shader Program
 	{
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		compile(engine, userAsset);
 		generate_program(userAsset);
 		link_program(engine, userAsset);
@@ -215,7 +215,7 @@ void Asset_Shader_Geometry::Finalize(Engine * engine, Shared_Asset_Shader_Geomet
 
 	// Notify Completion
 	{
-		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 		for each (auto qwe in userAsset->m_callbacks)
 			assetManager.submitNotifyee(qwe.second); 
 	}

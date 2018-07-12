@@ -13,13 +13,13 @@
 * @param	vertices	the vertices of the mesh to derive the AABB from
 * @param	minOut	output reference containing the minimum extents of the AABB
 * @param	maxOut	output reference containing the maximum extents of the AABB */
-inline void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & maxOut, vec3 & centerOut, float & radiusOut)
+inline void calculate_AABB(const std::vector<glm::vec3> & vertices, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
 {
 	if (vertices.size() >= 1) {
-		const vec3 &vector = vertices.at(0);
+		const glm::vec3 & vector = vertices.at(0);
 		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
 		for (int x = 1, total = vertices.size(); x < total; ++x) {
-			const vec3 &vertex = vertices.at(x);
+			const glm::vec3 &vertex = vertices.at(x);
 			if (vertex.x < minX)
 				minX = vertex.x;
 			else if (vertex.x > maxX)
@@ -34,8 +34,8 @@ inline void calculate_AABB(const vector<vec3> & vertices, vec3 & minOut, vec3 & 
 				maxZ = vertex.z;
 		}
 
-		minOut = vec3(minX, minY, minZ);
-		maxOut = vec3(maxX, maxY, maxZ);
+		minOut = glm::vec3(minX, minY, minZ);
+		maxOut = glm::vec3(maxX, maxY, maxZ);
 		centerOut = ((maxOut - minOut) / 2.0f) + minOut;
 		radiusOut = glm::distance(minOut, maxOut) / 2.0f;
 	}
@@ -57,14 +57,14 @@ inline void generate_material(Engine * engine, Shared_Asset_Material & modelMate
 		DIRECTORY_MODEL_MAT_TEX + material.ao
 	};
 
-	engine->createAsset(modelMaterial, string(""), true, material_textures);
+	engine->createAsset(modelMaterial, std::string(""), true, material_textures);
 }
 
 /** Initialize a model's materials, using the model's name as a lookup to an external material file.
 * @param	engine			the engine being used
 * @param	modelMaterial	the material asset to load into
 * @param	filename		the model's filename to use as a guide */
-inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const string & filename)
+inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const std::string & filename)
 {
 	std::string materialFilename = filename.substr(filename.find("Models\\"));
 	materialFilename = materialFilename.substr(0, materialFilename.find_first_of("."));
@@ -77,12 +77,12 @@ Asset_Model::~Asset_Model()
 		m_modelManager->unregisterGeometry(m_data, m_offset, m_count);
 }
 
-Asset_Model::Asset_Model(const string & filename, ModelManager * modelManager) : Asset(filename)
+Asset_Model::Asset_Model(const std::string & filename, ModelManager * modelManager) : Asset(filename)
 {
 	m_meshSize = 0;
-	m_bboxMin = vec3(0.0f);
-	m_bboxMax = vec3(0.0f);
-	m_bboxCenter = vec3(0.0f);
+	m_bboxMin = glm::vec3(0.0f);
+	m_bboxMax = glm::vec3(0.0f);
+	m_bboxCenter = glm::vec3(0.0f);
 	m_radius = 0.0f;
 	m_offset = 0;
 	m_count = 0;
@@ -100,16 +100,16 @@ void Asset_Model::CreateDefault(Engine * engine, Shared_Asset_Model & userAsset)
 
 	// Create hard-coded alternative
 	assetManager.createNewAsset(userAsset, "defaultModel", &modelManager);
-	userAsset->m_data.vs = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.uv = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
-	userAsset->m_data.nm = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.tg = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_data.bt = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
+	userAsset->m_data.vs = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
+	userAsset->m_data.uv = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
+	userAsset->m_data.nm = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
+	userAsset->m_data.tg = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
+	userAsset->m_data.bt = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
 	userAsset->m_meshSize = 6; // Final vertex size (needed for draw arrays call)
 	userAsset->m_data.bones.resize(6);
 	userAsset->m_skins.resize(1);
 	calculate_AABB(userAsset->m_data.vs, userAsset->m_bboxMin, userAsset->m_bboxMax, userAsset->m_bboxCenter, userAsset->m_radius);
-	engine->createAsset(userAsset->m_skins[0], string("defaultMaterial"), true);
+	engine->createAsset(userAsset->m_skins[0], std::string("defaultMaterial"), true);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -120,7 +120,7 @@ void Asset_Model::CreateDefault(Engine * engine, Shared_Asset_Model & userAsset)
 	);
 }
 
-void Asset_Model::Create(Engine * engine, Shared_Asset_Model & userAsset, const string & filename, const bool & threaded)
+void Asset_Model::Create(Engine * engine, Shared_Asset_Model & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 	ModelManager & modelManager = engine->getModelManager();
@@ -148,7 +148,7 @@ void Asset_Model::Create(Engine * engine, Shared_Asset_Model & userAsset, const 
 	);
 }
 
-void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, const string & fullDirectory)
+void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, const std::string & fullDirectory)
 {
 	Model_Geometry dataContainer;
 	if (!Model_IO::Import_Model(engine, fullDirectory, import_model, dataContainer)) {
@@ -157,7 +157,7 @@ void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, co
 		return;
 	}
 
-	unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> m_asset_guard(userAsset->m_mutex);
 	userAsset->m_meshSize = dataContainer.vertices.size();
 	userAsset->m_data.vs = dataContainer.vertices;
 	userAsset->m_data.nm = dataContainer.normals;
@@ -187,7 +187,7 @@ void Asset_Model::Finalize(Engine * engine, Shared_Asset_Model & userAsset)
 	userAsset->finalize();
 
 	// Register geometry
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	userAsset->m_modelManager->registerGeometry(userAsset->m_data, userAsset->m_offset, userAsset->m_count);
 
 	// Notify Completion
@@ -197,6 +197,6 @@ void Asset_Model::Finalize(Engine * engine, Shared_Asset_Model & userAsset)
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
-	shared_lock<shared_mutex> guard(m_mutex);
+	std::shared_lock<std::shared_mutex> guard(m_mutex);
 	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
 }

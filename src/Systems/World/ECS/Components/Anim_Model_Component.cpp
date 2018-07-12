@@ -7,7 +7,7 @@
 #include <minmax.h>
 
 
-inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
+inline void ReadNodeHeirarchy(std::vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const glm::mat4& ParentTransform);
 
 Anim_Model_Component::~Anim_Model_Component()
 {
@@ -25,11 +25,11 @@ Anim_Model_Component::Anim_Model_Component(Engine *engine)
 	m_playAnim = false;
 	m_skin = 0;
 	m_bsphereRadius = 0;
-	m_bspherePos = vec3(0.0f);
+	m_bspherePos = glm::vec3(0.0f);
 
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.addElement(&m_uboIndex);
 	m_commandMap["Set_Model_Directory"] = [&](const ECS_Command & payload) {
-		if (payload.isType<string>()) setModelDirectory(payload.toType<string>());
+		if (payload.isType<std::string>()) setModelDirectory(payload.toType<std::string>());
 	};
 	m_commandMap["Set_Skin"] = [&](const ECS_Command & payload) {
 		if (payload.isType<int>()) setSkin(payload.toType<int>());
@@ -49,7 +49,7 @@ bool Anim_Model_Component::isLoaded() const
 	return false;
 }
 
-bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosition) const
+bool Anim_Model_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	if (m_model && m_model->existsYet()) {
 		const float distance = glm::distance(m_bspherePos, eyePosition);
@@ -58,7 +58,7 @@ bool Anim_Model_Component::isVisible(const float & radius, const vec3 & eyePosit
 	return false;
 }
 
-bool Anim_Model_Component::containsPoint(const vec3 & point) const
+bool Anim_Model_Component::containsPoint(const glm::vec3 & point) const
 {
 	if (m_model) {
 		const float distance = glm::distance(m_bspherePos, point);
@@ -72,19 +72,19 @@ const unsigned int Anim_Model_Component::getBufferIndex() const
 	return m_uboIndex;
 }
 
-const ivec2 Anim_Model_Component::getDrawInfo() const
+const glm::ivec2 Anim_Model_Component::getDrawInfo() const
 {
 	if (m_model && m_model->existsYet()) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		return ivec2(m_model->m_offset, m_model->m_count);
+		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
+		return glm::ivec2(m_model->m_offset, m_model->m_count);
 	}
-	return ivec2(0);
+	return glm::ivec2(0);
 }
 
 const unsigned int Anim_Model_Component::getMeshSize() const
 {
 	if (m_model && m_model->existsYet()) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
+		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
 		return m_model->m_meshSize;
 	}
 	return 0;
@@ -93,22 +93,22 @@ const unsigned int Anim_Model_Component::getMeshSize() const
 void Anim_Model_Component::updateBSphere()
 {
 	if (m_model && m_model->existsYet()) {
-		shared_lock<shared_mutex> guard(m_model->m_mutex);
-		const vec3 bboxMax_World = (m_model->m_bboxMax * m_transform.m_scale) + m_transform.m_position;
-		const vec3 bboxMin_World = (m_model->m_bboxMin * m_transform.m_scale) + m_transform.m_position;
-		const vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;	
-		const vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
-		mat4 matTrans = glm::translate(mat4(1.0f), bboxCenter);
-		mat4 matRot = glm::mat4_cast(m_transform.m_orientation);
-		mat4 matScale = glm::scale(mat4(1.0f), bboxScale);
-		mat4 matFinal = (matTrans * matRot * matScale);
+		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
+		const glm::vec3 bboxMax_World = (m_model->m_bboxMax * m_transform.m_scale) + m_transform.m_position;
+		const glm::vec3 bboxMin_World = (m_model->m_bboxMin * m_transform.m_scale) + m_transform.m_position;
+		const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;	
+		const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
+		glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
+		glm::mat4 matRot = glm::mat4_cast(m_transform.m_orientation);
+		glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
+		glm::mat4 matFinal = (matTrans * matRot * matScale);
 		(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->bBoxMatrix = matFinal;
 		m_bsphereRadius = glm::compMax(m_model->m_radius * m_transform.m_scale);
 		m_bspherePos = m_model->m_bboxCenter + m_transform.m_position;
 	}
 }
 
-void Anim_Model_Component::setModelDirectory(const string & directory)
+void Anim_Model_Component::setModelDirectory(const std::string & directory)
 {
 	// Remove callback from old model before loading
 	if (m_model.get())
@@ -155,7 +155,7 @@ void Anim_Model_Component::animate(const double & deltaTime)
 	if (!m_model || !m_model->existsYet()) return;
 	
 	Geometry_Dynamic_Struct *const uboData = &reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
-	shared_lock<shared_mutex> guard(m_model->m_mutex);
+	std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
 
 	if (m_animation == -1 || m_transforms.size() == 0 || m_animation >= m_model->m_animations.size())
 		uboData->useBones = 0;	
@@ -170,7 +170,7 @@ void Anim_Model_Component::animate(const double & deltaTime)
 		const float AnimationTime = fmod(TimeInTicks, m_model->m_animations[m_animation].duration);
 		m_animStart = m_animStart == -1 ? TimeInTicks : m_animStart;
 
-		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_rootNode, m_model, mat4(1.0f));
+		ReadNodeHeirarchy(m_transforms, AnimationTime, m_animation, m_model->m_rootNode, m_model, glm::mat4(1.0f));
 
 		for (unsigned int i = 0, total = min(m_transforms.size(), NUM_MAX_BONES); i < total; i++)
 			uboData->transforms[i] = m_transforms[i].final;		
@@ -178,12 +178,12 @@ void Anim_Model_Component::animate(const double & deltaTime)
 }
 
 template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }
-template <> inline quat convertType(const aiQuaternion &t) { return quat(t.w, t.x, t.y, t.z); }
-template <> inline mat4 convertType(const aiMatrix4x4 &t) { return mat4(t.a1, t.b1, t.c1, t.d1,	t.a2, t.b2, t.c2, t.d2,	t.a3, t.b3, t.c3, t.d3,	t.a4, t.b4, t.c4, t.d4); }
+template <> inline glm::quat convertType(const aiQuaternion &t) { return glm::quat(t.w, t.x, t.y, t.z); }
+template <> inline glm::mat4 convertType(const aiMatrix4x4 &t) { return glm::mat4(t.a1, t.b1, t.c1, t.d1,	t.a2, t.b2, t.c2, t.d2,	t.a3, t.b3, t.c3, t.d3,	t.a4, t.b4, t.c4, t.d4); }
 template <typename T> inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
-template <> inline quat valueMix(const quat &t1, const quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
+template <> inline glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
 
-inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const string &NodeName)
+inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const std::string &NodeName)
 {
 	for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
 		const Node_Animation * pNodeAnim = pAnimation.channels[i];
@@ -194,7 +194,7 @@ inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const s
 }
 
 template <typename KeyType>
-inline int FindKey(const float &AnimationTime, const unsigned int &count, const vector<KeyType> & keys)
+inline int FindKey(const float &AnimationTime, const unsigned int &count, const std::vector<KeyType> & keys)
 {
 	for (unsigned int i = 0; i < count; i++)
 		if (AnimationTime < (float)(keys[i + 1]).time)
@@ -203,7 +203,7 @@ inline int FindKey(const float &AnimationTime, const unsigned int &count, const 
 }
 
 template <typename ValueType>
-inline ValueType InterpolateKeys(const float &AnimationTime, const vector<Animation_Time_Key<ValueType>> & keys) {
+inline ValueType InterpolateKeys(const float &AnimationTime, const std::vector<Animation_Time_Key<ValueType>> & keys) {
 	const unsigned int & keyCount = keys.size();
 	assert(keyCount > 0);
 	const ValueType &Result = keys[0].value;
@@ -213,32 +213,32 @@ inline ValueType InterpolateKeys(const float &AnimationTime, const vector<Animat
 		const Animation_Time_Key<ValueType> &Key = keys[Index];
 		const Animation_Time_Key<ValueType> &NextKey = keys[NextIndex];
 		const float DeltaTime = (float)(NextKey.time - Key.time);
-		const float Factor = clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
+		const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
 		return valueMix(Key.value, NextKey.value, Factor);
 	}
 	return Result;
 }
 
-inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
+inline void ReadNodeHeirarchy(std::vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const glm::mat4& ParentTransform)
 {
-	const string & NodeName = parentNode->name;
+	const std::string & NodeName = parentNode->name;
 	const Animation &pAnimation = model->m_animations[animation_ID];
 	const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-	mat4 NodeTransformation = parentNode->transformation;
+	glm::mat4 NodeTransformation = parentNode->transformation;
 
 	// Interpolate scaling, rotation, and translation.
 	// Generate their matrices and apply their transformations.
 	if (pNodeAnim) {
-		const vec3 Scaling = InterpolateKeys<vec3>(animation_time, pNodeAnim->scalingKeys);
-		const quat Rotation = InterpolateKeys<quat>(animation_time, pNodeAnim->rotationKeys);
-		const vec3 Translation = InterpolateKeys<vec3>(animation_time, pNodeAnim->positionKeys);
+		const glm::vec3 Scaling = InterpolateKeys<glm::vec3>(animation_time, pNodeAnim->scalingKeys);
+		const glm::quat Rotation = InterpolateKeys<glm::quat>(animation_time, pNodeAnim->rotationKeys);
+		const glm::vec3 Translation = InterpolateKeys<glm::vec3>(animation_time, pNodeAnim->positionKeys);
 		
-		NodeTransformation = glm::translate(mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(mat4(1.0f), Scaling);
+		NodeTransformation = glm::translate(glm::mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0f), Scaling);
 	}
 
-	const mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const mat4 GlobalInverseTransform = glm::inverse(model->m_rootNode->transformation);
-	const map<string, int> &BoneMap = model->m_boneMap;
+	const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
+	const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_rootNode->transformation);
+	const std::map<std::string, int> &BoneMap = model->m_boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		int BoneIndex = BoneMap.at(NodeName);
 		transforms.at(BoneIndex).final = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).offset;

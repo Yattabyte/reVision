@@ -30,13 +30,13 @@ public:
 	 * @param	<T>		the type to down-cast the components to.
 	 * @return			a type-casted list of components matching the supplied type */
 	template <typename T> 
-	const vector<T*>& getTypeList(const char * name) const {
-		return *(vector<T*>*)(&mList.at(name));
+	const std::vector<T*>& getTypeList(const char * name) const {
+		return *(std::vector<T*>*)(&mList.at(name));
 	}
 	/** Retrieve a list of components of the given type.
 	 * @param	name	the name of the type to retrieve
 	 * @return			the list of components matching the supplied type */
-	vector<Component*>& operator[](const char * name) {
+	std::vector<Component*>& operator[](const char * name) {
 		return mList.at(name);
 	}
 	/** Retrieve the size of the map.

@@ -13,17 +13,17 @@ Asset_Texture::~Asset_Texture()
 	delete m_pixelData;
 }
 
-Asset_Texture::Asset_Texture(const string & filename) : Asset(filename)
+Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename)
 {
 	m_glTexID = GL_TEXTURE_2D;
 	m_type = 0;
-	m_size = vec2(0);
+	m_size = glm::vec2(0);
 	m_pixelData = nullptr;
 	m_mipmap = false;
 	m_anis = false;
 }
 
-Asset_Texture::Asset_Texture(const string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
+Asset_Texture::Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
 {
 	m_type = t;
 	m_mipmap = m;
@@ -43,7 +43,7 @@ void Asset_Texture::CreateDefault(Engine * engine, Shared_Asset_Texture & userAs
 	userAsset->m_pixelData = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		userAsset->m_pixelData[x] = GLubyte(255);
-	userAsset->m_size = vec2(1);
+	userAsset->m_size = glm::vec2(1);
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -54,7 +54,7 @@ void Asset_Texture::CreateDefault(Engine * engine, Shared_Asset_Texture & userAs
 	);
 }
 
-void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, const string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
+void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -63,7 +63,7 @@ void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, co
 		return;
 
 	// Check if the file/directory exists on disk
-	const string &fullDirectory = DIRECTORY_TEXTURE + filename;
+	const std::string &fullDirectory = DIRECTORY_TEXTURE + filename;
 	if (!Engine::File_Exists(fullDirectory)) {
 		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 		CreateDefault(engine, userAsset);
@@ -81,7 +81,7 @@ void Asset_Texture::Create(Engine * engine, Shared_Asset_Texture & userAsset, co
 	);
 }
 
-void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset, const string & fullDirectory)
+void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset, const std::string & fullDirectory)
 {
 	Image_Data dataContainer;
 	if (!Image_IO::Import_Image(engine, fullDirectory, dataContainer)) {
@@ -90,7 +90,7 @@ void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset
 		return;
 	}
 
-	unique_lock<shared_mutex> m_asset_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> m_asset_guard(userAsset->m_mutex);
 	userAsset->m_size = dataContainer.dimensions;
 	userAsset->m_pixelData = dataContainer.pixelData;
 	GLubyte *textureData = userAsset->m_pixelData;
@@ -105,13 +105,13 @@ void Asset_Texture::Finalize(Engine * engine, Shared_Asset_Texture & userAsset)
 		
 	// Create Texture
 	{
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		glCreateTextures(userAsset->m_type, 1, &userAsset->m_glTexID);
 	}
 
 	// Load Texture
 	{
-		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 		switch (userAsset->m_type) {
 			case GL_TEXTURE_1D: {
 				glTextureStorage1D(userAsset->m_glTexID, 1, GL_RGBA16F, userAsset->m_size.x);

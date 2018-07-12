@@ -12,7 +12,7 @@ Asset_Collider::~Asset_Collider()
 		delete m_shape;
 }
 
-Asset_Collider::Asset_Collider(const string & filename) : Asset(filename)
+Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename)
 {
 	m_shape = nullptr;
 }
@@ -36,7 +36,7 @@ void Asset_Collider::CreateDefault(Engine * engine, Shared_Asset_Collider & user
 	);
 }
 
-void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, const string & filename, const bool & threaded)
+void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -62,7 +62,7 @@ void Asset_Collider::Create(Engine * engine, Shared_Asset_Collider & userAsset, 
 	);
 }
 
-void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAsset, const string & fullDirectory)
+void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAsset, const std::string & fullDirectory)
 {
 	// Attempt to create the asset
 	Model_Geometry dataContainer;
@@ -70,7 +70,7 @@ void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAss
 		CreateDefault(engine, userAsset);
 		return;
 	}
-	vector<btScalar> orderedPoints;
+	std::vector<btScalar> orderedPoints;
 	orderedPoints.reserve(dataContainer.vertices.size() * 3);
 	for each (const auto & vertex in dataContainer.vertices) {
 		orderedPoints.push_back(vertex.x);
@@ -88,7 +88,7 @@ void Asset_Collider::Finalize(Engine * engine, Shared_Asset_Collider & userAsset
 	userAsset->finalize();
 	
 	// Notify Completion
-	shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
 		assetManager.submitNotifyee(qwe.second);
 }

@@ -6,13 +6,13 @@ PreferenceState::~PreferenceState()
 {
 }
 
-PreferenceState::PreferenceState(Engine * engine, const string & filename) 
+PreferenceState::PreferenceState(Engine * engine, const std::string & filename) 
 {
 	m_engine = engine;
 	LoadFile(filename);
 }
 
-void PreferenceState::LoadFile(const string & filename)
+void PreferenceState::LoadFile(const std::string & filename)
 {
 	m_engine->createAsset(m_preferences, filename, PreferenceState::Preference_Strings(), false);
 }

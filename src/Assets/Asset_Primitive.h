@@ -8,10 +8,9 @@
 #include <vector>
 
 
-using namespace glm; 
 class Engine;
 class Asset_Primitive;
-typedef shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
+typedef std::shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
 
 /**
  * A basic geometric shape to be used in basic visual processing, such as a quad or a sphere.
@@ -33,7 +32,7 @@ public:
 	 * @param	userAsset		the desired asset container
 	 * @param	filename		the filename to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & filename, const bool & threaded = true);
 	/** Generates a vertex array object, formed to match primitives' object data.
 	 * @return			a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();
@@ -48,19 +47,19 @@ public:
 	
 	// Public Attributes
 	GLuint m_buffers[2];
-	vector<vec3> m_dataVertex;
-	vector<vec2> m_dataUV;
+	std::vector<glm::vec3> m_dataVertex;
+	std::vector<glm::vec2> m_dataUV;
 
 
 private:
 	// Private Constructors
 	/** Construct the Primitive. */
-	Asset_Primitive(const string & filename);
+	Asset_Primitive(const std::string & filename);
 
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Primitive & userAsset);
 

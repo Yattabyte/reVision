@@ -39,7 +39,7 @@ public:
 	virtual void bindForReading();
 	/** Change the size of the framebuffer object. 
 	 * @param	size		the new size of the framebuffer */
-	virtual void resize(const ivec2 & isize);
+	virtual void resize(const glm::ivec2 & isize);
 	/** Resets the framebuffer and re-attaches all its render-targets.*/
 	void end();
 	/** Generate ambient occlusion for the frame. */

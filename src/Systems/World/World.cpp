@@ -37,10 +37,10 @@ void System_World::update(const float & deltaTime)
 
 void System_World::updateThreaded(const float & deltaTime)
 {
-	shared_lock<shared_mutex> stateGuard(m_stateLock);
+	std::shared_lock<std::shared_mutex> stateGuard(m_stateLock);
 	//if (!m_worldChanged && m_loaded) {
 		calcVisibility(*m_engine->getCamera());
-		shared_lock<shared_mutex> viewerGuard(m_viewerLock);
+		std::shared_lock<std::shared_mutex> viewerGuard(m_viewerLock);
 		for each (auto &camera in m_viewers)
 			calcVisibility(*camera);
 	//}
@@ -48,13 +48,13 @@ void System_World::updateThreaded(const float & deltaTime)
 
 void System_World::registerViewer(Camera * c)
 {
-	unique_lock<shared_mutex> writeGuard(m_viewerLock);
+	std::unique_lock<std::shared_mutex> writeGuard(m_viewerLock);
 	m_viewers.push_back(c);
 }
 
 void System_World::unregisterViewer(Camera * c)
 {
-	unique_lock<shared_mutex> writeGuard(m_viewerLock);
+	std::unique_lock<std::shared_mutex> writeGuard(m_viewerLock);
 	m_viewers.erase(std::remove_if(begin(m_viewers), end(m_viewers), [c](const auto * camera) {
 		return (camera == c);
 	}), end(m_viewers));
@@ -69,11 +69,11 @@ void System_World::calcVisibility(Camera & camera)
 {
 	const auto camBuffer = camera.getCameraBuffer();
 	const float &radius = camBuffer.FarPlane;
-	const vec3 &eyePos = camBuffer.EyePosition;
+	const glm::vec3 &eyePos = camBuffer.EyePosition;
 	Visibility_Token vis_token;
 
-	for each (const auto &type in vector<const char *>{ "Static_Model", "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
-		vector<Component*> visible_components;
+	for each (const auto &type in std::vector<const char *>{ "Static_Model", "Anim_Model", "Light_Directional", "Light_Directional_Cheap", "Light_Spot", "Light_Spot_Cheap", "Light_Point", "Light_Point_Cheap", "Reflector" }) {
+		std::vector<Component*> visible_components;
 		
 		for each (auto component in getSpecificComponents<Component>(type))
 			if (component->isVisible(radius, eyePos))
@@ -92,101 +92,101 @@ void System_World::loadWorld()
 	static bool temp_loaded = false;
 	if (!temp_loaded) {
 		Entity * hills = m_entityFactory.createEntity("Prop");
-		hills->sendCommand("Load_Model", string("Test\\hills.obj"));
-		hills->sendCommand("Change_Transform", Transform(vec3(0, -7.5, 10), quat(1, 0, 0, 0), vec3(30)));
+		hills->sendCommand("Load_Model", std::string("Test\\hills.obj"));
+		hills->sendCommand("Change_Transform", Transform(glm::vec3(0, -7.5, 10), glm::quat(1, 0, 0, 0), glm::vec3(30)));
 
 		Entity * wall1 = m_entityFactory.createEntity("Prop");
-		wall1->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall1->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall1->sendCommand("Change_Skin", 0);
-		wall1->sendCommand("Change_Transform", Transform(vec3(-22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
+		wall1->sendCommand("Change_Transform", Transform(glm::vec3(-22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2)));
 
 		Entity * wall2 = m_entityFactory.createEntity("Prop");
-		wall2->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall2->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall2->sendCommand("Change_Skin", 2);
-		wall2->sendCommand("Change_Transform", Transform(vec3(22, -10, 0), quat(1, 0, 0, 0), vec3(2)));
+		wall2->sendCommand("Change_Transform", Transform(glm::vec3(22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2)));
 
 		Entity * wall3 = m_entityFactory.createEntity("Prop");
-		wall3->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall3->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall3->sendCommand("Change_Skin", 1);
-		wall3->sendCommand("Change_Transform", Transform(vec3(0, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
+		wall3->sendCommand("Change_Transform", Transform(glm::vec3(0, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
 
 		/*	Entity * wall4 = m_entityFactory.createEntity("Prop");
-		wall4->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall4->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall4->sendCommand("Change_Skin", 1);
-		wall4->sendCommand("Change_Transform", Transform(vec3(0, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
+		wall4->sendCommand("Change_Transform", Transform(glm::vec3(0, -10, 22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
 		*/
 		Entity * wall5 = m_entityFactory.createEntity("Prop");
-		wall5->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall5->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall5->sendCommand("Change_Skin", 1);
-		wall5->sendCommand("Change_Transform", Transform(vec3(20, -11, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 0, 1)), vec3(2)));
+		wall5->sendCommand("Change_Transform", Transform(glm::vec3(20, -11, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 0, 1)), glm::vec3(2)));
 
 		Entity * wall6 = m_entityFactory.createEntity("Prop");
-		wall6->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall6->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall6->sendCommand("Change_Skin", 1);
-		wall6->sendCommand("Change_Transform", Transform(vec3(-44, -10, -22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
+		wall6->sendCommand("Change_Transform", Transform(glm::vec3(-44, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
 
 		Entity * wall7 = m_entityFactory.createEntity("Prop");
-		wall7->sendCommand("Load_Model", string("Test\\wall.obj"));
+		wall7->sendCommand("Load_Model", std::string("Test\\wall.obj"));
 		wall7->sendCommand("Change_Skin", 1);
-		wall7->sendCommand("Change_Transform", Transform(vec3(-44, -10, 22), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0)), vec3(2)));
+		wall7->sendCommand("Change_Transform", Transform(glm::vec3(-44, -10, 22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
 
 		Entity * sun = m_entityFactory.createEntity("Sun");
-		sun->sendCommand("Change_Light_Color", vec3(0.75, 0.75, 0.9));
+		sun->sendCommand("Change_Light_Color", glm::vec3(0.75, 0.75, 0.9));
 		sun->sendCommand("Change_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
-		sun->sendCommand("Change_Transform", Transform(glm::rotate(quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), vec3(0, 0, 1))));
+		sun->sendCommand("Change_Transform", Transform(glm::rotate(glm::quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), glm::vec3(0, 0, 1))));
 
 		/*auto point = m_entityFactory.createEntity("PointLight_Cheap");
-		point->sendCommand("Change_Light_Color", vec3(0, 0, 1.0));
+		point->sendCommand("Change_Light_Color", glm::vec3(0, 0, 1.0));
 		point->sendCommand("Change_Light_Intensity", 15.0f);
 		point->sendCommand("Change_Light_Radius", 10.0f);
-		point->sendCommand("Change_Transform", Transform(vec3(0,0,0)));*/
+		point->sendCommand("Change_Transform", Transform(glm::vec3(0,0,0)));*/
 
 
 		Entity * ref2 = m_entityFactory.createEntity("Reflector");
-		ref2->sendCommand("Change_Transform", Transform(vec3(44, 15, 0), quat(1, 0, 0, 0), vec3(21)));
+		ref2->sendCommand("Change_Transform", Transform(glm::vec3(44, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21)));
 
 		Entity * ref = m_entityFactory.createEntity("Reflector");
-		ref->sendCommand("Change_Transform", Transform(vec3(0, 15, 0), quat(1, 0, 0, 0), vec3(21)));
+		ref->sendCommand("Change_Transform", Transform(glm::vec3(0, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21)));
 
 		/*auto spot = m_entityFactory.createEntity("PointLight");
-		spot->sendCommand("Change_Light_Color", vec3(1));
+		spot->sendCommand("Change_Light_Color", glm::vec3(1));
 		spot->sendCommand("Change_Light_Intensity", 15.0f);
 		spot->sendCommand("Change_Light_Radius", 10.0f);
 		spot->sendCommand("Change_Light_Cutoff", 45.0f);
-		//spot->sendCommand("Change_Transform", Transform(vec3(-40, 0, 0), quat(1, 0, 0, 0)));*/
+		//spot->sendCommand("Change_Transform", Transform(glm::vec3(-40, 0, 0), glm::quat(1, 0, 0, 0)));*/
 
 		Entity * h = m_entityFactory.createEntity("Prop");
-		h->sendCommand("Load_Model", string("Test\\ref_test.obj"));
-		h->sendCommand("Change_Transform", Transform(vec3(015, 0, -18), quat(1, 0, 0, 0), vec3(1)));
+		h->sendCommand("Load_Model", std::string("Test\\ref_test.obj"));
+		h->sendCommand("Change_Transform", Transform(glm::vec3(015, 0, -18), glm::quat(1, 0, 0, 0), glm::vec3(1)));
 
 		Entity * m1 = m_entityFactory.createEntity("Prop");
-		m1->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
+		m1->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
 		m1->sendCommand("Change_Animation", 1);
-		m1->sendCommand("Change_Transform", Transform(vec3(-5, 0, 0)));
+		m1->sendCommand("Change_Transform", Transform(glm::vec3(-5, 0, 0)));
 
 		Entity * m2 = m_entityFactory.createEntity("Prop");
-		m2->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m2->sendCommand("Change_Transform", Transform(vec3(5, 0, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
+		m2->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m2->sendCommand("Change_Transform", Transform(glm::vec3(5, 0, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0))));
 
 		Entity * m3 = m_entityFactory.createEntity("Prop");
-		m3->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m3->sendCommand("Change_Transform", Transform(vec3(18, 0, -5)));
+		m3->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m3->sendCommand("Change_Transform", Transform(glm::vec3(18, 0, -5)));
 
 		Entity * m4 = m_entityFactory.createEntity("Prop");
-		m4->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m4->sendCommand("Change_Transform", Transform(vec3(0, 0, 5), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 0))));
+		m4->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m4->sendCommand("Change_Transform", Transform(glm::vec3(0, 0, 5), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0))));
 
 		Entity * m5 = m_entityFactory.createEntity("Prop");
-		m5->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m5->sendCommand("Change_Transform", Transform(vec3(0, -5, 0), glm::rotate(quat(1, 0, 0, 0), glm::radians(90.0f), vec3(0, 1, 1))));
+		m5->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m5->sendCommand("Change_Transform", Transform(glm::vec3(0, -5, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 1))));
 
 		Entity * m6 = m_entityFactory.createEntity("Prop");
-		m6->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m6->sendCommand("Change_Transform", Transform(vec3(-30, 0, -5)));
+		m6->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m6->sendCommand("Change_Transform", Transform(glm::vec3(-30, 0, -5)));
 
 		Entity * m7 = m_entityFactory.createEntity("Prop");
-		m7->sendCommand("Load_Model", string("Test\\AnimationTest.fbx"));
-		m7->sendCommand("Change_Transform", Transform(vec3(-30, 0, 5)));		
+		m7->sendCommand("Load_Model", std::string("Test\\AnimationTest.fbx"));
+		m7->sendCommand("Change_Transform", Transform(glm::vec3(-30, 0, 5)));		
 
 		temp_loaded = true;
 		m_loaded = false;
@@ -198,14 +198,14 @@ void System_World::loadWorld()
 
 void System_World::unloadWorld()
 {
-	lock_guard<shared_mutex> state_writeGuard(m_stateLock);
+	std::lock_guard<std::shared_mutex> state_writeGuard(m_stateLock);
 	m_worldChanged = true;
 	m_loaded = false;
 
 	m_entityFactory.flush();
 	m_componentFactory.flush();
 
-	lock_guard<shared_mutex> view_writeGuard(m_viewerLock);
+	std::lock_guard<std::shared_mutex> view_writeGuard(m_viewerLock);
 	m_viewers.clear();
 }
 

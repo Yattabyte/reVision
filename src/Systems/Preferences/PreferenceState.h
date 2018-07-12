@@ -10,7 +10,6 @@
 #include <utility>
 
 
-using namespace std;
 class Engine;
 
 /**
@@ -25,7 +24,7 @@ public:
 	/** Construct the preference state.
 	 * @param	engine		the engine
 	 * @param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	PreferenceState(Engine * engine, const string & filename = "preferences");
+	PreferenceState(Engine * engine, const std::string & filename = "preferences");
 	
 
 	// Public Static Enumerations
@@ -52,9 +51,9 @@ public:
 
 	// Public Static Methods
 	/* Retrieve a static list of all user-preferences.
-	* @return	vector of preference names as strings */
-	static vector<string> Preference_Strings() {
-		static const vector<string> preferenceStrings = {
+	* @return	std::vector of preference names as strings */
+	static std::vector<std::string> Preference_Strings() {
+		static const std::vector<std::string> preferenceStrings = {
 			"C_WINDOW_WIDTH",
 			"C_WINDOW_HEIGHT",
 			"C_BLOOM_STRENGTH",
@@ -79,7 +78,7 @@ public:
 	// Public Methods
 	/** Loads a preference file from disk.
 	 * @param	filename	the relative path to the preference file to load */
-	void LoadFile(const string & filename);
+	void LoadFile(const std::string & filename);
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	void Save();
 	/** Retrieves a value tied to the supplied preference ID.
@@ -98,9 +97,9 @@ public:
 	 * @return				optionally returns the preference value held for this target */
 	template <typename Observer>
 	float const addPrefCallback(const Preference & targetKey, void * pointerID, Observer&& observer) {
-		m_callbacks.insert(pair<Preference, map<void*, function<void(float)>>>(targetKey, map<void*, function<void(float)>>()));
-		m_callbacks[targetKey].insert(pair<void*, function<void(float)>>(pointerID, function<void(float)>()));
-		m_callbacks[targetKey][pointerID] = forward<Observer>(observer);
+		m_callbacks.insert(std::pair<Preference, std::map<void*, std::function<void(float)>>>(targetKey, std::map<void*, std::function<void(float)>>()));
+		m_callbacks[targetKey].insert(std::pair<void*, std::function<void(float)>>(pointerID, std::function<void(float)>()));
+		m_callbacks[targetKey][pointerID] = std::forward<Observer>(observer);
 		return getPreference(targetKey);
 	}
 	/** Removes a callback method from triggering when a particular preference changes.
@@ -118,7 +117,7 @@ public:
 private:
 	Engine * m_engine;
 	Shared_Asset_Config m_preferences;
-	map<Preference, map<void*, function<void(float)>>> m_callbacks;
+	std::map<Preference, std::map<void*, std::function<void(float)>>> m_callbacks;
 };
 
 #endif // PREFERENCE_STATE_H

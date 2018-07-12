@@ -8,7 +8,6 @@
 #include "Utilities\GL\StaticBuffer.h"
 
 
-using namespace glm;
 class Engine;
 
 /**
@@ -32,14 +31,14 @@ public:
 	// Public Methods
 	/** Resize the frame buffer. 
 	 * @param	size	the new size of the frame buffer */
-	void resize(const vec2 & size);
+	void resize(const glm::vec2 & size);
 
 
 private:
 	// Private Attributes
 	GLuint m_fbo;
 	GLuint m_texture;
-	vec2 m_renderSize; 
+	glm::vec2 m_renderSize; 
 	Engine * m_engine;
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;

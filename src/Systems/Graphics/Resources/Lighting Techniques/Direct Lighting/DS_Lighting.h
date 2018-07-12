@@ -30,7 +30,7 @@ public:
 	DS_Lighting(
 		Engine * engine,
 		Geometry_FBO * geometryFBO, Lighting_FBO * lightingFBO, 
-		vector<Light_Tech*> * baseTechs,
+		std::vector<Light_Tech*> * baseTechs,
 		Geometry_Buffers * geometryBuffers
 	);
 
@@ -54,7 +54,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine;
-	vector<Light_Tech*> * m_baseTechs;
+	std::vector<Light_Tech*> * m_baseTechs;
 	int m_updateQuality;
 	// Shared FBO's
 	Geometry_FBO * m_geometryFBO;

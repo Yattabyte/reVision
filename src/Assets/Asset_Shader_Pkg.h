@@ -8,11 +8,9 @@
 #include <string>
 
 
-using namespace glm;
-using namespace std;
 class Engine;
 class Asset_Shader_Pkg;
-typedef shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
+typedef std::shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
 
 /**
  * An accessory asset for shaders that stores code blocks for other shaders to use.
@@ -35,25 +33,25 @@ public:
 	* @param	userAsset		the desired asset container
 	* @param	filename		the filename to use
 	* @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const string & filename, const bool & threaded = true);
-	/** Retrieves this package's content as a string.
+	static void Create(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & filename, const bool & threaded = true);
+	/** Retrieves this package's content as a std::string.
 	 * @return	package contents */
-	string getPackageText() const;
+	std::string getPackageText() const;
 
 	
 	// Public Attributes
-	string m_packageText;
+	std::string m_packageText;
 
 
 private:
 	// Private Constructors
 	/** Construct the Shader Package. */
-	Asset_Shader_Pkg(const string & filename);
+	Asset_Shader_Pkg(const std::string & filename);
 
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset);
 

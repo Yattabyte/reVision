@@ -15,8 +15,8 @@ Point_Tech_Cheap::Point_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers
 	m_size = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Point\\Light_Cheap"), true);
-	m_engine->createAsset(m_shapeSphere, string("sphere"), true);
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Point\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeSphere, std::string("sphere"), true);
 
 	// Primitive Construction
 	m_sphereVAOLoaded = false;
@@ -30,11 +30,11 @@ Point_Tech_Cheap::Point_Tech_Cheap(Engine * engine, Light_Buffers * lightBuffers
 	});
 }
 
-void Point_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Point_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Point_Cheap");
 	if (m_size && m_sphereVAOLoaded) {
-		vector<GLuint> visArray(m_size);
+		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point_Cheap"))
 			visArray[count++] = component->getBufferIndex();

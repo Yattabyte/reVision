@@ -13,9 +13,9 @@ Sky_Ref_Tech::Sky_Ref_Tech(Engine * engine)
 	m_engine = engine;
 
 	// Asset Loadiug
-	m_engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect"), true);
-	m_engine->createAsset(m_textureSky, string("sky\\"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderEffect, std::string("Lighting\\Indirect Lighting\\Reflections (specular)\\Sky_Reflect"), true);
+	m_engine->createAsset(m_textureSky, std::string("sky\\"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 	
 	// Primitive Construction
 	m_quadVAOLoaded = false;

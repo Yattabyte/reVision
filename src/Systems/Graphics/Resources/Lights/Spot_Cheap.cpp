@@ -15,8 +15,8 @@ Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	m_size = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Spot\\Light_Cheap"), true);
-	m_engine->createAsset(m_shapeCone, string("cone"), true);
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Spot\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeCone, std::string("cone"), true);
 
 	// Primitive Loading
 	m_coneVAOLoaded = false;
@@ -30,11 +30,11 @@ Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 	});
 }
 
-void Spot_Cheap_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Spot_Cheap_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Spot_Cheap");
 	if (m_size && m_coneVAOLoaded) {
-		vector<GLuint> visArray(m_size);
+		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot_Cheap"))
 			visArray[count++] = component->getBufferIndex();

@@ -21,7 +21,7 @@ public:
 
 	// Public Interface Methods
 	/** Pepare this technique ahead of time. */
-	virtual void updateData(const vector<Camera*> & viewers) = 0;
+	virtual void updateData(const std::vector<Camera*> & viewers) = 0;
 	/** Apply occlusion-culling rendering passes. */
 	virtual void occlusionCullBuffers(Camera & camera) = 0;
 	/** Render geometry to the framebuffer using this technique. */

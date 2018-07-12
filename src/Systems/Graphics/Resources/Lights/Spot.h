@@ -28,7 +28,7 @@ public:
 
 	/** Get the size of the shadows used by this light type.
 	 * @return				the shadowmap size */
-	vec2 getSize() const;
+	glm::vec2 getSize() const;
 	/** Register a new shadow caster to this category of lights. 
 	 * @param	array_spot	updated index into the shadowmap array */
 	void registerShadowCaster(int & array_spot);
@@ -43,7 +43,7 @@ public:
 
 	// Interface Implementations
 	virtual const char * getName() const { return "Spot_Tech"; }
-	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
+	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos);
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution);
 	virtual void renderOcclusionCulling(); 
 	virtual void renderShadows();
@@ -70,15 +70,15 @@ private:
 	VectorBuffer<Spot_Struct> * m_lightSSBO;
 	DynamicBuffer m_visShapes;
 	StaticBuffer m_indirectShape;
-	vector<Lighting_Component*> m_lightList, m_queue;
+	std::vector<Lighting_Component*> m_lightList, m_queue;
 	size_t m_size;
 
 
 	// Shadows
-	vec2 m_shadowSize;
+	glm::vec2 m_shadowSize;
 	GLuint m_shadowFBO[2], m_shadowDepth[2], m_shadowWNormal[2], m_shadowRFlux[2];
 	GLuint m_shadowCount;
-	deque<unsigned int>	m_freedShadowSpots;
+	std::deque<unsigned int>	m_freedShadowSpots;
 	bool m_regenSShadows;
 
 

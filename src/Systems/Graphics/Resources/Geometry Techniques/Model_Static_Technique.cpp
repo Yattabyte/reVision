@@ -19,9 +19,9 @@ Model_Static_Technique::Model_Static_Technique(Engine * engine, Geometry_FBO * g
 	m_geometryStaticSSBO = geometrySSBO;
 	
 	// Asset Loading
-	m_engine->createAsset(m_shaderCull, string("Geometry\\culling_static"), true);
-	m_engine->createAsset(m_shaderGeometry, string("Geometry\\geometry_static"), true);
-	m_engine->createAsset(m_shapeCube, string("box"), true);
+	m_engine->createAsset(m_shaderCull, std::string("Geometry\\culling_static"), true);
+	m_engine->createAsset(m_shaderGeometry, std::string("Geometry\\geometry_static"), true);
+	m_engine->createAsset(m_shapeCube, std::string("box"), true);
 
 	// Primitive Construction
 	m_cubeVAOLoaded = false;
@@ -32,7 +32,7 @@ Model_Static_Technique::Model_Static_Technique(Engine * engine, Geometry_FBO * g
 	});
 }
 
-void Model_Static_Technique::updateData(const vector<Camera*> & viewers)
+void Model_Static_Technique::updateData(const std::vector<Camera*> & viewers)
 {
 }
 
@@ -100,28 +100,28 @@ void Model_Static_Technique::writeCameraBuffers(Camera & camera, const unsigned 
 	const size_t size = vis_token.specificSize("Static_Model");
 	if (size) {
 		// Draw parameter order = { COUNT, INSTANCE_COUNT, FIRST, BASE_INSTANCE }
-		vector<ivec4> cullingDrawData(size);
-		vector<ivec4> renderingDrawData(size);
-		vector<uint> visibleIndices(size);
+		std::vector<glm::ivec4> cullingDrawData(size);
+		std::vector<glm::ivec4> renderingDrawData(size);
+		std::vector<unsigned int> visibleIndices(size);
 
 		unsigned int count = 0;
 		for each (const auto &component in vis_token.getTypeList<Static_Model_Component>("Static_Model")) {
-			const ivec2 drawInfo = component->getDrawInfo();
+			const glm::ivec2 drawInfo = component->getDrawInfo();
 			visibleIndices[count] = component->getBufferIndex();
 			// Check mesh complexity and if viewer not within BSphere
 			if ((component->getMeshSize() >= 100) && !(component->containsPoint(camera.getPosition()))) { // Allow
-				cullingDrawData[count] = ivec4(36, instanceCount, 0, 1);
-				renderingDrawData[count++] = ivec4(drawInfo.y, 0, drawInfo.x, 1);
+				cullingDrawData[count] = glm::ivec4(36, instanceCount, 0, 1);
+				renderingDrawData[count++] = glm::ivec4(drawInfo.y, 0, drawInfo.x, 1);
 			}
 			else { // Skip				
-				cullingDrawData[count] = ivec4(36, 0, 0, 1);
-				renderingDrawData[count++] = ivec4(drawInfo.y, instanceCount, drawInfo.x, 1);
+				cullingDrawData[count] = glm::ivec4(36, 0, 0, 1);
+				renderingDrawData[count++] = glm::ivec4(drawInfo.y, instanceCount, drawInfo.x, 1);
 			}
 		}
 
 		auto &visBuffers = camera.getVisibilityBuffers();
-		visBuffers.m_buffer_Index[CAM_GEOMETRY_STATIC].write(0, sizeof(uint) * size, visibleIndices.data());
-		visBuffers.m_buffer_Culling[CAM_GEOMETRY_STATIC].write(0, sizeof(ivec4) * size, cullingDrawData.data());
-		visBuffers.m_buffer_Render[CAM_GEOMETRY_STATIC].write(0, sizeof(ivec4) * size, renderingDrawData.data());
+		visBuffers.m_buffer_Index[CAM_GEOMETRY_STATIC].write(0, sizeof(unsigned int) * size, visibleIndices.data());
+		visBuffers.m_buffer_Culling[CAM_GEOMETRY_STATIC].write(0, sizeof(glm::ivec4) * size, cullingDrawData.data());
+		visBuffers.m_buffer_Render[CAM_GEOMETRY_STATIC].write(0, sizeof(glm::ivec4) * size, renderingDrawData.data());
 	}
 }

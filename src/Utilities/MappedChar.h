@@ -6,8 +6,6 @@
 #include <vector>
 
 
-using namespace std;
-
 /**
  * A std::map that uses a constant char array as the keys, and stores values of type <T>.\n
  * Uses the adapter pattern to hide some of the complexity and reduce the amount of redundant code written.
@@ -19,12 +17,12 @@ class MappedChar {
 private:
 	// Nested Private Members
 	struct compare_string { bool operator()(const char * a, const char * b) const { return strcmp(a, b) < 0; } };
-	typedef typename map<const char *, T>::iterator iterator;
-	typedef typename map<const char *, T>::const_iterator const_iterator;
+	typedef typename std::map<const char *, T>::iterator iterator;
+	typedef typename std::map<const char *, T>::const_iterator const_iterator;
 
 
 	// Private Attributes
-	map<const char *, T, compare_string> m_map;
+	std::map<const char *, T, compare_string> m_map;
 
 
 public:
@@ -39,7 +37,7 @@ public:
 	/** Insert a new key into the map.
 	 * @brief	will auto-generate a new zero-initialized <T> to associate with the key.
 	 * @param	key		the new key to insert into the map */	
-	void				insert(const char * key)			{ m_map.insert(pair<const char *, T>(key, T())); }
+	void				insert(const char * key)			{ m_map.insert(std::pair<const char *, T>(key, T())); }
 	/** Clears the map of all entries. */
 	void				clear()								{ m_map.clear(); }	
 	/** Retrieve the number of entries into the map.
@@ -86,10 +84,10 @@ public:
 
 /**
  * A std::map that uses a constant char array as the keys, and stores vectors of type <T>.\n
- * Extends the MappedChar class, but exists to shorten 'MappedChar<vector<T>> myMap' down to 'VectorMap<T> myMap'
+ * Extends the MappedChar class, but exists to shorten 'MappedChar<std::vector<T>> myMap' down to 'VectorMap<T> myMap'
  **/
 template <typename T>
-class VectorMap : public MappedChar<vector<T>> {
+class VectorMap : public MappedChar<std::vector<T>> {
 public:
 	~VectorMap() {};
 	VectorMap() {};

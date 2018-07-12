@@ -22,7 +22,7 @@ class Entity
 public:
 	// Public Methods
 	/** Sends a command to this entity to execute.
-	 * @param	command		the string command name
+	 * @param	command		the std::string command name
 	 * @param	obj			any arguments needed */
 	template <typename DATA_TYPE>
 	void sendCommand(const char * command, const DATA_TYPE & obj) {
@@ -44,7 +44,7 @@ protected:
 
 	// Protected Attributes
 	VectorMap<Component*> m_components;
-	MappedChar<function<void(const ECS_Command&)>> m_commandMap;
+	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
 	friend class EntityCreator;
 };
 

@@ -22,11 +22,11 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 	m_texture = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderEffect, string("Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax"), true);
-	m_engine->createAsset(m_shaderConvolute, string("Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution"), true);
-	m_engine->createAsset(m_shaderCopy, string("Utilities\\2D_To_Cubemap"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
-	m_engine->createAsset(m_shapeCube, string("box"), true);
+	m_engine->createAsset(m_shaderEffect, std::string("Lighting\\Indirect Lighting\\Reflections (specular)\\IBL_Parallax"), true);
+	m_engine->createAsset(m_shaderConvolute, std::string("Lighting\\Indirect Lighting\\Reflections (specular)\\Cube_Convolution"), true);
+	m_engine->createAsset(m_shaderCopy, std::string("Utilities\\2D_To_Cubemap"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
+	m_engine->createAsset(m_shapeCube, std::string("box"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -68,7 +68,7 @@ IBL_Parallax_Tech::IBL_Parallax_Tech(Engine * engine)
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	for (int x = 0; x < 6; ++x) {
-		const ivec2 size(floor(512.0f / pow(2, x)));
+		const glm::ivec2 size(floor(512.0f / pow(2, x)));
 		glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, 6, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 	glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
@@ -93,7 +93,7 @@ void IBL_Parallax_Tech::addElement()
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_texture, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	for (int x = 0; x < 6; ++x) {
-		const ivec2 size(floor(512.0f / pow(2, x)));
+		const glm::ivec2 size(floor(512.0f / pow(2, x)));
 		glTextureImage3DEXT(m_texture, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, m_reflectorCount * 6, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 }
@@ -107,7 +107,7 @@ void IBL_Parallax_Tech::updateData(const Visibility_Token & vis_token)
 	m_size = vis_token.specificSize("Reflector");
 	if (m_size) {
 		m_refList = vis_token.getTypeList<Reflector_Component>("Reflector");
-		vector<GLuint> refArray(m_size);
+		std::vector<GLuint> refArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in m_refList)
 			refArray[count++] = component->getBufferIndex();
@@ -128,7 +128,7 @@ void IBL_Parallax_Tech::applyPrePass()
 		m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, 512.0f);
 
 		auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
-		vector<Reflector_Component*> listCopy = m_refList;
+		std::vector<Reflector_Component*> listCopy = m_refList;
 		for each (const auto & component in listCopy) {
 			const int componentIndex = component->getBufferIndex();
 

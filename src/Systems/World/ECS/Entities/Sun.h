@@ -30,8 +30,8 @@ private:
 	// Private Functions
 	// Forward Commands
 	void changeColor(const ECS_Command & payload) {
-		if (payload.isType<vec3>())
-			m_light->sendCommand("Set_Light_Color", payload.toType<vec3>());
+		if (payload.isType<glm::vec3>())
+			m_light->sendCommand("Set_Light_Color", payload.toType<glm::vec3>());
 	}
 	void changeIntensity(const ECS_Command & payload) {
 		if (payload.isType<float>())

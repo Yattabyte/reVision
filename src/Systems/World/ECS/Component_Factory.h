@@ -10,7 +10,6 @@
 #include <shared_mutex>
 
 
-using namespace std;
 class Engine;
 
 /**
@@ -37,10 +36,10 @@ public:
   	 * @param	component		the component to delete */
 	void deleteComponent(Component * component);	
 	/** Retrieves an array of components that match the category specified.
-	 * @brief					Guaranteed to return at least a zero-length vector. Types that don't exist are created.
+	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
 	 * @param	type			the type-name of the component list to retrieve
 	 * @return					the list of components that match the type provided */
-	const vector<Component*> & getComponentsByType(const char * type);
+	const std::vector<Component*> & getComponentsByType(const char * type);
 	/** Removes all components from the system. */
 	void flush();	
 	/** Checks the map to see if it has any entries of a specific type.
@@ -48,17 +47,17 @@ public:
 	 * @return					true if it finds the key in the map, false otherwise */
 	bool find(const char * key) const;
 	/** Returns the data lock for the system. 
-	 * @return					the mutex for this factory */
-	shared_mutex & getDataLock();
+	 * @return					the std::mutex for this factory */
+	std::shared_mutex & getDataLock();
 
 
 private:
 	// Private Attributes
 	bool m_Initialized;
 	VectorMap<Component*> m_levelComponents;	
-	MappedChar<deque<unsigned int>> m_freeSpots;
+	MappedChar<std::deque<unsigned int>> m_freeSpots;
 	MappedChar<ComponentCreator*> m_creatorMap;
-	mutable shared_mutex m_dataLock;
+	mutable std::shared_mutex m_dataLock;
 	Engine *m_engine;
 };
 

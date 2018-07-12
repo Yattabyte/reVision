@@ -60,7 +60,7 @@ private:
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
-	vector<Reflector_Tech*> m_refTechs;
+	std::vector<Reflector_Tech*> m_refTechs;
 	MappedChar<void*> m_refTechMap;
 };
 

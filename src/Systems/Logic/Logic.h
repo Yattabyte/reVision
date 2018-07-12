@@ -31,7 +31,7 @@ public:
 private:
 	// Private Attributes
 	Transform m_transform;
-	vec3 m_rotation;
+	glm::vec3 m_rotation;
 };
 
 #endif // SYSTEM_LOGIC_H

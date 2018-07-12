@@ -27,9 +27,9 @@ Reflections::Reflections(Engine * engine, Geometry_FBO * geometryFBO, Lighting_F
 	m_lightingFBO = lightingFBO;
 	m_reflectionFBO = reflectionFBO;
 	
-	m_engine->createAsset(m_shaderFinal, string("Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR"), true);
-	m_engine->createAsset(m_brdfMap, string("brdfLUT.png"), GL_TEXTURE_2D, false, false, true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderFinal, std::string("Lighting\\Indirect Lighting\\Reflections (specular)\\reflections PBR"), true);
+	m_engine->createAsset(m_brdfMap, std::string("brdfLUT.png"), GL_TEXTURE_2D, false, false, true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;

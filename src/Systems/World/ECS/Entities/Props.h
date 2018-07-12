@@ -36,8 +36,8 @@ private:
 	// Private Functions
 	// Forward Commands
 	void loadModel(const ECS_Command & payload) {
-		if (payload.isType<string>())
-			m_prop->sendCommand("Set_Model_Directory", payload.toType<string>());
+		if (payload.isType<std::string>())
+			m_prop->sendCommand("Set_Model_Directory", payload.toType<std::string>());
 	}
 	void changeSkin(const ECS_Command & payload) {
 		if (payload.isType<int>())
@@ -105,8 +105,8 @@ private:
 	// Private Functions
 	// Forward Commands
 	void loadModel(const ECS_Command & payload) {
-		if (payload.isType<string>())
-			m_prop->sendCommand("Set_Model_Directory", payload.toType<string>());
+		if (payload.isType<std::string>())
+			m_prop->sendCommand("Set_Model_Directory", payload.toType<std::string>());
 	}
 	void changeSkin(const ECS_Command & payload) {
 		if (payload.isType<int>())

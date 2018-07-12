@@ -19,8 +19,8 @@ public:
 
 
 	// Public Interface Methods
-	/** Return string name of this technique.
-	 * @return	string name of this technique */
+	/** Return std::string name of this technique.
+	 * @return	std::string name of this technique */
 	virtual const char * getName() const = 0;
 	/** Update underlying data and send it to the GPU. */
 	virtual void updateData(const Visibility_Token & vis_token) = 0;

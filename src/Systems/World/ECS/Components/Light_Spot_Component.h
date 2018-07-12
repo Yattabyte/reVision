@@ -12,7 +12,6 @@
 #include "Utilities\Transform.h"
 
 
-using namespace glm;
 class Spot_Tech;
 class System_World;
 class Light_Spot_Creator;
@@ -27,8 +26,8 @@ class Light_Spot_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual const char * getName() const { return "Light_Spot"; }
-	virtual float getImportance(const vec3 & position) const;
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual float getImportance(const glm::vec3 & position) const;
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);
 	virtual void shadowPass(const unsigned int & type);
 	virtual void update(const unsigned int & type);
@@ -55,10 +54,10 @@ protected:
 	// Cached Attributes
 	float m_radius;
 	float m_squaredRadius;
-	mat4 m_lightVMatrix, m_lightPV;
-	vec3 m_lightPos;
+	glm::mat4 m_lightVMatrix, m_lightPV;
+	glm::vec3 m_lightPos;
 	int m_shadowSpot;
-	quat m_orientation;
+	glm::quat m_orientation;
 	Camera m_camera;
 	size_t m_visSize[2];
 	friend class Light_Spot_Creator;
@@ -68,7 +67,7 @@ private:
 	// Private Functions
 	/** Set the light color to use.
 	 * @param	color		the color to use */
-	void setColor(const vec3 & color);
+	void setColor(const glm::vec3 & color);
 	/** Set the light intensity to use.
 	 * @param	intensity	the intensity to use */
 	void setIntensity(const float & intensity);

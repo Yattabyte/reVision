@@ -23,7 +23,7 @@ public:
 
 	// Interface Implementations
 	virtual const char * getName() const { return "Directional_Tech_Cheap"; }
-	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos);
+	virtual void updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos);
 	virtual void updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution) {}
 	virtual void renderOcclusionCulling() {}
 	virtual void renderShadows() {}

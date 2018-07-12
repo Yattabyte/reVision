@@ -9,10 +9,9 @@
 #include "GLM\common.hpp"
 
 
-using namespace glm;
 class Engine;
 class Asset_Material;
-typedef shared_ptr<Asset_Material> Shared_Asset_Material;
+typedef std::shared_ptr<Asset_Material> Shared_Asset_Material;
 
 /**
  * A collection of texture surfaces that are used together to approximate a real surface.
@@ -45,7 +44,7 @@ public:
 	 * @param	threaded		create in a separate thread */
 	static void Create(Engine * engine, Shared_Asset_Material & userAsset, const std::string & material_filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES]);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
-	 * @brief				Updates the appropriate supplied @string's with a path to the appropriate file
+	 * @brief				Updates the appropriate supplied @std::string's with a path to the appropriate file
 	 * @param	filename	the absolute file path of the '.mat' file to read from
 	 * @param	albedo		reference updated with albedo texture file path
 	 * @param	normal		reference updated with normal texture file path
@@ -53,15 +52,15 @@ public:
 	 * @param	roughness	reference updated with roughness texture file path
 	 * @param	height		reference updated with height texture file path
 	 * @param	occlusion	reference updated with occlusion texture file path */
-	static void Get_PBR_Properties(const string & filename, string & albedo = string(), string & normal = string(), string & metalness = string(), string & roughness = string(), string & height = string(), string & occlusion = string());
+	static void Get_PBR_Properties(const std::string & filename, std::string & albedo = std::string(), std::string & normal = std::string(), std::string & metalness = std::string(), std::string & roughness = std::string(), std::string & height = std::string(), std::string & occlusion = std::string());
 	
 	
 	// Public Attributes
 	GLuint m_glArrayID;
 	GLuint m_matSpot;
 	GLubyte * m_materialData;
-	vec2 m_size;
-	string m_textures[MAX_PHYSICAL_IMAGES];
+	glm::vec2 m_size;
+	std::string m_textures[MAX_PHYSICAL_IMAGES];
 
 
 private:
@@ -76,7 +75,7 @@ private:
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Material & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Material & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Material & userAsset);
 

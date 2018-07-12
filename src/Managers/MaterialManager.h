@@ -11,8 +11,6 @@
 #include <shared_mutex>
 
 
-using namespace std;
-
 /**
  * Manages the creation and storage of materials, and to a lesser degree their destruction. * 
  * - How this works:
@@ -55,10 +53,10 @@ public:
 private:
 	// Private Attributes
 	bool m_Initialized;
-	shared_mutex m_DataMutex;
+	std::shared_mutex m_DataMutex;
 	unsigned int m_Count;
-	deque<unsigned int> m_FreeSpots;
-	vector<GLuint64> m_WorkOrders;
+	std::deque<unsigned int> m_FreeSpots;
+	std::vector<GLuint64> m_WorkOrders;
 	DynamicBuffer * m_buffer;
 };
 

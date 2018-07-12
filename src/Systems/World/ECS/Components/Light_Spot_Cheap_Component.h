@@ -11,7 +11,6 @@
 #include "Utilities\Transform.h"
 
 
-using namespace glm;
 class Light_Spot_Cheap_Creator;
 class Engine;
 
@@ -24,8 +23,8 @@ class Light_Spot_Cheap_Component : protected Lighting_Component
 public:
 	// Interface Implementations
 	virtual const char * getName() const { return "Light_Spot_Cheap"; }
-	virtual float getImportance(const vec3 & position) const;
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual float getImportance(const glm::vec3 & position) const;
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type) {}
 	virtual void shadowPass(const unsigned int & type) {}
 	virtual	void update(const unsigned int & type) {}
@@ -49,8 +48,8 @@ protected:
 	Engine * m_engine;
 	float m_radius;
 	float m_squaredRadius;
-	quat m_orientation;
-	vec3 m_lightPos;
+	glm::quat m_orientation;
+	glm::vec3 m_lightPos;
 	friend class Light_Spot_Cheap_Creator;
 
 
@@ -58,7 +57,7 @@ private:
 	// Private Functions
 	/** Set the light color to use.
 	 * @param	color		the color to use */
-	void setColor(const vec3 & color);
+	void setColor(const glm::vec3 & color);
 	/** Set the light intensity to use.
 	 * @param	intensity	the intensity to use */
 	void setIntensity(const float & intensity);

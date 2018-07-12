@@ -25,7 +25,7 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void updateData(const vector<Camera*> & viewers);
+	virtual void updateData(const std::vector<Camera*> & viewers);
 	virtual void renderGeometry(Camera & viewers);
 	virtual void occlusionCullBuffers(Camera & camera);
 

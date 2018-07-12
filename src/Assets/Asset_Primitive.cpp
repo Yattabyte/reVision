@@ -12,7 +12,7 @@ Asset_Primitive::~Asset_Primitive()
 		glDeleteBuffers(2, m_buffers);
 }
 
-Asset_Primitive::Asset_Primitive(const string & filename) : Asset(filename)
+Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
 {
 	for each (auto &buffer in m_buffers)
 		buffer = -1;
@@ -28,8 +28,8 @@ void Asset_Primitive::CreateDefault(Engine * engine, Shared_Asset_Primitive & us
 
 	// Create hard-coded alternative
 	assetManager.createNewAsset(userAsset, "defaultPrimitive");
-	userAsset->m_dataVertex = vector<vec3>{ vec3(-1, -1, 0), vec3(1, -1, 0), vec3(1, 1, 0), vec3(-1, -1, 0), vec3(1, 1, 0), vec3(-1, 1, 0) };
-	userAsset->m_dataUV = vector<vec2>{ vec2(0, 0), vec2(1, 0), vec2(1, 1), vec2(0, 0), vec2(1, 1), vec2(0, 1) };
+	userAsset->m_dataVertex = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
+	userAsset->m_dataUV = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
 
 	// Create the asset
 	assetManager.submitNewWorkOrder(userAsset, true,
@@ -40,7 +40,7 @@ void Asset_Primitive::CreateDefault(Engine * engine, Shared_Asset_Primitive & us
 	);
 }
 
-void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset, const string & filename, const bool & threaded)
+void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
@@ -67,7 +67,7 @@ void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset
 	);
 }
 
-void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const string & fullDirectory)
+void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & fullDirectory)
 {
 	Model_Geometry dataContainer;
 	if (!Model_IO::Import_Model(engine, fullDirectory, import_primitive, dataContainer)) {
@@ -77,7 +77,7 @@ void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userA
 	}
 
 
-	unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 	userAsset->m_dataVertex = dataContainer.vertices;
 	userAsset->m_dataUV = dataContainer.texCoords;
 }
@@ -89,15 +89,15 @@ void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAss
 
 	// Create buffers
 	{
-		unique_lock<shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		glCreateBuffers(2, userAsset->m_buffers);
 	}
 
 	// Load Buffers
 	{
-		shared_lock<shared_mutex> read_guard(userAsset->m_mutex);
-		glNamedBufferStorage(userAsset->m_buffers[0], userAsset->m_dataVertex.size() * sizeof(vec3), &userAsset->m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
-		glNamedBufferStorage(userAsset->m_buffers[1], userAsset->m_dataVertex.size() * sizeof(vec2), &userAsset->m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);
+		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
+		glNamedBufferStorage(userAsset->m_buffers[0], userAsset->m_dataVertex.size() * sizeof(glm::vec3), &userAsset->m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
+		glNamedBufferStorage(userAsset->m_buffers[1], userAsset->m_dataVertex.size() * sizeof(glm::vec2), &userAsset->m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);
 		
 		// Notify Completion
 		for each (auto qwe in userAsset->m_callbacks)
@@ -118,7 +118,7 @@ GLuint Asset_Primitive::Generate_VAO()
 
 void Asset_Primitive::updateVAO(const GLuint & vaoID)
 {
-	shared_lock<shared_mutex> guard(m_mutex);
+	std::shared_lock<std::shared_mutex> guard(m_mutex);
 	
 	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 	glVertexArrayAttribFormat(vaoID, 1, 2, GL_FLOAT, GL_FALSE, 0);
@@ -132,6 +132,6 @@ void Asset_Primitive::updateVAO(const GLuint & vaoID)
 
 size_t Asset_Primitive::getSize()
 {
-	shared_lock<shared_mutex> guard(m_mutex);
+	std::shared_lock<std::shared_mutex> guard(m_mutex);
 	return m_dataVertex.size();
 }

@@ -22,7 +22,7 @@ class Reflector_Component : protected Component
 public:
 	// Interface implementations
 	virtual const char * getName() const { return "Reflector"; }
-	virtual bool isVisible(const float & radius, const vec3 & eyePosition) const;
+	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 
 
 	// Public Methods
@@ -42,8 +42,8 @@ protected:
 	// Protected Attributes
 	unsigned int m_uboIndex;
 	VB_Ptr * m_uboBuffer;
-	vec3 m_position;
-	vec3 m_scale;
+	glm::vec3 m_position;
+	glm::vec3 m_scale;
 	Camera m_cameras[6];
 	Engine *m_engine;
 	friend class Reflector_Creator;

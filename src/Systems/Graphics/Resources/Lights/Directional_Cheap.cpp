@@ -15,8 +15,8 @@ Directional_Tech_Cheap::Directional_Tech_Cheap(Engine * engine, Light_Buffers * 
 	m_size = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light_Cheap"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Directional\\Light_Cheap"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -30,7 +30,7 @@ Directional_Tech_Cheap::Directional_Tech_Cheap(Engine * engine, Light_Buffers * 
 	});
 }
 
-void Directional_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Directional_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Directional_Cheap");
 	if (m_size && m_quadVAOLoaded) 

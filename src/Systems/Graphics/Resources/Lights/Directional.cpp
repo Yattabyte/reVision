@@ -18,13 +18,13 @@ Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers
 	m_sizeGI = 0;
 
 	// Asset Loading
-	m_engine->createAsset(m_shader_CullDynamic, string("Base Lights\\Directional\\Culling_Dynamic"), true);
-	m_engine->createAsset(m_shader_CullStatic, string("Base Lights\\Directional\\Culling_Static"), true);
-	m_engine->createAsset(m_shader_ShadowDynamic, string("Base Lights\\Directional\\Shadow_Dynamic"), true);
-	m_engine->createAsset(m_shader_ShadowStatic, string("Base Lights\\Directional\\Shadow_Static"), true);
-	m_engine->createAsset(m_shader_Lighting, string("Base Lights\\Directional\\Light"), true);
-	m_engine->createAsset(m_shader_Bounce, string("Base Lights\\Directional\\Bounce"), true);
-	engine->createAsset(m_shapeQuad, string("quad"));
+	m_engine->createAsset(m_shader_CullDynamic, std::string("Base Lights\\Directional\\Culling_Dynamic"), true);
+	m_engine->createAsset(m_shader_CullStatic, std::string("Base Lights\\Directional\\Culling_Static"), true);
+	m_engine->createAsset(m_shader_ShadowDynamic, std::string("Base Lights\\Directional\\Shadow_Dynamic"), true);
+	m_engine->createAsset(m_shader_ShadowStatic, std::string("Base Lights\\Directional\\Shadow_Static"), true);
+	m_engine->createAsset(m_shader_Lighting, std::string("Base Lights\\Directional\\Light"), true);
+	m_engine->createAsset(m_shader_Bounce, std::string("Base Lights\\Directional\\Bounce"), true);
+	engine->createAsset(m_shapeQuad, std::string("quad"));
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -39,7 +39,7 @@ Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers
 
 	// Initialize Shadows
 	m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { setSize(f); }	);
-	m_shadowSize = vec2(max(1.0f, m_shadowSize.x));
+	m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
 	m_shadowCount = 0;
 	m_shadowFBO = 0;
 	m_shadowDepth = 0;
@@ -87,7 +87,7 @@ Directional_Tech::Directional_Tech(Engine * engine, Light_Buffers * lightBuffers
 	m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4, firstBounceData);
 }
 
-vec2 Directional_Tech::getSize() const
+glm::vec2 Directional_Tech::getSize() const
 {
 	return m_shadowSize;
 }
@@ -119,7 +119,7 @@ void Directional_Tech::unregisterShadowCaster(int & array_spot)
 		m_freedShadowSpots.push_back(array_spot);
 }
 
-void Directional_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const vec3 & camPos)
+void Directional_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
 	m_size = vis_token.specificSize("Light_Directional");
 	if (m_size && m_quadVAOLoaded) {
@@ -219,7 +219,7 @@ void Directional_Tech::renderLighting()
 void Directional_Tech::clearShadow(const int & layer)
 {
 	const float clearDepth(1.0f);
-	const vec3 clear(0.0f);
+	const glm::vec3 clear(0.0f);
 	glClearTexSubImage(m_shadowDepth, 0, 0, 0, layer * 4, m_shadowSize.x, m_shadowSize.y, 4, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	glClearTexSubImage(m_shadowWNormal, 0, 0, 0, layer * 4, m_shadowSize.x, m_shadowSize.y, 4, GL_RGB, GL_FLOAT, &clear);
 	glClearTexSubImage(m_shadowRFlux, 0, 0, 0, layer * 4, m_shadowSize.x, m_shadowSize.y, 4, GL_RGB, GL_FLOAT, &clear);
@@ -227,7 +227,7 @@ void Directional_Tech::clearShadow(const int & layer)
 
 void Directional_Tech::setSize(const float & size)
 {
-	m_shadowSize = vec2(max(size, 1));
+	m_shadowSize = glm::vec2(max(size, 1));
 
 	glTextureImage3DEXT(m_shadowDepth, GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_shadowSize.x, m_shadowSize.y, m_shadowCount * 4, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	glNamedFramebufferTexture(m_shadowFBO, GL_DEPTH_ATTACHMENT, m_shadowDepth, 0);

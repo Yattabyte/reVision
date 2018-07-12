@@ -5,7 +5,6 @@
 #include "Utilities\GL\FrameBuffer.h"
 
 
-using namespace glm;
 class Engine;
 class VisualFX;
 
@@ -34,7 +33,7 @@ public:
 	virtual void bindForReading();
 	/** Change the size of the framebuffer object. 
 	 * @param	size			the new size of the framebuffer */
-	virtual void resize(const ivec2 & size);
+	virtual void resize(const glm::ivec2 & size);
 	/** Apply blur filter to bloom attachment, finishing the bloom effect. */
 	void end();
 	

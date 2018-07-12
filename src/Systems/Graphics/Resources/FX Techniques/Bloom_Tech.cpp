@@ -27,8 +27,8 @@ Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * v
 	m_visualFX = visualFX;
 
 	// Asset Loading
-	m_engine->createAsset(m_shaderBloomExtract, string("FX\\bloomExtraction"), true);
-	m_engine->createAsset(m_shapeQuad, string("quad"), true);
+	m_engine->createAsset(m_shaderBloomExtract, std::string("FX\\bloomExtraction"), true);
+	m_engine->createAsset(m_shapeQuad, std::string("quad"), true);
 
 	// Primitive Construction
 	m_quadVAOLoaded = false;
@@ -42,8 +42,8 @@ Bloom_Tech::Bloom_Tech(Engine * engine, Lighting_FBO * lightingFBO, VisualFX * v
 	});
 
 	// Preference Callbacks
-	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(vec2(f, m_renderSize.y)); });
-	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(vec2(m_renderSize.x, f)); });
+	m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
+	m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
 	m_bloomStrength = m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });	
 	
 	// GL Loading
@@ -105,7 +105,7 @@ void Bloom_Tech::setBloomStrength(const int & strength)
 	m_bloomStrength = strength;
 }
 
-void Bloom_Tech::resize(const vec2 & size)
+void Bloom_Tech::resize(const glm::vec2 & size)
 {
 	m_renderSize = size;
 	glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);

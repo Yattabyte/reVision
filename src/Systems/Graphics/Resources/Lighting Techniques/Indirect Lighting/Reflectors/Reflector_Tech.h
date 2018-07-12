@@ -19,8 +19,8 @@ public:
 
 
 	// Interface Declarations
-	/** Return string name of this technique.
-	 * @return	string name of this technique */
+	/** Return std::string name of this technique.
+	 * @return	std::string name of this technique */
 	virtual const char * getName() const = 0;
 	/** Perform updates, calculations, and memory writes for indirect reflection lighting
 	 * @param	vis_token		the visibility token */

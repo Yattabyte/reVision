@@ -10,7 +10,7 @@
 
 class Engine;
 class Asset_Config;
-typedef shared_ptr<Asset_Config> Shared_Asset_Config;
+typedef std::shared_ptr<Asset_Config> Shared_Asset_Config;
 
 /**
  * A registry for configuration name-value pairs.
@@ -33,7 +33,7 @@ public:
 	 * @param	filename		the filename to use
 	 * @param	cfg_strings		the configuration strings to use
 	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Config & userAsset, const string & filename, const vector<string> & cfg_strings, const bool & threaded = true);
+	static void Create(Engine * engine, Shared_Asset_Config & userAsset, const std::string & filename, const std::vector<std::string> & cfg_strings, const bool & threaded = true);
 	/** Assigns the specified value to the specified key.
 	 * @param	cfg_key		the key to apply this new value to
 	 * @param	cfg_value	the new value to give to this key */
@@ -47,19 +47,19 @@ public:
 
 
 	// Public Attributes
-	map<unsigned int, float> m_configuration;
-	vector<string> m_strings;
+	std::map<unsigned int, float> m_configuration;
+	std::vector<std::string> m_strings;
 
 
 private:
 	// Private Constructors
 	/** Construct the config with a particular set of variable names. */
-	Asset_Config(const string & filename, const vector<string> & strings);
+	Asset_Config(const std::string & filename, const std::vector<std::string> & strings);
 
 
 	// Private Methods
 	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Config & userAsset, const string & fullDirectory);
+	static void Initialize(Engine * engine, Shared_Asset_Config & userAsset, const std::string & fullDirectory);
 	/** Finalizes the asset. */
 	static void Finalize(Engine * engine, Shared_Asset_Config & userAsset);
 
