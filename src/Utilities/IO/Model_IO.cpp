@@ -57,6 +57,16 @@ inline mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
+inline Node * copy_node(const aiNode * oldNode) 
+{
+	Node * newNode = new Node(string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
+	// Copy Children
+	newNode->children.resize(oldNode->mNumChildren);
+	for (int c = 0; c < oldNode->mNumChildren; ++c) 
+		newNode->children[c] = copy_node(oldNode->mChildren[c]);
+	return newNode;
+}
+
 bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const unsigned int & importFlags, Model_Geometry & data_container)
 {
 	// Check if the file exists
@@ -129,27 +139,30 @@ bool Model_IO::Import_Model(Engine * engine, const string & fulldirectory, const
 			data_container.animations[a].channels.resize(animation->mNumChannels);
 			for (int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
 				auto * channel = scene->mAnimations[a]->mChannels[c];
-				data_container.animations[a].channels[c] = new Node_Animation(string(channel->mNodeName.data), channel->mNumScalingKeys, channel->mNumRotationKeys, channel->mNumPositionKeys);
+				data_container.animations[a].channels[c] = new Node_Animation(string(channel->mNodeName.data));
 
 				// Copy Keys
 				data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
 				for (int n = 0; n < channel->mNumScalingKeys; ++n) {
 					auto & key = channel->mScalingKeys[n];
-					data_container.animations[a].channels[c]->scalingKeys[n] = Vec3_Key(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<vec3>(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
 				for (int n = 0; n < channel->mNumRotationKeys; ++n) {
 					auto & key = channel->mRotationKeys[n];
-					data_container.animations[a].channels[c]->rotationKeys[n] = Quat_Key(key.mTime, quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<quat>(key.mTime, quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
 				for (int n = 0; n < channel->mNumPositionKeys; ++n) {
 					auto & key = channel->mPositionKeys[n];
-					data_container.animations[a].channels[c]->positionKeys[n] = Vec3_Key(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
+					data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<vec3>(key.mTime, vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 			}
 		}
-		data_container.rootNode = new aiNode(*scene->mRootNode);
+
+		// Copy Root Node
+		data_container.rootNode = copy_node(scene->mRootNode);
+		
 		data_container.bones.resize(data_container.vertices.size());
 		int vertexOffset = 0;
 		for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {

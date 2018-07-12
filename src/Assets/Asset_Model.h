@@ -57,7 +57,7 @@ public:
 	vector<BoneTransform>				m_boneTransforms;
 	map<string, int>					m_boneMap;
 	vector<Animation>					m_animations;
-	aiNode								*m_rootNode;
+	Node								*m_rootNode;
 	vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;

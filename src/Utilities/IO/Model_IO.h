@@ -12,7 +12,7 @@
 using namespace std;
 using namespace glm;
 class Engine;
-class aiNode;
+
 
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
@@ -29,24 +29,25 @@ struct Material {
 	Material(const string & al = "albedo" , const string & n = "normal", const string & m = "metalness", const string & r = "roughness", const string & h = "height", const string & a = "ao")
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
-struct Vec3_Key {
+template<typename T>
+struct Animation_Time_Key {
 	double time;
-	vec3 value;
-	Vec3_Key(const double & t = 0, const vec3 & v = vec3(0)) : time(t), value(v) {};
-};
-struct Quat_Key {
-	double time;
-	quat value;
-	Quat_Key(const double & t = 0, const quat & v = quat(1,0,0,0)) : time(t), value(v) {};
+	T value;
+	Animation_Time_Key() : time(0) {};
+	Animation_Time_Key(const double & t, const T & v) : time(t), value(v) {};
 };
 struct Node_Animation {
 	string nodeName;
-	unsigned int numScalingKeys, numRotationKeys, numPositionKeys;
-	vector<Vec3_Key> scalingKeys;
-	vector<Quat_Key> rotationKeys;
-	vector<Vec3_Key> positionKeys;
-	Node_Animation(const string & name = "", const unsigned int & numScale = 0, const unsigned int & numRot = 0, const unsigned int & numPos = 0)
-		: nodeName(name), numScalingKeys(numScale), numRotationKeys(numRot), numPositionKeys(numPos) {}
+	vector<Animation_Time_Key<vec3>> scalingKeys;
+	vector<Animation_Time_Key<quat>> rotationKeys;
+	vector<Animation_Time_Key<vec3>> positionKeys;
+	Node_Animation(const string & name = "") : nodeName(name) {}
+};
+struct Node {
+	string name;
+	mat4 transformation;
+	vector<Node*> children;
+	Node(const string & n, const mat4 & t) : name(n), transformation(t) {}
 };
 struct Animation {
 	unsigned int numChannels;
@@ -72,7 +73,7 @@ struct Model_Geometry {
 	vector<BoneTransform> boneTransforms;
 	map<string, int> boneMap;
 	vector<Animation> animations;
-	aiNode * rootNode;
+	Node * rootNode;
 };
 
 /* Import Directives */

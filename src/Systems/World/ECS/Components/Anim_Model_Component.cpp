@@ -7,7 +7,7 @@
 #include <minmax.h>
 
 
-inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
+inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform);
 
 Anim_Model_Component::~Anim_Model_Component()
 {
@@ -202,15 +202,16 @@ inline int FindKey(const float &AnimationTime, const unsigned int &count, const 
 	return 0;
 }
 
-template <typename KeyType, typename ValueType>
-inline ValueType InterpolateKeys(const float &AnimationTime, const unsigned int &keyCount, const vector<KeyType> & keys) {
+template <typename ValueType>
+inline ValueType InterpolateKeys(const float &AnimationTime, const vector<Animation_Time_Key<ValueType>> & keys) {
+	const unsigned int & keyCount = keys.size();
 	assert(keyCount > 0);
 	const ValueType &Result = keys[0].value;
 	if (keyCount > 1) { // Ensure we have 2 values to interpolate between
-		unsigned int Index = FindKey<KeyType>(AnimationTime, keyCount - 1, keys);
+		unsigned int Index = FindKey<Animation_Time_Key<ValueType>>(AnimationTime, keyCount - 1, keys);
 		unsigned int NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
-		const KeyType &Key = keys[Index];
-		const KeyType &NextKey = keys[NextIndex];
+		const Animation_Time_Key<ValueType> &Key = keys[Index];
+		const Animation_Time_Key<ValueType> &NextKey = keys[NextIndex];
 		const float DeltaTime = (float)(NextKey.time - Key.time);
 		const float Factor = clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
 		return valueMix(Key.value, NextKey.value, Factor);
@@ -218,34 +219,31 @@ inline ValueType InterpolateKeys(const float &AnimationTime, const unsigned int 
 	return Result;
 }
 
-inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const aiNode* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
+inline void ReadNodeHeirarchy(vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const mat4& ParentTransform)
 {
-	const string NodeName(parentNode->mName.data);
+	const string & NodeName = parentNode->name;
 	const Animation &pAnimation = model->m_animations[animation_ID];
 	const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-	mat4 NodeTransformation = convertType<aiMatrix4x4, mat4>(parentNode->mTransformation);
+	mat4 NodeTransformation = parentNode->transformation;
 
 	// Interpolate scaling, rotation, and translation.
 	// Generate their matrices and apply their transformations.
 	if (pNodeAnim) {
-		const vec3 Scaling = InterpolateKeys<Vec3_Key, vec3>
-							(animation_time, pNodeAnim->numScalingKeys, pNodeAnim->scalingKeys);
-		const quat Rotation = InterpolateKeys<Quat_Key, quat>
-							(animation_time, pNodeAnim->numRotationKeys, pNodeAnim->rotationKeys);
-		const vec3 Translation = InterpolateKeys<Vec3_Key, vec3>
-							(animation_time, pNodeAnim->numPositionKeys, pNodeAnim->positionKeys);
+		const vec3 Scaling = InterpolateKeys<vec3>(animation_time, pNodeAnim->scalingKeys);
+		const quat Rotation = InterpolateKeys<quat>(animation_time, pNodeAnim->rotationKeys);
+		const vec3 Translation = InterpolateKeys<vec3>(animation_time, pNodeAnim->positionKeys);
 		
 		NodeTransformation = glm::translate(mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(mat4(1.0f), Scaling);
 	}
 
 	const mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-	const mat4 GlobalInverseTransform = glm::inverse(convertType<aiMatrix4x4, mat4>(model->m_rootNode->mTransformation));
+	const mat4 GlobalInverseTransform = glm::inverse(model->m_rootNode->transformation);
 	const map<string, int> &BoneMap = model->m_boneMap;
 	if (BoneMap.find(NodeName) != BoneMap.end()) {
 		int BoneIndex = BoneMap.at(NodeName);
 		transforms.at(BoneIndex).final = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).offset;
 	}
 
-	for (unsigned int i = 0; i < parentNode->mNumChildren; i++)
-		ReadNodeHeirarchy(transforms, animation_time, animation_ID, parentNode->mChildren[i], model, GlobalTransformation);
+	for (unsigned int i = 0; i < parentNode->children.size(); ++i)
+		ReadNodeHeirarchy(transforms, animation_time, animation_ID, parentNode->children[i], model, GlobalTransformation);
 }
