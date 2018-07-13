@@ -1,30 +1,31 @@
 # reVision
 
-The reVision project is a WIP game engine, with the active area of development on real-time 3D rendering.
-The engine uses OpenGL 4.5 and GLSL 460, deferred rendering, and PBR materials + shaders;
+This project is a WIP game engine, with the primary focus being on real-time 3D rendering.
+The engine supports OpenGL 4.5 + GLSL 460, deferred rendering, and a PBR workflow (materials and shaders).
 
 ## Getting Started
 
-This project isn't in a stable state yet, but you will find the most stable version under the master branch.
-The active branch is updated frequently and is subject to some change. By Version 1.0 the fundamental systems should be finalized in design.
+This project isn't in a stable state yet, but you will find the most stable version under the branch "master".
+The branch "active" is updated frequently and contains the most recent builds.
 
-The project is designed with CMake in mind, so clone the branch desired and run CMake to generate the project solution.
+The project is designed with CMake in mind, so clone the desired branch and run CMake to generate the project solution.
 
-### Prerequisites
+Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460.
 
-This project requires the following libraries:
-* [ASSIMP](http://www.assimp.org/)
-* [Bullet](http://bulletphysics.org/wordpress/)
-* [FreeImage](http://freeimage.sourceforge.net/)
-* [GLEW](http://glew.sourceforge.net/)
-* [GLFW](http://www.glfw.org/)
-* [GLM](https://glm.g-truc.net/0.9.9/index.html)
+### Required Libraries
 
-The engine also requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460.
+This project requires the following (free) libraries:
+* [ASSIMP - Model Importing](http://www.assimp.org/)
+* [Bullet - Physics Back-end](http://bulletphysics.org/wordpress/)
+* [FreeImage - Image Importing](http://freeimage.sourceforge.net/)
+* [GLEW - OpenGL](http://glew.sourceforge.net/)
+* [GLFW - Windowing](http://www.glfw.org/)
+* [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
 
-### Installing
 
-Step 1: Downloading [CMake](https://cmake.org/)
+### Installation
+
+Step 1: Download [CMake](https://cmake.org/)
 
 ```
 Download CMake from the link above and install it
