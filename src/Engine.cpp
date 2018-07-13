@@ -74,7 +74,7 @@ bool Initialize_Sharing(Engine * engine)
 		glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
 		glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
 		glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-		m_Context_Sharing = glfwCreateWindow(512, 512, "", NULL, NULL);
+		m_Context_Sharing = glfwCreateWindow(1, 1, "", NULL, NULL);
 		glfwMakeContextCurrent(m_Context_Sharing);
 		glewExperimental = GL_TRUE;		
 		if (glewInit() != GLEW_OK) {

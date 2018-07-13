@@ -5,8 +5,8 @@ The engine supports OpenGL 4.5 + GLSL 460, deferred rendering, and a PBR workflo
 
 ## Getting Started
 
-This project isn't in a stable state yet, but you will find the most stable version under the branch "master".
-The branch "active" is updated frequently and contains the most recent builds.
+The branch "active" is updated frequently and contains the most recent builds, but may be unstable.
+The most stable versions can be found under the branch "master".
 
 The project is designed with CMake in mind, so clone the desired branch and run CMake to generate the project solution.
 
