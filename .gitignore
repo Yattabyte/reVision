@@ -5,7 +5,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -14,7 +13,6 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Fortran module files
 *.mod
@@ -30,4 +28,37 @@
 *.exe
 *.out
 *.app
+
+# Directories
+CMakeFiles/
+Debug/
+x64/
+x32/
+Documentation/
+.vs/
+src/reVision.dir/
+
+# Other
+CMakeCache.txt
 *.opendb
+*.tlog
+*.idb
+*.lastbuildstate
+*.1.tlog
+*.1.u.tlog
+*.exp
+*.TMP
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.cmake
+*.sln
+*.db
+*.suo
+*.VC.db-shm
+*.db-shm
+*.log
+*.ipch
+Doxyfile.out
+app/nsight_profiler.cfg
+app/reVision.exe - Shortcut.lnk

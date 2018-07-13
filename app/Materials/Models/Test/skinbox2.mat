@@ -1,0 +1,9 @@
+PBR
+{
+	albedo string Test\\test_diffuse2.png
+	normal string Test\\test_normal.png
+	metalness string Test\\test_metalness.png
+	roughness string Test\\test_roughness.png
+	height string Test\\test_height.png
+	occlusion string Test\\test_ao.png
+}

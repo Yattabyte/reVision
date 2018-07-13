@@ -1,0 +1,45 @@
+# Blender MTL File: 'wall.blend'
+# Material Count: 1
+
+newmtl Bricks
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Test\\wall_diffuse_a.png
+map_Bump Test\\wall_normal_a.tga
+map_Ns  Test\\wall_roughness_a.tga
+map_Ks Test\wall_metalness_a.tga
+
+newmtl White
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Test\\wall_diffuse_b.png
+map_Bump Test\\wall_normal_b.tga
+map_Ns  Test\\wall_roughness_b.png 
+map_Ks Test\wall_metalness_b.tga
+
+newmtl Mirror
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd Test\\wall_diffuse_c.png
+map_Bump Test\\wall_normal_c.png
+map_Ns  Test\\wall_roughness_c.png 
+map_Ks Test\wall_metalness_c.png
+
