@@ -11,9 +11,6 @@
 #include "Utilities\Transform.h"
 
 
-class Light_Point_Cheap_Creator;
-class Engine;
-
 /**
  * A renderable light component that mimics a light-bulb.
  * A cheap variation, no shadows or GI.
@@ -48,7 +45,7 @@ protected:
 	// Cached attributes
 	float m_radius, m_squaredRadius;
 	glm::vec3 m_lightPos;
-	friend class Light_Point_Cheap_Creator;
+	friend class Component_Creator<Light_Point_Cheap_C>;
 
 
 private:
@@ -65,15 +62,6 @@ private:
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Light_Point_Cheap_Creator : public ComponentCreator
-{
-public:
-	Light_Point_Cheap_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine * engine) {
-		return new Light_Point_Cheap_C(engine);
-	}
 };
 
 #endif // LIGHT_POINT_CHEAP_COMPONENT_H

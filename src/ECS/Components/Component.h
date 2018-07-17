@@ -9,7 +9,6 @@
 #include <functional>
 
 
-class ComponentCreator;
 class Engine;
 
 /**
@@ -54,30 +53,21 @@ protected:
 
 	// Protected Attributes
 	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
-	friend class ComponentCreator;
 };
 
-/**
- * An interface to direct the creation of specific components.
- **/
-class ComponentCreator
-{
-public:
-	// (de)Constructors
-	/** Virtual Destructor. */
-	virtual ~ComponentCreator(void) {};
-	/** Constructor. */
-	ComponentCreator() {};
+struct Component_Creator_Base {
 
+	virtual Component * create(Engine * engine) = 0;
+	static void destroy(Component * component) {
+		// delete component; 
+	}
+};
 
-	// Public Methods
-	/** Destroy the component.
-	 * @param	component	the component to delete */
-	void destroy(Component * component) { delete component; };
-	/** Creates an component.
-	 * @param	engine	pointer to the engine pointer	
-	 * @return			the component created */
-	virtual Component* create(Engine * engine) { return new Component(); };
+template <typename type_C>
+struct Component_Creator : public Component_Creator_Base {
+	virtual Component * create(Engine * engine) {
+		return new type_C(engine);
+	}
 };
 
 #endif // COMPONENT_H

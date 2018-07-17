@@ -11,9 +11,6 @@
 #include "Utilities\Transform.h"
 
 
-class Light_Directional_Cheap_Creator;
-class Engine;
-
 /**
  * A renderable light component that mimics the sun.
  * A cheap variation, no shadows or GI.
@@ -40,7 +37,7 @@ protected:
 
 	// Protected Attributes
 	Engine * m_engine;
-	friend class Light_Directional_Cheap_Creator;
+	friend class Component_Creator<Light_Directional_Cheap_C>;
 
 
 private:
@@ -54,15 +51,6 @@ private:
 	/** Set the transformation for this component.
 	* @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Light_Directional_Cheap_Creator : public ComponentCreator
-{
-public:
-	Light_Directional_Cheap_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Light_Directional_Cheap_C(engine);
-	}
 };
 
 #endif // LIGHT_DIRECTIONAL_CHEAP_COMPONENT_H

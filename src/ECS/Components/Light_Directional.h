@@ -14,8 +14,6 @@
 
 
 class Directional_Tech;
-class Light_Directional_Creator;
-class Engine;
 
 /**
  * A renderable light component that mimics the sun.
@@ -55,7 +53,7 @@ protected:
 	float m_shadowSize;
 	glm::mat4 m_mMatrix;
 	Camera m_camera;
-	friend class Light_Directional_Creator;
+	friend class Component_Creator<Light_Directional_C>;
 
 
 private:
@@ -69,15 +67,6 @@ private:
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Light_Directional_Creator : public ComponentCreator
-{
-public:
-	Light_Directional_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Light_Directional_C(engine);
-	}
 };
 
 #endif // LIGHT_DIRECTIONAL_COMPONENT_H

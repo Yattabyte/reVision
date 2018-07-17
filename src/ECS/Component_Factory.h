@@ -59,7 +59,7 @@ private:
 	bool m_Initialized;
 	VectorMap<Component*> m_levelComponents;	
 	MappedChar<std::deque<unsigned int>> m_freeSpots;
-	MappedChar<ComponentCreator*> m_creatorMap;
+	MappedChar<Component_Creator_Base*> m_creatorMap;
 	mutable std::shared_mutex m_dataLock;
 	Engine *m_engine;
 };

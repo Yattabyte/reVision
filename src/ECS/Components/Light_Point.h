@@ -14,8 +14,6 @@
 
 class Point_Tech;
 class System_World;
-class Light_Point_Creator;
-class Engine;
 
 /**
  * A renderable light component that mimics a light-bulb.
@@ -59,7 +57,7 @@ protected:
 	int m_shadowSpot;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Light_Point_Creator;
+	friend class Component_Creator<Light_Point_C>;
 
 
 private:
@@ -76,15 +74,6 @@ private:
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Light_Point_Creator : public ComponentCreator
-{
-public:
-	Light_Point_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine * engine) {
-		return new Light_Point_C(engine);
-	}
 };
 
 #endif // LIGHT_POINT_COMPONENT_H

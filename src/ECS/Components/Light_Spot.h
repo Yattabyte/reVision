@@ -14,7 +14,6 @@
 
 class Spot_Tech;
 class System_World;
-class Light_Spot_Creator;
 class Engine;
 
 /**
@@ -60,7 +59,7 @@ protected:
 	glm::quat m_orientation;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Light_Spot_Creator;
+	friend class Component_Creator<Light_Spot_C>;
 
 
 private:
@@ -80,15 +79,6 @@ private:
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Light_Spot_Creator : public ComponentCreator
-{
-public:
-	Light_Spot_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Light_Spot_C(engine);
-	}
 };
 
 #endif // LIGHT_SPOT_COMPONENT_H

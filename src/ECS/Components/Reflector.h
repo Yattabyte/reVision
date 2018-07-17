@@ -11,9 +11,6 @@
 #include "GL\glew.h"
 
 
-class Reflector_Creator;
-class Engine;
-
 /**
  * An object that records the world around it and uses it to project reflections.
  **/
@@ -47,7 +44,7 @@ protected:
 	glm::vec3 m_scale;
 	Camera m_cameras[6];
 	Engine *m_engine;
-	friend class Reflector_Creator;
+	friend class Component_Creator<Reflector_C>;
 
 
 private:
@@ -55,15 +52,6 @@ private:
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Reflector_Creator : public ComponentCreator
-{
-public:
-	Reflector_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Reflector_C(engine);
-	}
 };
 
 #endif // REFLECTOR_COMPONENT_H

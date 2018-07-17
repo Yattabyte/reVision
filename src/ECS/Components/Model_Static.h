@@ -11,8 +11,6 @@
 #include "glm\glm.hpp"
 
 
-class Static_Model_Creator;
-
 /**
  * A renderable model component that supports animation.
  **/
@@ -57,7 +55,7 @@ protected:
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	Engine *m_engine;
-	friend class Static_Model_Creator;
+	friend class Component_Creator<Model_Static_C>;
 
 
 private:
@@ -71,15 +69,6 @@ private:
 	/** Set the transformation for this model.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Static_Model_Creator : public ComponentCreator
-{
-public:
-	Static_Model_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Model_Static_C(engine);
-	}
 };
 
 #endif // STATIC_MODEL_COMPONENT_H

@@ -11,8 +11,6 @@
 #include "glm\glm.hpp"
 
 
-class Anim_Model_Creator;
-
 /**
  * A renderable model component that supports animation.
  **/
@@ -41,7 +39,7 @@ protected:
 	/** Destroys an animated model component. */
 	~Model_Animated_C();
 	/** Constructors an animated model component. */
-	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const unsigned int & animationIndex = 0, const Transform & transform = Transform());
+	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const unsigned int & animationIndex = -1, const Transform & transform = Transform());
 
 
 	// Protected functions
@@ -63,7 +61,7 @@ protected:
 	Transform m_transform;
 	std::vector<BoneTransform> m_transforms;
 	Engine *m_engine;
-	friend class Anim_Model_Creator;
+	friend class Component_Creator<Model_Animated_C>;
 
 
 private:
@@ -80,15 +78,6 @@ private:
 	/** Set the transformation for this model.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
-};
-
-class Anim_Model_Creator : public ComponentCreator
-{
-public:
-	Anim_Model_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Model_Animated_C(engine);
-	}
 };
 
 #endif // ANIM_MODEL_COMPONENT_H

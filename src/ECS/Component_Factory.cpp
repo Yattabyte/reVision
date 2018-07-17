@@ -25,15 +25,15 @@ void Component_Factory::initialize(Engine * engine)
 	if (!m_Initialized) {
 		m_engine = engine;
 
-		m_creatorMap["Anim_Model"] = new Anim_Model_Creator();
-		m_creatorMap["Static_Model"] = new Static_Model_Creator();
-		m_creatorMap["Light_Directional"] = new Light_Directional_Creator();
-		m_creatorMap["Light_Directional_Cheap"] = new Light_Directional_Cheap_Creator();
-		m_creatorMap["Light_Spot"] = new Light_Spot_Creator();
-		m_creatorMap["Light_Spot_Cheap"] = new Light_Spot_Cheap_Creator();
-		m_creatorMap["Light_Point"] = new Light_Point_Creator();
-		m_creatorMap["Light_Point_Cheap"] = new Light_Point_Cheap_Creator();
-		m_creatorMap["Reflector"] = new Reflector_Creator();
+		m_creatorMap["Anim_Model"] = new Component_Creator<Model_Animated_C>();
+		m_creatorMap["Static_Model"] = new Component_Creator<Model_Static_C>();
+		m_creatorMap["Light_Directional"] = new Component_Creator<Light_Directional_C>();
+		m_creatorMap["Light_Directional_Cheap"] = new Component_Creator<Light_Directional_Cheap_C>();
+		m_creatorMap["Light_Spot"] = new Component_Creator<Light_Spot_C>();
+		m_creatorMap["Light_Spot_Cheap"] = new Component_Creator<Light_Spot_Cheap_C>();
+		m_creatorMap["Light_Point"] = new Component_Creator<Light_Point_C>();
+		m_creatorMap["Light_Point_Cheap"] = new Component_Creator<Light_Point_Cheap_C>();
+		m_creatorMap["Reflector"] = new Component_Creator<Reflector_C>();
 
 		m_Initialized = true;
 	}
