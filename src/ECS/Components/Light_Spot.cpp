@@ -1,6 +1,6 @@
-#include "Systems\World\ECS\Components\Light_Spot_Component.h"
-#include "Systems\World\ECS\Components\Geometry_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Light_Spot.h"
+#include "ECS\Components\Geometry.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\World\World.h"
 #include "Engine.h"
 #include "Systems\Graphics\Graphics.h"
@@ -9,14 +9,14 @@
 #include <math.h>
 
 
-Light_Spot_Component::~Light_Spot_Component()
+Light_Spot_C::~Light_Spot_C()
 {
 	m_spotTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Spot_Component::Light_Spot_Component(Engine * engine)
+Light_Spot_C::Light_Spot_C(Engine * engine)
 {
 	m_engine = engine;
 	m_squaredRadius = 0;
@@ -56,17 +56,17 @@ Light_Spot_Component::Light_Spot_Component(Engine * engine)
 	};
 }
 
-void Light_Spot_Component::setColor(const glm::vec3 & color)
+void Light_Spot_C::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
 
-void Light_Spot_Component::setIntensity(const float & intensity)
+void Light_Spot_C::setIntensity(const float & intensity)
 {
 	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
 }
 
-void Light_Spot_Component::setRadius(const float & radius)
+void Light_Spot_C::setRadius(const float & radius)
 {
 	m_radius = radius;
 	m_squaredRadius = radius * radius;
@@ -75,14 +75,14 @@ void Light_Spot_Component::setRadius(const float & radius)
 	updateViews();
 }
 
-void Light_Spot_Component::setCutoff(const float & cutoff)
+void Light_Spot_C::setCutoff(const float & cutoff)
 {
 	(&reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightCutoff = cosf(glm::radians(cutoff));
 	m_camera.setHorizontalFOV(cutoff * 2.0f);
 	updateViews();
 }
 
-void Light_Spot_Component::setTransform(const Transform & transform)
+void Light_Spot_C::setTransform(const Transform & transform)
 {
 	Spot_Struct * uboData = &reinterpret_cast<Spot_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->LightPosition = transform.m_position;
@@ -103,7 +103,7 @@ void Light_Spot_Component::setTransform(const Transform & transform)
 	updateViews();
 }
 
-void Light_Spot_Component::updateViews()
+void Light_Spot_C::updateViews()
 {
 	// Recalculate perspective matrix
 	m_camera.update();
@@ -114,13 +114,13 @@ void Light_Spot_Component::updateViews()
 	m_camera.setMatrices(lightP, m_lightVMatrix);
 }
 
-bool Light_Spot_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Light_Spot_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
 }
 
-void Light_Spot_Component::occlusionPass(const unsigned int & type)
+void Light_Spot_C::occlusionPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		glUniform1i(0, getBufferIndex());
@@ -132,7 +132,7 @@ void Light_Spot_Component::occlusionPass(const unsigned int & type)
 	}
 }
 
-void Light_Spot_Component::shadowPass(const unsigned int & type)
+void Light_Spot_C::shadowPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		// Clear out the shadows
@@ -150,14 +150,14 @@ void Light_Spot_Component::shadowPass(const unsigned int & type)
 	}
 }
 
-float Light_Spot_Component::getImportance(const glm::vec3 & position) const
+float Light_Spot_C::getImportance(const glm::vec3 & position) const
 {
 	return m_radius / glm::length(position - m_lightPos);
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
-void Light_Spot_Component::update(const unsigned int & type)
+void Light_Spot_C::update(const unsigned int & type)
 {
 	// Update render lists
 	const char * string_type;

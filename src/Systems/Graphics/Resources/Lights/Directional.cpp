@@ -126,7 +126,7 @@ void Directional_Tech::updateData(const Visibility_Token & vis_token, const int 
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos);
 
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Directional"))
+		for each (const auto &component in vis_token.getTypeList<Lighting_C>("Light_Directional"))
 			queue.insert(component);
 
 		m_queue = queue.toList();

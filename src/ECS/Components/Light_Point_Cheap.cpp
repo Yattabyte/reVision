@@ -1,15 +1,15 @@
-#include "Systems\World\ECS\Components\Light_Point_Cheap_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Light_Point_Cheap.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Engine.h"
 
 
-Light_Point_Cheap_Component::~Light_Point_Cheap_Component()
+Light_Point_Cheap_C::~Light_Point_Cheap_C()
 {
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointCheapSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Point_Cheap_Component::Light_Point_Cheap_Component(Engine *engine)
+Light_Point_Cheap_C::Light_Point_Cheap_C(Engine *engine)
 {
 	m_engine = engine;
 	m_radius = 0;
@@ -31,7 +31,7 @@ Light_Point_Cheap_Component::Light_Point_Cheap_Component(Engine *engine)
 	};
 }
 
-void Light_Point_Cheap_Component::updateViews()
+void Light_Point_Cheap_C::updateViews()
 {
 	Point_Cheap_Struct * uboData = &reinterpret_cast<Point_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 
@@ -41,17 +41,17 @@ void Light_Point_Cheap_Component::updateViews()
 	uboData->mMatrix = trans * scl;
 }
 
-void Light_Point_Cheap_Component::setColor(const glm::vec3 & color)
+void Light_Point_Cheap_C::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Point_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
 
-void Light_Point_Cheap_Component::setIntensity(const float & intensity)
+void Light_Point_Cheap_C::setIntensity(const float & intensity)
 {
 	(&reinterpret_cast<Point_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
 }
 
-void Light_Point_Cheap_Component::setRadius(const float & radius)
+void Light_Point_Cheap_C::setRadius(const float & radius)
 {
 	m_radius = radius;
 	m_squaredRadius = radius * radius;
@@ -59,20 +59,20 @@ void Light_Point_Cheap_Component::setRadius(const float & radius)
 	updateViews();
 }
 
-void Light_Point_Cheap_Component::setTransform(const Transform & transform)
+void Light_Point_Cheap_C::setTransform(const Transform & transform)
 {
 	(&reinterpret_cast<Point_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightPosition = transform.m_position;
 	m_lightPos = transform.m_position;
 	updateViews();
 }
 
-bool Light_Point_Cheap_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Light_Point_Cheap_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
 }
 
-float Light_Point_Cheap_Component::getImportance(const glm::vec3 & position) const
+float Light_Point_Cheap_C::getImportance(const glm::vec3 & position) const
 {
 	return 0.0f;
 }

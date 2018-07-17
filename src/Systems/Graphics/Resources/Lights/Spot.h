@@ -70,7 +70,7 @@ private:
 	VectorBuffer<Spot_Struct> * m_lightSSBO;
 	DynamicBuffer m_visShapes;
 	StaticBuffer m_indirectShape;
-	std::vector<Lighting_Component*> m_lightList, m_queue;
+	std::vector<Lighting_C*> m_lightList, m_queue;
 	size_t m_size;
 
 

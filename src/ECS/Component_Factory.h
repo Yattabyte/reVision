@@ -2,8 +2,8 @@
 #ifndef COMPONENT_FACTORY_H
 #define COMPONENT_FACTORY_H
 
-#include "Systems\World\ECS\Components\Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Component.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\MappedChar.h"
 #include <deque>
@@ -35,6 +35,9 @@ public:
 	/** Deletes the component provided.
   	 * @param	component		the component to delete */
 	void deleteComponent(Component * component);	
+	/** Retrieves reference to the level components std::vector-map
+	* @return						the entire level component std::vector-map */
+	VectorMap<Component*> & getComponents();
 	/** Retrieves an array of components that match the category specified.
 	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
 	 * @param	type			the type-name of the component list to retrieve

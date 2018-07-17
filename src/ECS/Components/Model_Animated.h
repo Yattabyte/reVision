@@ -4,7 +4,7 @@
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 
-#include "Systems\World\ECS\Components\Geometry_Component.h"
+#include "ECS\Components\Geometry.h"
 #include "Assets\Asset_Model.h"
 #include "Utilities\Transform.h"
 #include "Utilities\GL\VectorBuffer.h"
@@ -16,7 +16,7 @@ class Anim_Model_Creator;
 /**
  * A renderable model component that supports animation.
  **/
-class Anim_Model_Component : protected Geometry_Component
+class Model_Animated_C : protected Geometry_C
 {
 public:
 	// Interface implementations
@@ -39,9 +39,9 @@ public:
 protected:
 	// (de)Constructors
 	/** Destroys an animated model component. */
-	~Anim_Model_Component();
+	~Model_Animated_C();
 	/** Constructors an animated model component. */
-	Anim_Model_Component(Engine *engine);
+	Model_Animated_C(Engine *engine);
 
 
 	// Protected functions
@@ -87,7 +87,7 @@ class Anim_Model_Creator : public ComponentCreator
 public:
 	Anim_Model_Creator() : ComponentCreator() {}
 	virtual Component* create(Engine *engine) {
-		return new Anim_Model_Component(engine);
+		return new Model_Animated_C(engine);
 	}
 };
 

@@ -1,6 +1,6 @@
-#include "Systems\World\ECS\Components\Light_Directional_Component.h"
-#include "Systems\World\ECS\Components\Geometry_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Light_Directional.h"
+#include "ECS\Components\Geometry.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\World\World.h"
 #include "Engine.h"
 #include "Systems\Graphics\Graphics.h"
@@ -8,14 +8,14 @@
 #include "GLFW\glfw3.h"
 
 
-Light_Directional_Component::~Light_Directional_Component()
+Light_Directional_C::~Light_Directional_C()
 {
 	m_directionalTech->unregisterShadowCaster(m_shadowSpot);
 	m_engine->getSubSystem<System_World>("World")->unregisterViewer(&m_camera);
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Directional_Component::Light_Directional_Component(Engine *engine)
+Light_Directional_C::Light_Directional_C(Engine *engine)
 {
 	m_engine = engine;
 	m_visSize[0] = 0;
@@ -55,17 +55,17 @@ Light_Directional_Component::Light_Directional_Component(Engine *engine)
 	};
 }
 
-void Light_Directional_Component::setColor(const glm::vec3 & color)
+void Light_Directional_C::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
 
-void Light_Directional_Component::setIntensity(const float & intensity)
+void Light_Directional_C::setIntensity(const float & intensity)
 {
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
 }
 
-void Light_Directional_Component::setTransform(const Transform & transform)
+void Light_Directional_C::setTransform(const Transform & transform)
 {
 	const glm::mat4 &rotation = transform.m_modelMatrix;
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightDirection = glm::normalize(rotation * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)).xyz;
@@ -73,13 +73,13 @@ void Light_Directional_Component::setTransform(const Transform & transform)
 	(&reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->lightV = m_mMatrix;
 }
 
-bool Light_Directional_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Light_Directional_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	// Directional lights are infinite as they simulate the sun.
 	return true;
 }
 
-void Light_Directional_Component::occlusionPass(const unsigned int & type)
+void Light_Directional_C::occlusionPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		glUniform1i(0, getBufferIndex());
@@ -94,7 +94,7 @@ void Light_Directional_Component::occlusionPass(const unsigned int & type)
 	}
 }
 
-void Light_Directional_Component::shadowPass(const unsigned int & type)
+void Light_Directional_C::shadowPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		// Clear out the shadows
@@ -117,14 +117,14 @@ void Light_Directional_Component::shadowPass(const unsigned int & type)
 	}
 }
 
-float Light_Directional_Component::getImportance(const glm::vec3 & position) const
+float Light_Directional_C::getImportance(const glm::vec3 & position) const
 {
 	return 1.0f;
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
-void Light_Directional_Component::update(const unsigned int & type)
+void Light_Directional_C::update(const unsigned int & type)
 {
 	calculateCascades();
 
@@ -143,7 +143,7 @@ void Light_Directional_Component::update(const unsigned int & type)
 	m_visSize[type] = m_camera.getVisibilityToken().specificSize(string_type);
 }
 
-void Light_Directional_Component::calculateCascades()
+void Light_Directional_C::calculateCascades()
 {
 	Directional_Struct * uboData = &reinterpret_cast<Directional_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer(); // returns a copy, no need to std::mutex

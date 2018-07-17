@@ -70,7 +70,7 @@
  *	- Asset_Texture
  *
  * \section New Assets
- * All assets have the following 4 static functions.\n
+ * All assets have at least 4 static functions (see below).\n
  * These functions require at least the same 2 parameters, a pointer to the Engine object, and a reference to the shared pointer holding the asset.\n
  * The asset's create function must be mapped in the asset manager's constructor.\n
  *
@@ -91,28 +91,28 @@
  * Entities are created by entityCreator classes, controlled by the EntityFactory.\n
  * 
  * Entities implemented so far include:
- *		- Entity (base class)
- *		- SpotLight
- *		- PointLight
- *		- Sun
- *		- Prop
-		- Prop_Static
-		- Reflector
- *		<br>
+ *	- Entity (base class)
+ *	- SpotLight
+ *	- PointLight
+ *	- Sun
+ *	- Prop
+ *	- Prop_Static
+ *	- Reflector
+ *	<br>
  *
  * Components implemented so far include:
  *		- Component (base class)
- *		- Geometry_Component (interface)
- *		- Lighting_Component (interface)
- *		- Anim_Model_Component
- *		- Static_Model_Component
- *		- Light_Directional_Component
- *		- Light_Directional_Cheap_Component
- *		- Light_Point_Component
- *		- Light_Point_Cheap_Component
- *		- Light_Spot_Component
- *		- Light_Spot_Cheap_Component
- *		- Reflector_Component
+ *		- Geometry_C (interface)
+ *		- Lighting_C (interface)
+ *		- Model_Animated_C
+ *		- Model_Static_C
+ *		- Light_Directional_C
+ *		- Light_Directional_Cheap_C
+ *		- Light_Point_C
+ *		- Light_Point_Cheap_C
+ *		- Light_Spot_C
+ *		- Light_Spot_Cheap_C
+ *		- Reflector_C
  */
 
  /*! \page managers Managers
@@ -139,8 +139,7 @@
  *		<br>
  *		
  *	***Why 2 update functions?***\n
- *	The main update function is intended to be used all the essentials, such as rendering and physics.\n
- *	These things are time sensitive, so if anything that needs frequent updating can be offloaded to a second thread, then they can be implemented in the threaded function.\n
+ *	The main update function is called every frame for every system, so if anything that needs frequent updating can be offloaded to a second thread to avoid stalling the rendering/physics pipeline, then they can be implemented in the threaded version instead.\n
  *  For example, visibility calculations are currently offloaded entirely to the second thread.
  *  
  *  The engine currently requires the following base systems:

@@ -1,13 +1,14 @@
-#include "Systems\World\ECS\Component_Factory.h"
-#include "Systems\World\ECS\Components\Anim_Model_Component.h"
-#include "Systems\World\ECS\Components\Static_Model_Component.h"
-#include "Systems\World\ECS\Components\Light_Directional_Component.h"
-#include "Systems\World\ECS\Components\Light_Directional_Cheap_Component.h"
-#include "Systems\World\ECS\Components\Light_Spot_Component.h"
-#include "Systems\World\ECS\Components\Light_Spot_Cheap_Component.h"
-#include "Systems\World\ECS\Components\Light_Point_Component.h"
-#include "Systems\World\ECS\Components\Light_Point_Cheap_Component.h"
-#include "Systems\World\ECS\Components\Reflector_Component.h"
+#include "ECS\Component_Factory.h"
+#include "ECS\Components\Model_Animated.h"
+#include "ECS\Components\Model_Static.h"
+#include "ECS\Components\Light_Directional.h"
+#include "ECS\Components\Light_Directional_Cheap.h"
+#include "ECS\Components\Light_Spot.h"
+#include "ECS\Components\Light_Spot_Cheap.h"
+#include "ECS\Components\Light_Point.h"
+#include "ECS\Components\Light_Point_Cheap.h"
+#include "ECS\Components\Reflector.h"
+#include "Engine.h"
 
 
 Component_Factory::~Component_Factory()
@@ -40,6 +41,11 @@ void Component_Factory::initialize(Engine * engine)
 
 Component * Component_Factory::createComponent(const char * type)
 {
+	if (!m_creatorMap.find(type)) {
+		m_engine->reportError(MessageManager::OTHER_ERROR, "Component type: '" + std::string(type) + "' not found");
+		return nullptr;
+	}
+
 	Component * component = m_creatorMap[type]->create(m_engine);
 
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
@@ -72,6 +78,11 @@ void Component_Factory::deleteComponent(Component * component)
 			return;
 		}
 	}
+}
+
+VectorMap<Component*>& Component_Factory::getComponents()
+{
+	return m_levelComponents;
 }
 
 const std::vector<Component*>& Component_Factory::getComponentsByType(const char * type)

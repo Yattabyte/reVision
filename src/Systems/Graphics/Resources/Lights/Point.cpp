@@ -142,7 +142,7 @@ void Point_Tech::updateData(const Visibility_Token & vis_token, const int & upda
 	if (m_size && m_sphereVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos); 
-		m_lightList = vis_token.getTypeList<Lighting_Component>("Light_Point");
+		m_lightList = vis_token.getTypeList<Lighting_C>("Light_Point");
 
 		for each (const auto &component in m_lightList)
 			queue.insert(component);

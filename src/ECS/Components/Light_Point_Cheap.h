@@ -7,7 +7,7 @@
 #include "glm\gtc\quaternion.hpp"
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Lighting.h"
 #include "Utilities\Transform.h"
 
 
@@ -18,7 +18,7 @@ class Engine;
  * A renderable light component that mimics a light-bulb.
  * A cheap variation, no shadows or GI.
  **/
-class Light_Point_Cheap_Component : protected Lighting_Component
+class Light_Point_Cheap_C : protected Lighting_C
 {
 public:
 	// Interface Implementations
@@ -33,9 +33,9 @@ public:
 protected:
 	// (de)Constructors
 	/** Destroys a cheap point light component. */
-	~Light_Point_Cheap_Component();
+	~Light_Point_Cheap_C();
 	/** Constructs a cheap point light component. */
-	Light_Point_Cheap_Component(Engine *engine);
+	Light_Point_Cheap_C(Engine *engine);
 	
 
 	// Protected Functions
@@ -72,7 +72,7 @@ class Light_Point_Cheap_Creator : public ComponentCreator
 public:
 	Light_Point_Cheap_Creator() : ComponentCreator() {}
 	virtual Component* create(Engine * engine) {
-		return new Light_Point_Cheap_Component(engine);
+		return new Light_Point_Cheap_C(engine);
 	}
 };
 

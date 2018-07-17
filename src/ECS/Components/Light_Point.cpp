@@ -1,7 +1,7 @@
-#include "Systems\World\ECS\Components\Light_Point_Component.h"
-#include "Systems\World\ECS\Components\Geometry_Component.h"
+#include "ECS\Components\Light_Point.h"
+#include "ECS\Components\Geometry.h"
 #include "Systems\World\World.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\Lights\Point.h"
 #include "Engine.h"
@@ -9,14 +9,14 @@
 #include <math.h>
 
 
-Light_Point_Component::~Light_Point_Component()
+Light_Point_C::~Light_Point_C()
 {
 	m_pointTech->unregisterShadowCaster(m_shadowSpot);
 	m_world->unregisterViewer(&m_camera);
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Point_Component::Light_Point_Component(Engine *engine)
+Light_Point_C::Light_Point_C(Engine *engine)
 {
 	m_engine = engine;
 	m_radius = 0;
@@ -55,7 +55,7 @@ Light_Point_Component::Light_Point_Component(Engine *engine)
 	};
 }
 
-void Light_Point_Component::updateViews()
+void Light_Point_C::updateViews()
 {
 	Point_Struct * uboData = &reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 
@@ -82,17 +82,17 @@ void Light_Point_Component::updateViews()
 	}
 }
 
-void Light_Point_Component::setColor(const glm::vec3 & color)
+void Light_Point_C::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
 
-void Light_Point_Component::setIntensity(const float & intensity)
+void Light_Point_C::setIntensity(const float & intensity)
 {
 	(&reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
 }
 
-void Light_Point_Component::setRadius(const float & radius)
+void Light_Point_C::setRadius(const float & radius)
 {
 	m_radius = radius;
 	m_squaredRadius = radius * radius;
@@ -101,7 +101,7 @@ void Light_Point_Component::setRadius(const float & radius)
 	updateViews();
 }
 
-void Light_Point_Component::setTransform(const Transform & transform)
+void Light_Point_C::setTransform(const Transform & transform)
 {
 	(&reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightPosition = transform.m_position;
 	m_lightPos = transform.m_position;
@@ -109,13 +109,13 @@ void Light_Point_Component::setTransform(const Transform & transform)
 	updateViews();
 }
 
-bool Light_Point_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Light_Point_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
 }
 
-void Light_Point_Component::occlusionPass(const unsigned int & type)
+void Light_Point_C::occlusionPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		glUniform1i(0, getBufferIndex());
@@ -127,7 +127,7 @@ void Light_Point_Component::occlusionPass(const unsigned int & type)
 	}	
 }
 
-void Light_Point_Component::shadowPass(const unsigned int & type)
+void Light_Point_C::shadowPass(const unsigned int & type)
 {
 	if (m_visSize[type]) {
 		// Clear out the shadows
@@ -144,14 +144,14 @@ void Light_Point_Component::shadowPass(const unsigned int & type)
 	}
 }
 
-float Light_Point_Component::getImportance(const glm::vec3 & position) const
+float Light_Point_C::getImportance(const glm::vec3 & position) const
 {
 	return m_radius / glm::length(position - m_lightPos);
 }
 
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
-void Light_Point_Component::update(const unsigned int & type)
+void Light_Point_C::update(const unsigned int & type)
 {
 	// Update render lists
 	const char * string_type;

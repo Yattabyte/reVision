@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
-#include "Systems\World\ECS\Components\Anim_Model_Component.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Model_Animated.h"
+#include "ECS\Components\Lighting.h"
 #include "Systems\World\Camera.h"
 #include "Engine.h"
 
@@ -105,7 +105,7 @@ void Model_Technique::writeCameraBuffers(Camera & camera, const unsigned int & i
 		std::vector<unsigned int> visibleIndices(size);
 
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Anim_Model_Component>("Anim_Model")) {
+		for each (const auto &component in vis_token.getTypeList<Model_Animated_C>("Anim_Model")) {
 			const glm::ivec2 drawInfo = component->getDrawInfo();
 			visibleIndices[count] = component->getBufferIndex();
 			// Check mesh complexity and if viewer not within BSphere

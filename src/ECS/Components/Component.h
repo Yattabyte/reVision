@@ -2,7 +2,7 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\ECSmessage.h"
 #include "Utilities\MappedChar.h"
 #include "glm\glm.hpp"
 #include <utility>

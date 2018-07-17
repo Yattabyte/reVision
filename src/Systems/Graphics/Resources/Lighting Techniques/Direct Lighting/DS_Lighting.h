@@ -12,7 +12,7 @@
 class Engine;
 class Geometry_FBO;
 class Lighting_FBO;
-class Lighting_Component;
+class Lighting_C;
 class Geometry_Buffers;
 
 /**

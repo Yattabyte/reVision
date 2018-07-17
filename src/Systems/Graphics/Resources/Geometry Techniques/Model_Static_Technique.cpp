@@ -1,7 +1,7 @@
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
-#include "Systems\World\ECS\Components\Static_Model_Component.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Model_Static.h"
+#include "ECS\Components\Lighting.h"
 #include "Systems\World\Camera.h"
 #include "Engine.h"
 
@@ -105,7 +105,7 @@ void Model_Static_Technique::writeCameraBuffers(Camera & camera, const unsigned 
 		std::vector<unsigned int> visibleIndices(size);
 
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Static_Model_Component>("Static_Model")) {
+		for each (const auto &component in vis_token.getTypeList<Model_Static_C>("Static_Model")) {
 			const glm::ivec2 drawInfo = component->getDrawInfo();
 			visibleIndices[count] = component->getBufferIndex();
 			// Check mesh complexity and if viewer not within BSphere

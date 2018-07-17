@@ -1,31 +1,31 @@
 #pragma once
-#ifndef LIGHT_SPOT_COMPONENT_H
-#define LIGHT_SPOT_COMPONENT_H
+#ifndef LIGHT_POINT_COMPONENT_H
+#define LIGHT_POINT_COMPONENT_H
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 #include "glm\glm.hpp"
 #include "glm\gtc\quaternion.hpp"
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Lighting.h"
 #include "Systems\World\Camera.h"
 #include "Utilities\Transform.h"
 
 
-class Spot_Tech;
+class Point_Tech;
 class System_World;
-class Light_Spot_Creator;
+class Light_Point_Creator;
 class Engine;
 
 /**
- * A renderable light component that mimics a flashlight.
- * Uses a single shadow map.
+ * A renderable light component that mimics a light-bulb.
+ * Uses 6 shadow maps.
  **/
-class Light_Spot_Component : protected Lighting_Component
+class Light_Point_C : protected Lighting_C
 {
 public:
 	// Interface Implementations
-	virtual const char * getName() const { return "Light_Spot"; }
+	virtual const char * getName() const { return "Light_Point"; }
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);
@@ -35,10 +35,10 @@ public:
 
 protected:
 	// (de)Constructors
-	/** Destroys a spot light component. */
-	~Light_Spot_Component();
-	/** Constructs a spot light component. */
-	Light_Spot_Component(Engine *engine);
+	/** Destroys a point light component. */
+	~Light_Point_C();
+	/** Constructs a point light component. */
+	Light_Point_C(Engine *engine);
 
 
 	// Protected Functions
@@ -48,19 +48,18 @@ protected:
 
 	// Protected Attributes
 	// Shared Objects
-	Engine *m_engine;
-	Spot_Tech * m_spotTech;
-	System_World *m_world;
-	// Cached Attributes
+	Engine * m_engine;
+	Point_Tech * m_pointTech;
+	System_World * m_world;
+	// Cached attributes
 	float m_radius;
 	float m_squaredRadius;
-	glm::mat4 m_lightVMatrix, m_lightPV;
+	glm::mat4 m_lightVMatrix; 
 	glm::vec3 m_lightPos;
 	int m_shadowSpot;
-	glm::quat m_orientation;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Light_Spot_Creator;
+	friend class Light_Point_Creator;
 
 
 private:
@@ -74,21 +73,18 @@ private:
 	/** Set the light radius to use.
 	 * @param	radius		the radius to use */
 	void setRadius(const float & radius);
-	/** Set the light cutoff to use.
-	 * @param	cutoff		the cutoff to use */
-	void setCutoff(const float & cutoff);
 	/** Set the transformation for this component.
 	 * @param	transform	the transform to use */
 	void setTransform(const Transform & transform);
 };
 
-class Light_Spot_Creator : public ComponentCreator
+class Light_Point_Creator : public ComponentCreator
 {
 public:
-	Light_Spot_Creator() : ComponentCreator() {}
-	virtual Component* create(Engine *engine) {
-		return new Light_Spot_Component(engine);
+	Light_Point_Creator() : ComponentCreator() {}
+	virtual Component* create(Engine * engine) {
+		return new Light_Point_C(engine);
 	}
 };
 
-#endif // LIGHT_SPOT_COMPONENT_H
+#endif // LIGHT_POINT_COMPONENT_H

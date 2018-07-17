@@ -2,8 +2,8 @@
 #ifndef VISIBILITY_TOKEN_H
 #define VISIBILITY_TOKEN_H
 
-#include "Systems\World\ECS\Components\Component.h"
-#include "Systems\World\ECS\ECS_DEFINES.h"
+#include "ECS\Components\Component.h"
+#include "ECS\ECS_DEFINES.h"
 #include "Utilities\MappedChar.h"
 
 

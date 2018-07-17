@@ -132,7 +132,7 @@ void Spot_Tech::updateData(const Visibility_Token & vis_token, const int & updat
 	if (m_size && m_coneVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos);
-		m_lightList = vis_token.getTypeList<Lighting_Component>("Light_Spot");
+		m_lightList = vis_token.getTypeList<Lighting_C>("Light_Spot");
 
 		for each (const auto &component in m_lightList)
 			queue.insert(component);
@@ -161,7 +161,7 @@ void Spot_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned 
 		const GLuint spotDraws = bounceResolution * m_sizeGI;
 		std::vector<GLuint> visArray(m_sizeGI);
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Spot"))
+		for each (const auto &component in vis_token.getTypeList<Lighting_C>("Light_Spot"))
 			visArray[count++] = component->getBufferIndex();
 		m_visSpots.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &spotDraws);

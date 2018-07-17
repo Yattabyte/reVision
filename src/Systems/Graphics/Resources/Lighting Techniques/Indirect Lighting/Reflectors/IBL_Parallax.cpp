@@ -1,6 +1,6 @@
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflectors\IBL_Parallax.h"
 #include "Systems\Graphics\Graphics.h"
-#include "Systems\World\ECS\Components\Reflector_Component.h"
+#include "ECS\Components\Reflector.h"
 #include "Systems\World\World.h"
 #include "Engine.h"
 #include <minmax.h>
@@ -106,7 +106,7 @@ void IBL_Parallax_Tech::updateData(const Visibility_Token & vis_token)
 {
 	m_size = vis_token.specificSize("Reflector");
 	if (m_size) {
-		m_refList = vis_token.getTypeList<Reflector_Component>("Reflector");
+		m_refList = vis_token.getTypeList<Reflector_C>("Reflector");
 		std::vector<GLuint> refArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in m_refList)
@@ -128,7 +128,7 @@ void IBL_Parallax_Tech::applyPrePass()
 		m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, 512.0f);
 
 		auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
-		std::vector<Reflector_Component*> listCopy = m_refList;
+		std::vector<Reflector_C*> listCopy = m_refList;
 		for each (const auto & component in listCopy) {
 			const int componentIndex = component->getBufferIndex();
 

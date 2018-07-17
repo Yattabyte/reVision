@@ -2,7 +2,7 @@
 #ifndef LIGHTING_COMPONENT_H
 #define LIGHTING_COMPONENT_H
 
-#include "Systems\World\ECS\Components\Component.h"
+#include "ECS\Components\Component.h"
 #include "Systems\World\Visibility_Token.h"
 #include "glm\glm.hpp"
 
@@ -12,7 +12,7 @@ class VB_Ptr;
 /**
  * An interface for lighting related components.
  **/
-class Lighting_Component : protected Component
+class Lighting_C : protected Component
 {
 public:
 	// Public Methods
@@ -38,9 +38,9 @@ public:
 protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~Lighting_Component() {};
+	~Lighting_C() {};
 	/** Constructor. */
-	Lighting_Component() { m_shadowUpdateTime = 0; };
+	Lighting_C() { m_shadowUpdateTime = 0; };
 
 
 	// Protected Attributes

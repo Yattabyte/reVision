@@ -1,5 +1,5 @@
-#include "Systems\World\ECS\Components\Static_Model_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Model_Static.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Engine.h"
@@ -7,13 +7,13 @@
 #include <minmax.h>
 
 
-Static_Model_Component::~Static_Model_Component()
+Model_Static_C::~Model_Static_C()
 {
 	if (m_model.get()) m_model->removeCallback(this);
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
-Static_Model_Component::Static_Model_Component(Engine *engine)
+Model_Static_C::Model_Static_C(Engine *engine)
 {
 	m_engine = engine;
 	m_vaoLoaded = false;
@@ -33,14 +33,14 @@ Static_Model_Component::Static_Model_Component(Engine *engine)
 	};
 }
 
-bool Static_Model_Component::isLoaded() const
+bool Model_Static_C::isLoaded() const
 {
 	if (m_model)
 		return m_model->existsYet();
 	return false;
 }
 
-bool Static_Model_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Model_Static_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	if (m_model && m_model->existsYet()) {
 		const float distance = glm::distance(m_bspherePos, eyePosition);
@@ -49,7 +49,7 @@ bool Static_Model_Component::isVisible(const float & radius, const glm::vec3 & e
 	return false;
 }
 
-bool Static_Model_Component::containsPoint(const glm::vec3 & point) const
+bool Model_Static_C::containsPoint(const glm::vec3 & point) const
 {
 	if (m_model) {
 		const float distance = glm::distance(m_bspherePos, point);
@@ -58,12 +58,12 @@ bool Static_Model_Component::containsPoint(const glm::vec3 & point) const
 	return false;
 }
 
-const unsigned int Static_Model_Component::getBufferIndex() const
+const unsigned int Model_Static_C::getBufferIndex() const
 {
 	return m_uboIndex;
 }
 
-const glm::ivec2 Static_Model_Component::getDrawInfo() const
+const glm::ivec2 Model_Static_C::getDrawInfo() const
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -72,7 +72,7 @@ const glm::ivec2 Static_Model_Component::getDrawInfo() const
 	return glm::ivec2(0);
 }
 
-const unsigned int Static_Model_Component::getMeshSize() const
+const unsigned int Model_Static_C::getMeshSize() const
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -81,7 +81,7 @@ const unsigned int Static_Model_Component::getMeshSize() const
 	return 0;
 }
 
-void Static_Model_Component::updateBSphere()
+void Model_Static_C::updateBSphere()
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -99,7 +99,7 @@ void Static_Model_Component::updateBSphere()
 	}
 }
 
-void Static_Model_Component::setModelDirectory(const std::string & directory)
+void Model_Static_C::setModelDirectory(const std::string & directory)
 {
 	// Remove callback from old model before loading
 	if (m_model.get())
@@ -115,14 +115,14 @@ void Static_Model_Component::setModelDirectory(const std::string & directory)
 	});
 }
 
-void Static_Model_Component::setSkin(const unsigned int & index)
+void Model_Static_C::setSkin(const unsigned int & index)
 {
 	m_skin = index;
 	if (m_model && m_model->existsYet())
 		(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
 }
 
-void Static_Model_Component::setTransform(const Transform & transform)
+void Model_Static_C::setTransform(const Transform & transform)
 {
 	(&reinterpret_cast<Geometry_Static_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = transform.m_modelMatrix;
 	if (m_model && m_model->existsYet())

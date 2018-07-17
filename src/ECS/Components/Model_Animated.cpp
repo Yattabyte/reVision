@@ -1,5 +1,5 @@
-#include "Systems\World\ECS\Components\Anim_Model_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Model_Animated.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Engine.h"
@@ -9,13 +9,13 @@
 
 inline void ReadNodeHeirarchy(std::vector<BoneTransform> &transforms, const float &animation_time, const int &animation_ID, const Node* parentNode, const Shared_Asset_Model &model, const glm::mat4& ParentTransform);
 
-Anim_Model_Component::~Anim_Model_Component()
+Model_Animated_C::~Model_Animated_C()
 {
 	if (m_model.get()) m_model->removeCallback(this);
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.removeElement(&m_uboIndex);
 }
 
-Anim_Model_Component::Anim_Model_Component(Engine *engine)
+Model_Animated_C::Model_Animated_C(Engine *engine)
 {
 	m_engine = engine;
 	m_vaoLoaded = false;
@@ -42,14 +42,14 @@ Anim_Model_Component::Anim_Model_Component(Engine *engine)
 	};
 }
 
-bool Anim_Model_Component::isLoaded() const
+bool Model_Animated_C::isLoaded() const
 {
 	if (m_model)
 		return m_model->existsYet();
 	return false;
 }
 
-bool Anim_Model_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Model_Animated_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	if (m_model && m_model->existsYet()) {
 		const float distance = glm::distance(m_bspherePos, eyePosition);
@@ -58,7 +58,7 @@ bool Anim_Model_Component::isVisible(const float & radius, const glm::vec3 & eye
 	return false;
 }
 
-bool Anim_Model_Component::containsPoint(const glm::vec3 & point) const
+bool Model_Animated_C::containsPoint(const glm::vec3 & point) const
 {
 	if (m_model) {
 		const float distance = glm::distance(m_bspherePos, point);
@@ -67,12 +67,12 @@ bool Anim_Model_Component::containsPoint(const glm::vec3 & point) const
 	return false;
 }
 
-const unsigned int Anim_Model_Component::getBufferIndex() const
+const unsigned int Model_Animated_C::getBufferIndex() const
 {
 	return m_uboIndex;
 }
 
-const glm::ivec2 Anim_Model_Component::getDrawInfo() const
+const glm::ivec2 Model_Animated_C::getDrawInfo() const
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -81,7 +81,7 @@ const glm::ivec2 Anim_Model_Component::getDrawInfo() const
 	return glm::ivec2(0);
 }
 
-const unsigned int Anim_Model_Component::getMeshSize() const
+const unsigned int Model_Animated_C::getMeshSize() const
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -90,7 +90,7 @@ const unsigned int Anim_Model_Component::getMeshSize() const
 	return 0;
 }
 
-void Anim_Model_Component::updateBSphere()
+void Model_Animated_C::updateBSphere()
 {
 	if (m_model && m_model->existsYet()) {
 		std::shared_lock<std::shared_mutex> guard(m_model->m_mutex);
@@ -108,7 +108,7 @@ void Anim_Model_Component::updateBSphere()
 	}
 }
 
-void Anim_Model_Component::setModelDirectory(const std::string & directory)
+void Model_Animated_C::setModelDirectory(const std::string & directory)
 {
 	// Remove callback from old model before loading
 	if (m_model.get())
@@ -125,21 +125,21 @@ void Anim_Model_Component::setModelDirectory(const std::string & directory)
 	});
 }
 
-void Anim_Model_Component::setSkin(const unsigned int & index)
+void Model_Animated_C::setSkin(const unsigned int & index)
 {
 	m_skin = index;
 	if (m_model && m_model->existsYet())
 		(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->materialID = m_model->getSkinID(m_skin);
 }
 
-void Anim_Model_Component::setAnimation(const unsigned int & index)
+void Model_Animated_C::setAnimation(const unsigned int & index)
 {
 	m_animation = index;
 	m_playAnim = true;
 	//m_playAnim = message.GetPayload<bool>();
 }
 
-void Anim_Model_Component::setTransform(const Transform & transform)
+void Model_Animated_C::setTransform(const Transform & transform)
 {
 	(&reinterpret_cast<Geometry_Dynamic_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->mMatrix = transform.m_modelMatrix;
 	if (m_model && m_model->existsYet())
@@ -150,7 +150,7 @@ void Anim_Model_Component::setTransform(const Transform & transform)
 }
 
 
-void Anim_Model_Component::animate(const double & deltaTime)
+void Model_Animated_C::animate(const double & deltaTime)
 {
 	if (!m_model || !m_model->existsYet()) return;
 	

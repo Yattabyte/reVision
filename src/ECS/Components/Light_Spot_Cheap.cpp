@@ -1,15 +1,15 @@
-#include "Systems\World\ECS\Components\Light_Spot_Cheap_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Light_Spot_Cheap.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Engine.h"
 
 
-Light_Spot_Cheap_Component::~Light_Spot_Cheap_Component()
+Light_Spot_Cheap_C::~Light_Spot_Cheap_C()
 {
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(Engine * engine)
+Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine)
 {
 	m_engine = engine;
 	m_radius = 0;
@@ -36,17 +36,17 @@ Light_Spot_Cheap_Component::Light_Spot_Cheap_Component(Engine * engine)
 	};
 }
 
-void Light_Spot_Cheap_Component::setColor(const glm::vec3 & color)
+void Light_Spot_Cheap_C::setColor(const glm::vec3 & color)
 {
 	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightColor = color;
 }
 
-void Light_Spot_Cheap_Component::setIntensity(const float & intensity)
+void Light_Spot_Cheap_C::setIntensity(const float & intensity)
 {
 	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightIntensity = intensity;
 }
 
-void Light_Spot_Cheap_Component::setRadius(const float & radius)
+void Light_Spot_Cheap_C::setRadius(const float & radius)
 {
 	m_radius = radius;
 	m_squaredRadius = radius * radius;
@@ -54,13 +54,13 @@ void Light_Spot_Cheap_Component::setRadius(const float & radius)
 	updateViews();
 }
 
-void Light_Spot_Cheap_Component::setCutoff(const float & cutoff)
+void Light_Spot_Cheap_C::setCutoff(const float & cutoff)
 {
 	(&reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->LightCutoff = cosf(glm::radians(cutoff));
 	updateViews();
 }
 
-void Light_Spot_Cheap_Component::setTransform(const Transform & transform)
+void Light_Spot_Cheap_C::setTransform(const Transform & transform)
 {
 	Spot_Cheap_Struct * uboData = &reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->LightPosition = transform.m_position;
@@ -69,7 +69,7 @@ void Light_Spot_Cheap_Component::setTransform(const Transform & transform)
 	updateViews();
 }
 
-void Light_Spot_Cheap_Component::updateViews()
+void Light_Spot_Cheap_C::updateViews()
 {
 	Spot_Cheap_Struct * uboData = &reinterpret_cast<Spot_Cheap_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	
@@ -81,13 +81,13 @@ void Light_Spot_Cheap_Component::updateViews()
 	uboData->mMatrix = (trans * rot) * scl;
 }
 
-bool Light_Spot_Cheap_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Light_Spot_Cheap_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_lightPos, eyePosition);
 	return radius + m_radius > distance;
 }
 
-float Light_Spot_Cheap_Component::getImportance(const glm::vec3 & position) const
+float Light_Spot_Cheap_C::getImportance(const glm::vec3 & position) const
 {
 	return 0.0f;
 }

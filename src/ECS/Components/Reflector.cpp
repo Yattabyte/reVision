@@ -1,5 +1,5 @@
-#include "Systems\World\ECS\Components\Reflector_Component.h"
-#include "Systems\World\ECS\ECSmessage.h"
+#include "ECS\Components\Reflector.h"
+#include "ECS\ECSmessage.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Systems\Graphics\Resources\Lighting Techniques\Indirect Lighting\Reflections.h"
@@ -9,14 +9,14 @@
 #include <minmax.h>
 
 
-Reflector_Component::~Reflector_Component()
+Reflector_C::~Reflector_C()
 {
 	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->removeElement(m_uboIndex);
 	graphics->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
-Reflector_Component::Reflector_Component(Engine * engine)
+Reflector_C::Reflector_C(Engine * engine)
 { 
 	m_engine = engine;
 	m_position = glm::vec3(0.0f);
@@ -43,7 +43,7 @@ Reflector_Component::Reflector_Component(Engine * engine)
 	}
 }
 
-void Reflector_Component::setTransform(const Transform & transform)
+void Reflector_C::setTransform(const Transform & transform)
 {
 	Reflection_Struct * uboData = &reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->mMatrix = transform.m_modelMatrix;
@@ -61,18 +61,18 @@ void Reflector_Component::setTransform(const Transform & transform)
 	}
 }
 
-bool Reflector_Component::isVisible(const float & radius, const glm::vec3 & eyePosition) const
+bool Reflector_C::isVisible(const float & radius, const glm::vec3 & eyePosition) const
 {
 	const float distance = glm::distance(m_position, eyePosition);
 	return radius + glm::length(m_scale) > distance;
 }
 
-const unsigned int Reflector_Component::getBufferIndex() const
+const unsigned int Reflector_C::getBufferIndex() const
 {
 	return m_uboIndex;
 }
 
-void Reflector_Component::bindCamera(const unsigned int & index) const
+void Reflector_C::bindCamera(const unsigned int & index) const
 {
 	m_cameras[index].bind();
 }

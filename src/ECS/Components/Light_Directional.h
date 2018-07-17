@@ -7,7 +7,7 @@
 #include "glm\gtc\quaternion.hpp"
 #include "GLM\gtc\type_ptr.hpp"
 #include "GL\glew.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Lighting.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Graphics\Resources\GFX_DEFINES.h"
 #include "Utilities\Transform.h"
@@ -21,7 +21,7 @@ class Engine;
  * A renderable light component that mimics the sun.
  * Uses 4 cascaded shadowmaps.
  **/
-class Light_Directional_Component : protected Lighting_Component
+class Light_Directional_C : protected Lighting_C
 {
 public:
 	// Interface implementations
@@ -41,9 +41,9 @@ public:
 protected:
 	// (de)Constructors
 	/** Destroys a directional light component. */
-	~Light_Directional_Component();
+	~Light_Directional_C();
 	/** Constructs a directional light component. */
-	Light_Directional_Component(Engine *engine);
+	Light_Directional_C(Engine *engine);
 
 
 	// Protected Attributes
@@ -76,7 +76,7 @@ class Light_Directional_Creator : public ComponentCreator
 public:
 	Light_Directional_Creator() : ComponentCreator() {}
 	virtual Component* create(Engine *engine) {
-		return new Light_Directional_Component(engine);
+		return new Light_Directional_C(engine);
 	}
 };
 

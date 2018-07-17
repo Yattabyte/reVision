@@ -36,7 +36,7 @@ void Point_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int 
 	if (m_size && m_sphereVAOLoaded) {
 		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Lighting_Component>("Light_Point_Cheap"))
+		for each (const auto &component in vis_token.getTypeList<Lighting_C>("Light_Point_Cheap"))
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)

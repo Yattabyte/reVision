@@ -3,7 +3,7 @@
 #define CAMERA_H
 
 #include "Systems\World\Visibility_Token.h"
-#include "Systems\World\ECS\ECS_DEFINES.h"
+#include "ECS\ECS_DEFINES.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"

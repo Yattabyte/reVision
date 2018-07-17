@@ -2,7 +2,7 @@
 #include "Systems\Graphics\Resources\Frame Buffers\Geometry_FBO.h"
 #include "Systems\Graphics\Resources\Frame Buffers\Lighting_FBO.h"
 #include "Systems\Graphics\Resources\Geometry_Buffers.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Lighting.h"
 #include "Engine.h"
 
 

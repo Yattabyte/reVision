@@ -5,8 +5,7 @@
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
 #include "Systems\World\Animator.h"
-#include "Systems\World\ECS\Entity_Factory.h"
-#include "Systems\World\ECS\Component_Factory.h"
+#include "ECS\Component_Factory.h"
 
 
 class Engine;
@@ -31,6 +30,12 @@ public:
 
 
 	// Public Methods
+	template <class...Args>
+	void makeEntity(Args&...args)
+	{
+		Component * components[] = { &args... };
+		return makeEntity(components, componentIDS, sizeof...(Args));
+	}
 	/** Register a viewer into the system, to maintain its visibility info. 
  	 * @param	camera	the camera to register */
 	void registerViewer(Camera * camera);
@@ -59,7 +64,6 @@ private:
 
 
 	// Private Attributes
-	Entity_Factory m_entityFactory;
 	Component_Factory m_componentFactory;
 	std::shared_mutex m_viewerLock;
 	std::vector<Camera*> m_viewers;

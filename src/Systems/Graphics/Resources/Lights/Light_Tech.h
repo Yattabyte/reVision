@@ -4,7 +4,7 @@
 
 #include "GL\glew.h"
 #include "Systems\World\Visibility_Token.h"
-#include "Systems\World\ECS\Components\Lighting_Component.h"
+#include "ECS\Components\Lighting.h"
 #include <vector>
 
 
@@ -62,14 +62,14 @@ public:
 	// Public Methods
 	/** Fill the oldest light list with a new light, and have it sorted.
 	* @param	light		the light to insert */
-	void insert(Lighting_Component * light) {
+	void insert(Lighting_C * light) {
 		m_oldest.insert(light->getShadowUpdateTime(), light);
 	}
 	/** Return a list composed of the oldest and the closest lights.
 	* @return				a double sorted list with the oldest lights and closest lights */
-	const std::vector<Lighting_Component*> toList() const {
-		PriorityList<float, Lighting_Component*, std::greater<float>> m_closest(m_quality / 2);
-		std::vector<Lighting_Component*> outList;
+	const std::vector<Lighting_C*> toList() const {
+		PriorityList<float, Lighting_C*, std::greater<float>> m_closest(m_quality / 2);
+		std::vector<Lighting_C*> outList;
 		outList.reserve(m_quality);
 
 		for each (const auto &element in m_oldest.toList()) {
@@ -93,7 +93,7 @@ private:
 	// Private Attributes
 	unsigned int m_quality;
 	glm::vec3 m_position;
-	PriorityList<float, Lighting_Component*, std::less<float>> m_oldest;
+	PriorityList<float, Lighting_C*, std::less<float>> m_oldest;
 };
 
 #endif // LIGHT_TECH_H

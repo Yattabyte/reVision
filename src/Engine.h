@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.0";
+constexpr char ENGINE_VERSION[]	= "1.1";
 
 #include "Assets\Asset.h"
 #include "Systems\World\Camera.h"

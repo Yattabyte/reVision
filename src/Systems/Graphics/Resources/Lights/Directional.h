@@ -64,7 +64,7 @@ private:
 	bool m_quadVAOLoaded;
 	VectorBuffer<Directional_Struct> * m_lightSSBO; 
 	StaticBuffer m_indirectShape;
-	std::vector<Lighting_Component*> m_queue;
+	std::vector<Lighting_C*> m_queue;
 	size_t m_size;
 
 

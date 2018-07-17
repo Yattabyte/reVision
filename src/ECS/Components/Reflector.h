@@ -4,7 +4,7 @@
 #define GLM_FORCE_SWIZZLE
 #define GLM_SWIZZLE_XYZ
 
-#include "Systems\World\ECS\Components\Component.h"
+#include "ECS\Components\Component.h"
 #include "Systems\World\Camera.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\Transform.h"
@@ -17,7 +17,7 @@ class Engine;
 /**
  * An object that records the world around it and uses it to project reflections.
  **/
-class Reflector_Component : protected Component
+class Reflector_C : protected Component
 {
 public:
 	// Interface implementations
@@ -34,9 +34,9 @@ public:
 protected:
 	// (de)Constructors
 	/** Destroys a reflector component. */
-	~Reflector_Component();
+	~Reflector_C();
 	/** Constructors a reflector component. */
-	Reflector_Component(Engine *engine);
+	Reflector_C(Engine *engine);
 
 
 	// Protected Attributes
@@ -61,7 +61,7 @@ class Reflector_Creator : public ComponentCreator
 public:
 	Reflector_Creator() : ComponentCreator() {}
 	virtual Component* create(Engine *engine) {
-		return new Reflector_Component(engine);
+		return new Reflector_C(engine);
 	}
 };
 
