@@ -31,12 +31,13 @@ public:
 	const unsigned int getBufferIndex() const;
 	void bindCamera(const unsigned int & index) const;
 
+
 protected:
 	// (de)Constructors
 	/** Destroys a reflector component. */
 	~Reflector_C();
 	/** Constructors a reflector component. */
-	Reflector_C(Engine *engine);
+	Reflector_C(Engine * engine, const Transform & transform = Transform());
 
 
 	// Protected Attributes

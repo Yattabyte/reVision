@@ -38,7 +38,7 @@ protected:
 	/** Destroys a spot light component. */
 	~Light_Spot_C();
 	/** Constructs a spot light component. */
-	Light_Spot_C(Engine *engine);
+	Light_Spot_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const float & cutoff = 1.0f, const Transform & transform = Transform());
 
 
 	// Protected Functions

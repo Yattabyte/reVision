@@ -38,7 +38,7 @@ protected:
 	/** Destroys a point light component. */
 	~Light_Point_C();
 	/** Constructs a point light component. */
-	Light_Point_C(Engine *engine);
+	Light_Point_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const Transform & transform = Transform());
 
 
 	// Protected Functions

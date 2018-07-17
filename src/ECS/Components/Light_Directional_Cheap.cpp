@@ -9,10 +9,15 @@ Light_Directional_Cheap_C::~Light_Directional_Cheap_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine *engine)
+Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
+
+	// Acquire and update buffers
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.addElement(&m_uboIndex);
+	
+	// Register Commands
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
@@ -22,6 +27,11 @@ Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine *engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setColor(color);
+	setIntensity(intensity);
+	setTransform(transform);
 }
 
 void Light_Directional_Cheap_C::setColor(const glm::vec3 & color)

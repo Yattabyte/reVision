@@ -35,7 +35,7 @@ protected:
 	/** Destroys a cheap directional light component. */
 	~Light_Directional_Cheap_C();
 	/** Constructs a cheap directional light component. */
-	Light_Directional_Cheap_C(Engine *engine);
+	Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const Transform & transform = Transform());
 
 
 	// Protected Attributes

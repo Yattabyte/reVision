@@ -15,13 +15,15 @@ Light_Directional_C::~Light_Directional_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Directional_C::Light_Directional_C(Engine *engine)
+Light_Directional_C::Light_Directional_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
 	m_mMatrix = glm::mat4(1.0f);
 
+	// Cascade Calculations
 	float near_plane = -0.1f;
 	float far_plane = - m_engine->getPreference(PreferenceState::C_DRAW_DISTANCE);
 	m_cascadeEnd[0] = near_plane;
@@ -30,8 +32,9 @@ Light_Directional_C::Light_Directional_C(Engine *engine)
 		float cUni = near_plane + ((far_plane - near_plane) * x / NUM_CASCADES);
 		float lambda = 0.3f;
 		m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
-	}
+	}	
 
+	// Acquire and update buffers
 	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_directionalTech = graphics->getBaseTech<Directional_Tech>("Directional_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightDirSSBO.addElement(&m_uboIndex);
@@ -44,6 +47,8 @@ Light_Directional_C::Light_Directional_C(Engine *engine)
 	uboData->ShadowSize_Recip = 1.0f / m_shadowSize;
 		
 	m_engine->getSubSystem<System_World>("World")->registerViewer(&m_camera);	
+
+	// Register Commands
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
@@ -53,6 +58,11 @@ Light_Directional_C::Light_Directional_C(Engine *engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setColor(color);
+	setIntensity(intensity);
+	setTransform(transform);
 }
 
 void Light_Directional_C::setColor(const glm::vec3 & color)

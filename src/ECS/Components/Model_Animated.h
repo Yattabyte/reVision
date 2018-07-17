@@ -41,7 +41,7 @@ protected:
 	/** Destroys an animated model component. */
 	~Model_Animated_C();
 	/** Constructors an animated model component. */
-	Model_Animated_C(Engine *engine);
+	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const unsigned int & animationIndex = 0, const Transform & transform = Transform());
 
 
 	// Protected functions

@@ -9,16 +9,19 @@ Light_Spot_Cheap_C::~Light_Spot_Cheap_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine)
+Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const float & cutoff, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = glm::vec3(0.0f);
 	m_orientation = glm::quat(1, 0, 0, 0);
+
+	// Acquire and update buffers
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.addElement(&m_uboIndex);
-
-
+	
+	// Register Commands
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
@@ -34,6 +37,13 @@ Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setColor(color);
+	setIntensity(intensity);
+	setRadius(radius);
+	setCutoff(cutoff);
+	setTransform(transform);
 }
 
 void Light_Spot_Cheap_C::setColor(const glm::vec3 & color)

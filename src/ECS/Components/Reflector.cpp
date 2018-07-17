@@ -16,19 +16,14 @@ Reflector_C::~Reflector_C()
 	graphics->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
-Reflector_C::Reflector_C(Engine * engine)
-{ 
+Reflector_C::Reflector_C(Engine * engine, const Transform & transform)
+{
+	// Default Parameters
 	m_engine = engine;
 	m_position = glm::vec3(0.0f);
 	m_scale = glm::vec3(1.0f);
-	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
-	m_uboBuffer = graphics->m_reflectionSSBO.addElement(&m_uboIndex);
-	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->CubeSpot = m_uboIndex;
-	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->addElement();
-		
-	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
-		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
-	};
+
+	// Update Cameras
 	glm::quat quats[6];
 	quats[0] = glm::lookAt(glm::vec3(0), glm::vec3(1, 0, 0), glm::vec3(0, -1, 0));
 	quats[1] = glm::lookAt(glm::vec3(0), glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0));
@@ -41,6 +36,20 @@ Reflector_C::Reflector_C(Engine * engine)
 		m_cameras[x].setOrientation(quats[x]);
 		m_cameras[x].update();
 	}
+
+	// Acquire and update buffers
+	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
+	m_uboBuffer = graphics->m_reflectionSSBO.addElement(&m_uboIndex);
+	(&reinterpret_cast<Reflection_Struct*>(m_uboBuffer->pointer)[m_uboIndex])->CubeSpot = m_uboIndex;
+	graphics->getLightingTech<Reflections>("Reflections")->getReflectorTech<IBL_Parallax_Tech>("IBL_Parallax_Tech")->addElement();
+
+	// Register Commands
+	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
+		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
+	};
+
+	// Update with passed parameters
+	setTransform(transform);
 }
 
 void Reflector_C::setTransform(const Transform & transform)

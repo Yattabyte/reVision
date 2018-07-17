@@ -16,8 +16,9 @@ Light_Point_C::~Light_Point_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightPointSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Point_C::Light_Point_C(Engine *engine)
+Light_Point_C::Light_Point_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_radius = 0;
 	m_squaredRadius = 0;
@@ -26,21 +27,20 @@ Light_Point_C::Light_Point_C(Engine *engine)
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
 
+	// Acquire and update buffers
 	auto graphics = m_engine->getSubSystem<System_Graphics>("Graphics");
 	m_pointTech = graphics->getBaseTech<Point_Tech>("Point_Tech");
 	m_uboBuffer = graphics->m_lightBuffers.m_lightPointSSBO.addElement(&m_uboIndex);
 	m_pointTech->registerShadowCaster(m_shadowSpot);
-
 	m_world = m_engine->getSubSystem<System_World>("World");
 	m_world->registerViewer(&m_camera);
 	m_camera.setHorizontalFOV(90.0f);
 	m_camera.setDimensions(m_pointTech->getSize());
-	
-	// Write data to our index spot
 	Point_Struct * uboData = &reinterpret_cast<Point_Struct*>(m_uboBuffer->pointer)[m_uboIndex];
 	uboData->Shadow_Spot = m_shadowSpot;
 	uboData->ShadowSize_Recip = 1.0f / m_pointTech->getSize().x;
 
+	// Register Commands
 	m_commandMap["Set_Light_Color"] = [&](const ECS_Command & payload) {
 		if (payload.isType<glm::vec3>()) setColor(payload.toType<glm::vec3>());
 	};
@@ -53,6 +53,12 @@ Light_Point_C::Light_Point_C(Engine *engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setColor(color);
+	setIntensity(intensity);
+	setRadius(radius);
+	setTransform(transform);
 }
 
 void Light_Point_C::updateViews()

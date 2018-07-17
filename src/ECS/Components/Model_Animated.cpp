@@ -15,8 +15,9 @@ Model_Animated_C::~Model_Animated_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.removeElement(&m_uboIndex);
 }
 
-Model_Animated_C::Model_Animated_C(Engine *engine)
+Model_Animated_C::Model_Animated_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const unsigned int & animationIndex, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_vaoLoaded = false;
 	m_animation = -1;
@@ -27,7 +28,10 @@ Model_Animated_C::Model_Animated_C(Engine *engine)
 	m_bsphereRadius = 0;
 	m_bspherePos = glm::vec3(0.0f);
 
+	// Acquire and update buffers
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.addElement(&m_uboIndex);
+
+	// Register Commands
 	m_commandMap["Set_Model_Directory"] = [&](const ECS_Command & payload) {
 		if (payload.isType<std::string>()) setModelDirectory(payload.toType<std::string>());
 	};
@@ -40,6 +44,12 @@ Model_Animated_C::Model_Animated_C(Engine *engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setModelDirectory(filename);
+	setSkin(skinIndex);
+	setAnimation(animationIndex);	
+	setTransform(transform);
 }
 
 bool Model_Animated_C::isLoaded() const
@@ -110,6 +120,7 @@ void Model_Animated_C::updateBSphere()
 
 void Model_Animated_C::setModelDirectory(const std::string & directory)
 {
+	if (directory == "") return;
 	// Remove callback from old model before loading
 	if (m_model.get())
 		m_model->removeCallback(this);

@@ -13,15 +13,19 @@ Model_Static_C::~Model_Static_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
-Model_Static_C::Model_Static_C(Engine *engine)
+Model_Static_C::Model_Static_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const Transform & transform)
 {
+	// Default Parameters
 	m_engine = engine;
 	m_vaoLoaded = false;
 	m_skin = 0;
 	m_bsphereRadius = 0;
 	m_bspherePos = glm::vec3(0.0f);
 
+	// Acquire and update buffers
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.addElement(&m_uboIndex);
+	
+	// Register Commands
 	m_commandMap["Set_Model_Directory"] = [&](const ECS_Command & payload) { 
 		if (payload.isType<std::string>()) setModelDirectory(payload.toType<std::string>()); 
 	};
@@ -31,6 +35,11 @@ Model_Static_C::Model_Static_C(Engine *engine)
 	m_commandMap["Set_Transform"] = [&](const ECS_Command & payload) {
 		if (payload.isType<Transform>()) setTransform(payload.toType<Transform>());
 	};
+
+	// Update with passed parameters
+	setModelDirectory(filename);
+	setSkin(skinIndex);
+	setTransform(transform);
 }
 
 bool Model_Static_C::isLoaded() const
@@ -101,6 +110,7 @@ void Model_Static_C::updateBSphere()
 
 void Model_Static_C::setModelDirectory(const std::string & directory)
 {
+	if (directory == "") return;
 	// Remove callback from old model before loading
 	if (m_model.get())
 		m_model->removeCallback(this);

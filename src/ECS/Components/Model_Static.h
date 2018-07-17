@@ -39,7 +39,7 @@ protected:
 	/** Destroys a static model component. */
 	~Model_Static_C();
 	/** Constructors an animated model component. */
-	Model_Static_C(Engine *engine);
+	Model_Static_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const Transform & transform = Transform());
 
 
 	// Protected functions
