@@ -14,7 +14,7 @@
 /**
  * A renderable model component that supports animation.
  **/
-class Model_Animated_C : protected Geometry_C
+class Model_Animated_C : public Geometry_C
 {
 public:
 	// Interface implementations
@@ -39,7 +39,8 @@ protected:
 	/** Destroys an animated model component. */
 	~Model_Animated_C();
 	/** Constructors an animated model component. */
-	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const unsigned int & animationIndex = -1, const Transform & transform = Transform());
+	#define MODEL_ANIMATED_PARAMS const std::string&, const unsigned int &, const int &, const Transform&
+	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const int & animationIndex = -1, const Transform & transform = Transform());
 
 
 	// Protected functions
@@ -60,8 +61,7 @@ protected:
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	std::vector<BoneTransform> m_transforms;
-	Engine *m_engine;
-	friend class Component_Creator<Model_Animated_C>;
+	friend class Component_Factory;
 
 
 private:

@@ -14,7 +14,7 @@
 /**
  * A renderable model component that supports animation.
  **/
-class Model_Static_C : protected Geometry_C
+class Model_Static_C : public Geometry_C
 {
 public:
 	// Interface implementations
@@ -54,8 +54,7 @@ protected:
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
-	Engine *m_engine;
-	friend class Component_Creator<Model_Static_C>;
+	friend class Component_Factory;
 
 
 private:

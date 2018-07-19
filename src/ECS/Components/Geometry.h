@@ -9,7 +9,7 @@
 /**
  * An interface for renderable components with a 3D mesh to implement.
  **/
-class Geometry_C : protected Component
+class Geometry_C : public Component
 {
 public:
 	// Public Methods
@@ -26,7 +26,7 @@ protected:
 	/** Virtual Destructor. */
 	virtual ~Geometry_C() {};
 	/** Constructor. */
-	Geometry_C() {};
+	Geometry_C(Engine * engine) : Component(engine) {};
 };
 
 #endif // GEOMETRY_COMPONENT_H

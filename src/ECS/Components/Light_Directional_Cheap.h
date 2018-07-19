@@ -15,7 +15,7 @@
  * A renderable light component that mimics the sun.
  * A cheap variation, no shadows or GI.
  **/
-class Light_Directional_Cheap_C : protected Lighting_C
+class Light_Directional_Cheap_C : public Lighting_C
 {
 public:
 	// Interface implementations
@@ -36,8 +36,7 @@ protected:
 
 
 	// Protected Attributes
-	Engine * m_engine;
-	friend class Component_Creator<Light_Directional_Cheap_C>;
+	friend class Component_Factory;
 
 
 private:

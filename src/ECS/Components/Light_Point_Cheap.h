@@ -15,7 +15,7 @@
  * A renderable light component that mimics a light-bulb.
  * A cheap variation, no shadows or GI.
  **/
-class Light_Point_Cheap_C : protected Lighting_C
+class Light_Point_Cheap_C : public Lighting_C
 {
 public:
 	// Interface Implementations
@@ -41,11 +41,10 @@ protected:
 
 
 	// Protected Attributes
-	Engine * m_engine;
 	// Cached attributes
 	float m_radius, m_squaredRadius;
 	glm::vec3 m_lightPos;
-	friend class Component_Creator<Light_Point_Cheap_C>;
+	friend class Component_Factory;
 
 
 private:

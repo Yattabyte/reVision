@@ -30,8 +30,23 @@ public:
 	void initialize(Engine * engine);
 	/** Creates a component of the supplied type and returns its handle.
 	 * @param	type			the type of component to create
-	 * @return					the newely created component */	 
-	Component * createComponent(const char * type);
+	 * @return					the newely created component */	
+	template <typename Component_Type, typename... Args>
+	Component_Type * createComponent(const char * type, Args&&... ax) {
+		Component_Type * component = new Component_Type(m_engine, std::forward<Args>(ax)...);
+		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
+
+		m_levelComponents.insert(type);
+		if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
+			m_levelComponents[type][m_freeSpots[type].front()] = component;
+			m_freeSpots[type].pop_front();
+		}
+		else
+			m_levelComponents[type].push_back(component);
+
+		return component;
+
+	}
 	/** Deletes the component provided.
   	 * @param	component		the component to delete */
 	void deleteComponent(Component * component);	
@@ -59,7 +74,6 @@ private:
 	bool m_Initialized;
 	VectorMap<Component*> m_levelComponents;	
 	MappedChar<std::deque<unsigned int>> m_freeSpots;
-	MappedChar<Component_Creator_Base*> m_creatorMap;
 	mutable std::shared_mutex m_dataLock;
 	Engine *m_engine;
 };

@@ -12,7 +12,7 @@ class VB_Ptr;
 /**
  * An interface for lighting related components.
  **/
-class Lighting_C : protected Component
+class Lighting_C : public Component
 {
 public:
 	// Public Methods
@@ -40,7 +40,7 @@ protected:
 	/** Virtual Destructor. */
 	~Lighting_C() {};
 	/** Constructor. */
-	Lighting_C() { m_shadowUpdateTime = 0; };
+	Lighting_C(Engine * engine) : Component(engine) { m_shadowUpdateTime = 0; };
 
 
 	// Protected Attributes

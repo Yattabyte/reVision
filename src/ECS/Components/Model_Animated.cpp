@@ -15,10 +15,10 @@ Model_Animated_C::~Model_Animated_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.removeElement(&m_uboIndex);
 }
 
-Model_Animated_C::Model_Animated_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const unsigned int & animationIndex, const Transform & transform)
+Model_Animated_C::Model_Animated_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const int & animationIndex, const Transform & transform)
+	: Geometry_C(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_vaoLoaded = false;
 	m_animation = -1;
 	m_animTime = 0;

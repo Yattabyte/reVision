@@ -10,6 +10,7 @@
 
 
 class Engine;
+class Component_Factory;
 
 /**
  * A base class which is extend-able to create a specific component type.
@@ -48,26 +49,12 @@ protected:
 	/** Virtual Destructor. */
 	virtual ~Component() {};
 	/** Constructor. */
-	Component() {};
+	Component(Engine * engine) : m_engine(engine) {};
 
 
 	// Protected Attributes
+	Engine * m_engine;
 	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
+	friend class Component_Factory;
 };
-
-struct Component_Creator_Base {
-
-	virtual Component * create(Engine * engine) = 0;
-	static void destroy(Component * component) {
-		// delete component; 
-	}
-};
-
-template <typename type_C>
-struct Component_Creator : public Component_Creator_Base {
-	virtual Component * create(Engine * engine) {
-		return new type_C(engine);
-	}
-};
-
 #endif // COMPONENT_H

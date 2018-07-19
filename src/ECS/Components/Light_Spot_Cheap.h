@@ -15,7 +15,7 @@
  * A renderable light component that mimics a flashlight.
  * A cheap variation, no shadows or GI.
  **/
-class Light_Spot_Cheap_C : protected Lighting_C
+class Light_Spot_Cheap_C : public Lighting_C
 {
 public:
 	// Interface Implementations
@@ -42,12 +42,11 @@ protected:
 
 	// Protected Attributes
 	// Cached Attributes
-	Engine * m_engine;
 	float m_radius;
 	float m_squaredRadius;
 	glm::quat m_orientation;
 	glm::vec3 m_lightPos;
-	friend class Component_Creator<Light_Spot_Cheap_C>;
+	friend class Component_Factory;
 
 
 private:

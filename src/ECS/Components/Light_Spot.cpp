@@ -17,9 +17,9 @@ Light_Spot_C::~Light_Spot_C()
 }
 
 Light_Spot_C::Light_Spot_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const float & cutoff, const Transform & transform)
+	: Lighting_C(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_squaredRadius = 0;
 	m_orientation = glm::quat(1, 0, 0, 0);
 	m_lightPos = glm::vec3(0.0f);

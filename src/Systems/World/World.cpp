@@ -5,6 +5,15 @@
 #include "Utilities\Transform.h"
 #include <algorithm>
 
+#include "ECS\Components\Model_Animated.h"
+#include "ECS\Components\Model_Static.h"
+#include "ECS\Components\Light_Directional.h"
+#include "ECS\Components\Light_Directional_Cheap.h"
+#include "ECS\Components\Light_Spot.h"
+#include "ECS\Components\Light_Spot_Cheap.h"
+#include "ECS\Components\Light_Point.h"
+#include "ECS\Components\Light_Point_Cheap.h"
+#include "ECS\Components\Reflector.h"
 
 System_World::~System_World()
 {
@@ -90,83 +99,108 @@ void System_World::loadWorld()
 	// Temporary level loading logic until a map format is chosen
 	static bool temp_loaded = false;
 	if (!temp_loaded) {
-		Component * hills = m_componentFactory.createComponent("Anim_Model");
-		hills->sendCommand("Set_Model_Directory", std::string("Test\\hills.obj"));
-		hills->sendCommand("Set_Transform", Transform(glm::vec3(0, -7.5, 10), glm::quat(1, 0, 0, 0), glm::vec3(30)));
+		Component * hills = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\hills.obj"), 
+			0u, 
+			-1, 
+			Transform(glm::vec3(0, -7.5, 10), glm::quat(1, 0, 0, 0), glm::vec3(30))
+		);
+		Component * wall1 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			0u,
+			-1,
+			Transform(glm::vec3(-22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2))
+		);
+		Component * wall2 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			2u,
+			-1,
+			Transform(glm::vec3(22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2))
+		);
+		Component * wall3 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			1u,
+			-1,
+			Transform(glm::vec3(0, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2))
+		);
+		Component * wall5 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			1u,
+			-1,
+			Transform(glm::vec3(20, -11, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 0, 1)), glm::vec3(2))
+		);
+		Component * wall6 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			1u,
+			-1,
+			Transform(glm::vec3(-44, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2))
+		);
+		Component * wall7 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\wall.obj"),
+			1u,
+			-1,
+			Transform(glm::vec3(-44, -10, 22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2))
+		);
+		Component * h = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\ref_test.obj"),
+			0u,
+			-1,
+			Transform(glm::vec3(015, 0, -18), glm::quat(1, 0, 0, 0), glm::vec3(1))
+		);
+		Component * m1 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			1u,
+			1,
+			Transform(glm::vec3(-5, 0, 0))
+		);
+		Component * m2 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(5, 0, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)))
+		);
+		Component * m3 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(18, 0, -5))
+		);
+		Component * m4 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(0, 0, 5), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)))
+		);
+		Component * m5 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(0, -5, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 1)))
+		);
+		Component * m6 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(-30, 0, -5))
+		);
+		Component * m7 = m_componentFactory.createComponent<Model_Animated_C>("Anim_Model",
+			std::string("Test\\AnimationTest.fbx"),
+			0u,
+			-1,
+			Transform(glm::vec3(-30, 0, 5))
+		);			
+		Component * sun = m_componentFactory.createComponent<Light_Directional_C>("Light_Directional",
+			glm::vec3(0.75, 0.75, 0.9),
+			8.0f,
+			Transform(glm::rotate(glm::quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), glm::vec3(0, 0, 1)))
+		);
+		Component * ref2 = m_componentFactory.createComponent<Reflector_C>("Reflector",
+			Transform(glm::vec3(44, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21))
+		);
+		Component * ref = m_componentFactory.createComponent<Reflector_C>("Reflector",
+			Transform(glm::vec3(0, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21))
+		);
 
-		Component * wall1 = m_componentFactory.createComponent("Anim_Model");
-		wall1->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall1->sendCommand("Set_Skin", 0);
-		wall1->sendCommand("Set_Transform", Transform(glm::vec3(-22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2)));
-
-		Component * wall2 = m_componentFactory.createComponent("Anim_Model");
-		wall2->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall2->sendCommand("Set_Skin", 2);
-		wall2->sendCommand("Set_Transform", Transform(glm::vec3(22, -10, 0), glm::quat(1, 0, 0, 0), glm::vec3(2)));
-
-		Component * wall3 = m_componentFactory.createComponent("Anim_Model");
-		wall3->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall3->sendCommand("Set_Skin", 1);
-		wall3->sendCommand("Set_Transform", Transform(glm::vec3(0, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
-
-		Component * wall5 = m_componentFactory.createComponent("Anim_Model");
-		wall5->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall5->sendCommand("Set_Skin", 1);
-		wall5->sendCommand("Set_Transform", Transform(glm::vec3(20, -11, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 0, 1)), glm::vec3(2)));
-
-		Component * wall6 = m_componentFactory.createComponent("Anim_Model");
-		wall6->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall6->sendCommand("Set_Skin", 1);
-		wall6->sendCommand("Set_Transform", Transform(glm::vec3(-44, -10, -22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
-
-		Component * wall7 = m_componentFactory.createComponent("Anim_Model");
-		wall7->sendCommand("Set_Model_Directory", std::string("Test\\wall.obj"));
-		wall7->sendCommand("Set_Skin", 1);
-		wall7->sendCommand("Set_Transform", Transform(glm::vec3(-44, -10, 22), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0)), glm::vec3(2)));
-
-		Component * sun = m_componentFactory.createComponent("Light_Directional");
-		sun->sendCommand("Set_Light_Color", glm::vec3(0.75, 0.75, 0.9));
-		sun->sendCommand("Set_Light_Intensity", 8.0f); // OLD INTENSITY WAS 8.0
-		sun->sendCommand("Set_Transform", Transform(glm::rotate(glm::quat(0.153046, -0.690346, 0.690346, 0.153046), glm::radians(45.0f), glm::vec3(0, 0, 1))));
-
-		Component * ref2 = m_componentFactory.createComponent("Reflector");
-		ref2->sendCommand("Set_Transform", Transform(glm::vec3(44, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21)));
-
-		Component * ref = m_componentFactory.createComponent("Reflector");
-		ref->sendCommand("Set_Transform", Transform(glm::vec3(0, 15, 0), glm::quat(1, 0, 0, 0), glm::vec3(21)));
-		
-		Component * h = m_componentFactory.createComponent("Anim_Model");
-		h->sendCommand("Set_Model_Directory", std::string("Test\\ref_test.obj"));
-		h->sendCommand("Set_Transform", Transform(glm::vec3(015, 0, -18), glm::quat(1, 0, 0, 0), glm::vec3(1)));
-
-		Component * m1 = m_componentFactory.createComponent("Anim_Model");
-		m1->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m1->sendCommand("Set_Animation", 1);
-		m1->sendCommand("Set_Transform", Transform(glm::vec3(-5, 0, 0)));
-
-		Component * m2 = m_componentFactory.createComponent("Anim_Model");
-		m2->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m2->sendCommand("Set_Transform", Transform(glm::vec3(5, 0, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0))));
-
-		Component * m3 = m_componentFactory.createComponent("Anim_Model");
-		m3->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m3->sendCommand("Set_Transform", Transform(glm::vec3(18, 0, -5)));
-
-		Component * m4 = m_componentFactory.createComponent("Anim_Model");
-		m4->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m4->sendCommand("Set_Transform", Transform(glm::vec3(0, 0, 5), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 0))));
-
-		Component * m5 = m_componentFactory.createComponent("Anim_Model");
-		m5->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m5->sendCommand("Set_Transform", Transform(glm::vec3(0, -5, 0), glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1, 1))));
-
-		Component * m6 = m_componentFactory.createComponent("Anim_Model");
-		m6->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m6->sendCommand("Set_Transform", Transform(glm::vec3(-30, 0, -5)));
-
-		Component * m7 = m_componentFactory.createComponent("Anim_Model");
-		m7->sendCommand("Set_Model_Directory", std::string("Test\\AnimationTest.fbx"));
-		m7->sendCommand("Set_Transform", Transform(glm::vec3(-30, 0, 5)));		
 
 		temp_loaded = true;
 		m_loaded = false;

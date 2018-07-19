@@ -10,9 +10,9 @@ Light_Point_Cheap_C::~Light_Point_Cheap_C()
 }
 
 Light_Point_Cheap_C::Light_Point_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const Transform & transform)
+	: Lighting_C(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_radius = 0;
 	m_squaredRadius = 0;
 	m_lightPos = glm::vec3(0.0f);

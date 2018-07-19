@@ -20,7 +20,7 @@ class Engine;
  * A renderable light component that mimics a flashlight.
  * Uses a single shadow map.
  **/
-class Light_Spot_C : protected Lighting_C
+class Light_Spot_C : public Lighting_C
 {
 public:
 	// Interface Implementations
@@ -47,7 +47,6 @@ protected:
 
 	// Protected Attributes
 	// Shared Objects
-	Engine *m_engine;
 	Spot_Tech * m_spotTech;
 	System_World *m_world;
 	// Cached Attributes
@@ -59,7 +58,7 @@ protected:
 	glm::quat m_orientation;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Component_Creator<Light_Spot_C>;
+	friend class Component_Factory;
 
 
 private:

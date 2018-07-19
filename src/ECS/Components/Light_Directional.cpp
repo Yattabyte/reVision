@@ -16,9 +16,9 @@ Light_Directional_C::~Light_Directional_C()
 }
 
 Light_Directional_C::Light_Directional_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
+	: Lighting_C(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_visSize[0] = 0;
 	m_visSize[1] = 0;
 	m_mMatrix = glm::mat4(1.0f);

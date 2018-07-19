@@ -19,7 +19,7 @@ class System_World;
  * A renderable light component that mimics a light-bulb.
  * Uses 6 shadow maps.
  **/
-class Light_Point_C : protected Lighting_C
+class Light_Point_C : public Lighting_C
 {
 public:
 	// Interface Implementations
@@ -46,7 +46,6 @@ protected:
 
 	// Protected Attributes
 	// Shared Objects
-	Engine * m_engine;
 	Point_Tech * m_pointTech;
 	System_World * m_world;
 	// Cached attributes
@@ -57,7 +56,7 @@ protected:
 	int m_shadowSpot;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Component_Creator<Light_Point_C>;
+	friend class Component_Factory;
 
 
 private:

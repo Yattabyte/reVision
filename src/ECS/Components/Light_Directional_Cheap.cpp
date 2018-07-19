@@ -10,10 +10,8 @@ Light_Directional_Cheap_C::~Light_Directional_Cheap_C()
 }
 
 Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
+	: Lighting_C(engine)
 {
-	// Default Parameters
-	m_engine = engine;
-
 	// Acquire and update buffers
 	m_uboBuffer = m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.addElement(&m_uboIndex);
 	

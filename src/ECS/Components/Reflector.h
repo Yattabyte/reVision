@@ -14,7 +14,7 @@
 /**
  * An object that records the world around it and uses it to project reflections.
  **/
-class Reflector_C : protected Component
+class Reflector_C : public Component
 {
 public:
 	// Interface implementations
@@ -43,8 +43,7 @@ protected:
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
 	Camera m_cameras[6];
-	Engine *m_engine;
-	friend class Component_Creator<Reflector_C>;
+	friend class Component_Factory;
 
 
 private:

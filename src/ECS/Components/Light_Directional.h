@@ -19,7 +19,7 @@ class Directional_Tech;
  * A renderable light component that mimics the sun.
  * Uses 4 cascaded shadowmaps.
  **/
-class Light_Directional_C : protected Lighting_C
+class Light_Directional_C : public Lighting_C
 {
 public:
 	// Interface implementations
@@ -45,7 +45,6 @@ protected:
 
 
 	// Protected Attributes
-	Engine *m_engine;
 	Directional_Tech * m_directionalTech;
 	float m_cascadeEnd[5];
 	int m_shadowSpot;
@@ -53,7 +52,7 @@ protected:
 	float m_shadowSize;
 	glm::mat4 m_mMatrix;
 	Camera m_camera;
-	friend class Component_Creator<Light_Directional_C>;
+	friend class Component_Factory;
 
 
 private:

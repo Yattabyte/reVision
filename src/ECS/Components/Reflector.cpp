@@ -17,9 +17,9 @@ Reflector_C::~Reflector_C()
 }
 
 Reflector_C::Reflector_C(Engine * engine, const Transform & transform)
+	: Component(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_position = glm::vec3(0.0f);
 	m_scale = glm::vec3(1.0f);
 

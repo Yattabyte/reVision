@@ -14,9 +14,9 @@ Model_Static_C::~Model_Static_C()
 }
 
 Model_Static_C::Model_Static_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const Transform & transform)
+	: Geometry_C(engine)
 {
 	// Default Parameters
-	m_engine = engine;
 	m_vaoLoaded = false;
 	m_skin = 0;
 	m_bsphereRadius = 0;
