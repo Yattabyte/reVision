@@ -58,7 +58,7 @@ protected:
 	GLuint m_skin;
 	Shared_Asset_Model m_model;
 	Transform m_transform;
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

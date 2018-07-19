@@ -4,9 +4,10 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.1.E";
+constexpr char ENGINE_VERSION[]	= "1.1.F";
 
 #include "Assets\Asset.h"
+#include "ECS\ECS.h"
 #include "Systems\World\Camera.h"
 #include "Systems\Input\ActionState.h"
 #include "Systems\Preferences\PreferenceState.h"
@@ -113,6 +114,8 @@ public:
 	GLFWwindow * getRenderingContext() { return m_Context_Rendering; }
 	/** Returns this engine's main camera. */
 	Camera * getCamera() { return m_Camera; }
+	/** Returns this engine's entity component system. */
+	ECS & getECS() { return m_ecs; }
 	/** Returns this engine's action state. */
 	ActionState & getActionState() { return m_ActionState; }
 	/** Returns this engine's preference state. */
@@ -146,6 +149,7 @@ private:
 	GLFWwindow * m_Context_Rendering;
 	Camera * m_Camera;
 	AssetManager m_AssetManager;
+	ECS	m_ecs;
 	ActionState	m_ActionState;
 	PreferenceState	m_PreferenceState;
 	MappedChar<System*>	m_Systems;

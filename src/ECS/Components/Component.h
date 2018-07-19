@@ -10,7 +10,7 @@
 
 
 class Engine;
-class Component_Factory;
+class ECS;
 
 /**
  * A base class which is extend-able to create a specific component type.
@@ -56,6 +56,6 @@ protected:
 	// Protected Attributes
 	Engine * m_engine;
 	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
-	friend class Component_Factory;
+	friend class ECS;
 };
 #endif // COMPONENT_H

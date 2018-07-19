@@ -64,7 +64,7 @@ protected:
 	glm::quat m_orientation;
 	Camera m_camera;
 	size_t m_visSize[2];
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

@@ -4,8 +4,6 @@
 
 #include "Systems\System_Interface.h"
 #include "Systems\World\Camera.h"
-#include "Systems\World\Animator.h"
-#include "ECS\Component_Factory.h"
 
 
 class Engine;
@@ -30,28 +28,14 @@ public:
 
 
 	// Public Methods
-	template <class...Args>
-	void makeEntity(Args&...args)
-	{
-		Component * components[] = { &args... };
-		return makeEntity(components, componentIDS, sizeof...(Args));
-	}
 	/** Register a viewer into the system, to maintain its visibility info. 
  	 * @param	camera	the camera to register */
 	void registerViewer(Camera * camera);
 	/** Remove a viewer from the system.
-	* @param	camera	the camera to unregister */
+     * @param	camera	the camera to unregister */
 	void unregisterViewer(Camera * camera);
-	/** Retrieve and down-cast an array of components that match the category specified.
-	 * @brief			Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
-	 * @param	type	the name of the component type to retrieve
-	 * @param	<T>		the class-type to cast the components to */
-	template <typename T>
-	const std::vector<T*> getSpecificComponents(const char * type) {
-		// Want to return a copy because this data would need to be locked until done being used at its target otherwise.
-		std::shared_lock<std::shared_mutex> read_lock(m_componentFactory.getDataLock());
-		return *(std::vector<T*>*)(&m_componentFactory.getComponentsByType(type));
-	}
+	/** Submit a bool flag to update to true when the level finishes loading.
+	 * @param	notifyee	the bool flag to update */
 	void notifyWhenLoaded(bool * notifyee);
 
 
@@ -64,12 +48,9 @@ private:
 
 
 	// Private Attributes
-	Component_Factory m_componentFactory;
 	std::shared_mutex m_viewerLock;
 	std::vector<Camera*> m_viewers;
-	Animator m_animator;
 	std::vector<bool *> m_loadNotifiers;
-
 	std::shared_mutex m_stateLock;
 	bool m_loaded, m_worldChanged;
 };

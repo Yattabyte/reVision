@@ -1,25 +1,12 @@
-#include "ECS\Component_Factory.h"
+#include "ECS\ECS.h"
 #include "Engine.h"
 
 
-Component_Factory::~Component_Factory()
+ECS::~ECS()
 {
 }
 
-Component_Factory::Component_Factory() 
-{
-	m_Initialized = false;
-}
-
-void Component_Factory::initialize(Engine * engine)
-{
-	if (!m_Initialized) {
-		m_engine = engine;
-		m_Initialized = true;
-	}
-}
-
-void Component_Factory::deleteComponent(Component * component)
+void ECS::deleteComponent(Component * component)
 {
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 	const char * type = component->GetName();
@@ -38,18 +25,18 @@ void Component_Factory::deleteComponent(Component * component)
 	}
 }
 
-VectorMap<Component*>& Component_Factory::getComponents()
+VectorMap<Component*>& ECS::getComponents()
 {
 	return m_levelComponents;
 }
 
-const std::vector<Component*>& Component_Factory::getComponentsByType(const char * type)
+const std::vector<Component*>& ECS::getComponentsByType(const char * type)
 {
 	std::shared_lock<std::shared_mutex> read_lock(m_dataLock);
 	return m_levelComponents[type];
 }
 
-void Component_Factory::flush()
+void ECS::flush()
 {
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 
@@ -60,13 +47,13 @@ void Component_Factory::flush()
 	m_freeSpots.clear();
 }
 
-bool Component_Factory::find(const char * key) const
+bool ECS::find(const char * key) const
 {
 	std::shared_lock<std::shared_mutex> read_lock(m_dataLock);
 	return m_levelComponents.find(key);
 }
 
-std::shared_mutex & Component_Factory::getDataLock()
+std::shared_mutex & ECS::getDataLock()
 {
 	return m_dataLock;
 }

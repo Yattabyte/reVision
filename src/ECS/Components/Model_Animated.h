@@ -66,7 +66,7 @@ protected:
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	std::vector<BoneTransform> m_transforms;
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

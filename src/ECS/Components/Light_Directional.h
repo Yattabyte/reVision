@@ -56,7 +56,7 @@ protected:
 	float m_shadowSize;
 	glm::mat4 m_mMatrix;
 	Camera m_camera;
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

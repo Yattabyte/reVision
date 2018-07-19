@@ -52,7 +52,7 @@ protected:
 	float m_squaredRadius;
 	glm::quat m_orientation;
 	glm::vec3 m_lightPos;
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

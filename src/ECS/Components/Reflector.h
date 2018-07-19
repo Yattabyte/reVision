@@ -45,7 +45,7 @@ protected:
 	glm::vec3 m_position;
 	glm::vec3 m_scale;
 	Camera m_cameras[6];
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

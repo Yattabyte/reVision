@@ -39,7 +39,7 @@ Engine::~Engine()
 	}
 }
 
-Engine::Engine() : m_AssetManager(this), m_PreferenceState(this)
+Engine::Engine() : m_ecs(this), m_AssetManager(this), m_PreferenceState(this)
 {
 	m_Initialized = false;	
 	m_lastTime = 0;
@@ -103,13 +103,13 @@ bool Initialize_Sharing(Engine * engine)
 	return m_Initialized_Sharing;
 }
 
-#include "Assets\Asset_Material.h"
-#include "Systems\Preferences\Preferences.h"
+#include "Systems\Animation\Animation.h"
 #include "Systems\Graphics\Graphics.h"
 #include "Systems\Input\Input.h"
 #include "Systems\Logic\Logic.h"
-#include "Systems\World\World.h"
 #include "Systems\PerfCounter\PerfCounter.h"
+#include "Systems\Preferences\Preferences.h"
+#include "Systems\World\World.h"
 bool Engine::initialize()
 {
 	if ((!m_Initialized) && Initialize_Sharing(this)) {
@@ -147,6 +147,7 @@ bool Engine::initialize()
 		m_Systems["Input"] = new System_Input(this);
 		m_Systems["Logic"] = new System_Logic();
 		m_Systems["World"] = new System_World();
+		m_Systems["Animation"] = new System_Animation();
 
 		// Initialize all systems
 		for each (auto &system in m_Systems)

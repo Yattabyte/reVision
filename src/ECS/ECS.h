@@ -1,6 +1,6 @@
 #pragma once
-#ifndef COMPONENT_FACTORY_H
-#define COMPONENT_FACTORY_H
+#ifndef ECS_H
+#define ECS_H
 
 #include "ECS\Components\Component.h"
 #include "ECS\ECSmessage.h"
@@ -13,21 +13,19 @@
 class Engine;
 
 /**
- * A utility that handles the creation and storage of all level components
+ * A utility that handles the creation and storage of all level components and entities.
  **/
-class Component_Factory {
+class ECS {
 public:
 	// (de)Constructors
-	/** Destroy the factory. */
-	~Component_Factory();
-	/** Construct the factory. */
-	Component_Factory();
+	/** Destroy the ECS. */
+	~ECS();
+	/** Construct the ECS.
+	 * @param	engine	pointer to the engine pointer */
+	ECS(Engine * engine) : m_engine(engine) {}
 
 	
 	// Public Methods
-	/** Initialize  the component factory.
-	 * @param	engine	pointer to the engine pointer */
-	void initialize(Engine * engine);
 	/** Creates a component of the supplied type and returns its handle.
 	 * @param	type			the type of component to create
 	 * @param	args			any optional arguments to send to the component's constructor
@@ -47,7 +45,6 @@ public:
 			m_levelComponents[componentName].push_back(component);
 
 		return component;
-
 	}
 	/** Deletes the component provided.
   	 * @param	component		the component to delete */
@@ -60,6 +57,16 @@ public:
 	 * @param	type			the type-name of the component list to retrieve
 	 * @return					the list of components that match the type provided */
 	const std::vector<Component*> & getComponentsByType(const char * type);
+	/** Retrieve and down-cast an array of components that match the category specified.
+	 * @brief			Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
+	 * @param	type	the name of the component type to retrieve
+	 * @param	<T>		the class-type to cast the components to */
+	template <typename T>
+	const std::vector<T*> getSpecificComponents(const char * type) {
+		// Want to return a copy because this data would need to be locked until done being used at its target otherwise.
+		std::shared_lock<std::shared_mutex> read_lock(getDataLock());
+		return *(std::vector<T*>*)(&getComponentsByType(type));
+	}
 	/** Removes all components from the system. */
 	void flush();	
 	/** Checks the map to see if it has any entries of a specific type.
@@ -67,7 +74,7 @@ public:
 	 * @return					true if it finds the key in the map, false otherwise */
 	bool find(const char * key) const;
 	/** Returns the data lock for the system. 
-	 * @return					the std::mutex for this factory */
+	 * @return					the std::mutex for this class */
 	std::shared_mutex & getDataLock();
 
 
@@ -77,7 +84,7 @@ private:
 	VectorMap<Component*> m_levelComponents;	
 	MappedChar<std::deque<unsigned int>> m_freeSpots;
 	mutable std::shared_mutex m_dataLock;
-	Engine *m_engine;
+	Engine * m_engine;
 };
 
-#endif // COMPONENT_FACTORY_H
+#endif // ECS_H

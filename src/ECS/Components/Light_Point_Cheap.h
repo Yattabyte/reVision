@@ -49,7 +49,7 @@ protected:
 	// Cached attributes
 	float m_radius, m_squaredRadius;
 	glm::vec3 m_lightPos;
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:

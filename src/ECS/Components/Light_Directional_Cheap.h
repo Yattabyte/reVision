@@ -40,7 +40,7 @@ protected:
 
 
 	// Protected Attributes
-	friend class Component_Factory;
+	friend class ECS;
 
 
 private:
