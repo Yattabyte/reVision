@@ -1,6 +1,5 @@
 #include "Systems\Graphics\Resources\FX Techniques\HDR_Tech.h"
 #include "Engine.h"
-#include <algorithm>
 
 
 HDR_Tech::~HDR_Tech()

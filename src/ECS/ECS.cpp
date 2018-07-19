@@ -6,6 +6,16 @@ ECS::~ECS()
 {
 }
 
+void ECS::deleteEntity(Entity * entity)
+{
+	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
+	if (!entity)
+		return;
+	m_levelEntities.erase(std::remove_if(begin(m_levelEntities), end(m_levelEntities), [entity](Entity * levelEntity) {
+		return (levelEntity == entity);
+	}), end(m_levelEntities));
+}
+
 void ECS::deleteComponent(Component * component)
 {
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
@@ -40,9 +50,12 @@ void ECS::flush()
 {
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 
+	for each (Entity * entity in m_levelEntities)
+		delete entity;
 	for each (auto pair in m_levelComponents) 
-		for each (auto *component in pair.second) 
+		for each (Component * component in pair.second) 
 			delete component;
+	m_levelEntities.clear();
 	m_levelComponents.clear();
 	m_freeSpots.clear();
 }

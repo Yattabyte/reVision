@@ -3,6 +3,7 @@
 #define ECS_H
 
 #include "ECS\Components\Component.h"
+#include "ECS\Entity.h"
 #include "ECS\ECSmessage.h"
 #include "Systems\World\Visibility_Token.h"
 #include "Utilities\MappedChar.h"
@@ -25,11 +26,28 @@ public:
 	ECS(Engine * engine) : m_engine(engine) {}
 
 	
-	// Public Methods
-	/** Creates a component of the supplied type and returns its handle.
-	 * @param	type			the type of component to create
-	 * @param	args			any optional arguments to send to the component's constructor
-	 * @return					the newely created component */	
+	// Public Methods	
+	/** Creates an entity with the supplied components
+	 * @param	args			a comma delineated list of component pointers to add to the entity
+	 * @return					the newely created entity */	
+	template <typename... Args>
+	inline Entity * createEntity(Args&&... ax) {
+		const unsigned int count	= sizeof...(Args);
+		const char * types[]		= { ax->GetName()... };
+		Component * components[]	= { ax... };
+		Entity * entity				= new Entity(count, types, components);
+
+		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
+		m_levelEntities.push_back(entity);
+		return entity;
+	}
+	/** Deletes the entity provided.
+  	 * @param	entity				the entity to delete */
+	void deleteEntity(Entity * entity);
+	/** Creates a component of the supplied type and returns its pointer.
+	 * @param	<Component_Type>	the class of component to create
+	 * @param	args				any optional arguments to send to the component's constructor
+	 * @return						the newely created component */	
 	template <typename Component_Type, typename... Args>
 	Component_Type * createComponent(Args&&... ax) {
 		const char * componentName = Component_Type::GetName();
@@ -47,10 +65,10 @@ public:
 		return component;
 	}
 	/** Deletes the component provided.
-  	 * @param	component		the component to delete */
+  	 * @param	component			the component to delete */
 	void deleteComponent(Component * component);	
 	/** Retrieves reference to the level components std::vector-map
-	* @return						the entire level component std::vector-map */
+	* @return					the entire level component std::vector-map */
 	VectorMap<Component*> & getComponents();
 	/** Retrieves an array of components that match the category specified.
 	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
@@ -58,9 +76,9 @@ public:
 	 * @return					the list of components that match the type provided */
 	const std::vector<Component*> & getComponentsByType(const char * type);
 	/** Retrieve and down-cast an array of components that match the category specified.
-	 * @brief			Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
-	 * @param	type	the name of the component type to retrieve
-	 * @param	<T>		the class-type to cast the components to */
+	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
+	 * @param	type			the name of the component type to retrieve
+	 * @param	<T>				the class-type to cast the components to */
 	template <typename T>
 	const std::vector<T*> getSpecificComponents(const char * type) {
 		// Want to return a copy because this data would need to be locked until done being used at its target otherwise.
@@ -81,7 +99,8 @@ public:
 private:
 	// Private Attributes
 	bool m_Initialized;
-	VectorMap<Component*> m_levelComponents;	
+	VectorMap<Component*> m_levelComponents;
+	std::vector<Entity*> m_levelEntities;
 	MappedChar<std::deque<unsigned int>> m_freeSpots;
 	mutable std::shared_mutex m_dataLock;
 	Engine * m_engine;
