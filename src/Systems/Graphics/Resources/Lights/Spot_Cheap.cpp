@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lights\Spot_Cheap.h"
+#include "ECS\Components\Light_Spot_Cheap.h"
 #include "Engine.h"
 
 
@@ -32,11 +33,11 @@ Spot_Cheap_Tech::Spot_Cheap_Tech(Engine * engine, Light_Buffers * lightBuffers)
 
 void Spot_Cheap_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
-	m_size = vis_token.specificSize("Light_Spot_Cheap");
+	m_size = vis_token.specificSize(Light_Spot_Cheap_C::GetName());
 	if (m_size && m_coneVAOLoaded) {
 		std::vector<GLuint> visArray(m_size);
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Lighting_C>("Light_Spot_Cheap"))
+		for each (const auto &component in vis_token.getTypeList<Light_Spot_Cheap_C>())
 			visArray[count++] = component->getBufferIndex();
 		m_visShapes.write(0, sizeof(GLuint)*visArray.size(), visArray.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)

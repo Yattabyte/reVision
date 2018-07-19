@@ -5,7 +5,7 @@
 
 void Animator::animate(const float & deltaTime)
 {
-	const auto &models = m_world->getSpecificComponents<Model_Animated_C>("Anim_Model");
+	const auto &models = m_world->getSpecificComponents<Model_Animated_C>(Model_Animated_C::GetName());
 	for each (auto model in models)
 		model->animate(deltaTime);
 }

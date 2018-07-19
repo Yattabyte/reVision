@@ -104,9 +104,9 @@ void IBL_Parallax_Tech::removeElement(const unsigned int & index)
 
 void IBL_Parallax_Tech::updateData(const Visibility_Token & vis_token)
 {
-	m_size = vis_token.specificSize("Reflector");
+	m_size = vis_token.specificSize(Reflector_C::GetName());
 	if (m_size) {
-		m_refList = vis_token.getTypeList<Reflector_C>("Reflector");
+		m_refList = vis_token.getTypeList<Reflector_C>();
 		std::vector<GLuint> refArray(m_size);
 		unsigned int count = 0;
 		for each (const auto &component in m_refList)

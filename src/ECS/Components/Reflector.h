@@ -18,7 +18,7 @@ class Reflector_C : public Component
 {
 public:
 	// Interface implementations
-	virtual const char * getName() const { return "Reflector"; }
+	static const char * GetName() { return "Reflector"; }
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 
 

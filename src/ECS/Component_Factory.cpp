@@ -22,7 +22,7 @@ void Component_Factory::initialize(Engine * engine)
 void Component_Factory::deleteComponent(Component * component)
 {
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
-	const char * type = component->getName();
+	const char * type = component->GetName();
 	if (!component || !m_levelComponents.find(type))
 		return;
 	for (auto itt = m_levelComponents[type].begin(); itt != m_levelComponents[type].end(); ++itt) {

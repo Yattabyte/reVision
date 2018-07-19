@@ -23,7 +23,7 @@ class Light_Directional_C : public Lighting_C
 {
 public:
 	// Interface implementations
-	virtual const char * getName() const { return "Light_Directional"; }
+	static const char * GetName() { return "Light_Directional"; }
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);

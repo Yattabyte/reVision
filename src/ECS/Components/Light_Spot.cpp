@@ -162,6 +162,8 @@ float Light_Spot_C::getImportance(const glm::vec3 & position) const
 	return m_radius / glm::length(position - m_lightPos);
 }
 
+#include "ECS\Components\Model_Animated.h"
+#include "ECS\Components\Model_Static.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Technique.h"
 #include "Systems\Graphics\Resources\Geometry Techniques\Model_Static_Technique.h"
 void Light_Spot_C::update(const unsigned int & type)
@@ -171,11 +173,11 @@ void Light_Spot_C::update(const unsigned int & type)
 	switch (type) {
 		case CAM_GEOMETRY_DYNAMIC:
 			Model_Technique::writeCameraBuffers(m_camera);
-			string_type = "Anim_Model";
+			string_type = Model_Animated_C::GetName();
 			break;
 		case CAM_GEOMETRY_STATIC:
 			Model_Static_Technique::writeCameraBuffers(m_camera);
-			string_type = "Static_Model";
+			string_type = Model_Static_C::GetName();
 			break;
 	}
 	m_visSize[type] = m_camera.getVisibilityToken().specificSize(string_type);

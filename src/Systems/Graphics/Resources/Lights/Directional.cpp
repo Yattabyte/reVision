@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lights\Directional.h"
+#include "ECS\Components\Light_Directional.h"
 #include "Engine.h"
 #include <minmax.h>
 
@@ -121,12 +122,12 @@ void Directional_Tech::unregisterShadowCaster(int & array_spot)
 
 void Directional_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
-	m_size = vis_token.specificSize("Light_Directional");
+	m_size = vis_token.specificSize(Light_Directional_C::GetName());
 	if (m_size && m_quadVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos);
 
-		for each (const auto &component in vis_token.getTypeList<Lighting_C>("Light_Directional"))
+		for each (const auto &component in vis_token.getTypeList<Light_Directional_C>())
 			queue.insert(component);
 
 		m_queue = queue.toList();
@@ -142,7 +143,7 @@ void Directional_Tech::updateData(const Visibility_Token & vis_token, const int 
 
 void Directional_Tech::updateDataGI(const Visibility_Token & vis_token, const unsigned int & bounceResolution)
 {
-	m_sizeGI = vis_token.specificSize("Light_Directional");
+	m_sizeGI = vis_token.specificSize(Light_Directional_C::GetName());
 	if (m_sizeGI && m_shader_Bounce->existsYet()) {
 		const GLuint dirDraws = bounceResolution * m_sizeGI;
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &dirDraws);

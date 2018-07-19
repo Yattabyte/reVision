@@ -1,4 +1,5 @@
 #include "Systems\Graphics\Resources\Lights\Directional_Cheap.h"
+#include "ECS\Components\Light_Directional_Cheap.h"
 #include "Engine.h"
 
 
@@ -32,7 +33,7 @@ Directional_Tech_Cheap::Directional_Tech_Cheap(Engine * engine, Light_Buffers * 
 
 void Directional_Tech_Cheap::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
-	m_size = vis_token.specificSize("Light_Directional_Cheap");
+	m_size = vis_token.specificSize(Light_Directional_Cheap_C::GetName());
 	if (m_size && m_quadVAOLoaded) 
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_size); // update primCount (2nd param)
 }

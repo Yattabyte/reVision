@@ -38,7 +38,7 @@ void Model_Technique::updateData(const std::vector<Camera*> & viewers)
 
 void Model_Technique::renderGeometry(Camera & camera)
 {
-	const size_t size = camera.getVisibilityToken().specificSize("Anim_Model");
+	const size_t size = camera.getVisibilityToken().specificSize(Model_Animated_C::GetName());
 	if (size && m_shaderGeometry->existsYet()) {
 		glDisable(GL_BLEND);
 		glEnable(GL_DEPTH_TEST);
@@ -60,7 +60,7 @@ void Model_Technique::renderGeometry(Camera & camera)
 
 void Model_Technique::occlusionCullBuffers(Camera & camera)
 {
-	const size_t size = camera.getVisibilityToken().specificSize("Anim_Model");
+	const size_t size = camera.getVisibilityToken().specificSize(Model_Animated_C::GetName());
 	if (m_shaderCull->existsYet() && m_cubeVAOLoaded && size) {
 		// Set up state
 		glDisable(GL_BLEND);
@@ -97,7 +97,7 @@ void Model_Technique::occlusionCullBuffers(Camera & camera)
 void Model_Technique::writeCameraBuffers(Camera & camera, const unsigned int & instanceCount)
 {
 	const Visibility_Token vis_token = camera.getVisibilityToken();
-	const size_t size = vis_token.specificSize("Anim_Model");
+	const size_t size = vis_token.specificSize(Model_Animated_C::GetName());
 	if (size) {
 		// Draw parameter order = { COUNT, INSTANCE_COUNT, FIRST, BASE_INSTANCE }
 		std::vector<glm::ivec4> cullingDrawData(size);
@@ -105,7 +105,7 @@ void Model_Technique::writeCameraBuffers(Camera & camera, const unsigned int & i
 		std::vector<unsigned int> visibleIndices(size);
 
 		unsigned int count = 0;
-		for each (const auto &component in vis_token.getTypeList<Model_Animated_C>("Anim_Model")) {
+		for each (const auto &component in vis_token.getTypeList<Model_Animated_C>()) {
 			const glm::ivec2 drawInfo = component->getDrawInfo();
 			visibleIndices[count] = component->getBufferIndex();
 			// Check mesh complexity and if viewer not within BSphere

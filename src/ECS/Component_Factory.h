@@ -33,17 +33,18 @@ public:
 	 * @param	args			any optional arguments to send to the component's constructor
 	 * @return					the newely created component */	
 	template <typename Component_Type, typename... Args>
-	Component_Type * createComponent(const char * type, Args&&... ax) {
+	Component_Type * createComponent(Args&&... ax) {
+		const char * componentName = Component_Type::GetName();
 		Component_Type * component = new Component_Type(m_engine, std::forward<Args>(ax)...);
 		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 
-		m_levelComponents.insert(type);
-		if (m_freeSpots.find(type) && m_freeSpots[type].size()) {
-			m_levelComponents[type][m_freeSpots[type].front()] = component;
-			m_freeSpots[type].pop_front();
+		m_levelComponents.insert(componentName);
+		if (m_freeSpots.find(componentName) && m_freeSpots[componentName].size()) {
+			m_levelComponents[componentName][m_freeSpots[componentName].front()] = component;
+			m_freeSpots[componentName].pop_front();
 		}
 		else
-			m_levelComponents[type].push_back(component);
+			m_levelComponents[componentName].push_back(component);
 
 		return component;
 

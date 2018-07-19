@@ -43,9 +43,6 @@ DS_Lighting::DS_Lighting(
 
 void DS_Lighting::updateData(const Visibility_Token & vis_token)
 {
-	// Quit early if we don't have models
-	if (!vis_token.find("Anim_Model")) return;
-
 	for each (auto technique in *m_baseTechs)
 		technique->updateData(vis_token, m_updateQuality, m_engine->getCamera()->getCameraBuffer().EyePosition);
 }

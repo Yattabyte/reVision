@@ -20,7 +20,7 @@ class Component
 {
 public:
 	/** Returns the name of this component class. */
-	virtual const char * getName() const {	return "Component";	}
+	static const char * GetName() { return "Component"; }
 	/** Sends a command to this component to execute.
 	 * @param	command		the std::string command name
 	 * @param	obj			any arguments needed */

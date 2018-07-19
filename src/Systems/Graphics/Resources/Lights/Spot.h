@@ -12,7 +12,8 @@
 #include <deque>
 
 
-class Engine;
+class Engine; 
+class Light_Spot_C;
 
 /**
  * A deferred shading lighting technique that manages spot lights.
@@ -70,7 +71,8 @@ private:
 	VectorBuffer<Spot_Struct> * m_lightSSBO;
 	DynamicBuffer m_visShapes;
 	StaticBuffer m_indirectShape;
-	std::vector<Lighting_C*> m_lightList, m_queue;
+	std::vector<Light_Spot_C*> m_lightList;
+	std::vector<Lighting_C*> m_queue;
 	size_t m_size;
 
 

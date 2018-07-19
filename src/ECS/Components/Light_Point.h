@@ -23,7 +23,7 @@ class Light_Point_C : public Lighting_C
 {
 public:
 	// Interface Implementations
-	virtual const char * getName() const { return "Light_Point"; }
+	static const char * GetName() { return "Light_Point"; }
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);

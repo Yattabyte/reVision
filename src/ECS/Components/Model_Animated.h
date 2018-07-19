@@ -18,7 +18,7 @@ class Model_Animated_C : public Geometry_C
 {
 public:
 	// Interface implementations
-	virtual const char * getName() const { return "Anim_Model"; }
+	static const char * GetName() { return "Anim_Model"; }
 	virtual bool isLoaded() const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual bool containsPoint(const glm::vec3 & point) const;

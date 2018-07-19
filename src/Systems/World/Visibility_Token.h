@@ -25,13 +25,12 @@ public:
 	void insertType(const char * name) {
 		mList.insert(name);
 	}
-	/** Get a type-casted list of components that match the given type
-	 * @param	name	the name of the type to retrieve
-	 * @param	<T>		the type to down-cast the components to.
-	 * @return			a type-casted list of components matching the supplied type */
-	template <typename T> 
-	const std::vector<T*>& getTypeList(const char * name) const {
-		return *(std::vector<T*>*)(&mList.at(name));
+	/** Get a type-casted list of components that match the type of component specified
+	 * @param	<Component_Type>	the type to down-cast the components to.
+	 * @return						a type-casted list of components of the supplied type */
+	template <typename Component_Type>
+	const std::vector<Component_Type*>& getTypeList() const {
+		return *(std::vector<Component_Type*>*)(&mList.at(Component_Type::GetName()));
 	}
 	/** Retrieve a list of components of the given type.
 	 * @param	name	the name of the type to retrieve

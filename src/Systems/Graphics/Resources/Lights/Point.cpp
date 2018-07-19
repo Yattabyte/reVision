@@ -1,5 +1,6 @@
 #include "Systems\Graphics\Resources\Lights\Point.h"
 #include "Systems\World\World.h"
+#include "ECS\Components\Light_Point.h"
 #include "Engine.h"
 #include <minmax.h>
 
@@ -138,11 +139,11 @@ void Point_Tech::unregisterShadowCaster(int & array_spot)
 
 void Point_Tech::updateData(const Visibility_Token & vis_token, const int & updateQuality, const glm::vec3 & camPos)
 {	
-	m_size = vis_token.specificSize("Light_Point");
+	m_size = vis_token.specificSize(Light_Point_C::GetName());
 	if (m_size && m_sphereVAOLoaded) {
 		// Retrieve a sorted list of most important lights to run shadow calc for.
 		PriorityLightList queue(updateQuality, camPos); 
-		m_lightList = vis_token.getTypeList<Lighting_C>("Light_Point");
+		m_lightList = vis_token.getTypeList<Light_Point_C>();
 
 		for each (const auto &component in m_lightList)
 			queue.insert(component);
