@@ -39,7 +39,8 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Lighting_C() {};
-	/** Constructor. */
+	/** Constructor.
+	 * @param	engine	the engine */
 	Lighting_C(Engine * engine) : Component(engine) { m_shadowUpdateTime = 0; };
 
 

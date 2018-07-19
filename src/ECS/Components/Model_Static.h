@@ -36,7 +36,11 @@ protected:
 	// (de)Constructors
 	/** Destroys a static model component. */
 	~Model_Static_C();
-	/** Constructors an animated model component. */
+	/** Constructors an animated model component.
+	 * @param	engine		the engine to use
+	 * @param	directory	the model directory
+	 * @param	skinIndex	the skin index to use
+	 * @param	transform	the transform to use */
 	Model_Static_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const Transform & transform = Transform());
 
 

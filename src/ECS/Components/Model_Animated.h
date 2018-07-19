@@ -38,7 +38,12 @@ protected:
 	// (de)Constructors
 	/** Destroys an animated model component. */
 	~Model_Animated_C();
-	/** Constructors an animated model component. */
+	/** Constructors an animated model component.
+	 * @param	engine			the engine to use
+	 * @param	directory		the model directory
+	 * @param	skinIndex		the skin index to use
+	 * @param	animationIndex	the animation index to use
+	 * @param	transform		the transform to use */
 	#define MODEL_ANIMATED_PARAMS const std::string&, const unsigned int &, const int &, const Transform&
 	Model_Animated_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const int & animationIndex = -1, const Transform & transform = Transform());
 

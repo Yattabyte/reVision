@@ -30,6 +30,7 @@ public:
 	void initialize(Engine * engine);
 	/** Creates a component of the supplied type and returns its handle.
 	 * @param	type			the type of component to create
+	 * @param	args			any optional arguments to send to the component's constructor
 	 * @return					the newely created component */	
 	template <typename Component_Type, typename... Args>
 	Component_Type * createComponent(const char * type, Args&&... ax) {

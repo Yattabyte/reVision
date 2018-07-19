@@ -25,7 +25,8 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~Geometry_C() {};
-	/** Constructor. */
+	/** Constructor.
+	 * @param	engine	the engine */
 	Geometry_C(Engine * engine) : Component(engine) {};
 };
 

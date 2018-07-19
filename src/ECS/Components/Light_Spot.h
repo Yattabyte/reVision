@@ -36,7 +36,13 @@ protected:
 	// (de)Constructors
 	/** Destroys a spot light component. */
 	~Light_Spot_C();
-	/** Constructs a spot light component. */
+	/** Constructs a spot light component.
+	 * @param	engine	the engine to use
+	 * @param	color		the color to use
+	 * @param	intensity	the intensity to use
+	 * @param	radius		the radius to use
+	 * @param	cutoff		the cutoff to use 
+	 * @param	transform	the transform to use */
 	Light_Spot_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const float & cutoff = 1.0f, const Transform & transform = Transform());
 
 

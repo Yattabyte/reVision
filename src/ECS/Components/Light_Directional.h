@@ -40,7 +40,11 @@ protected:
 	// (de)Constructors
 	/** Destroys a directional light component. */
 	~Light_Directional_C();
-	/** Constructs a directional light component. */
+	/** Constructs a directional light component.
+	 * @param	engine	the engine to use
+	 * @param	color		the color to use
+	 * @param	intensity	the intensity to use
+	 * @param	transform	the transform to use */
 	Light_Directional_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const Transform & transform = Transform());
 
 

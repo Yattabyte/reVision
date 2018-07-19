@@ -48,7 +48,8 @@ protected:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	virtual ~Component() {};
-	/** Constructor. */
+	/** Constructor. 
+	 * @param	engine	the engine */
 	Component(Engine * engine) : m_engine(engine) {};
 
 

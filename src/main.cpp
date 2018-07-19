@@ -5,24 +5,28 @@
 
 int main()
 {	
+	// Create our objects
 	Engine engine;
 	std::thread *m_UpdaterThread;
 	Camera * camera;
 
+	// Begin Initialization
 	if (!engine.initialize())
 		exit(-1);
 
-	camera = engine.getCamera();
+	// Begin threaded operations
 	m_UpdaterThread = new std::thread(&Engine::tickThreaded, &engine);
 	m_UpdaterThread->detach();
 
+	// Begin main thread
 	while (!(engine.shouldClose())) {
-		camera->bind();
+		engine.getCamera()->bind();
 		engine.tick();
 	}
 
-	/*if (m_UpdaterThread->joinable())
+	// Shutdown
+	if (m_UpdaterThread->joinable())
 		m_UpdaterThread->join();
-	delete m_UpdaterThread;*/
+	delete m_UpdaterThread;
 	engine.shutdown();
 }

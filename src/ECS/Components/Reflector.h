@@ -33,7 +33,9 @@ protected:
 	// (de)Constructors
 	/** Destroys a reflector component. */
 	~Reflector_C();
-	/** Constructors a reflector component. */
+	/** Constructors a reflector component. 
+	 * @param	engine		the engine to use
+	 * @param	transform	the transform to use */
 	Reflector_C(Engine * engine, const Transform & transform = Transform());
 
 
