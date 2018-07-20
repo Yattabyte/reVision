@@ -35,6 +35,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a point light component. */
 	~Light_Point_C();
+	/** Construct by means of an argument list. */
+	Light_Point_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a point light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -42,7 +44,6 @@ protected:
 	 * @param	radius		the radius to use
 	 * @param	transform	the transform to use */
 	Light_Point_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const Transform & transform = Transform());
-
 
 	// Protected Functions
 	/** Recalculate matrices. */
@@ -62,6 +63,7 @@ protected:
 	Camera m_camera;
 	size_t m_visSize[2];
 	friend class ECS;
+	friend class Component_Creator<Light_Point_C>;
 
 
 private:

@@ -31,6 +31,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a cheap point light component. */
 	~Light_Point_Cheap_C();
+	/** Construct by means of an argument list. */
+	Light_Point_Cheap_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a cheap point light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -50,6 +52,7 @@ protected:
 	float m_radius, m_squaredRadius;
 	glm::vec3 m_lightPos;
 	friend class ECS;
+	friend class Component_Creator<Light_Point_Cheap_C>;
 
 
 private:

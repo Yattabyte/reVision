@@ -31,6 +31,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a spot light component. */
 	~Light_Spot_Cheap_C();
+	/** Construct by means of an argument list. */
+	Light_Spot_Cheap_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a spot light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -53,6 +55,7 @@ protected:
 	glm::quat m_orientation;
 	glm::vec3 m_lightPos;
 	friend class ECS;
+	friend class Component_Creator<Light_Spot_Cheap_C>;
 
 
 private:

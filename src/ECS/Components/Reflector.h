@@ -33,6 +33,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a reflector component. */
 	~Reflector_C();
+	/** Construct by means of an argument list. */
+	Reflector_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructors a reflector component. 
 	 * @param	engine		the engine to use
 	 * @param	transform	the transform to use */
@@ -46,6 +48,7 @@ protected:
 	glm::vec3 m_scale;
 	Camera m_cameras[6];
 	friend class ECS;
+	friend class Component_Creator<Reflector_C>;
 
 
 private:

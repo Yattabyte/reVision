@@ -36,6 +36,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a static model component. */
 	~Model_Static_C();
+	/** Construct by means of an argument list. */
+	Model_Static_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructors an animated model component.
 	 * @param	engine		the engine to use
 	 * @param	directory	the model directory
@@ -59,6 +61,7 @@ protected:
 	Shared_Asset_Model m_model;
 	Transform m_transform;
 	friend class ECS;
+	friend class Component_Creator<Model_Static_C>;
 
 
 private:

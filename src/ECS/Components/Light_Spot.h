@@ -36,6 +36,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a spot light component. */
 	~Light_Spot_C();
+	/** Construct by means of an argument list. */
+	Light_Spot_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a spot light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -65,6 +67,7 @@ protected:
 	Camera m_camera;
 	size_t m_visSize[2];
 	friend class ECS;
+	friend class Component_Creator<Light_Spot_C>;
 
 
 private:

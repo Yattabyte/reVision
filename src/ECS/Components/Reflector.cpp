@@ -16,6 +16,12 @@ Reflector_C::~Reflector_C()
 	graphics->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
+Reflector_C::Reflector_C(Engine * engine, const ArgumentList & argumentList)
+	: Reflector_C(
+		engine,
+		*(Transform*)argumentList.dataPointers[0]
+	) {}
+
 Reflector_C::Reflector_C(Engine * engine, const Transform & transform)
 	: Component(engine)
 {

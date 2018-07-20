@@ -16,6 +16,16 @@ Light_Spot_C::~Light_Spot_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotSSBO.removeElement(&m_uboIndex);
 }
 
+Light_Spot_C::Light_Spot_C(Engine * engine, const ArgumentList & argumentList)
+	: Light_Spot_C(
+		engine,
+		*(glm::vec3*)argumentList.dataPointers[0],
+		*(float*)argumentList.dataPointers[1],
+		*(float*)argumentList.dataPointers[2],
+		*(float*)argumentList.dataPointers[3],
+		*(Transform*)argumentList.dataPointers[4]
+	) {}
+
 Light_Spot_C::Light_Spot_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const float & cutoff, const Transform & transform)
 	: Lighting_C(engine)
 {

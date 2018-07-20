@@ -31,6 +31,8 @@ protected:
 	// (de)Constructors
 	/** Destroys a cheap directional light component. */
 	~Light_Directional_Cheap_C();
+	/** Construct by means of an argument list. */
+	Light_Directional_Cheap_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a cheap directional light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -41,6 +43,7 @@ protected:
 
 	// Protected Attributes
 	friend class ECS;
+	friend class Component_Creator<Light_Directional_Cheap_C>;
 
 
 private:

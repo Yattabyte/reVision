@@ -57,5 +57,31 @@ protected:
 	Engine * m_engine;
 	MappedChar<std::function<void(const ECS_Command&)>> m_commandMap;
 	friend class ECS;
+	friend class Component_Creator_Base;
 };
+
+struct ArgumentList {
+	std::vector<void*> dataPointers;
+	~ArgumentList() {
+		for each(void * dataPtr in dataPointers)
+			delete dataPtr;
+	}
+};
+
+struct Component_Creator_Base {
+
+	virtual Component * create(Engine * engine, const ArgumentList & argumentList) { return nullptr; };
+	static void destroy(Component * component) {
+		// delete component; 
+	}
+};
+
+template <typename type_C>
+struct Component_Creator : public Component_Creator_Base {
+	virtual Component * create(Engine * engine, const ArgumentList & argumentList) {
+		return new type_C(engine, argumentList);
+	}
+};
+
+
 #endif // COMPONENT_H

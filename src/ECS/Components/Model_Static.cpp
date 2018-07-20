@@ -13,6 +13,14 @@ Model_Static_C::~Model_Static_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 
+Model_Static_C::Model_Static_C(Engine * engine, const ArgumentList & argumentList)
+	: Model_Static_C(
+		engine,
+		*(std::string*)argumentList.dataPointers[0],
+		*(unsigned int*)argumentList.dataPointers[1],
+		*(Transform*)argumentList.dataPointers[2]
+	) {}
+
 Model_Static_C::Model_Static_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const Transform & transform)
 	: Geometry_C(engine)
 {

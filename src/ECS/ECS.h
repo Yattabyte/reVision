@@ -23,7 +23,7 @@ public:
 	~ECS();
 	/** Construct the ECS.
 	 * @param	engine	pointer to the engine pointer */
-	ECS(Engine * engine) : m_engine(engine) {}
+	ECS(Engine * engine);
 
 	
 	// Public Methods	
@@ -35,7 +35,13 @@ public:
 		const unsigned int count	= sizeof...(Args);
 		const char * types[]		= { ax->GetName()... };
 		Component * components[]	= { ax... };
-		Entity * entity				= new Entity(count, types, components);
+		return createEntity_Manual(count, types, components);
+	}
+	/** Creates an entity with the supplied components
+	* @param	args			a comma delineated list of component pointers to add to the entity
+	* @return					the newely created entity */
+	inline Entity * createEntity_Manual(const unsigned int & count, const char** types, Component ** components) {
+		Entity * entity = new Entity(count, types, components);
 
 		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 		m_levelEntities.push_back(entity);
@@ -45,25 +51,10 @@ public:
   	 * @param	entity				the entity to delete */
 	void deleteEntity(Entity * entity);
 	/** Creates a component of the supplied type and returns its pointer.
-	 * @param	<Component_Type>	the class of component to create
-	 * @param	args				any optional arguments to send to the component's constructor
+	 * @param	type				the type of component to create
+	 * @param	argumentList		a completed argument list to pass to the component's constructor
 	 * @return						the newely created component */	
-	template <typename Component_Type, typename... Args>
-	Component_Type * createComponent(Args&&... ax) {
-		const char * componentName = Component_Type::GetName();
-		Component_Type * component = new Component_Type(m_engine, std::forward<Args>(ax)...);
-		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
-
-		m_levelComponents.insert(componentName);
-		if (m_freeSpots.find(componentName) && m_freeSpots[componentName].size()) {
-			m_levelComponents[componentName][m_freeSpots[componentName].front()] = component;
-			m_freeSpots[componentName].pop_front();
-		}
-		else
-			m_levelComponents[componentName].push_back(component);
-
-		return component;
-	}
+	Component * createComponent(const char * type, const ArgumentList & argumentList);
 	/** Deletes the component provided.
   	 * @param	component			the component to delete */
 	void deleteComponent(Component * component);	
@@ -99,6 +90,7 @@ public:
 private:
 	// Private Attributes
 	bool m_Initialized;
+	MappedChar<Component_Creator_Base*> m_creatorMap;
 	VectorMap<Component*> m_levelComponents;
 	std::vector<Entity*> m_levelEntities;
 	MappedChar<std::deque<unsigned int>> m_freeSpots;

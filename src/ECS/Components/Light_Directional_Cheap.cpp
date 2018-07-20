@@ -9,6 +9,14 @@ Light_Directional_Cheap_C::~Light_Directional_Cheap_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirCheapSSBO.removeElement(&m_uboIndex);
 }
 
+Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine * engine, const ArgumentList & argumentList)
+	: Light_Directional_Cheap_C(
+		engine,
+		*(glm::vec3*)argumentList.dataPointers[0],
+		*(float*)argumentList.dataPointers[1],
+		*(Transform*)argumentList.dataPointers[2]
+	) {}
+
 Light_Directional_Cheap_C::Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
 	: Lighting_C(engine)
 {
