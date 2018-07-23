@@ -192,7 +192,7 @@ void Asset_Model::Finalize(Engine * engine, Shared_Asset_Model & userAsset)
 
 	// Notify Completion
 	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
+		assetManager.submitNotifyee(qwe.first, qwe.second);
 }
 
 GLuint Asset_Model::getSkinID(const unsigned int & desired)

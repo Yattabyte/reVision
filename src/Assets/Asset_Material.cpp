@@ -237,7 +237,7 @@ void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset
 
 		// Notify Completion
 		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second); 
+			assetManager.submitNotifyee(qwe.first, qwe.second);
 	}
 }
 bool getString(std::istringstream & string_stream, std::string & target, std::string & input = std::string(""))

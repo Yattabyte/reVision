@@ -123,7 +123,7 @@ void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
 	// Notify completion
 	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.second);
+		assetManager.submitNotifyee(qwe.first, qwe.second);
 }
 
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)

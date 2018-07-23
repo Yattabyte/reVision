@@ -208,7 +208,7 @@ void Asset_Shader::Finalize(Engine * engine, Shared_Asset_Shader & userAsset)
 	{
 		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
 		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second); 
+			assetManager.submitNotifyee(qwe.first, qwe.second);
 	}
 }
 

@@ -37,7 +37,12 @@ void System_World::initialize(Engine * engine)
 void System_World::update(const float & deltaTime)
 {
 	checkWorld();
-	loadWorld();
+
+	static bool temp_loaded = false;
+	if (!temp_loaded) {
+		loadWorld();
+		temp_loaded = true;
+	}
 }
 
 void System_World::updateThreaded(const float & deltaTime)
@@ -203,86 +208,80 @@ void System_World::loadWorld()
 {
 	ECS & ecs = m_engine->getECS();
 
-	// Temporary level loading logic until a map format is chosen
-	static bool temp_loaded = false;
-	if (!temp_loaded) {
-		// Open Level file		
-		std::ifstream file_stream(m_engine->Get_Current_Dir() + "\\Maps\\test.map");
-		for (std::string entityLine; std::getline(file_stream, entityLine); ) {
-			// Search for entities
-			if (find(entityLine,"entity")) {
-				std::vector<Component*> components;
-				std::vector<const char*> types;
-				int curlyBraceCount = 0;
-				for (std::string componentLine; std::getline(file_stream, componentLine); ) {
-					// Count curly braces
-					if (find(componentLine, "{"))
-						curlyBraceCount++;
-					else if (find(componentLine, "}"))
-						curlyBraceCount--;
-					// Search for components
-					else if (find(componentLine, "component")) {
-						std::string componentType = "";
-						ArgumentList list;
+	// Open Level file		
+	std::ifstream file_stream(m_engine->Get_Current_Dir() + "\\Maps\\test_static.map");
+	for (std::string entityLine; std::getline(file_stream, entityLine); ) {
+		// Search for entities
+		if (find(entityLine, "entity")) {
+			std::vector<Component*> components;
+			std::vector<const char*> types;
+			int curlyBraceCount = 0;
+			for (std::string componentLine; std::getline(file_stream, componentLine); ) {
+				// Count curly braces
+				if (find(componentLine, "{"))
+					curlyBraceCount++;
+				else if (find(componentLine, "}"))
+					curlyBraceCount--;
+				// Search for components
+				else if (find(componentLine, "component")) {
+					std::string componentType = "";
+					ArgumentList list;
 
-						int curlyBraceCount = 0;
-						for (std::string paramLine; std::getline(file_stream, paramLine); ) {
-							// Count curly braces
-							if (find(paramLine, "{"))
-								curlyBraceCount++;
-							else if (find(paramLine, "}"))
-								curlyBraceCount--;
+					int curlyBraceCount = 0;
+					for (std::string paramLine; std::getline(file_stream, paramLine); ) {
+						// Count curly braces
+						if (find(paramLine, "{"))
+							curlyBraceCount++;
+						else if (find(paramLine, "}"))
+							curlyBraceCount--;
 
-							// Fetch Component Type
-							else if (find(paramLine, "type"))
-								componentType = getType_String(paramLine);
+						// Fetch Component Type
+						else if (find(paramLine, "type"))
+							componentType = getType_String(paramLine);
 
-							// Fetch Arguments
-							else if (find(paramLine, "string"))
-								list.dataPointers.push_back(new std::string(getType_String(paramLine)));
-							else if (find(paramLine, "uint"))
-								list.dataPointers.push_back(new unsigned int(getType_UInt(paramLine)));
-							else if (find(paramLine, "int"))
-								list.dataPointers.push_back(new int(getType_Int(paramLine)));
-							else if (find(paramLine, "double"))
-								list.dataPointers.push_back(new double(getType_Double(paramLine)));
-							else if (find(paramLine, "float"))
-								list.dataPointers.push_back(new float(getType_Float(paramLine)));
-							else if (find(paramLine, "vec2"))
-								list.dataPointers.push_back(new glm::vec2(getType_Vec2(paramLine)));
-							else if (find(paramLine, "vec3"))
-								list.dataPointers.push_back(new glm::vec3(getType_Vec3(paramLine)));
-							else if (find(paramLine, "vec4"))
-								list.dataPointers.push_back(new glm::vec4(getType_Vec4(paramLine)));
-							else if (find(paramLine, "quat"))
-								list.dataPointers.push_back(new glm::quat(getType_Quat(paramLine)));
-							else if (find(paramLine, "transform")) {
-								std::string positionLine, orientationLine, scaleLine;
-								std::getline(file_stream, positionLine);
-								std::getline(file_stream, orientationLine);
-								std::getline(file_stream, scaleLine);
+						// Fetch Arguments
+						// Maybe we can use some sort of creator pattern here too, like with the component creation?
+						else if (find(paramLine, "string"))
+							list.dataPointers.push_back(new std::string(getType_String(paramLine)));
+						else if (find(paramLine, "uint"))
+							list.dataPointers.push_back(new unsigned int(getType_UInt(paramLine)));
+						else if (find(paramLine, "int"))
+							list.dataPointers.push_back(new int(getType_Int(paramLine)));
+						else if (find(paramLine, "double"))
+							list.dataPointers.push_back(new double(getType_Double(paramLine)));
+						else if (find(paramLine, "float"))
+							list.dataPointers.push_back(new float(getType_Float(paramLine)));
+						else if (find(paramLine, "vec2"))
+							list.dataPointers.push_back(new glm::vec2(getType_Vec2(paramLine)));
+						else if (find(paramLine, "vec3"))
+							list.dataPointers.push_back(new glm::vec3(getType_Vec3(paramLine)));
+						else if (find(paramLine, "vec4"))
+							list.dataPointers.push_back(new glm::vec4(getType_Vec4(paramLine)));
+						else if (find(paramLine, "quat"))
+							list.dataPointers.push_back(new glm::quat(getType_Quat(paramLine)));
+						else if (find(paramLine, "transform")) {
+							std::string positionLine, orientationLine, scaleLine;
+							std::getline(file_stream, positionLine);
+							std::getline(file_stream, orientationLine);
+							std::getline(file_stream, scaleLine);
 
-								list.dataPointers.push_back(new Transform(getType_Vec3(positionLine), getType_Quat(orientationLine), getType_Vec3(scaleLine)));
-							}
-							if (curlyBraceCount == 0)
-								break;
+							list.dataPointers.push_back(new Transform(getType_Vec3(positionLine), getType_Quat(orientationLine), getType_Vec3(scaleLine)));
 						}
-						components.push_back(ecs.createComponent(componentType.c_str(), list));
-						types.push_back(componentType.c_str());
+						if (curlyBraceCount == 0)
+							break;
 					}
-					if (curlyBraceCount == 0)
-						break;
+					components.push_back(ecs.createComponent(componentType.c_str(), list));
+					types.push_back(componentType.c_str());
 				}
-				ecs.createEntity_Manual(components.size(), types.data(), components.data());
+				if (curlyBraceCount == 0)
+					break;
 			}
+			ecs.createEntity_Manual(components.size(), types.data(), components.data());
 		}
-		
-		temp_loaded = true;
-		m_loaded = false;
-		m_worldChanged = true;
-
-		//unloadWorld();
 	}
+
+	m_loaded = false;
+	m_worldChanged = true;
 }
 
 void System_World::unloadWorld()
@@ -294,6 +293,7 @@ void System_World::unloadWorld()
 	m_engine->getECS().flush();
 
 	std::lock_guard<std::shared_mutex> view_writeGuard(m_viewerLock);
+	m_engine->getCamera()->setVisibilityToken(Visibility_Token());
 	m_viewers.clear();
 }
 
@@ -309,9 +309,7 @@ void System_World::checkWorld()
 		m_worldChanged = false;
 
 		for each (bool * notifyee in m_loadNotifiers) 
-			*notifyee = true;		
-
-		saveWorld();
+			*notifyee = true;	
 	}
 }
 

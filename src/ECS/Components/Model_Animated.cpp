@@ -11,7 +11,10 @@ inline void ReadNodeHeirarchy(std::vector<BoneTransform> &transforms, const floa
 
 Model_Animated_C::~Model_Animated_C()
 {
-	if (m_model.get()) m_model->removeCallback(this);
+	if (m_model.get()) {
+		m_model->removeCallback(this);
+		m_engine->getAssetManager().removeNotifyee(this);
+	}
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryDynamicSSBO.removeElement(&m_uboIndex);
 }
 

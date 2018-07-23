@@ -93,7 +93,6 @@ private:
 	MappedChar<Component_Creator_Base*> m_creatorMap;
 	VectorMap<Component*> m_levelComponents;
 	std::vector<Entity*> m_levelEntities;
-	MappedChar<std::deque<unsigned int>> m_freeSpots;
 	mutable std::shared_mutex m_dataLock;
 	Engine * m_engine;
 };

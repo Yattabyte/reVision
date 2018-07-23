@@ -28,7 +28,7 @@ layout (location = 1) in flat uint BufferIndex;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) out vec3 LightingColor;
 
-float CalcShadowFactor(in int Index, in vec4 LightSpacePos, float Penumbra)                                                  
+float CalcShadowFactor(in int Index, in vec4 LightSpacePos)                                                  
 {     
 	// Bring fragment coordinates from world space into light space, then into texture spaces
 	const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
@@ -38,7 +38,7 @@ float CalcShadowFactor(in int Index, in vec4 LightSpacePos, float Penumbra)
 	float Factor = 0.0f;	
 	for (int y = -1; y <= 1 ; ++y) 
         for (int x = -1 ; x <= 1; ++x) {
-			const vec2 Offsets 			= vec2(x, y) * Penumbra * buffers[BufferIndex].ShadowSize_Recip;
+			const vec2 Offsets 			= vec2(x, y) * buffers[BufferIndex].ShadowSize_Recip;
 			const vec3 FinalCoord 		= vec3( UVCoords + Offsets, buffers[BufferIndex].Shadow_Spot + Index );
 			const float depth 			= texture( ShadowMap, FinalCoord ).r;
 			Factor 			   		   += (depth >= FragmentDepth) ? 1.0 : 0.0;	
@@ -70,8 +70,7 @@ void main()
 		if (-data.View_Pos.z <= buffers[BufferIndex].CascadeEndClipSpace[index]) 
 			break;			
 	const vec3 LightPseudoPos		= EyePosition + (buffers[BufferIndex].LightDirection.xyz);
-	const float Penumbra 			= clamp(length(LightPseudoPos - data.World_Pos.xyz) / 25.0f, 1.0f, 10.0f);
-	const float ShadowFactor 		= CalcShadowFactor(index, buffers[BufferIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset), Penumbra);	
+	const float ShadowFactor 		= CalcShadowFactor(index, buffers[BufferIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
 	if (ShadowFactor < EPSILON)				discard; // Discard if completely in shadow
 	
 	// Direct Light	

@@ -53,13 +53,13 @@ public:
 
 	// Public Attributes
 	int									m_meshSize;
-	std::vector<Shared_Asset_Material>		m_skins;
+	std::vector<Shared_Asset_Material>	m_skins;
 	GeometryInfo						m_data;
-	std::vector<BoneTransform>				m_boneTransforms;
-	std::map<std::string, int>					m_boneMap;
-	std::vector<Animation>					m_animations;
+	std::vector<BoneTransform>			m_boneTransforms;
+	std::map<std::string, int>			m_boneMap;
+	std::vector<Animation>				m_animations;
 	Node								*m_rootNode;
-	glm::vec3								m_bboxMin, m_bboxMax, m_bboxCenter;
+	glm::vec3							m_bboxMin, m_bboxMax, m_bboxCenter;
 	float								m_radius;
 	GLint								m_offset, m_count;
 	ModelManager						*m_modelManager;

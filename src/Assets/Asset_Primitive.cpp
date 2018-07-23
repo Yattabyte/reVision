@@ -101,7 +101,7 @@ void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAss
 		
 		// Notify Completion
 		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second);
+			assetManager.submitNotifyee(qwe.first, qwe.second);
 	}
 }
 

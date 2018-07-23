@@ -83,6 +83,7 @@ void AssetManager::initializeOrders()
 		}
 	}
 }
+
 void AssetManager::finalizeOrders() 
 {
 	std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);
@@ -104,15 +105,21 @@ void AssetManager::finalizeOrders()
 	delete workOrder;	
 }
 
-void AssetManager::submitNotifyee(const std::function<void()> & callBack)
+void AssetManager::submitNotifyee(void * pointerID, const std::function<void()> & callBack)
 {
-	m_notifyees.push_back(callBack);
+	m_notifyees.push_back(std::make_pair(pointerID,callBack));
+}
+
+void AssetManager::removeNotifyee(void * pointerID)
+{
+	m_notifyees.erase(std::remove_if(begin(m_notifyees), end(m_notifyees), [pointerID](const std::pair<void*, std::function<void()>> & notifyee) {
+		return (notifyee.first == pointerID);
+	}), end(m_notifyees));
 }
 
 void AssetManager::notifyObservers()
 {
 	for each (const auto & notifyee in m_notifyees)
-		notifyee();
+		notifyee.second();
 	m_notifyees.clear();
 }
-

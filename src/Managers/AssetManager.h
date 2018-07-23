@@ -131,7 +131,9 @@ public:
 	/** Finalize any initialized orders. */
 	void finalizeOrders();
 	/** For assets that have just finalized, takes callback submissions. */
-	void submitNotifyee(const std::function<void()> & callBack);
+	void submitNotifyee(void * pointerID, const std::function<void()> & callBack);
+	/** Remove a notifyee from the pool. */
+	void removeNotifyee(void * pointerID);
 	/* From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers();
 
@@ -164,7 +166,7 @@ private:
 	std::deque<Asset_Work_Order*> m_Work_toStart, m_Work_toFinish;
 	std::shared_mutex m_workerNotificationMutex;
 	std::vector<std::thread*> m_Workers;
-	std::vector<std::function<void()>> m_notifyees;
+	std::vector<std::pair<void*, std::function<void()>>> m_notifyees;
 	bool m_running;
 };
 

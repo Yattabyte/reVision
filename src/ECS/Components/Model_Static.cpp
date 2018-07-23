@@ -9,7 +9,10 @@
 
 Model_Static_C::~Model_Static_C()
 {
-	if (m_model.get()) m_model->removeCallback(this);
+	if (m_model.get()) {
+		m_model->removeCallback(this);
+		m_engine->getAssetManager().removeNotifyee(this);
+	}
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_geometryBuffers.m_geometryStaticSSBO.removeElement(&m_uboIndex);
 }
 

@@ -149,7 +149,7 @@ void Asset_Texture::Finalize(Engine * engine, Shared_Asset_Texture & userAsset)
 
 		// Notify Completion
 		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second);
+			assetManager.submitNotifyee(qwe.first, qwe.second);
 	}
 }
 

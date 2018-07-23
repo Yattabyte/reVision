@@ -127,7 +127,7 @@ void Asset_Cubemap::Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset)
 
 		// Notify completion
 		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second);
+			assetManager.submitNotifyee(qwe.first, qwe.second);
 	}
 }
 
