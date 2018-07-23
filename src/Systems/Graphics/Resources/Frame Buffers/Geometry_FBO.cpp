@@ -80,7 +80,7 @@ void Geometry_FBO::initialize(Engine * engine, VisualFX * visualFX)
 		glNamedFramebufferTexture(m_fbo, GL_DEPTH_STENCIL_ATTACHMENT, m_depth_stencil, 0);
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR) 
-			engine->reportError(MessageManager::FBO_INCOMPLETE, "", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));	
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		clear();
 	}
 }

@@ -8,7 +8,7 @@ layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D NoiseMap;
 layout (binding = 3) uniform sampler2D DepthMap;
 
-layout (std430, binding = 4) readonly buffer Renderer_Attribs
+layout (std430, binding = 2) readonly buffer Renderer_Attribs
 {			
 	float m_ssao_radius;
 	int m_ssao_strenth;

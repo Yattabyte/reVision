@@ -3,7 +3,6 @@
 #extension GL_ARB_gpu_shader5 : require 
 #extension GL_ARB_gpu_shader_int64 : require
 #package "camera"
-#define MAX_BONES 100 
 
 struct Geometry_Struct {
 	uint materialID;

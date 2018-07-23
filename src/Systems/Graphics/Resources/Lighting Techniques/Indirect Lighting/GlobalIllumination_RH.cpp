@@ -118,9 +118,10 @@ void GlobalIllumination_RH::updateData(const Visibility_Token & cam_vis_token)
 	{
 		const auto cameraBuffer = m_engine->getCamera()->getCameraBuffer();
 		const glm::vec2 &size = cameraBuffer.Dimensions;
-		const float ar = size.x / size.y;
-		const float tanHalfHFOV = (tanf(glm::radians(cameraBuffer.FOV / 2.0f)));
-		const float tanHalfVFOV = (tanf(glm::radians((cameraBuffer.FOV / ar) / 2.0f)));
+		const float hfovRad = glm::radians(cameraBuffer.FOV);
+		const float tanHalfHFOV = (tanf(hfovRad / 2.0f));
+		const float radVFOV = 2.0f * atanf(tanf(hfovRad / 2.0f) * size.y / size.x);
+		const float tanHalfVFOV = (tanf(radVFOV / 2.0f));
 		const float points[4] = { 
 			m_nearPlane * tanHalfHFOV,
 			m_farPlane  * tanHalfHFOV,

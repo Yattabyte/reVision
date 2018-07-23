@@ -1,6 +1,7 @@
 #include "Systems\World\Camera.h"
 #include "glm\mat4x4.hpp"
 #include "glm\gtc\matrix_transform.hpp"
+#include <minmax.h>
 
 
 Camera::~Camera()
@@ -62,7 +63,7 @@ void Camera::update()
 	std::unique_lock<std::shared_mutex> wguard(data_mutex);
 
 	// Update Perspective Matrix
-	float ar(m_cameraBuffer.Dimensions.x / m_cameraBuffer.Dimensions.y);
+	float ar = max(1.0f, m_cameraBuffer.Dimensions.x) / max(1.0f, m_cameraBuffer.Dimensions.y);
 	float horizontalRad = glm::radians(m_cameraBuffer.FOV);
 	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
 	m_cameraBuffer.pMatrix = glm::perspective(verticalRad, ar, m_cameraBuffer.NearPlane, m_cameraBuffer.FarPlane);
