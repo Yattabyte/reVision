@@ -19,6 +19,10 @@ class Model_Static_C : public Geometry_C
 public:
 	// Interface implementations
 	static const char * GetName() { return "Static_Model"; }
+	static std::vector<const char *> GetParamTypes() {
+		static std::vector<const char *> params = { "string", "uint", "transform" };
+		return params;
+	}
 	virtual bool isLoaded() const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual bool containsPoint(const glm::vec3 & point) const;

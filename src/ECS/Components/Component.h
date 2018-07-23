@@ -7,6 +7,7 @@
 #include "glm\glm.hpp"
 #include <utility>
 #include <functional>
+#include <minmax.h>
 
 
 class Engine;
@@ -61,10 +62,15 @@ protected:
 };
 
 struct ArgumentList {
+	std::vector<const char*> dataTypes;
 	std::vector<void*> dataPointers;
 	~ArgumentList() {
 		for each(void * dataPtr in dataPointers)
 			delete dataPtr;
+	}
+	void pushData(const char * type, void  * const pointer) {
+		dataTypes.push_back(type);
+		dataPointers.push_back(pointer);
 	}
 };
 
@@ -79,6 +85,12 @@ struct Component_Creator_Base {
 template <typename type_C>
 struct Component_Creator : public Component_Creator_Base {
 	virtual Component * create(Engine * engine, const ArgumentList & argumentList) {
+		// Compare each of the parameters
+		const std::vector<const char*> & paramTypes = type_C::GetParamTypes();
+		for (int paramIndex = 0, paramCount = min(min(paramTypes.size(), argumentList.dataTypes.size()), argumentList.dataPointers.size()); paramIndex < paramCount; ++paramIndex) {
+			if (strcmp(paramTypes[paramIndex], argumentList.dataTypes[paramIndex]) != 0)
+				return nullptr;
+		}
 		return new type_C(engine, argumentList);
 	}
 };

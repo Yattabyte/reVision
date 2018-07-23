@@ -19,6 +19,10 @@ class Reflector_C : public Component
 public:
 	// Interface implementations
 	static const char * GetName() { return "Reflector"; }
+	static std::vector<const char *> GetParamTypes() {
+		static std::vector<const char *> params = { "transform" };
+		return params;
+	}
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 
 

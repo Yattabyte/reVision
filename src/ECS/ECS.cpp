@@ -18,15 +18,15 @@ ECS::~ECS()
 
 ECS::ECS(Engine * engine) : m_engine(engine) 
 {
-	m_creatorMap[Model_Animated_C::GetName()] = new Component_Creator<Model_Animated_C>();
-	m_creatorMap[Model_Static_C::GetName()] = new Component_Creator<Model_Static_C>();
-	m_creatorMap[Light_Directional_C::GetName()] = new Component_Creator<Light_Directional_C>();
-	m_creatorMap[Light_Directional_Cheap_C::GetName()] = new Component_Creator<Light_Directional_Cheap_C>();
-	m_creatorMap[Light_Spot_C::GetName()] = new Component_Creator<Light_Spot_C>();
-	m_creatorMap[Light_Spot_Cheap_C::GetName()] = new Component_Creator<Light_Spot_Cheap_C>();
-	m_creatorMap[Light_Point_C::GetName()] = new Component_Creator<Light_Point_C>();
-	m_creatorMap[Light_Point_Cheap_C::GetName()] = new Component_Creator<Light_Point_Cheap_C>();
-	m_creatorMap[Reflector_C::GetName()] = new Component_Creator<Reflector_C>();
+	m_creatorMap[Light_Directional_C::GetName()]		= new Component_Creator<Light_Directional_C>();
+	m_creatorMap[Light_Directional_Cheap_C::GetName()]	= new Component_Creator<Light_Directional_Cheap_C>();
+	m_creatorMap[Light_Point_C::GetName()]				= new Component_Creator<Light_Point_C>();
+	m_creatorMap[Light_Spot_Cheap_C::GetName()]			= new Component_Creator<Light_Spot_Cheap_C>();
+	m_creatorMap[Light_Spot_C::GetName()]				= new Component_Creator<Light_Spot_C>();
+	m_creatorMap[Light_Point_Cheap_C::GetName()]		= new Component_Creator<Light_Point_Cheap_C>();
+	m_creatorMap[Model_Animated_C::GetName()]			= new Component_Creator<Model_Animated_C>();
+	m_creatorMap[Model_Static_C::GetName()]				= new Component_Creator<Model_Static_C>();
+	m_creatorMap[Reflector_C::GetName()]				= new Component_Creator<Reflector_C>();
 }
 
 void ECS::deleteEntity(Entity * entity)
@@ -52,10 +52,19 @@ void ECS::deleteEntity(Entity * entity)
 
 Component * ECS::createComponent(const char * type, const ArgumentList & argumentList)
 {
-	if (!m_creatorMap.find(type))
+	if (!m_creatorMap.find(type)) {
+		m_engine->reportError(MessageManager::OTHER_ERROR, "Unidentified component type: \"" + std::string(type) + "\"");
 		return nullptr;
+	}
 
 	Component * component = ((Component_Creator_Base*)(m_creatorMap[type]))->create(m_engine, argumentList);
+	if (component == nullptr) {
+		std::string parameterListDebug;
+		for each (const char * paramType in argumentList.dataTypes)
+			parameterListDebug += ", " + std::string(paramType);
+		m_engine->reportError(MessageManager::OTHER_ERROR, "Unidentified component constructor combination. Type: \"" + std::string(type) + "\" with arguments: \"" + parameterListDebug + "\"");
+		return nullptr;
+	}
 
 	std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
 	if (!m_levelComponents.find(type)) 

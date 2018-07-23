@@ -24,6 +24,10 @@ class Light_Point_C : public Lighting_C
 public:
 	// Interface Implementations
 	static const char * GetName() { return "Light_Point"; }
+	static std::vector<const char *> GetParamTypes() {
+		static std::vector<const char *> params = { "vec3", "float", "float", "transform" };
+		return params;
+	}
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);

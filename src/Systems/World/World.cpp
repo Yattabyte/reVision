@@ -201,8 +201,6 @@ inline glm::quat getType_Quat(std::string & in)
 	return glm::quat(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
 }
 
-
-
 #include <fstream>
 void System_World::loadWorld()
 {
@@ -242,30 +240,30 @@ void System_World::loadWorld()
 						// Fetch Arguments
 						// Maybe we can use some sort of creator pattern here too, like with the component creation?
 						else if (find(paramLine, "string"))
-							list.dataPointers.push_back(new std::string(getType_String(paramLine)));
+							list.pushData("string", new std::string(getType_String(paramLine)));
 						else if (find(paramLine, "uint"))
-							list.dataPointers.push_back(new unsigned int(getType_UInt(paramLine)));
+							list.pushData("uint", new unsigned int(getType_UInt(paramLine)));
 						else if (find(paramLine, "int"))
-							list.dataPointers.push_back(new int(getType_Int(paramLine)));
+							list.pushData("int", new int(getType_Int(paramLine)));
 						else if (find(paramLine, "double"))
-							list.dataPointers.push_back(new double(getType_Double(paramLine)));
+							list.pushData("double", new double(getType_Double(paramLine)));
 						else if (find(paramLine, "float"))
-							list.dataPointers.push_back(new float(getType_Float(paramLine)));
+							list.pushData("float", new float(getType_Float(paramLine)));
 						else if (find(paramLine, "vec2"))
-							list.dataPointers.push_back(new glm::vec2(getType_Vec2(paramLine)));
+							list.pushData("vec2", new glm::vec2(getType_Vec2(paramLine)));
 						else if (find(paramLine, "vec3"))
-							list.dataPointers.push_back(new glm::vec3(getType_Vec3(paramLine)));
+							list.pushData("vec3", new glm::vec3(getType_Vec3(paramLine)));
 						else if (find(paramLine, "vec4"))
-							list.dataPointers.push_back(new glm::vec4(getType_Vec4(paramLine)));
+							list.pushData("vec4", new glm::vec4(getType_Vec4(paramLine)));
 						else if (find(paramLine, "quat"))
-							list.dataPointers.push_back(new glm::quat(getType_Quat(paramLine)));
+							list.pushData("quat", new glm::quat(getType_Quat(paramLine)));
 						else if (find(paramLine, "transform")) {
 							std::string positionLine, orientationLine, scaleLine;
 							std::getline(file_stream, positionLine);
 							std::getline(file_stream, orientationLine);
 							std::getline(file_stream, scaleLine);
 
-							list.dataPointers.push_back(new Transform(getType_Vec3(positionLine), getType_Quat(orientationLine), getType_Vec3(scaleLine)));
+							list.pushData("transform", new Transform(getType_Vec3(positionLine), getType_Quat(orientationLine), getType_Vec3(scaleLine)));
 						}
 						if (curlyBraceCount == 0)
 							break;
