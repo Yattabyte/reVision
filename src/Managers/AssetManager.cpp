@@ -17,25 +17,17 @@
 
  
 AssetManager::~AssetManager()
-{
-	/** @todo destructor */
-
-	{
-		std::unique_lock<std::shared_mutex> worker_writeGuard(m_workerNotificationMutex);
-		m_running = false;
+{	
+	for (int x = 0; x < m_Workers.size(); ++x) {
+		m_Workers[x].second.set_value();
+		if (m_Workers[x].first.joinable())
+			m_Workers[x].first.join();
 	}
-	for each (auto thread in m_Workers) {
-		if (thread->joinable())
-			thread->join();
-		delete thread;
-	}
+	m_Workers.clear();
 }
 
 AssetManager::AssetManager(Engine * engine) : m_engine(engine)
 {
-	// Default Parameters
-	m_running = true;
-
 	// Register asset creators
 	registerAssetCreator(typeid(Shared_Asset_Collider).name(), std::function<void(Engine*, Shared_Asset_Collider&, const std::string&, const bool &)>(Asset_Collider::Create));
 	registerAssetCreator(typeid(Shared_Asset_Config).name(), std::function<void(Engine*, Shared_Asset_Config&, const std::string&, const std::vector<std::string> &, const bool &)>(Asset_Config::Create));
@@ -51,20 +43,18 @@ AssetManager::AssetManager(Engine * engine) : m_engine(engine)
 	// Initialize worker threads
 	const unsigned int maxThreads = std::min(4u, std::min(ASSETMANAGER_MAX_THREADS, std::thread::hardware_concurrency()));
 	for (unsigned int x = 0; x < maxThreads; ++x) {
-		std::thread * workerThread = new std::thread(&AssetManager::initializeOrders, this);
-		workerThread->detach();
-		m_Workers.push_back(workerThread);
+		std::promise<void> exitSignal;
+		std::future<void> exitObject = exitSignal.get_future();
+		std::thread workerThread(&AssetManager::initializeOrders, this, std::move(exitObject));
+		workerThread.detach();
+		m_Workers.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
 	}
 }
 
-void AssetManager::initializeOrders()
+void AssetManager::initializeOrders(std::future<void> exitObject)
 {
-	while (true) {
-		// Check if worker should shutdown
-		std::shared_lock<std::shared_mutex> worker_readGuard(m_workerNotificationMutex);
-		if (!m_running)
-			return;
-
+	// Check if worker should shutdown
+	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
 		// Start reading work orders
 		std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);
 		if (m_Work_toStart.size()) {

@@ -6,6 +6,7 @@
 #include "Utilities\MappedChar.h"
 #include <deque>
 #include <functional>
+#include <future>
 #include <shared_mutex>
 #include <thread>
 
@@ -154,7 +155,9 @@ private:
 	void forwardMapArguments(const char * type, Args&&... ax) {
 		((FuncHolder<Args...>*)(m_CreatorMap[type]))->m_function(std::forward<Args>(ax)...);
 	}
-	void initializeOrders();
+	/** Initializes any waiting orders.
+	* @param	exitObject	object signaling when to close the thread */
+	void initializeOrders(std::future<void> exitObject);
 
 
 	// Private Attributes
@@ -165,9 +168,8 @@ private:
 	std::shared_mutex m_Mutex_Workorders;
 	std::deque<Asset_Work_Order*> m_Work_toStart, m_Work_toFinish;
 	std::shared_mutex m_workerNotificationMutex;
-	std::vector<std::thread*> m_Workers;
+	std::vector<std::pair<std::thread, std::promise<void>>> m_Workers;
 	std::vector<std::pair<void*, std::function<void()>>> m_notifyees;
-	bool m_running;
 };
 
 #endif // ASSETMANAGER_H

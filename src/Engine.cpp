@@ -178,6 +178,7 @@ bool Engine::initialize()
 void Engine::shutdown()
 {
 	if (m_Initialized) {
+		reportMessage("Shutting down...");
 		removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 		
 		for each (auto system in m_Systems)
@@ -223,12 +224,11 @@ void Engine::tick()
 	}
 }
 
-void Engine::tickThreaded()
+void Engine::tickThreaded(std::future<void> exitObj)
 {
 	glfwMakeContextCurrent(m_Context_Sharing);
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
-	bool stay_alive = true;
-	while (stay_alive) {
+	while (exitObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
 		if (m_Initialized && m_Initialized_Sharing) {
 			thisTime = glfwGetTime();
 			deltaTime = thisTime - lastTime;
@@ -237,7 +237,6 @@ void Engine::tickThreaded()
 			for each (auto system in m_Systems)
 				system.second->updateThreaded(deltaTime);
 		}
-		stay_alive = !shouldClose();
 	}
 }
 

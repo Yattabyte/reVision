@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.2.B";
+constexpr char ENGINE_VERSION[]	= "1.3";
 
 #include "Assets\Asset.h"
 #include "ECS\ECS.h"
@@ -49,8 +49,9 @@ public:
 	void shutdown();
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
-	/** Ticks the engine's overall simulation by a frame from a secondary thread. */
-	void tickThreaded();
+	/** Ticks the engine's overall simulation by a frame from a secondary thread. 
+	 * @param	exitObject	object signaling when to close the thread */
+	void tickThreaded(std::future<void> exitObj);
 	/** Checks if the engine wants to shut down.
 	 * @return	true if engine should shut down */
 	bool shouldClose();
@@ -148,14 +149,14 @@ private:
 	int m_frameCount;
 	GLFWwindow * m_Context_Rendering;
 	Camera * m_Camera;
-	AssetManager m_AssetManager;
 	ECS	m_ecs;
 	ActionState	m_ActionState;
-	PreferenceState	m_PreferenceState;
 	MappedChar<System*>	m_Systems;
 	ModelManager m_modelManager;
 	MaterialManager m_materialManager;
 	MessageManager m_messageManager;
+	AssetManager m_AssetManager;
+	PreferenceState	m_PreferenceState;
 };
 
 #endif // ENGINE_H

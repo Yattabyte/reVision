@@ -1,5 +1,6 @@
 #include "Engine.h"
 #include "Systems\World\Camera.h"
+#include <future>
 #include <thread>
 
 
@@ -7,7 +8,6 @@ int main()
 {	
 	// Create our objects
 	Engine engine;
-	std::thread *m_UpdaterThread;
 	Camera * camera;
 
 	// Begin Initialization
@@ -15,8 +15,10 @@ int main()
 		exit(-1);
 
 	// Begin threaded operations
-	m_UpdaterThread = new std::thread(&Engine::tickThreaded, &engine);
-	m_UpdaterThread->detach();
+	std::promise<void> exitSignal;
+	std::future<void> exitObject = exitSignal.get_future();
+	std::thread m_UpdaterThread(&Engine::tickThreaded, &engine, std::move(exitObject));
+	m_UpdaterThread.detach();
 
 	// Begin main thread
 	while (!(engine.shouldClose())) {
@@ -25,8 +27,6 @@ int main()
 	}
 
 	// Shutdown
-	if (m_UpdaterThread->joinable())
-		m_UpdaterThread->join();
-	delete m_UpdaterThread;
+	exitSignal.set_value();
 	engine.shutdown();
 }
