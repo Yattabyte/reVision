@@ -85,7 +85,7 @@ void Asset_Texture::Initialize(Engine * engine, Shared_Asset_Texture & userAsset
 {
 	Image_Data dataContainer;
 	if (!Image_IO::Import_Image(engine, fullDirectory, dataContainer)) {
-		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load texture asset, using default...");
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Texture");
 		CreateDefault(engine, userAsset);
 		return;
 	}

@@ -53,7 +53,7 @@ bool Initialize_Sharing(Engine * engine)
 		glfwSetErrorCallback(GLFW_Callback_Error);
 		if (!glfwInit()) {
 			glfwTerminate();
-			engine->reportError(MessageManager::OTHER_ERROR, "GLFW unable to initialize, shutting down...");
+			engine->reportError(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
 			return false;
 		}
 
@@ -79,7 +79,7 @@ bool Initialize_Sharing(Engine * engine)
 		glewExperimental = GL_TRUE;		
 		if (glewInit() != GLEW_OK) {
 			glfwTerminate();
-			engine->reportError(MessageManager::OTHER_ERROR, "GLEW unable to initialize, shutting down...");
+			engine->reportError(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
 			return false;
 		}
 		engine->reportMessage("...success!\n");

@@ -192,6 +192,7 @@ void Asset_Shader_Geometry::Initialize(Engine * engine, Shared_Asset_Shader_Geom
 	write_guard.release();
 
 	if (!(found_vertex && found_fragement)) {
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader_Geometry");
 		CreateDefault(engine, userAsset);
 		return;
 	}

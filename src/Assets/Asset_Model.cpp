@@ -152,7 +152,7 @@ void Asset_Model::Initialize(Engine * engine, Shared_Asset_Model & userAsset, co
 {
 	Model_Geometry dataContainer;
 	if (!Model_IO::Import_Model(engine, fullDirectory, import_model, dataContainer)) {
-		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load model asset, using default...");
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Model");
 		CreateDefault(engine, userAsset);
 		return;
 	}

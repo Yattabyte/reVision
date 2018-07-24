@@ -85,12 +85,18 @@ struct Component_Creator_Base {
 template <typename type_C>
 struct Component_Creator : public Component_Creator_Base {
 	virtual Component * create(Engine * engine, const ArgumentList & argumentList) {
-		// Compare each of the parameters
+		// Check for a size mismatch
 		const std::vector<const char*> & paramTypes = type_C::GetParamTypes();
-		for (int paramIndex = 0, paramCount = min(min(paramTypes.size(), argumentList.dataTypes.size()), argumentList.dataPointers.size()); paramIndex < paramCount; ++paramIndex) {
+		if (paramTypes.size() != argumentList.dataTypes.size() || paramTypes.size() != argumentList.dataPointers.size())
+			return nullptr;
+
+		// Ensure the argument list provided matches the component parameter types
+		for (int paramIndex = 0; paramIndex < paramTypes.size(); ++paramIndex) {
 			if (strcmp(paramTypes[paramIndex], argumentList.dataTypes[paramIndex]) != 0)
-				return nullptr;
+				return nullptr; // Something didn't match, return early
 		}
+
+		// Safe to create
 		return new type_C(engine, argumentList);
 	}
 };

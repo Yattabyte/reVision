@@ -53,16 +53,16 @@ void ECS::deleteEntity(Entity * entity)
 Component * ECS::createComponent(const char * type, const ArgumentList & argumentList)
 {
 	if (!m_creatorMap.find(type)) {
-		m_engine->reportError(MessageManager::OTHER_ERROR, "Unidentified component type: \"" + std::string(type) + "\"");
+		m_engine->reportError(MessageManager::UNKNOWN_COMPONENT_TYPE, type);
 		return nullptr;
 	}
 
 	Component * component = ((Component_Creator_Base*)(m_creatorMap[type]))->create(m_engine, argumentList);
 	if (component == nullptr) {
-		std::string parameterListDebug;
-		for each (const char * paramType in argumentList.dataTypes)
-			parameterListDebug += ", " + std::string(paramType);
-		m_engine->reportError(MessageManager::OTHER_ERROR, "Unidentified component constructor combination. Type: \"" + std::string(type) + "\" with arguments: \"" + parameterListDebug + "\"");
+		std::string parameterListDebug = argumentList.dataTypes.size() ? std::string(argumentList.dataTypes[0]) : "";
+		for (int x = 1; x < argumentList.dataTypes.size(); ++x)
+			parameterListDebug += ", " + std::string(argumentList.dataTypes[x]);
+		m_engine->reportError(MessageManager::UNKNOWN_COMPONENT_CONSTRUCTOR, std::string(type) + "( " + parameterListDebug + " )");
 		return nullptr;
 	}
 

@@ -67,6 +67,7 @@ void Asset_Collider::Initialize(Engine * engine, Shared_Asset_Collider & userAss
 	// Attempt to create the asset
 	Model_Geometry dataContainer;
 	if (!Model_IO::Import_Model(engine, fullDirectory, import_hull, dataContainer)) {
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Collider");
 		CreateDefault(engine, userAsset);
 		return;
 	}

@@ -91,7 +91,7 @@ void Asset_Cubemap::Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset
 
 		Image_Data dataContainer;
 		if (!Image_IO::Import_Image(engine, specific_side_directory, dataContainer)) {
-			engine->reportError(MessageManager::OTHER_ERROR, "Failed to load cubemap asset, using default...");
+			engine->reportError(MessageManager::ASSET_FAILED, "Asset_Cubemap");
 			CreateDefault(engine, userAsset);
 			return;
 		}	

@@ -38,32 +38,40 @@ public:
 	static const enum Error_Enum
 	{
 		FILE_MISSING,
-		DIRECTORY_MISSING,
 		FILE_CORRUPT,
+
+		ASSET_FAILED,
 
 		FBO_INCOMPLETE,
 		SHADER_INCOMPLETE,
 		PROGRAM_INCOMPLETE,
 
+		UNKNOWN_COMPONENT_TYPE,
+		UNKNOWN_COMPONENT_CONSTRUCTOR,
+
 		GLFW_ERROR,
 		OPENGL_ERROR,
-		OTHER_ERROR,
+		MANUAL_ERROR,
 		ERROR_COUNT,
 	};
 	// String-ified versions of the previous error enumerations
 	const std::string Error_String[ERROR_COUNT] =
 	{
-		"Error (" + std::to_string(FILE_MISSING) + "): The file % does not exist! ",
-		"Error (" + std::to_string(DIRECTORY_MISSING) + "): The directory % does not exist! ",
-		"Error (" + std::to_string(FILE_CORRUPT) + "): The file % is corrupt! ",
+		"The file \"%\" does not exist! ",
+		"The file \"%\" is corrupt! ",
+				
+		"\"%\" initialization failure, attempting to use fallback asset...",
 
-		"Error (" + std::to_string(FBO_INCOMPLETE) + "): A Framebuffer in the % is incomplete. ",
-		"Error (" + std::to_string(SHADER_INCOMPLETE) + "): The Shader file % could not compile. ",
-		"Error (" + std::to_string(PROGRAM_INCOMPLETE) + "): The Shader program % could not compile. ",
+		"A Framebuffer in the \"%\" is incomplete. ",
+		"The Shader file \"%\" could not compile. ",
+		"The Shader program \"%\" could not compile. ",
 
-		"Error (" + std::to_string(GLFW_ERROR) + "): GLFW Error: % ",
-		"Error (" + std::to_string(OPENGL_ERROR) + "): OpenGL Error: % ",
-		"Error (" + std::to_string(OTHER_ERROR) + "): % ",
+		"Unidentified component type: \"%\""
+		"Unidentified component constructor: \"%\""
+
+		"GLFW Error: % ",
+		"OpenGL Error: % ",
+		"% "
 	};
 
 

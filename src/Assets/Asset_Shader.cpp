@@ -183,6 +183,7 @@ void Asset_Shader::Initialize(Engine * engine, Shared_Asset_Shader & userAsset, 
 	write_guard.release();
 
 	if (!(found_vertex && found_fragement)) {
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
 		CreateDefault(engine, userAsset);
 		return;
 	}

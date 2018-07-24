@@ -101,17 +101,25 @@ void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, cons
 
 void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const std::string & fullDirectory)
 {
-	std::ifstream file_stream(fullDirectory);
-	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-	for (std::string line; std::getline(file_stream, line); ) {
-		if (line.length()) {
-			const std::string cfg_property = get_between_quotes(line);
-			int spot = find_CFG_Property(cfg_property, userAsset->m_strings);
-			if (spot >= 0) {
-				std::string cfg_value = get_between_quotes(line);
-				userAsset->setValue(spot, atof(cfg_value.c_str()));
+	std::ifstream file_stream;	
+	try {
+		file_stream.open(fullDirectory);
+		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
+		for (std::string line; std::getline(file_stream, line); ) {
+			if (line.length()) {
+				const std::string cfg_property = get_between_quotes(line);
+				int spot = find_CFG_Property(cfg_property, userAsset->m_strings);
+				if (spot >= 0) {
+					std::string cfg_value = get_between_quotes(line);
+					userAsset->setValue(spot, atof(cfg_value.c_str()));
+				}
 			}
 		}
+	}
+	catch (const std::ifstream::failure& e) {
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Config");
+		CreateDefault(engine, userAsset);
+		return;
 	}
 }
 
