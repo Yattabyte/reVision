@@ -262,14 +262,14 @@ const std::string Model_IO::Get_Version()
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
-inline VertexBoneData::~VertexBoneData() {}
+VertexBoneData::~VertexBoneData() {}
 
-inline VertexBoneData::VertexBoneData() 
+VertexBoneData::VertexBoneData() 
 {
 	Reset();
 }
 
-inline VertexBoneData::VertexBoneData(const VertexBoneData & vbd) 
+VertexBoneData::VertexBoneData(const VertexBoneData & vbd) 
 {
 	Reset();
 	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++) {

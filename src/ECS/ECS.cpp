@@ -21,9 +21,9 @@ ECS::ECS(Engine * engine) : m_engine(engine)
 	m_creatorMap[Light_Directional_C::GetName()]		= new Component_Creator<Light_Directional_C>();
 	m_creatorMap[Light_Directional_Cheap_C::GetName()]	= new Component_Creator<Light_Directional_Cheap_C>();
 	m_creatorMap[Light_Point_C::GetName()]				= new Component_Creator<Light_Point_C>();
-	m_creatorMap[Light_Spot_Cheap_C::GetName()]			= new Component_Creator<Light_Spot_Cheap_C>();
-	m_creatorMap[Light_Spot_C::GetName()]				= new Component_Creator<Light_Spot_C>();
 	m_creatorMap[Light_Point_Cheap_C::GetName()]		= new Component_Creator<Light_Point_Cheap_C>();
+	m_creatorMap[Light_Spot_C::GetName()]				= new Component_Creator<Light_Spot_C>();
+	m_creatorMap[Light_Spot_Cheap_C::GetName()]			= new Component_Creator<Light_Spot_Cheap_C>();
 	m_creatorMap[Model_Animated_C::GetName()]			= new Component_Creator<Model_Animated_C>();
 	m_creatorMap[Model_Static_C::GetName()]				= new Component_Creator<Model_Static_C>();
 	m_creatorMap[Reflector_C::GetName()]				= new Component_Creator<Reflector_C>();
@@ -57,7 +57,7 @@ Component * ECS::createComponent(const char * type, const ArgumentList & argumen
 		return nullptr;
 	}
 
-	Component * component = ((Component_Creator_Base*)(m_creatorMap[type]))->create(m_engine, argumentList);
+	Component * component = ((Component_Creator_Base*)(m_creatorMap[type]))->create(argumentList);
 	if (component == nullptr) {
 		std::string parameterListDebug = argumentList.dataTypes.size() ? std::string(argumentList.dataTypes[0]) : "";
 		for (int x = 1; x < argumentList.dataTypes.size(); ++x)

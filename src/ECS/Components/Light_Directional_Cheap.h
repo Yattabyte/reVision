@@ -20,10 +20,6 @@ class Light_Directional_Cheap_C : public Lighting_C
 public:
 	// Interface implementations
 	static const char * GetName() { return "Light_Directional_Cheap"; }
-	static std::vector<const char *> GetParamTypes() {
-		static std::vector<const char *> params = { "vec3", "float", "transform" };
-		return params;
-	}
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type) {}
@@ -35,14 +31,15 @@ protected:
 	// (de)Constructors
 	/** Destroys a cheap directional light component. */
 	~Light_Directional_Cheap_C();
-	/** Construct by means of an argument list. */
-	Light_Directional_Cheap_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a cheap directional light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
 	 * @param	intensity	the intensity to use
 	 * @param	transform	the transform to use */
-	Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const Transform & transform = Transform());
+	Light_Directional_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform);
+	/** Creates the component from an argument list.
+	 * @param	argumentList	the argument list to construct from */
+	static Light_Directional_Cheap_C * Create(const ArgumentList & argumentList);
 
 
 	// Protected Attributes

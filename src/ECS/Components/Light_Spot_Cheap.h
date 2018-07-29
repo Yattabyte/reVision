@@ -20,10 +20,6 @@ class Light_Spot_Cheap_C : public Lighting_C
 public:
 	// Interface Implementations
 	static const char * GetName() { return "Light_Spot_Cheap"; }
-	static std::vector<const char *> GetParamTypes() {
-		static std::vector<const char *> params = { "vec3", "float", "float", "float", "transform" };
-		return params;
-	}
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type) {}
@@ -35,8 +31,6 @@ protected:
 	// (de)Constructors
 	/** Destroys a spot light component. */
 	~Light_Spot_Cheap_C();
-	/** Construct by means of an argument list. */
-	Light_Spot_Cheap_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a spot light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
@@ -44,7 +38,10 @@ protected:
 	 * @param	radius		the radius to use
 	 * @param	cutoff		the cutoff to use
 	 * @param	transform	the transform to use */
-	Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const float & cutoff = 1.0f, const Transform & transform = Transform());
+	Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color, const glm::vec2 &intensity_radius, const float & cutoff, const Transform & transform);
+	/** Creates the component from an argument list.
+	 * @param	argumentList	the argument list to construct from */
+	static Light_Spot_Cheap_C * Create(const ArgumentList & argumentList);
 
 
 	// Protected Functions

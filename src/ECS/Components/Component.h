@@ -4,10 +4,12 @@
 
 #include "ECS\ECSmessage.h"
 #include "Utilities\MappedChar.h"
+#include "Utilities\Transform.h"
 #include "glm\glm.hpp"
-#include <utility>
 #include <functional>
 #include <minmax.h>
+#include <tuple>
+#include <utility>
 
 
 class Engine;
@@ -65,18 +67,19 @@ struct ArgumentList {
 	std::vector<const char*> dataTypes;
 	std::vector<void*> dataPointers;
 	~ArgumentList() {
-		for each(void * dataPtr in dataPointers)
-			delete dataPtr;
 	}
-	void pushData(const char * type, void  * const pointer) {
+	inline void pushData(const char * type, void  * const pointer) {
 		dataTypes.push_back(type);
 		dataPointers.push_back(pointer);
+	}
+	template <typename T>
+	inline bool checkParameter(const unsigned int & index) const {
+		return (dataPointers.size() > index) && (std::strcmp(dataTypes[index], typeid(T).name()) == 0);
 	}
 };
 
 struct Component_Creator_Base {
-
-	virtual Component * create(Engine * engine, const ArgumentList & argumentList) { return nullptr; };
+	virtual Component * create(const ArgumentList & argumentList) { return nullptr; };
 	static void destroy(Component * component) {
 		// delete component; 
 	}
@@ -84,22 +87,11 @@ struct Component_Creator_Base {
 
 template <typename type_C>
 struct Component_Creator : public Component_Creator_Base {
-	virtual Component * create(Engine * engine, const ArgumentList & argumentList) {
-		// Check for a size mismatch
-		const std::vector<const char*> & paramTypes = type_C::GetParamTypes();
-		if (paramTypes.size() != argumentList.dataTypes.size() || paramTypes.size() != argumentList.dataPointers.size())
-			return nullptr;
-
-		// Ensure the argument list provided matches the component parameter types
-		for (int paramIndex = 0; paramIndex < paramTypes.size(); ++paramIndex) {
-			if (strcmp(paramTypes[paramIndex], argumentList.dataTypes[paramIndex]) != 0)
-				return nullptr; // Something didn't match, return early
-		}
-
-		// Safe to create
-		return new type_C(engine, argumentList);
+	Component_Creator() {}
+	inline virtual Component * create(const ArgumentList & argumentList) {
+		return type_C::Create(argumentList);
 	}
-};
 
+};
 
 #endif // COMPONENT_H

@@ -19,10 +19,6 @@ class Model_Static_C : public Geometry_C
 public:
 	// Interface implementations
 	static const char * GetName() { return "Static_Model"; }
-	static std::vector<const char *> GetParamTypes() {
-		static std::vector<const char *> params = { "string", "uint", "transform" };
-		return params;
-	}
 	virtual bool isLoaded() const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual bool containsPoint(const glm::vec3 & point) const;
@@ -40,14 +36,15 @@ protected:
 	// (de)Constructors
 	/** Destroys a static model component. */
 	~Model_Static_C();
-	/** Construct by means of an argument list. */
-	Model_Static_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructors an animated model component.
 	 * @param	engine		the engine to use
 	 * @param	directory	the model directory
 	 * @param	skinIndex	the skin index to use
 	 * @param	transform	the transform to use */
-	Model_Static_C(Engine * engine, const std::string & filename = "", const unsigned int & skinIndex = 0, const Transform & transform = Transform());
+	Model_Static_C(Engine * engine, const std::string & filename, const unsigned int & skinIndex, const Transform & transform);
+	/** Creates the component from an argument list.
+	 * @param	argumentList	the argument list to construct from */
+	static Model_Static_C * Create(const ArgumentList & argumentList);
 
 
 	// Protected functions

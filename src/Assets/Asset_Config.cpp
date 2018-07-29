@@ -101,9 +101,8 @@ void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, cons
 
 void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const std::string & fullDirectory)
 {
-	std::ifstream file_stream;	
 	try {
-		file_stream.open(fullDirectory);
+		std::ifstream file_stream(fullDirectory);
 		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
 		for (std::string line; std::getline(file_stream, line); ) {
 			if (line.length()) {

@@ -24,10 +24,6 @@ class Light_Point_C : public Lighting_C
 public:
 	// Interface Implementations
 	static const char * GetName() { return "Light_Point"; }
-	static std::vector<const char *> GetParamTypes() {
-		static std::vector<const char *> params = { "vec3", "float", "float", "transform" };
-		return params;
-	}
 	virtual float getImportance(const glm::vec3 & position) const;
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 	virtual void occlusionPass(const unsigned int & type);
@@ -39,15 +35,17 @@ protected:
 	// (de)Constructors
 	/** Destroys a point light component. */
 	~Light_Point_C();
-	/** Construct by means of an argument list. */
-	Light_Point_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructs a point light component.
 	 * @param	engine	the engine to use
 	 * @param	color		the color to use
 	 * @param	intensity	the intensity to use
 	 * @param	radius		the radius to use
 	 * @param	transform	the transform to use */
-	Light_Point_C(Engine * engine, const glm::vec3 & color = glm::vec3(1.0f), const float & intensity = 1.0f, const float & radius = 1.0f, const Transform & transform = Transform());
+	Light_Point_C(Engine * engine, const glm::vec3 & color, const glm::vec2 &intensity_radius, const Transform & transform);
+	/** Creates the component from an argument list.
+	 * @param	argumentList	the argument list to construct from */
+	static Light_Point_C * Create(const ArgumentList & argumentList);
+
 
 	// Protected Functions
 	/** Recalculate matrices. */

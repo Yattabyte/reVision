@@ -19,10 +19,6 @@ class Reflector_C : public Component
 public:
 	// Interface implementations
 	static const char * GetName() { return "Reflector"; }
-	static std::vector<const char *> GetParamTypes() {
-		static std::vector<const char *> params = { "transform" };
-		return params;
-	}
 	virtual bool isVisible(const float & radius, const glm::vec3 & eyePosition) const;
 
 
@@ -37,12 +33,13 @@ protected:
 	// (de)Constructors
 	/** Destroys a reflector component. */
 	~Reflector_C();
-	/** Construct by means of an argument list. */
-	Reflector_C(Engine * engine, const ArgumentList & argumentList);;
 	/** Constructors a reflector component. 
 	 * @param	engine		the engine to use
 	 * @param	transform	the transform to use */
-	Reflector_C(Engine * engine, const Transform & transform = Transform());
+	Reflector_C(Engine * engine, const Transform & transform);
+	/** Creates the component from an argument list.
+	 * @param	argumentList	the argument list to construct from */
+	static Reflector_C * Create(const ArgumentList & argumentList);
 
 
 	// Protected Attributes

@@ -15,15 +15,6 @@ Light_Directional_C::~Light_Directional_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightDirSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Directional_C::Light_Directional_C(Engine * engine, const ArgumentList & argumentList)
- : Light_Directional_C(
-		engine,
-		*(glm::vec3*)argumentList.dataPointers[0],
-		*(float*)argumentList.dataPointers[1],
-		*(Transform*)argumentList.dataPointers[2]
-	) {}
-
-
 Light_Directional_C::Light_Directional_C(Engine * engine, const glm::vec3 & color, const float & intensity, const Transform & transform)
 	: Lighting_C(engine)
 {
@@ -72,6 +63,16 @@ Light_Directional_C::Light_Directional_C(Engine * engine, const glm::vec3 & colo
 	setColor(color);
 	setIntensity(intensity);
 	setTransform(transform);
+}
+
+Light_Directional_C * Light_Directional_C::Create(const ArgumentList & argumentList)
+{
+	return new Light_Directional_C(
+		argumentList.checkParameter<Engine>(0) ? (Engine*)argumentList.dataPointers[0] : nullptr,
+		argumentList.checkParameter<glm::vec3>(1) ? *(glm::vec3*)argumentList.dataPointers[1] : glm::vec3(1.0f),
+		argumentList.checkParameter<float>(2) ? *(float*)argumentList.dataPointers[2] : 1.0f,
+		argumentList.checkParameter<Transform>(3) ? *(Transform*)argumentList.dataPointers[3] : Transform()
+	);
 }
 
 void Light_Directional_C::setColor(const glm::vec3 & color)

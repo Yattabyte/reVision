@@ -224,6 +224,7 @@ void System_World::loadWorld()
 				else if (find(componentLine, "component")) {
 					std::string componentType = "";
 					ArgumentList list;
+					list.pushData("engine", m_engine);
 
 					int curlyBraceCount = 0;
 					for (std::string paramLine; std::getline(file_stream, paramLine); ) {
@@ -277,7 +278,7 @@ void System_World::loadWorld()
 			ecs.createEntity_Manual(components.size(), types.data(), components.data());
 		}
 	}
-
+	
 	m_loaded = false;
 	m_worldChanged = true;
 }

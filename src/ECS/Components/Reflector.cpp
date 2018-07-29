@@ -16,12 +16,6 @@ Reflector_C::~Reflector_C()
 	graphics->m_reflectionSSBO.removeElement(&m_uboIndex);
 }
 
-Reflector_C::Reflector_C(Engine * engine, const ArgumentList & argumentList)
-	: Reflector_C(
-		engine,
-		*(Transform*)argumentList.dataPointers[0]
-	) {}
-
 Reflector_C::Reflector_C(Engine * engine, const Transform & transform)
 	: Component(engine)
 {
@@ -56,6 +50,14 @@ Reflector_C::Reflector_C(Engine * engine, const Transform & transform)
 
 	// Update with passed parameters
 	setTransform(transform);
+}
+
+Reflector_C * Reflector_C::Create(const ArgumentList & argumentList)
+{
+	return new Reflector_C(
+		argumentList.checkParameter<Engine>(0) ? (Engine*)argumentList.dataPointers[0] : nullptr,
+		argumentList.checkParameter<Transform>(1) ? *(Transform*)argumentList.dataPointers[1] : Transform()
+	);
 }
 
 void Reflector_C::setTransform(const Transform & transform)

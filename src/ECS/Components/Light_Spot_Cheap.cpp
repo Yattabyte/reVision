@@ -9,17 +9,7 @@ Light_Spot_Cheap_C::~Light_Spot_Cheap_C()
 	m_engine->getSubSystem<System_Graphics>("Graphics")->m_lightBuffers.m_lightSpotCheapSSBO.removeElement(&m_uboIndex);
 }
 
-Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine, const ArgumentList & argumentList)
-	: Light_Spot_Cheap_C(
-		engine,
-		*(glm::vec3*)argumentList.dataPointers[0],
-		*(float*)argumentList.dataPointers[1],
-		*(float*)argumentList.dataPointers[2],
-		*(float*)argumentList.dataPointers[3],
-		*(Transform*)argumentList.dataPointers[4]
-	) {}
-
-Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color, const float & intensity, const float & radius, const float & cutoff, const Transform & transform)
+Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color, const glm::vec2 &intensity_radius, const float & cutoff, const Transform & transform)
 	: Lighting_C(engine)
 {
 	// Default Parameters
@@ -50,10 +40,21 @@ Light_Spot_Cheap_C::Light_Spot_Cheap_C(Engine * engine, const glm::vec3 & color,
 
 	// Update with passed parameters
 	setColor(color);
-	setIntensity(intensity);
-	setRadius(radius);
+	setIntensity(intensity_radius.x);
+	setRadius(intensity_radius.y);
 	setCutoff(cutoff);
 	setTransform(transform);
+}
+
+Light_Spot_Cheap_C * Light_Spot_Cheap_C::Create(const ArgumentList & argumentList)
+{
+	return new Light_Spot_Cheap_C(
+		argumentList.checkParameter<Engine>(0) ? (Engine*)argumentList.dataPointers[0] : nullptr,
+		argumentList.checkParameter<glm::vec3>(1) ? *(glm::vec3*)argumentList.dataPointers[1] : glm::vec3(1.0f),
+		argumentList.checkParameter<glm::vec2>(2) ? *(glm::vec2*)argumentList.dataPointers[2] : glm::vec2(1.0f),
+		argumentList.checkParameter<glm::vec2>(3) ? *(float*)argumentList.dataPointers[3] : float(1.0f),
+		argumentList.checkParameter<Transform>(4) ? *(Transform*)argumentList.dataPointers[4] : Transform()
+	);
 }
 
 void Light_Spot_Cheap_C::setColor(const glm::vec3 & color)
