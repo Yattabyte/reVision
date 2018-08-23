@@ -27,6 +27,7 @@ public:
 
 	// (de)Constructors
 	~PropShadowing_System() {
+		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 		glDeleteVertexArrays(1, &m_cubeVAO);
 	}
 	PropShadowing_System(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer) : BaseECSSystem() {

@@ -21,6 +21,7 @@ public:
 	// (de)Constructors
 	~PropRendering_System() {
 		glDeleteVertexArrays(1, &m_cubeVAO);
+		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 	}
 	PropRendering_System(Engine * engine, FBO_Base * geometryFBO, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderGeometry) : BaseECSSystem() {
 		// Declare component types used

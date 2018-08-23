@@ -22,6 +22,7 @@ class LightingSpot_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~LightingSpot_System() {
+		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 		if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 		glDeleteVertexArrays(1, &m_coneVAO);
 	}
