@@ -16,6 +16,8 @@ public:
 	/** Virtual Destructor. */
 	~FXAA() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		glDeleteFramebuffers(1, &m_fboID);
+		glDeleteTextures(1, &m_textureID);
 	}
 	/** Constructor. */
 	FXAA(Engine * engine) {
@@ -36,6 +38,24 @@ public:
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
+
+		// Preference Callbacks
+		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+
+
+		// GL loading
+		m_fboID = 0;
+		m_textureID = 0;
+		glCreateFramebuffers(1, &m_fboID);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
+		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
+		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 	}
 
 
@@ -43,19 +63,34 @@ public:
 	virtual void applyEffect(const float & deltaTime) {
 		if (!m_shaderFXAA->existsYet() || !m_quadVAOLoaded)
 			return;
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shaderFXAA->bind();
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Bind for reading by next effect	
+		glBindTextureUnit(0, m_textureID);
+	}
+	
+
+private:
+	// Private Methods
+	/** Resize the frame buffer.
+	@param	size	the new size of the frame buffer */
+	void resize(const glm::ivec2 & size) {
+		m_renderSize = size;
+		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 	}
 
 
-private:
 	// Private Attributes
 	Engine * m_engine;
 	Shared_Asset_Shader m_shaderFXAA;
 	Shared_Asset_Primitive m_shapeQuad;
+	GLuint m_fboID, m_textureID;
+	glm::ivec2 m_renderSize;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;

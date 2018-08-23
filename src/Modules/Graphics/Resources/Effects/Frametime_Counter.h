@@ -45,13 +45,6 @@ public:
 		resize(m_renderSize);
 	}
 
-	
-	// Public Methods
-	void resize(const glm::ivec2 &s)	{
-		m_renderSize = s;
-		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
-	}
-
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) {
@@ -95,6 +88,13 @@ public:
 
 
 private:
+	// Private Methods
+	void resize(const glm::ivec2 &s) {
+		m_renderSize = s;
+		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
+	}
+
+
 	// Private Attributes
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader;

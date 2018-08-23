@@ -196,7 +196,7 @@ protected:
 		m_shader_Lighting->bind();										// Shader (point)
 		m_lightingFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textures[0]);				// Shadow map(linear depth texture)
+		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);				// Shadow map(linear depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer

@@ -29,7 +29,7 @@ public:
 	static Shared_Asset_Primitive Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Generates a vertex array object, formed to match primitives' object data.
 	@return					a vertex array object resident on the GPU */
-	static GLuint Generate_VAO();
+	static const GLuint Generate_VAO();
 	/** Updates a vertex array object's state with this primitives' data. 
 	@brief					using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
 	@param	vaoID			the vertex array object's ID on the GPU */	

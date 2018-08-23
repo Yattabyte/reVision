@@ -5,6 +5,7 @@
 VisualFX::~VisualFX()
 {
 	if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+	glDeleteFramebuffers(1, &m_fbo_GB);
 }
 
 VisualFX::VisualFX()

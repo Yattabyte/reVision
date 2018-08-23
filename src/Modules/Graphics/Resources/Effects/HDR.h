@@ -16,8 +16,8 @@ public:
 	/** Virtual Destructor. */
 	~HDR() {
 		// Destroy OpenGL objects
-		glDeleteTextures(1, &m_texture);
-		glDeleteFramebuffers(1, &m_fbo);
+		glDeleteFramebuffers(1, &m_fboID);
+		glDeleteTextures(1, &m_textureID);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
@@ -26,8 +26,6 @@ public:
 	HDR(Engine * engine) {
 		// Default Parameters
 		m_engine = engine;
-		m_fbo = 0;
-		m_texture = 0;
 
 		// Asset Loading
 		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
@@ -49,18 +47,20 @@ public:
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 
 		// GL loading
-		glCreateFramebuffers(1, &m_fbo);
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_texture);
-		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureParameteri(m_texture, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_texture, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_texture, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_texture, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
-		glNamedFramebufferDrawBuffer(m_fbo, GL_COLOR_ATTACHMENT0);
+		m_fboID = 0;
+		m_textureID = 0;
+		glCreateFramebuffers(1, &m_fboID);
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
+		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
+		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fbo, GL_FRAMEBUFFER);
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
 			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
@@ -70,7 +70,7 @@ public:
 	virtual void applyEffect(const float & deltaTime) {
 		if (!m_shaderHDR->existsYet() || !m_quadVAOLoaded)
 			return;
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		m_shaderHDR->bind();
@@ -80,24 +80,23 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);	
 		
 		// Bind for reading by next effect	
-		glBindTextureUnit(0, m_texture);
-	}
-
-	
-	// Public Methods
-	/** Resize the frame buffer. 
-	@param	size	the new size of the frame buffer */
-	void resize(const glm::ivec2 & size) {
-		m_renderSize = size;
-		glTextureImage2DEXT(m_texture, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glNamedFramebufferTexture(m_fbo, GL_COLOR_ATTACHMENT0, m_texture, 0);
+		glBindTextureUnit(0, m_textureID);
 	}
 
 
 private:
+	// Private Methods
+	/** Resize the frame buffer.
+	@param	size	the new size of the frame buffer */
+	void resize(const glm::ivec2 & size) {
+		m_renderSize = size;
+		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
+	}
+
+
 	// Private Attributes
-	GLuint m_fbo;
-	GLuint m_texture;
+	GLuint m_fboID, m_textureID;
 	glm::ivec2 m_renderSize; 
 	Engine * m_engine;
 	Shared_Asset_Shader m_shaderHDR;

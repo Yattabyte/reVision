@@ -8,43 +8,50 @@
 
 /** A framebuffer, formatted for storing directional light shadows, 4 at a time (parallel split cascaded shadow maps). */
 struct FBO_Shadow_Directional {
-	GLuint m_fboID = 0, m_textures[3];
+	GLuint m_fboID, m_textureIDS[3];
 	glm::ivec2 m_size;
+	~FBO_Shadow_Directional() {
+		glDeleteFramebuffers(1, &m_fboID);
+		glDeleteTextures(3, m_textureIDS);
+	}
 	FBO_Shadow_Directional() {
+		m_fboID = 0;
+		for each (GLuint & id in m_textureIDS)
+			id = 0;
 		glCreateFramebuffers(1, &m_fboID);
-		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textures);
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
 		resize(glm::vec2(1), 4);
-		glTextureParameteri(m_textures[0], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[0], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[0], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textures[0], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textures[1], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[1], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[1], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textures[1], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textures[2], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[2], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textures[2], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_textures[2], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_textures[2], GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
-		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
-		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT1, m_textures[1], 0);
-		glNamedFramebufferTexture(m_fboID, GL_DEPTH_ATTACHMENT, m_textures[2], 0);
+		glTextureParameteri(m_textureIDS[0], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[0], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[0], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureIDS[0], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureIDS[1], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[1], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[1], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureIDS[1], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureIDS[2], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[2], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textureIDS[2], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textureIDS[2], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textureIDS[2], GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureIDS[0], 0);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT1, m_textureIDS[1], 0);
+		glNamedFramebufferTexture(m_fboID, GL_DEPTH_ATTACHMENT, m_textureIDS[2], 0);
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
 		glNamedFramebufferDrawBuffers(m_fboID, 2, drawBuffers);
 	}
 	void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
 		m_size = size;
-		glTextureImage3DEXT(m_textures[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage3DEXT(m_textures[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage3DEXT(m_textures[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
 	void clear(const GLint & zOffset) {
 		const float clearDepth(1.0f);
 		const glm::vec3 clear(0.0f);
-		glClearTexSubImage(m_textures[0], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_RGB, GL_FLOAT, &clear);
-		glClearTexSubImage(m_textures[1], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_RGB, GL_FLOAT, &clear);
-		glClearTexSubImage(m_textures[2], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
+		glClearTexSubImage(m_textureIDS[0], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_RGB, GL_FLOAT, &clear);
+		glClearTexSubImage(m_textureIDS[1], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_RGB, GL_FLOAT, &clear);
+		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, 4, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	}
 	void bindForWriting() {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);

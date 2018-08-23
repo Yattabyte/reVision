@@ -45,7 +45,9 @@ public:
 		C_SHADOW_SIZE_SPOT,
 		C_SHADOW_QUALITY,
 
-		C_ENVMAP_SIZE
+		C_ENVMAP_SIZE,
+
+		C_SSR
 	};
 
 
@@ -72,7 +74,9 @@ public:
 			"C_SHADOW_SIZE_SPOT",
 			"C_SHADOW_QUALITY",
 
-			"C_ENVMAP_SIZE"
+			"C_ENVMAP_SIZE",
+
+			"C_SSR"
 		};
 		return preferenceStrings;
 	};

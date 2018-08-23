@@ -81,7 +81,7 @@ void Asset_Primitive::finalize(Engine * engine)
 	Asset::finalize(engine);
 }
 
-GLuint Asset_Primitive::Generate_VAO()
+const GLuint Asset_Primitive::Generate_VAO()
 {
 	GLuint vaoID = 0;
 

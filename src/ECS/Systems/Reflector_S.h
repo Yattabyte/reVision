@@ -195,20 +195,20 @@ protected:
 					const float write_size = max(1.0f, (floor(m_envmapSize / pow(2.0f, r))));
 					glViewport(0, 0, write_size, write_size);
 					m_shaderConvolute->Set_Uniform(1, r / 5.0f);
-					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_texture, r);
+					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);
 
 					// Ensure we are reading from MIP level r - 1
-					glTextureParameterf(m_envmapFBO.m_texture, GL_TEXTURE_BASE_LEVEL, r - 1.0f);
-					glTextureParameterf(m_envmapFBO.m_texture, GL_TEXTURE_MAX_LEVEL, r - 1.0f);
+					glTextureParameterf(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, r - 1.0f);
+					glTextureParameterf(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, r - 1.0f);
 
 					// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
 					glDrawArraysIndirect(GL_TRIANGLES, 0);
 				}
 
 				// Reset texture, so it can be used for other component reflections
-				glTextureParameteri(m_envmapFBO.m_texture, GL_TEXTURE_BASE_LEVEL, 0);
-				glTextureParameteri(m_envmapFBO.m_texture, GL_TEXTURE_MAX_LEVEL, 5);
-				glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_texture, 0);
+				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, 0);
+				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, 5);
+				glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, 0);
 				reflector->m_updateTime = glfwGetTime();
 			}
 		}			
@@ -234,7 +234,7 @@ protected:
 		m_shaderLighting->bind();										// Shader (spot)
 		m_reflectionFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
-		glBindTextureUnit(4, m_envmapFBO.m_texture);					// Reflection map (environment texture)
+		glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
 		m_brdfMap->bind(5);												// Environment BRDF
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer

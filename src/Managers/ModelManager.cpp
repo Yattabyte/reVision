@@ -6,6 +6,8 @@
 ModelManager::~ModelManager()
 {
 	/** @todo destructor */
+	glDeleteBuffers(NUM_VERTEX_ATTRIBUTES, m_vboIDS);
+	glDeleteVertexArrays(1, &m_vaoID);
 }
 
 ModelManager::ModelManager()

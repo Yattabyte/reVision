@@ -16,8 +16,8 @@ Asset_Texture::~Asset_Texture()
 
 Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename)
 {
-	m_glTexID = GL_TEXTURE_2D;
-	m_type = 0;
+	m_glTexID = 0;
+	m_type = GL_TEXTURE_2D;
 	m_size = glm::vec2(0);
 	m_pixelData = nullptr;
 	m_mipmap = false;

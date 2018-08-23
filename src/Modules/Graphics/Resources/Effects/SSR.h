@@ -18,6 +18,9 @@ public:
 	/** Virtual Destructor. */
 	~SSR() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		glDeleteFramebuffers(1, &m_fboID);
+		glDeleteTextures(1, &m_textureID);
+		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
 	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
@@ -37,6 +40,7 @@ public:
 		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		m_enabled = m_engine->addPrefCallback(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Primitive Construction
 		m_quadVAOLoaded = false;
@@ -59,8 +63,8 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		m_fboID = 0;
-		glCreateFramebuffers(1, &m_fboID);
 		m_textureID = 0;
+		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -81,7 +85,7 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) {
-		if (!m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
+		if (!m_enabled || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -172,6 +176,7 @@ private:
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 	FBO_Base * m_geometryFBO, * m_lightingFBO, *m_reflectionFBO;
+	bool m_enabled;
 };
 
 #endif // SSR_H

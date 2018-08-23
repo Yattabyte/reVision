@@ -21,6 +21,7 @@
 #include "Modules\Graphics\Resources\Effects\Bloom.h"
 #include "Modules\Graphics\Resources\Effects\HDR.h"
 #include "Modules\Graphics\Resources\Effects\FXAA.h"
+#include "Modules\Graphics\Resources\Effects\To_Screen.h"
 #include "Modules\Graphics\Resources\Effects\Frametime_Counter.h"
 
 
@@ -99,8 +100,8 @@ void Graphics_Module::initialize()
 	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 	m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
 	m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_lightingFBO.attachTexture(m_geometryFBO.m_textures[3], GL_DEPTH_STENCIL_ATTACHMENT);
-	m_reflectionFBO.attachTexture(m_geometryFBO.m_textures[3], GL_DEPTH_STENCIL_ATTACHMENT);
+	m_lightingFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
+	m_reflectionFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
 	GLint size = sizeof(Camera_Buffer), offsetAlignment = 0;
 	glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
 	m_cameraBuffer.setOffsetAlignment(size % offsetAlignment);
@@ -124,6 +125,7 @@ void Graphics_Module::initialize()
 	m_fxTechs.push_back(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
 	m_fxTechs.push_back(new HDR(m_engine));
 	m_fxTechs.push_back(new FXAA(m_engine));
+	m_fxTechs.push_back(new To_Screen(m_engine));
 	m_fxTechs.push_back(new Frametime_Counter(m_engine));
 
 	auto & world = m_engine->getWorldModule();
