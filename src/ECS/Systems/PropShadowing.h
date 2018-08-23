@@ -26,7 +26,9 @@ public:
 
 
 	// (de)Constructors
-	~PropShadowing_System() {}
+	~PropShadowing_System() {
+		glDeleteVertexArrays(1, &m_cubeVAO);
+	}
 	PropShadowing_System(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer) : BaseECSSystem() {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);

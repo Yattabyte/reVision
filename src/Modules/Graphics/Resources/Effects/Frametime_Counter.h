@@ -17,6 +17,7 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Frametime_Counter() {
+		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);		

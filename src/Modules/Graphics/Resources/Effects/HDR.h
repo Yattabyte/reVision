@@ -18,6 +18,7 @@ public:
 		// Destroy OpenGL objects
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
+		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);

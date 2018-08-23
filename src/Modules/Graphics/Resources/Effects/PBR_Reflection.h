@@ -17,6 +17,7 @@ public:
 	/** Virtual Destructor. */
 	~PBR_Reflection() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
 	PBR_Reflection(Engine * engine, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {

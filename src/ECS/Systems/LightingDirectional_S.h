@@ -23,6 +23,7 @@ public:
 	// (de)Constructors
 	~LightingDirectional_System() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	LightingDirectional_System(
 		Engine * engine, 

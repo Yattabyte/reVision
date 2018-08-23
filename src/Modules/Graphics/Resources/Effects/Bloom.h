@@ -22,7 +22,8 @@ public:
 	~Bloom() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
-		glDeleteTextures(2, m_textureIDS_GB);
+		glDeleteTextures(2, m_textureIDS_GB); 
+		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);

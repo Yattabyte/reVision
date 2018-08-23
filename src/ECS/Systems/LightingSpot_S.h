@@ -23,6 +23,7 @@ public:
 	// (de)Constructors
 	~LightingSpot_System() {
 		if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
+		glDeleteVertexArrays(1, &m_coneVAO);
 	}
 	LightingSpot_System(
 		Engine * engine, 

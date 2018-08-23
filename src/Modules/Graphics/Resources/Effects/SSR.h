@@ -21,6 +21,7 @@ public:
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 		glDeleteTextures(1, &m_bayerID);
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
 	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {

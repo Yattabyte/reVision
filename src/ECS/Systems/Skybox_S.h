@@ -20,7 +20,8 @@ class Skybox_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~Skybox_System() {
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);		
+		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);	
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Skybox_System(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) : BaseECSSystem() {
 		// Declare component types used

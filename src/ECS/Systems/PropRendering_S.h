@@ -19,7 +19,9 @@
 class PropRendering_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
-	~PropRendering_System() {}
+	~PropRendering_System() {
+		glDeleteVertexArrays(1, &m_cubeVAO);
+	}
 	PropRendering_System(Engine * engine, FBO_Base * geometryFBO, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderGeometry) : BaseECSSystem() {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);

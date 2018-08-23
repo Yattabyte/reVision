@@ -24,6 +24,7 @@ public:
 	// (de)Constructors
 	~LightingPoint_System() {
 		if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
+		glDeleteVertexArrays(1, &m_sphereVAO);
 	}
 	LightingPoint_System(
 		Engine * engine, 

@@ -21,6 +21,8 @@ public:
 	// (de)Constructors
 	~Reflector_System() {
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
+		glDeleteVertexArrays(1, &m_cubeVAO);
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Reflector_System(
 		Engine * engine,

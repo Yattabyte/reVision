@@ -16,6 +16,7 @@ public:
 	/** Virtual Destructor. */
 	~To_Screen() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
 	To_Screen(Engine * engine) {
