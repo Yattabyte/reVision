@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.8.D";
+constexpr char ENGINE_VERSION[]	= "1.8.E";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -120,22 +120,19 @@ private:
 	void updateInput(const float & deltaTime);
 
 
-	// Private Managers
-	MessageManager m_messageManager;
-	ModelManager m_modelManager;
-	MaterialManager m_materialManager;
-	AssetManager m_AssetManager;
-
-
 	// Private Attributes
 	float m_lastTime; 
 	float m_frameAccumulator;
 	int m_frameCount;
+	AssetManager m_AssetManager;
+	MessageManager m_messageManager;
+	PreferenceState	m_PreferenceState;
+	Rendering_Context m_renderingContext;
+	MaterialManager m_materialManager;
+	ModelManager m_modelManager;
 	ECS	m_ecs;
 	ActionState	m_ActionState;
 	InputBinding m_inputBindings;
-	PreferenceState	m_PreferenceState;
-	Rendering_Context m_renderingContext;
 
 
 	// Private Modules

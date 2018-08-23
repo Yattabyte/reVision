@@ -22,12 +22,12 @@ Engine::~Engine()
 {
 	reportMessage("Shutting down...");
 	removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
-	reportMessage("...done!\n");
+	reportMessage("...done!");
 }
 
 Engine::Engine() : 
 	// Initialize engine-dependent members first
-	m_AssetManager(this), m_messageManager(), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_moduleGraphics(this), m_moduleWorld(this)
+	m_AssetManager(this), m_messageManager(), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_materialManager(), m_moduleGraphics(this), m_moduleWorld(this)
 {
 	// Default Parameters
 	m_lastTime = 0;
@@ -51,7 +51,6 @@ Engine::Engine() :
 	m_moduleGraphics.initialize();
 	m_moduleWorld.initialize();
 	m_modelManager.initialize();
-	m_materialManager.initialize();
 
 	reportMessage("**************************************************");
 	reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
@@ -69,7 +68,7 @@ Engine::Engine() :
 
 	reportMessage("Loading World...");
 	m_moduleWorld.loadWorld();
-	reportMessage("...done!\n");
+	reportMessage("...done!");
 }
 
 void Engine::tick()

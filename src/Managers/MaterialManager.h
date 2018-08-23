@@ -32,8 +32,6 @@ public:
 	
 
 	// Public Functions
-	/** Initialzie the material manager. */
-	void initialize();
 	/** Make this buffer active. */
 	void bind();
 	/** Generates a material ID 
@@ -52,12 +50,11 @@ public:
 
 private:
 	// Private Attributes
-	bool m_Initialized;
 	std::shared_mutex m_DataMutex;
 	unsigned int m_Count;
 	std::deque<unsigned int> m_FreeSpots;
 	std::vector<GLuint64> m_WorkOrders;
-	DynamicBuffer * m_buffer;
+	DynamicBuffer m_buffer;
 };
 
 #endif // MATERIALMANAGER_H

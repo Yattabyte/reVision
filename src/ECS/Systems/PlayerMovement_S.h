@@ -19,7 +19,6 @@ public:
 		// Declare component types used
 		addComponentType(BasicPlayer_Component::ID);
 
-
 		// Attribute Sharing
 		m_engine = engine;
 	}

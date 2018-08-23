@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PBR_REFLECTION_H
-#define PBR_REFLECTION_H
+#ifndef JOIN_REFLECTIONS_H
+#define JOIN_REFLECTIONS_H
 
 #include "Modules\Graphics\Resources\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
@@ -11,16 +11,16 @@
 
 
 /** A post-processing technique for writing the final scene reflections back into the lighting. */
-class PBR_Reflection : public Effect_Base {
+class Join_Reflections : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~PBR_Reflection() {
+	~Join_Reflections() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	PBR_Reflection(Engine * engine, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
+	Join_Reflections(Engine * engine, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
 		// Default Parameters
 		m_engine = engine;
 		m_lightingFBO = lightingFBO;
@@ -71,4 +71,4 @@ private:
 	FBO_Base * m_lightingFBO, * m_reflectionFBO;
 };
 
-#endif // PBR_REFLECTION_H
+#endif // JOIN_REFLECTIONS_H
