@@ -2,99 +2,100 @@
 #ifndef ECS_H
 #define ECS_H
 
-#include "ECS\Components\Component.h"
-#include "ECS\Entity.h"
-#include "ECS\ECSmessage.h"
-#include "Systems\World\Visibility_Token.h"
-#include "Utilities\MappedChar.h"
-#include <deque>
-#include <shared_mutex>
+#include "ECS\Components\ecsComponent.h"
+#include "ECS\Systems\ecsSystem.h"
+#include <map>
+#include <vector>
 
 
-class Engine;
-
-/**
- * A utility that handles the creation and storage of all level components and entities.
- **/
+/** The core class behind the functionality of an ECS framework. */
 class ECS {
 public:
-	// (de)Constructors
-	/** Destroy the ECS. */
+	// Public (de)Constructors
+	ECS() {}
 	~ECS();
-	/** Construct the ECS.
-	 * @param	engine	pointer to the engine pointer */
-	ECS(Engine * engine);
+	ECS(const ECS& other) { (void)other; }
+	void operator=(const ECS& other) { (void)other; }
 
-	
-	// Public Methods	
-	/** Creates an entity with the supplied components
-	 * @param	args			a comma delineated list of component pointers to add to the entity
-	 * @return					the newely created entity */	
-	template <typename... Args>
-	inline Entity * createEntity(Args&&... ax) {
-		const unsigned int count	= sizeof...(Args);
-		const char * types[]		= { ax->GetName()... };
-		Component * components[]	= { ax... };
-		return createEntity_Manual(count, types, components);
-	}
-	/** Creates an entity with the supplied components
-	* @param	args			a comma delineated list of component pointers to add to the entity
-	* @return					the newely created entity */
-	inline Entity * createEntity_Manual(const unsigned int & count, const char** types, Component ** components) {
-		Entity * entity = new Entity(count, types, components);
 
-		std::unique_lock<std::shared_mutex> write_lock(m_dataLock);
-		m_levelEntities.push_back(entity);
-		return entity;
+	// Public Entity Functions
+	/** Construct an entity from the array of components and IDS*/
+	EntityHandle makeEntity(BaseECSComponent ** components, const unsigned int * componentIDS, const size_t & numComponents);
+	/** Construct an entity from the array of component references.
+	@note Variadic
+	@param	args	all components to use for this entity. */
+	template <class...Args>
+	inline EntityHandle makeEntity(Args&...args) {
+		BaseECSComponent * components[] = { &args... };
+		unsigned int componentIDS[] = { Args::ID... };
+		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
-	/** Deletes the entity provided.
-  	 * @param	entity				the entity to delete */
-	void deleteEntity(Entity * entity);
-	/** Creates a component of the supplied type and returns its pointer.
-	 * @param	type				the type of component to create
-	 * @param	argumentList		a completed argument list to pass to the component's constructor
-	 * @return						the newely created component */	
-	Component * createComponent(const char * type, const ArgumentList & argumentList);
-	/** Deletes the component provided.
-  	 * @param	component			the component to delete */
-	void deleteComponent(Component * component);	
-	/** Retrieves reference to the level components std::vector-map
-	* @return					the entire level component std::vector-map */
-	VectorMap<Component*> & getComponents();
-	/** Retrieves an array of components that match the category specified.
-	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
-	 * @param	type			the type-name of the component list to retrieve
-	 * @return					the list of components that match the type provided */
-	const std::vector<Component*> & getComponentsByType(const char * type);
-	/** Retrieve and down-cast an array of components that match the category specified.
-	 * @brief					Guaranteed to return at least a zero-length std::vector. Types that don't exist are created.
-	 * @param	type			the name of the component type to retrieve
-	 * @param	<T>				the class-type to cast the components to */
-	template <typename T>
-	const std::vector<T*> getSpecificComponents(const char * type) {
-		// Want to return a copy because this data would need to be locked until done being used at its target otherwise.
-		std::shared_lock<std::shared_mutex> read_lock(getDataLock());
-		return *(std::vector<T*>*)(&getComponentsByType(type));
+	/** Construct an entity from the array of component pointers.
+	@note Variadic
+	@param	args	all components to use for this entity. */
+	template <class...Args>
+	inline EntityHandle makeEntity(Args*...args) {
+		BaseECSComponent * components[] = { args... };
+		unsigned int componentIDS[] = { Args::ID... };
+		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
-	/** Removes all components from the system. */
-	void flush();	
-	/** Checks the map to see if it has any entries of a specific type.
-	 * @param	key				the type to check
-	 * @return					true if it finds the key in the map, false otherwise */
-	bool find(const char * key) const;
-	/** Returns the data lock for the system. 
-	 * @return					the std::mutex for this class */
-	std::shared_mutex & getDataLock();
+	/** Remove an entity.
+	@param	handle	the entity to remove. */
+	void removeEntity(const EntityHandle & handle);
+	// Public BaseECSComponent Functions
+	/** Adds a component to an entity.
+	@param	entity				the entity to add the component to.
+	@param	component			the component being added. */
+	template <typename BaseECSComponent>
+	inline void addComponent(const EntityHandle & entity, BaseECSComponent * component) {
+		addComponentInternal(entity, handleToEntity(entity), BaseECSComponent::ID, component);
+	}
+	/** Removes a component from an entity.
+	@param	entity				the entity to remove from.
+	@param	<BaseECSComponent>	the category of component being removed. 
+	@return						true on successful removal, false otherwise. */
+	template <typename BaseECSComponent>
+	inline bool removeComponent(const EntityHandle & entity) {
+		return removeComponentInternal(entity, BaseECSComponent::ID);
+	}
+	/** Retrieve a component.
+	@param	entity				the entity to retrieve from.
+	@param	<BaseECSComponent>	the category of component being retrieved. */ 
+	template <typename BaseECSComponent>
+	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
+		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), components[BaseECSComponent::ID], BaseECSComponent::ID);
+	}
+
+
+	// Public System Functions
+	/** Update the components of all systems provided.
+	@param	systems				the systems to update.
+	@param	deltaTime			the delta time. */
+	void updateSystems(ECSSystemList & systems, const float & deltaTime);
 
 
 private:
-	// Private Attributes
-	bool m_Initialized;
-	MappedChar<Component_Creator_Base*> m_creatorMap;
-	VectorMap<Component*> m_levelComponents;
-	std::vector<Entity*> m_levelEntities;
-	mutable std::shared_mutex m_dataLock;
-	Engine * m_engine;
+	// Private Functions
+	inline std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >* handleToRawType(const EntityHandle & handle) {
+		return (std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >*)handle;
+	}
+	inline unsigned int handleToEntityIndex(const EntityHandle & handle) {
+		return handleToRawType(handle)->first;
+	}
+	inline std::vector<std::pair<unsigned int, unsigned int> >& handleToEntity(const EntityHandle & handle) {
+		return handleToRawType(handle)->second;
+	}
+	void deleteComponent(const unsigned int & componentID, const unsigned int & index);
+	void addComponentInternal(EntityHandle handle, std::vector<std::pair<unsigned int, unsigned int>> & entity, const unsigned int & componentID, BaseECSComponent * component);
+	bool removeComponentInternal(EntityHandle handle, const unsigned int & componentID);
+	BaseECSComponent * getComponentInternal(std::vector<std::pair<unsigned int, unsigned int>>& entityComponents, std::vector<unsigned int> & array, const unsigned int & componentID);
+	void updateSystemWithMultipleComponents(ECSSystemList & systems, const unsigned int & index, const float & deltaTime, const std::vector<unsigned int> & componentTypes);
+	unsigned int findLeastCommonComponent(const std::vector<unsigned int> & componentTypes, const std::vector<unsigned int> & componentFlags);
+
+
+	// Private attributes
+	std::map<unsigned int, std::vector<unsigned int>> components;
+	std::vector < std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >* > entities;	
 };
 
 #endif // ECS_H

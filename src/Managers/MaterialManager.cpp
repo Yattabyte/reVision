@@ -63,3 +63,9 @@ void MaterialManager::parseWorkOrders()
 		glMakeTextureHandleResidentARB(handle);
 	m_WorkOrders.clear();
 }
+
+const bool MaterialManager::finishedWork()
+{
+	std::shared_lock<std::shared_mutex> readGuard(m_DataMutex);
+	return !bool(m_WorkOrders.size());
+}

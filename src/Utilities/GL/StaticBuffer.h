@@ -2,12 +2,12 @@
 #ifndef STATICBUFFER_H
 #define STATICBUFFER_H
 
-
 #include "GL\glew.h"
 #include <utility>
 
-class StaticBuffer
-{
+
+/** Encapsulates an OpenGL buffer that is fixed in size. */
+class StaticBuffer {
 public:
 	// Public (de)Constructors
 	~StaticBuffer() {
@@ -45,34 +45,34 @@ public:
 
 	// Public Methods
 	/** Bind this buffer.
-	* @param	target	the target type of this buffer */
+	@param	target	the target type of this buffer */
 	void bindBuffer(const GLenum & target) const {
 		glBindBuffer(target, m_bufferID);
 	}
 	/** Bind this buffer to a particular binding point for shaders.
-	 * @param	target	the target type of this buffer
-	 * @param	index	the binding point index to use */
+	@param	target	the target type of this buffer
+	@param	index	the binding point index to use */
 	void bindBufferBase(const GLenum & target, const GLuint & index) const {
 		glBindBufferBase(target, index, m_bufferID);
 	}
 	/** Cast this buffer's pointer to a type, as to allow modifying its underlying data. 
-	 * @return			the pointer to this data in memory, cast to the type specified
-	 * @param	<T>		the type to cast this to */
+	@return			the pointer to this data in memory, cast to the type specified
+	@param	<T>		the type to cast this to */
 	template <typename T>
 	T castPointer() {
 		return reinterpret_cast<T>(m_bufferPtr);
 	}
 	/** Write the supplied data to GPU memory
-	 * @param	offset	byte offset from the beginning
-	 * @param	size	the size of the data to write
-	 * @param	data	the data to write */
+	@param	offset	byte offset from the beginning
+	@param	size	the size of the data to write
+	@param	data	the data to write */
 	void write(const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
 		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr) + offset, data, size);
 	}
 	/** Write the supplied data to GPU memory
-	* @param	offset	byte offset from the beginning
-	* @param	size	the size of the data to write
-	* @param	data	the data to write */
+	@param	offset	byte offset from the beginning
+	@param	size	the size of the data to write
+	@param	data	the data to write */
 	void write_immediate(const GLuint & offset, const GLsizeiptr & size, const void * data) {
 		glNamedBufferSubData(m_bufferID, offset, size, data);
 	}

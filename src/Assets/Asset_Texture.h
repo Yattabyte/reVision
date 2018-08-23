@@ -11,10 +11,8 @@ class Engine;
 class Asset_Texture;
 typedef std::shared_ptr<Asset_Texture> Shared_Asset_Texture;
 
-/**
- * An encapsulation of an OpenGL texture object.\n
- * Supports MIP-mapping and anisotropic filtering.
- **/
+/** An encapsulation of an OpenGL texture object.
+Supports MIP-mapping and anisotropic filtering. */
 class Asset_Texture : public Asset
 {
 public:
@@ -23,21 +21,17 @@ public:
 
 
 	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Texture & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container
-	 * @param	filename		the filename to use
-	 * @param	type			the texture type (2D, 3D, CUBEMAP, etc)
-	 * @param	mipmap			use mipmaps
-	 * @param	anis			use 16x anistropic filtering
-	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Texture & userAsset, const std::string & filename, const GLuint & type = GL_TEXTURE, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	type			the texture type (2D, 3D, CUBEMAP, etc)
+	@param	mipmap			use mipmaps
+	@param	anis			use 16x anistropic filtering
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	static Shared_Asset_Texture Create(Engine * engine, const std::string & filename, const GLuint & type = GL_TEXTURE, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit
-	 * @param	texture_unit	the texture unit to make this texture active at */
+	@param	texture_unit	the texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
 
 	
@@ -58,10 +52,10 @@ private:
 
 
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Texture & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Texture & userAsset);
+	// Interface Implementation
+	virtual void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & fullDirectory);
+	virtual void finalize(Engine * engine);
 
 
 	// Private Attributes

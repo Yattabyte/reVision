@@ -10,17 +10,14 @@
 #include "glm\gtc\matrix_access.hpp"
 
 
-/**
- * A 3D transformation object. 
- * Takes in position, orientation, and scaling attributes, and calculates a transformation matrix.
- **/
-struct Transform 
-{
+/** A 3D transformation object. 
+Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. */
+struct Transform {
 	// (de)Constructors
 	/** Constructs a transformation object with any of the supplied parameters.
-	 * @param position		the desired position
-	 * @param orientation	the desired orientation
-	 * @param scale			the desired scale */
+	@param position		the desired position
+	@param orientation	the desired orientation
+	@param scale			the desired scale */
 	Transform(const glm::vec3 &position = glm::vec3(0.0f), const glm::quat &orientation = glm::quat(1, 0, 0, 0), const glm::vec3 &scale = glm::vec3(1.0f)) {
 		m_position = position;
 		m_orientation = orientation;

@@ -12,9 +12,7 @@ class Engine;
 class Asset_Primitive;
 typedef std::shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
 
-/**
- * A basic geometric shape to be used in basic visual processing, such as a quad or a sphere.
- **/
+/** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
 class Asset_Primitive : public Asset
 {
 public:
@@ -23,25 +21,21 @@ public:
 
 
 	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Primitive & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container
-	 * @param	filename		the filename to use
-	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & filename, const bool & threaded = true);
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread 
+	@return					the desired asset */
+	static Shared_Asset_Primitive Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Generates a vertex array object, formed to match primitives' object data.
-	 * @return			a vertex array object resident on the GPU */
+	@return					a vertex array object resident on the GPU */
 	static GLuint Generate_VAO();
 	/** Updates a vertex array object's state with this primitives' data. 
-	 * @brief			using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
-	 * @param	vaoID	the vertex array object's ID on the GPU */	
+	@brief					using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
+	@param	vaoID			the vertex array object's ID on the GPU */	
 	void updateVAO(const GLuint & vaoID);
 	/** Returns the vertex-count of this object. 
-	 * @return			vertex-count of this object */
+	@return					vertex-count of this object */
 	size_t getSize();
 	
 	
@@ -58,10 +52,10 @@ private:
 
 
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Primitive & userAsset);
+	// Interface Implementation
+	virtual void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & fullDirectory);
+	virtual void finalize(Engine * engine);
 
 
 	// Private Attributes

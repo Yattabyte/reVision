@@ -2,13 +2,14 @@
 #include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 #include <fstream>
+
 #define EXT_CONFIG ".cfg"
 #define DIRECTORY_CONFIG Engine::Get_Current_Dir() + "\\Configs\\"
 #define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
 
-/** Attempts to retrieve a std::string between quotation marks "<std::string>"
- * @return	the std::string between quotation marks*/
+/** Attempts to retrieve a std::string between quotation marks "<std::string>".
+@return	the std::string between quotation marks */
 inline std::string get_between_quotes(std::string & s)
 {
 	std::string output = s;
@@ -26,9 +27,9 @@ inline std::string get_between_quotes(std::string & s)
 }
 
 /** Checks if the supplied value is a parameter in the CFG_STRING list.
- * @param	s	the std::string to check for in the list
- * @param	m_strings	the list of strings to check for an occurrence of our value within
- * @return	the index of the value in the list if found, otherwise -1. */
+@param	s			the std::string to check for in the list
+@param	m_strings	the list of strings to check for an occurrence of our value within
+@return				the index of the value in the list if found, otherwise -1 */
 inline int find_CFG_Property(const std::string & s, const std::vector<std::string> & m_strings)
 {
 	std::string UPPER_STRING;
@@ -49,88 +50,62 @@ Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::
 {
 }
 
-/** Returns a default asset that can be used whenever an asset doesn't exist, is corrupted, or whenever else desired.
-* @brief Uses hard-coded values
-* @param	asset	a shared pointer to fill with the default asset */
-void Asset_Config::CreateDefault(Engine * engine, Shared_Asset_Config & userAsset)
+Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 
-	// Check if a copy already exists
-	if (assetManager.queryExistingAsset(userAsset, "defaultConfig"))
-		return;
+	// Create the asset or find one that already exists
+	auto userAsset = assetManager.queryExistingAsset<Asset_Config>(filename);
+	if (!userAsset) {
+		userAsset = assetManager.createNewAsset<Asset_Config>(filename, cfg_strings);
+		auto & assetRef = *userAsset.get();
 
-	// Create hard-coded alternative
-	assetManager.createNewAsset(userAsset, "defaultConfig", std::vector<std::string>());
+		// Check if the file/directory exists on disk
+		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+		if (!Engine::File_Exists(fullDirectory)) {
+			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+			initFunc = std::bind(&initializeDefault, &assetRef, engine);
+		}
 
-	// Create the asset
-	assetManager.submitNewWorkOrder(userAsset, true,
-		/* Initialization. */
-		[]() {},
-		/* Finalization. */
-		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
-	);
-}
-
-void Asset_Config::Create(Engine * engine, Shared_Asset_Config & userAsset, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
-{
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Check if a copy already exists
-	if (assetManager.queryExistingAsset(userAsset, filename))
-		return;
-
-	// Check if the file/directory exists on disk
-	const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
-	if (!Engine::File_Exists(fullDirectory)) {
-		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-		CreateDefault(engine, userAsset);
-		return;
+		// Submit the work order
+		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
-
-	// Create the asset
-	assetManager.submitNewAsset(userAsset, threaded,
-		/* Initialization. */
-		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
-		/* Finalization. */
-		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
-		/* Constructor Arguments. */
-		filename, cfg_strings
-	);
+	return userAsset;
 }
 
-void Asset_Config::Initialize(Engine * engine, Shared_Asset_Config & userAsset, const std::string & fullDirectory)
+void Asset_Config::initializeDefault(Engine * engine)
+{
+	// Create hard-coded alternative	
+}
+
+void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory)
 {
 	try {
 		std::ifstream file_stream(fullDirectory);
-		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		for (std::string line; std::getline(file_stream, line); ) {
 			if (line.length()) {
 				const std::string cfg_property = get_between_quotes(line);
-				int spot = find_CFG_Property(cfg_property, userAsset->m_strings);
+				int spot = find_CFG_Property(cfg_property, m_strings);
 				if (spot >= 0) {
 					std::string cfg_value = get_between_quotes(line);
-					userAsset->setValue(spot, atof(cfg_value.c_str()));
+					setValue(spot, atof(cfg_value.c_str()));
 				}
 			}
 		}
 	}
 	catch (const std::ifstream::failure& e) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Config");
-		CreateDefault(engine, userAsset);
+		initializeDefault(engine);
 		return;
 	}
 }
 
-void Asset_Config::Finalize(Engine * engine, Shared_Asset_Config & userAsset)
+void Asset_Config::finalize(Engine * engine)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-	userAsset->finalize();
-
-	// Notify completion
-	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
-	for each (auto qwe in userAsset->m_callbacks)
-		assetManager.submitNotifyee(qwe.first, qwe.second);
+	Asset::finalize(engine);
 }
 
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)

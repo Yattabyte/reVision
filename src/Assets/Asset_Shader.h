@@ -13,11 +13,8 @@ class Engine;
 class Asset_Shader;
 typedef std::shared_ptr<Asset_Shader> Shared_Asset_Shader;
 
-/**
- * An encapsulation of an OpenGL shader program.\n
- * Supports vertex, fragment, and geometry shaders.\n
- * Also provides support for explicitly setting uniform values for a given attribute location.
- **/
+/** An encapsulation of a vertex/fragment OpenGL shader program.
+Also provides support for explicitly setting uniform values for a given attribute location. */
 class Asset_Shader : public Asset
 {
 public:	
@@ -26,16 +23,12 @@ public:
 
 
 	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Shader & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container
-	 * @param	filename		the filename to use
-	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Shader & userAsset, const std::string & filename, const bool & threaded = true);
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	static Shared_Asset_Shader Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */
@@ -137,10 +130,10 @@ protected:
 
 private:
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Shader & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Shader & userAsset);
+	// Interface Implementation
+	virtual void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & fullDirectory);
+	virtual void finalize(Engine * engine);
 
 
 	// Private Attributes

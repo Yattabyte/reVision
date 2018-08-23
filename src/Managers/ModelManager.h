@@ -13,11 +13,8 @@
 
 struct GeometryInfo;
 
-/**
- * A single storage point for all model geometry. Maintains a single vertex array object.
- **/
-class ModelManager
-{
+/** A single storage point for all model geometry. Maintains a single vertex array object. */
+class ModelManager {
 public:
 	// (de)Constructors
 	/** Destroy the model manager. */
@@ -30,19 +27,22 @@ public:
 	/** Initialzie the model manager. */
 	void initialize();
 	/** Submit some continuous geometric data into this buffer. 
-	 * @param	data	the data to submit
-	 * @param	offset	the offset of the data (gets updated) 
-	 * @param	count	the count of the data (gets updated) */
+	@param	data	the data to submit
+	@param	offset	the offset of the data (gets updated) 
+	@param	count	the count of the data (gets updated) */
 	void registerGeometry(const GeometryInfo & data, GLint &offset, GLint &count);
 	/** Remove some continuous geometric data from this buffer. 
-	 * @param	data	the data to remove
-	 * @param	offset	the offset of the data 
-	 * @param	count	the count of the data */
+	@param	data	the data to remove
+	@param	offset	the offset of the data 
+	@param	count	the count of the data */
 	void unregisterGeometry(const GeometryInfo & data, const GLint &offset, const GLint &count);
 	/** Update the buffer's VAO from the main thread. */
 	void update();
 	/** Retreive this buffer's VAO ID */
 	const GLuint & getVAO() const;
+	/** Returns whether or not this manager has work left.
+	@return	true if all work is finished, false otherwise. */
+	const bool finishedWork();
 
 
 private:
@@ -56,6 +56,7 @@ private:
 	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES];
 	GLuint m_maxCapacity;
 	GLuint m_currentSize;
+	GLsync m_fence;
 	bool m_outOfDate;	
 	std::shared_mutex m_mutex;
 };

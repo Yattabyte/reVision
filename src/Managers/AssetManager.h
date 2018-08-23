@@ -11,7 +11,7 @@
 #include <thread>
 
 
-constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8;
+constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8u;
 class Engine;
 
 /** Base class that represents a function, but does nothing else */
@@ -25,6 +25,7 @@ struct FuncHolder : public FuncBase {
 	std::function<void(Args...)> m_function;
 };
 
+/** Represents an asset work order that gets started and finished at separate times. */
 struct Asset_Work_Order  {
 	Asset_Work_Order(const std::function<void(void)> & i, const std::function<void(void)> & f) : m_ini(i), m_fin(f) {}
 	void start() { m_ini(); }
@@ -33,23 +34,8 @@ struct Asset_Work_Order  {
 	std::function<void(void)> m_ini, m_fin;
 };
 
-/*
-template <typename... Args>
-struct Asset_Work_Order : public Asset_Work_Order {
-	Asset_Work_Order(const std::function<void(Args...)> & i, const std::function<void(Args...)> & f) : m_ini(i), m_fin(f) {}
-	template <typename... ExtraArgs>
-	virtual void start(ExtraArgs&&... ax) { m_ini(std::forward<ExtraArgs>(ax)...); }
-	virtual void finish() { m_fin(); }
-
-	std::function<void(Args...)> m_ini, m_fin;
-};
-*/
-
-/** 
- * Manages the storage and retrieval of assets.
- **/
-class AssetManager
-{
+/** Manages the storage and retrieval of assets. */
+class AssetManager {
 public:
 	// (de)Constructors
 	/** Destroy the asset manager. */
@@ -57,25 +43,15 @@ public:
 	/** Destroy the asset manager. */
 	AssetManager(Engine * engine);
 
-
+	
 	// Public Methods
-	/** Creates an asset or uses a cached copy if it has already been created.
-	 * @param	sharedAsset		the cointainer to place the asset
-	 * @param	args			the rest of the arguments to be used for initialization
-	 */
-	template <typename SharedAsset, typename... Args>
-	void create(SharedAsset & sharedAsset, Args&&... ax) {
-		// Get the asset's name from the template, and forward the engine pointer, asset container, and extra arguments to the creator function
-		forwardMapArguments(typeid(SharedAsset).name(), m_engine, sharedAsset, std::forward<Args>(ax)...);
-	}
 	/** Queries if an asset already exists with the given filename, fetching if true.
-	 * @brief				Searches for and updates the supplied container with the desired asset if it already exists.
-	 * @param	<Asset_T>	the type of asset to query for
-	 * @param	user		the shared_ptr container to load the asset into if the query is successful
-	 * @param	filename	the relative filename (within the project directory) of the asset to search for
-	 * @return				true if it was successful in finding the asset, false otherwise */
+	@brief				Searches for and updates the supplied container with the desired asset if it already exists.
+	@param	<Asset_T>	the type of asset to query for
+	@param	filename	the relative filename (within the project directory) of the asset to search for
+	@return				the asset, if found, or null if not */
 	template <typename Asset_T>
-	bool queryExistingAsset(std::shared_ptr<Asset_T> & user, const std::string & filename) {
+	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename) {
 		std::shared_lock<std::shared_mutex> guard(m_Mutex_Assets);
 		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) {
 			std::shared_lock<std::shared_mutex> asset_guard(asset->m_mutex);
@@ -83,41 +59,26 @@ public:
 			if (asset->getFileName() == filename) {
 				asset_guard.unlock();
 				asset_guard.release();
-				user = std::dynamic_pointer_cast<Asset_T>(asset);
-
-				// Can't guarantee that the asset isn't already being worked on, so no finalization here if threaded
-				return true;
+				return std::dynamic_pointer_cast<Asset_T>(asset);
 			}
 		}
-		return false;
+		return std::shared_ptr<Asset_T>();
 	}
-	/** A template for creating assets and forwarding their arguments, also adds to the map. 
-	 * @param	userAsset	the asset container
-	 * @param	ax			the constructor arguments */
+	/** A template for creating assets and forwarding their arguments, also adds to the map. 	
+	@param	<Asset_T>	the type of asset to create
+	@param	ax			the constructor arguments */
 	template <typename Asset_T, typename... Args>
-	void createNewAsset(std::shared_ptr<Asset_T> & userAsset, Args&&... ax) {
-		userAsset = std::shared_ptr<Asset_T>(new Asset_T(std::forward<Args>(ax)...));
+	std::shared_ptr<Asset_T> createNewAsset(Args&&... ax) {
+		std::shared_ptr<Asset_T> userAsset = std::shared_ptr<Asset_T>(new Asset_T(std::forward<Args>(ax)...));
 		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
+		return userAsset;
 	}
 	/** Submits an asset for physical creation, and optionally whether to thread it or not. To be called by asset creation functions.
-	 * @param	userAsset	the asset container
-	 * @param	threaded	flag to create in a separate thread
-	 * @param	ini			lambda initialization function
-	 * @param	fin			lambda finalization function
-	 * @param	ax			args to forward to the asset constructor
-	 */
-	template <typename Asset_T, typename Init_Callback, typename Fin_Callback, typename... Args>
-	void submitNewAsset(std::shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin, Args&&...ax) {
-		createNewAsset(userAsset, std::forward<Args>(ax)...);
-		submitNewWorkOrder(userAsset, threaded, ini, fin);
-	}
-	/** Submits an asset for physical creation, and optionally whether to thread it or not. To be called by asset creation functions.
-	 * @param	userAsset	the asset container
-	 * @param	threaded	flag to create in a separate thread
-	 * @param	ini			lambda initialization function
-	 * @param	fin			lambda finalization function
-	 * @param	ax			args to forward to the asset constructor
-	 */
+	@param	<Asset_T>	the type of asset used
+	@param	userAsset	the asset container
+	@param	threaded	flag to create in a separate thread
+	@param	ini			lambda initialization function
+	@param	fin			lambda finalization function */
 	template <typename Asset_T, typename Init_Callback, typename Fin_Callback>
 	void submitNewWorkOrder(std::shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin) {
 		if (threaded) {
@@ -137,32 +98,20 @@ public:
 	void removeNotifyee(void * pointerID);
 	/* From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers();
+	/** Returns whether or not this manager has work left.
+	 * @return	true if all work is finished, false otherwise. */
+	const bool finishedWork();
 
 
 private:
 	// Private Methods
-	/** A template for registrating new asset creators. 
-	 * @param	type	the name to use
-	 * @param	f		the creator function to use */
-	template <typename... Args>
-	void registerAssetCreator(const char * type, const std::function<void(Args...)> & f) {
-		m_CreatorMap[type] = new FuncHolder<Args...>(f);
-	}
-	/* A template to allow concatenating several parameters into one, for forwarding purposes. 
-	 * @param	type	the name to use
-	 * @param	ax		the aruments to forward */
-	template <typename... Args>
-	void forwardMapArguments(const char * type, Args&&... ax) {
-		((FuncHolder<Args...>*)(m_CreatorMap[type]))->m_function(std::forward<Args>(ax)...);
-	}
 	/** Initializes any waiting orders.
-	* @param	exitObject	object signaling when to close the thread */
+	@param	exitObject	object signaling when to close the thread */
 	void initializeOrders(std::future<void> exitObject);
 
 
 	// Private Attributes
 	Engine * m_engine;
-	MappedChar<FuncBase *> m_CreatorMap;
 	std::shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;
 	std::shared_mutex m_Mutex_Workorders;

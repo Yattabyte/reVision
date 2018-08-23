@@ -2,6 +2,7 @@
 #ifndef	MODEL_IO_H
 #define	MODEL_IO_H
 #define NUM_BONES_PER_VEREX 4
+
 #include "glm\common.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\quaternion.hpp"
@@ -90,22 +91,19 @@ enum Model_IO_Flags {
 	import_all			= 0b1111'1111
 };
 
-/** 
- * A static helper class used for reading/writing models.
- * Uses the Assimp library: http://assimp.sourceforge.net/
- **/
-class Model_IO
-{
+/** A static helper class used for reading/writing models.
+Uses the Assimp library: http://assimp.sourceforge.net/ */
+class Model_IO {
 public:
 	/** Import a model from disk.
-	 * @param	engine			the engine to import to
-	 * @param	fulldirectory	the path to the file
-	 * @param	importFlags		bitflags directing how to import the model
-	 * @param	importedData	the container to place the imported data within
-	 * @return					true on successfull import, false otherwise (error reported to engine) */
+	@param	engine			the engine to import to
+	@param	fulldirectory	the path to the file
+	@param	importFlags		bitflags directing how to import the model
+	@param	importedData	the container to place the imported data within
+	@return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine * engine, const std::string & fulldirectory, const unsigned int & importFlags, Model_Geometry & importedData);
 	/** Get the plugin version.
-	 * @return the plugin version */
+	@return the plugin version */
 	static const std::string Get_Version();
 };
 

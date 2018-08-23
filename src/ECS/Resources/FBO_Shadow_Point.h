@@ -1,0 +1,65 @@
+#pragma once
+#ifndef FBO_SHADOW_POINT_H
+#define FBO_SHADOW_POINT_H 
+
+#include "Utilities\GL\FBO.h"
+#include "GLFW\glfw3.h"
+
+
+/** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
+struct FBO_Shadow_Point {
+	GLuint m_fboID = 0, m_textures[4];
+	glm::ivec2 m_size;
+	FBO_Shadow_Point() {
+		glCreateFramebuffers(1, &m_fboID);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 4, m_textures);
+		resize(glm::vec2(1), 6);
+		glTextureParameteri(m_textures[0], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[0], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[0], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[0], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textures[0], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textures[1], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[1], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[1], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[1], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textures[1], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textures[2], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[2], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[2], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[2], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textures[2], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textures[3], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[3], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[3], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameteri(m_textures[3], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textures[3], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textures[3], GL_DEPTH_TEXTURE_MODE, GL_INTENSITY);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textures[0], 0);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT1, m_textures[1], 0);
+		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT2, m_textures[2], 0);
+		glNamedFramebufferTexture(m_fboID, GL_DEPTH_ATTACHMENT, m_textures[3], 0);
+		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+		glNamedFramebufferDrawBuffers(m_fboID, 3, drawBuffers);
+	}
+	void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
+		m_size = size;
+		glTextureImage3DEXT(m_textures[0], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_size.x, m_size.y, layerFaces, 0, GL_RED, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textures[1], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textures[2], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textures[3], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+	}
+	void clear(const GLint & zOffset) {
+		const float clearDepth(1.0f);
+		const glm::vec3 clear(0.0f);
+		glClearTexSubImage(m_textures[0], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RED, GL_FLOAT, &clearDepth);
+		glClearTexSubImage(m_textures[1], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
+		glClearTexSubImage(m_textures[2], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
+		glClearTexSubImage(m_textures[3], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
+	}
+	void bindForWriting() {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+	}
+};
+
+#endif // FBO_SHADOW_POINT_H

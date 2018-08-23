@@ -11,21 +11,18 @@
 #include <shared_mutex>
 
 
-/**
- * Manages the creation and storage of materials, and to a lesser degree their destruction. * 
- * - How this works:
- *		- This stores an array of GLuint64 bindless texture handles
- *		- That array is stored as a shader storage buffer object (SSBO)
- *		- Pieces of geometry requests a spot in the material buffer array:
- *			- this provides an int index
- *			- geometry stores it alongside vertices (MUST NOT be interpolated across face)
- *		- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
- *			- get GLuint64 from SSBO's array using index
- *			- transform into sampler
- * - Uses bindless textures to circumvent slow texture binding 
- **/
-class MaterialManager
-{
+/** Manages the creation and storage of materials, and to a lesser degree their destruction. * 
+- How this works:
+	- This stores an array of GLuint64 bindless texture handles
+	- That array is stored as a shader storage buffer object (SSBO)
+	- Pieces of geometry requests a spot in the material buffer array:
+		- this provides an int index
+		- geometry stores it alongside vertices (MUST NOT be interpolated across face)
+	- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
+		- get GLuint64 from SSBO's array using index
+		- transform into sampler
+- Uses bindless textures to circumvent slow texture binding */
+class MaterialManager {
 public:
 	// (de)Constructors
 	/** Destroy the material manager. */
@@ -40,14 +37,17 @@ public:
 	/** Make this buffer active. */
 	void bind();
 	/** Generates a material ID 
-	 * @return	a new material ID */
+	 @return						a new material ID */
 	GLuint generateID();
 	/** Generates a 64-bit GLuint64 texture handle for the specified texture, and makes it resident on the GPU
-	 * @param	materialightingFBOID	the material buffer
-	 * @param	glTextureID			the texture to generate the handle for **/
+	@param	materialightingFBOID	the material buffer
+	@param	glTextureID				the texture to generate the handle for **/
 	void generateHandle(const GLuint & materialightingFBOID, const GLuint & glTextureID);
 	/** Tick through the work orders */
 	void parseWorkOrders();
+	/** Returns whether or not this manager has work left.
+	@return							true if all work is finished, false otherwise. */
+	const bool finishedWork();
 
 
 private:

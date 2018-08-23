@@ -1,4 +1,5 @@
 #include "Assets\Asset.h"
+#include "Engine.h"
 #include <algorithm>
 
 
@@ -35,8 +36,13 @@ bool Asset::existsYet() const
 	return m_finalized;
 }
 
-void Asset::finalize()
+void Asset::finalize(Engine * engine)
 {
 	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-	m_finalized = true;	
+	m_finalized = true;
+
+	// Notify Completion
+	AssetManager & assetManager = engine->getAssetManager();
+	for each (auto qwe in m_callbacks)
+		assetManager.submitNotifyee(qwe.first, qwe.second);
 }

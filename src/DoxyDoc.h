@@ -70,49 +70,46 @@
  *	- Asset_Texture
  *
  * \section New Assets
- * All assets have at least 4 static functions (see below).\n
- * These functions require at least the same 2 parameters, a pointer to the Engine object, and a reference to the shared pointer holding the asset.\n
- * The asset's create function must be mapped in the asset manager's constructor.\n
+ * All assets have 1 static create function, and 3 private functions managing the specifics of their creation:
  *
- *	- CreateDefault(...)	
+ *	- initializeDefault(...)	
  *		- Used when file missing/corrupt.
- *	- Create(...)	
- *		- Mapped in the asset manager (call the asset manager to create).
- *	- Initialize(...)	
+ *	- initialize(...)	
  *		- Used to load asset from disk and any other processing that can occur on a separate thread.
- *	- Finalize(...)	
+ *	- finalize(...)	
  *		- Any final processing that must occur on the main thread.\n
  */
 
- /*! \page entities Entities
- * \section ent_sec	Engine Entities
- * This section contains entities and their components.\n
- * There exists only 1 entity class, as all complex entities can be created by adding unique components to them.\n
- * Entities are created by entityCreator classes, controlled by the EntityFactory.\n
- * 
- * Entities implemented so far include:
- *	- Entity (base class)
- *	- SpotLight
- *	- PointLight
- *	- Sun
- *	- Prop
- *	- Prop_Static
- *	- Reflector
- *	<br>
+ /*! \page ecs ECS
+ * \section ent_sec	Engine ECS
+ * The engine currently supports the following components:
+ *		- ECSComponent <T> (base for all new components)
+ *		- BasicPlayer_Component
+ *		- BoundingSphere_Component
+ *		- LightDirectional_Component
+ *		- LightDirectionalShadow_Component
+ *		- LightPoint_Component
+ *		- LightPointShadow_Component
+ *		- LightSpot_Component
+ *		- LightSpotShadow_Component
+ *		- Prop_Component
+ *		- Reflector_Component
+ *		- Skeleton_Component
+ *		- Skybox_Component
+ *		- Transform_Component
+ *		<br>
  *
- * Components implemented so far include:
- *		- Component (base class)
- *		- Geometry_C (interface)
- *		- Lighting_C (interface)
- *		- Model_Animated_C
- *		- Model_Static_C
- *		- Light_Directional_C
- *		- Light_Directional_Cheap_C
- *		- Light_Point_C
- *		- Light_Point_Cheap_C
- *		- Light_Spot_C
- *		- Light_Spot_Cheap_C
- *		- Reflector_C
+ * There are also several systems in place that use them:
+ *		- BaseECSSystem (base for all new systems)
+ *		- LightingDirectional_System
+ *		- LightingPoint_System
+ *		- LightingSpot_System
+ *		- PlayerMovement_System
+ *		- PropBSphere_System
+ *		- PropRendering_System
+ *		- PropShadowing_System
+ *		- SkeletonAnimation_System
+ *		- Skybox_System
  */
 
  /*! \page managers Managers
@@ -127,31 +124,6 @@
  *		- Used to print messages/error reports to the console/command line.
  *	- Model_Manager
  *		- Creates/destroys models, exposing them to shaders.
- */
-
- /*! \page systems Systems
- * \section	sys_sec	Engine Systems
- * This section details systems implemented thus far for the engine.\n
- * The System_Interface details 3 virtual methods all systems inherit: 
- *		- A safe (post-context creation) initialization function
- *		- A main-loop update function (with delta-time argument)
- *		- A secondary threaded update function (with delta-time argument)
- *		<br>
- *		
- *	***Why 2 update functions?***\n
- *	The main update function is called every frame for every system, so if anything that needs frequent updating can be offloaded to a second thread to avoid stalling the rendering/physics pipeline, then they can be implemented in the threaded version instead.\n
- *  For example, visibility calculations are currently offloaded entirely to the second thread.
- *  
- *  The engine currently requires the following base systems:
- *		- System_Graphics
- *		- System_Input
- *		- System_Logic
- *		- System_PerfCounter (temporary)
- *		- System_Preferences
- *		- System_World
- *		<br>
- *	
- *	It is planned to allow swapping out a system of a given category with a different one that implements that system's interface, such as a specialized graphics or world class.
  */
 
  /*! \page utilities Utilities
@@ -170,10 +142,12 @@
  *			- Text_IO
  *				- Plaintext importing.
  *		- OpenGL Helper Classes:
+ *			- Camera
+ *				- Camera object
  *			- DynamicBuffer
  *				- Buffer Object Encapsulation, but can change in size.
- *			- FrameBuffer
- *				- Frame Buffer Object Encapsulation.
+ *			- FBO
+ *				- Frame Buffer Object interface.
  *			- StaticBuffer
  *				- Buffer Object Encapsulation, static in size.
  *			- VectorBuffer

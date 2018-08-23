@@ -7,12 +7,9 @@
 #include <deque>
 
 
-/**
- * Provides some message reporting functionality for the engine.
- * Holds a log of text in case they need to be accessed by any external UI
- **/
-class MessageManager
-{
+/** Provides some message reporting functionality for the engine..
+Holds a log of text in case they need to be accessed by any external UI */
+class MessageManager {
 public:
 	// (de)Constructors
 	/** Destroy the message manager. */
@@ -23,13 +20,12 @@ public:
 
 	// Public Methods
 	/** Prints a raw std::string into the message log.
-	 * @param	input	std::string message to print */
+	@param	input				std::string message to print */
 	void statement(const std::string & input);
-
 	/** Prints a formatted message based around the supplied error type.
-	 * @param	error_number		the error type to format this error message around
-	 * @param	input				the error message to be formatted
-	 * @param	additional_input	an optional additional message to supplement the original */
+	@param	error_number		the error type to format this error message around
+	@param	input				the error message to be formatted
+	@param	additional_input	an optional additional message to supplement the original */
 	void error(const int & error_number, const std::string & input, const std::string & additional_input = "");
 
 

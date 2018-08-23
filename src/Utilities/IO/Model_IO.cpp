@@ -48,8 +48,8 @@ struct Importer_Pool {
 static Importer_Pool importer_pool;
 
 /** Convert an aiMatrix to glm::mat4.
- * @param	d	the aiMatrix to convert from
- * @return		the glm::mat4 converted to */ 
+@param	d	the aiMatrix to convert from
+@return		the glm::mat4 converted to */ 
 inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,

@@ -12,10 +12,8 @@ class Engine;
 class Asset_Shader_Pkg;
 typedef std::shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
 
-/**
- * An accessory asset for shaders that stores code blocks for other shaders to use.
- * @brief	no functionality on its own, but can recursively import more code blocks for other shaders and itself.
- **/
+/** An accessory asset for shaders that stores code blocks for other shaders to use.
+@brief	no functionality on its own, but can recursively import more code blocks for other shaders and itself. */
 class Asset_Shader_Pkg : public Asset
 {
 public:
@@ -24,18 +22,14 @@ public:
 
 	
 	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	* @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Shader_Pkg & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	* @param	userAsset		the desired asset container
-	* @param	filename		the filename to use
-	* @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & filename, const bool & threaded = true);
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	static Shared_Asset_Shader_Pkg Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Retrieves this package's content as a std::string.
-	 * @return	package contents */
+	* @return	package contents */
 	std::string getPackageText() const;
 
 	
@@ -50,10 +44,10 @@ private:
 
 
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Shader_Pkg & userAsset);
+	// Interface Implementation
+	virtual void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & fullDirectory);
+	virtual void finalize(Engine * engine);
 
 
 	// Private Attributes

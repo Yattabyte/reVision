@@ -11,9 +11,7 @@ class Engine;
 class Asset_Cubemap;
 typedef std::shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
 
-/**
- * Represents an OpenGL cubemap texture object.
- **/
+/** Represents an OpenGL cubemap texture object. */
 class Asset_Cubemap : public Asset
 {
 public:
@@ -22,18 +20,14 @@ public:
 
 
 	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Cubemap & userAsset);
 	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container
-	 * @param	filename		the filename to use
-	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & filename, const bool & threaded = true);
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	static Shared_Asset_Cubemap Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit.
-	 * @param	texture_unit	the desired texture unit to make this texture active at */
+	@param	texture_unit	the desired texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
 
 	
@@ -50,10 +44,10 @@ private:
 
 
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Cubemap & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Cubemap & userAsset);
+	// Interface Implementation
+	virtual void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & fullDirectory);
+	virtual void finalize(Engine * engine);
 
 
 	// Private Attributes

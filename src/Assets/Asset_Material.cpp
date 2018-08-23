@@ -5,6 +5,7 @@
 #include <minmax.h>
 #include <fstream>
 #include <sstream>
+
 #define EXT_MATERIAL ".mat"
 #define ABS_DIRECTORY_MATERIAL(filename) Engine::Get_Current_Dir() + "\\Materials\\" + filename + EXT_MATERIAL
 #define ABS_DIRECTORY_MAT_TEX(filename) Engine::Get_Current_Dir() + "\\Textures\\Environment\\" + filename
@@ -21,32 +22,64 @@ Asset_Material::~Asset_Material()
 Asset_Material::Asset_Material(const std::string & filename) : Asset(filename)
 {
 	m_glArrayID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
+	m_matSpot = 0;
 }
 
-Asset_Material::Asset_Material(const std::string & filename, const GLuint & spot) : Asset_Material(filename)
-{
-	m_matSpot = spot;
-}
-
-Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES], const GLuint & spot) : Asset_Material("")
+Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES]) : Asset_Material("")
 {
 	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
 		m_textures[x] = tx[x];
-	m_matSpot = spot;
 }
 
-void Asset_Material::CreateDefault(Engine * engine, Shared_Asset_Material & userAsset)
+Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 	MaterialManager & materialManager = engine->getMaterialManager();
 
-	// Check if a copy already exists
-	if (assetManager.queryExistingAsset(userAsset, "defaultMaterial"))
-		return;
+	// Create the asset or find one that already exists
+	auto userAsset = assetManager.queryExistingAsset<Asset_Material>(filename);
+	if (!userAsset) {
+		userAsset = assetManager.createNewAsset<Asset_Material>(filename);
+		auto & assetRef = *userAsset.get();
+		assetRef.m_matSpot = materialManager.generateID();
 
-	// Create hard-coded alternative
-	assetManager.createNewAsset(userAsset, "defaultMaterial", materialManager.generateID());
-	userAsset->m_materialData = new GLubyte[192]{
+		// Check if the file/directory exists on disk
+		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+		if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
+			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+			initFunc = std::bind(&initializeDefault, &assetRef, engine);
+		}
+
+		// Submit the work order
+		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+	}
+	return userAsset;
+}
+
+Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded)
+{
+	AssetManager & assetManager = engine->getAssetManager();
+	MaterialManager & materialManager = engine->getMaterialManager();
+
+	// Create the asset or find one that already exists
+	auto userAsset = assetManager.createNewAsset<Asset_Material>(textures);
+	auto & assetRef = *userAsset.get();
+	assetRef.m_matSpot = materialManager.generateID();
+
+	// Check if the file/directory exists on disk
+	std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, "");
+	std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+
+	// Submit the work order
+	assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);	
+	return userAsset;
+}
+
+void Asset_Material::initializeDefault(Engine * engine)
+{
+	m_materialData = new GLubyte[192]{
 		// Albedo with full alpha
 		GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(255),
 		GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255),
@@ -58,7 +91,7 @@ void Asset_Material::CreateDefault(Engine * engine, Shared_Asset_Material & user
 		GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255),
 
 		// Straight pointing normal with empty fourth channel
-		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), 
+		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000),
 		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000),
 		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000),
 		GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000), GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(000),
@@ -77,64 +110,16 @@ void Asset_Material::CreateDefault(Engine * engine, Shared_Asset_Material & user
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),	GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),
 		GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255),	GLubyte(063), GLubyte(127), GLubyte(000), GLubyte(255)
 	};
-	userAsset->m_size = glm::vec2(4);
-
-	// Create the asset
-	assetManager.submitNewWorkOrder(userAsset, true,
-		/* Initialization. */
-		[]() {},
-		/* Finalization. */
-		[engine, &materialManager, &userAsset]() mutable { Finalize(engine, userAsset); }
-	);
+	m_size = glm::vec2(4);
 }
 
-void Asset_Material::Create(Engine * engine, Shared_Asset_Material & userAsset, const std::string & filename, const bool & threaded, const std::string(&textures)[MAX_PHYSICAL_IMAGES])
-{
-	AssetManager & assetManager = engine->getAssetManager();
-	MaterialManager & materialManager = engine->getMaterialManager();
-
-	if (filename != "") {
-		// Check if a copy already exists
-		if (assetManager.queryExistingAsset(userAsset, filename))
-			return;
-
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
-		if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			CreateDefault(engine, userAsset);
-			return;
-		}
-
-		// Create the asset
-		assetManager.submitNewAsset(userAsset, threaded,
-			/* Initialization. */
-			[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
-			/* Finalization. */
-			[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
-			/* Constructor Arguments. */
-			filename, materialManager.generateID()
-		);
-	}
-	else {
-		assetManager.submitNewAsset<Asset_Material>(userAsset, threaded,
-			/* Initialization. */
-			[engine, &userAsset]() mutable { Asset_Material::Initialize(engine, userAsset, ""); },
-			/* Finalization. */
-			[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
-			/* Constructor Arguments. */
-			textures, materialManager.generateID()
-		);
-	}
-}
-
-void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAsset, const std::string & fullDirectory)
+void Asset_Material::initialize(Engine * engine, const std::string & fullDirectory)
 {
 	if (fullDirectory != "") {
-		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-		Asset_Material::Get_PBR_Properties(fullDirectory, userAsset->m_textures[0], userAsset->m_textures[1], userAsset->m_textures[2], userAsset->m_textures[3], userAsset->m_textures[4], userAsset->m_textures[5]);
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+		Asset_Material::Get_PBR_Properties(fullDirectory, m_textures[0], m_textures[1], m_textures[2], m_textures[3], m_textures[4], m_textures[5]);
 		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-			userAsset->m_textures[x] = ABS_DIRECTORY_MAT_TEX(userAsset->m_textures[x]);
+			m_textures[x] = ABS_DIRECTORY_MAT_TEX(m_textures[x]);
 	}
 
 	Image_Data dataContainers[MAX_PHYSICAL_IMAGES];
@@ -149,9 +134,9 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 		{ GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(0) },
 		{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0) } 
 	};
-	std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
+	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
-		if (!Image_IO::Import_Image(engine, userAsset->m_textures[x], dataContainers[x])) {
+		if (!Image_IO::Import_Image(engine, m_textures[x], dataContainers[x])) {
 			dataContainers[x].pixelData = new GLubyte[4];
 			for (int p = 0; p < 4; ++p)
 				dataContainers[x].pixelData[p] = defaultMaterial[x][p];
@@ -195,51 +180,48 @@ void Asset_Material::Initialize(Engine * engine, Shared_Asset_Material & userAss
 		delete dataContainers[x].pixelData;
 
 	// Assign data to asset
-	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_size = material_dimensions;
-	userAsset->m_materialData = materialData;
+	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+	m_size = material_dimensions;
+	m_materialData = materialData;
 }
 
-void Asset_Material::Finalize(Engine * engine, Shared_Asset_Material & userAsset)
+void Asset_Material::finalize(Engine * engine)
 {
-	AssetManager & assetManager = engine->getAssetManager();
 	MaterialManager & materialManager = engine->getMaterialManager();
-	userAsset->finalize();
 
 	// Create Material
 	{
-		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-		userAsset->m_finalized = true;
-		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &userAsset->m_glArrayID);
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
 	}
+	// Load material
 	{
-		// Load material
-		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
+		
+		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 		float anisotropy;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
 		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
 		// Uses the smallest dimension of the image
-		glTextureStorage3D(userAsset->m_glArrayID, floor(log2f((min(userAsset->m_size.x, userAsset->m_size.y))) + 1), GL_RGBA16F, (int)userAsset->m_size.x, (int)userAsset->m_size.y, 3);
-		glTextureSubImage3D(userAsset->m_glArrayID, 0, 0, 0, 0, (int)userAsset->m_size.x, (int)userAsset->m_size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, userAsset->m_materialData);
-		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTextureParameteri(userAsset->m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-		glGenerateTextureMipmap(userAsset->m_glArrayID);
+		glTextureStorage3D(m_glArrayID, floor(log2f((min(m_size.x, m_size.y))) + 1), GL_RGBA8, (int)m_size.x, (int)m_size.y, 3);
+		glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, (int)m_size.x, (int)m_size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
+		glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+		glGenerateTextureMipmap(m_glArrayID);
 
 		// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
 		// That IS a problem, because once the handle is issued, the texture object CAN NOT and MUST NOT be changed!!!
 		GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		auto state = glClientWaitSync(fence, 0, 0);
+		auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-			state = glClientWaitSync(fence, 0, 0);
+			state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 		glDeleteSync(fence);
-		materialManager.generateHandle(userAsset->m_matSpot, userAsset->m_glArrayID);
-
-		// Notify Completion
-		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.first, qwe.second);
+		materialManager.generateHandle(m_matSpot, m_glArrayID);
 	}
+	Asset::finalize(engine);
 }
+
+/** Fetch the directory of a material texture from its definition file. */
 bool getString(std::istringstream & string_stream, std::string & target, std::string & input = std::string(""))
 {
 	string_stream >> input;
@@ -255,6 +237,7 @@ bool getString(std::istringstream & string_stream, std::string & target, std::st
 	else return false;
 	return true;
 }
+
 void Asset_Material::Get_PBR_Properties(const std::string & filename, std::string & albedo, std::string & normal, std::string & metalness, std::string & roughness, std::string & height, std::string & occlusion)
 {
 	std::ifstream file_stream(filename);
