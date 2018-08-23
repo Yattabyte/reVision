@@ -23,6 +23,10 @@ class LightingPoint_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~LightingPoint_System() {
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 		if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
 		glDeleteVertexArrays(1, &m_sphereVAO);

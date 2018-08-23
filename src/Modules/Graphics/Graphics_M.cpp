@@ -27,12 +27,10 @@
 
 Graphics_Module::~Graphics_Module()
 {
-	m_engine->removePrefCallback(PreferenceState::C_SSAO, this);
-	m_engine->removePrefCallback(PreferenceState::C_SSAO_QUALITY, this);
-	m_engine->removePrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this);
-	m_engine->removePrefCallback(PreferenceState::C_SSAO_RADIUS, this);
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);	
+	m_engine->removePrefCallback(PreferenceState::C_GAMMA, this);
+	m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 }
 
 Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)

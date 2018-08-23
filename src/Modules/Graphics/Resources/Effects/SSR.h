@@ -17,6 +17,9 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~SSR() {
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_SSR, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);

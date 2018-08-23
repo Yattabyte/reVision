@@ -22,6 +22,10 @@ class LightingDirectional_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~LightingDirectional_System() {
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
+		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);

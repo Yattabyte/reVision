@@ -20,6 +20,9 @@ class Reflector_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Reflector_System() {
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
+		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 		glDeleteVertexArrays(1, &m_cubeVAO);
 		glDeleteVertexArrays(1, &m_quadVAO);
