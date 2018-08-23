@@ -45,7 +45,6 @@ public:
 
 
 	// Public Attributes
-	int									m_meshSize;
 	std::vector<Shared_Asset_Material>	m_skins;
 	GeometryInfo						m_data;
 	std::vector<BoneTransform>			m_boneTransforms;

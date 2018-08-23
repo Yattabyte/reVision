@@ -80,7 +80,6 @@ Asset_Model::~Asset_Model()
 
 Asset_Model::Asset_Model(const std::string & filename, ModelManager & modelManager) : Asset(filename)
 {
-	m_meshSize = 0;
 	m_bboxMin = glm::vec3(0.0f);
 	m_bboxMax = glm::vec3(0.0f);
 	m_bboxCenter = glm::vec3(0.0f);
@@ -123,8 +122,7 @@ void Asset_Model::initializeDefault(Engine * engine)
 	m_data.uv = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
 	m_data.nm = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
 	m_data.tg = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_data.bt = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_meshSize = 6; // Final vertex size (needed for draw arrays call)
+	m_data.bt = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };	
 	m_data.bones.resize(6);
 	m_skins.resize(1);
 	calculate_AABB(m_data.vs, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
@@ -141,7 +139,6 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 	}
 
 	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-	m_meshSize = dataContainer.vertices.size();
 	m_data.vs = dataContainer.vertices;
 	m_data.nm = dataContainer.normals;
 	m_data.tg = dataContainer.tangents;
