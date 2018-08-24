@@ -217,6 +217,8 @@ void Asset_Material::finalize(Engine * engine)
 			state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 		glDeleteSync(fence);
 		materialManager.generateHandle(m_matSpot, m_glArrayID);
+		if (!glIsTexture(m_glArrayID))
+			engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename, m_textures[0] + ", " + m_textures[1] + ", " + m_textures[2] + ", " + m_textures[3] + ", " + m_textures[4] + ", " + m_textures[5]);
 	}
 	Asset::finalize(engine);
 }

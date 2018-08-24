@@ -86,6 +86,11 @@ public:
 			const GLuint quad6Data[4] = { m_shapeQuad->getSize(), 6, 0, 0 }; 
 			m_indirectQuad6Faces.write(0, sizeof(GLuint) * 4, quad6Data);
 		});
+		
+		// Error Reporting
+		const GLenum Status = glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Reflector Environment map FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 

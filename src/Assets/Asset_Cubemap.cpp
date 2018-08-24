@@ -104,6 +104,8 @@ void Asset_Cubemap::finalize(Engine * engine)
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+		if (!glIsTexture(m_glTexID)) 
+			engine->reportError(MessageManager::TEXTURE_INCOMPLETE, m_filename);		
 	}
 	Asset::finalize(engine);
 }

@@ -83,7 +83,13 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting Buffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Bloom Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (!glIsTexture(m_textureID))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom Texture");
+		if (!glIsTexture(m_textureIDS_GB[0]))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 0");
+		if (!glIsTexture(m_textureIDS_GB[1]))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 1");
 	}
 
 

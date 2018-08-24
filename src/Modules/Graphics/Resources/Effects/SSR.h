@@ -56,16 +56,8 @@ public:
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
-		
-		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_bayerID);
-		glTextureStorage2D(m_bayerID, 1, GL_R8, 4, 4);
-		glTextureSubImage2D(m_bayerID, 0, 0, 0, 4, 4, GL_RED, GL_UNSIGNED_BYTE, &data);
-		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTextureParameteri(m_bayerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
+		// GL loading
 		m_fboID = 0;
 		m_textureID = 0;
 		glCreateFramebuffers(1, &m_fboID);
@@ -84,6 +76,25 @@ public:
 		}
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
+
+		// Bayer matrix
+		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
+		glCreateTextures(GL_TEXTURE_2D, 1, &m_bayerID);
+		glTextureStorage2D(m_bayerID, 1, GL_R8, 4, 4);
+		glTextureSubImage2D(m_bayerID, 0, 0, 0, 4, 4, GL_RED, GL_UNSIGNED_BYTE, &data);
+		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
+		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
+		glTextureParameteri(m_bayerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+		// Error Reporting
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "SSR Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (!glIsTexture(m_textureID))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSR Texture");
+		if (!glIsTexture(m_bayerID))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSR - Bayer matrix texture");
 	}
 
 

@@ -222,5 +222,5 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(main, 0, 0);
 	glfwSwapInterval(0);
-	engine->reportMessage("...done!\n");
+	engine->reportMessage("...done!");
 }

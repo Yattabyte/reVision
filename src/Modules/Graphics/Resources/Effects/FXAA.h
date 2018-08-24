@@ -58,6 +58,13 @@ public:
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
+		
+		// Error Reporting
+		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "FXAA Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (!glIsTexture(m_textureID))
+			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "FXAA Texture");		
 	}
 
 

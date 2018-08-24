@@ -43,7 +43,6 @@ public:
 		m_engine = engine;
 		m_geometryFBO = geometryFBO;
 		m_lightingFBO = lightingFBO;
-		m_shadowFBO;
 
 		// Asset Loading
 		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Directional\\Light");
@@ -77,6 +76,11 @@ public:
 
 		// Geometry rendering pipeline
 		m_geometrySystems.addSystem(new PropShadowing_System(engine, 4, PropShadowing_System::RenderAll, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
+
+		// Error Reporting
+		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Directional Shadowmap FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 

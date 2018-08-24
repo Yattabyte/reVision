@@ -41,9 +41,8 @@ public:
 		FBO_INCOMPLETE,
 		SHADER_INCOMPLETE,
 		PROGRAM_INCOMPLETE,
-
-		UNKNOWN_COMPONENT_TYPE,
-		UNKNOWN_COMPONENT_CONSTRUCTOR,
+		TEXTURE_INCOMPLETE,
+		MATERIAL_INCOMPLETE,
 
 		GLFW_ERROR,
 		OPENGL_ERROR,
@@ -61,10 +60,9 @@ public:
 		"A Framebuffer in the \"%\" is incomplete. ",
 		"The Shader file \"%\" could not compile. ",
 		"The Shader program \"%\" could not compile. ",
-
-		"Unidentified component type: \"%\""
-		"Unidentified component constructor: \"%\""
-
+		"The Texture object \"%\" is incomplete. ",
+		"The Material object \"%\" is incomplete. ",
+		
 		"GLFW Error: % ",
 		"OpenGL Error: % ",
 		"% "

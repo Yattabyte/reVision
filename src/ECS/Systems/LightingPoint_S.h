@@ -81,6 +81,11 @@ public:
 		// Geometry rendering pipeline
 		m_geometryStaticSystems.addSystem(new PropShadowing_System(engine, 6, PropShadowing_System::RenderStatic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
 		m_geometryDynamicSystems.addSystem(new PropShadowing_System(engine, 6, PropShadowing_System::RenderDynamic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
+		
+		// Error Reporting
+		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);
+		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Point Shadowmap FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 
