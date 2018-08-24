@@ -10,13 +10,21 @@ public:
 	/** Virtual Destructor. */
 	virtual ~Effect_Base() {};
 	/** Constructor. */
-	Effect_Base() {}
+	Effect_Base() : m_enabled(true) {}
 
 
 	// Public Methods
+	/** Return whether or not this effect is enabled*/
+	const bool isEnabled() const { return m_enabled; };
+	// Public Interface
 	/** Apply this lighting technique. 
 	@param	deltaTime	the amount of time passed since last frame. */
 	virtual void applyEffect(const float & deltaTime) = 0;
+
+
+protected:
+	// Protected Attributes
+	bool m_enabled;
 };
 
 #endif // EFFECT_BASE_H

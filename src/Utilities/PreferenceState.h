@@ -47,7 +47,8 @@ public:
 
 		C_ENVMAP_SIZE,
 
-		C_SSR
+		C_SSR,
+		C_FXAA,
 	};
 
 
@@ -76,7 +77,8 @@ public:
 
 			"C_ENVMAP_SIZE",
 
-			"C_SSR"
+			"C_SSR",
+			"C_FXAA"
 		};
 		return preferenceStrings;
 	};

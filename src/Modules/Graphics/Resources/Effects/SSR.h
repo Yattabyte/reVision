@@ -191,7 +191,6 @@ private:
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 	FBO_Base * m_geometryFBO, * m_lightingFBO, *m_reflectionFBO;
-	bool m_enabled;
 };
 
 #endif // SSR_H

@@ -45,6 +45,7 @@ public:
 		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		m_enabled = m_engine->addPrefCallback(PreferenceState::C_FXAA, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL loading
 		m_fboID = 0;

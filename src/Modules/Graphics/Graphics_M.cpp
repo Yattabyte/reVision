@@ -165,8 +165,9 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	glDisable(GL_BLEND);
 	glDisable(GL_DEPTH_TEST);
 	m_lightingFBO.bindForReading();
-	for each (auto *tech in m_fxTechs) 
-		tech->applyEffect(deltaTime);
+	for each (auto *tech in m_fxTechs)
+		if (tech->isEnabled())
+			tech->applyEffect(deltaTime);
 
 	if (fence)
 		glDeleteSync(fence);
