@@ -46,9 +46,9 @@ struct FBO_Geometry : FBO_Base {
 	}
 	virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) {
 		m_size = glm::ivec2(width, height);
-		glTextureImage2DEXT(m_textureIDS[0], GL_TEXTURE_2D, 0, GL_RGBA8, m_size.x, m_size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_textureIDS[0], GL_TEXTURE_2D, 0, GL_RGBA16F, m_size.x, m_size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		glTextureImage2DEXT(m_textureIDS[1], GL_TEXTURE_2D, 0, GL_RGB16F, m_size.x, m_size.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage2DEXT(m_textureIDS[2], GL_TEXTURE_2D, 0, GL_RGBA8, m_size.x, m_size.y, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_textureIDS[2], GL_TEXTURE_2D, 0, GL_RGBA16F, m_size.x, m_size.y, 0, GL_RGBA, GL_FLOAT, NULL);
 		glTextureImage2DEXT(m_textureIDS[3], GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_size.x, m_size.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
 	}
 	virtual void clear() {

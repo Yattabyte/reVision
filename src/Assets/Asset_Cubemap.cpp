@@ -96,7 +96,7 @@ void Asset_Cubemap::finalize(Engine * engine)
 	// Load the final texture
 	{
 		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		glTextureStorage2D(m_glTexID, 1, GL_RGBA8, m_size.x, m_size.x);
+		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_size.x, m_size.x);
 		for (int x = 0; x < 6; ++x)
 			glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_size.x, m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData[x]);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
