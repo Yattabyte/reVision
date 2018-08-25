@@ -10,7 +10,7 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for joining together light + bloom, and applying hdr to it by tone-mapping it and gamma correcting it. */
+/** A post-processing technique for tone-mapping and gamma correcting the final lighting product. */
 class HDR : public Effect_Base {
 public:
 	// (de)Constructors
@@ -76,7 +76,8 @@ public:
 		if (!m_shaderHDR->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 
 		m_shaderHDR->bind();
 		m_shaderHDR->Set_Uniform(0, 1.0f);

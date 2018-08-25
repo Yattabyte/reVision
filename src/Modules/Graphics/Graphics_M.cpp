@@ -16,8 +16,9 @@
 #include "ECS\Systems\Reflector_S.h"
 
 /* Post Processing Techniques Used */
-#include "Modules\Graphics\Resources\Effects\SSR.h"
+#include "Modules\Graphics\Resources\Effects\SSAO.h"
 #include "Modules\Graphics\Resources\Effects\Join_Reflections.h"
+#include "Modules\Graphics\Resources\Effects\SSR.h"
 #include "Modules\Graphics\Resources\Effects\Bloom.h"
 #include "Modules\Graphics\Resources\Effects\HDR.h"
 #include "Modules\Graphics\Resources\Effects\FXAA.h"
@@ -129,7 +130,8 @@ void Graphics_Module::initialize()
 	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	// Initiate specialized effects techniques
-	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_lightingFBO, &m_reflectionFBO));
+	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
+	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
 	m_fxTechs.push_back(new HDR(m_engine, &m_lightingFBO));

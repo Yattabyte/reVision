@@ -148,7 +148,7 @@ private:
 	// Private Attributes
 	Engine * m_engine;
 	FBO_Base * m_lightingFBO;
-	VisualFX *m_visualFX;
+	VisualFX * m_visualFX;
 	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;

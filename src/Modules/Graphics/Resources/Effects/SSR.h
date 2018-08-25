@@ -133,7 +133,8 @@ private:
 		m_shaderCopy->bind();
 		m_lightingFBO->bindForReading();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-		glClear(GL_COLOR_BUFFER_BIT);
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
 		// Blur MIP chain, reading from 1 MIP level and writing into next

@@ -20,14 +20,15 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	Join_Reflections(Engine * engine, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
+	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
 		// Default Parameters
 		m_engine = engine;
 		m_lightingFBO = lightingFBO;
+		m_geometryFBO = geometryFBO;
 		m_reflectionFBO = reflectionFBO;
 
 		// Asset Loading
-		m_shader = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
+		m_shader = Asset_Shader::Create(m_engine, "Effects\\Join Reflections");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
@@ -51,6 +52,7 @@ public:
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 		m_lightingFBO->bindForWriting();
+		m_geometryFBO->bindForReading(0); // only care about texture[2]
 		m_reflectionFBO->bindForReading(0);
 		m_shader->bind();
 		glBindVertexArray(m_quadVAO);
@@ -68,7 +70,7 @@ private:
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
-	FBO_Base * m_lightingFBO, * m_reflectionFBO;
+	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
 };
 
 #endif // JOIN_REFLECTIONS_H

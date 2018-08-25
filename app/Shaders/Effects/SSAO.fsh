@@ -8,14 +8,9 @@ layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D NoiseMap;
 layout (binding = 3) uniform sampler2D DepthMap;
 
-layout (std430, binding = 2) readonly buffer Renderer_Attribs
-{			
-	float m_ssao_radius;
-	int m_ssao_strenth;
-	int m_aa_quality;
-	bool m_ssao;
-	vec4 m_kernel[];
-};
+layout (location = 0) uniform float SSAORadius = 1.0f;
+layout (location = 1) uniform int SSAOQuality = 1;
+layout (location = 2) uniform vec4 SSAOKernel[128];
 
 in vec2 TexCoord;
 
@@ -61,10 +56,10 @@ void main()
 	const mat3 TBN 				= mat3(ViewTangent, ViewBitangent, ViewNormal);  
 	
 	float occlusion = 0.0;	
-	const uint sampleCount = sampleCounts[m_aa_quality];	
+	const uint sampleCount = sampleCounts[SSAOQuality];	
 	for (int i = 0 ; i < sampleCount; ++i) {
-		vec3 samplePos 			= TBN * m_kernel[i].xyz; 	// From tangent to view-space
-		samplePos 				= ViewPos + samplePos * m_ssao_radius; 
+		vec3 samplePos 			= TBN * SSAOKernel[i].xyz; 	// From tangent to view-space
+		samplePos 				= ViewPos + samplePos * SSAORadius; 
 		
 		// project Sample position (to Sample texture) (to get position on screen/texture)
 		vec4 offset 			= vec4(samplePos, 1.0);
@@ -74,7 +69,7 @@ void main()
 		
 		// get Sample depth
 		const float sampleDepth = CalcPositionFromDepth(offset.xy).z; // Get depth value of kernel Sample        
-		const float rangeCheck 	= smoothstep(0.0, 1.0, m_ssao_radius / abs(ViewPos.z - sampleDepth));
+		const float rangeCheck 	= smoothstep(0.0, 1.0, SSAORadius / abs(ViewPos.z - sampleDepth));
 		occlusion 			   += (sampleDepth >= samplePos.z + 0.025f ? 1.0f : 0.0f) * rangeCheck;  
 	}
 

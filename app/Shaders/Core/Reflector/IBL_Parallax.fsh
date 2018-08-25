@@ -92,5 +92,5 @@ void main(void)
 	const vec3 I_Diffuse				= (data.Albedo / M_PI);
 	const vec3 I_Ratio					= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
 	const vec3 I_Specular				= Reflection * (Fs * I_BRDF.x + I_BRDF.y);
-	LightingColor 						= (I_Ratio * I_Diffuse + I_Specular) * data.View_AO;
+	LightingColor 						= (I_Ratio * I_Diffuse + I_Specular);
 }

@@ -100,12 +100,15 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, flipTextures[0], 0);
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, flipTextures[1], 0);
 
+		GLfloat clearRed = 0.0f;
+		glClearTexImage(flipTextures[0], 0, GL_RED, GL_FLOAT, &clearRed);
+		glClearTexImage(flipTextures[1], 0, GL_RED, GL_FLOAT, &clearRed);
+
 		// Read from desired texture, blur into this frame buffer
 		bool horizontal = false;
 		glBindTextureUnit(0, desiredTexture);
 		glBindTextureUnit(1, flipTextures[0]);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_TRUE);
 		m_shaderGB_A->bind();
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 		m_shaderGB_A->Set_Uniform(1, size);
@@ -130,7 +133,6 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		m_shaderGB_A->Set_Uniform(0, horizontal);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 }
