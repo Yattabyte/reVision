@@ -190,21 +190,21 @@ protected:
 					m_lightingFBO->bindForReading();
 					m_envmapFBO.bindForWriting();
 					m_shaderCopy->bind();
-					m_shaderCopy->Set_Uniform(0, x + reflector->m_cubeSpot);
+					m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
 					m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 					glBindVertexArray(m_quadVAO);
 					glDrawArraysIndirect(GL_TRIANGLES, 0);
 				}
 				// Once cubemap is generated, convolute it
 				m_shaderConvolute->bind();
-				m_shaderConvolute->Set_Uniform(0, reflector->m_cubeSpot);
+				m_shaderConvolute->setUniform(0, reflector->m_cubeSpot);
 				m_envmapFBO.bindForReading();
 				m_indirectQuad6Faces.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				for (float r = 1; r < 6; ++r) {
 					// Ensure we are writing to MIP level r
 					const float write_size = max(1.0f, (floor(m_envmapSize / pow(2.0f, r))));
 					glViewport(0, 0, write_size, write_size);
-					m_shaderConvolute->Set_Uniform(1, r / 5.0f);
+					m_shaderConvolute->setUniform(1, r / 5.0f);
 					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);
 
 					// Ensure we are reading from MIP level r - 1
@@ -255,7 +255,7 @@ protected:
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		m_shaderLighting->Set_Uniform(1, true);
+		m_shaderLighting->setUniform(1, true);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Now draw into color buffers
@@ -264,7 +264,7 @@ protected:
 		glDisable(GL_BLEND);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		m_shaderLighting->Set_Uniform(1, false);
+		m_shaderLighting->setUniform(1, false);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glCullFace(GL_BACK);

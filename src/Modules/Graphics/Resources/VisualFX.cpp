@@ -66,8 +66,8 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		glBindTextureUnit(1, flipTextures[0]);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		m_shaderGB->bind();
-		m_shaderGB->Set_Uniform(0, horizontal);
-		m_shaderGB->Set_Uniform(1, size);
+		m_shaderGB->setUniform(0, horizontal);
+		m_shaderGB->setUniform(1, size);
 
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -78,7 +78,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		for (int i = 1; i < amount - 1; i++) {
 			horizontal = !horizontal;
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
-			m_shaderGB->Set_Uniform(0, horizontal);
+			m_shaderGB->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 
@@ -86,7 +86,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 		horizontal = !horizontal;
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, desiredTexture, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
-		m_shaderGB->Set_Uniform(0, horizontal);
+		m_shaderGB->setUniform(0, horizontal);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -110,8 +110,8 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		glBindTextureUnit(1, flipTextures[0]);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 		m_shaderGB_A->bind();
-		m_shaderGB_A->Set_Uniform(0, horizontal);
-		m_shaderGB_A->Set_Uniform(1, size);
+		m_shaderGB_A->setUniform(0, horizontal);
+		m_shaderGB_A->setUniform(1, size);
 
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -122,7 +122,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		for (int i = 1; i < amount - 1; i++) {
 			horizontal = !horizontal;
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
-			m_shaderGB_A->Set_Uniform(0, horizontal);
+			m_shaderGB_A->setUniform(0, horizontal);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 
@@ -130,7 +130,7 @@ void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLui
 		horizontal = !horizontal;
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, desiredTexture, 0);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
-		m_shaderGB_A->Set_Uniform(0, horizontal);
+		m_shaderGB_A->setUniform(0, horizontal);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);

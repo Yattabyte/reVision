@@ -62,7 +62,7 @@ public:
 		m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
 		m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) { m_shadowSize = glm::vec2(max(1.0f, f)); });
 		m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
-		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->Set_Uniform(0, 1.0f / m_shadowSize.x); });
+		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
 		// Shadows
 		m_shadowFBO.resize(m_shadowSize, 6);
@@ -217,7 +217,7 @@ protected:
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		m_shader_Lighting->Set_Uniform(1, true);
+		m_shader_Lighting->setUniform(1, true);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Now draw into color buffers
@@ -225,7 +225,7 @@ protected:
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		m_shader_Lighting->Set_Uniform(1, false);
+		m_shader_Lighting->setUniform(1, false);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
 		glCullFace(GL_BACK);

@@ -57,7 +57,7 @@ public:
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		glBindVertexArray(m_quadVAO);
 		m_shader->bind();
-		m_shader->Set_Uniform(1, m_projMatrix);
+		m_shader->setUniform(1, m_projMatrix);
 		m_numberTexture->bind(0);
 		const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
 
@@ -75,12 +75,12 @@ public:
 			const int number = test[x];
 			if (number == 46) {
 				foundDecimal = true;
-				m_shader->Set_Uniform(3, 10); // set texture index to 11
+				m_shader->setUniform(3, 10); // set texture index to 11
 			}
 			else
-				m_shader->Set_Uniform(3, number - 48); // remove the ascii encoding, convert to int		
+				m_shader->setUniform(3, number - 48); // remove the ascii encoding, convert to int		
 
-			m_shader->Set_Uniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(x * 24, 24, 0)) * scale);
+			m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(x * 24, 24, 0)) * scale);
 			glDrawArrays(GL_TRIANGLES, 0, 6);
 		}
 		m_shader->Release();		

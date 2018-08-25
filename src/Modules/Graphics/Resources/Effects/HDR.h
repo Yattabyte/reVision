@@ -80,7 +80,7 @@ public:
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 
 		m_shaderHDR->bind();
-		m_shaderHDR->Set_Uniform(0, 1.0f);
+		m_shaderHDR->setUniform(0, 1.0f);
 		m_lightingFBO->bindForReading();
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

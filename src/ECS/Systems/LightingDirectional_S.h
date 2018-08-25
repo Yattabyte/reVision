@@ -61,7 +61,7 @@ public:
 		m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { m_shadowSize = glm::vec2(max(1.0f, f)); });
 		m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
 		m_shadowFBO.resize(m_shadowSize, 4);
-		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->Set_Uniform(0, 1.0f / m_shadowSize.x); });
+		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
 		// Primitive Construction
 		m_quadVAOLoaded = false;

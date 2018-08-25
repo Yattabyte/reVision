@@ -141,11 +141,11 @@ private:
 		m_shaderConvMips->bind();
 		glBindTextureUnit(0, m_textureID);
 		for (int horizontal = 0; horizontal < 2; ++horizontal) {
-			m_shaderConvMips->Set_Uniform(0, horizontal);
+			m_shaderConvMips->setUniform(0, horizontal);
 			glm::ivec2 read_size = m_renderSize;
 			for (int x = 1; x < 6; ++x) {
 				// Ensure we are reading from MIP level x - 1
-				m_shaderConvMips->Set_Uniform(1, read_size);
+				m_shaderConvMips->setUniform(1, read_size);
 				glTextureParameteri(m_textureID, GL_TEXTURE_BASE_LEVEL, x - 1);
 				glTextureParameteri(m_textureID, GL_TEXTURE_MAX_LEVEL, x - 1);
 				// Ensure we are writing to MIP level x

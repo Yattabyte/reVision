@@ -50,8 +50,8 @@ public:
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 		m_enabled = m_engine->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) { m_enabled = (bool)f; });
-		m_radius = m_engine->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->Set_Uniform(0, m_radius); });
-		m_quality = m_engine->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->Set_Uniform(1, m_quality); });
+		m_radius = m_engine->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
+		m_quality = m_engine->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
 		m_blurStrength = m_engine->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) { m_blurStrength = (int)f; });
 
 		// GL loading
@@ -107,9 +107,9 @@ public:
 				sample *= scale;
 				new_kernel[t] = glm::vec4(sample, 1);
 			}
-			m_shader->Set_Uniform(0, m_radius);
-			m_shader->Set_Uniform(1, m_quality);
-			m_shader->Set_Uniform_Array(2, new_kernel, MAX_KERNEL_SIZE);
+			m_shader->setUniform(0, m_radius);
+			m_shader->setUniform(1, m_quality);
+			m_shader->setUniformArray(2, new_kernel, MAX_KERNEL_SIZE);
 		});
 		
 
