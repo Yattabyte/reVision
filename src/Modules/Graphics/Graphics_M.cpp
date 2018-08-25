@@ -132,7 +132,7 @@ void Graphics_Module::initialize()
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
-	m_fxTechs.push_back(new HDR(m_engine));
+	m_fxTechs.push_back(new HDR(m_engine, &m_lightingFBO));
 	m_fxTechs.push_back(new FXAA(m_engine));
 	m_fxTechs.push_back(new To_Screen(m_engine));
 	m_fxTechs.push_back(new Frametime_Counter(m_engine));

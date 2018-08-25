@@ -38,6 +38,7 @@ public:
 
 		// Asset Loading
 		m_shaderBloomExtract = Asset_Shader::Create(m_engine, "Effects\\Bloom Extraction");
+		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Primitive Construction
@@ -55,6 +56,7 @@ public:
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
 		m_bloomStrength = m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });
+		m_enabled = m_engine->addPrefCallback(PreferenceState::C_BLOOM, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL Loading
 		m_fboID = 0;
@@ -95,7 +97,7 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime ) {
-		if (!m_shaderBloomExtract->existsYet() || !m_quadVAOLoaded)
+		if (!m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet()|| !m_quadVAOLoaded)
 			return;
 		// Extract bright regions from lighting buffer
 		m_shaderBloomExtract->bind();
@@ -110,10 +112,18 @@ public:
 
 		// Re-attach our bloom texture (was detached to allow for convolution)
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
-		m_lightingFBO->bindForReading();	
 
-		// Bind for reading by next effect
-		glBindTextureUnit(1, m_textureID);
+		// Copy to lighting buffer
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
+		m_lightingFBO->bindForWriting();
+		glBindTextureUnit(0, m_textureID);
+		m_shaderCopy->bind();
+		glBindVertexArray(m_quadVAO);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glDisable(GL_BLEND);
 	}
 
 
@@ -139,7 +149,7 @@ private:
 	Engine * m_engine;
 	FBO_Base * m_lightingFBO;
 	VisualFX *m_visualFX;
-	Shared_Asset_Shader m_shaderBloomExtract;
+	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;

@@ -100,7 +100,7 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) {
-		if (!m_enabled || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
+		if (!m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

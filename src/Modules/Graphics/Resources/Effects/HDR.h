@@ -6,6 +6,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\FBO.h"
 #include "Engine.h"
 
 
@@ -24,9 +25,10 @@ public:
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	}
 	/** Constructor. */
-	HDR(Engine * engine) {
+	HDR(Engine * engine, FBO_Base * lightingFBO) {
 		// Default Parameters
 		m_engine = engine;
+		m_lightingFBO = lightingFBO;
 
 		// Asset Loading
 		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
@@ -78,6 +80,7 @@ public:
 
 		m_shaderHDR->bind();
 		m_shaderHDR->Set_Uniform(0, 1.0f);
+		m_lightingFBO->bindForReading();
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);	
@@ -99,6 +102,7 @@ private:
 
 
 	// Private Attributes
+	FBO_Base * m_lightingFBO;
 	GLuint m_fboID, m_textureID;
 	glm::ivec2 m_renderSize; 
 	Engine * m_engine;

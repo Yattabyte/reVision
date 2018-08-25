@@ -29,7 +29,10 @@ public:
 	static const enum Preference {
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
+
+		C_BLOOM,
 		C_BLOOM_STRENGTH,
+
 		C_DRAW_DISTANCE,
 
 		C_SSAO,
@@ -38,6 +41,7 @@ public:
 		C_SSAO_QUALITY,
 
 		C_GAMMA,
+
 		C_TEXTURE_ANISOTROPY,
 
 		C_SHADOW_SIZE_DIRECTIONAL,
@@ -48,6 +52,7 @@ public:
 		C_ENVMAP_SIZE,
 
 		C_SSR,
+
 		C_FXAA,
 	};
 
@@ -59,7 +64,10 @@ public:
 		static const std::vector<std::string> preferenceStrings = {
 			"C_WINDOW_WIDTH",
 			"C_WINDOW_HEIGHT",
+
+			"C_BLOOM",
 			"C_BLOOM_STRENGTH",
+
 			"C_DRAW_DISTANCE",
 
 			"C_SSAO",
@@ -68,6 +76,7 @@ public:
 			"C_SSAO_QUALITY",
 
 			"C_GAMMA",
+
 			"C_TEXTURE_ANISOTROPY",
 
 			"C_SHADOW_SIZE_DIRECTIONAL",
@@ -78,6 +87,7 @@ public:
 			"C_ENVMAP_SIZE",
 
 			"C_SSR",
+
 			"C_FXAA"
 		};
 		return preferenceStrings;
