@@ -19,7 +19,7 @@ int main()
 	std::future<void> exitObject = exitSignal.get_future();
 	std::thread m_UpdaterThread(&Engine::tickThreaded, &engine, std::move(exitObject));
 	m_UpdaterThread.detach();
-	
+
 	// Begin main thread
 	while (!(engine.shouldClose())) 
 		engine.tick();	

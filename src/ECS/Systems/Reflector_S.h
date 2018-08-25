@@ -97,7 +97,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Exit Early
-		if (!m_cubeVAOLoaded || !m_shaderLighting || !m_shaderLighting->existsYet())
+		if (!m_cubeVAOLoaded || !m_shaderLighting->existsYet())
 			return;
 
 		// Clear Data
@@ -164,7 +164,7 @@ protected:
 	// Protected Methods
 	/** Render all the geometry for each reflector */
 	void renderScene(const float & deltaTime) {
-		if (!m_shaderCopy || !m_shaderCopy->existsYet() || !m_shaderConvolute || !m_shaderConvolute->existsYet() || !m_quadVAOLoaded)
+		if (!m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet() || !m_quadVAOLoaded)
 			return;
 		auto & graphics = m_engine->getGraphicsModule();
 		bool didAnything = false, update = m_outOfDate;

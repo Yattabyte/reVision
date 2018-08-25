@@ -32,6 +32,8 @@ void Asset::removeCallback(void * pointerID)
 
 bool Asset::existsYet() const
 { 
+	if (!this)
+		return false;
 	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	return m_finalized;
 }

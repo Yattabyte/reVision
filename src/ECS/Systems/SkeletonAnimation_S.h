@@ -28,7 +28,7 @@ public:
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
 
-			if (!propComponent->m_model || !propComponent->m_model->existsYet())
+			if (!propComponent->m_model->existsYet())
 				return;
 
 			Skeleton_Buffer * uboData = skeletonComponent->m_data->data;

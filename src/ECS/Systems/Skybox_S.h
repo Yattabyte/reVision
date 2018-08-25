@@ -58,7 +58,7 @@ public:
 			return;
 
 		Skybox_Component * skyboxComponent = (Skybox_Component*)components[0][0];
-		if (!skyboxComponent->m_texture || !skyboxComponent->m_texture->existsYet())
+		if (!skyboxComponent->m_texture->existsYet())
 			return;
 
 		glDisable(GL_BLEND);

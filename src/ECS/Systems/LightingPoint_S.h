@@ -92,7 +92,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Exit Early
-		if (!m_sphereVAOLoaded || !m_shader_Lighting || !m_shader_Lighting->existsYet() || !m_shader_Shadow || !m_shader_Shadow->existsYet())
+		if (!m_sphereVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet())
 			return;
 
 		// Clear Data

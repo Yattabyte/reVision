@@ -32,7 +32,7 @@ public:
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[2];
-			if (propComponent->m_model && propComponent->m_model->existsYet()) {
+			if (propComponent->m_model->existsYet()) {
 				std::shared_lock<std::shared_mutex> guard(propComponent->m_model->m_mutex);
 				const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * transformComponent->m_transform.m_scale) + transformComponent->m_transform.m_position;
 				const glm::vec3 bboxMin_World = (propComponent->m_model->m_bboxMin * transformComponent->m_transform.m_scale) + transformComponent->m_transform.m_position;
