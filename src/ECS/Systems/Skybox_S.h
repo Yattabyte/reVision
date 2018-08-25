@@ -52,13 +52,13 @@ public:
 		});
 		
 		m_brdfMap->addCallback(this, [&] {
-			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
-			glMakeTextureHandleResidentARB(m_brdfHandle);
+			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
 			if (m_shaderSkyReflect->existsYet())
-				m_shaderSkyReflect->setUniform(0, m_brdfHandle);
+				m_shaderSkyReflect->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 		m_shaderSkyReflect->addCallback(this, [&] {
-			m_shaderSkyReflect->setUniform(0, m_brdfHandle);
+			if (m_brdfMap->existsYet())
+				m_shaderSkyReflect->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 	}
 
@@ -102,7 +102,6 @@ private:
 	Shared_Asset_Shader	m_shaderSky, m_shaderSkyReflect;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
-	GLuint64 m_brdfHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;

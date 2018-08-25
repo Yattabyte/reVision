@@ -9,14 +9,17 @@
 
 Asset_Texture::~Asset_Texture()
 {
-	if (existsYet())
+	if (existsYet()) {
 		glDeleteTextures(1, &m_glTexID);
+		glMakeTextureHandleNonResidentARB(m_glTexHandle);
+	}
 	delete m_pixelData;
 }
 
 Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename)
 {
 	m_glTexID = 0;
+	m_glTexHandle = 0;
 	m_type = GL_TEXTURE_2D;
 	m_size = glm::vec2(0);
 	m_pixelData = nullptr;
@@ -123,9 +126,17 @@ void Asset_Texture::finalize(Engine * engine)
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glGenerateTextureMipmap(m_glTexID);
+				GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
+					state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 				break;
 			}
 		}
+	}
+	{
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+		m_glTexHandle = glGetTextureHandleARB(m_glTexID);
 	}
 	Asset::finalize(engine);
 }

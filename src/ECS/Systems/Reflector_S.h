@@ -90,13 +90,13 @@ public:
 		});
 
 		m_brdfMap->addCallback(this, [&] {
-			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
-			glMakeTextureHandleResidentARB(m_brdfHandle);
+			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
 			if (m_shaderLighting->existsYet())
-				m_shaderLighting->setUniform(2, m_brdfHandle);
+				m_shaderLighting->setUniform(2, m_brdfMap->m_glTexHandle);
 		});
 		m_shaderLighting->addCallback(this, [&] {
-			m_shaderLighting->setUniform(2, m_brdfHandle);
+			if (m_brdfMap->existsYet())
+				m_shaderLighting->setUniform(2, m_brdfMap->m_glTexHandle);
 		});
 		
 		// Error Reporting
@@ -313,7 +313,6 @@ private:
 	Shared_Asset_Shader m_shaderLighting, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
-	GLuint64 m_brdfHandle;
 	GLuint m_cubeVAO, m_quadVAO;
 	bool m_cubeVAOLoaded, m_quadVAOLoaded;
 	StaticBuffer m_indirectCube, m_indirectQuad, m_indirectQuad6Faces;

@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.8.M";
+constexpr char ENGINE_VERSION[]	= "1.8.N";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"

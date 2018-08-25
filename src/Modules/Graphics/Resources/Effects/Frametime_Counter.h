@@ -20,6 +20,8 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_numberTexture->removeCallback(this);
+		m_shader->removeCallback(this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);		
 	}
 	/** Constructor. */
@@ -46,13 +48,13 @@ public:
 		resize(m_renderSize);
 
 		m_numberTexture->addCallback(this, [&] {
-			m_numberHandle = glGetTextureHandleARB(m_numberTexture->m_glTexID);
-			glMakeTextureHandleResidentARB(m_numberHandle);
+			glMakeTextureHandleResidentARB(m_numberTexture->m_glTexHandle);
 			if (m_shader->existsYet())
-				m_shader->setUniform(0, m_numberHandle);
+				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
 		});
 		m_shader->addCallback(this, [&] {
-			m_shader->setUniform(0, m_numberHandle);
+			if (m_numberTexture->existsYet())
+				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
 		});
 	}
 
@@ -110,7 +112,6 @@ private:
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Texture m_numberTexture;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint64 m_numberHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	glm::ivec2 m_renderSize;

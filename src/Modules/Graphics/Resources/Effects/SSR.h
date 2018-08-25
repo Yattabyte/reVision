@@ -91,13 +91,12 @@ public:
 		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
 		glMakeTextureHandleResidentARB(m_bayerHandle);
 		m_brdfMap->addCallback(this, [&] {
-			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
-			glMakeTextureHandleResidentARB(m_brdfHandle);
+			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
 			if (m_shaderSSR->existsYet())
-				m_shaderSSR->setUniform(0, m_brdfHandle);			
+				m_shaderSSR->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 		m_shaderSSR->addCallback(this, [&] {
-			m_shaderSSR->setUniform(0, m_brdfHandle);
+			m_shaderSSR->setUniform(0, m_brdfMap->m_glTexHandle);
 			m_shaderSSR->setUniform(1, m_bayerHandle);
 		});
 
@@ -200,7 +199,7 @@ private:
 	glm::ivec2 m_renderSize;
 	GLuint m_fboID, m_textureID;
 	GLuint m_bayerID;
-	GLuint64 m_bayerHandle, m_brdfHandle;
+	GLuint64 m_bayerHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
