@@ -20,6 +20,8 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_SSR, this);
+		m_brdfMap->removeCallback(this);
+		m_shaderSSR->removeCallback(this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
@@ -86,6 +88,18 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
+		glMakeTextureHandleResidentARB(m_bayerHandle);
+		m_brdfMap->addCallback(this, [&] {
+			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
+			glMakeTextureHandleResidentARB(m_brdfHandle);
+			if (m_shaderSSR->existsYet())
+				m_shaderSSR->setUniform(0, m_brdfHandle);			
+		});
+		m_shaderSSR->addCallback(this, [&] {
+			m_shaderSSR->setUniform(0, m_brdfHandle);
+			m_shaderSSR->setUniform(1, m_bayerHandle);
+		});
 
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
@@ -113,8 +127,6 @@ public:
 		m_lightingFBO->bindForWriting();
 		m_geometryFBO->bindForReading();
 		glBindTextureUnit(4, m_textureID);
-		m_brdfMap->bind(5);
-		glBindTextureUnit(6, m_bayerID);
 		m_shaderSSR->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -188,6 +200,7 @@ private:
 	glm::ivec2 m_renderSize;
 	GLuint m_fboID, m_textureID;
 	GLuint m_bayerID;
+	GLuint64 m_bayerHandle, m_brdfHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;

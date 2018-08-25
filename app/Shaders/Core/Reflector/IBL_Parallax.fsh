@@ -1,4 +1,5 @@
 #version 460
+#extension GL_ARB_bindless_texture : require
 #package "lighting_pbr"
 
 struct Reflection_Struct {
@@ -16,11 +17,13 @@ layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 	Reflection_Struct reflectorBuffers[];
 };
 
-layout (location = 0) flat in uint BufferIndex;
 layout (binding = 4) uniform samplerCubeArray ReflectionMap;
-layout (binding = 5) uniform sampler2D EnvironmentBRDF;
-layout (location = 0) out vec3 LightingColor;
+
+layout (location = 0) flat in uint BufferIndex;
 layout (location = 1) uniform bool UseStencil = false;
+layout (location = 2, bindless_sampler) uniform sampler2D EnvironmentBRDF;
+
+layout (location = 0) out vec3 LightingColor;
 
 vec3 Fresnel_Schlick_Roughness(vec3 f0, float AdotB, float roughness)
 {

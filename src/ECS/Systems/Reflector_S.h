@@ -23,6 +23,8 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
+		m_brdfMap->removeCallback(this);
+		m_shaderLighting->removeCallback(this);
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 		glDeleteVertexArrays(1, &m_cubeVAO);
 		glDeleteVertexArrays(1, &m_quadVAO);
@@ -85,6 +87,16 @@ public:
 			m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData); 
 			const GLuint quad6Data[4] = { m_shapeQuad->getSize(), 6, 0, 0 }; 
 			m_indirectQuad6Faces.write(0, sizeof(GLuint) * 4, quad6Data);
+		});
+
+		m_brdfMap->addCallback(this, [&] {
+			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
+			glMakeTextureHandleResidentARB(m_brdfHandle);
+			if (m_shaderLighting->existsYet())
+				m_shaderLighting->setUniform(2, m_brdfHandle);
+		});
+		m_shaderLighting->addCallback(this, [&] {
+			m_shaderLighting->setUniform(2, m_brdfHandle);
 		});
 		
 		// Error Reporting
@@ -245,7 +257,6 @@ protected:
 		m_reflectionFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
 		glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
-		m_brdfMap->bind(5);												// Environment BRDF
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
 		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
@@ -302,6 +313,7 @@ private:
 	Shared_Asset_Shader m_shaderLighting, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
+	GLuint64 m_brdfHandle;
 	GLuint m_cubeVAO, m_quadVAO;
 	bool m_cubeVAOLoaded, m_quadVAOLoaded;
 	StaticBuffer m_indirectCube, m_indirectQuad, m_indirectQuad6Faces;

@@ -44,6 +44,16 @@ public:
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
 		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
 		resize(m_renderSize);
+
+		m_numberTexture->addCallback(this, [&] {
+			m_numberHandle = glGetTextureHandleARB(m_numberTexture->m_glTexID);
+			glMakeTextureHandleResidentARB(m_numberHandle);
+			if (m_shader->existsYet())
+				m_shader->setUniform(0, m_numberHandle);
+		});
+		m_shader->addCallback(this, [&] {
+			m_shader->setUniform(0, m_numberHandle);
+		});
 	}
 
 
@@ -58,7 +68,6 @@ public:
 		glBindVertexArray(m_quadVAO);
 		m_shader->bind();
 		m_shader->setUniform(1, m_projMatrix);
-		m_numberTexture->bind(0);
 		const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
 
 
@@ -101,6 +110,7 @@ private:
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Texture m_numberTexture;
 	Shared_Asset_Primitive m_shapeQuad;
+	GLuint64 m_numberHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	glm::ivec2 m_renderSize;

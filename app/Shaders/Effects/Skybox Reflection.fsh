@@ -1,8 +1,9 @@
 #version 460
+#extension GL_ARB_bindless_texture : require
 #package "lighting_pbr"
 
 layout (binding = 4) uniform samplerCube SkyMap;
-layout (binding = 5) uniform sampler2D EnvironmentBRDF;
+layout (location = 0, bindless_sampler) uniform sampler2D EnvironmentBRDF;
 layout (location = 0) out vec3 LocalReflectionOut;  
 layout (location = 0) in vec2 TexCoord;
 

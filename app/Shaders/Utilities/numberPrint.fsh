@@ -1,8 +1,9 @@
 #version 460
+#extension GL_ARB_bindless_texture : require
 
 layout (location = 0) in vec2 UV;
 layout (location = 0) out vec4 fragColor;
-layout (binding = 0) uniform sampler2D Numbers;
+layout (location = 0, bindless_sampler) uniform sampler2D Numbers;
 layout (location = 3) uniform int index;
 void main()
 {			

@@ -43,6 +43,7 @@ public:
 	void setUniform(const GLuint & i, const int & o) { glProgramUniform1i(m_glProgramID, i, o); }
 	void setUniform(const GLuint & i, const double & o) { glProgramUniform1d(m_glProgramID, i,o ); }
 	void setUniform(const GLuint & i, const float & o) { glProgramUniform1f(m_glProgramID, i, o); }
+	void setUniform(const GLuint & i, const GLuint64 & o) { glProgramUniformHandleui64ARB(m_glProgramID, i, o); }
 	void setUniform(const GLuint & i, const glm::vec2 & o) { glProgramUniform2f(m_glProgramID, i, o.x, o.y); }
 	void setUniform(const GLuint & i, const glm::vec3 & o) { glProgramUniform3f(m_glProgramID, i, o.x, o.y, o.z); }
 	void setUniform(const GLuint & i, const glm::vec4 & o) { glProgramUniform4f(m_glProgramID, i, o.x, o.y, o.z, o.w); }
@@ -54,6 +55,7 @@ public:
 	void setUniform(const GLuint & i, const int * o) { glProgramUniform1iv(m_glProgramID, i, 1, o); }
 	void setUniform(const GLuint & i, const double * o) { glProgramUniform1dv(m_glProgramID, i, 1, o); }
 	void setUniform(const GLuint & i, const float * o) { glProgramUniform1fv(m_glProgramID, i, 1, o); }
+	void setUniform(const GLuint & i, const GLuint64 * o) { glProgramUniformHandleui64ARB(m_glProgramID, i, *o); }
 	void setUniform(const GLuint & i, const glm::vec2 * o) { glProgramUniform2fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
 	void setUniform(const GLuint & i, const glm::vec3 * o) { glProgramUniform3fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
 	void setUniform(const GLuint & i, const glm::vec4 * o) { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
@@ -62,6 +64,7 @@ public:
 	void setUniformArray(const GLuint & i, const int & o, const int & size) { glProgramUniform1iv(m_glProgramID, i, size, &o); }
 	void setUniformArray(const GLuint & i, const double & o, const int & size) { glProgramUniform1dv(m_glProgramID, i, size, &o); }
 	void setUniformArray(const GLuint & i, const float & o, const int & size) { glProgramUniform1fv(m_glProgramID, i, size, &o); }
+	void setUniformArray(const GLuint & i, const GLuint64 & o, const int & size) { glProgramUniformHandleui64vARB(m_glProgramID, i, size, &o); }
 	void setUniformArray(const GLuint & i, const glm::vec2 & o, const int & size) { glProgramUniform2fv(m_glProgramID, i, size, glm::value_ptr(o)); }
 	void setUniformArray(const GLuint & i, const glm::vec3 & o, const int & size) { glProgramUniform3fv(m_glProgramID, i, size, glm::value_ptr(o)); }
 	void setUniformArray(const GLuint & i, const glm::vec4 & o, const int & size) { glProgramUniform4fv(m_glProgramID, i, size, glm::value_ptr(o)); }
@@ -69,6 +72,7 @@ public:
 	void setUniformArray(const GLuint & i, const int * o, const int & size) { glProgramUniform1iv(m_glProgramID, i, size, o); }
 	void setUniformArray(const GLuint & i, const double * o, const int & size) { glProgramUniform1dv(m_glProgramID, i, size, o); }
 	void setUniformArray(const GLuint & i, const float * o, const int & size) { glProgramUniform1fv(m_glProgramID, i, size, o); }
+	void setUniformArray(const GLuint & i, const GLuint64 * o, const int & size) { glProgramUniformHandleui64vARB(m_glProgramID, i, size, o); }
 	void setUniformArray(const GLuint & i, const glm::vec2 * o, const int & size) { glProgramUniform2fv(m_glProgramID, i, size, glm::value_ptr(*o)); }
 	void setUniformArray(const GLuint & i, const glm::vec3 * o, const int & size) { glProgramUniform3fv(m_glProgramID, i, size, glm::value_ptr(*o)); }
 	void setUniformArray(const GLuint & i, const glm::vec4 * o, const int & size) { glProgramUniform4fv(m_glProgramID, i, size, glm::value_ptr(*o)); }

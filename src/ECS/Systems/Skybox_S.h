@@ -20,7 +20,9 @@ class Skybox_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~Skybox_System() {
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);	
+		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		m_brdfMap->removeCallback(this);
+		m_shaderSkyReflect->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Skybox_System(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) : BaseECSSystem() {
@@ -48,7 +50,16 @@ public:
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
-
+		
+		m_brdfMap->addCallback(this, [&] {
+			m_brdfHandle = glGetTextureHandleARB(m_brdfMap->m_glTexID);
+			glMakeTextureHandleResidentARB(m_brdfHandle);
+			if (m_shaderSkyReflect->existsYet())
+				m_shaderSkyReflect->setUniform(0, m_brdfHandle);
+		});
+		m_shaderSkyReflect->addCallback(this, [&] {
+			m_shaderSkyReflect->setUniform(0, m_brdfHandle);
+		});
 	}
 
 
@@ -68,7 +79,6 @@ public:
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_geometryFBO->bindForReading();
 		skyboxComponent->m_texture->bind(4);
-		m_brdfMap->bind(5);
 
 		// Render skybox to reflection buffer
 		m_shaderSkyReflect->bind();
@@ -92,6 +102,7 @@ private:
 	Shared_Asset_Shader	m_shaderSky, m_shaderSkyReflect;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_brdfMap;
+	GLuint64 m_brdfHandle;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;

@@ -1,16 +1,17 @@
 #version 460 
+#extension GL_ARB_bindless_texture : require
 #pragma optionNV (unroll all)
 #package "camera"
 
 layout (location = 0) out vec4 SSAOColor; 
 
 layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D NoiseMap;
 layout (binding = 3) uniform sampler2D DepthMap;
 
 layout (location = 0) uniform float SSAORadius = 1.0f;
 layout (location = 1) uniform int SSAOQuality = 1;
-layout (location = 2) uniform vec4 SSAOKernel[128];
+layout (location = 2, bindless_sampler) uniform sampler2D NoiseMap;
+layout (location = 3) uniform vec4 SSAOKernel[128];
 
 in vec2 TexCoord;
 

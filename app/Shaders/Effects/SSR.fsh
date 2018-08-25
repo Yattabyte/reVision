@@ -1,4 +1,5 @@
 #version 460
+#extension GL_ARB_bindless_texture : require
 #pragma optionNV(fastmath on)
 #pragma optionNV(fastprecision on)
 #pragma optionNV(ifcvt none)
@@ -20,8 +21,8 @@ const float fadeEnd = 0.9f;
 
 // The screen texture
 layout (binding = 4) uniform sampler2D LightMap;
-layout (binding = 5) uniform sampler2D EnvironmentBRDF;
-layout (binding = 6) uniform sampler2D BayerMatrix;
+layout (location = 0, bindless_sampler) uniform sampler2D EnvironmentBRDF;
+layout (location = 1, bindless_sampler) uniform sampler2D BayerMatrix;
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 0) out vec4 LightingColor;
