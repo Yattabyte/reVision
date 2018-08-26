@@ -133,8 +133,6 @@ public:
 			return;
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
-		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shader->bind();
 		m_geometryFBO->bindForReading();

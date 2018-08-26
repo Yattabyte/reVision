@@ -35,8 +35,7 @@ struct Shadow_Struct {
 	mat4 InverseLightVP[NUM_CASCADES];	
 };
 
-layout (std430, binding = 0) readonly buffer Material_Buffer
-{		
+layout (std430, binding = 0) readonly buffer Material_Buffer {		
 	uint64_t MaterialMaps[];
 };
 layout (std430, binding = 3) readonly buffer Prop_Buffer {

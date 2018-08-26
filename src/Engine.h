@@ -4,7 +4,7 @@
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
 #define GLEW_STATIC
-constexpr char ENGINE_VERSION[]	= "1.9.C";
+constexpr char ENGINE_VERSION[]	= "1.9.D";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -124,6 +124,8 @@ private:
 	float m_lastTime; 
 	float m_frameAccumulator;
 	int m_frameCount;
+	glm::ivec2 m_windowSize;
+	float m_refreshRate;
 	AssetManager m_AssetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_PreferenceState;

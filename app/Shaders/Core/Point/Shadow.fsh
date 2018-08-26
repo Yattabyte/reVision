@@ -24,5 +24,4 @@ void main()
 	LightDistance 				= length(WorldPos - LightPos) / FarPlane;
 	WorldNormalOut				= WorldNormal;
 	RadiantFluxOut				= GColor.xyz * ColorModifier;
-
 }

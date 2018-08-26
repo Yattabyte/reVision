@@ -29,6 +29,9 @@ public:
 	static const enum Preference {
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
+		C_WINDOW_USE_MONITOR_RATE,
+		C_WINDOW_REFRESH_RATE,
+		C_VSYNC,
 
 		C_BLOOM,
 		C_BLOOM_STRENGTH,
@@ -64,6 +67,9 @@ public:
 		static const std::vector<std::string> preferenceStrings = {
 			"C_WINDOW_WIDTH",
 			"C_WINDOW_HEIGHT",
+			"C_WINDOW_USE_MONITOR_RATE",
+			"C_WINDOW_REFRESH_RATE",
+			"C_VSYNC",
 
 			"C_BLOOM",
 			"C_BLOOM_STRENGTH",

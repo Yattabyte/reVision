@@ -30,7 +30,7 @@ struct FBO_Reflection : FBO_Base {
 	}
 	virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) {
 		m_size = glm::ivec2(width, height);
-		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_size.x, m_size.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB8, m_size.x, m_size.y, 0, GL_RGB, GL_FLOAT, NULL);
 	}
 	virtual void clear() {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };

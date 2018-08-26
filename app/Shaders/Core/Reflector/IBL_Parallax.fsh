@@ -15,9 +15,6 @@ struct Reflection_Struct {
 	int CubeSpot;
 };
 
-layout (std430, binding = 3) readonly buffer Reflection_Index_Buffer {
-	uint reflectionIndexes[];
-};
 layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 	Reflection_Struct reflectorBuffers[];
 };

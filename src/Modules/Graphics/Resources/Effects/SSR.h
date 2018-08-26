@@ -76,7 +76,7 @@ public:
 		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LEVEL, 5);
 		for (int x = 0; x < 6; ++x) {
 			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
 		glNamedFramebufferDrawBuffer(m_fboMipsID, GL_COLOR_ATTACHMENT0);
@@ -85,7 +85,7 @@ public:
 		m_textureSSRID = 0;
 		glCreateFramebuffers(1, &m_fboSSRID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureSSRID);
-		glTextureImage2DEXT(m_textureSSRID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_textureSSRID, GL_TEXTURE_2D, 0, GL_RGB8, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 		glTextureParameteri(m_textureSSRID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_textureSSRID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_textureSSRID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -212,7 +212,7 @@ private:
 		m_renderSize = size;
 		for (int x = 0; x < 6; ++x) {
 			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB16F, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
 	}

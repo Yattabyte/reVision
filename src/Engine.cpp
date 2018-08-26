@@ -21,7 +21,9 @@ static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int heigh
 Engine::~Engine()
 {
 	reportMessage("Shutting down...");
-	removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
+	removePrefCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this);
+	removePrefCallback(PreferenceState::C_WINDOW_REFRESH_RATE, this);
+	removePrefCallback(PreferenceState::C_VSYNC, this);
 	reportMessage("...done!");
 }
 
@@ -36,14 +38,35 @@ Engine::Engine() :
 
 	// Configure Rendering Context
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	const float window_width = getPreference(PreferenceState::C_WINDOW_WIDTH);
-	const float window_height = getPreference(PreferenceState::C_WINDOW_HEIGHT);
+	m_windowSize.x = getPreference(PreferenceState::C_WINDOW_WIDTH);
+	m_windowSize.y = getPreference(PreferenceState::C_WINDOW_HEIGHT);
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
-	glfwSetWindowSize(m_renderingContext.main, window_width, window_height);
-	glfwSetWindowPos(m_renderingContext.main, (maxWidth - window_width) / 2, (maxHeight - window_height) / 2);
+	glfwSetWindowSize(m_renderingContext.main, m_windowSize.x, m_windowSize.y);
+	glfwSetWindowPos(m_renderingContext.main, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
 	glfwSetWindowUserPointer(m_renderingContext.main, this);
 	glfwSetWindowSizeCallback(m_renderingContext.main, GLFW_Callback_Windowresize);
 	glfwMakeContextCurrent(m_renderingContext.main);
+
+
+	// Preference Callbacks
+	addPrefCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this, [&](const float &f) {
+		if (f > 0.0f) {
+			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
+		}
+		else 
+			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? m_refreshRate : GLFW_DONT_CARE);		
+	});
+	m_refreshRate = addPrefCallback(PreferenceState::C_WINDOW_REFRESH_RATE, this, [&](const float &f) {
+		m_refreshRate = f;
+		if (getPreference(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
+			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
+		}
+		else
+			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? m_refreshRate : GLFW_DONT_CARE);
+	});
+	addPrefCallback(PreferenceState::C_VSYNC, this, [&](const float &f) {glfwSwapInterval((int)f); });
 
 	// Initialize Members
 	m_PreferenceState.loadFile("preferences");
@@ -194,7 +217,12 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	glfwWindowHint(GLFW_REFRESH_RATE, GLFW_DONT_CARE);
+	if (engine->getPreference(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
+		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
+	else {
+		const float refreshRate = engine->getPreference(PreferenceState::C_WINDOW_REFRESH_RATE);
+		glfwWindowHint(GLFW_REFRESH_RATE, refreshRate > 0.0f ? refreshRate : GLFW_DONT_CARE);
+	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
 	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
@@ -214,13 +242,12 @@ Rendering_Context::Rendering_Context(Engine * engine)
 		exit(-1);
 	}
 
-	glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
 	main = glfwCreateWindow(1, 1, "reVision", NULL, shared);
 	glfwSetWindowIcon(main, 0, NULL);
 	glfwMakeContextCurrent(main);
 	glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(main, 0, 0);
-	glfwSwapInterval(0);
+	glfwSwapInterval((int)engine->getPreference(PreferenceState::C_VSYNC));
 	engine->reportMessage("...done!");
 }

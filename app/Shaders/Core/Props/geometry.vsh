@@ -54,11 +54,12 @@ void main()
 		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[3]] * Weights[3];
 	}
 	TexCoord             		= textureCoordinate;
-	const mat3 vmMatrix			= mat3(cameraBuffer.vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform);
-	const vec3 ViewNormal 		= normalize(vmMatrix * normalize(normal));
-	const vec3 ViewTangent		= normalize(vmMatrix * normalize(tangent));		
-	const vec3 ViewBitangent 	= normalize(vmMatrix * normalize(bitangent));
+	const mat4 vmMatrix4		= cameraBuffer.vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform;
+	const mat3 vmMatrix3		= mat3(vmMatrix4);
+	const vec3 ViewNormal 		= normalize(vmMatrix3 * normalize(normal));
+	const vec3 ViewTangent		= normalize(vmMatrix3 * normalize(tangent));		
+	const vec3 ViewBitangent 	= normalize(vmMatrix3 * normalize(bitangent));
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
 	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[PropIndex].materialID]);
-	gl_Position           		= cameraBuffer.pMatrix * cameraBuffer.vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform * vec4(vertex,1.0);			
+	gl_Position           		= cameraBuffer.pMatrix * vmMatrix4 * vec4(vertex,1.0);			
 }
