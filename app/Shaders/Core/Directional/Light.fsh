@@ -78,7 +78,7 @@ void main()
 	const float NdotL 		 				= dot(normalize(-lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz), data.World_Normal);
 	const float NdotL_Clamped				= max(NdotL, 0.0);
 	const float NdotV_Clamped				= max(NdotV, 0.0);
-	if (NdotL < 0.f && abs(NdotV) < 0.f)	discard; // Discard if light will be zero anyway
+	if (NdotL <= 0.f && abs(NdotV) <= 0.f)	discard; // Discard if light will be zero anyway
 	
 	// Shadow
 	float ShadowFactor 						= 1.0f;
@@ -91,7 +91,7 @@ void main()
 				break;			
 		const vec3 LightPseudoPos			= cameraBuffer.EyePosition + (lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz);
 		ShadowFactor 						= CalcShadowFactor(index, shadowBuffers[shadowIndexes[BufferIndex]].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
-		if (ShadowFactor < EPSILON)			discard; // Discard if completely in shadow
+		if (ShadowFactor <= EPSILON)		discard; // Discard if completely in shadow
 	}
 	
 	// Direct Light	

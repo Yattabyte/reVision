@@ -91,7 +91,7 @@ void World_Module::loadWorld()
 		light->m_data->data->LightRadius = 5.0;
 		light->m_data->data->LightPosition = glm::vec3(5, 5, 10);
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(5, 5, 10));
-		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
+		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5)*1.1f);
 		const glm::mat4 final = glm::inverse(trans * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 1, 0)));
 		const float verticalRad = 2.0f * atanf(tanf(glm::radians(35.0f * 2) / 2.0f));
 		const glm::mat4 perspective = glm::perspective(verticalRad, 1.0f, 0.01f, 5.0f * 5.0f);
@@ -113,7 +113,7 @@ void World_Module::loadWorld()
 		light->m_data->data->LightRadius = 5.0;
 		light->m_data->data->LightPosition = glm::vec3(5, 5, -10);
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(5, 5, -10));
-		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
+		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5)*1.1f);
 		const glm::mat4 final = glm::inverse(trans * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 1, 0)));
 		const float verticalRad = 2.0f * atanf(tanf(glm::radians(35.0f * 2) / 2.0f));
 		const glm::mat4 perspective = glm::perspective(verticalRad, 1.0f, 0.01f, 5.0f * 5.0f);
@@ -136,7 +136,7 @@ void World_Module::loadWorld()
 		const glm::vec3 position = glm::vec3(-5, 5, 10);
 		light->m_data->data->LightPosition = position;
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
+		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5)*1.1f);
 		light->m_data->data->mMatrix = (trans)* scl;
 		shadow->m_data->data->lightV = glm::translate(glm::mat4(1.0f), -position);
 		glm::mat4 rotMats[6];
@@ -164,7 +164,7 @@ void World_Module::loadWorld()
 		const glm::vec3 position = glm::vec3(-5, 5, -10);
 		light->m_data->data->LightPosition = position;
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
+		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5)*1.1f);
 		light->m_data->data->mMatrix = (trans)* scl;
 		shadow->m_data->data->lightV = glm::translate(glm::mat4(1.0f), -position);
 		glm::mat4 rotMats[6];

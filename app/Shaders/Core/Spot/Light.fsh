@@ -38,10 +38,10 @@ layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 	Shadow_Struct shadowBuffers[];
 };
 
-layout (location = 0) flat in uint BufferIndex;
+layout (location = 0) flat in uint LightIndex;
+layout (location = 1) flat in uint ShadowIndex;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
-layout (location = 1) uniform bool UseStencil = true;
 layout (location = 0) out vec3 LightingColor;         
 
 vec2 CalcTexCoord()
@@ -49,21 +49,23 @@ vec2 CalcTexCoord()
     return			 				gl_FragCoord.xy / cameraBuffer.CameraDimensions;
 }
 
-float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance)                                                  
+float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance, in float RadiusSquared)                                                  
 {                                                                                  
 	// Bring fragment coordinates from world space into light space, then into texture spaces
 	const vec3 ProjCoords 			= LightSpacePos.xyz / LightSpacePos.w;                                  
 	const vec2 UVCoords 			= 0.5f * ProjCoords.xy + 0.5f;                                                        
 	const float FragmentDepth 		= 0.5f * ProjCoords.z + 0.5f; 		
-	const float FarPlane 			= (lightBuffers[lightIndexes[BufferIndex]].LightRadius * lightBuffers[lightIndexes[BufferIndex]].LightRadius);
+	const float FarPlane 			= RadiusSquared;
 	const float diskRadius 			= (1.0 + (ViewDistance / FarPlane)) * (ShadowSize_Recip * 2);
 		
 	float Factor = 0.0f;	
+	const int Shadowspot1 = shadowBuffers[ShadowIndex].Shadow_Spot;
+	const int Shadowspot2 = Shadowspot1+1;
 	for (int y = -1 ; y <= 1 ; y++) 
 		for (int x = -1 ; x <= 1 ; x++) {
 			const vec2 Offsets 		= vec2(x, y) * diskRadius;
-			const vec3 FinalCoord1 	= vec3( UVCoords + Offsets, shadowBuffers[shadowIndexes[BufferIndex]].Shadow_Spot);			
-			const vec3 FinalCoord2 	= vec3( UVCoords + Offsets, shadowBuffers[shadowIndexes[BufferIndex]].Shadow_Spot+1);
+			const vec3 FinalCoord1 	= vec3(UVCoords + Offsets, Shadowspot1);			
+			const vec3 FinalCoord2 	= vec3(FinalCoord1.xy, Shadowspot2);
 			const float depth1 		= texture( ShadowMap, FinalCoord1 ).r;
 			const float depth2 		= texture( ShadowMap, FinalCoord2 ).r;
 			Factor 			   	 	+= (depth1 >= FragmentDepth - EPSILON) ? (depth2 >= FragmentDepth - EPSILON) ? 1.0 : 0.0 : 0.0;	
@@ -74,17 +76,16 @@ float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance)
 void main(void)
 {		
 	// Initialize variables
-	if (UseStencil) 				return; // Strictly for the stenciling pass so we don't have to change shaders		
 	ViewData data;
 	GetFragmentData(CalcTexCoord(), data);
    	if (data.View_Depth >= 1.0f)	discard; // Discard background fragments
 	
 	// Spot Angle Factor
-	const vec3 LightToPixel 		= normalize(data.World_Pos.xyz - lightBuffers[lightIndexes[BufferIndex]].LightPosition.xyz);                             
-	const float SpotFactor 			= dot(LightToPixel, lightBuffers[lightIndexes[BufferIndex]].LightVector.xyz); 			
-    if (SpotFactor < lightBuffers[lightIndexes[BufferIndex]].LightCutoff) discard;	// Discard if light falls outside of FOV
+	const vec3 LightToPixel 		= normalize(data.World_Pos.xyz - lightBuffers[LightIndex].LightPosition.xyz);                             
+	const float SpotFactor 			= dot(LightToPixel, lightBuffers[LightIndex].LightVector.xyz); 			
+    if (SpotFactor < lightBuffers[LightIndex].LightCutoff) discard;	// Discard if light falls outside of FOV
 	
-	const vec3 LightPosDirection 	= normalize(lightBuffers[lightIndexes[BufferIndex]].LightPosition.xyz - data.World_Pos.xyz);  
+	const vec3 LightPosDirection 	= -LightToPixel;
 	const vec3 DeltaView 			= cameraBuffer.EyePosition - data.World_Pos.xyz;  
 	const float ViewDistance 		= length(DeltaView);
 	const vec3 ViewDirection		= DeltaView / ViewDistance;
@@ -92,24 +93,26 @@ void main(void)
 	const float NdotL 		 		= dot(normalize(LightPosDirection), data.World_Normal);
 	const float NdotL_Clamped		= max(NdotL, 0.0);
 	const float NdotV_Clamped		= max(NdotV, 0.0);
-	if (NdotL < 0.f && abs(NdotV) < 0.f) discard; // Discard if light will be zero anyway
+	if (NdotL <= 0.f && abs(NdotV) <= 0.f) discard; // Discard if light will be zero anyway
+	
+	// Attenuation	
+	const float Distance 			= length(LightToPixel);
+	const float	RadiusSquared		= lightBuffers[LightIndex].LightRadius * lightBuffers[LightIndex].LightRadius;
+	const float range 				= 1.0f / RadiusSquared;
+	const float Attenuation 		= 1.0f - (Distance * Distance) * (range * range); 	
+	if (Attenuation <= 0.0f) 		discard; // Discard if outside of radius	
 	
 	// Shadow	
 	const float cosAngle			= saturate(1.0f - NdotL);
 	const float bias 				= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 	const vec4 scaledNormalOffset	= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
-	const float ShadowFactor 		= CalcShadowFactor(shadowBuffers[shadowIndexes[BufferIndex]].lightPV * (data.World_Pos + scaledNormalOffset), ViewDistance); 
-	if (ShadowFactor < EPSILON) 	discard; // Discard if completely in shadow
+	const float ShadowFactor 		= CalcShadowFactor(shadowBuffers[ShadowIndex].lightPV * (data.World_Pos + scaledNormalOffset), ViewDistance, RadiusSquared); 
+	if (ShadowFactor <= EPSILON) 	discard; // Discard if completely in shadow
 	
-	// Attenuation	
-	const float Distance 			= length(lightBuffers[lightIndexes[BufferIndex]].LightPosition.xyz - data.World_Pos.xyz);
-	const float range 				= (1.0f / (lightBuffers[lightIndexes[BufferIndex]].LightRadius * lightBuffers[lightIndexes[BufferIndex]].LightRadius));
-	const float Attenuation 		= 1.0f - (Distance * Distance) * (range * range); 	
-	if (Attenuation < 0.0f) 		discard; // Discard if outside of radius	
 	
 	// Direct Light
 	vec3 Fs;
-	const vec3 Radiance 			= ( (lightBuffers[lightIndexes[BufferIndex]].LightColor.xyz * lightBuffers[lightIndexes[BufferIndex]].LightIntensity) * Attenuation ) * (1.0f - (1.0f - SpotFactor) * 1.0f/(1.0f - lightBuffers[lightIndexes[BufferIndex]].LightCutoff)) * ShadowFactor;
+	const vec3 Radiance 			= ( (lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity) * Attenuation ) * (1.0f - (1.0f - SpotFactor) * 1.0f/(1.0f - lightBuffers[LightIndex].LightCutoff)) * ShadowFactor;
 	const vec3 D_Diffuse			= CalculateDiffuse( data.Albedo );
 	const vec3 D_Specular			= BRDF_Specular( data.Roughness, data.Albedo, data.Metalness, data.World_Normal, LightPosDirection, NdotL_Clamped, NdotV, ViewDirection, Fs);
 	const vec3 D_Ratio				= (vec3(1.0f) - Fs) * (1.0f - data.Metalness); 

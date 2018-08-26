@@ -48,9 +48,10 @@ public:
 		
 		// Asset Loading
 		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Point\\Light");
+		m_shader_Stencil = Asset_Shader::Create(m_engine, "Core\\Point\\Stencil");
 		m_shader_Shadow = Asset_Shader::Create(m_engine, "Core\\Point\\Shadow");
 		m_shader_Culling = Asset_Shader::Create(m_engine, "Core\\Point\\Culling");
-		m_shapeSphere = Asset_Primitive::Create(m_engine, "ssphere");
+		m_shapeSphere = Asset_Primitive::Create(m_engine, "sphere");
 
 		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
@@ -92,7 +93,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Exit Early
-		if (!m_sphereVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet())
+		if (!m_sphereVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
 			return;
 
 		// Clear Data
@@ -200,11 +201,9 @@ protected:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Lighting->bind();										// Shader (point)
+		m_shader_Stencil->bind();										// Shader (point)
 		m_lightingFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);				// Shadow map(linear depth texture)
@@ -217,15 +216,14 @@ protected:
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		m_shader_Lighting->setUniform(1, true);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Now draw into color buffers
+		m_shader_Lighting->bind();
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		m_shader_Lighting->setUniform(1, false);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
 		glCullFace(GL_BACK);
@@ -262,7 +260,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeSphere;
 	GLuint m_sphereVAO;
 	bool m_sphereVAOLoaded;

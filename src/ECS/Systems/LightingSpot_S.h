@@ -46,6 +46,7 @@ public:
 
 		// Asset Loading
 		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Spot\\Light");
+		m_shader_Stencil = Asset_Shader::Create(m_engine, "Core\\Spot\\Stencil");
 		m_shader_Shadow = Asset_Shader::Create(m_engine, "Core\\Spot\\Shadow");
 		m_shader_Culling = Asset_Shader::Create(m_engine, "Core\\Spot\\Culling");
 		m_shapeCone = Asset_Primitive::Create(m_engine, "cone");
@@ -90,7 +91,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Exit Early
-		if (!m_coneVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet())
+		if (!m_coneVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
 			return;
 
 		// Clear Data
@@ -204,7 +205,7 @@ protected:
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Lighting->bind();										// Shader (spot)
+		m_shader_Stencil->bind();										// Shader (spot)
 		m_lightingFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);				// Shadow map (depth texture)
@@ -217,15 +218,14 @@ protected:
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		m_shader_Lighting->setUniform(1, true);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Now draw into color buffers
+		m_shader_Lighting->bind();
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		m_shader_Lighting->setUniform(1, false);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
 		glCullFace(GL_BACK);
@@ -262,7 +262,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling;
+	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeCone;
 	GLuint m_coneVAO;
 	bool m_coneVAOLoaded;

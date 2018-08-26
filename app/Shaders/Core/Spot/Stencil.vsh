@@ -16,20 +16,13 @@ struct Light_Struct {
 layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
 	uint lightIndexes[];
 };
-layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
-	int shadowIndexes[];
-};
+
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
 
-layout (location = 0) flat out uint LightIndex;
-layout (location = 1) flat out uint ShadowIndex;
-
 void main()
 {		
-	LightIndex = lightIndexes[gl_InstanceID];
-	ShadowIndex = shadowIndexes[gl_InstanceID];
 	gl_Position = cameraBuffer.pMatrix * cameraBuffer.vMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vertex;
 }
 

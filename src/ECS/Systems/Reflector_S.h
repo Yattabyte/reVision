@@ -43,6 +43,7 @@ public:
 
 		// Asset Loading
 		m_shaderLighting = Asset_Shader::Create(m_engine, "Core\\Reflector\\IBL_Parallax");
+		m_shaderStencil = Asset_Shader::Create(m_engine, "Core\\Reflector\\Stencil");
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Core\\Reflector\\2D_To_Cubemap");
 		m_shaderConvolute = Asset_Shader::Create(m_engine, "Core\\Reflector\\Cube_Convolution");
 		m_shapeCube = Asset_Primitive::Create(m_engine, "cube");
@@ -240,7 +241,7 @@ protected:
 		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 
 		// Draw only into depth-stencil buffer
-		m_shaderLighting->bind();										// Shader (spot)
+		m_shaderStencil->bind();										// Shader (reflector)
 		m_reflectionFBO->bindForWriting();								// Ensure writing to lighting FBO
 		m_geometryFBO->bindForReading();								// Read from Geometry FBO
 		glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
@@ -248,25 +249,26 @@ protected:
 		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
 		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
 		glBindVertexArray(m_cubeVAO);									// Quad VAO
-		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
 		glStencilFunc(GL_ALWAYS, 0, 0);
-		m_shaderLighting->setUniform(1, true);
+		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+		glDepthMask(GL_FALSE);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Now draw into color buffers
+		m_shaderLighting->bind();
 		glDisable(GL_DEPTH_TEST);
 		glEnable(GL_CULL_FACE);
 		glDisable(GL_BLEND);
 		glCullFace(GL_FRONT);
 		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		m_shaderLighting->setUniform(1, false);
+		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glCullFace(GL_BACK);
 		glDepthMask(GL_TRUE);
+		glCullFace(GL_BACK);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_STENCIL_TEST);
 	}
@@ -297,7 +299,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine;
-	Shared_Asset_Shader m_shaderLighting, m_shaderCopy, m_shaderConvolute;
+	Shared_Asset_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
 	GLuint m_cubeVAO, m_quadVAO;
 	bool m_cubeVAOLoaded, m_quadVAOLoaded;
@@ -308,7 +310,7 @@ private:
 	std::vector<GLuint> reflectionIndicies;
 	DynamicBuffer m_visLights;
 	PriorityList<float, Reflector_Component*, std::less<float>> m_oldest;
-	FBO_Base * m_geometryFBO, *m_lightingFBO, *m_reflectionFBO;
+	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
 	FBO_EnvMap m_envmapFBO;
 	bool m_outOfDate = true;
 };
