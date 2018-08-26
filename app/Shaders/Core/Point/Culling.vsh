@@ -21,13 +21,13 @@ layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
 layout (std430, binding = 4) readonly buffer Visibility_Buffer {
-	uint propIndex[];
+	uint propIndexes[];
 };
 layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
 	BonesStruct skeletonBuffer[];
 };
 layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
-	int skeletonID[];
+	int skeletonIndexes[];
 };
 layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 	Shadow_Struct shadowBuffers[];
@@ -41,8 +41,8 @@ layout (location = 1) uniform int ShadowIndex = 0;
 
 void main()
 {	
-	int shadowOffset = skeletonID[gl_DrawID] == -1 ? 6 : 0;
-	gl_Position = shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * propBuffer[propIndex[gl_DrawID]].bBoxMatrix * vec4(vertex, 1.0);		
+	int shadowOffset = skeletonIndexes[gl_DrawID] == -1 ? 6 : 0;
+	gl_Position = shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex, 1.0);		
 	gl_Layer = shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + shadowOffset;
 	id = gl_DrawID;
 }

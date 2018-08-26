@@ -20,7 +20,7 @@ layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
 layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
-	uint propIndex[];
+	uint propIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 	Reflection_Struct reflectorBuffers[];
@@ -35,7 +35,7 @@ layout (location = 0) flat out int id;
 
 void main()
 {	
-	gl_Position = reflectorBuffers[reflectorIndex].pMatrix * reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[propIndex[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
+	gl_Position = reflectorBuffers[reflectorIndex].pMatrix * reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
 	id = gl_DrawID;
 	gl_Layer = reflectorBuffers[reflectorIndex].CubeSpot + instance;
 }

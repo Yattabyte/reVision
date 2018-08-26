@@ -41,7 +41,8 @@ layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 };
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) in flat uint BufferIndex;
+layout (location = 1) in flat uint LightIndex;
+layout (location = 2) in flat uint ShadowIndex;
 
 layout (location = 0) uniform float ShadowSize_Recip;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
@@ -58,7 +59,7 @@ float CalcShadowFactor(in int Index, in vec4 LightSpacePos)
 	for (int y = -1; y <= 1 ; ++y) 
         for (int x = -1 ; x <= 1; ++x) {
 			const vec2 Offsets 			= vec2(x, y) * ShadowSize_Recip;
-			const vec3 FinalCoord 		= vec3( UVCoords + Offsets, shadowBuffers[shadowIndexes[BufferIndex]].Shadow_Spot + Index );
+			const vec3 FinalCoord 		= vec3( UVCoords + Offsets, shadowBuffers[ShadowIndex].Shadow_Spot + Index );
 			const float depth 			= texture( ShadowMap, FinalCoord ).r;
 			Factor 			   		   += (depth >= FragmentDepth) ? 1.0 : 0.0;	
 		}
@@ -75,30 +76,30 @@ void main()
 	
 	const vec3 ViewDirection				= normalize(cameraBuffer.EyePosition - data.World_Pos.xyz);
 	const float NdotV 						= dot(data.World_Normal, ViewDirection);
-	const float NdotL 		 				= dot(normalize(-lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz), data.World_Normal);
+	const float NdotL 		 				= dot(normalize(-lightBuffers[LightIndex].LightDirection.xyz), data.World_Normal);
 	const float NdotL_Clamped				= max(NdotL, 0.0);
 	const float NdotV_Clamped				= max(NdotV, 0.0);
 	if (NdotL <= 0.f && abs(NdotV) <= 0.f)	discard; // Discard if light will be zero anyway
 	
 	// Shadow
 	float ShadowFactor 						= 1.0f;
-	if (shadowIndexes[BufferIndex] != -1) {
+	if (ShadowIndex != -1) {
 		const float cosAngle				= saturate(1.0f - NdotL);
 		const vec4 scaledNormalOffset		= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
 		int index 							= 0;
 		for (; index < 4; ++index) 
-			if (-data.View_Pos.z <= shadowBuffers[shadowIndexes[BufferIndex]].CascadeEndClipSpace[index]) 
+			if (-data.View_Pos.z <= shadowBuffers[ShadowIndex].CascadeEndClipSpace[index]) 
 				break;			
-		const vec3 LightPseudoPos			= cameraBuffer.EyePosition + (lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz);
-		ShadowFactor 						= CalcShadowFactor(index, shadowBuffers[shadowIndexes[BufferIndex]].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
+		const vec3 LightPseudoPos			= cameraBuffer.EyePosition + (lightBuffers[LightIndex].LightDirection.xyz);
+		ShadowFactor 						= CalcShadowFactor(index, shadowBuffers[ShadowIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
 		if (ShadowFactor <= EPSILON)		discard; // Discard if completely in shadow
 	}
 	
 	// Direct Light	
 	vec3 Fs;
-	const vec3 Radiance 					= (lightBuffers[lightIndexes[BufferIndex]].LightColor.xyz * lightBuffers[lightIndexes[BufferIndex]].LightIntensity) * ShadowFactor;
+	const vec3 Radiance 					= (lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity) * ShadowFactor;
 	const vec3 D_Diffuse					= CalculateDiffuse( data.Albedo );
-	const vec3 D_Specular					= BRDF_Specular( data.Roughness, data.Albedo, data.Metalness, data.World_Normal, -lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz, NdotL_Clamped, NdotV_Clamped, ViewDirection, Fs);
+	const vec3 D_Specular					= BRDF_Specular( data.Roughness, data.Albedo, data.Metalness, data.World_Normal, -lightBuffers[LightIndex].LightDirection.xyz, NdotL_Clamped, NdotV_Clamped, ViewDirection, Fs);
 	const vec3 D_Ratio						= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
 	LightingColor		 					= (D_Ratio * D_Diffuse + D_Specular) * Radiance * NdotL_Clamped;
 }

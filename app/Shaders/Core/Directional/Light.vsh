@@ -2,17 +2,22 @@
 
 layout (location = 0) in vec3 vertex;
 
-layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out uint BufferIndex;
-
-
-layout (std430, binding = 3) readonly buffer Visibility_Buffer {
-	uint indexes[];
+layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+	uint lightIndexes[];
 };
+layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
+	int shadowIndexes[];
+};
+
+layout (location = 0) out vec2 TexCoord;
+
+layout (location = 1) flat out uint LightIndex;
+layout (location = 2) flat out uint ShadowIndex;
 
 void main()
 {	
-	BufferIndex = gl_InstanceID;	
+	LightIndex = lightIndexes[gl_InstanceID];
+	ShadowIndex = shadowIndexes[gl_InstanceID];
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	gl_Position = vec4(vertex, 1);
 }

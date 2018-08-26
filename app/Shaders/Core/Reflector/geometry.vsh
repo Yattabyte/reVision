@@ -30,13 +30,13 @@ layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
 layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
-	uint propIndex[];
+	uint propIndexes[];
 };
 layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
 	BonesStruct skeletonBuffer[];
 };
 layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
-	int skeletonID[];
+	int skeletonIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 	Reflection_Struct reflectorBuffers[];
@@ -60,19 +60,21 @@ layout (location = 5) flat out sampler2DArray MaterialMap;
 
 void main()
 {	
+	const uint PropIndex 		= propIndexes[gl_DrawID];
+	const uint SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
-	if (skeletonID[gl_DrawID] != -1) {	
-		BoneTransform 			= skeletonBuffer[skeletonID[gl_DrawID]].bones[BoneIDs[0]] * Weights[0];
-		BoneTransform 	   	   += skeletonBuffer[skeletonID[gl_DrawID]].bones[BoneIDs[1]] * Weights[1];
-		BoneTransform          += skeletonBuffer[skeletonID[gl_DrawID]].bones[BoneIDs[2]] * Weights[2];
-		BoneTransform          += skeletonBuffer[skeletonID[gl_DrawID]].bones[BoneIDs[3]] * Weights[3];
+	if (SkeletonIndex != -1) {	
+		BoneTransform 			= skeletonBuffer[SkeletonIndex].bones[BoneIDs[0]] * Weights[0];
+		BoneTransform 	   	   += skeletonBuffer[SkeletonIndex].bones[BoneIDs[1]] * Weights[1];
+		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[2]] * Weights[2];
+		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[3]] * Weights[3];
 	}
 	TexCoord             		= textureCoordinate;
-	const mat3 vmMatrix			= mat3(reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[propIndex[gl_DrawID]].mMatrix * BoneTransform);
+	const mat3 vmMatrix			= mat3(reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[PropIndex].mMatrix * BoneTransform);
 	const vec3 ViewNormal 		= normalize(vmMatrix * normalize(normal));
 	const vec3 ViewTangent		= normalize(vmMatrix * normalize(tangent));		
 	const vec3 ViewBitangent 	= normalize(vmMatrix * normalize(bitangent));
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
-	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[propIndex[gl_DrawID]].materialID]);
-	gl_Position           		= reflectorBuffers[reflectorIndex].pMatrix * reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[propIndex[gl_DrawID]].mMatrix * BoneTransform * vec4(vertex,1.0);				
+	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[PropIndex].materialID]);
+	gl_Position           		= reflectorBuffers[reflectorIndex].pMatrix * reflectorBuffers[reflectorIndex].vMatrix[instance] * propBuffer[PropIndex].mMatrix * BoneTransform * vec4(vertex,1.0);				
 }

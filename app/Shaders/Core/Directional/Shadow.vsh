@@ -43,13 +43,13 @@ layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
 layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
-	uint propIndex[];
+	uint propIndexes[];
 };
 layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
 	BonesStruct skeletonBuffer[];
 };
 layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
-	int skeletonID[];
+	int skeletonIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
@@ -76,14 +76,16 @@ layout (location = 6) flat out sampler2DArray MaterialMap;
 
 void main()
 {	
+	const uint PropIndex 		= propIndexes[gl_DrawID];
+	const uint SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
-	if (skeletonID[gl_DrawID] != -1) {	
-		BoneTransform 			= skeletonBuffer[skeletonID[gl_DrawID]].bones[boneIDs[0]] * weights[0];
-		BoneTransform 	   	   += skeletonBuffer[skeletonID[gl_DrawID]].bones[boneIDs[1]] * weights[1];
-		BoneTransform          += skeletonBuffer[skeletonID[gl_DrawID]].bones[boneIDs[2]] * weights[2];
-		BoneTransform          += skeletonBuffer[skeletonID[gl_DrawID]].bones[boneIDs[3]] * weights[3];
+	if (SkeletonIndex != -1) {	
+		BoneTransform 			= skeletonBuffer[SkeletonIndex].bones[boneIDs[0]] * weights[0];
+		BoneTransform 	   	   += skeletonBuffer[SkeletonIndex].bones[boneIDs[1]] * weights[1];
+		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[boneIDs[2]] * weights[2];
+		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[boneIDs[3]] * weights[3];
 	}
-	const mat4 matTrans4 		= propBuffer[propIndex[gl_DrawID]].mMatrix * BoneTransform;
+	const mat4 matTrans4 		= propBuffer[PropIndex].mMatrix * BoneTransform;
 	const mat3 matTrans3 		= mat3(matTrans4);
 	const vec4 WorldVertex		= matTrans4 * vec4(vertex,1.0);
 	const vec3 WorldNormal 		= normalize(matTrans3 * normalize(normal));
@@ -92,7 +94,7 @@ void main()
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);	
 	TexCoord0             		= textureCoordinate;		
 	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;
-	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[propIndex[gl_DrawID]].materialID]);
+	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[PropIndex].materialID]);
 	gl_Position           		= shadowBuffers[ShadowIndex].LightVP[gl_InstanceID] * WorldVertex;		
 	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID;
 }
