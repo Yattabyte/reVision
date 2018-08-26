@@ -46,7 +46,11 @@ void World_Module::loadWorld()
 	auto * reflectorSys = graphics.getSystem<Reflector_System>();
 
 	{
-		ecs.makeEntity(BasicPlayer_Component());
+		auto eHandle = ecs.makeEntity(BasicPlayer_Component());
+		BasicPlayer_Component * player = ecs.getComponent<BasicPlayer_Component>(eHandle);
+		player->m_transform.m_position = glm::vec3(0, 10, 30);
+		player->m_rotation.y = 45.0f;
+		player->m_transform.update();
 	}
 	{
 		auto eHandle = ecs.makeEntity(LightDirectional_Component(), LightDirectionalShadow_Component());
@@ -85,8 +89,8 @@ void World_Module::loadWorld()
 		light->m_data->data->LightColor = glm::vec3(0, 0, 10);
 		light->m_data->data->LightIntensity = 5.0f;
 		light->m_data->data->LightRadius = 5.0;
-		light->m_data->data->LightPosition = glm::vec3(0, 5, 10);
-		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, 10));
+		light->m_data->data->LightPosition = glm::vec3(5, 5, 10);
+		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(5, 5, 10));
 		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
 		const glm::mat4 final = glm::inverse(trans * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 1, 0)));
 		const float verticalRad = 2.0f * atanf(tanf(glm::radians(35.0f * 2) / 2.0f));
@@ -107,8 +111,8 @@ void World_Module::loadWorld()
 		light->m_data->data->LightColor = glm::vec3(0, 10, 0);
 		light->m_data->data->LightIntensity = 1.0f;
 		light->m_data->data->LightRadius = 5.0;
-		light->m_data->data->LightPosition = glm::vec3(0, 5, -10);
-		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -10));
+		light->m_data->data->LightPosition = glm::vec3(5, 5, -10);
+		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), glm::vec3(5, 5, -10));
 		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
 		const glm::mat4 final = glm::inverse(trans * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 1, 0)));
 		const float verticalRad = 2.0f * atanf(tanf(glm::radians(35.0f * 2) / 2.0f));
@@ -129,7 +133,7 @@ void World_Module::loadWorld()
 		light->m_data->data->LightColor = glm::vec3(0, 0, 10);
 		light->m_data->data->LightIntensity = 5.0f;
 		light->m_data->data->LightRadius = 5.0;
-		const glm::vec3 position = glm::vec3(-44, 5, 10);
+		const glm::vec3 position = glm::vec3(-5, 5, 10);
 		light->m_data->data->LightPosition = position;
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
@@ -157,7 +161,7 @@ void World_Module::loadWorld()
 		light->m_data->data->LightColor = glm::vec3(0, 10, 0);
 		light->m_data->data->LightIntensity = 1.0f;
 		light->m_data->data->LightRadius = 5.0;
-		const glm::vec3 position = glm::vec3(-44, 5, -10);
+		const glm::vec3 position = glm::vec3(-5, 5, -10);
 		light->m_data->data->LightPosition = position;
 		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(5 * 5));
@@ -339,7 +343,7 @@ void World_Module::loadWorld()
 		propSys->registerComponent(*model);
 		propSys->registerComponent(*anim);
 		model->m_model = Asset_Model::Create(m_engine, "Test\\AnimationTest.fbx");
-		transform->m_transform.m_position = glm::vec3(-29, 0, 10);
+		transform->m_transform.m_position = glm::vec3(-18, 0, 10);
 		transform->m_transform.m_scale = glm::vec3(1.0f);
 		transform->m_transform.update();
 		model->m_data->data->materialID = 0;
@@ -361,7 +365,7 @@ void World_Module::loadWorld()
 		propSys->registerComponent(*model);
 		propSys->registerComponent(*anim);
 		model->m_model = Asset_Model::Create(m_engine, "Test\\AnimationTest.fbx");
-		transform->m_transform.m_position = glm::vec3(-29, 0, -10);
+		transform->m_transform.m_position = glm::vec3(-18, 0, -10);
 		transform->m_transform.m_scale = glm::vec3(1.0f);
 		transform->m_transform.update();
 		model->m_data->data->materialID = 0;
