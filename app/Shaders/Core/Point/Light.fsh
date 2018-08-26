@@ -1,4 +1,8 @@
 #version 460
+#pragma optionNV(fastmath on)
+#pragma optionNV(ifcvt none)
+#pragma optionNV(inline all)
+#pragma optionNV(strict on)
 #pragma optionNV(unroll all)
 #define EPSILON 0.00001
 #define saturate(value) clamp(value, 0.0f, 1.0f)
@@ -77,7 +81,6 @@ float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float b
 void main(void)
 {		
 	// Initialize variables
-	LightingColor 					= vec3(0);
 	if (UseStencil) 				return; // Strictly for the stenciling pass so we don't have to change shaders	
 	ViewData data;
 	GetFragmentData(CalcTexCoord(), data);
@@ -97,7 +100,7 @@ void main(void)
 	const float Distance 			= length(lightBuffers[lightIndexes[BufferIndex]].LightPosition.xyz - data.World_Pos.xyz);
 	const float range 				= (1.0f / (lightBuffers[lightIndexes[BufferIndex]].LightRadius * lightBuffers[lightIndexes[BufferIndex]].LightRadius));
 	const float Attenuation 		= 1.0f - (Distance * Distance) * (range * range);
-	if (Attenuation < 0.0f) 		discard;// Discard if outside of radius
+	if (Attenuation < 0.0f) 		discard; // Discard if outside of radius
 	
 	// Shadow
 	const float cosAngle			= saturate(1.0f - NdotL);

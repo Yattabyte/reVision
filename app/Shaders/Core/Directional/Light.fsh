@@ -1,4 +1,8 @@
 #version 460
+#pragma optionNV(fastmath on)
+#pragma optionNV(ifcvt none)
+#pragma optionNV(inline all)
+#pragma optionNV(strict on)
 #pragma optionNV(unroll all)
 #define NUM_CASCADES 4
 #define EPSILON 0.00001
@@ -65,7 +69,6 @@ float CalcShadowFactor(in int Index, in vec4 LightSpacePos)
 void main()
 {			
 	// Initialize first variables
-	LightingColor 							= vec3(0);
 	ViewData data;
 	GetFragmentData(TexCoord, data);	
    	if (data.View_Depth >= 1.0f)			discard; // Discard background fragments
@@ -97,6 +100,5 @@ void main()
 	const vec3 D_Diffuse					= CalculateDiffuse( data.Albedo );
 	const vec3 D_Specular					= BRDF_Specular( data.Roughness, data.Albedo, data.Metalness, data.World_Normal, -lightBuffers[lightIndexes[BufferIndex]].LightDirection.xyz, NdotL_Clamped, NdotV_Clamped, ViewDirection, Fs);
 	const vec3 D_Ratio						= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
-	const vec3 Lighting 					= (D_Ratio * D_Diffuse + D_Specular) * Radiance * NdotL_Clamped;
-	LightingColor							= Lighting;	 
+	LightingColor		 					= (D_Ratio * D_Diffuse + D_Specular) * Radiance * NdotL_Clamped;
 }

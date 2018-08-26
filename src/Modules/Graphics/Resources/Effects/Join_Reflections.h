@@ -4,6 +4,7 @@
 
 #include "Modules\Graphics\Resources\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
+#include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\FBO.h"
@@ -17,6 +18,7 @@ public:
 	/** Virtual Destructor. */
 	~Join_Reflections() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		m_brdfMap->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
@@ -29,6 +31,7 @@ public:
 
 		// Asset Loading
 		m_shader = Asset_Shader::Create(m_engine, "Effects\\Join Reflections");
+		m_brdfMap = Asset_Texture::Create(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
@@ -41,6 +44,16 @@ public:
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
+
+		m_brdfMap->addCallback(this, [&] {
+			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
+			if (m_shader->existsYet())
+				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
+		});
+		m_shader->addCallback(this, [&] {
+			if (m_brdfMap->existsYet())
+				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
+		});
 	}
 
 
@@ -52,8 +65,8 @@ public:
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 		m_lightingFBO->bindForWriting();
-		m_geometryFBO->bindForReading(0); // only care about texture[2]
-		m_reflectionFBO->bindForReading(0);
+		m_geometryFBO->bindForReading(0);
+		m_reflectionFBO->bindForReading(4);
 		m_shader->bind();
 		glBindVertexArray(m_quadVAO);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -66,6 +79,7 @@ private:
 	// Private Attributes
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader;
+	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Primitive m_shapeQuad;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;

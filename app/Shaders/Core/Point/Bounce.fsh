@@ -39,7 +39,7 @@ vec2 ShadowProjection( in vec3 WorldPos, out int Shadow_Spot)
 	vec2 UVCoords;
 	   
 	// Front Hemisphere
-	if(Position.z >= 0.0f) {
+	if (Position.z >= 0.0f) {
 		UVCoords.x   			=  (Position.x / (1.0f + Position.z)) * 0.5f + 0.5f;
 		UVCoords.y   			=  (Position.y / (1.0f + Position.z)) * 0.5f + 0.5f;
 		Shadow_Spot				=  buffers[indexes[BufferIndex]].Shadow_Spot1;

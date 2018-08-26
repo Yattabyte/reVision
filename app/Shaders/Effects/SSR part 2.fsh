@@ -84,7 +84,7 @@ vec3 AcquireSpecular(in vec3 SSPos, in float Roughness, in vec2 ReflectionUV, in
 	vec2 samplePos;
 	vec4 newColor;
     // cone-tracing using an isosceles triangle to approximate a cone in screen space
-    for(uint i = 0; i < 14; ++i) {
+    for (uint i = 0; i < 14; ++i) {
         // intersection length is the adjacent side, get the opposite side using trig
         oppositeLength			= isoscelesTriangleOpposite(adjacentLength, coneTheta);
          
@@ -105,12 +105,12 @@ vec3 AcquireSpecular(in vec3 SSPos, in float Roughness, in vec2 ReflectionUV, in
         newColor				= coneSampleWeightedColor(samplePos, mipChannel, glossMult);
          
         remainingAlpha		   -= newColor.a;
-        if(remainingAlpha < 0.0f)
+        if (remainingAlpha < 0.0f)
             newColor.rgb       *= (1.0f - abs(remainingAlpha));
     
         totalColor			   += newColor;
          
-        if(totalColor.a >= 1.0f)
+        if (totalColor.a >= 1.0f)
             break;
         
         adjacentLength		   = isoscelesTriangleNextAdjacent(adjacentLength, incircleSize);
@@ -131,21 +131,23 @@ vec2 IntegrateBRDF( in float Roughness, in vec3 Normal, in float NoV )
 }
 
 void main(void)
-{   
-	LightingColor 						= vec4(0.0f);
+{   	
 	ViewData data;
 	GetFragmentData(TexCoord, data);
 	// Quit Early
-	if (data.View_Depth	 >= 1.0f) { discard;return; }
+	if (data.View_Depth	>= 1.0f) 		discard;
+	
+	// SSR Texture
+	const vec4 SSRtexture				= texture(SSRMap, TexCoord);		
+	const vec3 ReflectionUVS 			= SSRtexture.xyz;
+	const float rDotV					= SSRtexture.w;
+	if (rDotV <= 0.0f)					discard;
 	
 	// Variables
-	const vec4 SSRtexture				= texture(SSRMap, TexCoord);	
 	const vec3 SSPos	 				= vec3(TexCoord, data.View_Depth);	
     const vec3 WorldNormal 				= normalize((cameraBuffer.vMatrix_Inverse * vec4(data.View_Normal, 0))).xyz;
 	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - cameraBuffer.EyePosition);
 	const vec3 ReflectionVector 		= reflect(CameraVector, WorldNormal);
-	const vec3 ReflectionUVS 			= SSRtexture.xyz;
-	const float rDotV					= SSRtexture.w;
 	float Alpha 						= 1.0f;
 	const vec3 Reflection				= AcquireSpecular(SSPos, data.Roughness, ReflectionUVS.xy, Alpha);
 	
@@ -167,7 +169,8 @@ void main(void)
 	// Attenuate Distance
 	const float Atten_Distance  		= 1.0f - clamp(distance(ReflectionUVS, SSPos) / maxDistance, 0.0f, 1.0f);	
 	// Final Attenuation
-	const float Attenuation				= Atten_Facing * Atten_Perpendicular * Atten_Roughness * Atten_UV * Atten_BackFace * Atten_Border * Atten_Distance * (1.0f - clamp(Alpha, 0.0f, 1.0f));
+	const float Attenuation				= Atten_Facing * Atten_Perpendicular * Atten_Roughness * Atten_UV * Atten_BackFace * Atten_Border * Atten_Distance * (1.0f - clamp(Alpha, 0.0f, 1.0f));	
+	if (Attenuation <= 0.0f)			discard;
 	
 	// Final lighting color	
 	const vec3 View_Direction			= normalize(cameraBuffer.EyePosition - data.World_Pos.xyz);		

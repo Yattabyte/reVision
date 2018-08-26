@@ -23,8 +23,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
-		m_brdfMap->removeCallback(this);
-		m_shaderLighting->removeCallback(this);
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 		glDeleteVertexArrays(1, &m_cubeVAO);
 		glDeleteVertexArrays(1, &m_quadVAO);
@@ -47,7 +45,6 @@ public:
 		m_shaderLighting = Asset_Shader::Create(m_engine, "Core\\Reflector\\IBL_Parallax");
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Core\\Reflector\\2D_To_Cubemap");
 		m_shaderConvolute = Asset_Shader::Create(m_engine, "Core\\Reflector\\Cube_Convolution");
-		m_brdfMap = Asset_Texture::Create(m_engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeCube = Asset_Primitive::Create(m_engine, "cube");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
@@ -87,16 +84,6 @@ public:
 			m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData); 
 			const GLuint quad6Data[4] = { m_shapeQuad->getSize(), 6, 0, 0 }; 
 			m_indirectQuad6Faces.write(0, sizeof(GLuint) * 4, quad6Data);
-		});
-
-		m_brdfMap->addCallback(this, [&] {
-			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
-			if (m_shaderLighting->existsYet())
-				m_shaderLighting->setUniform(2, m_brdfMap->m_glTexHandle);
-		});
-		m_shaderLighting->addCallback(this, [&] {
-			if (m_brdfMap->existsYet())
-				m_shaderLighting->setUniform(2, m_brdfMap->m_glTexHandle);
 		});
 		
 		// Error Reporting
@@ -312,7 +299,6 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shaderLighting, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
-	Shared_Asset_Texture m_brdfMap;
 	GLuint m_cubeVAO, m_quadVAO;
 	bool m_cubeVAOLoaded, m_quadVAOLoaded;
 	StaticBuffer m_indirectCube, m_indirectQuad, m_indirectQuad6Faces;

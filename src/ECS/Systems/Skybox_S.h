@@ -6,7 +6,6 @@
 #include "glm\gtx\component_wise.hpp"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Engine.h"
 #include <vector>
@@ -21,8 +20,6 @@ public:
 	// (de)Constructors
 	~Skybox_System() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		m_brdfMap->removeCallback(this);
-		m_shaderSkyReflect->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Skybox_System(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) : BaseECSSystem() {
@@ -37,7 +34,6 @@ public:
 		// System Loading
 		m_shaderSky = Asset_Shader::Create(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Asset_Shader::Create(engine, "Effects\\Skybox Reflection");
-		m_brdfMap = Asset_Texture::Create(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Primitive Construction
@@ -49,16 +45,6 @@ public:
 			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
-		});
-		
-		m_brdfMap->addCallback(this, [&] {
-			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
-			if (m_shaderSkyReflect->existsYet())
-				m_shaderSkyReflect->setUniform(0, m_brdfMap->m_glTexHandle);
-		});
-		m_shaderSkyReflect->addCallback(this, [&] {
-			if (m_brdfMap->existsYet())
-				m_shaderSkyReflect->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 	}
 
@@ -101,7 +87,6 @@ private:
 	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
 	Shared_Asset_Shader	m_shaderSky, m_shaderSkyReflect;
 	Shared_Asset_Primitive m_shapeQuad;
-	Shared_Asset_Texture m_brdfMap;
 	GLuint m_quadVAO;
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;

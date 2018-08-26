@@ -77,15 +77,11 @@ vec3 RayMarch(vec3 SSReflectionVector, vec3 SSPos)
 
 void main(void)
 {   
-	bool intersection					= true;
-	LightingColor 						= vec4(0.0f);
 	ViewData data;
 	GetFragmentData(TexCoord, data);
 	// Quit Early
-	if (data.View_Depth	 >= 1.0f)
-		intersection = false;
-	if (!any(bvec3(data.View_Normal)))
-		intersection = false;
+	if (data.View_Depth	>= 1.0f)
+		discard;
 	
 	// Variables
 	const vec3 SSPos	 				= vec3(TexCoord, data.View_Depth);
@@ -103,8 +99,7 @@ void main(void)
 	
 	// Ray March
 	const vec3 ReflectionUVS 			= RayMarch(SSReflectionVector, SSPos.xyz);	
-	if(ReflectionUVS.x > 1.0f || ReflectionUVS.x < 0.0f || ReflectionUVS.y > 1.0f || ReflectionUVS.y < 0.0f) 
-		intersection = false;
-	LightingColor 						= vec4(ReflectionUVS, rDotV) * (intersection ? 1.0f : 0.0f);
+	if (ReflectionUVS.x <= 1.0f && ReflectionUVS.x >= 0.0f && ReflectionUVS.y <= 1.0f && ReflectionUVS.y >= 0.0f) 
+		LightingColor 						= vec4(ReflectionUVS, rDotV);
 }
 

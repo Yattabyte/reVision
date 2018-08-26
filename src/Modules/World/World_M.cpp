@@ -49,7 +49,7 @@ void World_Module::loadWorld()
 		auto eHandle = ecs.makeEntity(BasicPlayer_Component());
 		BasicPlayer_Component * player = ecs.getComponent<BasicPlayer_Component>(eHandle);
 		player->m_transform.m_position = glm::vec3(0, 10, 30);
-		player->m_rotation.y = 45.0f;
+		//player->m_rotation.y = 45.0f;
 		player->m_transform.update();
 	}
 	{
