@@ -56,7 +56,6 @@ vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal,
 										reflectorBuffers[ReflectorIndex].mMatrix,
 										reflectorBuffers[ReflectorIndex].BoxCamPos.xyz, 
 										WorldPos.xyz	);	
-	//return							texture(ReflectionMap, vec4(CorrectedDir, Roughness * 5.0f)).xyz;	
 	return							textureLod(ReflectionMap, vec4(CorrectedDir, reflectorBuffers[ReflectorIndex].CubeSpot), Roughness * 5.0f).xyz;		
 }
 

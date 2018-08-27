@@ -80,8 +80,8 @@ public:
 		});
 
 		// Geometry rendering pipeline
-		m_geometryStaticSystems.addSystem(new PropShadowing_System(engine, 6, PropShadowing_System::RenderStatic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
-		m_geometryDynamicSystems.addSystem(new PropShadowing_System(engine, 6, PropShadowing_System::RenderDynamic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
+		m_geometryStaticSystems.addSystem(new PropShadowing_System(m_engine, 6, PropShadowing_System::RenderStatic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
+		m_geometryDynamicSystems.addSystem(new PropShadowing_System(m_engine, 6, PropShadowing_System::RenderDynamic, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer));
 		
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);

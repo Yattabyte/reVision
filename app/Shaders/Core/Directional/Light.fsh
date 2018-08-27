@@ -40,6 +40,12 @@ layout (location = 0) uniform float ShadowSize_Recip;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) out vec3 LightingColor;
 
+const vec2 sampleOffsetDirections[9] = vec2[] (
+	vec2(-1,  -1), vec2(-1,  0), vec2(-1,  1), 
+	vec2(0,  -1), vec2(0,  0), vec2(0,  1),
+	vec2(1,  -1), vec2(1,  0), vec2(1,  1)
+);
+#define FactorAmt 1.0 / 9
 float CalcShadowFactor(in int Index, in vec4 LightSpacePos)                                                  
 {     
 	// Bring fragment coordinates from world space into light space, then into texture spaces
@@ -47,16 +53,14 @@ float CalcShadowFactor(in int Index, in vec4 LightSpacePos)
     const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                                        
     const float FragmentDepth 			= 0.5f * ProjCoords.z + 0.5f;  
 	
-	float Factor = 0.0f;	
-	for (int y = -1; y <= 1 ; ++y) 
-        for (int x = -1 ; x <= 1; ++x) {
-			const vec2 Offsets 			= vec2(x, y) * ShadowSize_Recip;
-			const vec3 FinalCoord 		= vec3( UVCoords + Offsets, shadowBuffers[ShadowIndex].Shadow_Spot + Index );
-			const float depth 			= texture( ShadowMap, FinalCoord ).r;
-			Factor 			   		   += (depth >= FragmentDepth) ? 1.0 : 0.0;	
-		}
-
-	return Factor / 9.0f;      
+	float Factor = 0.0f, depth;
+	vec3 FinalCoord;
+	for (uint x = 0; x < 9; ++x) { 
+		FinalCoord 						= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, shadowBuffers[ShadowIndex].Shadow_Spot + Index );
+		depth 							= texture( ShadowMap, FinalCoord ).r;
+		Factor 			   		  	 	+= (depth >= FragmentDepth) ? FactorAmt : 0.0;	
+	}
+	return 								Factor;      
 } 
 
 void main()

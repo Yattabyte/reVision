@@ -40,39 +40,31 @@ vec2 CalcTexCoord()
 {
     return			 				gl_FragCoord.xy / cameraBuffer.CameraDimensions;
 }
-
-float CalcRandom(in vec4 seed) 
-{
-	const float dot_product 		= dot(seed, vec4(12.9898,78.233,45.164,94.673));
-    return 							fract(sin(dot_product) * 43758.5453);
-}
-
 const vec3 sampleOffsetDirections[20] = vec3[] (
-	vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
-	vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
-	vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
-	vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
-	vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
-);
-	
+		vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+		vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+		vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+		vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+		vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+	);
+#define FactorAmt 1.0 / 20
 float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float RadiusSquared, in float bias)                                                  
 {	
-	const float FragmentDepth 		= length(LightDirection);
-	const float FarPlane 			= RadiusSquared;
-	//aconst float diskRadius 			= (ViewDistance / FarPlane) / 2;
-	const float diskRadius 			= (1.0 + (ViewDistance / FarPlane)) * (ShadowSize_Recip * 2);
 	
-	float Factor = 0.0f;	
+	const float FragmentDepth 		= (length(LightDirection) - bias - EPSILON) / RadiusSquared;
+	const float diskRadius 			= (1.0 + (ViewDistance / RadiusSquared)) * (ShadowSize_Recip * 2);
+	
+	float Factor = 0.0f, depth;
+	vec4 FinalCoord1, FinalCoord2;
 	const int Shadowspot1 = shadowBuffers[ShadowIndex].Shadow_Spot/6;
 	const int Shadowspot2 = Shadowspot1+1;
 	for (uint x = 0; x < 20; ++x) {	
-		const vec4 FinalCoord1		= vec4(LightDirection + sampleOffsetDirections[x] * diskRadius, Shadowspot1);
-		const vec4 FinalCoord2		= vec4(FinalCoord1.xyz, Shadowspot2);
-		const float depth1 			= texture(ShadowMap, FinalCoord1).r * FarPlane;
-		const float depth2 			= texture(ShadowMap, FinalCoord2).r * FarPlane;
-		Factor 			   	 		+= (depth1 >= FragmentDepth - bias - EPSILON) ? (depth2 >= FragmentDepth - bias - EPSILON) ? 1.0 : 0.0 : 0.0;	
+		FinalCoord1					= vec4(LightDirection + sampleOffsetDirections[x] * diskRadius, Shadowspot1);
+		FinalCoord2					= vec4(FinalCoord1.xyz, Shadowspot2);
+		depth 						= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
+		Factor 			   	 		+= (depth >= FragmentDepth ) ? FactorAmt : 0.0;	
 	}
-	return 							Factor / 20.0f;
+	return 							Factor;
 }   
 
 void main(void)
