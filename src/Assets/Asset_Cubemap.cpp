@@ -99,8 +99,8 @@ void Asset_Cubemap::finalize(Engine * engine)
 		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_size.x, m_size.x);
 		for (int x = 0; x < 6; ++x)
 			glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_size.x, m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData[x]);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);

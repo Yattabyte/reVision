@@ -64,8 +64,8 @@ public:
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
@@ -76,8 +76,8 @@ public:
 		glCreateTextures(GL_TEXTURE_2D, 2, m_textureIDS_GB);
 		for (int x = 0; x < 2; ++x) {
 			glTextureImage2DEXT(m_textureIDS_GB[x], GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		}
