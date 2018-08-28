@@ -3,7 +3,6 @@
 #define SKELETONANIMATION_S_H 
 
 #include "ECS\Systems\ecsSystem.h"
-#include <minmax.h>
 
 /* Component Types Used */
 #include "ECS\Components\Prop_C.h"
@@ -48,7 +47,7 @@ public:
 
 				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, propComponent->m_model->m_rootNode, propComponent->m_model, glm::mat4(1.0f));
 
-				for (unsigned int i = 0, total = min(skeletonComponent->m_transforms.size(), NUM_MAX_BONES); i < total; i++)
+				for (unsigned int i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; i++)
 					uboData->bones[i] = skeletonComponent->m_transforms[i].final;
 			}
 		}

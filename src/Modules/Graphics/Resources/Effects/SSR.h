@@ -57,7 +57,7 @@ public:
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
-			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
 
@@ -190,7 +190,7 @@ private:
 				glm::ivec2 write_size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
 				glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, x);
 
-				glViewport(0, 0, max(1.0f, write_size.x), max(1.0f, write_size.y));
+				glViewport(0, 0, std::max(1, write_size.x), std::max(1, write_size.y));
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 				read_size = write_size;
 			}

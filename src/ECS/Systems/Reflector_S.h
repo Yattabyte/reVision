@@ -57,7 +57,7 @@ public:
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
 		m_envmapSize = m_engine->addPrefCallback(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) { 
-			m_envmapSize = max(1.0f, f);
+			m_envmapSize = std::max(1.0f, f);
 		});
 	
 		// Environment Map
@@ -81,9 +81,9 @@ public:
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
-			const GLuint quadData[4] = { m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData); 
-			const GLuint quad6Data[4] = { m_shapeQuad->getSize(), 6, 0, 0 }; 
+			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
 			m_indirectQuad6Faces.write(0, sizeof(GLuint) * 4, quad6Data);
 		});
 		
@@ -202,7 +202,7 @@ protected:
 				m_indirectQuad6Faces.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				for (float r = 1; r < 6; ++r) {
 					// Ensure we are writing to MIP level r
-					const float write_size = max(1.0f, (floor(m_envmapSize / pow(2.0f, r))));
+					const float write_size = std::max(1.0f, (floor(m_envmapSize / pow(2.0f, r))));
 					glViewport(0, 0, write_size, write_size);
 					m_shaderConvolute->setUniform(1, r / 5.0f);
 					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);

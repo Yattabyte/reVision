@@ -26,7 +26,7 @@ public:
 
 	// Public Static Enumerations
 	/** Enumeration for indexing into preferences. */
-	static const enum Preference {
+	const enum Preference {
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
 		C_WINDOW_USE_MONITOR_RATE,

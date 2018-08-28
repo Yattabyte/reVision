@@ -31,7 +31,7 @@ public:
 
 	// Public Attributes
 	// Enumerations used for reporting error types
-	static const enum Error_Enum
+	const enum Error_Enum
 	{
 		FILE_MISSING,
 		FILE_CORRUPT,

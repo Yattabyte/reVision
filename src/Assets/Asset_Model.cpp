@@ -1,7 +1,6 @@
 #include "Assets\Asset_Model.h"
 #include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
-#include <minmax.h>
 
 #define EXT_MODEL ".obj"
 #define DIRECTORY_MODEL Engine::Get_Current_Dir() + "\\Models\\"
@@ -153,7 +152,7 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 	calculate_AABB(m_data.vs, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
 
 	// Generate all the required skins
-	m_skins.resize(max(1, (dataContainer.materials.size())));
+	m_skins.resize(std::max(size_t(1), (dataContainer.materials.size())));
 	if (dataContainer.materials.size())
 		for (int x = 0; x < dataContainer.materials.size(); ++x)
 			generate_material(engine, m_skins[x], dataContainer.materials[x]);
@@ -174,5 +173,5 @@ void Asset_Model::finalize(Engine * engine)
 GLuint Asset_Model::getSkinID(const unsigned int & desired)
 {
 	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	return m_skins[max(0, min(m_skins.size() - 1, desired))]->m_matSpot;
+	return m_skins[std::max(size_t(0), std::min(m_skins.size() - size_t(1), size_t(desired)))]->m_matSpot;
 }

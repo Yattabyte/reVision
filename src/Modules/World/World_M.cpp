@@ -187,7 +187,7 @@ void World_Module::loadWorld()
 		reflectorSys->registerComponent(reflector);
 		const glm::vec3 position = glm::vec3(0, 15, 0);
 		const glm::vec3 scale = glm::vec3(21.0F);
-		const float largest = pow(max(max(scale.x, scale.y), scale.z), 2.0f);
+		const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
 		transform.m_transform = Transform(position, glm::quat(1, 0, 0, 0), glm::vec3(21));
 		reflector.m_data->data->mMatrix = transform.m_transform.m_modelMatrix;
 		reflector.m_data->data->rotMatrix = glm::inverse(glm::toMat4(transform.m_transform.m_orientation));
@@ -214,7 +214,7 @@ void World_Module::loadWorld()
 		reflectorSys->registerComponent(reflector);
 		const glm::vec3 position = glm::vec3(44, 15, 0);
 		const glm::vec3 scale = glm::vec3(21.0F);
-		const float largest = pow(max(max(scale.x, scale.y), scale.z), 2.0f);
+		const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
 		transform.m_transform = Transform(position, glm::quat(1, 0, 0, 0), glm::vec3(21));
 		reflector.m_data->data->mMatrix = transform.m_transform.m_modelMatrix;
 		reflector.m_data->data->rotMatrix = glm::inverse(glm::toMat4(transform.m_transform.m_orientation));

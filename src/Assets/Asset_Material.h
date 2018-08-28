@@ -6,7 +6,7 @@
 
 #include "Assets\Asset.h"
 #include "GL\glew.h"
-#include "GLM\common.hpp"
+#include "GLM\glm.hpp"
 
 
 class Engine;

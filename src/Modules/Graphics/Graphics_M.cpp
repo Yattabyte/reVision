@@ -2,7 +2,6 @@
 #include "Modules\World\World_M.h"
 #include "Engine.h"
 #include <random>
-#include <minmax.h>
 
 /* System Types Used */
 #include "ECS\Systems\PlayerMovement_S.h"
@@ -179,7 +178,7 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 void Graphics_Module::updateCamera(Camera_Buffer * camera)
 {
 	// Update Perspective Matrix
-	float ar = max(1.0f, camera->Dimensions.x) / max(1.0f, camera->Dimensions.y);
+	float ar = std::max(1.0f, camera->Dimensions.x) / std::max(1.0f, camera->Dimensions.y);
 	float horizontalRad = glm::radians(camera->FOV);
 	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
 	camera->pMatrix = glm::perspective(verticalRad, ar, camera->NearPlane, camera->FarPlane);

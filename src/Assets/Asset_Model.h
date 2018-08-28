@@ -3,14 +3,13 @@
 #define	ASSET_MODEL_H
 #define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
-#define GLEW_STATIC
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
 #include "Managers\ModelManager.h"
 #include "assimp\scene.h"
 #include "GL\glew.h"
-#include "glm\common.hpp"
+#include "GLM\glm.hpp"
 #include "glm\geometric.hpp"
 #include <map>
 #include <string>

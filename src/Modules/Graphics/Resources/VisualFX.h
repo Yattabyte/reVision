@@ -1,7 +1,6 @@
 #pragma once
 #ifndef VISUALFX_H
 #define VISUALFX_H
-#define GLEW_STATIC
 
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"

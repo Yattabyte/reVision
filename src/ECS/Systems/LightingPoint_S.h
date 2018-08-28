@@ -14,7 +14,6 @@
 #include "Utilities\PriorityList.h"
 #include "Engine.h"
 #include "GLFW\glfw3.h"
-#include <minmax.h>
 #include <vector>
 
 
@@ -61,8 +60,8 @@ public:
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});	
 		m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
-		m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) { m_shadowSize = glm::vec2(max(1.0f, f)); });
-		m_shadowSize = glm::vec2(max(1.0f, m_shadowSize.x));
+		m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) { m_shadowSize = glm::vec2(std::max(1.0f, f)); });
+		m_shadowSize = glm::vec2(std::max(1.0f, m_shadowSize.x));
 		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
 		// Shadows

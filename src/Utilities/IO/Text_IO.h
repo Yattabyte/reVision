@@ -2,7 +2,7 @@
 #ifndef	TEXT_IO_H
 #define	TEXT_IO_H
 
-#include "glm\common.hpp"
+#include "GLM\glm.hpp"
 #include <string>
 
 

@@ -1,5 +1,4 @@
 #include "ECS\ecs.h"
-#include <minmax.h>
 
 
 ECS::~ECS()

@@ -1,7 +1,6 @@
 #pragma once
 #ifndef MODELMANAGER_H
 #define MODELMANAGER_H
-#define GLEW_STATIC
 #define NUM_VERTEX_ATTRIBUTES 6
 
 #include "Utilities\IO\Model_IO.h"

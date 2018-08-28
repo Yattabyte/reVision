@@ -44,6 +44,16 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & fulldire
 	return bitmap;
 }
 
+void Image_IO::Initialize()
+{
+	FreeImage_Initialise();
+}
+
+void Image_IO::Deinitialize()
+{
+	FreeImage_DeInitialise();
+}
+
 bool Image_IO::Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & data_container)
 {
 	FIBITMAP * bitmap = Import_Bitmap(engine, fulldirectory);

@@ -138,11 +138,6 @@ public:
 	virtual void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const {
 		glBindBufferRange(target, index, m_bufferID, offset, size );
 	}
-	virtual void ** addElement(unsigned int * uboIndex) {
-		void ** dataPtrPtr;
-
-		return dataPtrPtr;
-	}
 
 
 private:

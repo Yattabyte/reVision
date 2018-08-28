@@ -24,6 +24,7 @@ Engine::~Engine()
 	removePrefCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this);
 	removePrefCallback(PreferenceState::C_WINDOW_REFRESH_RATE, this);
 	removePrefCallback(PreferenceState::C_VSYNC, this);
+	Image_IO::Deinitialize();
 	reportMessage("...done!");
 }
 
@@ -31,6 +32,7 @@ Engine::Engine() :
 	// Initialize engine-dependent members first
 	m_AssetManager(this), m_messageManager(), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_materialManager(), m_moduleGraphics(this), m_moduleWorld(this)
 {
+	Image_IO::Initialize();
 	// Default Parameters
 	m_lastTime = 0;
 	m_frameAccumulator = 0;

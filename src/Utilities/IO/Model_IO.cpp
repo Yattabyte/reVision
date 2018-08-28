@@ -5,7 +5,6 @@
 #include "assimp\scene.h"
 #include "assimp\version.h"
 #include <shared_mutex>
-#include <minmax.h>
 
 
 struct Importer_Pool {

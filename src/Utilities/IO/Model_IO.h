@@ -3,7 +3,7 @@
 #define	MODEL_IO_H
 #define NUM_BONES_PER_VEREX 4
 
-#include "glm\common.hpp"
+#include "GLM\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\quaternion.hpp"
 #include <map>

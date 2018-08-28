@@ -21,7 +21,7 @@ public:
 
 	// Public Static Enumerations
 	/** Enumeration for indexing into actions. */
-	static const enum ACTION_ENUM {
+	const enum ACTION_ENUM {
 		FORWARD,
 		BACK,
 		LEFT,

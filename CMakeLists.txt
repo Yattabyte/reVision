@@ -27,10 +27,13 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 									optimized	${ASSIMP_DIR}/lib/Release/IrrXML.lib
 									debug		${ASSIMP_DIR}/lib/Debug/zlibstaticd.lib
 									optimized	${ASSIMP_DIR}/lib/Release/zlibstatic.lib
-												${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
+									debug		${FREEIMAGE_DIR}/Dist/x64/FreeImaged.lib
+									optimized	${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
 												${GLEW_DIR}/lib/Release/x64/glew32s.lib
 									debug		${GLFW_DIR}/src/Debug/glfw3.lib
 									optimized	${GLFW_DIR}/src/Release/glfw3.lib
+									debug		${GLM_DIR}/glm/Debug/glm_static.lib
+									optimized	${GLM_DIR}/glm/Release/glm_static.lib
 									debug		${BULLET_DIR}/lib/Debug/Bullet2FileLoader.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet2FileLoader.lib
 									debug		${BULLET_DIR}/lib/Debug/Bullet3Collision.lib
@@ -57,6 +60,7 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 					
 # add all sub-projects and plugins here
 add_subdirectory( src )
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 
 # Generates the documentation folder and runs doxygen

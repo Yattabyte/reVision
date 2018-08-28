@@ -2,7 +2,7 @@
 #ifndef	IMAGE_IO_H
 #define	IMAGE_IO_H
 
-#include "glm\common.hpp"
+#include "GLM\glm.hpp"
 #include "GL/glew.h"
 #include <string>
 
@@ -21,6 +21,10 @@ struct Image_Data {
 Uses the FreeImage texture importer: http://freeimage.sourceforge.net/ */
 class Image_IO {
 public:
+	/** Initialzie the freeimage library. */
+	static void Initialize();
+	/** Shutdown the freeimage library*/
+	static void Deinitialize();
 	/** Import an image from disk.
 	@param	engine			the engine to import to
 	@param	fulldirectory	the path to the file
