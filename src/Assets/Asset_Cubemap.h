@@ -33,7 +33,7 @@ public:
 	
 	// Public Attributes
 	GLuint m_glTexID;
-	glm::vec2 m_size;
+	glm::ivec2 m_size;
 	GLubyte	* m_pixelData[6];
 
 

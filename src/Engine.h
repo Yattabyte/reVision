@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.10";
+constexpr char ENGINE_VERSION[]	= "1.10.A";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -19,7 +19,7 @@ constexpr char ENGINE_VERSION[]	= "1.10";
 #include <string>
 
 
-class GLFWwindow;
+struct GLFWwindow;
 class Engine;
 
 struct Rendering_Context {

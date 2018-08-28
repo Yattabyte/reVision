@@ -59,7 +59,7 @@ public:
 	GLuint m_glArrayID;
 	GLuint m_matSpot;
 	GLubyte * m_materialData;
-	glm::vec2 m_size;
+	glm::ivec2 m_size;
 	std::string m_textures[MAX_PHYSICAL_IMAGES];
 
 

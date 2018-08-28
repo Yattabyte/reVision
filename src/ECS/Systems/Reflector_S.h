@@ -50,14 +50,14 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
-		m_envmapSize = m_engine->addPrefCallback(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) { 
-			m_envmapSize = std::max(1.0f, f);
+		m_envmapSize = (unsigned int)m_engine->addPrefCallback(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) { 
+			m_envmapSize = std::max(1u, (unsigned int)f);
 		});
 	
 		// Environment Map
@@ -174,8 +174,8 @@ protected:
 			if (update || reflector->m_outOfDate) {
 				if (!didAnything) {
 					auto copySize = m_renderSize;
-					m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_envmapSize);
-					m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_envmapSize);
+					m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, (float)m_envmapSize);
+					m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, (float)m_envmapSize);
 					glViewport(0, 0, m_envmapSize, m_envmapSize);
 					m_renderSize = copySize;
 					oldCameraID = graphics.getActiveCamera();
@@ -200,16 +200,16 @@ protected:
 				m_shaderConvolute->setUniform(0, reflector->m_cubeSpot);
 				m_envmapFBO.bindForReading();
 				m_indirectQuad6Faces.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-				for (float r = 1; r < 6; ++r) {
+				for (unsigned int r = 1; r < 6; ++r) {
 					// Ensure we are writing to MIP level r
-					const float write_size = std::max(1.0f, (floor(m_envmapSize / pow(2.0f, r))));
+					const unsigned int write_size = (unsigned int)std::max(1.0f, (floor(m_envmapSize / pow(2.0f, (float)r))));
 					glViewport(0, 0, write_size, write_size);
-					m_shaderConvolute->setUniform(1, r / 5.0f);
+					m_shaderConvolute->setUniform(1, (float)r / 5.0f);
 					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);
 
 					// Ensure we are reading from MIP level r - 1
-					glTextureParameterf(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, r - 1.0f);
-					glTextureParameterf(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, r - 1.0f);
+					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, r - 1);
+					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, r - 1);
 
 					// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
 					glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -227,8 +227,8 @@ protected:
 			Asset_Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			graphics.setActiveCamera(oldCameraID);
-			m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-			m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+			m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, (float)m_renderSize.x);
+			m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, (float)m_renderSize.y);
 		}
 	}
 	/** Render all the lights */

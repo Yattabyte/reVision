@@ -38,7 +38,7 @@ public:
 	// Public Attributes
 	GLuint m_glTexID, m_type;
 	GLuint64 m_glTexHandle;
-	glm::vec2 m_size;
+	glm::ivec2 m_size;
 	GLubyte	* m_pixelData;
 	bool m_mipmap;
 	bool m_anis;

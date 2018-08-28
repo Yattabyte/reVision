@@ -21,7 +21,7 @@ Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename)
 	m_glTexID = 0;
 	m_glTexHandle = 0;
 	m_type = GL_TEXTURE_2D;
-	m_size = glm::vec2(0);
+	m_size = glm::ivec2(0);
 	m_pixelData = nullptr;
 	m_mipmap = false;
 	m_anis = false;
@@ -65,7 +65,7 @@ void Asset_Texture::initializeDefault(Engine * engine)
 	m_pixelData = new GLubyte[4];
 	for (int x = 0; x < 4; ++x)
 		m_pixelData[x] = GLubyte(255);
-	m_size = glm::vec2(1);
+	m_size = glm::ivec2(1);
 }
 
 void Asset_Texture::initialize(Engine * engine, const std::string & fullDirectory)

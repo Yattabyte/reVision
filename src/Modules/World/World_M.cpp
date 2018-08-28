@@ -60,7 +60,7 @@ void World_Module::loadWorld()
 		lightDirSys->registerComponent(*sunShadow);
 		sun->m_data->data->LightColor = glm::vec3(0.75, 0.75, 0.9);
 		sun->m_data->data->LightIntensity = 8;
-		glm::mat4 sunTransform = glm::mat4_cast(glm::quat(0.0828278884, -0.373612523, 0.901980519, 0.199964225));
+		glm::mat4 sunTransform = glm::mat4_cast(glm::quat(0.0828278884f, -0.373612523f, 0.901980519f, 0.199964225f));
 		sun->m_data->data->LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 		glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 		sunShadow->m_mMatrix = sunModelMatrix;

@@ -150,7 +150,7 @@ private:
 		if (offset + size > m_maxCapacity) {
 			// Create new buffer large enough to fit old data + new data
 			const GLsizeiptr oldSize = m_maxCapacity;
-			m_maxCapacity += offset + (size * 1.5);
+			m_maxCapacity += offset + (size * 2);
 
 			// Create new buffer
 			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;

@@ -121,7 +121,7 @@ void ModelManager::expandToFit(const size_t & arraySize)
 	// Check if we can fit the desired data
 	if (m_currentSize + arraySize > m_maxCapacity) {
 		// Create new set of VBO's large enough to fit old data + desired data
-		m_maxCapacity += arraySize * 1.5;
+		m_maxCapacity += arraySize * 2;
 
 		// Create the new VBO's
 		constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT;// | GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;

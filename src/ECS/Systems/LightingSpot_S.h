@@ -52,16 +52,16 @@ public:
 		m_shapeCone = Asset_Primitive::Create(m_engine, "cone");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});	
-		m_updateQuality = m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = f; });
-		m_shadowSize.x = m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this, [&](const float &f) { m_shadowSize = glm::vec2(std::max(1.0f, f)); });
-		m_shadowSize = glm::vec2(std::max(1.0f, m_shadowSize.x));
-		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
+		m_updateQuality = (unsigned int)m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = (unsigned int)f; });
+		m_shadowSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this, [&](const float &f) { m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		m_shadowSize = glm::ivec2(std::max(1, m_shadowSize.x));
+		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
 		// Shadows
 		m_shadowFBO.resize(m_shadowSize, 1);
@@ -267,7 +267,7 @@ private:
 	GLuint m_coneVAO;
 	bool m_coneVAOLoaded;
 	unsigned int m_updateQuality;
-	glm::vec2 m_shadowSize;
+	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;
 	StaticBuffer m_indirectShape;
 	std::vector<GLuint> lightIndices, shadowIndices;

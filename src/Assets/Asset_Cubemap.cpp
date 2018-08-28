@@ -16,7 +16,7 @@ Asset_Cubemap::~Asset_Cubemap()
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
 {
 	m_glTexID = 0;
-	m_size = glm::vec2(0);
+	m_size = glm::ivec2(0);
 }
 
 Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & filename, const bool & threaded)
@@ -53,7 +53,7 @@ void Asset_Cubemap::initializeDefault(Engine * engine)
 	m_pixelData[3] = new GLubyte[4]{ GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255) };
 	m_pixelData[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
 	m_pixelData[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
-	m_size = glm::vec2(1);
+	m_size = glm::ivec2(1);
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)

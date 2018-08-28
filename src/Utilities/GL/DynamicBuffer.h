@@ -89,7 +89,7 @@ public:
 		if (offset + size > m_maxCapacity) {
 			// Create new buffer large enough to fit old data + new data
 			const GLsizeiptr oldSize = m_maxCapacity;
-			m_maxCapacity += offset + (size * 1.5);
+			m_maxCapacity += offset + (size * 2);
 
 			// Create new buffer
 			GLuint newBuffer = 0;

@@ -53,9 +53,9 @@ public:
 		});
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
-		m_bloomStrength = m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength(f); });
+		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
+		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
+		m_bloomStrength = (int)m_engine->addPrefCallback(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength((int)f); });
 		m_enabled = m_engine->addPrefCallback(PreferenceState::C_BLOOM, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL Loading
@@ -155,7 +155,7 @@ private:
 	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 	GLuint m_fboID, m_textureID, m_textureIDS_GB[2];
-	glm::vec2 m_renderSize;
+	glm::ivec2 m_renderSize;
 	int m_bloomStrength;
 };
 

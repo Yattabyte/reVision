@@ -47,12 +47,12 @@ public:
 		});
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
-		m_enabled = m_engine->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) { m_enabled = (bool)f; });
+		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		m_enabled = (bool)m_engine->addPrefCallback(PreferenceState::C_SSAO, this, [&](const float &f) { m_enabled = (bool)f; });
 		m_radius = m_engine->addPrefCallback(PreferenceState::C_SSAO_RADIUS, this, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
-		m_quality = m_engine->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
-		m_blurStrength = m_engine->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) { m_blurStrength = (int)f; });
+		m_quality = (int)m_engine->addPrefCallback(PreferenceState::C_SSAO_QUALITY, this, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
+		m_blurStrength = (int)m_engine->addPrefCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) { m_blurStrength = (int)f; });
 
 		// GL loading
 		m_fboID = 0;

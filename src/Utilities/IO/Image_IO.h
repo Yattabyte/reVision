@@ -8,7 +8,7 @@
 
 
 class Engine;
-class FIBITMAP;
+struct FIBITMAP;
 
 struct Image_Data {
 	GLubyte * pixelData = nullptr;
