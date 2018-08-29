@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.10.A";
+constexpr char ENGINE_VERSION[]	= "1.10.B";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -49,14 +49,16 @@ public:
 	/** Returns the preference-value associated with the supplied preference-ID.
 	@param	targetKey	the ID associated with the desired preference-value
 	@return				the value associated with the supplied preference-ID */
-	float getPreference(const PreferenceState::Preference & targetKey) const {
-		return m_PreferenceState.getPreference(targetKey);
+	template <typename T>
+	const T getPreference(const PreferenceState::Preference & targetKey) const {
+		return m_PreferenceState.getPreference<T>(targetKey);
 	}
 	/** Sets the supplied preference-value to the supplied preference-ID.
 	@param	targetKey	the ID associated with the supplied preference-value
 	@param	targetValue	the value to be set to the supplied preference-ID */
-	void setPreference(const PreferenceState::Preference & targetKey, const float & targetValue) {
-		m_PreferenceState.setPreference(targetKey, targetValue);
+	template <typename T>
+	void setPreference(const PreferenceState::Preference & targetKey, const T & targetValue) {
+		m_PreferenceState.setPreference<T>(targetKey, targetValue);
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.
 	@param	targetKey	the preference-ID to which this callback will be attached
@@ -64,9 +66,9 @@ public:
 	@param	observer	the method to be triggered
 	@param	<Observer>	the (auto-deduced) signature of the method 
 	@return				optionally returns the preference value held for this target */
-	template <typename Observer>
+	template <typename T, typename Observer>
 	float const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
-		return m_PreferenceState.addPrefCallback(targetKey, pointerID, observer);
+		return m_PreferenceState.addPrefCallback<T>(targetKey, pointerID, observer);
 	}
 	/** Removes a callback method from triggering when a particular preference changes.
 	@param	targetKey	the preference key that was listening for changes

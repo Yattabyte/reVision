@@ -46,9 +46,9 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
-		m_enabled = (bool)m_engine->addPrefCallback(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Primitive Construction
 		m_quadVAOLoaded = false;

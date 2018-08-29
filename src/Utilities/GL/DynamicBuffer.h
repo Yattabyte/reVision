@@ -115,7 +115,7 @@ private:
 	// Private Attributes
 	GLuint m_bufferID;
 	void * m_bufferPtr;
-	GLuint m_maxCapacity;
+	GLsizeiptr m_maxCapacity;
 	GLbitfield m_mapFlags;
 };
 

@@ -14,8 +14,8 @@
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	Engine & engine = *((Engine*)glfwGetWindowUserPointer(window));
-	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, (float)width);
-	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, (float)height);
+	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
+	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
 Engine::~Engine()
@@ -40,8 +40,8 @@ Engine::Engine() :
 
 	// Configure Rendering Context
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	m_windowSize.x = (int)getPreference(PreferenceState::C_WINDOW_WIDTH);
-	m_windowSize.y = (int)getPreference(PreferenceState::C_WINDOW_HEIGHT);
+	m_windowSize.x = getPreference<int>(PreferenceState::C_WINDOW_WIDTH);
+	m_windowSize.y = getPreference<int>(PreferenceState::C_WINDOW_HEIGHT);
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 	glfwSetWindowSize(m_renderingContext.main, m_windowSize.x, m_windowSize.y);
 	glfwSetWindowPos(m_renderingContext.main, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
@@ -51,7 +51,7 @@ Engine::Engine() :
 
 
 	// Preference Callbacks
-	addPrefCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this, [&](const float &f) {
+	addPrefCallback<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this, [&](const float &f) {
 		if (f > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
@@ -59,16 +59,16 @@ Engine::Engine() :
 		else 
 			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);		
 	});
-	m_refreshRate = addPrefCallback(PreferenceState::C_WINDOW_REFRESH_RATE, this, [&](const float &f) {
+	m_refreshRate = addPrefCallback<float>(PreferenceState::C_WINDOW_REFRESH_RATE, this, [&](const float &f) {
 		m_refreshRate = f;
-		if (getPreference(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
+		if (getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
 		}
 		else
 			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
 	});
-	addPrefCallback(PreferenceState::C_VSYNC, this, [&](const float &f) {glfwSwapInterval((int)f); });
+	addPrefCallback<float>(PreferenceState::C_VSYNC, this, [&](const float &f) {glfwSwapInterval((int)f); });
 
 	// Initialize Members
 	m_PreferenceState.loadFile("preferences");
@@ -219,10 +219,10 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	if (engine->getPreference(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
+	if (engine->getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
 		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
 	else {
-		const float refreshRate = engine->getPreference(PreferenceState::C_WINDOW_REFRESH_RATE);
+		const float refreshRate = engine->getPreference<float>(PreferenceState::C_WINDOW_REFRESH_RATE);
 		glfwWindowHint(GLFW_REFRESH_RATE, refreshRate > 0.0f ? (int)refreshRate : GLFW_DONT_CARE);
 	}
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
@@ -250,6 +250,6 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwMakeContextCurrent(main);
 	glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(main, 0, 0);
-	glfwSwapInterval((int)engine->getPreference(PreferenceState::C_VSYNC));
+	glfwSwapInterval(engine->getPreference<int>(PreferenceState::C_VSYNC));
 	engine->reportMessage("...done!");
 }

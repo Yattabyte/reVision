@@ -51,14 +51,14 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});	
-		m_updateQuality = (unsigned int)m_engine->addPrefCallback(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = (unsigned int)f; });
-		m_shadowSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		m_updateQuality = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) {m_updateQuality = (unsigned int)f; });
+		m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
 		m_shadowSize = glm::ivec2(std::max(1, m_shadowSize.x));
 		m_shadowFBO.resize(m_shadowSize, 4);
 		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
@@ -199,7 +199,7 @@ public:
 	@param	component	the shadow component to register. */
 	void registerComponent(LightDirectionalShadow_Component & component) {
 		float near_plane = -0.1f;
-		float far_plane = -m_engine->getPreference(PreferenceState::C_DRAW_DISTANCE);
+		float far_plane = -m_engine->getPreference<float>(PreferenceState::C_DRAW_DISTANCE);
 		component.m_cascadeEnd[0] = near_plane;
 		for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 			const float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));

@@ -46,7 +46,7 @@ Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)
 	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Preferences loading
-	m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+	m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
@@ -54,7 +54,7 @@ Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
-	m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+	m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
@@ -62,11 +62,11 @@ Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
-	const float farPlane = m_engine->addPrefCallback(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) {
+	const float farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) {
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
 	});
-	const float gamma = m_engine->addPrefCallback(PreferenceState::C_GAMMA, this, [&](const float &f) {
+	const float gamma = m_engine->addPrefCallback<float>(PreferenceState::C_GAMMA, this, [&](const float &f) {
 		m_defaultCamera->data->Gamma = f;
 		m_cameraBuffer.getElement(m_activeCamera)->data->Gamma = f;
 	});

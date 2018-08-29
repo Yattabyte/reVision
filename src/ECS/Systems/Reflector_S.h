@@ -50,13 +50,13 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = (int)m_engine->addPrefCallback(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
-		m_envmapSize = (unsigned int)m_engine->addPrefCallback(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) { 
+		m_envmapSize = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) { 
 			m_envmapSize = std::max(1u, (unsigned int)f);
 		});
 	
@@ -174,8 +174,8 @@ protected:
 			if (update || reflector->m_outOfDate) {
 				if (!didAnything) {
 					auto copySize = m_renderSize;
-					m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, (float)m_envmapSize);
-					m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, (float)m_envmapSize);
+					m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_envmapSize);
+					m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_envmapSize);
 					glViewport(0, 0, m_envmapSize, m_envmapSize);
 					m_renderSize = copySize;
 					oldCameraID = graphics.getActiveCamera();
@@ -227,8 +227,8 @@ protected:
 			Asset_Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			graphics.setActiveCamera(oldCameraID);
-			m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, (float)m_renderSize.x);
-			m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, (float)m_renderSize.y);
+			m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+			m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		}
 	}
 	/** Render all the lights */
