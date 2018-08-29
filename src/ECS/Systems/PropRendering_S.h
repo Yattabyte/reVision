@@ -70,8 +70,8 @@ public:
 			if (!propComponent->m_model->existsYet())
 				continue;
 
-			const GLuint & offset = propComponent->m_model->m_offset;
-			const GLuint & count = propComponent->m_model->m_count;
+			const auto & offset = propComponent->m_model->m_offset;
+			const auto & count = propComponent->m_model->m_count;
 			const GLuint & index = propComponent->m_data->index;
 			visibleIndices.push_back(index);
 			// Flag for occlusion culling  if mesh complexity is high enough and if viewer is NOT within BSphere
@@ -87,7 +87,7 @@ public:
 		}
 		
 		// Update camera buffers
-		const size_t & size = visibleIndices.size();
+		const GLsizei size = (GLsizei)visibleIndices.size();
 		m_bufferPropIndex.write(0, sizeof(GLuint) * size, visibleIndices.data());
 		m_bufferCulling.write(0, sizeof(glm::ivec4) * size, cullingDrawData.data());
 		m_bufferRender.write(0, sizeof(glm::ivec4) * size, renderingDrawData.data());

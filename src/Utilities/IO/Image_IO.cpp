@@ -6,7 +6,7 @@
 GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size) 
 {
 	GLubyte * newPixels = new GLubyte[size * 4];
-	for (int x = 0; x < size; ++x) {
+	for (unsigned int x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
 		newPixels[x * 4 + 2] = pixels[x * 4 + 0];

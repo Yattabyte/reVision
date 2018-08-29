@@ -62,8 +62,6 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirector
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
 	for (int sides = 0; sides < 6; ++sides) {
 		std::string specific_side_directory = "";
-		const char * file;
-
 		for (int x = 0; x < 3; ++x) {
 			specific_side_directory = fullDirectory + side_suffixes[sides] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))

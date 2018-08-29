@@ -13,10 +13,10 @@
 inline std::string get_between_quotes(std::string & s)
 {
 	std::string output = s;
-	int spot1 = s.find_first_of("\"");
+	size_t spot1 = s.find_first_of("\"");
 	if (spot1 >= 0) {
 		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
-		int spot2 = output.find_first_of("\"");
+		size_t spot2 = output.find_first_of("\"");
 		if (spot2 >= 0) {
 			output = output.substr(0, spot2);
 
@@ -38,7 +38,7 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 	bool success = false;
 	for (auto value = begin(m_strings); value != end(m_strings); value++)
 		if ((*value) == UPPER_STRING)
-			return std::distance(m_strings.begin(), value);
+			return (int)std::distance(m_strings.begin(), value);
 	return -1;
 }
 
@@ -91,12 +91,12 @@ void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory
 				int spot = find_CFG_Property(cfg_property, m_strings);
 				if (spot >= 0) {
 					std::string cfg_value = get_between_quotes(line);
-					setValue(spot, atof(cfg_value.c_str()));
+					setValue((unsigned int)spot, (float)atof(cfg_value.c_str()));
 				}
 			}
 		}
 	}
-	catch (const std::ifstream::failure& e) {
+	catch (const std::ifstream::failure) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Config");
 		initializeDefault(engine);
 		return;

@@ -62,7 +62,7 @@ inline Node * copy_node(const aiNode * oldNode)
 	Node * newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
 	newNode->children.resize(oldNode->mNumChildren);
-	for (int c = 0; c < oldNode->mNumChildren; ++c) 
+	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c) 
 		newNode->children[c] = copy_node(oldNode->mChildren[c]);
 	return newNode;
 }
@@ -137,23 +137,23 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 
 			// Copy Channels
 			data_container.animations[a].channels.resize(animation->mNumChannels);
-			for (int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
+			for (unsigned int c = 0; c < scene->mAnimations[a]->mNumChannels; ++c) {
 				auto * channel = scene->mAnimations[a]->mChannels[c];
 				data_container.animations[a].channels[c] = new Node_Animation(std::string(channel->mNodeName.data));
 
 				// Copy Keys
 				data_container.animations[a].channels[c]->scalingKeys.resize(channel->mNumScalingKeys);
-				for (int n = 0; n < channel->mNumScalingKeys; ++n) {
+				for (unsigned int n = 0; n < channel->mNumScalingKeys; ++n) {
 					auto & key = channel->mScalingKeys[n];
 					data_container.animations[a].channels[c]->scalingKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->rotationKeys.resize(channel->mNumRotationKeys);
-				for (int n = 0; n < channel->mNumRotationKeys; ++n) {
+				for (unsigned int n = 0; n < channel->mNumRotationKeys; ++n) {
 					auto & key = channel->mRotationKeys[n];
 					data_container.animations[a].channels[c]->rotationKeys[n] = Animation_Time_Key<glm::quat>(key.mTime, glm::quat(key.mValue.w, key.mValue.x, key.mValue.y, key.mValue.z));
 				}
 				data_container.animations[a].channels[c]->positionKeys.resize(channel->mNumPositionKeys);
-				for (int n = 0; n < channel->mNumPositionKeys; ++n) {
+				for (unsigned int n = 0; n < channel->mNumPositionKeys; ++n) {
 					auto & key = channel->mPositionKeys[n];
 					data_container.animations[a].channels[c]->positionKeys[n] = Animation_Time_Key<glm::vec3>(key.mTime, glm::vec3(key.mValue.x, key.mValue.y, key.mValue.z));
 				}
@@ -169,7 +169,7 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 			const aiMesh * mesh = scene->mMeshes[a];
 
 			for (int B = 0, numBones = mesh->mNumBones; B < numBones; B++) {
-				int BoneIndex = 0;
+				size_t BoneIndex = 0;
 				std::string BoneName(mesh->mBones[B]->mName.data);
 
 				if (data_container.boneMap.find(BoneName) == data_container.boneMap.end()) {
@@ -185,7 +185,7 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 				for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
 					int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
 					float Weight = mesh->mBones[B]->mWeights[j].mWeight;
-					data_container.bones[VertexID].AddBoneData(BoneIndex, Weight);
+					data_container.bones[VertexID].AddBoneData((int)BoneIndex, Weight);
 				}
 			}
 
@@ -215,9 +215,9 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 				std::string templateTexture, extension = ".png";
 				if (albedo_exists == AI_SUCCESS) {
 					std::string minusD = albedo.C_Str();
-					int exspot = minusD.find_last_of(".");
+					size_t exspot = minusD.find_last_of(".");
 					extension = minusD.substr(exspot, minusD.length());
-					int diffuseStart = minusD.find("diff");
+					size_t diffuseStart = minusD.find("diff");
 					if (diffuseStart > -1)
 						minusD = minusD.substr(0, diffuseStart);
 					else
@@ -228,7 +228,7 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 				// Importer might not distinguish between height and normal maps
 				if (normal_exists != AI_SUCCESS && height_exists == AI_SUCCESS) {
 					std::string norm_string(height.C_Str());
-					const int norm_spot = norm_string.find_last_of("norm");
+					const size_t norm_spot = norm_string.find_last_of("norm");
 					if (norm_spot > -1) {
 						// Normal map confirmed to be in height map spot, move it over
 						normal = height;

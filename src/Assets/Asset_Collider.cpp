@@ -65,7 +65,7 @@ void Asset_Collider::initialize(Engine * engine, const std::string & fullDirecto
 		orderedPoints.push_back(vertex.y);
 		orderedPoints.push_back(vertex.z);
 	}
-	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], orderedPoints.size(), sizeof(btScalar) * 3);
+	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], (int)orderedPoints.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
 	m_shape = shape;
 }

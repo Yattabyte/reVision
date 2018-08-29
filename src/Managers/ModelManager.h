@@ -29,12 +29,12 @@ public:
 	@param	data	the data to submit
 	@param	offset	the offset of the data (gets updated) 
 	@param	count	the count of the data (gets updated) */
-	void registerGeometry(const GeometryInfo & data, GLint &offset, GLint &count);
+	void registerGeometry(const GeometryInfo & data, size_t & offset, size_t & count);
 	/** Remove some continuous geometric data from this buffer. 
 	@param	data	the data to remove
 	@param	offset	the offset of the data 
 	@param	count	the count of the data */
-	void unregisterGeometry(const GeometryInfo & data, const GLint &offset, const GLint &count);
+	void unregisterGeometry(const GeometryInfo & data, const size_t & offset, const size_t & count);
 	/** Update the buffer's VAO from the main thread. */
 	void update();
 	/** Retreive this buffer's VAO ID */
@@ -53,8 +53,8 @@ private:
 	// Private Attributes
 	GLuint m_vaoID;
 	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES];
-	GLuint m_maxCapacity;
-	GLuint m_currentSize;
+	size_t m_maxCapacity;
+	size_t m_currentSize;
 	GLsync m_fence;
 	bool m_outOfDate;	
 	std::shared_mutex m_mutex;

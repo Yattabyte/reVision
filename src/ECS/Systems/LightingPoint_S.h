@@ -74,7 +74,7 @@ public:
 		m_shapeSphere->addCallback(this, [&]() mutable {
 			m_sphereVAOLoaded = true;
 			m_shapeSphere->updateVAO(m_sphereVAO);
-			const GLuint data = m_shapeSphere->getSize();
+			const GLuint data = { (GLuint)m_shapeSphere->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
 
@@ -187,7 +187,7 @@ protected:
 			// update dynamic shadows
 			m_shadowFBO.clear(pair.second->m_shadowSpot);
 			ecs.updateSystems(m_geometryDynamicSystems, deltaTime);
-			pair.second->m_updateTime = glfwGetTime();
+			pair.second->m_updateTime = (float)glfwGetTime();
 		}
 
 		if (m_outOfDate)

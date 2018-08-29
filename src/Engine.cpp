@@ -98,7 +98,7 @@ Engine::Engine() :
 
 void Engine::tick()
 {
-	float thisTime = glfwGetTime();
+	float thisTime = (float)glfwGetTime();
 	float deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
@@ -141,7 +141,7 @@ void Engine::tickThreaded(std::future<void> exitObj)
 	float lastTime = 0, thisTime = 0, deltaTime = 0;
 	while (exitObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
 		if (m_renderingContext.shared) {
-			thisTime = glfwGetTime();
+			thisTime = (float)glfwGetTime();
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			m_AssetManager.finalizeOrders();
@@ -199,8 +199,8 @@ void Engine::updateInput(const float & deltaTime)
 	}
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_renderingContext.main, &mouseX, &mouseY);
-	m_ActionState.at(ActionState::LOOK_X) = mouseX;
-	m_ActionState.at(ActionState::LOOK_Y) = mouseY;
+	m_ActionState.at(ActionState::LOOK_X) = (float)mouseX;
+	m_ActionState.at(ActionState::LOOK_Y) = (float)mouseY;
 	glfwSetCursorPos(m_renderingContext.main, 0, 0);
 }
 

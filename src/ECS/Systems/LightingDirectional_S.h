@@ -70,7 +70,7 @@ public:
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
-			const GLuint data = m_shapeQuad->getSize();
+			const GLuint data = { (GLuint)m_shapeQuad->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
 
@@ -245,7 +245,7 @@ protected:
 			pair.second->m_data->wait();
 			m_shadowFBO.clear(pair.second->m_shadowSpot);
 			ecs.updateSystems(m_geometrySystems, deltaTime);
-			pair.second->m_updateTime = glfwGetTime();
+			pair.second->m_updateTime = (float)glfwGetTime();
 		}
 
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);

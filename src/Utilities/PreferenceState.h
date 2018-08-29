@@ -113,7 +113,8 @@ public:
 	const T getPreference(const Preference & targetKey) const	{
 		if (m_preferences)
 			return (T)m_preferences->getValue(targetKey);
-		return (T)UNDEFINED_CVAL;
+		float undefinedCVAL = UNDEFINED_CVAL;
+		return (T)(undefinedCVAL);
 	}
 	/** Sets a value for a preference with the given ID.
 	@param	targetKey	the preference key to set the value to

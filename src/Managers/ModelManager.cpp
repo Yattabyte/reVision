@@ -63,9 +63,9 @@ void ModelManager::initialize()
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
-void ModelManager::registerGeometry(const GeometryInfo & data, GLint & offset, GLint & count)
+void ModelManager::registerGeometry(const GeometryInfo & data, size_t & offset, size_t & count)
 {
-	const size_t &arraySize = data.vs.size();
+	const size_t arraySize = data.vs.size();
 	expandToFit(arraySize);
 
 	{
@@ -90,7 +90,7 @@ void ModelManager::registerGeometry(const GeometryInfo & data, GLint & offset, G
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
-void ModelManager::unregisterGeometry(const GeometryInfo & data, const GLint & offset, const GLint & count)
+void ModelManager::unregisterGeometry(const GeometryInfo & data, const size_t & offset, const size_t & count)
 {
 	/**@todo remove geometry*/
 }

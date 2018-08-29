@@ -18,7 +18,7 @@ inline void calculate_AABB(const std::vector<glm::vec3> & vertices, glm::vec3 & 
 	if (vertices.size() >= 1) {
 		const glm::vec3 & vector = vertices.at(0);
 		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
-		for (int x = 1, total = vertices.size(); x < total; ++x) {
+		for (size_t x = 1, total = vertices.size(); x < total; ++x) {
 			const glm::vec3 &vertex = vertices.at(x);
 			if (vertex.x < minX)
 				minX = vertex.x;

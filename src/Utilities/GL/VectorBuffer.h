@@ -206,7 +206,7 @@ private:
 	unsigned int m_count;
 	GLuint m_bufferID;
 	void * m_ptrContainer;
-	GLuint m_maxCapacity;
+	GLsizeiptr m_maxCapacity;
 	GLint m_offsetAlignment;
 	std::vector<VB_Element<T>*> m_elements;
 };

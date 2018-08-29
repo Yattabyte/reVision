@@ -22,12 +22,12 @@ inline void parse(Engine * engine, Asset_Shader_Geometry & userAsset)
 			if (*text[x] == "") continue;
 			input = *text[x];
 			// Find Package to include
-			int spot = input.find("#package");
+			size_t spot = input.find("#package");
 			while (spot != std::string::npos) {
 				std::string directory = input.substr(spot);
 
-				unsigned int qspot1 = directory.find("\"");
-				unsigned int qspot2 = directory.find("\"", qspot1 + 1);
+				size_t qspot1 = directory.find("\"");
+				size_t qspot2 = directory.find("\"", qspot1 + 1);
 				// find std::string quotes and remove them
 				directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 

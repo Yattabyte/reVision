@@ -67,7 +67,7 @@ public:
 	@param	<Observer>	the (auto-deduced) signature of the method 
 	@return				optionally returns the preference value held for this target */
 	template <typename T, typename Observer>
-	float const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
+	T const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
 		return m_PreferenceState.addPrefCallback<T>(targetKey, pointerID, observer);
 	}
 	/** Removes a callback method from triggering when a particular preference changes.

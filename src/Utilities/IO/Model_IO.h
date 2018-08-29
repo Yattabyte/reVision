@@ -70,7 +70,7 @@ struct Model_Geometry {
 	// Animation
 	std::vector<VertexBoneData> bones;
 	std::vector<BoneTransform> boneTransforms;
-	std::map<std::string, int> boneMap;
+	std::map<std::string, size_t> boneMap;
 	std::vector<Animation> animations;
 	Node * rootNode;
 };

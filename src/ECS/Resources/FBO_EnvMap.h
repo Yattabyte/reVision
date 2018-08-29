@@ -35,7 +35,7 @@ struct FBO_EnvMap : FBO_Base {
 	void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) {
 		m_size = glm::ivec2(width, height);
 		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(pow(2, x))));
+			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
 			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB8, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 	}

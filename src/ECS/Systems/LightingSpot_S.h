@@ -73,7 +73,7 @@ public:
 		m_shapeCone->addCallback(this, [&]() mutable {
 			m_coneVAOLoaded = true;
 			m_shapeCone->updateVAO(m_coneVAO);
-			const GLuint data = m_shapeCone->getSize();
+			const GLuint data = { (GLuint)m_shapeCone->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
 
@@ -188,7 +188,7 @@ protected:
 			// update dynamic shadows
 			m_shadowFBO.clear(pair.second->m_shadowSpot);
 			ecs.updateSystems(m_geometryDynamicSystems, deltaTime);
-			pair.second->m_updateTime = glfwGetTime();
+			pair.second->m_updateTime = (float)glfwGetTime();
 		}
 
 		if (m_outOfDate)

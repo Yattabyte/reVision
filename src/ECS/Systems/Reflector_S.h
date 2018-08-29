@@ -71,7 +71,7 @@ public:
 		m_shapeCube->addCallback(this, [&]() mutable {
 			m_cubeVAOLoaded = true;
 			m_shapeCube->updateVAO(m_cubeVAO);
-			const GLuint data = m_shapeCube->getSize();
+			const GLuint data = { (GLuint)m_shapeCube->getSize() };
 			m_indirectCube.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
 		m_quadVAOLoaded = false;
@@ -219,7 +219,7 @@ protected:
 				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, 0);
 				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, 5);
 				glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, 0);
-				reflector->m_updateTime = glfwGetTime();
+				reflector->m_updateTime = (float)glfwGetTime();
 			}
 		}			
 		if (didAnything) {

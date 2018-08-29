@@ -78,7 +78,7 @@ public:
 		bool foundDecimal = false;
 		int decimalCount = 0;
 		bool repeat = true;
-		for (int x = 0, length = test.size(); x < length && repeat; ++x) {
+		for (size_t x = 0, length = test.size(); x < length && repeat; ++x) {
 			if (foundDecimal)
 				decimalCount++;
 			if (decimalCount >= 2)
