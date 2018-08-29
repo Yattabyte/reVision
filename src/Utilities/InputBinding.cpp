@@ -2,10 +2,7 @@
 #include "Engine.h"
 
 
-InputBinding::InputBinding(Engine * engine) 
-{ 
-	m_engine = engine;
-}
+InputBinding::InputBinding(Engine * engine) : m_engine(engine) {}
 
 void InputBinding::loadFile(const std::string & filename)
 {

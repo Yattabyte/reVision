@@ -29,14 +29,19 @@ public:
 	const std::vector<unsigned int> & getComponentFlags() { return componentFlags; };
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
 	@return		true if the system is valid, false otherwise. */
-	const bool isValid() const;
+	inline const bool isValid() const {
+		for (unsigned int i = 0; i < componentFlags.size(); ++i) 
+			if ((componentFlags[i] & BaseECSSystem::FLAG_OPTIONAL) == 0)
+				return true;		
+		return false;
+	}
 
 
 	// Public Interface
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {};
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) = 0;
 
 
 protected:
@@ -62,8 +67,7 @@ public:
 	// Public Methods
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	inline const bool addSystem(BaseECSSystem * system)
-	{
+	inline const bool addSystem(BaseECSSystem * system)	{
 		if (!system->isValid())
 			return false;
 		systems.push_back(system);
@@ -71,7 +75,14 @@ public:
 	}
 	/** Removes a system from the list.
 	@param	system	the system to remove. */
-	const bool removeSystem(BaseECSSystem * system);
+	inline const bool removeSystem(BaseECSSystem * system) {
+		for (unsigned int i = 0; i < systems.size(); ++i)
+			if (system == systems[i]) {
+				systems.erase(systems.begin() + i);
+				return true;
+			}		
+		return false;
+	}
 	/** Get the number of systems in the list.
 	@return			the size of the list. */
 	inline const size_t size() {

@@ -30,21 +30,16 @@ public:
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	}
 	/** Constructor. */
-	Bloom(Engine * engine, FBO_Base * lightingFBO, VisualFX * visualFX) {
-		// Default Parameters
-		m_engine = engine;
-		m_lightingFBO = lightingFBO;
-		m_visualFX = visualFX;
-
+	Bloom(Engine * engine, FBO_Base * lightingFBO, VisualFX * visualFX) 
+		: m_engine(engine), m_lightingFBO(lightingFBO), m_visualFX(visualFX) {
 		// Asset Loading
 		m_shaderBloomExtract = Asset_Shader::Create(m_engine, "Effects\\Bloom Extraction");
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -59,8 +54,6 @@ public:
 		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_BLOOM, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL Loading
-		m_fboID = 0;
-		m_textureID = 0;
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -71,8 +64,6 @@ public:
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 
-		m_textureIDS_GB[0] = 0;
-		m_textureIDS_GB[1] = 0;
 		glCreateTextures(GL_TEXTURE_2D, 2, m_textureIDS_GB);
 		for (int x = 0; x < 2; ++x) {
 			glTextureImage2DEXT(m_textureIDS_GB[x], GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -96,7 +87,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime ) {
+	virtual void applyEffect(const float & deltaTime ) override {
 		if (!m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet()|| !m_quadVAOLoaded)
 			return;
 		// Extract bright regions from lighting buffer
@@ -146,17 +137,17 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
-	FBO_Base * m_lightingFBO;
-	VisualFX * m_visualFX;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_lightingFBO = nullptr;
+	VisualFX * m_visualFX = nullptr;
 	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
-	GLuint m_fboID, m_textureID, m_textureIDS_GB[2];
-	glm::ivec2 m_renderSize;
-	int m_bloomStrength;
+	GLuint m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 };
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	int m_bloomStrength = 5;
 };
 
 #endif // BLOOM_H

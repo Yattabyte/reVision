@@ -17,7 +17,7 @@ class PreferenceState {
 public:
 	// (de)Constructors
 	/** Destroy the preference state. */
-	~PreferenceState();
+	~PreferenceState() = default;
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
@@ -156,7 +156,7 @@ public:
 
 	
 private:
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Config m_preferences;
 	std::map<Preference, std::map<void*, std::function<void(float)>>> m_callbacks;
 };

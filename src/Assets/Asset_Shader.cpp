@@ -116,14 +116,7 @@ Asset_Shader::~Asset_Shader()
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename)
-{
-	m_glProgramID = 0;
-	m_glVertexID = 0;
-	m_glFragmentID = 0;
-	m_vertexText = "";
-	m_fragmentText = "";
-}
+Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

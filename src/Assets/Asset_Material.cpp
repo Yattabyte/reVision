@@ -18,11 +18,7 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const std::string & filename) : Asset(filename)
-{
-	m_glArrayID = 0; // So we don't bind a texture with an auto-generated int like 3465384972
-	m_matSpot = 0;
-}
+Asset_Material::Asset_Material(const std::string & filename) : Asset(filename) {}
 
 Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES]) : Asset_Material("")
 {

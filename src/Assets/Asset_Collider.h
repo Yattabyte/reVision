@@ -8,7 +8,7 @@
 
 class Engine;
 class Asset_Collider;
-typedef std::shared_ptr<Asset_Collider> Shared_Asset_Collider;
+using Shared_Asset_Collider = std::shared_ptr<Asset_Collider>;
 
 /** A 3D mesh tuned for use in physics simulations instead of rendering. */
 class Asset_Collider : public Asset
@@ -27,7 +27,7 @@ public:
 	
 	
 	// Public Attributes
-	btCollisionShape * m_shape;
+	btCollisionShape * m_shape = nullptr;
 
 
 private:
@@ -38,9 +38,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

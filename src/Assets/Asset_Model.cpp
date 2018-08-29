@@ -77,16 +77,7 @@ Asset_Model::~Asset_Model()
 		m_modelManager->unregisterGeometry(m_data, m_offset, m_count);
 }
 
-Asset_Model::Asset_Model(const std::string & filename, ModelManager & modelManager) : Asset(filename)
-{
-	m_bboxMin = glm::vec3(0.0f);
-	m_bboxMax = glm::vec3(0.0f);
-	m_bboxCenter = glm::vec3(0.0f);
-	m_radius = 0.0f;
-	m_offset = 0;
-	m_count = 0;
-	m_modelManager = &modelManager;
-}
+Asset_Model::Asset_Model(const std::string & filename, ModelManager & modelManager) : Asset(filename), m_modelManager(&modelManager) {}
 
 Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

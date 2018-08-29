@@ -13,19 +13,15 @@
 class PlayerMovement_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
-	~PlayerMovement_System() {	
-	}
-	PlayerMovement_System(Engine * engine) : BaseECSSystem() {
+	~PlayerMovement_System() = default;
+	PlayerMovement_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
 		// Declare component types used
 		addComponentType(BasicPlayer_Component::ID);
-
-		// Attribute Sharing
-		m_engine = engine;
 	}
 
 
 	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		auto & graphicsModule = m_engine->getGraphicsModule();
 		graphicsModule.m_defaultCamera->wait();
 		for each (const auto & componentParam in components) {

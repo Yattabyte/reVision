@@ -26,14 +26,7 @@
 #include "ECS\Systems\Reflector_S.h"
 
 
-World_Module::~World_Module()
-{
-}
-
-World_Module::World_Module(Engine * engine) : Engine_Module(engine)
-{
-	m_finishedLoading = false;
-}
+World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
 
 void World_Module::loadWorld()
 {

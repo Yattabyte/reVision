@@ -18,7 +18,7 @@ public:
 	/** Destructor. */
 	~VisualFX();
 	/** Constructor. */
-	VisualFX();
+	VisualFX() = default;
 
 	
 	// Public Methods
@@ -51,12 +51,12 @@ private:
 
 	
 	// Private Attributes
-	bool m_Initialized;
-	Engine *m_engine;
+	Engine * m_engine = nullptr;
+	bool m_Initialized = false;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
-	GLuint m_quadVAO, m_fbo_GB;
-	bool m_quadVAOLoaded;
+	GLuint m_quadVAO = 0, m_fbo_GB = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

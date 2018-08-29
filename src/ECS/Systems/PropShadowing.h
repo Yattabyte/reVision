@@ -30,24 +30,17 @@ public:
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 		glDeleteVertexArrays(1, &m_cubeVAO);
 	}
-	PropShadowing_System(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer) : BaseECSSystem() {
+	PropShadowing_System(
+		Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer
+	) : BaseECSSystem(), m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_propBuffer(propBuffer), m_skeletonBuffer(skeletonBuffer), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow) {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
 		addComponentType(BoundingSphere_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
 
-		// Shared Parameters
-		m_engine = engine;
-		m_instanceCount = instanceCount;
-		m_flags = flags;
-		m_propBuffer = propBuffer;
-		m_skeletonBuffer = skeletonBuffer;
-		m_shaderCull = shaderCull;
-		m_shaderShadow = shaderShadow;
-		m_modelsVAO = &m_engine->getModelManager().getVAO();
-
 		// Asset Loading
 		m_shapeCube = Asset_Primitive::Create(engine, "cube");
+		m_modelsVAO = &m_engine->getModelManager().getVAO();
 
 		// Primitive Construction
 		m_cubeVAOLoaded = false;
@@ -60,7 +53,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
 		if (!m_cubeVAOLoaded)
 			return;

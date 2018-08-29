@@ -13,11 +13,7 @@ Asset_Primitive::~Asset_Primitive()
 		glDeleteBuffers(2, m_buffers);
 }
 
-Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
-{
-	for each (auto &buffer in m_buffers)
-		buffer = -1;
-}
+Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

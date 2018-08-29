@@ -258,9 +258,6 @@ const std::string Model_IO::Get_Version()
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
-#define ZERO_MEM(a) memset(a, 0, sizeof(a))
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
-
 VertexBoneData::~VertexBoneData() {}
 
 VertexBoneData::VertexBoneData() 
@@ -271,7 +268,7 @@ VertexBoneData::VertexBoneData()
 VertexBoneData::VertexBoneData(const VertexBoneData & vbd) 
 {
 	Reset();
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++) {
+	for (size_t i = 0; i < 4; ++i) {
 		IDs[i] = vbd.IDs[i];
 		Weights[i] = vbd.Weights[i];
 	}
@@ -279,13 +276,13 @@ VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
 
 inline void VertexBoneData::Reset() 
 {
-	ZERO_MEM(IDs);
-	ZERO_MEM(Weights);
+	memset(IDs, 0, sizeof(IDs));
+	memset(Weights, 0, sizeof(Weights));
 }
 
 inline void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight) 
 {
-	for (int i = 0; i < ARRAY_SIZE_IN_ELEMENTS(IDs); i++)
+	for (size_t i = 0; i < 4; ++i)
 		if (Weights[i] == 0.0) {
 			IDs[i] = BoneID;
 			Weights[i] = Weight;

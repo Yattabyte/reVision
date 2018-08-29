@@ -22,14 +22,11 @@ public:
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
-	Skybox_System(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) : BaseECSSystem() {
+	Skybox_System(
+		Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
+	) : BaseECSSystem(), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Declare component types used
 		addComponentType(Skybox_Component::ID);
-
-		// Shared Parameters
-		m_geometryFBO = geometryFBO;
-		m_lightingFBO = lightingFBO;
-		m_reflectionFBO = reflectionFBO;
 
 		// System Loading
 		m_shaderSky = Asset_Shader::Create(engine, "Effects\\Skybox");
@@ -39,7 +36,7 @@ public:
 		// Primitive Construction
 		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -50,7 +47,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		if (!m_shaderSky->existsYet() || !m_quadVAOLoaded)
 			return;
 

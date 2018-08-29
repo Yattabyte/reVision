@@ -29,7 +29,7 @@ public:
 
 	// Public Methods
 	/** Initialize the module. */
-	virtual void initialize();
+	virtual void initialize() override;
 	/** Render a single frame. 
 	@param	deltaTime	the amount of time passed since last frame */
 	void renderFrame(const float & deltaTime);
@@ -69,10 +69,9 @@ public:
 	
 private:
 	// Private Attributes
-	ECS *						m_ecs;
-	GLuint						m_activeCamera;
-	glm::ivec2					m_renderSize;
-	bool						m_ssao;
+	ECS *						m_ecs = nullptr;
+	GLuint						m_activeCamera = 0;
+	glm::ivec2					m_renderSize = glm::ivec2(1);
 	ECSSystemList				m_renderingSystems;
 	std::vector<Effect_Base*>	m_fxTechs;
 	VisualFX					m_visualFX;

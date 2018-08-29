@@ -19,18 +19,15 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	To_Screen(Engine * engine) {
-		// Default Parameters
-		m_engine = engine;
-
+	To_Screen(Engine * engine)
+	: m_engine(engine) {
 		// Asset Loading
 		m_shader = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -41,7 +38,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shader->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
@@ -54,11 +51,11 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

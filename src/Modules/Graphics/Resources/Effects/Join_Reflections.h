@@ -22,22 +22,16 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
-		// Default Parameters
-		m_engine = engine;
-		m_lightingFBO = lightingFBO;
-		m_geometryFBO = geometryFBO;
-		m_reflectionFBO = reflectionFBO;
-
+	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
+	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
 		m_shader = Asset_Shader::Create(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Asset_Texture::Create(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -58,7 +52,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shader->existsYet() || !m_quadVAOLoaded)
 			return;
 		glEnable(GL_BLEND);
@@ -77,14 +71,14 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
-	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
 };
 
 #endif // JOIN_REFLECTIONS_H

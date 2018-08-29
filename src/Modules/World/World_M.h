@@ -10,7 +10,7 @@
 class World_Module : public Engine_Module {
 public:
 	// (de)Constructors
-	~World_Module();
+	~World_Module() = default;
 	World_Module(Engine * engine);
 
 
@@ -26,7 +26,7 @@ public:
 
 private:
 	// Private Attributes
-	bool m_finishedLoading;
+	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
 };
 

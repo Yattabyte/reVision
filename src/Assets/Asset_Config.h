@@ -10,14 +10,14 @@
 
 class Engine;
 class Asset_Config;
-typedef std::shared_ptr<Asset_Config> Shared_Asset_Config;
+using Shared_Asset_Config = std::shared_ptr<Asset_Config>;
 
 /** A registry for configuration name-value pairs. */
 class Asset_Config : public Asset
 {
 public: 
 	/** Destroy the Config. */
-	~Asset_Config();
+	~Asset_Config() = default;
 
 
 	// Public Methods
@@ -53,9 +53,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

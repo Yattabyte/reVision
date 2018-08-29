@@ -7,9 +7,9 @@
 
 
 struct BaseECSComponent;
-typedef void* EntityHandle;
-typedef const unsigned int (*ECSComponentCreateFunction)(std::vector<unsigned int>& memory, const EntityHandle & entity, BaseECSComponent * comp);
-typedef void (*ECSComponentFreeFunction)(BaseECSComponent * comp);
+using EntityHandle = void*;
+using ECSComponentCreateFunction = const unsigned int(*)(std::vector<unsigned int>& memory, const EntityHandle & entity, BaseECSComponent * comp);
+using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 #define NULL_ENTITY_HANDLE nullptr
 
 /** A base type component. */

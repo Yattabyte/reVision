@@ -13,9 +13,9 @@ class MessageManager {
 public:
 	// (de)Constructors
 	/** Destroy the message manager. */
-	~MessageManager();
+	~MessageManager() = default;
 	/** Construct the message manager*/
-	MessageManager();
+	MessageManager() = default;
 
 
 	// Public Methods
@@ -31,8 +31,7 @@ public:
 
 	// Public Attributes
 	// Enumerations used for reporting error types
-	const enum Error_Enum
-	{
+	const enum Error_Enum {
 		FILE_MISSING,
 		FILE_CORRUPT,
 
@@ -50,8 +49,7 @@ public:
 		ERROR_COUNT,
 	};
 	// String-ified versions of the previous error enumerations
-	const std::string Error_String[ERROR_COUNT] =
-	{
+	const std::string Error_String[ERROR_COUNT] = {
 		"The file \"%\" does not exist! ",
 		"The file \"%\" is corrupt! ",
 				

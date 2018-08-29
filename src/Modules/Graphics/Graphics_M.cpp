@@ -33,17 +33,12 @@ Graphics_Module::~Graphics_Module()
 	m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 }
 
-Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)
-{
-	// Default Paramaters
-	m_ecs = &m_engine->getECS();
-	m_renderSize = glm::vec2(1.0f);
-	m_ssao = true;
-
+Graphics_Module::Graphics_Module(Engine * engine) 
+	: Engine_Module(engine), m_ecs(&m_engine->getECS()) {
 	// GL settings
 	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 	glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
-	//glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Preferences loading
 	m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
@@ -72,7 +67,7 @@ Graphics_Module::Graphics_Module(Engine * engine) : Engine_Module(engine)
 	});
 	
 	// Camera Setup
-	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint), 0);
+	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint));
 	m_defaultCamera = m_cameraBuffer.newElement();
 	m_defaultCamera->data->pMatrix = glm::mat4(1.0f);
 	m_defaultCamera->data->pMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
@@ -127,7 +122,7 @@ void Graphics_Module::initialize()
 	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingSpot_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
-	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
+	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	// Initiate specialized effects techniques
 	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
@@ -189,7 +184,7 @@ void Graphics_Module::updateCamera(Camera_Buffer * camera)
 void Graphics_Module::setActiveCamera(const GLuint & newCameraID)
 {
 	m_activeCamera = newCameraID;
-	m_cameraIndexBuffer.write_immediate(0, sizeof(GLuint), &newCameraID);
+	m_cameraIndexBuffer.write(0, sizeof(GLuint), &newCameraID);
 	const GLint offsetAlignment = m_cameraBuffer.getOffsetAlignment();
 	m_cameraBuffer.bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 2, (sizeof(Camera_Buffer) + offsetAlignment) * newCameraID, sizeof(Camera_Buffer) + offsetAlignment);
 }

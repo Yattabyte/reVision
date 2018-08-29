@@ -19,7 +19,7 @@ public:
 	/** Destroy the model manager. */
 	~ModelManager();
 	/** Construct the model manager. */
-	ModelManager();
+	ModelManager() = default;
 
 	
 	// Public Functions
@@ -51,12 +51,12 @@ private:
 
 
 	// Private Attributes
-	GLuint m_vaoID;
-	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES];
-	size_t m_maxCapacity;
-	size_t m_currentSize;
-	GLsync m_fence;
-	bool m_outOfDate;	
+	GLuint m_vaoID = 0;
+	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES] = { 0,0,0,0,0,0 };
+	size_t m_maxCapacity = 4000;
+	size_t m_currentSize = 0;
+	GLsync m_fence = nullptr;
+	bool m_outOfDate = false;
 	std::shared_mutex m_mutex;
 };
 

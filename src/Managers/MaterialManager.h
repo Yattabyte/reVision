@@ -1,7 +1,6 @@
 #pragma once
 #ifndef MATERIALMANAGER_H
 #define MATERIALMANAGER_H
-#define ZERO_MEM(a) memset(a, 0, sizeof(a))
 #define MAX_NUM_MAPPED_TEXTURES 500	
 
 #include "Utilities\GL\DynamicBuffer.h"
@@ -28,7 +27,7 @@ public:
 	/** Destroy the material manager. */
 	~MaterialManager();
 	/** Construct the material manager. */
-	MaterialManager();
+	MaterialManager() = default;
 	
 
 	// Public Functions
@@ -51,7 +50,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_mutex m_DataMutex;
-	unsigned int m_Count;
+	unsigned int m_Count = 0;
 	std::deque<unsigned int> m_FreeSpots;
 	std::vector<GLuint64> m_WorkOrders;
 	DynamicBuffer m_buffer;

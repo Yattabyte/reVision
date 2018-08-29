@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.10.B";
+constexpr char ENGINE_VERSION[]	= "1.11";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -122,11 +122,11 @@ private:
 
 
 	// Private Attributes
-	float m_lastTime; 
-	float m_frameAccumulator;
-	int m_frameCount;
-	glm::ivec2 m_windowSize;
-	float m_refreshRate;
+	float m_lastTime = 0;
+	float m_frameAccumulator = 0;
+	int m_frameCount = 0;
+	float m_refreshRate = 60.0f;
+	glm::ivec2 m_windowSize = glm::ivec2(1);
 	AssetManager m_AssetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_PreferenceState;

@@ -42,13 +42,7 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 	return -1;
 }
 
-Asset_Config::~Asset_Config()
-{
-}
-
-Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings)
-{
-}
+Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings) {}
 
 Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
 {

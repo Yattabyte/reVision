@@ -13,7 +13,7 @@
 
 class Asset;
 class Engine;
-typedef std::shared_ptr<Asset> Shared_Asset;
+using Shared_Asset = std::shared_ptr<Asset>;
 
 /** An abstract base-class for assets.
 @brief	Represents some form of data to be loaded from disk, such as shaders, models, levels, and sounds.
@@ -24,9 +24,9 @@ class Asset
 public:
 	// (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
-	~Asset();
+	~Asset() = default;
 	/** Create asset that uses the specified file-path. */
-	Asset(const std::string & filename = "");
+	Asset(const std::string & filename);
 
 
 	// Public Methods	
@@ -66,39 +66,18 @@ public:
 
 protected:
 	// Protected Attributes
-	bool m_finalized;
-	std::string m_filename;
+	bool m_finalized = false;
+	std::string m_filename = "";
 	std::map<void*, std::function<void()>> m_callbacks;
 	friend class AssetManager;
 
 
 	// Protected Interface
-	virtual void initializeDefault(Engine * engine) {};
+	virtual void initializeDefault(Engine * engine) = 0;
 	/** Initializes the asset. */
-	virtual void initialize(Engine * engine, const std::string & fullDirectory) {};
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) = 0;
 	/** Finalizes the asset. */
 	virtual void finalize(Engine * engine);
-};
-
-/*** An abstract class for assets work orders.
-@brief	Each asset should implement a specific work order specialized for their own data. */
-class Work_Order
-{
-public:
-	// (de)Constructor
-	/** Generic default constructor. */
-	Work_Order() {};
-	/** Virtual destructor. */
-	virtual ~Work_Order() {};
-	
-
-	// Public Methods
-	/** Begins reading and parsing an asset's data from disk. 
-	@note	This is designed to be multi-threaded if the asset can support it. */
-	virtual void initializeOrder() = 0;
-	/** Finishes remaining operations needed to finalize an asset.
-	@note	Since many assets require GPU synchronization, this step is done in the main thread. */
-	virtual void finalizeOrder() = 0;
 };
 
 #endif // ASSET_H

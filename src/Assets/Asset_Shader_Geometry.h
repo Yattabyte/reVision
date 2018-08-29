@@ -12,7 +12,7 @@
 
 class Engine;
 class Asset_Shader_Geometry;
-typedef std::shared_ptr<Asset_Shader_Geometry> Shared_Asset_Shader_Geometry;
+using Shared_Asset_Shader_Geometry = std::shared_ptr<Asset_Shader_Geometry>;
 
 /** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Asset_Shader. */
 class Asset_Shader_Geometry : public Asset_Shader
@@ -32,8 +32,8 @@ public:
 
 	
 	// Public Attributes
-	GLuint m_glGeometryID; // OpenGL ID's
-	std::string m_geometryText; // Text Data
+	GLuint m_glGeometryID = 0; // OpenGL ID's
+	std::string m_geometryText = ""; // Text Data
 
 
 private:
@@ -44,9 +44,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

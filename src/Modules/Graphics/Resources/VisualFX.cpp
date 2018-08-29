@@ -9,15 +9,6 @@ VisualFX::~VisualFX()
 	glDeleteVertexArrays(1, &m_quadVAO);
 }
 
-VisualFX::VisualFX()
-{
-	// Default Parameters
-	m_Initialized = false;
-	m_quadVAOLoaded = false;
-	m_quadVAO = 0;
-	m_fbo_GB = 0;
-}
-
 void VisualFX::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
@@ -26,7 +17,7 @@ void VisualFX::initialize(Engine * engine)
 		// Primitive Construction
 		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);

@@ -1,8 +1,6 @@
 #pragma once
 #ifndef	ASSET_MODEL_H
 #define	ASSET_MODEL_H
-#define ZERO_MEM(a) memset(a, 0, sizeof(a))
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
 #include "Assets\Asset.h"
 #include "Assets\Asset_Material.h"
@@ -19,7 +17,7 @@
 class Engine;
 class ModelManager;
 class Asset_Model;
-typedef std::shared_ptr<Asset_Model> Shared_Asset_Model;
+using Shared_Asset_Model = std::shared_ptr<Asset_Model>;
 
 /** A 3D geometric mesh meant to be used in 3D rendering. */
 class Asset_Model : public Asset
@@ -44,16 +42,16 @@ public:
 
 
 	// Public Attributes
-	std::vector<Shared_Asset_Material>	m_skins;
-	GeometryInfo						m_data;
-	std::vector<BoneTransform>			m_boneTransforms;
-	std::map<std::string, size_t>		m_boneMap;
-	std::vector<Animation>				m_animations;
-	Node								*m_rootNode;
-	glm::vec3							m_bboxMin, m_bboxMax, m_bboxCenter;
-	float								m_radius;
-	size_t								m_offset, m_count;
-	ModelManager						*m_modelManager;
+	std::vector<Shared_Asset_Material>		m_skins;
+	GeometryInfo							m_data;
+	std::vector<BoneTransform>				m_boneTransforms;
+	std::map<std::string, size_t>			m_boneMap;
+	std::vector<Animation>					m_animations;
+	Node								*	m_rootNode;
+	glm::vec3								m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
+	float									m_radius = 0.0f;
+	size_t									m_offset = 0, m_count = 0;
+	ModelManager						*	m_modelManager = nullptr;
 
 
 private:
@@ -64,9 +62,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

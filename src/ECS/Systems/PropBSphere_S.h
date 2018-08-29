@@ -17,7 +17,7 @@
 class PropBSphere_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
-	~PropBSphere_System() {}
+	~PropBSphere_System() = default;
 	PropBSphere_System() : BaseECSSystem() {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
@@ -27,7 +27,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];

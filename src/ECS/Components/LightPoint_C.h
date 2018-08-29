@@ -33,9 +33,9 @@ struct LightPointShadow_Buffer {
 
 /** A point light shadow component, formatted to support using a cubemap for shadows. */
 struct LightPointShadow_Component : public ECSComponent<LightPointShadow_Component> {
-	float m_updateTime;
-	int m_shadowSpot;
-	bool m_outOfDate;
+	float m_updateTime = 0.0f;
+	int m_shadowSpot = 0;
+	bool m_outOfDate = true;
 	VB_Element<LightPointShadow_Buffer> * m_data;
 };
 

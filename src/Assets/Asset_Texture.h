@@ -9,7 +9,7 @@
 
 class Engine;
 class Asset_Texture;
-typedef std::shared_ptr<Asset_Texture> Shared_Asset_Texture;
+using Shared_Asset_Texture = std::shared_ptr<Asset_Texture>;
 
 /** An encapsulation of an OpenGL texture object.
 Supports MIP-mapping and anisotropic filtering. */
@@ -36,12 +36,12 @@ public:
 
 	
 	// Public Attributes
-	GLuint m_glTexID, m_type;
-	GLuint64 m_glTexHandle;
-	glm::ivec2 m_size;
-	GLubyte	* m_pixelData;
-	bool m_mipmap;
-	bool m_anis;
+	GLuint m_glTexID = 0, m_type = GL_TEXTURE_2D;
+	GLuint64 m_glTexHandle = 0;
+	glm::ivec2 m_size = glm::ivec2(0);
+	GLubyte	* m_pixelData = nullptr;
+	bool m_mipmap = false;
+	bool m_anis = false;
 
 
 private:
@@ -54,9 +54,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

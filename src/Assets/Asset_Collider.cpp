@@ -13,10 +13,7 @@ Asset_Collider::~Asset_Collider()
 		delete m_shape;
 }
 
-Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename)
-{
-	m_shape = nullptr;
-}
+Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

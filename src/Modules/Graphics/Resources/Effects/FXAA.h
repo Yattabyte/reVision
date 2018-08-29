@@ -23,18 +23,15 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	FXAA(Engine * engine) {
-		// Default Parameters
-		m_engine = engine;
-
+	FXAA(Engine * engine) 
+	: m_engine(engine) {
 		// Asset Loading
 		m_shaderFXAA = Asset_Shader::Create(m_engine, "Effects\\FXAA");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -48,8 +45,6 @@ public:
 		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_FXAA, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL loading
-		m_fboID = 0;
-		m_textureID = 0;
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -70,7 +65,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shaderFXAA->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
@@ -96,13 +91,13 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader m_shaderFXAA;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_fboID, m_textureID;
-	glm::ivec2 m_renderSize;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	GLuint m_fboID = 0, m_textureID = 0;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

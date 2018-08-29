@@ -2,13 +2,8 @@
 #include "Engine.h"
 
 
-PreferenceState::~PreferenceState() 
+PreferenceState::PreferenceState(Engine * engine, const std::string & filename) : m_engine(engine)
 {
-}
-
-PreferenceState::PreferenceState(Engine * engine, const std::string & filename) 
-{
-	m_engine = engine;
 	loadFile(filename);
 }
 

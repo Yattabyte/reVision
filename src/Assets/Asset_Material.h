@@ -11,7 +11,7 @@
 
 class Engine;
 class Asset_Material;
-typedef std::shared_ptr<Asset_Material> Shared_Asset_Material;
+using Shared_Asset_Material = std::shared_ptr<Asset_Material>;
 
 /** A collection of texture surfaces that are used together to approximate a real surface.
 - Support for:
@@ -56,11 +56,11 @@ public:
 	
 	
 	// Public Attributes
-	GLuint m_glArrayID;
-	GLuint m_matSpot;
-	GLubyte * m_materialData;
-	glm::ivec2 m_size;
-	std::string m_textures[MAX_PHYSICAL_IMAGES];
+	GLuint m_glArrayID = 0;
+	GLuint m_matSpot = 0;
+	GLubyte * m_materialData = nullptr;
+	glm::ivec2 m_size = glm::ivec2(0);
+	std::string m_textures[MAX_PHYSICAL_IMAGES] = { "","","","","","" };
 
 
 private:
@@ -73,9 +73,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

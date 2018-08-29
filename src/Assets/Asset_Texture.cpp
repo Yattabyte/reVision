@@ -16,16 +16,7 @@ Asset_Texture::~Asset_Texture()
 	delete m_pixelData;
 }
 
-Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename)
-{
-	m_glTexID = 0;
-	m_glTexHandle = 0;
-	m_type = GL_TEXTURE_2D;
-	m_size = glm::ivec2(0);
-	m_pixelData = nullptr;
-	m_mipmap = false;
-	m_anis = false;
-}
+Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename) {}
 
 Asset_Texture::Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a) : Asset_Texture(filename)
 {

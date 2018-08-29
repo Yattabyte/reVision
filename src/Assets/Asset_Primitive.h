@@ -10,7 +10,7 @@
 
 class Engine;
 class Asset_Primitive;
-typedef std::shared_ptr<Asset_Primitive> Shared_Asset_Primitive;
+using Shared_Asset_Primitive = std::shared_ptr<Asset_Primitive>;
 
 /** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
 class Asset_Primitive : public Asset
@@ -40,7 +40,7 @@ public:
 	
 	
 	// Public Attributes
-	GLuint m_buffers[2];
+	GLuint m_buffers[2] = { 0, 0 };
 	std::vector<glm::vec3> m_dataVertex;
 	std::vector<glm::vec2> m_dataUV;
 
@@ -53,9 +53,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

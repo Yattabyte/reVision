@@ -1,22 +1,10 @@
 #include "Managers\ModelManager.h"
-#define ZERO_MEM(a) memset(a, 0, sizeof(a))
-#define ARRAY_SIZE_IN_ELEMENTS(a) (sizeof(a)/sizeof(a[0]))
 
 
 ModelManager::~ModelManager()
 {
 	glDeleteBuffers(NUM_VERTEX_ATTRIBUTES, m_vboIDS);
 	glDeleteVertexArrays(1, &m_vaoID);
-}
-
-ModelManager::ModelManager()
-{
-	m_vaoID = 0;
-	m_maxCapacity = 4000;
-	m_currentSize = 0;
-	m_fence = nullptr;
-	m_outOfDate = false;
-	ZERO_MEM(m_vboIDS);
 }
 
 void ModelManager::initialize()

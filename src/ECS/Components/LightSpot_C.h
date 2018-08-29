@@ -35,9 +35,9 @@ struct LightSpotShadow_Buffer {
 
 /** A spot light shadow component, formatted to support a single shadow map. */
 struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component> {
-	float m_updateTime;
-	int m_shadowSpot;
-	bool m_outOfDate;
+	float m_updateTime = 0.0f;
+	int m_shadowSpot = 0;
+	bool m_outOfDate = true;
 	VB_Element<LightSpotShadow_Buffer> * m_data;
 };
 

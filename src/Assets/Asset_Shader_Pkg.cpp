@@ -39,14 +39,7 @@ inline void parse(Engine * engine, Asset_Shader_Pkg & userAsset)
 	userAsset.m_packageText = input;
 }
 
-Asset_Shader_Pkg::~Asset_Shader_Pkg()
-{
-}
-
-Asset_Shader_Pkg::Asset_Shader_Pkg(const std::string & filename) : Asset(filename)
-{	
-	m_packageText = "";
-}
+Asset_Shader_Pkg::Asset_Shader_Pkg(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Shader_Pkg Asset_Shader_Pkg::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

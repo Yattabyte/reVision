@@ -9,7 +9,7 @@
 
 class Engine;
 class Asset_Cubemap;
-typedef std::shared_ptr<Asset_Cubemap> Shared_Asset_Cubemap;
+using Shared_Asset_Cubemap = std::shared_ptr<Asset_Cubemap>;
 
 /** Represents an OpenGL cubemap texture object. */
 class Asset_Cubemap : public Asset
@@ -32,8 +32,8 @@ public:
 
 	
 	// Public Attributes
-	GLuint m_glTexID;
-	glm::ivec2 m_size;
+	GLuint m_glTexID = 0;
+	glm::ivec2 m_size = glm::ivec2(0);
 	GLubyte	* m_pixelData[6];
 
 
@@ -45,9 +45,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

@@ -61,17 +61,15 @@ public:
 			glDeleteBuffers(1, &m_bufferID);
 		}
 	}
-	/** Default. */
-	VectorBuffer(const GLsizeiptr & sizeHint = 512, const GLint & offsetAlignment = 0) {
-		m_count = 0;
-		m_maxCapacity = sizeHint;
-		m_offsetAlignment = offsetAlignment;
-		m_bufferID = 0;
+	/** Default Constructor. */
+	VectorBuffer() {
 		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		glCreateBuffers(1, &m_bufferID);
-		glNamedBufferStorage(m_bufferID, sizeHint, 0, GL_DYNAMIC_STORAGE_BIT | flags);
-		m_ptrContainer = glMapNamedBufferRange(m_bufferID, 0, sizeHint, flags);
+		glNamedBufferStorage(m_bufferID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | flags);
+		m_ptrContainer = glMapNamedBufferRange(m_bufferID, 0, m_maxCapacity, flags);
 	}
+	/** Explicit Constructor. */
+	explicit VectorBuffer(const GLsizeiptr & sizeHint, const GLint & offsetAlignment) : m_maxCapacity(sizeHint), m_offsetAlignment(offsetAllighnment) {}
 	/** Move gl object from 1 instance to another. */
 	VectorBuffer & operator=(VectorBuffer && o) noexcept {
 		m_count = (std::move(o.m_count));
@@ -129,13 +127,13 @@ public:
 
 
 	// Interface Implementation
-	virtual void bindBuffer(const GLenum & target) const {
+	virtual void bindBuffer(const GLenum & target) const override {
 		glBindBuffer(target, m_bufferID);
 	}
-	virtual void bindBufferBase(const GLenum & target, const GLuint & index) const {
+	virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
 		glBindBufferBase(target, index, m_bufferID);
 	}
-	virtual void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const {
+	virtual void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const override {
 		glBindBufferRange(target, index, m_bufferID, offset, size );
 	}
 
@@ -203,11 +201,11 @@ private:
 
 
 	// Private Attributes
-	unsigned int m_count;
-	GLuint m_bufferID;
-	void * m_ptrContainer;
-	GLsizeiptr m_maxCapacity;
-	GLint m_offsetAlignment;
+	unsigned int m_count = 0;
+	GLuint m_bufferID = 0;
+	void * m_ptrContainer = nullptr;
+	GLsizeiptr m_maxCapacity = 256;
+	GLint m_offsetAlignment = 0;
 	std::vector<VB_Element<T>*> m_elements;
 };
 

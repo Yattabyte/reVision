@@ -33,10 +33,6 @@ Engine::Engine() :
 	m_AssetManager(this), m_messageManager(), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_materialManager(), m_moduleGraphics(this), m_moduleWorld(this)
 {
 	Image_IO::Initialize();
-	// Default Parameters
-	m_lastTime = 0;
-	m_frameAccumulator = 0;
-	m_frameCount = 0;
 
 	// Configure Rendering Context
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());

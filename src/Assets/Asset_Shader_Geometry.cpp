@@ -122,16 +122,7 @@ Asset_Shader_Geometry::~Asset_Shader_Geometry()
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader_Geometry::Asset_Shader_Geometry(const std::string & filename) : Asset_Shader(filename)
-{
-	m_glProgramID = 0;
-	m_glVertexID = 0;
-	m_glFragmentID = 0;
-	m_glGeometryID = 0;
-	m_vertexText = "";
-	m_fragmentText = "";
-	m_geometryText = "";
-}
+Asset_Shader_Geometry::Asset_Shader_Geometry(const std::string & filename) : Asset_Shader(filename) {}
 
 Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

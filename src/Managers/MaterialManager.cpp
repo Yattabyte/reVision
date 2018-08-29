@@ -7,12 +7,6 @@ MaterialManager::~MaterialManager()
 	m_FreeSpots.clear();
 }
 
-MaterialManager::MaterialManager()
-{
-	m_Count = 0;
-	m_buffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 0);
-}
-
 void MaterialManager::bind()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_DataMutex);

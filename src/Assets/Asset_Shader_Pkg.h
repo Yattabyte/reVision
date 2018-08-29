@@ -10,7 +10,7 @@
 
 class Engine;
 class Asset_Shader_Pkg;
-typedef std::shared_ptr<Asset_Shader_Pkg> Shared_Asset_Shader_Pkg;
+using Shared_Asset_Shader_Pkg = std::shared_ptr<Asset_Shader_Pkg>;
 
 /** An accessory asset for shaders that stores code blocks for other shaders to use.
 @brief	no functionality on its own, but can recursively import more code blocks for other shaders and itself. */
@@ -18,7 +18,7 @@ class Asset_Shader_Pkg : public Asset
 {
 public:
 	/** Destroy the Shader Package. */
-	~Asset_Shader_Pkg();	
+	~Asset_Shader_Pkg() = default;
 
 	
 	// Public Methods
@@ -34,7 +34,7 @@ public:
 
 	
 	// Public Attributes
-	std::string m_packageText;
+	std::string m_packageText = "";
 
 
 private:
@@ -45,9 +45,9 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

@@ -11,7 +11,7 @@ class ActionState : public std::map<unsigned int, float> {
 public:
 	// (de)Constructors
 	/** Destroy the action state. */
-	~ActionState() {}
+	~ActionState() = default;
 	/** Construct the action state. */
 	ActionState() {
 		for (unsigned int x = 0; x < ACTION_COUNT; ++x)

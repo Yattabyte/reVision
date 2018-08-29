@@ -25,19 +25,15 @@ public:
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	}
 	/** Constructor. */
-	HDR(Engine * engine, FBO_Base * lightingFBO) {
-		// Default Parameters
-		m_engine = engine;
-		m_lightingFBO = lightingFBO;
-
+	HDR(Engine * engine, FBO_Base * lightingFBO)
+	: m_engine(engine), m_lightingFBO(lightingFBO) {
 		// Asset Loading
 		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -50,8 +46,6 @@ public:
 		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 
 		// GL loading
-		m_fboID = 0;
-		m_textureID = 0;
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -72,7 +66,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shaderHDR->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
@@ -103,14 +97,14 @@ private:
 
 
 	// Private Attributes
-	FBO_Base * m_lightingFBO;
-	GLuint m_fboID, m_textureID;
-	glm::ivec2 m_renderSize; 
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_lightingFBO = nullptr;
+	GLuint m_fboID = 0, m_textureID = 0;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

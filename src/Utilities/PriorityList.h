@@ -28,7 +28,7 @@ private:
 public:
 	// (de)Constructors
 	/** Default destructor. */
-	~PriorityList() {}
+	~PriorityList() = default;
 	/** Construct a priority list, optionally reserve a given capacity.
 	@param	capacity	the amount to reserve */
 	PriorityList(const unsigned int & capacity = 16) {

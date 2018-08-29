@@ -34,15 +34,10 @@ public:
 		Engine * engine, 
 		FBO_Base * geometryFBO, FBO_Base * lightingFBO,
 		GL_Vector * propBuffer, GL_Vector * skeletonBuffer
-	) : BaseECSSystem() {
+	) : BaseECSSystem(), m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO) {
 		// Declare component types used
 		addComponentType(LightDirectional_Component::ID);
 		addComponentType(LightDirectionalShadow_Component::ID, FLAG_OPTIONAL);
-
-		// Shared Parameters
-		m_engine = engine;
-		m_geometryFBO = geometryFBO;
-		m_lightingFBO = lightingFBO;
 
 		// Asset Loading
 		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Directional\\Light");
@@ -66,7 +61,7 @@ public:
 		// Primitive Construction
 		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -85,7 +80,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
 		if (!m_quadVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;

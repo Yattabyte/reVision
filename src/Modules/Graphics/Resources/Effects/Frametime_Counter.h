@@ -25,17 +25,14 @@ public:
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);		
 	}
 	/** Constructor. */
-	Frametime_Counter(Engine * engine) {
-		// Default Parameters
-		m_engine = engine;
-
+	Frametime_Counter(Engine * engine)
+	: m_engine(engine) {
 		// Asset Loading
 		m_numberTexture = Asset_Texture::Create(m_engine, "numbers.png", GL_TEXTURE_2D, false, false);
 		m_shader = Asset_Shader::Create(m_engine, "Utilities\\numberPrint");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
@@ -60,7 +57,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_quadVAOLoaded || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);
@@ -71,8 +68,7 @@ public:
 		m_shader->bind();
 		m_shader->setUniform(1, m_projMatrix);
 		const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
-
-
+		
 		float dt_seconds = deltaTime * 1000;
 		std::string test = std::to_string(dt_seconds);
 		bool foundDecimal = false;
@@ -108,14 +104,14 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Texture m_numberTexture;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
-	glm::ivec2 m_renderSize;
-	glm::mat4 m_projMatrix;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	glm::mat4 m_projMatrix = glm::mat4(1.0f);
 };
 
 #endif // FRAMETIME_COUNTER_H

@@ -23,21 +23,17 @@ public:
 		glDeleteVertexArrays(1, &m_cubeVAO);
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 	}
-	PropRendering_System(Engine * engine, FBO_Base * geometryFBO, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderGeometry) : BaseECSSystem() {
+	PropRendering_System(
+		Engine * engine, FBO_Base * geometryFBO, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderGeometry
+	) : BaseECSSystem(), m_engine(engine), m_geometryFBO(geometryFBO), m_shaderCull(shaderCull), m_shaderGeometry(shaderGeometry) {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
 		addComponentType(BoundingSphere_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
 
-		// Shared Parameters
-		m_engine = engine;
-		m_geometryFBO = geometryFBO;
-		m_shaderCull = shaderCull;
-		m_shaderGeometry = shaderGeometry;
-		m_modelsVAO = &m_engine->getModelManager().getVAO();
-
 		// Asset Loading
 		m_shapeCube = Asset_Primitive::Create(engine, "cube");
+		m_modelsVAO = &m_engine->getModelManager().getVAO();
 
 		// Primitive Construction
 		m_cubeVAOLoaded = false;
@@ -50,7 +46,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
 		if (!m_shaderCull->existsYet() || !m_shaderGeometry->existsYet() || !m_cubeVAOLoaded)
 			return;

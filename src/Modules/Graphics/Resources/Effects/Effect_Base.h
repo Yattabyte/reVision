@@ -8,9 +8,9 @@ class Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	virtual ~Effect_Base() {};
+	virtual ~Effect_Base() = default;
 	/** Constructor. */
-	Effect_Base() : m_enabled(true) {}
+	Effect_Base() = default;
 
 
 	// Public Methods
@@ -24,7 +24,7 @@ public:
 
 protected:
 	// Protected Attributes
-	bool m_enabled;
+	bool m_enabled = true;
 };
 
 #endif // EFFECT_BASE_H

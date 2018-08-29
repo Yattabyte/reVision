@@ -30,13 +30,8 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) {
-		// Default Parameters
-		m_engine = engine;
-		m_geometryFBO = geometryFBO;
-		m_lightingFBO = lightingFBO;
-		m_reflectionFBO = reflectionFBO;
-
+	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
+	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
 		m_shaderSSR1 = Asset_Shader::Create(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Asset_Shader::Create(m_engine, "Effects\\SSR part 2");
@@ -51,9 +46,8 @@ public:
 		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -62,8 +56,6 @@ public:
 		});
 
 		// GL loading
-		m_fboMipsID = 0;
-		m_textureMipsID = 0;
 		glCreateFramebuffers(1, &m_fboMipsID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureMipsID);
 		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -81,8 +73,6 @@ public:
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
 		glNamedFramebufferDrawBuffer(m_fboMipsID, GL_COLOR_ATTACHMENT0);
 
-		m_fboSSRID = 0;
-		m_textureSSRID = 0;
 		glCreateFramebuffers(1, &m_fboSSRID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureSSRID);
 		glTextureImage2DEXT(m_textureSSRID, GL_TEXTURE_2D, 0, GL_RGB8, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -133,7 +123,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
 			return;
 		glBindVertexArray(m_quadVAO);
@@ -219,19 +209,19 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Shared_Asset_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Primitive m_shapeQuad;
-	glm::ivec2 m_renderSize;
-	GLuint m_fboMipsID, m_textureMipsID;
-	GLuint m_fboSSRID, m_textureSSRID;
-	GLuint m_bayerID;
-	GLuint64 m_bayerHandle;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	GLuint m_fboMipsID = 0, m_textureMipsID = 0;
+	GLuint m_fboSSRID = 0, m_textureSSRID = 0;
+	GLuint m_bayerID = 0;
+	GLuint64 m_bayerHandle = 0;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
-	FBO_Base * m_geometryFBO, * m_lightingFBO, *m_reflectionFBO;
 };
 
 #endif // SSR_H

@@ -13,11 +13,7 @@ Asset_Cubemap::~Asset_Cubemap()
 		glDeleteTextures(1, &m_glTexID);
 }
 
-Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename)
-{
-	m_glTexID = 0;
-	m_size = glm::ivec2(0);
-}
+Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {

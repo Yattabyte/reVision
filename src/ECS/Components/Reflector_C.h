@@ -21,8 +21,8 @@ struct Reflection_Buffer {
 /** Represents an environment map buffer component. */
 struct Reflector_Component: public ECSComponent<Reflector_Component> {
 	VB_Element<Reflection_Buffer> * m_data;
-	int m_cubeSpot;
-	bool m_outOfDate;
+	int m_cubeSpot = 0;
+	bool m_outOfDate = true;
 	float m_updateTime = 0.0f;
 	VB_Element<Camera_Buffer> * m_Cameradata[6];
 };

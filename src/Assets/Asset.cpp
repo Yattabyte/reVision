@@ -3,15 +3,7 @@
 #include <algorithm>
 
 
-Asset::~Asset()
-{
-}
-
-Asset::Asset(const std::string & filename)
-{	
-	m_finalized = false;
-	m_filename = filename;
-}
+Asset::Asset(const std::string & filename) : m_filename(filename) {}
 
 std::string Asset::getFileName() const
 {

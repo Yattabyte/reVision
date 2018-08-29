@@ -29,18 +29,11 @@ public:
 	}
 	Reflector_System(
 		Engine * engine,
-		FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO,
-		GL_Vector * propBuffer, GL_Vector * skeletonBuffer
-	) : BaseECSSystem() {
+		FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
+	) : BaseECSSystem(), m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Declare component types used
 		addComponentType(Reflector_Component::ID);
-
-		// Shared Parameters
-		m_engine = engine;
-		m_geometryFBO = geometryFBO;
-		m_lightingFBO = lightingFBO;
-		m_reflectionFBO = reflectionFBO;
-
+		
 		// Asset Loading
 		m_shaderLighting = Asset_Shader::Create(m_engine, "Core\\Reflector\\IBL_Parallax");
 		m_shaderStencil = Asset_Shader::Create(m_engine, "Core\\Reflector\\Stencil");
@@ -67,7 +60,7 @@ public:
 		// Primitive Construction
 		m_cubeVAOLoaded = false;
 		m_cubeVAO = Asset_Primitive::Generate_VAO();
-		m_indirectCube = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_indirectCube = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeCube->addCallback(this, [&]() mutable {
 			m_cubeVAOLoaded = true;
 			m_shapeCube->updateVAO(m_cubeVAO);
@@ -76,8 +69,8 @@ public:
 		});
 		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4, 0);
-		m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4);
+		m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -95,7 +88,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
 		if (!m_cubeVAOLoaded || !m_shaderLighting->existsYet())
 			return;

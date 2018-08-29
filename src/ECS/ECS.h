@@ -12,10 +12,10 @@
 class ECS {
 public:
 	// Public (de)Constructors
-	ECS() {}
 	~ECS();
-	ECS(const ECS& other) { (void)other; }
-	void operator=(const ECS& other) { (void)other; }
+	ECS() = default;
+	ECS(const ECS& other) = delete;
+	void operator=(const ECS& other) = delete;
 
 
 	// Public Entity Functions

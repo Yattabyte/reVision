@@ -24,21 +24,16 @@ public:
 		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
-	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX) {
-		// Default Parameters
-		m_engine = engine;
-		m_geometryFBO = geometryFBO;
-		m_visualFX = visualFX;
-
+	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
+	: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
 		// Asset Loading
 		m_shader = Asset_Shader::Create(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Asset_Shader::Create(m_engine, "Effects\\SSAO To AO");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Primitive Construction
-		m_quadVAOLoaded = false;
 		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, 0);
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			m_quadVAOLoaded = true;
 			m_shapeQuad->updateVAO(m_quadVAO);
@@ -55,8 +50,6 @@ public:
 		m_blurStrength = m_engine->addPrefCallback<int>(PreferenceState::C_SSAO_BLUR_STRENGTH, this, [&](const float &f) { m_blurStrength = (int)f; });
 
 		// GL loading
-		m_fboID = 0;
-		m_textureID = 0;
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
@@ -128,7 +121,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) {
+	virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shader->existsYet() || !m_shaderCopyAO->existsYet() || !m_quadVAOLoaded)
 			return;
 		glDisable(GL_DEPTH_TEST);
@@ -170,18 +163,18 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
-	FBO_Base * m_geometryFBO;
-	VisualFX *m_visualFX;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_geometryFBO = nullptr;
+	VisualFX * m_visualFX = nullptr;
 	Shared_Asset_Shader m_shader, m_shaderCopyAO;
 	Shared_Asset_Primitive m_shapeQuad;
-	glm::ivec2 m_renderSize;
-	float m_radius;
-	int m_quality, m_blurStrength;
-	GLuint m_fboID, m_textureID, m_textureIDSGB[2], m_noiseID;
-	GLuint64 m_noiseHandle;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	float m_radius = 1.0f;
+	int m_quality = 1, m_blurStrength = 5;
+	GLuint m_fboID = 0, m_textureID = 0, m_textureIDSGB[2] = { 0,0 }, m_noiseID = 0;
+	GLuint64 m_noiseHandle = 0;
+	GLuint m_quadVAO = 0;
+	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

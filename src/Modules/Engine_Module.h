@@ -9,7 +9,7 @@ class Engine;
 class Engine_Module {
 public:
 	// (de)Constructors
-	~Engine_Module() {}
+	~Engine_Module() = default;
 	Engine_Module(Engine * engine) : m_engine(engine) {}
 
 

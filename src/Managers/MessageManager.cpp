@@ -2,14 +2,6 @@
 #include <iostream>
 
 
-MessageManager::~MessageManager()
-{
-}
-
-MessageManager::MessageManager()
-{
-}
-
 void MessageManager::statement(const std::string & input)
 {
 	textOutput(input);

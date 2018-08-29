@@ -11,7 +11,7 @@
 
 class Engine;
 class Asset_Shader;
-typedef std::shared_ptr<Asset_Shader> Shared_Asset_Shader;
+using Shared_Asset_Shader = std::shared_ptr<Asset_Shader>;
 
 /** An encapsulation of a vertex/fragment OpenGL shader program.
 Also provides support for explicitly setting uniform values for a given attribute location. */
@@ -81,8 +81,8 @@ public:
 	
 
 	// Public Attributes
-	GLuint m_glProgramID, m_glVertexID, m_glFragmentID; // OpenGL ID's
-	std::string m_vertexText, m_fragmentText; // Text Data
+	GLuint m_glProgramID = 0, m_glVertexID = 0, m_glFragmentID = 0; // OpenGL ID's
+	std::string m_vertexText = "", m_fragmentText = ""; // Text Data
 
 
 protected:
@@ -94,9 +94,9 @@ protected:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory);
-	virtual void finalize(Engine * engine);
+	virtual void initializeDefault(Engine * engine) override;
+	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

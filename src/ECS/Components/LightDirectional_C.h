@@ -33,11 +33,11 @@ struct LightDirectionalShadow_Buffer {
 
 /** A directional light shadow component, formatted for 4 parallel split cascaded shadow maps. */
 struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalShadow_Component> {
-	float m_updateTime;
+	float m_updateTime = 0.0f;
 	float m_cascadeEnd[5];
-	int m_shadowSpot;
+	int m_shadowSpot = 0;
 	size_t m_visSize[2];
-	float m_shadowSize;
+	float m_shadowSize = 0.0f;
 	glm::mat4 m_mMatrix = glm::mat4(1.0f);
 	VB_Element<LightDirectionalShadow_Buffer> * m_data;
 };
