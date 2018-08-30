@@ -5,6 +5,7 @@
 #include "ECS\Components\ecsComponent.h"
 #include "Assets\Asset_Model.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\Transform.h"
 
 
 /** OpenGL buffer for basic props.
@@ -19,6 +20,7 @@ struct Prop_Buffer {
 @note		On its own it provides no support for animation. */
 struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Asset_Model m_model;
+	Transform m_transform;
 	VB_Element<Prop_Buffer> * m_data;
 };
 

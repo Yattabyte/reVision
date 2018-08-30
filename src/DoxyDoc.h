@@ -96,7 +96,6 @@
  *		- Reflector_Component
  *		- Skeleton_Component
  *		- Skybox_Component
- *		- Transform_Component
  *		<br>
  *
  * There are also several systems in place that use them:

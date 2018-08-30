@@ -16,7 +16,6 @@ public:
 	~SkeletonAnimation_System() = default;
 	SkeletonAnimation_System() : BaseECSSystem() {
 		// Declare component types used
-		addComponentType(Prop_Component::ID);
 		addComponentType(Skeleton_Component::ID);
 	}
 
@@ -24,31 +23,31 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
+			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
 
-			if (!propComponent->m_model->existsYet())
+			if (!skeletonComponent->m_model->existsYet())
 				return;
 
 			Skeleton_Buffer * uboData = skeletonComponent->m_data->data;
-			std::shared_lock<std::shared_mutex> guard(propComponent->m_model->m_mutex);
+			std::shared_lock<std::shared_mutex> guard(skeletonComponent->m_model->m_mutex);
 
-			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_transforms.size() == 0 || skeletonComponent->m_animation >= propComponent->m_model->m_animations.size())
+			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_model->m_boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_model->m_animations.size())
 				return;
 			else {
+				skeletonComponent->m_transforms.resize(skeletonComponent->m_model->m_boneTransforms.size());
 				if (skeletonComponent->m_playAnim)
 					skeletonComponent->m_animTime += deltaTime;
-				const double TicksPerSecond = propComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond != 0
-					? propComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond
+				const double TicksPerSecond = skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond != 0
+					? skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond
 					: 25.0f;
 				const double TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const double AnimationTime = fmod(TimeInTicks, propComponent->m_model->m_animations[skeletonComponent->m_animation].duration);
+				const double AnimationTime = fmod(TimeInTicks, skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].duration);
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
-				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, propComponent->m_model->m_rootNode, propComponent->m_model, glm::mat4(1.0f));
+				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_model->m_rootNode, skeletonComponent->m_model, glm::mat4(1.0f));
 
 				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
-					uboData->bones[i] = skeletonComponent->m_transforms[i].final;
+					uboData->bones[i] = skeletonComponent->m_transforms[i];
 			}
 		}
 	};
@@ -56,8 +55,7 @@ public:
 
 protected:
 	// Protected functions
-	inline void ReadNodeHeirarchy(std::vector<BoneTransform> &transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Model & model, const glm::mat4 & ParentTransform)
-	{
+	inline void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Model & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
 		const Animation &pAnimation = model->m_animations[animation_ID];
 		const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
@@ -78,7 +76,7 @@ protected:
 		const std::map<std::string, size_t> &BoneMap = model->m_boneMap;
 		if (BoneMap.find(NodeName) != BoneMap.end()) {
 			size_t BoneIndex = BoneMap.at(NodeName);
-			transforms.at(BoneIndex).final = GlobalInverseTransform * GlobalTransformation * transforms.at(BoneIndex).offset;
+			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_boneTransforms.at(BoneIndex);
 		}
 
 		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
@@ -89,8 +87,7 @@ protected:
 	template <> inline glm::mat4 convertType(const aiMatrix4x4 &t) { return glm::mat4(t.a1, t.b1, t.c1, t.d1, t.a2, t.b2, t.c2, t.d2, t.a3, t.b3, t.c3, t.d3, t.a4, t.b4, t.c4, t.d4); }
 	template <typename T> inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
 	template <> inline glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
-	inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const std::string &NodeName)
-	{
+	inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const std::string &NodeName) {
 		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
 			const Node_Animation * pNodeAnim = pAnimation.channels[i];
 			if (pNodeAnim->nodeName == NodeName)
@@ -99,8 +96,7 @@ protected:
 		return nullptr;
 	}
 	template <typename KeyType>
-	inline size_t FindKey(const float &AnimationTime, const size_t &count, const std::vector<KeyType> & keys)
-	{
+	inline size_t FindKey(const float &AnimationTime, const size_t &count, const std::vector<KeyType> & keys) {
 		for (size_t i = 0; i < count; i++)
 			if (AnimationTime < (float)(keys[i + 1]).time)
 				return i;

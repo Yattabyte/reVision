@@ -50,7 +50,8 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		if (!m_shaderSky->existsYet() || !m_quadVAOLoaded)
 			return;
-
+		if (!components.size())
+			return;
 		Skybox_Component * skyboxComponent = (Skybox_Component*)components[0][0];
 		if (!skyboxComponent->m_texture->existsYet())
 			return;

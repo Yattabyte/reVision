@@ -45,7 +45,7 @@ layout (location = 5) flat out sampler2DArray MaterialMap;
 void main()
 {	
 	const uint PropIndex 		= propIndexes[gl_DrawID];
-	const uint SkeletonIndex 	= skeletonIndexes[gl_DrawID];
+	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
 	if (SkeletonIndex != -1) {	
 		BoneTransform 			= skeletonBuffer[SkeletonIndex].bones[BoneIDs[0]] * Weights[0];

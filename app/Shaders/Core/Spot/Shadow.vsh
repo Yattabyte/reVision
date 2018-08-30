@@ -70,7 +70,7 @@ layout (location = 6) flat out sampler2DArray MaterialMap;
 void main()
 {	
 	const uint PropIndex 		= propIndexes[gl_DrawID];
-	const uint SkeletonIndex 	= skeletonIndexes[gl_DrawID];
+	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
 	const bool isStatic 		= SkeletonIndex == -1 ? true : false;
 	if (!isStatic) {	

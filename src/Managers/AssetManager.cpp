@@ -70,11 +70,13 @@ void AssetManager::finalizeOrders()
 
 void AssetManager::submitNotifyee(void * pointerID, const std::function<void()> & callBack)
 {
+	std::lock_guard writeGuard(m_mutexNofications);
 	m_notifyees.push_back(std::make_pair(pointerID,callBack));
 }
 
 void AssetManager::removeNotifyee(void * pointerID)
 {
+	std::lock_guard writeGuard(m_mutexNofications);
 	m_notifyees.erase(std::remove_if(begin(m_notifyees), end(m_notifyees), [pointerID](const std::pair<void*, std::function<void()>> & notifyee) {
 		return (notifyee.first == pointerID);
 	}), end(m_notifyees));
@@ -82,8 +84,12 @@ void AssetManager::removeNotifyee(void * pointerID)
 
 void AssetManager::notifyObservers()
 {
-	for each (const auto & notifyee in m_notifyees)
-		notifyee.second();
+	{
+		std::shared_lock readGuard(m_mutexNofications);
+		for each (const auto & notifyee in m_notifyees)
+			notifyee.second();
+	}
+	std::lock_guard writeGuard(m_mutexNofications);
 	m_notifyees.clear();
 }
 

@@ -5,6 +5,7 @@
 #include "ECS\Components\ecsComponent.h"
 #include "ECS\Components\Camera_C.h"
 #include "Utilities\GL\VectorBuffer.h"
+#include "Utilities\Transform.h"
 #include "glm\glm.hpp"
 
 
@@ -24,6 +25,7 @@ struct Reflector_Component: public ECSComponent<Reflector_Component> {
 	int m_cubeSpot = 0;
 	bool m_outOfDate = true;
 	float m_updateTime = 0.0f;
+	Transform m_transform;
 	VB_Element<Camera_Buffer> * m_Cameradata[6];
 };
 

@@ -19,7 +19,8 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	int m_animation = -1;
 	bool m_playAnim = true;
 	float m_animTime = 0, m_animStart = 0;
-	std::vector<BoneTransform> m_transforms;
+	Shared_Asset_Model m_model;
+	std::vector<glm::mat4> m_transforms;
 	VB_Element<Skeleton_Buffer> * m_data;
 };
 

@@ -44,7 +44,7 @@ public:
 	// Public Attributes
 	std::vector<Shared_Asset_Material>		m_skins;
 	GeometryInfo							m_data;
-	std::vector<BoneTransform>				m_boneTransforms;
+	std::vector<glm::mat4>					m_boneTransforms;
 	std::map<std::string, size_t>			m_boneMap;
 	std::vector<Animation>					m_animations;
 	Node								*	m_rootNode;

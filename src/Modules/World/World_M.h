@@ -3,6 +3,7 @@
 #define WORLD_MODULE_H
 
 #include "Modules\Engine_Module.h"
+#include "Assets\Asset_Level.h"
 #include <vector>
 
 
@@ -25,9 +26,11 @@ public:
 
 
 private:
+	void processLevel();
 	// Private Attributes
 	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
+	Shared_Asset_Level m_level;
 };
 
 #endif // WORLD_MODULE_h

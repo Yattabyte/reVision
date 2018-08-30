@@ -174,13 +174,13 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 
 				if (data_container.boneMap.find(BoneName) == data_container.boneMap.end()) {
 					BoneIndex = data_container.boneTransforms.size();
-					data_container.boneTransforms.push_back(BoneTransform());
+					data_container.boneTransforms.push_back(glm::mat4(1.0f));
 				}
 				else
 					BoneIndex = data_container.boneMap[BoneName];
 
 				data_container.boneMap[BoneName] = BoneIndex;
-				data_container.boneTransforms[BoneIndex].offset = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
+				data_container.boneTransforms[BoneIndex] = aiMatrix_to_Mat4x4(mesh->mBones[B]->mOffsetMatrix);
 
 				for (unsigned int j = 0; j < mesh->mBones[B]->mNumWeights; j++) {
 					int VertexID = vertexOffset + mesh->mBones[B]->mWeights[j].mVertexId;
