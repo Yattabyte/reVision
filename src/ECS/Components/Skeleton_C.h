@@ -23,5 +23,24 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	std::vector<glm::mat4> m_transforms;
 	VB_Element<Skeleton_Buffer> * m_data;
 };
+/** A constructor to aid in creation. */
+struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
+	Skeleton_Constructor(Engine * engine, VectorBuffer<Skeleton_Buffer> * elementBuffer)
+		: m_engine(engine), m_elementBuffer(elementBuffer) {};
+	// Interface Implementation
+	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+		auto directory = castAny(parameters[0], std::string(""));
+		auto animation = castAny(parameters[1], 0);
+		auto * component = new Skeleton_Component();
+		component->m_data = m_elementBuffer->newElement();
+		component->m_model = Asset_Model::Create(m_engine, directory);
+		component->m_animation = animation;
+		for (int x = 0; x < NUM_MAX_BONES; ++x)
+			component->m_data->data->bones[x] = glm::mat4(1.0f);
+		return { component, component->ID };
+	}
+	Engine * m_engine;
+	VectorBuffer<Skeleton_Buffer> * m_elementBuffer;
+};
 
 #endif // SKELETALANIMATION_C_H

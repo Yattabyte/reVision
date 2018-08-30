@@ -12,7 +12,7 @@ struct Light_Struct {
 };
 
 layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
-	uint lightIndexes[];
+	int lightIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];

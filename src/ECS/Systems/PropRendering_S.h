@@ -120,26 +120,6 @@ public:
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 	}
-
-
-	// Public Methods
-	/** Registers a prop component.
-	@param	component	the prop component to register. */
-	void registerComponent(Prop_Component & component) {
-		component.m_data = m_propBuffer.newElement();
-		// Default Values
-		component.m_data->data->materialID = 0;
-		component.m_data->data->mMatrix = glm::mat4(1.0f);
-		component.m_data->data->bBoxMatrix = glm::mat4(1.0f);
-	}
-	/** Registers a skeleton component.
-	@param	component	the skeleton component to register. */
-	void registerComponent(Skeleton_Component & component) {
-		component.m_data = m_skeletonBuffer.newElement();
-		// Default Values
-		for (int x = 0; x < NUM_MAX_BONES; ++x)
-			component.m_data->data->bones[x] = glm::mat4(1.0f);
-	}
 	
 
 	// Public Attributes

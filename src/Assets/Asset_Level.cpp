@@ -1,5 +1,6 @@
 #include "Assets\Asset_Level.h"
 #include "Engine.h"
+#include <algorithm>
 #include <fstream>
 
 #define DIRECTORY_LEVEL Engine::Get_Current_Dir() + "\\Maps\\"
@@ -190,6 +191,7 @@ static LevelStruct_Entity parse_entity(std::ifstream & file_stream)
 		}
 		else if (find(line, "Component") ) {
 			auto component = parse_component(file_stream);
+			line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
 			component.type = line;
 			entity.components.push_back(component);
 		}

@@ -32,8 +32,8 @@ layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 	Shadow_Struct shadowBuffers[];
 };
 
-layout (location = 0) flat in uint LightIndex;
-layout (location = 1) flat in uint ShadowIndex;
+layout (location = 0) flat in int LightIndex;
+layout (location = 1) flat in int ShadowIndex;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
 layout (location = 0) out vec3 LightingColor;         
@@ -67,7 +67,7 @@ float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance, in float Ra
 		depth 						= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
 		Factor 			   			+= (depth >= FragmentDepth) ? FactorAmt : 0.0;
 	}		
-	return 							Factor;
+	return 							ShadowIndex != -1 ? Factor : 1.0f;  
 }  
 
 void main(void)
@@ -104,8 +104,7 @@ void main(void)
 	const float bias 				= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 	const vec4 scaledNormalOffset	= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
 	const float ShadowFactor 		= CalcShadowFactor(shadowBuffers[ShadowIndex].lightPV * (data.World_Pos + scaledNormalOffset), ViewDistance, RadiusSquared); 
-	if (ShadowFactor <= EPSILON) 	discard; // Discard if completely in shadow
-	
+	if (ShadowFactor <= EPSILON) 	discard; // Discard if completely in shadow	
 	
 	// Direct Light
 	vec3 Fs;

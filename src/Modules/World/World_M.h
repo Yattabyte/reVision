@@ -4,6 +4,8 @@
 
 #include "Modules\Engine_Module.h"
 #include "Assets\Asset_Level.h"
+#include "ECS\ECS.h"
+#include "Utilities\MappedChar.h"
 #include <vector>
 
 
@@ -13,6 +15,10 @@ public:
 	// (de)Constructors
 	~World_Module() = default;
 	World_Module(Engine * engine);
+
+
+	// Public Interface Implementation
+	virtual void initialize() override;
 
 
 	// Public Methods
@@ -31,6 +37,8 @@ private:
 	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
 	Shared_Asset_Level m_level;
+	MappedChar<BaseECSComponentConstructor*> m_constructorMap;
+
 };
 
 #endif // WORLD_MODULE_h

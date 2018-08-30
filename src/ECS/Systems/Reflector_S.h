@@ -54,7 +54,6 @@ public:
 		});
 	
 		// Environment Map
-		m_envCount = 0;
 		m_envmapFBO.resize(m_envmapSize, m_envmapSize, 6);
 
 		// Primitive Construction
@@ -114,43 +113,15 @@ public:
 		// Render reflectors
 		renderReflectors(deltaTime);
 	}
-
+	
 
 	// Public Methods
-	/** Registers a rfeflector component.
-	@param	component	the light component to register. */
-	void registerComponent(Reflector_Component & component) {
-		component.m_data = m_reflectorBuffer.newElement();
-		component.m_data->data->CubeSpot = m_envCount;
-		component.m_cubeSpot = m_envCount;
-		m_envCount += 6;
-		m_envmapFBO.resize(m_envmapSize, m_envmapSize, m_envCount);
-		// Default Values
-		component.m_data->data->mMatrix = glm::mat4(1.0f);
-		component.m_data->data->rotMatrix = glm::mat4(1.0f);
-		component.m_data->data->BoxCamPos = glm::vec3(0.0f);
-		component.m_data->data->BoxScale = glm::vec3(0.0f);
-		component.m_outOfDate = true;
-
-		for (int x = 0; x < 6; ++x) {
-			component.m_Cameradata[x] = m_engine->getGraphicsModule().m_cameraBuffer.newElement();
-			component.m_Cameradata[x]->data->pMatrix = glm::mat4(1.0f);
-			component.m_Cameradata[x]->data->pMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
-			component.m_Cameradata[x]->data->vMatrix = glm::mat4(1.0f);
-			component.m_Cameradata[x]->data->vMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
-			component.m_Cameradata[x]->data->EyePosition = glm::vec3(0.0f);
-			component.m_Cameradata[x]->data->Dimensions = glm::vec2(512.0f);
-			component.m_Cameradata[x]->data->NearPlane = 0.01f;
-			component.m_Cameradata[x]->data->FarPlane = 1.0f;
-			component.m_Cameradata[x]->data->FOV = 90.0f;
-			component.m_Cameradata[x]->data->Gamma = 1.0f;
-		}
-	}
 	bool & outOfDate() { return m_outOfDate; }
 
 
 	// Public Attributes
 	VectorBuffer<Reflection_Buffer> m_reflectorBuffer;
+	FBO_EnvMap m_envmapFBO;
 
 
 protected:
@@ -299,12 +270,10 @@ private:
 	StaticBuffer m_indirectCube, m_indirectQuad, m_indirectQuad6Faces;
 	glm::ivec2	m_renderSize;
 	GLuint m_envmapSize;
-	GLuint m_envCount;
 	std::vector<GLuint> reflectionIndicies;
 	DynamicBuffer m_visLights;
 	PriorityList<float, Reflector_Component*, std::less<float>> m_oldest;
 	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
-	FBO_EnvMap m_envmapFBO;
 	bool m_outOfDate = true;
 };
 

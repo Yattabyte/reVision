@@ -125,40 +125,13 @@ public:
 
 
 	// Public Methods
-	/** Registers a light component.
-	@param	component	the light component to register. */
-	void registerComponent(LightPoint_Component & component) {
-		component.m_data = m_lightBuffer.newElement();
-		// Default Values
-		component.m_data->data->mMatrix = glm::mat4(1.0f);
-		component.m_data->data->LightColor = glm::vec3(1.0f);
-		component.m_data->data->LightPosition = glm::vec3(0.0f);
-		component.m_data->data->LightIntensity = 1.0f;
-		component.m_data->data->LightRadius = 1.0f;
-	}
-	/** Registers a shadow component.
-	@param	component	the shadow component to register. */
-	void registerComponent(LightPointShadow_Component & component) {
-		component.m_data = m_shadowBuffer.newElement();
-		// Default Values
-		component.m_data->data->lightV = glm::mat4(1.0f);
-		for (int x = 0; x < 6; ++x) {
-			component.m_data->data->lightPV[x] = glm::mat4(1.0f);
-			component.m_data->data->inversePV[x] = glm::mat4(1.0f);
-		}
-		component.m_data->data->Shadow_Spot = m_shadowCount;
-		component.m_updateTime = 0.0f;
-		component.m_shadowSpot = m_shadowCount;
-		component.m_outOfDate = true;
-		m_shadowCount+=12;
-		m_shadowFBO.resize(m_shadowSize, m_shadowCount);
-	}
 	bool & outOfDate() { return m_outOfDate; }
 	
 
 	// Public Attributes
 	VectorBuffer<LightPoint_Buffer> m_lightBuffer;
 	VectorBuffer<LightPointShadow_Buffer> m_shadowBuffer;
+	FBO_Shadow_Point m_shadowFBO;
 
 	
 protected:
@@ -261,13 +234,11 @@ private:
 	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;
 	StaticBuffer m_indirectShape;
-	std::vector<GLuint> lightIndices, shadowIndices;
+	std::vector<GLint> lightIndices, shadowIndices;
 	DynamicBuffer m_visLights, m_visShadows;
 	PriorityList<float, std::pair<LightPoint_Component*, LightPointShadow_Component*>, std::less<float>> m_oldest;
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
 	FBO_Base * m_geometryFBO, * m_lightingFBO;
-	FBO_Shadow_Point m_shadowFBO;
-	GLuint m_shadowCount = 0;	
 	bool m_outOfDate = true;
 };
 

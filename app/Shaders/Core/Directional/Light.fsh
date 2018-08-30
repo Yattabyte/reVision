@@ -33,8 +33,8 @@ layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 };
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) in flat uint LightIndex;
-layout (location = 2) in flat uint ShadowIndex;
+layout (location = 1) in flat int LightIndex;
+layout (location = 2) in flat int ShadowIndex;
 
 layout (location = 0) uniform float ShadowSize_Recip;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
@@ -60,7 +60,7 @@ float CalcShadowFactor(in int Index, in vec4 LightSpacePos)
 		depth 							= texture( ShadowMap, FinalCoord ).r;
 		Factor 			   		  	 	+= (depth >= FragmentDepth) ? FactorAmt : 0.0;	
 	}
-	return 								Factor;      
+	return 								ShadowIndex != -1 ? Factor : 1.0f;  
 } 
 
 void main()
@@ -78,19 +78,16 @@ void main()
 	if (NdotL <= 0.f && abs(NdotV) <= 0.f)	discard; // Discard if light will be zero anyway
 	
 	// Shadow
-	float ShadowFactor 						= 1.0f;
-	if (ShadowIndex != -1) {
-		const float cosAngle				= saturate(1.0f - NdotL);
-		const vec4 scaledNormalOffset		= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
-		int index 							= 0;
-		for (; index < 4; ++index) 
-			if (-data.View_Pos.z <= shadowBuffers[ShadowIndex].CascadeEndClipSpace[index]) 
-				break;			
-		const vec3 LightPseudoPos			= cameraBuffer.EyePosition + (lightBuffers[LightIndex].LightDirection.xyz);
-		ShadowFactor 						= CalcShadowFactor(index, shadowBuffers[ShadowIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
-		if (ShadowFactor <= EPSILON)		discard; // Discard if completely in shadow
-	}
-	
+	const float cosAngle					= saturate(1.0f - NdotL);
+	const vec4 scaledNormalOffset			= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
+	int index 								= 0;
+	for (; index < 4; ++index) 
+		if (-data.View_Pos.z <= shadowBuffers[ShadowIndex].CascadeEndClipSpace[index]) 
+			break;			
+	const vec3 LightPseudoPos				= cameraBuffer.EyePosition + (lightBuffers[LightIndex].LightDirection.xyz);
+	float ShadowFactor 						= CalcShadowFactor(index, shadowBuffers[ShadowIndex].LightVP[index] * (data.World_Pos + scaledNormalOffset));	
+	if (ShadowFactor <= EPSILON)			discard; // Discard if completely in shadow
+		
 	// Direct Light	
 	vec3 Fs;
 	const vec3 Radiance 					= (lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity) * ShadowFactor;

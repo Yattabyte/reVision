@@ -2,6 +2,8 @@
 #ifndef ECSCOMPONENT_H
 #define ECSCOMPONENT_H
 
+#include <any>
+#include <limits>
 #include <tuple>
 #include <vector>
 
@@ -34,7 +36,7 @@ private:
 
 /** A specialized, specific type of component.
 @param	T	the type of this component */
-template<typename T>
+template <typename T>
 struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentCreateFunction CREATE_FUNCTION;
 	static const ECSComponentFreeFunction FREE_FUNCTION;
@@ -42,7 +44,7 @@ struct ECSComponent : public BaseECSComponent {
 	static const size_t SIZE;
 };
 
-template<typename Component>
+template <typename Component>
 const unsigned int ECSComponentCreate(std::vector<unsigned int> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
 	const unsigned int index = memory.size();
 	memory.resize(index+Component::SIZE);
@@ -51,22 +53,58 @@ const unsigned int ECSComponentCreate(std::vector<unsigned int> & memory, const 
 	return index;
 }
 
-template<typename Component>
+template <typename Component>
 void ECSComponentFree(BaseECSComponent * comp) {
 	Component * component = (Component*)comp;
 	component->~Component();
 }
 
-template<typename T>
+template <typename T>
 const unsigned int ECSComponent<T>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T)));
 
-template<typename T>
+template <typename T>
 const size_t ECSComponent<T>::SIZE(sizeof(T));
 
-template<typename T>
+template <typename T>
 const ECSComponentCreateFunction ECSComponent<T>::CREATE_FUNCTION(ECSComponentCreate<T>);
 
-template<typename T>
+template <typename T>
 const ECSComponentFreeFunction ECSComponent<T>::FREE_FUNCTION(ECSComponentFree<T>);
+
+struct Component_and_ID {
+	BaseECSComponent * component = nullptr;
+	unsigned int id = (unsigned)(-1);
+
+	const bool success() const {
+		return bool(component && id != (unsigned)(-1));
+	}
+	void clear() {
+		component = nullptr;
+		id = (unsigned)(-1);
+	}
+};
+struct BaseECSComponentConstructor {	
+	// Public Interface
+	virtual Component_and_ID construct(const std::vector<std::any> & parameters) = 0;
+
+
+protected:
+	// Protected Methods
+	template <typename ParamT>
+	inline ParamT const castAny(const std::any & parameter, const ParamT & fallback) const {
+		if (parameter.has_value() && parameter.type() == typeid(ParamT))
+			return std::any_cast<ParamT>(parameter);
+		return fallback;
+	}
+};
+
+template <typename BaseECSComponent>
+struct ECSComponentConstructor : BaseECSComponentConstructor {
+	// Default Interface Implementation
+	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+		auto * component = new BaseECSComponent();
+		return { component, component->ID };
+	}
+};
 
 #endif // ECSCOMPONENT_H
