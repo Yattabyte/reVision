@@ -3,11 +3,9 @@
 #define	ASSET_LEVEL_H
 
 #include "Assets\Asset.h"
-#include "Utilities\MappedChar.h"
 #include <any>
 #include <optional>
 #include <string>
-#include <vector>
 
 
 class Engine;
@@ -21,7 +19,7 @@ class Asset_Level : public Asset
 {
 public:
 	/** Destroy the Level. */
-	~Asset_Level();
+	~Asset_Level() = default;
 
 
 	/** Begins the creation process for this asset.
@@ -51,11 +49,9 @@ private:
 	// Private Attributes
 	friend class AssetManager;
 };
-
 struct LevelStruct_Component {
 	std::string type;
 	std::vector<std::any> parameters;
-
 	template <typename T>
 	inline std::optional<T> const getParameter(const unsigned int x) const {
 		if (parameters[x].has_value() && parameters[x].type() == typeid(T))
@@ -66,5 +62,4 @@ struct LevelStruct_Component {
 struct LevelStruct_Entity {
 	std::vector<LevelStruct_Component> components;
 };
-
 #endif // ASSET_LEVEL_H
