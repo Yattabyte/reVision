@@ -218,7 +218,7 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 					size_t exspot = minusD.find_last_of(".");
 					extension = minusD.substr(exspot, minusD.length());
 					size_t diffuseStart = minusD.find("diff");
-					if (diffuseStart > -1)
+					if (diffuseStart != std::string::npos)
 						minusD = minusD.substr(0, diffuseStart);
 					else
 						minusD = minusD.substr(0, exspot) + "_";
@@ -229,7 +229,7 @@ bool Model_IO::Import_Model(Engine * engine, const std::string & fulldirectory, 
 				if (normal_exists != AI_SUCCESS && height_exists == AI_SUCCESS) {
 					std::string norm_string(height.C_Str());
 					const size_t norm_spot = norm_string.find_last_of("norm");
-					if (norm_spot > -1) {
+					if (norm_spot != std::string::npos) {
 						// Normal map confirmed to be in height map spot, move it over
 						normal = height;
 						normal_exists = AI_SUCCESS;

@@ -135,7 +135,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 		if (!Image_IO::Import_Image(engine, m_textures[x], dataContainers[x])) {
 			dataContainers[x].pixelData = new GLubyte[4];
 			for (int p = 0; p < 4; ++p)
-				dataContainers[x].pixelData[p] = defaultMaterial[x][p];
+				dataContainers[x].pixelData[p] = defaultMaterial[x % MAX_PHYSICAL_IMAGES][p];
 			dataContainers[x].dimensions = glm::ivec2(1);
 			dataContainers[x].pitch = 4;
 			dataContainers[x].bpp = 32;
@@ -161,11 +161,11 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 	GLubyte * materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
-		for (size_t x = 0, size = pixelsPerImage; x < size; ++x, ++arrayIndex)
+		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
 			materialData[arrayIndex] = dataContainers[tx + 0].pixelData[x]; // ALBEDO	
-		for (size_t x = 0, size = pixelsPerImage; x < size;  ++x, ++arrayIndex)
+		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
 			materialData[arrayIndex] = dataContainers[tx + 1].pixelData[x]; // NORMAL
-		for (size_t x = 0, size = pixelsPerImage; x < size; x += 4, arrayIndex += 4) {
+		for (size_t x = 0; x < pixelsPerImage; x += 4, arrayIndex += 4) {
 			materialData[arrayIndex + 0] = dataContainers[tx + 2].pixelData[x]; // METALNESS
 			materialData[arrayIndex + 1] = dataContainers[tx + 3].pixelData[x]; // ROUGHNESS
 			materialData[arrayIndex + 2] = dataContainers[tx + 4].pixelData[x]; // HEIGHT

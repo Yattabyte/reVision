@@ -160,7 +160,7 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 
 	// Generate all the required skins
 	if (dataContainer.materials.size())
-			generate_material(engine, m_materialArray, dataContainer.materials);
+		generate_material(engine, m_materialArray, dataContainer.materials);
 	else
 		generate_material(engine, m_materialArray, fullDirectory);
 
