@@ -13,7 +13,8 @@ Asset_Texture::~Asset_Texture()
 		glDeleteTextures(1, &m_glTexID);
 		glMakeTextureHandleNonResidentARB(m_glTexHandle);
 	}
-	delete m_pixelData;
+	if (m_image)
+		m_image->removeCallback(this);
 }
 
 Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename) {}
@@ -35,17 +36,12 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 		userAsset = assetManager.createNewAsset<Asset_Texture>(filename, type, mipmap, anis);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
+		// Forward image creation
 		const std::string &fullDirectory = DIRECTORY_TEXTURE + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
-		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		assetRef.m_image = Asset_Image::Create(engine, fullDirectory);
+		// add callback instead of new work order
+		std::function<void()> finiFunc = std::bind(&Asset_Texture::finalize, &assetRef, engine);
+		assetRef.m_image->addCallback(&assetRef, finiFunc);
 	}
 	return userAsset;
 }
@@ -53,27 +49,10 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 void Asset_Texture::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	m_pixelData = new GLubyte[4];
-	for (int x = 0; x < 4; ++x)
-		m_pixelData[x] = GLubyte(255);
-	m_size = glm::ivec2(1);
 }
 
 void Asset_Texture::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	Image_Data dataContainer;
-	if (!Image_IO::Import_Image(engine, fullDirectory, dataContainer)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Texture");
-		initializeDefault(engine);
-		return;
-	}
-
-	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-	m_size = dataContainer.dimensions;
-	m_pixelData = dataContainer.pixelData;
-	GLubyte *textureData = m_pixelData;
-	if (dataContainer.dimensions.x < 1.5f || dataContainer.dimensions.y < 1.5f)
-		m_type = GL_TEXTURE_1D;	
 }
 
 void Asset_Texture::finalize(Engine * engine)
@@ -88,15 +67,15 @@ void Asset_Texture::finalize(Engine * engine)
 		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 		switch (m_type) {
 			case GL_TEXTURE_1D: {
-				glTextureStorage1D(m_glTexID, 1, GL_RGBA16F, m_size.x);
-				glTextureSubImage1D(m_glTexID, 0, 0, m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData);
+				glTextureStorage1D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x);
+				glTextureSubImage1D(m_glTexID, 0, 0, m_image->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				break;
 			}
 			case GL_TEXTURE_2D: {
-				glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_size.x, m_size.y);
-				glTextureSubImage2D(m_glTexID, 0, 0, 0, m_size.x, m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData);
+				glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y);
+				glTextureSubImage2D(m_glTexID, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
 				if (m_anis)
 					glTextureParameterf(m_glTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 				if (m_mipmap) {
@@ -115,8 +94,8 @@ void Asset_Texture::finalize(Engine * engine)
 				break;
 			}
 			case GL_TEXTURE_2D_ARRAY: {
-				glTextureStorage3D(m_glTexID, 1, GL_RGBA16F, m_size.x, m_size.y, 0);
-				glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_size.x, m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData);
+				glTextureStorage3D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y, 0);
+				glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
 				glTextureParameteri(m_glTexID, GL_GENERATE_MIPMAP, GL_TRUE);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -133,7 +112,7 @@ void Asset_Texture::finalize(Engine * engine)
 		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		m_glTexHandle = glGetTextureHandleARB(m_glTexID);
 	}
-	Asset::finalize(engine);
+	Asset::finalize(engine);	
 }
 
 void Asset_Texture::bind(const unsigned int & texture_unit)

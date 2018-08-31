@@ -20,10 +20,9 @@ Asset_Material::~Asset_Material()
 
 Asset_Material::Asset_Material(const std::string & filename) : Asset(filename) {}
 
-Asset_Material::Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES]) : Asset_Material("")
+Asset_Material::Asset_Material(const std::vector<std::string> &textures) : Asset_Material("")
 {
-	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-		m_textures[x] = tx[x];
+	m_textures = textures;
 }
 
 Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const bool & threaded)
@@ -53,7 +52,7 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 	return userAsset;
 }
 
-Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded)
+Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::vector<std::string> &textures, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 	MaterialManager & materialManager = engine->getMaterialManager();
@@ -117,7 +116,9 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 			m_textures[x] = ABS_DIRECTORY_MAT_TEX(m_textures[x]);
 	}
 
-	Image_Data dataContainers[MAX_PHYSICAL_IMAGES];
+	const size_t textureCount = m_textures.size();
+	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
+	std::vector<Image_Data> dataContainers(textureCount);
 	glm::ivec2 material_dimensions = glm::ivec2(1);
 
 	// Load all images
@@ -130,7 +131,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 		{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0) } 
 	};
 	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-	for (unsigned int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) 
+	for (size_t x = 0; x < textureCount; ++x)
 		if (!Image_IO::Import_Image(engine, m_textures[x], dataContainers[x])) {
 			dataContainers[x].pixelData = new GLubyte[4];
 			for (int p = 0; p < 4; ++p)
@@ -143,7 +144,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 	read_guard.release();
 
 	// Find the largest dimensions
-	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x) {
+	for (size_t x = 0; x < textureCount; ++x) {
 		const glm::ivec2 & dimensions = dataContainers[x].dimensions;
 		if (material_dimensions.x < dimensions.x)
 			material_dimensions.x = dimensions.x;
@@ -152,26 +153,28 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 	}
 
 	// Force all images to be the same size
-	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
+	for (size_t x = 0; x < textureCount; ++x) 
 		Image_IO::Resize_Image(material_dimensions, dataContainers[x]);
 
 	// Merge data into single array
-	const unsigned int pixelsPerImage = material_dimensions.x * material_dimensions.y * 4;
-	GLubyte * materialData = new GLubyte[(pixelsPerImage) * 3]();
-	unsigned int arrayIndex = 0;
-	for (unsigned int x = 0, size = pixelsPerImage; x < size; ++x, ++arrayIndex)		
-		materialData[arrayIndex] = dataContainers[0].pixelData[x]; // ALBEDO	
-	for (unsigned int x = 0, size = pixelsPerImage; x < size;  ++x, ++arrayIndex) 
-		materialData[arrayIndex] = dataContainers[1].pixelData[x]; // NORMAL
-	for (unsigned int x = 0, size = pixelsPerImage; x < size; x += 4, arrayIndex += 4) {
-		materialData[arrayIndex + 0] = dataContainers[2].pixelData[x]; // METALNESS
-		materialData[arrayIndex + 1] = dataContainers[3].pixelData[x]; // ROUGHNESS
-		materialData[arrayIndex + 2] = dataContainers[4].pixelData[x]; // HEIGHT
-		materialData[arrayIndex + 3] = dataContainers[5].pixelData[x]; // AO
+	const size_t pixelsPerImage = material_dimensions.x * material_dimensions.y * 4;
+	GLubyte * materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
+	size_t arrayIndex = 0;
+	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
+		for (size_t x = 0, size = pixelsPerImage; x < size; ++x, ++arrayIndex)
+			materialData[arrayIndex] = dataContainers[tx + 0].pixelData[x]; // ALBEDO	
+		for (size_t x = 0, size = pixelsPerImage; x < size;  ++x, ++arrayIndex)
+			materialData[arrayIndex] = dataContainers[tx + 1].pixelData[x]; // NORMAL
+		for (size_t x = 0, size = pixelsPerImage; x < size; x += 4, arrayIndex += 4) {
+			materialData[arrayIndex + 0] = dataContainers[tx + 2].pixelData[x]; // METALNESS
+			materialData[arrayIndex + 1] = dataContainers[tx + 3].pixelData[x]; // ROUGHNESS
+			materialData[arrayIndex + 2] = dataContainers[tx + 4].pixelData[x]; // HEIGHT
+			materialData[arrayIndex + 3] = dataContainers[tx + 5].pixelData[x]; // AO
+		}
 	}
 
 	// Delete old data
-	for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
+	for (size_t x = 0; x < textureCount; ++x)
 		delete dataContainers[x].pixelData;
 
 	// Assign data to asset
@@ -190,15 +193,15 @@ void Asset_Material::finalize(Engine * engine)
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
 	}
 	// Load material
-	{
-		
+	{		
 		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 		float anisotropy;
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
 		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
 		// Uses the smallest dimension of the image
-		glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, 3);
-		glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, 3, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
+		GLsizei m_imageCount = (m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES;
+		glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
+		glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
 		glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);

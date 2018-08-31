@@ -84,13 +84,14 @@ void AssetManager::removeNotifyee(void * pointerID)
 
 void AssetManager::notifyObservers()
 {
+	std::vector<std::pair<void*, std::function<void()>>> copyNotifyees;
 	{
-		std::shared_lock readGuard(m_mutexNofications);
-		for each (const auto & notifyee in m_notifyees)
-			notifyee.second();
+		std::lock_guard writeGuard(m_mutexNofications);
+		copyNotifyees = m_notifyees;
+		m_notifyees.clear();
 	}
-	std::lock_guard writeGuard(m_mutexNofications);
-	m_notifyees.clear();
+	for each (const auto & notifyee in copyNotifyees)
+		notifyee.second();
 }
 
 const bool AssetManager::finishedWork()

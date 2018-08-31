@@ -1,7 +1,7 @@
 #pragma once
 #ifndef MODELMANAGER_H
 #define MODELMANAGER_H
-#define NUM_VERTEX_ATTRIBUTES 6
+#define NUM_VERTEX_ATTRIBUTES 8
 
 #include "Utilities\IO\Model_IO.h"
 #include "GL\glew.h"
@@ -52,7 +52,7 @@ private:
 
 	// Private Attributes
 	GLuint m_vaoID = 0;
-	GLuint m_vboIDS[NUM_VERTEX_ATTRIBUTES] = { 0,0,0,0,0,0 };
+	GLuint m_vboID = 0;
 	size_t m_maxCapacity = 4000;
 	size_t m_currentSize = 0;
 	GLsync m_fence = nullptr;
@@ -60,10 +60,19 @@ private:
 	std::shared_mutex m_mutex;
 };
 
+struct SingleVertex {
+	glm::vec3 vertex;
+	glm::vec3 normal;
+	glm::vec3 tangent;
+	glm::vec3 bitangent;
+	glm::vec2 uv;
+	GLuint matID;
+	glm::ivec4 boneIDs;
+	glm::vec4 weights;
+};
+
 struct GeometryInfo {
-	std::vector<glm::vec3> vs, nm, tg, bt;
-	std::vector<glm::vec2> uv;
-	std::vector<VertexBoneData> bones;
+	std::vector<SingleVertex> m_vertices;
 };
 
 #endif // MODELMANAGER_H

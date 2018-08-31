@@ -4,6 +4,7 @@
 #extension GL_ARB_gpu_shader5 : require 
 #extension GL_ARB_gpu_shader_int64 : require
 #define MAX_BONES 100
+#define MAX_DIGITAL_IMAGES 3
 
 struct PropAttributes {
 	uint materialID;
@@ -54,8 +55,9 @@ layout (location = 1) in vec3 normal;
 layout (location = 2) in vec3 tangent;
 layout (location = 3) in vec3 bitangent;
 layout (location = 4) in vec2 textureCoordinate;
-layout (location = 5) in ivec4 boneIDs;
-layout (location = 6) in vec4 weights;
+layout (location = 5) in uint matID;
+layout (location = 6) in ivec4 boneIDs;
+layout (location = 7) in vec4 weights;
 
 layout (location = 0) uniform int LightIndex = 0;
 layout (location = 1) uniform int ShadowIndex = 0;
@@ -67,6 +69,7 @@ layout (location = 3) out mat3 WorldTBN;
 layout (location = 7) out vec2 TexCoord0;
 layout (location = 8) flat out vec3 ColorModifier;
 layout (location = 9) flat out sampler2DArray MaterialMap;
+layout (location = 10) flat out uint MaterialOffset;
 
 void main()
 {	
@@ -92,7 +95,8 @@ void main()
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);	
 	TexCoord0             		= textureCoordinate;		
 	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;
-	MaterialMap 				= sampler2DArray(MaterialMaps[propBuffer[PropIndex].materialID]);
+	MaterialMap 				= sampler2DArray(MaterialMaps[matID]);
+	MaterialOffset				= propBuffer[PropIndex].materialID * MAX_DIGITAL_IMAGES;
 	gl_Position           		= shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * WorldVertex;	
 	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + (int(isStatic) * 6);	
 }
