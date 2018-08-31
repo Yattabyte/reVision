@@ -2,7 +2,7 @@
 #ifndef	ASSET_TEXTURE_H
 #define	ASSET_TEXTURE_H
 
-#include "Assets\Asset.h"
+#include "Asset_Image.h"
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
 
@@ -38,10 +38,9 @@ public:
 	// Public Attributes
 	GLuint m_glTexID = 0, m_type = GL_TEXTURE_2D;
 	GLuint64 m_glTexHandle = 0;
-	glm::ivec2 m_size = glm::ivec2(0);
-	GLubyte	* m_pixelData = nullptr;
 	bool m_mipmap = false;
 	bool m_anis = false;
+	Shared_Asset_Image m_image;
 
 
 private:

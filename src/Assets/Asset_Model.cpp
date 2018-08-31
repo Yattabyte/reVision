@@ -13,13 +13,13 @@ Returns it as updated minimum and maximum values &minOut and &maxOut respectivel
 @param	vertices	the vertices of the mesh to derive the AABB from
 @param	minOut	output reference containing the minimum extents of the AABB
 @param	maxOut	output reference containing the maximum extents of the AABB */
-inline void calculate_AABB(const std::vector<glm::vec3> & vertices, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
+inline void calculate_AABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
 {
-	if (vertices.size() >= 1) {
-		const glm::vec3 & vector = vertices.at(0);
+	if (mesh.size() >= 1) {
+		const glm::vec3 & vector = mesh[0].vertex;
 		float minX = vector.x, maxX = vector.x, minY = vector.y, maxY = vector.y, minZ = vector.z, maxZ = vector.z;
-		for (size_t x = 1, total = vertices.size(); x < total; ++x) {
-			const glm::vec3 &vertex = vertices.at(x);
+		for (size_t x = 1, total = mesh.size(); x < total; ++x) {
+			const glm::vec3 &vertex = mesh[x].vertex;
 			if (vertex.x < minX)
 				minX = vertex.x;
 			else if (vertex.x > maxX)
@@ -45,19 +45,20 @@ inline void calculate_AABB(const std::vector<glm::vec3> & vertices, glm::vec3 & 
 @param	engine			the engine being used
 @param	modelMaterial	the material asset to load into
 @param	sceneMaterial	the scene material to use as a guide */
-inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const Material & material)
+inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials)
 {
 	// Get texture names
-	std::string material_textures[6] = {
-		DIRECTORY_MODEL_MAT_TEX + material.albedo,
-		DIRECTORY_MODEL_MAT_TEX + material.normal,
-		DIRECTORY_MODEL_MAT_TEX + material.metalness,
-		DIRECTORY_MODEL_MAT_TEX + material.roughness,
-		DIRECTORY_MODEL_MAT_TEX + material.height,
-		DIRECTORY_MODEL_MAT_TEX + material.ao
-	};
+	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);	
+	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
+		textures[tx + 0] = DIRECTORY_MODEL_MAT_TEX + materials[mx].albedo;
+		textures[tx + 1] = DIRECTORY_MODEL_MAT_TEX + materials[mx].normal;
+		textures[tx + 2] = DIRECTORY_MODEL_MAT_TEX + materials[mx].metalness;
+		textures[tx + 3] = DIRECTORY_MODEL_MAT_TEX + materials[mx].roughness;
+		textures[tx + 4] = DIRECTORY_MODEL_MAT_TEX + materials[mx].height;
+		textures[tx + 5] = DIRECTORY_MODEL_MAT_TEX + materials[mx].ao;
+	}
 
-	modelMaterial = Asset_Material::Create(engine, material_textures);
+	modelMaterial = Asset_Material::Create(engine, textures);
 }
 
 /** Initialize a model's materials, using the model's name as a lookup to an external material file.
@@ -107,16 +108,19 @@ Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & file
 
 void Asset_Model::initializeDefault(Engine * engine)
 {
+	m_materialArray = Asset_Material::Create(engine, "defaultMaterial");
+	
 	// Create hard-coded alternative
-	m_data.vs = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_data.uv = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
-	m_data.nm = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_data.tg = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_data.bt = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };	
-	m_data.bones.resize(6);
-	m_skins.resize(1);
-	calculate_AABB(m_data.vs, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
-	m_skins[0] = Asset_Material::Create(engine, "defaultMaterial");
+	m_data.m_vertices = { 
+		{glm::vec3(-1, -1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0)},
+		{glm::vec3(1, -1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0) },
+		{glm::vec3(1, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0)},
+		{glm::vec3(-1, -1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0)},
+		{glm::vec3(1, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0)},
+		{glm::vec3(-1, 1, 0), glm::vec3(1, 0, 0), glm::vec3(0, 1, 0), glm::vec3(0, 0, 1), glm::vec2(0, 0), m_materialArray->m_matSpot, glm::ivec4(0), glm::vec4(0)} 
+	};
+	
+	calculate_AABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
 }
 
 void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
@@ -129,26 +133,39 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 	}
 
 	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-	m_data.vs = dataContainer.vertices;
-	m_data.nm = dataContainer.normals;
-	m_data.tg = dataContainer.tangents;
-	m_data.bt = dataContainer.bitangents;
-	m_data.uv = dataContainer.texCoords;
-	m_data.bones = dataContainer.bones;
+	const size_t vertexCount = dataContainer.vertices.size();
+	m_data.m_vertices.resize(vertexCount);
+	for (size_t x = 0; x < vertexCount; ++x) {
+		m_data.m_vertices[x].vertex = dataContainer.vertices[x];
+		m_data.m_vertices[x].normal = dataContainer.normals[x];
+		m_data.m_vertices[x].tangent = dataContainer.tangents[x];
+		m_data.m_vertices[x].bitangent = dataContainer.bitangents[x];
+		m_data.m_vertices[x].uv = dataContainer.texCoords[x];
+		m_data.m_vertices[x].boneIDs.x = dataContainer.bones[x].IDs[0];
+		m_data.m_vertices[x].boneIDs.y = dataContainer.bones[x].IDs[1];
+		m_data.m_vertices[x].boneIDs.z = dataContainer.bones[x].IDs[2];
+		m_data.m_vertices[x].boneIDs.w = dataContainer.bones[x].IDs[3];
+		m_data.m_vertices[x].weights.x = dataContainer.bones[x].Weights[0];
+		m_data.m_vertices[x].weights.y = dataContainer.bones[x].Weights[1];
+		m_data.m_vertices[x].weights.z = dataContainer.bones[x].Weights[2];
+		m_data.m_vertices[x].weights.w = dataContainer.bones[x].Weights[3];
+	}
 	m_boneTransforms = dataContainer.boneTransforms;
 	m_boneMap = dataContainer.boneMap;
 	m_animations = dataContainer.animations;
 	m_rootNode = dataContainer.rootNode;
+	
 
-	calculate_AABB(m_data.vs, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
+	calculate_AABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
 
 	// Generate all the required skins
-	m_skins.resize(std::max(size_t(1), (dataContainer.materials.size())));
 	if (dataContainer.materials.size())
-		for (int x = 0; x < dataContainer.materials.size(); ++x)
-			generate_material(engine, m_skins[x], dataContainer.materials[x]);
+		generate_material(engine, m_materialArray, dataContainer.materials);
 	else
-		generate_material(engine, m_skins[0], fullDirectory);
+		generate_material(engine, m_materialArray, fullDirectory);
+
+	for (size_t x = 0; x < vertexCount; ++x)
+		m_data.m_vertices[x].matID = m_materialArray->m_matSpot;
 }
 
 void Asset_Model::finalize(Engine * engine)
@@ -159,10 +176,4 @@ void Asset_Model::finalize(Engine * engine)
 		m_modelManager->registerGeometry(m_data, m_offset, m_count);
 	}
 	Asset::finalize(engine);
-}
-
-GLuint Asset_Model::getSkinID(const unsigned int & desired)
-{
-	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	return m_skins[std::max(size_t(0), std::min(m_skins.size() - size_t(1), size_t(desired)))]->m_matSpot;
 }

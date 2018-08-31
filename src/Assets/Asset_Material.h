@@ -5,6 +5,7 @@
 #define MAX_DIGITAL_IMAGES 3
 
 #include "Assets\Asset.h"
+#include <vector>
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
 
@@ -42,7 +43,7 @@ public:
 	@param	textures		the textures to use 
 	@param	threaded		create in a separate thread
 	@return					the desired asset */	
-	static Shared_Asset_Material Create(Engine * engine, const std::string(&textures)[MAX_PHYSICAL_IMAGES], const bool & threaded = true);
+	static Shared_Asset_Material Create(Engine * engine, const std::vector<std::string> &textures, const bool & threaded = true);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	@brief					Updates the appropriate supplied @std::string's with a path to the appropriate file
 	@param	filename		the absolute file path of the '.mat' file to read from
@@ -60,7 +61,7 @@ public:
 	GLuint m_matSpot = 0;
 	GLubyte * m_materialData = nullptr;
 	glm::ivec2 m_size = glm::ivec2(0);
-	std::string m_textures[MAX_PHYSICAL_IMAGES] = { "","","","","","" };
+	std::vector<std::string> m_textures = std::vector<std::string>(MAX_PHYSICAL_IMAGES);
 
 
 private:
@@ -68,7 +69,7 @@ private:
 	/** Construct the Material. */
 	Asset_Material(const std::string & filename);
 	/** Construct the Material with a manual set of textures. */
-	Asset_Material(const std::string(&tx)[MAX_PHYSICAL_IMAGES]);
+	Asset_Material(const std::vector<std::string> &textures);
 
 
 	// Private Methods
@@ -76,7 +77,7 @@ private:
 	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
-
+	 
 
 	// Private Attributes
 	friend class AssetManager;

@@ -170,7 +170,7 @@ std::string Engine::Get_Current_Dir()
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
 	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
-		cCurrentPath[sizeof(cCurrentPath) - 1] = '/0';
+		cCurrentPath[sizeof(cCurrentPath) - 1] = char('/0');
 	return std::string(cCurrentPath);
 }
 

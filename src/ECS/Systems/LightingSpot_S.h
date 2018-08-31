@@ -28,7 +28,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 		if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
-		glDeleteVertexArrays(1, &m_coneVAO);
 	}
 	LightingSpot_System(
 		Engine * engine, 
@@ -61,13 +60,9 @@ public:
 		// Shadows
 		m_shadowFBO.resize(m_shadowSize, 1);
 
-		// Primitive Construction
-		m_coneVAOLoaded = false;
-		m_coneVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeCone->addCallback(this, [&]() mutable {
-			m_coneVAOLoaded = true;
-			m_shapeCone->updateVAO(m_coneVAO);
 			const GLuint data = { (GLuint)m_shapeCone->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
@@ -86,7 +81,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_coneVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
+		if (!m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
 			return;
 
 		// Clear Data
@@ -125,40 +120,13 @@ public:
 
 
 	// Public Methods
-	/** Registers a light component.
-	@param	component	the light component to register. */
-	void registerComponent(LightSpot_Component & component) {
-		component.m_data = m_lightBuffer.newElement();
-		// Default Values
-		component.m_data->data->mMatrix = glm::mat4(1.0f);
-		component.m_data->data->LightColor = glm::vec3(1.0f);
-		component.m_data->data->LightPosition = glm::vec3(0.0f);
-		component.m_data->data->LightDirection = glm::vec3(1, 0, 0);
-		component.m_data->data->LightIntensity = 1.0f;
-		component.m_data->data->LightRadius = 1.0f;
-		component.m_data->data->LightCutoff = 0;
-	}
-	/** Registers a shadow component.
-	@param	component	the shadow component to register. */
-	void registerComponent(LightSpotShadow_Component & component) {
-		component.m_data = m_shadowBuffer.newElement();
-		// Default Values
-		component.m_data->data->lightV = glm::mat4(1.0f);
-		component.m_data->data->lightPV = glm::mat4(1.0f);
-		component.m_data->data->inversePV = glm::mat4(1.0f);
-		component.m_data->data->Shadow_Spot = m_shadowCount;
-		component.m_updateTime = 0.0f;
-		component.m_shadowSpot = m_shadowCount;
-		component.m_outOfDate = true;
-		m_shadowCount+=2;
-		m_shadowFBO.resize(m_shadowSize, m_shadowCount);
-	}
 	bool & outOfDate() { return m_outOfDate; }
 	
 
 	// Public Attributes
 	VectorBuffer<LightSpot_Buffer> m_lightBuffer;
 	VectorBuffer<LightSpotShadow_Buffer> m_shadowBuffer;
+	FBO_Shadow_Spot m_shadowFBO;
 
 	
 protected:
@@ -207,7 +175,7 @@ protected:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_coneVAO);									// Quad VAO
+		glBindVertexArray(m_shapeCone->m_vaoID);						// Quad VAO
 		glDepthMask(GL_FALSE);		
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -259,19 +227,15 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeCone;
-	GLuint m_coneVAO;
-	bool m_coneVAOLoaded;
 	unsigned int m_updateQuality;
 	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;
 	StaticBuffer m_indirectShape;
-	std::vector<GLuint> lightIndices, shadowIndices;
+	std::vector<GLint> lightIndices, shadowIndices;
 	DynamicBuffer m_visLights, m_visShadows;
 	PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::less<float>> m_oldest;
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
 	FBO_Base * m_geometryFBO, * m_lightingFBO;
-	FBO_Shadow_Spot m_shadowFBO;
-	GLuint m_shadowCount = 0;	
 	bool m_outOfDate = true;
 };
 

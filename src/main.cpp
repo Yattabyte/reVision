@@ -2,12 +2,6 @@
 #include <future>
 #include <thread>
 
-#include "ECS/Components/Transform_C.h"
-#include "ECS/Components/Prop_C.h"
-#include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/Skybox_C.h"
-#include "ECS/Components/LightDirectional_C.h"
-
 
 int main()
 {	

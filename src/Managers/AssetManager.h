@@ -118,6 +118,7 @@ private:
 	std::deque<Asset_Work_Order*> m_Work_toStart, m_Work_toFinish;
 	std::shared_mutex m_workerNotificationMutex;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_Workers;
+	std::shared_mutex m_mutexNofications;
 	std::vector<std::pair<void*, std::function<void()>>> m_notifyees;
 };
 

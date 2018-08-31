@@ -27,9 +27,12 @@ public:
 	Graphics_Module(Engine * engine);
 
 
-	// Public Methods
+	// Public Interface Implementation
 	/** Initialize the module. */
 	virtual void initialize() override;
+
+
+	// Public Methods
 	/** Render a single frame. 
 	@param	deltaTime	the amount of time passed since last frame */
 	void renderFrame(const float & deltaTime);

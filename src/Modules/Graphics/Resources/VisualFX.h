@@ -55,8 +55,7 @@ private:
 	bool m_Initialized = false;
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
-	GLuint m_quadVAO = 0, m_fbo_GB = 0;
-	bool m_quadVAOLoaded = false;
+	GLuint m_fbo_GB = 0;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

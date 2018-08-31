@@ -27,7 +27,6 @@ public:
 		glDeleteFramebuffers(1, &m_fboMipsID);
 		glDeleteTextures(1, &m_textureMipsID);
 		glDeleteTextures(1, &m_bayerID);
-		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	/** Constructor. */
 	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
@@ -45,12 +44,9 @@ public:
 		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
-		// Primitive Construction
-		m_quadVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
@@ -124,9 +120,9 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet() || !m_brdfMap->existsYet() || !m_quadVAOLoaded)
+		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet() || !m_brdfMap->existsYet())
 			return;
-		glBindVertexArray(m_quadVAO);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 		updateMIPChain();
@@ -219,8 +215,6 @@ private:
 	GLuint m_fboSSRID = 0, m_textureSSRID = 0;
 	GLuint m_bayerID = 0;
 	GLuint64 m_bayerHandle = 0;
-	GLuint m_quadVAO = 0;
-	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

@@ -3,7 +3,7 @@
 layout (location = 0) in vec3 vertex;
 
 layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
-	uint lightIndexes[];
+	int lightIndexes[];
 };
 layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
 	int shadowIndexes[];
@@ -11,8 +11,8 @@ layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
 
 layout (location = 0) out vec2 TexCoord;
 
-layout (location = 1) flat out uint LightIndex;
-layout (location = 2) flat out uint ShadowIndex;
+layout (location = 1) flat out int LightIndex;
+layout (location = 2) flat out int ShadowIndex;
 
 void main()
 {	

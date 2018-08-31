@@ -28,7 +28,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
-		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	LightingDirectional_System(
 		Engine * engine, 
@@ -58,13 +57,9 @@ public:
 		m_shadowFBO.resize(m_shadowSize, 4);
 		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
-		// Primitive Construction
-		m_quadVAOLoaded = false;
-		m_quadVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint data = { (GLuint)m_shapeQuad->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
@@ -82,7 +77,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_quadVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
 
 		// Clear Data
@@ -178,49 +173,12 @@ public:
 		// Render lights
 		renderLights(deltaTime);
 	}
-
-
-	// Public Methods
-	/** Registers a light component.
-	@param	component	the light component to register. */
-	void registerComponent(LightDirectional_Component & component) {
-		component.m_data = m_lightBuffer.newElement();
-		// Default Values
-		component.m_data->data->LightColor = glm::vec3(1.0f);
-		component.m_data->data->LightDirection = glm::vec3(0, -1.0f, 0);
-		component.m_data->data->LightIntensity = 1.0f;
-	}
-	/** Registers a shadow component.
-	@param	component	the shadow component to register. */
-	void registerComponent(LightDirectionalShadow_Component & component) {
-		float near_plane = -0.1f;
-		float far_plane = -m_engine->getPreference<float>(PreferenceState::C_DRAW_DISTANCE);
-		component.m_cascadeEnd[0] = near_plane;
-		for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-			const float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
-			const float cUni = near_plane + ((far_plane - near_plane) * x / NUM_CASCADES);
-			const float lambda = 0.3f;
-			component.m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
-		}
-
-		component.m_data = m_shadowBuffer.newElement();
-		component.m_data->data->Shadow_Spot = m_shadowCount;
-		component.m_updateTime = 0.0f;
-		component.m_shadowSpot = m_shadowCount;
-		m_shadowCount += 4;
-		m_shadowFBO.resize(m_shadowSize, m_shadowCount);
-		// Default Values
-		component.m_data->data->lightV = glm::mat4(1.0f);
-		for (int x = 0; x < NUM_CASCADES; ++x) {
-			component.m_data->data->lightVP[x] = glm::mat4(1.0f);
-			component.m_data->data->inverseVP[x] = glm::inverse(glm::mat4(1.0f));
-		}
-	}
 		
 
 	// Public Attributes
 	VectorBuffer<LightDirectional_Buffer> m_lightBuffer;
 	VectorBuffer<LightDirectionalShadow_Buffer> m_shadowBuffer;
+	FBO_Shadow_Directional m_shadowFBO;
 
 	
 protected:
@@ -260,7 +218,7 @@ protected:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_quadVAO);									// Quad VAO
+		glBindVertexArray(m_shapeQuad->m_vaoID);						// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);							// Now draw
 
 		glDepthMask(GL_TRUE);
@@ -298,19 +256,15 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
 	unsigned int m_updateQuality;
 	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;
 	StaticBuffer m_indirectShape;
-	std::vector<GLuint> lightIndices, shadowIndices;
+	std::vector<GLint> lightIndices, shadowIndices;
 	DynamicBuffer m_visLights, m_visShadows;
 	PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> m_oldest;
 	ECSSystemList m_geometrySystems;
 	FBO_Base * m_geometryFBO, * m_lightingFBO;
-	FBO_Shadow_Directional m_shadowFBO;
-	GLuint m_shadowCount = 0;
 };
 
 #endif // LIGHTINGDIRECTIONAL_S_H

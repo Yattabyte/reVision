@@ -22,7 +22,6 @@ struct VertexBoneData {
 	void Reset();
 	void AddBoneData(const int & BoneID, const float & Weight);
 };
-struct BoneTransform { glm::mat4 offset, final; };
 struct Material {
 	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
 	Material(const std::string & al = "albedo" , const std::string & n = "normal", const std::string & m = "metalness", const std::string & r = "roughness", const std::string & h = "height", const std::string & a = "ao")
@@ -69,7 +68,7 @@ struct Model_Geometry {
 
 	// Animation
 	std::vector<VertexBoneData> bones;
-	std::vector<BoneTransform> boneTransforms;
+	std::vector<glm::mat4> boneTransforms;
 	std::map<std::string, size_t> boneMap;
 	std::vector<Animation> animations;
 	Node * rootNode;

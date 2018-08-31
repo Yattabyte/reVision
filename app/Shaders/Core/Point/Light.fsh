@@ -30,8 +30,8 @@ layout (std430, binding = 9) readonly buffer Shadow_Buffer {
 	Shadow_Struct shadowBuffers[];
 };
 
-layout (location = 0) flat in uint LightIndex;
-layout (location = 1) flat in uint ShadowIndex;
+layout (location = 0) flat in int LightIndex;
+layout (location = 1) flat in int ShadowIndex;
 layout (binding = 4) uniform samplerCubeArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
 layout (location = 0) out vec3 LightingColor; 
@@ -49,8 +49,7 @@ const vec3 sampleOffsetDirections[20] = vec3[] (
 	);
 #define FactorAmt 1.0 / 20
 float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float RadiusSquared, in float bias)                                                  
-{	
-	
+{		
 	const float FragmentDepth 		= (length(LightDirection) - bias - EPSILON) / RadiusSquared;
 	const float diskRadius 			= (1.0 + (ViewDistance / RadiusSquared)) * (ShadowSize_Recip * 2);
 	
@@ -64,7 +63,7 @@ float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float R
 		depth 						= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
 		Factor 			   	 		+= (depth >= FragmentDepth ) ? FactorAmt : 0.0;	
 	}
-	return 							Factor;
+	return 							ShadowIndex != -1 ? Factor : 1.0f;
 }   
 
 void main(void)
