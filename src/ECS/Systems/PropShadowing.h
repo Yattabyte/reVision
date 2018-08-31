@@ -26,10 +26,7 @@ public:
 
 
 	// (de)Constructors
-	~PropShadowing_System() {
-		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
-		glDeleteVertexArrays(1, &m_cubeVAO);
-	}
+	~PropShadowing_System() = default;
 	PropShadowing_System(
 		Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer
 	) : BaseECSSystem(), m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_propBuffer(propBuffer), m_skeletonBuffer(skeletonBuffer), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow) {
@@ -41,21 +38,13 @@ public:
 		// Asset Loading
 		m_shapeCube = Asset_Primitive::Create(engine, "cube");
 		m_modelsVAO = &m_engine->getModelManager().getVAO();
-
-		// Primitive Construction
-		m_cubeVAOLoaded = false;
-		m_cubeVAO = Asset_Primitive::Generate_VAO();
-		m_shapeCube->addCallback(this, [&]() mutable {
-			m_cubeVAOLoaded = true;
-			m_shapeCube->updateVAO(m_cubeVAO);
-		});
 	}
 
 
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_cubeVAOLoaded)
+		if (!m_shapeCube->existsYet())
 			return;
 
 		// Clear Data
@@ -115,7 +104,7 @@ public:
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		m_shaderCull->bind();
-		glBindVertexArray(m_cubeVAO);
+		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
@@ -147,8 +136,6 @@ private:
 	unsigned int m_flags;
 	Shared_Asset_Shader	m_shaderCull, m_shaderShadow;
 	Shared_Asset_Primitive m_shapeCube;
-	bool m_cubeVAOLoaded;
-	GLuint m_cubeVAO;
 	const GLuint * m_modelsVAO;
 	std::vector<glm::ivec4> cullingDrawData;
 	std::vector<glm::ivec4> renderingDrawData;

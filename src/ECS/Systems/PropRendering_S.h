@@ -19,10 +19,7 @@
 class PropRendering_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
-	~PropRendering_System() {
-		glDeleteVertexArrays(1, &m_cubeVAO);
-		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
-	}
+	~PropRendering_System() = default;
 	PropRendering_System(
 		Engine * engine, FBO_Base * geometryFBO, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderGeometry
 	) : BaseECSSystem(), m_engine(engine), m_geometryFBO(geometryFBO), m_shaderCull(shaderCull), m_shaderGeometry(shaderGeometry) {
@@ -34,21 +31,13 @@ public:
 		// Asset Loading
 		m_shapeCube = Asset_Primitive::Create(engine, "cube");
 		m_modelsVAO = &m_engine->getModelManager().getVAO();
-
-		// Primitive Construction
-		m_cubeVAOLoaded = false;
-		m_cubeVAO = Asset_Primitive::Generate_VAO();
-		m_shapeCube->addCallback(this, [&]() mutable {
-			m_cubeVAOLoaded = true;
-			m_shapeCube->updateVAO(m_cubeVAO);
-		});
 	}
 
 
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_shaderCull->existsYet() || !m_shaderGeometry->existsYet() || !m_cubeVAOLoaded)
+		if (!m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
 
 		// Clear Data
@@ -103,7 +92,7 @@ public:
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		m_shaderCull->bind();
 		m_geometryFBO->bindForWriting();
-		glBindVertexArray(m_cubeVAO);
+		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
@@ -133,8 +122,6 @@ private:
 	FBO_Base * m_geometryFBO;
 	Shared_Asset_Shader	m_shaderCull, m_shaderGeometry;
 	Shared_Asset_Primitive m_shapeCube;
-	bool m_cubeVAOLoaded;
-	GLuint m_cubeVAO;
 	const GLuint * m_modelsVAO;
 	std::vector<glm::ivec4> cullingDrawData;
 	std::vector<glm::ivec4> renderingDrawData;

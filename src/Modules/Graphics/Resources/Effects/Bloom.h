@@ -23,7 +23,6 @@ public:
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 		glDeleteTextures(2, m_textureIDS_GB); 
-		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
@@ -37,12 +36,9 @@ public:
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
-		// Primitive Construction
-		m_quadVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
@@ -88,13 +84,13 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime ) override {
-		if (!m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet()|| !m_quadVAOLoaded)
+		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet())
 			return;
 		// Extract bright regions from lighting buffer
 		m_shaderBloomExtract->bind();
 		m_lightingFBO->bindForReading();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-		glBindVertexArray(m_quadVAO);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
@@ -111,7 +107,7 @@ public:
 		m_lightingFBO->bindForWriting();
 		glBindTextureUnit(0, m_textureID);
 		m_shaderCopy->bind();
-		glBindVertexArray(m_quadVAO);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);
@@ -142,8 +138,6 @@ private:
 	VisualFX * m_visualFX = nullptr;
 	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO = 0;
-	bool m_quadVAOLoaded = false;
 	StaticBuffer m_quadIndirectBuffer;
 	GLuint m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 };
 	glm::ivec2 m_renderSize = glm::ivec2(1);

@@ -24,8 +24,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
 		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
-		glDeleteVertexArrays(1, &m_cubeVAO);
-		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Reflector_System(
 		Engine * engine,
@@ -56,23 +54,15 @@ public:
 		// Environment Map
 		m_envmapFBO.resize(m_envmapSize, m_envmapSize, 6);
 
-		// Primitive Construction
-		m_cubeVAOLoaded = false;
-		m_cubeVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_indirectCube = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeCube->addCallback(this, [&]() mutable {
-			m_cubeVAOLoaded = true;
-			m_shapeCube->updateVAO(m_cubeVAO);
 			const GLuint data = { (GLuint)m_shapeCube->getSize() };
 			m_indirectCube.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
-		m_quadVAOLoaded = false;
-		m_quadVAO = Asset_Primitive::Generate_VAO();
 		m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4);
 		m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData); 
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
@@ -89,7 +79,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_cubeVAOLoaded || !m_shaderLighting->existsYet())
+		if (!m_shapeCube->existsYet() || !m_shaderLighting->existsYet())
 			return;
 
 		// Clear Data
@@ -128,7 +118,7 @@ protected:
 	// Protected Methods
 	/** Render all the geometry for each reflector */
 	void renderScene(const float & deltaTime) {
-		if (!m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet() || !m_quadVAOLoaded)
+		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
 			return;
 		auto & graphics = m_engine->getGraphicsModule();
 		bool didAnything = false, update = m_outOfDate;
@@ -156,7 +146,7 @@ protected:
 					m_shaderCopy->bind();
 					m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
 					m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-					glBindVertexArray(m_quadVAO);
+					glBindVertexArray(m_shapeQuad->m_vaoID);
 					glDrawArraysIndirect(GL_TRIANGLES, 0);
 				}
 				// Once cubemap is generated, convolute it
@@ -212,7 +202,7 @@ protected:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
 		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
-		glBindVertexArray(m_cubeVAO);									// Quad VAO
+		glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -265,8 +255,6 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
-	GLuint m_cubeVAO, m_quadVAO;
-	bool m_cubeVAOLoaded, m_quadVAOLoaded;
 	StaticBuffer m_indirectCube, m_indirectQuad, m_indirectQuad6Faces;
 	glm::ivec2	m_renderSize;
 	GLuint m_envmapSize;

@@ -28,7 +28,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
-		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	LightingDirectional_System(
 		Engine * engine, 
@@ -58,13 +57,9 @@ public:
 		m_shadowFBO.resize(m_shadowSize, 4);
 		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
-		// Primitive Construction
-		m_quadVAOLoaded = false;
-		m_quadVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint data = { (GLuint)m_shapeQuad->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
@@ -82,7 +77,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_quadVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
 
 		// Clear Data
@@ -223,7 +218,7 @@ protected:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_quadVAO);									// Quad VAO
+		glBindVertexArray(m_shapeQuad->m_vaoID);						// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);							// Now draw
 
 		glDepthMask(GL_TRUE);
@@ -261,8 +256,6 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
 	unsigned int m_updateQuality;
 	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;

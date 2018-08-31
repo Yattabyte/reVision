@@ -10,10 +10,21 @@
 Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
-		glDeleteBuffers(2, m_buffers);
+		glDeleteBuffers(1, &m_uboID);
 }
 
-Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename) {}
+Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename) 
+{
+	glCreateVertexArrays(1, &m_vaoID);
+	glEnableVertexArrayAttrib(m_vaoID, 0);
+	glEnableVertexArrayAttrib(m_vaoID, 1);
+	glVertexArrayAttribBinding(m_vaoID, 0, 0);
+	glVertexArrayAttribBinding(m_vaoID, 1, 0);
+	glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(m_vaoID, 1, 2, GL_FLOAT, GL_FALSE, 12);
+	glCreateBuffers(1, &m_uboID);
+	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
+}
 
 Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
@@ -43,8 +54,10 @@ Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::strin
 void Asset_Primitive::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	m_dataVertex = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	m_dataUV = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
+	m_data = { 
+		{ glm::vec3(-1, -1, 0), glm::vec2(0, 0) }, { glm::vec3(1, -1, 0), glm::vec2(1, 0) }, { glm::vec3(1, 1, 0), glm::vec2(1, 1) },
+		{ glm::vec3(-1, -1, 0), glm::vec2(0, 0) }, {glm::vec3(1, 1, 0), glm::vec2(1, 1) }, { glm::vec3(-1, 1, 0),glm::vec2(0, 1) }
+	};
 }
 
 void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirectory)
@@ -57,53 +70,27 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirect
 	}
 
 	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-	m_dataVertex = dataContainer.vertices;
-	m_dataUV = dataContainer.texCoords;
+	const size_t vertexCount = dataContainer.vertices.size();
+	m_data.resize(vertexCount);
+	for (size_t x = 0; x < vertexCount; ++x) {
+		m_data[x].vertex = dataContainer.vertices[x];
+		m_data[x].uv = dataContainer.texCoords[x];
+	}
 }
 
 void Asset_Primitive::finalize(Engine * engine)
 {
-	// Create buffers
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		glCreateBuffers(2, m_buffers);
-	}
 	// Load Buffers
 	{
 		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		glNamedBufferStorage(m_buffers[0], m_dataVertex.size() * sizeof(glm::vec3), &m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
-		glNamedBufferStorage(m_buffers[1], m_dataVertex.size() * sizeof(glm::vec2), &m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);		
+		const size_t arraySize = m_data.size();
+		glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], GL_CLIENT_STORAGE_BIT);		
 	}
 	Asset::finalize(engine);
-}
-
-const GLuint Asset_Primitive::Generate_VAO()
-{
-	GLuint vaoID = 0;
-
-	glCreateVertexArrays(1, &vaoID);
-	glEnableVertexArrayAttrib(vaoID, 0);
-	glEnableVertexArrayAttrib(vaoID, 1);
-
-	return vaoID;
-}
-
-void Asset_Primitive::updateVAO(const GLuint & vaoID)
-{
-	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	
-	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 1, 2, GL_FLOAT, GL_FALSE, 0);
-
-	glVertexArrayVertexBuffer(vaoID, 0, m_buffers[0], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 1, m_buffers[1], 0, 8);
-
-	glVertexArrayAttribBinding(vaoID, 0, 0);
-	glVertexArrayAttribBinding(vaoID, 1, 1);
 }
 
 size_t Asset_Primitive::getSize()
 {
 	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	return m_dataVertex.size();
+	return m_data.size();
 }

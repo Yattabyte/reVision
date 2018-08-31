@@ -17,12 +17,10 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Frametime_Counter() {
-		glDeleteVertexArrays(1, &m_quadVAO);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_numberTexture->removeCallback(this);
 		m_shader->removeCallback(this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);		
 	}
 	/** Constructor. */
 	Frametime_Counter(Engine * engine)
@@ -31,13 +29,6 @@ public:
 		m_numberTexture = Asset_Texture::Create(m_engine, "numbers.png", GL_TEXTURE_2D, false, false);
 		m_shader = Asset_Shader::Create(m_engine, "Utilities\\numberPrint");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
-
-		// Primitive Construction
-		m_quadVAO = Asset_Primitive::Generate_VAO();
-		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
-		});
 
 		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
@@ -58,13 +49,13 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) override {
-		if (!m_quadVAOLoaded || !m_shader->existsYet() || !m_numberTexture->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		glBindVertexArray(m_quadVAO);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_shader->bind();
 		m_shader->setUniform(1, m_projMatrix);
 		const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));
@@ -108,8 +99,6 @@ private:
 	Shared_Asset_Shader m_shader;
 	Shared_Asset_Texture m_numberTexture;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO = 0;
-	bool m_quadVAOLoaded = false;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_projMatrix = glm::mat4(1.0f);
 };

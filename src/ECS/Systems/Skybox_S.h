@@ -20,7 +20,6 @@ public:
 	// (de)Constructors
 	~Skybox_System() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		glDeleteVertexArrays(1, &m_quadVAO);
 	}
 	Skybox_System(
 		Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
@@ -33,13 +32,9 @@ public:
 		m_shaderSkyReflect = Asset_Shader::Create(engine, "Effects\\Skybox Reflection");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
-		// Primitive Construction
-		m_quadVAOLoaded = false;
-		m_quadVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
-			m_quadVAOLoaded = true;
-			m_shapeQuad->updateVAO(m_quadVAO);
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
@@ -48,7 +43,7 @@ public:
 
 	// Interface Implementation
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		if (!m_shaderSky->existsYet() || !m_quadVAOLoaded)
+		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet())
 			return;
 		if (!components.size())
 			return;
@@ -59,7 +54,7 @@ public:
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
-		glBindVertexArray(m_quadVAO);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_geometryFBO->bindForReading();
 		skyboxComponent->m_texture->bind(4);
@@ -85,8 +80,6 @@ private:
 	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
 	Shared_Asset_Shader	m_shaderSky, m_shaderSkyReflect;
 	Shared_Asset_Primitive m_shapeQuad;
-	GLuint m_quadVAO;
-	bool m_quadVAOLoaded;
 	StaticBuffer m_quadIndirectBuffer;
 };
 

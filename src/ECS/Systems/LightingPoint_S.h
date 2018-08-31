@@ -28,7 +28,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this);
 		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 		if (m_shapeSphere.get()) m_shapeSphere->removeCallback(this);
-		glDeleteVertexArrays(1, &m_sphereVAO);
 	}
 	LightingPoint_System(
 		Engine * engine, 
@@ -61,13 +60,9 @@ public:
 		// Shadows
 		m_shadowFBO.resize(m_shadowSize, 6);
 
-		// Primitive Construction
-		m_sphereVAOLoaded = false;
-		m_sphereVAO = Asset_Primitive::Generate_VAO();
+		// Asset-Finished Callbacks
 		m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeSphere->addCallback(this, [&]() mutable {
-			m_sphereVAOLoaded = true;
-			m_shapeSphere->updateVAO(m_sphereVAO);
 			const GLuint data = { (GLuint)m_shapeSphere->getSize() };
 			m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
@@ -86,7 +81,7 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Exit Early
-		if (!m_sphereVAOLoaded || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
+		if (!m_shapeSphere->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet())
 			return;
 
 		// Clear Data
@@ -176,7 +171,7 @@ protected:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_sphereVAO);									// Quad VAO
+		glBindVertexArray(m_shapeSphere->m_vaoID);						// Quad VAO
 		glDepthMask(GL_FALSE);		
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -228,8 +223,6 @@ private:
 	Engine * m_engine;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeSphere;
-	GLuint m_sphereVAO;
-	bool m_sphereVAOLoaded;
 	unsigned int m_updateQuality;
 	glm::ivec2 m_shadowSize;
 	glm::ivec2	m_renderSize;

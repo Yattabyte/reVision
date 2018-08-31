@@ -10,6 +10,7 @@
 
 class Engine;
 class Asset_Primitive;
+struct Single_Primitive_Vertex;
 using Shared_Asset_Primitive = std::shared_ptr<Asset_Primitive>;
 
 /** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
@@ -27,22 +28,14 @@ public:
 	@param	threaded		create in a separate thread 
 	@return					the desired asset */
 	static Shared_Asset_Primitive Create(Engine * engine, const std::string & filename, const bool & threaded = true);
-	/** Generates a vertex array object, formed to match primitives' object data.
-	@return					a vertex array object resident on the GPU */
-	static const GLuint Generate_VAO();
-	/** Updates a vertex array object's state with this primitives' data. 
-	@brief					using the supplied vertex array object, updates its internal data on the GPU with this primitives underlying data.
-	@param	vaoID			the vertex array object's ID on the GPU */	
-	void updateVAO(const GLuint & vaoID);
 	/** Returns the vertex-count of this object. 
 	@return					vertex-count of this object */
 	size_t getSize();
 	
 	
 	// Public Attributes
-	GLuint m_buffers[2] = { 0, 0 };
-	std::vector<glm::vec3> m_dataVertex;
-	std::vector<glm::vec2> m_dataUV;
+	GLuint m_uboID = 0, m_vaoID = 0;
+	std::vector<Single_Primitive_Vertex> m_data;
 
 
 private:
@@ -60,6 +53,10 @@ private:
 
 	// Private Attributes
 	friend class AssetManager;
+};
+struct Single_Primitive_Vertex {
+	glm::vec3 vertex;
+	glm::vec2 uv;
 };
 
 #endif // ASSET_PRIMITIVE_H
