@@ -10,9 +10,8 @@ ModelManager::~ModelManager()
 void ModelManager::initialize()
 {
 	// Create VBO's
-	constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT;
 	glCreateBuffers(1, &m_vboID);
-	glNamedBufferStorage(m_vboID, m_maxCapacity * sizeof(SingleVertex), 0, flags);
+	glNamedBufferStorage(m_vboID, m_maxCapacity * sizeof(SingleVertex), 0, GL_DYNAMIC_STORAGE_BIT);
 	// Create VAO
 	glCreateVertexArrays(1, &m_vaoID);
 	// Enable 7 attribute locations which all source data from binding point 0
@@ -90,10 +89,9 @@ void ModelManager::expandToFit(const size_t & arraySize)
 		m_maxCapacity += arraySize * 2;
 
 		// Create the new VBO's
-		constexpr GLbitfield flags = GL_DYNAMIC_STORAGE_BIT;
 		GLuint newVBOID;
 		glCreateBuffers(1, &newVBOID);
-		glNamedBufferStorage(newVBOID, m_maxCapacity * sizeof(SingleVertex), 0, flags);
+		glNamedBufferStorage(newVBOID, m_maxCapacity * sizeof(SingleVertex), 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Copy old VBO's
 		glCopyNamedBufferSubData(m_vboID, newVBOID, 0, 0, m_currentSize * sizeof(SingleVertex));

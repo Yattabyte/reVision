@@ -95,7 +95,6 @@
  *		- Prop_Component
  *		- Reflector_Component
  *		- Skeleton_Component
- *		- Skybox_Component
  *		<br>
  *
  * There are also several systems in place that use them:
@@ -108,7 +107,6 @@
  *		- PropRendering_System
  *		- PropShadowing_System
  *		- SkeletonAnimation_System
- *		- Skybox_System
  */
 
  /*! \page managers Managers

@@ -8,7 +8,6 @@
 #include "ECS/Components/BasicPlayer_C.h"
 #include "ECS/Components/Prop_C.h"
 #include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/Skybox_C.h"
 #include "ECS/Components/LightDirectional_C.h"
 #include "ECS/Components/LightSpot_C.h"
 #include "ECS/Components/LightPoint_C.h"
@@ -19,7 +18,6 @@
 #include "ECS\Systems\PropRendering_S.h"
 #include "ECS\Systems\PropBSphere_S.h"
 #include "ECS\Systems\SkeletonAnimation_S.h"
-#include "ECS\Systems\Skybox_S.h"
 #include "ECS\Systems\LightingDirectional_S.h"
 #include "ECS\Systems\LightingSpot_S.h"
 #include "ECS\Systems\LightingPoint_S.h"
@@ -47,7 +45,6 @@ void World_Module::initialize()
 	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &propSys.m_propBuffer);
 	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &refSys.m_reflectorBuffer, &refSys.m_envmapFBO);
 	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &propSys.m_skeletonBuffer);
-	m_constructorMap["Skybox_Component"] = new Skybox_Constructor(m_engine);
 }
 
 void World_Module::loadWorld()

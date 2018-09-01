@@ -199,7 +199,7 @@ void Asset_Material::finalize(Engine * engine)
 		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
 		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
 		// Uses the smallest dimension of the image
-		GLsizei m_imageCount = (m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES;
+		GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
 		glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
 		glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
 		glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
