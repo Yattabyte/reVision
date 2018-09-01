@@ -4,8 +4,7 @@
 #define M_PI 3.14159265359
 
 // Uniform Inputs
-layout (binding = 0) uniform samplerCubeArray CubeMapSampler;
-layout (location = 0) uniform int cubeIndex = 0;
+layout (binding = 0) uniform samplerCube CubeMapSampler;
 layout (location = 1) uniform float roughness = 1.0f;
 
 // Inputs
@@ -63,9 +62,9 @@ void main()
 		float NdotL 			= max( dot( N, L ), 0.0f );
 		
 		if ( NdotL > 0.0f ) {
-			PrefilteredColor   += textureLod(CubeMapSampler, vec4(L, cubeIndex/6.0f), 0.0f).rgb * NdotL;
+			PrefilteredColor   += textureLod(CubeMapSampler, L, 0.0f).rgb * NdotL;
 			TotalWeight 	   += NdotL;
 		}
 	}	
-	fragColor 					= PrefilteredColor / TotalWeight;	
+	fragColor 					= PrefilteredColor / TotalWeight;			
 }

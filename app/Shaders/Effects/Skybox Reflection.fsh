@@ -11,7 +11,7 @@ vec3 CalculateReflections(in vec3 ViewPos, in vec3 ViewNormal, in float Roughnes
 	vec3 ReflectDir					= (reflect(ViewPos, ViewNormal));
 		 ReflectDir 				= normalize(cameraBuffer.vMatrix_Inverse * vec4(ReflectDir,0)).xyz;
 	const float level 				= Roughness * 5.0f;
-	return 							pow(texture(SkyMap, vec3(ReflectDir.x, -ReflectDir.y, ReflectDir.z)).xyz, vec3(2.2f));		
+	return 							pow(textureLod(SkyMap, vec3(ReflectDir.x, -ReflectDir.y, ReflectDir.z), level).xyz, vec3(2.2f));		
 }
 
 void main()

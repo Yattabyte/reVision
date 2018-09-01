@@ -9,5 +9,5 @@ layout (location = 0) in vec3 vecView;
 
 void main()
 {		
-	LightingColor = pow(texture(SkyMap, vecView).rgb, vec3(2.2f));
+	LightingColor = pow(textureLod(SkyMap, vecView, 0).rgb, vec3(2.2f));
 }

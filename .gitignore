@@ -63,3 +63,4 @@ Doxyfile.out
 app/nsight_profiler.cfg
 app/reVision.exe - Shortcut.lnk
 CMakeDoxyfile.tpl.bak
+CMakeDoxyfile.in
