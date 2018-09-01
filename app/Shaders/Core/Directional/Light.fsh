@@ -1,3 +1,4 @@
+/* Directional light - lighting shader. */
 #version 460
 #pragma optionNV(fastmath on)
 #pragma optionNV(ifcvt none)

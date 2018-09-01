@@ -1,3 +1,4 @@
+/* Point light - geometry culling shader. */
 #version 460
 layout (early_fragment_tests) in;
 layout (location = 0) flat in int id;

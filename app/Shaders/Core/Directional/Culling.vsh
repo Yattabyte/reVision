@@ -1,3 +1,4 @@
+/* Directional light - geometry culling shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
 #define NUM_CASCADES 4

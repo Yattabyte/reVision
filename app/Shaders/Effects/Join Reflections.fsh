@@ -1,3 +1,4 @@
+/* Makes a reflection buffer more physically correct. */
 #version 460 
 #extension GL_ARB_bindless_texture : require
 #package "lighting_pbr"

@@ -1,3 +1,4 @@
+/* Calculates skybox reflections. */
 #version 460
 #package "lighting_pbr"
 

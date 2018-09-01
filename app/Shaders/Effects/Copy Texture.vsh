@@ -1,3 +1,4 @@
+/* Copies an image from binding 0, to location 0. */
 #version 460
 
 layout(location = 0) in vec3 vertex;

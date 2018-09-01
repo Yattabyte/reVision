@@ -1,3 +1,4 @@
+/* Point light - (indirect) light bounce shader. */
 #version 460
 
 layout(location = 0) in vec4 vertex;

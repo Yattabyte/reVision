@@ -1,3 +1,4 @@
+/* Reflector - lighting shader. */
 #version 460
 #extension GL_ARB_shader_draw_parameters : enable
 #package "camera"

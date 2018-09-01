@@ -1,3 +1,4 @@
+/* Makes a reflection buffer more physically correct. */
 #version 460
 
 layout(location = 0) in vec3 vertex;

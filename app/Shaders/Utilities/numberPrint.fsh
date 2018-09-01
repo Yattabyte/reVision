@@ -1,3 +1,4 @@
+/* Number printing shader. */
 #version 460
 #extension GL_ARB_bindless_texture : require
 

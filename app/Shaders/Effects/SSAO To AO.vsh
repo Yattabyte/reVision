@@ -1,3 +1,4 @@
+/* Merges post-process AO into GBuffer AO. */
 #version 460
 
 layout(location = 0) in vec3 vertex;

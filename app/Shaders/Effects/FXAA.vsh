@@ -1,3 +1,4 @@
+/* FXAA shader - applies FXAA to the input image. */
 #version 460
 #package "camera"
 

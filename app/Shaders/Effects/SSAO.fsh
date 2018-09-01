@@ -1,3 +1,4 @@
+/* Calculates SSAO. */
 #version 460 
 #extension GL_ARB_bindless_texture : require
 #pragma optionNV (unroll all)

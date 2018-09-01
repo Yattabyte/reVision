@@ -1,3 +1,4 @@
+/* Point light - (indirect) light bounce shader. */
 #version 460
 
 layout (points) in;

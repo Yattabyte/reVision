@@ -1,3 +1,4 @@
+/* Screen space reflection shader - part 1 - UV Lookup Creation. */
 #version 460
 #extension GL_ARB_bindless_texture : require
 #pragma optionNV(fastmath on)

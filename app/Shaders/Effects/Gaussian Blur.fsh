@@ -1,3 +1,4 @@
+/* Gaussian Blur shader. */
 #version 460
 #pragma optionNV(unroll all)
 

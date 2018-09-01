@@ -1,3 +1,4 @@
+/* Spot light - lighting shader. */
 #version 460
 #package "camera"
 

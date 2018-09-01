@@ -1,11 +1,4 @@
-/*
- Name: Shadow.vsh
- Description: Renders prop components from a directional light's perspective
- Notes:
-	- Prop components may come paired with an optional skeleton component
-	- Directional lights w/o a shadow component don't run this shader
-	- We don't use an index buffer for the light struct lookup, we use uniform instead (same value for all props)
-*/
+/* Directional light - geometry shadowing shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
 #extension GL_ARB_bindless_texture : require

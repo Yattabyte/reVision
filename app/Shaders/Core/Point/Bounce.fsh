@@ -1,3 +1,4 @@
+/* Point light - (indirect) light bounce shader. */
 #version 460
 #pragma optionNV(unroll all)
 #package "Lighting\gi_defines"

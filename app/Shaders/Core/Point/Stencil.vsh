@@ -1,3 +1,4 @@
+/* Point light - light stenciling shader. */
 #version 460
 #package "camera"
 

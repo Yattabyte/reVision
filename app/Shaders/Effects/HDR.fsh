@@ -1,3 +1,4 @@
+/* HDR shader - Tone maps and gamma corrects an input image. */
 #version 460
 #package "camera"
 

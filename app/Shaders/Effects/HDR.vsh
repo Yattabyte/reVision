@@ -1,3 +1,4 @@
+/* HDR shader - Tone maps and gamma corrects an input image. */
 #version 460
 
 layout(location = 0) in vec3 vertex;

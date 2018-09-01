@@ -1,3 +1,4 @@
+/* Point light - geometry shadowing shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
 #extension GL_ARB_bindless_texture : require

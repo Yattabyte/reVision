@@ -1,3 +1,4 @@
+/* Extracts bloom features from an image. */
 #version 460 
 
 layout (location = 0) in vec3 vertex;

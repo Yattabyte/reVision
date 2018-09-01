@@ -1,3 +1,4 @@
+/* Calculates a 2D skybox from a quad. */
 #version 460
 #package "camera"
 

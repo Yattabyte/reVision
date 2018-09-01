@@ -1,3 +1,4 @@
+/* Directional light - (indirect) light bounce shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
 

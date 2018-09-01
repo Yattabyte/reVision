@@ -1,3 +1,4 @@
+/* Prop - Geometry culling shader. */
 #version 460
 #package "camera"
 

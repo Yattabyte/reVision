@@ -1,3 +1,4 @@
+/* Directional light - (indirect) light bounce shader. */
 #version 460
 #pragma optionNV(unroll all)
 #define NUM_CASCADES 4
