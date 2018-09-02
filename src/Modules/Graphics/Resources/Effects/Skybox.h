@@ -44,13 +44,6 @@ public:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-		glm::vec3 face = glm::vec3(-1, 1, 0);
-		glm::vec3 normal = face;
-		glm::vec3 viewDir = normal;
-		float dotr = glm::dot(viewDir, normal);
-		glm::vec3 R = 2.0f * glm::dot(viewDir, normal) * normal - viewDir;
-		glm::vec3 R2 = face * 3.0f;
-
 		// Preference Callbacks
 		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);

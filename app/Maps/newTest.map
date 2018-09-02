@@ -146,6 +146,34 @@ entity
 {
 	Prop_Component
 	{
+		string "castleWall.obj"
+		uint "0"
+		vec3 "-18,0,-10"
+		quat "1,0,0,0"
+		vec3 "0.1,0.1,0.1"
+	}
+	BoundingSphere_Component
+	{
+	}
+}
+entity
+{
+	Prop_Component
+	{
+		string "Test\\ChamferedCube.obj"
+		uint "0"
+		vec3 "0,0,0"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}
+	BoundingSphere_Component
+	{
+	}
+}
+entity
+{
+	Prop_Component
+	{
 		string "Test\\AnimationTest.fbx"
 		uint "0"
 		vec3 "18,0,10"

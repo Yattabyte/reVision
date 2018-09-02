@@ -10,6 +10,7 @@
 #include "ECS\Resources\FBO_Geometry.h"
 #include "ECS\Resources\FBO_Lighting.h"
 #include "ECS\Resources\FBO_Reflection.h"
+#include "ECS\Resources\FBO_LightBounce.h"
 #include "ECS\Components\Camera_C.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -64,6 +65,7 @@ public:
 	FBO_Geometry				m_geometryFBO;
 	FBO_Lighting				m_lightingFBO;
 	FBO_Reflection				m_reflectionFBO;
+	FBO_LightBounce				m_bounceFBO;
 	VB_Element<Camera_Buffer> *	m_defaultCamera;
 	StaticBuffer				m_cameraIndexBuffer;
 	VectorBuffer<Camera_Buffer>	m_cameraBuffer;

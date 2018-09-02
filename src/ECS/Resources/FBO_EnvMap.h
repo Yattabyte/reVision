@@ -39,11 +39,11 @@ struct FBO_EnvMap : FBO_Base {
 		m_size = glm::ivec2(width, height);
 		for (int x = 0; x < 6; ++x) {
 			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
-			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB8, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 	}
 	virtual void clear() override {
-		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 	}
 	virtual void bindForWriting() override {

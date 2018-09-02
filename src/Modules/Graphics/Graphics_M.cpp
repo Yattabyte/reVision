@@ -16,6 +16,7 @@
 /* Post Processing Techniques Used */
 #include "Modules\Graphics\Resources\Effects\Skybox.h"
 #include "Modules\Graphics\Resources\Effects\SSAO.h"
+#include "Modules\Graphics\Resources\Effects\Radiance_Hints.h"
 #include "Modules\Graphics\Resources\Effects\Join_Reflections.h"
 #include "Modules\Graphics\Resources\Effects\SSR.h"
 #include "Modules\Graphics\Resources\Effects\Bloom.h"
@@ -57,6 +58,8 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
+	const GLuint m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
+	m_bounceFBO.resize(m_bounceSize);
 	const float farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) {
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
@@ -118,12 +121,13 @@ void Graphics_Module::initialize()
 	// Geometry Rendering
 	addSystem(new PropRendering_System(m_engine, &m_geometryFBO, m_shaderCull, m_shaderGeometry));
 	// Light Rendering
-	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
+	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingSpot_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	// Initiate specialized effects techniques
 	m_fxTechs.push_back(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO));
 	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
@@ -153,6 +157,7 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	m_geometryFBO.clear();
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
+	m_bounceFBO.clear();
 	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
 	m_cameraBuffer.getElement(getActiveCamera())->wait();
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);

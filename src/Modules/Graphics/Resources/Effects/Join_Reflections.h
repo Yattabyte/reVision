@@ -19,6 +19,7 @@ public:
 	~Join_Reflections() {
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		m_brdfMap->removeCallback(this);
+		m_shader->removeCallback(this);
 	}
 	/** Constructor. */
 	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
@@ -55,7 +56,7 @@ public:
 		glBlendFunc(GL_ONE, GL_ONE);
 		m_lightingFBO->bindForWriting();
 		m_geometryFBO->bindForReading(0);
-		m_reflectionFBO->bindForReading(4);
+		m_reflectionFBO->bindForReading(5);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

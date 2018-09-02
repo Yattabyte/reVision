@@ -114,7 +114,7 @@ public:
 
 		// Render important shadows
 		renderShadows(deltaTime);
-		// Render lights
+		// Render direct lights
 		renderLights(deltaTime);
 	}
 
@@ -131,7 +131,7 @@ public:
 	
 protected:
 	// Protected Methods
-	/** Render all the geometry from each light */
+	/** Render all the geometry from each light. */
 	void renderShadows(const float & deltaTime) {
 		ECS & ecs = m_engine->getECS();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
@@ -156,7 +156,7 @@ protected:
 			m_outOfDate = false;
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	}
-	/** Render all the lights */
+	/** Render all the lights. */
 	void renderLights(const float & deltaTime) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);

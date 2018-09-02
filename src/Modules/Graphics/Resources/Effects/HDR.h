@@ -66,7 +66,7 @@ public:
 		if (!m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 
 		m_shaderHDR->bind();

@@ -16,7 +16,6 @@ struct Light_Struct {
 	vec4 LightDirection;
 	float LightIntensity;
 };
-
 struct Shadow_Struct {
 	mat4 lightV;	
 	int Shadow_Spot;
