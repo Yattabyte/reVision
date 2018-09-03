@@ -2,18 +2,6 @@
 #version 460
 #pragma optionNV(unroll all)
 #define NUM_CASCADES 4
-#package "camera"
-
-struct Shadow_Struct {
-	mat4 lightV;	
-	int Shadow_Spot;
-	float CascadeEndClipSpace[NUM_CASCADES];
-	mat4 LightVP[NUM_CASCADES];
-	mat4 InverseLightVP[NUM_CASCADES];	
-};
-layout (std430, binding = 9) readonly buffer Shadow_Buffer {
-	Shadow_Struct shadowBuffers[];
-};
 
 layout (location = 1) uniform vec3 BBox_Max = vec3(1);
 layout (location = 2) uniform vec3 BBox_Min = vec3(-1);
@@ -22,7 +10,11 @@ layout (location = 4) uniform float resolution = 16.0f;
 layout (location = 5) uniform float spread = 0.001f;
 layout (location = 6) uniform float R_wcs = 0.0f;
 
-layout (location = 0) flat in int ShadowIndex;
+layout (location = 0) flat in mat4 CamVMatrix;
+layout (location = 4) flat in mat4 CamPVMatrix;
+layout (location = 8) flat in mat4 LightVP[NUM_CASCADES];
+layout (location = 24) flat in vec4 CascadeEndClipSpace;
+layout (location = 25) flat in int Shadow_Spot;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 
@@ -56,7 +48,7 @@ void RGB2SH (in vec3 dir, in vec3 L, out vec4 sh_r, out vec4 sh_g, out vec4 sh_b
 
 vec3 PointWCS2CSS(in vec3 p) 
 { 
-    vec4 p_css = cameraBuffer.pMatrix * cameraBuffer.vMatrix * vec4(p,1); 
+    vec4 p_css = CamPVMatrix * vec4(p,1); 
     return p_css.xyz/p_css.w; 
 } 
 
@@ -172,15 +164,15 @@ void main()
     vec3 extents 				= (bbox_max - bbox_min).xyz; 
 	vec3 RHCellSize				= extents / (resolution);
     vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
-	vec4 ViewPos 				= cameraBuffer.vMatrix * vec4(RHCenter, 1);
+	vec4 ViewPos 				= CamVMatrix * vec4(RHCenter, 1);
 	
 	// RH -> light space, get sampling disk center
 	int index 					= 0;
-	for (; index < 4; ++index) 
-		if (-ViewPos.z <= shadowBuffers[ShadowIndex].CascadeEndClipSpace[index]) 
+	for (; index < NUM_CASCADES; ++index) 
+		if (-ViewPos.z <= CascadeEndClipSpace[index]) 
 			break;		
-	vec2 RHUV					= ShadowProjection(shadowBuffers[ShadowIndex].LightVP[index] * vec4(RHCenter, 1)); 
+	vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
 	
 	// Perform light bounce operation
-	BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, shadowBuffers[ShadowIndex].InverseLightVP[index], shadowBuffers[ShadowIndex].Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+	BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
 }

@@ -1,13 +1,19 @@
 /* Prop - Geometry culling shader. */
 #version 460
-#package "camera"
 
 struct PropAttributes {
 	uint materialID;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
-
+layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
+	mat4 pMatrix;
+	mat4 vMatrix;
+	mat4 pMatrix_Inverse;
+	mat4 vMatrix_Inverse;
+	vec3 EyePosition;
+	vec2 CameraDimensions;
+};
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
@@ -20,6 +26,6 @@ layout (location = 0) flat out int id;
 
 void main()
 {	
-	gl_Position = cameraBuffer.pMatrix * cameraBuffer.vMatrix * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
+	gl_Position = pMatrix * vMatrix * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
 	id = gl_DrawID;
 }

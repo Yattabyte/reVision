@@ -51,7 +51,7 @@ void World_Module::loadWorld()
 {
 	if (m_level) 
 		m_level->removeCallback(this);	
-	m_level = Asset_Level::Create(m_engine, "test_sunOnly.map");
+	m_level = Asset_Level::Create(m_engine, "newTest.map");
 	m_level->addCallback(this, [&]{processLevel();});	
 }
 

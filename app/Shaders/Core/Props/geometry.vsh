@@ -5,7 +5,6 @@
 #extension GL_ARB_gpu_shader_int64 : require
 #define MAX_BONES 100
 #define MAX_DIGITAL_IMAGES 3
-#package "camera"
 
 struct PropAttributes {
 	uint materialID;
@@ -18,6 +17,14 @@ struct BonesStruct {
 
 layout (std430, binding = 0) readonly buffer Material_Buffer {		
 	uint64_t MaterialMaps[];
+};
+layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
+	mat4 pMatrix;
+	mat4 vMatrix;
+	mat4 pMatrix_Inverse;
+	mat4 vMatrix_Inverse;
+	vec3 EyePosition;
+	vec2 CameraDimensions;
 };
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
@@ -58,7 +65,7 @@ void main()
 		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[3]] * Weights[3];
 	}
 	TexCoord             		= textureCoordinate;
-	const mat4 vmMatrix4		= cameraBuffer.vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform;
+	const mat4 vmMatrix4		= vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform;
 	const mat3 vmMatrix3		= mat3(vmMatrix4);
 	const vec3 ViewNormal 		= normalize(vmMatrix3 * normalize(normal));
 	const vec3 ViewTangent		= normalize(vmMatrix3 * normalize(tangent));		
@@ -66,5 +73,5 @@ void main()
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
 	MaterialMap 				= sampler2DArray(MaterialMaps[matID]);
 	MaterialOffset				= propBuffer[PropIndex].materialID * MAX_DIGITAL_IMAGES;
-	gl_Position           		= cameraBuffer.pMatrix * vmMatrix4 * vec4(vertex,1.0);			
+	gl_Position           		= pMatrix * vmMatrix4 * vec4(vertex,1.0);			
 }

@@ -8,8 +8,6 @@
 #pragma optionNV(strict on)
 #pragma optionNV(unroll all)
 #define M_MAX_SPECULAR_EXP 32 
-#package "lighting_pbr"
-
 
 // SSR Variables
 const float maxDistance = 500.0f;
@@ -17,13 +15,25 @@ const float numMips = 6.0f;
 const float fadeStart = 0.1f;
 const float fadeEnd = 0.9f;
 
-// The screen texture
+// The screen textures
+layout (binding = 0) uniform sampler2D ColorMap;
+layout (binding = 1) uniform sampler2D ViewNormalMap;
+layout (binding = 2) uniform sampler2D SpecularMap;
+layout (binding = 3) uniform sampler2D DepthMap;
 layout (binding = 4) uniform sampler2D SSRMap;
 layout (binding = 5) uniform sampler2D LightMap;
 layout (location = 0, bindless_sampler) uniform sampler2D EnvironmentBRDF;
 
 layout (location = 0) in vec2 TexCoord;
+layout (location = 1) flat in mat4 CamPInverse;
+layout (location = 5) flat in mat4 CamVInverse;
+layout (location = 9) flat in vec3 CamEyePosition;
+layout (location = 10) flat in vec2 CamDimensions;
+
 layout (location = 0) out vec4 LightingColor;
+
+// Use PBR lighting methods
+#package "lighting_pbr"
 
 // based on phong distribution model
 float specularPowerToConeAngle(in float specularPower)
@@ -79,7 +89,7 @@ vec3 AcquireSpecular(in vec3 SSPos, in float Roughness, in vec2 ReflectionUV, in
     const float maxMipLevel     = numMips - 1.0f;
     const float gloss			= 1.0F - Roughness;
     float glossMult             = gloss;
-	const vec2 cameraDimensions	= cameraBuffer.CameraDimensions;
+	const vec2 cameraDimensions	= CamDimensions;
 	const float maxDimension	= max(cameraDimensions.x, cameraDimensions.y);
 	float oppositeLength, incircleSize, mipChannel;
 	vec2 samplePos;
@@ -146,8 +156,8 @@ void main(void)
 	
 	// Variables
 	const vec3 SSPos	 				= vec3(TexCoord, data.View_Depth);	
-    const vec3 WorldNormal 				= normalize((cameraBuffer.vMatrix_Inverse * vec4(data.View_Normal, 0))).xyz;
-	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - cameraBuffer.EyePosition);
+    const vec3 WorldNormal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
+	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - CamEyePosition);
 	const vec3 ReflectionVector 		= reflect(CameraVector, WorldNormal);
 	float Alpha 						= 1.0f;
 	const vec3 Reflection				= AcquireSpecular(SSPos, data.Roughness, ReflectionUVS.xy, Alpha);
@@ -162,7 +172,7 @@ void main(void)
 	const vec2 UVSamplingAttenuation 	= smoothstep(0.05, 0.1, ReflectionUVS.xy) * (vec2(1.0f) - smoothstep(0.95, 1.0, ReflectionUVS.xy));	
 	const float Atten_UV				= UVSamplingAttenuation.x * UVSamplingAttenuation.y;
 	// Attenuate back-faces
-	const float Atten_BackFace			= smoothstep(-0.17, 0.0, dot(normalize((cameraBuffer.vMatrix_Inverse * vec4(texture(ViewNormalMap, ReflectionUVS.xy).rgb, 0))).xyz, -ReflectionVector));	
+	const float Atten_BackFace			= smoothstep(-0.17, 0.0, dot(normalize((CamVInverse * vec4(texture(ViewNormalMap, ReflectionUVS.xy).rgb, 0))).xyz, -ReflectionVector));	
 	// Attenuate near edge of screen
     const vec2 boundary					= abs(ReflectionUVS.xy - vec2(0.5f, 0.5f)) * 2.0f;
     const float fadeDiffRcp				= 1.0f / (fadeEnd - fadeStart);
@@ -174,7 +184,7 @@ void main(void)
 	if (Attenuation <= 0.0f)			discard;
 	
 	// Final lighting color	
-	const vec3 View_Direction			= normalize(cameraBuffer.EyePosition - data.World_Pos.xyz);		
+	const vec3 View_Direction			= normalize(CamEyePosition - data.World_Pos.xyz);		
 	const float NdotV					= max(dot(data.World_Normal, View_Direction), 0.0);		
 	const vec3 F0						= mix(vec3(0.03f), data.Albedo, data.Metalness);
 	const vec3 Fs						= Fresnel_Schlick_Roughness(F0, NdotV, data.Roughness);

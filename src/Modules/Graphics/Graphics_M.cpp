@@ -30,7 +30,6 @@ Graphics_Module::~Graphics_Module()
 {
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);	
-	m_engine->removePrefCallback(PreferenceState::C_GAMMA, this);
 	m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 }
 
@@ -64,10 +63,6 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
 	});
-	const float gamma = m_engine->addPrefCallback<float>(PreferenceState::C_GAMMA, this, [&](const float &f) {
-		m_defaultCamera->data->Gamma = f;
-		m_cameraBuffer.getElement(m_activeCamera)->data->Gamma = f;
-	});
 	
 	// Camera Setup
 	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint));
@@ -78,10 +73,8 @@ Graphics_Module::Graphics_Module(Engine * engine)
 	m_defaultCamera->data->vMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
 	m_defaultCamera->data->EyePosition = glm::vec3(0.0f);
 	m_defaultCamera->data->Dimensions = m_renderSize;
-	m_defaultCamera->data->NearPlane = 0.01f;
 	m_defaultCamera->data->FarPlane = farPlane;
 	m_defaultCamera->data->FOV = 110.0f;
-	m_defaultCamera->data->Gamma = gamma;
 	updateCamera(m_defaultCamera->data);
 	setActiveCamera(m_defaultCamera->index);
 
@@ -181,7 +174,7 @@ void Graphics_Module::updateCamera(Camera_Buffer * camera)
 	float ar = std::max(1.0f, camera->Dimensions.x) / std::max(1.0f, camera->Dimensions.y);
 	float horizontalRad = glm::radians(camera->FOV);
 	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	camera->pMatrix = glm::perspective(verticalRad, ar, camera->NearPlane, camera->FarPlane);
+	camera->pMatrix = glm::perspective(verticalRad, ar, CAMERA_NEAR_PLANE, camera->FarPlane);
 	camera->pMatrix_Inverse = glm::inverse(camera->pMatrix);
 	camera->vMatrix_Inverse = glm::inverse(camera->vMatrix);
 }
