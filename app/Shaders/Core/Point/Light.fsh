@@ -46,7 +46,7 @@ const vec3 sampleOffsetDirections[20] = vec3[] (
 #define FactorAmt 1.0 / 20
 float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float bias)                                                  
 {		
-	const float FragmentDepth 		= (length(LightDirection) - bias - EPSILON) / LightRadius2;
+	const float FragmentDepth 		= (length(LightDirection) / LightRadius2) - EPSILON - bias;
 	const float diskRadius 			= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
 	
 	float Factor = 0.0f, depth;
@@ -86,7 +86,7 @@ void main(void)
 	
 	// Shadow
 	const float cosAngle			= saturate(1.0f - NdotL);
-	const float bias 				= clamp(0.005 * tan(acos(NdotL)), 0.0, 0.01);
+	const float bias 				= clamp(0.05f * tan(acos(NdotL)), 0.0f, 0.05f);
 	const vec3 scaledNormalOffset	= data.World_Normal * (cosAngle * ShadowSize_Recip);
 	const float ShadowFactor 		= CalcShadowFactor(-(LightDirection + scaledNormalOffset), ViewDistance, bias);
 	if (ShadowFactor <= EPSILON) 	discard; // Discard if completely in shadow

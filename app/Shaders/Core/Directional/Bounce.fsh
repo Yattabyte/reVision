@@ -7,7 +7,7 @@ layout (location = 1) uniform vec3 BBox_Max = vec3(1);
 layout (location = 2) uniform vec3 BBox_Min = vec3(-1);
 layout (location = 3) uniform int samples = 16;
 layout (location = 4) uniform float resolution = 16.0f;
-layout (location = 5) uniform float spread = 0.001f;
+layout (location = 5) uniform float spread = 0.05f;
 layout (location = 6) uniform float R_wcs = 0.0f;
 
 layout (location = 0) flat in mat4 CamVMatrix;

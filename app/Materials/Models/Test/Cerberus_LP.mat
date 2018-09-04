@@ -1,0 +1,9 @@
+PBR
+{
+	albedo string Test\\Cerberus_A.tga
+	normal string Test\\Cerberus_N.tga
+	metalness string Test\\Cerberus_M.tga
+	roughness string Test\\Cerberus_R.tga
+	height string Test\\Cerberus_H.tga
+	occlusion string Test\\Cerberus_AO.tga
+}

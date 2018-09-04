@@ -72,6 +72,7 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) override {
+
 		if (!m_shapeQuad->existsYet() || !m_shaderRecon->existsYet())
 			return;
 

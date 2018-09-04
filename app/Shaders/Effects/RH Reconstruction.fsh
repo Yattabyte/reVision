@@ -4,6 +4,7 @@
 #pragma optionNV(inline all)
 #pragma optionNV(strict on)
 #pragma optionNV(unroll all)
+#define EPSILON 0.00001
 
 layout (binding = 0) uniform sampler2D ColorMap;
 layout (binding = 1) uniform sampler2D ViewNormalMap;
@@ -17,7 +18,7 @@ layout (binding = 7) uniform sampler3D VolumeMap4;
 layout (location = 1) uniform vec3 BBox_Max = vec3(1);
 layout (location = 2) uniform vec3 BBox_Min = vec3(-1);
 layout (location = 3) uniform float resolution = 16.0f;
-layout (location = 4) uniform float factor = 25.0f;
+layout (location = 4) uniform float factor = 1.0f;
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in mat4 CamPInverse;
@@ -53,14 +54,14 @@ vec3 CalculateGI(in vec3 WorldPos, in vec3 Normal, in vec3 extents, in vec3 uvw)
 		D[i] = normalize( vec3(0.1, 0.8 * cos( (rnd.x * 1.5 + i) * 6.2832 / 3.0 ), 0.8 * sin( (rnd.x * 1.5 + i) * 6.2832 / 3.0) ) );    
 
 	float extents_length		= length(extents / resolution);
-    vec3 v_rand 				= vec3(0.5, 0.5, 0.5); 
+    vec3 v_rand 				= vec3(0.5f); 
     vec3 tangent 				= normalize(cross(Normal, v_rand)); 
     vec3 bitangent 				= cross(Normal, tangent); 
 	vec3 GI						= vec3(0.0f);	
-	float denom 				= 0.05;
+	float denom 				= EPSILON;
     for (int i = 0; i < 4; ++i) { 
 		vec3 SampleDir 			= Normal * D[i].x + tangent * D[i].y + bitangent * D[i].z;
-        vec3 uvw_new 			= 0.5 * Normal / resolution + SampleDir / resolution + uvw;
+        vec3 uvw_new 			= 0.5f * Normal / resolution + SampleDir / resolution + uvw;
 
 		vec4 rh_shr    			= texture(VolumeMap2, uvw_new); 
 		vec4 rh_shg    			= texture(VolumeMap3, uvw_new); 
@@ -69,7 +70,7 @@ vec3 CalculateGI(in vec3 WorldPos, in vec3 Normal, in vec3 extents, in vec3 uvw)
 		vec3 rh_pos    			= BBox_Min.xyz + extents * uvw_new; 
 		float dist 				= length(rh_pos - WorldPos) / extents_length; 
 		
-		float contribution		= dist > 0.005 ? 1.0 : 0.0;
+		float contribution		= dist > 0.005f ? 1.0f : 0.0f;
 		GI					   += contribution * SH2RGB(rh_shr, rh_shg, rh_shb, -Normal);
 		denom				   += contribution;
     } 
@@ -88,6 +89,5 @@ void main()
 	// We want it to clamp to edge and repeat the edge texture, as we aren't using any other cascades
 	const vec3 extents 				= (BBox_Max.xyz - BBox_Min.xyz); 
 	const vec3 uvw 					= (data.World_Pos.xyz - BBox_Min.xyz) / extents; 
-	const vec3 GI_Irradiance 		= CalculateGI(data.World_Pos.xyz, data.World_Normal, extents, uvw);		
-	LightingColor					= GI_Irradiance;
+	LightingColor 					= CalculateGI(data.World_Pos.xyz, data.World_Normal, extents, uvw);	
 }

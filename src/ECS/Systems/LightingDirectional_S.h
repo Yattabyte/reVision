@@ -226,7 +226,7 @@ protected:
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians(cameraBuffer->data->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-		const float near_plane = -0.1f;
+		const float near_plane = -CAMERA_NEAR_PLANE;
 		const float far_plane = -m_drawDistance;
 		const float cascadeEnd[2] = {
 			near_plane, (far_plane * 0.3f)
@@ -238,7 +238,7 @@ protected:
 			cascadeEnd[1] * tanHalfVFOV
 		};
 		glm::vec3 frustumCorners[8] = {
-			// near face65
+			// near face
 			glm::vec3(points[0], points[2], cascadeEnd[0]),
 			glm::vec3(-points[0], points[2], cascadeEnd[0]),
 			glm::vec3(points[0], -points[2], cascadeEnd[0]),
@@ -250,7 +250,7 @@ protected:
 			glm::vec3(-points[1], -points[3], cascadeEnd[1])
 		};
 		glm::vec3 middle(0, 0, ((cascadeEnd[1] - cascadeEnd[0]) / 2.0f) + cascadeEnd[0]);
-		glm::vec3 aabb(glm::length(frustumCorners[7] - middle));
+		glm::vec3 aabb(glm::distance(frustumCorners[7], middle));
 		const glm::vec3 volumeUnitSize = (aabb - -aabb) / float(m_bounceSize);
 		const glm::vec3 frustumpos = (CamInv * glm::vec4(middle, 1.0f));
 		const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
@@ -309,8 +309,7 @@ private:
 	}
 	void calculateCascades() {
 		auto & graphics = m_engine->getGraphicsModule();
-		const auto cameraBuffer = graphics.m_cameraBuffer.getElement(graphics.getActiveCamera());
-		const glm::mat4 CamInv = glm::inverse(cameraBuffer->data->vMatrix);
+		const auto cameraBuffer = graphics.m_cameraBuffer.getElement(graphics.getActiveCamera());	
 		const glm::vec2 &size = cameraBuffer->data->Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians(cameraBuffer->data->FOV) / 2.0f;
@@ -321,8 +320,8 @@ private:
 		for (int x = 1; x < NUM_CASCADES + 1; ++x) {
 			const float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
 			const float cUni = near_plane + ((far_plane - near_plane) * x / NUM_CASCADES);
-			const float lambda = 0.3f;
-			m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
+			const float lambda = 0.75f;
+			m_cascadeEnd[x] = (lambda*cLog) + ((1.0f - lambda)*cUni);
 		}
 		for (int i = 0; i < NUM_CASCADES; i++) {			
 			float points[4] = {
@@ -332,7 +331,7 @@ private:
 				m_cascadeEnd[i + 1] * tanHalfVFOV
 			};
 			glm::vec3 frustumCorners[8] = {
-				// near face65
+				// near face
 				glm::vec3(points[0], points[2], m_cascadeEnd[i]),
 				glm::vec3(-points[0], points[2], m_cascadeEnd[i]),
 				glm::vec3(points[0], -points[2], m_cascadeEnd[i]),
@@ -349,7 +348,7 @@ private:
 
 			// Measure distance from middle to the furthest point of frustum slice
 			// Use to make a bounding sphere, but then convert into a bounding box
-			m_aabb[i] = glm::vec3(glm::length(frustumCorners[7] - m_middle[i]));
+			m_aabb[i] = glm::vec3(glm::distance(frustumCorners[7], m_middle[i]));
 		}	
 	}
 

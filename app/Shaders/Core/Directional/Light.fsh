@@ -40,12 +40,12 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 	vec2(1,  -1), vec2(1,  0), vec2(1,  1)
 );
 #define FactorAmt 1.0 / 9
-float CalcShadowFactor(in int Index, in vec4 LightSpacePos)                                                  
+float CalcShadowFactor(in int Index, in vec4 LightSpacePos, in float bias)                                                  
 {     
 	// Bring fragment coordinates from world space into light space, then into texture spaces
 	const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
-    const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                                        
-    const float FragmentDepth 			= 0.5f * ProjCoords.z + 0.5f;  
+    const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                    
+    const float FragmentDepth 			= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 	  
 	
 	float Factor = 0.0f, depth;
 	vec3 FinalCoord;
@@ -73,13 +73,14 @@ void main()
 	
 	// Shadow
 	const float cosAngle					= saturate(1.0f - NdotL);
+	const float bias 						= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
 	const vec4 scaledNormalOffset			= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
 	int index 								= 0;
-	for (; index < 4; ++index) 
+	for (; index < NUM_CASCADES; ++index) 
 		if (-data.View_Pos.z <= CascadeEndClipSpace[index]) 
 			break;			
 	const vec3 LightPseudoPos				= CamEyePosition + (LightDirection.xyz);
-	float ShadowFactor 						= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset));	
+	float ShadowFactor 						= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);	
 	if (ShadowFactor <= EPSILON)			discard; // Discard if completely in shadow
 		
 	// Direct Light	
