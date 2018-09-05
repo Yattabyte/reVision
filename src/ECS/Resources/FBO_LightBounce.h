@@ -43,14 +43,14 @@ struct FBO_LightBounce : FBO_Base {
 	}
 	virtual void clear() override {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		for (size_t x = 0; x < RH_TEXTURE_COUNT; ++x)
+		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(m_fboID, GL_COLOR, x, clearColor);
 	}
 	virtual void bindForWriting() override {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}
 	virtual void bindForReading(const GLuint & binding = 0) override {
-		for (int x = 0; x < RH_TEXTURE_COUNT; ++x)
+		for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glBindTextureUnit(binding + x, m_textureIDS[x]);
 	}
 	virtual void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) override {
