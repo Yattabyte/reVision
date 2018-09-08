@@ -1,4 +1,4 @@
-#include "Modules\Graphics\Resources\VisualFX.h"
+#include "Modules\Graphics\Resources\Common\VisualFX.h"
 #include "Engine.h"
 
 

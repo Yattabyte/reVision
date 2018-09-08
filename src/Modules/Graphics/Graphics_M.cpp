@@ -1,6 +1,8 @@
 #include "Modules\Graphics\Graphics_M.h"
+#include "Modules\Graphics\Resources\Common\RH_Volume.h"
 #include "Modules\World\World_M.h"
 #include "Engine.h"
+#include <memory>
 #include <random>
 
 /* System Types Used */
@@ -105,6 +107,7 @@ void Graphics_Module::initialize()
 	GLint size = sizeof(Camera_Buffer), offsetAlignment = 0;
 	glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
 	m_cameraBuffer.setOffsetAlignment(size % offsetAlignment);
+	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
 	// Rendering Pipeline Generation
 	// Logical Systems
@@ -114,13 +117,13 @@ void Graphics_Module::initialize()
 	// Geometry Rendering
 	addSystem(new PropRendering_System(m_engine, &m_geometryFBO, m_shaderCull, m_shaderGeometry));
 	// Light Rendering
-	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
+	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer, m_volumeRH));
 	addSystem(new LightingSpot_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	// Initiate specialized effects techniques
 	m_fxTechs.push_back(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO));
+	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
 	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
@@ -152,7 +155,7 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	m_reflectionFBO.clear();
 	m_bounceFBO.clear();
 	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
-	m_cameraBuffer.getElement(getActiveCamera())->wait();
+	m_volumeRH->updateVolume(*m_cameraBuffer.getElement(getActiveCamera()));
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);
 
 	// Post Processing
