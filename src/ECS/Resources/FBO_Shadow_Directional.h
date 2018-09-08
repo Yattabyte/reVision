@@ -38,8 +38,8 @@ struct FBO_Shadow_Directional {
 	}
 	void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
 		m_size = size;
-		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB16F, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB16F, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
 		glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
 	void clear(const GLint & zOffset) {

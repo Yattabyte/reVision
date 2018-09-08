@@ -4,12 +4,14 @@
 
 #include "Modules\Engine_Module.h"
 #include "Modules\Graphics\Resources\Effects\Effect_Base.h"
-#include "Modules\Graphics\Resources\VisualFX.h"
+#include "Modules\Graphics\Resources\Common\RH_Volume.h"
+#include "Modules\Graphics\Resources\Common\VisualFX.h"
 #include "Assets\Asset_Shader.h"
 #include "ECS\Systems\ecsSystem.h"
 #include "ECS\Resources\FBO_Geometry.h"
 #include "ECS\Resources\FBO_Lighting.h"
 #include "ECS\Resources\FBO_Reflection.h"
+#include "ECS\Resources\FBO_LightBounce.h"
 #include "ECS\Components\Camera_C.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -64,6 +66,7 @@ public:
 	FBO_Geometry				m_geometryFBO;
 	FBO_Lighting				m_lightingFBO;
 	FBO_Reflection				m_reflectionFBO;
+	FBO_LightBounce				m_bounceFBO;
 	VB_Element<Camera_Buffer> *	m_defaultCamera;
 	StaticBuffer				m_cameraIndexBuffer;
 	VectorBuffer<Camera_Buffer>	m_cameraBuffer;
@@ -77,6 +80,7 @@ private:
 	glm::ivec2					m_renderSize = glm::ivec2(1);
 	ECSSystemList				m_renderingSystems;
 	std::vector<Effect_Base*>	m_fxTechs;
+	std::shared_ptr<RH_Volume>	m_volumeRH;
 	VisualFX					m_visualFX;
 	Shared_Asset_Shader			m_shaderCull, m_shaderGeometry;
 };

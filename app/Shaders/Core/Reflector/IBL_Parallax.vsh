@@ -1,7 +1,6 @@
 /* Reflector - lighting shader. */
 #version 460
 #extension GL_ARB_shader_draw_parameters : enable
-#package "camera"
 
 layout (location = 0) in vec3 vertex;
 
@@ -12,7 +11,14 @@ struct Reflection_Struct {
 	vec4 BoxScale;
 	int CubeSpot;
 };
-
+layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {	
+	mat4 pMatrix;
+	mat4 vMatrix;
+	mat4 pMatrix_Inverse;
+	mat4 vMatrix_Inverse;
+	vec3 EyePosition;
+	vec2 CameraDimensions;
+};
 layout (std430, binding = 3) readonly buffer Reflection_Index_Buffer {
 	uint reflectionIndexes[];
 };
@@ -20,11 +26,25 @@ layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 	Reflection_Struct reflectorBuffers[];
 };
 
-layout (location = 0) flat out uint ReflectorIndex;
+layout (location = 0) flat out mat4 mMatrix;
+layout (location = 4) flat out mat4 rotMatrix;
+layout (location = 8) flat out vec4 BoxCamPos;
+layout (location = 9) flat out vec4 BoxScale;
+layout (location = 10) flat out int CubeSpot;
+layout (location = 11) flat out mat4 CamPInverse;
+layout (location = 15) flat out mat4 CamVInverse;
+layout (location = 19) flat out vec2 CamDimensions;
 
 void main(void)
 {	
-	ReflectorIndex 		= reflectionIndexes[gl_InstanceID];
-	gl_Position 		= cameraBuffer.pMatrix * cameraBuffer.vMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
+	const uint ReflectorIndex = reflectionIndexes[gl_InstanceID];
+	mMatrix = reflectorBuffers[ReflectorIndex].mMatrix;
+	rotMatrix = reflectorBuffers[ReflectorIndex].rotMatrix;
+	BoxCamPos = reflectorBuffers[ReflectorIndex].BoxCamPos;
+	BoxScale = reflectorBuffers[ReflectorIndex].BoxScale;
+	CubeSpot = reflectorBuffers[ReflectorIndex].CubeSpot;
+	CamPInverse = pMatrix_Inverse;
+	CamVInverse = vMatrix_Inverse;
+	CamDimensions = CameraDimensions;
+	gl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1);	
 }
-

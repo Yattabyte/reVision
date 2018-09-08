@@ -63,12 +63,10 @@ struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 		const glm::mat4 pMatrix_Inverse = glm::inverse(pMatrix);
 		for (int x = 0; x < 6; ++x) {
 			component->m_Cameradata[x] = m_camElementBuffer->newElement();
-			component->m_Cameradata[x]->data->NearPlane = 0.01f;
 			component->m_Cameradata[x]->data->FarPlane = largest;
 			component->m_Cameradata[x]->data->EyePosition = position;
 			component->m_Cameradata[x]->data->Dimensions = m_envmapFBO->m_size;
 			component->m_Cameradata[x]->data->FOV = 90.0f;
-			component->m_Cameradata[x]->data->Gamma = 1.0f;
 			component->m_Cameradata[x]->data->pMatrix = pMatrix;
 			component->m_Cameradata[x]->data->pMatrix_Inverse = pMatrix_Inverse;
 			component->m_Cameradata[x]->data->vMatrix = vMatrices[x];

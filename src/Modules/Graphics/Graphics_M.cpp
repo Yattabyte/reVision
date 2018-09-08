@@ -1,6 +1,8 @@
 #include "Modules\Graphics\Graphics_M.h"
+#include "Modules\Graphics\Resources\Common\RH_Volume.h"
 #include "Modules\World\World_M.h"
 #include "Engine.h"
+#include <memory>
 #include <random>
 
 /* System Types Used */
@@ -16,6 +18,7 @@
 /* Post Processing Techniques Used */
 #include "Modules\Graphics\Resources\Effects\Skybox.h"
 #include "Modules\Graphics\Resources\Effects\SSAO.h"
+#include "Modules\Graphics\Resources\Effects\Radiance_Hints.h"
 #include "Modules\Graphics\Resources\Effects\Join_Reflections.h"
 #include "Modules\Graphics\Resources\Effects\SSR.h"
 #include "Modules\Graphics\Resources\Effects\Bloom.h"
@@ -29,7 +32,6 @@ Graphics_Module::~Graphics_Module()
 {
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 	m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);	
-	m_engine->removePrefCallback(PreferenceState::C_GAMMA, this);
 	m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
 }
 
@@ -57,13 +59,11 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
+	const GLuint m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
+	m_bounceFBO.resize(m_bounceSize);
 	const float farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) {
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
-	});
-	const float gamma = m_engine->addPrefCallback<float>(PreferenceState::C_GAMMA, this, [&](const float &f) {
-		m_defaultCamera->data->Gamma = f;
-		m_cameraBuffer.getElement(m_activeCamera)->data->Gamma = f;
 	});
 	
 	// Camera Setup
@@ -75,10 +75,8 @@ Graphics_Module::Graphics_Module(Engine * engine)
 	m_defaultCamera->data->vMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
 	m_defaultCamera->data->EyePosition = glm::vec3(0.0f);
 	m_defaultCamera->data->Dimensions = m_renderSize;
-	m_defaultCamera->data->NearPlane = 0.01f;
 	m_defaultCamera->data->FarPlane = farPlane;
 	m_defaultCamera->data->FOV = 110.0f;
-	m_defaultCamera->data->Gamma = gamma;
 	updateCamera(m_defaultCamera->data);
 	setActiveCamera(m_defaultCamera->index);
 
@@ -109,6 +107,7 @@ void Graphics_Module::initialize()
 	GLint size = sizeof(Camera_Buffer), offsetAlignment = 0;
 	glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
 	m_cameraBuffer.setOffsetAlignment(size % offsetAlignment);
+	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
 	// Rendering Pipeline Generation
 	// Logical Systems
@@ -118,12 +117,13 @@ void Graphics_Module::initialize()
 	// Geometry Rendering
 	addSystem(new PropRendering_System(m_engine, &m_geometryFBO, m_shaderCull, m_shaderGeometry));
 	// Light Rendering
-	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
+	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer, m_volumeRH));
 	addSystem(new LightingSpot_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
 	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	// Initiate specialized effects techniques
 	m_fxTechs.push_back(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
 	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
@@ -153,8 +153,9 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	m_geometryFBO.clear();
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
+	m_bounceFBO.clear();
 	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
-	m_cameraBuffer.getElement(getActiveCamera())->wait();
+	m_volumeRH->updateVolume(*m_cameraBuffer.getElement(getActiveCamera()));
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);
 
 	// Post Processing
@@ -176,7 +177,7 @@ void Graphics_Module::updateCamera(Camera_Buffer * camera)
 	float ar = std::max(1.0f, camera->Dimensions.x) / std::max(1.0f, camera->Dimensions.y);
 	float horizontalRad = glm::radians(camera->FOV);
 	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	camera->pMatrix = glm::perspective(verticalRad, ar, camera->NearPlane, camera->FarPlane);
+	camera->pMatrix = glm::perspective(verticalRad, ar, CAMERA_NEAR_PLANE, camera->FarPlane);
 	camera->pMatrix_Inverse = glm::inverse(camera->pMatrix);
 	camera->vMatrix_Inverse = glm::inverse(camera->vMatrix);
 }

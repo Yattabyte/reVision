@@ -116,11 +116,13 @@ public:
 		glDepthMask(GL_TRUE);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_FRONT);
+		glFrontFace(GL_CW);
 		m_shaderShadow->bind();
 		glBindVertexArray(*m_modelsVAO);
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, size, 0);
 
+		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
 	}
 	

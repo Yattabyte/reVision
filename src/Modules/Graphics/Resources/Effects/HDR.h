@@ -21,7 +21,9 @@ public:
 		glDeleteTextures(1, &m_textureID);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		m_engine->removePrefCallback(PreferenceState::C_GAMMA, this);
 		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
+		if (m_shaderHDR) m_shaderHDR->removeCallback(this);
 	}
 	/** Constructor. */
 	HDR(Engine * engine, FBO_Base * lightingFBO)
@@ -30,16 +32,17 @@ public:
 		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
+		// Preference Callbacks
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		m_gamma = m_engine->addPrefCallback<float>(PreferenceState::C_GAMMA, this, [&](const float &f) { m_gamma = f; });
+
 		// Asset-Finished Callbacks
 		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
 		});
-
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 
 		// GL loading
 		glCreateFramebuffers(1, &m_fboID);
@@ -66,11 +69,12 @@ public:
 		if (!m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 
 		m_shaderHDR->bind();
 		m_shaderHDR->setUniform(0, 1.0f);
+		m_shaderHDR->setUniform(1, m_gamma);
 		m_lightingFBO->bindForReading();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -97,6 +101,7 @@ private:
 	FBO_Base * m_lightingFBO = nullptr;
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
+	float m_gamma = 1.0f;
 	Shared_Asset_Shader m_shaderHDR;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;

@@ -43,7 +43,7 @@ public:
 			transform.m_orientation = quat_cast(rotationMatrix);
 
 			// Determine how much to move in local space
-			const float velocity = 50.0f;
+			const float velocity = 25.0f;
 			const float moveAmount = velocity * deltaTime;
 			glm::vec3 deltaPosition(0.0f);
 			if (actionState.at(ActionState::FORWARD) > 0.5f)

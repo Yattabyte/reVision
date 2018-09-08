@@ -53,7 +53,6 @@ struct LightDirectionalShadow_Buffer {
 /** A directional light shadow component, formatted for 4 parallel split cascaded shadow maps. */
 struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalShadow_Component> {
 	float m_updateTime = 0.0f;
-	float m_cascadeEnd[5];
 	int m_shadowSpot = 0;
 	size_t m_visSize[2];
 	float m_shadowSize = 0.0f;
@@ -62,8 +61,8 @@ struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalSh
 };
 /** A constructor to aid in creation. */
 struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirectionalShadow_Component> {
-	LightDirectionalShadow_Constructor(const float & drawDistance, VectorBuffer<LightDirectionalShadow_Buffer> * const elementBuffer, FBO_Shadow_Directional * const shadowFBO) 
-		: m_drawDistance(drawDistance), m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
+	LightDirectionalShadow_Constructor(VectorBuffer<LightDirectionalShadow_Buffer> * const elementBuffer, FBO_Shadow_Directional * const shadowFBO) 
+		: m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
 	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto position = castAny(parameters[0], glm::vec3(0.0f));
 		auto orientation = castAny(parameters[1], glm::quat(1, 0, 0, 0));
@@ -73,16 +72,7 @@ struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirecti
 		glm::mat4 sunTransform = glm::mat4_cast(orientation);
 		glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 		component->m_mMatrix = sunModelMatrix;
-		component->m_data->data->lightV = sunModelMatrix;
-		float near_plane = -0.1f;
-		float far_plane = -m_drawDistance;
-		component->m_cascadeEnd[0] = near_plane;
-		for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-			const float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
-			const float cUni = near_plane + ((far_plane - near_plane) * x / NUM_CASCADES);
-			const float lambda = 0.3f;
-			component->m_cascadeEnd[x] = (lambda*cLog) + ((1 - lambda)*cUni);
-		}
+		component->m_data->data->lightV = sunModelMatrix;		
 		component->m_data->data->Shadow_Spot = m_shadowCount;
 		component->m_updateTime = 0.0f;
 		component->m_shadowSpot = m_shadowCount;
@@ -97,7 +87,6 @@ struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirecti
 		return { component, component->ID };
 	}
 	GLuint m_shadowCount = 0;
-	float m_drawDistance = 100.0f;
 	VectorBuffer<LightDirectionalShadow_Buffer> * m_elementBuffer;
 	FBO_Shadow_Directional * m_shadowFBO;
 };

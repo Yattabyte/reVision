@@ -7,7 +7,6 @@
 #pragma optionNV(inline all)
 #pragma optionNV(strict on)
 #pragma optionNV(unroll all)
-#package "camera"
 
 // SSR Variables
 const float rayStep = 0.01f;
@@ -23,6 +22,13 @@ layout (binding = 2) uniform sampler2D SpecularMap;
 layout (binding = 3) uniform sampler2D DepthMap;
 
 layout (location = 0) in vec2 TexCoord;
+layout (location = 1) flat in mat4 CamPMatrix;
+layout (location = 5) flat in mat4 CamVMatrix;
+layout (location = 9) flat in mat4 CamPInverse;
+layout (location = 13) flat in mat4 CamVInverse;
+layout (location = 17) flat in vec3 CamEyePosition;
+layout (location = 18) flat in vec2 CamDimensions;
+
 layout (location = 0) out vec4 LightingColor;
 
 struct ViewData {
@@ -41,18 +47,18 @@ void GetFragmentData(in vec2 TexCoord, out ViewData data)
 	data.View_Normal				= Texture2.rgb;
 	data.View_Depth					= Texture4.r;
 	
-	data.View_Pos					= cameraBuffer.pMatrix_Inverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
-    data.World_Pos 					= cameraBuffer.vMatrix_Inverse * data.View_Pos;
+	data.View_Pos					= CamPInverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
+    data.World_Pos 					= CamVInverse * data.View_Pos;
 	data.View_Pos 					= data.View_Pos / data.View_Pos.w;
 	data.World_Pos 					= data.World_Pos / data.World_Pos.w;
-    data.World_Normal 				= normalize((cameraBuffer.vMatrix_Inverse * vec4(data.View_Normal, 0))).xyz;
+    data.World_Normal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
 }
 
 vec3 RayMarch(vec3 SSReflectionVector, vec3 SSPos) 
 {
 	vec3 raySample, prevRaySample, minRaySample, maxRaySample, midRaySample;
 	float depthValue;
-	const float DitherOffset = texelFetch(BayerMatrix, ivec2(TexCoord * cameraBuffer.CameraDimensions), 0).r ;
+	const float DitherOffset = texelFetch(BayerMatrix, ivec2(TexCoord * CamDimensions), 0).r ;
 	for (uint i = 0; i < maxSteps ; ++i) {	
 		prevRaySample = raySample;
         raySample = (i * rayStep) * SSReflectionVector + SSPos + DitherOffset;
@@ -86,14 +92,14 @@ void main(void)
 	
 	// Variables
 	const vec3 SSPos	 				= vec3(TexCoord, data.View_Depth);
-    const vec3 WorldNormal 				= normalize((cameraBuffer.vMatrix_Inverse * vec4(data.View_Normal, 0))).xyz;
-	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - cameraBuffer.EyePosition);
+    const vec3 WorldNormal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
+	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - CamEyePosition);
 	const vec3 ReflectionVector 		= reflect(CameraVector, WorldNormal);
 	const vec3 ViewPos_Unit				= normalize(data.View_Pos.xyz); 	
 	const vec3 reflected 				= normalize(reflect(ViewPos_Unit, normalize(data.View_Normal))); 
 	const float rDotV					= dot(reflected, ViewPos_Unit);
 	const vec4 PointAlongReflectionVec 	= vec4(maxDistance * ReflectionVector + data.World_Pos.xyz, 1.0f);
-	vec4 SSReflectionPoint				= cameraBuffer.pMatrix * cameraBuffer.vMatrix * PointAlongReflectionVec;
+	vec4 SSReflectionPoint				= CamPMatrix * CamVMatrix * PointAlongReflectionVec;
 	SSReflectionPoint 					/= SSReflectionPoint.w;
 	SSReflectionPoint.xy 				= SSReflectionPoint.xy * 0.5 + 0.5;
 	const vec3 SSReflectionVector		= normalize(SSReflectionPoint.xyz - SSPos.xyz);

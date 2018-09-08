@@ -54,6 +54,8 @@ public:
 
 		C_ENVMAP_SIZE,
 
+		C_RH_BOUNCE_SIZE,
+
 		C_SSR,
 
 		C_FXAA,
@@ -91,6 +93,8 @@ public:
 			"C_SHADOW_QUALITY",
 
 			"C_ENVMAP_SIZE",
+
+			"C_RH_BOUNCE_SIZE",
 
 			"C_SSR",
 

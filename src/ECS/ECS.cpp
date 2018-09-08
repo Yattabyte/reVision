@@ -57,8 +57,8 @@ void ECS::updateSystems(ECSSystemList & systems, const float & deltaTime)
 			std::vector< std::vector<BaseECSComponent*> > components(array.size() / typeSize);
 			for (size_t j = 0, k = 0; j < array.size(); j += typeSize, ++k) 
 				components[k].push_back((BaseECSComponent*)&array[j]);
-			
-			systems[i]->updateComponents(deltaTime, components);
+			if (components.size())
+				systems[i]->updateComponents(deltaTime, components);
 		}
 		else 
 			updateSystemWithMultipleComponents(systems, i, deltaTime, componentTypes);
@@ -157,7 +157,8 @@ void ECS::updateSystemWithMultipleComponents(ECSSystemList & systems, const unsi
 		if (isValid) 
 			components.push_back(componentParam);		
 	}
-	systems[index]->updateComponents(deltaTime, components);
+	if (components.size())
+		systems[index]->updateComponents(deltaTime, components);
 }
 
 unsigned int ECS::findLeastCommonComponent(const std::vector<unsigned int>& componentTypes, const std::vector<unsigned int> & componentFlags)

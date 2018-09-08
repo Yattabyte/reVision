@@ -37,7 +37,7 @@ void World_Module::initialize()
 	m_constructorMap["BasicPlayer_Component"] = new BasicPlayer_Constructor();
 	m_constructorMap["BoundingSphere_Component"] = new BoundingSphere_Constructor();
 	m_constructorMap["LightDirectional_Component"] = new LightDirectional_Constructor(&lightDirSys.m_lightBuffer);
-	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(m_engine->getPreference<float>(PreferenceState::C_DRAW_DISTANCE), &lightDirSys.m_shadowBuffer, &lightDirSys.m_shadowFBO);
+	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(&lightDirSys.m_shadowBuffer, &lightDirSys.m_shadowFBO);
 	m_constructorMap["LightPoint_Component"] = new LightPoint_Constructor(&lightPointSys.m_lightBuffer);
 	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPointSys.m_shadowBuffer, &lightPointSys.m_shadowFBO);
 	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpotSys.m_lightBuffer);

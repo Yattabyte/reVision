@@ -157,7 +157,7 @@ private:
 		m_shaderCopy->bind();
 		m_lightingFBO->bindForReading();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboMipsID);
-		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f };
+		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboMipsID, GL_COLOR, 0, clearColor);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
