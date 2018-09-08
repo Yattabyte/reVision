@@ -29,7 +29,7 @@ layout (binding = 4) uniform sampler3D Noise;       		// A pre-computed 3D noise
 // #define DEPTH_OCCL    // if defined, depth-based RSM sample occlusion is enabled.
 
 
-vec4 SHBasis (const in vec3 dir) 
+vec4 SHBasis(const in vec3 dir) 
 { 
     float L00  					= 0.282095; 
     float L1_1 					= 0.488603 * dir.y; 
@@ -38,7 +38,7 @@ vec4 SHBasis (const in vec3 dir)
     return vec4 				(L11, L1_1, L10, L00); 
 }
 
-void RGB2SH (in vec3 dir, in vec3 L, out vec4 sh_r, out vec4 sh_g, out vec4 sh_b) 
+void RGB2SH(in vec3 dir, in vec3 L, out vec4 sh_r, out vec4 sh_g, out vec4 sh_b) 
 { 
     vec4 sh 					= SHBasis (dir); 
     sh_r 						= L.r * sh; 
