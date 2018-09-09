@@ -2,7 +2,7 @@
 #ifndef FRAMETIME_COUNTER_H
 #define FRAMETIME_COUNTER_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"

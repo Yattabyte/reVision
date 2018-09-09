@@ -2,7 +2,6 @@
 #include "Modules\Graphics\Graphics_M.h"
 #include "Utilities\IO\Level_IO.h"
 #include "Engine.h"
-#include "glm\gtc\matrix_transform.hpp"
 
 /* Component Types Used */
 #include "ECS/Components/BasicPlayer_C.h"
@@ -13,15 +12,12 @@
 #include "ECS/Components/LightPoint_C.h"
 #include "ECS/Components/Reflector_C.h"
 
-/* System Types Used */
-#include "ECS\Systems\PlayerMovement_S.h"
-#include "ECS\Systems\PropRendering_S.h"
-#include "ECS\Systems\PropBSphere_S.h"
-#include "ECS\Systems\SkeletonAnimation_S.h"
-#include "ECS\Systems\LightingDirectional_S.h"
-#include "ECS\Systems\LightingSpot_S.h"
-#include "ECS\Systems\LightingPoint_S.h"
-#include "ECS\Systems\Reflector_S.h"
+/* Effect Types Used */
+#include "Modules\Graphics\Effects\LightDirectional_FX.h"
+#include "Modules\Graphics\Effects\LightPoint_FX.h"
+#include "Modules\Graphics\Effects\LightSpot_FX.h"
+#include "Modules\Graphics\Effects\PropRendering_FX.h"
+#include "Modules\Graphics\Effects\Reflector_FX.h"
 
 
 World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
@@ -29,22 +25,22 @@ World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
 void World_Module::initialize()
 {
 	auto & graphics = m_engine->getGraphicsModule();
-	auto & lightDirSys = *graphics.getSystem<LightingDirectional_System>();
-	auto & lightPointSys = *graphics.getSystem<LightingPoint_System>();
-	auto & lightSpotSys = *graphics.getSystem<LightingSpot_System>();
-	auto & propSys = *graphics.getSystem<PropRendering_System>();
-	auto & refSys = *graphics.getSystem<Reflector_System>();
+	auto & lightDir = *graphics.getEffect<LightDirectional_Effect>();
+	auto & lightPoint = *graphics.getEffect<LightPoint_Effect>();
+	auto & lightSpot = *graphics.getEffect<LightSpot_Effect>();
+	auto & prop = *graphics.getEffect<PropRendering_Effect>();
+	auto & ref = *graphics.getEffect<Reflector_Effect>();
 	m_constructorMap["BasicPlayer_Component"] = new BasicPlayer_Constructor();
 	m_constructorMap["BoundingSphere_Component"] = new BoundingSphere_Constructor();
-	m_constructorMap["LightDirectional_Component"] = new LightDirectional_Constructor(&lightDirSys.m_lightBuffer);
-	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(&lightDirSys.m_shadowBuffer, &lightDirSys.m_shadowFBO);
-	m_constructorMap["LightPoint_Component"] = new LightPoint_Constructor(&lightPointSys.m_lightBuffer);
-	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPointSys.m_shadowBuffer, &lightPointSys.m_shadowFBO);
-	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpotSys.m_lightBuffer);
-	m_constructorMap["LightSpotShadow_Component"] = new LightSpotShadow_Constructor(&lightSpotSys.m_shadowBuffer, &lightSpotSys.m_shadowFBO);
-	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &propSys.m_propBuffer);
-	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &refSys.m_reflectorBuffer, &refSys.m_envmapFBO);
-	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &propSys.m_skeletonBuffer);
+	m_constructorMap["LightDirectional_Component"] = new LightDirectional_Constructor(&lightDir.m_lightBuffer);
+	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(&lightDir.m_shadowBuffer, &lightDir.m_shadowFBO);
+	m_constructorMap["LightPoint_Component"] = new LightPoint_Constructor(&lightPoint.m_lightBuffer);
+	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPoint.m_shadowBuffer, &lightPoint.m_shadowFBO);
+	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpot.m_lightBuffer);
+	m_constructorMap["LightSpotShadow_Component"] = new LightSpotShadow_Constructor(&lightSpot.m_shadowBuffer, &lightSpot.m_shadowFBO);
+	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &prop.m_propBuffer);
+	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO);
+	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer);
 }
 
 void World_Module::loadWorld()

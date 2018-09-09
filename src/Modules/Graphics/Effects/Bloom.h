@@ -2,8 +2,8 @@
 #ifndef BLOOM_H
 #define BLOOM_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
-#include "Modules\Graphics\Resources\Common\VisualFX.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Common\VisualFX.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"

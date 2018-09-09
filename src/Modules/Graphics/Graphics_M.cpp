@@ -1,5 +1,5 @@
 #include "Modules\Graphics\Graphics_M.h"
-#include "Modules\Graphics\Resources\Common\RH_Volume.h"
+#include "Modules\Graphics\Common\RH_Volume.h"
 #include "Modules\World\World_M.h"
 #include "Engine.h"
 #include <memory>
@@ -10,22 +10,27 @@
 #include "ECS\Systems\PropRendering_S.h"
 #include "ECS\Systems\PropBSphere_S.h"
 #include "ECS\Systems\SkeletonAnimation_S.h"
-#include "ECS\Systems\LightingDirectional_S.h"
-#include "ECS\Systems\LightingSpot_S.h"
-#include "ECS\Systems\LightingPoint_S.h"
+#include "ECS\Systems\LightDirectional_S.h"
+#include "ECS\Systems\LightSpot_S.h"
+#include "ECS\Systems\LightPoint_S.h"
 #include "ECS\Systems\Reflector_S.h"
 
 /* Post Processing Techniques Used */
-#include "Modules\Graphics\Resources\Effects\Skybox.h"
-#include "Modules\Graphics\Resources\Effects\SSAO.h"
-#include "Modules\Graphics\Resources\Effects\Radiance_Hints.h"
-#include "Modules\Graphics\Resources\Effects\Join_Reflections.h"
-#include "Modules\Graphics\Resources\Effects\SSR.h"
-#include "Modules\Graphics\Resources\Effects\Bloom.h"
-#include "Modules\Graphics\Resources\Effects\HDR.h"
-#include "Modules\Graphics\Resources\Effects\FXAA.h"
-#include "Modules\Graphics\Resources\Effects\To_Screen.h"
-#include "Modules\Graphics\Resources\Effects\Frametime_Counter.h"
+#include "Modules\Graphics\Effects\PropRendering_FX.h"
+#include "Modules\Graphics\Effects\LightDirectional_FX.h"
+#include "Modules\Graphics\Effects\LightPoint_FX.h"
+#include "Modules\Graphics\Effects\LightSpot_FX.h"
+#include "Modules\Graphics\Effects\Reflector_FX.h"
+#include "Modules\Graphics\Effects\Skybox.h"
+#include "Modules\Graphics\Effects\SSAO.h"
+#include "Modules\Graphics\Effects\Radiance_Hints.h"
+#include "Modules\Graphics\Effects\Join_Reflections.h"
+#include "Modules\Graphics\Effects\SSR.h"
+#include "Modules\Graphics\Effects\Bloom.h"
+#include "Modules\Graphics\Effects\HDR.h"
+#include "Modules\Graphics\Effects\FXAA.h"
+#include "Modules\Graphics\Effects\To_Screen.h"
+#include "Modules\Graphics\Effects\Frametime_Counter.h"
 
 
 Graphics_Module::~Graphics_Module()
@@ -109,34 +114,37 @@ void Graphics_Module::initialize()
 	m_cameraBuffer.setOffsetAlignment(size % offsetAlignment);
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
-	// Rendering Pipeline Generation
-	// Logical Systems
+	// Graphics-related Component Updating
 	addSystem(new PlayerMovement_System(m_engine));
 	addSystem(new PropBSphere_System());
 	addSystem(new SkeletonAnimation_System());
-	// Geometry Rendering
-	addSystem(new PropRendering_System(m_engine, &m_geometryFBO, m_shaderCull, m_shaderGeometry));
-	// Light Rendering
-	addSystem(new LightingDirectional_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer, m_volumeRH));
-	addSystem(new LightingSpot_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
-	addSystem(new LightingPoint_System(m_engine, &m_geometryFBO, &m_lightingFBO, &getSystem<PropRendering_System>()->m_propBuffer, &getSystem<PropRendering_System>()->m_skeletonBuffer));
-	addSystem(new Reflector_System(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	// Initiate specialized effects techniques
-	m_fxTechs.push_back(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
-	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
-	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
-	m_fxTechs.push_back(new HDR(m_engine, &m_lightingFBO));
-	m_fxTechs.push_back(new FXAA(m_engine));
-	m_fxTechs.push_back(new To_Screen(m_engine));
-	m_fxTechs.push_back(new Frametime_Counter(m_engine));
+	addSystem(new PropRendering_System(m_engine));
+	addSystem(new LightDirectional_System(m_engine));
+	addSystem(new LightPoint_System(m_engine));
+	addSystem(new LightSpot_System(m_engine));
+	addSystem(new Reflector_System(m_engine));
+
+	// Rendering Pipeline
+	addEffect(new PropRendering_Effect(m_engine, &m_geometryFBO, &getSystem<PropRendering_System>()->m_renderState, m_shaderCull, m_shaderGeometry));
+	addEffect(new LightDirectional_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &getEffect<PropRendering_Effect>()->m_propBuffer, &getEffect<PropRendering_Effect>()->m_skeletonBuffer, &getSystem<LightDirectional_System>()->m_renderState, m_volumeRH));
+	addEffect(new LightPoint_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &getEffect<PropRendering_Effect>()->m_propBuffer, &getEffect<PropRendering_Effect>()->m_skeletonBuffer, &getSystem<LightPoint_System>()->m_renderState));
+	addEffect(new LightSpot_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &getEffect<PropRendering_Effect>()->m_propBuffer, &getEffect<PropRendering_Effect>()->m_skeletonBuffer, &getSystem<LightSpot_System>()->m_renderState));
+	addEffect(new Reflector_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &getSystem<Reflector_System>()->m_renderState));
+	addEffect(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	addEffect(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
+	addEffect(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
+	addEffect(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	addEffect(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	addEffect(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
+	addEffect(new HDR(m_engine, &m_lightingFBO));
+	addEffect(new FXAA(m_engine));
+	addEffect(new To_Screen(m_engine)); 
+	addEffect(new Frametime_Counter(m_engine));
 
 	auto & world = m_engine->getWorldModule();
-	world.addLevelListener(&((getSystem<LightingSpot_System>())->outOfDate()));
-	world.addLevelListener(&((getSystem<LightingPoint_System>())->outOfDate()));
-	world.addLevelListener(&((getSystem<Reflector_System>())->outOfDate()));
+	world.addLevelListener(&getSystem<LightSpot_System>()->m_renderState.m_outOfDate);
+	world.addLevelListener(&getSystem<LightPoint_System>()->m_renderState.m_outOfDate);
+	world.addLevelListener(&getSystem<Reflector_System>()->m_renderState.m_outOfDate);
 }
 
 void Graphics_Module::renderFrame(const float & deltaTime)
@@ -158,10 +166,7 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	m_volumeRH->updateVolume(*m_cameraBuffer.getElement(getActiveCamera()));
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);
 
-	// Post Processing
-	glDisable(GL_BLEND);
-	glDisable(GL_DEPTH_TEST);
-	m_lightingFBO.bindForReading();
+	// Rendering
 	for each (auto *tech in m_fxTechs)
 		if (tech->isEnabled())
 			tech->applyEffect(deltaTime);

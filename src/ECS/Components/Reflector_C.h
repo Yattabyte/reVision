@@ -4,7 +4,7 @@
 
 #include "ECS\Components\ecsComponent.h"
 #include "ECS\Components\Camera_C.h"
-#include "ECS\Resources\FBO_EnvMap.h"
+#include "Modules\Graphics\Common\FBO_EnvMap.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\Transform.h"
 #include "glm\glm.hpp"

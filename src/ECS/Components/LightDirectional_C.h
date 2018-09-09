@@ -3,7 +3,7 @@
 #define LIGHTDIRECTIONAL_C_H
 
 #include "ECS\Components\ecsComponent.h"
-#include "ECS\Resources\FBO_Shadow_Directional.h"
+#include "Modules\Graphics\Common\FBO_Shadow_Directional.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
 

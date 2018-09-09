@@ -3,8 +3,8 @@
 #define SSAO_H
 #define MAX_KERNEL_SIZE 128
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
-#include "Modules\Graphics\Resources\Common\VisualFX.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Common\VisualFX.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"

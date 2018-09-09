@@ -2,7 +2,7 @@
 #ifndef JOIN_REFLECTIONS_H
 #define JOIN_REFLECTIONS_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Primitive.h"

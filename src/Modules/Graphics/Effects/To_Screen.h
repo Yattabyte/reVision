@@ -2,7 +2,7 @@
 #ifndef TO_SCREEN_H
 #define TO_SCREEN_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"

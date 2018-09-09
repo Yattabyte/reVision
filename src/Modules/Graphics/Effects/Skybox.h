@@ -2,7 +2,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Cubemap.h"
 #include "Assets\Asset_Primitive.h"

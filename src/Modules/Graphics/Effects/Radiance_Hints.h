@@ -2,9 +2,9 @@
 #ifndef RADIANCE_HINTS_H
 #define RADIANCE_HINTS_H
 
-#include "Modules\Graphics\Resources\Effects\Effect_Base.h"
-#include "Modules\Graphics\Resources\Common\RH_Volume.h"
-#include "ECS\Resources\FBO_LightBounce.h"
+#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Common\RH_Volume.h"
+#include "Modules\Graphics\Common\FBO_LightBounce.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Primitive.h"

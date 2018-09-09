@@ -99,9 +99,9 @@
  *
  * There are also several systems in place that use them:
  *		- BaseECSSystem (base for all new systems)
- *		- LightingDirectional_System
- *		- LightingPoint_System
- *		- LightingSpot_System
+ *		- LightDirectional_System
+ *		- LightPoint_System
+ *		- LightSpot_System
  *		- PlayerMovement_System
  *		- PropBSphere_System
  *		- PropRendering_System

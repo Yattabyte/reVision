@@ -3,7 +3,7 @@
 #define LIGHTPOINT_C_H
 
 #include "ECS\Components\ecsComponent.h"
-#include "ECS\Resources\FBO_Shadow_Point.h"
+#include "Modules\Graphics\Common\FBO_Shadow_Point.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
 
