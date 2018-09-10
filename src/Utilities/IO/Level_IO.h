@@ -35,12 +35,12 @@ private:
 	@return					a component with parameters/attributes */
 	static LevelStruct_Component parse_component(std::ifstream & file_stream);
 	/** Attempts to retrieve a std::string between quotation marks "<std::string>"
-	@return	the std::string between quotation marks*/
+	@return	the std::string between quotation marks */
 	static std::string const get_between_quotes(std::string & s);
 	/** Search a given string and return whether or not it contains the desired string.
 	@param		s1	the string to search within
 	@param		s2	the target string to find
-	@return		true if the second string is found in the first, else otherwise./*/
+	@return		true if the second string is found in the first, else otherwise. */
 	static bool const find(const std::string & s1, const std::string & s2);
 	/** Parse a given line between parantheses and convert it to a string.
 	@param	in	the string to convert

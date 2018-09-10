@@ -35,25 +35,15 @@ public:
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use 
-	@param	threaded		create in a separate thread
-	@return					the desired asset */	
-	static Shared_Asset_Material Create(Engine * engine, const std::string & material_filename, const bool & threaded = true);	
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
 	@param	textures		the textures to use 
 	@param	threaded		create in a separate thread
 	@return					the desired asset */	
-	static Shared_Asset_Material Create(Engine * engine, const std::vector<std::string> &textures, const bool & threaded = true);
+	static Shared_Asset_Material Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded = true);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	@brief					Updates the appropriate supplied @std::string's with a path to the appropriate file
 	@param	filename		the absolute file path of the '.mat' file to read from
-	@param	albedo			reference updated with albedo texture file path
-	@param	normal			reference updated with normal texture file path
-	@param	metalness		reference updated with metalness texture file path
-	@param	roughness		reference updated with roughness texture file path
-	@param	height			reference updated with height texture file path
-	@param	occlusion		reference updated with occlusion texture file path */
-	static void Get_PBR_Properties(const std::string & filename, std::string & albedo = std::string(), std::string & normal = std::string(), std::string & metalness = std::string(), std::string & roughness = std::string(), std::string & height = std::string(), std::string & occlusion = std::string());
+	@return					the vector storing texture directories */
+	static std::vector<std::string> Get_Material_Textures(const std::string & filename);
 	
 	
 	// Public Attributes
@@ -61,15 +51,13 @@ public:
 	GLuint m_matSpot = 0;
 	GLubyte * m_materialData = nullptr;
 	glm::ivec2 m_size = glm::ivec2(0);
-	std::vector<std::string> m_textures = std::vector<std::string>(MAX_PHYSICAL_IMAGES);
+	std::vector<std::string> m_textures;
 
 
 private:
 	// Private Constructors
 	/** Construct the Material. */
-	Asset_Material(const std::string & filename);
-	/** Construct the Material with a manual set of textures. */
-	Asset_Material(const std::vector<std::string> &textures);
+	Asset_Material(const std::string & filename, const std::vector<std::string> & textures);
 
 
 	// Private Methods

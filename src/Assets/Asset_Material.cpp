@@ -18,14 +18,9 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const std::string & filename) : Asset(filename) {}
+Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures) : Asset(filename), m_textures(textures) {}
 
-Asset_Material::Asset_Material(const std::vector<std::string> &textures) : Asset_Material("")
-{
-	m_textures = textures;
-}
-
-Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded)
 {
 	AssetManager & assetManager = engine->getAssetManager();
 	MaterialManager & materialManager = engine->getMaterialManager();
@@ -33,41 +28,22 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Material>(filename);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Material>(filename);
+		userAsset = assetManager.createNewAsset<Asset_Material>(filename, textures);
 		auto & assetRef = *userAsset.get();
 		assetRef.m_matSpot = materialManager.generateID();
 
-		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_MATERIAL(filename);
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
+
+		/*
+		if (!Engine::File_Exists(filename) || (filename == "") || (filename == " ")) {
 			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
+		}*/
 
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
-	return userAsset;
-}
-
-Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::vector<std::string> &textures, const bool & threaded)
-{
-	AssetManager & assetManager = engine->getAssetManager();
-	MaterialManager & materialManager = engine->getMaterialManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.createNewAsset<Asset_Material>(textures);
-	auto & assetRef = *userAsset.get();
-	assetRef.m_matSpot = materialManager.generateID();
-
-	// Check if the file/directory exists on disk
-	std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, "");
-	std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-
-	// Submit the work order
-	assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);	
 	return userAsset;
 }
 
@@ -109,11 +85,19 @@ void Asset_Material::initializeDefault(Engine * engine)
 
 void Asset_Material::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	if (fullDirectory != "") {
+	if (Engine::File_Exists(fullDirectory)) {
+		// Fetch a list of textures as defined in the .mat file
+		auto textures = Asset_Material::Get_Material_Textures(fullDirectory);
+		// Recover the material folder directory from the filename
+		const size_t slash1Index = fullDirectory.find_last_of('/'), slash2Index = fullDirectory.find_last_of('\\');
+		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
+		const std::string modelDirectory = fullDirectory.substr(0, furthestFolderIndex + 1);
+		// Apply these texture directories to the material whenever not null
 		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		Asset_Material::Get_PBR_Properties(fullDirectory, m_textures[0], m_textures[1], m_textures[2], m_textures[3], m_textures[4], m_textures[5]);
-		for (int x = 0; x < MAX_PHYSICAL_IMAGES; ++x)
-			m_textures[x] = ABS_DIRECTORY_MAT_TEX(m_textures[x]);
+		m_textures.resize(textures.size());
+		for (size_t x = 0, size = m_textures.size(); x < size; ++x)
+			if (textures[x] != "")
+				m_textures[x] = modelDirectory + textures[x];
 	}
 
 	const size_t textureCount = m_textures.size();
@@ -237,41 +221,89 @@ bool getString(std::istringstream & string_stream, std::string & target, std::st
 	else return false;
 	return true;
 }
-
-void Asset_Material::Get_PBR_Properties(const std::string & filename, std::string & albedo, std::string & normal, std::string & metalness, std::string & roughness, std::string & height, std::string & occlusion)
+/** Attempts to retrieve a std::string between quotation marks "<std::string>"
+@return	the std::string between quotation marks */
+std::string const get_between_quotes(std::string & s)
 {
-	std::ifstream file_stream(filename);
+	std::string output = s;
+	size_t spot1 = s.find_first_of("\"");
+	if (spot1 != std::string::npos) {
+		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
+		size_t spot2 = output.find_first_of("\"");
+		if (spot2 != std::string::npos) {
+			output = output.substr(0, spot2);
+
+			s = s.substr(spot2 + 2, s.length() - spot2 - 1);
+		}
+	}
+	return output;
+}
+/** Parse a given line between parantheses and convert it to a string.
+@param	in	the string to convert
+@return		a string */
+std::string const getType_String(std::string & in) {
+	return get_between_quotes(in);
+}
+/** Search a given string and return whether or not it contains the desired string.
+@param		s1	the string to search within
+@param		s2	the target string to find
+@return		true if the second string is found in the first, else otherwise. */
+bool const find(const std::string & s1, const std::string & s2) {
+	return (s1.find(s2) != std::string::npos);
+}
+std::vector<std::string> parse_pbr(std::ifstream & file_stream)
+{
+	std::vector<std::string> textures(MAX_PHYSICAL_IMAGES);
+	int bracketCount = 0;
 	for (std::string line; std::getline(file_stream, line); ) {
-		if (file_stream.good()) {
-			if (line == "PBR") {
-				bool end = false;
-				std::getline(file_stream, line);
-
-				const size_t propertycount = 6;
-
-				for (int x = 0; x < propertycount; ++x) {
-					std::string string;
-					std::getline(file_stream, line);
-					std::istringstream string_stream(line);
-					string_stream >> line;
-					if (getString(string_stream, string)) {
-						if (line == "albedo") albedo = string;
-						else if (line == "normal") normal = string;
-						else if (line == "metalness") metalness = string;
-						else if (line == "roughness") roughness = string;
-						else if (line == "height") height = string;
-						else if (line == "occlusion") occlusion = string;
-						else if (line == "}") break;
-						else break;
-					}
-					else break;
-				}
-				// ensure we are at end of class
-				while (line != "}" && !end) {
-					file_stream >> line;
-					end = file_stream.bad();
-				}
+		if (line.length() && line != "" && line != " ") {
+			if (find(line, "{")) {
+				bracketCount++;
+				continue;
+			}
+			else if (find(line, "}")) {
+				bracketCount--;
+				if (bracketCount <= 0)
+					break;
+				continue;
+			}
+			else {
+				if (find(line, "albedo"))
+					textures[0] = getType_String(line);
+				else if (find(line, "normal"))
+					textures[1] = getType_String(line);
+				else if (find(line, "metalness"))
+					textures[2] = getType_String(line);
+				else if (find(line, "roughness"))
+					textures[3] = getType_String(line);
+				else if (find(line, "height"))
+					textures[4] = getType_String(line);
+				else if (find(line, "occlusion"))
+					textures[5] = getType_String(line);
 			}
 		}
 	}
+	return textures;
+}
+std::vector<std::string> Asset_Material::Get_Material_Textures(const std::string & filename)
+{
+	std::vector<std::string> textures;
+	std::ifstream file_stream(filename);
+	int bracketCount = 0;
+	for (std::string line; std::getline(file_stream, line); ) {
+		if (find(line, "{")) {
+			bracketCount++;
+			continue;
+		}
+		else if (find(line, "}")) {
+			bracketCount--;
+			if (bracketCount <= 0)
+				break;
+			continue;
+		}
+		else if (find(line, "PBR"))	
+			for each (const auto & texture in parse_pbr(file_stream)) 
+				textures.push_back(texture);		
+	}
+	return textures;
 }

@@ -14,5 +14,5 @@ map_Kd Cerberus_diffuse.tga
 map_Bump Cerberus_N.tga
 map_Ks Cerberus_M.tga
 map_Ns Cerberus_R.tga
-map_Ka Cerberus_AO.png
+map_Ka Cerberus_AO.tga
  

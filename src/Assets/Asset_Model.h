@@ -49,6 +49,23 @@ public:
 	ModelManager					*	m_modelManager = nullptr;
 
 
+protected:
+	// Protected Methods
+	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
+	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
+	@param	vertices	the vertices of the mesh to derive the AABB from
+	@param	minOut	output reference containing the minimum extents of the AABB
+	@param	maxOut	output reference containing the maximum extents of the AABB */
+	void calculateAABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut);
+	/** Create a model material, loading the textures as defined by the model file itself.
+	@note	Used as a failsafe. Model importer may not succeed in fetching the directories, and the model may not store usable directories.
+	@param	engine			the engine being used
+	@param	fullDirectory	the model's filename to use as a guide
+	@param	modelMaterial	the material asset to load into
+	@param	sceneMaterial	the scene material to use as a guide */
+	void loadMaterial(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
+
+
 private:
 	// Private Constructors
 	/** Construct the Model. */
