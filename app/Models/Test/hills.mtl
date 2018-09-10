@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump Test\\grass_normal.png
-map_Kd Test\\grass_diffuse.png
-map_Ks Test\\grass_metalness.png
-map_Ns Test\\grass_roughness.png
+map_Bump grass_normal.png
+map_Kd grass_diffuse.png
+map_Ks grass_metalness.png
+map_Ns grass_roughness.png

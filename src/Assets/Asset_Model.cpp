@@ -1,11 +1,9 @@
 #include "Assets\Asset_Model.h"
 #include "Utilities\IO\Model_IO.h"
 #include "Engine.h"
+#include <algorithm>
 
-#define EXT_MODEL ".obj"
 #define DIRECTORY_MODEL Engine::Get_Current_Dir() + "\\Models\\"
-#define ABS_DIRECTORY_MODEL(filename) DIRECTORY_MODEL + filename + EXT_MODEL
-#define DIRECTORY_MODEL_MAT_TEX Engine::Get_Current_Dir() + "\\Textures\\Environment\\" 
 
 
 /** Calculates a Axis Aligned Bounding Box from a set of vertices.
@@ -43,19 +41,23 @@ inline void calculate_AABB(const std::vector<SingleVertex> & mesh, glm::vec3 & m
 
 /** Initialize a model's material, where each texture is specified individually.
 @param	engine			the engine being used
+@param	filename		the model's filename to use as a guide
 @param	modelMaterial	the material asset to load into
 @param	sceneMaterial	the scene material to use as a guide */
-inline void generate_material(Engine * engine, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials)
+inline void generate_material(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials)
 {
 	// Get texture names
+	const size_t slash1Index = fullDirectory.find_last_of('/'), slash2Index = fullDirectory.find_last_of('\\');
+	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
+	const std::string modelDirectory = fullDirectory.substr(0, furthestFolderIndex+1);
 	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);	
 	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
-		textures[tx + 0] = DIRECTORY_MODEL_MAT_TEX + materials[mx].albedo;
-		textures[tx + 1] = DIRECTORY_MODEL_MAT_TEX + materials[mx].normal;
-		textures[tx + 2] = DIRECTORY_MODEL_MAT_TEX + materials[mx].metalness;
-		textures[tx + 3] = DIRECTORY_MODEL_MAT_TEX + materials[mx].roughness;
-		textures[tx + 4] = DIRECTORY_MODEL_MAT_TEX + materials[mx].height;
-		textures[tx + 5] = DIRECTORY_MODEL_MAT_TEX + materials[mx].ao;
+		textures[tx + 0] = modelDirectory + materials[mx].albedo;
+		textures[tx + 1] = modelDirectory + materials[mx].normal;
+		textures[tx + 2] = modelDirectory + materials[mx].metalness;
+		textures[tx + 3] = modelDirectory + materials[mx].roughness;
+		textures[tx + 4] = modelDirectory + materials[mx].height;
+		textures[tx + 5] = modelDirectory + materials[mx].ao;
 	}
 
 	modelMaterial = Asset_Material::Create(engine, textures);
@@ -160,7 +162,7 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 
 	// Generate all the required skins
 	if (dataContainer.materials.size())
-		generate_material(engine, m_materialArray, dataContainer.materials);
+		generate_material(engine, fullDirectory, m_materialArray, dataContainer.materials);
 	else
 		generate_material(engine, m_materialArray, fullDirectory);
 

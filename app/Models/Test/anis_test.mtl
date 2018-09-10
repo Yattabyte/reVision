@@ -14,9 +14,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\0_0_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 0_0_roughness.png
 
 newmtl 0_1
 Ns 10.0000
@@ -31,9 +31,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\0_1_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 0_1_roughness.png
 
 newmtl 0_2
 Ns 10.0000
@@ -48,9 +48,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\0_2_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 0_2_roughness.png
 
 newmtl 0_3
 Ns 10.0000
@@ -65,9 +65,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\0_3_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 0_3_roughness.png
 
 newmtl 0_4
 Ns 10.0000
@@ -82,9 +82,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\0_4_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 0_4_roughness.png
 
 newmtl 1_0
 Ns 10.0000
@@ -99,9 +99,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\1_0_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 1_0_roughness.png
 
 newmtl 1_1
 Ns 10.0000
@@ -116,9 +116,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\1_1_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 1_1_roughness.png
 
 newmtl 1_2
 Ns 10.0000
@@ -133,9 +133,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\1_2_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 1_2_roughness.png
 
 newmtl 1_3
 Ns 10.0000
@@ -150,9 +150,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\1_3_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 1_3_roughness.png
 
 newmtl 1_4
 Ns 10.0000
@@ -167,9 +167,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\1_4_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 1_4_roughness.png
 
 newmtl 2_0
 Ns 10.0000
@@ -184,9 +184,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\2_0_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 2_0_roughness.png
 
 newmtl 2_1
 Ns 10.0000
@@ -201,9 +201,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\2_1_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 2_1_roughness.png
 
 newmtl 2_2
 Ns 10.0000
@@ -218,9 +218,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\2_2_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 2_2_roughness.png
 
 newmtl 2_3
 Ns 10.0000
@@ -235,9 +235,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\2_3_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 2_3_roughness.png
 
 newmtl 2_4
 Ns 10.0000
@@ -252,9 +252,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\2_4_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 2_4_roughness.png
 
 newmtl 3_0
 Ns 10.0000
@@ -269,9 +269,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\3_0_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 3_0_roughness.png
 
 newmtl 3_1
 Ns 10.0000
@@ -286,9 +286,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\3_1_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 3_1_roughness.png
 
 newmtl 3_2
 Ns 10.0000
@@ -303,9 +303,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\3_2_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 3_2_roughness.png
 
 newmtl 3_3
 Ns 10.0000
@@ -320,9 +320,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\3_3_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 3_3_roughness.png
 
 newmtl 3_4
 Ns 10.0000
@@ -337,9 +337,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\3_4_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 3_4_roughness.png
 
 newmtl 4_0
 Ns 10.0000
@@ -354,9 +354,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\4_0_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 4_0_roughness.png
 
 newmtl 4_1
 Ns 10.0000
@@ -371,9 +371,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\4_1_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 4_1_roughness.png
 
 newmtl 4_2
 Ns 10.0000
@@ -388,9 +388,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\4_2_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 4_2_roughness.png
 
 newmtl 4_3
 Ns 10.0000
@@ -405,9 +405,9 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\4_3_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 4_3_roughness.png
 
 newmtl 4_4
 Ns 10.0000
@@ -422,6 +422,6 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd \anis\Diffuse.png
-map_Ks \anis\specular.png
-map_Ns \anis\4_4_roughness.png
+map_Kd Diffuse.png
+map_Ks specular.png
+map_Ns 4_4_roughness.png

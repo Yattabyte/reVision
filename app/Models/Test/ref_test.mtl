@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Test\\ref_diffuse.png
-map_Bump Test\\ref_normal.png
-map_Ks Test\\ref_metalness.png
-map_Ns Test\\ref_roughness.png
+map_Kd ref_diffuse.png
+map_Bump ref_normal.png
+map_Ks ref_metalness.png
+map_Ns ref_roughness.png

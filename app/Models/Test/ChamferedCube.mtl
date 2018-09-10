@@ -10,7 +10,7 @@ Ke 0.000000 0.000000 0.000000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Kd Test\\cube_diffuse.png
-map_Bump  Test\\cube_normal.png
-map_Ks  Test\\cube_specular.png
-map_Ns  Test\\cube_roughness.png
+map_Kd cube_diffuse.png
+map_Bump  cube_normal.png
+map_Ks  cube_specular.png
+map_Ns  cube_roughness.png
