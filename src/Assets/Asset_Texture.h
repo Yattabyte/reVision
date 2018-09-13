@@ -2,7 +2,7 @@
 #ifndef	ASSET_TEXTURE_H
 #define	ASSET_TEXTURE_H
 
-#include "Asset_Image.h"
+#include "Assets\Asset_Image.h"
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
 

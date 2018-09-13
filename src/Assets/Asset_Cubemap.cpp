@@ -1,5 +1,4 @@
 #include "Assets\Asset_Cubemap.h"
-#include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
 
 #define EXT_CUBEMAP ".png"
@@ -11,6 +10,9 @@ Asset_Cubemap::~Asset_Cubemap()
 {
 	if (existsYet())
 		glDeleteTextures(1, &m_glTexID);
+	for (int x = 0; x < 6; ++x)
+		if (m_images[x])
+			m_images[x]->removeCallback(this);
 }
 
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
@@ -28,7 +30,7 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 		// Check if the file/directory exists on disk
 		const std::string fullDirectory = DIRECTORY_CUBEMAP + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine); 
+		std::function<void()> finiFunc = []() {};
 		if (!Engine::File_Exists(fullDirectory)) {
 			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
@@ -43,40 +45,34 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 void Asset_Cubemap::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	m_pixelData[0] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(255) };
-	m_pixelData[1] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(0), GLubyte(255) };
-	m_pixelData[2] = new GLubyte[4]{ GLubyte(0), GLubyte(0), GLubyte(255), GLubyte(255) };
-	m_pixelData[3] = new GLubyte[4]{ GLubyte(255), GLubyte(255), GLubyte(0), GLubyte(255) };
-	m_pixelData[4] = new GLubyte[4]{ GLubyte(0), GLubyte(255), GLubyte(255), GLubyte(255) };
-	m_pixelData[5] = new GLubyte[4]{ GLubyte(255), GLubyte(0), GLubyte(255), GLubyte(255) };
-	m_size = glm::ivec2(1);
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
-	for (int sides = 0; sides < 6; ++sides) {
+	for (int side = 0; side < 6; ++side) {
 		std::string specific_side_directory = "";
 		for (int x = 0; x < 3; ++x) {
-			specific_side_directory = fullDirectory + side_suffixes[sides] + extensions[x];
+			specific_side_directory = fullDirectory + side_suffixes[side] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))
 				break;
-			specific_side_directory = fullDirectory + "\\" + side_suffixes[sides] + extensions[x];
+			specific_side_directory = fullDirectory + "\\" + side_suffixes[side] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))
 				break;
 		}
 
-		Image_Data dataContainer;
-		if (!Image_IO::Import_Image(engine, specific_side_directory, dataContainer)) {
-			engine->reportError(MessageManager::ASSET_FAILED, "Asset_Cubemap");
-			initializeDefault(engine);
-			return;
-		}	
-		
+		// Forward image creation
 		std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-		m_size = dataContainer.dimensions;
-		m_pixelData[sides] = dataContainer.pixelData;
+		m_images[side] = Asset_Image::Create(engine, specific_side_directory);
+		m_images[side]->addCallback(this, [&]() {
+			// Quit early if there exists an incomplete image
+			for each (const auto & image in m_images) {
+				if (!image->existsYet())
+					return;
+			}
+			finalize(engine);
+		});
 	}
 }
 
@@ -90,9 +86,9 @@ void Asset_Cubemap::finalize(Engine * engine)
 	// Load the final texture
 	{
 		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_size.x, m_size.x);
+		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
 		for (int x = 0; x < 6; ++x)
-			glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_size.x, m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_pixelData[x]);
+			glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_images[x]->m_pixelData);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);

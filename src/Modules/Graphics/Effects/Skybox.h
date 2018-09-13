@@ -63,10 +63,10 @@ public:
 		});
 		m_cubemapSky->addCallback(this, [&]() mutable {
 			m_skyOutOfDate = true;
-			const glm::ivec2 skySize = m_cubemapSky->m_size;
+			const glm::ivec2 skySize = m_cubemapSky->m_images[0]->m_size;
 			glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, skySize.x, skySize.x);
 			for (int x = 0; x < 6; ++x)
-				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, skySize.x, skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_cubemapSky->m_pixelData[x]);
+				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, skySize.x, skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_cubemapSky->m_images[x]->m_pixelData);
 			glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
 			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
@@ -126,7 +126,7 @@ private:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
 		m_quad6IndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		const glm::ivec2 skySize = m_cubemapSky->m_size;		
+		const glm::ivec2 skySize = m_cubemapSky->m_images[0]->m_size;
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
 			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)skySize.x / pow(2.0f, (float)r))));
