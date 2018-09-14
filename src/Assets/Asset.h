@@ -47,15 +47,13 @@ public:
 		write_guard.unlock();
 		write_guard.release();
 
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		if (m_finalized)
+		if (existsYet())
 			callback();
 	}
 	/** Removes a callback method from triggering when the asset finishes loading.
 	@param	pointerID	the pointer to the object owning the callback to be removed */
 	void removeCallback(void * pointerID);
 	/** Returns whether or not this asset has completed finalizing.
-	@note				Virtual, each asset can re-implement if they have specific finalizing criteria.
 	@return				true if this asset has finished finalizing, false otherwise. */
 	bool existsYet() const;
 

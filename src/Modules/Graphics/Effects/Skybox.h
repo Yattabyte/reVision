@@ -61,12 +61,12 @@ public:
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
 			m_quad6IndirectBuffer.write(0, sizeof(GLuint) * 4, quad6Data);
 		});
-		m_cubemapSky->addCallback(this, [&]() mutable {
+		m_cubemapSky->addCallback(this, [&](void) mutable {
 			m_skyOutOfDate = true;
-			const glm::ivec2 skySize = m_cubemapSky->m_images[0]->m_size;
-			glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, skySize.x, skySize.x);
+			m_skySize = m_cubemapSky->m_images[0]->m_size;
+			glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, m_skySize.x, m_skySize.x);
 			for (int x = 0; x < 6; ++x)
-				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, skySize.x, skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_cubemapSky->m_images[x]->m_pixelData);
+				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, m_skySize.x, m_skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_cubemapSky->m_images[x]->m_pixelData);
 			glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
 			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
@@ -74,13 +74,13 @@ public:
 				m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Skybox Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 			if (!glIsTexture(m_cubemapMipped))
 				m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Skybox Texture");
-		});			
+		});
 	}
 
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
 			convoluteSky();
@@ -126,10 +126,9 @@ private:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
 		m_quad6IndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		const glm::ivec2 skySize = m_cubemapSky->m_images[0]->m_size;
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
-			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)skySize.x / pow(2.0f, (float)r))));
+			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_skySize.x / pow(2.0f, (float)r))));
 			glViewport(0, 0, write_size, write_size);
 			m_shaderConvolute->setUniform(1, (float)r / 5.0f);
 			glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, r);
@@ -161,7 +160,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
-	glm::ivec2 m_renderSize;
+	glm::ivec2 m_renderSize = glm::ivec2(1), m_skySize = glm::ivec2(1);
 };
 
 #endif // FRAMETIME_COUNTER_H
