@@ -42,11 +42,9 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 void Asset_Cubemap::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	for (int side = 0; side < 6; ++side) {
+	for (int side = 0; side < 6; ++side)
 		// Forward image creation
-		std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-		m_images[side] = Asset_Image::Create(engine, "", false);
-	}
+		m_images[side] = Asset_Image::Create(engine, "", false); 	
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)
@@ -65,7 +63,6 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirector
 		}
 
 		// Forward image creation
-		std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
 		m_images[side] = Asset_Image::Create(engine, specific_side_directory, false);
 	}
 
@@ -84,30 +81,26 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirector
 
 void Asset_Cubemap::finalize(Engine * engine)
 {
-	// Create the final texture
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);	
-	}
+	// Create the final texture	
+	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);	
+	
 	// Load the final texture
-	{
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
-		for (int x = 0; x < 6; ++x)
-			glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_images[x]->m_pixelData);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-		if (!glIsTexture(m_glTexID)) 
-			engine->reportError(MessageManager::TEXTURE_INCOMPLETE, m_filename);		
-	}
+	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
+	for (int x = 0; x < 6; ++x)
+		glTextureSubImage3D(m_glTexID, 0, 0, 0, x, m_images[x]->m_size.x, m_images[x]->m_size.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_images[x]->m_pixelData);
+	glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+	if (!glIsTexture(m_glTexID))
+		engine->reportError(MessageManager::TEXTURE_INCOMPLETE, m_filename);
+
+	// Finalize
 	Asset::finalize(engine);
 }
 
 void Asset_Cubemap::bind(const unsigned int & texture_unit)
 {
-	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

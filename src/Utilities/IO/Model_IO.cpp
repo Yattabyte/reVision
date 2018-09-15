@@ -4,43 +4,35 @@
 #include "assimp\postprocess.h"
 #include "assimp\scene.h"
 #include "assimp\version.h"
-#include <shared_mutex>
+#include <atomic>
 
 
+constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
-	std::shared_mutex pool_mutex;
-	std::vector<Assimp::Importer*> pool;
-
+	Assimp::Importer* pool[MAX_IMPORTERS];
+	std::atomic_size_t available = MAX_IMPORTERS;
 
 	Importer_Pool() {
-		for (int x = 0; x < 4; ++x)
-			pool.push_back(new Assimp::Importer());
+		std::generate(pool, pool + MAX_IMPORTERS, [](){return new Assimp::Importer(); });
 	}
 
+	/** Borrow a single importer. 
+	@return		returns a single importer*/
 	Assimp::Importer * rentImporter() {
-		// Start Reading Pool
-		std::unique_lock<std::shared_mutex> pool_readGuard(pool_mutex);
-
 		// Check if any of our importers are free to be used
-		if (pool.size()) {
-			Assimp::Importer * freeImporter = pool.back();
-			pool.pop_back();
-			return freeImporter;
-		}
+		if (available) 
+			return pool[--available];		
 		// Otherwise create a new one
 		else
 			return new Assimp::Importer();
 	}
 
 	void returnImporter(Assimp::Importer * returnedImporter) {
-		// Start Reading Pool
-		std::unique_lock<std::shared_mutex> pool_readGuard(pool_mutex);
-
 		// Check if we have enough importers, free extra
-		if (pool.size() >= 4)
+		if (available >= 4)
 			delete returnedImporter;
-		else
-			pool.push_back(returnedImporter);
+		else 
+			pool[available++] = returnedImporter;		
 	}
 };
 

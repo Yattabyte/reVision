@@ -93,7 +93,6 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
 		const std::string modelDirectory = fullDirectory.substr(0, furthestFolderIndex + 1);
 		// Apply these texture directories to the material whenever not null
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		m_textures.resize(textures.size());
 		for (size_t x = 0, size = m_textures.size(); x < size; ++x)
 			if (textures[x] != "")
@@ -103,102 +102,84 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 	// Some definitions for later
 	const size_t textureCount = m_textures.size();
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
-	glm::ivec2 material_dimensions = glm::ivec2(1);
 
-	// Load all images
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		m_images.resize(textureCount);
-		constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
-			Asset_Image::Fill_Policy::Checkered,
-			Asset_Image::Fill_Policy::Solid,
-			Asset_Image::Fill_Policy::Checkered,
-			Asset_Image::Fill_Policy::Checkered,
-			Asset_Image::Fill_Policy::Checkered,
-			Asset_Image::Fill_Policy::Solid
-		};
-		for (size_t x = 0; x < textureCount; ++x) 
-			m_images[x] = Asset_Image::Create(engine, m_textures[x], false, fillPolicies[x]);
+	// Load all images	
+	m_images.resize(textureCount);
+	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
+		Asset_Image::Fill_Policy::Checkered,
+		Asset_Image::Fill_Policy::Solid,
+		Asset_Image::Fill_Policy::Checkered,
+		Asset_Image::Fill_Policy::Checkered,
+		Asset_Image::Fill_Policy::Checkered,
+		Asset_Image::Fill_Policy::Solid
+	};
+	for (size_t x = 0; x < textureCount; ++x)
+		m_images[x] = Asset_Image::Create(engine, m_textures[x], false, fillPolicies[x]);
+
+	// Find the largest dimensions	
+	for each (const auto & image in m_images) {
+		if (m_size.x < image->m_size.x)
+			m_size.x = image->m_size.x;
+		if (m_size.y < image->m_size.y)
+			m_size.y = image->m_size.y;
 	}
-	// Find the largest dimensions
-	{
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		for each (const auto & image in m_images) {
-			if (material_dimensions.x < image->m_size.x)
-				material_dimensions.x = image->m_size.x;
-			if (material_dimensions.y < image->m_size.y)
-				material_dimensions.y = image->m_size.y;
-		}
-	}
-	// Force all images to be the same size
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		for each (auto image in m_images)
-			if (image->m_size != material_dimensions)
-				image->resize(material_dimensions);
-	}
+
+	// Force all images to be the same size	
+	for each (auto image in m_images)
+		if (image->m_size != m_size)
+			image->resize(m_size);
+	
 
 	// Merge data into single array
-	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-	const size_t pixelsPerImage = material_dimensions.x * material_dimensions.y * 4;
-	GLubyte * materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
+	const size_t pixelsPerImage = m_size.x * m_size.y * 4;
+	m_materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
 		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
-			materialData[arrayIndex] = m_images[tx + 0]->m_pixelData[x]; // ALBEDO	
+			m_materialData[arrayIndex] = m_images[tx + 0]->m_pixelData[x]; // ALBEDO	
 		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
-			materialData[arrayIndex] = m_images[tx + 1]->m_pixelData[x]; // NORMAL
+			m_materialData[arrayIndex] = m_images[tx + 1]->m_pixelData[x]; // NORMAL
 		for (size_t x = 0; x < pixelsPerImage; x += 4, arrayIndex += 4) {
-			materialData[arrayIndex + 0] = m_images[tx + 2]->m_pixelData[x]; // METALNESS
-			materialData[arrayIndex + 1] = m_images[tx + 3]->m_pixelData[x]; // ROUGHNESS
-			materialData[arrayIndex + 2] = m_images[tx + 4]->m_pixelData[x]; // HEIGHT
-			materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
+			m_materialData[arrayIndex + 0] = m_images[tx + 2]->m_pixelData[x]; // METALNESS
+			m_materialData[arrayIndex + 1] = m_images[tx + 3]->m_pixelData[x]; // ROUGHNESS
+			m_materialData[arrayIndex + 2] = m_images[tx + 4]->m_pixelData[x]; // HEIGHT
+			m_materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
 		}
 	}
-	read_guard.unlock();
-	read_guard.release();
-
-	// Assign data to asset
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-	m_size = material_dimensions;
-	m_materialData = materialData;
 }
 
 void Asset_Material::finalize(Engine * engine)
 {
 	MaterialManager & materialManager = engine->getMaterialManager();
 
-	// Create Material
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
-	}
-	// Load material
-	{		
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		float anisotropy;
-		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-		// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
-		// Uses the smallest dimension of the image
-		GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
-		glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
-		glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
-		glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
-		glGenerateTextureMipmap(m_glArrayID);
+	// Create Material	
+	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
+	
+	// Load material		
+	float anisotropy;
+	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
+	// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
+	// Uses the smallest dimension of the image
+	GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
+	glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
+	glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
+	glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+	glGenerateTextureMipmap(m_glArrayID);
 
-		// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
-		// That IS a problem, because once the handle is issued, the texture object CAN NOT and MUST NOT be changed!!!
-		GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-			state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-		glDeleteSync(fence);
-		materialManager.generateHandle(m_matSpot, m_glArrayID);
-		if (!glIsTexture(m_glArrayID))
-			engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename, m_textures[0] + ", " + m_textures[1] + ", " + m_textures[2] + ", " + m_textures[3] + ", " + m_textures[4] + ", " + m_textures[5]);
-	}
+	// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
+	// That IS a problem, because once the handle is issued, the texture object CAN NOT and MUST NOT be changed!!!
+	GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
+		state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	glDeleteSync(fence);
+	materialManager.generateHandle(m_matSpot, m_glArrayID);
+	if (!glIsTexture(m_glArrayID))
+		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename, m_textures[0] + ", " + m_textures[1] + ", " + m_textures[2] + ", " + m_textures[3] + ", " + m_textures[4] + ", " + m_textures[5]);
+	
+	// Finalize
 	Asset::finalize(engine);
 }
 

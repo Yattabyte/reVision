@@ -50,7 +50,7 @@ public:
 	GLuint m_glArrayID = 0;
 	GLuint m_matSpot = 0;
 	GLubyte * m_materialData = nullptr;
-	glm::ivec2 m_size = glm::ivec2(0);
+	glm::ivec2 m_size = glm::ivec2(1);
 	std::vector<std::string> m_textures;
 	std::vector<Shared_Asset_Image> m_images;
 
@@ -66,7 +66,7 @@ private:
 	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
-	 
+
 
 	// Private Attributes
 	friend class AssetManager;

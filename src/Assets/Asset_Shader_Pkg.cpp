@@ -13,29 +13,24 @@
 inline void parse(Engine * engine, Asset_Shader_Pkg & userAsset)
 {
 	std::string input;
-	{
-		std::shared_lock<std::shared_mutex> read_guard(userAsset.m_mutex);
-		input = userAsset.m_packageText;
-		if (input == "") return;
-		// Find Package to include
-		size_t spot = input.find("#package");
-		while (spot != std::string::npos) {
-			std::string directory = input.substr(spot);
+	input = userAsset.m_packageText;
+	if (input == "") return;
+	// Find Package to include
+	size_t spot = input.find("#package");
+	while (spot != std::string::npos) {
+		std::string directory = input.substr(spot);
 
-			size_t qspot1 = directory.find("\"");
-			size_t qspot2 = directory.find("\"", qspot1 + 1);
-			// find std::string quotes and remove them
-			directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
+		size_t qspot1 = directory.find("\"");
+		size_t qspot2 = directory.find("\"", qspot1 + 1);
+		// find std::string quotes and remove them
+		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
-			Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
-			std::shared_lock<std::shared_mutex> read_guardPKG(package->m_mutex);
-			std::string left = input.substr(0, spot);
-			std::string right = input.substr(spot + 1 + qspot2);
-			input = left + package->getPackageText() + right;
-			spot = input.find("#package");
-		}
-	}
-	std::unique_lock<std::shared_mutex> write_guard(userAsset.m_mutex);
+		Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
+		std::string left = input.substr(0, spot);
+		std::string right = input.substr(spot + 1 + qspot2);
+		input = left + package->getPackageText() + right;
+		spot = input.find("#package");
+	}	
 	userAsset.m_packageText = input;
 }
 
@@ -74,11 +69,8 @@ void Asset_Shader_Pkg::initializeDefault(Engine * engine)
 
 void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	const bool found = Text_IO::Import_Text(engine, fullDirectory + EXT_PACKAGE, m_packageText);
-	write_guard.unlock();
-	write_guard.release();
-
+	
 	if (!found)
 		engine->reportError(MessageManager::FILE_MISSING, getFileName() + EXT_PACKAGE);
 

@@ -16,29 +16,24 @@ inline void parse(Engine * engine, Asset_Shader & userAsset)
 	std::string *text[2] = { &userAsset.m_vertexText, &userAsset.m_fragmentText };
 	for (int x = 0; x < 2; ++x) {
 		std::string input;
-		{
-			std::shared_lock<std::shared_mutex> read_guard(userAsset.m_mutex);
-			if (*text[x] == "") continue;
-			input = *text[x];
-			// Find Package to include
-			size_t spot = input.find("#package");
-			while (spot != std::string::npos) {
-				std::string directory = input.substr(spot);
+		if (*text[x] == "") continue;
+		input = *text[x];
+		// Find Package to include
+		size_t spot = input.find("#package");
+		while (spot != std::string::npos) {
+			std::string directory = input.substr(spot);
 
-				size_t qspot1 = directory.find("\"");
-				size_t qspot2 = directory.find("\"", qspot1 + 1);
-				// find std::string quotes and remove them
-				directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
+			size_t qspot1 = directory.find("\"");
+			size_t qspot2 = directory.find("\"", qspot1 + 1);
+			// find std::string quotes and remove them
+			directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
-				Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
-				std::shared_lock<std::shared_mutex> read_guardPKG(package->m_mutex);
-				std::string left = input.substr(0, spot);
-				std::string right = input.substr(spot + 1 + qspot2);
-				input = left + package->getPackageText() + right;
-				spot = input.find("#package");
-			}
-		}
-		std::unique_lock<std::shared_mutex> write_guard(userAsset.m_mutex);
+			Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
+			std::string left = input.substr(0, spot);
+			std::string right = input.substr(spot + 1 + qspot2);
+			input = left + package->getPackageText() + right;
+			spot = input.find("#package");
+		}			
 		*text[x] = input;
 	}
 }
@@ -156,12 +151,9 @@ void Asset_Shader::initializeDefault(Engine * engine)
 
 void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, m_vertexText);
 	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, m_fragmentText);
-	write_guard.unlock();
-	write_guard.release();
-
+	
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
 		initializeDefault(engine);
@@ -175,18 +167,16 @@ void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory
 void Asset_Shader::finalize(Engine * engine)
 {
 	// Create Shader Program
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		compile(engine, *this);
-		generate_program(*this);
-		link_program(engine, *this);
-	}
+	compile(engine, *this);
+	generate_program(*this);
+	link_program(engine, *this);		
+	
+	// Finalize
 	Asset::finalize(engine);
 }
 
 void Asset_Shader::bind()
 {
-	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	glUseProgram(m_glProgramID);
 }
 

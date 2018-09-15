@@ -115,7 +115,6 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 		return;
 	}
 
-	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
 	const size_t vertexCount = dataContainer.vertices.size();
 	m_data.m_vertices.resize(vertexCount);
 	for (size_t x = 0; x < vertexCount; ++x) {
@@ -152,9 +151,8 @@ void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
 void Asset_Model::finalize(Engine * engine)
 {
 	// Register geometry
-	{
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		m_modelManager->registerGeometry(m_data, m_offset, m_count);
-	}
+	m_modelManager->registerGeometry(m_data, m_offset, m_count);
+	
+	// Finalize
 	Asset::finalize(engine);
 }

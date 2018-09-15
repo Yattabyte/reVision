@@ -184,7 +184,7 @@ bool Engine::File_Exists(const std::string & name)
 void Engine::updateInput(const float & deltaTime)
 {
 	const auto &bindings = m_inputBindings.getBindings();
-	if (!bindings) return;
+	if (!bindings->existsYet()) return;
 	const auto &bind_map = bindings.get()->m_configuration;
 	// Pair is the action followed by the key assigned to it
 	for each (const auto &pair in bind_map) {

@@ -2,13 +2,13 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
-#include <shared_mutex>
-#include <vector>
+#include <atomic>
+#include <functional>
+#include <map>
 #include <stdio.h>
 #include <string>
-#include <memory>
-#include <map>
 #include <utility>
+#include <vector>
 
 
 class Asset;
@@ -42,10 +42,7 @@ public:
 	@param	<Callback>	the (auto-deduced) signature of the method */
 	template <typename Callback>
 	void addCallback(void * pointerID, Callback && callback) {
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		m_callbacks[pointerID] = std::forward<Callback>(callback);
-		write_guard.unlock();
-		write_guard.release();
 
 		if (existsYet())
 			callback();
@@ -58,13 +55,9 @@ public:
 	bool existsYet() const;
 
 
-	// Public Attributes
-	mutable std::shared_mutex m_mutex;	// public std::mutex, to encourage safe access of asset.
-
-
 protected:
 	// Protected Attributes
-	bool m_finalized = false;
+	std::atomic_bool m_finalized = false;
 	std::string m_filename = "";
 	std::map<void*, std::function<void()>> m_callbacks;
 	friend class AssetManager;

@@ -42,7 +42,7 @@ void VisualFX::initializeGausianBlur()
 
 void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const glm::vec2 & size, const int & amount)
 {
-	if (m_shapeQuad->existsYet() && m_shaderGB->existsYet() && desiredTexture && m_shapeQuad->existsYet()) {
+	if (m_shapeQuad->existsYet() && m_shaderGB->existsYet() && desiredTexture) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo_GB);
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, flipTextures[0], 0);
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, flipTextures[1], 0);
@@ -82,7 +82,7 @@ void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * f
 
 void VisualFX::applyGaussianBlur_Alpha(const GLuint & desiredTexture, const GLuint * flipTextures, const glm::vec2 & size, const int & amount)
 {
-	if (m_shapeQuad->existsYet() && m_shaderGB_A->existsYet() && desiredTexture && m_shapeQuad->existsYet()) {
+	if (m_shapeQuad->existsYet() && m_shaderGB_A->existsYet() && desiredTexture) {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo_GB);
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, flipTextures[0], 0);
 		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, flipTextures[1], 0);

@@ -78,7 +78,6 @@ void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory
 {
 	try {
 		std::ifstream file_stream(fullDirectory);
-		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 		for (std::string line; std::getline(file_stream, line); ) {
 			if (line.length()) {
 				const std::string cfg_property = get_between_quotes(line);

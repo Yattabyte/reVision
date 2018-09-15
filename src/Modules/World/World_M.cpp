@@ -70,33 +70,34 @@ void World_Module::checkIfLoaded()
 
 void World_Module::processLevel()
 {
-	ECS & ecs = m_engine->getECS();
-	std::shared_lock readGuard(m_level->m_mutex); // safe to read level
-	std::vector<BaseECSComponent*> components; // holds each entity's components
-	std::vector<unsigned int> ids; // holds each entity's component id's
-	Component_and_ID outputComponent; // holds a single component
-	const char * type;
-	for each (auto & lvlEntity in m_level->m_entities) {
-		for each (const auto & lvlComponent in lvlEntity.components) {
-			// Get component type
-			type = lvlComponent.type.c_str();
-			// Call the appropriate creator if available
-			if (m_constructorMap.find(type)) 
-				outputComponent = m_constructorMap[type]->construct(lvlComponent.parameters);
-			// Push back our result if successfull
-			if (outputComponent.success()) {
-				components.push_back(outputComponent.component);
-				ids.push_back(outputComponent.id);
-				outputComponent.clear();
+	if (m_level->existsYet()) {
+		ECS & ecs = m_engine->getECS();
+		std::vector<BaseECSComponent*> components; // holds each entity's components
+		std::vector<unsigned int> ids; // holds each entity's component id's
+		Component_and_ID outputComponent; // holds a single component
+		const char * type;
+		for each (auto & lvlEntity in m_level->m_entities) {
+			for each (const auto & lvlComponent in lvlEntity.components) {
+				// Get component type
+				type = lvlComponent.type.c_str();
+				// Call the appropriate creator if available
+				if (m_constructorMap.find(type))
+					outputComponent = m_constructorMap[type]->construct(lvlComponent.parameters);
+				// Push back our result if successfull
+				if (outputComponent.success()) {
+					components.push_back(outputComponent.component);
+					ids.push_back(outputComponent.id);
+					outputComponent.clear();
+				}
 			}
+			// Make an entity out of the available components
+			if (components.size())
+				ecs.makeEntity(components.data(), ids.data(), components.size());
+			// Delete temporary components and reset for next entity
+			for each (auto * component in components)
+				delete component;
+			components.clear();
+			ids.clear();
 		}
-		// Make an entity out of the available components
-		if (components.size())
-			ecs.makeEntity(components.data(), ids.data(), components.size());
-		// Delete temporary components and reset for next entity
-		for each (auto * component in components)
-			delete component;
-		components.clear();
-		ids.clear();
 	}
 }

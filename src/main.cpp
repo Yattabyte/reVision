@@ -3,21 +3,6 @@
 #include <thread>
 #include <any>
 
-struct A {
-	virtual void qwe() = 0;
-};
-
-struct B : public A {
-	virtual void qwe() override {
-		bool qwe = false;
-	}
-};
-
-struct C : public A {
-	virtual void qwe() override {
-		bool qwe = true;
-	}
-};
 
 int main()
 {	

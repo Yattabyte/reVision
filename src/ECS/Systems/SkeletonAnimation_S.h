@@ -24,13 +24,10 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
-
 			if (!skeletonComponent->m_model->existsYet())
 				return;
 
 			Skeleton_Buffer * uboData = skeletonComponent->m_data->data;
-			std::shared_lock<std::shared_mutex> guard(skeletonComponent->m_model->m_mutex);
-
 			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_model->m_boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_model->m_animations.size())
 				return;
 			else {

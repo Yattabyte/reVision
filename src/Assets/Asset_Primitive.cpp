@@ -69,7 +69,6 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirect
 		return;
 	}
 
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	const size_t vertexCount = dataContainer.vertices.size();
 	m_data.resize(vertexCount);
 	for (size_t x = 0; x < vertexCount; ++x) {
@@ -81,16 +80,14 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirect
 void Asset_Primitive::finalize(Engine * engine)
 {
 	// Load Buffers
-	{
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		const size_t arraySize = m_data.size();
-		glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], GL_CLIENT_STORAGE_BIT);		
-	}
+	const size_t arraySize = m_data.size();
+	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], GL_CLIENT_STORAGE_BIT);		
+	
+	// Finalize
 	Asset::finalize(engine);
 }
 
 size_t Asset_Primitive::getSize()
 {
-	std::shared_lock<std::shared_mutex> guard(m_mutex);
 	return m_data.size();
 }

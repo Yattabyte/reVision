@@ -53,15 +53,9 @@ public:
 	template <typename Asset_T>
 	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename) {
 		std::shared_lock<std::shared_mutex> guard(m_Mutex_Assets);
-		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) {
-			std::shared_lock<std::shared_mutex> asset_guard(asset->m_mutex);
-			// No need to cast it, filename is a member variable across assets
-			if (asset->getFileName() == filename) {
-				asset_guard.unlock();
-				asset_guard.release();
-				return std::dynamic_pointer_cast<Asset_T>(asset);
-			}
-		}
+		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) 
+			if (asset->getFileName() == filename) 
+				return std::dynamic_pointer_cast<Asset_T>(asset);				
 		return std::shared_ptr<Asset_T>();
 	}
 	/** A template for creating assets and forwarding their arguments, also adds to the map. 	

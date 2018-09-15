@@ -52,7 +52,6 @@ void Asset_Image::initialize(Engine * engine, const std::string & fullDirectory)
 		return;
 	}
 
-	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
 	m_size = dataContainer.dimensions;
 	m_pixelData = dataContainer.pixelData;
 	m_pitch = dataContainer.pitch;
@@ -112,8 +111,6 @@ void Asset_Image::fill(const glm::ivec4 primaryColor, const glm::ivec4 secondary
 
 void Asset_Image::resize(const glm::ivec2 newSize)
 {
-	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-
 	Image_Data dataContainer{ m_pixelData, m_size, m_pitch, m_bpp };
 	Image_IO::Resize_Image(newSize, dataContainer, m_policyResize);
 	m_size = dataContainer.dimensions;
