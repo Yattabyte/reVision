@@ -185,7 +185,7 @@ private:
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 
-		glViewport(0, 0, m_volumeRH->m_resolution, m_volumeRH->m_resolution);
+		glViewport(0, 0, (GLsizei)m_volumeRH->m_resolution, (GLsizei)m_volumeRH->m_resolution);
 		m_bounceFBO->bindForWriting();
 		m_shader_Bounce->bind();
 		m_geometryFBO->bindForReading(0); // depth -> 3		

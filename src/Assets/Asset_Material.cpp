@@ -129,7 +129,6 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 		if (image->m_size != m_size)
 			image->resize(m_size);
 	
-
 	// Merge data into single array
 	const size_t pixelsPerImage = m_size.x * m_size.y * 4;
 	m_materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();

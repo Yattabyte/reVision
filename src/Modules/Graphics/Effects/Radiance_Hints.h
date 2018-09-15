@@ -93,7 +93,7 @@ public:
 		m_shaderRebounce->bind();
 		m_bounceFBO->bindForReading(0);
 		m_rebounceFBO.bindForWriting();
-		glViewport(0, 0, m_volumeRH->m_resolution, m_volumeRH->m_resolution);
+		glViewport(0, 0, (GLsizei)m_volumeRH->m_resolution, (GLsizei)m_volumeRH->m_resolution);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 

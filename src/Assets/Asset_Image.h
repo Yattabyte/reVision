@@ -42,7 +42,7 @@ public:
 	/** Fill the image with the desired colors, in accordance with the fill policy. 
 	@param	primaryColor	the primary color to use
 	@param	secondaryColor	the secondary color to use */
-	void fill(const glm::ivec4 primaryColor = glm::ivec4(128, 128, 255, 255), const glm::ivec4 secondaryColor = glm::ivec4(0, 0, 0, 255));
+	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255));
 	/** Resize the image.
 	@param	newSize			the new size to use. */
 	void resize(const glm::ivec2 newSize);

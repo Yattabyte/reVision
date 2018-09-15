@@ -1,6 +1,7 @@
 #include "Assets\Asset_Image.h"
 #include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
+#include "glm\gtc\type_ptr.hpp"
 
 
 Asset_Image::~Asset_Image()
@@ -63,7 +64,7 @@ void Asset_Image::finalize(Engine * engine)
 	Asset::finalize(engine);
 }
 
-void Asset_Image::fill(const glm::ivec4 primaryColor, const glm::ivec4 secondaryColor)
+void Asset_Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 {
 	constexpr size_t defaultSize = 256;
 	constexpr size_t pixelCount = defaultSize * defaultSize;
@@ -86,9 +87,9 @@ void Asset_Image::fill(const glm::ivec4 primaryColor, const glm::ivec4 secondary
 			// How many pixels wide and tall the checkers should be
 			constexpr size_t checkerSize = 32;
 			constexpr size_t rowWidth = defaultSize;
-			const GLubyte colors[2][4] = { 
-				{primaryColor.x, primaryColor.y, primaryColor.z, primaryColor.w},
-				{secondaryColor.x, secondaryColor.y, secondaryColor.z, secondaryColor.w},
+			const GLubyte colors[2][4] = {
+				{ GLubyte(primaryColor.x), GLubyte(primaryColor.y), GLubyte(primaryColor.z), GLubyte(primaryColor.w) },
+				{ GLubyte(secondaryColor.x), GLubyte(secondaryColor.y), GLubyte(secondaryColor.z), GLubyte(secondaryColor.w) }
 			};
 			bool cFlip = false;
 			for (size_t pixel = 0, depth = -1; pixel < pixelCount; ++pixel) {
