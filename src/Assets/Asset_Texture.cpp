@@ -12,8 +12,6 @@ Asset_Texture::~Asset_Texture()
 		glDeleteTextures(1, &m_glTexID);
 		glMakeTextureHandleNonResidentARB(m_glTexHandle);
 	}
-	if (m_image)
-		m_image->removeCallback(this);
 }
 
 Asset_Texture::Asset_Texture(const std::string & filename) : Asset(filename) {}
@@ -38,13 +36,14 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = DIRECTORY_TEXTURE + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		if (!Engine::File_Exists(fullDirectory)) {
 			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 		}
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, [](){});
+		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
 }
@@ -54,20 +53,14 @@ void Asset_Texture::initializeDefault(Engine * engine)
 	// Create hard-coded alternative
 	// Forward image creation
 	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-	m_image = Asset_Image::Create(engine, "");
-	// add callback instead of new work order
-	std::function<void()> finiFunc = std::bind(&Asset_Texture::finalize, this, engine);
-	m_image->addCallback(this, finiFunc);
+	m_image = Asset_Image::Create(engine, "", false);
 }
 
 void Asset_Texture::initialize(Engine * engine, const std::string & fullDirectory)
 {
 	// Forward image creation
 	std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-	m_image = Asset_Image::Create(engine, fullDirectory);
-	// add callback instead of new work order
-	std::function<void()> finiFunc = std::bind(&Asset_Texture::finalize, this, engine);
-	m_image->addCallback(this, finiFunc);
+	m_image = Asset_Image::Create(engine, fullDirectory, false);
 }
 
 void Asset_Texture::finalize(Engine * engine)

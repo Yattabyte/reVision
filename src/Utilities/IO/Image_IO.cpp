@@ -85,7 +85,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP * bitmap, Image_Data & data_container)
 	data_container.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData)
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData, const bool & linear)
 {
 	// Make sure new sizes AREN'T zero
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y) 
@@ -98,7 +98,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData)
 			delete BGRA_Pixels;
 		
 			// Resize the bitmap
-			FIBITMAP * newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y);
+			FIBITMAP * newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y, linear ? FREE_IMAGE_FILTER::FILTER_CATMULLROM : FREE_IMAGE_FILTER::FILTER_BOX);
 			Load_Pixel_Data(newBitmap, importedData);
 
 			// Free Resources	

@@ -1,5 +1,4 @@
 #include "Assets\Asset_Material.h"
-#include "Utilities\IO\Image_IO.h"
 #include "Engine.h"
 #include <math.h>
 #include <fstream>
@@ -85,8 +84,9 @@ void Asset_Material::initializeDefault(Engine * engine)
 
 void Asset_Material::initialize(Engine * engine, const std::string & fullDirectory)
 {
+	// Check if we're loading extra material data from a .mat file
 	if (Engine::File_Exists(fullDirectory)) {
-		// Fetch a list of textures as defined in the .mat file
+		// Fetch a list of textures as defined in the file
 		auto textures = Asset_Material::Get_Material_Textures(fullDirectory);
 		// Recover the material folder directory from the filename
 		const size_t slash1Index = fullDirectory.find_last_of('/'), slash2Index = fullDirectory.find_last_of('\\');
@@ -100,66 +100,63 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 				m_textures[x] = modelDirectory + textures[x];
 	}
 
+	// Some definitions for later
 	const size_t textureCount = m_textures.size();
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
-	std::vector<Image_Data> dataContainers(textureCount);
 	glm::ivec2 material_dimensions = glm::ivec2(1);
 
 	// Load all images
-	constexpr GLubyte defaultMaterial[MAX_PHYSICAL_IMAGES][4] = {
-		{ GLubyte(255), GLubyte(255), GLubyte(255), GLubyte(255) },
-		{ GLubyte(128), GLubyte(128), GLubyte(255), GLubyte(0) },
-		{ GLubyte(63), GLubyte(0), GLubyte(0), GLubyte(0) },
-		{ GLubyte(128), GLubyte(0), GLubyte(0), GLubyte(0) },
-		{ GLubyte(0), GLubyte(0), GLubyte(0), GLubyte(0) },
-		{ GLubyte(255), GLubyte(0), GLubyte(0), GLubyte(0) } 
-	};
-	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-	for (size_t x = 0; x < textureCount; ++x)
-		if (!Image_IO::Import_Image(engine, m_textures[x], dataContainers[x])) {
-			dataContainers[x].pixelData = new GLubyte[4];
-			for (int p = 0; p < 4; ++p)
-				dataContainers[x].pixelData[p] = defaultMaterial[x % MAX_PHYSICAL_IMAGES][p];
-			dataContainers[x].dimensions = glm::ivec2(1);
-			dataContainers[x].pitch = 4;
-			dataContainers[x].bpp = 32;
-		}
-	read_guard.unlock();
-	read_guard.release();
-
+	{
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+		m_images.resize(textureCount);
+		constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
+			Asset_Image::Fill_Policy::Checkered,
+			Asset_Image::Fill_Policy::Solid,
+			Asset_Image::Fill_Policy::Checkered,
+			Asset_Image::Fill_Policy::Checkered,
+			Asset_Image::Fill_Policy::Checkered,
+			Asset_Image::Fill_Policy::Solid
+		};
+		for (size_t x = 0; x < textureCount; ++x) 
+			m_images[x] = Asset_Image::Create(engine, m_textures[x], false, fillPolicies[x]);
+	}
 	// Find the largest dimensions
-	for (size_t x = 0; x < textureCount; ++x) {
-		const glm::ivec2 & dimensions = dataContainers[x].dimensions;
-		if (material_dimensions.x < dimensions.x)
-			material_dimensions.x = dimensions.x;
-		if (material_dimensions.y < dimensions.y)
-			material_dimensions.y = dimensions.y;
+	{
+		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
+		for each (const auto & image in m_images) {
+			if (material_dimensions.x < image->m_size.x)
+				material_dimensions.x = image->m_size.x;
+			if (material_dimensions.y < image->m_size.y)
+				material_dimensions.y = image->m_size.y;
+		}
+	}
+	// Force all images to be the same size
+	{
+		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+		for each (auto image in m_images)
+			if (image->m_size != material_dimensions)
+				image->resize(material_dimensions);
 	}
 
-	// Force all images to be the same size
-	for (size_t x = 0; x < textureCount; ++x) 
-		Image_IO::Resize_Image(material_dimensions, dataContainers[x]);
-
 	// Merge data into single array
+	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
 	const size_t pixelsPerImage = material_dimensions.x * material_dimensions.y * 4;
 	GLubyte * materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {
 		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
-			materialData[arrayIndex] = dataContainers[tx + 0].pixelData[x]; // ALBEDO	
+			materialData[arrayIndex] = m_images[tx + 0]->m_pixelData[x]; // ALBEDO	
 		for (size_t x = 0; x < pixelsPerImage; ++x, ++arrayIndex)
-			materialData[arrayIndex] = dataContainers[tx + 1].pixelData[x]; // NORMAL
+			materialData[arrayIndex] = m_images[tx + 1]->m_pixelData[x]; // NORMAL
 		for (size_t x = 0; x < pixelsPerImage; x += 4, arrayIndex += 4) {
-			materialData[arrayIndex + 0] = dataContainers[tx + 2].pixelData[x]; // METALNESS
-			materialData[arrayIndex + 1] = dataContainers[tx + 3].pixelData[x]; // ROUGHNESS
-			materialData[arrayIndex + 2] = dataContainers[tx + 4].pixelData[x]; // HEIGHT
-			materialData[arrayIndex + 3] = dataContainers[tx + 5].pixelData[x]; // AO
+			materialData[arrayIndex + 0] = m_images[tx + 2]->m_pixelData[x]; // METALNESS
+			materialData[arrayIndex + 1] = m_images[tx + 3]->m_pixelData[x]; // ROUGHNESS
+			materialData[arrayIndex + 2] = m_images[tx + 4]->m_pixelData[x]; // HEIGHT
+			materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
 		}
 	}
-
-	// Delete old data
-	for (size_t x = 0; x < textureCount; ++x)
-		delete dataContainers[x].pixelData;
+	read_guard.unlock();
+	read_guard.release();
 
 	// Assign data to asset
 	std::unique_lock<std::shared_mutex> write_guard(m_mutex);

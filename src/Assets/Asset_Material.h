@@ -4,7 +4,7 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 
-#include "Assets\Asset.h"
+#include "Assets\Asset_Image.h"
 #include <vector>
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
@@ -52,6 +52,7 @@ public:
 	GLubyte * m_materialData = nullptr;
 	glm::ivec2 m_size = glm::ivec2(0);
 	std::vector<std::string> m_textures;
+	std::vector<Shared_Asset_Image> m_images;
 
 
 private:

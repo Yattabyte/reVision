@@ -10,9 +10,6 @@ Asset_Cubemap::~Asset_Cubemap()
 {
 	if (existsYet())
 		glDeleteTextures(1, &m_glTexID);
-	for (int x = 0; x < 6; ++x)
-		if (m_images[x])
-			m_images[x]->removeCallback(this);
 }
 
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
@@ -30,13 +27,14 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 		// Check if the file/directory exists on disk
 		const std::string fullDirectory = DIRECTORY_CUBEMAP + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		if (!Engine::File_Exists(fullDirectory)) {
 			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 		}
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, [](){});
+		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
 }
@@ -44,32 +42,15 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 void Asset_Cubemap::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	std::function<void()> finiFunc = [&, engine](void) mutable {
-		// Quit early if there exists an incomplete image
-		for (int x = 0; x < 6; ++x)
-			if (!m_images[x]->existsYet())
-				return;
-		if (!existsYet())
-			finalize(engine);
-	};
 	for (int side = 0; side < 6; ++side) {
 		// Forward image creation
 		std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-		m_images[side] = Asset_Image::Create(engine, "");
-		m_images[side]->addCallback(this, finiFunc);
+		m_images[side] = Asset_Image::Create(engine, "", false);
 	}
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	std::function<void()> finiFunc = [&, engine](void) mutable {
-		// Quit early if there exists an incomplete image
-		for (int x = 0; x < 6; ++x)
-			if (!m_images[x]->existsYet())
-				return;
-		if (!existsYet()) 
-			finalize(engine);		
-	};
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
 	for (int side = 0; side < 6; ++side) {
@@ -85,9 +66,20 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirector
 
 		// Forward image creation
 		std::unique_lock<std::shared_mutex> m_asset_guard(m_mutex);
-		m_images[side] = Asset_Image::Create(engine, specific_side_directory);
-		m_images[side]->addCallback(this, finiFunc);
+		m_images[side] = Asset_Image::Create(engine, specific_side_directory, false);
 	}
+
+	// Ensure each face is the same dimension
+	glm::ivec2 size = glm::ivec2(1);
+	for each (const auto & image in m_images) {
+		if (size.x < image->m_size.x)
+			size.x = image->m_size.x;
+		if (size.y < image->m_size.y)
+			size.y = image->m_size.y;
+	}
+	for each (auto image in m_images)
+		if (image->m_size != size)
+			image->resize(size);
 }
 
 void Asset_Cubemap::finalize(Engine * engine)
@@ -95,7 +87,7 @@ void Asset_Cubemap::finalize(Engine * engine)
 	// Create the final texture
 	{
 		std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);
+		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);	
 	}
 	// Load the final texture
 	{
