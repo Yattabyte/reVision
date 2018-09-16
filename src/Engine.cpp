@@ -241,6 +241,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	}
 
 	glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 	main = glfwCreateWindow(1, 1, "reVision", NULL, shared);
 	glfwSetWindowIcon(main, 0, NULL);
 	glfwMakeContextCurrent(main);

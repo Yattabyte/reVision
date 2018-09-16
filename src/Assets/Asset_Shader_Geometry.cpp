@@ -55,9 +55,11 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 		GLint success;
 		glGetShaderiv(ID, GL_COMPILE_STATUS, &success);
 		if (!success) {
-			GLchar InfoLog[1024];
-			glGetShaderInfoLog(ID, sizeof(InfoLog), NULL, InfoLog);
-			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(InfoLog, 1024));
+			GLint infoLogLength;
+			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
+			std::vector<GLchar> infoLog(infoLogLength);
+			glGetShaderInfoLog(ID, infoLog.size(), NULL, &infoLog[0]);
+			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 }
@@ -96,9 +98,11 @@ inline void link_program(Engine * engine, Asset_Shader_Geometry & userAsset)
 	GLint success;
 	glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
 	if (success == 0) {
-		GLchar ErrorLog[1024];
-		glGetProgramInfoLog(userAsset.m_glProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(ErrorLog, 1024));
+		GLint infoLogLength;
+		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<GLchar> infoLog(infoLogLength);
+		glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
+		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}
 	glValidateProgram(userAsset.m_glProgramID);
 

@@ -5,8 +5,14 @@
 
 #define EXT_SHADER_VERTEX ".vsh"
 #define EXT_SHADER_FRAGMENT ".fsh"
+#define EXT_SHADER_BINARY ".shader"
 #define DIRECTORY_SHADER Engine::Get_Current_Dir() + "\\Shaders\\"
 
+
+struct ShaderHeader { 
+	GLenum format;	
+	GLsizei length; 
+};
 
 /** Parse the shader, looking for any directives that require us to modify the document.
 @param	engine			the engine being used
@@ -54,9 +60,11 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 		GLint success;
 		glGetShaderiv(ID, GL_COMPILE_STATUS, &success);
 		if (!success) {
-			GLchar InfoLog[1024];
-			glGetShaderInfoLog(ID, sizeof(InfoLog), NULL, InfoLog);
-			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(InfoLog, 1024));
+			GLint infoLogLength;
+			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
+			std::vector<GLchar> infoLog(infoLogLength);
+			glGetShaderInfoLog(ID, infoLog.size(), NULL, &infoLog[0]);
+			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 }
@@ -82,6 +90,8 @@ void generate_program(Asset_Shader & userAsset)
 		glAttachShader(userAsset.m_glProgramID, userAsset.m_glFragmentID);
 }
 
+#include <fstream>
+
 /** Link the shader program.
 @param	engine		the engine to be used
 @param	userAsset	the shader asset to link for */
@@ -92,12 +102,18 @@ inline void link_program(Engine * engine, Asset_Shader & userAsset)
 	GLint success;
 	glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
 	if (success == 0) {
-		GLchar ErrorLog[1024];
-		glGetProgramInfoLog(userAsset.m_glProgramID, sizeof(ErrorLog), NULL, ErrorLog);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(ErrorLog, 1024));
-	}
+		GLint infoLogLength;
+		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<GLchar> infoLog(infoLogLength);
+		glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
+		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
+	}	
 	glValidateProgram(userAsset.m_glProgramID);
+}
 
+/** Cleanup residual program files.
+@param	userAsset	the shader asset to link for */
+inline void cleanup_program(Asset_Shader & userAsset) {
 	// Delete shader objects, they are already compiled and attached
 	if (userAsset.m_glVertexID != 0) {
 		glDetachShader(userAsset.m_glProgramID, userAsset.m_glVertexID);
@@ -106,6 +122,50 @@ inline void link_program(Engine * engine, Asset_Shader & userAsset)
 	if (userAsset.m_glFragmentID != 0) {
 		glDetachShader(userAsset.m_glProgramID, userAsset.m_glFragmentID);
 		glDeleteShader(userAsset.m_glFragmentID);
+	}
+}
+
+/** Save the program binary to file
+@param	engine		the engine to be used
+@param	userAsset	the shader asset to link for */
+inline void use_binary(Engine * engine, Asset_Shader & userAsset)
+{
+	if (userAsset.m_hasBinary) {
+		userAsset.m_glProgramID = glCreateProgram(); 
+		glProgramBinary(userAsset.m_glProgramID, userAsset.m_binaryFormat, userAsset.m_binary.data(), userAsset.m_binaryLength);
+		GLint success;
+		glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
+		if (success == 0) {
+			GLint infoLogLength;
+			glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength); 
+			std::vector<GLchar> infoLog(infoLogLength);
+			glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
+			engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(),infoLog.size()));
+		}
+		glValidateProgram(userAsset.m_glProgramID);
+	}
+}
+
+/** Save the program binary to file
+@param	engine		the engine to be used
+@param	userAsset	the shader asset to link for */
+inline void save_binary(Engine * engine, Asset_Shader & userAsset)
+{
+	if (!userAsset.m_hasBinary) {
+		ShaderHeader header;
+		glProgramParameteri(userAsset.m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+		glGetProgramiv(userAsset.m_glProgramID, GL_PROGRAM_BINARY_LENGTH, &header.length);
+		userAsset.m_binary.resize(header.length);
+		glGetProgramBinary(userAsset.m_glProgramID, header.length, NULL, &header.format, userAsset.m_binary.data());
+
+		std::ofstream file((DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+		if (file.is_open()) {			
+			file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+			file.write(userAsset.m_binary.data(), header.length);
+			file.close();
+		}
+		userAsset.m_binaryFormat = header.format;
+		userAsset.m_binaryLength = header.length;
 	}
 }
 
@@ -157,6 +217,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory
 {
 	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, m_vertexText);
 	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, m_fragmentText);
+	const bool found_shader_binary = Engine::File_Exists(fullDirectory + EXT_SHADER_BINARY);
 	
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
@@ -164,16 +225,36 @@ void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory
 		return;
 	}
 
-	// parse
-	parse(engine, *this);
+	// Try to use the cached shader
+	if (found_shader_binary) {
+		ShaderHeader header;
+		std::ifstream file((fullDirectory + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+		if (file.is_open()) {
+			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+			m_binary.resize(header.length);
+			file.read(m_binary.data(), header.length);
+			m_binaryFormat = header.format;
+			m_binaryLength = header.length;
+			m_hasBinary = true;
+			file.close();
+		}
+	}
+	else
+		parse(engine, *this);
 }
 
 void Asset_Shader::finalize(Engine * engine)
 {
 	// Create Shader Program
-	compile(engine, *this);
-	generate_program(*this);
-	link_program(engine, *this);		
+	if (m_hasBinary) 
+		use_binary(engine, *this);	
+	else {
+		compile(engine, *this);
+		generate_program(*this);
+		link_program(engine, *this);
+		save_binary(engine, *this);
+		cleanup_program(*this);
+	}
 	
 	// Finalize
 	Asset::finalize(engine);
