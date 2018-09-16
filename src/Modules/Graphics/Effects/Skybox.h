@@ -53,13 +53,11 @@ public:
 		});
 
 		// Asset-Finished Callbacks
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
-		m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
-			m_quad6IndirectBuffer.write(0, sizeof(GLuint) * 4, quad6Data);
+			m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data, 0);
 		});
 		m_cubemapSky->addCallback(this, [&](void) mutable {
 			m_skyOutOfDate = true;

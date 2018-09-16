@@ -81,7 +81,7 @@ void Asset_Primitive::finalize(Engine * engine)
 {
 	// Load Buffers
 	const size_t arraySize = m_data.size();
-	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], GL_CLIENT_STORAGE_BIT);		
+	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);		
 	
 	// Finalize
 	Asset::finalize(engine);

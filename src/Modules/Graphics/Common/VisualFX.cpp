@@ -15,10 +15,9 @@ void VisualFX::initialize(Engine * engine)
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Asset-Finished Callbacks
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
 		initializeCubeFilter();

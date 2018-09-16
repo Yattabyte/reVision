@@ -141,7 +141,6 @@ void Engine::tickThreaded(std::future<void> exitObj)
 			deltaTime = thisTime - lastTime;
 			lastTime = thisTime;
 			m_AssetManager.finalizeOrders();
-			glFinish();
 		}
 	}
 }

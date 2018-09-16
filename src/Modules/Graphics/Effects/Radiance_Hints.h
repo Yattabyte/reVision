@@ -41,11 +41,10 @@ public:
 		m_rebounceFBO.resize(m_bounceSize);
 
 		// Asset-Finished callbacks
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&, m_bounceSize]() mutable {
 			// count, primCount, first, reserved
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
-			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
 		// GL Loading

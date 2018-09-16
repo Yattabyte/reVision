@@ -45,10 +45,9 @@ public:
 		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Asset-Finished Callbacks
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4);
 		m_shapeQuad->addCallback(this, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer.write(0, sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
 		// GL loading

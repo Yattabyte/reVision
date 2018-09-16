@@ -29,13 +29,7 @@ void ModelManager::initialize()
 	glVertexArrayAttribIFormat(m_vaoID, 6, 4, GL_INT, offsetof(SingleVertex, boneIDs));
 	glVertexArrayAttribFormat(m_vaoID, 7, 4, GL_FLOAT, GL_FALSE, offsetof(SingleVertex, weights));
 	// Specify data from the one vertex buffer to binding point 0
-	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));
-
-	if (m_fence) {
-		glDeleteSync(m_fence);
-		m_fence = nullptr;
-	}
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));	
 }
 
 void ModelManager::registerGeometry(const GeometryInfo & data, size_t & offset, size_t & count)
@@ -53,10 +47,8 @@ void ModelManager::registerGeometry(const GeometryInfo & data, size_t & offset, 
 	
 	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	m_currentSize += arraySize;
-	if (m_fence) {
-		glDeleteSync(m_fence);
-		m_fence = nullptr;
-	}
+	if (m_fence) 
+		glDeleteSync(m_fence);	
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 }
 
@@ -102,11 +94,6 @@ void ModelManager::expandToFit(const size_t & arraySize)
 		// Overwrite old VBO ID's
 		m_vboID = newVBOID;
 		m_outOfDate = true;
-		if (m_fence) {
-			glDeleteSync(m_fence);
-			m_fence = nullptr;
-		}
-		m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	}
 }
 
@@ -120,7 +107,7 @@ const bool ModelManager::finishedWork()
 	std::shared_lock<std::shared_mutex> readGuard(m_mutex);	
 	if (!m_fence)
 		return true;
-	const GLenum & state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	const GLenum & state = glClientWaitSync(m_fence, 0, 0);
 	if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED) {
 		glDeleteSync(m_fence);
 		m_fence = nullptr;
