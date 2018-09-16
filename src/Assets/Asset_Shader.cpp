@@ -99,10 +99,14 @@ inline void link_program(Engine * engine, Asset_Shader & userAsset)
 	glValidateProgram(userAsset.m_glProgramID);
 
 	// Delete shader objects, they are already compiled and attached
-	if (userAsset.m_glVertexID != 0)
+	if (userAsset.m_glVertexID != 0) {
+		glDetachShader(userAsset.m_glProgramID, userAsset.m_glVertexID);
 		glDeleteShader(userAsset.m_glVertexID);
-	if (userAsset.m_glFragmentID != 0)
+	}
+	if (userAsset.m_glFragmentID != 0) {
+		glDetachShader(userAsset.m_glProgramID, userAsset.m_glFragmentID);
 		glDeleteShader(userAsset.m_glFragmentID);
+	}
 }
 
 Asset_Shader::~Asset_Shader()

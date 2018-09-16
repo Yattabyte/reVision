@@ -9,6 +9,7 @@
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet()) {
+		glDeleteBuffers(1, &m_pboID);
 		glDeleteTextures(1, &m_glTexID);
 		glMakeTextureHandleNonResidentARB(m_glTexHandle);
 	}
@@ -65,29 +66,33 @@ void Asset_Texture::finalize(Engine * engine)
 {		
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);
+	glCreateBuffers(1, &m_pboID);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
 	
 	// Load Texture
 	switch (m_type) {
 		case GL_TEXTURE_1D: {
+			glNamedBufferStorage(m_pboID, m_image->m_size.x * 4, m_image->m_pixelData, 0);
 			glTextureStorage1D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x);
-			glTextureSubImage1D(m_glTexID, 0, 0, m_image->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
+			glTextureSubImage1D(m_glTexID, 0, 0, m_image->m_size.x, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
 			glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 			break;
 		}
 		case GL_TEXTURE_2D: {
+			glNamedBufferStorage(m_pboID, m_image->m_size.x * m_image->m_size.y * 4, m_image->m_pixelData, 0);
 			glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y);
-			glTextureSubImage2D(m_glTexID, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
+			glTextureSubImage2D(m_glTexID, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
 			if (m_anis)
 				glTextureParameterf(m_glTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 			if (m_mipmap) {
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 				glGenerateTextureMipmap(m_glTexID);
-				GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				/*GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				auto state = GL_UNSIGNALED;
 				while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-					state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+					state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);*/
 			}
 			else {
 				glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -96,19 +101,21 @@ void Asset_Texture::finalize(Engine * engine)
 			break;
 		}
 		case GL_TEXTURE_2D_ARRAY: {
+			glNamedBufferStorage(m_pboID, m_image->m_size.x * m_image->m_size.y * 4, m_image->m_pixelData, 0);
 			glTextureStorage3D(m_glTexID, 1, GL_RGBA16F, m_image->m_size.x, m_image->m_size.y, 0);
-			glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_image->m_pixelData);
+			glTextureSubImage3D(m_glTexID, 0, 0, 0, 0, m_image->m_size.x, m_image->m_size.y, 0, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
 			glTextureParameteri(m_glTexID, GL_GENERATE_MIPMAP, GL_TRUE);
 			glTextureParameteri(m_glTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			glTextureParameteri(m_glTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 			glGenerateTextureMipmap(m_glTexID);
-			GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-			auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+			/*GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			auto state = GL_UNSIGNALED;
 			while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-				state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);*/
 			break;
 		}
-	}	
+	}
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	m_glTexHandle = glGetTextureHandleARB(m_glTexID);
 	
 	// Finalize

@@ -11,8 +11,10 @@
 
 Asset_Material::~Asset_Material()
 {
-	if (existsYet())
+	if (existsYet()) {
+		glDeleteBuffers(1, &m_pboID);
 		glDeleteTextures(1, &m_glArrayID);
+	}
 	if (m_materialData)
 		delete m_materialData;
 }
@@ -150,30 +152,29 @@ void Asset_Material::initialize(Engine * engine, const std::string & fullDirecto
 void Asset_Material::finalize(Engine * engine)
 {
 	MaterialManager & materialManager = engine->getMaterialManager();
+	const GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
 
 	// Create Material	
 	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
+	glCreateBuffers(1, &m_pboID);
+	glNamedBufferStorage(m_pboID, m_size.x * m_size.y * m_imageCount * 4, m_materialData, 0);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
 	
 	// Load material		
-	float anisotropy;
-	glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &anisotropy);
-	// The equation beneath calculates the nubmer of mip levels needed, to mip down to a size of 1
-	// Uses the smallest dimension of the image
-	GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
-	glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)), GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
-	glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, m_materialData);
+	glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)) /* Calculates mipmap count*/, GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
+	glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
 	glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, anisotropy);
+	glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 	glGenerateTextureMipmap(m_glArrayID);
+	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-	// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
-	// That IS a problem, because once the handle is issued, the texture object CAN NOT and MUST NOT be changed!!!
+	/*// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
 	GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	auto state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	auto state = GL_UNSIGNALED;
 	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
 		state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-	glDeleteSync(fence);
+	glDeleteSync(fence);*/
 	materialManager.generateHandle(m_matSpot, m_glArrayID);
 	if (!glIsTexture(m_glArrayID))
 		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename, m_textures[0] + ", " + m_textures[1] + ", " + m_textures[2] + ", " + m_textures[3] + ", " + m_textures[4] + ", " + m_textures[5]);

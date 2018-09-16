@@ -47,6 +47,7 @@ public:
 	
 	
 	// Public Attributes
+	GLuint m_pboID = 0;
 	GLuint m_glArrayID = 0;
 	GLuint m_matSpot = 0;
 	GLubyte * m_materialData = nullptr;

@@ -32,7 +32,7 @@ public:
 	
 	
 	// Public Attributes
-	GLuint m_glTexID = 0;
+	GLuint m_glTexID = 0, m_pboIDs[6] = {0,0,0,0,0,0};
 	Shared_Asset_Image m_images[6];
 
 

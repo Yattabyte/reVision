@@ -65,8 +65,11 @@ public:
 			m_skyOutOfDate = true;
 			m_skySize = m_cubemapSky->m_images[0]->m_size;
 			glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, m_skySize.x, m_skySize.x);
-			for (int x = 0; x < 6; ++x)
-				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, m_skySize.x, m_skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, m_cubemapSky->m_images[x]->m_pixelData);
+			for (int x = 0; x < 6; ++x) {
+				glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_cubemapSky->m_pboIDs[x]);
+				glTextureSubImage3D(m_cubemapMipped, 0, 0, 0, x, m_skySize.x, m_skySize.x, 1, GL_RGBA, GL_UNSIGNED_BYTE, (void*)0);
+			}
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
 			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
