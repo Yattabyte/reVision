@@ -4,6 +4,7 @@
 
 #include "Assets\Asset.h"
 #include "Utilities\MappedChar.h"
+#include <chrono>
 #include <deque>
 #include <functional>
 #include <future>
@@ -51,11 +52,21 @@ public:
 	@param	filename	the relative filename (within the project directory) of the asset to search for
 	@return				the asset, if found, or null if not */
 	template <typename Asset_T>
-	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename) {
+	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename, const bool & dontForceFinalize = false) {
 		std::shared_lock<std::shared_mutex> read_guard(m_Mutex_Assets);
 		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) 
-			if (asset->getFileName() == filename) 
-				return std::dynamic_pointer_cast<Asset_T>(asset);				
+			if (asset->getFileName() == filename) {		
+				read_guard.unlock();
+				read_guard.release();
+				// Asset may be found, but not guaranteed to be finalized
+				// Stay here until it is finalized
+				if (!dontForceFinalize)
+					while (!asset->existsYet()) {
+						std::this_thread::sleep_for(std::chrono::milliseconds(1));
+						continue;
+					}
+				return std::dynamic_pointer_cast<Asset_T>(asset);
+			}			
 		return std::shared_ptr<Asset_T>();
 	}
 	/** A template for creating assets and forwarding their arguments, also adds to the map. 	

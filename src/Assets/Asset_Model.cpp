@@ -1,8 +1,8 @@
 #include "Assets\Asset_Model.h"
 #include "Engine.h"
 
-#define DIRECTORY_MODEL "\\Models\\"
 
+constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
 Asset_Model::~Asset_Model()
 {
@@ -18,14 +18,14 @@ Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & file
 	ModelManager & modelManager = engine->getModelManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Model>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Model>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Model>(filename, modelManager);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_MODEL + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_MODEL + filename;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		
 		// Submit the work order
@@ -34,13 +34,13 @@ Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & file
 	return userAsset;
 }
 
-void Asset_Model::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Model::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, fullDirectory, false);
+	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
 
 	// Generate all the required skins
-	loadMaterial(engine, fullDirectory, m_materialArray, m_mesh->m_geometry.materials);
+	loadMaterial(engine, relativePath, m_materialArray, m_mesh->m_geometry.materials);
 
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.m_vertices.resize(vertexCount);
@@ -106,12 +106,12 @@ void Asset_Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3
 	}
 }
 
-void Asset_Model::loadMaterial(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material>& materials)
+void Asset_Model::loadMaterial(Engine * engine, const std::string & relativePath, Shared_Asset_Material & modelMaterial, const std::vector<Material>& materials)
 {
 	// Retrieve texture directories from the mesh file
-	const size_t slash1Index = fullDirectory.find_last_of('/'), slash2Index = fullDirectory.find_last_of('\\');
+	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
 	const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
-	const std::string meshDirectory = fullDirectory.substr(0, furthestFolderIndex + 1);
+	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);
 	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
 		textures[tx + 0] = meshDirectory + materials[mx].albedo;
@@ -123,6 +123,6 @@ void Asset_Model::loadMaterial(Engine * engine, const std::string & fullDirector
 	}
 
 	// Attempt to find a .mat file if it exists
-	std::string materialFilename = fullDirectory.substr(0, fullDirectory.find_first_of("."));
+	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of("."));
 	modelMaterial = Asset_Material::Create(engine, materialFilename, textures);
 }

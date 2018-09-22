@@ -3,11 +3,11 @@
 #include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 
-#define EXT_SHADER_VERTEX ".vsh"
-#define EXT_SHADER_FRAGMENT ".fsh"
-#define EXT_SHADER_GEOMETRY ".gsh"
-#define DIRECTORY_SHADER Engine::Get_Current_Dir() + "\\Shaders\\"
 
+constexpr char* EXT_SHADER_VERTEX = ".vsh";
+constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
+constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
+constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
 /** Parse the shader, looking for any directives that require us to modify the document.
 @param	engine			the engine being used
@@ -128,21 +128,21 @@ Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, cons
 	AssetManager & assetManager = engine->getAssetManager();
 	
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Geometry>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Geometry>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Shader_Geometry>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = "\\Shaders\\" + filename;
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		bool found_vertex = Engine::File_Exists(fullDirectory + EXT_SHADER_VERTEX);
-		bool found_fragement = Engine::File_Exists(fullDirectory + EXT_SHADER_FRAGMENT);
+		bool found_vertex = Engine::File_Exists(relativePath + EXT_SHADER_VERTEX);
+		bool found_fragement = Engine::File_Exists(relativePath + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
+			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_VERTEX);
 		if (!found_fragement)
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
+			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_FRAGMENT);
 		if (!(found_vertex && found_fragement))
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 
@@ -159,11 +159,11 @@ void Asset_Shader_Geometry::initializeDefault(Engine * engine)
 	m_fragmentText = "#version 430\n\nlayout (location = 0) out glm::vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = glm::vec4(1.0f);\n}";	
 }
 
-void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & relativePath)
 {
-	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, m_vertexText);
-	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, m_fragmentText);
-	const bool found_geometry = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_GEOMETRY, m_geometryText);
+	const bool found_vertex = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_VERTEX, m_vertexText);
+	const bool found_fragement = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_FRAGMENT, m_fragmentText);
+	const bool found_geometry = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_GEOMETRY, m_geometryText);
 
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader_Geometry");

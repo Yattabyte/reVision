@@ -94,10 +94,10 @@ class Mesh_IO {
 public:
 	/** Import a model from disk.
 	@param	engine			the engine to import to
-	@param	fulldirectory	the path to the file
+	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
 	@return					true on successfull import, false otherwise (error reported to engine) */
-	static bool Import_Model(Engine * engine, const std::string & fulldirectory, Mesh_Geometry & importedData);
+	static bool Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & importedData);
 	/** Get the plugin version.
 	@return the plugin version */
 	static const std::string Get_Version();

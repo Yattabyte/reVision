@@ -62,15 +62,15 @@ private:
 	/** Create a mesh material, loading the textures as defined by the mesh file itself.
 	@note	Used as a failsafe. Mesh importer may not succeed in fetching the directories, and the mesh may not store usable directories.
 	@param	engine			the engine being used
-	@param	fullDirectory	the model's filename to use as a guide
+	@param	relativePath	the model's filename to use as a guide
 	@param	modelMaterial	the material asset to load into
 	@param	meshMaterial	the material asset to load into
 	@param	sceneMaterial	the scene material to use as a guide */
-	void loadMaterial(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
+	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
 
 
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 	virtual void finalize(Engine * engine) override;
 
 

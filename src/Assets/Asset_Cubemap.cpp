@@ -1,10 +1,8 @@
 #include "Assets\Asset_Cubemap.h"
 #include "Engine.h"
 
-#define EXT_CUBEMAP ".png"
-#define DIRECTORY_CUBEMAP "\\Textures\\Cubemaps\\"
-#define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
+constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
 Asset_Cubemap::~Asset_Cubemap()
 {
@@ -21,14 +19,14 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Cubemap>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Cubemap>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Cubemap>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string fullDirectory = DIRECTORY_CUBEMAP + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string relativePath = DIRECTORY_CUBEMAP + filename;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		
 		// Submit the work order
@@ -37,18 +35,18 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 	return userAsset;
 }
 
-void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath)
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
 	for (int side = 0; side < 6; ++side) {
 		std::string specific_side_directory = "";
 		for (int x = 0; x < 3; ++x) {
-			specific_side_directory = fullDirectory + side_suffixes[side] + extensions[x];
-			if (Engine::File_Exists(Engine::Get_Current_Dir() + specific_side_directory))
+			specific_side_directory = relativePath + side_suffixes[side] + extensions[x];
+			if (Engine::File_Exists(specific_side_directory))
 				break;
-			specific_side_directory = fullDirectory + "\\" + side_suffixes[side] + extensions[x];
-			if (Engine::File_Exists(Engine::Get_Current_Dir() + specific_side_directory))
+			specific_side_directory = relativePath + "\\" + side_suffixes[side] + extensions[x];
+			if (Engine::File_Exists(specific_side_directory))
 				break;
 		}
 

@@ -15,16 +15,17 @@ GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size)
 	return newPixels;
 }
 
-FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & fulldirectory)
+FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relativePath)
 {
-	const char * file = fulldirectory.c_str();
+	std::string fullPath(Engine::Get_Current_Dir() + relativePath);
+	const char * file = fullPath.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	FIBITMAP * bitmap = nullptr;
 
 	if (format == -1)
-		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
+		engine->reportError(MessageManager::FILE_MISSING, relativePath);
 	else if (format == FIF_UNKNOWN) {
-		engine->reportError(MessageManager::FILE_CORRUPT, fulldirectory);
+		engine->reportError(MessageManager::FILE_CORRUPT, relativePath);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (FreeImage_FIFSupportsReading(format))
 			engine->reportMessage("Successfully resolved the texture file's format!");
@@ -54,9 +55,9 @@ void Image_IO::Deinitialize()
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & data_container)
+bool Image_IO::Import_Image(Engine * engine, const std::string & relativePath, Image_Data & data_container)
 {
-	FIBITMAP * bitmap = Import_Bitmap(engine, fulldirectory);
+	FIBITMAP * bitmap = Import_Bitmap(engine, relativePath);
 	if (!bitmap) return false;
 	Load_Pixel_Data(bitmap, data_container);
 	FreeImage_Unload(bitmap);

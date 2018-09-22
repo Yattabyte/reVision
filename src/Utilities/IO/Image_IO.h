@@ -27,10 +27,10 @@ public:
 	static void Deinitialize();
 	/** Import an image from disk.
 	@param	engine			the engine to import to
-	@param	fulldirectory	the path to the file
+	@param	relativePath	the path to the file
 	@param	importedData	the container to place the imported data within
 	@return					true on successfull import, false otherwise (error reported to engine) */
-	static bool Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & importedData);
+	static bool Import_Image(Engine * engine, const std::string & relativePath, Image_Data & importedData);
 	/** Load pixel data from a bitmap object.
 	@param	bitmap			the FreeImage bitmap to read from
 	@param	importedData	the container to place the imported data within */
@@ -48,9 +48,9 @@ public:
 private:
 	/** Import a FreeImage bitmap from disk.
 	@param	engine			the engine to import to
-	@param	fulldirectory	the path to the file
+	@param	relativePath	the path to the file
 	@return					the free image bitmap object */
-	static FIBITMAP * Import_Bitmap(Engine * engine, const std::string & fulldirectory);
+	static FIBITMAP * Import_Bitmap(Engine * engine, const std::string & relativePath);
 };
 
 #endif // IMAGE_IO_H

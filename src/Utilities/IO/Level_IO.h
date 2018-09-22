@@ -17,7 +17,7 @@ Supports only our own level format so far. */
 class Level_IO {
 public:
 	/***/
-	static bool Import_Level(Engine * engine, const std::string & fulldirectory, std::vector<LevelStruct_Entity> & entities);
+	static bool Import_Level(Engine * engine, const std::string & relativePath, std::vector<LevelStruct_Entity> & entities);
 
 
 private:

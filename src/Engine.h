@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.28";
+constexpr char ENGINE_VERSION[]	= "1.29";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -110,7 +110,7 @@ public:
 	/** Retrieves the application's running directory.
 	@return					std::string of the absolute directory that this executable ran from */
 	static std::string Get_Current_Dir();
-	/** Check if a given file exists.
+	/** Check if a given file exists, relative to the application directory.
 	@param	name			the full file path
 	@return					true if the file exists, false otherwise */
 	static bool File_Exists(const std::string & name);

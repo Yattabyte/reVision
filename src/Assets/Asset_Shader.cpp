@@ -3,11 +3,11 @@
 #include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
 
-#define EXT_SHADER_VERTEX ".vsh"
-#define EXT_SHADER_FRAGMENT ".fsh"
-#define EXT_SHADER_BINARY ".shader"
-#define DIRECTORY_SHADER Engine::Get_Current_Dir() + "\\Shaders\\"
 
+constexpr char* EXT_SHADER_VERTEX = ".vsh";
+constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
+constexpr char* EXT_SHADER_BINARY = ".shader";
+constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
 struct ShaderHeader { 
 	GLenum format;	
@@ -158,7 +158,7 @@ inline void save_binary(Engine * engine, Asset_Shader & userAsset)
 		userAsset.m_binary.resize(header.length);
 		glGetProgramBinary(userAsset.m_glProgramID, header.length, NULL, &header.format, userAsset.m_binary.data());
 
-		std::ofstream file((DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+		std::ofstream file((Engine::Get_Current_Dir() + DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
 		if (file.is_open()) {			
 			file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 			file.write(userAsset.m_binary.data(), header.length);
@@ -182,28 +182,28 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Shader>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Shader>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Shader>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_SHADER + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_SHADER + filename;
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		bool found_vertex = Engine::File_Exists(fullDirectory + EXT_SHADER_VERTEX);
-		bool found_fragement = Engine::File_Exists(fullDirectory + EXT_SHADER_FRAGMENT);
+		bool found_vertex = Engine::File_Exists(relativePath +  EXT_SHADER_VERTEX);
+		bool found_fragement = Engine::File_Exists(relativePath + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_VERTEX);
+			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_VERTEX);
 		if (!found_fragement)
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_SHADER_FRAGMENT);
+			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_FRAGMENT);
 		if (!(found_vertex && found_fragement))
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
-	return userAsset;
+	return userAsset;	
 }
 
 void Asset_Shader::initializeDefault(Engine * engine)
@@ -213,11 +213,11 @@ void Asset_Shader::initializeDefault(Engine * engine)
 	m_fragmentText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
 }
 
-void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 {
-	const bool found_vertex = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_VERTEX, m_vertexText);
-	const bool found_fragement = Text_IO::Import_Text(engine, fullDirectory + EXT_SHADER_FRAGMENT, m_fragmentText);
-	const bool found_shader_binary = Engine::File_Exists(fullDirectory + EXT_SHADER_BINARY);
+	const bool found_vertex = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_VERTEX, m_vertexText);
+	const bool found_fragement = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_FRAGMENT, m_fragmentText);
+	const bool found_shader_binary = Engine::File_Exists(relativePath + EXT_SHADER_BINARY);
 	
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
@@ -226,10 +226,12 @@ void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory
 	}
 
 	// Try to use the cached shader
+	bool success = false;
 	if (found_shader_binary) {
 		ShaderHeader header;
-		std::ifstream file((fullDirectory + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
 		if (file.is_open()) {
+			success = true;
 			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 			m_binary.resize(header.length);
 			file.read(m_binary.data(), header.length);
@@ -239,7 +241,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & fullDirectory
 			file.close();
 		}
 	}
-	else
+	if (!success)	
 		parse(engine, *this);
 }
 

@@ -22,7 +22,7 @@ class Asset_Mesh : public Asset
 {
 public:
 	/** Destroy the Mesh. */
-	~Asset_Mesh();
+	~Asset_Mesh() = default;
 
 
 	// Public Methods
@@ -47,7 +47,7 @@ private:
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 	virtual void finalize(Engine * engine) override;
 
 

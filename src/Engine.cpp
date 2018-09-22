@@ -178,7 +178,7 @@ bool Engine::File_Exists(const std::string & name)
 {
 	// Technique to return whether or not a given file or folder exists
 	struct stat buffer;
-	return (stat(name.c_str(), &buffer) == 0);
+	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
 void Engine::updateInput(const float & deltaTime)

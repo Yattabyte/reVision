@@ -3,8 +3,8 @@
 #include "Utilities\IO\Mesh_IO.h"
 #include "Engine.h"
 
-#define DIRECTORY_COLLIDER "\\Models\\"
 
+constexpr char* DIRECTORY_COLLIDER = "\\Models\\";
 
 Asset_Collider::~Asset_Collider()
 {
@@ -19,14 +19,14 @@ Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string 
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Collider>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Collider>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Collider>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string fullDirectory = DIRECTORY_COLLIDER + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string relativePath = DIRECTORY_COLLIDER + filename;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 
 		// Submit the work order
@@ -35,10 +35,10 @@ Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string 
 	return userAsset;
 }
 
-void Asset_Collider::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Collider::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, fullDirectory, false);
+	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
 	std::vector<btScalar> orderedPoints;
 	orderedPoints.reserve(m_mesh->m_geometry.vertices.size() * 3);
 	for each (const auto & vertex in m_mesh->m_geometry.vertices) {

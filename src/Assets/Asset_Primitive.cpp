@@ -2,10 +2,9 @@
 #include "Utilities\IO\Mesh_IO.h"
 #include "Engine.h"
 
-#define EXT_PRIMITIVE ".obj"
-#define DIRECTORY_PRIMITIVE "\\Primitives\\"
-#define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
+constexpr char* EXT_PRIMITIVE = ".obj";
+constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
 Asset_Primitive::~Asset_Primitive()
 {
@@ -31,14 +30,14 @@ Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::strin
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Primitive>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Primitive>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Primitive>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 	
 		// Submit the work order
@@ -47,10 +46,10 @@ Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::strin
 	return userAsset;
 }
 
-void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Primitive::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, fullDirectory, false);
+	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
 
 
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();

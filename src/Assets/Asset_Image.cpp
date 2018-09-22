@@ -3,7 +3,6 @@
 #include "Engine.h"
 #include "glm\gtc\type_ptr.hpp"
 
-#define DIRECTORY_IMAGE Engine::Get_Current_Dir()
 
 Asset_Image::~Asset_Image()
 {
@@ -17,7 +16,7 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Image>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Image>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Image>(filename);
 		auto & assetRef = *userAsset.get();
@@ -25,11 +24,10 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 		assetRef.m_policyResize = policyResize;
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_IMAGE + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
+		if (!Engine::File_Exists(filename)) {
+			engine->reportError(MessageManager::FILE_MISSING, filename);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 		}
 
@@ -45,10 +43,10 @@ void Asset_Image::initializeDefault(Engine * engine)
 	fill();
 }
 
-void Asset_Image::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 {
 	Image_Data dataContainer;
-	if (!Image_IO::Import_Image(engine, fullDirectory, dataContainer)) {
+	if (!Image_IO::Import_Image(engine, relativePath, dataContainer)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Image");
 		initializeDefault(engine);
 		return;

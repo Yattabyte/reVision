@@ -87,7 +87,7 @@ public:
 	// Public Attributes
 	GLuint m_glProgramID = 0, m_glVertexID = 0, m_glFragmentID = 0; // OpenGL ID's
 	std::string m_vertexText = "", m_fragmentText = ""; // Text Data
-	bool m_hasBinary = true;
+	bool m_hasBinary = false;
 	std::vector<char> m_binary;
 	GLenum m_binaryFormat;
 	GLsizei m_binaryLength;
@@ -103,7 +103,7 @@ private:
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
+	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 	virtual void finalize(Engine * engine) override;
 
 

@@ -1,10 +1,8 @@
 #include "Assets\Asset_Texture.h"
 #include "Engine.h"
 
-#define EXT_TEXTURE	".png"
-#define DIRECTORY_TEXTURE "\\Textures\\"
-#define ABS_DIRECTORY_TEXTURE(filename) DIRECTORY_TEXTURE + filename + EXT_TEXTURE
 
+constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
 Asset_Texture::~Asset_Texture()
 {
@@ -29,14 +27,14 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Texture>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Texture>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Texture>(filename, type, mipmap, anis);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_TEXTURE + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_TEXTURE + filename;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		
 		// Submit the work order
@@ -45,10 +43,10 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 	return userAsset;
 }
 
-void Asset_Texture::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Texture::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_image = Asset_Image::Create(engine, fullDirectory, false);
+	m_image = Asset_Image::Create(engine, relativePath, false);
 }
 
 void Asset_Texture::finalize(Engine * engine)

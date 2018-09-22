@@ -3,10 +3,9 @@
 #include "Engine.h"
 #include <fstream>
 
-#define EXT_CONFIG ".cfg"
-#define DIRECTORY_CONFIG Engine::Get_Current_Dir() + "\\Configs\\"
-#define ABS_DIRECTORY_CONFIG(filename) DIRECTORY_CONFIG + filename + EXT_CONFIG
 
+constexpr char* EXT_CONFIG = ".cfg";
+constexpr char* DIRECTORY_CONFIG = "\\Configs\\";
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>".
 @return	the std::string between quotation marks */
@@ -49,14 +48,14 @@ Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & fi
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Config>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Config>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Config>(filename, cfg_strings);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_CONFIG + filename + EXT_CONFIG;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		
 		// Submit the work order
@@ -65,10 +64,10 @@ Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & fi
 	return userAsset;
 }
 
-void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 {
 	try {
-		std::ifstream file_stream(fullDirectory);
+		std::ifstream file_stream(Engine::Get_Current_Dir() + relativePath);
 		for (std::string line; std::getline(file_stream, line); ) {
 			if (line.length()) {
 				const std::string cfg_property = get_between_quotes(line);
@@ -110,5 +109,5 @@ void Asset_Config::saveConfig()
 	std::string output;
 	for each (const auto &value in m_configuration) 
 		output += "\"" + m_strings[value.first] + "\" \"" + std::to_string(value.second) + "\"\n";
-	Text_IO::Export_Text(ABS_DIRECTORY_CONFIG(getFileName()), output);
+	Text_IO::Export_Text(DIRECTORY_CONFIG + getFileName() + EXT_CONFIG, output);
 }

@@ -59,18 +59,18 @@ inline Node * copy_node(const aiNode * oldNode)
 	return newNode;
 }
 
-bool Mesh_IO::Import_Model(Engine * engine, const std::string & fulldirectory, Mesh_Geometry & data_container)
+bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & data_container)
 {
 	// Check if the file exists
-	if (!Engine::File_Exists(fulldirectory)) {
-		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
+	if (!Engine::File_Exists(relativePath)) {
+		engine->reportError(MessageManager::FILE_MISSING, relativePath);
 		return false;
 	}
 
 	// Get Importer Resource
 	Assimp::Importer * importer = importer_pool.rentImporter();
 	const aiScene* scene = importer->ReadFile(
-		fulldirectory, 
+		Engine::Get_Current_Dir() + relativePath, 
 		aiProcess_LimitBoneWeights |
 		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace /*|
@@ -83,7 +83,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & fulldirectory, M
 
 	// Check if scene imported successfully
 	if (!scene) {
-		engine->reportError(MessageManager::FILE_CORRUPT, fulldirectory);
+		engine->reportError(MessageManager::FILE_CORRUPT, relativePath);
 		return false;
 	}
 

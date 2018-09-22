@@ -1,21 +1,21 @@
 #include "Level_IO.h"
 #include "Engine.h"
 
-bool Level_IO::Import_Level(Engine * engine, const std::string & fulldirectory, std::vector<LevelStruct_Entity> & entities)
+bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, std::vector<LevelStruct_Entity> & entities)
 {
 	// Check if the file exists
-	if (!Engine::File_Exists(fulldirectory)) {
-		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
+	if (!Engine::File_Exists(relativePath)) {
+		engine->reportError(MessageManager::FILE_MISSING, relativePath);
 		return false;
 	}
 	// Try to load the file stream
 	try {
-		entities = parse_level(std::ifstream(fulldirectory));
+		entities = parse_level(std::ifstream(Engine::Get_Current_Dir() + relativePath));
 		return true;
 	}
 	// Catch failure state
 	catch (const std::ifstream::failure e) {
-		engine->reportError(MessageManager::FILE_CORRUPT, fulldirectory, e.what());
+		engine->reportError(MessageManager::FILE_CORRUPT, relativePath, e.what());
 		return false;
 	}
 }

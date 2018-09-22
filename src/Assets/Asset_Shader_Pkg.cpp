@@ -3,9 +3,9 @@
 #include "Engine.h"
 #include "GLM\gtc\type_ptr.hpp"
 
-#define EXT_PACKAGE ".pkg"
-#define DIRECTORY_SHADER_PKG Engine::Get_Current_Dir() + "\\Shaders\\"
 
+constexpr char* EXT_PACKAGE = ".pkg";
+constexpr char* DIRECTORY_SHADER_PKG = "\\Shaders\\";
 
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
 @param	engine			the engine being used
@@ -41,18 +41,18 @@ Shared_Asset_Shader_Pkg Asset_Shader_Pkg::Create(Engine * engine, const std::str
 	AssetManager & assetManager = engine->getAssetManager();
 
 	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Pkg>(filename);
+	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Pkg>(filename, threaded);
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Shader_Pkg>(filename);
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = DIRECTORY_SHADER_PKG + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::string &relativePath = DIRECTORY_SHADER_PKG + filename;
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		const bool found = Engine::File_Exists(fullDirectory + EXT_PACKAGE);
+		const bool found = Engine::File_Exists(relativePath + EXT_PACKAGE);
 		if (!found) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory + EXT_PACKAGE);
+			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_PACKAGE);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 		}
 
@@ -67,9 +67,9 @@ void Asset_Shader_Pkg::initializeDefault(Engine * engine)
 	// Create hard-coded alternative
 }
 
-void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & fullDirectory)
+void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativePath)
 {
-	const bool found = Text_IO::Import_Text(engine, fullDirectory + EXT_PACKAGE, m_packageText);
+	const bool found = Text_IO::Import_Text(engine, relativePath + EXT_PACKAGE, m_packageText);
 	
 	if (!found)
 		engine->reportError(MessageManager::FILE_MISSING, getFileName() + EXT_PACKAGE);
