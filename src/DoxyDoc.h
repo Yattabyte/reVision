@@ -134,7 +134,7 @@
  *		- IO Classes:
  *			- Image_IO
  *				- Image Importing using FreeImage.
- *			- Model_IO
+ *			- Mesh_IO
  *				- Model Importing ussing ASSIMP.
  *			- Text_IO
  *				- Plaintext importing.

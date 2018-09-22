@@ -2,7 +2,7 @@
 #ifndef	ASSET_COLLIDER_H
 #define	ASSET_COLLIDER_H
 
-#include "Assets\Asset.h"
+#include "Assets\Asset_Mesh.h"
 #include <btBulletDynamicsCommon.h>
 
 
@@ -27,6 +27,7 @@ public:
 	
 	
 	// Public Attributes
+	Shared_Asset_Mesh m_mesh;
 	btCollisionShape * m_shape = nullptr;
 
 
@@ -38,7 +39,6 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
 

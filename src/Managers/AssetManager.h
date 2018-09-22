@@ -52,7 +52,7 @@ public:
 	@return				the asset, if found, or null if not */
 	template <typename Asset_T>
 	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename) {
-		std::shared_lock<std::shared_mutex> guard(m_Mutex_Assets);
+		std::shared_lock<std::shared_mutex> read_guard(m_Mutex_Assets);
 		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) 
 			if (asset->getFileName() == filename) 
 				return std::dynamic_pointer_cast<Asset_T>(asset);				
@@ -64,6 +64,7 @@ public:
 	template <typename Asset_T, typename... Args>
 	std::shared_ptr<Asset_T> createNewAsset(Args&&... ax) {
 		std::shared_ptr<Asset_T> userAsset = std::shared_ptr<Asset_T>(new Asset_T(std::forward<Args>(ax)...));
+		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
 		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
 		return userAsset;
 	}

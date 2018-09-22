@@ -64,7 +64,6 @@ protected:
 
 
 	// Protected Interface
-	virtual void initializeDefault(Engine * engine) = 0;
 	/** Initializes the asset. */
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) = 0;
 	/** Finalizes the asset. */

@@ -1,10 +1,9 @@
 #include "Asset_Collider.h"
 #include "Utilities\IO\Text_IO.h"
-#include "Utilities\IO\Model_IO.h"
+#include "Utilities\IO\Mesh_IO.h"
 #include "Engine.h"
 
-#define DIRECTORY_COLLIDER Engine::Get_Current_Dir() + "\\Models\\"
-#define ABS_DIRECTORY_COLLIDER(filename) DIRECTORY_COLLIDER + filename 
+#define DIRECTORY_COLLIDER "\\Models\\"
 
 
 Asset_Collider::~Asset_Collider()
@@ -26,13 +25,9 @@ Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string 
 		auto & assetRef = *userAsset.get();
 
 		// Check if the file/directory exists on disk
-		const std::string fullDirectory = ABS_DIRECTORY_COLLIDER(filename);
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory) || (filename == "") || (filename == " ")) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
+		const std::string fullDirectory = DIRECTORY_COLLIDER + filename;
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
@@ -40,24 +35,13 @@ Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string 
 	return userAsset;
 }
 
-void Asset_Collider::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative
-	m_shape = new btBoxShape(btVector3(1, 1, 1));	
-}
-
 void Asset_Collider::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	// Attempt to create the asset
-	Model_Geometry dataContainer;
-	if (!Model_IO::Import_Model(engine, fullDirectory, import_hull, dataContainer)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Collider");
-		initializeDefault(engine);
-		return;
-	}
+	// Forward asset creation
+	m_mesh = Asset_Mesh::Create(engine, fullDirectory, false);
 	std::vector<btScalar> orderedPoints;
-	orderedPoints.reserve(dataContainer.vertices.size() * 3);
-	for each (const auto & vertex in dataContainer.vertices) {
+	orderedPoints.reserve(m_mesh->m_geometry.vertices.size() * 3);
+	for each (const auto & vertex in m_mesh->m_geometry.vertices) {
 		orderedPoints.push_back(vertex.x);
 		orderedPoints.push_back(vertex.y);
 		orderedPoints.push_back(vertex.z);

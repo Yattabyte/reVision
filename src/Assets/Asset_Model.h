@@ -2,7 +2,7 @@
 #ifndef	ASSET_MODEL_H
 #define	ASSET_MODEL_H
 
-#include "Assets\Asset.h"
+#include "Assets\Asset_Mesh.h"
 #include "Assets\Asset_Material.h"
 #include "Managers\ModelManager.h"
 #include "assimp\scene.h"
@@ -37,33 +37,13 @@ public:
 
 
 	// Public Attributes
+	Shared_Asset_Mesh					m_mesh;
 	Shared_Asset_Material				m_materialArray;
 	GeometryInfo						m_data;
-	std::vector<glm::mat4>				m_boneTransforms;
-	std::map<std::string, size_t>		m_boneMap;
-	std::vector<Animation>				m_animations;
-	Node							*	m_rootNode;
+	size_t								m_offset = 0, m_count = 0;
 	glm::vec3							m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
 	float								m_radius = 0.0f;
-	size_t								m_offset = 0, m_count = 0;
 	ModelManager					*	m_modelManager = nullptr;
-
-
-protected:
-	// Protected Methods
-	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
-	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
-	@param	vertices	the vertices of the mesh to derive the AABB from
-	@param	minOut	output reference containing the minimum extents of the AABB
-	@param	maxOut	output reference containing the maximum extents of the AABB */
-	void calculateAABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut);
-	/** Create a model material, loading the textures as defined by the model file itself.
-	@note	Used as a failsafe. Model importer may not succeed in fetching the directories, and the model may not store usable directories.
-	@param	engine			the engine being used
-	@param	fullDirectory	the model's filename to use as a guide
-	@param	modelMaterial	the material asset to load into
-	@param	sceneMaterial	the scene material to use as a guide */
-	void loadMaterial(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
 
 
 private:
@@ -73,8 +53,23 @@ private:
 
 
 	// Private Methods
+	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
+	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
+	@param	vertices	the vertices of the mesh to derive the AABB from
+	@param	minOut	output reference containing the minimum extents of the AABB
+	@param	maxOut	output reference containing the maximum extents of the AABB */
+	void calculateAABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut);
+	/** Create a mesh material, loading the textures as defined by the mesh file itself.
+	@note	Used as a failsafe. Mesh importer may not succeed in fetching the directories, and the mesh may not store usable directories.
+	@param	engine			the engine being used
+	@param	fullDirectory	the model's filename to use as a guide
+	@param	modelMaterial	the material asset to load into
+	@param	meshMaterial	the material asset to load into
+	@param	sceneMaterial	the scene material to use as a guide */
+	void loadMaterial(Engine * engine, const std::string & fullDirectory, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
+
+
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
 

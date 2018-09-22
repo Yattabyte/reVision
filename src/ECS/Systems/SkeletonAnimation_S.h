@@ -24,24 +24,24 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
-			if (!skeletonComponent->m_model->existsYet())
+			if (!skeletonComponent->m_mesh->existsYet())
 				return;
 
 			Skeleton_Buffer * uboData = skeletonComponent->m_data->data;
-			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_model->m_boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_model->m_animations.size())
+			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_mesh->m_geometry.boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_mesh->m_geometry.animations.size())
 				return;
 			else {
-				skeletonComponent->m_transforms.resize(skeletonComponent->m_model->m_boneTransforms.size());
+				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
 				if (skeletonComponent->m_playAnim)
 					skeletonComponent->m_animTime += deltaTime;
-				const double TicksPerSecond = skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond != 0
-					? skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].ticksPerSecond
+				const double TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0
+					? skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond
 					: 25.0f;
 				const double TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const double AnimationTime = fmod(TimeInTicks, skeletonComponent->m_model->m_animations[skeletonComponent->m_animation].duration);
+				const double AnimationTime = fmod(TimeInTicks, skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration);
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
-				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_model->m_rootNode, skeletonComponent->m_model, glm::mat4(1.0f));
+				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
 
 				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 					uboData->bones[i] = skeletonComponent->m_transforms[i];
@@ -52,9 +52,9 @@ public:
 
 protected:
 	// Protected functions
-	inline void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Model & model, const glm::mat4 & ParentTransform) {
+	inline void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Mesh & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
-		const Animation &pAnimation = model->m_animations[animation_ID];
+		const Animation &pAnimation = model->m_geometry.animations[animation_ID];
 		const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 		glm::mat4 NodeTransformation = parentNode->transformation;
 
@@ -69,11 +69,11 @@ protected:
 		}
 
 		const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-		const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_rootNode->transformation);
-		const std::map<std::string, size_t> &BoneMap = model->m_boneMap;
+		const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode->transformation);
+		const std::map<std::string, size_t> &BoneMap = model->m_geometry.boneMap;
 		if (BoneMap.find(NodeName) != BoneMap.end()) {
 			size_t BoneIndex = BoneMap.at(NodeName);
-			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_boneTransforms.at(BoneIndex);
+			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
 		}
 
 		for (unsigned int i = 0; i < parentNode->children.size(); ++i)

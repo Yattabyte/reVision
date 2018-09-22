@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 #define EXT_CUBEMAP ".png"
-#define DIRECTORY_CUBEMAP Engine::Get_Current_Dir() + "\\Textures\\Cubemaps\\"
+#define DIRECTORY_CUBEMAP "\\Textures\\Cubemaps\\"
 #define ABS_DIRECTORY_CUBEMAP(filename) DIRECTORY_CUBEMAP + filename
 
 
@@ -28,25 +28,13 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 
 		// Check if the file/directory exists on disk
 		const std::string fullDirectory = DIRECTORY_CUBEMAP + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+		
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
-}
-
-void Asset_Cubemap::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative
-	for (int side = 0; side < 6; ++side)
-		// Forward image creation
-		m_images[side] = Asset_Image::Create(engine, "", false); 	
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirectory)
@@ -57,10 +45,10 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & fullDirector
 		std::string specific_side_directory = "";
 		for (int x = 0; x < 3; ++x) {
 			specific_side_directory = fullDirectory + side_suffixes[side] + extensions[x];
-			if (Engine::File_Exists(specific_side_directory))
+			if (Engine::File_Exists(Engine::Get_Current_Dir() + specific_side_directory))
 				break;
 			specific_side_directory = fullDirectory + "\\" + side_suffixes[side] + extensions[x];
-			if (Engine::File_Exists(specific_side_directory))
+			if (Engine::File_Exists(Engine::Get_Current_Dir() + specific_side_directory))
 				break;
 		}
 

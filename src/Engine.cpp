@@ -7,7 +7,7 @@
 
 // Importers used //
 #include "Utilities\IO\Image_IO.h"
-#include "Utilities\IO\Model_IO.h"
+#include "Utilities\IO\Mesh_IO.h"
 
 
 // Is called when the window resizes
@@ -75,7 +75,7 @@ Engine::Engine() :
 
 	reportMessage("**************************************************");
 	reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
-	reportMessage("ASSIMP Version: " + Model_IO::Get_Version());
+	reportMessage("ASSIMP Version: " + Mesh_IO::Get_Version());
 	reportMessage("Bullet Version: N/A");
 	reportMessage("FreeImage Version: " + Image_IO::Get_Version());
 	reportMessage("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));

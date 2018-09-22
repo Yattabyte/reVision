@@ -56,22 +56,13 @@ Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & fi
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_CONFIG(filename);
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+		
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
-}
-
-void Asset_Config::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative	
 }
 
 void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory)
@@ -91,7 +82,6 @@ void Asset_Config::initialize(Engine * engine, const std::string & fullDirectory
 	}
 	catch (const std::ifstream::failure) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Config");
-		initializeDefault(engine);
 		return;
 	}
 }

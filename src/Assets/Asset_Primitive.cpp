@@ -1,9 +1,9 @@
 #include "Assets\Asset_Primitive.h"
-#include "Utilities\IO\Model_IO.h"
+#include "Utilities\IO\Mesh_IO.h"
 #include "Engine.h"
 
 #define EXT_PRIMITIVE ".obj"
-#define DIRECTORY_PRIMITIVE Engine::Get_Current_Dir() + "\\Primitives\\"
+#define DIRECTORY_PRIMITIVE "\\Primitives\\"
 #define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
 
@@ -38,42 +38,26 @@ Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::strin
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+	
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
 }
 
-void Asset_Primitive::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative
-	m_data = { 
-		{ glm::vec3(-1, -1, 0), glm::vec2(0, 0) }, { glm::vec3(1, -1, 0), glm::vec2(1, 0) }, { glm::vec3(1, 1, 0), glm::vec2(1, 1) },
-		{ glm::vec3(-1, -1, 0), glm::vec2(0, 0) }, {glm::vec3(1, 1, 0), glm::vec2(1, 1) }, { glm::vec3(-1, 1, 0),glm::vec2(0, 1) }
-	};
-}
-
 void Asset_Primitive::initialize(Engine * engine, const std::string & fullDirectory)
 {
-	Model_Geometry dataContainer;
-	if (!Model_IO::Import_Model(engine, fullDirectory, import_primitive, dataContainer)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Primitive");
-		initializeDefault(engine);
-		return;
-	}
+	// Forward asset creation
+	m_mesh = Asset_Mesh::Create(engine, fullDirectory, false);
 
-	const size_t vertexCount = dataContainer.vertices.size();
+
+	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.resize(vertexCount);
 	for (size_t x = 0; x < vertexCount; ++x) {
-		m_data[x].vertex = dataContainer.vertices[x];
-		m_data[x].uv = dataContainer.texCoords[x];
+		m_data[x].vertex = m_mesh->m_geometry.vertices[x];
+		m_data[x].uv = m_mesh->m_geometry.texCoords[x];
 	}
 }
 

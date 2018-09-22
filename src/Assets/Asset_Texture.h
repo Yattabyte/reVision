@@ -53,7 +53,6 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
 

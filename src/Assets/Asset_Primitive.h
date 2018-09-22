@@ -2,7 +2,7 @@
 #ifndef	ASSET_PRIMITIVE_H
 #define	ASSET_PRIMITIVE_H
 
-#include "Assets\Asset.h"
+#include "Assets\Asset_Mesh.h"
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
 #include <vector>
@@ -34,8 +34,9 @@ public:
 	
 	
 	// Public Attributes
-	GLuint m_uboID = 0, m_vaoID = 0;
+	Shared_Asset_Mesh m_mesh;
 	std::vector<Single_Primitive_Vertex> m_data;
+	GLuint m_uboID = 0, m_vaoID = 0;
 
 
 private:
@@ -46,7 +47,6 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	virtual void initializeDefault(Engine * engine) override;
 	virtual void initialize(Engine * engine, const std::string & fullDirectory) override;
 	virtual void finalize(Engine * engine) override;
 

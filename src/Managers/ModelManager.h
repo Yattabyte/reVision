@@ -3,7 +3,7 @@
 #define MODELMANAGER_H
 #define NUM_VERTEX_ATTRIBUTES 8
 
-#include "Utilities\IO\Model_IO.h"
+#include "Utilities\IO\Mesh_IO.h"
 #include "GL\glew.h"
 #include "glm\glm.hpp"
 #include <shared_mutex>
@@ -58,21 +58,6 @@ private:
 	GLsync m_fence = nullptr;
 	bool m_outOfDate = false;
 	std::shared_mutex m_mutex;
-};
-
-struct SingleVertex {
-	glm::vec3 vertex;
-	glm::vec3 normal;
-	glm::vec3 tangent;
-	glm::vec3 bitangent;
-	glm::vec2 uv;
-	GLuint matID;
-	glm::ivec4 boneIDs;
-	glm::vec4 weights;
-};
-
-struct GeometryInfo {
-	std::vector<SingleVertex> m_vertices;
 };
 
 #endif // MODELMANAGER_H

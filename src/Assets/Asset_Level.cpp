@@ -20,29 +20,19 @@ Shared_Asset_Level Asset_Level::Create(Engine * engine, const std::string & file
 
 		// Check if the file/directory exists on disk
 		const std::string &fullDirectory = ABS_DIRECTORY_LEVEL(filename);
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(fullDirectory)) {
-			engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
+		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
+		
 		// Submit the work order
 		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
 	}
 	return userAsset;
 }
 
-void Asset_Level::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative	
-}
-
 void Asset_Level::initialize(Engine * engine, const std::string & fullDirectory)
 {
 	if (!Level_IO::Import_Level(engine, fullDirectory, m_entities)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Level");
-		initializeDefault(engine);
 		return;
 	}
 }

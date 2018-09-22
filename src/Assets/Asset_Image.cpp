@@ -3,6 +3,7 @@
 #include "Engine.h"
 #include "glm\gtc\type_ptr.hpp"
 
+#define DIRECTORY_IMAGE Engine::Get_Current_Dir()
 
 Asset_Image::~Asset_Image()
 {
@@ -24,7 +25,7 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 		assetRef.m_policyResize = policyResize;
 
 		// Check if the file/directory exists on disk
-		const std::string &fullDirectory = filename;
+		const std::string &fullDirectory = DIRECTORY_IMAGE + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, fullDirectory);
 		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		if (!Engine::File_Exists(fullDirectory)) {

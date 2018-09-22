@@ -1,8 +1,9 @@
 #pragma once
-#ifndef	MODEL_IO_H
-#define	MODEL_IO_H
+#ifndef	Mesh_IO_H
+#define	Mesh_IO_H
 #define NUM_BONES_PER_VEREX 4
 
+#include "GL\glew.h"
 #include "GLM\glm.hpp"
 #include "glm\gtc\matrix_transform.hpp"
 #include "glm\gtc\quaternion.hpp"
@@ -55,7 +56,7 @@ struct Animation {
 	Animation(const unsigned int & nC = 0, const double & tick = 0, const double & dur = 0)
 		: numChannels(nC), ticksPerSecond(tick), duration(dur) {}
 };
-struct Model_Geometry {
+struct Mesh_Geometry {
 	// Per Vertex Attributes
 	std::vector<glm::vec3> vertices;
 	std::vector<glm::vec3> normals;
@@ -73,37 +74,33 @@ struct Model_Geometry {
 	std::vector<Animation> animations;
 	Node * rootNode;
 };
-
-/* Import Directives */
-enum Model_IO_Flags {
-	import_vertices		= 0b0000'0001,
-	import_normals		= 0b0000'0010,
-	import_tangents		= 0b0000'0100,
-	import_bitangents	= 0b0000'1000,
-	import_texcoords	= 0b0001'0000,
-	import_animation	= 0b0010'0000,
-	import_materials	= 0b0100'0000,
-
-	import_hull			= 0b0000'0001,
-	import_primitive	= 0b0001'0001,
-	import_model		= 0b0111'1111,
-	import_all			= 0b1111'1111
+struct SingleVertex {
+	glm::vec3 vertex;
+	glm::vec3 normal;
+	glm::vec3 tangent;
+	glm::vec3 bitangent;
+	glm::vec2 uv;
+	GLuint matID;
+	glm::ivec4 boneIDs;
+	glm::vec4 weights;
+};
+struct GeometryInfo {
+	std::vector<SingleVertex> m_vertices;
 };
 
 /** A static helper class used for reading/writing models.
 Uses the Assimp library: http://assimp.sourceforge.net/ */
-class Model_IO {
+class Mesh_IO {
 public:
 	/** Import a model from disk.
 	@param	engine			the engine to import to
 	@param	fulldirectory	the path to the file
-	@param	importFlags		bitflags directing how to import the model
 	@param	importedData	the container to place the imported data within
 	@return					true on successfull import, false otherwise (error reported to engine) */
-	static bool Import_Model(Engine * engine, const std::string & fulldirectory, const unsigned int & importFlags, Model_Geometry & importedData);
+	static bool Import_Model(Engine * engine, const std::string & fulldirectory, Mesh_Geometry & importedData);
 	/** Get the plugin version.
 	@return the plugin version */
 	static const std::string Get_Version();
 };
 
-#endif // MODEL_IO_H
+#endif // Mesh_IO_H

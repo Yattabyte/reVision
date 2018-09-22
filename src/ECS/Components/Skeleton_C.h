@@ -3,7 +3,7 @@
 #define SKELETALANIMATION_C_H
 
 #include "ECS\Components\ecsComponent.h"
-#include "Assets\Asset_Model.h"
+#include "Assets\Asset_Mesh.h"
 
 
 /** OpenGL buffer for animated props.
@@ -19,7 +19,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	int m_animation = -1;
 	bool m_playAnim = true;
 	float m_animTime = 0, m_animStart = 0;
-	Shared_Asset_Model m_model;
+	Shared_Asset_Mesh m_mesh;
 	std::vector<glm::mat4> m_transforms;
 	VB_Element<Skeleton_Buffer> * m_data;
 };
@@ -33,7 +33,7 @@ struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
 		auto animation = castAny(parameters[1], 0);
 		auto * component = new Skeleton_Component();
 		component->m_data = m_elementBuffer->newElement();
-		component->m_model = Asset_Model::Create(m_engine, directory);
+		component->m_mesh = Asset_Mesh::Create(m_engine, "\\Models\\" + directory);
 		component->m_animation = animation;
 		for (int x = 0; x < NUM_MAX_BONES; ++x)
 			component->m_data->data->bones[x] = glm::mat4(1.0f);
