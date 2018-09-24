@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.29";
+constexpr char ENGINE_VERSION[]	= "1.30";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -21,10 +21,14 @@ constexpr char ENGINE_VERSION[]	= "1.29";
 
 struct GLFWwindow;
 class Engine;
-
 struct Rendering_Context {
+	~Rendering_Context();
 	Rendering_Context(Engine * engine);
-	GLFWwindow * main, *shared;
+	GLFWwindow * window = NULL;
+};
+struct Auxilliary_Context {
+	Auxilliary_Context(const Rendering_Context & other);
+	GLFWwindow * window = NULL;
 };
 
 /** The main game engine object. Encapsulates the entire engine state. */
@@ -42,7 +46,7 @@ public:
 	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread. 
 	@param	exitObject	object signaling when to close the thread */
-	void tickThreaded(std::future<void> exitObj);
+	void tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context);
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down */
 	bool shouldClose();
@@ -126,7 +130,7 @@ private:
 	float m_frameAccumulator = 0;
 	int m_frameCount = 0;
 	float m_refreshRate = 60.0f;
-	glm::ivec2 m_windowSize = glm::ivec2(1);
+	glm::ivec2 m_windowSize = glm::ivec2(1);	
 	AssetManager m_AssetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_PreferenceState;
@@ -136,6 +140,7 @@ private:
 	ECS	m_ecs;
 	ActionState	m_ActionState;
 	InputBinding m_inputBindings;
+	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 
 
 	// Private Modules

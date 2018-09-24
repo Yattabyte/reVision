@@ -230,6 +230,11 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 				(ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
 			));
 		}
+	else {
+		data_container.materials.push_back(Material(
+			 "albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"
+		));
+	}
 
 
 	// Free Importer Resource

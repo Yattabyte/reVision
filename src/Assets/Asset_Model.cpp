@@ -23,13 +23,9 @@ Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & file
 		userAsset = assetManager.createNewAsset<Asset_Model>(filename, modelManager);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = DIRECTORY_MODEL + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = DIRECTORY_MODEL + filename;		
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -58,23 +54,17 @@ void Asset_Model::initialize(Engine * engine, const std::string & relativePath)
 		m_data.m_vertices[x].weights.y = m_mesh->m_geometry.bones[x].Weights[1];
 		m_data.m_vertices[x].weights.z = m_mesh->m_geometry.bones[x].Weights[2];
 		m_data.m_vertices[x].weights.w = m_mesh->m_geometry.bones[x].Weights[3];
+		m_data.m_vertices[x].matID = m_materialArray->m_matSpot;
 	}
 
 	// Calculate the mesh's min, max, center, and radius
 	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
 	
-	// Apply this mesh's material set index to each vertex
-	for (size_t x = 0; x < vertexCount; ++x)
-		m_data.m_vertices[x].matID = m_materialArray->m_matSpot;
-	
-}
-
-void Asset_Model::finalize(Engine * engine)
-{
 	// Register geometry
 	m_modelManager->registerGeometry(m_data, m_offset, m_count);
-	
+
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 

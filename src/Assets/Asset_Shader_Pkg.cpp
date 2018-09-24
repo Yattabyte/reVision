@@ -45,26 +45,12 @@ Shared_Asset_Shader_Pkg Asset_Shader_Pkg::Create(Engine * engine, const std::str
 	if (!userAsset) {
 		userAsset = assetManager.createNewAsset<Asset_Shader_Pkg>(filename);
 		auto & assetRef = *userAsset.get();
-
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = DIRECTORY_SHADER_PKG + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		const bool found = Engine::File_Exists(relativePath + EXT_PACKAGE);
-		if (!found) {
-			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_PACKAGE);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = DIRECTORY_SHADER_PKG + filename;	
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
-}
-
-void Asset_Shader_Pkg::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative
 }
 
 void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativePath)
@@ -76,10 +62,7 @@ void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativeP
 
 	// parse
 	parse(engine, *this);
-}
 
-void Asset_Shader_Pkg::finalize(Engine * engine)
-{
 	Asset::finalize(engine);
 }
 

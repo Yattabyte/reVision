@@ -24,13 +24,9 @@ Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string 
 		userAsset = assetManager.createNewAsset<Asset_Collider>(filename);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string relativePath = DIRECTORY_COLLIDER + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string relativePath = DIRECTORY_COLLIDER + filename;
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -49,9 +45,6 @@ void Asset_Collider::initialize(Engine * engine, const std::string & relativePat
 	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], (int)orderedPoints.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
 	m_shape = shape;
-}
 
-void Asset_Collider::finalize(Engine * engine)
-{
 	Asset::finalize(engine);
 }

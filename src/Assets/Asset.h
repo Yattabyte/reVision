@@ -2,6 +2,7 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
+#include "GL\glew.h"
 #include <atomic>
 #include <functional>
 #include <map>
@@ -58,6 +59,7 @@ public:
 protected:
 	// Protected Attributes
 	std::atomic_bool m_finalized = false;
+	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";
 	std::map<void*, std::function<void()>> m_callbacks;
 	friend class AssetManager;
@@ -66,8 +68,11 @@ protected:
 	// Protected Interface
 	/** Initializes the asset. */
 	virtual void initialize(Engine * engine, const std::string & relativePath) = 0;
-	/** Finalizes the asset. */
-	virtual void finalize(Engine * engine);
+
+	
+	// Protected Methods
+	/** Declares this asset ready-to-use. */
+	void finalize(Engine * engine);
 };
 
 #endif // ASSET_H

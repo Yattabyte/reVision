@@ -18,6 +18,83 @@ static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int heigh
 	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
+Rendering_Context::~Rendering_Context()
+{
+	glfwDestroyWindow(window);
+}
+
+Rendering_Context::Rendering_Context(Engine * engine)
+{
+	// Begin Initialization
+	engine->reportMessage("Initializing rendering context...");
+	if (!glfwInit()) {
+		engine->reportError(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
+		glfwTerminate();
+		exit(-1);
+	}
+
+	// Create an invisible window for asset sharing
+	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
+	glfwWindowHint(GLFW_ALPHA_BITS, 0);
+	if (engine->getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
+		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
+	else {
+		const float refreshRate = engine->getPreference<float>(PreferenceState::C_WINDOW_REFRESH_RATE);
+		glfwWindowHint(GLFW_REFRESH_RATE, refreshRate > 0.0f ? (int)refreshRate : GLFW_DONT_CARE);
+	}
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
+	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	glfwWindowHint(GLFW_VISIBLE, GL_TRUE);
+	glfwWindowHint(GLFW_MAXIMIZED, GL_TRUE);
+	window = glfwCreateWindow(1, 1, "", NULL, NULL);
+	glfwMakeContextCurrent(window);
+	glfwSetWindowIcon(window, 0, NULL);
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	glfwSetCursorPos(window, 0, 0);
+	glfwSwapInterval(engine->getPreference<int>(PreferenceState::C_VSYNC));
+
+	// Initialize GLEW
+	glewExperimental = GL_TRUE;
+	if (glewInit() != GLEW_OK) {
+		engine->reportError(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
+		glfwTerminate();
+		exit(-1);
+	}
+
+	engine->reportMessage("...done!");
+}
+
+Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
+{
+	// Create an invisible window for multi-threaded GL operations
+	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
+	glfwWindowHint(GLFW_ALPHA_BITS, 0);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
+	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
+	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_DOUBLEBUFFER, GL_TRUE);
+	glfwWindowHint(GLFW_AUTO_ICONIFY, GL_TRUE);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
+	glfwWindowHint(GLFW_VISIBLE, GL_FALSE);
+	window = glfwCreateWindow(1, 1, "", NULL, otherContext.window);
+}
+
 Engine::~Engine()
 {
 	reportMessage("Shutting down...");
@@ -26,11 +103,12 @@ Engine::~Engine()
 	removePrefCallback(PreferenceState::C_VSYNC, this);
 	Image_IO::Deinitialize();
 	reportMessage("...done!");
+	glfwTerminate();
 }
 
 Engine::Engine() : 
 	// Initialize engine-dependent members first
-	m_AssetManager(this), m_messageManager(), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_materialManager(), m_moduleGraphics(this), m_moduleWorld(this)
+	m_AssetManager(this), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_moduleGraphics(this), m_moduleWorld(this)
 {
 	Image_IO::Initialize();
 
@@ -39,30 +117,29 @@ Engine::Engine() :
 	m_windowSize.x = getPreference<int>(PreferenceState::C_WINDOW_WIDTH);
 	m_windowSize.y = getPreference<int>(PreferenceState::C_WINDOW_HEIGHT);
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
-	glfwSetWindowSize(m_renderingContext.main, m_windowSize.x, m_windowSize.y);
-	glfwSetWindowPos(m_renderingContext.main, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
-	glfwSetWindowUserPointer(m_renderingContext.main, this);
-	glfwSetWindowSizeCallback(m_renderingContext.main, GLFW_Callback_Windowresize);
-	glfwMakeContextCurrent(m_renderingContext.main);
-
+	glfwSetWindowSize(m_renderingContext.window, m_windowSize.x, m_windowSize.y);
+	glfwSetWindowPos(m_renderingContext.window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
+	glfwSetWindowUserPointer(m_renderingContext.window, this);
+	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_Windowresize);
+	glfwMakeContextCurrent(m_renderingContext.window);
 
 	// Preference Callbacks
 	addPrefCallback<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this, [&](const float &f) {
 		if (f > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
 		}
 		else 
-			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);		
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);		
 	});
 	m_refreshRate = addPrefCallback<float>(PreferenceState::C_WINDOW_REFRESH_RATE, this, [&](const float &f) {
 		m_refreshRate = f;
 		if (getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
 		}
 		else
-			glfwSetWindowMonitor(m_renderingContext.main, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
 	});
 	addPrefCallback<float>(PreferenceState::C_VSYNC, this, [&](const float &f) {glfwSwapInterval((int)f); });
 
@@ -90,6 +167,15 @@ Engine::Engine() :
 	reportMessage("Loading World...");
 	m_moduleWorld.loadWorld();
 	reportMessage("...done!");
+
+	const unsigned int maxThreads = std::thread::hardware_concurrency();
+	for (unsigned int x = 0; x < maxThreads; ++x) {
+		std::promise<void> exitSignal;
+		std::future<void> exitObject = exitSignal.get_future();
+		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(Auxilliary_Context(m_renderingContext)));
+		workerThread.detach();
+		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
+	}
 }
 
 void Engine::tick()
@@ -127,27 +213,23 @@ void Engine::tick()
 	m_moduleGraphics.renderFrame(deltaTime);
 
 	// End Frame
-	glfwSwapBuffers(m_renderingContext.main);
+	glfwSwapBuffers(m_renderingContext.window);
 	glfwPollEvents();	
 }
 
-void Engine::tickThreaded(std::future<void> exitObj)
+void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context)
 {
-	glfwMakeContextCurrent(m_renderingContext.shared);
-	float lastTime = 0, thisTime = 0, deltaTime = 0;
-	while (exitObj.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
-		if (m_renderingContext.shared) {
-			thisTime = (float)glfwGetTime();
-			deltaTime = thisTime - lastTime;
-			lastTime = thisTime;
-			m_AssetManager.finalizeOrders();
-		}
+	glfwMakeContextCurrent(context.window);
+
+	// Check if thread should shutdown
+	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
+		m_AssetManager.beginWorkOrder();
 	}
 }
 
 bool Engine::shouldClose()
 {
-	return glfwWindowShouldClose(m_renderingContext.main);
+	return glfwWindowShouldClose(m_renderingContext.window);
 }
 
 void Engine::reportMessage(const std::string & input)
@@ -162,7 +244,7 @@ void Engine::reportError(const int & error_number, const std::string & input, co
 
 GLFWwindow * Engine::getRenderingContext() const
 { 
-	return m_renderingContext.main; 
+	return m_renderingContext.window; 
 }
 
 std::string Engine::Get_Current_Dir()
@@ -191,62 +273,11 @@ void Engine::updateInput(const float & deltaTime)
 		const auto &action = pair.first;
 		const auto &input_button = (int)pair.second;
 		// If Key is pressed, set state to 1, otherwise set to 0
-		m_ActionState.at(action) = (glfwGetKey(m_renderingContext.main, input_button)) ? 1.0f : 0.0f;
+		m_ActionState.at(action) = (glfwGetKey(m_renderingContext.window, input_button)) ? 1.0f : 0.0f;
 	}
 	double mouseX, mouseY;
-	glfwGetCursorPos(m_renderingContext.main, &mouseX, &mouseY);
+	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
 	m_ActionState.at(ActionState::LOOK_X) = (float)mouseX;
 	m_ActionState.at(ActionState::LOOK_Y) = (float)mouseY;
-	glfwSetCursorPos(m_renderingContext.main, 0, 0);
-}
-
-Rendering_Context::Rendering_Context(Engine * engine)
-{
-	engine->reportMessage("Initializing rendering context...");		
-	if (!glfwInit()) {
-		engine->reportError(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	// Create an invisible window for asset sharing
-	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
-	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	if (engine->getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
-		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
-	else {
-		const float refreshRate = engine->getPreference<float>(PreferenceState::C_WINDOW_REFRESH_RATE);
-		glfwWindowHint(GLFW_REFRESH_RATE, refreshRate > 0.0f ? (int)refreshRate : GLFW_DONT_CARE);
-	}
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
-	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
-	glfwWindowHint(GLFW_AUTO_ICONIFY, GLFW_TRUE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-	shared = glfwCreateWindow(1, 1, "", NULL, NULL);
-	glfwMakeContextCurrent(shared);
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) {
-		engine->reportError(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
-		glfwTerminate();
-		exit(-1);
-	}
-
-	glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
-	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-	main = glfwCreateWindow(1, 1, "reVision", NULL, shared);
-	glfwSetWindowIcon(main, 0, NULL);
-	glfwMakeContextCurrent(main);
-	glfwSetInputMode(main, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-	glfwSetCursorPos(main, 0, 0);
-	glfwSwapInterval(engine->getPreference<int>(PreferenceState::C_VSYNC));
-	engine->reportMessage("...done!");
+	glfwSetCursorPos(m_renderingContext.window, 0, 0);
 }

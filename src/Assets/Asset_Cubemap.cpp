@@ -24,13 +24,9 @@ Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & 
 		userAsset = assetManager.createNewAsset<Asset_Cubemap>(filename);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string relativePath = DIRECTORY_CUBEMAP + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string relativePath = DIRECTORY_CUBEMAP + filename;		
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -65,14 +61,11 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 	for each (auto image in m_images)
 		if (image->m_size != size)
 			image->resize(size);
-}
 
-void Asset_Cubemap::finalize(Engine * engine)
-{
 	// Create the final texture	
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);
 	glCreateBuffers(6, m_pboIDs);
-	
+
 	// Load the final texture
 	glTextureStorage2D(m_glTexID, 1, GL_RGBA16F, m_images[0]->m_size.x, m_images[0]->m_size.x);
 	for (int x = 0; x < 6; ++x) {
@@ -90,6 +83,7 @@ void Asset_Cubemap::finalize(Engine * engine)
 		engine->reportError(MessageManager::TEXTURE_INCOMPLETE, m_filename);
 
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 

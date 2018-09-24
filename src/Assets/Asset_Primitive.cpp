@@ -35,13 +35,9 @@ Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::strin
 		userAsset = assetManager.createNewAsset<Asset_Primitive>(filename);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-	
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE;	
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -51,22 +47,19 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & relativePa
 	// Forward asset creation
 	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
 
-
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.resize(vertexCount);
 	for (size_t x = 0; x < vertexCount; ++x) {
 		m_data[x].vertex = m_mesh->m_geometry.vertices[x];
 		m_data[x].uv = m_mesh->m_geometry.texCoords[x];
 	}
-}
 
-void Asset_Primitive::finalize(Engine * engine)
-{
 	// Load Buffers
 	const size_t arraySize = m_data.size();
-	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);		
-	
+	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);
+
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 

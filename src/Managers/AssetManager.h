@@ -13,34 +13,15 @@
 
 
 constexpr unsigned int ASSETMANAGER_MAX_THREADS = 8u;
+using Asset_Work_Order = std::function<void(void)>;
 class Engine;
-
-/** Base class that represents a function, but does nothing else */
-struct FuncBase {};
-
-/** This class represents a specific function with a specific signature (templated) */
-template <typename... Args>
-struct FuncHolder : public FuncBase {
-	FuncHolder(const std::function<void(Args...)> & f) : m_function(f) {	}
-
-	std::function<void(Args...)> m_function;
-};
-
-/** Represents an asset work order that gets started and finished at separate times. */
-struct Asset_Work_Order  {
-	Asset_Work_Order(const std::function<void(void)> & i, const std::function<void(void)> & f) : m_ini(i), m_fin(f) {}
-	void start() { m_ini(); }
-	void finish() { m_fin(); }
-
-	std::function<void(void)> m_ini, m_fin;
-};
 
 /** Manages the storage and retrieval of assets. */
 class AssetManager {
 public:
 	// (de)Constructors
 	/** Destroy the asset manager. */
-	~AssetManager();
+	~AssetManager() = default;
 	/** Destroy the asset manager. */
 	AssetManager(Engine * engine);
 
@@ -52,19 +33,17 @@ public:
 	@param	filename	the relative filename (within the project directory) of the asset to search for
 	@return				the asset, if found, or null if not */
 	template <typename Asset_T>
-	std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename, const bool & dontForceFinalize = false) {
+	inline std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename, const bool & dontForceFinalize = false) {
 		std::shared_lock<std::shared_mutex> read_guard(m_Mutex_Assets);
-		for each (auto &asset in m_AssetMap[typeid(Asset_T).name()]) 
-			if (asset->getFileName() == filename) {		
+		for each (const Shared_Asset asset in m_AssetMap[typeid(Asset_T).name()]) 
+			if (asset->getFileName() == filename) {
 				read_guard.unlock();
 				read_guard.release();
 				// Asset may be found, but not guaranteed to be finalized
 				// Stay here until it is finalized
 				if (!dontForceFinalize)
-					while (!asset->existsYet()) {
+					while (!asset->existsYet()) 
 						std::this_thread::sleep_for(std::chrono::milliseconds(1));
-						continue;
-					}
 				return std::dynamic_pointer_cast<Asset_T>(asset);
 			}			
 		return std::shared_ptr<Asset_T>();
@@ -73,31 +52,18 @@ public:
 	@param	<Asset_T>	the type of asset to create
 	@param	ax			the constructor arguments */
 	template <typename Asset_T, typename... Args>
-	std::shared_ptr<Asset_T> createNewAsset(Args&&... ax) {
+	inline std::shared_ptr<Asset_T> createNewAsset(Args&&... ax) {
 		std::shared_ptr<Asset_T> userAsset = std::shared_ptr<Asset_T>(new Asset_T(std::forward<Args>(ax)...));
 		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
 		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
 		return userAsset;
 	}
-	/** Submits an asset for physical creation, and optionally whether to thread it or not. To be called by asset creation functions.
-	@param	<Asset_T>	the type of asset used
-	@param	userAsset	the asset container
-	@param	threaded	flag to create in a separate thread
-	@param	ini			lambda initialization function
-	@param	fin			lambda finalization function */
-	template <typename Asset_T, typename Init_Callback, typename Fin_Callback>
-	void submitNewWorkOrder(std::shared_ptr<Asset_T> & userAsset, const bool & threaded, Init_Callback && ini, Fin_Callback && fin) {
-		if (threaded) {
-			std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);
-			m_Work_toStart.push_back(new Asset_Work_Order(ini, fin));
-		}
-		else {
-			ini();
-			fin();
-		}
-	}
-	/** Finalize any initialized orders. */
-	void finalizeOrders();
+	/** Submits an asset for physical creation, and optionally whether to thread it or not. 
+	@param	ini			asset initialization function
+	@param	threaded	flag to create in a separate thread	*/
+	void submitNewWorkOrder(const Asset_Work_Order && ini, const bool & threaded);
+	/** Pop's the first work order and completes it. */
+	void beginWorkOrder();
 	/** For assets that have just finalized, takes callback submissions. */
 	void submitNotifyee(void * pointerID, const std::function<void()> & callBack);
 	/** Remove a notifyee from the pool. */
@@ -110,20 +76,12 @@ public:
 
 
 private:
-	// Private Methods
-	/** Initializes any waiting orders.
-	@param	exitObject	object signaling when to close the thread */
-	void initializeOrders(std::future<void> exitObject);
-
-
 	// Private Attributes
 	Engine * m_engine;
 	std::shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;
 	std::shared_mutex m_Mutex_Workorders;
-	std::deque<Asset_Work_Order*> m_Work_toStart, m_Work_toFinish;
-	std::shared_mutex m_workerNotificationMutex;
-	std::vector<std::pair<std::thread, std::promise<void>>> m_Workers;
+	std::deque<Asset_Work_Order> m_Workorders;
 	std::shared_mutex m_mutexNofications;
 	std::vector<std::pair<void*, std::function<void()>>> m_notifyees;
 };

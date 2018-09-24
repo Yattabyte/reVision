@@ -17,14 +17,13 @@ Shared_Asset_Mesh Asset_Mesh::Create(Engine * engine, const std::string & filena
 
 		// Check if the file/directory exists on disk
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		if (!Engine::File_Exists(filename)) {
 			engine->reportError(MessageManager::FILE_MISSING, filename);
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 		}
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
 	}
 	return userAsset;
 }
@@ -44,12 +43,7 @@ void Asset_Mesh::initialize(Engine * engine, const std::string & relativePath)
 	if (!Mesh_IO::Import_Model(engine, relativePath, m_geometry)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Mesh");
 		initializeDefault(engine);
-		return;
 	}
-}
 
-void Asset_Mesh::finalize(Engine * engine)
-{
-	// Finalize
 	Asset::finalize(engine);
 }

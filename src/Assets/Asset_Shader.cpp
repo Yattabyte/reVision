@@ -63,7 +63,7 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 			GLint infoLogLength;
 			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
 			std::vector<GLchar> infoLog(infoLogLength);
-			glGetShaderInfoLog(ID, infoLog.size(), NULL, &infoLog[0]);
+			glGetShaderInfoLog(ID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
@@ -105,7 +105,7 @@ inline void link_program(Engine * engine, Asset_Shader & userAsset)
 		GLint infoLogLength;
 		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		std::vector<GLchar> infoLog(infoLogLength);
-		glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
+		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}	
 	glValidateProgram(userAsset.m_glProgramID);
@@ -127,23 +127,23 @@ inline void cleanup_program(Asset_Shader & userAsset) {
 
 /** Save the program binary to file
 @param	engine		the engine to be used
-@param	userAsset	the shader asset to link for */
-inline void use_binary(Engine * engine, Asset_Shader & userAsset)
+@param	userAsset	the shader asset to link for 
+@return				true if successful, false otherwise */
+inline bool use_binary(Engine * engine, Asset_Shader & userAsset)
 {
-	if (userAsset.m_hasBinary) {
-		userAsset.m_glProgramID = glCreateProgram(); 
-		glProgramBinary(userAsset.m_glProgramID, userAsset.m_binaryFormat, userAsset.m_binary.data(), userAsset.m_binaryLength);
-		GLint success;
-		glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
-		if (success == 0) {
-			GLint infoLogLength;
-			glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength); 
-			std::vector<GLchar> infoLog(infoLogLength);
-			glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
-			engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(),infoLog.size()));
-		}
-		glValidateProgram(userAsset.m_glProgramID);
+	userAsset.m_glProgramID = glCreateProgram();
+	glProgramBinary(userAsset.m_glProgramID, userAsset.m_binaryFormat, userAsset.m_binary.data(), userAsset.m_binaryLength);
+	GLint success;
+	glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
+	if (success == 0) {
+		GLint infoLogLength;
+		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
+		std::vector<GLchar> infoLog(infoLogLength);
+		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}
+	glValidateProgram(userAsset.m_glProgramID);
+	return (bool)success;
 }
 
 /** Save the program binary to file
@@ -151,22 +151,20 @@ inline void use_binary(Engine * engine, Asset_Shader & userAsset)
 @param	userAsset	the shader asset to link for */
 inline void save_binary(Engine * engine, Asset_Shader & userAsset)
 {
-	if (!userAsset.m_hasBinary) {
-		ShaderHeader header;
-		glProgramParameteri(userAsset.m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
-		glGetProgramiv(userAsset.m_glProgramID, GL_PROGRAM_BINARY_LENGTH, &header.length);
-		userAsset.m_binary.resize(header.length);
-		glGetProgramBinary(userAsset.m_glProgramID, header.length, NULL, &header.format, userAsset.m_binary.data());
+	ShaderHeader header;
+	glProgramParameteri(userAsset.m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+	glGetProgramiv(userAsset.m_glProgramID, GL_PROGRAM_BINARY_LENGTH, &header.length);
+	userAsset.m_binary.resize(header.length);
+	glGetProgramBinary(userAsset.m_glProgramID, header.length, NULL, &header.format, userAsset.m_binary.data());
 
-		std::ofstream file((Engine::Get_Current_Dir() + DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
-		if (file.is_open()) {			
-			file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-			file.write(userAsset.m_binary.data(), header.length);
-			file.close();
-		}
-		userAsset.m_binaryFormat = header.format;
-		userAsset.m_binaryLength = header.length;
+	std::ofstream file((Engine::Get_Current_Dir() + DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+	if (file.is_open()) {
+		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+		file.write(userAsset.m_binary.data(), header.length);
+		file.close();
 	}
+	userAsset.m_binaryFormat = header.format;
+	userAsset.m_binaryLength = header.length;	
 }
 
 Asset_Shader::~Asset_Shader()
@@ -190,7 +188,6 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 		// Check if the file/directory exists on disk
 		const std::string &relativePath = DIRECTORY_SHADER + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		bool found_vertex = Engine::File_Exists(relativePath +  EXT_SHADER_VERTEX);
 		bool found_fragement = Engine::File_Exists(relativePath + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
@@ -201,7 +198,7 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
 	}
 	return userAsset;	
 }
@@ -222,43 +219,34 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
 		initializeDefault(engine);
-		return;
 	}
 
 	// Try to use the cached shader
-	bool success = false;
+	bool binarySuccess = false;
 	if (found_shader_binary) {
 		ShaderHeader header;
 		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
 		if (file.is_open()) {
-			success = true;
 			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 			m_binary.resize(header.length);
 			file.read(m_binary.data(), header.length);
 			m_binaryFormat = header.format;
 			m_binaryLength = header.length;
-			m_hasBinary = true;
 			file.close();
+			binarySuccess = use_binary(engine, *this);
 		}
 	}
-	if (!success)	
+	if (!binarySuccess) {
 		parse(engine, *this);
-}
-
-void Asset_Shader::finalize(Engine * engine)
-{
-	// Create Shader Program
-	if (m_hasBinary) 
-		use_binary(engine, *this);	
-	else {
 		compile(engine, *this);
 		generate_program(*this);
 		link_program(engine, *this);
 		save_binary(engine, *this);
 		cleanup_program(*this);
 	}
-	
+
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 

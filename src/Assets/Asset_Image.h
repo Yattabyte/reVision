@@ -64,9 +64,7 @@ private:
 
 	// Private Methods
 	// Interface Implementation
-	void initializeDefault(Engine * engine);
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;
-	virtual void finalize(Engine * engine) override;
 
 
 	// Private Attributes

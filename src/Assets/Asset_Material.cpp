@@ -31,12 +31,9 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 		auto & assetRef = *userAsset.get();
 		assetRef.m_matSpot = materialManager.generateID();
 
-		const std::string &relativePath = filename + MATERIAL_EXTENSION;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = filename + MATERIAL_EXTENSION;
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -59,8 +56,12 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 	}
 
 	// Some definitions for later
-	const size_t textureCount = m_textures.size();
+	const size_t remainder = m_textures.size() % size_t(6u);
+	const size_t textureCount = remainder 
+		? m_textures.size() + size_t(6u) - remainder // if remainder != 0, round up to nearest multiple of 6
+		: std::max(size_t(6u), m_textures.size()); // else remainder == 0, enforce minimum size of 6
 	const size_t materialCount = textureCount / MAX_PHYSICAL_IMAGES;
+	m_textures.resize(textureCount);
 
 	// Load all images	
 	m_images.resize(textureCount);
@@ -104,11 +105,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 			m_materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
 		}
 	}
-}
 
-void Asset_Material::finalize(Engine * engine)
-{
-	MaterialManager & materialManager = engine->getMaterialManager();
 	const GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
 
 	// Create Material	
@@ -116,7 +113,7 @@ void Asset_Material::finalize(Engine * engine)
 	glCreateBuffers(1, &m_pboID);
 	glNamedBufferStorage(m_pboID, m_size.x * m_size.y * m_imageCount * 4, m_materialData, 0);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
-	
+
 	// Load material		
 	glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)) /* Calculates mipmap count*/, GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
 	glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
@@ -126,17 +123,12 @@ void Asset_Material::finalize(Engine * engine)
 	glGenerateTextureMipmap(m_glArrayID);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 
-	/*// Synchronize because sometimes driver hasn't completed generating mipmap's before the handle is created 
-	GLsync fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	auto state = GL_UNSIGNALED;
-	while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state == GL_CONDITION_SATISFIED)
-		state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-	glDeleteSync(fence);*/
-	materialManager.generateHandle(m_matSpot, m_glArrayID);
+	engine->getMaterialManager().generateHandle(m_matSpot, m_glArrayID);
 	if (!glIsTexture(m_glArrayID))
-		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename, m_textures[0] + ", " + m_textures[1] + ", " + m_textures[2] + ", " + m_textures[3] + ", " + m_textures[4] + ", " + m_textures[5]);
-	
+		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename);
+
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 

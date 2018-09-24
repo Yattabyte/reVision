@@ -32,13 +32,9 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 		userAsset = assetManager.createNewAsset<Asset_Texture>(filename, type, mipmap, anis);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = DIRECTORY_TEXTURE + filename;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = DIRECTORY_TEXTURE + filename;		
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -47,15 +43,12 @@ void Asset_Texture::initialize(Engine * engine, const std::string & relativePath
 {
 	// Forward asset creation
 	m_image = Asset_Image::Create(engine, relativePath, false);
-}
 
-void Asset_Texture::finalize(Engine * engine)
-{		
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);
 	glCreateBuffers(1, &m_pboID);
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
-	
+
 	// Load Texture
 	switch (m_type) {
 		case GL_TEXTURE_1D: {
@@ -93,12 +86,13 @@ void Asset_Texture::finalize(Engine * engine)
 			glGenerateTextureMipmap(m_glTexID);
 			break;
 		}
-	}
+	};
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 	m_glTexHandle = glGetTextureHandleARB(m_glTexID);
-	
+
 	// Finalize
-	Asset::finalize(engine);	
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	Asset::finalize(engine);
 }
 
 void Asset_Texture::bind(const unsigned int & texture_unit)

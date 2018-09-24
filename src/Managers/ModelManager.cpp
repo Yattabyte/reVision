@@ -34,18 +34,15 @@ void ModelManager::initialize()
 
 void ModelManager::registerGeometry(const GeometryInfo & data, size_t & offset, size_t & count)
 {
+	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
 	const size_t arraySize = data.m_vertices.size();
 	expandToFit(arraySize);
-
-	{
-		std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-		offset = m_currentSize;
-		count = arraySize;
-		// No need to check fence, since we are writing to a NEW range
-		glNamedBufferSubData(m_vboID, m_currentSize * sizeof(SingleVertex), arraySize * sizeof(SingleVertex), &data.m_vertices[0]);
-	}
 	
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
+	offset = m_currentSize;
+	count = arraySize;
+	// No need to check fence, since we are writing to a NEW range
+	glNamedBufferSubData(m_vboID, m_currentSize * sizeof(SingleVertex), arraySize * sizeof(SingleVertex), &data.m_vertices[0]);	
+	
 	m_currentSize += arraySize;
 	if (m_fence) 
 		glDeleteSync(m_fence);	
@@ -73,8 +70,6 @@ void ModelManager::update()
 
 void ModelManager::expandToFit(const size_t & arraySize)
 {
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-
 	// Check if we can fit the desired data
 	if (m_currentSize + arraySize > m_maxCapacity) {
 		// Create new set of VBO's large enough to fit old data + desired data

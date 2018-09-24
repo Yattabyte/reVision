@@ -23,43 +23,27 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 		assetRef.m_policyFill = policyFill;
 		assetRef.m_policyResize = policyResize;
 
-		// Check if the file/directory exists on disk
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		if (!Engine::File_Exists(filename)) {
-			engine->reportError(MessageManager::FILE_MISSING, filename);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
+		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
 	}
 	return userAsset;
-}
-
-void Asset_Image::initializeDefault(Engine * engine)
-{
-	// Create hard-coded alternative	
-	fill();
 }
 
 void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 {
 	Image_Data dataContainer;
-	if (!Image_IO::Import_Image(engine, relativePath, dataContainer)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Image");
-		initializeDefault(engine);
-		return;
+	if (Image_IO::Import_Image(engine, relativePath, dataContainer)) {
+		m_size = dataContainer.dimensions;
+		m_pixelData = dataContainer.pixelData;
+		m_pitch = dataContainer.pitch;
+		m_bpp = dataContainer.bpp;
 	}
-
-	m_size = dataContainer.dimensions;
-	m_pixelData = dataContainer.pixelData;
-	m_pitch = dataContainer.pitch;
-	m_bpp = dataContainer.bpp;
-}
-
-void Asset_Image::finalize(Engine * engine)
-{
+	else {
+		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Image");
+		fill();
+	}
+	
 	Asset::finalize(engine);
 }
 

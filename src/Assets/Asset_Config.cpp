@@ -53,13 +53,9 @@ Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & fi
 		userAsset = assetManager.createNewAsset<Asset_Config>(filename, cfg_strings);
 		auto & assetRef = *userAsset.get();
 
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = DIRECTORY_CONFIG + filename + EXT_CONFIG;
-		const std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		const std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
-		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		const std::string &relativePath = DIRECTORY_CONFIG + filename + EXT_CONFIG;		
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
 	}
 	return userAsset;
 }
@@ -81,12 +77,8 @@ void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 	}
 	catch (const std::ifstream::failure) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Config");
-		return;
 	}
-}
 
-void Asset_Config::finalize(Engine * engine)
-{
 	Asset::finalize(engine);
 }
 

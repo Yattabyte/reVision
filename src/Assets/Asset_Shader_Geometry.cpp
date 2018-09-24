@@ -58,7 +58,7 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 			GLint infoLogLength;
 			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
 			std::vector<GLchar> infoLog(infoLogLength);
-			glGetShaderInfoLog(ID, infoLog.size(), NULL, &infoLog[0]);
+			glGetShaderInfoLog(ID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
@@ -101,7 +101,7 @@ inline void link_program(Engine * engine, Asset_Shader_Geometry & userAsset)
 		GLint infoLogLength;
 		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		std::vector<GLchar> infoLog(infoLogLength);
-		glGetProgramInfoLog(userAsset.m_glProgramID, infoLog.size(), NULL, &infoLog[0]);
+		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}
 	glValidateProgram(userAsset.m_glProgramID);
@@ -136,7 +136,6 @@ Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, cons
 		// Check if the file/directory exists on disk
 		const std::string &relativePath = "\\Shaders\\" + filename;
 		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		std::function<void()> finiFunc = std::bind(&finalize, &assetRef, engine);
 		bool found_vertex = Engine::File_Exists(relativePath + EXT_SHADER_VERTEX);
 		bool found_fragement = Engine::File_Exists(relativePath + EXT_SHADER_FRAGMENT);
 		if (!found_vertex)
@@ -147,7 +146,7 @@ Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, cons
 			initFunc = std::bind(&initializeDefault, &assetRef, engine);
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(userAsset, threaded, initFunc, finiFunc);
+		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
 	}
 	return userAsset;
 }
@@ -168,20 +167,17 @@ void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & rela
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader_Geometry");
 		initializeDefault(engine);
-		return;
 	}
 
 	// parse
 	parse(engine, *this);
-}
 
-void Asset_Shader_Geometry::finalize(Engine * engine)
-{
 	// Create Shader Program	
 	compile(engine, *this);
 	generate_program(*this);
 	link_program(engine, *this);
 
 	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
