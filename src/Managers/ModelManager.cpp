@@ -72,6 +72,13 @@ void ModelManager::expandToFit(const size_t & arraySize)
 {
 	// Check if we can fit the desired data
 	if (m_currentSize + arraySize > m_maxCapacity) {
+		// Wait for data fence to be passed
+		GLenum state = GL_UNSIGNALED; 
+		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) 
+			state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+		glDeleteSync(m_fence);
+		m_fence = nullptr;
+
 		// Create new set of VBO's large enough to fit old data + desired data
 		m_maxCapacity += arraySize * 2;
 
@@ -102,7 +109,7 @@ const bool ModelManager::finishedWork()
 	std::shared_lock<std::shared_mutex> readGuard(m_mutex);	
 	if (!m_fence)
 		return true;
-	const GLenum & state = glClientWaitSync(m_fence, 0, 0);
+	const GLenum & state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 	if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED) {
 		glDeleteSync(m_fence);
 		m_fence = nullptr;
