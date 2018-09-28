@@ -19,8 +19,6 @@ public:
 	~Frametime_Counter() {
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_numberTexture->removeCallback(this);
-		m_shader->removeCallback(this);
 	}
 	/** Constructor. */
 	Frametime_Counter(Engine * engine)

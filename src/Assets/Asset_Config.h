@@ -18,6 +18,8 @@ class Asset_Config : public Asset
 public: 
 	/** Destroy the Config. */
 	~Asset_Config() = default;
+	/** Construct the config with a particular set of variable names. */
+	Asset_Config(const std::string & filename, const std::vector<std::string> & strings);
 
 
 	// Public Methods
@@ -46,11 +48,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the config with a particular set of variable names. */
-	Asset_Config(const std::string & filename, const std::vector<std::string> & strings);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

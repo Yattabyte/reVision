@@ -29,6 +29,8 @@ class Asset_Material : public Asset
 public:
 	/** Destroy the Material. */
 	~Asset_Material();
+	/** Construct the Material. */
+	Asset_Material(const std::string & filename, const std::vector<std::string> & textures);
 	
 
 	// Public Methods
@@ -57,11 +59,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Material. */
-	Asset_Material(const std::string & filename, const std::vector<std::string> & textures);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

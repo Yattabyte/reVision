@@ -20,6 +20,8 @@ class Asset_Shader : public Asset
 public:	
 	/** Destroy the Shader. */
 	~Asset_Shader();
+	/** Construct the Shader. */
+	Asset_Shader(const std::string & filename);
 
 
 	// Public Methods
@@ -90,12 +92,6 @@ public:
 	std::vector<char> m_binary;
 	GLenum m_binaryFormat;
 	GLsizei m_binaryLength;
-
-
-protected:
-	// Protected Constructors
-	/** Construct the Shader. */
-	Asset_Shader(const std::string & filename);
 
 
 private:

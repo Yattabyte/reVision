@@ -19,6 +19,8 @@ class Asset_Primitive : public Asset
 public:
 	/** Destroy the Primitive. */
 	~Asset_Primitive();
+	/** Construct the Primitive. */
+	Asset_Primitive(const std::string & filename);
 
 
 	// Public Methods
@@ -40,11 +42,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Primitive. */
-	Asset_Primitive(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

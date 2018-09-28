@@ -43,12 +43,12 @@ Shared_Asset_Shader_Pkg Asset_Shader_Pkg::Create(Engine * engine, const std::str
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Pkg>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Shader_Pkg>(filename);
-		auto & assetRef = *userAsset.get();
+		userAsset = std::make_shared<Asset_Shader_Pkg>(filename);
+		assetManager.addShareableAsset(userAsset);
 		
 		// Submit the work order
-		const std::string &relativePath = DIRECTORY_SHADER_PKG + filename;	
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
+		const std::string relativePath(DIRECTORY_SHADER_PKG + filename);	
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
 	}
 	return userAsset;
 }

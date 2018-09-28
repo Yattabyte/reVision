@@ -17,8 +17,6 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Skybox() {
-		m_shapeQuad->removeCallback(this);
-		m_cubemapSky->removeCallback(this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 	}

@@ -23,6 +23,8 @@ class Asset_Mesh : public Asset
 public:
 	/** Destroy the Mesh. */
 	~Asset_Mesh() = default;
+	/** Construct the Mesh. */
+	Asset_Mesh(const std::string & filename);
 
 
 	// Public Methods
@@ -39,11 +41,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Mesh. */
-	Asset_Mesh(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault(Engine * engine);

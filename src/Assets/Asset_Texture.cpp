@@ -29,12 +29,12 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Texture>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Texture>(filename, type, mipmap, anis);
-		auto & assetRef = *userAsset.get();
+		userAsset = std::make_shared<Asset_Texture>(filename, type, mipmap, anis);
+		assetManager.addShareableAsset(userAsset);
 
 		// Submit the work order
-		const std::string &relativePath = DIRECTORY_TEXTURE + filename;		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
+		const std::string relativePath(DIRECTORY_TEXTURE + filename);		
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
 	}
 	return userAsset;
 }

@@ -130,23 +130,12 @@ Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, cons
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Shader_Geometry>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Shader_Geometry>(filename);
-		auto & assetRef = *userAsset.get();
-
-		// Check if the file/directory exists on disk
-		const std::string &relativePath = "\\Shaders\\" + filename;
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, relativePath);
-		bool found_vertex = Engine::File_Exists(relativePath + EXT_SHADER_VERTEX);
-		bool found_fragement = Engine::File_Exists(relativePath + EXT_SHADER_FRAGMENT);
-		if (!found_vertex)
-			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_VERTEX);
-		if (!found_fragement)
-			engine->reportError(MessageManager::FILE_MISSING, relativePath + EXT_SHADER_FRAGMENT);
-		if (!(found_vertex && found_fragement))
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
+		userAsset = std::make_shared<Asset_Shader_Geometry>(filename);
+		assetManager.addShareableAsset(userAsset);
 
 		// Submit the work order
-		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
+		const std::string relativePath("\\Shaders\\" + filename);
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
 	}
 	return userAsset;
 }

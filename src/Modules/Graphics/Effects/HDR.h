@@ -22,8 +22,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_GAMMA, this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		if (m_shaderHDR) m_shaderHDR->removeCallback(this);
 	}
 	/** Constructor. */
 	HDR(Engine * engine, FBO_Base * lightingFBO)

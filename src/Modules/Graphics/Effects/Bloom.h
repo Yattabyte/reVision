@@ -26,7 +26,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 	}
 	/** Constructor. */
 	Bloom(Engine * engine, FBO_Base * lightingFBO, VisualFX * visualFX) 

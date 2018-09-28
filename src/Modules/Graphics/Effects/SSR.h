@@ -20,10 +20,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_SSR, this);
-		m_brdfMap->removeCallback(this);
-		m_shaderSSR1->removeCallback(this);
-		m_shaderSSR2->removeCallback(this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
 		glDeleteFramebuffers(1, &m_fboMipsID);
 		glDeleteTextures(1, &m_textureMipsID);
 		glDeleteTextures(1, &m_bayerID);

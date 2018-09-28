@@ -16,11 +16,7 @@ class Join_Reflections : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~Join_Reflections() {
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		m_brdfMap->removeCallback(this);
-		m_shader->removeCallback(this);
-	}
+	~Join_Reflections() = default;
 	/** Constructor. */
 	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {

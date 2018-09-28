@@ -20,6 +20,8 @@ class Asset_Level : public Asset
 public:
 	/** Destroy the Level. */
 	~Asset_Level() = default;
+	/** Construct the Level. */
+	Asset_Level(const std::string & filename);
 
 
 	/** Begins the creation process for this asset.
@@ -34,11 +36,6 @@ public:
 	std::vector<LevelStruct_Entity> m_entities;
 
 private:
-	// Private Constructors
-	/** Construct the Level. */
-	Asset_Level(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

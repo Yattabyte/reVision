@@ -19,6 +19,8 @@ class Asset_Shader_Pkg : public Asset
 public:
 	/** Destroy the Shader Package. */
 	~Asset_Shader_Pkg() = default;
+	/** Construct the Shader Package. */
+	Asset_Shader_Pkg(const std::string & filename);
 
 	
 	// Public Methods
@@ -38,11 +40,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Shader Package. */
-	Asset_Shader_Pkg(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

@@ -14,9 +14,7 @@ class To_Screen : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~To_Screen() {
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-	}
+	~To_Screen() = default;
 	/** Constructor. */
 	To_Screen(Engine * engine)
 	: m_engine(engine) {

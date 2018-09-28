@@ -27,13 +27,13 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Material>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Material>(filename, textures);
-		auto & assetRef = *userAsset.get();
-		assetRef.m_matSpot = materialManager.generateID();
+		userAsset = std::make_shared<Asset_Material>(filename, textures);
+		userAsset->m_matSpot = materialManager.generateID();
+		assetManager.addShareableAsset(userAsset);
 
 		// Submit the work order
 		const std::string &relativePath = filename + MATERIAL_EXTENSION;
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
 	}
 	return userAsset;
 }

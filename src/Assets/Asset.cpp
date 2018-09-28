@@ -15,12 +15,6 @@ void Asset::setFileName(const std::string & fn)
 	m_filename = fn;
 }
 
-void Asset::removeCallback(void * pointerID) 
-{
-	if (m_callbacks.find(pointerID) != m_callbacks.end())
-		m_callbacks.erase(m_callbacks.find(pointerID));	
-}
-
 bool Asset::existsYet() const
 { 
 	// Exit early if this points to nothing
@@ -52,4 +46,5 @@ void Asset::finalize(Engine * engine)
 	AssetManager & assetManager = engine->getAssetManager();
 	for each (auto qwe in m_callbacks)
 		assetManager.submitNotifyee(qwe.first, qwe.second);
+	m_callbacks.clear();
 }

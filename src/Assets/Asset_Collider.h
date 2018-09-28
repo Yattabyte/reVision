@@ -16,6 +16,8 @@ class Asset_Collider : public Asset
 public:
 	/** Destroy the Collider. */
 	~Asset_Collider();
+	/** Construct the Collider. */
+	Asset_Collider(const std::string & filename);
 
 
 	/** Begins the creation process for this asset.
@@ -31,12 +33,7 @@ public:
 	btCollisionShape * m_shape = nullptr;
 
 
-private:
-	// Private Constructors
-	/** Construct the Collider. */
-	Asset_Collider(const std::string & filename);
-
-
+protected:
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

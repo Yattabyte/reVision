@@ -12,18 +12,11 @@ Shared_Asset_Mesh Asset_Mesh::Create(Engine * engine, const std::string & filena
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Mesh>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Mesh>(filename);
-		auto & assetRef = *userAsset.get();
-
-		// Check if the file/directory exists on disk
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
-		if (!Engine::File_Exists(filename)) {
-			engine->reportError(MessageManager::FILE_MISSING, filename);
-			initFunc = std::bind(&initializeDefault, &assetRef, engine);
-		}
-
+		userAsset = std::make_shared<Asset_Mesh>(filename);
+		assetManager.addShareableAsset(userAsset);
+		
 		// Submit the work order
-		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, filename)), threaded);
 	}
 	return userAsset;
 }

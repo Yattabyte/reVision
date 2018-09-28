@@ -18,10 +18,7 @@ class SSAO : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~SSAO() {
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		m_shader->removeCallback(this);
-	}
+	~SSAO() = default;
 	/** Constructor. */
 	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {

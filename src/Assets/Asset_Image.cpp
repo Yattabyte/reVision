@@ -18,14 +18,13 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Image>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Image>(filename);
-		auto & assetRef = *userAsset.get();
-		assetRef.m_policyFill = policyFill;
-		assetRef.m_policyResize = policyResize;
+		userAsset = std::make_shared<Asset_Image>(filename);
+		userAsset->m_policyFill = policyFill;
+		userAsset->m_policyResize = policyResize;
+		assetManager.addShareableAsset(userAsset);
 
 		// Submit the work order
-		std::function<void()> initFunc = std::bind(&initialize, &assetRef, engine, filename);
-		assetManager.submitNewWorkOrder(std::move(initFunc), threaded);
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, filename)), threaded);
 	}
 	return userAsset;
 }

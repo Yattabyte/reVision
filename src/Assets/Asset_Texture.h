@@ -18,6 +18,10 @@ class Asset_Texture : public Asset
 public:
 	/** Destroy the Texture. */
 	~Asset_Texture();
+	/** Construct the Texture. */
+	Asset_Texture(const std::string & filename);
+	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
+	Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);/** Attempts to create an asset from disk or share one if it already exists */
 
 
 	// Public Methods
@@ -44,13 +48,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Texture. */
-	Asset_Texture(const std::string & filename);
-	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
-	Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);/** Attempts to create an asset from disk or share one if it already exists */
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

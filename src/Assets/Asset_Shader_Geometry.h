@@ -20,6 +20,8 @@ class Asset_Shader_Geometry : public Asset_Shader
 public:	
 	/** Destroy the Shader. */
 	~Asset_Shader_Geometry();
+	/** Construct the Shader. */
+	Asset_Shader_Geometry(const std::string & filename);
 
 
 	// Public Methods
@@ -37,11 +39,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Shader. */
-	Asset_Shader_Geometry(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault(Engine * engine) ;

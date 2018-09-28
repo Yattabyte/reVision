@@ -20,12 +20,12 @@ Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & file
 	// Create the asset or find one that already exists
 	auto userAsset = assetManager.queryExistingAsset<Asset_Model>(filename, threaded);
 	if (!userAsset) {
-		userAsset = assetManager.createNewAsset<Asset_Model>(filename, modelManager);
-		auto & assetRef = *userAsset.get();
+		userAsset = std::make_shared<Asset_Model>(filename, modelManager);
+		assetManager.addShareableAsset(userAsset);
 
 		// Submit the work order
 		const std::string &relativePath = DIRECTORY_MODEL + filename;		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, &assetRef, engine, relativePath)), threaded);
+		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
 	}
 	return userAsset;
 }

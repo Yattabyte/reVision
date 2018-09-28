@@ -24,8 +24,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_SPOT, this);
-		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
-		if (m_shapeCone.get()) m_shapeCone->removeCallback(this);
 	}
 	/** Constructor. */
 	LightSpot_Effect(

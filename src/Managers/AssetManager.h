@@ -48,15 +48,12 @@ public:
 			}			
 		return std::shared_ptr<Asset_T>();
 	}
-	/** A template for creating assets and forwarding their arguments, also adds to the map. 	
-	@param	<Asset_T>	the type of asset to create
-	@param	ax			the constructor arguments */
-	template <typename Asset_T, typename... Args>
-	inline std::shared_ptr<Asset_T> createNewAsset(Args&&... ax) {
-		std::shared_ptr<Asset_T> userAsset = std::shared_ptr<Asset_T>(new Asset_T(std::forward<Args>(ax)...));
+	/** A template for adding shareable assets to the map.
+	@param	asset	the asset to add to the map */
+	template <typename Asset_T>
+	inline void addShareableAsset(const Asset_T & asset) {
 		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
-		m_AssetMap[typeid(Asset_T).name()].push_back(userAsset);
-		return userAsset;
+		m_AssetMap[typeid(Asset_T).name()].push_back(asset);
 	}
 	/** Submits an asset for physical creation, and optionally whether to thread it or not. 
 	@param	ini			asset initialization function

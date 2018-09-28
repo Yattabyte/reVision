@@ -28,8 +28,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
 		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
 		m_engine->removePrefCallback(PreferenceState::C_RH_BOUNCE_SIZE, this);
-		if (m_shapeQuad.get()) m_shapeQuad->removeCallback(this);
-		if (m_shader_Lighting.get()) m_shader_Lighting->removeCallback(this);
 	}
 	/** Constructor. */
 	LightDirectional_Effect(

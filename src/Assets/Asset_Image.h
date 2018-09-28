@@ -29,6 +29,8 @@ public:
 
 	/** Destroy the Image. */
 	~Asset_Image();
+	/** Construct the Image. */
+	Asset_Image(const std::string & filename);
 
 
 	// Public Methods
@@ -57,11 +59,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Image. */
-	Asset_Image(const std::string & filename);
-
-
 	// Private Methods
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

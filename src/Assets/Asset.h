@@ -26,8 +26,6 @@ public:
 	// (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
 	~Asset() = default;
-	/** Create asset that uses the specified file-path. */
-	Asset(const std::string & filename);
 
 
 	// Public Methods	
@@ -43,26 +41,20 @@ public:
 	@param	<Callback>	the (auto-deduced) signature of the method */
 	template <typename Callback>
 	void addCallback(void * pointerID, Callback && callback) {
-		m_callbacks[pointerID] = std::forward<Callback>(callback);
-
-		if (existsYet())
+		if (!existsYet()) 
+			m_callbacks[pointerID] = std::forward<Callback>(callback);
+		else
 			callback();
 	}
-	/** Removes a callback method from triggering when the asset finishes loading.
-	@param	pointerID	the pointer to the object owning the callback to be removed */
-	void removeCallback(void * pointerID);
 	/** Returns whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
 	bool existsYet() const;
 
 
 protected:
-	// Protected Attributes
-	std::atomic_bool m_finalized = false;
-	mutable GLsync m_fence = nullptr;
-	std::string m_filename = "";
-	std::map<void*, std::function<void()>> m_callbacks;
-	friend class AssetManager;
+	// Protected Constructors
+	/** Create asset that uses the specified file-path. */
+	Asset(const std::string & filename);
 
 
 	// Protected Interface
@@ -73,6 +65,20 @@ protected:
 	// Protected Methods
 	/** Declares this asset ready-to-use. */
 	void finalize(Engine * engine);
+
+
+	// Protected Attributes
+	std::atomic_bool m_finalized = false;
+	mutable GLsync m_fence = nullptr;
+	std::string m_filename = "";
+	std::map<void*, std::function<void()>> m_callbacks;
+	friend class AssetManager;
+
+	
+private:
+	// Private but deleted
+	Asset(const Asset &) = delete;
+	const Asset &operator =(const Asset &) = delete;
 };
 
 #endif // ASSET_H

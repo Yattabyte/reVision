@@ -23,7 +23,6 @@ public:
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
 		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
 		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
-		if (m_shapeCube.get()) m_shapeCube->removeCallback(this);
 	}
 	/** Constructor. */
 	Reflector_Effect(

@@ -25,6 +25,8 @@ class Asset_Model : public Asset
 public:	
 	/** Destroy the Model. */
 	~Asset_Model();
+	/** Construct the Model. */
+	Asset_Model(const std::string & filename, ModelManager & modelManager);
 
 
 	// Public Methods
@@ -47,11 +49,6 @@ public:
 
 
 private:
-	// Private Constructors
-	/** Construct the Model. */
-	Asset_Model(const std::string & filename, ModelManager & modelManager);
-
-
 	// Private Methods
 	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
 	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
