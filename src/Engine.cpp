@@ -165,7 +165,7 @@ Engine::Engine() :
 	m_moduleWorld.loadWorld();
 	reportMessage("...done!");
 
-	const unsigned int maxThreads = std::thread::hardware_concurrency();
+	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
 		std::promise<void> exitSignal;
 		std::future<void> exitObject = exitSignal.get_future();

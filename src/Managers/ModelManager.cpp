@@ -72,12 +72,14 @@ void ModelManager::expandToFit(const size_t & arraySize)
 {
 	// Check if we can fit the desired data
 	if (m_currentSize + arraySize > m_maxCapacity) {
-		// Wait for data fence to be passed
-		GLenum state = GL_UNSIGNALED; 
-		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) 
-			state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-		glDeleteSync(m_fence);
-		m_fence = nullptr;
+		if (m_fence) {
+			// Wait for data fence to be passed
+			GLenum state = GL_UNSIGNALED;
+			while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+				state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+			glDeleteSync(m_fence);
+			m_fence = nullptr;
+		}
 
 		// Create new set of VBO's large enough to fit old data + desired data
 		m_maxCapacity += arraySize * 2;
