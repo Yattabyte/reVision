@@ -26,16 +26,16 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Asset-Finished callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
-		m_brdfMap->addCallback(this, [&] {
+		m_brdfMap->addCallback(m_aliveIndicator, [&] {
 			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
 			if (m_shader->existsYet())
 				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
-		m_shader->addCallback(this, [&] {
+		m_shader->addCallback(m_aliveIndicator, [&] {
 			if (m_brdfMap->existsYet())
 				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
@@ -68,6 +68,7 @@ private:
 	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // JOIN_REFLECTIONS_H

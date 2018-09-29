@@ -57,6 +57,7 @@ private:
 	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
 	GLuint m_fbo_GB = 0;
 	StaticBuffer m_quadIndirectBuffer;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // VISUALFX_H

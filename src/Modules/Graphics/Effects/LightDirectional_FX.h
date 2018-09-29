@@ -59,13 +59,13 @@ public:
 		m_renderState->m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			// count, primCount, first, reserved
 			const GLuint data[4] = { (GLuint)m_shapeQuad->getSize(), 0, 0, 0 };
 			m_renderState->m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
 			m_renderState->m_indirectBounce.write(0, sizeof(GLuint) * 4, &data);
 		});
-		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_renderState->m_shadowSize.x); });
+		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_renderState->m_shadowSize.x); });
 
 		// Noise Texture
 		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
@@ -210,6 +210,7 @@ private:
 	GLuint m_textureNoise32 = 0;
 	Directional_RenderState * m_renderState;
 	std::shared_ptr<RH_Volume> m_volumeRH;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // LIGHTDIRECTIONAL_FX_H

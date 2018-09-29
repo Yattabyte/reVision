@@ -53,11 +53,11 @@ public:
 		m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);
 
 		// Asset-Finished Callbacks		
-		m_shapeCube->addCallback(this, [&]() mutable {
+		m_shapeCube->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint data = { (GLuint)m_shapeCube->getSize() };
 			m_renderState->m_indirectCube.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_renderState->m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData);
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
@@ -207,6 +207,7 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	FBO_Base * m_geometryFBO, *m_lightingFBO, *m_reflectionFBO;
 	Reflector_RenderState * m_renderState;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // REFLECTOR_FX_H

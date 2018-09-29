@@ -14,7 +14,7 @@ void VisualFX::initialize(Engine * engine)
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});

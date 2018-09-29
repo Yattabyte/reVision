@@ -52,11 +52,11 @@ public:
 		m_shadowFBO.resize(m_renderState->m_shadowSize, 6);
 
 		// Asset-Finished Callbacks
-		m_shapeSphere->addCallback(this, [&]() mutable {
+		m_shapeSphere->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint data = { (GLuint)m_shapeSphere->getSize() };
 			m_renderState->m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
-		m_shader_Lighting->addCallback(this, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / (float)m_renderState->m_shadowSize.x); });
+		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / (float)m_renderState->m_shadowSize.x); });
 
 		// Geometry rendering pipeline
 		m_geometryStaticSystems.addSystem(new PropShadowing_System(m_engine, 6, PropShadowing_System::RenderStatic));
@@ -176,6 +176,7 @@ private:
 	std::vector<Effect_Base*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
 	FBO_Base * m_geometryFBO, * m_lightingFBO;
 	Point_RenderState * m_renderState;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // LIGHTPOINT_FX_H

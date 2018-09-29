@@ -36,7 +36,7 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
@@ -140,6 +140,7 @@ private:
 	GLuint m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 };
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	int m_bloomStrength = 5;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // BLOOM_H

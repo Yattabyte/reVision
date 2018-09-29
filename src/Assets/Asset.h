@@ -37,12 +37,11 @@ public:
 	void setFileName(const std::string & filename);	
 	/** Attaches a callback method to be triggered when the asset finishes loading.
 	@param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
-	@param	callback	the method to be triggered
-	@param	<Callback>	the (auto-deduced) signature of the method */
+	@param	callback	the method to be triggered */
 	template <typename Callback>
-	void addCallback(void * pointerID, Callback && callback) {
+	void addCallback(std::shared_ptr<bool> alive, Callback && callback) {
 		if (!existsYet()) 
-			m_callbacks[pointerID] = std::forward<Callback>(callback);
+			m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
 		else
 			callback();
 	}
@@ -71,7 +70,7 @@ protected:
 	std::atomic_bool m_finalized = false;
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";
-	std::map<void*, std::function<void()>> m_callbacks;
+	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_callbacks;
 	friend class AssetManager;
 
 	

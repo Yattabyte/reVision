@@ -41,7 +41,7 @@ public:
 		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, this, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
@@ -85,15 +85,15 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
 		glMakeTextureHandleResidentARB(m_bayerHandle);
-		m_brdfMap->addCallback(this, [&] {
+		m_brdfMap->addCallback(m_aliveIndicator, [&] {
 			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
 			if (m_shaderSSR2->existsYet())
 				m_shaderSSR2->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
-		m_shaderSSR1->addCallback(this, [&] {
+		m_shaderSSR1->addCallback(m_aliveIndicator, [&] {
 			m_shaderSSR1->setUniform(0, m_bayerHandle);
 		});
-		m_shaderSSR2->addCallback(this, [&] {
+		m_shaderSSR2->addCallback(m_aliveIndicator, [&] {
 			m_shaderSSR2->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 
@@ -211,6 +211,7 @@ private:
 	GLuint m_bayerID = 0;
 	GLuint64 m_bayerHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // SSR_H

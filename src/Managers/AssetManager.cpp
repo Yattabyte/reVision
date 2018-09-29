@@ -28,30 +28,23 @@ void AssetManager::beginWorkOrder()
 	}
 }
 
-void AssetManager::submitNotifyee(void * pointerID, const std::function<void()> & callBack)
+void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack)
 {
 	std::lock_guard writeGuard(m_mutexNofications);
-	m_notifyees.push_back(std::make_pair(pointerID,callBack));
-}
-
-void AssetManager::removeNotifyee(void * pointerID)
-{
-	std::lock_guard writeGuard(m_mutexNofications);
-	m_notifyees.erase(std::remove_if(begin(m_notifyees), end(m_notifyees), [pointerID](const std::pair<void*, std::function<void()>> & notifyee) {
-		return (notifyee.first == pointerID);
-	}), end(m_notifyees));
+	m_notifyees.push_back(callBack);
 }
 
 void AssetManager::notifyObservers()
 {
-	std::vector<std::pair<void*, std::function<void()>>> copyNotifyees;
+	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> copyNotifyees;
 	{
 		std::lock_guard writeGuard(m_mutexNofications);
 		copyNotifyees = m_notifyees;
 		m_notifyees.clear();
 	}
-	for each (const auto & notifyee in copyNotifyees)
-		notifyee.second();
+	for each (const auto & pair in copyNotifyees)
+		if (pair.first.use_count() > 1)
+			pair.second();
 }
 
 const bool AssetManager::finishedWork()

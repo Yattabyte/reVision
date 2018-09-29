@@ -51,13 +51,13 @@ public:
 		});
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
 			m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data, 0);
 		});
-		m_cubemapSky->addCallback(this, [&](void) mutable {
+		m_cubemapSky->addCallback(m_aliveIndicator, [&](void) mutable {
 			m_skyOutOfDate = true;
 			m_skySize = m_cubemapSky->m_images[0]->m_size;
 			glTextureStorage2D(m_cubemapMipped, 6, GL_RGB16F, m_skySize.x, m_skySize.x);
@@ -160,6 +160,7 @@ private:
 	StaticBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_renderSize = glm::ivec2(1), m_skySize = glm::ivec2(1);
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // FRAMETIME_COUNTER_H

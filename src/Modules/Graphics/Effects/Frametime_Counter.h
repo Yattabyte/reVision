@@ -33,12 +33,12 @@ public:
 		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
 		resize(m_renderSize);
 
-		m_numberTexture->addCallback(this, [&] {
+		m_numberTexture->addCallback(m_aliveIndicator, [&] {
 			glMakeTextureHandleResidentARB(m_numberTexture->m_glTexHandle);
 			if (m_shader->existsYet())
 				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
 		});
-		m_shader->addCallback(this, [&] {
+		m_shader->addCallback(m_aliveIndicator, [&] {
 			if (m_numberTexture->existsYet())
 				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
 		});
@@ -99,6 +99,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_projMatrix = glm::mat4(1.0f);
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // FRAMETIME_COUNTER_H

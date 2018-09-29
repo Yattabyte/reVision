@@ -61,10 +61,8 @@ public:
 	void submitNewWorkOrder(const Asset_Work_Order && ini, const bool & threaded);
 	/** Pop's the first work order and completes it. */
 	void beginWorkOrder();
-	/** For assets that have just finalized, takes callback submissions. */
-	void submitNotifyee(void * pointerID, const std::function<void()> & callBack);
-	/** Remove a notifyee from the pool. */
-	void removeNotifyee(void * pointerID);
+	/** Forwards an asset-is-finalized notification request, which will be activated from the main thread. */
+	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack);
 	/* From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers();
 	/** Returns whether or not this manager has work left.
@@ -80,7 +78,7 @@ private:
 	std::shared_mutex m_Mutex_Workorders;
 	std::deque<Asset_Work_Order> m_Workorders;
 	std::shared_mutex m_mutexNofications;
-	std::vector<std::pair<void*, std::function<void()>>> m_notifyees;
+	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_notifyees;
 };
 
 #endif // ASSETMANAGER_H

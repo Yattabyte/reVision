@@ -28,7 +28,7 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(this, [&]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
@@ -77,7 +77,7 @@ public:
 		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);		
 		m_noiseHandle = glGetTextureHandleARB(m_noiseID);
 		glMakeTextureHandleResidentARB(m_noiseHandle);
-		m_shader->addCallback(this, [&] {
+		m_shader->addCallback(m_aliveIndicator, [&] {
 			std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 			std::default_random_engine generator;
 			glm::vec4 new_kernel[MAX_KERNEL_SIZE];
@@ -166,6 +166,7 @@ private:
 	GLuint m_fboID = 0, m_textureID = 0, m_textureIDSGB[2] = { 0,0 }, m_noiseID = 0;
 	GLuint64 m_noiseHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // SSAO_H

@@ -42,9 +42,11 @@ void Asset::finalize(Engine * engine)
 {
 	m_finalized = true;
 
-	// Notify Completion
+	// Copy callbacks in case any get added while we're busy
 	AssetManager & assetManager = engine->getAssetManager();
-	for each (auto qwe in m_callbacks)
-		assetManager.submitNotifyee(qwe.first, qwe.second);
+	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
+	
+	for each (const auto qwe in copyCallbacks)
+		assetManager.submitNotifyee(qwe);
 }

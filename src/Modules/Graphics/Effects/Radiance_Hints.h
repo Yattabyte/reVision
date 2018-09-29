@@ -40,7 +40,7 @@ public:
 		m_rebounceFBO.resize(m_bounceSize);
 
 		// Asset-Finished callbacks
-		m_shapeQuad->addCallback(this, [&, m_bounceSize]() mutable {
+		m_shapeQuad->addCallback(m_aliveIndicator, [&, m_bounceSize]() mutable {
 			// count, primCount, first, reserved
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
@@ -128,6 +128,7 @@ private:
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	GLuint m_fboID = 0, m_textureID = 0;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // RADIANCE_HINTS_H
