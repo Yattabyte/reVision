@@ -43,7 +43,7 @@ void AssetManager::notifyObservers()
 		m_notifyees.clear();
 	}
 	for each (const auto & pair in copyNotifyees)
-		if (pair.first.use_count() > 1)
+		if (pair.first)
 			pair.second();
 }
 
