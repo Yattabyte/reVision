@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.30.C";
+constexpr char ENGINE_VERSION[]	= "1.30.D";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -66,19 +66,12 @@ public:
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.
 	@param	targetKey	the preference-ID to which this callback will be attached
-	@param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	@param	alive		a shared pointer indicating whether the caller is alive or not
 	@param	observer	the method to be triggered
-	@param	<Observer>	the (auto-deduced) signature of the method 
 	@return				optionally returns the preference value held for this target */
 	template <typename T, typename Observer>
-	T const addPrefCallback(const PreferenceState::Preference & targetKey, void * pointerID, Observer && observer) {
-		return m_PreferenceState.addPrefCallback<T>(targetKey, pointerID, observer);
-	}
-	/** Removes a callback method from triggering when a particular preference changes.
-	@param	targetKey	the preference key that was listening for changes
-	@param	pointerID	the pointer to the object owning the callback to be removed */
-	void removePrefCallback(const PreferenceState::Preference & targetKey, void * pointerID) {
-		m_PreferenceState.removePrefCallback(targetKey, pointerID);
+	T const addPrefCallback(const PreferenceState::Preference & targetKey, const std::shared_ptr<bool> & alive, Observer && observer) {
+		return m_PreferenceState.addPrefCallback<T>(targetKey, alive, observer);
 	}
 	/** Forward a message to the message manager.
 	@param	input				the message to report */
@@ -141,6 +134,7 @@ private:
 	ActionState	m_ActionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 
 	// Private Modules

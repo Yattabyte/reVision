@@ -129,40 +129,30 @@ public:
 		const float castValue = (float)targetValue;
 		if (m_preferences) {
 			m_preferences->setValue(targetKey, castValue);
+
+			// Call callbacks
 			if (m_callbacks.find(targetKey) != m_callbacks.end())
-				for each (const auto &observer in m_callbacks[targetKey])
-					observer.second(castValue);
+				for each (const auto &pair in m_callbacks[targetKey])
+					if (pair.first.use_count() > 1)
+						pair.second(castValue);
 		}
 	}
 	/** Attaches a callback method to be triggered when the supplied preference updates.
 	@param	targetKey	the preference-ID to which this callback will be attached
-	@param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	@param	alive		the
 	@param	observer	the method to be triggered
-	@param	<Observer>	the (auto-deduced) signature of the method
 	@return				optionally returns the preference value held for this target */
 	template <typename T, typename Observer>
-	const T addPrefCallback(const Preference & targetKey, void * pointerID, Observer&& observer) {
-		m_callbacks.insert(std::pair<Preference, std::map<void*, std::function<void(float)>>>(targetKey, std::map<void*, std::function<void(float)>>()));
-		m_callbacks[targetKey].insert(std::pair<void*, std::function<void(float)>>(pointerID, std::function<void(float)>()));
-		m_callbacks[targetKey][pointerID] = std::forward<Observer>(observer);
+	const T addPrefCallback(const Preference & targetKey, const std::shared_ptr<bool> & alive, Observer&& observer) {
+		m_callbacks[targetKey].emplace_back(std::make_pair(alive, std::function<void(float)>(std::forward<Observer>(observer))));
 		return getPreference<T>(targetKey);
-	}
-	/** Removes a callback method from triggering when a particular preference changes.
-	@param	targetKey	the preference key that was listening for changes
-	@param	pointerID	the pointer to the object owning the callback to be removed */
-	void removePrefCallback(const Preference & targetKey, void * pointerID) {
-		if (m_callbacks.find(targetKey) != m_callbacks.end()) {
-			auto &specific_map = m_callbacks[targetKey];
-			if (specific_map.find(pointerID) != specific_map.end()) 
-				specific_map.erase(specific_map.find(pointerID));			
-		}
 	}
 
 	
 private:
 	Engine * m_engine = nullptr;
 	Shared_Asset_Config m_preferences;
-	std::map<Preference, std::map<void*, std::function<void(float)>>> m_callbacks;
+	std::map< Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>> > m_callbacks;
 };
 
 #endif // PREFERENCE_STATE_H

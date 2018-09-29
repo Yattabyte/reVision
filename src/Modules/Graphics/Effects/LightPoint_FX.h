@@ -20,10 +20,8 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~LightPoint_Effect() {
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
-		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_POINT, this);
+		// Update indicator
+		m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	LightPoint_Effect(
@@ -40,14 +38,14 @@ public:
 		m_shapeSphere = Asset_Primitive::Create(m_engine, "sphere");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
-		m_renderState->m_updateQuality = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
-		m_renderState->m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_POINT, this, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		m_renderState->m_updateQuality = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
+		m_renderState->m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
 		m_renderState->m_shadowSize = glm::ivec2(std::max(1, m_renderState->m_shadowSize.x));
 		m_shadowFBO.resize(m_renderState->m_shadowSize, 6);
 

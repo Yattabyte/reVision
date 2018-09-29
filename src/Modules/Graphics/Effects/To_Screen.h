@@ -14,7 +14,10 @@ class To_Screen : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~To_Screen() = default;
+	~To_Screen() {
+		// Update indicator
+		m_aliveIndicator = false;
+	}
 	/** Constructor. */
 	To_Screen(Engine * engine)
 	: m_engine(engine) {

@@ -17,8 +17,8 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Frametime_Counter() {
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
+		// Update indicator
+		m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	Frametime_Counter(Engine * engine)
@@ -29,8 +29,8 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
 		resize(m_renderSize);
 
 		m_numberTexture->addCallback(m_aliveIndicator, [&] {

@@ -16,7 +16,10 @@ class Join_Reflections : public Effect_Base {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	~Join_Reflections() = default;
+	~Join_Reflections() {
+		// Update indicator
+		m_aliveIndicator = false;
+	}
 	/** Constructor. */
 	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {

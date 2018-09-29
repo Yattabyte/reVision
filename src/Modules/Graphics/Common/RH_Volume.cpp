@@ -4,15 +4,14 @@
 
 
 RH_Volume::~RH_Volume() {
-	// Preference Callbacks
-	m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
-	m_engine->removePrefCallback(PreferenceState::C_RH_BOUNCE_SIZE, this);
+	// Update indicator
+	m_aliveIndicator = false;
 }
 
 RH_Volume::RH_Volume(Engine * engine) : m_engine(engine) {
 	// Preference Callbacks
-	m_farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) { m_farPlane = f; });
-	m_resolution = m_engine->addPrefCallback<float>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_resolution = f; });
+	m_farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_farPlane = f; });
+	m_resolution = m_engine->addPrefCallback<float>(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_resolution = f; });
 }
 
 void RH_Volume::updateVolume(const VB_Element<Camera_Buffer>& cameraBuffer) {

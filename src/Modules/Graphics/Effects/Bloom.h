@@ -20,12 +20,13 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Bloom() {
+		// Update indicator
+		m_aliveIndicator = false;
+
+		// Destroy OpenGL objects
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 		glDeleteTextures(2, m_textureIDS_GB); 
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_engine->removePrefCallback(PreferenceState::C_BLOOM_STRENGTH, this);
 	}
 	/** Constructor. */
 	Bloom(Engine * engine, FBO_Base * lightingFBO, VisualFX * visualFX) 
@@ -42,10 +43,10 @@ public:
 		});
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
-		m_bloomStrength = m_engine->addPrefCallback<int>(PreferenceState::C_BLOOM_STRENGTH, this, [&](const float &f) {setBloomStrength((int)f); });
-		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_BLOOM, this, [&](const float &f) { m_enabled = (bool)f; });
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
+		m_bloomStrength = m_engine->addPrefCallback<int>(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float &f) {setBloomStrength((int)f); });
+		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL Loading
 		glCreateFramebuffers(1, &m_fboID);

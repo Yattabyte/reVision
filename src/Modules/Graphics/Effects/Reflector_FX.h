@@ -20,9 +20,8 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Reflector_Effect() {
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_engine->removePrefCallback(PreferenceState::C_ENVMAP_SIZE, this);
+		// Update indicator
+		m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	Reflector_Effect(
@@ -39,13 +38,13 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
-		m_renderState->m_envmapSize = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_ENVMAP_SIZE, this, [&](const float &f) {
+		m_renderState->m_envmapSize = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 			m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);
 		});
 

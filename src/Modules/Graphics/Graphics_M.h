@@ -25,7 +25,7 @@ class ECS;
 class Graphics_Module : public Engine_Module {
 public:
 	// (de)Constructors
-	~Graphics_Module();
+	~Graphics_Module() = default;
 	Graphics_Module(Engine * engine);
 
 
@@ -96,6 +96,7 @@ private:
 	std::shared_ptr<RH_Volume>	m_volumeRH;
 	VisualFX					m_visualFX;
 	Shared_Asset_Shader			m_shaderCull, m_shaderGeometry;
+	std::shared_ptr<bool>		m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // GRAPHICS_MODULE_H

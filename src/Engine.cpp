@@ -98,9 +98,6 @@ Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
 Engine::~Engine()
 {
 	reportMessage("Shutting down...");
-	removePrefCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this);
-	removePrefCallback(PreferenceState::C_WINDOW_REFRESH_RATE, this);
-	removePrefCallback(PreferenceState::C_VSYNC, this);
 	Image_IO::Deinitialize();
 	reportMessage("...done!");
 	glfwTerminate();
@@ -124,7 +121,7 @@ Engine::Engine() :
 	glfwMakeContextCurrent(m_renderingContext.window);
 
 	// Preference Callbacks
-	addPrefCallback<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE, this, [&](const float &f) {
+	addPrefCallback<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
 		if (f > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
@@ -132,7 +129,7 @@ Engine::Engine() :
 		else 
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);		
 	});
-	m_refreshRate = addPrefCallback<float>(PreferenceState::C_WINDOW_REFRESH_RATE, this, [&](const float &f) {
+	m_refreshRate = addPrefCallback<float>(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
 		m_refreshRate = f;
 		if (getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
 			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -141,7 +138,7 @@ Engine::Engine() :
 		else
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
 	});
-	addPrefCallback<float>(PreferenceState::C_VSYNC, this, [&](const float &f) {glfwSwapInterval((int)f); });
+	addPrefCallback<float>(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f); });
 
 	// Initialize Members
 	m_PreferenceState.loadFile("preferences");

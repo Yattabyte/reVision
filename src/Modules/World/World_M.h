@@ -13,7 +13,7 @@
 class World_Module : public Engine_Module {
 public:
 	// (de)Constructors
-	~World_Module() = default;
+	~World_Module();
 	World_Module(Engine * engine);
 
 
@@ -32,14 +32,16 @@ public:
 
 
 private:
+	// Process the level
 	void processLevel();
+
+
 	// Private Attributes
 	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
 	Shared_Asset_Level m_level;
 	MappedChar<BaseECSComponentConstructor*> m_constructorMap;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-
 };
 
 #endif // WORLD_MODULE_h

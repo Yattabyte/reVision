@@ -4,6 +4,10 @@
 
 VisualFX::~VisualFX()
 {
+	// Update indicator
+	m_aliveIndicator = false;
+
+	// Destroy OpenGL objects
 	glDeleteFramebuffers(1, &m_fbo_GB);
 }
 

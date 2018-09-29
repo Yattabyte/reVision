@@ -19,11 +19,12 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~Radiance_Hints() {
+		// Update indicator
+		m_aliveIndicator = false;
+
+		// Destroy OpenGL objects
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_engine->removePrefCallback(PreferenceState::C_RH_BOUNCE_SIZE, this);
 	}
 	/** Constructor. */
 	Radiance_Hints(Engine * engine, FBO_Base * geometryFBO, FBO_Base * bounceFBO, std::shared_ptr<RH_Volume> volumeRH)
@@ -34,9 +35,9 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
-		const GLuint m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_rebounceFBO.resize((GLuint)f); });
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
+		const GLuint m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_rebounceFBO.resize((GLuint)f); });
 		m_rebounceFBO.resize(m_bounceSize);
 
 		// Asset-Finished callbacks

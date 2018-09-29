@@ -22,12 +22,8 @@ public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~LightDirectional_Effect() {
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_WIDTH, this);
-		m_engine->removePrefCallback(PreferenceState::C_WINDOW_HEIGHT, this);
-		m_engine->removePrefCallback(PreferenceState::C_DRAW_DISTANCE, this);
-		m_engine->removePrefCallback(PreferenceState::C_SHADOW_QUALITY, this);
-		m_engine->removePrefCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this);
-		m_engine->removePrefCallback(PreferenceState::C_RH_BOUNCE_SIZE, this);
+		// Update indicator
+		m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	LightDirectional_Effect(
@@ -45,18 +41,18 @@ public:
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, this, [&](const float &f) {
+		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(f, m_renderSize.y);
 		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, this, [&](const float &f) {
+		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 			m_renderSize = glm::ivec2(m_renderSize.x, f);
 		});
-		m_renderState->m_drawDistance = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, this, [&](const float &f) { m_renderState->m_drawDistance = f; });
-		m_renderState->m_updateQuality = m_engine->addPrefCallback<GLuint> (PreferenceState::C_SHADOW_QUALITY, this, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
-		m_renderState->m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, this, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		m_renderState->m_drawDistance = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_renderState->m_drawDistance = f; });
+		m_renderState->m_updateQuality = m_engine->addPrefCallback<GLuint> (PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
+		m_renderState->m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
 		m_renderState->m_shadowSize = glm::ivec2(std::max(1, m_renderState->m_shadowSize.x));
 		m_shadowFBO.resize(m_renderState->m_shadowSize, 4);
-		m_renderState->m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, this, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
+		m_renderState->m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

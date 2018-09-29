@@ -20,6 +20,12 @@
 #include "Modules\Graphics\Effects\Reflector_FX.h"
 
 
+World_Module::~World_Module()
+{
+	// Update indicator
+	m_aliveIndicator = false;
+}
+
 World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
 
 void World_Module::initialize()

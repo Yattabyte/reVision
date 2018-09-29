@@ -36,10 +36,10 @@ public:
 	@param	filename	the file name to set this asset to */
 	void setFileName(const std::string & filename);	
 	/** Attaches a callback method to be triggered when the asset finishes loading.
-	@param	pointerID	the pointer to the object owning the function. Used for sorting and removing the callback.
+	@param	alive		a shared pointer indicating whether the caller is alive or not
 	@param	callback	the method to be triggered */
 	template <typename Callback>
-	void addCallback(std::shared_ptr<bool> alive, Callback && callback) {
+	void addCallback(const std::shared_ptr<bool> & alive, Callback && callback) {
 		if (!existsYet()) 
 			m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
 		else
