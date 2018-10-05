@@ -200,12 +200,12 @@ protected:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
-	FBO_Base * m_geometryFBO, *m_lightingFBO, *m_reflectionFBO;
-	Reflector_RenderState * m_renderState;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
+	Reflector_RenderState * m_renderState = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

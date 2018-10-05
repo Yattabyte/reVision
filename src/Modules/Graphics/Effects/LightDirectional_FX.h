@@ -196,15 +196,15 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
 	Shared_Asset_Primitive m_shapeQuad;	
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	ECSSystemList m_geometrySystems;
 	std::vector<Effect_Base*> m_geometryEffects;
-	FBO_Base * m_geometryFBO, *m_lightingFBO, *m_bounceFBO;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_bounceFBO = nullptr;
 	GLuint m_textureNoise32 = 0;
-	Directional_RenderState * m_renderState;
+	Directional_RenderState * m_renderState = nullptr;
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

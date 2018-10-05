@@ -73,12 +73,12 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO;
 	Shared_Asset_Shader	m_shaderCull, m_shaderGeometry;
 	Shared_Asset_Primitive m_shapeCube;
-	const GLuint * m_modelsVAO;
-	Prop_RenderState * m_renderState;
+	const GLuint * m_modelsVAO = nullptr;
+	Prop_RenderState * m_renderState = nullptr;
 };
 
 #endif // PROPRENDERING_FX_H

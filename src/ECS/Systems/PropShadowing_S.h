@@ -96,7 +96,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	unsigned int m_instanceCount;
 	unsigned int m_flags;
 };

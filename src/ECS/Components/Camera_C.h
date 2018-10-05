@@ -22,7 +22,7 @@ struct Camera_Buffer {
 
 /** A camera component. */
 struct Camera_Component : public ECSComponent<Camera_Component> {
-	VB_Element<Camera_Buffer> * m_data;
+	VB_Element<Camera_Buffer> * m_data = nullptr;
 };
 
 #endif // CAMERA_C_H

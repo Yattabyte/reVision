@@ -21,7 +21,7 @@ struct LightSpot_Buffer {
 };
 /** A spot light component, emulating a flash light/spot light. */
 struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
-	VB_Element<LightSpot_Buffer> * m_data;
+	VB_Element<LightSpot_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
@@ -47,7 +47,7 @@ struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
 		component->m_data->data->mMatrix = (trans)* scl;
 		return { component, component->ID };
 	}
-	VectorBuffer<LightSpot_Buffer> * m_elementBuffer;
+	VectorBuffer<LightSpot_Buffer> * m_elementBuffer = nullptr;
 };
 
 /** OpenGL buffer for spot light shadows.
@@ -63,7 +63,7 @@ struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
 	bool m_outOfDate = true;
-	VB_Element<LightSpotShadow_Buffer> * m_data;
+	VB_Element<LightSpotShadow_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct LightSpotShadow_Constructor : ECSComponentConstructor<LightSpotShadow_Component> {
@@ -92,8 +92,8 @@ struct LightSpotShadow_Constructor : ECSComponentConstructor<LightSpotShadow_Com
 		return { component, component->ID };
 	}
 	GLuint m_shadowCount = 0;
-	VectorBuffer<LightSpotShadow_Buffer> * m_elementBuffer;
-	FBO_Shadow_Spot * m_shadowFBO;
+	VectorBuffer<LightSpotShadow_Buffer> * m_elementBuffer = nullptr;
+	FBO_Shadow_Spot * m_shadowFBO = nullptr;
 };
 
 #endif // LIGHTSPOT_C_H

@@ -6,12 +6,6 @@
 
 constexpr char* DIRECTORY_COLLIDER = "\\Models\\";
 
-Asset_Collider::~Asset_Collider()
-{
-	if (m_shape != nullptr)
-		delete m_shape;
-}
-
 Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string & filename, const bool & threaded)
@@ -44,7 +38,7 @@ void Asset_Collider::initialize(Engine * engine, const std::string & relativePat
 	}
 	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], (int)orderedPoints.size(), sizeof(btScalar) * 3);
 	shape->recalcLocalAabb();
-	m_shape = shape;
+	m_shape = std::unique_ptr<btCollisionShape>(shape);
 
 	Asset::finalize(engine);
 }

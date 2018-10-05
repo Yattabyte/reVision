@@ -166,14 +166,14 @@ protected:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeCone;
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
 	std::vector<Effect_Base*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
-	FBO_Base * m_geometryFBO, *m_lightingFBO;
-	Spot_RenderState * m_renderState;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr;
+	Spot_RenderState * m_renderState = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -17,7 +17,7 @@ struct LightDirectional_Buffer {
 };
 /** A directional light component, emulating the appearance of sun lighting. */
 struct LightDirectional_Component : public ECSComponent<LightDirectional_Component> {
-	VB_Element<LightDirectional_Buffer> * m_data;
+	VB_Element<LightDirectional_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct LightDirectional_Constructor : ECSComponentConstructor<LightDirectional_Component> {
@@ -36,7 +36,7 @@ struct LightDirectional_Constructor : ECSComponentConstructor<LightDirectional_C
 		component->m_data->data->LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 		return { component, component->ID };
 	}
-	VectorBuffer<LightDirectional_Buffer> * m_elementBuffer;
+	VectorBuffer<LightDirectional_Buffer> * m_elementBuffer = nullptr;
 };
 
 /** OpenGL buffer for directional light shadows.
@@ -57,7 +57,7 @@ struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalSh
 	size_t m_visSize[2];
 	float m_shadowSize = 0.0f;
 	glm::mat4 m_mMatrix = glm::mat4(1.0f);
-	VB_Element<LightDirectionalShadow_Buffer> * m_data;
+	VB_Element<LightDirectionalShadow_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirectionalShadow_Component> {
@@ -87,8 +87,8 @@ struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirecti
 		return { component, component->ID };
 	}
 	GLuint m_shadowCount = 0;
-	VectorBuffer<LightDirectionalShadow_Buffer> * m_elementBuffer;
-	FBO_Shadow_Directional * m_shadowFBO;
+	VectorBuffer<LightDirectionalShadow_Buffer> * m_elementBuffer = nullptr;
+	FBO_Shadow_Directional * m_shadowFBO = nullptr;
 };
 
 #endif // LIGHTDIRECTIONAL_C_H

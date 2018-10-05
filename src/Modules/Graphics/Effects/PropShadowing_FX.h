@@ -70,12 +70,12 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	Shared_Asset_Shader	m_shaderCull, m_shaderShadow;
 	Shared_Asset_Primitive m_shapeCube;
-	const GLuint * m_modelsVAO;
-	GL_Vector * m_propBuffer, *m_skeletonBuffer;
-	PropShadow_RenderState * m_renderState;
+	const GLuint * m_modelsVAO = nullptr;
+	GL_Vector * m_propBuffer = nullptr, * m_skeletonBuffer = nullptr;
+	PropShadow_RenderState * m_renderState = nullptr;
 };
 
 #endif // PROPSHADOWING_FX_H

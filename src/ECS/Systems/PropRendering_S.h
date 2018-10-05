@@ -81,7 +81,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 };
 
 #endif // PROPRENDERING_S_H

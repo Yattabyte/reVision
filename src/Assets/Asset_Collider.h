@@ -15,7 +15,7 @@ class Asset_Collider : public Asset
 {
 public:
 	/** Destroy the Collider. */
-	~Asset_Collider();
+	~Asset_Collider() = default;
 	/** Construct the Collider. */
 	Asset_Collider(const std::string & filename);
 
@@ -30,7 +30,7 @@ public:
 	
 	// Public Attributes
 	Shared_Asset_Mesh m_mesh;
-	btCollisionShape * m_shape = nullptr;
+	std::unique_ptr<btCollisionShape> m_shape;
 
 
 protected:

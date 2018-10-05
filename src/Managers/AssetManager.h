@@ -72,7 +72,7 @@ public:
 
 private:
 	// Private Attributes
-	Engine * m_engine;
+	Engine * m_engine = nullptr;
 	std::shared_mutex m_Mutex_Assets;
 	VectorMap<Shared_Asset> m_AssetMap;
 	std::shared_mutex m_Mutex_Workorders;

@@ -21,7 +21,7 @@ struct Prop_Buffer {
 struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Asset_Model m_model;
 	Transform m_transform;
-	VB_Element<Prop_Buffer> * m_data;
+	VB_Element<Prop_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct Prop_Constructor : ECSComponentConstructor<Prop_Component> {
@@ -46,8 +46,8 @@ struct Prop_Constructor : ECSComponentConstructor<Prop_Component> {
 		component->m_data->data->bBoxMatrix = component->m_transform.m_modelMatrix;
 		return { component, component->ID };
 	}
-	Engine * m_engine; 
-	VectorBuffer<Prop_Buffer> * m_elementBuffer;
+	Engine * m_engine = nullptr;
+	VectorBuffer<Prop_Buffer> * m_elementBuffer = nullptr;
 };
 
 #endif // MODEL_C_H

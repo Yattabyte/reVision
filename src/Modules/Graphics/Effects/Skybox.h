@@ -151,8 +151,8 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine;
-	FBO_Base * m_geometryFBO, * m_lightingFBO, * m_reflectionFBO;
+	Engine * m_engine = nullptr;
+	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Asset_Cubemap m_cubemapSky;
 	Shared_Asset_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;

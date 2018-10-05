@@ -21,7 +21,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	float m_animTime = 0, m_animStart = 0;
 	Shared_Asset_Mesh m_mesh;
 	std::vector<glm::mat4> m_transforms;
-	VB_Element<Skeleton_Buffer> * m_data;
+	VB_Element<Skeleton_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
 struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
@@ -39,8 +39,8 @@ struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
 			component->m_data->data->bones[x] = glm::mat4(1.0f);
 		return { component, component->ID };
 	}
-	Engine * m_engine;
-	VectorBuffer<Skeleton_Buffer> * m_elementBuffer;
+	Engine * m_engine = nullptr;
+	VectorBuffer<Skeleton_Buffer> * m_elementBuffer = nullptr;
 };
 
 #endif // SKELETALANIMATION_C_H

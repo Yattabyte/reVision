@@ -22,12 +22,12 @@ struct Reflection_Buffer {
 
 /** Represents an environment map buffer component. */
 struct Reflector_Component: public ECSComponent<Reflector_Component> {
-	VB_Element<Reflection_Buffer> * m_data;
+	VB_Element<Reflection_Buffer> * m_data = nullptr;
 	int m_cubeSpot = 0;
 	bool m_outOfDate = true;
 	float m_updateTime = 0.0f;
 	Transform m_transform;
-	VB_Element<Camera_Buffer> * m_Cameradata[6];
+	VB_Element<Camera_Buffer> * m_Cameradata[6] = { nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr };
 };
 /** A constructor to aid in creation. */
 struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
@@ -75,9 +75,9 @@ struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 		return { component, component->ID };
 	}
 	GLuint m_envCount = 0;
-	VectorBuffer<Camera_Buffer> * m_camElementBuffer;
-	VectorBuffer<Reflection_Buffer> * m_refElementBuffer;
-	FBO_EnvMap * m_envmapFBO;
+	VectorBuffer<Camera_Buffer> * m_camElementBuffer = nullptr;
+	VectorBuffer<Reflection_Buffer> * m_refElementBuffer = nullptr;
+	FBO_EnvMap * m_envmapFBO = nullptr;
 };
 
 #endif // REFLECTOR_C_H

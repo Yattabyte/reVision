@@ -3,7 +3,7 @@
 #define ENGINE_H
 #define DESIRED_OGL_VER_MAJOR	4
 #define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.30.F";
+constexpr char ENGINE_VERSION[]	= "1.30.G";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
