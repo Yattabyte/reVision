@@ -37,16 +37,14 @@ public:
 		m_shapeCube = Asset_Primitive::Create(m_engine, "cube");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(f, m_renderSize.y);
-		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(m_renderSize.x, f);
-		});
-		m_renderState->m_envmapSize = m_engine->addPrefCallback<unsigned int>(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
-			m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);
-		});
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(f, m_renderSize.y); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
+		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_renderState->m_envmapSize);
+		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);});
 
 		// Environment Map
 		m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);
@@ -92,6 +90,7 @@ protected:
 	// Protected Methods
 	/** Render all the geometry for each reflector */
 	void renderScene(const float & deltaTime) {
+		auto & preferences = m_engine->getPreferenceState();
 		auto & graphics = m_engine->getGraphicsModule();
 		bool didAnything = false, update = m_renderState->m_outOfDate;
 		m_renderState->m_outOfDate = false;
@@ -100,8 +99,8 @@ protected:
 			if (update || reflector->m_outOfDate) {
 				if (!didAnything) {
 					auto copySize = m_renderSize;
-					m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_renderState->m_envmapSize);
-					m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_renderState->m_envmapSize);
+					preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderState->m_envmapSize);
+					preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_renderState->m_envmapSize);
 					glViewport(0, 0, m_renderState->m_envmapSize, m_renderState->m_envmapSize);
 					m_renderSize = copySize;
 					oldCameraID = graphics.getActiveCamera();
@@ -153,8 +152,8 @@ protected:
 			Asset_Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			graphics.setActiveCamera(oldCameraID);
-			m_engine->setPreference(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-			m_engine->setPreference(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+			preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		}
 	}
 	/** Render all the lights */

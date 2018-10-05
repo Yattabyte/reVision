@@ -43,10 +43,15 @@ public:
 		});
 
 		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::vec2(m_renderSize.x, f)); });
-		m_bloomStrength = m_engine->addPrefCallback<int>(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float &f) {setBloomStrength((int)f); });
-		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
+		preferences.getOrSetValue(PreferenceState::C_BLOOM, m_enabled);
+		preferences.addCallback(PreferenceState::C_BLOOM, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::C_BLOOM_STRENGTH, m_bloomStrength);
+		preferences.addCallback(PreferenceState::C_BLOOM_STRENGTH, m_aliveIndicator, [&](const float &f) { setBloomStrength((int)f); });
 
 		// GL Loading
 		glCreateFramebuffers(1, &m_fboID);

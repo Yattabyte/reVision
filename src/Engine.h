@@ -1,9 +1,6 @@
 #pragma once
 #ifndef ENGINE_H
 #define ENGINE_H
-#define DESIRED_OGL_VER_MAJOR	4
-#define DESIRED_OGL_VER_MINOR	5
-constexpr char ENGINE_VERSION[]	= "1.30.G";
 
 #include "ECS\ecs.h"
 #include "Managers\AssetManager.h"
@@ -18,6 +15,9 @@ constexpr char ENGINE_VERSION[]	= "1.30.G";
 #include "Utilities\MappedChar.h"
 #include <string>
 
+constexpr char ENGINE_VERSION[] = "1.31";
+constexpr int DESIRED_OGL_VER_MAJOR = 4;
+constexpr int DESIRED_OGL_VER_MINOR = 5;
 
 struct GLFWwindow;
 class Engine;
@@ -50,29 +50,6 @@ public:
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down */
 	bool shouldClose();
-	/** Returns the preference-value associated with the supplied preference-ID.
-	@param	targetKey	the ID associated with the desired preference-value
-	@return				the value associated with the supplied preference-ID */
-	template <typename T>
-	const T getPreference(const PreferenceState::Preference & targetKey) const {
-		return m_PreferenceState.getPreference<T>(targetKey);
-	}
-	/** Sets the supplied preference-value to the supplied preference-ID.
-	@param	targetKey	the ID associated with the supplied preference-value
-	@param	targetValue	the value to be set to the supplied preference-ID */
-	template <typename T>
-	void setPreference(const PreferenceState::Preference & targetKey, const T & targetValue) {
-		m_PreferenceState.setPreference<T>(targetKey, targetValue);
-	}
-	/** Attaches a callback method to be triggered when the supplied preference updates.
-	@param	targetKey	the preference-ID to which this callback will be attached
-	@param	alive		a shared pointer indicating whether the caller is alive or not
-	@param	observer	the method to be triggered
-	@return				optionally returns the preference value held for this target */
-	template <typename T, typename Observer>
-	T const addPrefCallback(const PreferenceState::Preference & targetKey, const std::shared_ptr<bool> & alive, Observer && observer) {
-		return m_PreferenceState.addPrefCallback<T>(targetKey, alive, observer);
-	}
 	/** Forward a message to the message manager.
 	@param	input				the message to report */
 	void reportMessage(const std::string & input);

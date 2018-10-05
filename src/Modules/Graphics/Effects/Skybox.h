@@ -42,13 +42,12 @@ public:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(f, m_renderSize.y);
-		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(m_renderSize.x, f);
-		});
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(f, m_renderSize.y); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

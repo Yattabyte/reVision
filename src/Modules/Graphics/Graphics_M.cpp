@@ -40,8 +40,10 @@ Graphics_Module::Graphics_Module(Engine * engine)
 	glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-	// Preferences loading
-	m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
+	// Preferences
+	auto & preferences = m_engine->getPreferenceState();
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
@@ -49,7 +51,8 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
-	m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
@@ -57,9 +60,13 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->Dimensions = m_renderSize;
 		updateCamera(m_defaultCamera->data);
 	});
-	const GLuint m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
+	GLuint m_bounceSize = 16;
+	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
+	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
 	m_bounceFBO.resize(m_bounceSize);
-	const float farPlane = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
+	float farPlane = 1000.0f;
+	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
+	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
 	});

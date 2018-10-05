@@ -16,7 +16,7 @@ struct Directional_RenderState {
 	GLint m_shadowCount = 0;
 	glm::ivec2 m_shadowSize = glm::ivec2(1024);
 	GLuint m_bounceSize = 16u,  m_updateQuality = 1u;
-	float m_drawDistance = 100.0f;
+	float m_drawDistance = 1000.0f;
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4), m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
 	DynamicBuffer m_visLights, m_visShadows;
 	std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> m_shadowsToUpdate;

@@ -35,10 +35,14 @@ public:
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
-		m_enabled = m_engine->addPrefCallback<float>(PreferenceState::C_FXAA, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		preferences.getOrSetValue(PreferenceState::C_FXAA, m_enabled);
+		preferences.addCallback(PreferenceState::C_FXAA, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
 
 		// GL loading
 		glCreateFramebuffers(1, &m_fboID);

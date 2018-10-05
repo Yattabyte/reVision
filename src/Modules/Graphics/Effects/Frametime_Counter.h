@@ -28,9 +28,12 @@ public:
 		m_shader = Asset_Shader::Create(m_engine, "Utilities\\numberPrint");
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });		
 		resize(m_renderSize);
 
 		m_numberTexture->addCallback(m_aliveIndicator, [&] {

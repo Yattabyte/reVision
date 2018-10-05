@@ -13,9 +13,9 @@
 // Is called when the window resizes
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
-	Engine & engine = *((Engine*)glfwGetWindowUserPointer(window));
-	engine.setPreference(PreferenceState::C_WINDOW_WIDTH, width);
-	engine.setPreference(PreferenceState::C_WINDOW_HEIGHT, height);
+	auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
+	preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
+	preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
 }
 
 Rendering_Context::~Rendering_Context()
@@ -32,6 +32,11 @@ Rendering_Context::Rendering_Context(Engine * engine)
 		glfwTerminate();
 		exit(-1);
 	}
+	auto & preferences = engine->getPreferenceState();
+	int useMonitorRate = 1, desiredRate = 60, vsync = 1;
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, useMonitorRate);
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, desiredRate);
+	preferences.getOrSetValue(PreferenceState::C_VSYNC, vsync);
 
 	// Create an invisible window for asset sharing
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -39,12 +44,10 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	if (engine->getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0F)
+	if (useMonitorRate > 0)
 		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
-	else {
-		const float refreshRate = engine->getPreference<float>(PreferenceState::C_WINDOW_REFRESH_RATE);
-		glfwWindowHint(GLFW_REFRESH_RATE, refreshRate > 0.0f ? (int)refreshRate : GLFW_DONT_CARE);
-	}
+	else 
+		glfwWindowHint(GLFW_REFRESH_RATE, desiredRate > 0 ? desiredRate : GLFW_DONT_CARE);	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
 	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
@@ -61,7 +64,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwSetWindowIcon(window, 0, NULL);
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
-	glfwSwapInterval(engine->getPreference<int>(PreferenceState::C_VSYNC));
+	glfwSwapInterval(vsync);
 
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
@@ -98,7 +101,7 @@ Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
 Engine::~Engine()
 {
 	reportMessage("Shutting down...");
-	Image_IO::Deinitialize();
+	Image_IO::Deinitialize();	
 	reportMessage("...done!");
 	glfwTerminate();
 }
@@ -109,10 +112,31 @@ Engine::Engine() :
 {
 	Image_IO::Initialize();
 
+	// Preference Values
+	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
+	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
+	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
+
+	// Preference Callbacks
+	m_PreferenceState.addCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
+		if (f > 0.0f) 
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);		
+		else
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
+	});
+	m_PreferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
+		m_refreshRate = f;
+		int useMonitorRate = 1;
+		m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, useMonitorRate);
+		if (useMonitorRate > 0)
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);		
+		else
+			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
+	});
+	m_PreferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f);});
+
 	// Configure Rendering Context
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-	m_windowSize.x = getPreference<int>(PreferenceState::C_WINDOW_WIDTH);
-	m_windowSize.y = getPreference<int>(PreferenceState::C_WINDOW_HEIGHT);
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 	glfwSetWindowSize(m_renderingContext.window, m_windowSize.x, m_windowSize.y);
 	glfwSetWindowPos(m_renderingContext.window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
@@ -120,28 +144,7 @@ Engine::Engine() :
 	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_Windowresize);
 	glfwMakeContextCurrent(m_renderingContext.window);
 
-	// Preference Callbacks
-	addPrefCallback<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
-		if (f > 0.0f) {
-			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
-		}
-		else 
-			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);		
-	});
-	m_refreshRate = addPrefCallback<float>(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
-		m_refreshRate = f;
-		if (getPreference<float>(PreferenceState::C_WINDOW_USE_MONITOR_RATE) > 0.0f) {
-			const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, mainMode->refreshRate);
-		}
-		else
-			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
-	});
-	addPrefCallback<float>(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f); });
-
 	// Initialize Members
-	m_PreferenceState.loadFile("preferences");
 	m_inputBindings.loadFile("binds");
 	m_moduleGraphics.initialize();
 	m_moduleWorld.initialize();

@@ -36,10 +36,14 @@ public:
 		m_brdfMap = Asset_Texture::Create(m_engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
-		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSR, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		preferences.getOrSetValue(PreferenceState::C_SSR, m_enabled);
+		preferences.addCallback(PreferenceState::C_SSR, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

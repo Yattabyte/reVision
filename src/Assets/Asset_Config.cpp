@@ -84,15 +84,14 @@ void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 
 void Asset_Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 {
-	// Try inserting the value by key in case the key doesn't exist.
-	m_configuration.insert(std::pair<int, float>(cfg_key, cfg_value));
+	// If the key doesn't exist in the map, [ ] will create it
 	m_configuration[cfg_key] = cfg_value;
 }
 
-float Asset_Config::getValue(const unsigned int & cfg_key)
+const float Asset_Config::getValue(const unsigned int & cfg_key) const
 {
 	if (cfg_key >= 0 && m_configuration.find(cfg_key) != m_configuration.end())
-		return m_configuration[cfg_key];
+		return m_configuration.at(cfg_key);
 	return UNDEFINED_CVAL;
 }
 

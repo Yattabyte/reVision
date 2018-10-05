@@ -40,19 +40,22 @@ public:
 		m_shader_Bounce = Asset_Shader::Create(m_engine, "Core\\Directional\\Bounce");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(f, m_renderSize.y);
-		});
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize = glm::ivec2(m_renderSize.x, f);
-		});
-		m_renderState->m_drawDistance = m_engine->addPrefCallback<float>(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_renderState->m_drawDistance = f; });
-		m_renderState->m_updateQuality = m_engine->addPrefCallback<GLuint> (PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
-		m_renderState->m_shadowSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(f, m_renderSize.y); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
+		preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, m_renderState->m_drawDistance);
+		preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_renderState->m_drawDistance = f; });
+		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_renderState->m_updateQuality);
+		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
+		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_renderState->m_shadowSize.x);
+		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_renderState->m_bounceSize);
+		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
 		m_renderState->m_shadowSize = glm::ivec2(std::max(1, m_renderState->m_shadowSize.x));
 		m_shadowFBO.resize(m_renderState->m_shadowSize, 4);
-		m_renderState->m_bounceSize = m_engine->addPrefCallback<GLuint>(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

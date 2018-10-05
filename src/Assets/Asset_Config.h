@@ -1,12 +1,12 @@
 #pragma once
 #ifndef	ASSET_CONFIG_H
 #define	ASSET_CONFIG_H
-#define UNDEFINED_CVAL -12345.67890f // Undefined preference
 
 #include "Assets\Asset.h"
 #include <map>
 #include <vector>
 
+constexpr float UNDEFINED_CVAL = -12345.67890f; // Undefined preference
 
 class Engine;
 class Asset_Config;
@@ -37,7 +37,7 @@ public:
 	/** Retrieves the value assigned to the supplied key.
 	@param	cfg_key		the key in which to fetch the value from
 	@return				the value assigned to supplied key (UNDEFINED_CVAL if the supplied key doesn't exist) */
-	float getValue(const unsigned int & cfg_key);
+	const float getValue(const unsigned int & cfg_key) const;
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
 	void saveConfig();
 

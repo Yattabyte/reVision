@@ -18,7 +18,7 @@ public:
 
 	// Public Attributes
 	glm::vec3 m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f), m_center = glm::vec3(0.0f);
-	float m_nearPlane = -CAMERA_NEAR_PLANE, m_farPlane = -100.0f, m_resolution = 16.0F, m_unitSize = 0.0f;
+	float m_nearPlane = -CAMERA_NEAR_PLANE, m_farPlane = 1000.0f, m_resolution = 16.0F, m_unitSize = 0.0f;
 
 	
 private:

@@ -14,7 +14,7 @@
 /** A struct that holds rendering data that can change frame-to-frame. */
 struct Point_RenderState {
 	GLuint m_updateQuality = 1u;
-	glm::ivec2 m_shadowSize = glm::ivec2(1);
+	glm::ivec2 m_shadowSize = glm::ivec2(512);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);	
 	DynamicBuffer m_visLights, m_visShadows;
 	std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> m_shadowsToUpdate;

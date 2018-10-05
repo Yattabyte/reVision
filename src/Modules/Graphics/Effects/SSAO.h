@@ -36,14 +36,21 @@ public:
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
-		// Preference Callbacks
-		m_renderSize.x = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		m_renderSize.y = m_engine->addPrefCallback<int>(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
-		m_enabled = m_engine->addPrefCallback<bool>(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
-		m_radius = m_engine->addPrefCallback<float>(PreferenceState::C_SSAO_RADIUS, m_aliveIndicator, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
-		m_quality = m_engine->addPrefCallback<int>(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
-		m_blurStrength = m_engine->addPrefCallback<int>(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float &f) { m_blurStrength = (int)f; });
-
+		// Preferences
+		auto & preferences = m_engine->getPreferenceState();
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);
+		preferences.addCallback(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
+		preferences.getOrSetValue(PreferenceState::C_SSAO_RADIUS, m_radius);
+		preferences.addCallback(PreferenceState::C_SSAO_RADIUS, m_aliveIndicator, [&](const float &f) { m_radius = f; if (m_shader->existsYet()) m_shader->setUniform(0, m_radius); });
+		preferences.getOrSetValue(PreferenceState::C_SSAO_QUALITY, m_quality);
+		preferences.addCallback(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
+		preferences.getOrSetValue(PreferenceState::C_SSAO_BLUR_STRENGTH, m_blurStrength);
+		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float &f) { m_blurStrength = (int)f; });
+	
 		// GL loading
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
