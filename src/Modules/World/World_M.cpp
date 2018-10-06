@@ -51,7 +51,7 @@ void World_Module::initialize()
 
 void World_Module::loadWorld()
 {
-	m_level = Asset_Level::Create(m_engine, "newTest.map");
+	m_level = Asset_Level::Create(m_engine, "devTest.map");
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 

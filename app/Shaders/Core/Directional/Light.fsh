@@ -80,7 +80,7 @@ void main()
 		if (-data.View_Pos.z <= CascadeEndClipSpace[index]) 
 			break;			
 	const vec3 LightPseudoPos				= CamEyePosition + (LightDirection.xyz);
-	float ShadowFactor 						= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);	
+	const float ShadowFactor 				= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);	
 	if (ShadowFactor <= EPSILON)			discard; // Discard if completely in shadow
 		
 	// Direct Light	
