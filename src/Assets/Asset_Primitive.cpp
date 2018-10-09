@@ -27,19 +27,14 @@ Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
 
 Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Primitive>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Primitive>(filename);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE);	
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Primitive>(
+		filename,
+		DIRECTORY_PRIMITIVE,
+		EXT_PRIMITIVE,
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Primitive::initialize(Engine * engine, const std::string & relativePath)

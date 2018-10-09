@@ -5,6 +5,7 @@
 #define MAX_DIGITAL_IMAGES 3
 
 #include "Assets\Asset_Image.h"
+#include "Managers\MaterialManager.h"
 #include <vector>
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
@@ -30,7 +31,7 @@ public:
 	/** Destroy the Material. */
 	~Asset_Material();
 	/** Construct the Material. */
-	Asset_Material(const std::string & filename, const std::vector<std::string> & textures);
+	Asset_Material(const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
 	
 
 	// Public Methods

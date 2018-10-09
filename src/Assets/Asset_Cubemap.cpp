@@ -16,19 +16,14 @@ Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Cubemap>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Cubemap>(filename);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_CUBEMAP + filename);		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Cubemap>(
+		filename,
+		DIRECTORY_CUBEMAP,
+		"",
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath)

@@ -9,19 +9,14 @@ Asset_Level::Asset_Level(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Level Asset_Level::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Level>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Level>(filename);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_LEVEL + filename);		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Level>(
+		filename,
+		DIRECTORY_LEVEL,
+		"",
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Level::initialize(Engine * engine, const std::string & relativePath)

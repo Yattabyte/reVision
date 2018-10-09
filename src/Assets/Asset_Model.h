@@ -39,13 +39,13 @@ public:
 
 
 	// Public Attributes
-	Shared_Asset_Mesh					m_mesh;
-	Shared_Asset_Material				m_materialArray;
-	GeometryInfo						m_data;
-	size_t								m_offset = 0, m_count = 0;
-	glm::vec3							m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
-	float								m_radius = 0.0f;
-	ModelManager					*	m_modelManager = nullptr;
+	Shared_Asset_Mesh			m_mesh;
+	Shared_Asset_Material		m_materialArray;
+	GeometryInfo				m_data;
+	size_t						m_offset = 0, m_count = 0;
+	glm::vec3					m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
+	float						m_radius = 0.0f;
+	ModelManager			*	m_modelManager = nullptr;
 
 
 private:

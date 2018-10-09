@@ -30,7 +30,7 @@ public:
 	/** Destroy the Image. */
 	~Asset_Image();
 	/** Construct the Image. */
-	Asset_Image(const std::string & filename);
+	Asset_Image(const std::string & filename, const GLenum & policyFill, const GLenum & policyResize);
 
 
 	// Public Methods

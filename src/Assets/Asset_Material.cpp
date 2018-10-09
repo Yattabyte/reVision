@@ -17,25 +17,22 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures) : Asset(filename), m_textures(textures) {}
+Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures, MaterialManager & materialManager) 
+	: Asset(filename), m_textures(textures), m_matSpot(materialManager.generateID()) 
+{}
 
 Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-	MaterialManager & materialManager = engine->getMaterialManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Material>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Material>(filename, textures);
-		userAsset->m_matSpot = materialManager.generateID();
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string &relativePath = filename + MATERIAL_EXTENSION;
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Material>(
+		filename,
+		"",
+		MATERIAL_EXTENSION,
+		&initialize,
+		engine,
+		threaded,
+		textures,
+		engine->getMaterialManager()
+	);
 }
 
 void Asset_Material::initialize(Engine * engine, const std::string & relativePath)

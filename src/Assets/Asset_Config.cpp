@@ -45,19 +45,15 @@ Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::
 
 Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Config>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Config>(filename, cfg_strings);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_CONFIG + filename + EXT_CONFIG);		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Config>(
+		filename,
+		DIRECTORY_CONFIG,
+		EXT_CONFIG,
+		&initialize,
+		engine,
+		threaded,
+		cfg_strings
+	);
 }
 
 void Asset_Config::initialize(Engine * engine, const std::string & relativePath)

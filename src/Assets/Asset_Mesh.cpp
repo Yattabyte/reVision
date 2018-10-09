@@ -7,18 +7,14 @@ Asset_Mesh::Asset_Mesh(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Mesh Asset_Mesh::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Mesh>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Mesh>(filename);
-		assetManager.addShareableAsset(userAsset);
-		
-		// Submit the work order
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, filename)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Mesh>(
+		filename,
+		"",
+		"",
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Mesh::initializeDefault(Engine * engine)

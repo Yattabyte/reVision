@@ -177,19 +177,14 @@ Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
 
 Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Shader>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Shader>(filename);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_SHADER + filename);
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;	
+	return engine->getAssetManager().createAsset<Asset_Shader>(
+		filename,
+		DIRECTORY_SHADER,
+		"",
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Shader::initializeDefault(Engine * engine)

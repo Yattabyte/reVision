@@ -37,7 +37,7 @@ public:
 
 
 	// Public Attributes
-	Mesh_Geometry						m_geometry;
+	Mesh_Geometry m_geometry;
 
 
 private:

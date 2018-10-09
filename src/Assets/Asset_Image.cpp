@@ -9,24 +9,20 @@ Asset_Image::~Asset_Image()
 	delete m_pixelData;
 }
 
-Asset_Image::Asset_Image(const std::string & filename) : Asset(filename) {}
+Asset_Image::Asset_Image(const std::string & filename, const GLenum & policyFill, const GLenum & policyResize) : Asset(filename), m_policyFill(policyFill), m_policyResize(policyResize) {}
 
 Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & filename, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Image>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Image>(filename);
-		userAsset->m_policyFill = policyFill;
-		userAsset->m_policyResize = policyResize;
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, filename)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Image>(
+		filename,
+		"",
+		"",
+		&initialize,
+		engine,
+		threaded,
+		policyFill,
+		policyResize
+	);
 }
 
 void Asset_Image::initialize(Engine * engine, const std::string & relativePath)

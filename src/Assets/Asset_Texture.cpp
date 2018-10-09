@@ -24,19 +24,14 @@ Asset_Texture::Asset_Texture(const std::string & filename, const GLuint & t, con
 
 Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Create the asset or find one that already exists
-	auto userAsset = assetManager.queryExistingAsset<Asset_Texture>(filename, threaded);
-	if (!userAsset) {
-		userAsset = std::make_shared<Asset_Texture>(filename, type, mipmap, anis);
-		assetManager.addShareableAsset(userAsset);
-
-		// Submit the work order
-		const std::string relativePath(DIRECTORY_TEXTURE + filename);		
-		assetManager.submitNewWorkOrder(std::move(std::bind(&initialize, userAsset.get(), engine, relativePath)), threaded);
-	}
-	return userAsset;
+	return engine->getAssetManager().createAsset<Asset_Texture>(
+		filename,
+		DIRECTORY_TEXTURE,
+		"",
+		&initialize,
+		engine,
+		threaded
+	);
 }
 
 void Asset_Texture::initialize(Engine * engine, const std::string & relativePath)
