@@ -73,3 +73,31 @@ entity
 		vec3 "10.5,10.5,10.5"
 	}
 }
+entity
+{
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "3"
+		vec3 "-10,-10,0"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}
+	BoundingSphere_Component
+	{
+	}
+}
+entity
+{
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "4"
+		vec3 "0,-10,10"
+		quat "0.707,0,0.707,0"
+		vec3 "1,1,1"
+	}
+	BoundingSphere_Component
+	{
+	}
+}

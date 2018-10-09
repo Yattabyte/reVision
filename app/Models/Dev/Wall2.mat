@@ -22,3 +22,19 @@ PBR
 	roughness string "gradient bottom.png"
 	occlusion string "gradient right.png"
 }
+PBR
+{
+	albedo string "test_normal.png"
+	normal string "test_normal_normal.png"
+	metalness string "white.png"
+	roughness string "black.png"
+	occlusion string "white.png"
+}
+PBR
+{
+	albedo string "test_ao.png"
+	normal string "test_ao_normal.png"
+	metalness string "white.png"
+	roughness string "black.png"
+	occlusion string "test_ao_ao.png"
+}

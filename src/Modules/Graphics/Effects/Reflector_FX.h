@@ -178,7 +178,9 @@ protected:
 		glStencilFunc(GL_ALWAYS, 0, 0);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		glDepthMask(GL_FALSE);
+		glFrontFace(GL_CW);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glFrontFace(GL_CCW);
 
 		// Now draw into color buffers
 		m_shaderLighting->bind();
