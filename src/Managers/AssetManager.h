@@ -67,9 +67,12 @@ public:
 	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack);
 	/* From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers();
-	/** Returns whether or not this manager has work left.
-	 * @return	true if all work is finished, false otherwise. */
-	const bool finishedWork();
+	/** Returns whether or not this manager is ready to use.
+	@return					true if all work is finished, false otherwise. */
+	const bool readyToUse();
+	/** Returns whether or not any changes have occured to this manager since the last check
+	@return					true if any changes occured, false otherwise */
+	const bool hasChanged();
 
 
 private:
@@ -112,6 +115,7 @@ private:
 	std::deque<Asset_Work_Order> m_Workorders;
 	std::shared_mutex m_mutexNofications;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_notifyees;
+	bool m_changed = true;
 };
 
 #endif // ASSETMANAGER_H

@@ -162,6 +162,7 @@ void Graphics_Module::renderFrame(const float & deltaTime)
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
 	m_bounceFBO.clear();
+	m_engine->getMaterialManager().bind();
 	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
 	m_volumeRH->updateVolume(*m_cameraBuffer.getElement(getActiveCamera()));
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);

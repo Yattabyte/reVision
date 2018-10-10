@@ -6,9 +6,10 @@
 #include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"
 #include <deque>
-#include <vector>
 #include <shared_mutex>
 
+
+class Engine;
 
 /** Manages the creation and storage of materials, and to a lesser degree their destruction. * 
 - How this works:
@@ -27,33 +28,37 @@ public:
 	/** Destroy the material manager. */
 	~MaterialManager();
 	/** Construct the material manager. */
-	MaterialManager() = default;
+	MaterialManager(Engine * engine);
 	
 
 	// Public Functions
 	/** Make this buffer active. */
 	void bind();
+	/** Retrieve the required size materials must be to fit in this buffer. */
+	const GLsizei getMaterialSize() const;
 	/** Generates a material ID 
-	 @return						a new material ID */
-	GLuint generateID();
-	/** Generates a 64-bit GLuint64 texture handle for the specified texture, and makes it resident on the GPU
-	@param	materialightingFBOID	the material buffer
-	@param	glTextureID				the texture to generate the handle for **/
-	void generateHandle(const GLuint & materialightingFBOID, const GLuint & glTextureID);
-	/** Tick through the work orders */
-	void parseWorkOrders();
-	/** Returns whether or not this manager has work left.
-	@return							true if all work is finished, false otherwise. */
-	const bool finishedWork();
+	@param	textureCount	the number of textures used for this material
+	@return					a new material ID */
+	GLuint generateID(const size_t & textureCount);
+	/***/
+	void writeMaterials(const GLuint & materialID, const GLubyte * imageData, const GLsizei & imageCount);
+	/** Returns whether or not this manager is ready to use.
+	@return					true if all work is finished, false otherwise. */
+	const bool readyToUse();
+	/** Returns whether or not any changes have occured to this manager since the last check
+	@return					true if any changes occured, false otherwise */
+	const bool hasChanged();
 
 
 private:
 	// Private Attributes
 	std::shared_mutex m_DataMutex;
 	unsigned int m_Count = 0;
-	std::deque<unsigned int> m_FreeSpots;
-	std::vector<GLuint64> m_WorkOrders;
-	DynamicBuffer m_buffer;
+	GLsizei m_materialSize = 512u;
+	GLint m_textureLayers = 6, m_mipCount = 1;
+	GLuint m_arrayID = 0;
+	std::deque<GLsync> m_fences;
+	bool m_changed = true;
 };
 
 #endif // MATERIALMANAGER_H

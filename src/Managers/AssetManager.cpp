@@ -30,25 +30,36 @@ void AssetManager::beginWorkOrder()
 
 void AssetManager::submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack)
 {
-	std::lock_guard writeGuard(m_mutexNofications);
+	std::unique_lock<std::shared_mutex> writeGuard(m_mutexNofications);
 	m_notifyees.push_back(callBack);
+	m_changed = true;
 }
 
 void AssetManager::notifyObservers()
 {
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> copyNotifyees;
 	{
-		std::lock_guard writeGuard(m_mutexNofications);
+		std::unique_lock<std::shared_mutex> writeGuard(m_mutexNofications);
 		copyNotifyees = m_notifyees;
 		m_notifyees.clear();
 	}
 	for each (const auto & pair in copyNotifyees)
 		if (pair.first)
 			pair.second();
+
 }
 
-const bool AssetManager::finishedWork()
+const bool AssetManager::readyToUse()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
 	return !bool(m_Workorders.size() + m_Workorders.size());
+}
+
+const bool AssetManager::hasChanged()
+{
+	// Changes every time assets finalize, when this manager notifies the assets' observers.
+	std::shared_lock<std::shared_mutex> readGuard(m_mutexNofications);
+	bool state = m_changed;
+	m_changed = false;
+	return state;
 }

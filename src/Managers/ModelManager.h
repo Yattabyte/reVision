@@ -39,9 +39,12 @@ public:
 	void update();
 	/** Retreive this buffer's VAO ID */
 	const GLuint & getVAO() const;
-	/** Returns whether or not this manager has work left.
-	@return	true if all work is finished, false otherwise. */
-	const bool finishedWork();
+	/** Returns whether or not this manager is ready to use.
+	@return			true if all work is finished, false otherwise. */
+	const bool readyToUse();
+	/** Returns whether or not any changes have occured to this manager since the last check
+	@return			true if any changes occured, false otherwise */
+	const bool hasChanged();
 
 
 private:
@@ -57,6 +60,7 @@ private:
 	size_t m_currentSize = 0;
 	GLsync m_fence = nullptr;
 	bool m_outOfDate = false;
+	bool m_changed = true;
 	std::shared_mutex m_mutex;
 };
 

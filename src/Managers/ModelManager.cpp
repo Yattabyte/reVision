@@ -47,6 +47,7 @@ void ModelManager::registerGeometry(const GeometryInfo & data, size_t & offset, 
 	if (m_fence) 
 		glDeleteSync(m_fence);	
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	m_changed = true;
 }
 
 void ModelManager::unregisterGeometry(const GeometryInfo & data, const size_t & offset, const size_t & count)
@@ -106,7 +107,7 @@ const GLuint & ModelManager::getVAO() const
 	return m_vaoID;
 }
 
-const bool ModelManager::finishedWork()
+const bool ModelManager::readyToUse()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_mutex);	
 	if (!m_fence)
@@ -119,4 +120,14 @@ const bool ModelManager::finishedWork()
 	}
 	return false;
 }
+
+const bool ModelManager::hasChanged()
+{
+	// Changes every time another piece of geometry is added
+	std::shared_lock<std::shared_mutex> readGuard(m_mutex);
+	bool state = m_changed;
+	m_changed = false;
+	return state;
+}
+
 

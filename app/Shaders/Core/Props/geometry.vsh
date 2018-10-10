@@ -1,10 +1,7 @@
 /* Prop - Geometry rendering shader. */
 #version 460
-#extension GL_ARB_bindless_texture : require
-#extension GL_ARB_gpu_shader5 : require 
-#extension GL_ARB_gpu_shader_int64 : require
 #define MAX_BONES 100
-#define MAX_DIGITAL_IMAGES 3
+#define TEXTURES_PER_MATERIAL 3
 
 struct PropAttributes {
 	uint materialID;
@@ -15,9 +12,6 @@ struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
 
-layout (std430, binding = 0) readonly buffer Material_Buffer {		
-	uint64_t MaterialMaps[];
-};
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
 	mat4 pMatrix;
 	mat4 vMatrix;
@@ -50,8 +44,7 @@ layout (location = 7) in vec4 Weights;
 
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) out mat3 ViewTBN;
-layout (location = 5) flat out sampler2DArray MaterialMap;
-layout (location = 6) flat out uint MaterialOffset;
+layout (location = 5) flat out uint MaterialOffset;
 
 void main()
 {	
@@ -71,7 +64,6 @@ void main()
 	const vec3 ViewTangent		= normalize(vmMatrix3 * normalize(tangent));		
 	const vec3 ViewBitangent 	= normalize(vmMatrix3 * normalize(bitangent));
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
-	MaterialMap 				= sampler2DArray(MaterialMaps[matID]);
-	MaterialOffset				= propBuffer[PropIndex].materialID * MAX_DIGITAL_IMAGES;
+	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
 	gl_Position           		= pMatrix * vmMatrix4 * vec4(vertex,1.0);			
 }

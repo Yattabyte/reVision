@@ -1,11 +1,8 @@
 /* Point light - geometry shadowing shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : require
-#extension GL_ARB_bindless_texture : require
-#extension GL_ARB_gpu_shader5 : require 
-#extension GL_ARB_gpu_shader_int64 : require
 #define MAX_BONES 100
-#define MAX_DIGITAL_IMAGES 3
+#define TEXTURES_PER_MATERIAL 3
 
 struct PropAttributes {
 	uint materialID;
@@ -29,9 +26,7 @@ struct Shadow_Struct {
 	int Shadow_Spot;
 };
 
-layout (std430, binding = 0) readonly buffer Material_Buffer {		
-	uint64_t MaterialMaps[];
-};
+
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
@@ -69,8 +64,7 @@ layout (location = 2) out float FarPlane;
 layout (location = 3) out mat3 WorldTBN;
 layout (location = 7) out vec2 TexCoord0;
 layout (location = 8) flat out vec3 ColorModifier;
-layout (location = 9) flat out sampler2DArray MaterialMap;
-layout (location = 10) flat out uint MaterialOffset;
+layout (location = 9) flat out uint MaterialOffset;
 
 void main()
 {	
@@ -95,9 +89,8 @@ void main()
 	FarPlane					= lightBuffers[LightIndex].LightRadius * lightBuffers[LightIndex].LightRadius;
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);	
 	TexCoord0             		= textureCoordinate;		
-	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;
-	MaterialMap 				= sampler2DArray(MaterialMaps[matID]);
-	MaterialOffset				= propBuffer[PropIndex].materialID * MAX_DIGITAL_IMAGES;
+	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;	
+	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
 	gl_Position           		= shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * WorldVertex;	
 	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + (int(isStatic) * 6);	
 }

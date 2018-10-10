@@ -32,6 +32,7 @@ public:
 		if (!m_shapeCube->existsYet())
 			return;
 
+		m_engine->getMaterialManager().bind();
 		m_propBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_renderState->m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_skeletonBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);

@@ -1,12 +1,12 @@
 /* Spot light - geometry shadowing shader. */
 #version 460
-#extension GL_ARB_bindless_texture : require
+
+layout (binding = 0) uniform sampler2DArray MaterialMap;
 
 layout (location = 0) in mat3 WorldTBN;
 layout (location = 4) in vec2 TexCoord0;
 layout (location = 5) flat in vec3 ColorModifier;
-layout (location = 6) flat in sampler2DArray MaterialMap;
-layout (location = 7) flat in uint MaterialOffset;
+layout (location = 6) flat in uint MaterialOffset;
 
 layout (location = 0) out vec3 WorldNormalOut; 
 layout (location = 1) out vec3 RadiantFluxOut; 

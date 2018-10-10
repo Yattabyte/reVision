@@ -29,11 +29,11 @@ bool Asset::existsYet() const
 	if (m_fence) {
 		// Check if the fence has passed
 		const GLenum state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-		if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED) {
-			// Delete fence so we can skip these 2 branches next time
-			glDeleteSync(m_fence);
-			m_fence = 0;
-		}
+		if (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) 
+			return false;		
+		// Delete fence so we can skip these 2 branches next time
+		glDeleteSync(m_fence);
+		m_fence = 0;
 	}
 	return true;	
 }

@@ -64,11 +64,20 @@ void World_Module::addLevelListener(bool * notifier)
 
 void World_Module::checkIfLoaded()
 {
-	bool oldStatus = m_finishedLoading;
-	m_finishedLoading = m_engine->getAssetManager().finishedWork() & m_engine->getModelManager().finishedWork() & m_engine->getMaterialManager().finishedWork();	
-	if (!oldStatus && m_finishedLoading) {
-		for each (bool * flag in m_notifyees)
-			*flag = true;
+	auto & assetManager = m_engine->getAssetManager();
+	auto & modelManager = m_engine->getModelManager();
+	auto & materialManager = m_engine->getMaterialManager();
+	// Firstly, check and see if the following systems are ready
+	if (assetManager.readyToUse() &&
+		modelManager.readyToUse() &&
+		materialManager.readyToUse()) {
+
+		// Lastly, check and see if we observed any change
+		if (assetManager.hasChanged() ||
+			modelManager.hasChanged() ||
+			materialManager.hasChanged())
+			for each (bool * flag in m_notifyees)
+				*flag = true;
 	}
 }
 

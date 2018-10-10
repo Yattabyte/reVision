@@ -1,11 +1,11 @@
 /* Prop - Geometry rendering shader. */
 #version 460
-#extension GL_ARB_bindless_texture : require
+
+layout (binding = 0) uniform sampler2DArray MaterialMap;
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) in mat3 ViewTBN;
-layout (location = 5) flat in sampler2DArray MaterialMap;
-layout (location = 6) flat in uint MaterialOffset;
+layout (location = 5) flat in uint MaterialOffset;
 
 layout (location = 0) out vec3 FirstTexture; 
 layout (location = 1) out vec4 SecondTexture; 

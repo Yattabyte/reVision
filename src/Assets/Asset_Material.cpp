@@ -18,7 +18,7 @@ Asset_Material::~Asset_Material()
 }
 
 Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures, MaterialManager & materialManager) 
-	: Asset(filename), m_textures(textures), m_matSpot(materialManager.generateID()) 
+	: Asset(filename), m_textures(textures), m_matSpot(materialManager.generateID(textures.size())) 
 {}
 
 Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded)
@@ -37,6 +37,8 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 
 void Asset_Material::initialize(Engine * engine, const std::string & relativePath)
 {
+	auto & materialManager = engine->getMaterialManager();
+
 	// Check if we're loading extra material data from a .mat file
 	if (Engine::File_Exists(relativePath)) {
 		// Fetch a list of textures as defined in the file
@@ -66,6 +68,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 
 	// Load all images	
 	m_images.resize(textureCount);
+	m_size = glm::ivec2(engine->getMaterialManager().getMaterialSize());
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Asset_Image::Fill_Policy::Checkered,
 		Asset_Image::Fill_Policy::Solid,
@@ -76,15 +79,6 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 	};
 	for (size_t x = 0; x < textureCount; ++x)
 		m_images[x] = Asset_Image::Create(engine, m_textures[x], false, fillPolicies[x]);
-
-	// Find the largest dimensions	
-	for each (const auto & image in m_images) {
-		if (m_size.x < image->m_size.x)
-			m_size.x = image->m_size.x;
-		if (m_size.y < image->m_size.y)
-			m_size.y = image->m_size.y;
-	}
-
 	// Force all images to be the same size	
 	for each (auto image in m_images)
 		if (image->m_size != m_size)
@@ -106,27 +100,8 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 			m_materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
 		}
 	}
-
-	const GLsizei m_imageCount = GLsizei((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
-
-	// Create Material	
-	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_glArrayID);
-	glCreateBuffers(1, &m_pboID);
-	glNamedBufferStorage(m_pboID, m_size.x * m_size.y * m_imageCount * 4, m_materialData, 0);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, m_pboID);
-
-	// Load material		
-	glTextureStorage3D(m_glArrayID, GLsizei(floor(log2f(float(std::min(m_size.x, m_size.y))) + 1.0f)) /* Calculates mipmap count*/, GL_RGBA16F, m_size.x, m_size.y, m_imageCount);
-	glTextureSubImage3D(m_glArrayID, 0, 0, 0, 0, m_size.x, m_size.y, m_imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
-	glTextureParameteri(m_glArrayID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTextureParameteri(m_glArrayID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTextureParameterf(m_glArrayID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
-	glGenerateTextureMipmap(m_glArrayID);
-	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-
-	engine->getMaterialManager().generateHandle(m_matSpot, m_glArrayID);
-	if (!glIsTexture(m_glArrayID))
-		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, m_filename);
+	
+	materialManager.writeMaterials(m_matSpot, m_materialData, (GLsizei)((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES));
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

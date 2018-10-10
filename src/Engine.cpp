@@ -108,7 +108,7 @@ Engine::~Engine()
 
 Engine::Engine() : 
 	// Initialize engine-dependent members first
-	m_AssetManager(this), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_moduleGraphics(this), m_moduleWorld(this)
+	m_AssetManager(this), m_inputBindings(this), m_PreferenceState(this), m_renderingContext(this), m_materialManager(this), m_moduleGraphics(this), m_moduleWorld(this)
 {
 	Image_IO::Initialize();
 
@@ -202,8 +202,6 @@ void Engine::tick()
 	// Tick managers
 	m_AssetManager.notifyObservers();
 	m_modelManager.update();
-	m_materialManager.parseWorkOrders();
-	m_materialManager.bind();
 
 	// Tick Inpute
 	updateInput(deltaTime);
