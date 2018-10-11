@@ -33,7 +33,6 @@ public:
 		m_shaderSSR2 = Asset_Shader::Create(m_engine, "Effects\\SSR part 2");
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
 		m_shaderConvMips = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur MIP");
-		m_brdfMap = Asset_Texture::Create(m_engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
 		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
 
 		// Preferences
@@ -90,16 +89,8 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
 		glMakeTextureHandleResidentARB(m_bayerHandle);
-		m_brdfMap->addCallback(m_aliveIndicator, [&] {
-			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
-			if (m_shaderSSR2->existsYet())
-				m_shaderSSR2->setUniform(0, m_brdfMap->m_glTexHandle);
-		});
 		m_shaderSSR1->addCallback(m_aliveIndicator, [&] {
 			m_shaderSSR1->setUniform(0, m_bayerHandle);
-		});
-		m_shaderSSR2->addCallback(m_aliveIndicator, [&] {
-			m_shaderSSR2->setUniform(0, m_brdfMap->m_glTexHandle);
 		});
 
 		// Error Reporting
@@ -120,7 +111,7 @@ public:
 
 	// Interface Implementations.
 	virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet() || !m_brdfMap->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -136,9 +127,9 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		m_lightingFBO->bindForWriting();
-		glBindTextureUnit(4, m_textureSSRID);
-		glBindTextureUnit(5, m_textureMipsID);
+		m_reflectionFBO->bindForWriting();
+		glBindTextureUnit(5, m_textureSSRID);
+		glBindTextureUnit(6, m_textureMipsID);
 		m_shaderSSR2->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -208,7 +199,6 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Shared_Asset_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
-	Shared_Asset_Texture m_brdfMap;
 	Shared_Asset_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	GLuint m_fboMipsID = 0, m_textureMipsID = 0;

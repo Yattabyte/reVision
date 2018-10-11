@@ -133,8 +133,8 @@ void Graphics_Module::initialize()
 	addEffect(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	addEffect(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
 	addEffect(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
-	addEffect(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	addEffect(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
+	addEffect(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	addEffect(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
 	addEffect(new HDR(m_engine, &m_lightingFBO));
 	addEffect(new FXAA(m_engine));

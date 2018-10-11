@@ -10,18 +10,18 @@
 #define M_MAX_SPECULAR_EXP 32 
 
 // SSR Variables
-const float maxDistance = 500.0f;
+const float maxDistance = -1000.0f;
 const float numMips = 6.0f;
-const float fadeStart = 0.1f;
-const float fadeEnd = 0.9f;
+const float fadeStart = 0.75f;
+const float fadeEnd = 1.0f;
 
 // The screen textures
 layout (binding = 0) uniform sampler2D ColorMap;
 layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D SpecularMap;
 layout (binding = 3) uniform sampler2D DepthMap;
-layout (binding = 4) uniform sampler2D SSRMap;
-layout (binding = 5) uniform sampler2D LightMap;
+layout (binding = 5) uniform sampler2D SSRMap;
+layout (binding = 6) uniform sampler2D LightMap;
 layout (location = 0, bindless_sampler) uniform sampler2D EnvironmentBRDF;
 
 layout (location = 0) in vec2 TexCoord;
@@ -136,11 +136,6 @@ vec3 Fresnel_Schlick_Roughness(vec3 f0, float AdotB, float roughness)
     return 								f0 + (max(vec3(1.0 - roughness), f0) - f0) * pow(1.0 - AdotB, 5.0);
 }   
 
-vec2 IntegrateBRDF( in float Roughness, in vec3 Normal, in float NoV )
-{
-	return 								texture(EnvironmentBRDF, vec2(NoV, Roughness)).xy;
-}
-
 void main(void)
 {   	
 	ViewData data;
@@ -180,17 +175,7 @@ void main(void)
 	// Attenuate Distance
 	const float Atten_Distance  		= 1.0f - clamp(distance(ReflectionUVS, SSPos) / maxDistance, 0.0f, 1.0f);	
 	// Final Attenuation
-	const float Attenuation				= Atten_Facing * Atten_Perpendicular * Atten_Roughness * Atten_UV * Atten_BackFace * Atten_Border * Atten_Distance * (1.0f - clamp(Alpha, 0.0f, 1.0f));	
-	if (Attenuation <= 0.0f)			discard;
+	const float Attenuation				= Atten_Facing * Atten_Perpendicular * Atten_Roughness * Atten_UV * Atten_BackFace * Atten_Border * Atten_Distance * (1.0f - clamp(Alpha, 0.0f, 1.0f));		
 	
-	// Final lighting color	
-	const vec3 View_Direction			= normalize(CamEyePosition - data.World_Pos.xyz);		
-	const float NdotV					= max(dot(data.World_Normal, View_Direction), 0.0);		
-	const vec3 F0						= mix(vec3(0.03f), data.Albedo, data.Metalness);
-	const vec3 Fs						= Fresnel_Schlick_Roughness(F0, NdotV, data.Roughness);
-	const vec2 I_BRDF					= IntegrateBRDF(data.Roughness, data.World_Normal, NdotV);
-	const vec3 I_Diffuse				= (data.Albedo / M_PI);
-	const vec3 I_Ratio					= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
-	const vec3 I_Specular				= Reflection * (Fs * I_BRDF.x + I_BRDF.y);
-	LightingColor 						= vec4((I_Ratio * I_Diffuse + I_Specular) * data.View_AO, Attenuation);
+	LightingColor						= vec4(Reflection, Attenuation);
 }

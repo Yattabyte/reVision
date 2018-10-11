@@ -165,7 +165,7 @@ protected:
 
 		// Draw only into depth-stencil buffer
 		m_shaderStencil->bind();													// Shader (reflector)
-		m_reflectionFBO->bindForWriting();											// Ensure writing to lighting FBO
+		m_reflectionFBO->bindForWriting();											// Ensure writing to reflection FBO
 		m_geometryFBO->bindForReading();											// Read from Geometry FBO
 		glBindTextureUnit(4, m_envmapFBO.m_textureID);								// Reflection map (environment texture)
 		m_renderState->m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices

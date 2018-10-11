@@ -9,10 +9,10 @@
 #pragma optionNV(unroll all)
 
 // SSR Variables
-const float rayStep = 0.01f;
+const float rayStep = 0.1f;
 const uint maxSteps = 6u;
-const uint maxBinarySteps = 4u;
-const float maxDistance = 500.0f;
+const uint maxBinarySteps = 6u;
+const float maxDistance = -1000.0f;
 
 // The screen texture
 layout (location = 0, bindless_sampler) uniform sampler2D BayerMatrix;
@@ -59,17 +59,17 @@ vec3 RayMarch(vec3 SSReflectionVector, vec3 SSPos)
 	vec3 raySample, prevRaySample, minRaySample, maxRaySample, midRaySample;
 	float depthValue;
 	const float DitherOffset = texelFetch(BayerMatrix, ivec2(TexCoord * CamDimensions), 0).r ;
-	for (uint i = 0; i < maxSteps ; ++i) {	
+	for (uint x = 0; x < maxSteps ; ++x) {	
 		prevRaySample = raySample;
-        raySample = (i * rayStep) * SSReflectionVector + SSPos + DitherOffset;
+        raySample = (x * rayStep) * SSReflectionVector + SSPos + DitherOffset;
 		depthValue = texture(DepthMap, raySample.xy).r;
 		
 		if (raySample.z > depthValue) {
 			minRaySample = prevRaySample;
 			maxRaySample = raySample;
 			midRaySample;
-			for (uint i = 0; i < maxBinarySteps; ++i)	{
-				midRaySample = mix(minRaySample, maxRaySample, 0.5);
+			for (uint y = 0; y < maxBinarySteps; ++y)	{
+				midRaySample = mix(minRaySample, maxRaySample, 0.5f);
 				depthValue = texture(DepthMap, midRaySample.xy).r;
 				
 				if (midRaySample.z > depthValue)
@@ -107,6 +107,6 @@ void main(void)
 	// Ray March
 	const vec3 ReflectionUVS 			= RayMarch(SSReflectionVector, SSPos.xyz);	
 	if (ReflectionUVS.x <= 1.0f && ReflectionUVS.x >= 0.0f && ReflectionUVS.y <= 1.0f && ReflectionUVS.y >= 0.0f) 
-		LightingColor 						= vec4(ReflectionUVS, rDotV);
+		LightingColor 					= vec4(ReflectionUVS, rDotV);
 }
 

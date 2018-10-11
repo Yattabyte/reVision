@@ -198,7 +198,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 {
 	const bool found_vertex = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_VERTEX, m_vertexText);
 	const bool found_fragement = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_FRAGMENT, m_fragmentText);
-	const bool found_shader_binary = Engine::File_Exists(relativePath + EXT_SHADER_BINARY);
+	const bool found_shader_binary = false;// Engine::File_Exists(relativePath + EXT_SHADER_BINARY);
 	
 	if (!(found_vertex && found_fragement)) {
 		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
