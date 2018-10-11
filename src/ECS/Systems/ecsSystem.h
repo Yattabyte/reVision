@@ -17,20 +17,25 @@ public:
 
 
 	// Public (de)Constructors
-	BaseECSSystem() {};
+	~BaseECSSystem() = default;
+	BaseECSSystem() = default;
 
 
 	// Public Methods
 	/** Returns the component types supported by this system.
 	@return		the component types supported by this system. */
-	const std::vector<unsigned int> & getComponentTypes() { return componentTypes; };
+	inline const std::vector<uint32_t> & getComponentTypes() { 
+		return componentTypes; 
+	};
 	/** Returns the component flags requested by this system.
 	@return		the component flags requested by this system. */
-	const std::vector<unsigned int> & getComponentFlags() { return componentFlags; };
+	inline const std::vector<uint32_t> & getComponentFlags() {
+		return componentFlags; 
+	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
 	@return		true if the system is valid, false otherwise. */
 	inline const bool isValid() const {
-		for (unsigned int i = 0; i < componentFlags.size(); ++i) 
+		for (size_t i = 0; i < componentFlags.size(); ++i) 
 			if ((componentFlags[i] & BaseECSSystem::FLAG_OPTIONAL) == 0)
 				return true;		
 		return false;
@@ -49,7 +54,7 @@ protected:
 	/** Add a component type to be used by this system. 
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	void addComponentType(const unsigned int & componentType, const unsigned int & componentFlag = FLAG_REQUIRED) {
+	inline void addComponentType(const uint32_t & componentType, const uint32_t & componentFlag = FLAG_REQUIRED) {
 		componentTypes.push_back(componentType);
 		componentFlags.push_back(componentFlag);
 	}
@@ -57,8 +62,8 @@ protected:
 	
 private:
 	//private attributes
-	std::vector<unsigned int> componentTypes;
-	std::vector<unsigned int> componentFlags;
+	std::vector<uint32_t> componentTypes;
+	std::vector<uint32_t> componentFlags;
 };
 
 /** An ordered list of systems to be updated. */
@@ -76,7 +81,7 @@ public:
 	/** Removes a system from the list.
 	@param	system	the system to remove. */
 	inline const bool removeSystem(BaseECSSystem * system) {
-		for (unsigned int i = 0; i < systems.size(); ++i)
+		for (size_t i = 0; i < systems.size(); ++i)
 			if (system == systems[i]) {
 				systems.erase(systems.begin() + i);
 				return true;
@@ -90,7 +95,7 @@ public:
 	}
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from. */
-	inline BaseECSSystem * operator[](const unsigned int & index) {
+	inline BaseECSSystem * operator[](const size_t & index) {
 		return systems[index];
 	}
 

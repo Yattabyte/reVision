@@ -15,7 +15,7 @@
 #include "Utilities\MappedChar.h"
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "1.34";
+constexpr char ENGINE_VERSION[] = "1.34.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 

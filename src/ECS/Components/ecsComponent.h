@@ -10,7 +10,7 @@
 
 struct BaseECSComponent;
 using EntityHandle = void*;
-using ECSComponentCreateFunction = const unsigned int(*)(std::vector<unsigned int>& memory, const EntityHandle & entity, BaseECSComponent * comp);
+using ECSComponentCreateFunction = const uint32_t(*)(std::vector<uint8_t>& memory, const EntityHandle & entity, BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 #define NULL_ENTITY_HANDLE nullptr
 
@@ -18,11 +18,11 @@ using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 struct BaseECSComponent {
 public:
 	// Public Methods
-	static const unsigned int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size);
-	inline static ECSComponentCreateFunction getTypeCreateFunction(const unsigned int & id) { return std::get<0>((*componentTypes)[id]); }
-	inline static ECSComponentFreeFunction getTypeFreeFunction(const unsigned int & id) { return std::get<1>((*componentTypes)[id]); }
-	inline static size_t getTypeSize(const unsigned int & id) { return std::get<2>((*componentTypes)[id]); }
-	inline static const bool isTypeValid(const unsigned int & id) { return id < componentTypes->size(); }
+	static const uint32_t registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size);
+	inline static ECSComponentCreateFunction getTypeCreateFunction(const uint32_t & id) { return std::get<0>((*componentTypes)[id]); }
+	inline static ECSComponentFreeFunction getTypeFreeFunction(const uint32_t & id) { return std::get<1>((*componentTypes)[id]); }
+	inline static size_t getTypeSize(const uint32_t & id) { return std::get<2>((*componentTypes)[id]); }
+	inline static const bool isTypeValid(const uint32_t & id) { return id < componentTypes->size(); }
 
 	
 	// Public Attributes
@@ -40,17 +40,17 @@ template <typename T>
 struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentCreateFunction CREATE_FUNCTION;
 	static const ECSComponentFreeFunction FREE_FUNCTION;
-	static const unsigned int ID;
+	static const uint32_t ID;
 	static const size_t SIZE;
 };
 
 template <typename Component>
-const unsigned int ECSComponentCreate(std::vector<unsigned int> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
-	const unsigned int index = memory.size();
+const uint32_t ECSComponentCreate(std::vector<uint8_t> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
+	const size_t index = memory.size();
 	memory.resize(index+Component::SIZE);
 	Component * component = new(&memory[index])Component(*(Component*)comp);
 	component->entity = entity;
-	return index;
+	return (uint32_t)index;
 }
 
 template <typename Component>
@@ -60,7 +60,7 @@ void ECSComponentFree(BaseECSComponent * comp) {
 }
 
 template <typename T>
-const unsigned int ECSComponent<T>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T)));
+const uint32_t ECSComponent<T>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T)));
 
 template <typename T>
 const size_t ECSComponent<T>::SIZE(sizeof(T));
@@ -73,7 +73,7 @@ const ECSComponentFreeFunction ECSComponent<T>::FREE_FUNCTION(ECSComponentFree<T
 
 struct Component_and_ID {
 	BaseECSComponent * component = nullptr;
-	unsigned int id = (unsigned)(-1);
+	uint32_t id = (unsigned)(-1);
 
 	const bool success() const {
 		return bool(component && id != (unsigned)(-1));

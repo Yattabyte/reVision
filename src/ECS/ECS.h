@@ -20,14 +20,14 @@ public:
 
 	// Public Entity Functions
 	/** Construct an entity from the array of components and IDS*/
-	EntityHandle makeEntity(BaseECSComponent ** components, const unsigned int * componentIDS, const size_t & numComponents);
+	EntityHandle makeEntity(BaseECSComponent ** components, const uint32_t * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.
 	@note Variadic
 	@param	args	all components to use for this entity. */
 	template <class...Args>
 	inline EntityHandle makeEntity(Args&...args) {
 		BaseECSComponent * components[] = { &args... };
-		unsigned int componentIDS[] = { Args::ID... };
+		uint32_t componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Construct an entity from the array of component pointers.
@@ -36,7 +36,7 @@ public:
 	template <class...Args>
 	inline EntityHandle makeEntity(Args*...args) {
 		BaseECSComponent * components[] = { args... };
-		unsigned int componentIDS[] = { Args::ID... };
+		uint32_t componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Remove an entity.
@@ -76,26 +76,26 @@ public:
 
 private:
 	// Private Functions
-	inline std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >* handleToRawType(const EntityHandle & handle) {
-		return (std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >*)handle;
+	inline std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* handleToRawType(const EntityHandle & handle) {
+		return (std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >*)handle;
 	}
-	inline unsigned int handleToEntityIndex(const EntityHandle & handle) {
+	inline uint32_t handleToEntityIndex(const EntityHandle & handle) {
 		return handleToRawType(handle)->first;
 	}
-	inline std::vector<std::pair<unsigned int, unsigned int> >& handleToEntity(const EntityHandle & handle) {
+	inline std::vector<std::pair<uint32_t, uint32_t> >& handleToEntity(const EntityHandle & handle) {
 		return handleToRawType(handle)->second;
 	}
-	void deleteComponent(const unsigned int & componentID, const unsigned int & index);
-	void addComponentInternal(EntityHandle handle, std::vector<std::pair<unsigned int, unsigned int>> & entity, const unsigned int & componentID, BaseECSComponent * component);
-	bool removeComponentInternal(EntityHandle handle, const unsigned int & componentID);
-	BaseECSComponent * getComponentInternal(std::vector<std::pair<unsigned int, unsigned int>>& entityComponents, std::vector<unsigned int> & array, const unsigned int & componentID);
-	void updateSystemWithMultipleComponents(ECSSystemList & systems, const unsigned int & index, const float & deltaTime, const std::vector<unsigned int> & componentTypes);
-	unsigned int findLeastCommonComponent(const std::vector<unsigned int> & componentTypes, const std::vector<unsigned int> & componentFlags);
+	void deleteComponent(const uint32_t & componentID, const uint32_t & index);
+	void addComponentInternal(EntityHandle handle, std::vector<std::pair<uint32_t, uint32_t>> & entity, const uint32_t & componentID, BaseECSComponent * component);
+	bool removeComponentInternal(EntityHandle handle, const uint32_t & componentID);
+	BaseECSComponent * getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>>& entityComponents, std::vector<uint8_t> & array, const uint32_t & componentID);
+	void updateSystemWithMultipleComponents(ECSSystemList & systems, const size_t & index, const float & deltaTime, const std::vector<uint32_t> & componentTypes);
+	size_t findLeastCommonComponent(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
 
 
 	// Private attributes
-	std::map<unsigned int, std::vector<unsigned int>> components;
-	std::vector < std::pair< unsigned int, std::vector<std::pair<unsigned int, unsigned int> > >* > entities;	
+	std::map<uint32_t, std::vector<uint8_t>> components;
+	std::vector < std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* > entities;
 };
 
 #endif // ECS_H
