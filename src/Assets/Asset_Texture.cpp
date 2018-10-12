@@ -37,7 +37,7 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 void Asset_Texture::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_image = Asset_Image::Create(engine, relativePath, false);
+	m_image = Asset_Image::Create(engine, relativePath, {}, false);
 
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);

@@ -18,8 +18,34 @@ Asset_Material::~Asset_Material()
 }
 
 Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures, MaterialManager & materialManager) 
-	: Asset(filename), m_textures(textures), m_matSpot(materialManager.generateID(textures.size())) 
-{}
+	: Asset(filename), m_textures(textures)
+{
+	// We need to reserve a region of gpu memory for all the textures
+	// So we need to pre-emptively figure out the maximum number of textures we may need (can't delay until later)
+	// Thus, we will process any extra files ahead of time, like ".mat"
+
+	// Check if we're loading extra material data from a .mat file
+	const std::string relativePath = filename + MATERIAL_EXTENSION;
+	if (Engine::File_Exists(relativePath)) {
+		// Fetch a list of textures as defined in the file
+		auto textures = Asset_Material::Get_Material_Textures(relativePath);
+		// Recover the material folder directory from the filename
+		const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
+		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
+		const std::string modelDirectory = relativePath.substr(0, furthestFolderIndex + 1);
+		// Apply these texture directories to the material whenever not null
+		m_textures.resize(textures.size());
+		for (size_t x = 0, size = m_textures.size(); x < size; ++x) {
+			// In case we made the original texture set larger, copy the original texture naming pattern
+			if (m_textures[x] == "")
+				m_textures[x] = m_textures[x % MAX_PHYSICAL_IMAGES];
+			if (textures[x] != "")
+				m_textures[x] = modelDirectory + textures[x];
+		}
+	}
+
+	m_matSpot = materialManager.generateID(m_textures.size());
+}
 
 Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded)
 {
@@ -38,25 +64,6 @@ Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string 
 void Asset_Material::initialize(Engine * engine, const std::string & relativePath)
 {
 	auto & materialManager = engine->getMaterialManager();
-
-	// Check if we're loading extra material data from a .mat file
-	if (Engine::File_Exists(relativePath)) {
-		// Fetch a list of textures as defined in the file
-		auto textures = Asset_Material::Get_Material_Textures(relativePath);
-		// Recover the material folder directory from the filename
-		const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
-		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
-		const std::string modelDirectory = relativePath.substr(0, furthestFolderIndex + 1);
-		// Apply these texture directories to the material whenever not null
-		m_textures.resize(textures.size());
-		for (size_t x = 0, size = m_textures.size(); x < size; ++x) {
-			// In case we made the original texture set larger, copy the original texture naming pattern
-			if (m_textures[x] == "") 
-				m_textures[x] = m_textures[x % MAX_PHYSICAL_IMAGES];			
-			if (textures[x] != "")
-				m_textures[x] = modelDirectory + textures[x];
-		}
-	}
 
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);
@@ -78,11 +85,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 		Asset_Image::Fill_Policy::Solid
 	};
 	for (size_t x = 0; x < textureCount; ++x)
-		m_images[x] = Asset_Image::Create(engine, m_textures[x], false, fillPolicies[x]);
-	// Force all images to be the same size	
-	for each (auto image in m_images)
-		if (image->m_size != m_size)
-			image->resize(m_size);
+		m_images[x] = Asset_Image::Create(engine, m_textures[x], m_size, false, fillPolicies[x]);
 	
 	// Merge data into single array
 	const size_t pixelsPerImage = m_size.x * m_size.y * 4;

@@ -72,7 +72,7 @@ void World_Module::checkIfLoaded()
 		modelManager.readyToUse() &&
 		materialManager.readyToUse()) {
 
-		// Lastly, check and see if we observed any change
+		// Lastly, check and see if we observed any changes
 		if (assetManager.hasChanged() ||
 			modelManager.hasChanged() ||
 			materialManager.hasChanged())

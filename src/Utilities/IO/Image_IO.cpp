@@ -55,12 +55,16 @@ void Image_IO::Deinitialize()
 	FreeImage_DeInitialise();
 }
 
-bool Image_IO::Import_Image(Engine * engine, const std::string & relativePath, Image_Data & data_container)
+bool Image_IO::Import_Image(Engine * engine, const std::string & relativePath, Image_Data & data_container, const bool & linear)
 {
+	const glm::ivec2 containerSize = data_container.dimensions;
 	FIBITMAP * bitmap = Import_Bitmap(engine, relativePath);
 	if (!bitmap) return false;
 	Load_Pixel_Data(bitmap, data_container);
 	FreeImage_Unload(bitmap);
+	// If the image container already has a determined size, resize this new image to fit it (if it is a different size)
+	if (containerSize != glm::ivec2(0) && containerSize != data_container.dimensions)
+		Resize_Image(containerSize, data_container, linear);
 	return true;
 }
 

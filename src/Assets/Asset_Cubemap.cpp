@@ -42,7 +42,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 		}
 
 		// Forward image creation
-		m_images[side] = Asset_Image::Create(engine, specific_side_directory, false);
+		m_images[side] = Asset_Image::Create(engine, specific_side_directory, {}, false);
 	}
 
 	// Ensure each face is the same dimension

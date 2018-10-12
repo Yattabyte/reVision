@@ -6,6 +6,7 @@
 #include "GL\glew.h"
 #include "GLM\glm.hpp"
 #include <any>
+#include <optional>
 
 
 class Engine;
@@ -30,17 +31,18 @@ public:
 	/** Destroy the Image. */
 	~Asset_Image();
 	/** Construct the Image. */
-	Asset_Image(const std::string & filename, const GLenum & policyFill, const GLenum & policyResize);
+	Asset_Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
 
 
 	// Public Methods
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
+	@param	specificSize	an optional size to force the image to
 	@param	category		the category of image, if available
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	static Shared_Asset_Image Create(Engine * engine, const std::string & filename, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
+	static Shared_Asset_Image Create(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
 	/** Fill the image with the desired colors, in accordance with the fill policy. 
 	@param	primaryColor	the primary color to use
 	@param	secondaryColor	the secondary color to use */

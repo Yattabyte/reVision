@@ -8,6 +8,7 @@
 #include "Managers\MaterialManager.h"
 #include "Managers\MessageManager.h"
 #include "Modules\Graphics\Graphics_M.h"
+#include "Modules\Physics\Physics_M.h"
 #include "Modules\World\World_M.h"
 #include "Utilities\ActionState.h"
 #include "Utilities\InputBinding.h"
@@ -15,7 +16,7 @@
 #include "Utilities\MappedChar.h"
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "1.34.B";
+constexpr char ENGINE_VERSION[] = "1.35";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -116,6 +117,7 @@ private:
 
 	// Private Modules
 	Graphics_Module m_moduleGraphics;
+	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
 };
 

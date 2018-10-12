@@ -9,9 +9,13 @@ Asset_Image::~Asset_Image()
 	delete m_pixelData;
 }
 
-Asset_Image::Asset_Image(const std::string & filename, const GLenum & policyFill, const GLenum & policyResize) : Asset(filename), m_policyFill(policyFill), m_policyResize(policyResize) {}
+Asset_Image::Asset_Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize) : Asset(filename), m_policyFill(policyFill), m_policyResize(policyResize) 
+{
+	if (specificSize)
+		m_size = specificSize.value();
+}
 
-Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & filename, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
+Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
 {
 	return engine->getAssetManager().createAsset<Asset_Image>(
 		filename,
@@ -20,6 +24,7 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 		&initialize,
 		engine,
 		threaded,
+		specificSize,
 		policyFill,
 		policyResize
 	);
@@ -27,8 +32,8 @@ Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & file
 
 void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 {
-	Image_Data dataContainer;
-	if (Image_IO::Import_Image(engine, relativePath, dataContainer)) {
+	Image_Data dataContainer{ m_pixelData, m_size, m_pitch, m_bpp };
+	if (Image_IO::Import_Image(engine, relativePath, dataContainer, m_policyResize)) {
 		m_size = dataContainer.dimensions;
 		m_pixelData = dataContainer.pixelData;
 		m_pitch = dataContainer.pitch;
@@ -44,12 +49,12 @@ void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 
 void Asset_Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 {
-	constexpr size_t defaultSize = 256;
-	constexpr size_t pixelCount = defaultSize * defaultSize;
-	constexpr size_t componentCount = pixelCount * 4;
-	m_size = glm::ivec2(defaultSize);
+	if (m_size == glm::ivec2(0))
+		m_size = glm::ivec2(256);
+	const size_t pixelCount = m_size.x * m_size.x;
+	const size_t componentCount = pixelCount * 4;
 	m_pixelData = new GLubyte[componentCount];
-	m_pitch = defaultSize * 4;
+	m_pitch = m_size.x * 4;
 	m_bpp = 32;
 	switch (m_policyFill) {
 		case Solid: {
@@ -64,7 +69,7 @@ void Asset_Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondary
 		case Checkered: {
 			// How many pixels wide and tall the checkers should be
 			constexpr size_t checkerSize = 32;
-			constexpr size_t rowWidth = defaultSize;
+			const size_t rowWidth = m_size.x;
 			const GLubyte colors[2][4] = {
 				{ GLubyte(primaryColor.x), GLubyte(primaryColor.y), GLubyte(primaryColor.z), GLubyte(primaryColor.w) },
 				{ GLubyte(secondaryColor.x), GLubyte(secondaryColor.y), GLubyte(secondaryColor.z), GLubyte(secondaryColor.w) }
