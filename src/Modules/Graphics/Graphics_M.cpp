@@ -103,6 +103,7 @@ Graphics_Module::Graphics_Module(Engine * engine)
 
 void Graphics_Module::initialize()
 {
+	m_engine->getMessageManager().statement("Loading Module: Graphics...");
 	m_visualFX.initialize(m_engine);
 	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 	m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);

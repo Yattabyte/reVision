@@ -38,3 +38,11 @@ PBR
 	roughness string "black.png"
 	occlusion string "test_ao_ao.png"
 }
+PBR
+{
+	albedo string "albedo.png"
+	normal string "normal.png"
+	metalness string "grey.png"
+	roughness string "grey.png"
+	occlusion string "white.png"
+}

@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "LinearMath\btScalar.h"
 #include <direct.h>
 
 // OpenGL Dependent Systems //
@@ -26,7 +27,7 @@ Rendering_Context::~Rendering_Context()
 Rendering_Context::Rendering_Context(Engine * engine)
 {
 	// Begin Initialization
-	engine->reportMessage("Initializing rendering context...");
+	engine->reportMessage("Creating Window...");
 	if (!glfwInit()) {
 		engine->reportError(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
 		glfwTerminate();
@@ -73,8 +74,6 @@ Rendering_Context::Rendering_Context(Engine * engine)
 		glfwTerminate();
 		exit(-1);
 	}
-
-	engine->reportMessage("...done!");
 }
 
 Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
@@ -102,7 +101,6 @@ Engine::~Engine()
 {
 	reportMessage("Shutting down...");
 	Image_IO::Deinitialize();	
-	reportMessage("...done!");
 	glfwTerminate();
 }
 
@@ -150,30 +148,13 @@ Engine::Engine() :
 	glfwSetWindowUserPointer(m_renderingContext.window, this);
 	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_Windowresize);
 	glfwMakeContextCurrent(m_renderingContext.window);
-
+	
 	// Initialize Members
 	m_inputBindings.loadFile("binds");
 	m_moduleGraphics.initialize();
+	m_modulePhysics.initialize();
 	m_moduleWorld.initialize();
 	m_modelManager.initialize();
-
-	reportMessage("**************************************************");
-	reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
-	reportMessage("ASSIMP Version: " + Mesh_IO::Get_Version());
-	reportMessage("Bullet Version: N/A");
-	reportMessage("FreeImage Version: " + Image_IO::Get_Version());
-	reportMessage("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
-	reportMessage("GLFW Version: " + std::string(glfwGetVersionString()));
-	reportMessage("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
-	reportMessage("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-	reportMessage("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-	reportMessage("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-	reportMessage("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
-	reportMessage("**************************************************");
-
-	reportMessage("Loading World...");
-	m_moduleWorld.loadWorld();
-	reportMessage("...done!");
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -183,6 +164,20 @@ Engine::Engine() :
 		workerThread.detach();
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
 	}
+
+	reportMessage("**************************************************");
+	reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
+	reportMessage("ASSIMP Version: " + Mesh_IO::Get_Version());
+	reportMessage("Bullet Version: " + std::to_string(BT_BULLET_VERSION));
+	reportMessage("FreeImage Version: " + Image_IO::Get_Version());
+	reportMessage("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+	reportMessage("GLFW Version: " + std::string(glfwGetVersionString()));
+	reportMessage("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	reportMessage("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+	reportMessage("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+	reportMessage("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+	reportMessage("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+	reportMessage("**************************************************");
 }
 
 void Engine::tick()
@@ -203,17 +198,19 @@ void Engine::tick()
 		m_frameAccumulator += deltaTime;
 	// end performance heuristics
 
-	// Check world status
-	m_moduleWorld.checkIfLoaded();
-
-	// Tick managers
+	// Logic depending on assets finalizing
 	m_AssetManager.notifyObservers();
+	// Update expandable model container
 	m_modelManager.update();
-
-	// Tick Inpute
+	// Update input
 	updateInput(deltaTime);
 
-	// Tick Graphics
+	// Logic depending on state of the world
+	if (m_moduleWorld.checkIfLoaded()) {
+		// Update physics
+		m_modulePhysics.physicsFrame(deltaTime);
+	}
+	// Update graphics
 	m_moduleGraphics.setActiveCamera(0);
 	m_moduleGraphics.renderFrame(deltaTime);
 

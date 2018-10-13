@@ -53,7 +53,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_mutex m_DataMutex;
-	unsigned int m_Count = 0;
+	size_t m_Count = 0;
 	GLsizei m_materialSize = 512u;
 	GLint m_textureLayers = 6, m_mipCount = 1;
 	GLuint m_arrayID = 0;

@@ -28,7 +28,7 @@ public:
 	@param	notifier	flag to be set when level loaded*/
 	void addLevelListener(bool * notifier);
 	/** Checks whether the level has finished loading. */
-	void checkIfLoaded();
+	const bool checkIfLoaded();
 
 
 private:

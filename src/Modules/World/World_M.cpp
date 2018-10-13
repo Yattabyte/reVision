@@ -1,5 +1,6 @@
 #include "Modules\World\World_M.h"
 #include "Modules\Graphics\Graphics_M.h"
+#include "Modules\Physics\Physics_M.h"
 #include "Utilities\IO\Level_IO.h"
 #include "Engine.h"
 
@@ -8,9 +9,11 @@
 #include "ECS/Components/Prop_C.h"
 #include "ECS/Components/Skeleton_C.h"
 #include "ECS/Components/LightDirectional_C.h"
-#include "ECS/Components/LightSpot_C.h"
 #include "ECS/Components/LightPoint_C.h"
+#include "ECS/Components/LightSpot_C.h"
+#include "ECS/Components/Physics_C.h"
 #include "ECS/Components/Reflector_C.h"
+#include "ECS/Components/Skeleton_C.h"
 
 /* Effect Types Used */
 #include "Modules\Graphics\Effects\LightDirectional_FX.h"
@@ -30,6 +33,8 @@ World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
 
 void World_Module::initialize()
 {
+	m_engine->getMessageManager().statement("Loading Module: World...");
+	auto & physics = m_engine->getPhysicsModule();
 	auto & graphics = m_engine->getGraphicsModule();
 	auto & lightDir = *graphics.getEffect<LightDirectional_Effect>();
 	auto & lightPoint = *graphics.getEffect<LightPoint_Effect>();
@@ -44,14 +49,17 @@ void World_Module::initialize()
 	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPoint.m_shadowBuffer, &lightPoint.m_shadowFBO);
 	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpot.m_lightBuffer);
 	m_constructorMap["LightSpotShadow_Component"] = new LightSpotShadow_Constructor(&lightSpot.m_shadowBuffer, &lightSpot.m_shadowFBO);
+	m_constructorMap["Physics_Component"] = new Physics_Constructor(m_engine, physics.getWorld());
 	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &prop.m_propBuffer);
 	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO);
 	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer);
+
+	loadWorld();
 }
 
 void World_Module::loadWorld()
 {
-	m_level = Asset_Level::Create(m_engine, "devTest.map");
+	m_level = Asset_Level::Create(m_engine, "physTest.map");
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 
@@ -62,7 +70,7 @@ void World_Module::addLevelListener(bool * notifier)
 		*notifier = true;
 }
 
-void World_Module::checkIfLoaded()
+const bool World_Module::checkIfLoaded()
 {
 	auto & assetManager = m_engine->getAssetManager();
 	auto & modelManager = m_engine->getModelManager();
@@ -78,7 +86,9 @@ void World_Module::checkIfLoaded()
 			materialManager.hasChanged())
 			for each (bool * flag in m_notifyees)
 				*flag = true;
+		return true;
 	}
+	return false;
 }
 
 void World_Module::processLevel()

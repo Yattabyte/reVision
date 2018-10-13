@@ -24,16 +24,11 @@ void Asset_Collider::initialize(Engine * engine, const std::string & relativePat
 {
 	// Forward asset creation
 	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
-	std::vector<btScalar> orderedPoints;
-	orderedPoints.reserve(m_mesh->m_geometry.vertices.size() * 3);
-	for each (const auto & vertex in m_mesh->m_geometry.vertices) {
-		orderedPoints.push_back(vertex.x);
-		orderedPoints.push_back(vertex.y);
-		orderedPoints.push_back(vertex.z);
-	}
-	btConvexHullShape *shape = new btConvexHullShape(&orderedPoints[0], (int)orderedPoints.size(), sizeof(btScalar) * 3);
+	btConvexHullShape * shape = new btConvexHullShape();
+	for each (const auto & vertex in m_mesh->m_geometry.vertices) 
+		shape->addPoint(btVector3(vertex.x, vertex.y, vertex.z));	
 	shape->recalcLocalAabb();
-	m_shape = std::unique_ptr<btCollisionShape>(shape);
+	m_shape = shape;
 
 	Asset::finalize(engine);
 }

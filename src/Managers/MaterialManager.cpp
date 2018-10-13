@@ -39,7 +39,7 @@ const GLsizei MaterialManager::getMaterialSize() const
 GLuint MaterialManager::generateID(const size_t & textureCount)
 {
 	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
-	GLuint arraySpot = m_Count;
+	GLuint arraySpot = (GLuint)m_Count;
 	m_Count += textureCount;
 	return arraySpot;
 }

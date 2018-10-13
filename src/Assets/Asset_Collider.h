@@ -30,7 +30,7 @@ public:
 	
 	// Public Attributes
 	Shared_Asset_Mesh m_mesh;
-	std::unique_ptr<btCollisionShape> m_shape;
+	btCollisionShape * m_shape;
 
 
 protected:

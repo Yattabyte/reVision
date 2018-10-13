@@ -16,7 +16,7 @@
 #include "Utilities\MappedChar.h"
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "1.35";
+constexpr char ENGINE_VERSION[] = "1.35.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -77,6 +77,8 @@ public:
 	MessageManager & getMessageManager() { return m_messageManager; }
 	/** Returns this engine's graphics module. */
 	Graphics_Module & getGraphicsModule() { return m_moduleGraphics; }
+	/** Returns this engine's physics module. */
+	Physics_Module & getPhysicsModule() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
 	World_Module & getWorldModule() { return m_moduleWorld; }
 
