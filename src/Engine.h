@@ -16,7 +16,7 @@
 #include "Utilities\MappedChar.h"
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "1.35.A";
+constexpr char ENGINE_VERSION[] = "1.36";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -111,6 +111,7 @@ private:
 	MaterialManager m_materialManager;
 	ModelManager m_modelManager;
 	ECS	m_ecs;
+	ECSSystemList m_logicSystems;
 	ActionState	m_ActionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;

@@ -11,9 +11,10 @@
 #include "ECS/Components/LightDirectional_C.h"
 #include "ECS/Components/LightPoint_C.h"
 #include "ECS/Components/LightSpot_C.h"
-#include "ECS/Components/Physics_C.h"
+#include "ECS/Components/Collider_C.h"
 #include "ECS/Components/Reflector_C.h"
 #include "ECS/Components/Skeleton_C.h"
+#include "ECS/Components/Transform_C.h"
 
 /* Effect Types Used */
 #include "Modules\Graphics\Effects\LightDirectional_FX.h"
@@ -42,24 +43,24 @@ void World_Module::initialize()
 	auto & prop = *graphics.getEffect<PropRendering_Effect>();
 	auto & ref = *graphics.getEffect<Reflector_Effect>();
 	m_constructorMap["BasicPlayer_Component"] = new BasicPlayer_Constructor();
-	m_constructorMap["BoundingSphere_Component"] = new BoundingSphere_Constructor();
 	m_constructorMap["LightDirectional_Component"] = new LightDirectional_Constructor(&lightDir.m_lightBuffer);
 	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(&lightDir.m_shadowBuffer, &lightDir.m_shadowFBO);
 	m_constructorMap["LightPoint_Component"] = new LightPoint_Constructor(&lightPoint.m_lightBuffer);
 	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPoint.m_shadowBuffer, &lightPoint.m_shadowFBO);
 	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpot.m_lightBuffer);
 	m_constructorMap["LightSpotShadow_Component"] = new LightSpotShadow_Constructor(&lightSpot.m_shadowBuffer, &lightSpot.m_shadowFBO);
-	m_constructorMap["Physics_Component"] = new Physics_Constructor(m_engine, physics.getWorld());
+	m_constructorMap["Collider_Component"] = new Collider_Constructor(m_engine);
 	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &prop.m_propBuffer);
 	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO);
 	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer);
+	m_constructorMap["Transform_Component"] = new Transform_Constructor();
 
 	loadWorld();
 }
 
 void World_Module::loadWorld()
 {
-	m_level = Asset_Level::Create(m_engine, "physTest.map");
+	m_level = Asset_Level::Create(m_engine, "newTest.map");
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 

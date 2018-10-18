@@ -45,7 +45,7 @@ layout (location = 10) flat out vec3 LightColorInt;
 layout (location = 11) flat out vec3 LightPosition;
 layout (location = 12) flat out float LightRadius2;
 layout (location = 13) flat out int ShadowSpotFinal;
-layout (location = 14) flat out float ShadowIndexFactor;
+layout (location = 14) flat out float HasShadow;
 
 void main()
 {		
@@ -59,6 +59,6 @@ void main()
 	LightPosition = lightBuffers[lightIndex].LightPosition.xyz;
 	LightRadius2 = lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius;	
 	ShadowSpotFinal = shadowBuffers[shadowIndex].Shadow_Spot/6;	
-	ShadowIndexFactor = shadowIndex != -1 ? 1.0f : 0.0f;	
+	HasShadow = shadowIndex != -1 ? 1.0f : 0.0f;	
 	gl_Position = pMatrix * vMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
 }

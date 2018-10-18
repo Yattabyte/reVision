@@ -3,12 +3,9 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules\Engine_Module.h"
-#include "ECS\Systems\ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 
-
-class ECS;
 
 /** A module responsible for physics. */
 class Physics_Module : public Engine_Module {
@@ -37,8 +34,6 @@ private:
 	btCollisionDispatcher * m_dispatcher = nullptr;
 	btSequentialImpulseConstraintSolver * m_solver = nullptr;
 	btDiscreteDynamicsWorld * m_world = nullptr;
-	ECS * m_ecs = nullptr;
-	ECSSystemList m_physicsSystems;
 };
 
 #endif // PHYSICS_MODULE_H

@@ -25,7 +25,7 @@ layout (location = 10) flat in vec3 LightColorInt;
 layout (location = 11) flat in vec3 LightPosition;
 layout (location = 12) flat in float LightRadius2;
 layout (location = 13) flat in int ShadowSpotFinal;
-layout (location = 14) flat in float ShadowIndexFactor;
+layout (location = 14) flat in float HasShadow;
 
 layout (location = 0) out vec3 LightingColor; 
 
@@ -46,20 +46,23 @@ const vec3 sampleOffsetDirections[20] = vec3[] (
 #define FactorAmt 1.0 / 20
 float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float bias)                                                  
 {		
-	const float FragmentDepth 		= (length(LightDirection) / LightRadius2) - EPSILON - bias;
-	const float diskRadius 			= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
-	
-	float Factor = 0.0f, depth;
-	vec4 FinalCoord1, FinalCoord2;
-	const int Shadowspot1 = ShadowSpotFinal;
-	const int Shadowspot2 = ShadowSpotFinal+1;
-	for (uint x = 0; x < 20; ++x) {	
-		FinalCoord1					= vec4(LightDirection + sampleOffsetDirections[x] * diskRadius, Shadowspot1);
-		FinalCoord2					= vec4(FinalCoord1.xyz, Shadowspot2);
-		depth 						= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
-		Factor 			   	 		+= (depth >= FragmentDepth ) ? FactorAmt : 0.0;	
+	if (HasShadow > 0.5f) {	
+		const float FragmentDepth 	= (length(LightDirection) / LightRadius2) - EPSILON - bias;
+		const float diskRadius 		= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
+		
+		float Factor = 0.0f, depth;
+		vec4 FinalCoord1, FinalCoord2;
+		const int Shadowspot1 = ShadowSpotFinal;
+		const int Shadowspot2 = ShadowSpotFinal+1;
+		for (uint x = 0; x < 20; ++x) {	
+			FinalCoord1				= vec4(LightDirection + sampleOffsetDirections[x] * diskRadius, Shadowspot1);
+			FinalCoord2				= vec4(FinalCoord1.xyz, Shadowspot2);
+			depth 					= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
+			Factor 			   	 	+= (depth >= FragmentDepth ) ? FactorAmt : 0.0;	
+		}
+		return 						Factor;
 	}
-	return 							Factor * ShadowIndexFactor;
+	return 							1.0f;
 }   
 
 void main(void)

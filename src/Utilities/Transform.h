@@ -44,6 +44,12 @@ struct Transform {
 						glm::scale( glm::mat4(1.0f), m_scale );
 		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 	}
+	bool operator==(const Transform & other) {
+		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
+	}
+	bool operator!=(const Transform & other) {
+		return !((*this)==other);
+	}
 
 
 	// Public Attributes

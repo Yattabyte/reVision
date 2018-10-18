@@ -25,15 +25,10 @@ struct LightDirectional_Constructor : ECSComponentConstructor<LightDirectional_C
 	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto color = castAny(parameters[0], glm::vec3(1.0f));
 		auto intensity = castAny(parameters[1], 1.0f);
-		auto position = castAny(parameters[2], glm::vec3(0.0f));
-		auto orientation = castAny(parameters[3], glm::quat(1, 0, 0, 0));
-		auto scale = castAny(parameters[4], glm::vec3(1.0f));
 		auto * component = new LightDirectional_Component();
 		component->m_data = m_elementBuffer->newElement();
 		component->m_data->data->LightColor = color;
-		component->m_data->data->LightIntensity = intensity;
-		glm::mat4 sunTransform = glm::mat4_cast(orientation);
-		component->m_data->data->LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+		component->m_data->data->LightIntensity = intensity;			
 		return { component, component->ID };
 	}
 	VectorBuffer<LightDirectional_Buffer> * m_elementBuffer = nullptr;
@@ -57,6 +52,7 @@ struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalSh
 	size_t m_visSize[2];
 	float m_shadowSize = 0.0f;
 	glm::mat4 m_mMatrix = glm::mat4(1.0f);
+	glm::quat m_orientation = glm::quat(1, 0, 0, 0);
 	VB_Element<LightDirectionalShadow_Buffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -64,15 +60,8 @@ struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirecti
 	LightDirectionalShadow_Constructor(VectorBuffer<LightDirectionalShadow_Buffer> * const elementBuffer, FBO_Shadow_Directional * const shadowFBO) 
 		: m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
 	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto position = castAny(parameters[0], glm::vec3(0.0f));
-		auto orientation = castAny(parameters[1], glm::quat(1, 0, 0, 0));
-		auto scale = castAny(parameters[2], glm::vec3(1.0f));
 		auto * component = new LightDirectionalShadow_Component();
-		component->m_data = m_elementBuffer->newElement();
-		glm::mat4 sunTransform = glm::mat4_cast(orientation);
-		glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
-		component->m_mMatrix = sunModelMatrix;
-		component->m_data->data->lightV = sunModelMatrix;		
+		component->m_data = m_elementBuffer->newElement();		
 		component->m_data->data->Shadow_Spot = m_shadowCount;
 		component->m_updateTime = 0.0f;
 		component->m_shadowSpot = m_shadowCount;

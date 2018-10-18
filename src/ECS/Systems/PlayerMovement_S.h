@@ -7,6 +7,7 @@
 #include "glm\glm.hpp"
 
 /* Component Types Used */
+#include "ECS\Components\Transform_C.h"
 #include "ECS\Components\BasicPlayer_C.h"
 
 /** A system responsible for updating player components. */
@@ -16,6 +17,7 @@ public:
 	~PlayerMovement_System() = default;
 	PlayerMovement_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
 		// Declare component types used
+		addComponentType(Transform_Component::ID);
 		addComponentType(BasicPlayer_Component::ID);
 	}
 
@@ -25,11 +27,12 @@ public:
 		auto & graphicsModule = m_engine->getGraphicsModule();
 		graphicsModule.m_defaultCamera->wait();
 		for each (const auto & componentParam in components) {
-			BasicPlayer_Component * playerComponent = (BasicPlayer_Component*)componentParam[0];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
+			BasicPlayer_Component * playerComponent = (BasicPlayer_Component*)componentParam[1];
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;
-			auto & transform = playerComponent->m_transform;
+			auto & transform = transformComponent->m_transform;
 			// Determine how much the camera should rotate
 			rotation += 25.0f * deltaTime * glm::vec3(actionState.at(ActionState::LOOK_X), actionState.at(ActionState::LOOK_Y), 0);
 			rotation.x = fmodf(rotation.x, 360.0f);

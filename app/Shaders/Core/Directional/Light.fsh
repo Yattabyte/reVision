@@ -19,7 +19,7 @@ layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in float shadowIndexFactor;
+layout (location = 1) flat in float HasShadow;
 layout (location = 2) flat in vec3 LightColorInt;
 layout (location = 3) flat in vec3 LightDirection;
 layout (location = 4) flat in int Shadow_Spot;
@@ -42,19 +42,22 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 #define FactorAmt 1.0 / 9
 float CalcShadowFactor(in int Index, in vec4 LightSpacePos, in float bias)                                                  
 {     
-	// Bring fragment coordinates from world space into light space, then into texture spaces
-	const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
-    const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                    
-    const float FragmentDepth 			= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 	  
-	
-	float Factor = 0.0f, depth;
-	vec3 FinalCoord;
-	for (uint x = 0; x < 9; ++x) { 
-		FinalCoord 						= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, Shadow_Spot + Index );
-		depth 							= texture( ShadowMap, FinalCoord ).r;
-		Factor 			   		  	 	+= (depth >= FragmentDepth) ? FactorAmt : 0.0;	
+	if (HasShadow > 0.5f) {	
+		// Bring fragment coordinates from world space into light space, then into texture spaces
+		const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
+		const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                    
+		const float FragmentDepth 			= (0.5f * ProjCoords.z + 0.5f) - EPSILON - bias; 	  
+		
+		float Factor = 0.0f, depth;
+		vec3 FinalCoord;
+		for (uint x = 0; x < 9; ++x) { 
+			FinalCoord 						= vec3( UVCoords + sampleOffsetDirections[x] * ShadowSize_Recip, Shadow_Spot + Index );
+			depth 							= texture( ShadowMap, FinalCoord ).r;
+			Factor 			   		  		+= (depth >= FragmentDepth) ? FactorAmt : 0.0;	
+		}
+		return 								Factor;
 	}
-	return 								Factor * shadowIndexFactor;
+	return 									1.0f;
 } 
 
 void main()

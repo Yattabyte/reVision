@@ -37,7 +37,7 @@ layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
 };
 
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out float shadowIndexFactor;
+layout (location = 1) flat out float HasShadow;
 layout (location = 2) flat out vec3 LightColorInt;
 layout (location = 3) flat out vec3 LightDirection;
 layout (location = 4) flat out int Shadow_Spot;
@@ -52,7 +52,7 @@ void main()
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	const int lightIndex = lightIndexes[gl_InstanceID];
 	const int shadowIndex = shadowIndexes[gl_InstanceID];
-	shadowIndexFactor = shadowIndex != -1 ? 1.0f : 0.0f;	
+	HasShadow = shadowIndex != -1 ? 1.0f : 0.0f;	
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 	LightDirection = lightBuffers[lightIndex].LightDirection.xyz;
 	Shadow_Spot = shadowBuffers[shadowIndex].Shadow_Spot;

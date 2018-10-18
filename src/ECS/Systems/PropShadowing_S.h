@@ -10,7 +10,6 @@
 
 /* Component Types Used */
 #include "ECS\Components\Prop_C.h"
-#include "ECS\Components\BoundingSphere_C.h"
 #include "ECS\Components\Skeleton_C.h"
 
 
@@ -38,7 +37,6 @@ public:
 	) : m_engine(engine), m_instanceCount(instanceCount), m_flags(flags) {
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
-		addComponentType(BoundingSphere_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
 	}
 
@@ -55,8 +53,7 @@ public:
 		const glm::vec3 & eyePosition = m_engine->getGraphicsModule().m_cameraBuffer.getElement(m_engine->getGraphicsModule().getActiveCamera())->data->EyePosition;
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
-			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[1];
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[2];
+			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
 			if (!propComponent->m_model->existsYet())
 				continue; // Skip if prop isn't ready
 			if (skeletonComponent == nullptr && renderDynamic && !renderStatic)
@@ -69,7 +66,7 @@ public:
 			const GLuint & index = propComponent->m_data->index;
 			visibleIndices.push_back(index);
 			// Flag for occlusion culling  if mesh complexity is high enough and if viewer is NOT within BSphere
-			if ((count >= 100) && !(bsphereComponent->m_radius > glm::distance(bsphereComponent->m_position, eyePosition))) { // Allow
+			if ((count >= 100) && !(propComponent->m_radius > glm::distance(propComponent->m_position, eyePosition))) { // Allow
 				cullingDrawData.push_back(glm::ivec4(36, m_instanceCount, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
 			}

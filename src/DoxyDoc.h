@@ -85,7 +85,6 @@
  * The engine currently supports the following components:
  *		- ECSComponent <T> (base for all new components)
  *		- BasicPlayer_Component
- *		- BoundingSphere_Component
  *		- LightDirectional_Component
  *		- LightDirectionalShadow_Component
  *		- LightPoint_Component

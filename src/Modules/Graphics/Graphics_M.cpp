@@ -6,10 +6,7 @@
 #include <random>
 
 /* System Types Used */
-#include "ECS\Systems\PlayerMovement_S.h"
 #include "ECS\Systems\PropRendering_S.h"
-#include "ECS\Systems\PropBSphere_S.h"
-#include "ECS\Systems\SkeletonAnimation_S.h"
 #include "ECS\Systems\LightDirectional_S.h"
 #include "ECS\Systems\LightSpot_S.h"
 #include "ECS\Systems\LightPoint_S.h"
@@ -116,9 +113,6 @@ void Graphics_Module::initialize()
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
 	// Graphics-related Component Updating
-	addSystem(new PlayerMovement_System(m_engine));
-	addSystem(new PropBSphere_System());
-	addSystem(new SkeletonAnimation_System());
 	addSystem(new PropRendering_System(m_engine));
 	addSystem(new LightDirectional_System(m_engine));
 	addSystem(new LightPoint_System(m_engine));

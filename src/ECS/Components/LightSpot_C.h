@@ -22,6 +22,7 @@ struct LightSpot_Buffer {
 /** A spot light component, emulating a flash light/spot light. */
 struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 	VB_Element<LightSpot_Buffer> * m_data = nullptr;
+	float m_radius = 0.0f;
 };
 /** A constructor to aid in creation. */
 struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
@@ -33,18 +34,13 @@ struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
 		auto intensity = castAny(parameters[1], 1.0f);
 		auto radius = castAny(parameters[2], 1.0f);
 		auto cutoff = castAny(parameters[3], 45.0f);
-		auto position = castAny(parameters[4], glm::vec3(0.0f));
 		auto * component = new LightSpot_Component();
 		component->m_data = m_elementBuffer->newElement();
 		component->m_data->data->LightColor = color;
 		component->m_data->data->LightIntensity = intensity;
 		component->m_data->data->LightRadius = radius;
 		component->m_data->data->LightCutoff = cosf(glm::radians(cutoff));
-		component->m_data->data->LightPosition = position;
-		component->m_data->data->LightDirection = glm::vec3(1, 0, 0);
-		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-		const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radius*radius)*1.1f);
-		component->m_data->data->mMatrix = (trans)* scl;
+		component->m_radius = radius;	
 		return { component, component->ID };
 	}
 	VectorBuffer<LightSpot_Buffer> * m_elementBuffer = nullptr;
@@ -60,6 +56,9 @@ struct LightSpotShadow_Buffer {
 };
 /** A spot light shadow component, formatted to support a single shadow map. */
 struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component> {
+	glm::vec3 m_position = glm::vec3(0.0f);
+	float m_radius = 0.0f;
+	float m_cutoff = 45.0f;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
 	bool m_outOfDate = true;
@@ -71,24 +70,16 @@ struct LightSpotShadow_Constructor : ECSComponentConstructor<LightSpotShadow_Com
 		: m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
 	// Interface Implementation
 	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto radius = castAny(parameters[0], 1.0f);
-		auto cutoff = castAny(parameters[1], 45.0f);
-		auto position = castAny(parameters[2], glm::vec3(0.0f));
 		auto * component = new LightSpotShadow_Component();
+		component->m_radius = castAny(parameters[0], 1.0f);
+		component->m_cutoff = castAny(parameters[1], 45.0f);
 		component->m_data = m_elementBuffer->newElement();
 		component->m_data->data->Shadow_Spot = m_shadowCount;
 		component->m_updateTime = 0.0f;
 		component->m_shadowSpot = m_shadowCount;
 		component->m_outOfDate = true;
 		m_shadowCount += 2;
-		m_shadowFBO->resize(m_shadowFBO->m_size, m_shadowCount);
-		const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-		const glm::mat4 final = glm::inverse(trans * glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 1, 0)));
-		const float verticalRad = 2.0f * atanf(tanf(glm::radians(cutoff * 2) / 2.0f));
-		const glm::mat4 perspective = glm::perspective(verticalRad, 1.0f, 0.01f, radius*radius);
-		component->m_data->data->lightV = final;
-		component->m_data->data->lightPV = perspective * final;
-		component->m_data->data->inversePV = glm::inverse(perspective * final);
+		m_shadowFBO->resize(m_shadowFBO->m_size, m_shadowCount);		
 		return { component, component->ID };
 	}
 	GLuint m_shadowCount = 0;

@@ -6,9 +6,14 @@
 #include "GL\glew.h"
 #include "GLFW\glfw3.h"
 
-// Importers used //
+// Importers Used //
 #include "Utilities\IO\Image_IO.h"
 #include "Utilities\IO\Mesh_IO.h"
+
+// General Logical ECS Systems Used //
+#include "ECS\Systems\PlayerMovement_S.h"
+#include "ECS\Systems\SkeletonAnimation_S.h"
+#include "ECS\Systems\TransformSync_S.h"
 
 
 // Is called when the window resizes
@@ -156,6 +161,10 @@ Engine::Engine() :
 	m_moduleWorld.initialize();
 	m_modelManager.initialize();
 
+	m_logicSystems.addSystem(new PlayerMovement_System(this));
+	m_logicSystems.addSystem(new SkeletonAnimation_System());
+	m_logicSystems.addSystem(new TransformSync_System(this, m_modulePhysics.getWorld()));
+
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
 		std::promise<void> exitSignal;
@@ -210,6 +219,8 @@ void Engine::tick()
 		// Update physics
 		m_modulePhysics.physicsFrame(deltaTime);
 	}
+	// Update logical systems
+	m_ecs.updateSystems(m_logicSystems, deltaTime);
 	// Update graphics
 	m_moduleGraphics.setActiveCamera(0);
 	m_moduleGraphics.renderFrame(deltaTime);

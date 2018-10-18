@@ -50,7 +50,7 @@ layout (location = 13) flat out float LightRadius2;
 layout (location = 14) flat out float LightCutoff;
 layout (location = 15) flat out int Shadow_Spot;
 layout (location = 16) flat out mat4 ShadowPV;
-layout (location = 20) flat out float ShadowIndexFactor;
+layout (location = 20) flat out float HasShadow;
 
 void main()
 {		
@@ -67,7 +67,7 @@ void main()
 	LightCutoff = lightBuffers[lightIndex].LightCutoff;
 	Shadow_Spot = shadowBuffers[shadowIndex].Shadow_Spot;
 	ShadowPV = shadowBuffers[shadowIndex].lightPV;
-	ShadowIndexFactor = shadowIndex != -1 ? 1.0f : 0.0f;	
+	HasShadow = shadowIndex != -1 ? 1.0f : 0.0f;	
 	gl_Position = pMatrix * vMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vertex;
 }
 

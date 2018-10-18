@@ -1,9 +1,6 @@
 #include "Physics_M.h"
 #include "Engine.h"
 
-/* System Types Used */
-#include "ECS\Systems\Collider_Transform_S.h"
-
 
 Physics_Module::~Physics_Module()
 {
@@ -14,7 +11,7 @@ Physics_Module::~Physics_Module()
 	delete m_world;
 }
 
-Physics_Module::Physics_Module(Engine * engine) : Engine_Module(engine), m_ecs(&m_engine->getECS())
+Physics_Module::Physics_Module(Engine * engine) : Engine_Module(engine)
 {}
 
 void Physics_Module::initialize()
@@ -26,12 +23,9 @@ void Physics_Module::initialize()
 	m_solver = new btSequentialImpulseConstraintSolver;
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 	m_world->setGravity(btVector3(0, -9.8, 0));
-
-	m_physicsSystems.addSystem(new Collider_System(m_engine));
 }
 
 void Physics_Module::physicsFrame(const float & deltaTime)
 {
 	m_world->stepSimulation(deltaTime);
-	m_ecs->updateSystems(m_physicsSystems, deltaTime);
 }
