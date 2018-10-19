@@ -63,8 +63,6 @@ public:
 				if (colliderComponent->m_collider->existsYet()) {
 					// If the collider's transformation is out of date
 					if (colliderComponent->m_transform != transformComponent->m_transform) {
-						// Update the transform
-						colliderComponent->m_transform = transformComponent->m_transform;
 
 						// Remove from the physics simulation
 						if (colliderComponent->m_rigidBody) {
@@ -77,16 +75,25 @@ public:
 							colliderComponent->m_motionState = new btDefaultMotionState();
 						colliderComponent->m_motionState->setWorldTransform(btTransform(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w), btVector3(position.x, position.y, position.z))));
 
-						// This line won't work if the shape is reused!!
-						colliderComponent->m_collider->m_shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+						// Resize the collider shape to fit
+						if (colliderComponent->m_transform.m_scale != transformComponent->m_transform.m_scale || !colliderComponent->m_shape) {	
+							if (!colliderComponent->m_shape)
+								delete colliderComponent->m_shape;
+							colliderComponent->m_shape = new btConvexHullShape(*(btConvexHullShape*)colliderComponent->m_collider->m_shape);
+							colliderComponent->m_shape->setLocalScaling(btVector3(scale.x, scale.y, scale.z));
+						}
 
+						// Add back to simulation
 						btVector3 Inertia(0, 0, 0);
-						colliderComponent->m_collider->m_shape->calculateLocalInertia(colliderComponent->m_mass, Inertia);
-						auto bodyCI = btRigidBody::btRigidBodyConstructionInfo(colliderComponent->m_mass, colliderComponent->m_motionState, colliderComponent->m_collider->m_shape, Inertia);
+						colliderComponent->m_shape->calculateLocalInertia(colliderComponent->m_mass, Inertia);
+						auto bodyCI = btRigidBody::btRigidBodyConstructionInfo(colliderComponent->m_mass, colliderComponent->m_motionState, colliderComponent->m_shape, Inertia);
 						bodyCI.m_restitution = colliderComponent->m_restitution;
 						bodyCI.m_friction = colliderComponent->m_friction;
 						colliderComponent->m_rigidBody = new btRigidBody(bodyCI);
 						m_world->addRigidBody(colliderComponent->m_rigidBody);
+
+						// Update the transform
+						colliderComponent->m_transform = transformComponent->m_transform;
 					}
 					
 					// Otherwise update the transform with the collider info

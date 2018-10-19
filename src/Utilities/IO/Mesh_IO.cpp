@@ -90,6 +90,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	// Import geometry
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh * mesh = scene->mMeshes[a];
+		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u) * 3u;
 		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 			const aiFace & face = mesh->mFaces[x];
 			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
@@ -108,6 +109,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
 				data_container.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
 
+				data_container.materialIndices.push_back(meshMaterialOffset);
 			}
 
 		}
@@ -145,9 +147,8 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 		}
 	}
 
-	// Copy Root Node
+	// Copy Root Node and bones
 	data_container.rootNode = copy_node(scene->mRootNode);
-
 	data_container.bones.resize(data_container.vertices.size());
 	int vertexOffset = 0;
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {

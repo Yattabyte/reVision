@@ -11,6 +11,7 @@ set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
 set (CORE_DIR "${PROJECT_SOURCE_DIR}/src")
 set (PROJECT_BIN ${CMAKE_SOURCE_DIR})
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
 # Include directories of dependencies for entire project
 include_directories ( 	${CORE_DIR} 
@@ -81,4 +82,3 @@ set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 # ALL_BUILD, ZERO_CHECK, and other build functions' folder
 set_property (GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER Build_Functions)
 set_property (TARGET Generate_Documentation PROPERTY FOLDER "Build_Functions")
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")

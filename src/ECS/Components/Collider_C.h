@@ -16,6 +16,7 @@ struct Collider_Component : public ECSComponent<Collider_Component> {
 	Shared_Asset_Collider m_collider;
 	btDefaultMotionState * m_motionState = nullptr;
 	btRigidBody * m_rigidBody = nullptr;
+	btConvexHullShape * m_shape = nullptr;
 	Transform m_transform;
 };
 /** A constructor to aid in creation. */

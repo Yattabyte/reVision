@@ -49,7 +49,7 @@ void Asset_Model::initialize(Engine * engine, const std::string & relativePath)
 		m_data.m_vertices[x].weights.y = m_mesh->m_geometry.bones[x].Weights[1];
 		m_data.m_vertices[x].weights.z = m_mesh->m_geometry.bones[x].Weights[2];
 		m_data.m_vertices[x].weights.w = m_mesh->m_geometry.bones[x].Weights[3];
-		m_data.m_vertices[x].matID = m_materialArray->m_matSpot;
+		m_data.m_vertices[x].matID = m_materialArray->m_matSpot + m_mesh->m_geometry.materialIndices[x];
 	}
 
 	// Calculate the mesh's min, max, center, and radius

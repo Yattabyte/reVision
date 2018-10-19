@@ -79,9 +79,9 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Asset_Image::Fill_Policy::Checkered,
 		Asset_Image::Fill_Policy::Solid,
-		Asset_Image::Fill_Policy::Checkered,
-		Asset_Image::Fill_Policy::Checkered,
-		Asset_Image::Fill_Policy::Checkered,
+		Asset_Image::Fill_Policy::Solid,
+		Asset_Image::Fill_Policy::Solid,
+		Asset_Image::Fill_Policy::Solid,
 		Asset_Image::Fill_Policy::Solid
 	};
 	for (size_t x = 0; x < textureCount; ++x)
