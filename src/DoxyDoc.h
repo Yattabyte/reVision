@@ -33,7 +33,9 @@
  *	Second, fill in the main directories for all the required external libraries, like assimp, bullet, etc.\n
  *	Third, hit the configure button and choose the compiler you want to generate the solution for. Then hit the generate button after.\n
  *
- *	- Step 3: Build CMake\n		
+ *	- Step 3: Build CMake\n
+ *
+ *	Here, we want to configure it for our project.\n
  *	The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.
  *	To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the 'app' folder. If the executable doesn't have it set already, change it to start in the app folder.
  *
@@ -55,13 +57,20 @@
 
 /*! \page assets Assets
  * \section assets_sec Engine Assets
- * This section contains all of the asset types the engine currently supports.\n
+ * Engine assets are an encapsulation of a file or set of related files that are found within the application subdirectory.\n
+ * Different file types need to be handled in different ways.
+ * Assets are designed to be ultra-efficient.\n
+ * We sort and store them within an asset manager, and we share them whenever possible to avoid redundant disk reads.\n
+ * Lastly, all assets supported thusfar support multithreading, as to avoid locking the main thread.\n
+ * Here's a list of all asset types the engine currently supports.\n
  *
- *	- Asset
  *	- Asset_Collider
  *	- Asset_Config
  *	- Asset_Cubemap
+ *	- Asset_Image
+ *	- Asset_Level
  *	- Asset_Material
+ *	- Asset_Mesh
  *	- Asset_Model
  *	- Asset_Primitive
  *	- Asset_Shader
@@ -69,22 +78,18 @@
  *	- Asset_Shader_Pkg
  *	- Asset_Texture
  *
- * \section New Assets
- * All assets have 1 static create function, and 3 private functions managing the specifics of their creation:
- *
- *	- initializeDefault(...)	
- *		- Used when file missing/corrupt.
- *	- initialize(...)	
- *		- Used to load asset from disk and any other processing that can occur on a separate thread.
- *	- finalize(...)	
- *		- Any final processing that must occur on the main thread.\n
+ * \section newAssets New Assets
+ * All assets have provide the following functionality - a static Create(...) function, and an overriden virtual initialize(...) function:
+ * 
+ *	- Shared_Asset_Shader	Asset_Shader::Create(	Engine * engine, const std::string & filename, const bool & threaded	)
+ *	- void Asset_Shader::initialize(	Engine * engine, const std::string & relativePath	)
  */
 
  /*! \page ecs ECS
  * \section ent_sec	Engine ECS
  * The engine currently supports the following components:
- *		- ECSComponent <T> (base for all new components)
  *		- BasicPlayer_Component
+ *		- Collider_Component
  *		- LightDirectional_Component
  *		- LightDirectionalShadow_Component
  *		- LightPoint_Component
@@ -94,18 +99,19 @@
  *		- Prop_Component
  *		- Reflector_Component
  *		- Skeleton_Component
+ *		- Transform_Component
  *		<br>
  *
- * There are also several systems in place that use them:
- *		- BaseECSSystem (base for all new systems)
- *		- LightDirectional_System
- *		- LightPoint_System
- *		- LightSpot_System
- *		- PlayerMovement_System
- *		- PropBSphere_System
- *		- PropRendering_System
- *		- PropShadowing_System
- *		- SkeletonAnimation_System
+ * These components interact through many different systems:
+ *		- LightDirectional_System (rendering)
+ *		- LightPoint_System (rendering)
+ *		- LightSpot_System (rendering)
+ *		- PropRendering_System (rendering)
+ *		- PropShadowing_System (rendering)
+ *		- Reflector_System  (rendering)
+ *		- PlayerMovement_System (update the player transform)
+ *		- SkeletonAnimation_System (update bone transforms when animating)
+ *		- TransformSync_System (update transform information for every other component type)
  */
 
  /*! \page managers Managers
@@ -113,7 +119,7 @@
  * This section contains all the managers the Engine owns.\n
  *
  *	- Asset_Manager
- *		- Used to create assets (specialized representations of files from disk).
+ *		- Used to create, find, and share assets (specialized representations of files from disk).
  *	- Material_Manager
  *		- Holds PBR materials, exposing them to shaders, sharing them with multiple models/surfaces.
  *	- Message_Manager
@@ -121,6 +127,18 @@
  *	- Model_Manager
  *		- Creates/destroys models, exposing them to shaders.
  */
+
+ /*! \page modules Modules
+  * \section mdul_sec Engine Modules
+  * This section contains all the modules currently implemented.\n
+  *
+  *	- Graphics_Module
+  *		- Used to render a physically based 3D scene, renders components using systems and effects.
+  *	- Physics_Module
+  *		- Basic physics implementation, handles collision events and updates components.
+  *	- World_Module
+  *		- Handles loading the world and determining when the world has changed.
+  */
 
  /*! \page utilities Utilities
  * \section util_sec Engine Utilities
@@ -133,19 +151,21 @@
  *		- IO Classes:
  *			- Image_IO
  *				- Image Importing using FreeImage.
+ *			- Level_IO
+ *				- Level Importing
  *			- Mesh_IO
- *				- Model Importing ussing ASSIMP.
+ *				- Model Importing using ASSIMP.
  *			- Text_IO
  *				- Plaintext importing.
  *		- OpenGL Helper Classes:
- *			- Camera
- *				- Camera object
  *			- DynamicBuffer
  *				- Buffer Object Encapsulation, but can change in size.
- *			- FBO
+ *			- FBO_Base
  *				- Frame Buffer Object interface.
  *			- StaticBuffer
  *				- Buffer Object Encapsulation, static in size.
+ *			- StaticMappedBuffer
+ *				- Buffer Object Encapsulation, static in size, mapped to local memory
  *			- VectorBuffer
  *				- Like the std::vector class, encapsulates a dynamic buffer in a templated fashion, allowing adding/removing of elements as the way to interact with.
  */
