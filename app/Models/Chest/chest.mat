@@ -1,0 +1,8 @@
+PBR
+{
+	albedo string "chest_albedo.png"
+	normal string "chest_normal.png"
+	metalness string "chest_metalness.png"
+	roughness string "chest_roughness.png"
+	occlusion string "chest_ao.png"
+}

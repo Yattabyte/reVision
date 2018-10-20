@@ -1,0 +1,48 @@
+PBR
+{
+	albedo string "test_rough_metal.png"
+	normal string "normal.png"
+	metalness string "gradient bottom.png"
+	roughness string "gradient right.png"
+	occlusion string "white.png"
+}
+PBR
+{
+	albedo string "test_metal_ao.png"
+	normal string "normal.png"
+	metalness string "gradient bottom.png"
+	roughness string "black.png"
+	occlusion string "gradient right.png"
+}
+PBR
+{
+	albedo string "test_ao_rough.png"
+	normal string "normal.png"
+	metalness string "white.png"
+	roughness string "gradient bottom.png"
+	occlusion string "gradient right.png"
+}
+PBR
+{
+	albedo string "test_normal.png"
+	normal string "test_normal_normal.png"
+	metalness string "white.png"
+	roughness string "black.png"
+	occlusion string "white.png"
+}
+PBR
+{
+	albedo string "test_ao.png"
+	normal string "test_ao_normal.png"
+	metalness string "white.png"
+	roughness string "black.png"
+	occlusion string "test_ao_ao.png"
+}
+PBR
+{
+	albedo string "albedo.png"
+	normal string "normal.png"
+	metalness string "grey.png"
+	roughness string "grey.png"
+	occlusion string "white.png"
+}

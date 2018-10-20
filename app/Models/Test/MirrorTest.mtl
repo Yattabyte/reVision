@@ -9,7 +9,7 @@ Ks 0.500000 0.500000 0.500000
 Ni 1.000000
 d 1.000000
 illum 2
-map_Bump Test\\mirror_normal.png
-map_Kd Test\\mirror_diffuse.png
-map_Ks Test\\mirror_metalness.png
-map_Ns Test\\mirror_roughness.png
+map_Bump mirror_normal.png
+map_Kd mirror_diffuse.png
+map_Ks mirror_metalness.png
+map_Ns mirror_roughness.png

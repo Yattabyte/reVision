@@ -1,0 +1,613 @@
+# Blender MTL File: 'sponza_opt.blend'
+# Material Count: 34
+
+newmtl Material__25
+Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Lion_diffuse.tga
+	map_Bump  textures\Lion_normal.tga
+	map_Ns  textures\Lion_roughness.tga
+
+newmtl Material__298
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Background_diffuse.tga
+	map_bump textures\Background_normal.tga
+	map_NS textures\Background_roughness.tga
+
+newmtl Mirror
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Mirror_specular.tga
+	map_Kd textures\Sponza_Mirror_specular.tga
+	map_bump textures\Sponza_Mirror_normal.png
+	map_Ns textures\Sponza_Mirror_roughness.tga
+	
+newmtl Water
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\water\Water_specular.png
+	map_Kd textures\water\Water_diffuse.png
+	map_bump textures\water\Water_normal.png
+	map_Ns textures\water\Water_roughness.png
+
+newmtl Material__57.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Vase_Plant_specular.tga
+	map_Kd textures\Vase_Plant_diffuse.tga
+	map_bump textures\Vase_Plant_normal.tga
+	map_Ns textures\Vase_Plant_roughness.tga
+	map_d textures\vase_plant_mask.tga
+
+newmtl arch
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Arch_diffuse.tga
+	map_Ns textures\Sponza_Arch_roughness.tga
+	map_bump textures\Sponza_Arch_normal.tga
+
+newmtl arch.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Arch_diffuse.tga
+	map_Ns textures\Sponza_Arch_roughness.tga
+	map_bump textures\Sponza_Arch_normal.tga
+
+newmtl bricks
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Bricks_a_diffuse.tga
+	map_bump textures\Sponza_Bricks_a_normal.tga
+	map_Ns textures\Sponza_Bricks_a_roughness.tga
+
+newmtl bricks.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Bricks_a_diffuse.tga
+	map_bump textures\Sponza_Bricks_a_normal.tga
+	map_Ns textures\Sponza_Bricks_a_roughness.tga
+	
+newmtl Puddle
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Puddle_specular.png
+	map_Kd textures\Puddle_specular.png
+	map_bump textures\Puddle_normal.png
+	map_Ns textures\Puddle_roughness.png
+
+newmtl Mud
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Mud_specular.png
+	map_Kd textures\Mud_diffuse.png
+	map_bump textures\Mud_normal.png
+	map_Ns textures\Mud_roughness.png
+	
+newmtl ceiling
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Ceiling_diffuse.tga
+	map_Ns textures\Sponza_Ceiling_roughness.tga
+	map_bump textures\Sponza_Ceiling_normal.tga
+
+newmtl chain.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\ChainTexture_specular.tga
+	map_Kd textures\ChainTexture_diffuse.tga
+	map_d textures\ChainTexture_mask.tga
+	map_bump textures\ChainTexture_normal.tga
+	map_Ns textures\ChainTexture_roughness.tga
+
+newmtl column_a.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Column_a_diffuse.tga
+	map_bump textures\Sponza_Column_a_normal.tga
+	map_Ns textures\Sponza_Column_a_roughness.tga
+
+newmtl column_b
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Column_b_diffuse.tga
+	map_bump textures\Sponza_Column_b_normal.tga
+	map_Ns textures\Sponza_Column_b_roughness.tga
+
+newmtl column_c
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Column_c_diffuse.tga
+	map_bump textures\Sponza_Column_c_normal.tga
+	map_Ns textures\Sponza_Column_c_roughness.tga
+
+newmtl details
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Details_specular.tga
+	map_Kd textures\Sponza_Details_diffuse.tga
+	map_bump textures\Sponza_Details_normal.tga
+	map_Ns textures\Sponza_Details_roughness.tga
+
+newmtl fabric_a.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Blue_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_a.001_sponza_fabric_diff.tga
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Red_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_c.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Curtain_specular.tga
+	map_Kd textures\Sponza_Curtain_Red_diffuse.tga
+	map_bump textures\Sponza_Curtain_normal.tga
+	map_Ns textures\Sponza_Curtain_roughness.tga
+
+newmtl fabric_d.000
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Green_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_d.000_sponza_fabric_green_diff.tga.002
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Green_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_d.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Blue_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_d.001_sponza_fabric_diff.tga
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Red_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+	
+newmtl fabric_d.002
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Green_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_e.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Blue_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_e.001_sponza_fabric_diff.tga
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Fabric_specular.tga
+	map_Kd textures\Sponza_Fabric_Red_diffuse.tga
+	map_bump textures\Sponza_Fabric_normal.tga
+	map_Ns textures\Sponza_Fabric_roughness.tga
+
+newmtl fabric_f.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Curtain_specular.tga
+	map_Kd textures\Sponza_Curtain_Green_diffuse.tga
+	map_bump textures\Sponza_Curtain_normal.tga
+	map_Ns textures\Sponza_Curtain_roughness.tga
+
+newmtl fabric_g.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Curtain_specular.tga
+	map_Kd textures\Sponza_Curtain_Blue_diffuse.tga
+	map_bump textures\Sponza_Curtain_normal.tga
+	map_Ns textures\Sponza_Curtain_roughness.tga
+
+newmtl flagpole
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\metallic_specular.tga
+	map_Kd textures\Sponza_FlagPole_diffuse.tga
+	map_bump textures\Sponza_FlagPole_normal.tga
+	map_Ns textures\Sponza_FlagPole_roughness.tga
+
+newmtl flagpole.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\metallic_specular.tga
+	map_Kd textures\Sponza_FlagPole_diffuse.tga
+	map_bump textures\Sponza_FlagPole_normal.tga
+	map_Ns textures\Sponza_FlagPole_roughness.tga
+
+newmtl floor
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Floor_diffuse.tga
+	map_bump textures\Sponza_Floor_normal.tga
+	map_Ns textures\Sponza_Floor_roughness.tga
+
+newmtl floor.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Floor_diffuse.tga
+	map_bump textures\Sponza_Floor_normal.tga
+	map_Ns textures\Sponza_Floor_roughness.tga
+
+newmtl leaf.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Sponza_Thorn_specular.tga
+	map_Kd textures\Sponza_Thorn_diffuse.tga
+	map_d textures\sponza_thorn_mask.tga
+	map_bump textures\Sponza_Thorn_normal.tga
+	map_Ns textures\Sponza_Thorn_roughness.tga
+
+newmtl roof
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Sponza_Roof_diffuse.tga
+	map_bump textures\Sponza_Roof_normal.tga
+	map_Ns textures\Sponza_Roof_roughness.tga
+
+newmtl vase
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Dielectric_specular.tga
+	map_Kd textures\Vase_diffuse.tga
+	map_bump textures\Vase_normal.tga
+	map_Ns textures\Vase_roughness.tga
+
+newmtl vase_hanging.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Vase_Hanging_specular.tga
+	map_Kd textures\Vase_Hanging_diffuse.tga
+	map_bump textures\Vase_Hanging_normal.tga
+	map_Ns textures\Vase_Hanging_roughness.tga
+
+newmtl vase_round.001
+	Ns 10.0000
+	Ni 1.5000
+	d 1.0000
+	Tr 0.0000
+	Tf 1.0000 1.0000 1.0000 
+	illum 2
+	Ka 0.5880 0.5880 0.5880
+	Kd 0.5880 0.5880 0.5880
+	Ks 1.0000 1.0000 1.0000
+	Ke 0.0000 0.0000 0.0000
+	map_Ks textures\Vase_Round_specular.tga
+	map_Kd textures\Vase_Round_diffuse.tga
+	map_bump textures\Vase_Round_normal.tga
+	map_Ns textures\Vase_Round_roughness.tga

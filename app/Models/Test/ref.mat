@@ -1,0 +1,9 @@
+PBR
+{
+	albedo string "ref_diffuse.png"
+	normal string "ref_normal.png"
+	metalness string "ref_metalness.png"
+	roughness string "ref_roughness.png"
+	height string "ref_height.png"
+	occlusion string "ref_occlusion.png"
+}

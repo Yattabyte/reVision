@@ -1,137 +1,64 @@
 #include "Assets\Asset_Primitive.h"
-#include "Utilities\IO\Model_IO.h"
+#include "Utilities\IO\Mesh_IO.h"
 #include "Engine.h"
-#define EXT_PRIMITIVE ".obj"
-#define DIRECTORY_PRIMITIVE Engine::Get_Current_Dir() + "\\Primitives\\"
-#define ABS_DIRECTORY_PRIMITIVE(filename) DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE
 
+
+constexpr char* EXT_PRIMITIVE = ".obj";
+constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
 Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
-		glDeleteBuffers(2, m_buffers);
+		glDeleteBuffers(1, &m_uboID);
 }
 
-Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
+Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename) 
 {
-	for each (auto &buffer in m_buffers)
-		buffer = -1;
+	glCreateVertexArrays(1, &m_vaoID);
+	glEnableVertexArrayAttrib(m_vaoID, 0);
+	glEnableVertexArrayAttrib(m_vaoID, 1);
+	glVertexArrayAttribBinding(m_vaoID, 0, 0);
+	glVertexArrayAttribBinding(m_vaoID, 1, 0);
+	glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayAttribFormat(m_vaoID, 1, 2, GL_FLOAT, GL_FALSE, 12);
+	glCreateBuffers(1, &m_uboID);
+	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-void Asset_Primitive::CreateDefault(Engine * engine, Shared_Asset_Primitive & userAsset)
+Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	AssetManager & assetManager = engine->getAssetManager();
-
-	// Check if a copy already exists
-	if (assetManager.queryExistingAsset(userAsset, "defaultPrimitive"))
-		return;
-
-	// Create hard-coded alternative
-	assetManager.createNewAsset(userAsset, "defaultPrimitive");
-	userAsset->m_dataVertex = std::vector<glm::vec3>{ glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
-	userAsset->m_dataUV = std::vector<glm::vec2>{ glm::vec2(0, 0), glm::vec2(1, 0), glm::vec2(1, 1), glm::vec2(0, 0), glm::vec2(1, 1), glm::vec2(0, 1) };
-
-	// Create the asset
-	assetManager.submitNewWorkOrder(userAsset, true,
-		/* Initialization. */
-		[]() {},
-		/* Finalization. */
-		[engine, &userAsset]() mutable { Finalize(engine, userAsset); }
+	return engine->getAssetManager().createAsset<Asset_Primitive>(
+		filename,
+		DIRECTORY_PRIMITIVE,
+		EXT_PRIMITIVE,
+		&initialize,
+		engine,
+		threaded
 	);
 }
 
-void Asset_Primitive::Create(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & filename, const bool & threaded)
+void Asset_Primitive::initialize(Engine * engine, const std::string & relativePath)
 {
-	AssetManager & assetManager = engine->getAssetManager();
+	// Forward asset creation
+	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
 
-	// Check if a copy already exists
-	if (assetManager.queryExistingAsset(userAsset, filename))
-		return;
-
-	// Check if the file/directory exists on disk
-	const std::string &fullDirectory = ABS_DIRECTORY_PRIMITIVE(filename);
-	if (!Engine::File_Exists(fullDirectory)) {
-		engine->reportError(MessageManager::FILE_MISSING, fullDirectory);
-		CreateDefault(engine, userAsset);
-		return;
-	}
-
-	// Create the asset
-	assetManager.submitNewAsset(userAsset, threaded,
-		/* Initialization. */
-		[engine, &userAsset, fullDirectory]() mutable { Initialize(engine, userAsset, fullDirectory); },
-		/* Finalization. */
-		[engine, &userAsset]() mutable { Finalize(engine, userAsset); },
-		/* Constructor Arguments. */
-		filename
-	);
-}
-
-void Asset_Primitive::Initialize(Engine * engine, Shared_Asset_Primitive & userAsset, const std::string & fullDirectory)
-{
-	Model_Geometry dataContainer;
-	if (!Model_IO::Import_Model(engine, fullDirectory, import_primitive, dataContainer)) {
-		engine->reportError(MessageManager::OTHER_ERROR, "Failed to load primitive asset, using default...");
-		CreateDefault(engine, userAsset);
-		return;
-	}
-
-
-	std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-	userAsset->m_dataVertex = dataContainer.vertices;
-	userAsset->m_dataUV = dataContainer.texCoords;
-}
-
-void Asset_Primitive::Finalize(Engine * engine, Shared_Asset_Primitive & userAsset)
-{
-	AssetManager & assetManager = engine->getAssetManager();	
-	userAsset->finalize();
-
-	// Create buffers
-	{
-		std::unique_lock<std::shared_mutex> write_guard(userAsset->m_mutex);
-		glCreateBuffers(2, userAsset->m_buffers);
+	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
+	m_data.resize(vertexCount);
+	for (size_t x = 0; x < vertexCount; ++x) {
+		m_data[x].vertex = m_mesh->m_geometry.vertices[x];
+		m_data[x].uv = m_mesh->m_geometry.texCoords[x];
 	}
 
 	// Load Buffers
-	{
-		std::shared_lock<std::shared_mutex> read_guard(userAsset->m_mutex);
-		glNamedBufferStorage(userAsset->m_buffers[0], userAsset->m_dataVertex.size() * sizeof(glm::vec3), &userAsset->m_dataVertex[0][0], GL_CLIENT_STORAGE_BIT);
-		glNamedBufferStorage(userAsset->m_buffers[1], userAsset->m_dataVertex.size() * sizeof(glm::vec2), &userAsset->m_dataUV[0][0], GL_CLIENT_STORAGE_BIT);
-		
-		// Notify Completion
-		for each (auto qwe in userAsset->m_callbacks)
-			assetManager.submitNotifyee(qwe.second);
-	}
-}
+	const size_t arraySize = m_data.size();
+	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);
 
-GLuint Asset_Primitive::Generate_VAO()
-{
-	GLuint vaoID = 0;
-
-	glCreateVertexArrays(1, &vaoID);
-	glEnableVertexArrayAttrib(vaoID, 0);
-	glEnableVertexArrayAttrib(vaoID, 1);
-
-	return vaoID;
-}
-
-void Asset_Primitive::updateVAO(const GLuint & vaoID)
-{
-	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	
-	glVertexArrayAttribFormat(vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(vaoID, 1, 2, GL_FLOAT, GL_FALSE, 0);
-
-	glVertexArrayVertexBuffer(vaoID, 0, m_buffers[0], 0, 12);
-	glVertexArrayVertexBuffer(vaoID, 1, m_buffers[1], 0, 8);
-
-	glVertexArrayAttribBinding(vaoID, 0, 0);
-	glVertexArrayAttribBinding(vaoID, 1, 1);
+	// Finalize
+	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	Asset::finalize(engine);
 }
 
 size_t Asset_Primitive::getSize()
 {
-	std::shared_lock<std::shared_mutex> guard(m_mutex);
-	return m_dataVertex.size();
+	return m_data.size();
 }

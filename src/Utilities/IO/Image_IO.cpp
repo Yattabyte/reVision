@@ -6,7 +6,7 @@
 GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size) 
 {
 	GLubyte * newPixels = new GLubyte[size * 4];
-	for (int x = 0; x < size; ++x) {
+	for (unsigned int x = 0; x < size; ++x) {
 		newPixels[x * 4 + 0] = pixels[x * 4 + 2];
 		newPixels[x * 4 + 1] = pixels[x * 4 + 1];
 		newPixels[x * 4 + 2] = pixels[x * 4 + 0];
@@ -15,24 +15,26 @@ GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size)
 	return newPixels;
 }
 
-FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & fulldirectory)
+FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relativePath)
 {
-	const char * file = fulldirectory.c_str();
+	std::string fullPath(Engine::Get_Current_Dir() + relativePath);
+	const char * file = fullPath.c_str();
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	FIBITMAP * bitmap = nullptr;
 
+	auto & messageManager = engine->getMessageManager();
 	if (format == -1)
-		engine->reportError(MessageManager::FILE_MISSING, fulldirectory);
+		messageManager.error(MessageManager::FILE_MISSING, relativePath);
 	else if (format == FIF_UNKNOWN) {
-		engine->reportError(MessageManager::FILE_CORRUPT, fulldirectory);
+		messageManager.error(MessageManager::FILE_CORRUPT, relativePath);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (FreeImage_FIFSupportsReading(format))
-			engine->reportMessage("Successfully resolved the texture file's format!");
+			messageManager.statement("Successfully resolved the texture file's format!");
 		else
-			engine->reportMessage("Failure, could not recover the file!");
+			messageManager.statement("Failure, could not recover the file!");
 	}
 	else if (format == FIF_GIF)
-		engine->reportMessage("GIF loading unsupported!");
+		messageManager.statement("GIF loading unsupported!");
 	else {
 		bitmap = FreeImage_Load(format, file);
 		if (FreeImage_GetBPP(bitmap) != 32) {
@@ -44,12 +46,26 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & fulldire
 	return bitmap;
 }
 
-bool Image_IO::Import_Image(Engine * engine, const std::string & fulldirectory, Image_Data & data_container)
+void Image_IO::Initialize()
 {
-	FIBITMAP * bitmap = Import_Bitmap(engine, fulldirectory);
+	FreeImage_Initialise();
+}
+
+void Image_IO::Deinitialize()
+{
+	FreeImage_DeInitialise();
+}
+
+bool Image_IO::Import_Image(Engine * engine, const std::string & relativePath, Image_Data & data_container, const bool & linear)
+{
+	const glm::ivec2 containerSize = data_container.dimensions;
+	FIBITMAP * bitmap = Import_Bitmap(engine, relativePath);
 	if (!bitmap) return false;
 	Load_Pixel_Data(bitmap, data_container);
 	FreeImage_Unload(bitmap);
+	// If the image container already has a determined size, resize this new image to fit it (if it is a different size)
+	if (containerSize != glm::ivec2(0) && containerSize != data_container.dimensions)
+		Resize_Image(containerSize, data_container, linear);
 	return true;
 }
 
@@ -75,7 +91,7 @@ void Image_IO::Load_Pixel_Data(FIBITMAP * bitmap, Image_Data & data_container)
 	data_container.bpp = FreeImage_GetBPP(bitmap);
 }
 
-void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData)
+void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData, const bool & linear)
 {
 	// Make sure new sizes AREN'T zero
 	if (newSize.x && newSize.y && importedData.dimensions.x && importedData.dimensions.y) 
@@ -88,7 +104,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData)
 			delete BGRA_Pixels;
 		
 			// Resize the bitmap
-			FIBITMAP * newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y);
+			FIBITMAP * newBitmap = FreeImage_Rescale(bitmap, newSize.x, newSize.y, linear ? FREE_IMAGE_FILTER::FILTER_CATMULLROM : FREE_IMAGE_FILTER::FILTER_BOX);
 			Load_Pixel_Data(newBitmap, importedData);
 
 			// Free Resources	

@@ -1,16 +1,9 @@
 #include "Assets\Asset.h"
+#include "Engine.h"
 #include <algorithm>
 
 
-Asset::~Asset()
-{
-}
-
-Asset::Asset(const std::string & filename)
-{	
-	m_finalized = false;
-	m_filename = filename;
-}
+Asset::Asset(const std::string & filename) : m_filename(filename) {}
 
 std::string Asset::getFileName() const
 {
@@ -22,21 +15,38 @@ void Asset::setFileName(const std::string & fn)
 	m_filename = fn;
 }
 
-void Asset::removeCallback(void * pointerID) 
-{
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-	if (m_callbacks.find(pointerID) != m_callbacks.end())
-		m_callbacks.erase(m_callbacks.find(pointerID));	
-}
-
 bool Asset::existsYet() const
 { 
-	std::shared_lock<std::shared_mutex> read_guard(m_mutex);
-	return m_finalized;
+	// Exit early if this points to nothing
+	if (!this)
+		return false;
+
+	// Check if we're finalized
+	if (!(m_finalized.load()))
+		return false;
+	
+	// Check if we have a fence
+	if (m_fence) {
+		// Check if the fence has passed
+		const GLenum state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+		if (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED) 
+			return false;		
+		// Delete fence so we can skip these 2 branches next time
+		glDeleteSync(m_fence);
+		m_fence = 0;
+	}
+	return true;	
 }
 
-void Asset::finalize()
+void Asset::finalize(Engine * engine)
 {
-	std::unique_lock<std::shared_mutex> write_guard(m_mutex);
-	m_finalized = true;	
+	m_finalized = true;
+
+	// Copy callbacks in case any get added while we're busy
+	AssetManager & assetManager = engine->getAssetManager();
+	const auto copyCallbacks = m_callbacks;
+	m_callbacks.clear();
+	
+	for each (const auto qwe in copyCallbacks)
+		assetManager.submitNotifyee(qwe);
 }

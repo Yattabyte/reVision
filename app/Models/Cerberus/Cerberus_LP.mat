@@ -1,0 +1,8 @@
+PBR
+{
+	albedo string "Cerberus_diffuse.tga"
+	normal string "Cerberus_N.tga"
+	metalness string "Cerberus_M.tga"
+	roughness string "Cerberus_R.tga"
+	occlusion string "Cerberus_AO.tga"
+}

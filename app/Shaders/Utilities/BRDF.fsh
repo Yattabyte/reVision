@@ -1,4 +1,6 @@
+/* BRDF texture creation shader. */
 #version 460
+#pragma optionNV(unroll all)
 #define M_PI 3.1415926535897932384626433832795
 
 layout (location = 0) out vec3 fragColor;  
@@ -44,7 +46,7 @@ vec2 IntegrateBRDF( in float NoV, in float Roughness )
 	float B 				= 0;
 	const uint NumSamples	= 1024;
 	
-	for( uint i = 0; i < NumSamples; ++i ) {
+	for ( uint i = 0; i < NumSamples; ++i ) {
 	
 		vec2 Xi 			= Hammersley( i, NumSamples );
 		vec3 H 				= ImportanceSampleGGX( Xi, Roughness, N );
@@ -53,7 +55,7 @@ vec2 IntegrateBRDF( in float NoV, in float Roughness )
 		float NoH 			= max( H.z, 0.0f );
 		float VoH 			= max( dot( V, H ), 0.0f );
 		
-		if( NoL > 0.0f ) {
+		if ( NoL > 0.0f ) {
 			float G 		= Geometry_Schlick_Beckmann( Roughness, NoL, NoV );
 			float G_Vis 	= (G * VoH) / (NoH * NoV);
 			float Fc 		= pow( 1.0f - VoH, 5.0f );

@@ -1,0 +1,17 @@
+# Blender MTL File: 'ref_test.blend'
+# Material Count: 1
+
+newmtl Material
+Ns 96.078431
+Ka 1.000000 1.000000 1.000000
+Kd 0.640000 0.640000 0.640000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd chest_albedo.png
+map_Bump chest_normal.png
+map_Ks chest_metalness.png
+map_Ns chest_roughness.png
+map_Ka chest_ao.png

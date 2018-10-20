@@ -50,7 +50,7 @@ To avoid duplicating the engine assets for multiple builds (debug, release, x32/
 ## Versioning
 
 We version our project in the following format: (Major #).(Minor #).(Patch Letter)
-For example, Version: 0.171.D, where the major version is 0, minor version is 171, and the patch version is D.
+For example, Version: 1.2.C, where the major version is 1, minor version is 2, and the patch version is C.
 
 ## License
 

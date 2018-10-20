@@ -7,63 +7,63 @@
 #include <deque>
 
 
-/**
- * Provides some message reporting functionality for the engine.
- * Holds a log of text in case they need to be accessed by any external UI
- **/
-class MessageManager
-{
+/** Provides some message reporting functionality for the engine..
+Holds a log of text in case they need to be accessed by any external UI */
+class MessageManager {
 public:
 	// (de)Constructors
 	/** Destroy the message manager. */
-	~MessageManager();
+	~MessageManager() = default;
 	/** Construct the message manager*/
-	MessageManager();
+	MessageManager() = default;
 
 
 	// Public Methods
 	/** Prints a raw std::string into the message log.
-	 * @param	input	std::string message to print */
+	@param	input				std::string message to print */
 	void statement(const std::string & input);
-
 	/** Prints a formatted message based around the supplied error type.
-	 * @param	error_number		the error type to format this error message around
-	 * @param	input				the error message to be formatted
-	 * @param	additional_input	an optional additional message to supplement the original */
+	@param	error_number		the error type to format this error message around
+	@param	input				the error message to be formatted
+	@param	additional_input	an optional additional message to supplement the original */
 	void error(const int & error_number, const std::string & input, const std::string & additional_input = "");
 
 
 	// Public Attributes
 	// Enumerations used for reporting error types
-	static const enum Error_Enum
-	{
+	const enum Error_Enum {
 		FILE_MISSING,
-		DIRECTORY_MISSING,
 		FILE_CORRUPT,
+
+		ASSET_FAILED,
 
 		FBO_INCOMPLETE,
 		SHADER_INCOMPLETE,
 		PROGRAM_INCOMPLETE,
+		TEXTURE_INCOMPLETE,
+		MATERIAL_INCOMPLETE,
 
 		GLFW_ERROR,
 		OPENGL_ERROR,
-		OTHER_ERROR,
+		MANUAL_ERROR,
 		ERROR_COUNT,
 	};
 	// String-ified versions of the previous error enumerations
-	const std::string Error_String[ERROR_COUNT] =
-	{
-		"Error (" + std::to_string(FILE_MISSING) + "): The file % does not exist! ",
-		"Error (" + std::to_string(DIRECTORY_MISSING) + "): The directory % does not exist! ",
-		"Error (" + std::to_string(FILE_CORRUPT) + "): The file % is corrupt! ",
+	const std::string Error_String[ERROR_COUNT] = {
+		"The file \"%\" does not exist! ",
+		"The file \"%\" is corrupt! ",
+				
+		"\"%\" initialization failure, attempting to use fallback asset...",
 
-		"Error (" + std::to_string(FBO_INCOMPLETE) + "): A Framebuffer in the % is incomplete. ",
-		"Error (" + std::to_string(SHADER_INCOMPLETE) + "): The Shader file % could not compile. ",
-		"Error (" + std::to_string(PROGRAM_INCOMPLETE) + "): The Shader program % could not compile. ",
-
-		"Error (" + std::to_string(GLFW_ERROR) + "): GLFW Error: % ",
-		"Error (" + std::to_string(OPENGL_ERROR) + "): OpenGL Error: % ",
-		"Error (" + std::to_string(OTHER_ERROR) + "): % ",
+		"A Framebuffer in the \"%\" is incomplete. ",
+		"The Shader file \"%\" could not compile. ",
+		"The Shader program \"%\" could not compile. ",
+		"The Texture object \"%\" is incomplete. ",
+		"The Material object \"%\" is incomplete. ",
+		
+		"GLFW Error: % ",
+		"OpenGL Error: % ",
+		"% "
 	};
 
 
@@ -74,8 +74,8 @@ private:
 
 
 	// Private Attributes
-	std::shared_mutex message_log_mutex;
-	std::deque<std::string> message_log;
+	std::shared_mutex m_mutex;
+	std::deque<std::string> m_messageLog;
 };
 
 #endif // MESSAGEMANAGER_H

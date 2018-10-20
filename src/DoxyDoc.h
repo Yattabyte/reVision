@@ -33,14 +33,16 @@
  *	Second, fill in the main directories for all the required external libraries, like assimp, bullet, etc.\n
  *	Third, hit the configure button and choose the compiler you want to generate the solution for. Then hit the generate button after.\n
  *
- *	- Step 3: Build CMake\n		
+ *	- Step 3: Build CMake\n
+ *
+ *	Here, we want to configure it for our project.\n
  *	The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.
  *	To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the 'app' folder. If the executable doesn't have it set already, change it to start in the app folder.
  *
  *	\section versioning_sec	Versioning
  *
  *	We version our project in the following format: (Major #).(Minor #).(Patch Letter)
- *	For example, Version: 0.171.D, where the major version is 0, minor version is 171, and the patch version is D.
+ *	For example, Version: 1.2.C, where the major version is 1, minor version is 2, and the patch version is C.
 
  *	\section license_sec License
  *
@@ -55,13 +57,20 @@
 
 /*! \page assets Assets
  * \section assets_sec Engine Assets
- * This section contains all of the asset types the engine currently supports.\n
+ * Engine assets are an encapsulation of a file or set of related files that are found within the application subdirectory.\n
+ * Different file types need to be handled in different ways.
+ * Assets are designed to be ultra-efficient.\n
+ * We sort and store them within an asset manager, and we share them whenever possible to avoid redundant disk reads.\n
+ * Lastly, all assets supported thusfar support multithreading, as to avoid locking the main thread.\n
+ * Here's a list of all asset types the engine currently supports.\n
  *
- *	- Asset
  *	- Asset_Collider
  *	- Asset_Config
  *	- Asset_Cubemap
+ *	- Asset_Image
+ *	- Asset_Level
  *	- Asset_Material
+ *	- Asset_Mesh
  *	- Asset_Model
  *	- Asset_Primitive
  *	- Asset_Shader
@@ -69,50 +78,40 @@
  *	- Asset_Shader_Pkg
  *	- Asset_Texture
  *
- * \section New Assets
- * All assets have the following 4 static functions.\n
- * These functions require at least the same 2 parameters, a pointer to the Engine object, and a reference to the shared pointer holding the asset.\n
- * The asset's create function must be mapped in the asset manager's constructor.\n
- *
- *	- CreateDefault(...)	
- *		- Used when file missing/corrupt.
- *	- Create(...)	
- *		- Mapped in the asset manager (call the asset manager to create).
- *	- Initialize(...)	
- *		- Used to load asset from disk and any other processing that can occur on a separate thread.
- *	- Finalize(...)	
- *		- Any final processing that must occur on the main thread.\n
+ * \section newAssets New Assets
+ * All assets have provide the following functionality - a static Create(...) function, and an overriden virtual initialize(...) function:
+ * 
+ *	- Shared_Asset_Shader	Asset_Shader::Create(	Engine * engine, const std::string & filename, const bool & threaded	)
+ *	- void Asset_Shader::initialize(	Engine * engine, const std::string & relativePath	)
  */
 
- /*! \page entities Entities
- * \section ent_sec	Engine Entities
- * This section contains entities and their components.\n
- * There exists only 1 entity class, as all complex entities can be created by adding unique components to them.\n
- * Entities are created by entityCreator classes, controlled by the EntityFactory.\n
- * 
- * Entities implemented so far include:
- *		- Entity (base class)
- *		- SpotLight
- *		- PointLight
- *		- Sun
- *		- Prop
-		- Prop_Static
-		- Reflector
+ /*! \page ecs ECS
+ * \section ent_sec	Engine ECS
+ * The engine currently supports the following components:
+ *		- BasicPlayer_Component
+ *		- Collider_Component
+ *		- LightDirectional_Component
+ *		- LightDirectionalShadow_Component
+ *		- LightPoint_Component
+ *		- LightPointShadow_Component
+ *		- LightSpot_Component
+ *		- LightSpotShadow_Component
+ *		- Prop_Component
+ *		- Reflector_Component
+ *		- Skeleton_Component
+ *		- Transform_Component
  *		<br>
  *
- * Components implemented so far include:
- *		- Component (base class)
- *		- Geometry_Component (interface)
- *		- Lighting_Component (interface)
- *		- Anim_Model_Component
- *		- Static_Model_Component
- *		- Light_Directional_Component
- *		- Light_Directional_Cheap_Component
- *		- Light_Point_Component
- *		- Light_Point_Cheap_Component
- *		- Light_Spot_Component
- *		- Light_Spot_Cheap_Component
- *		- Reflector_Component
+ * These components interact through many different systems:
+ *		- LightDirectional_System (rendering)
+ *		- LightPoint_System (rendering)
+ *		- LightSpot_System (rendering)
+ *		- PropRendering_System (rendering)
+ *		- PropShadowing_System (rendering)
+ *		- Reflector_System  (rendering)
+ *		- PlayerMovement_System (update the player transform)
+ *		- SkeletonAnimation_System (update bone transforms when animating)
+ *		- TransformSync_System (update transform information for every other component type)
  */
 
  /*! \page managers Managers
@@ -120,7 +119,7 @@
  * This section contains all the managers the Engine owns.\n
  *
  *	- Asset_Manager
- *		- Used to create assets (specialized representations of files from disk).
+ *		- Used to create, find, and share assets (specialized representations of files from disk).
  *	- Material_Manager
  *		- Holds PBR materials, exposing them to shaders, sharing them with multiple models/surfaces.
  *	- Message_Manager
@@ -129,31 +128,17 @@
  *		- Creates/destroys models, exposing them to shaders.
  */
 
- /*! \page systems Systems
- * \section	sys_sec	Engine Systems
- * This section details systems implemented thus far for the engine.\n
- * The System_Interface details 3 virtual methods all systems inherit: 
- *		- A safe (post-context creation) initialization function
- *		- A main-loop update function (with delta-time argument)
- *		- A secondary threaded update function (with delta-time argument)
- *		<br>
- *		
- *	***Why 2 update functions?***\n
- *	The main update function is intended to be used all the essentials, such as rendering and physics.\n
- *	These things are time sensitive, so if anything that needs frequent updating can be offloaded to a second thread, then they can be implemented in the threaded function.\n
- *  For example, visibility calculations are currently offloaded entirely to the second thread.
- *  
- *  The engine currently requires the following base systems:
- *		- System_Graphics
- *		- System_Input
- *		- System_Logic
- *		- System_PerfCounter (temporary)
- *		- System_Preferences
- *		- System_World
- *		<br>
- *	
- *	It is planned to allow swapping out a system of a given category with a different one that implements that system's interface, such as a specialized graphics or world class.
- */
+ /*! \page modules Modules
+  * \section mdul_sec Engine Modules
+  * This section contains all the modules currently implemented.\n
+  *
+  *	- Graphics_Module
+  *		- Used to render a physically based 3D scene, renders components using systems and effects.
+  *	- Physics_Module
+  *		- Basic physics implementation, handles collision events and updates components.
+  *	- World_Module
+  *		- Handles loading the world and determining when the world has changed.
+  */
 
  /*! \page utilities Utilities
  * \section util_sec Engine Utilities
@@ -166,17 +151,21 @@
  *		- IO Classes:
  *			- Image_IO
  *				- Image Importing using FreeImage.
- *			- Model_IO
- *				- Model Importing ussing ASSIMP.
+ *			- Level_IO
+ *				- Level Importing
+ *			- Mesh_IO
+ *				- Model Importing using ASSIMP.
  *			- Text_IO
  *				- Plaintext importing.
  *		- OpenGL Helper Classes:
  *			- DynamicBuffer
  *				- Buffer Object Encapsulation, but can change in size.
- *			- FrameBuffer
- *				- Frame Buffer Object Encapsulation.
+ *			- FBO_Base
+ *				- Frame Buffer Object interface.
  *			- StaticBuffer
  *				- Buffer Object Encapsulation, static in size.
+ *			- StaticMappedBuffer
+ *				- Buffer Object Encapsulation, static in size, mapped to local memory
  *			- VectorBuffer
  *				- Like the std::vector class, encapsulates a dynamic buffer in a templated fashion, allowing adding/removing of elements as the way to interact with.
  */

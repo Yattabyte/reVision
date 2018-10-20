@@ -1,0 +1,16 @@
+PBR
+{
+	albedo string "fire_hydrant_Base_Color_red.png"
+	normal string "fire_hydrant_Normal_OpenGL.png"
+	metalness string "fire_hydrant_Metallic.png"
+	roughness string "fire_hydrant_Roughness.png"
+	occlusion string "fire_hydrant_Mixed_AO.png"
+}
+PBR
+{
+	albedo string "fire_hydrant_Base_Color.png"
+	normal string "fire_hydrant_Normal_OpenGL.png"
+	metalness string "fire_hydrant_Metallic.png"
+	roughness string "fire_hydrant_Roughness.png"
+	occlusion string "fire_hydrant_Mixed_AO.png"
+}

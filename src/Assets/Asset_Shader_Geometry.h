@@ -12,49 +12,37 @@
 
 class Engine;
 class Asset_Shader_Geometry;
-typedef std::shared_ptr<Asset_Shader_Geometry> Shared_Asset_Shader_Geometry;
+using Shared_Asset_Shader_Geometry = std::shared_ptr<Asset_Shader_Geometry>;
 
-/**
- * An encapsulation of an OpenGL shader program.\n
- * Supports vertex, fragment, and geometry shaders.\n
- * Also provides support for explicitly setting uniform values for a given attribute location.
- **/
+/** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Asset_Shader. */
 class Asset_Shader_Geometry : public Asset_Shader
 {
 public:	
 	/** Destroy the Shader. */
 	~Asset_Shader_Geometry();
-
-
-	// Public Methods
-	/** Creates a default asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container */
-	static void CreateDefault(Engine * engine, Shared_Asset_Shader_Geometry & userAsset);
-	/** Begins the creation process for this asset.
-	 * @param	engine			the engine being used
-	 * @param	userAsset		the desired asset container
-	 * @param	filename		the filename to use
-	 * @param	threaded		create in a separate thread */
-	static void Create(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & filename, const bool & threaded = true);
-
-	
-	// Public Attributes
-	GLuint m_glGeometryID; // OpenGL ID's
-	std::string m_geometryText; // Text Data
-
-
-private:
-	// Private Constructors
 	/** Construct the Shader. */
 	Asset_Shader_Geometry(const std::string & filename);
 
 
+	// Public Methods
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	static Shared_Asset_Shader_Geometry Create(Engine * engine, const std::string & filename, const bool & threaded = true);
+
+	
+	// Public Attributes
+	GLuint m_glGeometryID = 0; // OpenGL ID's
+	std::string m_geometryText = ""; // Text Data
+
+
+private:
 	// Private Methods
-	/** Initializes the asset. */
-	static void Initialize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset, const std::string & fullDirectory);
-	/** Finalizes the asset. */
-	static void Finalize(Engine * engine, Shared_Asset_Shader_Geometry & userAsset);
+	// Interface Implementation
+	void initializeDefault(Engine * engine);
+	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 
 
 	// Private Attributes

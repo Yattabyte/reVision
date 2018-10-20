@@ -1,0 +1,8 @@
+PBR
+{
+	albedo string "albedo3.png"
+	normal string "normal.png"
+	metalness string "black.png"
+	roughness string "black.png"
+	occlusion string "white.png"
+}

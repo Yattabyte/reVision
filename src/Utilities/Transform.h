@@ -10,18 +10,17 @@
 #include "glm\gtc\matrix_access.hpp"
 
 
-/**
- * A 3D transformation object. 
- * Takes in position, orientation, and scaling attributes, and calculates a transformation matrix.
- **/
-struct Transform 
-{
+/** A 3D transformation object. 
+Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. */
+struct Transform {
 	// (de)Constructors
+	/** Default Constructor. */
+	Transform() = default;
 	/** Constructs a transformation object with any of the supplied parameters.
-	 * @param position		the desired position
-	 * @param orientation	the desired orientation
-	 * @param scale			the desired scale */
-	Transform(const glm::vec3 &position = glm::vec3(0.0f), const glm::quat &orientation = glm::quat(1, 0, 0, 0), const glm::vec3 &scale = glm::vec3(1.0f)) {
+	@param position			the desired position
+	@param orientation		the desired orientation
+	@param scale			the desired scale */
+	Transform(const glm::vec3 & position, const glm::quat & orientation, const glm::vec3 & scale) {
 		m_position = position;
 		m_orientation = orientation;
 		m_scale = scale;
@@ -39,22 +38,28 @@ struct Transform
 
 	// Public Methods
 	/** Recalculates the transformation matrix (and inverse) using this transformations current data. */
-	void update() {
+	inline void update() {
 		m_modelMatrix = glm::translate( glm::mat4(1.0f), m_position ) * 
 						glm::mat4_cast( m_orientation ) *
 						glm::scale( glm::mat4(1.0f), m_scale );
 		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
 	}
+	inline bool operator==(const Transform & other) {
+		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
+	}
+	inline bool operator!=(const Transform & other) {
+		return !((*this)==other);
+	}
 
 
 	// Public Attributes
 	// Input Variables
-	glm::vec3 m_position;
-	glm::quat m_orientation;
-	glm::vec3 m_scale;
+	glm::vec3 m_position = glm::vec3(0.0f);
+	glm::quat m_orientation = glm::quat(1, 0, 0, 0);
+	glm::vec3 m_scale = glm::vec3(1.0f);
 	// Derived Variables
-	glm::mat4 m_modelMatrix;
-	glm::mat4 m_inverseModelMatrix;
+	glm::mat4 m_modelMatrix = glm::mat4(1.0f);
+	glm::mat4 m_inverseModelMatrix = glm::mat4(1.0f);
 };
 
 #endif // TRANSFORMATION_H
