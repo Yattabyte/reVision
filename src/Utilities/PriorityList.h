@@ -38,18 +38,18 @@ public:
 
 	// Public Methods
 	/** Clear the queue. */
-	void clear() {
+	inline void clear() {
 		m_list.clear();
 	}
 	/** Get the size of the list.
 	@return			the size of the list */
-	const size_t size() const {
+	inline const size_t size() const {
 		return m_list.size();
 	}
 	/** Insert a new element into the lsit into a correct relative position.
 	@param	key		the key used to sort this element
 	@param	value	the value paired with the key to be inserted */
-	void insert(const T_key & key, const T_elmt & value) {
+	inline void insert(const T_key & key, const T_elmt & value) {
 		for (auto walk = m_list.begin(); walk != m_list.end(); ++walk) {
 			if (m_comparator(key, (*walk).m_key)) {
 				m_list.insert(walk, Element(key, value)); 
@@ -61,7 +61,7 @@ public:
 	}
 	/** Create a final list of elements only.
 	@return			a sorted list of elements */
-	const std::vector<T_elmt> toList() const {
+	inline const std::vector<T_elmt> toList() const {
 		std::vector<T_elmt> outList;
 		outList.reserve(m_list.size());
 		for each (const auto &element in m_list)

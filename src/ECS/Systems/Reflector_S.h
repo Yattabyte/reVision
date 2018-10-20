@@ -9,6 +9,7 @@
 #include "Utilities\PriorityList.h"
 #include "Engine.h"
 
+
 /** A struct that holds rendering data that can change frame-to-frame. */
 struct Reflector_RenderState {
 	StaticBuffer m_indirectCube = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);
@@ -58,6 +59,7 @@ public:
 
 private:
 	// Private methods
+	/** Converts a priority queue into an stl vector.*/
 	const std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest) const {
 		PriorityList<float, Reflector_Component*, std::greater<float>> m_closest(2);
 		std::vector<Reflector_Component*> outList;

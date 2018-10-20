@@ -69,15 +69,15 @@ public:
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
 			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
 			if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-				m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Skybox Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+				m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Skybox Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 			if (!glIsTexture(m_cubemapMipped))
-				m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Skybox Texture");
+				m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Skybox Texture");
 		});
 	}
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
@@ -114,7 +114,7 @@ public:
 
 private:
 	// Private Methods
-	void convoluteSky() {
+	inline void convoluteSky() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);

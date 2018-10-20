@@ -59,7 +59,7 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
 			std::vector<GLchar> infoLog(infoLogLength);
 			glGetShaderInfoLog(ID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
+			engine->getMessageManager().error(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 }
@@ -102,7 +102,7 @@ inline void link_program(Engine * engine, Asset_Shader_Geometry & userAsset)
 		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		std::vector<GLchar> infoLog(infoLogLength);
 		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
+		engine->getMessageManager().error(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}
 	glValidateProgram(userAsset.m_glProgramID);
 
@@ -149,7 +149,7 @@ void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & rela
 	const bool found_geometry = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_GEOMETRY, m_geometryText);
 
 	if (!(found_vertex && found_fragement)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader_Geometry");
+		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Shader_Geometry");
 		initializeDefault(engine);
 	}
 

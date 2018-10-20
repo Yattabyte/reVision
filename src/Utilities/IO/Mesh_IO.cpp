@@ -63,7 +63,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->reportError(MessageManager::FILE_MISSING, relativePath);
+		engine->getMessageManager().error(MessageManager::FILE_MISSING, relativePath);
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 
 	// Check if scene imported successfully
 	if (!scene) {
-		engine->reportError(MessageManager::FILE_CORRUPT, relativePath);
+		engine->getMessageManager().error(MessageManager::FILE_CORRUPT, relativePath);
 		return false;
 	}
 
@@ -247,8 +247,6 @@ const std::string Mesh_IO::Get_Version()
 {
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
-
-VertexBoneData::~VertexBoneData() {}
 
 VertexBoneData::VertexBoneData() 
 {

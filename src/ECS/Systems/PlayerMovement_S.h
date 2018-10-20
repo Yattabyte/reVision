@@ -10,6 +10,7 @@
 #include "ECS\Components\Transform_C.h"
 #include "ECS\Components\BasicPlayer_C.h"
 
+
 /** A system responsible for updating player components. */
 class PlayerMovement_System : public BaseECSSystem {
 public: 
@@ -25,7 +26,6 @@ public:
 	// Interface Implementation
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		auto & graphicsModule = m_engine->getGraphicsModule();
-		graphicsModule.m_defaultCamera->wait();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
 			BasicPlayer_Component * playerComponent = (BasicPlayer_Component*)componentParam[1];
@@ -68,8 +68,6 @@ public:
 			cameraBuffer->vMatrix = vMatrix;
 			cameraBuffer->vMatrix_Inverse = glm::inverse(vMatrix);
 		}
-		// Finished changes to buffer
-		graphicsModule.m_defaultCamera->lock();
 	};
 
 

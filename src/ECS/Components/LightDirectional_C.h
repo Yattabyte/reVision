@@ -8,6 +8,9 @@
 #include "glm\glm.hpp"
 
 
+/////////////////////////
+///-DIRECTIONAL LIGHT-///
+/////////////////////////
 /** OpenGL buffer for directional lights.
 Formatted to adhere to glsl specifications. */
 struct LightDirectional_Buffer {
@@ -21,8 +24,12 @@ struct LightDirectional_Component : public ECSComponent<LightDirectional_Compone
 };
 /** A constructor to aid in creation. */
 struct LightDirectional_Constructor : ECSComponentConstructor<LightDirectional_Component> {
+	// Public (de)Constructors
 	LightDirectional_Constructor(VectorBuffer<LightDirectional_Buffer> * const elementBuffer) : m_elementBuffer(elementBuffer) {};
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+
+
+	// Interface Implementation
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto color = castAny(parameters[0], glm::vec3(1.0f));
 		auto intensity = castAny(parameters[1], 1.0f);
 		auto * component = new LightDirectional_Component();
@@ -31,9 +38,16 @@ struct LightDirectional_Constructor : ECSComponentConstructor<LightDirectional_C
 		component->m_data->data->LightIntensity = intensity;			
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	VectorBuffer<LightDirectional_Buffer> * m_elementBuffer = nullptr;
 };
 
+//////////////////////////
+///-DIRECTIONAL SHADOW-///
+//////////////////////////
 /** OpenGL buffer for directional light shadows.
 Formatted to adhere to glsl specifications. */
 struct LightDirectionalShadow_Buffer {
@@ -57,9 +71,13 @@ struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalSh
 };
 /** A constructor to aid in creation. */
 struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirectionalShadow_Component> {
+	// Public (de)Constructors
 	LightDirectionalShadow_Constructor(VectorBuffer<LightDirectionalShadow_Buffer> * const elementBuffer, FBO_Shadow_Directional * const shadowFBO) 
 		: m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+
+
+	// Interface Implementation
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new LightDirectionalShadow_Component();
 		component->m_data = m_elementBuffer->newElement();		
 		component->m_data->data->Shadow_Spot = m_shadowCount;
@@ -75,6 +93,10 @@ struct LightDirectionalShadow_Constructor : ECSComponentConstructor<LightDirecti
 		}
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	GLuint m_shadowCount = 0;
 	VectorBuffer<LightDirectionalShadow_Buffer> * m_elementBuffer = nullptr;
 	FBO_Shadow_Directional * m_shadowFBO = nullptr;

@@ -12,7 +12,6 @@ struct Skeleton_Buffer {
 #define NUM_MAX_BONES 100
 	glm::mat4 bones[NUM_MAX_BONES];
 };
-
 /** A skeleton component is used in combination with prop components to allow for skeletal animation. 
 @note		is useless by itself. */
 struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
@@ -25,10 +24,13 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 };
 /** A constructor to aid in creation. */
 struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
+	// Public (de)Constructors
 	Skeleton_Constructor(Engine * engine, VectorBuffer<Skeleton_Buffer> * elementBuffer)
 		: m_engine(engine), m_elementBuffer(elementBuffer) {};
+
+
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto directory = castAny(parameters[0], std::string(""));
 		auto animation = castAny(parameters[1], 0);
 		auto * component = new Skeleton_Component();
@@ -39,6 +41,10 @@ struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
 			component->m_data->data->bones[x] = glm::mat4(1.0f);
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	Engine * m_engine = nullptr;
 	VectorBuffer<Skeleton_Buffer> * m_elementBuffer = nullptr;
 };

@@ -43,13 +43,7 @@ public:
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
 	static Shared_Asset_Image Create(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
-	/** Fill the image with the desired colors, in accordance with the fill policy. 
-	@param	primaryColor	the primary color to use
-	@param	secondaryColor	the secondary color to use */
-	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255));
-	/** Resize the image.
-	@param	newSize			the new size to use. */
-	void resize(const glm::ivec2 newSize);
+
 	
 	// Public Attributes
 	glm::ivec2 m_size = glm::ivec2(0);
@@ -62,6 +56,15 @@ public:
 
 private:
 	// Private Methods
+	/** Fill the image with the desired colors, in accordance with the fill policy.
+	@param	primaryColor	the primary color to use
+	@param	secondaryColor	the secondary color to use */
+	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255));
+	/** Resize the image.
+	@param	newSize			the new size to use. */
+	void resize(const glm::ivec2 newSize);
+
+
 	// Interface Implementation
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 

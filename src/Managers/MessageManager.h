@@ -74,8 +74,8 @@ private:
 
 
 	// Private Attributes
-	std::shared_mutex message_log_mutex;
-	std::deque<std::string> message_log;
+	std::shared_mutex m_mutex;
+	std::deque<std::string> m_messageLog;
 };
 
 #endif // MESSAGEMANAGER_H

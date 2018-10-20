@@ -8,6 +8,9 @@
 #include "glm\glm.hpp"
 
 
+//////////////////
+///-SPOT LIGHT-///
+//////////////////
 /** OpenGL buffer for spot lights.
 Formatted to adhere to glsl specifications. */
 struct LightSpot_Buffer {
@@ -26,10 +29,13 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 };
 /** A constructor to aid in creation. */
 struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
+	// Public (de)Constructors
 	LightSpot_Constructor(VectorBuffer<LightSpot_Buffer> * elementBuffer)
 		: m_elementBuffer(elementBuffer) {};
+
+
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto color = castAny(parameters[0], glm::vec3(1.0f));
 		auto intensity = castAny(parameters[1], 1.0f);
 		auto radius = castAny(parameters[2], 1.0f);
@@ -43,9 +49,16 @@ struct LightSpot_Constructor : ECSComponentConstructor<LightSpot_Component> {
 		component->m_radius = radius;	
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	VectorBuffer<LightSpot_Buffer> * m_elementBuffer = nullptr;
 };
 
+///////////////////
+///-SPOT SHADOW-///
+///////////////////
 /** OpenGL buffer for spot light shadows.
 Formatted to adhere to glsl specifications. */
 struct LightSpotShadow_Buffer {
@@ -66,10 +79,13 @@ struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component
 };
 /** A constructor to aid in creation. */
 struct LightSpotShadow_Constructor : ECSComponentConstructor<LightSpotShadow_Component> {
+	// Public (de)Constructors
 	LightSpotShadow_Constructor(VectorBuffer<LightSpotShadow_Buffer> * elementBuffer, FBO_Shadow_Spot * shadowFBO)
 		: m_elementBuffer(elementBuffer), m_shadowFBO(shadowFBO) {};
+
+
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new LightSpotShadow_Component();
 		component->m_radius = castAny(parameters[0], 1.0f);
 		component->m_cutoff = castAny(parameters[1], 45.0f);
@@ -82,6 +98,10 @@ struct LightSpotShadow_Constructor : ECSComponentConstructor<LightSpotShadow_Com
 		m_shadowFBO->resize(m_shadowFBO->m_size, m_shadowCount);		
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	GLuint m_shadowCount = 0;
 	VectorBuffer<LightSpotShadow_Buffer> * m_elementBuffer = nullptr;
 	FBO_Shadow_Spot * m_shadowFBO = nullptr;

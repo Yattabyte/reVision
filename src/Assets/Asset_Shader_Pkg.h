@@ -32,7 +32,9 @@ public:
 	static Shared_Asset_Shader_Pkg Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Retrieves this package's content as a std::string.
 	* @return	package contents */
-	std::string getPackageText() const;
+	inline const std::string getPackageText() const {
+		return m_packageText;
+	}
 
 	
 	// Public Attributes

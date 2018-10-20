@@ -14,7 +14,7 @@ public:
 
 
 	/** Initialize the module. */
-	virtual void initialize() {};
+	inline virtual void initialize() {};
 
 
 protected:

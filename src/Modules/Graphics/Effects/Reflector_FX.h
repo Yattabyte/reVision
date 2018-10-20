@@ -64,12 +64,12 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Reflector Environment map FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Reflector Environment map FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 
 	// Interface Implementation	
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
 			return;
@@ -89,7 +89,7 @@ public:
 protected:
 	// Protected Methods
 	/** Render all the geometry for each reflector */
-	void renderScene(const float & deltaTime) {
+	inline void renderScene(const float & deltaTime) {
 		auto & preferences = m_engine->getPreferenceState();
 		auto & graphics = m_engine->getGraphicsModule();
 		bool didAnything = false, update = m_renderState->m_outOfDate;
@@ -157,7 +157,7 @@ protected:
 		}
 	}
 	/** Render all the lights */
-	void renderReflectors(const float & deltaTime) {
+	inline void renderReflectors(const float & deltaTime) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);

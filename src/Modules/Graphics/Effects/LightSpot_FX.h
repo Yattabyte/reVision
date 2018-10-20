@@ -66,12 +66,12 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Spot Shadowmap FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Spot Shadowmap FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	}
 
 
 	// Interface Implementation	
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
@@ -96,7 +96,7 @@ public:
 protected:
 	// Protected Methods
 	/** Render all the geometry from each light. */
-	void renderShadows(const float & deltaTime) {
+	inline void renderShadows(const float & deltaTime) {
 		ECS & ecs = m_engine->getECS();
 		glViewport(0, 0, m_renderState->m_shadowSize.x, m_renderState->m_shadowSize.y);
 		m_shader_Shadow->bind();
@@ -127,7 +127,7 @@ protected:
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	}
 	/** Render all the lights. */
-	void renderLights(const float & deltaTime) {
+	inline void renderLights(const float & deltaTime) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);

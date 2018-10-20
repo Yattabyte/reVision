@@ -1,7 +1,6 @@
 #pragma once
 #ifndef MATERIALMANAGER_H
 #define MATERIALMANAGER_H
-#define MAX_NUM_MAPPED_TEXTURES 500	
 
 #include "Utilities\GL\DynamicBuffer.h"
 #include "GL\glew.h"
@@ -12,16 +11,8 @@
 class Engine;
 
 /** Manages the creation and storage of materials, and to a lesser degree their destruction. * 
-- How this works:
-	- This stores an array of GLuint64 bindless texture handles
-	- That array is stored as a shader storage buffer object (SSBO)
-	- Pieces of geometry requests a spot in the material buffer array:
-		- this provides an int index
-		- geometry stores it alongside vertices (MUST NOT be interpolated across face)
-	- Texture accessed in fragment shader by passing in the index spot from vertex shader to fragment shader:
-		- get GLuint64 from SSBO's array using index
-		- transform into sampler
-- Uses bindless textures to circumvent slow texture binding */
+* Creates a gigantic texture array for all the model's material textures
+* Uses sparse textures to avoid consuming all the memory at once. */
 class MaterialManager {
 public:
 	// (de)Constructors

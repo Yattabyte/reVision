@@ -21,7 +21,7 @@ public:
 	/** Construct the Texture. */
 	Asset_Texture(const std::string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
-	Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);/** Attempts to create an asset from disk or share one if it already exists */
+	Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);
 
 
 	// Public Methods

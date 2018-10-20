@@ -22,18 +22,19 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relative
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	FIBITMAP * bitmap = nullptr;
 
+	auto & messageManager = engine->getMessageManager();
 	if (format == -1)
-		engine->reportError(MessageManager::FILE_MISSING, relativePath);
+		messageManager.error(MessageManager::FILE_MISSING, relativePath);
 	else if (format == FIF_UNKNOWN) {
-		engine->reportError(MessageManager::FILE_CORRUPT, relativePath);
+		messageManager.error(MessageManager::FILE_CORRUPT, relativePath);
 		format = FreeImage_GetFIFFromFilename(file);
 		if (FreeImage_FIFSupportsReading(format))
-			engine->reportMessage("Successfully resolved the texture file's format!");
+			messageManager.statement("Successfully resolved the texture file's format!");
 		else
-			engine->reportMessage("Failure, could not recover the file!");
+			messageManager.statement("Failure, could not recover the file!");
 	}
 	else if (format == FIF_GIF)
-		engine->reportMessage("GIF loading unsupported!");
+		messageManager.statement("GIF loading unsupported!");
 	else {
 		bitmap = FreeImage_Load(format, file);
 		if (FreeImage_GetBPP(bitmap) != 32) {

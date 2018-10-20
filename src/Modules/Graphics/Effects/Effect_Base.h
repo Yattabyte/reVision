@@ -15,7 +15,7 @@ public:
 
 	// Public Methods
 	/** Return whether or not this effect is enabled*/
-	const bool isEnabled() const { return m_enabled; };
+	inline const bool isEnabled() const { return m_enabled; };
 	// Public Interface
 	/** Apply this lighting technique. 
 	@param	deltaTime	the amount of time passed since last frame. */

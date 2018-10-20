@@ -63,7 +63,7 @@ public:
 	@param	<BaseECSComponent>	the category of component being retrieved. */ 
 	template <typename BaseECSComponent>
 	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
-		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), components[BaseECSComponent::ID], BaseECSComponent::ID);
+		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
 	}
 
 
@@ -94,8 +94,8 @@ private:
 
 
 	// Private attributes
-	std::map<uint32_t, std::vector<uint8_t>> components;
-	std::vector < std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* > entities;
+	std::map<uint32_t, std::vector<uint8_t>> m_components;
+	std::vector < std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* > m_entities;
 };
 
 #endif // ECS_H

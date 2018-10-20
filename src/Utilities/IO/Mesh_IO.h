@@ -17,7 +17,7 @@ class Engine;
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
-	~VertexBoneData();
+	~VertexBoneData() = default;
 	VertexBoneData();
 	VertexBoneData(const VertexBoneData & vbd);
 	void Reset();

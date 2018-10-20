@@ -86,7 +86,7 @@ void ModelManager::expandToFit(const size_t & arraySize)
 		m_maxCapacity += arraySize * 2;
 
 		// Create the new VBO's
-		GLuint newVBOID;
+		GLuint newVBOID = 0;
 		glCreateBuffers(1, &newVBOID);
 		glNamedBufferStorage(newVBOID, m_maxCapacity * sizeof(SingleVertex), 0, GL_DYNAMIC_STORAGE_BIT);
 

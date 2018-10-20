@@ -32,9 +32,10 @@ Rendering_Context::~Rendering_Context()
 Rendering_Context::Rendering_Context(Engine * engine)
 {
 	// Begin Initialization
-	engine->reportMessage("Creating Window...");
+	auto & messageManager = engine->getMessageManager();
+	messageManager.statement("Creating Window...");
 	if (!glfwInit()) {
-		engine->reportError(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
+		messageManager.error(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -75,7 +76,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
-		engine->reportError(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
+		messageManager.error(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -104,7 +105,7 @@ Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
 
 Engine::~Engine()
 {
-	reportMessage("Shutting down...");
+	getMessageManager().statement("Shutting down...");
 	Image_IO::Deinitialize();	
 	glfwTerminate();
 }
@@ -174,19 +175,20 @@ Engine::Engine() :
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
 	}
 
-	reportMessage("**************************************************");
-	reportMessage("Engine Version: " + std::string(ENGINE_VERSION));
-	reportMessage("ASSIMP Version: " + Mesh_IO::Get_Version());
-	reportMessage("Bullet Version: " + std::to_string(BT_BULLET_VERSION));
-	reportMessage("FreeImage Version: " + Image_IO::Get_Version());
-	reportMessage("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
-	reportMessage("GLFW Version: " + std::string(glfwGetVersionString()));
-	reportMessage("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
-	reportMessage("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-	reportMessage("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-	reportMessage("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-	reportMessage("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
-	reportMessage("**************************************************");
+	auto & messageManager = getMessageManager();
+	messageManager.statement("**************************************************");
+	messageManager.statement("Engine Version: " + std::string(ENGINE_VERSION));
+	messageManager.statement("ASSIMP Version: " + Mesh_IO::Get_Version());
+	messageManager.statement("Bullet Version: " + std::to_string(BT_BULLET_VERSION));
+	messageManager.statement("FreeImage Version: " + Image_IO::Get_Version());
+	messageManager.statement("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+	messageManager.statement("GLFW Version: " + std::string(glfwGetVersionString()));
+	messageManager.statement("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	messageManager.statement("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+	messageManager.statement("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+	messageManager.statement("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
+	messageManager.statement("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+	messageManager.statement("**************************************************");
 }
 
 void Engine::tick()
@@ -199,7 +201,7 @@ void Engine::tick()
 	m_frameCount++;
 	if (m_frameCount >= 100) {
 		m_frameAccumulator /= 100.0f;
-		reportMessage("Avg Frametime = " + std::to_string(m_frameAccumulator*1000.0f) + " ms");
+		getMessageManager().statement("Avg Frametime = " + std::to_string(m_frameAccumulator*1000.0f) + " ms");
 		m_frameAccumulator = deltaTime;
 		m_frameCount = 0;
 	}
@@ -235,24 +237,13 @@ void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context
 	glfwMakeContextCurrent(context.window);
 
 	// Check if thread should shutdown
-	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) {
-		m_AssetManager.beginWorkOrder();
-	}
+	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) 
+		m_AssetManager.beginWorkOrder();	
 }
 
 bool Engine::shouldClose()
 {
 	return glfwWindowShouldClose(m_renderingContext.window);
-}
-
-void Engine::reportMessage(const std::string & input)
-{
-	m_messageManager.statement(input);
-}
-
-void Engine::reportError(const int & error_number, const std::string & input, const std::string & additional_input)
-{
-	m_messageManager.error(error_number, input, additional_input);
 }
 
 GLFWwindow * Engine::getRenderingContext() const

@@ -30,7 +30,7 @@ void Asset_Mesh::initializeDefault(Engine * engine)
 void Asset_Mesh::initialize(Engine * engine, const std::string & relativePath)
 {
 	if (!Mesh_IO::Import_Model(engine, relativePath, m_geometry)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Mesh");
+		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Mesh");
 		initializeDefault(engine);
 	}
 

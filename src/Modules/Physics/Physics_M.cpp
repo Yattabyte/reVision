@@ -11,8 +11,7 @@ Physics_Module::~Physics_Module()
 	delete m_world;
 }
 
-Physics_Module::Physics_Module(Engine * engine) : Engine_Module(engine)
-{}
+Physics_Module::Physics_Module(Engine * engine) : Engine_Module(engine) {}
 
 void Physics_Module::initialize()
 {
@@ -22,7 +21,7 @@ void Physics_Module::initialize()
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);
 	m_solver = new btSequentialImpulseConstraintSolver;
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
-	m_world->setGravity(btVector3(0, -9.8, 0));
+	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 }
 
 void Physics_Module::physicsFrame(const float & deltaTime)

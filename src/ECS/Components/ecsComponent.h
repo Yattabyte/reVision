@@ -75,10 +75,10 @@ struct Component_and_ID {
 	BaseECSComponent * component = nullptr;
 	uint32_t id = (unsigned)(-1);
 
-	const bool success() const {
+	inline const bool success() const {
 		return bool(component && id != (unsigned)(-1));
 	}
-	void clear() {
+	inline void clear() {
 		component = nullptr;
 		id = (unsigned)(-1);
 	}
@@ -101,7 +101,7 @@ protected:
 template <typename BaseECSComponent>
 struct ECSComponentConstructor : BaseECSComponentConstructor {
 	// Default Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new BaseECSComponent();
 		return { component, component->ID };
 	}

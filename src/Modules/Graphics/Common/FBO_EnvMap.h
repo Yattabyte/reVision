@@ -30,29 +30,29 @@ struct FBO_EnvMap : FBO_Base {
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 	}
-	void clear(const GLint & zOffset) {
+	inline void clear(const GLint & zOffset) {
 		const glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 	}
 	// Interface Implementation
-	virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
+	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_size = glm::ivec2(width, height);
 		for (int x = 0; x < 6; ++x) {
 			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
 			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 	}
-	virtual void clear() override {
+	inline virtual void clear() override {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 	}
-	virtual void bindForWriting() override {
+	inline virtual void bindForWriting() override {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}
-	virtual void bindForReading(const GLuint & binding = 0) override {
+	inline virtual void bindForReading(const GLuint & binding = 0) override {
 		glBindTextureUnit(binding, m_textureID);
 	}
-	virtual void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) override {
+	inline virtual void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) override {
 		glNamedFramebufferTexture(m_fboID, attachPoint, textureObj, level);
 	}
 };

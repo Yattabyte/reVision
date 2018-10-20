@@ -76,18 +76,18 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Bloom Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Bloom Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom Texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom Texture");
 		if (!glIsTexture(m_textureIDS_GB[0]))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 0");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 0");
 		if (!glIsTexture(m_textureIDS_GB[1]))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 1");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 1");
 	}
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime ) override {
+	inline virtual void applyEffect(const float & deltaTime ) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet())
 			return;
 		// Extract bright regions from lighting buffer
@@ -122,12 +122,12 @@ private:
 	// Private Methods
 	/** Change the strength of the bloom effect.
 	@param	strength		the new strength of the bloom effect */
-	void setBloomStrength(const int &strength) {
+	inline void setBloomStrength(const int &strength) {
 		m_bloomStrength = strength;
 	}
 	/** Resize the frame buffer.
 	@param	size	the new size of the frame buffer */
-	void resize(const glm::vec2 & size) {
+	inline void resize(const glm::vec2 & size) {
 		m_renderSize = size;
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);

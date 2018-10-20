@@ -23,7 +23,7 @@ MaterialManager::MaterialManager(Engine * engine)
 	glTextureParameteri(m_arrayID, GL_TEXTURE_SPARSE_ARB, GL_TRUE);
 	glTextureStorage3D(m_arrayID, m_mipCount, GL_RGBA16F, m_materialSize, m_materialSize, m_textureLayers);
 	if (!glIsTexture(m_arrayID))
-		engine->reportError(MessageManager::MATERIAL_INCOMPLETE, "Material Manager");
+		engine->getMessageManager().error(MessageManager::MATERIAL_INCOMPLETE, "Material Manager");
 }
 
 void MaterialManager::bind()

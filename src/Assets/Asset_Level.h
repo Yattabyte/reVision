@@ -44,6 +44,7 @@ private:
 	// Private Attributes
 	friend class AssetManager;
 };
+
 struct LevelStruct_Component {
 	std::string type;
 	std::vector<std::any> parameters;
@@ -57,4 +58,5 @@ struct LevelStruct_Component {
 struct LevelStruct_Entity {
 	std::vector<LevelStruct_Component> components;
 };
+
 #endif // ASSET_LEVEL_H

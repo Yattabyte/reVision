@@ -67,6 +67,7 @@ public:
 
 private:
 	// Private methods
+	/** Converts a priority queue into an stl vector.*/
 	const std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::less<float>> oldest) const {
 		PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::greater<float>> m_closest(m_renderState.m_updateQuality / 2);
 		std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> outList;

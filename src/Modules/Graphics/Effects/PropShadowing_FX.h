@@ -27,7 +27,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCube->existsYet())
 			return;

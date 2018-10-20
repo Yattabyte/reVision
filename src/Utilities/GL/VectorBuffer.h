@@ -28,25 +28,11 @@ public:
 /** An element within the Vector Buffer*/
 template <typename T>
 struct VB_Element {
-	GLuint index;
-	T * data;
+	GLuint index = 0u;
+	T * data = nullptr;
 	GLsync fence = nullptr;
-	T* operator->() { 
+	inline T* operator->() { 
 		return data; 
-	}
-	void lock() {
-		/*if (fence)
-			glDeleteSync(fence);
-		fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0); */
-	}
-	void wait() {
-		/*if (fence) {
-			while (true) {
-				GLenum state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-				if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED)
-					return;
-			}
-		}*/
 	}
 };
 
@@ -71,7 +57,7 @@ public:
 	/** Explicit Constructor. */
 	explicit VectorBuffer(const GLsizeiptr & sizeHint, const GLint & offsetAlignment) : m_maxCapacity(sizeHint), m_offsetAlignment(offsetAllighnment) {}
 	/** Move gl object from 1 instance to another. */
-	VectorBuffer & operator=(VectorBuffer && o) noexcept {
+	inline VectorBuffer & operator=(VectorBuffer && o) noexcept {
 		m_count = (std::move(o.m_count));
 		m_indexPointers = (std::move(o.m_indexPointers));
 		m_bufferID = (std::move(o.m_bufferID));
@@ -93,7 +79,7 @@ public:
 	/** Add an element to this buffers list.
 	@param	uboIndex	the element to add to this list
 	@return	the current buffer pointer */
-	VB_Element<T> * newElement() {
+	inline VB_Element<T> * newElement() {
 		const GLsizeiptr elementSize = sizeof(T);
 		expandToFit(m_count * (elementSize + m_offsetAlignment), elementSize);
 
@@ -106,13 +92,13 @@ public:
 	}	
 	/** Remove an element from this buffers list. *
  	@param	uboIndex	the element to remove from this list */
-	void removeElement(const unsigned int * uboIndex) {
+	inline void removeElement(const unsigned int * uboIndex) {
 		replaceWithEnd(uboIndex);
 	}
-	VB_Element<T> * getElement(const GLuint & index) {
+	inline VB_Element<T> * getElement(const GLuint & index) {
 		return m_elements[index];
 	}
-	void setOffsetAlignment(const GLint & offsetAlignment) {
+	inline void setOffsetAlignment(const GLint & offsetAlignment) {
 		m_offsetAlignment = offsetAlignment;
 
 		// Update all buffer references
@@ -121,19 +107,19 @@ public:
 			element->data = &reinterpret_cast<T*>(bytePtr)[element->index];
 		}
 	}
-	const GLint getOffsetAlignment() {
+	inline const GLint getOffsetAlignment() {
 		return m_offsetAlignment;
 	}
 
 
 	// Interface Implementation
-	virtual void bindBuffer(const GLenum & target) const override {
+	inline virtual void bindBuffer(const GLenum & target) const override {
 		glBindBuffer(target, m_bufferID);
 	}
-	virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
+	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
 		glBindBufferBase(target, index, m_bufferID);
 	}
-	virtual void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const override {
+	inline virtual void bindBufferBaseRange(const GLenum & target, const GLuint & index, const GLintptr & offset, const GLsizeiptr & size) const override {
 		glBindBufferRange(target, index, m_bufferID, offset, size );
 	}
 
@@ -144,7 +130,7 @@ private:
 	@note Technically creates a new a new buffer to replace the old one and copies the old data
 	@param	offset	byte offset from the beginning
 	@param	size	the size of the data to write */
-	void expandToFit(const GLsizeiptr & offset, const GLsizeiptr & size) {
+	inline void expandToFit(const GLsizeiptr & offset, const GLsizeiptr & size) {
 		if (offset + size > m_maxCapacity) {
 			// Create new buffer large enough to fit old data + new data
 			const GLsizeiptr oldSize = m_maxCapacity;
@@ -176,7 +162,7 @@ private:
 		}
 	}
 	/** @todo */
-	void replaceWithEnd(const unsigned int * uboIndex) {
+	inline void replaceWithEnd(const unsigned int * uboIndex) {
 		/*// Migrate last element of array into this index, replacing it.
 		if ((*uboIndex) < (m_elements.size() - 1)) {
 			// Move the pointer from the last element of the list to the spot we are deleting

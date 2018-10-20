@@ -6,7 +6,7 @@
 bool Text_IO::Import_Text(Engine * engine, const std::string & relativePath, std::string & data_container, std::ios_base::openmode mode)
 {
 	if (!Engine::File_Exists(relativePath)) {
-		engine->reportError(MessageManager::FILE_MISSING, relativePath);
+		engine->getMessageManager().error(MessageManager::FILE_MISSING, relativePath);
 		return false;
 	}
 

@@ -114,16 +114,16 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "SSAO Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSAO Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSAO Texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO Texture");
 		if (!glIsTexture(m_noiseID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSAO - Noise texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO - Noise texture");
 	}
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
 			return;
 		glDisable(GL_DEPTH_TEST);
@@ -156,7 +156,7 @@ private:
 	// Private Methods
 	/** Resize the frame buffer.
 	@param	size	the new size of the frame buffer */
-	void resize(const glm::ivec2 & size) {
+	inline void resize(const glm::ivec2 & size) {
 		m_renderSize = size;
 		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
 		for (int x = 0; x < 2; ++x) 

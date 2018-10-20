@@ -96,21 +96,21 @@ public:
 		// Error Reporting
 		GLenum Status = glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "SSR Mipmap Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSR Mipmap Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureMipsID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSR Mipmap Texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR Mipmap Texture");
 		Status = glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->reportError(MessageManager::FBO_INCOMPLETE, "SSR Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSR Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureSSRID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSR Texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR Texture");
 		if (!glIsTexture(m_bayerID))
-			m_engine->reportError(MessageManager::TEXTURE_INCOMPLETE, "SSR - Bayer matrix texture");
+			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR - Bayer matrix texture");
 	}
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -140,7 +140,7 @@ public:
 private:
 	// Private Methods
 	/** Convolute the lighting buffer into each of its mip levels. */
-	void updateMIPChain() {
+	inline void updateMIPChain() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 
@@ -185,7 +185,7 @@ private:
 	}
 	/** Resize the frame buffer.
 	@param	size	the new size of the frame buffer */
-	void resize(const glm::ivec2 & size) {
+	inline void resize(const glm::ivec2 & size) {
 		m_renderSize = size;
 		for (int x = 0; x < 6; ++x) {
 			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));

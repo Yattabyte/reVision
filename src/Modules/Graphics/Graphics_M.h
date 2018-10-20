@@ -40,26 +40,26 @@ public:
 	void renderFrame(const float & deltaTime);
 	/** Add a single system to this module. */
 	template <typename T>
-	void addSystem(T * t) {
+	inline void addSystem(T * t) {
 		m_mappedGFXSystems[typeid(T).name()] = t;
 		m_renderingSystems.addSystem(t);
 	}
 	/** Add a single effect to this module. */
 	template <typename T>
-	void addEffect(T * t) {
+	inline void addEffect(T * t) {
 		m_mappedFX[typeid(T).name()] = t;
 		m_fxTechs.push_back(t);
 	}
 	/** Returns a pointer to the system type requested. 
 	@param	return		system of type specified. */
 	template <typename T>
-	T * getSystem() {
+	inline T * getSystem() {
 		return (T*)m_mappedGFXSystems[typeid(T).name()];
 	}
 	/** Returns a pointer to the effect type requested.
 	@param	return		system of type specified. */
 	template <typename T>
-	T * getEffect() {
+	inline T * getEffect() {
 		return (T*)m_mappedFX[typeid(T).name()];
 	}
 	/** Update the data for the specified camera. 
@@ -74,7 +74,6 @@ public:
 
 	
 	// Public Attributes
-	// Frame Buffers
 	FBO_Geometry				m_geometryFBO;
 	FBO_Lighting				m_lightingFBO;
 	FBO_Reflection				m_reflectionFBO;

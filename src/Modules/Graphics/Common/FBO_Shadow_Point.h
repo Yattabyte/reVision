@@ -45,14 +45,14 @@ struct FBO_Shadow_Point {
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_fboID, 3, drawBuffers);
 	}
-	void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
+	inline void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
 		m_size = size;
 		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_R16F, m_size.x, m_size.y, layerFaces, 0, GL_RED, GL_FLOAT, NULL);
 		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
 		glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
 		glTextureImage3DEXT(m_textureIDS[3], GL_TEXTURE_CUBE_MAP_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
 	}
-	void clear(const GLint & zOffset) {
+	inline void clear(const GLint & zOffset) {
 		const float clearDepth(1.0f);
 		const glm::vec3 clear(0.0f);
 		glClearTexSubImage(m_textureIDS[0], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RED, GL_FLOAT, &clearDepth);
@@ -60,7 +60,7 @@ struct FBO_Shadow_Point {
 		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 		glClearTexSubImage(m_textureIDS[3], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	}
-	void bindForWriting() {
+	inline void bindForWriting() {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}
 };

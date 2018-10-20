@@ -26,10 +26,13 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 };
 /** A constructor to aid in creation. */
 struct Prop_Constructor : ECSComponentConstructor<Prop_Component> {
+	// Public (de)Constructors
 	Prop_Constructor(Engine * engine, VectorBuffer<Prop_Buffer> * elementBuffer) 
 		: m_engine(engine), m_elementBuffer(elementBuffer) {};
+
+
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto directory = castAny(parameters[0], std::string(""));
 		auto material = castAny(parameters[1], 0u);
 		auto * component = new Prop_Component();
@@ -38,6 +41,10 @@ struct Prop_Constructor : ECSComponentConstructor<Prop_Component> {
 		component->m_data->data->materialID = material;
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	Engine * m_engine = nullptr;
 	VectorBuffer<Prop_Buffer> * m_elementBuffer = nullptr;
 };

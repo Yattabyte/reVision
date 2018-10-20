@@ -30,6 +30,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
+	glm::ivec2 size(0);
 	for (int side = 0; side < 6; ++side) {
 		std::string specific_side_directory = "";
 		for (int x = 0; x < 3; ++x) {
@@ -42,20 +43,14 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 		}
 
 		// Forward image creation
-		m_images[side] = Asset_Image::Create(engine, specific_side_directory, {}, false);
-	}
-
-	// Ensure each face is the same dimension
-	glm::ivec2 size = glm::ivec2(1);
-	for each (const auto & image in m_images) {
-		if (size.x < image->m_size.x)
-			size.x = image->m_size.x;
-		if (size.y < image->m_size.y)
-			size.y = image->m_size.y;
-	}
-	for each (auto image in m_images)
-		if (image->m_size != size)
-			image->resize(size);
+		// Enforce same size for all images, use the size of the first found image
+		m_images[side] = Asset_Image::Create(
+			engine, specific_side_directory, 
+			(size == glm::ivec2(0)) ? std::optional<glm::ivec2>() : size, 
+			false
+		);
+		size = m_images[side]->m_size;
+	}	
 
 	// Create the final texture	
 	glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_glTexID);
@@ -75,7 +70,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		engine->reportError(MessageManager::TEXTURE_INCOMPLETE, m_filename);
+		engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, m_filename);
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

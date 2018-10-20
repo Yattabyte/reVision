@@ -37,7 +37,7 @@ public:
 
 
 	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Accumulate Light Data		
 		auto & graphics = m_engine->getGraphicsModule();
 		const auto cameraBuffer = graphics.m_cameraBuffer.getElement(graphics.getActiveCamera());
@@ -82,7 +82,6 @@ public:
 			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
 			lightIndices.push_back(lightComponent->m_data->index);
 			if (shadowComponent) {
-				shadowComponent->m_data->wait();
 				shadowIndices.push_back(shadowComponent->m_data->index);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 				for (int i = 0; i < NUM_CASCADES; i++) {	
@@ -100,7 +99,6 @@ public:
 					const glm::vec4 v2 = CamP * v1;
 					shadowComponent->m_data->data->CascadeEndClipSpace[i] = v2.z;
 				}
-				shadowComponent->m_data->lock();
 			}
 			else
 				shadowIndices.push_back(-1);
@@ -124,6 +122,7 @@ public:
 
 private:
 	// Private Methods
+	/** Converts a priority queue into an stl vector.*/
 	const std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest) const {
 		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::greater<float>> m_closest(m_renderState.m_updateQuality / 2);
 		std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> outList;

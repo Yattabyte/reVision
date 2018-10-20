@@ -16,7 +16,8 @@
 #include "Utilities\MappedChar.h"
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "1.36.A";
+
+constexpr char ENGINE_VERSION[] = "1.36.B";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -51,14 +52,9 @@ public:
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down */
 	bool shouldClose();
-	/** Forward a message to the message manager.
-	@param	input				the message to report */
-	void reportMessage(const std::string & input);
-	/** Forward an error to the message manager.
-	@param	error_number		the error number
-	@param	input				the error to report
-	@param	additional_input	additional input */
-	void reportError(const int & error_number, const std::string & input, const std::string & additional_input = "");
+
+
+	// Public Accessors
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
 	/** Returns this engine's entity component system. */

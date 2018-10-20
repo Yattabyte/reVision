@@ -49,7 +49,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);
@@ -89,7 +89,7 @@ public:
 
 private:
 	// Private Methods
-	void resize(const glm::ivec2 &s) {
+	inline void resize(const glm::ivec2 &s) {
 		m_renderSize = s;
 		m_projMatrix = glm::ortho(0.0f, (float)s.x, 0.0f, (float)s.y);
 	}

@@ -31,10 +31,13 @@ struct Reflector_Component: public ECSComponent<Reflector_Component> {
 };
 /** A constructor to aid in creation. */
 struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
+	// Public (de)Constructors
 	Reflector_Constructor(VectorBuffer<Camera_Buffer> * camElementBuffer, VectorBuffer<Reflection_Buffer> * refElementBuffer, FBO_EnvMap * envmapFBO)
 		: m_camElementBuffer(camElementBuffer), m_refElementBuffer(refElementBuffer), m_envmapFBO(envmapFBO) {};
+
+
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new Reflector_Component();
 		component->m_data = m_refElementBuffer->newElement();
 		component->m_data->data->CubeSpot = m_envCount;
@@ -49,6 +52,10 @@ struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 		}
 		return { component, component->ID };
 	}
+
+
+private:
+	// Private Attributes
 	GLuint m_envCount = 0;
 	VectorBuffer<Camera_Buffer> * m_camElementBuffer = nullptr;
 	VectorBuffer<Reflection_Buffer> * m_refElementBuffer = nullptr;

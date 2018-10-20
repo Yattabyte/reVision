@@ -34,7 +34,7 @@ public:
 
 
 	// Interface Implementations.
-	virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);

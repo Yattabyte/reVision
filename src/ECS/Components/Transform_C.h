@@ -13,7 +13,7 @@ struct Transform_Component : public ECSComponent<Transform_Component> {
 /** A constructor to aid in creation. */
 struct Transform_Constructor : ECSComponentConstructor<Transform_Component> {
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto position = castAny(parameters[0], glm::vec3(0.0f));
 		auto orientation = castAny(parameters[1], glm::quat(1, 0, 0, 0));
 		auto scale = castAny(parameters[2], glm::vec3(1.0f));

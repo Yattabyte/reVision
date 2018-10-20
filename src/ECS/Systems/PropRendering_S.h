@@ -13,6 +13,7 @@
 #include "ECS\Components\Prop_C.h"
 #include "ECS\Components\Skeleton_C.h"
 
+
 /** A struct that holds rendering data that can change frame-to-frame. */
 struct Prop_RenderState {
 	GLsizei m_propCount = 0;

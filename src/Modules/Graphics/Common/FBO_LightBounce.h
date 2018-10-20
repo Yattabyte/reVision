@@ -36,24 +36,24 @@ struct FBO_LightBounce : FBO_Base {
 		
 		resize();
 	}
-	virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
+	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_resolution = width;
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)
 			glTextureImage3DEXT(m_textureIDS[channel], GL_TEXTURE_3D, 0, GL_RGBA16F, m_resolution, m_resolution, m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 	}
-	virtual void clear() override {
+	inline virtual void clear() override {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		for (GLint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glClearNamedFramebufferfv(m_fboID, GL_COLOR, x, clearColor);
 	}
-	virtual void bindForWriting() override {
+	inline virtual void bindForWriting() override {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}
-	virtual void bindForReading(const GLuint & binding = 0) override {
+	inline virtual void bindForReading(const GLuint & binding = 0) override {
 		for (GLuint x = 0; x < RH_TEXTURE_COUNT; ++x)
 			glBindTextureUnit(binding + x, m_textureIDS[x]);
 	}
-	virtual void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) override {
+	inline virtual void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) override {
 		glNamedFramebufferTexture(m_fboID, attachPoint, textureObj, level);
 	}
 };

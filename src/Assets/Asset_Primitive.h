@@ -50,6 +50,7 @@ private:
 	// Private Attributes
 	friend class AssetManager;
 };
+
 struct Single_Primitive_Vertex {
 	glm::vec3 vertex;
 	glm::vec2 uv;

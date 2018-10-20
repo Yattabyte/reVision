@@ -75,15 +75,15 @@ public:
 	inline const bool addSystem(BaseECSSystem * system)	{
 		if (!system->isValid())
 			return false;
-		systems.push_back(system);
+		m_systems.push_back(system);
 		return true;
 	}
 	/** Removes a system from the list.
 	@param	system	the system to remove. */
 	inline const bool removeSystem(BaseECSSystem * system) {
-		for (size_t i = 0; i < systems.size(); ++i)
-			if (system == systems[i]) {
-				systems.erase(systems.begin() + i);
+		for (size_t i = 0; i < m_systems.size(); ++i)
+			if (system == m_systems[i]) {
+				m_systems.erase(m_systems.begin() + i);
 				return true;
 			}		
 		return false;
@@ -91,18 +91,18 @@ public:
 	/** Get the number of systems in the list.
 	@return			the size of the list. */
 	inline const size_t size() {
-		return systems.size();
+		return m_systems.size();
 	}
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from. */
 	inline BaseECSSystem * operator[](const size_t & index) {
-		return systems[index];
+		return m_systems[index];
 	}
 
 
 private:
 	// Private attributes
-	std::vector<BaseECSSystem *> systems;
+	std::vector<BaseECSSystem *> m_systems;
 };
 
 #endif // ECSSYSTEM_H

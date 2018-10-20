@@ -53,15 +53,10 @@ void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativeP
 	const bool found = Text_IO::Import_Text(engine, relativePath + EXT_PACKAGE, m_packageText);
 	
 	if (!found)
-		engine->reportError(MessageManager::FILE_MISSING, getFileName() + EXT_PACKAGE);
+		engine->getMessageManager().error(MessageManager::FILE_MISSING, getFileName() + EXT_PACKAGE);
 
 	// parse
 	parse(engine, *this);
 
 	Asset::finalize(engine);
-}
-
-std::string Asset_Shader_Pkg::getPackageText() const
-{
-	return m_packageText;
 }

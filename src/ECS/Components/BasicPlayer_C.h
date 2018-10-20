@@ -14,7 +14,7 @@ struct BasicPlayer_Component : public ECSComponent<BasicPlayer_Component> {
 /** A constructor to aid in creation. */
 struct BasicPlayer_Constructor : ECSComponentConstructor<BasicPlayer_Component> {
 	// Interface Implementation
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new BasicPlayer_Component();
 		return { component, component->ID };
 	}

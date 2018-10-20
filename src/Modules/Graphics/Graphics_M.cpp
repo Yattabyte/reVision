@@ -89,13 +89,13 @@ Graphics_Module::Graphics_Module(Engine * engine)
 	// Error Reporting
 	GLenum Status = glCheckNamedFramebufferStatus(m_geometryFBO.m_fboID, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Geometry FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Geometry FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	Status = glCheckNamedFramebufferStatus(m_lightingFBO.m_fboID, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Lighting FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Lighting FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	Status = glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->reportError(MessageManager::FBO_INCOMPLETE, "Reflection FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Reflection FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 }
 
 void Graphics_Module::initialize()

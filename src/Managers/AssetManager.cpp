@@ -59,7 +59,7 @@ const bool AssetManager::hasChanged()
 {
 	// Changes every time assets finalize, when this manager notifies the assets' observers.
 	std::shared_lock<std::shared_mutex> readGuard(m_mutexNofications);
-	bool state = m_changed;
+	const bool state = m_changed;
 	m_changed = false;
 	return state;
 }

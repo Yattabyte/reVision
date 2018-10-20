@@ -64,7 +64,7 @@ inline void compile_single_shader(Engine * engine, const std::string & filename,
 			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
 			std::vector<GLchar> infoLog(infoLogLength);
 			glGetShaderInfoLog(ID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-			engine->reportError(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
+			engine->getMessageManager().error(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
 		}
 	}
 }
@@ -106,7 +106,7 @@ inline void link_program(Engine * engine, Asset_Shader & userAsset)
 		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		std::vector<GLchar> infoLog(infoLogLength);
 		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
+		engine->getMessageManager().error(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}	
 	glValidateProgram(userAsset.m_glProgramID);
 }
@@ -140,7 +140,7 @@ inline bool use_binary(Engine * engine, Asset_Shader & userAsset)
 		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
 		std::vector<GLchar> infoLog(infoLogLength);
 		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-		engine->reportError(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
+		engine->getMessageManager().error(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
 	}
 	glValidateProgram(userAsset.m_glProgramID);
 	return (bool)success;
@@ -201,7 +201,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 	const bool found_shader_binary = Engine::File_Exists(relativePath + EXT_SHADER_BINARY);
 	
 	if (!(found_vertex && found_fragement)) {
-		engine->reportError(MessageManager::ASSET_FAILED, "Asset_Shader");
+		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Shader");
 		initializeDefault(engine);
 	}
 
