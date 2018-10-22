@@ -13,6 +13,36 @@ class Engine;
 class Asset_Shader;
 using Shared_Asset_Shader = std::shared_ptr<Asset_Shader>;
 
+struct ShaderObj 
+{
+	// (de)Constructors
+	~ShaderObj();
+	ShaderObj(const GLenum & type);
+
+
+	// Functions
+	/** Retrieve a shader parameter by the name specified.
+	@param		pname			the program parameter name
+	@return						the parameter value matching the name specified. */
+	const GLint getShaderiv(const GLenum & pname) const;
+	/** Load a shader document from the file path specified.
+	@param		engine			the active engine to use
+	@param		filePath		the relative path to the file to read
+	@return						true on success, false otherwise. */
+	const bool loadDocument(Engine * engine, const std::string & filePath);
+	/** Create an OpenGL shader object from this class, using the document string loaded.
+	@param		engine			the active engine to use
+	@param		filename		the shader file name (for reporting purposes)
+	@return						true on success, false otherwise. */
+	const bool createGLShader(Engine * engine, const std::string & filename);
+
+	
+	// Attributes
+	GLuint m_shaderID = 0;
+	std::string m_shaderText = "";
+	GLenum m_type = GL_VERTEX_SHADER;
+};
+
 /** An encapsulation of a vertex/fragment OpenGL shader program.
 Also provides support for explicitly setting uniform values for a given attribute location. */
 class Asset_Shader : public Asset
@@ -87,15 +117,41 @@ public:
 	
 
 	// Public Attributes
-	GLuint m_glProgramID = 0, m_glVertexID = 0, m_glFragmentID = 0; // OpenGL ID's
-	std::string m_vertexText = "", m_fragmentText = ""; // Text Data
-	std::vector<char> m_binary;
-	GLenum m_binaryFormat;
-	GLsizei m_binaryLength;
+	GLuint m_glProgramID = 0;
+	ShaderObj m_vertexShader = ShaderObj(GL_VERTEX_SHADER);
+	ShaderObj m_fragmentShader = ShaderObj(GL_FRAGMENT_SHADER);
+
+
+protected:
+	// Protected Methods
+	/** Retrieve a program parameter by the name specified.
+	@param		pname			the program parameter name
+	@return						the parameter value matching the name specified. */
+	const GLint getProgramiv(const GLenum & pname) const;
+	/** Retrieve an error log corresponding to this shader program.
+	@return						an error log for this shader program. */
+	const std::vector<GLchar> getErrorLog() const;
+	/** Attempt to load a shader program from a cached binary file.
+	@param		engine			the active engine to use
+	@param		relativePath	the relative path of the binary file
+	@return						true on success, false otherwise. */
+	const bool loadCachedBinary(Engine * engine, const std::string & relativePath);
+	/** Attempt to save a shader program to a cached binary file.
+	@param		engine			the active engine to use
+	@param		relativePath	the relative path of the binary file
+	@return						true on success, false otherwise. */
+	const bool saveCachedBinary(Engine * engine, const std::string & relativePath);
+	/** Attempt to load a shader program from separate shader files.
+	@param		engine			the active engine to use
+	@param		relativePath	the relative path of the shader files
+	@return						true on success, false otherwise. */
+	virtual const bool initShaders(Engine * engine, const std::string & relativePath);
+	/** Use to validate this shader program after linking.
+	@return						true on success, false otherwise. */
+	const bool validateProgram();
 
 
 private:
-	// Private Methods
 	// Interface Implementation
 	void initializeDefault(Engine * engine);
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;

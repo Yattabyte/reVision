@@ -34,8 +34,13 @@ public:
 
 	
 	// Public Attributes
-	GLuint m_glGeometryID = 0; // OpenGL ID's
-	std::string m_geometryText = ""; // Text Data
+	ShaderObj m_geometryShader = ShaderObj(GL_GEOMETRY_SHADER);
+
+
+protected:
+	// Protected Methods
+	// Interface Implementation
+	virtual const bool initShaders(Engine * engine, const std::string & relativePath) override;
 
 
 private:

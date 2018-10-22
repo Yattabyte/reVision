@@ -39,7 +39,8 @@ public:
 
 		FBO_INCOMPLETE,
 		SHADER_INCOMPLETE,
-		PROGRAM_INCOMPLETE,
+		SHADER_BINARY_INCOMPLETE,
+		SHADER_PROGRAM_INCOMPLETE,
 		TEXTURE_INCOMPLETE,
 		MATERIAL_INCOMPLETE,
 
@@ -57,6 +58,7 @@ public:
 
 		"A Framebuffer in the \"%\" is incomplete. ",
 		"The Shader file \"%\" could not compile. ",
+		"The Shader binary cache \"%\" could not used. ",
 		"The Shader program \"%\" could not compile. ",
 		"The Texture object \"%\" is incomplete. ",
 		"The Material object \"%\" is incomplete. ",

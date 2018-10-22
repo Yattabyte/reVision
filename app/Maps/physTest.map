@@ -73,8 +73,8 @@ entity
 	Collider_Component
 	{
 		string "Dev\sphere.obj"
-		int "10"
-		float "0.5"
+		int "50"
+		float "1.0"
 		float "0.5"
 	}
 	Prop_Component

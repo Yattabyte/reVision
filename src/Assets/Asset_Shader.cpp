@@ -2,6 +2,7 @@
 #include "Assets\Asset_Shader_Pkg.h"
 #include "Utilities\IO\Text_IO.h"
 #include "Engine.h"
+#include <fstream>
 
 
 constexpr char* EXT_SHADER_VERTEX = ".vsh";
@@ -10,162 +11,9 @@ constexpr char* EXT_SHADER_BINARY = ".shader";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
 struct ShaderHeader { 
-	GLenum format;	
+	GLenum format; 
 	GLsizei length; 
 };
-
-/** Parse the shader, looking for any directives that require us to modify the document.
-@param	engine			the engine being used
-@param	userAsset		the asset we are loading from */
-inline void parse(Engine * engine, Asset_Shader & userAsset)
-{
-	std::string *text[2] = { &userAsset.m_vertexText, &userAsset.m_fragmentText };
-	for (int x = 0; x < 2; ++x) {
-		std::string input;
-		if (*text[x] == "") continue;
-		input = *text[x];
-		// Find Package to include
-		size_t spot = input.find("#package");
-		while (spot != std::string::npos) {
-			std::string directory = input.substr(spot);
-
-			size_t qspot1 = directory.find("\"");
-			size_t qspot2 = directory.find("\"", qspot1 + 1);
-			// find std::string quotes and remove them
-			directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
-
-			Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
-			std::string left = input.substr(0, spot);
-			std::string right = input.substr(spot + 1 + qspot2);
-			input = left + package->getPackageText() + right;
-			spot = input.find("#package");
-		}			
-		*text[x] = input;
-	}
-}
-
-/** Compile a single shader object.
-@param	engine		the engine to be used
-@param	filename	the shader filename
-@param	ID			the shader ID to update
-@param	source		the char array representing the document
-@param	type		the shader type */
-inline void compile_single_shader(Engine * engine, const std::string & filename, GLuint & ID, const char * source, const GLenum & type)
-{
-	if (strlen(source) > 0) {
-		ID = glCreateShader(type);
-		glShaderSource(ID, 1, &source, NULL);
-		glCompileShader(ID);
-
-		GLint success;
-		glGetShaderiv(ID, GL_COMPILE_STATUS, &success);
-		if (!success) {
-			GLint infoLogLength;
-			glGetShaderiv(ID, GL_INFO_LOG_LENGTH, &infoLogLength);
-			std::vector<GLchar> infoLog(infoLogLength);
-			glGetShaderInfoLog(ID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-			engine->getMessageManager().error(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
-		}
-	}
-}
-
-/** Compile all the shaders representing a shader program.
-@param	engine		the engine to be used
-@param	userAsset	the shader asset to compile */
-inline void compile(Engine * engine, Asset_Shader & userAsset)
-{
-	compile_single_shader(engine, userAsset.getFileName(), userAsset.m_glVertexID, userAsset.m_vertexText.c_str(), GL_VERTEX_SHADER);
-	compile_single_shader(engine, userAsset.getFileName(), userAsset.m_glFragmentID, userAsset.m_fragmentText.c_str(), GL_FRAGMENT_SHADER);
-}
-
-/** Generate the shader program.
-@param	userAsset	the shader asset to generate for */
-void generate_program(Asset_Shader & userAsset)
-{
-	userAsset.m_glProgramID = glCreateProgram();
-
-	if (userAsset.m_glVertexID != 0)
-		glAttachShader(userAsset.m_glProgramID, userAsset.m_glVertexID);
-	if (userAsset.m_glFragmentID != 0)
-		glAttachShader(userAsset.m_glProgramID, userAsset.m_glFragmentID);
-}
-
-#include <fstream>
-
-/** Link the shader program.
-@param	engine		the engine to be used
-@param	userAsset	the shader asset to link for */
-inline void link_program(Engine * engine, Asset_Shader & userAsset)
-{
-	// Link and validate, retrieve any errors
-	glLinkProgram(userAsset.m_glProgramID);
-	GLint success;
-	glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
-	if (success == 0) {
-		GLint infoLogLength;
-		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<GLchar> infoLog(infoLogLength);
-		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-		engine->getMessageManager().error(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
-	}	
-	glValidateProgram(userAsset.m_glProgramID);
-}
-
-/** Cleanup residual program files.
-@param	userAsset	the shader asset to link for */
-inline void cleanup_program(Asset_Shader & userAsset) {
-	// Delete shader objects, they are already compiled and attached
-	if (userAsset.m_glVertexID != 0) {
-		glDetachShader(userAsset.m_glProgramID, userAsset.m_glVertexID);
-		glDeleteShader(userAsset.m_glVertexID);
-	}
-	if (userAsset.m_glFragmentID != 0) {
-		glDetachShader(userAsset.m_glProgramID, userAsset.m_glFragmentID);
-		glDeleteShader(userAsset.m_glFragmentID);
-	}
-}
-
-/** Save the program binary to file
-@param	engine		the engine to be used
-@param	userAsset	the shader asset to link for 
-@return				true if successful, false otherwise */
-inline bool use_binary(Engine * engine, Asset_Shader & userAsset)
-{
-	userAsset.m_glProgramID = glCreateProgram();
-	glProgramBinary(userAsset.m_glProgramID, userAsset.m_binaryFormat, userAsset.m_binary.data(), userAsset.m_binaryLength);
-	GLint success;
-	glGetProgramiv(userAsset.m_glProgramID, GL_LINK_STATUS, &success);
-	if (success == 0) {
-		GLint infoLogLength;
-		glGetProgramiv(userAsset.m_glProgramID, GL_INFO_LOG_LENGTH, &infoLogLength);
-		std::vector<GLchar> infoLog(infoLogLength);
-		glGetProgramInfoLog(userAsset.m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-		engine->getMessageManager().error(MessageManager::PROGRAM_INCOMPLETE, userAsset.getFileName(), std::string(infoLog.data(), infoLog.size()));
-	}
-	glValidateProgram(userAsset.m_glProgramID);
-	return (bool)success;
-}
-
-/** Save the program binary to file
-@param	engine		the engine to be used
-@param	userAsset	the shader asset to link for */
-inline void save_binary(Engine * engine, Asset_Shader & userAsset)
-{
-	ShaderHeader header;
-	glProgramParameteri(userAsset.m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
-	glGetProgramiv(userAsset.m_glProgramID, GL_PROGRAM_BINARY_LENGTH, &header.length);
-	userAsset.m_binary.resize(header.length);
-	glGetProgramBinary(userAsset.m_glProgramID, header.length, NULL, &header.format, userAsset.m_binary.data());
-
-	std::ofstream file((Engine::Get_Current_Dir() + DIRECTORY_SHADER + userAsset.getFileName() + EXT_SHADER_BINARY).c_str(), std::ios::binary);
-	if (file.is_open()) {
-		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-		file.write(userAsset.m_binary.data(), header.length);
-		file.close();
-	}
-	userAsset.m_binaryFormat = header.format;
-	userAsset.m_binaryLength = header.length;	
-}
 
 Asset_Shader::~Asset_Shader()
 {
@@ -186,47 +34,49 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 		threaded
 	);
 }
-
 void Asset_Shader::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
-	m_vertexText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	m_fragmentText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+	const std::string filename = getFileName();
+
+	// Create Vertex Shader
+	m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
+	m_vertexShader.createGLShader(engine, filename);
+	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
+
+	// Create Fragment Shader
+	m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+	m_fragmentShader.createGLShader(engine, filename);
+	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+
+	glLinkProgram(m_glProgramID);
+	glValidateProgram(m_glProgramID);
+
+	// Detach the shaders now that the program is complete
+	glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
+	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 }
 
 void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 {
-	const bool found_vertex = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_VERTEX, m_vertexText);
-	const bool found_fragement = Text_IO::Import_Text(engine, relativePath + EXT_SHADER_FRAGMENT, m_fragmentText);
-	const bool found_shader_binary = Engine::File_Exists(relativePath + EXT_SHADER_BINARY);
-	
-	if (!(found_vertex && found_fragement)) {
-		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Shader");
-		initializeDefault(engine);
-	}
-
-	// Try to use the cached shader
-	bool binarySuccess = false;
-	if (found_shader_binary) {
-		ShaderHeader header;
-		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
-		if (file.is_open()) {
-			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
-			m_binary.resize(header.length);
-			file.read(m_binary.data(), header.length);
-			m_binaryFormat = header.format;
-			m_binaryLength = header.length;
-			file.close();
-			binarySuccess = use_binary(engine, *this);
+	// Attempt to load cache, otherwise load manually
+	m_glProgramID = glCreateProgram();
+	bool success = false;
+	if (!loadCachedBinary(engine, relativePath)) {
+		// Create Vertex and Fragment shaders
+		if (initShaders(engine, relativePath)) {
+			glLinkProgram(m_glProgramID);
+			if (validateProgram()) {
+				saveCachedBinary(engine, relativePath);
+				success = true;
+			}
 		}
-	}
-	if (!binarySuccess) {
-		parse(engine, *this);
-		compile(engine, *this);
-		generate_program(*this);
-		link_program(engine, *this);
-		save_binary(engine, *this);
-		cleanup_program(*this);
+		if (!success) {
+			// Initialize default
+			const std::vector<GLchar> infoLog = getErrorLog();
+			engine->getMessageManager().error(MessageManager::SHADER_PROGRAM_INCOMPLETE, getFileName(), std::string(infoLog.data(), infoLog.size()));
+			initializeDefault(engine);
+		}
 	}
 
 	// Finalize
@@ -242,4 +92,156 @@ void Asset_Shader::bind()
 void Asset_Shader::Release()
 {
 	glUseProgram(0);
+}
+
+const GLint Asset_Shader::getProgramiv(const GLenum & pname) const
+{
+	GLint param;
+	glGetProgramiv(m_glProgramID, pname, &param);
+	return param;
+}
+
+const std::vector<GLchar> Asset_Shader::getErrorLog() const
+{
+	std::vector<GLchar> infoLog(getProgramiv(GL_INFO_LOG_LENGTH));
+	glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+	return infoLog;
+}
+
+const bool Asset_Shader::loadCachedBinary(Engine * engine, const std::string & relativePath)
+{
+	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
+		ShaderHeader header;
+		std::ifstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+		if (file.is_open()) {
+			file.read(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+			std::vector<char> binary(header.length); 
+			file.read(binary.data(), header.length);
+			file.close();
+
+			glProgramBinary(m_glProgramID, header.format, binary.data(), header.length);
+			if (getProgramiv(GL_LINK_STATUS)) {
+				glValidateProgram(m_glProgramID);
+				return true;
+			}
+			const std::vector<GLchar> infoLog = getErrorLog();
+			engine->getMessageManager().error(MessageManager::SHADER_BINARY_INCOMPLETE, getFileName(), std::string(infoLog.data(), infoLog.size()));
+			return false;
+		}
+		engine->getMessageManager().error(MessageManager::SHADER_BINARY_INCOMPLETE, getFileName(), "Failed to open binary file.");
+		return false;
+	}
+	// Safe, binary file simply doesn't exist. Don't error report.
+	return false;
+}
+
+const bool Asset_Shader::saveCachedBinary(Engine * engine, const std::string & relativePath)
+{
+	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
+	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
+	std::vector<char> binary(header.length);
+	glGetProgramBinary(m_glProgramID, header.length, NULL, &header.format, binary.data());
+
+	std::ofstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+	if (file.is_open()) {
+		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
+		file.write(binary.data(), header.length);
+		file.close();
+		return true;
+	}
+	engine->getMessageManager().error(MessageManager::MANUAL_ERROR, getFileName(), "Failed to cache shader binary.");
+	return false;
+}
+
+const bool Asset_Shader::initShaders(Engine * engine, const std::string & relativePath) 
+{
+	const std::string filename = getFileName();
+
+	if (!m_vertexShader.loadDocument(engine, relativePath + EXT_SHADER_VERTEX) ||
+		!m_fragmentShader.loadDocument(engine, relativePath + EXT_SHADER_FRAGMENT))	
+		return false;
+	
+
+	// Create Vertex Shader
+	m_vertexShader.createGLShader(engine, filename);
+	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
+
+	// Create Fragment Shader
+	m_fragmentShader.createGLShader(engine, filename);
+	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+
+	return true;
+}
+
+const bool Asset_Shader::validateProgram() 
+{
+	// Check Validation
+	if (getProgramiv(GL_LINK_STATUS)) {
+		glValidateProgram(m_glProgramID);
+
+		// Detach the shaders now that the program is complete
+		glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
+		glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+
+		return true;
+	}
+	return false;
+}
+
+ShaderObj::~ShaderObj() { glDeleteShader(m_shaderID); }
+
+ShaderObj::ShaderObj(const GLenum & type) : m_type(type) {}
+
+const GLint ShaderObj::getShaderiv(const GLenum & pname) const
+{
+	GLint param;
+	glGetShaderiv(m_shaderID, pname, &param);
+	return param;
+}
+
+const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
+{
+	// Exit early if document not found or no text is found in the document
+	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
+		return false;
+
+	// Update document, including any packages required
+	size_t spot = m_shaderText.find("#package");
+	while (spot != std::string::npos) {
+		std::string directory = m_shaderText.substr(spot);
+
+		const size_t qspot1 = directory.find("\"");
+		const size_t qspot2 = directory.find("\"", qspot1 + 1);
+		// find std::string quotes and remove them
+		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
+
+		Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
+		std::string left = m_shaderText.substr(0, spot);
+		std::string right = m_shaderText.substr(spot + 1 + qspot2);
+		m_shaderText = left + package->getPackageText() + right;
+		spot = m_shaderText.find("#package");
+	}
+
+	// Success
+	return true;
+}
+
+const bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
+{
+	// Create shader object
+	const char * source = m_shaderText.c_str();
+	const GLint length = (GLint)m_shaderText.length();
+	m_shaderID = glCreateShader(m_type);
+	glShaderSource(m_shaderID, 1, &source, &length);
+	glCompileShader(m_shaderID);
+
+	// Validate shader object
+	if (getShaderiv(GL_COMPILE_STATUS))
+		return true;
+
+	// Report any errors
+	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
+	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+	engine->getMessageManager().error(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
+	return false;
 }
