@@ -5,6 +5,17 @@
 #include <memory>
 #include <random>
 
+/* Component Types Used */
+#include "ECS/Components/Prop_C.h"
+#include "ECS/Components/Skeleton_C.h"
+#include "ECS/Components/LightDirectional_C.h"
+#include "ECS/Components/LightPoint_C.h"
+#include "ECS/Components/LightSpot_C.h"
+#include "ECS/Components/Collider_C.h"
+#include "ECS/Components/Reflector_C.h"
+#include "ECS/Components/Skeleton_C.h"
+#include "ECS/Components/Transform_C.h"
+
 /* System Types Used */
 #include "ECS\Systems\PropRendering_S.h"
 #include "ECS\Systems\LightDirectional_S.h"
@@ -145,6 +156,23 @@ void Graphics_Module::initialize(Engine * engine)
 	world.addLevelListener(&getSystem<LightSpot_System>()->m_renderState.m_outOfDate);
 	world.addLevelListener(&getSystem<LightPoint_System>()->m_renderState.m_outOfDate);
 	world.addLevelListener(&getSystem<Reflector_System>()->m_renderState.m_outOfDate);
+	   
+	// Component Constructors
+	auto & lightDir = *getEffect<LightDirectional_Effect>();
+	m_engine->registerECSConstructor("LightDirectional_Component", new LightDirectional_Constructor(&lightDir.m_lightBuffer));
+	m_engine->registerECSConstructor("LightDirectionalShadow_Component", new LightDirectionalShadow_Constructor(&lightDir.m_shadowBuffer, &lightDir.m_shadowFBO));
+	auto & lightPoint = *getEffect<LightPoint_Effect>();
+	m_engine->registerECSConstructor("LightPoint_Component", new LightPoint_Constructor(&lightPoint.m_lightBuffer));
+	m_engine->registerECSConstructor("LightPointShadow_Component", new LightPointShadow_Constructor(&lightPoint.m_shadowBuffer, &lightPoint.m_shadowFBO));
+	auto & lightSpot = *getEffect<LightSpot_Effect>();
+	m_engine->registerECSConstructor("LightSpot_Component", new LightSpot_Constructor(&lightSpot.m_lightBuffer));
+	m_engine->registerECSConstructor("LightSpotShadow_Component", new LightSpotShadow_Constructor(&lightSpot.m_shadowBuffer, &lightSpot.m_shadowFBO));
+	auto & ref = *getEffect<Reflector_Effect>();
+	m_engine->registerECSConstructor("Reflector_Component", new Reflector_Constructor(&m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO));
+	auto & prop = *getEffect<PropRendering_Effect>();
+	m_engine->registerECSConstructor("Prop_Component", new Prop_Constructor(m_engine, &prop.m_propBuffer));
+	m_engine->registerECSConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer));
+	m_engine->registerECSConstructor("Transform_Component", new Transform_Constructor());
 }
 
 void Graphics_Module::renderFrame(const float & deltaTime)

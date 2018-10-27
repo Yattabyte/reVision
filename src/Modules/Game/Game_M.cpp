@@ -3,6 +3,9 @@
 #include "Engine.h"
 #include <atomic>
 
+/* Component Types Used */
+#include "ECS/Components/BasicPlayer_C.h"
+#include "Modules\Game\Components\BoardState_C.h"
 
 void Game_Module::initialize(Engine * engine)
 {
@@ -68,6 +71,10 @@ void Game_Module::initialize(Engine * engine)
 	m_shaderTiles->addCallback(m_aliveIndicator, [&]() mutable {
 		m_shaderTiles->setUniform(0, glm::ortho<float>(0, 128 * 6, 0, 128 * 12, -1, 1));
 	});	
+
+	// Component Constructors
+	m_engine->registerECSConstructor("BasicPlayer_Component", new BasicPlayer_Constructor());
+	m_engine->registerECSConstructor("BoardState_Component", new BoardState_Constructor(&m_engine->getGameModule().m_boardBuffer));
 }
 
 void Game_Module::newGame()

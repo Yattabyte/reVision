@@ -4,6 +4,8 @@
 
 #include "ECS\Components\ecsComponent.h"
 #include "ECS\Systems\ecsSystem.h"
+#include "Utilities\MappedChar.h"
+#include <any>
 #include <map>
 #include <vector>
 
@@ -65,7 +67,10 @@ public:
 	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
 		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
 	}
-
+	/***/
+	void registerConstructor(const char * name, BaseECSComponentConstructor * constructor);
+	/***/
+	const Component_and_ID constructComponent(const char * typeName, const std::vector<std::any> & parameters);
 
 	// Public System Functions
 	/** Update the components of all systems provided.
@@ -96,6 +101,7 @@ private:
 	// Private attributes
 	std::map<uint32_t, std::vector<uint8_t>> m_components;
 	std::vector < std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* > m_entities;
+	MappedChar<BaseECSComponentConstructor*> m_constructorMap;
 };
 
 #endif // ECS_H

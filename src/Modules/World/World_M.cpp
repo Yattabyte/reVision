@@ -1,28 +1,6 @@
 #include "Modules\World\World_M.h"
-#include "Modules\Graphics\Graphics_M.h"
-#include "Modules\Physics\Physics_M.h"
 #include "Utilities\IO\Level_IO.h"
 #include "Engine.h"
-
-/* Component Types Used */
-#include "ECS/Components/BasicPlayer_C.h"
-#include "ECS/Components/Prop_C.h"
-#include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/LightDirectional_C.h"
-#include "ECS/Components/LightPoint_C.h"
-#include "ECS/Components/LightSpot_C.h"
-#include "ECS/Components/Collider_C.h"
-#include "ECS/Components/Reflector_C.h"
-#include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/Transform_C.h"
-#include "Modules\Game\Components\BoardState_C.h"
-
-/* Effect Types Used */
-#include "Modules\Graphics\Effects\LightDirectional_FX.h"
-#include "Modules\Graphics\Effects\LightPoint_FX.h"
-#include "Modules\Graphics\Effects\LightSpot_FX.h"
-#include "Modules\Graphics\Effects\PropRendering_FX.h"
-#include "Modules\Graphics\Effects\Reflector_FX.h"
 
 
 World_Module::~World_Module()
@@ -36,27 +14,7 @@ void World_Module::initialize(Engine * engine)
 	Engine_Module::initialize(engine);
 	m_engine->getMessageManager().statement("Loading Module: World...");
 
-	auto & physics = m_engine->getPhysicsModule();
-	auto & graphics = m_engine->getGraphicsModule();
-	auto & lightDir = *graphics.getEffect<LightDirectional_Effect>();
-	auto & lightPoint = *graphics.getEffect<LightPoint_Effect>();
-	auto & lightSpot = *graphics.getEffect<LightSpot_Effect>();
-	auto & prop = *graphics.getEffect<PropRendering_Effect>();
-	auto & ref = *graphics.getEffect<Reflector_Effect>();
-	m_constructorMap["BasicPlayer_Component"] = new BasicPlayer_Constructor();
-	m_constructorMap["LightDirectional_Component"] = new LightDirectional_Constructor(&lightDir.m_lightBuffer);
-	m_constructorMap["LightDirectionalShadow_Component"] = new LightDirectionalShadow_Constructor(&lightDir.m_shadowBuffer, &lightDir.m_shadowFBO);
-	m_constructorMap["LightPoint_Component"] = new LightPoint_Constructor(&lightPoint.m_lightBuffer);
-	m_constructorMap["LightPointShadow_Component"] = new LightPointShadow_Constructor(&lightPoint.m_shadowBuffer, &lightPoint.m_shadowFBO);
-	m_constructorMap["LightSpot_Component"] = new LightSpot_Constructor(&lightSpot.m_lightBuffer);
-	m_constructorMap["LightSpotShadow_Component"] = new LightSpotShadow_Constructor(&lightSpot.m_shadowBuffer, &lightSpot.m_shadowFBO);
-	m_constructorMap["Collider_Component"] = new Collider_Constructor(m_engine);
-	m_constructorMap["Prop_Component"] = new Prop_Constructor(m_engine, &prop.m_propBuffer);
-	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO);
-	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer);
-	m_constructorMap["Transform_Component"] = new Transform_Constructor();
-	m_constructorMap["BoardState_Component"] = new BoardState_Constructor(&m_engine->getGameModule().m_boardBuffer);
-
+	// Load world
 	loadWorld();
 }
 
@@ -107,8 +65,7 @@ void World_Module::processLevel()
 				// Get component type
 				type = lvlComponent.type.c_str();
 				// Call the appropriate creator if available
-				if (m_constructorMap.find(type))
-					outputComponent = m_constructorMap[type]->construct(lvlComponent.parameters);
+				outputComponent = ecs.constructComponent(type, lvlComponent.parameters);
 				// Push back our result if successfull
 				if (outputComponent.success()) {
 					components.push_back(outputComponent.component);

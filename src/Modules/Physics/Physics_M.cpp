@@ -1,6 +1,9 @@
 #include "Physics_M.h"
 #include "Engine.h"
 
+/* Component Types Used */
+#include "ECS/Components/Collider_C.h"
+
 
 Physics_Module::~Physics_Module()
 {
@@ -22,6 +25,9 @@ void Physics_Module::initialize(Engine * engine)
 	m_solver = new btSequentialImpulseConstraintSolver;
 	m_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collisionConfiguration);
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
+
+	// Component Constructors
+	m_engine->registerECSConstructor("Collider_Component", new Collider_Constructor(m_engine));
 }
 
 void Physics_Module::physicsFrame(const float & deltaTime)

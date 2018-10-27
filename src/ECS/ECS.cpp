@@ -47,6 +47,20 @@ void ECS::removeEntity(const EntityHandle & handle)
 	m_entities.pop_back();
 }
 
+void ECS::registerConstructor(const char * name, BaseECSComponentConstructor * constructor)
+{
+	if (m_constructorMap.find(name))
+		delete m_constructorMap[name];
+	m_constructorMap[name] = constructor;
+}
+
+const Component_and_ID ECS::constructComponent(const char * typeName, const std::vector<std::any>& parameters)
+{
+	if (m_constructorMap.find(typeName))
+		return m_constructorMap[typeName]->construct(parameters);
+	return Component_and_ID();
+}
+
 void ECS::updateSystems(ECSSystemList & systems, const float & deltaTime)
 {
 	for (size_t i = 0; i < systems.size(); ++i) {

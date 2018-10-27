@@ -18,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.1";
+constexpr char ENGINE_VERSION[] = "2.1.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -53,6 +53,10 @@ public:
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down */
 	bool shouldClose();
+	/***/
+	inline void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) {
+		m_ecs.registerConstructor(name, constructor);
+	}
 
 
 	// Public Accessors

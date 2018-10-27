@@ -40,7 +40,6 @@ private:
 	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
 	Shared_Asset_Level m_level;
-	MappedChar<BaseECSComponentConstructor*> m_constructorMap;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
