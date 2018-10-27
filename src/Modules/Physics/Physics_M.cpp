@@ -11,11 +11,11 @@ Physics_Module::~Physics_Module()
 	delete m_world;
 }
 
-Physics_Module::Physics_Module(Engine * engine) : Engine_Module(engine) {}
-
-void Physics_Module::initialize()
+void Physics_Module::initialize(Engine * engine)
 {
+	Engine_Module::initialize(engine);
 	m_engine->getMessageManager().statement("Loading Module: Physics...");
+
 	m_broadphase = new btDbvtBroadphase();
 	m_collisionConfiguration = new btDefaultCollisionConfiguration();
 	m_dispatcher = new btCollisionDispatcher(m_collisionConfiguration);

@@ -12,11 +12,11 @@ class Physics_Module : public Engine_Module {
 public:
 	// (de)Constructors
 	~Physics_Module();
-	Physics_Module(Engine * engine);
+	Physics_Module() = default;
 
 
 	// Public Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize(Engine * engine) override;
 
 
 	// Public Methods

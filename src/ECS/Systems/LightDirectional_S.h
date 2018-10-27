@@ -46,15 +46,16 @@ public:
 		const float tanHalfHFOV = glm::radians(cameraBuffer->data->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 		const float near_plane = -CAMERA_NEAR_PLANE;
-		const float far_plane = -m_renderState.m_drawDistance;
+		const float far_plane = -m_renderState.m_drawDistance/2.0F;
 		float cascadeEnd[NUM_CASCADES + 1];
 		glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
+		constexpr float lambda = 0.75f;
 		cascadeEnd[0] = near_plane;
 		for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-			const float cLog = near_plane * powf((far_plane / near_plane), (float(x) / float(NUM_CASCADES)));
-			const float cUni = near_plane + ((far_plane - near_plane) * x / NUM_CASCADES);
-			const float lambda = 0.75f;
-			cascadeEnd[x] = (lambda*cLog) + ((1.0f - lambda)*cUni);
+			const float xDivM = float(x) / float(NUM_CASCADES);
+			const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
+			const float cUni = near_plane + (far_plane - near_plane) * xDivM;
+			cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;
 		}
 		for (int i = 0; i < NUM_CASCADES; i++) {
 			float points[4] = {

@@ -10,11 +10,13 @@ class Engine_Module {
 public:
 	// (de)Constructors
 	~Engine_Module() = default;
-	Engine_Module(Engine * engine) : m_engine(engine) {}
+	Engine_Module() = default;
 
 
 	/** Initialize the module. */
-	inline virtual void initialize() {};
+	inline virtual void initialize(Engine * engine) {
+		m_engine = engine;
+	};
 
 
 protected:

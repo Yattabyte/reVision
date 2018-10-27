@@ -26,12 +26,12 @@ class Graphics_Module : public Engine_Module {
 public:
 	// (de)Constructors
 	~Graphics_Module() = default;
-	Graphics_Module(Engine * engine);
+	Graphics_Module();
 
 
 	// Public Interface Implementation
 	/** Initialize the module. */
-	virtual void initialize() override;
+	virtual void initialize(Engine * engine) override;
 
 
 	// Public Methods

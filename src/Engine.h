@@ -10,6 +10,7 @@
 #include "Modules\Graphics\Graphics_M.h"
 #include "Modules\Physics\Physics_M.h"
 #include "Modules\World\World_M.h"
+#include "Modules\Game\Game_M.h"
 #include "Utilities\ActionState.h"
 #include "Utilities\InputBinding.h"
 #include "Utilities\PreferenceState.h"
@@ -17,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.0.A";
+constexpr char ENGINE_VERSION[] = "2.1";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -77,6 +78,8 @@ public:
 	Physics_Module & getPhysicsModule() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
 	World_Module & getWorldModule() { return m_moduleWorld; }
+	/** Returns this engine's game module. */
+	Game_Module & getGameModule() { return m_moduleGame; }
 
 
 	// Static Methods
@@ -118,6 +121,7 @@ private:
 	Graphics_Module m_moduleGraphics;
 	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
+	Game_Module m_moduleGame;
 };
 
 #endif // ENGINE_H

@@ -116,10 +116,7 @@ Engine::Engine() :
 	m_inputBindings(this), 
 	m_PreferenceState(this),
 	m_renderingContext(this), 
-	m_materialManager(this), 
-	m_moduleGraphics(this), 
-	m_modulePhysics(this), 
-	m_moduleWorld(this)
+	m_materialManager(this)
 {
 	Image_IO::Initialize();
 
@@ -157,9 +154,10 @@ Engine::Engine() :
 	
 	// Initialize Members
 	m_inputBindings.loadFile("binds");
-	m_moduleGraphics.initialize();
-	m_modulePhysics.initialize();
-	m_moduleWorld.initialize();
+	m_moduleGraphics.initialize(this);
+	m_modulePhysics.initialize(this);
+	m_moduleWorld.initialize(this);
+	m_moduleGame.initialize(this);
 	m_modelManager.initialize();
 
 	m_logicSystems.addSystem(new PlayerMovement_System(this));
@@ -193,21 +191,20 @@ Engine::Engine() :
 
 void Engine::tick()
 {
-	float thisTime = (float)glfwGetTime();
-	float deltaTime = thisTime - m_lastTime;
+	const float thisTime = (float)glfwGetTime();
+	const float deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
 	// Performance Debugging
 	m_frameCount++;
 	if (m_frameCount >= 100) {
 		m_frameAccumulator /= 100.0f;
-		getMessageManager().statement("Avg Frametime = " + std::to_string(m_frameAccumulator*1000.0f) + " ms");
+		m_messageManager.statement("Avg Frametime = " + std::to_string(m_frameAccumulator * 1000.0f) + " ms");
 		m_frameAccumulator = deltaTime;
 		m_frameCount = 0;
 	}
 	else
 		m_frameAccumulator += deltaTime;
-	// end performance heuristics
 
 	// Logic depending on assets finalizing
 	m_AssetManager.notifyObservers();
@@ -215,17 +212,24 @@ void Engine::tick()
 	m_modelManager.update();
 	// Update input
 	updateInput(deltaTime);
-
-	// Logic depending on state of the world
-	if (m_moduleWorld.checkIfLoaded()) {
-		// Update physics
-		m_modulePhysics.physicsFrame(deltaTime);
-	}
 	// Update logical systems
 	m_ecs.updateSystems(m_logicSystems, deltaTime);
+
+
+	/*********************
+	--- Update Modules ---
+	*********************/
+	// Logic depending on state of the world
+	if (m_moduleWorld.checkIfLoaded()) 
+		// Update physics
+		m_modulePhysics.physicsFrame(deltaTime);
+	
 	// Update graphics
 	m_moduleGraphics.setActiveCamera(0);
 	m_moduleGraphics.renderFrame(deltaTime);
+	// Update game
+	m_moduleGame.tickGame(deltaTime);
+
 
 	// End Frame
 	glfwSwapBuffers(m_renderingContext.window);

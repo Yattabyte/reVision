@@ -30,8 +30,17 @@
 #include "Modules\Graphics\Effects\Frametime_Counter.h"
 
 
-Graphics_Module::Graphics_Module(Engine * engine) 
-	: Engine_Module(engine), m_ecs(&m_engine->getECS()) {
+Graphics_Module::Graphics_Module() 
+{
+	
+}
+
+void Graphics_Module::initialize(Engine * engine)
+{
+	Engine_Module::initialize(engine);
+	m_ecs = &m_engine->getECS();
+	m_engine->getMessageManager().statement("Loading Module: Graphics...");
+
 	// GL settings
 	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 	glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -67,7 +76,7 @@ Graphics_Module::Graphics_Module(Engine * engine)
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
 	});
-	
+
 	// Camera Setup
 	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint));
 	m_defaultCamera = m_cameraBuffer.newElement();
@@ -96,11 +105,7 @@ Graphics_Module::Graphics_Module(Engine * engine)
 	Status = glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER);
 	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
 		m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Reflection FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
-}
 
-void Graphics_Module::initialize()
-{
-	m_engine->getMessageManager().statement("Loading Module: Graphics...");
 	m_visualFX.initialize(m_engine);
 	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
 	m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);

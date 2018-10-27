@@ -14,11 +14,11 @@ class World_Module : public Engine_Module {
 public:
 	// (de)Constructors
 	~World_Module();
-	World_Module(Engine * engine);
+	World_Module() = default;
 
 
 	// Public Interface Implementation
-	virtual void initialize() override;
+	virtual void initialize(Engine * engine) override;
 
 
 	// Public Methods

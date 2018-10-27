@@ -15,6 +15,7 @@
 #include "ECS/Components/Reflector_C.h"
 #include "ECS/Components/Skeleton_C.h"
 #include "ECS/Components/Transform_C.h"
+#include "Modules\Game\Components\BoardState_C.h"
 
 /* Effect Types Used */
 #include "Modules\Graphics\Effects\LightDirectional_FX.h"
@@ -30,11 +31,11 @@ World_Module::~World_Module()
 	m_aliveIndicator = false;
 }
 
-World_Module::World_Module(Engine * engine) : Engine_Module(engine) {}
-
-void World_Module::initialize()
+void World_Module::initialize(Engine * engine)
 {
+	Engine_Module::initialize(engine);
 	m_engine->getMessageManager().statement("Loading Module: World...");
+
 	auto & physics = m_engine->getPhysicsModule();
 	auto & graphics = m_engine->getGraphicsModule();
 	auto & lightDir = *graphics.getEffect<LightDirectional_Effect>();
@@ -54,13 +55,14 @@ void World_Module::initialize()
 	m_constructorMap["Reflector_Component"] = new Reflector_Constructor(&graphics.m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO);
 	m_constructorMap["Skeleton_Component"] = new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer);
 	m_constructorMap["Transform_Component"] = new Transform_Constructor();
+	m_constructorMap["BoardState_Component"] = new BoardState_Constructor(&m_engine->getGameModule().m_boardBuffer);
 
 	loadWorld();
 }
 
 void World_Module::loadWorld()
 {
-	m_level = Asset_Level::Create(m_engine, "physTest.map");
+	m_level = Asset_Level::Create(m_engine, "game.map");
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 
