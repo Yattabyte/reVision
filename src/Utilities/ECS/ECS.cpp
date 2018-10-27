@@ -63,20 +63,24 @@ const Component_and_ID ECS::constructComponent(const char * typeName, const std:
 
 void ECS::updateSystems(ECSSystemList & systems, const float & deltaTime)
 {
-	for (size_t i = 0; i < systems.size(); ++i) {
-		const std::vector<uint32_t> & componentTypes = systems[i]->getComponentTypes();
-		if (componentTypes.size() == 1u) {
-			const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
-			const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
-			std::vector< std::vector<BaseECSComponent*> > components(mem_array.size() / typeSize);
-			for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k) 
-				components[k].push_back((BaseECSComponent*)&mem_array[j]);
-			if (components.size())
-				systems[i]->updateComponents(deltaTime, components);
-		}
-		else 
-			updateSystemWithMultipleComponents(systems, i, deltaTime, componentTypes);
+	for (size_t i = 0; i < systems.size(); ++i) 
+		updateSystem(systems[i], deltaTime);	
+}
+
+void ECS::updateSystem(BaseECSSystem * system, const float & deltaTime)
+{
+	const std::vector<uint32_t> & componentTypes = system->getComponentTypes();
+	if (componentTypes.size() == 1u) {
+		const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
+		const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
+		std::vector< std::vector<BaseECSComponent*> > components(mem_array.size() / typeSize);
+		for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
+			components[k].push_back((BaseECSComponent*)&mem_array[j]);
+		if (components.size())
+			system->updateComponents(deltaTime, components);
 	}
+	else
+		updateSystemWithMultipleComponents(system, deltaTime, componentTypes);
 }
 
 void ECS::deleteComponent(const uint32_t & componentID, const uint32_t & index)
@@ -140,11 +144,11 @@ BaseECSComponent * ECS::getComponentInternal(std::vector<std::pair<uint32_t, uin
 	return nullptr;
 }
 
-void ECS::updateSystemWithMultipleComponents(ECSSystemList & systems, const size_t & index, const float & deltaTime, const std::vector<uint32_t>& componentTypes)
+void ECS::updateSystemWithMultipleComponents(BaseECSSystem * system, const float & deltaTime, const std::vector<uint32_t>& componentTypes)
 {
 	std::vector<BaseECSComponent*> componentParam(componentTypes.size());
 	std::vector<std::vector<uint8_t>*> componentArrays(componentTypes.size());
-	const std::vector<uint32_t> & componentFlags = systems[index]->getComponentFlags();
+	const std::vector<uint32_t> & componentFlags = system->getComponentFlags();
 	for (size_t i = 0; i < componentTypes.size(); ++i) 
 		componentArrays[i] = &m_components[componentTypes[i]];	
 
@@ -172,7 +176,7 @@ void ECS::updateSystemWithMultipleComponents(ECSSystemList & systems, const size
 			componentParamList.push_back(componentParam);		
 	}
 	if (componentParamList.size())
-		systems[index]->updateComponents(deltaTime, componentParamList);
+		system->updateComponents(deltaTime, componentParamList);
 }
 
 size_t ECS::findLeastCommonComponent(const std::vector<uint32_t>& componentTypes, const std::vector<uint32_t> & componentFlags)

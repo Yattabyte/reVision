@@ -47,6 +47,8 @@ public:
 
 private:
 	// Private Methods
+	/** Adds a new row of tiles to the board provided.
+	@param		board		the board to add a new row of tiles to. */
 	void pushNewRow(BoardState_Component & board) {
 		// Move board up 1 row
 		for (int x = 0; x < BOARD_WIDTH; ++x) 

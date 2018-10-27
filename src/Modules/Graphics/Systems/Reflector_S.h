@@ -24,7 +24,7 @@ class Reflector_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Reflector_System() = default;
-	Reflector_System(Engine * engine) : m_engine(engine) {
+	Reflector_System() {
 		// Declare component types used
 		addComponentType(Reflector_Component::ID);
 		GLuint data[] = { 0,0,0,0 };
@@ -80,10 +80,6 @@ private:
 
 		return outList;
 	}
-
-
-	// Private Attributes
-	Engine * m_engine = nullptr;
 };
 
 #endif // REFLECTOR_S_H

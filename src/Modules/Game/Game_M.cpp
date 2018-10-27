@@ -82,10 +82,6 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->registerECSConstructor("BoardState_Component", new BoardState_Constructor(&m_engine->getGameModule().m_boardBuffer));
 }
 
-void Game_Module::newGame()
-{
-}
-
 void Game_Module::tickGame(const float & deltaTime)
 {
 	m_engine->getECS().updateSystems(m_gameplaySystems, deltaTime);

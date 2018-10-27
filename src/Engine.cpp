@@ -1,4 +1,5 @@
 #include "Engine.h"
+#include "Utilities\ECS\Transform_C.h"
 #include "LinearMath\btScalar.h"
 #include <direct.h>
 
@@ -10,11 +11,8 @@
 #include "Utilities\IO\Image_IO.h"
 #include "Utilities\IO\Mesh_IO.h"
 
-// General Logical ECS Systems Used //
-#include "ECS\Systems\TransformSync_S.h"
 
-
-// Is called when the window resizes
+// Called when the window resizes
 static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
 {
 	auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
@@ -110,36 +108,36 @@ Engine::~Engine()
 
 Engine::Engine() : 
 	// Initialize engine-dependent members first
-	m_AssetManager(this), 
+	m_assetManager(this), 
 	m_inputBindings(this), 
-	m_PreferenceState(this),
+	m_preferenceState(this),
 	m_renderingContext(this), 
 	m_materialManager(this)
 {
 	Image_IO::Initialize();
 
 	// Preference Values
-	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
-	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
-	m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
+	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
+	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
+	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
 
 	// Preference Callbacks
-	m_PreferenceState.addCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
 		if (f > 0.0f) 
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);		
 		else
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
 	});
-	m_PreferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
+	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
 		m_refreshRate = f;
 		int useMonitorRate = 1;
-		m_PreferenceState.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, useMonitorRate);
+		m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, useMonitorRate);
 		if (useMonitorRate > 0)
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);		
 		else
 			glfwSetWindowMonitor(m_renderingContext.window, glfwGetPrimaryMonitor(), 0, 0, m_windowSize.x, m_windowSize.y, m_refreshRate > 0.0f ? (int)m_refreshRate : GLFW_DONT_CARE);
 	});
-	m_PreferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f);});
+	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f);});
 
 	// Configure Rendering Context
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -151,14 +149,13 @@ Engine::Engine() :
 	glfwMakeContextCurrent(m_renderingContext.window);
 	
 	// Initialize Members
+	registerECSConstructor("Transform_Component", new Transform_Constructor());
 	m_inputBindings.loadFile("binds");
 	m_moduleGraphics.initialize(this);
 	m_modulePhysics.initialize(this);
 	m_moduleWorld.initialize(this);
 	m_moduleGame.initialize(this);
 	m_modelManager.initialize();
-
-	m_logicSystems.addSystem(new TransformSync_System(this, m_modulePhysics.getWorld()));
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -203,14 +200,11 @@ void Engine::tick()
 		m_frameAccumulator += deltaTime;
 
 	// Logic depending on assets finalizing
-	m_AssetManager.notifyObservers();
+	m_assetManager.notifyObservers();
 	// Update expandable model container
 	m_modelManager.update();
 	// Update input
 	updateInput(deltaTime);
-	// Update logical systems
-	m_ecs.updateSystems(m_logicSystems, deltaTime);
-
 
 	/*********************
 	--- Update Modules ---
@@ -218,8 +212,7 @@ void Engine::tick()
 	// Logic depending on state of the world
 	if (m_moduleWorld.checkIfLoaded()) 
 		// Update physics
-		m_modulePhysics.physicsFrame(deltaTime);
-	
+		m_modulePhysics.physicsFrame(deltaTime);	
 	// Update graphics
 	m_moduleGraphics.setActiveCamera(0);
 	m_moduleGraphics.renderFrame(deltaTime);
@@ -238,7 +231,7 @@ void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context
 
 	// Check if thread should shutdown
 	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) 
-		m_AssetManager.beginWorkOrder();	
+		m_assetManager.beginWorkOrder();	
 }
 
 bool Engine::shouldClose()
@@ -277,11 +270,11 @@ void Engine::updateInput(const float & deltaTime)
 		const auto &action = pair.first;
 		const auto &input_button = (int)pair.second;
 		// If Key is pressed, set state to 1, otherwise set to 0
-		m_ActionState.at(action) = (glfwGetKey(m_renderingContext.window, input_button)) ? 1.0f : 0.0f;
+		m_actionState.at(action) = (glfwGetKey(m_renderingContext.window, input_button)) ? 1.0f : 0.0f;
 	}
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
-	m_ActionState.at(ActionState::LOOK_X) = (float)mouseX;
-	m_ActionState.at(ActionState::LOOK_Y) = (float)mouseY;
+	m_actionState.at(ActionState::LOOK_X) = (float)mouseX;
+	m_actionState.at(ActionState::LOOK_Y) = (float)mouseY;
 	glfwSetCursorPos(m_renderingContext.window, 0, 0);
 }

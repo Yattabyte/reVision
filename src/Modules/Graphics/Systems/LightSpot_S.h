@@ -26,7 +26,7 @@ class LightSpot_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~LightSpot_System() = default;
-	LightSpot_System(Engine * engine) : m_engine(engine) {
+	LightSpot_System() {
 		// Declare component types used
 		addComponentType(LightSpot_Component::ID);
 		addComponentType(LightSpotShadow_Component::ID, FLAG_OPTIONAL);
@@ -88,10 +88,6 @@ private:
 
 		return outList;
 	}
-
-
-	// Private Attributes
-	Engine * m_engine = nullptr;
 };
 
 #endif // LIGHTSPOT_S_H

@@ -27,12 +27,14 @@ public:
 	/** Registers a notification flag to be updated when level loaded.
 	@param	notifier	flag to be set when level loaded*/
 	void addLevelListener(bool * notifier);
-	/** Checks whether the level has finished loading. */
+	/** Checks whether the level has finished loading. 
+	@return				true if level sufficiently loaded, false otherwise. */
 	const bool checkIfLoaded();
 
 
 private:
-	// Process the level
+	// Private Methods
+	/** Process the level asset, generating components and entities. */
 	void processLevel();
 
 

@@ -7,7 +7,7 @@
 #include "glm\glm.hpp"
 
 /* Component Types Used */
-#include "Modules\Graphics\Components\Transform_C.h"
+#include "Utilities\ECS\Transform_C.h"
 #include "Modules\Game\Components\BasicPlayer_C.h"
 
 

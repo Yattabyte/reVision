@@ -26,7 +26,7 @@ class LightPoint_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
 	~LightPoint_System() = default;
-	LightPoint_System(Engine * engine) : m_engine(engine) {
+	LightPoint_System() {
 		// Declare component types used
 		addComponentType(LightPoint_Component::ID);
 		addComponentType(LightPointShadow_Component::ID, FLAG_OPTIONAL);
@@ -87,10 +87,6 @@ private:
 
 		return outList;
 	}
-
-
-	// Private Attributes
-	Engine * m_engine = nullptr;
 };
 
 #endif // LIGHTINGPOINT_S_H

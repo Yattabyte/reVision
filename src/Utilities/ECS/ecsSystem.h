@@ -90,7 +90,7 @@ public:
 	}
 	/** Get the number of systems in the list.
 	@return			the size of the list. */
-	inline const size_t size() {
+	inline const size_t size() const {
 		return m_systems.size();
 	}
 	/** Retrieve a specific system at a given index.

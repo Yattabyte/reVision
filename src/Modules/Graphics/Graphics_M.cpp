@@ -13,10 +13,10 @@
 #include "Modules\Graphics\Components\LightSpot_C.h"
 #include "Modules\Graphics\Components\Reflector_C.h"
 #include "Modules\Graphics\Components\Skeleton_C.h"
-#include "Modules\Graphics\Components\Transform_C.h"
 #include "Modules\Graphics\Components\Camera_C.h"
 
 /* System Types Used */
+#include "Modules\Graphics\Systems\TransformSync_S.h"
 #include "Modules\Graphics\Systems\SkeletonAnimation_S.h"
 #include "Modules\Graphics\Systems\PropRendering_S.h"
 #include "Modules\Graphics\Systems\LightDirectional_S.h"
@@ -130,12 +130,13 @@ void Graphics_Module::initialize(Engine * engine)
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
 	// Graphics-related Component Updating
+	addSystem(new TransformSync_Gfx_System());
 	addSystem(new SkeletonAnimation_System());
 	addSystem(new PropRendering_System(m_engine));
 	addSystem(new LightDirectional_System(m_engine));
-	addSystem(new LightPoint_System(m_engine));
-	addSystem(new LightSpot_System(m_engine));
-	addSystem(new Reflector_System(m_engine));
+	addSystem(new LightPoint_System());
+	addSystem(new LightSpot_System());
+	addSystem(new Reflector_System());
 
 	// Rendering Pipeline
 	addEffect(new PropRendering_Effect(m_engine, &m_geometryFBO, &getSystem<PropRendering_System>()->m_renderState, m_shaderCull, m_shaderGeometry));
@@ -173,8 +174,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_engine->registerECSConstructor("Reflector_Component", new Reflector_Constructor(&m_cameraBuffer, &ref.m_reflectorBuffer, &ref.m_envmapFBO));
 	auto & prop = *getEffect<PropRendering_Effect>();
 	m_engine->registerECSConstructor("Prop_Component", new Prop_Constructor(m_engine, &prop.m_propBuffer));
-	m_engine->registerECSConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer));
-	m_engine->registerECSConstructor("Transform_Component", new Transform_Constructor());
+	m_engine->registerECSConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &prop.m_skeletonBuffer));	
 }
 
 void Graphics_Module::renderFrame(const float & deltaTime)

@@ -67,9 +67,13 @@ public:
 	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
 		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
 	}
-	/***/
+	/** Adds a component constructor to the construction map. 
+	@param	name				the component name type.
+	@param	constructor			the component constructor object. */
 	void registerConstructor(const char * name, BaseECSComponentConstructor * constructor);
-	/***/
+	/** Construct a component of the type provided, using the parameters specified.
+	@param	typeName			the component name type.
+	@param	parameters			the construction parameters (arguments). */
 	const Component_and_ID constructComponent(const char * typeName, const std::vector<std::any> & parameters);
 
 	// Public System Functions
@@ -77,6 +81,10 @@ public:
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
 	void updateSystems(ECSSystemList & systems, const float & deltaTime);
+	/** Update the components of a single system. 
+	@param	system				the system to update.
+	@param	deltaTime			the delta time. */
+	void updateSystem(BaseECSSystem * system, const float & deltaTime);
 
 
 private:
@@ -94,7 +102,7 @@ private:
 	void addComponentInternal(EntityHandle handle, std::vector<std::pair<uint32_t, uint32_t>> & entity, const uint32_t & componentID, BaseECSComponent * component);
 	bool removeComponentInternal(EntityHandle handle, const uint32_t & componentID);
 	BaseECSComponent * getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>>& entityComponents, std::vector<uint8_t> & array, const uint32_t & componentID);
-	void updateSystemWithMultipleComponents(ECSSystemList & systems, const size_t & index, const float & deltaTime, const std::vector<uint32_t> & componentTypes);
+	void updateSystemWithMultipleComponents(BaseECSSystem * system, const float & deltaTime, const std::vector<uint32_t> & componentTypes);
 	size_t findLeastCommonComponent(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
 
 

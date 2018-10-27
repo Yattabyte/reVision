@@ -3,6 +3,7 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules\Engine_Module.h"
+#include "Utilities\ECS\ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -23,7 +24,8 @@ public:
 	/** Updates the physics simulation by a single frame
 	@param	deltaTime	the amount of time passed since last frame */
 	void physicsFrame(const float & deltaTime);
-	/** Returns a pointer to the physics-world */
+	/** Returns a pointer to the physics-world.
+	@return				the physics world. */
 	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }
 
 
@@ -34,6 +36,7 @@ private:
 	btCollisionDispatcher * m_dispatcher = nullptr;
 	btSequentialImpulseConstraintSolver * m_solver = nullptr;
 	btDiscreteDynamicsWorld * m_world = nullptr;
+	ECSSystemList m_physicsSystems;
 };
 
 #endif // PHYSICS_MODULE_H

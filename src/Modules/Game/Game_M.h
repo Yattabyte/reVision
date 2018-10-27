@@ -24,7 +24,8 @@ public:
 
 
 	// Public Methods
-	void newGame();
+	/** Increments the game simulation by a single tick. 
+	@param		deltaTime		the delta time. */
 	void tickGame(const float & deltaTime);
 
 

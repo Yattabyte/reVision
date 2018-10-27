@@ -18,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.1.B";
+constexpr char ENGINE_VERSION[] = "2.1.C";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -53,7 +53,9 @@ public:
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down */
 	bool shouldClose();
-	/***/
+	/** Adds a component constructor to the ecs construction map.
+	@param	name				the component name type.
+	@param	constructor			the component constructor object. */
 	inline void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) {
 		m_ecs.registerConstructor(name, constructor);
 	}
@@ -65,11 +67,11 @@ public:
 	/** Returns this engine's entity component system. */
 	ECS & getECS() { return m_ecs; }
 	/** Returns this engine's action state. */
-	ActionState & getActionState() { return m_ActionState; }
+	ActionState & getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
-	PreferenceState & getPreferenceState() { return m_PreferenceState; }
+	PreferenceState & getPreferenceState() { return m_preferenceState; }
 	/** Returns this engine's asset manager. */
-	AssetManager & getAssetManager() { return m_AssetManager; }
+	AssetManager & getAssetManager() { return m_assetManager; }
 	/** Returns this engine's model manager. */
 	ModelManager & getModelManager() { return m_modelManager; }
 	/** Returns this engine's material manager. */
@@ -107,15 +109,14 @@ private:
 	int m_frameCount = 0;
 	float m_refreshRate = 60.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);	
-	AssetManager m_AssetManager;
+	AssetManager m_assetManager;
 	MessageManager m_messageManager;
-	PreferenceState	m_PreferenceState;
+	PreferenceState	m_preferenceState;
 	Rendering_Context m_renderingContext;
 	MaterialManager m_materialManager;
 	ModelManager m_modelManager;
 	ECS	m_ecs;
-	ECSSystemList m_logicSystems;
-	ActionState	m_ActionState;
+	ActionState	m_actionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
