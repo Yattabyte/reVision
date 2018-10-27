@@ -29,10 +29,6 @@ public:
 	void tickGame(const float & deltaTime);
 
 
-	// Public Attributes
-	VectorBuffer<BoardBuffer> m_boardBuffer;
-
-
 private:
 	// Private Attributes
 	ECSSystemList m_gameplaySystems;
@@ -42,6 +38,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_fboID = 0, m_boardTexID = 0, m_blockTextureID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
+	VectorBuffer<BoardBuffer> m_boardBuffer;
 };
 
 #endif // GAME_MODULE_H

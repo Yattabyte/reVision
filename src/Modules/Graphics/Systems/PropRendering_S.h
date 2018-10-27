@@ -40,7 +40,7 @@ public:
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;
-		const glm::vec3 & eyePosition = m_engine->getGraphicsModule().m_cameraBuffer.getElement(m_engine->getGraphicsModule().getActiveCamera())->data->EyePosition;
+		const glm::vec3 & eyePosition = m_engine->getGraphicsModule().getActiveCameraBuffer()->data->EyePosition;
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];

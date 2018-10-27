@@ -62,7 +62,7 @@ public:
 			transform.m_position += glm::vec3(rotatedPosition / rotatedPosition.w);
 
 			// Update the engine pointer
-			auto & cameraBuffer = graphicsModule.m_defaultCamera->data;
+			auto & cameraBuffer = graphicsModule.getActiveCameraBuffer()->data;
 			cameraBuffer->EyePosition = transform.m_position;
 			glm::mat4 vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
 			cameraBuffer->vMatrix = vMatrix;

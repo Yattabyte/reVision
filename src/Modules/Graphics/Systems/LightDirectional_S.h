@@ -40,7 +40,7 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Accumulate Light Data		
 		auto & graphics = m_engine->getGraphicsModule();
-		const auto cameraBuffer = graphics.m_cameraBuffer.getElement(graphics.getActiveCamera());
+		const auto cameraBuffer = graphics.getActiveCameraBuffer();
 		const glm::vec2 &size = cameraBuffer->data->Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians(cameraBuffer->data->FOV) / 2.0f;
