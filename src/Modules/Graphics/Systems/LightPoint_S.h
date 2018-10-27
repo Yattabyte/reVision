@@ -2,8 +2,8 @@
 #ifndef LIGHTINGPOINT_S_H
 #define LIGHTINGPOINT_S_H 
 
-#include "ECS\Systems\ecsSystem.h"
-#include "ECS\Components\LightPoint_C.h"
+#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Graphics\Components\LightPoint_C.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\PriorityList.h"

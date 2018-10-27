@@ -11,8 +11,6 @@
 #include "Utilities\IO\Mesh_IO.h"
 
 // General Logical ECS Systems Used //
-#include "ECS\Systems\PlayerMovement_S.h"
-#include "ECS\Systems\SkeletonAnimation_S.h"
 #include "ECS\Systems\TransformSync_S.h"
 
 
@@ -160,8 +158,6 @@ Engine::Engine() :
 	m_moduleGame.initialize(this);
 	m_modelManager.initialize();
 
-	m_logicSystems.addSystem(new PlayerMovement_System(this));
-	m_logicSystems.addSystem(new SkeletonAnimation_System());
 	m_logicSystems.addSystem(new TransformSync_System(this, m_modulePhysics.getWorld()));
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());

@@ -2,7 +2,7 @@
 #ifndef TRANSFORM_C_H
 #define TRANSFORM_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Utilities\Transform.h"
 
 

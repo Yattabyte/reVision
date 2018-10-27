@@ -2,7 +2,7 @@
 #ifndef MODEL_C_H
 #define MODEL_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Assets\Asset_Model.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\Transform.h"

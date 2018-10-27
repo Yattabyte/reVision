@@ -2,13 +2,13 @@
 #ifndef PLAYERMOVEMENT_S_H
 #define PLAYERMOVEMENT_S_H 
 
-#include "ECS\Systems\ecsSystem.h"
+#include "Utilities\ECS\ecsSystem.h"
 #include "Engine.h"
 #include "glm\glm.hpp"
 
 /* Component Types Used */
-#include "ECS\Components\Transform_C.h"
-#include "ECS\Components\BasicPlayer_C.h"
+#include "Modules\Graphics\Components\Transform_C.h"
+#include "Modules\Game\Components\BasicPlayer_C.h"
 
 
 /** A system responsible for updating player components. */

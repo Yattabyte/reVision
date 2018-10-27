@@ -3,12 +3,12 @@
 #define GAME_MODULE_H
 
 #include "Modules\Engine_Module.h"
-#include "Modules\Game\Systems\Board_S.h"
+#include "Modules\Game\Components\BoardState_C.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
-#include "ECS\ECS.h"
+#include "Utilities\ECS\ECS.h"
 
 
 /** A module responsible for the game. */
@@ -35,7 +35,6 @@ public:
 private:
 	// Private Attributes
 	ECSSystemList m_gameplaySystems;
-	Board_System m_boardSystem;
 	Shared_Asset_Shader m_shaderTiles, m_shaderBoard;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quad_tiles_indirect, m_quad_board_indirect;

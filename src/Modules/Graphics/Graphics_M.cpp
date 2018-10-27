@@ -6,22 +6,23 @@
 #include <random>
 
 /* Component Types Used */
-#include "ECS/Components/Prop_C.h"
-#include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/LightDirectional_C.h"
-#include "ECS/Components/LightPoint_C.h"
-#include "ECS/Components/LightSpot_C.h"
-#include "ECS/Components/Collider_C.h"
-#include "ECS/Components/Reflector_C.h"
-#include "ECS/Components/Skeleton_C.h"
-#include "ECS/Components/Transform_C.h"
+#include "Modules\Graphics\Components\Prop_C.h"
+#include "Modules\Graphics\Components\Skeleton_C.h"
+#include "Modules\Graphics\Components\LightDirectional_C.h"
+#include "Modules\Graphics\Components\LightPoint_C.h"
+#include "Modules\Graphics\Components\LightSpot_C.h"
+#include "Modules\Graphics\Components\Reflector_C.h"
+#include "Modules\Graphics\Components\Skeleton_C.h"
+#include "Modules\Graphics\Components\Transform_C.h"
+#include "Modules\Graphics\Components\Camera_C.h"
 
 /* System Types Used */
-#include "ECS\Systems\PropRendering_S.h"
-#include "ECS\Systems\LightDirectional_S.h"
-#include "ECS\Systems\LightSpot_S.h"
-#include "ECS\Systems\LightPoint_S.h"
-#include "ECS\Systems\Reflector_S.h"
+#include "Modules\Graphics\Systems\SkeletonAnimation_S.h"
+#include "Modules\Graphics\Systems\PropRendering_S.h"
+#include "Modules\Graphics\Systems\LightDirectional_S.h"
+#include "Modules\Graphics\Systems\LightSpot_S.h"
+#include "Modules\Graphics\Systems\LightPoint_S.h"
+#include "Modules\Graphics\Systems\Reflector_S.h"
 
 /* Post Processing Techniques Used */
 #include "Modules\Graphics\Effects\PropRendering_FX.h"
@@ -129,6 +130,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
 
 	// Graphics-related Component Updating
+	addSystem(new SkeletonAnimation_System());
 	addSystem(new PropRendering_System(m_engine));
 	addSystem(new LightDirectional_System(m_engine));
 	addSystem(new LightPoint_System(m_engine));

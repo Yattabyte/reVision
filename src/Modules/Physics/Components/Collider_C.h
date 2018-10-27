@@ -2,7 +2,7 @@
 #ifndef PHYSICS_C_H
 #define PHYSICS_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Assets\Asset_Collider.h"
 #include "Utilities\Transform.h"
 #include "glm\glm.hpp"

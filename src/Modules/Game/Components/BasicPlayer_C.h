@@ -2,7 +2,7 @@
 #ifndef BASICPLAYER_C_H
 #define BASICPLAYER_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Utilities\Transform.h"
 #include "glm\glm.hpp"
 

@@ -2,7 +2,7 @@
 #ifndef LIGHTSPOT_C_H
 #define LIGHTSPOT_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Modules\Graphics\Common\FBO_Shadow_Spot.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"

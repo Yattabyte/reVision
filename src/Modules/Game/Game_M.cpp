@@ -4,8 +4,12 @@
 #include <atomic>
 
 /* Component Types Used */
-#include "ECS/Components/BasicPlayer_C.h"
+#include "Modules\Game\Components\BasicPlayer_C.h"
 #include "Modules\Game\Components\BoardState_C.h"
+
+/* System Types Used */
+#include "Modules\Game\Systems\PlayerMovement_S.h"
+#include "Modules\Game\Systems\Board_S.h"
 
 void Game_Module::initialize(Engine * engine)
 {
@@ -13,7 +17,8 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->getMessageManager().statement("Loading Module: Game...");
 
 	// Systems
-	m_gameplaySystems.addSystem(&m_boardSystem);
+	m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
+	m_gameplaySystems.addSystem(new Board_System());
 	
 	// Board FBO & Texture Creation
 	constexpr unsigned int tileSize = 128u;

@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 /* Component Types Used */
-#include "ECS/Components/Collider_C.h"
+#include "Modules\Physics\Components\Collider_C.h"
 
 
 Physics_Module::~Physics_Module()

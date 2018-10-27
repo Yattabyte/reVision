@@ -2,7 +2,7 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "ECS\ecs.h"
+#include "Utilities\ECS\ecs.h"
 #include "Managers\AssetManager.h"
 #include "Managers\ModelManager.h"
 #include "Managers\MaterialManager.h"
@@ -18,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.1.A";
+constexpr char ENGINE_VERSION[] = "2.1.B";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 

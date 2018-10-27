@@ -5,7 +5,7 @@
 #include "Modules\Graphics\Effects\Effect_Base.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
-#include "ECS\Systems\PropShadowing_S.h"
+#include "Modules\Graphics\Systems\PropShadowing_S.h"
 #include "Utilities\GL\FBO.h"
 #include "Engine.h"
 #include "GLFW\glfw3.h"

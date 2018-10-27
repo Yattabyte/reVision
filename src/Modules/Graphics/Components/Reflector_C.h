@@ -2,8 +2,8 @@
 #ifndef REFLECTOR_C_H
 #define REFLECTOR_C_H
 
-#include "ECS\Components\ecsComponent.h"
-#include "ECS\Components\Camera_C.h"
+#include "Utilities\ECS\ecsComponent.h"
+#include "Modules\Graphics\Components\Camera_C.h"
 #include "Modules\Graphics\Common\FBO_EnvMap.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\Transform.h"

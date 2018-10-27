@@ -2,7 +2,7 @@
 #ifndef BOARD_S_H
 #define BOARD_S_H 
 
-#include "ECS\Systems\ecsSystem.h"
+#include "Utilities\ECS\ecsSystem.h"
 #include "Modules\Game\Components\BoardState_C.h"
 #include <random>
 

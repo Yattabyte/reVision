@@ -2,8 +2,8 @@
 #ifndef REFLECTOR_S_H
 #define REFLECTOR_S_H 
 
-#include "ECS\Systems\ecsSystem.h"
-#include "ECS\Components\Reflector_C.h"
+#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Graphics\Components\Reflector_C.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\DynamicBuffer.h"
 #include "Utilities\PriorityList.h"

@@ -2,7 +2,7 @@
 #ifndef CAMERA_C_H
 #define CAMERA_C_H
 
-#include "ECS\Components\ecsComponent.h"
+#include "Utilities\ECS\ecsComponent.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
 
