@@ -20,7 +20,7 @@ struct BoardBuffer {
 	glm::mat4 tileMats[12 * 6];
 	unsigned int types[12 * 6];
 	glm::mat4 boardMat;
-	unsigned int tick;
+	float heightOffset;
 	glm::vec3 padding;
 	glm::mat4 playerMat;
 };
@@ -48,12 +48,15 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 				component->m_data->data->types[dataIndex++] = TileState::TileType::NONE;
 			}
 		component->m_data->data->types[0] = 0u;
-		component->m_data->data->types[7] = 1u;
+		component->m_data->data->types[1] = 0u;
+		component->m_data->data->types[2] = 0u;
 		component->m_tiles[0][0].m_type = TileState::A;
+		component->m_tiles[0][1].m_type = TileState::A;
+		component->m_tiles[0][2].m_type = TileState::A;
 		component->m_tiles[1][1].m_type = TileState::B;
 		component->m_data->data->boardMat = glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
-		component->m_data->data->tick = 0;
 		component->m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1,1, 0));
+		component->m_data->data->heightOffset = 0.0f;
 		return { component, component->ID };
 	}
 

@@ -28,16 +28,21 @@ public:
 		m_timeAccumulator += deltaTime;
 		for each (const auto & componentParam in components) {
 			BoardState_Component & boardComponent = *(BoardState_Component*)componentParam[0];
-			if (m_timeAccumulator >= 0.5f) {
-				if (boardComponent.m_ticks == 15) {
+			validateBoard(boardComponent);
+			gravityBoard(boardComponent);
+			constexpr float dt = 0.05f;
+			while (m_timeAccumulator >= dt) {
+				if (boardComponent.m_ticks >= 100) {
 					pushNewRow(boardComponent);
 					boardComponent.m_ticks = 0;
 				}
-				else 
+				else {
 					boardComponent.m_ticks++;
-				m_timeAccumulator = 0.0f;
+					m_timeAccumulator -= dt;
+				}
 			}
-			boardComponent.m_data->data->tick = boardComponent.m_ticks;
+			boardComponent.m_data->data->heightOffset = (boardComponent.m_ticks / (100.0f / 2.0f));
+			
 
 			if (m_actionState->at(ActionState::LEFT) > 0.5f) {
 				if (!m_keyPressStates[ActionState::LEFT]) {
@@ -73,9 +78,7 @@ public:
 				m_keyPressStates[ActionState::FORWARD] = false;
 			if (m_actionState->at(ActionState::JUMP) > 0.5f) {
 				if (!m_keyPressStates[ActionState::JUMP]) {
-					auto copy = boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX].m_type;
-					boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX].m_type = boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX + 1].m_type;
-					boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX + 1].m_type = copy;
+					swapTiles(boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX], boardComponent.m_tiles[boardComponent.m_playerY][boardComponent.m_playerX + 1]);
 					m_keyPressStates[ActionState::JUMP] = true;
 				}
 			}
@@ -111,6 +114,70 @@ private:
 		// Replace row[0] with new row	
 		for (int x = 0; x < 6; ++x)
 			board.m_tiles[0][x] = TileState(TileState::TileType(m_tileDistributor(m_tileGenerator)));
+	}
+	void validateBoard(BoardState_Component & board) {
+		struct xy {
+			int x, y;
+		};
+		std::vector<xy> scoredTiles;
+		scoredTiles.reserve(6*12);
+		int numAdjacentMatches[12][6];
+		for (int y = 1; y < 12; ++y)
+			for (int x = 0; x < 6; ++x) {
+				int countPerRow = 0;
+				int countPerColumn = 0;
+				const auto & xTile = board.m_tiles[y][x].m_type;
+				if (xTile == TileState::NONE)
+					continue;
+				for (int n = x + 1; n < 6; ++n) {
+					const auto & nTile = board.m_tiles[y][n].m_type;
+					if (xTile == nTile) {
+						countPerRow++;
+					}
+					else
+						break;
+				}
+				for (int n = y + 1; n < 12; ++n) {
+					const auto & nTile = board.m_tiles[n][x].m_type;
+					if (xTile == nTile) {
+						countPerColumn++;
+					}
+					else
+						break;
+				}
+				// count is every subsequent match AFTER 'x'
+				if (countPerRow >= 2) {
+					scoredTiles.push_back({ x, y });
+					for (int n = 1; n < countPerRow + 1; ++n) 
+						scoredTiles.push_back({ x + n, y});					
+				}
+				if (countPerColumn >= 2) {
+					scoredTiles.push_back({ x, y });
+					for (int n = 1; n < countPerColumn + 1; ++n)
+						scoredTiles.push_back({ x, y + n });
+				}
+			}
+
+		for each (const auto & xy in scoredTiles) {
+			board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
+		}		
+	}
+
+	void gravityBoard(BoardState_Component & board) {
+		for (int y = 2; y < 12; ++y)
+			for (int x = 0; x < 6; ++x) {
+				const auto & xTile = board.m_tiles[y][x].m_type;
+				if (xTile == TileState::NONE)
+					continue;
+				if (board.m_tiles[y - 1][x].m_type == TileState::NONE)
+					swapTiles(board.m_tiles[y][x], board.m_tiles[y - 1][x]);				
+			}
+	}
+
+	void swapTiles(TileState & tile1, TileState & tile2) {
+		auto copy = tile1;
+		tile1 = tile2;
+		tile2 = copy;
 	}
 
 

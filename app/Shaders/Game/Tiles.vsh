@@ -13,7 +13,7 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	mat4 tileMats[12*6];
 	uint types[12*6];
 	mat4 boardMat;
-	uint tick;
+	float heightOffset;
 	mat4 playerMat;
 };
 layout (location = 0) in vec3 vertex;
@@ -33,10 +33,10 @@ void main()
 		TileWaiting = 1;
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6))
-		gl_Position = orthoProj * tileMats[gl_InstanceID] * vec4(vertex.x, vertex.y + (tick/16.0f) * 2.0f, 0, 1);
+		gl_Position = orthoProj * tileMats[gl_InstanceID] * vec4(vertex.x, vertex.y + heightOffset, 0, 1);
 	// Draw player tiles
 	else {
 		Type = 6;
-		gl_Position = orthoProj * playerMat * vec4(vertex.x + ((gl_InstanceID %(12*6)) * 2.0f), vertex.y + (tick/16.0f) * 2.0f, 0, 1);
+		gl_Position = orthoProj * playerMat * vec4(vertex.x + ((gl_InstanceID %(12*6)) * 2.0f), vertex.y + heightOffset, 0, 1);
 	}
 }
