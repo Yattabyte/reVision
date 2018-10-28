@@ -21,12 +21,15 @@ struct BoardBuffer {
 	unsigned int types[12 * 6];
 	glm::mat4 boardMat;
 	unsigned int tick;
+	glm::vec3 padding;
+	glm::mat4 playerMat;
 };
 /** A component representing a basic player. */
 struct BoardState_Component : public ECSComponent<BoardState_Component> {
 	TileState m_tiles[12][6];
 	unsigned int m_ticks = 0;
-	unsigned int m_playerIndex = 5 * 6;
+	int m_playerX = 0;
+	int m_playerY = 1;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -41,7 +44,7 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 		int dataIndex = 0;
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
-				component->m_data->data->tileMats[dataIndex] = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3((x * 2) + 1, (y * 2) - 1, 0));// *glm::scale(glm::mat4(1.0f), glm::vec3(0.5F));
+				component->m_data->data->tileMats[dataIndex] = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3((x * 2) + 1, (y * 2) - 1, 0));
 				component->m_data->data->types[dataIndex++] = TileState::TileType::NONE;
 			}
 		component->m_data->data->types[0] = 0u;
@@ -50,6 +53,7 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 		component->m_tiles[1][1].m_type = TileState::B;
 		component->m_data->data->boardMat = glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
 		component->m_data->data->tick = 0;
+		component->m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1,1, 0));
 		return { component, component->ID };
 	}
 

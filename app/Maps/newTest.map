@@ -6,7 +6,7 @@ entity
 		quat "1,0,0,0"
 		vec3 "1,1,1"
 	}
-	BasicPlayer_Component
+	Player_Component
 	{
 	}
 }

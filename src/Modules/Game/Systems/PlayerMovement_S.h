@@ -8,7 +8,7 @@
 
 /* Component Types Used */
 #include "Utilities\ECS\Transform_C.h"
-#include "Modules\Game\Components\BasicPlayer_C.h"
+#include "Modules\Game\Components\Player_C.h"
 
 
 /** A system responsible for updating player components. */
@@ -19,7 +19,7 @@ public:
 	PlayerMovement_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
-		addComponentType(BasicPlayer_Component::ID);
+		addComponentType(Player_Component::ID);
 	}
 
 
@@ -28,7 +28,7 @@ public:
 		auto & graphicsModule = m_engine->getGraphicsModule();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
-			BasicPlayer_Component * playerComponent = (BasicPlayer_Component*)componentParam[1];
+			Player_Component * playerComponent = (Player_Component*)componentParam[1];
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;
@@ -51,7 +51,7 @@ public:
 			glm::vec3 deltaPosition(0.0f);
 			if (actionState.at(ActionState::FORWARD) > 0.5f)
 				deltaPosition += glm::vec3(0, 0, -moveAmount);
-			if (actionState.at(ActionState::BACK) > 0.5f)
+			if (actionState.at(ActionState::BACKWARD) > 0.5f)
 				deltaPosition += glm::vec3(0, 0, moveAmount);
 			if (actionState.at(ActionState::LEFT) > 0.5f)
 				deltaPosition += glm::vec3(-moveAmount, 0, 0);

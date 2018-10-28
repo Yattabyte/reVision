@@ -22,5 +22,5 @@ layout (location = 0) out vec2 TexCoord;
 void main()
 {	
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	gl_Position = pMatrix * vMatrix * boardMat * vec4(vertex.xy, 0, 1);
+	gl_Position = pMatrix * vMatrix * boardMat * vec4(vertex.xy, -10, 1);
 }

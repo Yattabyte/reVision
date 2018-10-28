@@ -12,6 +12,8 @@ void main()
 {		
 	if (Type == 5)
 		FragColor = vec4(0);
+	else if (Type == 6)
+		FragColor = texture(TileTextures, vec3(TexCoord, 5)); // player caret spot
 	else
 		FragColor = texture(TileTextures, vec3(TexCoord, Type));
 	if (TileWaiting == 1)

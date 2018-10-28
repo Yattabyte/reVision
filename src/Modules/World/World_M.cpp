@@ -20,7 +20,7 @@ void World_Module::initialize(Engine * engine)
 
 void World_Module::loadWorld()
 {
-	m_level = Asset_Level::Create(m_engine, "sponza.map");
+	m_level = Asset_Level::Create(m_engine, "game.map");
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 
