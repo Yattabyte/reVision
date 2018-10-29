@@ -13,7 +13,8 @@ struct TileState {
 		A, B, C, D, E,
 		NONE,
 	} m_type = NONE;
-	TileState(const TileType & t = NONE) : m_type(t) {}
+	TileState(const TileType & t = NONE) : m_type(t) {};
+	bool m_scored = false;
 };
 /** OpenGL buffer for boards. */
 struct BoardBuffer {
@@ -27,10 +28,13 @@ struct BoardBuffer {
 /** A component representing a basic player. */
 struct BoardState_Component : public ECSComponent<BoardState_Component> {
 	TileState m_tiles[12][6];
-	unsigned int m_ticks = 0;
+	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 0;
 	int m_playerY = 1;
 	VB_Element<BoardBuffer> * m_data = nullptr;
+
+	struct xy { int x, y; };
+	std::vector<std::pair<std::vector<xy>, unsigned int>> m_scoredTiles;
 };
 /** A constructor to aid in creation. */
 struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
