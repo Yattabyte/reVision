@@ -28,12 +28,6 @@ void Game_Module::initialize(Engine * engine)
 	glTextureParameteri(m_boardTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_boardTexID, 0);
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
-	glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_blockTextureID);
-	glTextureImage3DEXT(m_blockTextureID, GL_TEXTURE_2D_ARRAY, 0, GL_RGBA16F, 128, 128, 6, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTextureParameteri(m_blockTextureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTextureParameteri(m_blockTextureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureParameteri(m_blockTextureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTextureParameteri(m_blockTextureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	// Error Reporting
 	const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
@@ -41,21 +35,13 @@ void Game_Module::initialize(Engine * engine)
 		m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Game Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	if (!glIsTexture(m_boardTexID))
 		m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Game Texture");
-	if (!glIsTexture(m_blockTextureID))
-		m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Game Block Texture");
 
 	// Asset Loading
 	m_shaderTiles = Asset_Shader::Create(m_engine, "Game\\Tiles");
 	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board");
+	m_textureTile = Asset_Texture::Create(m_engine, "Game\\tile.png");
+	m_texturePlayer = Asset_Texture::Create(m_engine, "Game\\player.png");
 	m_shapeQuad = Asset_Primitive::Create(engine, "quad");
-	// Combine Block Textures
-	constexpr const char* imageNames[6] = { "\\Textures\\Game\\A.png", "\\Textures\\Game\\B.png", "\\Textures\\Game\\C.png", "\\Textures\\Game\\D.png", "\\Textures\\Game\\E.png", "\\Textures\\Game\\P.png" };
-	for (int x = 0; x < 6; ++x) {
-		auto image = Asset_Image::Create(m_engine, imageNames[x], glm::ivec2(128u));
-		image->addCallback(m_aliveIndicator, [&textureID = m_blockTextureID, image, x]() {
-			glTextureSubImage3D(textureID, 0, 0, 0, x, 128, 128, 1, GL_RGBA, GL_UNSIGNED_BYTE, image->m_pixelData);
-		});
-	}
 
 	// Preferences
 	auto & preferences = m_engine->getPreferenceState();
@@ -88,7 +74,7 @@ void Game_Module::tickGame(const float & deltaTime)
 {
 	m_engine->getECS().updateSystems(m_gameplaySystems, deltaTime);
 	
-	if (!m_shapeQuad->existsYet() || !m_shaderTiles->existsYet() || !m_shaderBoard->existsYet())
+	if (!m_shapeQuad->existsYet() || !m_shaderTiles->existsYet() || !m_shaderBoard->existsYet() || !m_textureTile->existsYet())
 		return;
 
 	glViewport(0, 0, 128 * 6, 128 * 12);
@@ -98,7 +84,8 @@ void Game_Module::tickGame(const float & deltaTime)
 	glBlendEquation(GL_FUNC_ADD);
 	m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 	m_shaderTiles->bind();
-	glBindTextureUnit(0, m_blockTextureID);
+	m_textureTile->bind(0);
+	m_texturePlayer->bind(1);
 	glBindVertexArray(m_shapeQuad->m_vaoID);
 	m_quad_tiles_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);

@@ -1,15 +1,21 @@
 #pragma once
 #ifndef BOARD_S_H
 #define BOARD_S_H 
+#define _USE_MATH_DEFINES
 
 #include "Utilities\ECS\ecsSystem.h"
 #include "Modules\Game\Components\BoardState_C.h"
 #include "Engine.h"
 #include <random>
+#include <math.h>
 
 
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
+constexpr unsigned int TickCount_NewLine = 100u;
+constexpr unsigned int TickCount_Scoring = 20u;
+constexpr unsigned int ScoreFlashAmt = 4u;
+constexpr float scoreTickFlashDuration = (float)TickCount_Scoring / (float)ScoreFlashAmt;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -33,7 +39,7 @@ public:
 			constexpr float dt = 0.05f;
 			while (m_timeAccumulator >= dt) {
 				// Row climbing
-				if (board.m_rowClimbTick >= 100 && !(board.m_scoredTiles.size())) {
+				if (board.m_rowClimbTick >= TickCount_NewLine && !(board.m_scoredTiles.size())) {
 					pushNewRow(board);
 					board.m_rowClimbTick = 0;
 				}
@@ -42,19 +48,27 @@ public:
 					if (!(board.m_scoredTiles.size()))
 						board.m_rowClimbTick++;
 					scoreTiles(board);
+					board.m_excitement -= 0.003f;
 				}		
 
 				m_timeAccumulator -= dt;
 			}
-			board.m_data->data->heightOffset = (board.m_rowClimbTick / (100.0f / 2.0f));
+			for each (const auto & pair in board.m_scoredTiles) {
+				const float radiusAmt = std::max(0.0f, (sinf((2.0f * (float(pair.second) / scoreTickFlashDuration) - 1.0f) * M_PI) / 2.0f) + 0.75f);
+				for each(const auto & xy in pair.first)
+					board.m_data->data->brightness[(xy.y * 6) + xy.x] = radiusAmt;				
+			}
+
+			board.m_excitement = std::max(0.0f, std::min(1.1f, board.m_excitement));
+			board.m_data->data->excitement = board.m_excitement;
+			board.m_data->data->heightOffset = (board.m_rowClimbTick / ((float)TickCount_NewLine / 2.0f));
 			
 			userInteractWithBoard(board);
 
 			// Sync board state to GPU
-			int dataIndex = 0;
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)
-					board.m_data->data->types[dataIndex++] = board.m_tiles[y][x].m_type;
+					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
 
 			// Sync player state to GPU
 			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
@@ -84,9 +98,9 @@ private:
 	@param		board		the board to add a new row of tiles to. */
 	void pushNewRow(BoardState_Component & board) {
 		// Move board up 1 row
-		for (int x = 0; x < BOARD_WIDTH; ++x) 
-			for (int y = BOARD_HEIGHT - 1; y > 0; --y) 
-				board.m_tiles[y][x] = board.m_tiles[y-1][x];
+		for (int x = 0; x < BOARD_WIDTH; ++x)
+			for (int y = BOARD_HEIGHT - 1; y > 0; --y)
+				swapTiles(board.m_tiles[y][x], board.m_tiles[y - 1][x]);
 		board.m_playerY++;
 		for (size_t a = 0; a < board.m_scoredTiles.size(); ++a) {
 			auto & pair = board.m_scoredTiles[a];
@@ -182,8 +196,10 @@ private:
 				for each (const auto & xy in scoringManifold) {
 					board.m_tiles[xy.y][xy.x].m_scored = true;
 				}
-				if (scoringManifold.size())
+				if (scoringManifold.size()) {
 					board.m_scoredTiles.push_back(std::make_pair(scoringManifold, 0));
+					board.m_excitement+= (0.075f * (float)scoringManifold.size());
+				}
 				scoringManifold.clear();
 			}
 	}
@@ -192,10 +208,11 @@ private:
 	void scoreTiles(BoardState_Component & board) {
 		for (size_t x = 0; x < board.m_scoredTiles.size(); ++x) {
 			auto & pair = board.m_scoredTiles[x];
-			if (pair.second >= 33u) {
+			if (pair.second >= TickCount_Scoring) {
 				for each (const auto & xy in pair.first) {
 					board.m_tiles[xy.y][xy.x].m_scored = false;
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
+					board.m_data->data->brightness[(xy.y * 6) + xy.x] = 1.0f;
 				}
 				board.m_scoredTiles.erase(board.m_scoredTiles.begin() + x, board.m_scoredTiles.begin() + x + 1);
 			}

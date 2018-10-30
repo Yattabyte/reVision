@@ -20,9 +20,11 @@ struct TileState {
 struct BoardBuffer {
 	glm::mat4 tileMats[12 * 6];
 	unsigned int types[12 * 6];
+	float brightness[12 * 6];
 	glm::mat4 boardMat;
 	float heightOffset;
-	glm::vec3 padding;
+	float excitement;
+	glm::vec2 padding;
 	glm::mat4 playerMat;
 };
 /** A component representing a basic player. */
@@ -31,6 +33,7 @@ struct BoardState_Component : public ECSComponent<BoardState_Component> {
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 0;
 	int m_playerY = 1;
+	float m_excitement = 0;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 
 	struct xy { int x, y; };
@@ -49,7 +52,9 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
 				component->m_data->data->tileMats[dataIndex] = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3((x * 2) + 1, (y * 2) - 1, 0));
-				component->m_data->data->types[dataIndex++] = TileState::TileType::NONE;
+				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
+				component->m_data->data->brightness[dataIndex] = 1.0f;
+				dataIndex++;
 			}
 		component->m_data->data->types[0] = 0u;
 		component->m_data->data->types[1] = 0u;
