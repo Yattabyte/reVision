@@ -51,7 +51,7 @@ public:
 	/** Destroy the Shader. */
 	~Asset_Shader();
 	/** Construct the Shader. */
-	Asset_Shader(const std::string & filename);
+	Asset_Shader(const std::string & filename, const bool & ignoreBinary = false);
 
 
 	// Public Methods
@@ -60,7 +60,7 @@ public:
 	@param	filename		the filename to use
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	static Shared_Asset_Shader Create(Engine * engine, const std::string & filename, const bool & threaded = true);
+	static Shared_Asset_Shader Create(Engine * engine, const std::string & filename, const bool & ignoreBinary = false, const bool & threaded = true);
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */
@@ -117,6 +117,7 @@ public:
 	
 
 	// Public Attributes
+	bool m_ignoreBinary = false;
 	GLuint m_glProgramID = 0;
 	ShaderObj m_vertexShader = ShaderObj(GL_VERTEX_SHADER);
 	ShaderObj m_fragmentShader = ShaderObj(GL_FRAGMENT_SHADER);

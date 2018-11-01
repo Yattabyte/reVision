@@ -37,8 +37,8 @@ void Game_Module::initialize(Engine * engine)
 		m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Game Texture");
 
 	// Asset Loading
-	m_shaderTiles = Asset_Shader::Create(m_engine, "Game\\Tiles");
-	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board");
+	m_shaderTiles = Asset_Shader::Create(m_engine, "Game\\Tiles", true);
+	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board", true);
 	m_textureTile = Asset_Texture::Create(m_engine, "Game\\tile.png");
 	m_texturePlayer = Asset_Texture::Create(m_engine, "Game\\player.png");
 	m_shapeQuad = Asset_Primitive::Create(engine, "quad");

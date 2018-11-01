@@ -21,9 +21,9 @@ Asset_Shader::~Asset_Shader()
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
+Asset_Shader::Asset_Shader(const std::string & filename, const bool & ignoreBinary) : Asset(filename), m_ignoreBinary(ignoreBinary) {}
 
-Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & ignoreBinary, const bool & threaded)
 {
 	return engine->getAssetManager().createAsset<Asset_Shader>(
 		filename,
@@ -31,7 +31,8 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 		"",
 		&initialize,
 		engine,
-		threaded
+		threaded,
+		ignoreBinary
 	);
 }
 void Asset_Shader::initializeDefault(Engine * engine)
@@ -62,7 +63,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
 	bool success = false;
-	if (!loadCachedBinary(engine, relativePath)) {
+	if (m_ignoreBinary || !loadCachedBinary(engine, relativePath)) {
 		// Create Vertex and Fragment shaders
 		if (initShaders(engine, relativePath)) {
 			glLinkProgram(m_glProgramID);
