@@ -20,7 +20,8 @@ struct TileState {
 struct BoardBuffer {
 	glm::mat4 tileMats[12 * 6];
 	unsigned int types[12 * 6];
-	float brightness[12 * 6];
+	float lifeTick[12 * 6];
+	unsigned int deathTick[12 * 6];
 	glm::mat4 boardMat;
 	float heightOffset;
 	float excitement;
@@ -53,7 +54,8 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 			for (int x = 0; x < 6; ++x) {
 				component->m_data->data->tileMats[dataIndex] = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3((x * 2) + 1, (y * 2) - 1, 0));
 				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
-				component->m_data->data->brightness[dataIndex] = 1.0f;
+				component->m_data->data->lifeTick[dataIndex] = 0.0f;
+				component->m_data->data->deathTick[dataIndex] = 0u;
 				dataIndex++;
 			}
 		component->m_data->data->types[0] = 0u;

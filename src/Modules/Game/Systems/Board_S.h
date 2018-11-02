@@ -13,7 +13,8 @@
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
 constexpr unsigned int TickCount_NewLine = 100u;
-constexpr unsigned int TickCount_Scoring = 20u;
+constexpr unsigned int TickCount_Scoring = 10u;
+constexpr unsigned int TickCount_Popping = 5u;
 constexpr unsigned int ScoreFlashAmt = 4u;
 constexpr float scoreTickFlashDuration = (float)TickCount_Scoring / (float)ScoreFlashAmt;
 
@@ -53,10 +54,9 @@ public:
 
 				m_timeAccumulator -= dt;
 			}
-			for each (const auto & pair in board.m_scoredTiles) {
-				const float radiusAmt = std::max(0.0f, (sinf((2.0f * (float(pair.second) / scoreTickFlashDuration) - 1.0f) * M_PI) / 2.0f) + 0.75f);
+			for each (const auto & pair in board.m_scoredTiles) {				
 				for each(const auto & xy in pair.first)
-					board.m_data->data->brightness[(xy.y * 6) + xy.x] = radiusAmt;				
+					board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = (float)pair.second;
 			}
 
 			board.m_excitement = std::max(0.0f, std::min(1.1f, board.m_excitement));
@@ -81,6 +81,7 @@ public:
 
 private:
 	// Private structures
+	struct xy { int x, y; };
 	/** Contains a unique set of coordinates coresponding to tiles that have been scored. */
 	struct ScoringManifold : std::vector<BoardState_Component::xy> {
 		inline void insert(const BoardState_Component::xy & newTile) {
@@ -209,12 +210,24 @@ private:
 		for (size_t x = 0; x < board.m_scoredTiles.size(); ++x) {
 			auto & pair = board.m_scoredTiles[x];
 			if (pair.second >= TickCount_Scoring) {
+				size_t popCount = 0u;					
 				for each (const auto & xy in pair.first) {
-					board.m_tiles[xy.y][xy.x].m_scored = false;
-					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
-					board.m_data->data->brightness[(xy.y * 6) + xy.x] = 1.0f;
+					if (board.m_data->data->deathTick[(xy.y * 6) + xy.x] >= TickCount_Popping)
+						popCount++;
+					else {
+						board.m_data->data->deathTick[(xy.y * 6) + xy.x]++;
+						break;
+					}
 				}
-				board.m_scoredTiles.erase(board.m_scoredTiles.begin() + x, board.m_scoredTiles.begin() + x + 1);
+				if (popCount == pair.first.size()) {
+					for each (const auto & xy in pair.first) {
+						board.m_tiles[xy.y][xy.x].m_scored = false;
+						board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
+						board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = 0.0f;
+						board.m_data->data->deathTick[(xy.y * 6) + xy.x] = 0u;
+					}
+					board.m_scoredTiles.erase(board.m_scoredTiles.begin() + x, board.m_scoredTiles.begin() + x + 1);
+				}
 			}
 			else 
 				pair.second++;			
