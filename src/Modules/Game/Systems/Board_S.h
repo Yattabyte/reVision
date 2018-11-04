@@ -209,10 +209,9 @@ private:
 				}
 				board.m_excitement += (0.075f * (float)manifold.first.size());
 
-				// Add another 10 bonus points for every extra tile past 3
-				if (manifold.first.size() > 3) {
-					board.m_score += 10 + (10 * (manifold.first.size() - 3));
-				}
+				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10
+				if (manifold.first.size() > 3) 
+					board.m_score += 10 + (10 * (manifold.first.size() - 3));				
 			}
 		}
 
@@ -283,6 +282,7 @@ private:
 	/** Apply user interaction with the board.
 	@param		board		the board containing the tiles of interest. */
 	void userInteractWithBoard(BoardState_Component & board) {
+		// Move Left
 		if (m_actionState->at(ActionState::LEFT) > 0.5f) {
 			if (!m_keyPressStates[ActionState::LEFT]) {
 				board.m_playerX--;
@@ -291,6 +291,7 @@ private:
 		}
 		else
 			m_keyPressStates[ActionState::LEFT] = false;
+		// Move Right
 		if (m_actionState->at(ActionState::RIGHT) > 0.5f) {
 			if (!m_keyPressStates[ActionState::RIGHT]) {
 				board.m_playerX++;
@@ -299,6 +300,7 @@ private:
 		}
 		else
 			m_keyPressStates[ActionState::RIGHT] = false;
+		// Move Down
 		if (m_actionState->at(ActionState::BACKWARD) > 0.5f) {
 			if (!m_keyPressStates[ActionState::BACKWARD]) {
 				board.m_playerY--;
@@ -307,6 +309,7 @@ private:
 		}
 		else
 			m_keyPressStates[ActionState::BACKWARD] = false;
+		// Move Up
 		if (m_actionState->at(ActionState::FORWARD) > 0.5f) {
 			if (!m_keyPressStates[ActionState::FORWARD]) {
 				board.m_playerY++;
@@ -315,6 +318,7 @@ private:
 		}
 		else
 			m_keyPressStates[ActionState::FORWARD] = false;
+		// Swap Tiles
 		if (m_actionState->at(ActionState::JUMP) > 0.5f) {
 			if (!m_keyPressStates[ActionState::JUMP]) {
 				swapTiles(board.m_tiles[board.m_playerY][board.m_playerX], board.m_tiles[board.m_playerY][board.m_playerX + 1]);
@@ -323,6 +327,18 @@ private:
 		}
 		else
 			m_keyPressStates[ActionState::JUMP] = false;
+		// Fast Forward
+		if (m_actionState->at(ActionState::RUN) > 0.5f) {
+			if (!m_keyPressStates[ActionState::RUN]) {
+				m_keyPressStates[ActionState::RUN] = true;
+				if (!board.m_scoredTiles.size()) {
+					board.m_rowClimbTick = 0;
+					pushNewRow(board);
+				}
+			}
+		}
+		else
+			m_keyPressStates[ActionState::RUN] = false;
 	}
 
 
