@@ -4,8 +4,8 @@
 
 #include "Modules\Engine_Module.h"
 #include "Modules\Game\Components\BoardState_C.h"
-#include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
+#include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Texture.h"
 #include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"

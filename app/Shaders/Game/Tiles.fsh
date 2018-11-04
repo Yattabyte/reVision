@@ -6,13 +6,14 @@ layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in uint Type;
 layout (location = 2) flat in uint TileWaiting;
 layout (location = 3) flat in float LifeTick;
-layout (location = 4) flat in uint DeathTick;
-layout (location = 5) flat in float Excitement;
+layout (location = 4) flat in float Excitement;
 layout (location = 0) out vec4 FragColor;
 layout (binding = 0) uniform sampler2D TileTexture;
 layout (binding = 1) uniform sampler2D PlayerTexture;
 
 
+const float TILE_MAX_LIFE = 50.0F;
+const float TILE_POPPING = 15.0F;
 
 vec4 calcTile_Background()
 {
@@ -26,6 +27,7 @@ vec4 calcTile_Player()
 
 vec4 calcTile_Regular()
 {
+	// Different tile type colors
 	const vec3 tileColors[5] = vec3[](
 		vec3(1,0,0),
 		vec3(0,1,0),
@@ -33,17 +35,19 @@ vec4 calcTile_Regular()
 		vec3(0,1,1),
 		vec3(1,0,1)
 	);
+	// Tile backing appearance	
 	const vec4 tileAppearance = texture(TileTexture, TexCoord);
-	
+	// Blinking on death
+	const float brightness = 1.0f - clamp(mod(LifeTick, TILE_POPPING) / TILE_POPPING, 0.0f, 1.0f);
+	// decay color on death
+	const float colorSaturation = (1.0f - clamp(LifeTick / (TILE_MAX_LIFE * 2.0F), 0.0f, 1.0f)) * brightness;
+	// Vary illumination amount based on board excitement
 	const float quarterExcitement = Excitement / 4.0f;
 	const float texDistance = distance(TexCoord, vec2(0.5f));
 	const float Radius = 0.75f + quarterExcitement;
 	const float range = 1.0f / Radius;	
-	const float brightness = 1.0f - (mod(LifeTick, 5.0f) / 5.0f); // Blinking on death
-	const float colorSaturation = (1.0f - (LifeTick / 10.0f)) * brightness; // decay color on death
-	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range) + quarterExcitement;	
-	if (DeathTick >= 5u)
-		return vec4(0);
+	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range) + quarterExcitement; 
+	// Final Appaearance
 	return mix(tileAppearance, vec4(tileColors[Type], 1) * tileAppearance, colorSaturation) * vec4(vec3(attenuationFactor),1);
 }
 

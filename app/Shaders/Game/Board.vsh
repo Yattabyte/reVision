@@ -13,7 +13,6 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	mat4 tileMats[12*6];
 	uint types[12*6];
 	float lifeTick[12*6];
-	uint deathTick[12*6];
 	mat4 boardMat;
 	float heightOffset;
 	float excitement;

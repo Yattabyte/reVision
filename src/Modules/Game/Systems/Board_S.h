@@ -12,11 +12,10 @@
 
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
-constexpr unsigned int TickCount_NewLine = 100u;
-constexpr unsigned int TickCount_Scoring = 10u;
-constexpr unsigned int TickCount_Popping = 5u;
-constexpr unsigned int ScoreFlashAmt = 4u;
-constexpr float scoreTickFlashDuration = (float)TickCount_Scoring / (float)ScoreFlashAmt;
+constexpr int TickCount_NewLine = 500u;
+constexpr int TickCount_Scoring = 50u;
+constexpr int TickCount_Popping = 15u;
+constexpr int ScoreFlashAmt = 4u;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -35,9 +34,8 @@ public:
 		m_timeAccumulator += deltaTime;
 		for each (const auto & componentParam in components) {
 			BoardState_Component & board = *(BoardState_Component*)componentParam[0];
-			validateBoard(board);
-			gravityBoard(board);
-			constexpr float dt = 0.05f;
+			
+			constexpr float dt = 0.01f;
 			while (m_timeAccumulator >= dt) {
 				// Row climbing
 				if (board.m_rowClimbTick >= TickCount_NewLine && !(board.m_scoredTiles.size())) {
@@ -48,15 +46,15 @@ public:
 					// Every Tick
 					if (!(board.m_scoredTiles.size()))
 						board.m_rowClimbTick++;
+					validateBoard(board);
+					gravityBoard(board);
 					scoreTiles(board);
 					board.m_excitement -= 0.003f;
+					if (board.m_score - board.m_animtedScore > 0) 
+						board.m_animtedScore++;					
 				}		
 
 				m_timeAccumulator -= dt;
-			}
-			for each (const auto & pair in board.m_scoredTiles) {				
-				for each(const auto & xy in pair.first)
-					board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = (float)pair.second;
 			}
 
 			board.m_excitement = std::max(0.0f, std::min(1.1f, board.m_excitement));
@@ -81,10 +79,9 @@ public:
 
 private:
 	// Private structures
-	struct xy { int x, y; };
 	/** Contains a unique set of coordinates coresponding to tiles that have been scored. */
-	struct ScoringManifold : std::vector<BoardState_Component::xy> {
-		inline void insert(const BoardState_Component::xy & newTile) {
+	struct ScoringManifold : std::vector<XY> {
+		inline void insert(const XY & newTile) {
 			for each (const auto & tile in *this)
 				if (tile.x == newTile.x && tile.y == newTile.y)
 					return;
@@ -103,13 +100,6 @@ private:
 			for (int y = BOARD_HEIGHT - 1; y > 0; --y)
 				swapTiles(board.m_tiles[y][x], board.m_tiles[y - 1][x]);
 		board.m_playerY++;
-		for (size_t a = 0; a < board.m_scoredTiles.size(); ++a) {
-			auto & pair = board.m_scoredTiles[a];
-			for (size_t b = 0; b < pair.first.size(); ++b) {
-				auto & xy = pair.first;
-				xy[b].y++;
-			}			
-		}
 
 		// Replace row[0] with new row	
 		for (int x = 0; x < 6; ++x)
@@ -169,21 +159,21 @@ private:
  		ScoringManifold scoringManifold;
 		for (int y = 1; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
-				const auto & xTile = board.m_tiles[y][x].m_type;
-				if (xTile == TileState::NONE || board.m_tiles[y][x].m_scored)
+				const auto & xTile = board.m_tiles[y][x];
+				if (xTile.m_type == TileState::NONE || xTile.m_scoreType != TileState::UNMATCHED)
 					continue;
 				int countPerRow = 1;
 				int countPerColumn = 1;
 				for (int n = x + 1; n < 6; ++n) {
 					const auto & nTile = board.m_tiles[y][n].m_type;
-					if (xTile == nTile)
+					if (xTile.m_type == nTile)
 						countPerRow++;
 					else
 						break;
 				}
 				for (int n = y + 1; n < 12; ++n) {
 					const auto & nTile = board.m_tiles[n][x].m_type;
-					if (xTile == nTile)
+					if (xTile.m_type == nTile)
 						countPerColumn++;
 					else
 						break;
@@ -194,12 +184,10 @@ private:
 				}
 
 				// Prepare tiles for scoring
-				for each (const auto & xy in scoringManifold) {
-					board.m_tiles[xy.y][xy.x].m_scored = true;
-				}
 				if (scoringManifold.size()) {
-					board.m_scoredTiles.push_back(std::make_pair(scoringManifold, 0));
-					board.m_excitement+= (0.075f * (float)scoringManifold.size());
+					board.m_scoredTiles.push_back(std::make_pair(scoringManifold, false));
+					for each (const auto & xy in scoringManifold)
+						board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;					
 				}
 				scoringManifold.clear();
 			}
@@ -208,30 +196,64 @@ private:
 	@param		board		the board containing the tiles of interest. */
 	void scoreTiles(BoardState_Component & board) {
 		for (size_t x = 0; x < board.m_scoredTiles.size(); ++x) {
-			auto & pair = board.m_scoredTiles[x];
-			if (pair.second >= TickCount_Scoring) {
-				size_t popCount = 0u;					
-				for each (const auto & xy in pair.first) {
-					if (board.m_data->data->deathTick[(xy.y * 6) + xy.x] >= TickCount_Popping)
-						popCount++;
-					else {
-						board.m_data->data->deathTick[(xy.y * 6) + xy.x]++;
-						break;
-					}
+			auto & manifold = board.m_scoredTiles[x];
+			// If this manifold hasn't been processed
+			if (!manifold.second) {
+				manifold.second = true;
+				int offset = 0;
+				for each (const auto & xy in manifold.first) {
+					// Assign tick timing
+					board.m_tiles[xy.y][xy.x].m_tick = (TickCount_Popping * offset--) - TickCount_Scoring;
+					// Set as matched
+					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				if (popCount == pair.first.size()) {
-					for each (const auto & xy in pair.first) {
-						board.m_tiles[xy.y][xy.x].m_scored = false;
-						board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
-						board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = 0.0f;
-						board.m_data->data->deathTick[(xy.y * 6) + xy.x] = 0u;
-					}
-					board.m_scoredTiles.erase(board.m_scoredTiles.begin() + x, board.m_scoredTiles.begin() + x + 1);
+				board.m_excitement += (0.075f * (float)manifold.first.size());
+
+				// Add another 10 bonus points for every extra tile past 3
+				if (manifold.first.size() > 3) {
+					board.m_score += 10 + (10 * (manifold.first.size() - 3));
 				}
 			}
-			else 
-				pair.second++;			
 		}
+
+		// Tick all matched tiles until they pop
+		for (int y = 1; y < 12; ++y)
+			for (int x = 0; x < 6; ++x) {
+				auto & xTile = board.m_tiles[y][x];
+				if (xTile.m_scoreType != TileState::UNMATCHED) {
+					if (xTile.m_scoreType == TileState::MATCHED) {
+						if (xTile.m_tick >= TickCount_Popping) {
+							board.m_score += 10;
+							xTile.m_scoreType = TileState::SCORED;
+						}
+					}
+					board.m_data->data->lifeTick[(y * 6) + x] = ++xTile.m_tick;
+				}
+			}
+		
+		// Check if all tiles in a scoring set have been popped
+		// If so, empty and reset them
+		for (size_t x = 0; x < board.m_scoredTiles.size(); ++x) {
+			auto & pair = board.m_scoredTiles[x];
+			bool allPopped = true;
+			for each (const auto & xy in pair.first) 
+				if (board.m_tiles[xy.y][xy.x].m_scoreType != TileState::SCORED) {
+					allPopped = false;
+					break;
+				}
+			if (allPopped) {
+				// Reset the tiles, make them background spaces
+				for each (const auto & xy in pair.first) {
+					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
+					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
+					board.m_tiles[xy.y][xy.x].m_tick = 0;
+					board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = 0.0f;
+				}
+				board.m_scoredTiles.erase(board.m_scoredTiles.begin() + x);
+				x--;
+			}
+		}
+		
 	}
 	/** Try to drop tiles if they have room beneath them.
 	@param		board		the board containing the tiles of interest. */
@@ -251,8 +273,8 @@ private:
 	/** Swap 2 tiles if they active and not scored.
 	@param		tile1		the first tile, swaps with the second.
 	@param		tile2		the second tile, swaps with the first. */
-	void swapTiles(TileState & tile1, TileState & tile2) {
-		if (tile1.m_scored || tile2.m_scored)
+	void swapTiles(TileState & tile1, TileState & tile2) {	
+		if (tile1.m_scoreType != TileState::UNMATCHED || tile2.m_scoreType != TileState::UNMATCHED)
 			return;
 		auto copy = tile1;
 		tile1 = tile2;

@@ -13,7 +13,6 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	mat4 tileMats[12*6];
 	uint types[12*6];
 	float lifeTick[12*6];
-	uint deathTick[12*6];
 	mat4 boardMat;
 	float heightOffset;
 	float excitement;
@@ -24,9 +23,11 @@ layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out uint Type;
 layout (location = 2) flat out uint TileWaiting;
 layout (location = 3) flat out float LifeTick;
-layout (location = 4) flat out uint DeathTick;
-layout (location = 5) flat out float Excitement;
+layout (location = 4) flat out float Excitement;
 layout (location = 0) uniform mat4 orthoProj;
+
+
+const float TILE_POPPING = 15.0F;
 
 void main()
 {	
@@ -40,16 +41,15 @@ void main()
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6)) {
 		LifeTick = lifeTick[gl_InstanceID];
-		DeathTick = deathTick[gl_InstanceID];
 		Excitement = excitement;
-		const float deathScalingAmount = 1.0f - (float(DeathTick) / 5.0f);
-		const mat4 animation = mat4(
-			vec4(deathScalingAmount,   0.0, 0.0, 0.0),
-			vec4(0.0, deathScalingAmount,   0.0, 0.0),
-			vec4(0.0, 0.0, deathScalingAmount,   0.0),
+		const float scl = clamp(1.0f - (LifeTick / TILE_POPPING), 0.75f, 1.0f);
+		const mat4 deathMatrix = mat4(
+			vec4(scl, 0.0, 0.0, 0.0),
+			vec4(0.0, scl, 0.0, 0.0),
+			vec4(0.0, 0.0, scl, 0.0),
 			vec4(0.0, heightOffset, 0.0, 1.0)
 		);
-		gl_Position = orthoProj * tileMats[gl_InstanceID] * animation * vec4(vertex.x, vertex.y, 0, 1);
+		gl_Position = orthoProj * tileMats[gl_InstanceID] * deathMatrix * vec4(vertex.x, vertex.y, 0, 1);
 	}
 	// Draw player tiles
 	else {

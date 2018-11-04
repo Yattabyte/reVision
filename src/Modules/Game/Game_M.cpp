@@ -10,6 +10,7 @@
 /* System Types Used */
 #include "Modules\Game\Systems\PlayerMovement_S.h"
 #include "Modules\Game\Systems\Board_S.h"
+#include "Modules\Game\Systems\ScoreBoard_S.h"
 
 
 void Game_Module::initialize(Engine * engine)
@@ -37,8 +38,8 @@ void Game_Module::initialize(Engine * engine)
 		m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Game Texture");
 
 	// Asset Loading
-	m_shaderTiles = Asset_Shader::Create(m_engine, "Game\\Tiles", true);
-	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board", true);
+	m_shaderTiles = Asset_Shader::Create(m_engine, "Game\\Tiles");
+	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board");
 	m_textureTile = Asset_Texture::Create(m_engine, "Game\\tile.png");
 	m_texturePlayer = Asset_Texture::Create(m_engine, "Game\\player.png");
 	m_shapeQuad = Asset_Primitive::Create(engine, "quad");
@@ -62,6 +63,7 @@ void Game_Module::initialize(Engine * engine)
 
 	// Systems
 	m_gameplaySystems.addSystem(new Board_System(m_engine));
+	m_gameplaySystems.addSystem(new ScoreBoard_System(m_engine));
 	//m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
 
 
@@ -72,6 +74,7 @@ void Game_Module::initialize(Engine * engine)
 
 void Game_Module::tickGame(const float & deltaTime)
 {
+	m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 	m_engine->getECS().updateSystems(m_gameplaySystems, deltaTime);
 	
 	if (!m_shapeQuad->existsYet() || !m_shaderTiles->existsYet() || !m_shaderBoard->existsYet() || !m_textureTile->existsYet())
@@ -82,7 +85,7 @@ void Game_Module::tickGame(const float & deltaTime)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
-	m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_shaderTiles->bind();
 	m_textureTile->bind(0);
 	m_texturePlayer->bind(1);
@@ -94,7 +97,6 @@ void Game_Module::tickGame(const float & deltaTime)
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTextureUnit(0, m_boardTexID);
 	m_shaderBoard->bind();
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	m_quad_board_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
 	glDisable(GL_BLEND);
