@@ -13,6 +13,8 @@ struct XY { int x, y; };
 struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	int m_score = 0;
 	int m_lastScore = 0;
+	int m_stopTimeTick = 0;
+	int m_stopTimer = 0;
 	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
 };
 /** A constructor to aid in creation. */

@@ -39,11 +39,20 @@ public:
 				pushNewRow(board);
 				board.m_rowClimbTick = 0;
 			}
-			if (!(score.m_scoredTiles.size()))
+			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0)
 				board.m_rowClimbTick++;
+
+			// Timer preventing row climbing
+			if (score.m_stopTimeTick >= 100) {
+				score.m_stopTimeTick = 0;
+				score.m_stopTimer--;
+			}
+			if (score.m_stopTimer > 0)
+				score.m_stopTimeTick++;
+			board.m_data->data->stopTimer = score.m_stopTimer;
 			userInteractWithBoard(board, score);
 			gravityBoard(board);
-			board.m_data->data->excitement = std::max(0.0f, std::min(1.1f, board.m_data->data->excitement -= 0.003f));
+			board.m_data->data->excitement = std::max(0.0f, std::min(1.1f, board.m_data->data->excitement -= 0.001f));
 			board.m_data->data->heightOffset = (board.m_rowClimbTick / ((float)TickCount_NewLine / 2.0f));
 			
 
@@ -155,6 +164,8 @@ private:
 				m_keyPressStates[ActionState::RUN] = true;
 				if (!score.m_scoredTiles.size()) {
 					board.m_rowClimbTick = 0;
+					score.m_stopTimeTick = 0;
+					score.m_stopTimer = 0;
 					pushNewRow(board);
 				}
 			}

@@ -1,4 +1,4 @@
-/* Score Shader. */
+/* Board Shader. */
 #version 460
 
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
@@ -18,7 +18,6 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	float excitement;
 	int score;
 	int highlightIndex;
-	int stopTimer;
 	mat4 playerMat;
 };
 

@@ -44,6 +44,7 @@ void Game_Module::initialize(Engine * engine)
 	m_textureTile = Asset_Texture::Create(m_engine, "Game\\tile.png");
 	m_texturePlayer = Asset_Texture::Create(m_engine, "Game\\player.png");
 	m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
+	m_shaderStop = Asset_Shader::Create(engine, "Game\\Stop", true);
 	m_texture7Seg = Asset_Texture::Create(engine, "Game\\7segnums.png");
 	m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
@@ -54,12 +55,16 @@ void Game_Module::initialize(Engine * engine)
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint tileData[4] = { (GLuint)m_shapeQuad->getSize(), (12 * 6) + 2, 0, 0 }; // count, primCount, first, reserved
-		const GLuint boardData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		const GLuint scoreData[4] = { (GLuint)m_shapeQuad->getSize(), 8, 0, 0 }; // count, primCount, first, reserved
+		const GLuint & quadSize = (GLuint)m_shapeQuad->getSize();
+		// count, primCount, first, reserved
+		const GLuint tileData[4] = { quadSize, (12 * 6) + 2, 0, 0 }; 
 		m_bufferIndirectTiles = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
+		const GLuint boardData[4] = { quadSize, 1, 0, 0 };
 		m_bufferIndirectBoard = StaticBuffer(sizeof(GLuint) * 4, boardData, 0);
+		const GLuint scoreData[4] = { quadSize, 8, 0, 0 };
 		m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData, 0);		
+		const GLuint stopData[4] = { quadSize, 5, 0, 0 };
+		m_bufferIndirectStop = StaticBuffer(sizeof(GLuint) * 4, stopData, 0);
 	});
 	m_shaderTiles->addCallback(m_aliveIndicator, [&]() mutable {
 		m_shaderTiles->setUniform(0, glm::ortho<float>(0, 128 * 6, 0, 128 * 12, -1, 1));
@@ -93,8 +98,9 @@ void Game_Module::tickGame(const float & deltaTime)
 		!m_shaderTiles->existsYet() || 
 		!m_shaderBoard->existsYet() || 
 		!m_shaderScore->existsYet() ||
+		!m_shaderStop->existsYet() ||
 		!m_textureTile->existsYet() ||
-		!m_texture7Seg->existsYet())
+		!m_texture7Seg->existsYet() )
 		return;
 
 	// Render the tiles
@@ -124,7 +130,12 @@ void Game_Module::tickGame(const float & deltaTime)
 	m_texture7Seg->bind(0);
 	m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	m_shaderScore->setUniform(0, 0);
-	glDrawArraysIndirect(GL_TRIANGLES, 0);	
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+	// Stop Timer
+	m_shaderStop->bind();
+	m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 	// End
 	glDisable(GL_BLEND);

@@ -116,9 +116,10 @@ private:
 	@param		board		the board containing the tiles of interest.
 	@param		score		the scoring component. */
 	void validateBoard(GameBoard_Component & board, GameScore_Component & score) {
-		ScoringManifold scoringManifold;
+		std::vector<ScoringManifold> allMatchingSets;
 		for (int y = 1; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
+				ScoringManifold matchingSet;
 				const auto & xTile = board.m_tiles[y][x];
 				if (xTile.m_type == TileState::NONE || xTile.m_scoreType != TileState::UNMATCHED)
 					continue;
@@ -139,18 +140,28 @@ private:
 						break;
 				}
 				if (countPerRow >= 3 || countPerColumn >= 3) {
-					scoringManifold.insert({ x, y });
-					while (checkSeries_Horizontally(board, scoringManifold) || checkSeries_Vertically(board, scoringManifold)) {}
+					matchingSet.insert({ x, y });
+					while (checkSeries_Horizontally(board, matchingSet) || checkSeries_Vertically(board, matchingSet)) {}
 				}
 
 				// Prepare tiles for scoring
-				if (scoringManifold.size()) {
-					score.m_scoredTiles.push_back(std::make_pair(scoringManifold, false));
-					for each (const auto & xy in scoringManifold)
+				if (matchingSet.size()) {
+					allMatchingSets.push_back(matchingSet);
+					// Set the tiles as matched so that they aren't matched against more than once
+					for each (const auto & xy in matchingSet)
 						board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				scoringManifold.clear();
 			}
+
+		if (allMatchingSets.size()) {
+			// All matches formed in a single tick count as a single mega set, sized as the sum of all their tiles
+			// Combine their sets into 1 manifold
+			ScoringManifold combinedManifold;
+			for each (const auto & matchingSet in allMatchingSets)
+				for each (const auto & xy in matchingSet)
+					combinedManifold.push_back(xy);
+			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));
+		}
 	}
 	/** Try to delete any scored tiles if they've ticked long enough.
 	@param		board		the board containing the tiles of interest.
@@ -169,10 +180,15 @@ private:
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
 				board.m_data->data->excitement += (0.075f * (float)manifold.first.size());
-
-				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10
-				if (manifold.first.size() > 3)
+				// Add time, but never move timer past 3 seconds
+				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
+				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
+				if (manifold.first.size() > 3) {
 					score.m_score += 10 + (10 * (manifold.first.size() - 3));
+					score.m_stopTimer += (manifold.first.size() - 3);
+				}
+
+				score.m_stopTimeTick = 0;
 			}
 		}
 

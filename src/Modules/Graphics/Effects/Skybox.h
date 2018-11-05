@@ -24,7 +24,7 @@ public:
 	Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
-		m_cubemapSky = Asset_Cubemap::Create(engine, "sky\\");
+		m_cubemapSky = Asset_Cubemap::Create(engine, "none\\");
 		m_shaderSky = Asset_Shader::Create(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Asset_Shader::Create(engine, "Effects\\Skybox Reflection");
 		m_shaderConvolute = Asset_Shader::Create(engine, "Effects\\Sky_Convolution");

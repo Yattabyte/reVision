@@ -1,7 +1,6 @@
-/* Board Shader. */
+/* Score Shader. */
 #version 460
 
-layout (early_fragment_tests) in;
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in float NumberToRender;
 layout (location = 2) flat in float QuadIndex;

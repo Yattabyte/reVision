@@ -32,14 +32,16 @@ struct BoardBuffer {
 	float excitement;
 	int score;
 	int highlightIndex;
+	int stopTimer;
+	glm::vec3 padding;
 	glm::mat4 playerMat;
 };
 /** A component representing a basic player. */
 struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	TileState m_tiles[12][6];
 	unsigned int m_rowClimbTick = 0;
-	int m_playerX = 0;
-	int m_playerY = 1;
+	int m_playerX = 2;
+	int m_playerY = 5;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -62,10 +64,15 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		component->m_data->data->types[0] = 0u;
 		component->m_data->data->types[1] = 0u;
 		component->m_data->data->types[2] = 0u;
+		component->m_data->data->types[3] = 1u;
+		component->m_data->data->types[4] = 1;
+		component->m_data->data->types[5] = 1u;
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;
-		component->m_tiles[1][1].m_type = TileState::B;
+		component->m_tiles[0][3].m_type = TileState::B;
+		component->m_tiles[0][4].m_type = TileState::B;
+		component->m_tiles[0][5].m_type = TileState::B;
 		component->m_data->data->boardMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
 		component->m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1,1, 0));
 		component->m_data->data->heightOffset = 0.0f;

@@ -46,10 +46,14 @@ private:
 	Shared_Asset_Texture m_textureTile, m_texturePlayer;
 	StaticBuffer m_bufferIndirectTiles, m_bufferIndirectBoard;
 
-	Shared_Asset_Shader m_shaderScore;
+	// Score Rendering Resources
+	Shared_Asset_Shader m_shaderScore, m_shaderCombo;
 	Shared_Asset_Texture m_texture7Seg;
 	StaticBuffer m_bufferIndirectScore;
-
+	
+	// Stop-Timer Rendering Resources
+	Shared_Asset_Shader m_shaderStop;
+	StaticBuffer m_bufferIndirectStop;
 };
 
 #endif // GAME_MODULE_H
