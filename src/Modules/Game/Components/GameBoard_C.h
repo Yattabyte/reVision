@@ -8,8 +8,6 @@
 #include "glm\gtc\matrix_transform.hpp"
 
 
-/** Holds an int coordinate pair. */
-struct XY { int x, y; };
 /** Holds Tile State. */
 struct TileState {
 	// Enumerations
@@ -32,29 +30,26 @@ struct BoardBuffer {
 	glm::mat4 boardMat;
 	float heightOffset;
 	float excitement;
-	glm::vec2 padding;
+	int score;
+	int highlightIndex;
 	glm::mat4 playerMat;
 };
 /** A component representing a basic player. */
-struct BoardState_Component : public ECSComponent<BoardState_Component> {
+struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	TileState m_tiles[12][6];
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 0;
 	int m_playerY = 1;
-	float m_excitement = 0;
-	int m_score = 0;
-	int m_animtedScore = 0;
 	VB_Element<BoardBuffer> * m_data = nullptr;
-	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
 };
 /** A constructor to aid in creation. */
-struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
+struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 	// (de)Constructors
-	BoardState_Constructor(VectorBuffer<BoardBuffer> * elementBuffer)
+	GameBoard_Constructor(VectorBuffer<BoardBuffer> * elementBuffer)
 		: m_elementBuffer(elementBuffer) {};
 	// Interface Implementation
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto * component = new BoardState_Component();
+		auto * component = new GameBoard_Component();
 		component->m_data = m_elementBuffer->newElement();
 		int dataIndex = 0;
 		for (int y = 0; y < 12; ++y)
@@ -74,6 +69,9 @@ struct BoardState_Constructor : ECSComponentConstructor<BoardState_Component> {
 		component->m_data->data->boardMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
 		component->m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1,1, 0));
 		component->m_data->data->heightOffset = 0.0f;
+		component->m_data->data->excitement = 0.0f;
+		component->m_data->data->score = 0;
+		component->m_data->data->highlightIndex = 0;
 		return { component, component->ID };
 	}
 

@@ -1,6 +1,9 @@
 entity
 {
-	BoardState_Component
+	GameBoard_Component
+	{
+	}
+	GameScore_Component
 	{
 	}
 }

@@ -16,6 +16,8 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	mat4 boardMat;
 	float heightOffset;
 	float excitement;
+	int score;
+	int highlightIndex;
 	mat4 playerMat;
 };
 

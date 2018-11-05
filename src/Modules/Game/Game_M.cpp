@@ -4,13 +4,14 @@
 #include <atomic>
 
 /* Component Types Used */
+#include "Modules\Game\Components\GameBoard_C.h"
+#include "Modules\Game\Components\GameScore_C.h"
 #include "Modules\Game\Components\Player_C.h"
-#include "Modules\Game\Components\BoardState_C.h"
 
 /* System Types Used */
 #include "Modules\Game\Systems\PlayerMovement_S.h"
 #include "Modules\Game\Systems\Board_S.h"
-#include "Modules\Game\Systems\ScoreBoard_S.h"
+#include "Modules\Game\Systems\Score_S.h"
 
 
 void Game_Module::initialize(Engine * engine)
@@ -42,6 +43,8 @@ void Game_Module::initialize(Engine * engine)
 	m_shaderBoard = Asset_Shader::Create(m_engine, "Game\\Board");
 	m_textureTile = Asset_Texture::Create(m_engine, "Game\\tile.png");
 	m_texturePlayer = Asset_Texture::Create(m_engine, "Game\\player.png");
+	m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
+	m_texture7Seg = Asset_Texture::Create(engine, "Game\\7segnums.png");
 	m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 	// Preferences
@@ -53,9 +56,10 @@ void Game_Module::initialize(Engine * engine)
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint tileData[4] = { (GLuint)m_shapeQuad->getSize(), (12 * 6) + 2, 0, 0 }; // count, primCount, first, reserved
 		const GLuint boardData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_quad_tiles_indirect = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
-		m_quad_board_indirect = StaticBuffer(sizeof(GLuint) * 4, boardData, 0);
-		
+		const GLuint scoreData[4] = { (GLuint)m_shapeQuad->getSize(), 8, 0, 0 }; // count, primCount, first, reserved
+		m_bufferIndirectTiles = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
+		m_bufferIndirectBoard = StaticBuffer(sizeof(GLuint) * 4, boardData, 0);
+		m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData, 0);		
 	});
 	m_shaderTiles->addCallback(m_aliveIndicator, [&]() mutable {
 		m_shaderTiles->setUniform(0, glm::ortho<float>(0, 128 * 6, 0, 128 * 12, -1, 1));
@@ -63,23 +67,37 @@ void Game_Module::initialize(Engine * engine)
 
 	// Systems
 	m_gameplaySystems.addSystem(new Board_System(m_engine));
-	m_gameplaySystems.addSystem(new ScoreBoard_System(m_engine));
+	m_gameplaySystems.addSystem(new Score_System(m_engine));
 	//m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
 
 
 	// Component Constructors
+	m_engine->registerECSConstructor("GameBoard_Component", new GameBoard_Constructor(&m_engine->getGameModule().m_boardBuffer));
+	m_engine->registerECSConstructor("GameScore_Component", new GameScore_Constructor());
 	m_engine->registerECSConstructor("Player_Component", new Player_Constructor());
-	m_engine->registerECSConstructor("BoardState_Component", new BoardState_Constructor(&m_engine->getGameModule().m_boardBuffer));
 }
 
 void Game_Module::tickGame(const float & deltaTime)
 {
+	m_timeAccumulator += deltaTime;
 	m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-	m_engine->getECS().updateSystems(m_gameplaySystems, deltaTime);
 	
-	if (!m_shapeQuad->existsYet() || !m_shaderTiles->existsYet() || !m_shaderBoard->existsYet() || !m_textureTile->existsYet())
+	constexpr float dt = 0.01f;
+	while (m_timeAccumulator >= dt) {
+		// Update ALL systems with our fixed tick rate
+		m_engine->getECS().updateSystems(m_gameplaySystems, deltaTime);
+		m_timeAccumulator -= dt;
+	}
+	
+	if (!m_shapeQuad->existsYet() || 
+		!m_shaderTiles->existsYet() || 
+		!m_shaderBoard->existsYet() || 
+		!m_shaderScore->existsYet() ||
+		!m_textureTile->existsYet() ||
+		!m_texture7Seg->existsYet())
 		return;
 
+	// Render the tiles
 	glViewport(0, 0, 128 * 6, 128 * 12);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -90,14 +108,24 @@ void Game_Module::tickGame(const float & deltaTime)
 	m_textureTile->bind(0);
 	m_texturePlayer->bind(1);
 	glBindVertexArray(m_shapeQuad->m_vaoID);
-	m_quad_tiles_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
 
+	// Render the board
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindTextureUnit(0, m_boardTexID);
 	m_shaderBoard->bind();
-	m_quad_board_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+	// Render the score
+	m_shaderScore->bind();
+	m_texture7Seg->bind(0);
+	m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+	m_shaderScore->setUniform(0, 0);
+	glDrawArraysIndirect(GL_TRIANGLES, 0);	
+
+	// End
 	glDisable(GL_BLEND);
 }

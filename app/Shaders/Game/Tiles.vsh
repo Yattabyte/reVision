@@ -16,8 +16,11 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	mat4 boardMat;
 	float heightOffset;
 	float excitement;
+	int score;
+	int highlightIndex;
 	mat4 playerMat;
 };
+
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out uint Type;

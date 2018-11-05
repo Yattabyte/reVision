@@ -9,12 +9,23 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 	vec3 EyePosition;
 	vec2 CameraDimensions;
 };
+layout (std430, binding = 8) readonly buffer BoardBuffer {		
+	mat4 tileMats[12*6];
+	uint types[12*6];
+	float lifeTick[12*6];
+	mat4 boardMat;
+	float heightOffset;
+	float excitement;
+	int score;
+	int highlightIndex;
+	mat4 playerMat;
+};
 
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out float Index;
-
-layout (location = 0) uniform int Score = 0;
+layout (location = 1) flat out float NumberToRender;
+layout (location = 2) flat out float QuadIndex;
+layout (location = 3) flat out float HighlightIndex;
 
 
 const int NUM_CHARS = 8;
@@ -30,14 +41,14 @@ void main()
 	);
 	gl_Position = pMatrix * vMatrix * scoreTransMat * vec4(vertex.xy, -10, 1);
 	
-	int firstMostDigit = NUM_CHARS - 1;
-	for (int x = 0; x < NUM_CHARS - 1; ++x) 
-		if (int(mod(Score / pow(10, (NUM_CHARS-1)-x), 10.0f)) != 0) {
-			firstMostDigit = x;
-			break;
-		}
-	if (gl_InstanceID >= firstMostDigit)
-		Index = float(int(mod(Score / pow(10, (NUM_CHARS - 1) - gl_InstanceID), 10.0f)));
-	else
-		Index = -1.0f;
+	NumberToRender = -1.0f;
+	const int decimalPlaces[8] = int[](10000000,1000000,100000,10000,1000,100,10,1 );
+		for (int x = 0; x < 8; ++x) 
+			if (score >= decimalPlaces[x]) {
+				if (gl_InstanceID >= x) 
+					NumberToRender = float(int(mod(score / pow(10, (NUM_CHARS - 1) - gl_InstanceID), 10.0f)));				
+				break;
+			}			
+	QuadIndex = float(gl_InstanceID);
+	HighlightIndex = float(highlightIndex);
 }
