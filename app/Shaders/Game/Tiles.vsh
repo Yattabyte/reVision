@@ -33,6 +33,11 @@ layout (location = 0) uniform mat4 orthoProj;
 
 const float TILE_POPPING = 15.0F;
 
+float smoothStart6(float t) 
+{
+	return t * t * t * t * t * t;
+}
+
 void main()
 {	
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
@@ -45,8 +50,9 @@ void main()
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6)) {
 		LifeTick = lifeTick[gl_InstanceID];
-		Excitement = excitement;
-		const float scl = clamp(1.0f - (LifeTick / TILE_POPPING), 0.75f, 1.0f);
+		Excitement = excitement;		
+		const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
+		const float scl = mix(1.0f, 0.75f, smoothStart6(linearLife));
 		const mat4 deathMatrix = mat4(
 			vec4(scl, 0.0, 0.0, 0.0),
 			vec4(0.0, scl, 0.0, 0.0),
