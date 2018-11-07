@@ -25,31 +25,41 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out float NumberToRender;
-layout (location = 2) flat out float QuadIndex;
-layout (location = 3) flat out float HighlightIndex;
+layout (location = 2) flat out float HighlightAmount;
+layout (location = 3) flat out uint UseBackdrop;
+
+layout (location = 0) uniform uint scoreLength;
 
 
-const int NUM_CHARS = 8;
+const float NUM_CHARS = 8.0f;
 
 void main()
-{	
-	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	const mat4 scoreTransMat = mat4(
-		vec4(3.0f / 8.0f, 0.0, 0.0, 0.0),
-		vec4(0.0, 0.5, 0.0, 0.0),
+{
+	const float tileSize = 3.0f / NUM_CHARS;
+	UseBackdrop = 1u - uint(gl_InstanceID/scoreLength);
+	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
+	const uint modInstance = gl_InstanceID % scoreLength;
+	// This matrix stretches the unit row of blocks to the scale of 3
+	const mat4 scoreScaleMat = mat4(
+		vec4(tileSize, 0.0, 0.0, 0.0),
+		vec4(0.0, 1.0, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4((2.0f * (gl_InstanceID / (NUM_CHARS - 1.0f)) - 1.0f) * 2.625f, 5.5, 0.0, 1.0)
+		vec4(0.0, 0.0, 0.0, 1.0)
 	);
-	gl_Position = pMatrix * vMatrix * scoreTransMat * vec4(vertex.xy, -10, 1);
+	// This matrix positions the tiles within the top row, centered.
+	const mat4 scoreTransMat = mat4(
+		vec4(1.0, 0.0, 0.0, 0.0),
+		vec4(0.0, tileSize, 0.0, 0.0),
+		vec4(0.0, 0.0, 1.0, 0.0),
+		vec4(vec2(1.0F + (modInstance * 2.0F) - scoreLength, 5.5) + offsetMatrix, 0.0, 1.0)
+	);
+	gl_Position = pMatrix * vMatrix * scoreScaleMat * scoreTransMat * vec4(vertex.xy, -10, 1);
 	
-	NumberToRender = -1.0f;
-	const int decimalPlaces[8] = int[](10000000,1000000,100000,10000,1000,100,10,1 );
-		for (int x = 0; x < 8; ++x) 
-			if (score >= decimalPlaces[x]) {
-				if (gl_InstanceID >= x) 
-					NumberToRender = float(int(mod(score / pow(10, (NUM_CHARS - 1) - gl_InstanceID), 10.0f)));				
-				break;
-			}			
-	QuadIndex = float(gl_InstanceID);
-	HighlightIndex = float(highlightIndex);
+	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
+	NumberToRender = float(int(mod(score / pow(10, (NUM_CHARS - 1.0f) - (modInstance + (8u - scoreLength))), 10.0f)));
+	
+	if ((modInstance >= highlightIndex))
+		HighlightAmount = 1.0f;
+	else
+		HighlightAmount = 0.0f;
 }

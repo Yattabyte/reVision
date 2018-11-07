@@ -28,11 +28,11 @@ struct BoardBuffer {
 	unsigned int types[12 * 6];
 	float lifeTick[12 * 6];
 	glm::mat4 boardMat;
-	float heightOffset;
-	float excitement;
-	int score;
-	int highlightIndex;
-	int stopTimer;
+	float heightOffset = 0.0f;
+	float excitement = 0.0f;
+	int score = 0;
+	int highlightIndex = 0;
+	int stopTimer = 0;
 	glm::vec3 padding;
 	glm::mat4 playerMat;
 };

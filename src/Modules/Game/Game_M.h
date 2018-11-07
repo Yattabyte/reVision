@@ -4,10 +4,6 @@
 
 #include "Modules\Engine_Module.h"
 #include "Modules\Game\Components\GameBoard_C.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Texture.h"
-#include "Utilities\GL\StaticBuffer.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "Utilities\ECS\ECS.h"
 
@@ -34,26 +30,8 @@ private:
 	// Private Attributes
 	float m_timeAccumulator = 0.0f;
 	ECSSystemList m_gameplaySystems;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	GLuint m_fboID = 0, m_boardTexID = 0;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
+	BaseECSSystem * m_renderingSystem;
 	VectorBuffer<BoardBuffer> m_boardBuffer;
-	Shared_Asset_Primitive m_shapeQuad;
-
-
-	// Board Rendering Resources
-	Shared_Asset_Shader m_shaderTiles, m_shaderBoard;
-	Shared_Asset_Texture m_textureTile, m_texturePlayer;
-	StaticBuffer m_bufferIndirectTiles, m_bufferIndirectBoard;
-
-	// Score Rendering Resources
-	Shared_Asset_Shader m_shaderScore, m_shaderCombo;
-	Shared_Asset_Texture m_texture7Seg;
-	StaticBuffer m_bufferIndirectScore;
-	
-	// Stop-Timer Rendering Resources
-	Shared_Asset_Shader m_shaderStop;
-	StaticBuffer m_bufferIndirectStop;
 };
 
 #endif // GAME_MODULE_H

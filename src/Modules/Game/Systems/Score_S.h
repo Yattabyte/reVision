@@ -18,7 +18,7 @@ class Score_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Score_System() = default;
-	Score_System(Engine * engine) {
+	Score_System() {
 		// Declare component types used
 		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);		
@@ -33,19 +33,25 @@ public:
 			
 			validateBoard(board, score);
 			scoreTiles(board, score);
-			if (score.m_score - board.m_data->data->score > 0)
+			if ( (score.m_score - board.m_data->data->score) > 0 )
 				board.m_data->data->score++;
 			else
 				score.m_lastScore = score.m_score;
-			const int scoreGained = (score.m_score - score.m_lastScore);
 			constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
+			GLuint scoreLength = 1;
+			for (GLuint x = 0; x < 8; ++x)
+				if (score.m_score >= decimalPlaces[x]) {
+					scoreLength = 8 - x;
+					break;
+				}
+			const int scoreGained = (score.m_score - score.m_lastScore);
 			int firstMostDigit = 8;
 			for (int x = 0; x < 8; ++x) 
 				if (scoreGained >= decimalPlaces[x]) {
 					firstMostDigit = x;
 					break;
 				}
-			board.m_data->data->highlightIndex = firstMostDigit;
+			board.m_data->data->highlightIndex = scoreLength - (8-firstMostDigit);// std::max(0, firstMostDigit - 1);
 		}
 	}
 
