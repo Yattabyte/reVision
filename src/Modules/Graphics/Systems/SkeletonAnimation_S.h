@@ -49,21 +49,55 @@ public:
 		}
 	};
 
+	
+	// Public functions
+	template <typename T> static inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
+	template <> inline static glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
+
 
 protected:
 	// Protected functions
-	inline void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Mesh & model, const glm::mat4 & ParentTransform) {
+	static constexpr auto FindNodeAnim = [](const Animation & pAnimation, const std::string & NodeName) -> const Node_Animation* {
+		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
+			const Node_Animation * pNodeAnim = pAnimation.channels[i];
+			if (pNodeAnim->nodeName == NodeName)
+				return pNodeAnim;
+		}
+		return nullptr;
+	};
+	static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
+		for (size_t i = 0; i < count; i++)
+			if (AnimationTime < (float)(keyVector[i + 1]).time)
+				return i;
+		return size_t(0);
+	};	
+	static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
+		const size_t & keyCount = keyVector.size();
+		assert(keyCount > 0);
+		const auto & Result = keyVector[0].value;
+		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
+			const size_t Index = SkeletonAnimation_System::FindKey(AnimationTime, keyCount - 1, keyVector);
+			const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
+			const auto & Key = keyVector[Index];
+			const auto & NextKey = keyVector[NextIndex];
+			const float DeltaTime = (float)(NextKey.time - Key.time);
+			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
+			return SkeletonAnimation_System::valueMix(Key.value, NextKey.value, Factor);
+		}
+		return Result;
+	};
+	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Mesh & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
-		const Animation &pAnimation = model->m_geometry.animations[animation_ID];
-		const Node_Animation *pNodeAnim = FindNodeAnim(pAnimation, NodeName);
+		const Animation & pAnimation = model->m_geometry.animations[animation_ID];
+		const Node_Animation * pNodeAnim = FindNodeAnim(pAnimation, NodeName);
 		glm::mat4 NodeTransformation = parentNode->transformation;
 
 		// Interpolate scaling, rotation, and translation.
 		// Generate their matrices and apply their transformations.
 		if (pNodeAnim) {
-			const glm::vec3 Scaling = InterpolateKeys<glm::vec3>((float)animation_time, pNodeAnim->scalingKeys);
-			const glm::quat Rotation = InterpolateKeys<glm::quat>((float)animation_time, pNodeAnim->rotationKeys);
-			const glm::vec3 Translation = InterpolateKeys<glm::vec3>((float)animation_time, pNodeAnim->positionKeys);
+			const glm::vec3 Scaling = InterpolateKeys((float)animation_time, pNodeAnim->scalingKeys);
+			const glm::quat Rotation = InterpolateKeys((float)animation_time, pNodeAnim->rotationKeys);
+			const glm::vec3 Translation = InterpolateKeys((float)animation_time, pNodeAnim->positionKeys);
 
 			NodeTransformation = glm::translate(glm::mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0f), Scaling);
 		}
@@ -78,42 +112,6 @@ protected:
 
 		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
 			ReadNodeHeirarchy(transforms, animation_time, animation_ID, parentNode->children[i], model, GlobalTransformation);
-	}
-	template <typename FROM, typename TO> inline TO convertType(const FROM &t) { return *((TO*)&t); }
-	template <> inline glm::quat convertType(const aiQuaternion &t) { return glm::quat(t.w, t.x, t.y, t.z); }
-	template <> inline glm::mat4 convertType(const aiMatrix4x4 &t) { return glm::mat4(t.a1, t.b1, t.c1, t.d1, t.a2, t.b2, t.c2, t.d2, t.a3, t.b3, t.c3, t.d3, t.a4, t.b4, t.c4, t.d4); }
-	template <typename T> inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
-	template <> inline glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
-	inline const Node_Animation * FindNodeAnim(const Animation & pAnimation, const std::string &NodeName) {
-		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
-			const Node_Animation * pNodeAnim = pAnimation.channels[i];
-			if (pNodeAnim->nodeName == NodeName)
-				return pNodeAnim;
-		}
-		return nullptr;
-	}
-	template <typename KeyType>
-	inline size_t FindKey(const float &AnimationTime, const size_t &count, const std::vector<KeyType> & keys) {
-		for (size_t i = 0; i < count; i++)
-			if (AnimationTime < (float)(keys[i + 1]).time)
-				return i;
-		return 0;
-	}
-	template <typename ValueType>
-	inline ValueType InterpolateKeys(const float &AnimationTime, const std::vector<Animation_Time_Key<ValueType>> & keys) {
-		const size_t & keyCount = keys.size();
-		assert(keyCount > 0);
-		const ValueType &Result = keys[0].value;
-		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
-			size_t Index = FindKey<Animation_Time_Key<ValueType>>(AnimationTime, keyCount - 1, keys);
-			size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
-			const Animation_Time_Key<ValueType> &Key = keys[Index];
-			const Animation_Time_Key<ValueType> &NextKey = keys[NextIndex];
-			const float DeltaTime = (float)(NextKey.time - Key.time);
-			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
-			return valueMix(Key.value, NextKey.value, Factor);
-		}
-		return Result;
 	}
 };
 

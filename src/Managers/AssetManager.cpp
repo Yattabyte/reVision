@@ -3,6 +3,19 @@
  
 AssetManager::AssetManager(Engine * engine) : m_engine(engine) {}
 
+Shared_Asset AssetManager::queryExistingAsset(const char * assetType, const std::string & filename, const bool & dontForceFinalize) {
+	for each (const Shared_Asset asset in m_AssetMap[assetType])
+		if (asset->getFileName() == filename) {
+			// Asset may be found, but not guaranteed to be finalized
+			// Stay here until it is finalized
+			if (!dontForceFinalize)
+				while (!asset->existsYet())
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+			return asset;
+		}
+	return std::shared_ptr<Asset>();
+}
+
 void AssetManager::submitNewWorkOrder(const Asset_Work_Order && ini, const bool & threaded) {
 	if (threaded) {
 		std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);

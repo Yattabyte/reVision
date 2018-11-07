@@ -15,6 +15,14 @@ void Asset::setFileName(const std::string & fn)
 	m_filename = fn;
 }
 
+void Asset::addCallback(const std::shared_ptr<bool>& alive, AssetFinalizedCallback && callback)
+{
+	if (!existsYet())
+		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
+	else
+		callback();
+}
+
 bool Asset::existsYet() const
 { 
 	// Exit early if this points to nothing

@@ -48,12 +48,6 @@ private:
 struct LevelStruct_Component {
 	std::string type;
 	std::vector<std::any> parameters;
-	template <typename T>
-	inline std::optional<T> const getParameter(const unsigned int x) const {
-		if (parameters[x].has_value() && parameters[x].type() == typeid(T))
-			return std::any_cast<T>(parameters[x]);
-		return {};
-	}
 };
 struct LevelStruct_Entity {
 	std::vector<LevelStruct_Component> components;

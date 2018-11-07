@@ -46,19 +46,24 @@ public:
 		const bool & threaded,
 		Args && ...args
 	) {
-		// Create the asset or find one that already exists
-		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
-		auto userAsset = queryExistingAsset<Asset_T>(filename, threaded);
-		if (!userAsset) {
-			userAsset = std::make_shared<Asset_T>(filename, std::forward<Args>(args)...);
-			addShareableAsset<Asset_T>(userAsset);
-			write_guard.unlock();
-			write_guard.release();
+		// The standardized name of this asset type, for lookup purposes.
+		const auto assetTypeName = typeid(Asset_T).name();
 
-			// Submit the work order
-			const std::string relativePath(directory + filename + extension);
-			submitNewWorkOrder(std::move(std::bind(initFunc, userAsset.get(), engine, relativePath)), threaded);
-		}
+		// Find out if the asset already exists
+		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
+		auto userAsset = std::dynamic_pointer_cast<Asset_T>(queryExistingAsset(assetTypeName, filename, threaded));
+		if (userAsset) // Asset exists
+			return userAsset;
+		
+		// Asset doesn't exist, make it
+		userAsset = std::make_shared<Asset_T>(filename, std::forward<Args>(args)...);
+		m_AssetMap[assetTypeName].push_back(userAsset);
+		write_guard.unlock();
+		write_guard.release();
+
+		// Submit the work order
+		const std::string relativePath(directory + filename + extension);
+		submitNewWorkOrder(std::move(std::bind(initFunc, userAsset.get(), engine, relativePath)), threaded);
 		return userAsset;
 	}	
 	/** Pop's the first work order and completes it. */
@@ -78,29 +83,12 @@ public:
 private:
 	// Private Methods
 	/** Queries if an asset already exists with the given filename, fetching if true.
-	@brief				Searches for and updates the supplied container with the desired asset if it already exists.
-	@param	<Asset_T>	the type of asset to query for
-	@param	filename	the relative filename (within the project directory) of the asset to search for
-	@return				the asset, if found, or null if not */
-	template <typename Asset_T>
-	inline std::shared_ptr<Asset_T> queryExistingAsset(const std::string & filename, const bool & dontForceFinalize = false) {
-		for each (const Shared_Asset asset in m_AssetMap[typeid(Asset_T).name()])
-			if (asset->getFileName() == filename) {
-				// Asset may be found, but not guaranteed to be finalized
-				// Stay here until it is finalized
-				if (!dontForceFinalize)
-					while (!asset->existsYet())
-						std::this_thread::sleep_for(std::chrono::milliseconds(1));
-				return std::dynamic_pointer_cast<Asset_T>(asset);
-			}
-		return std::shared_ptr<Asset_T>();
-	}
-	/** A template for adding shareable assets to the map.
-	@param	asset	the asset to add to the map */
-	template <typename Asset_T>
-	inline void addShareableAsset(const std::shared_ptr<Asset_T> & asset) {
-		m_AssetMap[typeid(Asset_T).name()].push_back(asset);
-	}
+	@brief						Searches for and updates the supplied container with the desired asset if it already exists.
+	@param	assetType			the name of the asset type to search for.
+	@param	filename			the relative filename (within the project directory) of the asset to search for.
+	@param	dontForceFinalize	if the asset hasn't been finalized, whether or not to wait for it to finalize before returning.
+	@return						the asset, if found, or null if not. */
+	Shared_Asset queryExistingAsset(const char * assetType, const std::string & filename, const bool & dontForceFinalize = false);
 	/** Submits an asset for physical creation, and optionally whether to thread it or not.
 	@param	ini			asset initialization function
 	@param	threaded	flag to create in a separate thread	*/
