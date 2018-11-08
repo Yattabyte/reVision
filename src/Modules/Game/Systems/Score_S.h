@@ -10,8 +10,9 @@
 #include "Modules\Game\Components\GameScore_C.h"
 
 
-constexpr int TickCount_Scoring = 50u;
-constexpr int TickCount_Popping = 15u;
+constexpr int TickCount_Scoring = 50;
+constexpr int TickCount_Popping = 15;
+constexpr int TickCount_ScoreRotate = 750;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Score_System : public BaseECSSystem {
@@ -52,6 +53,10 @@ public:
 					break;
 				}
 			board.m_data->data->highlightIndex = scoreLength - (8-firstMostDigit);// std::max(0, firstMostDigit - 1);
+
+			board.m_data->data->scoreTick++;
+			if (board.m_data->data->scoreTick > TickCount_ScoreRotate)
+				board.m_data->data->scoreTick = 0;
 		}
 	}
 

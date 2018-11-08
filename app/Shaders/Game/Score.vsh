@@ -1,5 +1,7 @@
 /* Score Shader. */
 #version 460
+#package "Game\GameBuffer"
+#define M_PI 3.1415926535897932384626433832795
 
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
 	mat4 pMatrix;
@@ -8,18 +10,6 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 	mat4 vMatrix_Inverse;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
-};
-layout (std430, binding = 8) readonly buffer BoardBuffer {		
-	mat4 tileMats[12*6];
-	uint types[12*6];
-	float lifeTick[12*6];
-	mat4 boardMat;
-	float heightOffset;
-	float excitement;
-	int score;
-	int highlightIndex;
-	int stopTimer;
-	mat4 playerMat;
 };
 
 layout (location = 0) in vec3 vertex;
@@ -32,34 +22,46 @@ layout (location = 0) uniform uint scoreLength;
 
 
 const float NUM_CHARS = 8.0f;
+const float SCORE_ROTATE_TICK = 750.0F;
 
 void main()
 {
-	const float tileSize = 3.0f / NUM_CHARS;
-	UseBackdrop = 1u - uint(gl_InstanceID/scoreLength);
-	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
+	// Starting Variables
 	const uint modInstance = gl_InstanceID % scoreLength;
+	UseBackdrop = 1u - uint(gl_InstanceID / scoreLength);	
+	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
+	NumberToRender = float(int(mod(score / pow(10, (NUM_CHARS - 1.0f) - (modInstance + (8u - scoreLength))), 10.0f)));
+	
+	// Amount of color to add to the highlighted digit (when score is added)
+	HighlightAmount = 0.0f;
+	if ((modInstance >= highlightIndex))
+		HighlightAmount = 1.0f;		
+		
 	// This matrix stretches the unit row of blocks to the scale of 3
+	const float tileSize = (3.0f / NUM_CHARS) + (HighlightAmount * 0.01f);
+	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
 	const mat4 scoreScaleMat = mat4(
 		vec4(tileSize, 0.0, 0.0, 0.0),
-		vec4(0.0, 1.0, 0.0, 0.0),
+		vec4(0.0, tileSize, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(0.0, 0.0, 0.0, 1.0)
+		vec4(0.0, 5.75, 0.0, 1.0)
 	);
 	// This matrix positions the tiles within the top row, centered.
 	const mat4 scoreTransMat = mat4(
 		vec4(1.0, 0.0, 0.0, 0.0),
-		vec4(0.0, tileSize, 0.0, 0.0),
+		vec4(0.0, 1.0, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(vec2(1.0F + (modInstance * 2.0F) - scoreLength, 5.5) + offsetMatrix, 0.0, 1.0)
+		vec4(vec2(1.0F + (modInstance * 2.0F) - scoreLength, 0.0) + offsetMatrix, 0.0, 1.0)
 	);
-	gl_Position = pMatrix * vMatrix * scoreScaleMat * scoreTransMat * vec4(vertex.xy, -10, 1);
-	
-	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	NumberToRender = float(int(mod(score / pow(10, (NUM_CHARS - 1.0f) - (modInstance + (8u - scoreLength))), 10.0f)));
-	
-	if ((modInstance >= highlightIndex))
-		HighlightAmount = 1.0f;
-	else
-		HighlightAmount = 0.0f;
+	const float angle = sin((2.0f * (float(scoreTick) / SCORE_ROTATE_TICK) - 1.0f) * M_PI) * (0.0625F + (0.125f * excitement));
+	const vec3 axis = vec3(0,0,1);
+	const float s = sin(angle);
+    const float c = cos(angle);
+    const float oc = 1.0 - c;    
+    const mat4 scoreRotMat = mat4(
+		oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
+		oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
+        oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
+        0.0,        0.0,                                0.0,                                1.0);	
+	gl_Position = pMatrix * vMatrix * scoreScaleMat * scoreRotMat * scoreTransMat * vec4(vertex.xy, -10, 1);
 }

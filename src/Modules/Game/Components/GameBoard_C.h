@@ -31,9 +31,10 @@ struct BoardBuffer {
 	float heightOffset = 0.0f;
 	float excitement = 0.0f;
 	int score = 0;
+	int scoreTick = 0;
 	int highlightIndex = 0;
 	int stopTimer = 0;
-	glm::vec3 padding;
+	glm::vec2 padding;
 	glm::mat4 playerMat;
 };
 /** A component representing a basic player. */
