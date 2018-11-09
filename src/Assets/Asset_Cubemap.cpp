@@ -70,7 +70,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, m_filename);
+		engine->getMessageManager().error("Asset_Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

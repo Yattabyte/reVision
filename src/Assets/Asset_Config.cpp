@@ -72,7 +72,7 @@ void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 		}
 	}
 	catch (const std::ifstream::failure) {
-		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Config");
+		engine->getMessageManager().error("Asset_Config \"" + m_filename + "\" failed to initialize.");
 	}
 
 	Asset::finalize(engine);

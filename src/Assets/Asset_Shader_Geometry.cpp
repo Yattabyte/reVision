@@ -50,7 +50,7 @@ void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & rela
 		if (!success) {
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error(MessageManager::ASSET_FAILED, getFileName(), std::string(infoLog.data(), infoLog.size()));
+			engine->getMessageManager().error("Asset_Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault(engine);
 		}
 	}

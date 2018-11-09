@@ -28,10 +28,8 @@ Rendering_Context::~Rendering_Context()
 Rendering_Context::Rendering_Context(Engine * engine)
 {
 	// Begin Initialization
-	auto & messageManager = engine->getMessageManager();
-	messageManager.statement("Creating Window...");
 	if (!glfwInit()) {
-		messageManager.error(MessageManager::MANUAL_ERROR, "GLFW unable to initialize, shutting down...");
+		engine->getMessageManager().error("GLFW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -72,7 +70,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	// Initialize GLEW
 	glewExperimental = GL_TRUE;
 	if (glewInit() != GLEW_OK) {
-		messageManager.error(MessageManager::MANUAL_ERROR, "GLEW unable to initialize, shutting down...");
+		engine->getMessageManager().error("GLEW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -101,7 +99,7 @@ Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
 
 Engine::~Engine()
 {
-	getMessageManager().statement("Shutting down...");
+	m_messageManager.statement("Shutting down...");
 	Image_IO::Deinitialize();	
 	glfwTerminate();
 }
@@ -114,6 +112,24 @@ Engine::Engine() :
 	m_renderingContext(this), 
 	m_materialManager(this)
 {
+	// Output engine boiler-plate
+	m_messageManager.statement("**************************************************");
+	m_messageManager.statement("Engine Version " + std::string(ENGINE_VERSION));
+	m_messageManager.statement("");
+	m_messageManager.statement("Library Info:");
+	m_messageManager.statement("ASSIMP       " + Mesh_IO::Get_Version());
+	m_messageManager.statement("Bullet       " + std::to_string(BT_BULLET_VERSION));
+	m_messageManager.statement("FreeImage    " + Image_IO::Get_Version());
+	m_messageManager.statement("GLEW         " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+	m_messageManager.statement("GLFW         " + std::string(glfwGetVersionString(), 5));
+	m_messageManager.statement("GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	m_messageManager.statement("");
+	m_messageManager.statement("Graphics Info:");
+	m_messageManager.statement(std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
+	m_messageManager.statement("OpenGL " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
+	m_messageManager.statement("GLSL " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
+	m_messageManager.statement("**************************************************");
+
 	Image_IO::Initialize();
 
 	// Preference Values
@@ -164,22 +180,7 @@ Engine::Engine() :
 		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(Auxilliary_Context(m_renderingContext)));
 		workerThread.detach();
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
-	}
-
-	auto & messageManager = getMessageManager();
-	messageManager.statement("**************************************************");
-	messageManager.statement("Engine Version: " + std::string(ENGINE_VERSION));
-	messageManager.statement("ASSIMP Version: " + Mesh_IO::Get_Version());
-	messageManager.statement("Bullet Version: " + std::to_string(BT_BULLET_VERSION));
-	messageManager.statement("FreeImage Version: " + Image_IO::Get_Version());
-	messageManager.statement("GLEW Version: " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
-	messageManager.statement("GLFW Version: " + std::string(glfwGetVersionString()));
-	messageManager.statement("GLM Version: " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
-	messageManager.statement("OpenGL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-	messageManager.statement("GLSL Version: " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-	messageManager.statement("GL implementation provided by: " + std::string(reinterpret_cast<char const *>(glGetString(GL_VENDOR))));
-	messageManager.statement("Using GPU: " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
-	messageManager.statement("**************************************************");
+	}	
 }
 
 void Engine::tick()

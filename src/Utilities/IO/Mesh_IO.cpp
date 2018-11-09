@@ -63,7 +63,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getMessageManager().error(MessageManager::FILE_MISSING, relativePath);
+		engine->getMessageManager().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 
 	// Check if scene imported successfully
 	if (!scene) {
-		engine->getMessageManager().error(MessageManager::FILE_CORRUPT, relativePath);
+		engine->getMessageManager().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 

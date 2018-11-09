@@ -39,9 +39,9 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Game Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			engine->getMessageManager().error("Game Board Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
 		if (!glIsTexture(m_boardTexID))
-			engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Game Texture");
+			engine->getMessageManager().error("Game Board Texture is incomplete.");
 
 		// Asset Loading
 		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);

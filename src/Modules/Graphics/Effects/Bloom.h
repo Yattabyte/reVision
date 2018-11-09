@@ -76,13 +76,13 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Bloom Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			engine->getMessageManager().error("Bloom Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom Texture");
+			engine->getMessageManager().error("Bloom Texture is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[0]))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 0");
+			engine->getMessageManager().error("Bloom Gaussian blur texture #1 [0] is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[1]))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Bloom - Gaussian blur texture 1");
+			engine->getMessageManager().error("Bloom Gaussian blur texture #2 [1] is incomplete.");
 	}
 
 

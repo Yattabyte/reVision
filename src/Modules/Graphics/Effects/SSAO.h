@@ -114,11 +114,11 @@ public:
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
 		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSAO Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			m_engine->getMessageManager().error("SSAO Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO Texture");
+			m_engine->getMessageManager().error("SSAO Texture is incomplete.");
 		if (!glIsTexture(m_noiseID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO - Noise texture");
+			m_engine->getMessageManager().error("SSAO Noise Texture is incomplete.");
 	}
 
 

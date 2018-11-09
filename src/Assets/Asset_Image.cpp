@@ -40,7 +40,7 @@ void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 		m_bpp = dataContainer.bpp;
 	}
 	else {
-		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Image");
+		engine->getMessageManager().error("Asset_Image \"" + m_filename + "\" failed to initialize.");
 		fill();
 	}
 	

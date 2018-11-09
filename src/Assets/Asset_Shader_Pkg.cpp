@@ -53,7 +53,7 @@ void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativeP
 	const bool found = Text_IO::Import_Text(engine, relativePath + EXT_PACKAGE, m_packageText);
 	
 	if (!found)
-		engine->getMessageManager().error(MessageManager::FILE_MISSING, getFileName() + EXT_PACKAGE);
+		engine->getMessageManager().error("Asset_Shader_Pkg \"" + m_filename + "\" file does not exist");
 
 	// parse
 	parse(engine, *this);

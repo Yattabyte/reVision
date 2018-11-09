@@ -22,7 +22,7 @@ Shared_Asset_Level Asset_Level::Create(Engine * engine, const std::string & file
 void Asset_Level::initialize(Engine * engine, const std::string & relativePath)
 {
 	if (!Level_IO::Import_Level(engine, relativePath, m_entities)) {
-		engine->getMessageManager().error(MessageManager::ASSET_FAILED, "Asset_Level");
+		engine->getMessageManager().error("Asset_Level \"" + m_filename + "\" failed to initialize.");
 	}
 
 	Asset::finalize(engine);

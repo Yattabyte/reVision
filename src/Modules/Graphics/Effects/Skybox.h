@@ -69,9 +69,9 @@ public:
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
 			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
 			if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-				m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Skybox Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+				m_engine->getMessageManager().error("Skybox Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 			if (!glIsTexture(m_cubemapMipped))
-				m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Skybox Texture");
+				m_engine->getMessageManager().error("Skybox Texture is incomplete.");
 		});
 	}
 

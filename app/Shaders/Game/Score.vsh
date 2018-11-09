@@ -38,7 +38,7 @@ void main()
 		HighlightAmount = 1.0f;		
 		
 	// This matrix stretches the unit row of blocks to the scale of 3
-	const float tileSize = (3.0f / NUM_CHARS) + (HighlightAmount * 0.01f);
+	const float tileSize = (3.0f / NUM_CHARS) + (HighlightAmount * 0.025f);
 	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
 	const mat4 scoreScaleMat = mat4(
 		vec4(tileSize, 0.0, 0.0, 0.0),

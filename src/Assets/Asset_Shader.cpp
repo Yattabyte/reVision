@@ -75,7 +75,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 		if (!success) {
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error(MessageManager::SHADER_PROGRAM_INCOMPLETE, getFileName(), std::string(infoLog.data(), infoLog.size()));
+			engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault(engine);
 		}
 	}
@@ -126,10 +126,10 @@ const bool Asset_Shader::loadCachedBinary(Engine * engine, const std::string & r
 				return true;
 			}
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error(MessageManager::SHADER_BINARY_INCOMPLETE, getFileName(), std::string(infoLog.data(), infoLog.size()));
+			engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 			return false;
 		}
-		engine->getMessageManager().error(MessageManager::SHADER_BINARY_INCOMPLETE, getFileName(), "Failed to open binary file.");
+		engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to open binary cache.");
 		return false;
 	}
 	// Safe, binary file simply doesn't exist. Don't error report.
@@ -150,7 +150,7 @@ const bool Asset_Shader::saveCachedBinary(Engine * engine, const std::string & r
 		file.close();
 		return true;
 	}
-	engine->getMessageManager().error(MessageManager::MANUAL_ERROR, getFileName(), "Failed to cache shader binary.");
+	engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to write to binary cache.");
 	return false;
 }
 
@@ -243,6 +243,6 @@ const bool ShaderObj::createGLShader(Engine * engine, const std::string & filena
 	// Report any errors
 	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
 	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-	engine->getMessageManager().error(MessageManager::SHADER_INCOMPLETE, filename, std::string(infoLog.data(), infoLog.size()));
+	engine->getMessageManager().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 	return false;
 }
