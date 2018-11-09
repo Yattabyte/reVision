@@ -19,11 +19,14 @@ public:
 
 
 	// Public Methods
-	/** Prints a raw std::string into the message log.
-	@param	input				std::string message to print */
+	/** Prints a general statement into the console.
+	@param	input	std::string message to print */
 	void statement(const std::string & input);
-	/** Prints a formatted message based around the supplied error type.
-	@param	input				the error message to be displayed. */
+	/** Prints a warning message into the console.
+	@param	input	std::string message to print */
+	void warning(const std::string & input);
+	/** Prints an error message into the console.
+	@param	input	the error message to be displayed. */
 	void error(const std::string & input);
 
 

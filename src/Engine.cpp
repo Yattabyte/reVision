@@ -240,6 +240,10 @@ bool Engine::shouldClose()
 	return glfwWindowShouldClose(m_renderingContext.window);
 }
 
+void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) {
+	m_ecs.registerConstructor(name, constructor);
+}
+
 GLFWwindow * Engine::getRenderingContext() const
 { 
 	return m_renderingContext.window; 

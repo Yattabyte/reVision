@@ -7,6 +7,11 @@ void MessageManager::statement(const std::string & input)
 	textOutput(input);
 }
 
+void MessageManager::warning(const std::string & input)
+{
+	textOutput("Warning: " + input);
+}
+
 void MessageManager::error(const std::string & input)
 {
 	textOutput("Error: " + input);

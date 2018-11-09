@@ -18,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.3";
+constexpr char ENGINE_VERSION[] = "2.3.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -56,9 +56,7 @@ public:
 	/** Adds a component constructor to the ecs construction map.
 	@param	name				the component name type.
 	@param	constructor			the component constructor object. */
-	inline void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) {
-		m_ecs.registerConstructor(name, constructor);
-	}
+	void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor);
 
 
 	// Public Accessors

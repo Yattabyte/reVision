@@ -29,10 +29,10 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relative
 		messageManager.error("The file \"" + relativePath + "\" exists, but is corrupted. Attempting to recover...");
 		format = FreeImage_GetFIFFromFilename(file);
 		if (!FreeImage_FIFSupportsReading(format))
-			messageManager.error("Failed to recover the file \"" + relativePath + ".");
+			messageManager.warning("Failed to recover the file \"" + relativePath + ".");
 	}
 	else if (format == FIF_GIF)
-		messageManager.statement("GIF loading unsupported!");
+		messageManager.warning("GIF loading unsupported!");
 	else {
 		bitmap = FreeImage_Load(format, file);
 		if (FreeImage_GetBPP(bitmap) != 32) {
