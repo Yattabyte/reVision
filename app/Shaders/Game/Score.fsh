@@ -27,7 +27,7 @@ void main()
 	const ivec2 Size = textureSize(Numbers, 0);
 	const float AtlasWidth = float(Size.x);
 	const float ElementWidth = float(Size.y);
-	const float ElementCount = 10.0f;
+	const float ElementCount = 11.0f;
 	
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((NumberToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		

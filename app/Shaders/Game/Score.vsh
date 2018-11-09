@@ -44,9 +44,9 @@ void main()
 		vec4(tileSize, 0.0, 0.0, 0.0),
 		vec4(0.0, tileSize, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(0.0, 5.75, 0.0, 1.0)
+		vec4(0.0, 6.75, 0.0, 1.0)
 	);
-	// This matrix positions the tiles within the top row, centered.
+	// This matrix centers the posiotion of the tiles withom the row
 	const mat4 scoreTransMat = mat4(
 		vec4(1.0, 0.0, 0.0, 0.0),
 		vec4(0.0, 1.0, 0.0, 0.0),

@@ -74,7 +74,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		component->m_tiles[0][3].m_type = TileState::B;
 		component->m_tiles[0][4].m_type = TileState::B;
 		component->m_tiles[0][5].m_type = TileState::B;
-		component->m_data->data->boardMat = glm::translate(glm::mat4(1.0f), glm::vec3(0, -1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
+		component->m_data->data->boardMat = glm::scale(glm::mat4(1.0f), glm::vec3(3, 6, 1));
 		component->m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f), glm::vec3(1,1, 0));
 		component->m_data->data->heightOffset = 0.0f;
 		component->m_data->data->excitement = 0.0f;
