@@ -44,7 +44,7 @@ void main()
 		LifeTick = lifeTick[gl_InstanceID];
 		Excitement = excitement;		
 		const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
-		const float deathScl = mix(1.0f, 0.75f, smoothStart6(linearLife));
+		const float deathScl = mix(1.0f, 0.675f, smoothStart6(linearLife));
 		tileTransform = mat4(
 			vec4(deathScl, 0.0, 0.0, 0.0),
 			vec4(0.0, deathScl, 0.0, 0.0),
@@ -68,7 +68,7 @@ void main()
 	const mat4 scaleMat = mat4(
 		vec4(tileScale, 0.0, 0.0, 0.0),
 		vec4(0.0, tileScale, 0.0, 0.0),
-		vec4(0.0, 0.0, tileScale, 0.0),
+		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(0.0, 0.0, 0.0, 1.0)
 	);
 	gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.x, vertex.y, 0, 1);

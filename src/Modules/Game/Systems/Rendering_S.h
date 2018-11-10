@@ -24,6 +24,9 @@ public:
 		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);
 
+		// For rendering tiles to the board
+		m_orthoProj = glm::ortho<float>(0, 128 * 6, 0, 128 * 12, -1, 1);
+
 		// Board FBO & Texture Creation
 		constexpr unsigned int tileSize = 128u;
 		glCreateFramebuffers(1, &m_fboID);
@@ -44,12 +47,14 @@ public:
 			engine->getMessageManager().error("Game Board Texture is incomplete.");
 
 		// Asset Loading
-		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);
 		m_shaderBoard = Asset_Shader::Create(engine, "Game\\Board");
-		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
-		m_texturePlayer = Asset_Texture::Create(engine, "Game\\player.png");
+		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);
+		m_shaderTileScored = Asset_Shader::Create(engine, "Game\\TileScored", true);
 		m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
 		m_shaderStop = Asset_Shader::Create(engine, "Game\\Stop", true);
+		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
+		m_textureTileScored = Asset_Texture::Create(engine, "Game\\tileScored.png");
+		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
 		m_textureScoreNums = Asset_Texture::Create(engine, "Game\\scoreNums.png");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
@@ -64,15 +69,14 @@ public:
 			// count, primCount, first, reserved
 			const GLuint tileData[4] = { quadSize, (12 * 6) + 2, 0, 0 };
 			m_bufferIndirectTiles = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
+			const GLuint tileScoreData[4] = { quadSize, 0, 0, 0 };
+			m_bufferIndirectTilesScored = StaticBuffer(sizeof(GLuint) * 4, tileScoreData, GL_DYNAMIC_STORAGE_BIT);
 			const GLuint boardData[4] = { quadSize, 1, 0, 0 };
 			m_bufferIndirectBoard = StaticBuffer(sizeof(GLuint) * 4, boardData, 0);
 			const GLuint scoreData[4] = { quadSize, 1, 0, 0 };
 			m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData);
 			const GLuint stopData[4] = { quadSize, 5, 0, 0 };
 			m_bufferIndirectStop = StaticBuffer(sizeof(GLuint) * 4, stopData, 0);
-		});
-		m_shaderTiles->addCallback(m_aliveIndicator, [&]() mutable {
-			m_shaderTiles->setUniform(0, glm::ortho<float>(0, 128 * 6, 0, 128 * 12, -1, 1));
 		});
 	}
 
@@ -103,6 +107,14 @@ public:
 			const GLuint doubledLength = scoreLength * 2u;
 			m_bufferIndirectScore.write(sizeof(GLuint), sizeof(GLuint), &doubledLength);
 			m_shaderScore->setUniform(0, scoreLength);
+
+			const GLuint scoreCount = (GLuint)score.m_scoredTiles.size() * 2u;
+			m_bufferIndirectTilesScored.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
+			m_shaderTileScored->setUniform(4, (GLuint)score.m_scoredTiles.size());
+			for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
+				const glm::ivec3 data(score.m_scoredTiles[x].first[0].x, score.m_scoredTiles[x].first[0].y, (int)score.m_scoredTiles[x].first.size());
+				m_bufferScoredTileMarkers.write(sizeof(glm::ivec4) * x, sizeof(glm::ivec3), &data);
+			}
 			
 			// Render the tiles
 			glViewport(0, 0, 128 * 6, 128 * 12);
@@ -113,9 +125,19 @@ public:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			m_shaderTiles->bind();
 			m_textureTile->bind(0);
-			m_texturePlayer->bind(1);
+			m_textureTilePlayer->bind(1);
+			m_shaderTiles->setUniform(0, m_orthoProj);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+			// Render Score-Tiles
+			m_shaderTileScored->bind();
+			m_textureTileScored->bind(0);
+			m_textureScoreNums->bind(1);
+			m_shaderTileScored->setUniform(0, m_orthoProj);
+			m_bufferIndirectTilesScored.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_bufferScoredTileMarkers.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 			// Render the board
@@ -148,15 +170,21 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_fboID = 0, m_boardTexID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
+	glm::mat4 m_orthoProj;
 	Shared_Asset_Primitive m_shapeQuad;
 
+	// Tile Rendering Resources
+	Shared_Asset_Shader m_shaderTiles, m_shaderTileScored;
+	Shared_Asset_Texture m_textureTile, m_textureTilePlayer, m_textureTileScored;
+	StaticBuffer m_bufferIndirectTiles, m_bufferIndirectTilesScored;
+	DynamicBuffer m_bufferScoredTileMarkers;
+
 	// Board Rendering Resources
-	Shared_Asset_Shader m_shaderTiles, m_shaderBoard;
-	Shared_Asset_Texture m_textureTile, m_texturePlayer;
-	StaticBuffer m_bufferIndirectTiles, m_bufferIndirectBoard;
+	Shared_Asset_Shader m_shaderBoard;
+	StaticBuffer m_bufferIndirectBoard;
 
 	// Score Rendering Resources
-	Shared_Asset_Shader m_shaderScore, m_shaderCombo;
+	Shared_Asset_Shader m_shaderScore;
 	Shared_Asset_Texture m_textureScoreNums;
 	StaticBuffer m_bufferIndirectScore;
 
