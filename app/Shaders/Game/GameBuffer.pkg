@@ -1,13 +1,11 @@
-layout (std430, binding = 8) readonly buffer BoardBuffer {		
-	mat4 tileMats[12*6];
+layout (std430, binding = 8) readonly buffer BoardBuffer {	
 	uint types[12*6];
 	float lifeTick[12*6];
-	mat4 boardMat;
+	ivec2 playerCoords;
 	float heightOffset;
 	float excitement;
 	int score;
 	int scoreTick;
 	int highlightIndex;
 	int stopTimer;
-	mat4 playerMat;
 };

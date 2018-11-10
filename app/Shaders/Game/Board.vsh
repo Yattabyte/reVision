@@ -16,6 +16,12 @@ layout (location = 0) out vec2 TexCoord;
 
 void main()
 {	
-	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
+	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;	
+	const mat4 boardMat = mat4(
+		vec4(3.0, 0.0, 0.0, 0.0),
+		vec4(0.0, 6.0, 0.0, 0.0),
+		vec4(0.0, 0.0, 1.0, 0.0),
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
 	gl_Position = pMatrix * vMatrix * boardMat * vec4(vertex.xy, -10, 1);
 }

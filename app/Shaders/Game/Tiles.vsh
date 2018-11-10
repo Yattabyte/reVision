@@ -33,6 +33,9 @@ void main()
 	Type = types[gl_InstanceID];
 	TileWaiting = 0;
 	
+	// Container for storing transformations
+	mat4 tileTransform;
+		
 	// Identifies background tiles
 	if (gl_InstanceID < 6) 
 		TileWaiting = 1;
@@ -41,18 +44,32 @@ void main()
 		LifeTick = lifeTick[gl_InstanceID];
 		Excitement = excitement;		
 		const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
-		const float scl = mix(1.0f, 0.75f, smoothStart6(linearLife));
-		const mat4 deathMatrix = mat4(
-			vec4(scl, 0.0, 0.0, 0.0),
-			vec4(0.0, scl, 0.0, 0.0),
-			vec4(0.0, 0.0, scl, 0.0),
-			vec4(0.0, heightOffset, 0.0, 1.0)
+		const float deathScl = mix(1.0f, 0.75f, smoothStart6(linearLife));
+		tileTransform = mat4(
+			vec4(deathScl, 0.0, 0.0, 0.0),
+			vec4(0.0, deathScl, 0.0, 0.0),
+			vec4(0.0, 0.0, 1.0, 0.0),
+			vec4(((gl_InstanceID % 6) * 2) + 1, (((gl_InstanceID / 6) * 2) - 1) + heightOffset, 0.0, 1.0)
 		);
-		gl_Position = orthoProj * tileMats[gl_InstanceID] * deathMatrix * vec4(vertex.x, vertex.y, 0, 1);
 	}
 	// Draw player tiles
 	else {
 		Type = 6;
-		gl_Position = orthoProj * playerMat * vec4(vertex.x + ((gl_InstanceID %(12*6)) * 2.0f), vertex.y + heightOffset, 0, 1);
+		tileTransform = mat4(
+			vec4(1.0, 0.0, 0.0, 0.0),
+			vec4(0.0, 1.0, 0.0, 0.0),
+			vec4(0.0, 0.0, 1.0, 0.0),
+			vec4(((playerCoords.x * 2) + 1) + ((gl_InstanceID % 72) * 2.0f), ((playerCoords.y * 2) - 1) + heightOffset, 0.0, 1.0)
+		);
 	}
+	
+	// Scale tiles, and apply the orthographic projection
+	const float tileScale = 64.0f;
+	const mat4 scaleMat = mat4(
+		vec4(tileScale, 0.0, 0.0, 0.0),
+		vec4(0.0, tileScale, 0.0, 0.0),
+		vec4(0.0, 0.0, tileScale, 0.0),
+		vec4(0.0, 0.0, 0.0, 1.0)
+	);
+	gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.x, vertex.y, 0, 1);
 }

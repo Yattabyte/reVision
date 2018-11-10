@@ -64,8 +64,7 @@ public:
 			// Sync player state to GPU
 			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
 			board.m_playerY = std::min(11, std::max(1, board.m_playerY));
-			board.m_data->data->playerMat = glm::scale(glm::mat4(1.0f), glm::vec3(64.0f, 64.0f, 64.0f)) * glm::translate(glm::mat4(1.0f),
-				glm::vec3((board.m_playerX * 2) + 1, ((board.m_playerY) * 2) - 1, 0));
+			board.m_data->data->playerCoords = glm::ivec2(board.m_playerX, board.m_playerY);
 		}
 	}
 
