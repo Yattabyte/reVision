@@ -32,10 +32,11 @@ public:
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_boardTexID);
 		glTextureImage2DEXT(m_boardTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, tileSize * 6, tileSize * 12, 0, GL_RGBA, GL_FLOAT, NULL);
-		glTextureParameteri(m_boardTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_boardTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTextureParameteri(m_boardTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_boardTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_boardTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_boardTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+		glTextureParameterf(m_boardTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_boardTexID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 

@@ -4,6 +4,7 @@
 
 #include "Utilities\ECS\ecsSystem.h"
 #include "Engine.h"
+#include <algorithm>
 
 /** Component Types Used */
 #include "Modules\Game\Components\GameBoard_C.h"
@@ -70,6 +71,17 @@ private:
 				if (tile.x == newTile.x && tile.y == newTile.y)
 					return;
 			push_back(newTile);
+		}
+		static bool sortFunc(const XY & a, const XY & b) {
+			if (a.y > b.y)
+				return true;
+			else if (a.y == b.y)
+				return (a.x < b.x);
+			else // (a.y < b.y)
+				return false;
+		}
+		inline void sort() {
+			std::sort(begin(), end(), sortFunc);
 		}
 	};
 
@@ -171,6 +183,7 @@ private:
 			for each (const auto & matchingSet in allMatchingSets)
 				for each (const auto & xy in matchingSet)
 					combinedManifold.push_back(xy);
+			combinedManifold.sort();
 			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));
 		}
 	}
