@@ -30,9 +30,11 @@ void main()
 		FragColor = texture(Numbers, DigitIndex);
 	}
 	else {
-		const float tileLifeLinear= 2.0f * (TileLife / 90.0f) - 1.0f;
-		const float backgroundMixAmt = sin( ( length(TexCoord.xy) * 5.0f) + tileLifeLinear * 3.1415f);
-		const vec3 backgroundColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), backgroundMixAmt);
+		const float magicVar1 = (NumberToRender-3.0f) / 5.0f;
+		const float magicVar2 = 1.0f - magicVar1;
+		const float tileLifeLinear = 2.0f * (TileLife / 90.0f) - 1.0f;
+		const float backgroundMixAmt = sin( ( length(vec2(TexCoord.x, 1.0f-TexCoord.y)) * NumberToRender) + tileLifeLinear * 3.1415f);
+		const vec3 backgroundColor = mix(vec3(0,magicVar1,magicVar2), vec3(magicVar2,0,magicVar1), backgroundMixAmt);
 		FragColor = texture(TileTexture, TexCoord) * vec4(backgroundColor, 1);
 	}
 }
