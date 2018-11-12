@@ -5,6 +5,7 @@
 #include "Utilities\ECS\ecsSystem.h"
 #include "Engine.h"
 #include <algorithm>
+#include <iostream>
 
 /** Component Types Used */
 #include "Modules\Game\Components\GameBoard_C.h"
@@ -32,7 +33,11 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			auto & score = *(GameScore_Component*)componentParam[1];
-			
+
+			// Quit early if board is still resolving
+			if (!board.m_stable)
+				continue;
+
 			validateBoard(board, score);
 			scoreTiles(board, score);
 			if ( (score.m_score - board.m_data->data->score) > 0 )
@@ -53,8 +58,9 @@ public:
 					firstMostDigit = x;
 					break;
 				}
-			board.m_data->data->highlightIndex = scoreLength - (8-firstMostDigit);// std::max(0, firstMostDigit - 1);
 
+			// Logic for animating the score
+			board.m_data->data->highlightIndex = scoreLength - (8-firstMostDigit);// std::max(0, firstMostDigit - 1);
 			board.m_data->data->scoreTick++;
 			if (board.m_data->data->scoreTick > TickCount_ScoreRotate)
 				board.m_data->data->scoreTick = 0;
@@ -184,13 +190,35 @@ private:
 				for each (const auto & xy in matchingSet)
 					combinedManifold.push_back(xy);
 			combinedManifold.sort();
-			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));
+			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));			
+			score.m_comboChanged = true;
 		}
 	}
 	/** Try to delete any scored tiles if they've ticked long enough.
+	@brief		Rules: 
+				- Every tile matched		+pts(10) each
+					(Ex: 3 tiles += 30 pts)
+				- Every tile after 3rd in set +pts(10) each, +pts(setSize)
+					(Ex: 5 tiles += 25 pts)
+				- For every chained combo	-> +pts(5), +multiplier(1)
+				- All points added are multiplied by the combo multiplier
 	@param		board		the board containing the tiles of interest.
 	@param		score		the score component. */
 	void scoreTiles(GameBoard_Component & board, GameScore_Component & score) {
+		// Check to see if we should increment combo multiplier and add points
+		if (score.m_scoredTiles.size()) {
+			if (score.m_comboChanged) {
+				score.m_comboChanged = false;
+				addScore(score, 5);
+				score.m_multiplier++;
+			}
+		}
+		else if (!score.m_scoredTiles.size() || !score.m_comboChanged){
+			// Reset multiplier if no tiles are scored
+			score.m_multiplier = 0;
+			score.m_comboChanged = false;
+		}
+
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
 			// If this manifold hasn't been processed
@@ -208,13 +236,14 @@ private:
 				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.first.size() > 3) {
-					score.m_score += 10 + (10 * (manifold.first.size() - 3));
+					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
 					score.m_stopTimer += (manifold.first.size() - 3);
 				}
 
 				score.m_stopTimeTick = 0;
 			}
 		}
+
 
 		// Tick all matched tiles until they pop
 		for (int y = 1; y < 12; ++y)
@@ -223,14 +252,14 @@ private:
 				if (xTile.m_scoreType != TileState::UNMATCHED) {
 					if (xTile.m_scoreType == TileState::MATCHED) {
 						if (xTile.m_tick >= TickCount_Popping) {
-							score.m_score += 10;
+							addScore(score, 10);
 							xTile.m_scoreType = TileState::SCORED;
 						}
 					}
 					board.m_data->data->lifeTick[(y * 6) + x] = ++xTile.m_tick;
 				}
 			}
-
+		
 		// Check if all tiles in a scoring set have been popped
 		// If so, empty and reset them
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
@@ -254,6 +283,12 @@ private:
 			}
 		}
 
+	}
+	/** A wrapper function for adding points to the game score. Accounts for any other variables like multipliers.
+	@param	score	the score component.
+	@param	amount	the amount of points to add. */
+	void addScore(GameScore_Component & score, const int & amount) {
+		score.m_score += amount * score.m_multiplier;
 	}
 
 

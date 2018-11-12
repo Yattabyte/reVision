@@ -40,6 +40,7 @@ struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 2;
 	int m_playerY = 5;
+	bool m_stable = true;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -57,12 +58,27 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
 				component->m_data->data->lifeTick[++dataIndex] = 0.0f;
 			}
+		/*
+			  E
+			 EDD
+			EBBCD			
+			AAABCC
+		*/
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;
 		component->m_tiles[0][3].m_type = TileState::B;
-		component->m_tiles[0][4].m_type = TileState::B;
-		component->m_tiles[0][5].m_type = TileState::B;
+		component->m_tiles[0][4].m_type = TileState::C;
+		component->m_tiles[0][5].m_type = TileState::C;
+		component->m_tiles[1][0].m_type = TileState::E;
+		component->m_tiles[1][1].m_type = TileState::B;
+		component->m_tiles[1][2].m_type = TileState::B;
+		component->m_tiles[1][3].m_type = TileState::C;
+		component->m_tiles[1][4].m_type = TileState::D;
+		component->m_tiles[2][1].m_type = TileState::E;
+		component->m_tiles[2][2].m_type = TileState::D;
+		component->m_tiles[2][3].m_type = TileState::D;
+		component->m_tiles[3][2].m_type = TileState::E;
 		return { component, component->ID };
 	}
 

@@ -22,28 +22,38 @@ layout (location = 3) flat out float TileLife;
 layout (location = 0) uniform mat4 orthoProj;
 layout (location = 4) uniform uint markerCount;
 
+
+const float TILE_POPPING = 15.0F;
+
+
+float smoothStart6(float t) 
+{
+	return t * t * t * t * t * t;
+}
+
 void main()
 {	
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	RenderNumber = 0; // False
 	NumberToRender = scoredCoords[gl_InstanceID % markerCount].z;
+	TileLife = lifeTick[(scoredCoords[gl_InstanceID % markerCount].y * 6) + scoredCoords[gl_InstanceID % markerCount].x];
+	const float lifeScale = smoothStart6(clamp(TileLife / TILE_POPPING, 0.0f, 1.0f));
 	mat4 tileTransform;
 	// Draw the foreground
 	if (gl_InstanceID >= markerCount) {
 		RenderNumber = 1; // True		
 		tileTransform = mat4(
-			vec4(0.5f, 0.0, 0.0, 0.0),
-			vec4(0.0, 0.5f, 0.0, 0.0),
+			vec4(lifeScale * 0.5f, 0.0, 0.0, 0.0),
+			vec4(0.0, lifeScale * 0.5f, 0.0, 0.0),
 			vec4(0.0, 0.0, 1.0, 0.0),
 			vec4(((scoredCoords[gl_InstanceID % markerCount].x * 2) + 1), ((scoredCoords[gl_InstanceID % markerCount].y * 2) - 1) + heightOffset, 0.0, 1.0)
 		);
 	}
 	// Draw the  background
-	else {
-		TileLife = lifeTick[(scoredCoords[gl_InstanceID % markerCount].y * 6) + scoredCoords[gl_InstanceID % markerCount].x];
+	else {		
 		tileTransform = mat4(
-			vec4(1.0, 0.0, 0.0, 0.0),
-			vec4(0.0, 1.0, 0.0, 0.0),
+			vec4(lifeScale, 0.0, 0.0, 0.0),
+			vec4(0.0, lifeScale, 0.0, 0.0),
 			vec4(0.0, 0.0, 1.0, 0.0),
 			vec4(((scoredCoords[gl_InstanceID % markerCount].x * 2) + 1), ((scoredCoords[gl_InstanceID % markerCount].y * 2) - 1) + heightOffset, 0.0, 1.0)
 		);

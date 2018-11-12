@@ -35,12 +35,12 @@ public:
 			auto & score = *(GameScore_Component*)componentParam[1];
 			
 			// Row climbing
+			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0)
+				board.m_rowClimbTick++;
 			if (board.m_rowClimbTick >= TickCount_NewLine && !(score.m_scoredTiles.size())) {
 				pushNewRow(board);
 				board.m_rowClimbTick = 0;
 			}
-			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0)
-				board.m_rowClimbTick++;
 
 			// Timer preventing row climbing
 			if (score.m_stopTimeTick >= 100) {
@@ -87,16 +87,24 @@ private:
 	/** Try to drop tiles if they have room beneath them.
 	@param		board		the board containing the tiles of interest. */
 	void gravityBoard(GameBoard_Component & board) {
+		bool didAnything = false;
 		for (int y = 2; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
-				const auto & xTile = board.m_tiles[y][x].m_type;
-				if (xTile == TileState::NONE)
+				const auto & xTile = board.m_tiles[y][x];
+				if (xTile.m_type == TileState::NONE)
 					continue;
 				size_t dropIndex = y;
 				while (board.m_tiles[dropIndex - 1][x].m_type == TileState::NONE) 
-					dropIndex--;				
-				swapTiles(board.m_tiles[y][x], board.m_tiles[dropIndex][x]);
+					dropIndex--;	
+
+				const auto & dTile = board.m_tiles[dropIndex][x];
+				if (dropIndex != y && xTile.m_scoreType == TileState::UNMATCHED && dTile.m_scoreType == TileState::UNMATCHED) {
+					swapTiles(board.m_tiles[y][x], board.m_tiles[dropIndex][x]);
+					didAnything = true;
+				}
 			}
+
+		board.m_stable = !didAnything;
 	}
 
 	/** Swap 2 tiles if they active and not scored.
