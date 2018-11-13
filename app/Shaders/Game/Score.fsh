@@ -15,7 +15,7 @@ layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in float NumberToRender;
 layout (location = 2) flat in float HighlightAmount;
 layout (location = 3) flat in uint UseBackdrop;
-layout (location = 0) out vec4 FragColor;
+layout (location = 0) out vec4 HeaderColor;
 
 layout (binding = 0) uniform sampler2D Numbers;
 
@@ -36,5 +36,5 @@ void main()
 		DigitModifier.xyz *= 0.25f;
 	
 	const vec4 DigitColor = texture(Numbers, DigitIndex) * DigitModifier * ((NumberToRender >= -0.5f) ? 1.0f : 0.0f);
-	FragColor = DigitColor;
+	HeaderColor = DigitColor;
 }

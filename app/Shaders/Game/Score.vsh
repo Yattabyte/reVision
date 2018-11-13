@@ -3,22 +3,14 @@
 #package "Game\GameBuffer"
 #define M_PI 3.1415926535897932384626433832795
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-};
-
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out float NumberToRender;
 layout (location = 2) flat out float HighlightAmount;
 layout (location = 3) flat out uint UseBackdrop;
 
-layout (location = 0) uniform uint scoreLength;
+layout (location = 0) uniform mat4 orthoProj;
+layout (location = 4) uniform uint scoreLength;
 
 
 const float NUM_CHARS = 8.0f;
@@ -38,13 +30,13 @@ void main()
 		HighlightAmount = 1.0f;		
 		
 	// This matrix stretches the unit row of blocks to the scale of 3
-	const float tileSize = (3.0f / NUM_CHARS) + (HighlightAmount * 0.025f);
+	const float tileSize = ((3.0f / NUM_CHARS) + (HighlightAmount * 0.025f)) * 128.0f;
 	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
 	const mat4 scoreScaleMat = mat4(
 		vec4(tileSize, 0.0, 0.0, 0.0),
 		vec4(0.0, tileSize, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(0.0, 6.75, 0.0, 1.0)
+		vec4(0.0, 0.0, 0.0, 1.0)
 	);
 	// This matrix centers the posiotion of the tiles withom the row
 	const mat4 scoreTransMat = mat4(
@@ -63,5 +55,5 @@ void main()
 		oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
         oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
         0.0,        0.0,                                0.0,                                1.0);	
-	gl_Position = pMatrix * vMatrix * scoreScaleMat * scoreRotMat * scoreTransMat * vec4(vertex.xy, -10, 1);
+	gl_Position = orthoProj * scoreScaleMat * scoreRotMat * scoreTransMat * vec4(vertex.xy, 0, 1);
 }

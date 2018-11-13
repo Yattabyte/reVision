@@ -3,9 +3,9 @@
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in int CharToRender;
-layout (location = 0) out vec4 FragColor;
-
+layout (location = 0) out vec4 FooterColor;
 layout (binding = 0) uniform sampler2D Numbers;
+
 
 void main()
 {	
@@ -15,5 +15,5 @@ void main()
 	const float ElementCount = 11.0f;
 
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
-	FragColor = texture(Numbers, DigitIndex) * vec4(1,0,0,1);
+	FooterColor = texture(Numbers, DigitIndex) * vec4(1,0,0,1);
 }

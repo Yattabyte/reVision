@@ -2,19 +2,10 @@
 #version 460
 #package "Game\GameBuffer"
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-};
-
-
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout(location = 1) flat out int CharToRender;
+layout (location = 0) uniform mat4 orthoProj;
 
 
 const float NUM_CHARS = 8.0f;
@@ -22,7 +13,7 @@ const float NUM_CHARS = 8.0f;
 void main()
 {	
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	const float tileSize = (3.0f / NUM_CHARS);
+	const float tileSize = (3.0f / NUM_CHARS) * 128;
 	bool isSemiColon = false;
 	bool isLeftOfColon = false;
 	if (gl_InstanceID < 2) {
@@ -41,7 +32,7 @@ void main()
 		vec4(tileSize, 0.0, 0.0, 0.0),
 		vec4(0.0, tileSize, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(0.0, -6.75, 0.0, 1.0)
+		vec4(0.0, 0.0, 0.0, 1.0)
 	);
 	// This matrix centers the posiotion of the tiles withom the row
 	const mat4 transMat = mat4(
@@ -50,5 +41,5 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(vec2((1.0F + ((gl_InstanceID % 5) * 2.0F) - 5.0F) + (isLeftOfColon ? 0.725f : isSemiColon ? 0 : -0.725f), 0.0), 0.0, 1.0)
 	);
-	gl_Position = pMatrix * vMatrix * scaleMat * transMat * vec4(vertex.xy, -10, 1);
+	gl_Position = orthoProj * scaleMat * transMat * vec4(vertex.xy, 0, 1);
 }

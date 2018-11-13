@@ -12,16 +12,14 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 };
 
 layout (location = 0) in vec3 vertex;
+layout (location = 4) in vec2 textureCoordinate;
 layout (location = 0) out vec2 TexCoord;
+layout (location = 1) flat out int Index;
+
 
 void main()
 {	
-	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;	
-	const mat4 boardMat = mat4(
-		vec4(3.0, 0.0, 0.0, 0.0),
-		vec4(0.0, 6.0, 0.0, 0.0),
-		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4(0.0, 0.0, 0.0, 1.0)
-	);
-	gl_Position = pMatrix * vMatrix * boardMat * vec4(vertex.xy, -10, 1);
+	TexCoord = textureCoordinate;
+	Index = gl_DrawID;
+	gl_Position = pMatrix * vMatrix * vec4(vertex.xyz - vec3(0,0,10), 1);
 }

@@ -71,5 +71,5 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(0.0, 0.0, 0.0, 1.0)
 	);
-	gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.x, vertex.y, 0, 1);
+	gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.xy, 0, 1);
 }
