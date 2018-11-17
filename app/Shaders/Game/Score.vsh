@@ -45,7 +45,7 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(vec2(1.0F + (modInstance * 2.0F) - scoreLength, 0.0) + offsetMatrix, 0.0, 1.0)
 	);
-	const float angle = sin((2.0f * (float(scoreTick) / SCORE_ROTATE_TICK) - 1.0f) * M_PI) * (0.0625F + (0.125f * excitement));
+	const float angle = sin((2.0f * (float(scoreTick) / SCORE_ROTATE_TICK) - 1.0f) * M_PI) * 0.0625F;
 	const vec3 axis = vec3(0,0,1);
 	const float s = sin(angle);
     const float c = cos(angle);

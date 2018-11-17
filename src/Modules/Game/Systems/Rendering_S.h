@@ -86,7 +86,7 @@ public:
 		m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
 		m_shaderStop = Asset_Shader::Create(engine, "Game\\Stop", true);
 		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
-		m_textureTileScored = Asset_Texture::Create(engine, "Game\\tileScored.png");
+		m_textureTileScored = Asset_Texture::Create(engine, "Game\\newTileScored.png");
 		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
 		m_textureScoreNums = Asset_Texture::Create(engine, "Game\\scoreNums.png");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");

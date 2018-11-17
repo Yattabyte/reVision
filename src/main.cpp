@@ -8,5 +8,5 @@ int main()
 
 	// Begin main thread
 	while (!(engine.shouldClose())) 
-		engine.tick();	
+		engine.tick();
 }

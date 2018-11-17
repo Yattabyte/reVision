@@ -1,5 +1,6 @@
 /* Tiles Shader. */
 #version 460
+#package "Game\GameBuffer"
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in uint Type;
@@ -11,8 +12,17 @@ layout (binding = 0) uniform sampler2D TileTexture;
 layout (binding = 1) uniform sampler2D PlayerTexture;
 
 
+// Tick Rates
 const float TILE_MAX_LIFE = 50.0F;
 const float TILE_POPPING = 15.0F;
+// Different tile type colors
+const vec3 tileColors[5] = vec3[](
+	vec3(1,0,0),
+	vec3(0,1,0),
+	vec3(1,1,0),
+	vec3(0,1,1),
+	vec3(1,0,1)
+);
 
 float smoothStop6(float t)
 {
@@ -47,7 +57,10 @@ vec4 calcTile_Player()
 
 vec4 calcTile_Regular()
 {	
+	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 768.0f) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(scoreTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
+	const float pulseAmount =  1.0f - ((1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));
 	const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
+	
 	// Blinking on death
 	const float brightness = clamp(mod(LifeTick, TILE_POPPING) / TILE_POPPING, 0.0f, 1.0f);
 	
@@ -57,27 +70,18 @@ vec4 calcTile_Regular()
 	// Vary illumination amount based on board excitement
 	const float quarterExcitement = Excitement / 4.0f;
 	const float texDistance = distance(TexCoord, vec2(0.5f));
-	const float Radius = 0.75f + quarterExcitement;
-	const float range = 1.0f / Radius;	
-	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range) + quarterExcitement; 	
+	const float range = 1.0f / (0.7f + pulseAmount);	
+	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range); 	
 	
 	// Tile backing appearance	
-	const vec4 tileAppearance = chromaticAberration(TileTexture, TexCoord, brightness);
-	
-	// Different tile type colors
-	const vec3 tileColors[5] = vec3[](
-		vec3(1,0,0),
-		vec3(0,1,0),
-		vec3(1,1,0),
-		vec3(0,1,1),
-		vec3(1,0,1)
-	);
-	
+	vec4 tileAppearance = chromaticAberration(TileTexture, TexCoord, brightness);
+	tileAppearance.xyz += (((1.0f - pulseAmount) * 0.25f));
+		
 	// Final Appaearance
-	return mix(
-		vec4(tileColors[Type], 1) * tileAppearance * vec4(vec3(attenuationFactor),1), 
-		tileAppearance, 
-		colorSaturation * brightness
+	return tileAppearance * mix(	
+		vec4(tileColors[Type] * attenuationFactor, 1), 
+		vec4(1.0f), 
+		colorSaturation * brightness + ((0.1 * pulseAmount))
 	);
 }
 
@@ -89,15 +93,6 @@ vec4 calcTile_Waiting()
 	const float Radius = 0.75f + quarterExcitement;
 	const float range = 1.0f / Radius;	
 	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range) + quarterExcitement; 
-	
-	// Different tile type colors
-	const vec3 tileColors[5] = vec3[](
-		vec3(1,0,0),
-		vec3(0,1,0),
-		vec3(1,1,0),
-		vec3(0,1,1),
-		vec3(1,0,1)
-	);
 	
 	// Final Appaearance
 	return vec4(tileColors[Type] * 0.5f * attenuationFactor, 1);
