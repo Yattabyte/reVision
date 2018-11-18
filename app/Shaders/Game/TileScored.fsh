@@ -1,5 +1,6 @@
 /* Tile-Scored Shader. */
 #version 460
+#package "Game\GameBuffer"
 
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
 	mat4 pMatrix;
@@ -30,11 +31,9 @@ void main()
 		FragColor = texture(Numbers, DigitIndex);
 	}
 	else {
-		const float magicVar1 = (NumberToRender-3.0f) / 5.0f;
-		const float magicVar2 = 1.0f - magicVar1;
-		const float tileLifeLinear = 2.0f * (TileLife / 90.0f) - 1.0f;
-		const float backgroundMixAmt = sin( ( length(vec2(TexCoord.x, 1.0f-TexCoord.y)) * NumberToRender) + tileLifeLinear * 3.1415f);
-		const vec3 backgroundColor = mix(vec3(0,magicVar1,magicVar2), vec3(magicVar2,0,magicVar1), backgroundMixAmt);
-		FragColor = texture(TileTexture, TexCoord) * vec4(backgroundColor, 1);
+		const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / CameraDimensions.y) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(scoreTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
+		const float pulseAmount = 1.0f - (0.75 * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));		
+		const vec3 boardColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), excitement);
+		FragColor = texture(TileTexture, TexCoord) * vec4( boardColor * pulseAmount, 1 );
 	}
 }
