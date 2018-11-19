@@ -14,7 +14,8 @@
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
 constexpr int TickCount_NewLine = 500u;
-constexpr float TickCount_TileDrop = 30.0F;
+constexpr float TickCount_TileDrop = 10.0F;
+constexpr float TickCount_TileBounce = 10.0F;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -80,7 +81,7 @@ private:
 		auto & tileDrop1 = board.m_tileDrops[coordsA.second][coordsA.first];
 		auto & tileDrop2 = board.m_tileDrops[coordsB.second][coordsB.first];
 		if (tileState1.m_scoreType != TileState::UNMATCHED || tileState2.m_scoreType != TileState::UNMATCHED ||
-			tileDrop1.falling || tileDrop2.falling )
+			tileDrop1.dropState == GameBoard_Component::TileDropData::FALLING || tileDrop2.dropState == GameBoard_Component::TileDropData::FALLING)
 			return;
 
 		// Swap mechanism
@@ -113,19 +114,41 @@ private:
 	/** Try to drop tiles if they have room beneath them.
 	@param		board		the board containing the tiles of interest. */
 	void gravityBoard(GameBoard_Component & board) {	
+		// Bouncing Easing Function
+		static constexpr auto easeOutBounce = [](auto t) {
+			if (t < (1 / 2.75))
+				return (7.5625 * t *t);
+			else if (t < (2 / 2.75))
+				return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
+			else if (t < (2.5 / 2.75))
+				return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
+			else
+				return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
+		};
+
 		// Find any tiles that should START falling
 		for (unsigned int y = 2u; y < 12u; ++y)
 			for (unsigned int x = 0u; x < 6u; ++x) {
 				const auto & xTile = board.m_tiles[y][x];
 				// Exclude any background tiles, scored tiles, or already falling tiles
-				if (xTile.m_type != TileState::NONE && xTile.m_scoreType == TileState::UNMATCHED && !board.m_tileDrops[y][x].falling) {
+				if (xTile.m_type != TileState::NONE && xTile.m_scoreType == TileState::UNMATCHED && board.m_tileDrops[y][x].dropState == GameBoard_Component::TileDropData::STATIONARY) {
 
 					// Determine how far this tile may fall
 					unsigned int dropIndex = y;
-					while (board.m_tiles[dropIndex - 1u][x].m_type == TileState::NONE)
+					while (dropIndex - 1u > 0 && board.m_tiles[dropIndex - 1u][x].m_type == TileState::NONE)
 						dropIndex--;
 					unsigned int dropDistance = y - dropIndex;
 					const auto & dTile = board.m_tiles[dropIndex][x];
+
+					// Determine the amount of weight imposed on this tile
+					unsigned int weight = 0;
+					for (unsigned int z = y; z < 12u; ++z) {
+						if (board.m_tiles[z][x].m_scoreType == TileState::SCORED)
+							break;
+						if (board.m_tiles[z][x].m_type == TileState::NONE)
+							continue;
+						weight++;
+					}
 
 					// Continue only if this tile WILL ACTUALLY FALL
 					if ((dropDistance > 0u) && (dTile.m_scoreType == TileState::UNMATCHED)) {
@@ -139,42 +162,51 @@ private:
 							// Don't move scored tiles
 							if (board.m_tiles[z][x].m_scoreType == TileState::SCORED)
 								break;
-							board.m_tileDrops[z][x] = { true, z - dropDistance, float(dropDistance), 0.0f };
+							board.m_tileDrops[z][x] = { GameBoard_Component::TileDropData::FALLING, z - dropDistance, float(dropDistance), 0.0f, weight };
 						}
 					}
 				}
 			}
 
-		// Cycle through all tiles, find those that are currently falling
-		for (unsigned int y = 2u; y < 12u; ++y)
+		// Cycle through all tiles
+		for (unsigned int y = 1u; y < 12u; ++y)
 			for (unsigned int x = 0u; x < 6u; ++x) {
 				auto & dTile = board.m_tileDrops[y][x];
-				if (dTile.falling) {
-					// Increment the tile falling tick and check if it has finished falling (hit something)
-					if (++dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
-						// Tile has finished falling
-						// Reset falling data, and perform swap
-						board.m_tileDrops[y][x].tick = 0;
-						board.m_tileDrops[y][x].falling = false;
-						swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
+				switch (dTile.dropState) {
+					// Find falling tiles
+					case GameBoard_Component::TileDropData::FALLING: {
+						// Increment the tile falling tick and check if it has finished falling (hit something)
+						if (dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
+							// Tile has finished falling, start bouncing
+							dTile.dropState = GameBoard_Component::TileDropData::BOUNCING;
+							swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
+						}
+						board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * ((dTile.tick / (dTile.delta * TickCount_TileDrop)) * dTile.delta);
+						dTile.tick += (dTile.fallSpeed += 0.1f);
+						break;
 					}
-					// Bounce the tiles
-					static constexpr auto easeOutBounce = [](auto t) {
-						if (t < (1 / 2.75))
-							return (7.5625 * t *t);
-						else if (t < (2 / 2.75))
-							return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
-						else if (t < (2.5 / 2.75))
-							return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
-						else
-							return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
-					};
-					board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * (easeOutBounce(dTile.tick / (dTile.delta * TickCount_TileDrop)) * dTile.delta);
-				}
-				else {
-					// Reset the data just in case
-					board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
-					board.m_tileDrops[y][x] = GameBoard_Component::TileDropData(); // zero initialize it here
+					// Find Bouncing Tiles
+					case GameBoard_Component::TileDropData::BOUNCING: {
+						const float bounceTime = (TickCount_TileBounce * (11.0f - float(dTile.weight)));
+						const float adjustedTick = ((++dTile.tick) - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
+						// Increment the tile falling tick and check if it has finished falling (hit something)
+						if (adjustedTick >= bounceTime) {
+							// Tile has finished bouncing
+							dTile.tick = 0;
+							dTile.dropState = GameBoard_Component::TileDropData::STATIONARY;
+						}
+						// Tile has already been dropped to destination, need to move tile upwards now, not down
+						// So use negative reciprical of bounce function to get desired effect
+						board.m_data->data->gravityOffsets[(y * 6) + x] = -2.0f * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
+						break;
+					}
+					// Find Stationary Tiles
+					default: {
+						// Reset the data just in case
+						board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
+						board.m_tileDrops[y][x] = GameBoard_Component::TileDropData();
+						break;
+					}
 				}
 			}
 	}

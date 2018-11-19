@@ -20,6 +20,7 @@ layout (binding = 0) uniform sampler2D BoardTexture;
 layout (binding = 1) uniform sampler2D ScoreTexture;
 layout (binding = 2) uniform sampler2D TimeTexture;
 
+
 void main()
 {		
 	switch (Index) {

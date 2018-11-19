@@ -31,11 +31,11 @@ void main()
 	
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((NumberToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 	
-	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / CameraDimensions.y) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(scoreTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
-	const float pulseAmount = 1.0f - (0.75 * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));		
+	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 192.0) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(scoreTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
+	const float pulseAmount = 1.5f - (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)));		
 	const vec3 boardColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), excitement);
 	//vec4 DigitModifier = vec4(mix( mix(vec3(0,0.5,1), vec3(1,0,0.5), sin(((gl_FragCoord.x / CameraDimensions.x) * 6.0f) + (2.0f * (float(scoreTick) / SCORE_ROTATE_TICK) - 1.0f) * 3.1415f)), vec3(0,1,0),HighlightAmount),1);
-	vec4 DigitModifier = vec4(mix(boardColor, vec3(0,1,0), HighlightAmount), 1);
+	vec4 DigitModifier = vec4(mix(boardColor * pulseAmount, vec3(0,1,0), HighlightAmount), 1);
 	if (UseBackdrop != 0)
 		DigitModifier.xyz *= 0.25f;
 	

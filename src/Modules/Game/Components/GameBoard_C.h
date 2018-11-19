@@ -39,10 +39,14 @@ struct BoardBuffer {
 struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	TileState m_tiles[12][6];
 	struct TileDropData {
-		bool falling = false;
+		enum DropState {
+			STATIONARY, FALLING, BOUNCING
+		} dropState = STATIONARY;
 		unsigned int endIndex = 0;
 		float delta = 0.0f;
 		float tick = 0.0f;
+		unsigned int weight = 0;
+		float fallSpeed = 1.0f;
 	} m_tileDrops[12][6];
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 2;
@@ -70,7 +74,8 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 			 EDD
 			EBBCD			
 			AAABCC
-		*/		
+		*/	
+		
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;
@@ -86,6 +91,22 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		component->m_tiles[2][2].m_type = TileState::D;
 		component->m_tiles[2][3].m_type = TileState::D;
 		component->m_tiles[3][2].m_type = TileState::E;
+		
+
+		/*
+		component->m_tiles[0][0].m_type = TileState::A;
+		component->m_tiles[1][0].m_type = TileState::B;
+		component->m_tiles[2][0].m_type = TileState::A;
+		component->m_tiles[3][0].m_type = TileState::B;
+		component->m_tiles[4][0].m_type = TileState::A;
+		component->m_tiles[5][0].m_type = TileState::B;
+		component->m_tiles[6][0].m_type = TileState::A;
+		component->m_tiles[7][0].m_type = TileState::B;
+		component->m_tiles[8][0].m_type = TileState::A;
+		component->m_tiles[9][0].m_type = TileState::B;
+		component->m_tiles[10][0].m_type = TileState::A;
+		component->m_tiles[11][0].m_type = TileState::B;
+		*/
 		return { component, component->ID };
 	}
 
