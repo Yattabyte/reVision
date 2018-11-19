@@ -49,7 +49,7 @@ void main()
 			vec4(deathScl, 0.0, 0.0, 0.0),
 			vec4(0.0, deathScl, 0.0, 0.0),
 			vec4(0.0, 0.0, 1.0, 0.0),
-			vec4(((gl_InstanceID % 6) * 2) + 1, (((gl_InstanceID / 6) * 2) - 1) + heightOffset, 0.0, 1.0)
+			vec4(((gl_InstanceID % 6) * 2) + 1, (((gl_InstanceID / 6) * 2) - 1) + heightOffset - gravityOffsets[gl_InstanceID], 0.0, 1.0)
 		);
 	}
 	// Draw player tiles

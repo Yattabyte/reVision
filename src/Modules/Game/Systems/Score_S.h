@@ -34,13 +34,10 @@ public:
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			auto & score = *(GameScore_Component*)componentParam[1];
 
-			// Quit early if board is still resolving
-			if (!board.m_stable)
-				continue;
-
-			validateBoard(board, score);
+			validateBoard(board, score);	
 			scoreTiles(board, score);
-			if ( (score.m_score - board.m_data->data->score) > 0 )
+
+			if ((score.m_score - board.m_data->data->score) > 0)
 				board.m_data->data->score++;
 			else
 				score.m_lastScore = score.m_score;
@@ -53,14 +50,14 @@ public:
 				}
 			const int scoreGained = (score.m_score - score.m_lastScore);
 			int firstMostDigit = 8;
-			for (int x = 0; x < 8; ++x) 
+			for (int x = 0; x < 8; ++x)
 				if (scoreGained >= decimalPlaces[x]) {
 					firstMostDigit = x;
 					break;
 				}
 
 			// Logic for animating the score
-			board.m_data->data->highlightIndex = scoreLength - (8-firstMostDigit);// std::max(0, firstMostDigit - 1);
+			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);// std::max(0, firstMostDigit - 1);
 			board.m_data->data->scoreTick++;
 			if (board.m_data->data->scoreTick > TickCount_ScoreRotate)
 				board.m_data->data->scoreTick = 0;

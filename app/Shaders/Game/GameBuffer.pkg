@@ -1,5 +1,6 @@
 layout (std430, binding = 8) readonly buffer BoardBuffer {	
 	uint types[12*6];
+	float gravityOffsets[12*6];
 	float lifeTick[12*6];
 	ivec2 playerCoords;
 	float heightOffset;

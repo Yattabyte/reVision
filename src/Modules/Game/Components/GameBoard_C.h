@@ -25,6 +25,7 @@ struct TileState {
 /** OpenGL buffer for boards. */
 struct BoardBuffer {
 	unsigned int types[12 * 6];
+	float gravityOffsets[12 * 6];
 	float lifeTick[12 * 6];
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
@@ -37,10 +38,15 @@ struct BoardBuffer {
 /** A component representing a basic player. */
 struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	TileState m_tiles[12][6];
+	struct TileDropData {
+		bool falling = false;
+		unsigned int endIndex = 0;
+		float delta = 0.0f;
+		float tick = 0.0f;
+	} m_tileDrops[12][6];
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 2;
 	int m_playerY = 5;
-	bool m_stable = true;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -56,14 +62,15 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
 				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
-				component->m_data->data->lifeTick[++dataIndex] = 0.0f;
+				component->m_data->data->gravityOffsets[dataIndex] = 0.0f;
+				component->m_data->data->lifeTick[dataIndex] = 0.0f;
 			}
 		/*
 			  E
 			 EDD
 			EBBCD			
 			AAABCC
-		*/
+		*/		
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;

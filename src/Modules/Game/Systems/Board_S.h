@@ -14,6 +14,7 @@
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
 constexpr int TickCount_NewLine = 500u;
+constexpr float TickCount_TileDrop = 30.0F;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -33,35 +34,34 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			auto & score = *(GameScore_Component*)componentParam[1];
-			
-			// Row climbing
-			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0)
-				board.m_rowClimbTick++;
-			if (board.m_rowClimbTick >= TickCount_NewLine && !(score.m_scoredTiles.size())) {
-				pushNewRow(board);
-				board.m_rowClimbTick = 0;
-			}
 
-			// Timer preventing row climbing
-			if (score.m_stopTimeTick >= 100) {
-				score.m_stopTimeTick = 0;
-				score.m_stopTimer--;
-			}
-			if (score.m_stopTimer > 0)
-				score.m_stopTimeTick++;
-			board.m_data->data->stopTimer = score.m_stopTimer;
+			// Allow user to interact with the board
 			userInteractWithBoard(board, score);
-			gravityBoard(board);
-			board.m_data->data->excitement = std::max(0.0f, std::min(1.1f, board.m_data->data->excitement -= 0.001f));
-			board.m_data->data->heightOffset = (board.m_rowClimbTick / ((float)TickCount_NewLine / 2.0f));
 			
+			// Tick row-climbing
+			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0) {
+				board.m_rowClimbTick++;
+				if (board.m_rowClimbTick >= TickCount_NewLine && !(score.m_scoredTiles.size())) 
+					pushNewRow(board, score);				
+			}
 
-			// Sync board state to GPU
+			// Tick stop-timer
+			if (++score.m_stopTimeTick >= 100) {
+				if (score.m_stopTimer > 0)
+					score.m_stopTimer--;
+				score.m_stopTimeTick = 0;
+			}
+
+			// Tick gravity
+			gravityBoard(board);
+
+			// Synchronize component data to GPU
+			board.m_data->data->stopTimer = score.m_stopTimer;
+			board.m_data->data->excitement = std::max(0.0f, std::min(1.1f, board.m_data->data->excitement -= 0.001f));
+			board.m_data->data->heightOffset = 2.0f * (board.m_rowClimbTick / (float)TickCount_NewLine);
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)
 					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
-
-			// Sync player state to GPU
 			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
 			board.m_playerY = std::min(11, std::max(1, board.m_playerY));
 			board.m_data->data->playerCoords = glm::ivec2(board.m_playerX, board.m_playerY);
@@ -71,51 +71,112 @@ public:
 
 private:
 	// Private Methods
+	/** Swap 2 tiles ONLY if they're active, not falling, and not scored
+	@param		tile1		the first tile, swaps with the second.
+	@param		tile2		the second tile, swaps with the first. */
+	static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB, GameBoard_Component & board) {
+		auto & tileState1 = board.m_tiles[coordsA.second][coordsA.first];
+		auto & tileState2 = board.m_tiles[coordsB.second][coordsB.first];
+		auto & tileDrop1 = board.m_tileDrops[coordsA.second][coordsA.first];
+		auto & tileDrop2 = board.m_tileDrops[coordsB.second][coordsB.first];
+		if (tileState1.m_scoreType != TileState::UNMATCHED || tileState2.m_scoreType != TileState::UNMATCHED ||
+			tileDrop1.falling || tileDrop2.falling )
+			return;
+
+		// Swap mechanism
+		auto copyState = tileState1;
+		tileState1 = tileState2;
+		tileState2 = copyState;
+		auto copyDrop = tileDrop1;
+		tileDrop1 = tileDrop2;
+		tileDrop2 = copyDrop;
+	};
 	/** Adds a new row of tiles to the board provided.
 	@param		board		the board to add a new row of tiles to. */
-	void pushNewRow(GameBoard_Component & board) {
-		// Move board up 1 row
-		for (int x = 0; x < BOARD_WIDTH; ++x)
-			for (int y = BOARD_HEIGHT - 1; y > 0; --y)
-				swapTiles(board.m_tiles[y][x], board.m_tiles[y - 1][x]);
-		board.m_playerY++;
+	void pushNewRow(GameBoard_Component & board, GameScore_Component & score) {
+		if (!score.m_scoredTiles.size()) {
+			// Move board up 1 row
+			for (int x = 0; x < BOARD_WIDTH; ++x)
+				for (int y = BOARD_HEIGHT - 1; y > 0; --y)
+					swapTiles(std::make_pair(x, y), std::make_pair(x, y - 1), board);
+			board.m_playerY++;
 
-		// Replace row[0] with new row	
-		for (int x = 0; x < 6; ++x)
-			board.m_tiles[0][x] = TileState(TileState::TileType(m_tileDistributor(m_tileGenerator)));
-	}
+			// Replace row[0] with new row	
+			for (int x = 0; x < 6; ++x)
+				board.m_tiles[0][x] = TileState(TileState::TileType(m_tileDistributor(m_tileGenerator)));
+
+			board.m_rowClimbTick = 0;
+			score.m_stopTimeTick = 0;
+			score.m_stopTimer = 0;
+		}
+	}	
 	/** Try to drop tiles if they have room beneath them.
 	@param		board		the board containing the tiles of interest. */
-	void gravityBoard(GameBoard_Component & board) {
-		bool didAnything = false;
-		for (int y = 2; y < 12; ++y)
-			for (int x = 0; x < 6; ++x) {
+	void gravityBoard(GameBoard_Component & board) {	
+		// Find any tiles that should START falling
+		for (unsigned int y = 2u; y < 12u; ++y)
+			for (unsigned int x = 0u; x < 6u; ++x) {
 				const auto & xTile = board.m_tiles[y][x];
-				if (xTile.m_type == TileState::NONE)
-					continue;
-				size_t dropIndex = y;
-				while (board.m_tiles[dropIndex - 1][x].m_type == TileState::NONE) 
-					dropIndex--;	
+				// Exclude any background tiles, scored tiles, or already falling tiles
+				if (xTile.m_type != TileState::NONE && xTile.m_scoreType == TileState::UNMATCHED && !board.m_tileDrops[y][x].falling) {
 
-				const auto & dTile = board.m_tiles[dropIndex][x];
-				if (dropIndex != y && xTile.m_scoreType == TileState::UNMATCHED && dTile.m_scoreType == TileState::UNMATCHED) {
-					swapTiles(board.m_tiles[y][x], board.m_tiles[dropIndex][x]);
-					didAnything = true;
+					// Determine how far this tile may fall
+					unsigned int dropIndex = y;
+					while (board.m_tiles[dropIndex - 1u][x].m_type == TileState::NONE)
+						dropIndex--;
+					unsigned int dropDistance = y - dropIndex;
+					const auto & dTile = board.m_tiles[dropIndex][x];
+
+					// Continue only if this tile WILL ACTUALLY FALL
+					if ((dropDistance > 0u) && (dTile.m_scoreType == TileState::UNMATCHED)) {
+						// Mark this tile and all directly above this as falling
+						for (unsigned int z = y; z < 12u; ++z) {
+							// Add a skip for dead space
+							if (board.m_tiles[z][x].m_type == TileState::NONE) {
+								dropDistance++;
+								continue;
+							}
+							// Don't move scored tiles
+							if (board.m_tiles[z][x].m_scoreType == TileState::SCORED)
+								break;
+							board.m_tileDrops[z][x] = { true, z - dropDistance, float(dropDistance), 0.0f };
+						}
+					}
 				}
 			}
 
-		board.m_stable = !didAnything;
-	}
-
-	/** Swap 2 tiles if they active and not scored.
-	@param		tile1		the first tile, swaps with the second.
-	@param		tile2		the second tile, swaps with the first. */
-	void swapTiles(TileState & tile1, TileState & tile2) {	
-		if (tile1.m_scoreType != TileState::UNMATCHED || tile2.m_scoreType != TileState::UNMATCHED)
-			return;
-		auto copy = tile1;
-		tile1 = tile2;
-		tile2 = copy;
+		// Cycle through all tiles, find those that are currently falling
+		for (unsigned int y = 2u; y < 12u; ++y)
+			for (unsigned int x = 0u; x < 6u; ++x) {
+				auto & dTile = board.m_tileDrops[y][x];
+				if (dTile.falling) {
+					// Increment the tile falling tick and check if it has finished falling (hit something)
+					if (++dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
+						// Tile has finished falling
+						// Reset falling data, and perform swap
+						board.m_tileDrops[y][x].tick = 0;
+						board.m_tileDrops[y][x].falling = false;
+						swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
+					}
+					// Bounce the tiles
+					static constexpr auto easeOutBounce = [](auto t) {
+						if (t < (1 / 2.75))
+							return (7.5625 * t *t);
+						else if (t < (2 / 2.75))
+							return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
+						else if (t < (2.5 / 2.75))
+							return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
+						else
+							return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
+					};
+					board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * (easeOutBounce(dTile.tick / (dTile.delta * TickCount_TileDrop)) * dTile.delta);
+				}
+				else {
+					// Reset the data just in case
+					board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
+					board.m_tileDrops[y][x] = GameBoard_Component::TileDropData(); // zero initialize it here
+				}
+			}
 	}
 	/** Apply user interaction with the board.
 	@param		board		the board containing the tiles of interest. */
@@ -159,7 +220,7 @@ private:
 		// Swap Tiles
 		if (m_actionState->at(ActionState::JUMP) > 0.5f) {
 			if (!m_keyPressStates[ActionState::JUMP]) {
-				swapTiles(board.m_tiles[board.m_playerY][board.m_playerX], board.m_tiles[board.m_playerY][board.m_playerX + 1]);
+				swapTiles(std::make_pair(board.m_playerX, board.m_playerY), std::make_pair(board.m_playerX + 1, board.m_playerY), board);
 				m_keyPressStates[ActionState::JUMP] = true;
 			}
 		}
@@ -168,13 +229,8 @@ private:
 		// Fast Forward
 		if (m_actionState->at(ActionState::RUN) > 0.5f) {
 			if (!m_keyPressStates[ActionState::RUN]) {
-				m_keyPressStates[ActionState::RUN] = true;
-				if (!score.m_scoredTiles.size()) {
-					board.m_rowClimbTick = 0;
-					score.m_stopTimeTick = 0;
-					score.m_stopTimer = 0;
-					pushNewRow(board);
-				}
+				m_keyPressStates[ActionState::RUN] = true;				
+				pushNewRow(board, score);				
 			}
 		}
 		else

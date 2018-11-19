@@ -27,7 +27,7 @@ void main()
 		const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / CameraDimensions.y) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(scoreTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
 		const float pulseAmount = 1.0f - (0.75 * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));
 		const vec3 boardColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), excitement);
-		FragColor = vec4( boardColor * pulseAmount * Dot, 1 );
+		FragColor = vec4( (boardColor * pulseAmount * Dot) + (boardColor * pulseAmount * 0.1f), 1 );
 		break;
 	case 1:
 		FragColor = texture(BoardTexture, TexCoord);
