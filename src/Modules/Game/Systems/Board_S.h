@@ -15,7 +15,7 @@ constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
 constexpr int TickCount_NewLine = 500u;
 constexpr float TickCount_TileDrop = 10.0F;
-constexpr float TickCount_TileBounce = 10.0F;
+constexpr float TickCount_TileBounce = 15.0F;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -175,7 +175,7 @@ private:
 				switch (dTile.dropState) {
 					// Find falling tiles
 					case GameBoard_Component::TileDropData::FALLING: {
-						// Increment the tile falling tick and check if it has finished falling (hit something)
+						// Increment the tile tick and check if it has finished falling (hit something)
 						if (dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
 							// Tile has finished falling, start bouncing
 							dTile.dropState = GameBoard_Component::TileDropData::BOUNCING;
@@ -187,9 +187,9 @@ private:
 					}
 					// Find Bouncing Tiles
 					case GameBoard_Component::TileDropData::BOUNCING: {
-						const float bounceTime = (TickCount_TileBounce * (11.0f - float(dTile.weight)));
-						const float adjustedTick = ((++dTile.tick) - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
-						// Increment the tile falling tick and check if it has finished falling (hit something)
+						const float bounceTime = (TickCount_TileBounce * (12.0f - float(dTile.weight))) / dTile.fallSpeed;
+						const float adjustedTick = (dTile.tick - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
+						// Increment the tile tick and check if it has finished bouncing
 						if (adjustedTick >= bounceTime) {
 							// Tile has finished bouncing
 							dTile.tick = 0;
@@ -197,7 +197,8 @@ private:
 						}
 						// Tile has already been dropped to destination, need to move tile upwards now, not down
 						// So use negative reciprical of bounce function to get desired effect
-						board.m_data->data->gravityOffsets[(y * 6) + x] = -2.0f * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
+						board.m_data->data->gravityOffsets[(y * 6) + x] = -((std::max(6.0f, 12.0f - float(dTile.weight))) / 6.0f) * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
+						dTile.tick++;
 						break;
 					}
 					// Find Stationary Tiles

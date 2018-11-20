@@ -34,8 +34,17 @@ public:
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			auto & score = *(GameScore_Component*)componentParam[1];
 
-			validateBoard(board, score);	
-			scoreTiles(board, score);
+			bool allTilesGrounded = true;
+			for (unsigned int y = 2u; y < 12u; ++y)
+				for (unsigned int x = 0u; x < 6u; ++x)
+					if (board.m_tileDrops[y][x].dropState == GameBoard_Component::TileDropData::FALLING) {
+						allTilesGrounded = false;
+						break;
+					}
+			if (allTilesGrounded) {
+				validateBoard(board, score);
+				scoreTiles(board, score);
+			}
 
 			if ((score.m_score - board.m_data->data->score) > 0)
 				board.m_data->data->score++;
@@ -56,6 +65,7 @@ public:
 					break;
 				}
 
+			board.m_data->data->shakeAmt = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeAmt - 0.01f));
 			// Logic for animating the score
 			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);// std::max(0, firstMostDigit - 1);
 			board.m_data->data->scoreTick++;
@@ -208,6 +218,7 @@ private:
 				score.m_comboChanged = false;
 				addScore(score, 5);
 				score.m_multiplier++;
+				board.m_data->data->shakeAmt += (score.m_multiplier / 6.0f);
 			}
 		}
 		else if (!score.m_scoredTiles.size() || !score.m_comboChanged){
@@ -234,6 +245,7 @@ private:
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.first.size() > 3) {
 					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
+					board.m_data->data->shakeAmt += std::max(0.25f, manifold.first.size() / 9.0f);
 					score.m_stopTimer += (manifold.first.size() - 3);
 				}
 

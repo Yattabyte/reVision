@@ -30,6 +30,7 @@ struct BoardBuffer {
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
 	float excitement = 0.0f;
+	float shakeAmt = 0.0f;
 	int score = 0;
 	int scoreTick = 0;
 	int highlightIndex = 0;

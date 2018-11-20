@@ -19,10 +19,17 @@ layout (location = 1) flat out int Index;
 layout (location = 2) out float Dot;
 
 
+vec2 shake() {
+	const float amount = sin( scoreTick ) * shakeAmt;
+	const float xAmt = cos( scoreTick * 1.5) * amount;
+	const float yAmt = sin( scoreTick * 0.5f) * amount;
+	return vec2(xAmt, yAmt) / 5.0f * amount;
+}
+
 void main()
 {	
 	TexCoord = textureCoordinate;
 	Index = gl_DrawID;
 	Dot = dot(vec3(0,0,1), normal);
-	gl_Position = pMatrix * vMatrix * vec4(vertex.xyz - vec3(0,0,10), 1);
+	gl_Position = pMatrix * vMatrix * vec4(vertex.xyz - vec3(shake(), 10), 1);
 }
