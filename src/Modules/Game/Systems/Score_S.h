@@ -14,7 +14,6 @@
 
 constexpr int TickCount_Scoring = 50;
 constexpr int TickCount_Popping = 15;
-constexpr int TickCount_ScoreRotate = 750;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Score_System : public BaseECSSystem {
@@ -65,12 +64,10 @@ public:
 					break;
 				}
 
+			// Synchronize component data to GPU
 			board.m_data->data->shakeAmt = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeAmt - 0.01f));
-			// Logic for animating the score
-			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);// std::max(0, firstMostDigit - 1);
-			board.m_data->data->scoreTick++;
-			if (board.m_data->data->scoreTick > TickCount_ScoreRotate)
-				board.m_data->data->scoreTick = 0;
+			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
+			board.m_data->data->stopTimer = score.m_stopTimer;
 		}
 	}
 
@@ -105,8 +102,8 @@ private:
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
 	bool checkSeries_Horizontally(const GameBoard_Component & board, ScoringManifold & series) {
-		int horizontalCount = 1;
 		for each (const auto xy in series) {
+			int horizontalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
 			for (int n = xy.x + 1; n < 6; ++n) {
 				const auto & nTile = board.m_tiles[xy.y][n].m_type;
@@ -129,8 +126,8 @@ private:
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
 	bool checkSeries_Vertically(const GameBoard_Component & board, ScoringManifold & series) {
-		int verticalCount = 1;
 		for each (const auto xy in series) {
+			int verticalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
 			for (int n = xy.y + 1; n < 12; ++n) {
 				const auto & nTile = board.m_tiles[n][xy.x].m_type;
@@ -153,6 +150,13 @@ private:
 	@param		score		the scoring component. */
 	void validateBoard(GameBoard_Component & board, GameScore_Component & score) {
 		std::vector<ScoringManifold> allMatchingSets;
+		static constexpr auto findScoredTiles = [](const auto & xCoord, const auto & yCoord, GameScore_Component & score) {
+			for each (const auto & pair in score.m_scoredTiles)
+				for each (const auto & xy in pair.first) 
+					if (xy.x == xCoord && xy.y == yCoord)
+						return true;
+			return false;
+		};
 		for (int y = 1; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
 				ScoringManifold matchingSet;
@@ -182,10 +186,18 @@ private:
 
 				// Prepare tiles for scoring
 				if (matchingSet.size()) {
-					allMatchingSets.push_back(matchingSet);
-					// Set the tiles as matched so that they aren't matched against more than once
-					for each (const auto & xy in matchingSet)
-						board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
+					bool keepSet = true;
+					for each (const auto & xy in matchingSet) 
+						if (findScoredTiles(xy.x, xy.y, score)) {
+							keepSet = false;
+							break;
+						}
+					if (keepSet) {
+						allMatchingSets.push_back(matchingSet);
+						// Set the tiles as matched so that they aren't matched against more than once
+						for each (const auto & xy in matchingSet)
+							board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
+					}
 				}
 			}
 

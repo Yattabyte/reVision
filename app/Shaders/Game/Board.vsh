@@ -20,9 +20,9 @@ layout (location = 2) out float Dot;
 
 
 vec2 shake() {
-	const float amount = sin( scoreTick ) * shakeAmt;
-	const float xAmt = cos( scoreTick * 1.5) * amount;
-	const float yAmt = sin( scoreTick * 0.5f) * amount;
+	const float amount = sin( gameTick ) * shakeAmt;
+	const float xAmt = cos( gameTick * 1.5) * amount;
+	const float yAmt = sin( gameTick * 0.5f) * amount;
 	return vec2(xAmt, yAmt) / 5.0f * amount;
 }
 

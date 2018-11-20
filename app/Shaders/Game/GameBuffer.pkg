@@ -6,8 +6,8 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	float heightOffset;
 	float excitement;
 	float shakeAmt;
+	int gameTick;
 	int score;
-	int scoreTick;
 	int highlightIndex;
 	int stopTimer;
 };

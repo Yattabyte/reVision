@@ -31,8 +31,8 @@ struct BoardBuffer {
 	float heightOffset = 0.0f;
 	float excitement = 0.0f;
 	float shakeAmt = 0.0f;
+	int gameTick = 0;
 	int score = 0;
-	int scoreTick = 0;
 	int highlightIndex = 0;
 	int stopTimer = 0;
 };
@@ -68,15 +68,15 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 			for (int x = 0; x < 6; ++x) {
 				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
 				component->m_data->data->gravityOffsets[dataIndex] = 0.0f;
-				component->m_data->data->lifeTick[dataIndex] = 0.0f;
+				component->m_data->data->lifeTick[++dataIndex] = 0.0f;
 			}
 		/*
 			  E
 			 EDD
 			EBBCD			
 			AAABCC
-		*/	
-		
+		*/			
+		/*
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;
@@ -92,8 +92,12 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		component->m_tiles[2][2].m_type = TileState::D;
 		component->m_tiles[2][3].m_type = TileState::D;
 		component->m_tiles[3][2].m_type = TileState::E;
-		
+		*/
 
+		component->m_tiles[0][0].m_type = TileState::A;
+		component->m_tiles[0][1].m_type = TileState::A;
+		component->m_tiles[0][3].m_type = TileState::A;
+		component->m_tiles[0][4].m_type = TileState::A;
 		/*
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[1][0].m_type = TileState::B;
