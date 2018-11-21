@@ -67,6 +67,7 @@ public:
 			// Synchronize component data to GPU
 			board.m_data->data->shakeAmt = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeAmt - 0.01f));
 			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
+			score.m_stopTimer = std::min(9, score.m_stopTimer);
 			board.m_data->data->stopTimer = score.m_stopTimer;
 		}
 	}
@@ -230,6 +231,7 @@ private:
 				score.m_comboChanged = false;
 				addScore(score, 5);
 				score.m_multiplier++;
+				score.m_stopTimer++;
 				board.m_data->data->shakeAmt += (score.m_multiplier / 6.0f);
 			}
 		}
@@ -258,7 +260,7 @@ private:
 				if (manifold.first.size() > 3) {
 					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
 					board.m_data->data->shakeAmt += std::max(0.25f, manifold.first.size() / 9.0f);
-					score.m_stopTimer += (manifold.first.size() - 3);
+					score.m_stopTimer += 3;
 				}
 
 				score.m_stopTimeTick = 0;

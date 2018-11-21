@@ -17,7 +17,7 @@ layout (location = 2) flat in float HighlightAmount;
 layout (location = 3) flat in uint UseBackdrop;
 layout (location = 0) out vec4 HeaderColor;
 
-layout (binding = 0) uniform sampler2D Numbers;
+layout (binding = 1) uniform sampler2D Numbers;
 
 
 const float SCORE_ROTATE_TICK = 750.0F;

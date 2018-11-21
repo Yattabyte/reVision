@@ -89,6 +89,8 @@ public:
 		m_textureTileScored = Asset_Texture::Create(engine, "Game\\newTileScored.png");
 		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
 		m_textureScoreNums = Asset_Texture::Create(engine, "Game\\scoreNums.png");
+		m_textureStop = Asset_Texture::Create(engine, "Game\\stop.png");
+		m_textureTime = Asset_Texture::Create(engine, "Game\\time.png");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Preferences
@@ -107,7 +109,7 @@ public:
 		
 			const GLuint scoreData[4] = { quadSize, 1, 0, 0 };
 			m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData);
-			const GLuint stopData[4] = { quadSize, 5, 0, 0 };
+			const GLuint stopData[4] = { quadSize, 6, 0, 0 };
 			m_bufferIndirectStop = StaticBuffer(sizeof(GLuint) * 4, stopData, 0);
 		});
 		m_bufferIndirectBoard = StaticBuffer(sizeof(GLint) * 16, 0, GL_DYNAMIC_STORAGE_BIT);
@@ -132,14 +134,7 @@ public:
 
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		if (!m_shapeQuad->existsYet() ||
-			!m_modelBoard->existsYet() ||
-			!m_shaderTiles->existsYet() ||
-			!m_shaderBoard->existsYet() ||
-			!m_shaderScore->existsYet() ||
-			!m_shaderStop->existsYet() ||
-			!m_textureTile->existsYet() ||
-			!m_textureScoreNums->existsYet())
+		if (!areAssetsReady())
 			return;
 
 		for each (const auto & componentParam in components) {
@@ -197,7 +192,6 @@ public:
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_shaderScore->bind();
 			m_shaderScore->setUniform(0, m_orthoProjHeader);
-			m_textureScoreNums->bind(0);
 			m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
@@ -206,6 +200,7 @@ public:
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_shaderStop->bind();
 			m_shaderStop->setUniform(0, m_orthoProjHeader);
+			m_textureStop->bind(0);
 			m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 			
@@ -223,6 +218,21 @@ public:
 			// End
 			glDisable(GL_BLEND);
 		}
+	}
+
+	const bool areAssetsReady() const {
+		return (
+			m_shapeQuad->existsYet() &&
+			m_modelBoard->existsYet() &&
+			m_shaderTiles->existsYet() &&
+			m_shaderBoard->existsYet() &&
+			m_shaderScore->existsYet() &&
+			m_shaderStop->existsYet() &&
+			m_textureTile->existsYet() &&
+			m_textureScoreNums->existsYet() &&
+			m_textureStop->existsYet() &&
+			m_textureTime->existsYet()
+		);
 	}
 
 
@@ -253,6 +263,7 @@ private:
 
 	// Stop-Timer Rendering Resources
 	Shared_Asset_Shader m_shaderStop;
+	Shared_Asset_Texture m_textureStop, m_textureTime;
 	StaticBuffer m_bufferIndirectStop;
 
 };

@@ -41,7 +41,7 @@ public:
 			userInteractWithBoard(board, score);
 			
 			// Tick row-climbing
-			if (!(score.m_scoredTiles.size()) && score.m_stopTimer <= 0) {
+			if (!(score.m_scoredTiles.size()) && score.m_stopTimer < 0) {
 				board.m_rowClimbTick++;
 				if (board.m_rowClimbTick >= TickCount_NewLine && !(score.m_scoredTiles.size())) 
 					pushNewRow(board, score);				
@@ -49,7 +49,7 @@ public:
 
 			// Tick stop-timer
 			if (++score.m_stopTimeTick >= 100) {
-				if (score.m_stopTimer > 0)
+				if (score.m_stopTimer >= 0)
 					score.m_stopTimer--;
 				score.m_stopTimeTick = 0;
 			}
@@ -109,7 +109,7 @@ private:
 
 			board.m_rowClimbTick = 0;
 			score.m_stopTimeTick = 0;
-			score.m_stopTimer = 0;
+			score.m_stopTimer = -1;
 		}
 	}	
 	/** Try to drop tiles if they have room beneath them.

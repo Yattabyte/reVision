@@ -38,6 +38,7 @@ void main()
 		break;
 	case 3:
 		FragColor = vec4(texture(TimeTexture, TexCoord).xyz, 1);
+		//FragColor = vec4(texture(Background, TexCoord * vec2(3.5, 1) * 4.0f).xyz, 1);
 		break;
 	};
 	if (FragColor.a <= 0.5f)
