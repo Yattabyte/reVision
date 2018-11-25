@@ -6,10 +6,12 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	float heightOffset;
 	float excitement;
 	float shakeAmt;
-	float timerBrightness;
+	float animTime;
+	float animScore;
 	int gameTick;
 	int score;
 	int highlightIndex;
+	int multiplier;
 	int stopTimer;
 	int gameTimer;
 };

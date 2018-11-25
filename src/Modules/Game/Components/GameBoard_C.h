@@ -31,10 +31,12 @@ struct BoardBuffer {
 	float heightOffset = 0.0f;
 	float excitement = 0.0f;
 	float shakeAmt = 0.0f;
-	float timerBrightness = 1.0f;
+	float animTime = 1.0f;
+	float animScore = 0.0f;
 	int gameTick = 0;
 	int score = 0;
 	int highlightIndex = 0;
+	int multiplier = 0;
 	int stopTimer = 0;
 	int gameTimer = 0;
 };
@@ -65,7 +67,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new GameBoard_Component();
 		component->m_data = m_elementBuffer->newElement();
-		component->m_data->data->timerBrightness = 1.0f;
+		component->m_data->data->animTime = 1.0f;
 		int dataIndex = 0;
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
@@ -74,9 +76,11 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 				component->m_data->data->lifeTick[++dataIndex] = 0.0f;
 			}
 		/*
-			  E
-			 EDD
-			EBBCD			
+			  C
+			 CAB
+			 AEA
+			CEDDB
+			EBBCDB			
 			AAABCC
 		*/			
 		
@@ -91,10 +95,19 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 		component->m_tiles[1][2].m_type = TileState::B;
 		component->m_tiles[1][3].m_type = TileState::C;
 		component->m_tiles[1][4].m_type = TileState::D;
+		component->m_tiles[1][5].m_type = TileState::B;
+		component->m_tiles[2][0].m_type = TileState::C;
 		component->m_tiles[2][1].m_type = TileState::E;
 		component->m_tiles[2][2].m_type = TileState::D;
 		component->m_tiles[2][3].m_type = TileState::D;
+		component->m_tiles[2][4].m_type = TileState::B;
+		component->m_tiles[3][1].m_type = TileState::A;
 		component->m_tiles[3][2].m_type = TileState::E;
+		component->m_tiles[3][3].m_type = TileState::A;
+		component->m_tiles[4][1].m_type = TileState::C;
+		component->m_tiles[4][2].m_type = TileState::A;
+		component->m_tiles[4][3].m_type = TileState::B;
+		component->m_tiles[5][2].m_type = TileState::C;
 		return { component, component->ID };
 	}
 

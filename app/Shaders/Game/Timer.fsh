@@ -19,7 +19,7 @@ void main()
 		const ivec2 Size = textureSize(Numbers, 0);
 		const float AtlasWidth = float(Size.x);
 		const float ElementWidth = float(Size.y);
-		const float ElementCount = 11.0f;
+		const float ElementCount = 12.0f;
 		
 		const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		FooterColor = texture(Numbers, DigitIndex);
@@ -31,5 +31,5 @@ void main()
 	}
 	const float pulseAmount = (0.75f - (0.25f * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
 	const vec3 textColor = mix(vec3(1.0), vec3(1.0, 0.5, 0.0),  pulseAmount*pulseAmount);	
-	FooterColor *= vec4(textColor, 1) * timerBrightness;
+	FooterColor *= vec4(textColor, 1) * animTime;
 }

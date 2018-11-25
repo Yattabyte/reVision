@@ -71,7 +71,7 @@ public:
 			if (score.m_stopTimer < 0 && score.m_timerAnimationTick != -1) {
 				if (score.m_timerAnimationTick < 100)
 					++score.m_timerAnimationTick;				
-				board.m_data->data->timerBrightness = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
+				board.m_data->data->animTime = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
 				if (score.m_timerAnimationTick == 100)
 					score.m_timerAnimationTick = -1;
 			}

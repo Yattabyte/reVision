@@ -84,6 +84,7 @@ public:
 		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);
 		m_shaderTileScored = Asset_Shader::Create(engine, "Game\\TileScored", true);
 		m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
+		m_shaderMultiplier = Asset_Shader::Create(engine, "Game\\Multiplier", true);
 		m_shaderTimer = Asset_Shader::Create(engine, "Game\\Timer", true);
 		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
 		m_textureTileScored = Asset_Texture::Create(engine, "Game\\newTileScored.png");
@@ -110,6 +111,8 @@ public:
 			m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData);
 			const GLuint stopData[4] = { quadSize, 6, 0, 0 };
 			m_bufferIndirectStop = StaticBuffer(sizeof(GLuint) * 4, stopData, 0);
+			const GLuint multiplierData[4] = { quadSize, 4, 0, 0 };
+			m_bufferIndirectMultiplier = StaticBuffer(sizeof(GLuint) * 4, multiplierData, 0);
 		});
 		m_bufferIndirectBoard = StaticBuffer(sizeof(GLint) * 16, 0, GL_DYNAMIC_STORAGE_BIT);
 		m_modelBoard->addCallback(m_aliveIndicator, [&]() mutable {
@@ -193,6 +196,12 @@ public:
 			m_shaderScore->setUniform(0, m_orthoProjHeader);
 			m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			
+			// Render multiplier into header bar
+			m_shaderMultiplier->bind();
+			m_shaderMultiplier->setUniform(0, m_orthoProjHeader);
+			m_bufferIndirectMultiplier.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 			// Render time footer bar to the FBO			
 			glDrawBuffer(GL_COLOR_ATTACHMENT1);
@@ -226,6 +235,7 @@ public:
 			m_shaderTiles->existsYet() &&
 			m_shaderBoard->existsYet() &&
 			m_shaderScore->existsYet() &&
+			m_shaderMultiplier->existsYet() &&
 			m_shaderTimer->existsYet() &&
 			m_textureTile->existsYet() &&
 			m_textureScoreNums->existsYet() &&
@@ -258,6 +268,10 @@ private:
 	Shared_Asset_Shader m_shaderScore;
 	Shared_Asset_Texture m_textureScoreNums;
 	StaticBuffer m_bufferIndirectScore;
+
+	// Multiplier Rendering Resources
+	Shared_Asset_Shader m_shaderMultiplier;
+	StaticBuffer m_bufferIndirectMultiplier;
 
 	// Stop-Timer Rendering Resources
 	Shared_Asset_Shader m_shaderTimer;

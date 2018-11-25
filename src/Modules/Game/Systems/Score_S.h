@@ -45,10 +45,12 @@ public:
 				scoreTiles(board, score);
 			}
 
+			// Animate score climbing
 			if ((score.m_score - board.m_data->data->score) > 0)
 				board.m_data->data->score++;
 			else
 				score.m_lastScore = score.m_score;
+			// Highlight digits that are changing
 			constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
 			GLuint scoreLength = 1;
 			for (GLuint x = 0; x < 8; ++x)
@@ -63,10 +65,14 @@ public:
 					firstMostDigit = x;
 					break;
 				}
+			// Animate multiplier climbing
+			board.m_data->data->animScore = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, board.m_data->data->animScore)) : 0.0f;
+
 
 			// Synchronize component data to GPU
 			board.m_data->data->shakeAmt = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeAmt - 0.01f));
 			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
+			board.m_data->data->multiplier = score.m_multiplier;
 			score.m_stopTimer = std::min(9, score.m_stopTimer);
 			board.m_data->data->stopTimer = score.m_stopTimer;
 		}
@@ -233,6 +239,7 @@ private:
 				score.m_multiplier++;
 				score.m_stopTimer++;
 				board.m_data->data->shakeAmt += (score.m_multiplier / 6.0f);
+				board.m_data->data->animScore++;
 			}
 		}
 		else if (!score.m_scoredTiles.size() || !score.m_comboChanged){
