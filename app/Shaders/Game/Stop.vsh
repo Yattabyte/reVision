@@ -18,6 +18,9 @@ void main()
 	
 	// Render Text
 	if (gl_InstanceID == 0) {
+		TexCoord.x *= 0.5f;
+		if (stopTimer >= 0)
+			TexCoord.x += 0.5f;
 		CharToRender = -1;
 		// This matrix centers the position of the text within the row
 		const mat4 transMat = mat4(
@@ -38,18 +41,21 @@ void main()
 	
 	// Render Numbers
 	else {
+		const int timeToUse = stopTimer < 0 ? gameTimer : stopTimer;
+		const int timeInMinutes = timeToUse / 60;
+		const int timeInSeconds = timeToUse % 60;
 		bool isSemiColon = false;
 		bool isLeftOfColon = false;
 		if (gl_InstanceID < 3) {
 			isLeftOfColon = true;	
-			CharToRender = int(mod( stopTimer / pow(10.0f, 3.0F - gl_InstanceID), 10.0F ));
+			CharToRender = int(mod( timeInMinutes / pow(10.0f, 2 - gl_InstanceID), 10.0F ));
 		}
 		else if (gl_InstanceID == 3) {
 			CharToRender = 10;
 			isSemiColon = true;
 		}
 		else 
-			CharToRender = int(mod( stopTimer / pow(10.0f, 3.0F - (gl_InstanceID-2.0f)), 10.0F ));		
+			CharToRender = int(mod( timeInSeconds / pow(10.0f, 5 - gl_InstanceID), 10.0F ));		
 		
 		// This matrix centers the position of the tiles withim the row
 		const mat4 transMat = mat4(

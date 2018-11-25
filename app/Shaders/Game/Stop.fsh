@@ -11,10 +11,6 @@ layout (binding = 1) uniform sampler2D Numbers;
 
 void main()
 {	
-	const float blinkSpeed = 33.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
-	const float waveAmt = sin( blinkSpeed * (2.0f * (float(gameTick) / 750.0f) - 1.0f) * 3.1415f );
-	const float pulseAmount = (0.75f - (0.5f * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))))) * (stopTimer < 0 ? 0.0f : 1.0f);
-	const vec3 textColor = mix(vec3(0.75f,0,0), vec3(0.25f),  waveAmt*waveAmt) * 0.75f;
 	// Render Text
 	if (CharToRender < 0)	
 		FooterColor = texture(Text, TexCoord);	
@@ -24,9 +20,21 @@ void main()
 		const float AtlasWidth = float(Size.x);
 		const float ElementWidth = float(Size.y);
 		const float ElementCount = 11.0f;
-
+		
 		const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		FooterColor = texture(Numbers, DigitIndex);
 	}
-	FooterColor *= (vec4(textColor, 1) * pulseAmount);
+	if (stopTimer >= 0) {
+		const float blinkSpeed = 33.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
+		const float waveAmt = sin( blinkSpeed * (2.0f * (float(gameTick) / 750.0f) - 1.0f) * 3.1415f );
+		const float pulseAmount = (0.75f - (0.5f * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
+		const vec3 textColor = mix(vec3(0.75f,0,0), vec3(0.25f),  waveAmt*waveAmt) * 0.75f;		
+		FooterColor *= (vec4(textColor, 1) * pulseAmount);
+	}
+	else {
+		const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 128) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(gameTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
+		const float pulseAmount = 1.0f - (0.25 * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));
+		const vec3 textColor = mix(vec3(1.0f), vec3(1.0, 0.5, 0.0),  pulseAmount*pulseAmount);	
+		FooterColor *= (vec4(textColor, 1.0f));
+	}
 }

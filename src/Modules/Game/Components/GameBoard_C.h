@@ -35,6 +35,7 @@ struct BoardBuffer {
 	int score = 0;
 	int highlightIndex = 0;
 	int stopTimer = 0;
+	int gameTimer = 0;
 };
 /** A component representing a basic player. */
 struct GameBoard_Component : public ECSComponent<GameBoard_Component> {

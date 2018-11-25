@@ -1,4 +1,4 @@
-/* Board Shader. */
+/* Combo Shader. */
 #version 460
 #package "Game\GameBuffer"
 

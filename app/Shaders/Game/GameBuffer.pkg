@@ -10,4 +10,5 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	int score;
 	int highlightIndex;
 	int stopTimer;
+	int gameTimer;
 };

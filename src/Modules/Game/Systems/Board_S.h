@@ -49,9 +49,10 @@ public:
 
 			// Tick stop-timer
 			if (++score.m_stopTimeTick >= 100) {
+				score.m_stopTimeTick = 0;
+				++board.m_data->data->gameTimer;
 				if (score.m_stopTimer >= 0)
 					score.m_stopTimer--;
-				score.m_stopTimeTick = 0;
 			}
 
 			// Tick gravity

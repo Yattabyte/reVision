@@ -18,7 +18,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.4";
+constexpr char ENGINE_VERSION[] = "2.4.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 

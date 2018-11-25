@@ -89,8 +89,7 @@ public:
 		m_textureTileScored = Asset_Texture::Create(engine, "Game\\newTileScored.png");
 		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
 		m_textureScoreNums = Asset_Texture::Create(engine, "Game\\scoreNums.png");
-		m_textureStop = Asset_Texture::Create(engine, "Game\\stop.png");
-		m_textureTime = Asset_Texture::Create(engine, "Game\\time.png");
+		m_textureTimeStop = Asset_Texture::Create(engine, "Game\\timestop.png");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Preferences
@@ -200,7 +199,7 @@ public:
 			glClear(GL_COLOR_BUFFER_BIT);
 			m_shaderStop->bind();
 			m_shaderStop->setUniform(0, m_orthoProjHeader);
-			m_textureStop->bind(0);
+			m_textureTimeStop->bind(0);
 			m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 			
@@ -230,8 +229,7 @@ public:
 			m_shaderStop->existsYet() &&
 			m_textureTile->existsYet() &&
 			m_textureScoreNums->existsYet() &&
-			m_textureStop->existsYet() &&
-			m_textureTime->existsYet()
+			m_textureTimeStop->existsYet()
 		);
 	}
 
@@ -263,7 +261,7 @@ private:
 
 	// Stop-Timer Rendering Resources
 	Shared_Asset_Shader m_shaderStop;
-	Shared_Asset_Texture m_textureStop, m_textureTime;
+	Shared_Asset_Texture m_textureTimeStop;
 	StaticBuffer m_bufferIndirectStop;
 
 };
