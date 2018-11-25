@@ -2,7 +2,7 @@
 #ifndef STATICMAPPEDBUFFER_H
 #define STATICMAPPEDBUFFER_H
 
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include <utility>
 
 

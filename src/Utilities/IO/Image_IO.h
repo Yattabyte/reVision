@@ -3,7 +3,7 @@
 #define	IMAGE_IO_H
 
 #include "GLM\glm.hpp"
-#include "GL/glew.h"
+#include "GL\glad\glad.h"
 #include <string>
 
 

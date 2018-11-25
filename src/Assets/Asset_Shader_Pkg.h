@@ -4,7 +4,7 @@
 
 #include "Assets\Asset.h"
 #include "glm\glm.hpp"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include <string>
 
 

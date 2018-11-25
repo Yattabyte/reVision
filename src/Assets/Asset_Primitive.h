@@ -3,7 +3,7 @@
 #define	ASSET_PRIMITIVE_H
 
 #include "Assets\Asset_Mesh.h"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLM\glm.hpp"
 #include <vector>
 

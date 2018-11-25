@@ -6,7 +6,6 @@ project(reVision)
 set (ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
 set (FREEIMAGE_DIR "" CACHE PATH "FreeImage root directory")
 set (GLM_DIR "" CACHE PATH "OpenGL Mathematics library (GLM) root directory")
-set (GLEW_DIR "" CACHE PATH "OpenGL Extension Wrangler library (GLEW) root directory")
 set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
 set (CORE_DIR "${PROJECT_SOURCE_DIR}/src")
@@ -18,7 +17,6 @@ include_directories ( 	${CORE_DIR}
 						${ASSIMP_DIR}/include/
 						${FREEIMAGE_DIR}/Source/
 						${GLM_DIR} 
-						${GLEW_DIR}/include/ 
 						${GLFW_DIR}/include/
 						${BULLET_DIR}/src/			)
 						
@@ -30,7 +28,6 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 									optimized	${ASSIMP_DIR}/lib/Release/zlibstatic.lib
 									debug		${FREEIMAGE_DIR}/Dist/x64/FreeImaged.lib
 									optimized	${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
-												${GLEW_DIR}/lib/Release/x64/glew32s.lib
 									debug		${GLFW_DIR}/src/Debug/glfw3.lib
 									optimized	${GLFW_DIR}/src/Release/glfw3.lib
 									debug		${GLM_DIR}/glm/Debug/glm_static.lib

@@ -104,14 +104,14 @@ void Graphics_Module::initialize(Engine * engine)
 
 	// Error Reporting
 	GLenum Status = glCheckNamedFramebufferStatus(m_geometryFBO.m_fboID, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->getMessageManager().error("Geometry Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+	//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+	//	m_engine->getMessageManager().error("Geometry Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 	Status = glCheckNamedFramebufferStatus(m_lightingFBO.m_fboID, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->getMessageManager().error("Lighting Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
-	Status = glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER);
-	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		m_engine->getMessageManager().error("Reflection Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+//	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+	//	m_engine->getMessageManager().error("Lighting Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+	//Status = glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER);
+	//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+	//	m_engine->getMessageManager().error("Reflection Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 
 	m_visualFX.initialize(m_engine);
 	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);

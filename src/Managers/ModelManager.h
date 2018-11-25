@@ -4,7 +4,7 @@
 #define NUM_VERTEX_ATTRIBUTES 8
 
 #include "Utilities\IO\Mesh_IO.h"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "glm\glm.hpp"
 #include <shared_mutex>
 #include <vector>

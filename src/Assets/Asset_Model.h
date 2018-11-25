@@ -6,7 +6,7 @@
 #include "Assets\Asset_Material.h"
 #include "Managers\ModelManager.h"
 #include "assimp\scene.h"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLM\glm.hpp"
 #include "glm\geometric.hpp"
 #include <map>

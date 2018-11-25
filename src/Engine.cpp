@@ -4,7 +4,7 @@
 #include <direct.h>
 
 // OpenGL Dependent Systems //
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLFW\glfw3.h"
 
 // Importers Used //
@@ -67,13 +67,13 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwSetCursorPos(window, 0, 0);
 	glfwSwapInterval(vsync);
 
-	// Initialize GLEW
-	glewExperimental = GL_TRUE;
-	if (glewInit() != GLEW_OK) {
+	// Initialize GLAD
+	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+	/*if (gladLoadGL()) {
 		engine->getMessageManager().error("GLEW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
-	}
+	}*/
 }
 
 Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
@@ -120,7 +120,7 @@ Engine::Engine() :
 	m_messageManager.statement("ASSIMP       " + Mesh_IO::Get_Version());
 	m_messageManager.statement("Bullet       " + std::to_string(BT_BULLET_VERSION));
 	m_messageManager.statement("FreeImage    " + Image_IO::Get_Version());
-	m_messageManager.statement("GLEW         " + std::string(reinterpret_cast<char const *>(glewGetString(GLEW_VERSION))));
+	m_messageManager.statement("GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
 	m_messageManager.statement("GLFW         " + std::string(glfwGetVersionString(), 5));
 	m_messageManager.statement("GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
 	m_messageManager.statement("");

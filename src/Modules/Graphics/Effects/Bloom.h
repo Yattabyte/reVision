@@ -75,8 +75,8 @@ public:
 
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			engine->getMessageManager().error("Bloom Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		//	engine->getMessageManager().error("Bloom Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
 			engine->getMessageManager().error("Bloom Texture is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[0]))

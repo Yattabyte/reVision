@@ -2,7 +2,7 @@
 #ifndef DYNAMICBUFFER_H
 #define DYNAMICBUFFER_H
 
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include <utility>
 
 

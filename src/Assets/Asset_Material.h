@@ -7,7 +7,7 @@
 #include "Assets\Asset_Image.h"
 #include "Managers\MaterialManager.h"
 #include <vector>
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLM\glm.hpp"
 
 

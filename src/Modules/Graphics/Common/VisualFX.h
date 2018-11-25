@@ -5,7 +5,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "glm\glm.hpp"
 
 

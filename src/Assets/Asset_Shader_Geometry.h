@@ -5,7 +5,7 @@
 #include "Assets\Asset.h"
 #include "Assets\Asset_Shader.h"
 #include "glm\glm.hpp"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLM\gtc\type_ptr.hpp"
 #include <string>
 

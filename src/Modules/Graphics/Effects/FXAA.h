@@ -57,8 +57,8 @@ public:
 		
 		// Error Reporting
 		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error("FXAA Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		//	m_engine->getMessageManager().error("FXAA Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_textureID))
 			m_engine->getMessageManager().error("FXAA Texture is incomplete.");
 	}

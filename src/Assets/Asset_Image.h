@@ -3,7 +3,7 @@
 #define	ASSET_IMAGE_H
 
 #include "Assets\Asset.h"
-#include "GL\glew.h"
+#include "GL\glad\glad.h"
 #include "GLM\glm.hpp"
 #include <any>
 #include <optional>

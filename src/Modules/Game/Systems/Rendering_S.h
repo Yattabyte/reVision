@@ -65,13 +65,13 @@ public:
 
 		// Error Reporting
 		GLenum Status = glCheckNamedFramebufferStatus(m_fboIDField, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			engine->getMessageManager().error("Game Board Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
+		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		//	engine->getMessageManager().error("Game Board Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
 		if (!glIsTexture(m_boardTexID))
 			engine->getMessageManager().error("Game Board Texture is incomplete.");
 		Status = glCheckNamedFramebufferStatus(m_fboIDBars, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			engine->getMessageManager().error("Game Header Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
+		//	engine->getMessageManager().error("Game Header Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
 		if (!glIsTexture(m_scoreTexID))
 			engine->getMessageManager().error("Game Header Texture is incomplete.");
 
