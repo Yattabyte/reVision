@@ -1,6 +1,5 @@
 /* Screen space reflection shader - part 2 - Screen lookup from UV's */
 #version 460
-#extension GL_ARB_bindless_texture : require
 #pragma optionNV(fastmath on)
 #pragma optionNV(fastprecision on)
 #pragma optionNV(ifcvt none)
@@ -22,7 +21,6 @@ layout (binding = 2) uniform sampler2D SpecularMap;
 layout (binding = 3) uniform sampler2D DepthMap;
 layout (binding = 5) uniform sampler2D SSRMap;
 layout (binding = 6) uniform sampler2D LightMap;
-layout (location = 0, bindless_sampler) uniform sampler2D EnvironmentBRDF;
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in mat4 CamPInverse;

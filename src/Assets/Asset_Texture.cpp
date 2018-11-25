@@ -9,7 +9,6 @@ Asset_Texture::~Asset_Texture()
 	if (existsYet()) {
 		glDeleteBuffers(1, &m_pboID);
 		glDeleteTextures(1, &m_glTexID);
-		glMakeTextureHandleNonResidentARB(m_glTexHandle);
 	}
 }
 
@@ -82,7 +81,6 @@ void Asset_Texture::initialize(Engine * engine, const std::string & relativePath
 		}
 	};
 	glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
-	m_glTexHandle = glGetTextureHandleARB(m_glTexID);
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

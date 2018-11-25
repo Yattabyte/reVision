@@ -87,11 +87,6 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
-		glMakeTextureHandleResidentARB(m_bayerHandle);
-		m_shaderSSR1->addCallback(m_aliveIndicator, [&] {
-			m_shaderSSR1->setUniform(0, m_bayerHandle);
-		});
 
 		// Error Reporting
 		GLenum Status = glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER);		
@@ -122,6 +117,7 @@ public:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboSSRID);
 		m_geometryFBO->bindForReading();
 		m_shaderSSR1->bind();
+		glBindTextureUnit(6, m_bayerID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glEnable(GL_BLEND);
@@ -204,7 +200,6 @@ private:
 	GLuint m_fboMipsID = 0, m_textureMipsID = 0;
 	GLuint m_fboSSRID = 0, m_textureSSRID = 0;
 	GLuint m_bayerID = 0;
-	GLuint64 m_bayerHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

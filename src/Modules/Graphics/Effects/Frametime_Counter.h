@@ -35,16 +35,6 @@ public:
 		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(f, m_renderSize.y)); });
 		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::vec2(m_renderSize.x, f)); });		
 		resize(m_renderSize);
-
-		m_numberTexture->addCallback(m_aliveIndicator, [&] {
-			glMakeTextureHandleResidentARB(m_numberTexture->m_glTexHandle);
-			if (m_shader->existsYet())
-				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
-		});
-		m_shader->addCallback(m_aliveIndicator, [&] {
-			if (m_numberTexture->existsYet())
-				m_shader->setUniform(0, m_numberTexture->m_glTexHandle);
-		});
 	}
 
 
@@ -57,6 +47,7 @@ public:
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_numberTexture->bind(0);
 		m_shader->bind();
 		m_shader->setUniform(1, m_projMatrix);
 		const glm::mat4 scale = glm::translate(glm::mat4(1.0f), glm::vec3(12, 12, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(12));

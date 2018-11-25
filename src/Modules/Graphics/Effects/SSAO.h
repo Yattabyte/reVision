@@ -84,9 +84,7 @@ public:
 		glTextureParameteri(m_noiseID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_noiseID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);		
-		m_noiseHandle = glGetTextureHandleARB(m_noiseID);
-		glMakeTextureHandleResidentARB(m_noiseHandle);
+		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		m_shader->addCallback(m_aliveIndicator, [&] {
 			std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 			std::default_random_engine generator;
@@ -106,7 +104,6 @@ public:
 			}
 			m_shader->setUniform(0, m_radius);
 			m_shader->setUniform(1, m_quality);
-			m_shader->setUniform(2, m_noiseHandle);
 			m_shader->setUniformArray(3, new_kernel, MAX_KERNEL_SIZE);
 		});
 		
@@ -131,6 +128,7 @@ public:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shader->bind();
 		m_geometryFBO->bindForReading();
+		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -174,7 +172,6 @@ private:
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;
 	GLuint m_fboID = 0, m_textureID = 0, m_textureIDSGB[2] = { 0,0 }, m_noiseID = 0;
-	GLuint64 m_noiseHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

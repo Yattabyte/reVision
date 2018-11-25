@@ -33,15 +33,6 @@ public:
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
-		m_brdfMap->addCallback(m_aliveIndicator, [&] {
-			glMakeTextureHandleResidentARB(m_brdfMap->m_glTexHandle);
-			if (m_shader->existsYet())
-				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
-		});
-		m_shader->addCallback(m_aliveIndicator, [&] {
-			if (m_brdfMap->existsYet())
-				m_shader->setUniform(0, m_brdfMap->m_glTexHandle);
-		});
 	}
 
 
@@ -55,6 +46,7 @@ public:
 		m_lightingFBO->bindForWriting();
 		m_geometryFBO->bindForReading(0);
 		m_reflectionFBO->bindForReading(5);
+		m_brdfMap->bind(6);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

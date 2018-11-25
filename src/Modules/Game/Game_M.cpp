@@ -23,7 +23,7 @@ void Game_Module::initialize(Engine * engine)
 	// Gameplay Systems
 	m_gameplaySystems.addSystem(new Board_System(m_engine));
 	m_gameplaySystems.addSystem(new Score_System());
-	//m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
+	m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
 
 	// Rendering Systems
 	m_renderingSystem = new Rendering_System(engine);
