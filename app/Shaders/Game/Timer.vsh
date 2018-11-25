@@ -1,4 +1,4 @@
-/* Stop-Timer Shader. */
+/* Timer Shader. */
 #version 460
 #package "Game\GameBuffer"
 

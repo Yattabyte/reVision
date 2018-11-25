@@ -84,7 +84,7 @@ public:
 		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);
 		m_shaderTileScored = Asset_Shader::Create(engine, "Game\\TileScored", true);
 		m_shaderScore = Asset_Shader::Create(engine, "Game\\Score", true);
-		m_shaderStop = Asset_Shader::Create(engine, "Game\\Stop", true);
+		m_shaderTimer = Asset_Shader::Create(engine, "Game\\Timer", true);
 		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
 		m_textureTileScored = Asset_Texture::Create(engine, "Game\\newTileScored.png");
 		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
@@ -197,8 +197,8 @@ public:
 			// Render time footer bar to the FBO			
 			glDrawBuffer(GL_COLOR_ATTACHMENT1);
 			glClear(GL_COLOR_BUFFER_BIT);
-			m_shaderStop->bind();
-			m_shaderStop->setUniform(0, m_orthoProjHeader);
+			m_shaderTimer->bind();
+			m_shaderTimer->setUniform(0, m_orthoProjHeader);
 			m_textureTimeStop->bind(0);
 			m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -226,7 +226,7 @@ public:
 			m_shaderTiles->existsYet() &&
 			m_shaderBoard->existsYet() &&
 			m_shaderScore->existsYet() &&
-			m_shaderStop->existsYet() &&
+			m_shaderTimer->existsYet() &&
 			m_textureTile->existsYet() &&
 			m_textureScoreNums->existsYet() &&
 			m_textureTimeStop->existsYet()
@@ -260,7 +260,7 @@ private:
 	StaticBuffer m_bufferIndirectScore;
 
 	// Stop-Timer Rendering Resources
-	Shared_Asset_Shader m_shaderStop;
+	Shared_Asset_Shader m_shaderTimer;
 	Shared_Asset_Texture m_textureTimeStop;
 	StaticBuffer m_bufferIndirectStop;
 

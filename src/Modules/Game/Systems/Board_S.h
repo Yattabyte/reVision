@@ -17,6 +17,18 @@ constexpr int TickCount_GameAnimation = 750u;
 constexpr int TickCount_NewLine = 500u;
 constexpr float TickCount_TileDrop = 10.0F;
 constexpr float TickCount_TileBounce = 15.0F;
+// Bouncing Easing Function
+static constexpr auto easeOutBounce = [](float t) {
+	if (t < (1 / 2.75))
+		return (7.5625 * t *t);
+	else if (t < (2 / 2.75))
+		return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
+	else if (t < (2.5 / 2.75))
+		return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
+	else
+		return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
+};
+
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Board_System : public BaseECSSystem {
@@ -51,8 +63,17 @@ public:
 			if (++score.m_stopTimeTick >= 100) {
 				score.m_stopTimeTick = 0;
 				++board.m_data->data->gameTimer;
-				if (score.m_stopTimer >= 0)
+				if (score.m_stopTimer >= 0) {
 					score.m_stopTimer--;
+					score.m_timerAnimationTick = 0;
+				}
+			}
+			if (score.m_stopTimer < 0 && score.m_timerAnimationTick != -1) {
+				if (score.m_timerAnimationTick < 100)
+					++score.m_timerAnimationTick;				
+				board.m_data->data->timerBrightness = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
+				if (score.m_timerAnimationTick == 100)
+					score.m_timerAnimationTick = -1;
 			}
 
 			// Tick gravity
@@ -115,19 +136,7 @@ private:
 	}	
 	/** Try to drop tiles if they have room beneath them.
 	@param		board		the board containing the tiles of interest. */
-	void gravityBoard(GameBoard_Component & board) {	
-		// Bouncing Easing Function
-		static constexpr auto easeOutBounce = [](auto t) {
-			if (t < (1 / 2.75))
-				return (7.5625 * t *t);
-			else if (t < (2 / 2.75))
-				return (7.5625 * (t -= (1.5 / 2.75)) * t + .75);
-			else if (t < (2.5 / 2.75))
-				return (7.5625 * (t -= (2.25 / 2.75)) * t + .9375);
-			else
-				return (7.5625 * (t -= (2.625 / 2.75)) * t + .984375);
-		};
-
+	void gravityBoard(GameBoard_Component & board) {			
 		// Find any tiles that should START falling
 		for (unsigned int y = 2u; y < 12u; ++y)
 			for (unsigned int x = 0u; x < 6u; ++x) {

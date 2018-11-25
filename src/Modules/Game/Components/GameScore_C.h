@@ -16,6 +16,7 @@ struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	int m_stopTimeTick = 0;
 	int m_stopTimer = -1;
 	int m_multiplier = 0;
+	int m_timerAnimationTick = 0;
 	bool m_comboChanged = false;
 	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
 };

@@ -31,6 +31,7 @@ struct BoardBuffer {
 	float heightOffset = 0.0f;
 	float excitement = 0.0f;
 	float shakeAmt = 0.0f;
+	float timerBrightness = 1.0f;
 	int gameTick = 0;
 	int score = 0;
 	int highlightIndex = 0;
@@ -64,6 +65,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new GameBoard_Component();
 		component->m_data = m_elementBuffer->newElement();
+		component->m_data->data->timerBrightness = 1.0f;
 		int dataIndex = 0;
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
