@@ -47,7 +47,7 @@ public:
 
 			// Animate score climbing
 			if ((score.m_score - board.m_data->data->score) > 0)
-				board.m_data->data->score++;
+				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 2);
 			else
 				score.m_lastScore = score.m_score;
 			// Highlight digits that are changing
@@ -66,11 +66,10 @@ public:
 					break;
 				}
 			// Animate multiplier climbing
-			board.m_data->data->animScore = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, board.m_data->data->animScore)) : 0.0f;
-
-
+			board.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, board.m_data->data->scoreAnimLinear)) : 0.0f;
+			
 			// Synchronize component data to GPU
-			board.m_data->data->shakeAmt = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeAmt - 0.01f));
+			board.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeLinear - 0.01f));
 			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
 			board.m_data->data->multiplier = score.m_multiplier;
 			score.m_stopTimer = std::min(9, score.m_stopTimer);
@@ -238,8 +237,8 @@ private:
 				addScore(score, 5);
 				score.m_multiplier++;
 				score.m_stopTimer++;
-				board.m_data->data->shakeAmt += (score.m_multiplier / 6.0f);
-				board.m_data->data->animScore++;
+				board.m_data->data->shakeLinear += (score.m_multiplier / 6.0f);
+				board.m_data->data->scoreAnimLinear++;
 			}
 		}
 		else if (!score.m_scoredTiles.size() || !score.m_comboChanged){
@@ -260,13 +259,13 @@ private:
 					// Set as matched
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				board.m_data->data->excitement += (0.075f * (float)manifold.first.size());
+				board.m_data->data->excitementLinear += (0.075f * (float)manifold.first.size());
 				// Add time, but never move timer past 3 seconds
 				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.first.size() > 3) {
 					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
-					board.m_data->data->shakeAmt += std::max(0.25f, manifold.first.size() / 9.0f);
+					board.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
 					score.m_stopTimer += 3;
 				}
 

@@ -1,17 +1,28 @@
+#package "CameraBuffer"
+#define M_PI 3.1415926535897932384626433832795
+
 layout (std430, binding = 8) readonly buffer BoardBuffer {	
 	uint types[12*6];
 	float gravityOffsets[12*6];
 	float lifeTick[12*6];
+	vec3 colorScheme;
 	ivec2 playerCoords;
 	float heightOffset;
-	float excitement;
-	float shakeAmt;
-	float animTime;
-	float animScore;
-	int gameTick;
+	float gameWave;
+	float excitementLinear;
+	float shakeLinear;
+	float scoreAnimLinear;
+	float timeAnimLinear;
 	int score;
 	int highlightIndex;
 	int multiplier;
 	int stopTimer;
 	int gameTimer;
 };
+
+float calcPulseAmount(float yPos) {
+	const float waveAmt = 0.5f * (sin((gameWave + -length(yPos / CameraDimensions.y)) * M_PI)) + 0.5f;
+	const float maxBrightness = 1.5f;
+	const float minBrightness = 0.75f;
+	return (maxBrightness - (minBrightness * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
+}

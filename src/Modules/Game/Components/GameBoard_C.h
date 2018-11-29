@@ -27,13 +27,14 @@ struct BoardBuffer {
 	unsigned int types[12 * 6];
 	float gravityOffsets[12 * 6];
 	float lifeTick[12 * 6];
+	glm::vec3 colorScheme = glm::vec3(0.0f); float pad1;
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
-	float excitement = 0.0f;
-	float shakeAmt = 0.0f;
-	float animTime = 1.0f;
-	float animScore = 0.0f;
-	int gameTick = 0;
+	float gameWave = 0.0f;
+	float excitementLinear = 0.0f;
+	float shakeLinear = 0.0f;
+	float scoreAnimLinear = 0.0f;
+	float timeAnimLinear = 0.0f;
 	int score = 0;
 	int highlightIndex = 0;
 	int multiplier = 0;
@@ -53,6 +54,7 @@ struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 		unsigned int weight = 0;
 		float fallSpeed = 1.0f;
 	} m_tileDrops[12][6];
+	unsigned int m_gameTick = 0;
 	unsigned int m_rowClimbTick = 0;
 	int m_playerX = 2;
 	int m_playerY = 5;
@@ -67,7 +69,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new GameBoard_Component();
 		component->m_data = m_elementBuffer->newElement();
-		component->m_data->data->animTime = 1.0f;
+		component->m_data->data->timeAnimLinear = 1.0f;
 		int dataIndex = 0;
 		for (int y = 0; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {

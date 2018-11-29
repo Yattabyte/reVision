@@ -13,7 +13,7 @@
 
 constexpr unsigned int BOARD_WIDTH = 6;
 constexpr unsigned int BOARD_HEIGHT = 12;
-constexpr int TickCount_GameAnimation = 750u;
+constexpr float TickCount_GameAnimation = 750.0f;
 constexpr int TickCount_NewLine = 500u;
 constexpr float TickCount_TileDrop = 10.0F;
 constexpr float TickCount_TileBounce = 15.0F;
@@ -71,7 +71,7 @@ public:
 			if (score.m_stopTimer < 0 && score.m_timerAnimationTick != -1) {
 				if (score.m_timerAnimationTick < 100)
 					++score.m_timerAnimationTick;				
-				board.m_data->data->animTime = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
+				board.m_data->data->timeAnimLinear = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
 				if (score.m_timerAnimationTick == 100)
 					score.m_timerAnimationTick = -1;
 			}
@@ -80,8 +80,10 @@ public:
 			gravityBoard(board);
 
 			// Synchronize component data to GPU
-			board.m_data->data->gameTick = ++board.m_data->data->gameTick >= TickCount_GameAnimation ? 0 : board.m_data->data->gameTick;
-			board.m_data->data->excitement = std::max(0.0f, std::min(1.1f, board.m_data->data->excitement -= 0.001f));
+			board.m_gameTick = ++board.m_gameTick > (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) ? 0 : board.m_gameTick;
+			board.m_data->data->gameWave = 2.0f * float(board.m_gameTick) / (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) - 1.0f;
+			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.0005f));
+			board.m_data->data->colorScheme = glm::mix(glm::vec3(0, 0.5, 1), glm::vec3(1, 0, 0.5), board.m_data->data->excitementLinear);
 			board.m_data->data->heightOffset = 2.0f * (board.m_rowClimbTick / (float)TickCount_NewLine);
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)

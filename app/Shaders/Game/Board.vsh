@@ -2,15 +2,6 @@
 #version 460
 #package "Game\GameBuffer"
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-};
-
 layout (location = 0) in vec3 vertex;
 layout (location = 1) in vec3 normal;
 layout (location = 4) in vec2 textureCoordinate;
@@ -20,9 +11,9 @@ layout (location = 2) out float Dot;
 
 
 vec2 shake() {
-	const float amount = sin( gameTick ) * shakeAmt;
-	const float xAmt = cos( gameTick * 1.5) * amount;
-	const float yAmt = sin( gameTick * 0.5f) * amount;
+	const float amount = sin( 1000.0f * gameWave ) * shakeLinear;
+	const float xAmt = cos( 1000.0f * gameWave * 1.5) * amount;
+	const float yAmt = sin( 1000.0f * gameWave * 0.5f) * amount;
 	return vec2(xAmt, yAmt) / 5.0f * amount;
 }
 

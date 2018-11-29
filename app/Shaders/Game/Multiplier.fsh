@@ -1,22 +1,6 @@
 /* Multiplier Shader. */
 #version 460
-layout (std430, binding = 8) readonly buffer BoardBuffer {	
-	uint types[12*6];
-	float gravityOffsets[12*6];
-	float lifeTick[12*6];
-	ivec2 playerCoords;
-	float heightOffset;
-	float excitement;
-	float shakeAmt;
-	float animTime;
-	float animScore;
-	int gameTick;
-	int score;
-	int highlightIndex;
-	int multiplier;
-	int stopTimer;
-	int gameTimer;
-};
+#package "Game\GameBuffer"
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in float NumberToRender;
@@ -34,11 +18,8 @@ void main()
 	const float ElementCount = 12.0f;
 	
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((NumberToRender * ElementWidth) / AtlasWidth), TexCoord.y);
-	
-	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 192.0) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(gameTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
-	const float pulseAmount = 1.5f - (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)));		
-	const vec3 boardColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), excitement);	
-	const vec4 DigitModifier = vec4(boardColor * pulseAmount, 1) * (multiplier > 1 ? 1.0f : 0.0f) * (UseBackdrop != 0 ? 0.5f : 1.0f);
+
+	const vec4 DigitModifier = vec4(colorScheme * calcPulseAmount(gl_FragCoord.y), 1) * (multiplier > 1 ? 1.0f : 0.0f) * (UseBackdrop != 0 ? 0.5f : 1.0f);
 	
 	const vec4 DigitColor = texture(Numbers, DigitIndex) * DigitModifier * ((NumberToRender >= -0.5f) ? 1.0f : 0.0f);
 	HeaderColor = DigitColor;

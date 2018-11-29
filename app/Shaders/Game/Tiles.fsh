@@ -2,20 +2,10 @@
 #version 460
 #package "Game\GameBuffer"
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-};
-
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in uint Type;
 layout (location = 2) flat in uint TileWaiting;
 layout (location = 3) flat in float LifeTick;
-layout (location = 4) flat in float Excitement;
 layout (location = 0) out vec4 FragColor;
 layout (binding = 0) uniform sampler2D TileTexture;
 layout (binding = 1) uniform sampler2D PlayerTexture;
@@ -61,16 +51,12 @@ vec4 calcTile_Background()
 
 vec4 calcTile_Player()
 {
-	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 1536.0f) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(gameTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
-	const float pulseAmount = 1.5f - (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)));		
-	const vec3 boardColor = mix(vec3(0,0.5,1), vec3(1,0,0.5), excitement);
-	return texture(PlayerTexture, TexCoord) * vec4( boardColor * pulseAmount, 1 );
+	return texture(PlayerTexture, TexCoord) * vec4( colorScheme * calcPulseAmount(gl_FragCoord.y), 1 );
 }
 
 vec4 calcTile_Regular()
 {	
-	const float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 768.0f) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(gameTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
-	const float pulseAmount =  1.0f - ((1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt))));
+	const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
 	const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
 	
 	// Blinking on death
@@ -80,7 +66,7 @@ vec4 calcTile_Regular()
 	const float colorSaturation = smoothStop6(linearLife);
 	
 	// Vary illumination amount based on board excitement
-	const float quarterExcitement = Excitement / 4.0f;
+	const float quarterExcitement = excitementLinear / 4.0f;
 	const float texDistance = distance(TexCoord, vec2(0.5f));
 	const float range = 1.0f / (0.7f + pulseAmount);	
 	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range); 	
@@ -99,8 +85,8 @@ vec4 calcTile_Regular()
 
 vec4 calcTile_Waiting()
 {
-	// Vary illumination amount based on board excitement
-	const float quarterExcitement = Excitement / 4.0f;
+	// Vary illumination amount based on board excitementLinear
+	const float quarterExcitement = excitementLinear / 4.0f;
 	const float texDistance = distance(TexCoord, vec2(0.5f));
 	const float Radius = 0.75f + quarterExcitement;
 	const float range = 1.0f / Radius;	

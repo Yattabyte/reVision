@@ -24,12 +24,11 @@ void main()
 		const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		FooterColor = texture(Numbers, DigitIndex);
 	}
-	float waveAmt = 0.5f * sin((-length(gl_FragCoord.y / 128) * (2.0f + (excitement * 8.0))  ) + (2.0f * (float(gameTick) / 750.0) - 1.0f) * 3.1415f * (2.0f + (excitement * 8.0))) + 0.5f;
+	FooterColor *= vec4(colorScheme * calcPulseAmount(gl_FragCoord.y), 1) * timeAnimLinear;
 	if (stopTimer >= 0) {
-		const float blinkSpeed = 33.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
-		waveAmt = sin( blinkSpeed * (2.0f * (float(gameTick) / 750.0f) - 1.0f) * 3.1415f );
+		const float blinkSpeed = 10.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
+		const float waveAmt = sin( blinkSpeed * gameWave * M_PI );
+		const float pulseAmount = (1.0f - ((1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
+		FooterColor.xyz = mix(FooterColor.xyz, vec3(1.0, 0.0, 0.0), pulseAmount);	
 	}
-	const float pulseAmount = (0.75f - (0.25f * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
-	const vec3 textColor = mix(vec3(1.0), vec3(1.0, 0.5, 0.0),  pulseAmount*pulseAmount);	
-	FooterColor *= vec4(textColor, 1) * animTime;
 }

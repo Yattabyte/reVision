@@ -1,7 +1,6 @@
 /* Score Shader. */
 #version 460
 #package "Game\GameBuffer"
-#define M_PI 3.1415926535897932384626433832795
 
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
@@ -14,7 +13,6 @@ layout (location = 4) uniform uint scoreLength;
 
 
 const float NUM_CHARS = 8.0f;
-const float SCORE_ROTATE_TICK = 750.0F;
 
 void main()
 {
@@ -30,13 +28,13 @@ void main()
 		HighlightAmount = 1.0f;		
 		
 	// This matrix stretches the unit row of blocks to the scale of 3
-	const float tileSize = ((3.0f / NUM_CHARS) + (HighlightAmount * 0.025f)) * (128.0f - (10.0f * multiplier * animScore));
+	const float tileSize = ((3.0f / NUM_CHARS) + (HighlightAmount * 0.025f)) * (128.0f - (10.0f * multiplier * scoreAnimLinear));
 	const vec2 offsetMatrix = vec2(0.3, -0.1) * 0.65f * UseBackdrop;
 	const mat4 scoreScaleMat = mat4(
 		vec4(tileSize, 0.0, 0.0, 0.0),
 		vec4(0.0, tileSize, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),
-		vec4((vec2(50, -10) * (multiplier/10.0f)) + (vec2(125, -50) * animScore), 0.0, 1.0)
+		vec4((vec2(50, -10) * (multiplier/10.0f)) + (vec2(125, -50) * scoreAnimLinear), 0.0, 1.0)
 	);
 	// This matrix centers the posiotion of the tiles withom the row
 	const mat4 scoreTransMat = mat4(
@@ -45,15 +43,5 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(vec2(1.0F + (modInstance * 2.0F) - scoreLength, 0.0) + offsetMatrix, 0.0, 1.0)
 	);
-	const float angle = sin((2.0f * (float(gameTick) / SCORE_ROTATE_TICK) - 1.0f) * M_PI) * 0.0625F;
-	const vec3 axis = vec3(0,0,1);
-	const float s = sin(angle);
-    const float c = cos(angle);
-    const float oc = 1.0 - c;    
-    const mat4 scoreRotMat = mat4(
-		oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-		oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-        oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-        0.0,        0.0,                                0.0,                                1.0);	
-	gl_Position = orthoProj * scoreScaleMat * scoreRotMat * scoreTransMat * vec4(vertex.xy, 0, 1);
+	gl_Position = orthoProj * scoreScaleMat * scoreTransMat * vec4(vertex.xy, 0, 1);
 }

@@ -2,21 +2,11 @@
 #version 460
 #package "Game\GameBuffer"
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-};
-
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out uint Type;
 layout (location = 2) flat out uint TileWaiting;
 layout (location = 3) flat out float LifeTick;
-layout (location = 4) flat out float Excitement;
 layout (location = 0) uniform mat4 orthoProj;
 
 
@@ -42,7 +32,6 @@ void main()
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6)) {
 		LifeTick = lifeTick[gl_InstanceID];
-		Excitement = excitement;		
 		const float linearLife = clamp(LifeTick / TILE_POPPING, 0.0f, 1.0f);
 		const float deathScl = mix(1.0f, 0.675f, smoothStart6(linearLife));
 		tileTransform = mat4(
