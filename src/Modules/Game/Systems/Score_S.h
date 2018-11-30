@@ -103,6 +103,61 @@ private:
 
 
 	// Private Methods
+	/** Determines which scored tiles are next to each other.
+	@param		tileSet	the set of tiles to act on.
+	@return		a vector of tile adjacency information. */
+	std::vector<TileAdj> getAdjacency(const std::vector<XY> & tileSet) {
+		std::vector<TileAdj> adj(tileSet.size());
+		for (size_t n = 0; n < tileSet.size(); ++n) {
+			const auto & x = tileSet[n].x;
+			const auto & y = tileSet[n].y;
+
+
+			for (size_t m = 0; m < tileSet.size(); ++m) {
+				const auto & mx = tileSet[m].x;
+				const auto & my = tileSet[m].y;
+				if (mx == x && my == y)
+					continue;
+
+				/*				
+					[ ][ ][ ]
+					[ ][+][ ]
+					[+][+][+]
+				*/
+				if (mx == x - 1 && my == y - 1)
+					adj[n].scored[0][0] = true;
+				if (mx == x		&&	my == y - 1)
+					adj[n].scored[0][1] = true;
+				if (mx == x + 1	&&	my == y - 1)
+					adj[n].scored[0][2] = true;
+
+				/*
+					[ ][ ][ ]
+					[+][+][+]
+					[ ][ ][ ]
+				*/
+				if (mx == x - 1	&&	my == y)
+					adj[n].scored[1][0] = true;
+				if (mx == x		&&	my == y)
+					adj[n].scored[1][1] = true;
+				if (mx == x + 1	&&	my == y)
+					adj[n].scored[1][2] = true;
+
+				/*
+					[+][+][+]
+					[ ][+][ ]
+					[ ][ ][ ]
+				*/
+				if (mx == x - 1	&&	my == y + 1)
+					adj[n].scored[2][0] = true;
+				if (mx == x		&&	my == y + 1)
+					adj[n].scored[2][1] = true;
+				if (mx == x + 1	&&	my == y + 1)
+					adj[n].scored[2][2] = true;
+			}
+		}
+		return adj;
+	}
 	/** Iterates over a scoring manifold, checking if any of its tiles are involved in any horizontal matches.
 	@param		board		the board containing the tiles of interest.
 	@param		series		the scoring manifold referencing the active tiles to check againts.
@@ -215,7 +270,8 @@ private:
 				for each (const auto & xy in matchingSet)
 					combinedManifold.push_back(xy);
 			combinedManifold.sort();
-			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));			
+			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));	
+			score.m_scoredAdjacency.push_back(getAdjacency(combinedManifold));
 			score.m_comboChanged = true;
 		}
 	}
@@ -278,14 +334,12 @@ private:
 		for (int y = 1; y < 12; ++y)
 			for (int x = 0; x < 6; ++x) {
 				auto & xTile = board.m_tiles[y][x];
-				if (xTile.m_scoreType != TileState::UNMATCHED) {
-					if (xTile.m_scoreType == TileState::MATCHED) {
-						if (xTile.m_tick >= TickCount_Popping) {
-							addScore(score, 10);
-							xTile.m_scoreType = TileState::SCORED;
-						}
+				if (xTile.m_scoreType == TileState::MATCHED) {
+					if (xTile.m_tick >= TickCount_Popping) {
+						addScore(score, 10);
+						xTile.m_scoreType = TileState::SCORED;
 					}
-					board.m_data->data->lifeTick[(y * 6) + x] = ++xTile.m_tick;
+					board.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
 				}
 			}
 		
@@ -300,14 +354,15 @@ private:
 					break;
 				}
 			if (allPopped) {
-				// Reset the tiles, make them background spaces
+				// Reset the tiles and make them background spaces
 				for each (const auto & xy in pair.first) {
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
 					board.m_tiles[xy.y][xy.x].m_tick = 0;
-					board.m_data->data->lifeTick[(xy.y * 6) + xy.x] = 0.0f;
+					board.m_data->data->lifeLinear[(xy.y * 6) + xy.x] = 0.0f;
 				}
 				score.m_scoredTiles.erase(score.m_scoredTiles.begin() + x);
+				score.m_scoredAdjacency.erase(score.m_scoredAdjacency.begin() + x);
 				x--;
 			}
 		}

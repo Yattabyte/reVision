@@ -9,6 +9,8 @@
 
 /** Holds an int coordinate pair. */
 struct XY { int x, y; };
+/** Holds tile adjaceny information. */
+struct TileAdj { bool scored[3][3] = { false, false, false, false, false, false, false, false, false }; };
 /** A component representing a basic player. */
 struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	int m_score = 0;
@@ -19,6 +21,7 @@ struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	int m_timerAnimationTick = 0;
 	bool m_comboChanged = false;
 	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
+	std::vector<std::vector<TileAdj>> m_scoredAdjacency;
 };
 /** A constructor to aid in creation. */
 struct GameScore_Constructor : ECSComponentConstructor<GameScore_Component> {

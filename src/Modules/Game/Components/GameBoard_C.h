@@ -26,7 +26,7 @@ struct TileState {
 struct BoardBuffer {
 	unsigned int types[12 * 6];
 	float gravityOffsets[12 * 6];
-	float lifeTick[12 * 6];
+	float lifeLinear[12 * 6];
 	glm::vec3 colorScheme = glm::vec3(0.0f); float pad1;
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
@@ -75,7 +75,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 			for (int x = 0; x < 6; ++x) {
 				component->m_data->data->types[dataIndex] = TileState::TileType::NONE;
 				component->m_data->data->gravityOffsets[dataIndex] = 0.0f;
-				component->m_data->data->lifeTick[++dataIndex] = 0.0f;
+				component->m_data->data->lifeLinear[++dataIndex] = 0.0f;
 			}
 		/*
 			  C
@@ -84,8 +84,7 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 			CEDDB
 			EBBCDB			
 			AAABCC
-		*/			
-		
+		*/		
 		component->m_tiles[0][0].m_type = TileState::A;
 		component->m_tiles[0][1].m_type = TileState::A;
 		component->m_tiles[0][2].m_type = TileState::A;
