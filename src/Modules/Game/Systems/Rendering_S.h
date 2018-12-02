@@ -22,11 +22,11 @@ class Rendering_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Rendering_System() = default;
-	Rendering_System(Engine * engine) {
+	Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
 		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);
-
+		
 		m_vaoModels = &engine->getModelManager().getVAO();
 
 		// For rendering tiles to the board
@@ -295,7 +295,7 @@ public:
 			
 			// Render all of the textures onto the board model
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
+			glBindFramebuffer(GL_FRAMEBUFFER, m_lightingFBOID);
 			glBindVertexArray(*m_vaoModels);
 			m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_shaderBoard->bind();
@@ -330,7 +330,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	GLuint m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
+	GLuint m_lightingFBOID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_orthoProjField, m_orthoProjHeader;
 	Shared_Asset_Primitive m_shapeQuad;

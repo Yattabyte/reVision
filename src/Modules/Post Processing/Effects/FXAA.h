@@ -2,7 +2,7 @@
 #ifndef FXAA_H
 #define FXAA_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -10,7 +10,7 @@
 
 
 /** A post-processing technique for applying fxaa to the currently bound 2D image. */
-class FXAA : public Effect_Base {
+class FXAA : public GFX_PP_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

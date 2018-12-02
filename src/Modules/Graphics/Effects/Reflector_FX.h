@@ -2,7 +2,7 @@
 #ifndef REFLECTOR_FX_H
 #define REFLECTOR_FX_H 
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
@@ -14,8 +14,8 @@
 #include "GLFW\glfw3.h"
 
 
-/** A core rendering effect which applies parallax-corrected local cubemaps to the scene. */
-class Reflector_Effect : public Effect_Base {
+/** A core-rendering technique which applies parallax-corrected local cubemaps to the scene. */
+class Reflector_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -109,7 +109,7 @@ protected:
 				reflector->m_outOfDate = false;
 				for (int x = 0; x < 6; ++x) {
 					graphics.setActiveCamera(reflector->m_Cameradata[x]->index);
-					graphics.renderFrame(deltaTime);
+					graphics.frameTick(deltaTime);
 
 					// Copy lighting frame into cube-face
 					m_lightingFBO->bindForReading();

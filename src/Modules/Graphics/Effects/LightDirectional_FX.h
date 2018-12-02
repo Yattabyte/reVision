@@ -2,7 +2,7 @@
 #ifndef LIGHTDIRECTIONAL_FX_H
 #define LIGHTDIRECTIONAL_FX_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Modules\Graphics\Systems\LightDirectional_S.h"
@@ -16,8 +16,8 @@
 #include <random>
 
 
-/** A core rendering effect which applies directional lighting to the scene. */
-class LightDirectional_Effect : public Effect_Base {
+/** A core-rendering technique which applies directional lighting to the scene. */
+class LightDirectional_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -203,7 +203,7 @@ private:
 	Shared_Asset_Primitive m_shapeQuad;	
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	ECSSystemList m_geometrySystems;
-	std::vector<Effect_Base*> m_geometryEffects;
+	std::vector<GFX_Core_Effect*> m_geometryEffects;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_bounceFBO = nullptr;
 	GLuint m_textureNoise32 = 0;
 	Directional_RenderState * m_renderState = nullptr;

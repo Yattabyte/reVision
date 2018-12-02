@@ -1,16 +1,16 @@
 #pragma once
-#ifndef EFFECT_BASE_H
-#define EFFECT_BASE_H
+#ifndef GFX_PP_EFFECT_H
+#define GFX_PP_EFFECT_H
 
 
-/** An interface for applying post processing effects in the rendering pipeline. */
-class Effect_Base {
+/** An interface for rendering post-processing effects. */
+class GFX_PP_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
-	virtual ~Effect_Base() = default;
+	virtual ~GFX_PP_Effect() = default;
 	/** Constructor. */
-	Effect_Base() = default;
+	GFX_PP_Effect() = default;
 
 
 	// Public Methods
@@ -27,4 +27,4 @@ protected:
 	bool m_enabled = true;
 };
 
-#endif // EFFECT_BASE_H
+#endif // GFX_PP_EFFECT_H

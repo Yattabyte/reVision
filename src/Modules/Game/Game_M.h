@@ -23,7 +23,7 @@ public:
 	// Public Methods
 	/** Increments the game simulation by a single tick. 
 	@param		deltaTime		the delta time. */
-	void tickGame(const float & deltaTime);
+	void frameTick(const float & deltaTime);
 
 
 private:

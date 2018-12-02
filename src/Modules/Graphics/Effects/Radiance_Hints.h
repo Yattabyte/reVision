@@ -2,7 +2,7 @@
 #ifndef RADIANCE_HINTS_H
 #define RADIANCE_HINTS_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Modules\Graphics\Common\RH_Volume.h"
 #include "Modules\Graphics\Common\FBO_LightBounce.h"
 #include "Assets\Asset_Shader.h"
@@ -13,8 +13,8 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
-class Radiance_Hints : public Effect_Base {
+/** A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
+class Radiance_Hints : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

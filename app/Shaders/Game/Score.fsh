@@ -19,10 +19,12 @@ void main()
 	const float ElementWidth = float(Size.x / ElementCount);
 	
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((NumberToRender * ElementWidth) / AtlasWidth), TexCoord.y);
-	
-	vec4 DigitModifier = vec4(mix(colorScheme * calcPulseAmount(gl_FragCoord.y), vec3(0,1,0), HighlightAmount), 1);
+	const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
+	const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI);
+	const vec3 greenColor = vec3(0, 1.0F / M_PI, 0) * pulseAmount * (multiplier + 1);
+	vec4 DigitModifier = vec4(mix(boardColor, greenColor, HighlightAmount), 1);
 	if (UseBackdrop != 0)
-		DigitModifier.xyz *= 0.25f;
+		DigitModifier.xyz *= 0.5f;
 	
 	const vec4 DigitColor = texture(Numbers, DigitIndex) * DigitModifier * ((NumberToRender >= -0.5f) ? 1.0f : 0.0f);
 	HeaderColor = DigitColor;

@@ -168,6 +168,7 @@ Engine::Engine() :
 	registerECSConstructor("Transform_Component", new Transform_Constructor());
 	m_inputBindings.loadFile("binds");
 	m_moduleGraphics.initialize(this);
+	m_modulePProcess.initialize(this);
 	m_modulePhysics.initialize(this);
 	m_moduleWorld.initialize(this);
 	m_moduleGame.initialize(this);
@@ -207,19 +208,20 @@ void Engine::tick()
 	// Update input
 	updateInput(deltaTime);
 
-	/*********************
-	--- Update Modules ---
-	*********************/
+	/*******************
+	--- Tick Modules ---
+	*******************/
 	// Logic depending on state of the world
 	if (m_moduleWorld.checkIfLoaded()) 
 		// Update physics
-		m_modulePhysics.physicsFrame(deltaTime);	
+		m_modulePhysics.frameTick(deltaTime);	
 	// Update graphics
-	m_moduleGraphics.setActiveCamera(0);
-	m_moduleGraphics.renderFrame(deltaTime);
+	m_moduleGraphics.setActiveCamera(0); // MAYBE MOVE THIS UP?????????
+	m_moduleGraphics.frameTick(deltaTime);
 	// Update game
-	m_moduleGame.tickGame(deltaTime);
-
+	m_moduleGame.frameTick(deltaTime);
+	// Post Processing
+	m_modulePProcess.frameTick(deltaTime);
 
 	// End Frame
 	glfwSwapBuffers(m_renderingContext.window);

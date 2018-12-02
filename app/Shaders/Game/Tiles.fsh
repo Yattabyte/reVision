@@ -60,9 +60,9 @@ vec4 calcTile_Regular()
 		
 	// Final Appaearance
 	return tileAppearance * mix(	
-		vec4(tileColors[Type] * (1.0f - attenuationFactor), 1) + attenuationFactor, 
+		vec4(tileColors[Type], 1), 
 		vec4(1.0f), 
-		smoothStop6(TileLifeLinear) + attenuationFactor // desaturation amount
+		smoothStop6(TileLifeLinear) // desaturation amount
 	);
 }
 

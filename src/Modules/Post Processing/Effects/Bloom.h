@@ -2,20 +2,17 @@
 #ifndef BLOOM_H
 #define BLOOM_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Modules\Graphics\Common\VisualFX.h"
+#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
 #include "Engine.h"
 
 
 class Lighting_FBO;
-class VisualFX;
 
-/** A post processing technique for generating bloom from a lighting buffer. */
-class Bloom : public Effect_Base {
+/** A post-processing technique for generating bloom from a lighting buffer. */
+class Bloom : public GFX_PP_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -29,11 +26,12 @@ public:
 		glDeleteTextures(2, m_textureIDS_GB); 
 	}
 	/** Constructor. */
-	Bloom(Engine * engine, FBO_Base * lightingFBO, VisualFX * visualFX) 
-		: m_engine(engine), m_lightingFBO(lightingFBO), m_visualFX(visualFX) {
+	Bloom(Engine * engine, const GLuint & lightingFBOID, const GLuint & lightingTexID)
+		: m_engine(engine), m_lightingFBOID(lightingFBOID), m_lightingTexID(lightingTexID) {
 		// Asset Loading
 		m_shaderBloomExtract = Asset_Shader::Create(m_engine, "Effects\\Bloom Extraction");
 		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
+		m_shaderGB = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
 
 		// Asset-Finished Callbacks
@@ -83,23 +81,55 @@ public:
 			engine->getMessageManager().error("Bloom Gaussian blur texture #1 [0] is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[1]))
 			engine->getMessageManager().error("Bloom Gaussian blur texture #2 [1] is incomplete.");
+		glCreateFramebuffers(1, &m_fbo_GB);
 	}
 
 
 	// Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime ) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet())
+		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;
 		// Extract bright regions from lighting buffer
 		m_shaderBloomExtract->bind();
-		m_lightingFBO->bindForReading();
+		glBindTextureUnit(0, m_lightingTexID);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Blur bright regions
-		m_visualFX->applyGaussianBlur(m_textureID, m_textureIDS_GB, m_renderSize, m_bloomStrength);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbo_GB);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, m_textureIDS_GB[0], 0);
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT1, m_textureIDS_GB[1], 0);
+
+		// Read from desired texture, blur into this frame buffer
+		bool horizontal = false;
+		glBindTextureUnit(0, m_textureID);
+		glBindTextureUnit(1, m_textureIDS_GB[0]);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+		m_shaderGB->bind();
+		m_shaderGB->setUniform(0, horizontal);
+		m_shaderGB->setUniform(1, glm::vec2(m_renderSize));
+
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Blur remainder of the times minus 1
+		glBindTextureUnit(0, m_textureIDS_GB[1]);
+		for (int i = 1; i < m_bloomStrength - 1; i++) {
+			horizontal = !horizontal;
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+			m_shaderGB->setUniform(0, horizontal);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		}
+
+		// Last blur back into desired texture
+		horizontal = !horizontal;
+		glNamedFramebufferTexture(m_fbo_GB, GL_COLOR_ATTACHMENT0, m_textureID, 0);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+		m_shaderGB->setUniform(0, horizontal);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Re-attach our bloom texture (was detached to allow for convolution)
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
@@ -108,13 +138,14 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		m_lightingFBO->bindForWriting();
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_lightingFBOID);
 		glBindTextureUnit(0, m_textureID);
 		m_shaderCopy->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);
+		glBindTextureUnit(0, m_lightingTexID);
 	}
 
 
@@ -138,12 +169,10 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_lightingFBO = nullptr;
-	VisualFX * m_visualFX = nullptr;
-	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy;
+	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
 	Shared_Asset_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
-	GLuint m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 };
+	GLuint m_lightingFBOID = 0, m_lightingTexID = 0, m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 }, m_fbo_GB = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	int m_bloomStrength = 5;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

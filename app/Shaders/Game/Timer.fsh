@@ -24,8 +24,10 @@ void main()
 		const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		FooterColor = texture(Numbers, DigitIndex);
 	}
-	FooterColor *= vec4(colorScheme * calcPulseAmount(gl_FragCoord.y), 1) * timeAnimLinear;
-	if (stopTimer >= 0) {
+	FooterColor *= vec4(colorScheme, 1) * timeAnimLinear;
+	if (stopTimer < 0) 
+		FooterColor.xyz *= calcPulseAmount(gl_FragCoord.y);
+	else {
 		const float blinkSpeed = 10.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
 		const float waveAmt = sin( blinkSpeed * gameWave * M_PI );
 		const float pulseAmount = (1.0f - ((1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));

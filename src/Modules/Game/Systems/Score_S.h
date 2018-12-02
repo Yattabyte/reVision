@@ -47,7 +47,7 @@ public:
 
 			// Animate score climbing
 			if ((score.m_score - board.m_data->data->score) > 0)
-				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 2);
+				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 1);
 			else
 				score.m_lastScore = score.m_score;
 			// Highlight digits that are changing

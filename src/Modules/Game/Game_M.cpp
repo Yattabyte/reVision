@@ -26,7 +26,7 @@ void Game_Module::initialize(Engine * engine)
 	//m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
 
 	// Rendering Systems
-	m_renderingSystem = new Rendering_System(engine);
+	m_renderingSystem = new Rendering_System(m_engine, m_engine->getGraphicsModule().getLightingFBOID());
 
 	// Component Constructors
 	m_engine->registerECSConstructor("GameBoard_Component", new GameBoard_Constructor(&m_engine->getGameModule().m_boardBuffer));
@@ -34,7 +34,7 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->registerECSConstructor("Player_Component", new Player_Constructor());
 }
 
-void Game_Module::tickGame(const float & deltaTime)
+void Game_Module::frameTick(const float & deltaTime)
 {	
 	// Update Game
 	m_timeAccumulator += deltaTime;

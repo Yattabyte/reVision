@@ -2,7 +2,7 @@
 #ifndef PROPSHADOWING_FX_H
 #define PROPSHADOWING_FX_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Modules\Graphics\Systems\PropShadowing_S.h"
@@ -10,8 +10,9 @@
 #include "Engine.h"
 #include "GLFW\glfw3.h"
 
-/** A core rendering effect which renders prop geometry to the active shadow map. */
-class PropShadowing_Effect : public Effect_Base {
+
+/** A core-rendering technique which renders prop geometry to the active shadow map. */
+class PropShadowing_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

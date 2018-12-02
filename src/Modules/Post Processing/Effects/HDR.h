@@ -2,7 +2,7 @@
 #ifndef HDR_H
 #define HDR_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\StaticBuffer.h"
@@ -11,7 +11,7 @@
 
 
 /** A post-processing technique for tone-mapping and gamma correcting the final lighting product. */
-class HDR : public Effect_Base {
+class HDR : public GFX_PP_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -24,8 +24,8 @@ public:
 		glDeleteTextures(1, &m_textureID);
 	}
 	/** Constructor. */
-	HDR(Engine * engine, FBO_Base * lightingFBO)
-	: m_engine(engine), m_lightingFBO(lightingFBO) {
+	HDR(Engine * engine)
+	: m_engine(engine) {
 		// Asset Loading
 		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
 		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
@@ -76,7 +76,7 @@ public:
 		m_shaderHDR->bind();
 		m_shaderHDR->setUniform(0, 1.0f);
 		m_shaderHDR->setUniform(1, m_gamma);
-		m_lightingFBO->bindForReading();
+		// Use the currently bound framebuffer from the prior effect
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);	
@@ -99,7 +99,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_lightingFBO = nullptr;
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	float m_gamma = 1.0f;

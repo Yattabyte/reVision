@@ -2,7 +2,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Cubemap.h"
 #include "Assets\Asset_Primitive.h"
@@ -11,8 +11,8 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for writing the frame time to the screen. */
-class Skybox : public Effect_Base {
+/** A core-rendering technique for writing the frame time to the screen. */
+class Skybox : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

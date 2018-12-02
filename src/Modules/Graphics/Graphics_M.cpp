@@ -35,11 +35,6 @@
 #include "Modules\Graphics\Effects\Radiance_Hints.h"
 #include "Modules\Graphics\Effects\Join_Reflections.h"
 #include "Modules\Graphics\Effects\SSR.h"
-#include "Modules\Graphics\Effects\Bloom.h"
-#include "Modules\Graphics\Effects\HDR.h"
-#include "Modules\Graphics\Effects\FXAA.h"
-#include "Modules\Graphics\Effects\To_Screen.h"
-#include "Modules\Graphics\Effects\Frametime_Counter.h"
 
 
 void Graphics_Module::initialize(Engine * engine)
@@ -154,11 +149,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
 	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Bloom(m_engine, &m_lightingFBO, &m_visualFX));
-	m_fxTechs.push_back(new HDR(m_engine, &m_lightingFBO));
-	m_fxTechs.push_back(new FXAA(m_engine));
-	m_fxTechs.push_back(new To_Screen(m_engine));
-	m_fxTechs.push_back(new Frametime_Counter(m_engine));
+	
 
 	auto & world = m_engine->getWorldModule();
 	world.addLevelListener(&lightPoint->m_renderState.m_outOfDate);
@@ -177,7 +168,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_engine->registerECSConstructor("Reflector_Component", new Reflector_Constructor(&m_cameraBuffer, &reflectorEffect->m_reflectorBuffer, &reflectorEffect->m_envmapFBO));
 }
 
-void Graphics_Module::renderFrame(const float & deltaTime)
+void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Update rendering pipeline
 	static GLsync fence = nullptr;

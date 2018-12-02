@@ -2,7 +2,7 @@
 #ifndef FRAMETIME_COUNTER_H
 #define FRAMETIME_COUNTER_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
@@ -12,7 +12,7 @@
 
 
 /** A post-processing technique for writing the frame time to the screen. */
-class Frametime_Counter : public Effect_Base {
+class Frametime_Counter : public GFX_PP_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

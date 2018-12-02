@@ -23,7 +23,7 @@ public:
 	// Public Methods
 	/** Updates the physics simulation by a single frame
 	@param	deltaTime	the amount of time passed since last frame */
-	void physicsFrame(const float & deltaTime);
+	void frameTick(const float & deltaTime);
 	/** Returns a pointer to the physics-world.
 	@return				the physics world. */
 	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }

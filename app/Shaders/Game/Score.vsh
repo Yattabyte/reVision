@@ -29,7 +29,7 @@ void main()
 		
 	// This matrix stretches the unit row of blocks to the scale of 3
 	const float tileSize = ((3.0f / NUM_CHARS) + (HighlightAmount * 0.025f)) * (128.0f - (10.0f * (multiplier - 1.0f) * scoreAnimLinear));
-	const vec2 offsetMatrix = vec2(0.4, -0.2) * 0.65f * UseBackdrop;
+	const vec2 offsetMatrix = vec2(0.2, -0.2) * 0.65f * UseBackdrop;
 	const mat4 scoreScaleMat = mat4(
 		vec4(tileSize, 0.0, 0.0, 0.0),
 		vec4(0.0, tileSize, 0.0, 0.0),

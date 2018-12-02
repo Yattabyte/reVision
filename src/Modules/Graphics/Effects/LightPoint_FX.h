@@ -2,7 +2,7 @@
 #ifndef LIGHTPOINT_FX_H
 #define LIGHTPOINT_FX_H 
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Modules\Graphics\Systems\LightPoint_S.h"
@@ -14,8 +14,8 @@
 #include "GLFW\glfw3.h"
 
 
-/** A core rendering effect which applies point lighting to the scene. */
-class LightPoint_Effect : public Effect_Base {
+/** A core-rendering technique which applies point lighting to the scene. */
+class LightPoint_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -172,7 +172,7 @@ private:
 	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Asset_Primitive m_shapeSphere;	
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
-	std::vector<Effect_Base*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
+	std::vector<GFX_Core_Effect*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr;
 	Point_RenderState * m_renderState;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

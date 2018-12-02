@@ -2,7 +2,7 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Assets\Asset_Texture.h"
@@ -11,8 +11,8 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for deriving extra reflection information from the viewport itself. */
-class SSR : public Effect_Base {
+/** A core-rendering technique for deriving extra reflection information from the viewport itself. */
+class SSR : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

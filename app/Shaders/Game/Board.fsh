@@ -17,7 +17,9 @@ void main()
 	switch (Index) {
 	case 0:		
 		const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
-		FragColor = vec4( (colorScheme * pulseAmount * Dot) + (colorScheme * pulseAmount * 0.1f), 1 );
+		const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI) * Dot;
+		FragColor = vec4( boardColor, 1 );
+		FragColor.xyz += (FragColor.xyz * excitementLinear) * multiplier;
 		break;
 	case 1:
 		FragColor = texture(BoardTexture, TexCoord);
@@ -29,6 +31,4 @@ void main()
 		FragColor = vec4(texture(TimeTexture, TexCoord).xyz, 1);
 		break;
 	};
-	if (FragColor.a <= 0.5f)
-		FragColor.a = 0.5f;
 }

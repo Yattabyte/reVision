@@ -2,7 +2,7 @@
 #ifndef JOIN_REFLECTIONS_H
 #define JOIN_REFLECTIONS_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
+#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Texture.h"
 #include "Assets\Asset_Primitive.h"
@@ -11,8 +11,8 @@
 #include "Engine.h"
 
 
-/** A post-processing technique for writing the final scene reflections back into the lighting. */
-class Join_Reflections : public Effect_Base {
+/** A core-rendering technique for writing the final scene reflections back into the lighting. */
+class Join_Reflections : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */

@@ -34,7 +34,7 @@ void Physics_Module::initialize(Engine * engine)
 	m_engine->registerECSConstructor("Collider_Component", new Collider_Constructor(m_engine));
 }
 
-void Physics_Module::physicsFrame(const float & deltaTime)
+void Physics_Module::frameTick(const float & deltaTime)
 {
 	m_world->stepSimulation(deltaTime);
 	m_engine->getECS().updateSystems(m_physicsSystems, deltaTime);
