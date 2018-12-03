@@ -54,8 +54,8 @@ public:
 			
 			// Tick row-climbing
 			if (!(score.m_scoredTiles.size()) && score.m_stopTimer < 0) {
-				board.m_rowClimbTick++;
-				if (board.m_rowClimbTick >= TickCount_NewLine && !(score.m_scoredTiles.size())) 
+				board.m_rowClimbTick += 1.0 + (double(score.m_level - 1) * 0.1f);
+				if (board.m_rowClimbTick >= double(TickCount_NewLine) && !(score.m_scoredTiles.size())) 
 					pushNewRow(board, score);				
 			}
 
@@ -82,9 +82,9 @@ public:
 			// Synchronize component data to GPU
 			board.m_gameTick = ++board.m_gameTick > (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) ? 0 : board.m_gameTick;
 			board.m_data->data->gameWave = 2.0f * float(board.m_gameTick) / (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) - 1.0f;
-			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.0005f));
+			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.001f));
 			board.m_data->data->colorScheme = glm::mix(glm::vec3(0, 0.5, 1), glm::vec3(1, 0, 0.5), board.m_data->data->excitementLinear);
-			board.m_data->data->heightOffset = 2.0f * (board.m_rowClimbTick / (float)TickCount_NewLine);
+			board.m_data->data->heightOffset = 2.0f * (float(board.m_rowClimbTick) / (float)TickCount_NewLine);
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)
 					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
@@ -131,7 +131,7 @@ private:
 			for (int x = 0; x < 6; ++x)
 				board.m_tiles[0][x] = TileState(TileState::TileType(m_tileDistributor(m_tileGenerator)));
 
-			board.m_rowClimbTick = 0;
+			board.m_rowClimbTick = 0.0;
 			score.m_stopTimeTick = 0;
 			score.m_stopTimer = -1;
 		}

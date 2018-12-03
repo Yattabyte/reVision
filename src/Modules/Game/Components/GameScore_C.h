@@ -19,6 +19,11 @@ struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	int m_stopTimer = -1;
 	int m_multiplier = 0;
 	int m_timerAnimationTick = 0;
+	int m_level = 1;
+	int m_tilesCleared = 0;
+	int m_levelUpTick = 0;
+	float m_levelLinear = 0.0f;
+	float m_levelUpLinear = 0.0f;
 	bool m_comboChanged = false;
 	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
 	std::vector<std::vector<TileAdj>> m_scoredAdjacency;

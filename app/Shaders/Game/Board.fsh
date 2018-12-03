@@ -7,9 +7,10 @@ layout (location = 1) flat in int Index;
 layout (location = 2) in float Dot;
 layout (location = 0) out vec4 FragColor;
 
-layout (binding = 0) uniform sampler2D BoardTexture;
-layout (binding = 1) uniform sampler2D ScoreTexture;
-layout (binding = 2) uniform sampler2D TimeTexture;
+layout (binding = 0) uniform sampler1D BorderTexture;
+layout (binding = 1) uniform sampler2D BoardTexture;
+layout (binding = 2) uniform sampler2D ScoreTexture;
+layout (binding = 3) uniform sampler2D TimeTexture;
 
 
 void main()
@@ -19,7 +20,8 @@ void main()
 		const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
 		const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI) * Dot;
 		FragColor = vec4( boardColor, 1 );
-		FragColor.xyz += (FragColor.xyz * excitementLinear) * multiplier;
+		FragColor.xyz += (FragColor.xyz * excitementLinear) * multiplier;			
+		FragColor = vec4(texture(BorderTexture, TexCoord.y).xyz * Dot, 1);
 		break;
 	case 1:
 		FragColor = texture(BoardTexture, TexCoord);

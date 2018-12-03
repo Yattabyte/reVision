@@ -33,7 +33,17 @@ public:
 		m_orthoProjField = glm::ortho<float>(0, tileSize * 6, 0, tileSize * 12, -1, 1);
 		m_orthoProjHeader = glm::ortho<float>(-384, 384, -96, 96, -1, 1);
 
-		// Board FBO & Texture Creation
+		// FBO & Texture Creation
+		glCreateFramebuffers(1, &m_fboIDBorder);
+		glCreateTextures(GL_TEXTURE_1D, 1, &m_borderTexID);
+		glTextureImage1DEXT(m_borderTexID, GL_TEXTURE_1D, 0, GL_RGBA16F, tileSize * 16, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureParameteri(m_borderTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTextureParameteri(m_borderTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_borderTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+		glTextureParameterf(m_borderTexID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+		glNamedFramebufferTexture(m_fboIDBorder, GL_COLOR_ATTACHMENT0, m_borderTexID, 0);
+		glNamedFramebufferDrawBuffer(m_fboIDBorder, GL_COLOR_ATTACHMENT0);
+
 		glCreateFramebuffers(1, &m_fboIDField);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_boardTexID);
 		glTextureImage2DEXT(m_boardTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, tileSize * 6, tileSize * 12, 0, GL_RGBA, GL_FLOAT, NULL);
@@ -65,6 +75,8 @@ public:
 
 		// Error Reporting
 		GLenum Status = glCheckNamedFramebufferStatus(m_fboIDField, GL_FRAMEBUFFER);
+		if (!glIsTexture(m_borderTexID))
+			engine->getMessageManager().error("Game Border Texture is incomplete.");
 		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
 		//	engine->getMessageManager().error("Game Board Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
 		if (!glIsTexture(m_boardTexID))
@@ -80,6 +92,7 @@ public:
 		m_modelField = Asset_Model::Create(engine, "Game\\boardField.obj");
 		m_modelHeader = Asset_Model::Create(engine, "Game\\boardTop.obj");
 		m_modelFooter = Asset_Model::Create(engine, "Game\\boardBottom.obj");
+		m_shaderBorder = Asset_Shader::Create(engine, "Game\\Border", true);
 		m_shaderBoard = Asset_Shader::Create(engine, "Game\\Board", true);
 		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles", true);
 		m_shaderMatchedTiles = Asset_Shader::Create(engine, "Game\\Matched", true);
@@ -103,6 +116,8 @@ public:
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint & quadSize = (GLuint)m_shapeQuad->getSize();
 			// count, primCount, first, reserved
+			const GLuint borderData[4] = { quadSize, 1, 0, 0 };
+			m_bufferIndirectBorder = StaticBuffer(sizeof(GLuint) * 4, borderData, 0);
 			const GLuint tileData[4] = { quadSize, (12 * 6) + 2, 0, 0 };
 			m_bufferIndirectTiles = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
 			const GLuint tileScoreData[4] = { quadSize, 0, 0, 0 };
@@ -236,13 +251,23 @@ public:
 			const GLuint scoreCount = (GLuint)score.m_scoredTiles.size();
 			m_bufferIndirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
 
-			// Prepare center FBO
-			glViewport(0, 0, tileSize * 6, tileSize * 12);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDField);
+			// Render level XP to border FBO
+			glViewport(0, 0, tileSize * 16, 1);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBorder);
 			glClear(GL_COLOR_BUFFER_BIT);
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+			m_shaderBorder->bind();
+			m_shaderBorder->setUniform(0, score.m_levelLinear);
+			m_shaderBorder->setUniform(1, score.m_levelUpLinear);
+			m_bufferIndirectBorder.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+			// Prepare center FBO
+			glViewport(0, 0, tileSize * 6, tileSize * 12);
+			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDField);
+			glClear(GL_COLOR_BUFFER_BIT);
 
 			// Render Matched tiles to the FBO
 			m_shaderMatchedTiles->bind();
@@ -299,9 +324,10 @@ public:
 			glBindVertexArray(*m_vaoModels);
 			m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_shaderBoard->bind();
-			glBindTextureUnit(0, m_boardTexID);
-			glBindTextureUnit(1, m_scoreTexID);
-			glBindTextureUnit(2, m_timeTexID);
+			glBindTextureUnit(0, m_borderTexID);
+			glBindTextureUnit(1, m_boardTexID);
+			glBindTextureUnit(2, m_scoreTexID);
+			glBindTextureUnit(3, m_timeTexID);
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, 4, 0);
 
 			// End
@@ -330,9 +356,8 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	GLuint m_lightingFBOID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	glm::mat4 m_orthoProjField, m_orthoProjHeader;
+	GLuint m_lightingFBOID = 0, m_fboIDBorder = 0, m_borderTexID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
+	glm::ivec2 m_renderSize = glm::ivec2(1);	
 	Shared_Asset_Primitive m_shapeQuad;
 	Shared_Asset_Texture m_textureNums;
 
@@ -342,10 +367,15 @@ private:
 	StaticBuffer m_bufferIndirectBoard;
 	const GLuint * m_vaoModels;
 
+	// Border Rendering Resources
+	Shared_Asset_Shader m_shaderBorder;
+	StaticBuffer m_bufferIndirectBorder;
+
 	// Tile Rendering Resources
 	Shared_Asset_Shader m_shaderTiles;
 	Shared_Asset_Texture m_textureTile, m_textureTilePlayer;
 	StaticBuffer m_bufferIndirectTiles;
+	glm::mat4 m_orthoProjField;
 
 	// Matched Tiles Rendering Resources
 	Shared_Asset_Shader m_shaderMatchedTiles, m_shaderMatchedNo;
@@ -357,6 +387,7 @@ private:
 	Shared_Asset_Shader m_shaderScore;
 	Shared_Asset_Texture m_textureScoreNums;
 	StaticBuffer m_bufferIndirectScore;
+	glm::mat4 m_orthoProjHeader;
 
 	// Multiplier Rendering Resources
 	Shared_Asset_Shader m_shaderMultiplier;

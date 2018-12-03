@@ -14,6 +14,7 @@
 
 constexpr int TickCount_Scoring = 50;
 constexpr int TickCount_Popping = 15;
+constexpr int TickCount_LevelUp = 100;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Score_System : public BaseECSSystem {
@@ -74,6 +75,18 @@ public:
 			board.m_data->data->multiplier = score.m_multiplier;
 			score.m_stopTimer = std::min(9, score.m_stopTimer);
 			board.m_data->data->stopTimer = score.m_stopTimer;
+
+			score.m_levelLinear = float(score.m_tilesCleared) / float(score.m_level * 12);
+			score.m_levelUpLinear = glm::clamp(float(score.m_levelUpTick) / float(TickCount_LevelUp), 0.0f, 1.0f);
+			if (score.m_levelUpTick >= 0) 
+				score.m_levelUpTick = std::min(TickCount_LevelUp, score.m_levelUpTick + 1);			
+			if (score.m_levelUpTick >= TickCount_LevelUp)
+				score.m_levelUpTick = -1;
+			if (score.m_tilesCleared >= (score.m_level * 12)) {
+				score.m_tilesCleared = 0;
+				score.m_levelUpTick = 0;
+				score.m_level++;
+			}
 		}
 	}
 
@@ -336,8 +349,10 @@ private:
 				auto & xTile = board.m_tiles[y][x];
 				if (xTile.m_scoreType == TileState::MATCHED) {
 					if (xTile.m_tick >= TickCount_Popping) {
-						addScore(score, 10);
+						// Tile SCORED
 						xTile.m_scoreType = TileState::SCORED;
+						addScore(score, 10);
+						score.m_tilesCleared++;
 					}
 					board.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
 				}

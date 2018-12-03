@@ -55,7 +55,7 @@ struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 		float fallSpeed = 1.0f;
 	} m_tileDrops[12][6];
 	unsigned int m_gameTick = 0;
-	unsigned int m_rowClimbTick = 0;
+	double m_rowClimbTick = 0.0;
 	int m_playerX = 2;
 	int m_playerY = 5;
 	VB_Element<BoardBuffer> * m_data = nullptr;
