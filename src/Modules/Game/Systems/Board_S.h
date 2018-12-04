@@ -17,6 +17,8 @@ constexpr float TickCount_GameAnimation = 750.0f;
 constexpr int TickCount_NewLine = 500u;
 constexpr float TickCount_TileDrop = 10.0F;
 constexpr float TickCount_TileBounce = 15.0F;
+constexpr int TickCount_Time = 100;
+
 // Bouncing Easing Function
 static constexpr auto easeOutBounce = [](float t) {
 	if (t < (1 / 2.75))
@@ -60,7 +62,7 @@ public:
 			}
 
 			// Tick stop-timer
-			if (++score.m_stopTimeTick >= 100) {
+			if (++score.m_stopTimeTick >= TickCount_Time) {
 				score.m_stopTimeTick = 0;
 				++board.m_data->data->gameTimer;
 				if (score.m_stopTimer >= 0) {
@@ -69,10 +71,10 @@ public:
 				}
 			}
 			if (score.m_stopTimer < 0 && score.m_timerAnimationTick != -1) {
-				if (score.m_timerAnimationTick < 100)
+				if (score.m_timerAnimationTick < TickCount_Time)
 					++score.m_timerAnimationTick;				
-				board.m_data->data->timeAnimLinear = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / 100.0f));
-				if (score.m_timerAnimationTick == 100)
+				board.m_data->data->timeAnimLinear = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / float(TickCount_Time)));
+				if (score.m_timerAnimationTick == TickCount_Time)
 					score.m_timerAnimationTick = -1;
 			}
 

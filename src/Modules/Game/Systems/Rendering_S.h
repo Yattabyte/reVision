@@ -174,32 +174,18 @@ public:
 			m_shaderScore->setUniform(4, scoreLength);
 		
 			// Generate sprite set for scored tiles
-			const GLuint matchedCount = score.m_scoredTiles.size() ? (GLuint)(score.m_scoredTiles[0].first.size()) * 16u : 0u;
+			GLuint matchedCount = 0;
+			for each (const auto & qwe in score.m_scoredTiles)
+				matchedCount += (qwe.first.size() * 16u);
 			m_bufferIndirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
-			struct ScoredStruct {
-				glm::ivec4 coords;
-				glm::vec2 center;
-				glm::ivec2 count; 
-				GLuint pieceStates[16];
-			};
 			unsigned long writeIndex = unsigned long(0);
 			// Go through each set of scored tiles
 			for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
-				// Find the center point in the set of scored tiles
-				glm::ivec2 countAndType((int)score.m_scoredTiles[n].first.size(), board.m_tiles[score.m_scoredTiles[n].first[0].y][score.m_scoredTiles[n].first[0].x].m_type);
-				glm::vec2 center(0.0f);
-				for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x) 
-					center += glm::vec2(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
-				center /= float(countAndType.x);
 				// Go throuh a single set of scored tiles
 				for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x) {
 					const glm::ivec2 coords(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
 					m_bufferMatchedTiles.write(writeIndex, sizeof(glm::ivec2), &coords);
 					writeIndex += sizeof(glm::ivec2);
-					m_bufferMatchedTiles.write(writeIndex, sizeof(glm::vec2), &center);
-					writeIndex += sizeof(glm::vec2);
-					m_bufferMatchedTiles.write(writeIndex, sizeof(glm::ivec2), &countAndType);
-					writeIndex += sizeof(glm::ivec2); // using '2' because we need to pad it
 					GLuint states[16] = { 10,7,7,11, 4,16,16,6, 4,16,16,6, 8,5,5,9 };
 					// If tile to the left
 					if (score.m_scoredAdjacency[n][x].scored[1][0]) {
@@ -248,6 +234,20 @@ public:
 				}
 			}
 			// Get scored tile count
+			writeIndex = unsigned long(0);
+			// Go through each set of scored tiles
+			for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
+				// Find the center point in the set of scored tiles
+				glm::ivec2 countAndType((int)score.m_scoredTiles[n].first.size(), 0);
+				glm::vec2 center(0.0f);
+				for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x)
+					center += glm::vec2(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
+				center /= float(countAndType.x);
+				m_bufferMatchedNos.write(writeIndex, sizeof(glm::vec2), &center);
+				writeIndex += sizeof(glm::vec2);
+				m_bufferMatchedNos.write(writeIndex, sizeof(glm::ivec2), &countAndType);
+				writeIndex += sizeof(glm::ivec2); // using '2' because we need to pad it					
+			}
 			const GLuint scoreCount = (GLuint)score.m_scoredTiles.size();
 			m_bufferIndirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
 
@@ -291,6 +291,7 @@ public:
 			m_shaderMatchedNo->setUniform(0, m_orthoProjField);
 			m_textureNums->bind(1);
 			m_bufferIndirectMatchedNo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_bufferMatchedNos.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 			// Render score header bar to the FBO
@@ -381,7 +382,7 @@ private:
 	Shared_Asset_Shader m_shaderMatchedTiles, m_shaderMatchedNo;
 	Shared_Asset_Texture m_textureMatchedTiles;
 	StaticBuffer m_bufferIndirectMatchedTiles, m_bufferIndirectMatchedNo;
-	DynamicBuffer m_bufferMatchedTiles;
+	DynamicBuffer m_bufferMatchedTiles, m_bufferMatchedNos;
 
 	// Score Rendering Resources
 	Shared_Asset_Shader m_shaderScore;

@@ -4,8 +4,6 @@
 
 struct ScoredStruct {
 	ivec2 coords;
-	vec2 center;
-	ivec2 count;
 	uint pieceStates[16];
 };
 layout (std430, binding = 9) readonly buffer ScoredMarkers {	
@@ -14,7 +12,6 @@ layout (std430, binding = 9) readonly buffer ScoredMarkers {
 
 layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out int Type;
 layout (location = 0) uniform mat4 orthoProj;
 
 
@@ -41,6 +38,5 @@ void main()
 	TexCoord.y += float(int(matchedData[index].pieceStates[gl_InstanceID % 16]) / 4) / 3.0f; // 0-3 on y axis
 	if (matchedData[index].pieceStates[gl_InstanceID % 16] == 16u)
 		TexCoord = vec2(0.0f);
-	Type = matchedData[index].count.y;
 	gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.xy, 0, 1);
 }

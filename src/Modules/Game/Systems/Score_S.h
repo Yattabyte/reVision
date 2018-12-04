@@ -13,8 +13,8 @@
 
 
 constexpr int TickCount_Scoring = 50;
-constexpr int TickCount_Popping = 15;
-constexpr int TickCount_LevelUp = 100;
+constexpr int TickCount_Popping = 25;
+constexpr int TickCount_LevelUp = 75;
 
 /** A system that updates the rendering state for spot lighting, using the ECS system. */
 class Score_System : public BaseECSSystem {
@@ -335,7 +335,7 @@ private:
 				if (manifold.first.size() > 3) {
 					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
 					board.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
-					score.m_stopTimer += 3;
+					score.m_stopTimer++;
 				}
 
 				score.m_stopTimeTick = 0;

@@ -2,14 +2,12 @@
 #version 460
 #package "Game\GameBuffer"
 
-struct ScoredStruct {
-	ivec2 coords;
+struct CountStruct {
 	vec2 center;
 	ivec2 count;
-	uint pieceStates[16];
 };
-layout (std430, binding = 9) readonly buffer ScoredMarkers {	
-	ScoredStruct matchedData[];
+layout (std430, binding = 9) readonly buffer ScoredCounts {	
+	CountStruct matchedData[];
 };
 
 layout (location = 0) in vec3 vertex;
