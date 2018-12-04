@@ -282,6 +282,7 @@ public:
 			m_textureTile->bind(0);
 			m_textureTilePlayer->bind(1);
 			m_shaderTiles->setUniform(0, m_orthoProjField);
+			m_shaderTiles->setUniform(4, (float)(glfwGetTime()));
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);			

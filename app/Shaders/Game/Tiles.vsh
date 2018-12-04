@@ -7,6 +7,7 @@ layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out uint Type;
 layout (location = 2) flat out uint TileWaiting;
 layout (location = 3) flat out float TileLifeLinear;
+layout (location = 4) flat out float LaneAmt;
 layout (location = 0) uniform mat4 orthoProj;
 
 
@@ -20,6 +21,7 @@ void main()
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	Type = types[gl_InstanceID];
 	TileWaiting = 0;
+	LaneAmt = lanes[gl_InstanceID % 6] * lanes[gl_InstanceID % 6] * lanes[gl_InstanceID % 6];
 	
 	// Scale tiles, and apply the orthographic projection
 	const float scl = 64.0f;

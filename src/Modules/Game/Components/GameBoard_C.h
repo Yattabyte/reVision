@@ -27,7 +27,8 @@ struct BoardBuffer {
 	unsigned int types[12 * 6];
 	float gravityOffsets[12 * 6];
 	float lifeLinear[12 * 6];
-	glm::vec3 colorScheme = glm::vec3(0.0f); float pad1;
+	float lanes[6]; glm::vec2 pad1;
+	glm::vec3 colorScheme = glm::vec3(0.0f); float pad2;
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
 	float gameWave = 0.0f;

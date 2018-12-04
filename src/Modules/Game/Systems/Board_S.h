@@ -93,6 +93,13 @@ public:
 			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
 			board.m_playerY = std::min(11, std::max(1, board.m_playerY));
 			board.m_data->data->playerCoords = glm::ivec2(board.m_playerX, board.m_playerY);
+			// Find lanes approaching full (top of board)
+			for (int x = 0; x < 6; ++x) 
+				for (int y = 11; y >= 0; --y) 
+					if (board.m_tiles[y][x].m_type != TileState::NONE) {
+						board.m_data->data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->data->heightOffset / 2.0f)) / 3.0f : 0.0f; 
+						break;
+					}			
 		}
 	}
 

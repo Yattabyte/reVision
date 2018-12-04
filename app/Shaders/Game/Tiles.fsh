@@ -6,9 +6,11 @@ layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in uint Type;
 layout (location = 2) flat in uint TileWaiting;
 layout (location = 3) flat in float TileLifeLinear;
+layout (location = 4) flat in float LaneAmt;
 layout (location = 0) out vec4 FragColor;
 layout (binding = 0) uniform sampler2D TileTexture;
 layout (binding = 1) uniform sampler2D PlayerTexture;
+layout (location = 4) uniform float Time;
 
 
 // Different tile type colors
@@ -25,15 +27,13 @@ float smoothStop6(float t)
 	return 1.0f - ((1.0f - t)*(1.0f - t)*(1.0f - t)*(1.0f - t)*(1.0f - t)*(1.0f - t));
 }
 
-vec4 chromaticAberration(sampler2D sampler, vec2 texCoord, float t) 
-{
-	const float arch = t * t * t;
-	const float amt = arch * 0.04;
-	const float rValue = texture(sampler, texCoord + vec2(amt, -amt)).r;
-	const float gValue = texture(sampler, texCoord + vec2(-amt, amt)).g;
-	const float bValue = texture(sampler, texCoord + vec2(-amt, amt)).b;
-	const float aValue = texture(sampler, texCoord).a;
-	return vec4(rValue, gValue, bValue, aValue);
+float hash(float n) { return fract(sin(n) * 1e4); }
+
+float noise(float x) {
+	float i = floor(x);
+	float f = fract(x);
+	float u = f * f * (3.0 - 2.0 * f);
+	return mix(hash(i), hash(i + 1.0), u);
 }
 
 vec4 calcTile_Background()
@@ -48,22 +48,31 @@ vec4 calcTile_Player()
 
 vec4 calcTile_Regular()
 {		
-	// Diagonal lighting based on board activity
 	const float waveAmt = 0.5f * (sin((gameWave + -length(gl_FragCoord.xy / CameraDimensions.xy)) * M_PI)) + 0.5f;
 	const float maxBrightness = 1.125f;
 	const float minBrightness = 0.33f;
 	const float pulseAmtDiag = (maxBrightness - (minBrightness * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));
-	const float attenuationFactor = (pulseAmtDiag * pulseAmtDiag * pulseAmtDiag * pulseAmtDiag) * 0.05f; 	
 	
 	// Tile backing appearance	
-	vec4 tileAppearance = texture(TileTexture, TexCoord);
-		
-	// Final Appaearance
-	return tileAppearance * mix(	
-		vec4(tileColors[Type], 1), 
-		vec4(1.0f), 
-		smoothStop6(TileLifeLinear) // desaturation amount
-	);
+	vec4 appearance;
+	if (LaneAmt > 0.0f) {
+		const float DistortionScale = noise(Time) * 0.75f;
+		const float noiseAmt = (noise(gl_FragCoord.x) + noise(gl_FragCoord.y));
+		const vec2 moddedTex = vec2(
+			TexCoord.x,
+			//TexCoord.y * ( TexCoord.y * (0.005 / (noise(gl_FragCoord.y) * DistortionScale)))
+			mix((1.0f - TexCoord.y), (1.0f - TexCoord.y) * (noise(CameraDimensions.y - gl_FragCoord.y)) * DistortionScale, LaneAmt)
+		);
+		appearance = texture(TileTexture, moddedTex) * vec4(mix(tileColors[Type], tileColors[clamp(int(noiseAmt * 5), 0, 4)], clamp(DistortionScale, 0.0f, 1.0f) * LaneAmt), 1);
+	}
+	else 
+		appearance = vec4(tileColors[Type], 1);
+	appearance *= texture(TileTexture, TexCoord);
+	
+	// Desaturate based on life
+	vec4 grayXfer = vec4(0.3, 0.59, 0.11, 1.0f);
+	vec4 gray = vec4(dot(grayXfer, appearance));
+	return vec4(mix(appearance, gray, smoothStop6(TileLifeLinear)).xyz, appearance.a);
 }
 
 vec4 calcTile_Waiting()
