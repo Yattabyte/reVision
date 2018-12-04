@@ -102,6 +102,8 @@ Engine::~Engine()
 	m_messageManager.statement("Shutting down...");
 	Image_IO::Deinitialize();	
 	glfwTerminate();
+	system("pause");
+	exit(1);
 }
 
 Engine::Engine() : 
@@ -201,26 +203,19 @@ void Engine::tick()
 	else
 		m_frameAccumulator += deltaTime;
 
-	// Logic depending on assets finalizing
+	// Update Managers
 	m_assetManager.notifyObservers();
-	// Update expandable model container
 	m_modelManager.update();
-	// Update input
 	updateInput(deltaTime);
+	m_moduleGraphics.setActiveCamera(0);
 
 	/*******************
 	--- Tick Modules ---
 	*******************/
-	// Logic depending on state of the world
 	if (m_moduleWorld.checkIfLoaded()) 
-		// Update physics
 		m_modulePhysics.frameTick(deltaTime);	
-	// Update graphics
-	m_moduleGraphics.setActiveCamera(0); // MAYBE MOVE THIS UP?????????
 	m_moduleGraphics.frameTick(deltaTime);
-	// Update game
 	m_moduleGame.frameTick(deltaTime);
-	// Post Processing
 	m_modulePProcess.frameTick(deltaTime);
 
 	// End Frame

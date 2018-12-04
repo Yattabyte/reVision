@@ -21,9 +21,9 @@ Asset_Shader::~Asset_Shader()
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader::Asset_Shader(const std::string & filename, const bool & ignoreBinary) : Asset(filename), m_ignoreBinary(ignoreBinary) {}
+Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
 
-Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & ignoreBinary, const bool & threaded)
+Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & threaded)
 {
 	return engine->getAssetManager().createAsset<Asset_Shader>(
 		filename,
@@ -31,8 +31,7 @@ Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & fi
 		"",
 		&initialize,
 		engine,
-		threaded,
-		ignoreBinary
+		threaded
 	);
 }
 void Asset_Shader::initializeDefault(Engine * engine)
@@ -62,18 +61,23 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
-	bool success = false;
-	if (m_ignoreBinary || !loadCachedBinary(engine, relativePath)) {
+
+#ifdef NDEBUG
+	if (!loadCachedBinary(engine, relativePath))
+#endif
+	{
 		// Create Vertex and Fragment shaders
-		if (initShaders(engine, relativePath)) {
+		bool success = initShaders(engine, relativePath);
+		if (success) {
 			glLinkProgram(m_glProgramID);
-			if (validateProgram()) {
+			success = validateProgram();
+#ifdef NDEBUG
+			if (success)
 				saveCachedBinary(engine, relativePath);
-				success = true;
-			}
+#endif
 		}
+		// If we ever failed, initialize default shader
 		if (!success) {
-			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
 			engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault(engine);
