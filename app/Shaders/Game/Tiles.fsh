@@ -62,8 +62,8 @@ vec4 calcTile_Regular()
 			TexCoord.x,
 			//TexCoord.y * ( TexCoord.y * (0.005 / (noise(gl_FragCoord.y) * DistortionScale)))
 			mix((1.0f - TexCoord.y), (1.0f - TexCoord.y) * (noise(CameraDimensions.y - gl_FragCoord.y)) * DistortionScale, LaneAmt)
-		);
-		appearance = texture(TileTexture, moddedTex) * vec4(mix(tileColors[Type], tileColors[clamp(int(noiseAmt * 5), 0, 4)], clamp(DistortionScale, 0.0f, 1.0f) * LaneAmt), 1);
+		);		
+		appearance = texture(TileTexture, moddedTex) * vec4(mix(tileColors[Type], tileColors[clamp(int(noiseAmt * 5), 0, 4)], DistortionScale * LaneAmt * 0.5f), 1);
 	}
 	else 
 		appearance = vec4(tileColors[Type], 1);
