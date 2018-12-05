@@ -3,20 +3,14 @@
 #define SCOREBOARD_S_H 
 
 #include "Utilities\ECS\ecsSystem.h"
-#include "Engine.h"
-#include <algorithm>
-#include <iostream>
+#include "Modules\Game\Common.h"
 
 /** Component Types Used */
 #include "Modules\Game\Components\GameBoard_C.h"
 #include "Modules\Game\Components\GameScore_C.h"
 
 
-constexpr int TickCount_Scoring = 50;
-constexpr int TickCount_Popping = 25;
-constexpr int TickCount_LevelUp = 75;
-
-/** A system that updates the rendering state for spot lighting, using the ECS system. */
+/** Responsible for validating the game state, checking for scoreable events. */
 class Score_System : public BaseECSSystem {
 public:
 	// (de)Constructors
@@ -45,6 +39,8 @@ public:
 				validateBoard(board, score);
 				scoreTiles(board, score);
 			}
+
+			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
 
 			// Animate score climbing
 			if ((score.m_score - board.m_data->data->score) > 0)

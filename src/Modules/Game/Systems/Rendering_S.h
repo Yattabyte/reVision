@@ -323,6 +323,7 @@ public:
 			// Render all of the textures onto the board model
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			glBindFramebuffer(GL_FRAMEBUFFER, m_lightingFBOID);
+			glEnable(GL_DEPTH_TEST);
 			glBindVertexArray(*m_vaoModels);
 			m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_shaderBoard->bind();
@@ -333,6 +334,7 @@ public:
 			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, 4, 0);
 
 			// End
+			glDisable(GL_DEPTH_TEST);
 			glDisable(GL_BLEND);
 		}
 	}

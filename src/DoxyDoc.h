@@ -109,7 +109,7 @@
  *		- PropRendering_System (rendering)
  *		- PropShadowing_System (rendering)
  *		- Reflector_System  (rendering)
- *		- PlayerMovement_System (update the player transform)
+ *		- PlayerFreeLook_System (update the player transform)
  *		- SkeletonAnimation_System (update bone transforms when animating)
  *		- TransformSync_System (update transform information for every other component type)
  */

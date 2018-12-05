@@ -8,10 +8,16 @@
 #include "Modules\Game\Components\GameScore_C.h"
 #include "Modules\Game\Components\Player_C.h"
 
-/* System Types Used */
-#include "Modules\Game\Systems\PlayerMovement_S.h"
+/* Game System Types Used */
 #include "Modules\Game\Systems\Board_S.h"
+#include "Modules\Game\Systems\Gravity_S.h"
+#include "Modules\Game\Systems\PlayerInput_S.h"
+#include "Modules\Game\Systems\PlayerFreeLook_S.h"
+#include "Modules\Game\Systems\Push_S.h"
 #include "Modules\Game\Systems\Score_S.h"
+#include "Modules\Game\Systems\Timer_S.h"
+
+/* Rendering System Types Used */
 #include "Modules\Game\Systems\Rendering_S.h"
 
 
@@ -21,9 +27,13 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->getMessageManager().statement("Loading Module: Game...");
 
 	// Gameplay Systems
-	m_gameplaySystems.addSystem(new Board_System(m_engine));
+	m_gameplaySystems.addSystem(new Board_System());
+	m_gameplaySystems.addSystem(new Gravity_System());
+	m_gameplaySystems.addSystem(new Push_System());
+	m_gameplaySystems.addSystem(new PlayerInput_System(&m_engine->getActionState()));
 	m_gameplaySystems.addSystem(new Score_System());
-	//m_gameplaySystems.addSystem(new PlayerMovement_System(engine));
+	m_gameplaySystems.addSystem(new Timer_System());
+	//m_gameplaySystems.addSystem(new PlayerFreeLook_System(engine));
 
 	// Rendering Systems
 	m_renderingSystem = new Rendering_System(m_engine, m_engine->getGraphicsModule().getLightingFBOID());

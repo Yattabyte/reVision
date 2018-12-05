@@ -1,6 +1,6 @@
 #pragma once
-#ifndef PLAYERMOVEMENT_S_H
-#define PLAYERMOVEMENT_S_H 
+#ifndef PLAYERFREELOOK_S_H
+#define PLAYERFREELOOK_S_H 
 
 #include "Utilities\ECS\ecsSystem.h"
 #include "Engine.h"
@@ -11,12 +11,12 @@
 #include "Modules\Game\Components\Player_C.h"
 
 
-/** A system responsible for updating player components. */
-class PlayerMovement_System : public BaseECSSystem {
+/** A system responsible for updating player components based on keyboard/mouse. */
+class PlayerFreeLook_System : public BaseECSSystem {
 public: 
 	// (de)Constructors
-	~PlayerMovement_System() = default;
-	PlayerMovement_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
+	~PlayerFreeLook_System() = default;
+	PlayerFreeLook_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Player_Component::ID);
@@ -76,4 +76,4 @@ private:
 	Engine * m_engine = nullptr;
 };
 
-#endif // PLAYERMOVEMENT_S_H
+#endif // PLAYERFREELOOK_S_H
