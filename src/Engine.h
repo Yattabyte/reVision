@@ -7,6 +7,7 @@
 #include "Managers\ModelManager.h"
 #include "Managers\MaterialManager.h"
 #include "Managers\MessageManager.h"
+#include "Managers\SoundManager.h"
 #include "Modules\Graphics\Graphics_M.h"
 #include "Modules\Post Processing\Post_Processing_M.h"
 #include "Modules\Physics\Physics_M.h"
@@ -19,7 +20,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.6";
+constexpr char ENGINE_VERSION[] = "2.7";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -77,6 +78,8 @@ public:
 	MaterialManager & getMaterialManager() { return m_materialManager; }
 	/** Returns this engine's message manager. */
 	MessageManager & getMessageManager() { return m_messageManager; }
+	/** Returns this engine's sound manager. */
+	SoundManager & getSoundManager() { return m_soundManager; }
 	/** Returns this engine's graphics module. */
 	Graphics_Module & getGraphicsModule() { return m_moduleGraphics; }
 	/** Returns this engine's physics module. */
@@ -108,7 +111,8 @@ private:
 	float m_frameAccumulator = 0;
 	int m_frameCount = 0;
 	float m_refreshRate = 60.0f;
-	glm::ivec2 m_windowSize = glm::ivec2(1);	
+	glm::ivec2 m_windowSize = glm::ivec2(1);
+	SoundManager m_soundManager;
 	AssetManager m_assetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_preferenceState;

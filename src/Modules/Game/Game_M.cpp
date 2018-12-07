@@ -31,7 +31,7 @@ void Game_Module::initialize(Engine * engine)
 	m_gameplaySystems.addSystem(new Gravity_System());
 	m_gameplaySystems.addSystem(new Push_System());
 	m_gameplaySystems.addSystem(new PlayerInput_System(&m_engine->getActionState()));
-	m_gameplaySystems.addSystem(new Score_System());
+	m_gameplaySystems.addSystem(new Score_System(m_engine));
 	m_gameplaySystems.addSystem(new Timer_System());
 	//m_gameplaySystems.addSystem(new PlayerFreeLook_System(engine));
 

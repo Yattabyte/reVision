@@ -7,7 +7,7 @@
 #include <deque>
 
 
-/** Provides some message reporting functionality for the engine..
+/** Provides some message reporting functionality for the engine.
 Holds a log of text in case they need to be accessed by any external UI */
 class MessageManager {
 public:

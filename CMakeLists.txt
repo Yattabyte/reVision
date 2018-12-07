@@ -4,10 +4,11 @@ project(reVision)
 
 # Get dependency directory locations from the user
 set (ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
-set (FREEIMAGE_DIR "" CACHE PATH "FreeImage root directory")
-set (GLM_DIR "" CACHE PATH "OpenGL Mathematics library (GLM) root directory")
-set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
 set (BULLET_DIR "" CACHE PATH "Bullet Physics library (BT) root directory")
+set (FREEIMAGE_DIR "" CACHE PATH "FreeImage root directory")
+set (GLFW_DIR "" CACHE PATH "OpenGL Framework library (GLFW) root directory")
+set (GLM_DIR "" CACHE PATH "OpenGL Mathematics library (GLM) root directory")
+set (SOLOUD_DIR "" CACHE PATH "SoLoud Audio Engine root directory")
 set (CORE_DIR "${PROJECT_SOURCE_DIR}/src")
 set (PROJECT_BIN ${CMAKE_SOURCE_DIR})
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
@@ -15,23 +16,18 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 # Include directories of dependencies for entire project
 include_directories ( 	${CORE_DIR} 
 						${ASSIMP_DIR}/include/
+						${BULLET_DIR}/src/			
 						${FREEIMAGE_DIR}/Source/
-						${GLM_DIR} 
 						${GLFW_DIR}/include/
-						${BULLET_DIR}/src/			)
+						${GLM_DIR} 
+						${SOLOUD_DIR}/include )
 						
 link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 									optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib
 									debug		${ASSIMP_DIR}/lib/Debug/IrrXML.lib
 									optimized	${ASSIMP_DIR}/lib/Release/IrrXML.lib
 									debug		${ASSIMP_DIR}/lib/Debug/zlibstaticd.lib
-									optimized	${ASSIMP_DIR}/lib/Release/zlibstatic.lib
-									debug		${FREEIMAGE_DIR}/Dist/x64/FreeImaged.lib
-									optimized	${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
-									debug		${GLFW_DIR}/src/Debug/glfw3.lib
-									optimized	${GLFW_DIR}/src/Release/glfw3.lib
-									debug		${GLM_DIR}/glm/Debug/glm_static.lib
-									optimized	${GLM_DIR}/glm/Release/glm_static.lib
+									optimized	${ASSIMP_DIR}/lib/Release/zlibstatic.lib									
 									debug		${BULLET_DIR}/lib/Debug/Bullet2FileLoader.lib
 									optimized	${BULLET_DIR}/lib/Release/Bullet2FileLoader.lib
 									debug		${BULLET_DIR}/lib/Debug/Bullet3Collision.lib
@@ -54,6 +50,14 @@ link_libraries 	(					debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 									optimized	${BULLET_DIR}/lib/Release/BulletSoftBody.lib
 									debug		${BULLET_DIR}/lib/Debug/LinearMath.lib
 									optimized	${BULLET_DIR}/lib/Release/LinearMath.lib
+									debug		${FREEIMAGE_DIR}/Dist/x64/FreeImaged.lib
+									optimized	${FREEIMAGE_DIR}/Dist/x64/FreeImage.lib
+									debug		${GLFW_DIR}/src/Debug/glfw3.lib
+									optimized	${GLFW_DIR}/src/Release/glfw3.lib
+									debug		${GLM_DIR}/glm/Debug/glm_static.lib
+									optimized	${GLM_DIR}/glm/Release/glm_static.lib									
+									debug		${SOLOUD_DIR}/lib/soloud_static_x64_d.lib
+									optimized	${SOLOUD_DIR}/lib/soloud_static_x64.lib
 												"OpenGL32.lib")
 					
 # add all sub-projects and plugins here

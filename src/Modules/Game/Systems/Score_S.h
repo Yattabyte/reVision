@@ -3,7 +3,9 @@
 #define SCOREBOARD_S_H 
 
 #include "Utilities\ECS\ecsSystem.h"
+#include "Assets\Asset_Sound.h"
 #include "Modules\Game\Common.h"
+#include "Engine.h"
 
 /** Component Types Used */
 #include "Modules\Game\Components\GameBoard_C.h"
@@ -15,10 +17,12 @@ class Score_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Score_System() = default;
-	Score_System() {
+	Score_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);		
+
+		m_testSound = Asset_Sound::Create(m_engine, "test.wav");
 	}
 
 	
@@ -384,10 +388,15 @@ private:
 	@param	amount	the amount of points to add. */
 	void addScore(GameScore_Component & score, const int & amount) {
 		score.m_score += amount * score.m_multiplier;
+
+		if(m_testSound->existsYet())
+			m_engine->getSoundManager().playWav(m_testSound->m_soundObj);
 	}
 
 
 	// Private Attributes
+	Engine * m_engine = nullptr;
+	Shared_Asset_Sound m_testSound;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
