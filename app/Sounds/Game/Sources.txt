@@ -1,0 +1,33 @@
+Sources:
+-----------------------------------------------------------------
+Sound files provided by:
+	99Sounds.org (JoshuaCrispin aka Generdyn)
+	Sonniss.com (Many many many authors)
+	RonaldJenkees.com
+
+SFX Files sourced from the following royalty-free sound packs:
+	99Sounds.org - 2015 - Cinematic Sound Effects
+	Sonniss.com - Game Audio Monthly - #1-6
+	Sonniss.com - GDC 2015 - Game Audio Bundle
+	Sonniss.com - GDC 2016 - Game Audio Bundle
+
+Music files sourced from Ronald Jenkees:
+	Synth One - Disorganized Fun
+	Throwing Fire - Disorganized Fun
+
+	
+	
+Licenses:
+-----------------------------------------------------------------
+99Sounds and Sonniss have granted permission to freely use their 
+files for both commercial and non-commercial purposes, provided 
+that their work is not used as a part of another sample library 
+or a virtual instrument.
+
+Ronald Jenkees has granted permission to use his songs as a part 
+of this project, while this project remains non-commercial.
+
+*****************************************************************
+* All sound files are the property of their respective creators *
+* To be safe, don't redistribute them (outside of this game)    *
+*****************************************************************
