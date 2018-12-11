@@ -30,7 +30,7 @@ public:
 
 			// Tick row-climbing
 			if (!board.m_stop) {
-				board.m_rowClimbTick += 1.0 + (double(score.m_level - 1) * 0.1f);
+				board.m_rowClimbTick += board.m_speed;
 				if (board.m_rowClimbTick >= double(TickCount_NewLine) && !(score.m_scoredTiles.size()))
 					board.m_rowsToAdd++;
 				while (board.m_rowsToAdd > 0) {
@@ -52,10 +52,13 @@ public:
 					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
 
 			// Find lanes approaching full (top of board)
+			board.m_nearingTop = false;
 			for (int x = 0; x < 6; ++x)
 				for (int y = 11; y >= 0; --y)
 					if (board.m_tiles[y][x].m_type != TileState::NONE) {
 						board.m_data->data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->data->heightOffset / 2.0f)) / 3.0f : 0.0f;
+						if (y >= 8)
+							board.m_nearingTop = true;
 						break;
 					}
 		}

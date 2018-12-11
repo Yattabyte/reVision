@@ -22,7 +22,11 @@ public:
 		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);		
 
-		m_testSound = Asset_Sound::Create(m_engine, "test.wav");
+		// Asset Loading
+		m_soundPop = Asset_Sound::Create(m_engine, "Game\\pop.wav");
+		m_soundMultiplier = Asset_Sound::Create(m_engine, "Game\\multiplier.wav");
+		m_soundMultiplierLost = Asset_Sound::Create(m_engine, "Game\\multiplier lost.wav");
+		m_soundLevelGained = Asset_Sound::Create(m_engine, "Game\\level gain.wav");
 	}
 
 	
@@ -47,8 +51,8 @@ public:
 			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
 
 			// Animate score climbing
-			if ((score.m_score - board.m_data->data->score) > 0)
-				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 1);
+			if ((score.m_score - board.m_data->data->score) > 0) 
+				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 1);			
 			else
 				score.m_lastScore = score.m_score;
 			// Highlight digits that are changing
@@ -86,7 +90,11 @@ public:
 				score.m_tilesCleared = 0;
 				score.m_levelUpTick = 0;
 				score.m_level++;
+
+				if (m_soundLevelGained->existsYet())
+					m_engine->getSoundManager().playWav(m_soundLevelGained->m_soundObj, 0.75f);
 			}
+			board.m_speed = 1.0 + (double(score.m_level - 1) * 0.2f);
 		}
 	}
 
@@ -304,16 +312,23 @@ private:
 			if (score.m_comboChanged) {
 				score.m_comboChanged = false;
 				addScore(score, 5);
+
 				score.m_multiplier++;
 				score.m_stopTimer++;
-				board.m_data->data->shakeLinear += (score.m_multiplier / 6.0f);
+				board.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
 				board.m_data->data->scoreAnimLinear++;
+
+				if (m_soundMultiplier->existsYet() && score.m_multiplier >= 2)
+					m_engine->getSoundManager().playWav(m_soundMultiplier->m_soundObj, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
 		}
-		else if (!score.m_scoredTiles.size() || !score.m_comboChanged){
+		else if ((!score.m_scoredTiles.size() || !score.m_comboChanged) && score.m_multiplier) {
 			// Reset multiplier if no tiles are scored
+			if (m_soundMultiplierLost->existsYet() && score.m_multiplier >= 2)
+				m_engine->getSoundManager().playWav(m_soundMultiplierLost->m_soundObj, 0.25f);
 			score.m_multiplier = 0;
 			score.m_comboChanged = false;
+
 		}
 
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
@@ -388,15 +403,12 @@ private:
 	@param	amount	the amount of points to add. */
 	void addScore(GameScore_Component & score, const int & amount) {
 		score.m_score += amount * score.m_multiplier;
-
-		if(m_testSound->existsYet())
-			m_engine->getSoundManager().playWav(m_testSound->m_soundObj);
 	}
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Sound m_testSound;
+	Shared_Asset_Sound m_soundPop, m_soundMultiplier, m_soundMultiplierLost, m_soundLevelGained;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

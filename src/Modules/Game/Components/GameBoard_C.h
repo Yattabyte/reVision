@@ -57,10 +57,12 @@ struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	} m_tileDrops[12][6];
 	unsigned int m_gameTick = 0;
 	double m_rowClimbTick = 0.0;
+	double m_speed = 1.0f;
 	int m_playerX = 2;
 	int m_playerY = 5;
 	int m_rowsToAdd = 0;
 	bool m_stop = false;
+	bool m_nearingTop = false;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };
 /** A constructor to aid in creation. */
@@ -80,6 +82,30 @@ struct GameBoard_Constructor : ECSComponentConstructor<GameBoard_Component> {
 				component->m_data->data->gravityOffsets[dataIndex] = 0.0f;
 				component->m_data->data->lifeLinear[++dataIndex] = 0.0f;
 			}
+		component->m_tiles[0][0].m_type = TileState::A;
+		component->m_tiles[0][1].m_type = TileState::A;
+		component->m_tiles[0][2].m_type = TileState::A;
+		component->m_tiles[0][3].m_type = TileState::B;
+		component->m_tiles[0][4].m_type = TileState::C;
+		component->m_tiles[0][5].m_type = TileState::C;
+		component->m_tiles[1][0].m_type = TileState::E;
+		component->m_tiles[1][1].m_type = TileState::B;
+		component->m_tiles[1][2].m_type = TileState::B;
+		component->m_tiles[1][3].m_type = TileState::C;
+		component->m_tiles[1][4].m_type = TileState::D;
+		component->m_tiles[1][5].m_type = TileState::B;
+		component->m_tiles[2][0].m_type = TileState::C;
+		component->m_tiles[2][1].m_type = TileState::E;
+		component->m_tiles[2][2].m_type = TileState::D;
+		component->m_tiles[2][3].m_type = TileState::D;
+		component->m_tiles[2][4].m_type = TileState::B;
+		component->m_tiles[3][1].m_type = TileState::A;
+		component->m_tiles[3][2].m_type = TileState::E;
+		component->m_tiles[3][3].m_type = TileState::A;
+		component->m_tiles[4][1].m_type = TileState::C;
+		component->m_tiles[4][2].m_type = TileState::A;
+		component->m_tiles[4][3].m_type = TileState::B;
+		component->m_tiles[5][2].m_type = TileState::C;
 		return { component, component->ID };
 	}
 

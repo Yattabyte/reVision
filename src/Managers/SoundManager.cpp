@@ -17,8 +17,26 @@ SoundManager::SoundManager()
 	soundEngine = (SoundEngineObj*)soLoud;
 }
 
-void SoundManager::playWav(const SoundObj * const obj) const
+void SoundManager::playWav(const SoundObj * const obj, const float & volume, const float & speed, const double & time) const
+{
+	auto & soLoud = *((SoLoud::Soloud*)soundEngine);	
+	auto handle = soLoud.play(*(SoLoud::Wav*)obj, volume);
+	soLoud.setRelativePlaySpeed(handle, speed);
+}
+
+const unsigned int SoundManager::playWavBackground(const SoundObj * const obj, const float & volume, const bool & loop, const double & loopPoint) const
 {
 	auto & soLoud = *((SoLoud::Soloud*)soundEngine);
-	soLoud.play(*(SoLoud::Wav*)obj);
+	auto handle = soLoud.playBackground(*(SoLoud::Wav*)obj, volume);
+
+	if (loop) {
+		soLoud.setLooping(handle, true);
+		soLoud.setLoopPoint(handle, loopPoint);
+	}
+	return handle;
+}
+
+void SoundManager::stopWavBackground(const unsigned int & handle) const
+{
+	(*((SoLoud::Soloud*)soundEngine)).stop(handle);
 }

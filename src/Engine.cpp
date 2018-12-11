@@ -102,8 +102,6 @@ Engine::~Engine()
 	m_messageManager.statement("Shutting down...");
 	Image_IO::Deinitialize();	
 	glfwTerminate();
-	system("pause");
-	exit(1);
 }
 
 Engine::Engine() : 

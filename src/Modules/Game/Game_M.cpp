@@ -16,6 +16,7 @@
 #include "Modules\Game\Systems\Push_S.h"
 #include "Modules\Game\Systems\Score_S.h"
 #include "Modules\Game\Systems\Timer_S.h"
+#include "Modules\Game\Systems\Music.h"
 
 /* Rendering System Types Used */
 #include "Modules\Game\Systems\Rendering_S.h"
@@ -28,11 +29,12 @@ void Game_Module::initialize(Engine * engine)
 
 	// Gameplay Systems
 	m_gameplaySystems.addSystem(new Board_System());
-	m_gameplaySystems.addSystem(new Gravity_System());
+	m_gameplaySystems.addSystem(new Gravity_System(m_engine));
 	m_gameplaySystems.addSystem(new Push_System());
-	m_gameplaySystems.addSystem(new PlayerInput_System(&m_engine->getActionState()));
+	m_gameplaySystems.addSystem(new PlayerInput_System(m_engine, &m_engine->getActionState()));
 	m_gameplaySystems.addSystem(new Score_System(m_engine));
 	m_gameplaySystems.addSystem(new Timer_System());
+	m_gameplaySystems.addSystem(new Music_System(m_engine));
 	//m_gameplaySystems.addSystem(new PlayerFreeLook_System(engine));
 
 	// Rendering Systems

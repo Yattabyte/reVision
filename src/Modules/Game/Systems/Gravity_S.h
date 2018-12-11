@@ -3,8 +3,10 @@
 #define GRAVITY_S_H 
 
 #include "Utilities\ECS\ecsSystem.h"
+#include "Assets\Asset_Sound.h"
 #include "Modules\Game\Common.h"
 #include "Modules\Game\Components\GameBoard_C.h"
+#include "Engine.h"
 
 
 /** Responsible for dropping tiles down the board. */
@@ -12,9 +14,12 @@ class Gravity_System : public BaseECSSystem {
 public:
 	// (de)Constructors
 	~Gravity_System() = default;
-	Gravity_System() {
+	Gravity_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(GameBoard_Component::ID);
+
+		// Asset Loading
+		m_soundImpact = Asset_Sound::Create(m_engine, "Game\\impact.wav");
 	}
 
 
@@ -65,6 +70,7 @@ public:
 				}
 
 			// Cycle through all tiles
+			unsigned int impactPerColumn[6] = { 0, 0, 0, 0, 0, 0 };
 			for (unsigned int y = 1u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x) {
 					auto & dTile = board.m_tileDrops[y][x];
@@ -75,13 +81,17 @@ public:
 							if (dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
 								// Tile has finished falling, start bouncing
 								dTile.dropState = GameBoard_Component::TileDropData::BOUNCING;
+								if (impactPerColumn[x] <= 0)
+									impactPerColumn[x] += dTile.weight;
+
+								// Grab all attributes before we swap the tiles (dTile is a reference, not a copy)
 								swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
 							}
 							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * ((dTile.tick / (dTile.delta * TickCount_TileDrop)) * dTile.delta);
 							dTile.tick += (dTile.fallSpeed += 0.1f);
 							break;
 						}
-																		 // Find Bouncing Tiles
+						// Find Bouncing Tiles
 						case GameBoard_Component::TileDropData::BOUNCING: {
 							const float bounceTime = (TickCount_TileBounce * (12.0f - float(dTile.weight))) / dTile.fallSpeed;
 							const float adjustedTick = (dTile.tick - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
@@ -97,7 +107,7 @@ public:
 							dTile.tick++;
 							break;
 						}
-																		  // Find Stationary Tiles
+						// Find Stationary Tiles
 						default: {
 							// Reset the data just in case
 							board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
@@ -106,8 +116,24 @@ public:
 						}
 					}
 				}
+
+			
+			// Play impact sounds
+			for (unsigned int x = 0u; x < 6u; ++x) 
+				if (impactPerColumn[x] > 0.0f)
+					if (m_soundImpact->existsYet()) {
+						const float impactVolume = (impactPerColumn[x] / 12.0f); // Preportional to num of tiles falling
+						const float impactSpeed = 1.0f + ((2.0f * (1.0f - impactVolume) - 1.0f) * 0.5f); // Reverse preportional to num of tiles falling, from 0.5 to 1.5
+						m_engine->getSoundManager().playWav(m_soundImpact->m_soundObj, impactVolume, impactSpeed);
+					}
 		}
 	}
+
+
+private:
+	// Private Attributes
+	Engine * m_engine = nullptr;
+	Shared_Asset_Sound m_soundImpact;
 };
 
 #endif // GRAVITY_S_H
