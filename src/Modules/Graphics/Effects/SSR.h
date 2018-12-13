@@ -89,18 +89,17 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		// Error Reporting
-		GLenum Status = glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER);		
-		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-	//		m_engine->getMessageManager().error("SSR Mipmap Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		auto & msgMgr = m_engine->getMessageManager();
+		if (glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSR Mipmap Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureMipsID))
-			m_engine->getMessageManager().error("SSR Mipmap Texture is incomplete.");
-		Status = glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER);
-	//	if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		//	m_engine->getMessageManager().error("SSR Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			msgMgr.error("SSR Mipmap Texture is incomplete.");
+		if (glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSR Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureSSRID))
-			m_engine->getMessageManager().error("SSR Texture is incomplete.");
+			msgMgr.error("SSR Texture is incomplete.");
 		if (!glIsTexture(m_bayerID))
-			m_engine->getMessageManager().error("SSR Bayer Matrix Texture is incomplete.");
+			msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 	}
 
 

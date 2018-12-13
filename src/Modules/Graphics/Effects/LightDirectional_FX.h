@@ -85,9 +85,8 @@ public:
 		m_geometryEffects.push_back(new PropShadowing_Effect(engine, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer, &((PropShadowing_System*)m_geometrySystems[0])->m_renderState));
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);
-		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		//	m_engine->getMessageManager().error("DirectionalLight Shadowmap Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));		
+		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			m_engine->getMessageManager().error("DirectionalLight Shadowmap Framebuffer has encountered an error.");		
 	}
 
 

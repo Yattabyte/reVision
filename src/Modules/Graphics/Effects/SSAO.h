@@ -107,15 +107,14 @@ public:
 			m_shader->setUniformArray(3, new_kernel, MAX_KERNEL_SIZE);
 		});
 		
-
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-	//		m_engine->getMessageManager().error("SSAO Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		auto & msgMgr = m_engine->getMessageManager();
+		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSAO Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error("SSAO Texture is incomplete.");
+			msgMgr.error("SSAO Texture is incomplete.");
 		if (!glIsTexture(m_noiseID))
-			m_engine->getMessageManager().error("SSAO Noise Texture is incomplete.");
+			msgMgr.error("SSAO Noise Texture is incomplete.");
 	}
 
 

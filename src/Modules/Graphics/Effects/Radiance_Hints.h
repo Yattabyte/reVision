@@ -63,9 +63,8 @@ public:
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		//	m_engine->getMessageManager().error("Radiance_Hints Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			m_engine->getMessageManager().error("Radiance_Hints Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
 			m_engine->getMessageManager().error("Radiance_Hints Texture is incomplete.");
 	}

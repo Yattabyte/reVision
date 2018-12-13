@@ -61,7 +61,6 @@ public:
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
-
 		glCreateTextures(GL_TEXTURE_2D, 2, m_textureIDS_GB);
 		for (int x = 0; x < 2; ++x) {
 			glTextureImage2DEXT(m_textureIDS_GB[x], GL_TEXTURE_2D, 0, GL_RGB16F, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
@@ -70,18 +69,18 @@ public:
 			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS_GB[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		}
+		glCreateFramebuffers(1, &m_fbo_GB);
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		//if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-		//	engine->getMessageManager().error("Bloom Framebuffer is incomplete. Reason: \n" + std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		auto & msgMgr = m_engine->getMessageManager();
+		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("Bloom Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			engine->getMessageManager().error("Bloom Texture is incomplete.");
+			msgMgr.error("Bloom Texture is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[0]))
-			engine->getMessageManager().error("Bloom Gaussian blur texture #1 [0] is incomplete.");
+			msgMgr.error("Bloom Gaussian blur texture #1 [0] is incomplete.");
 		if (!glIsTexture(m_textureIDS_GB[1]))
-			engine->getMessageManager().error("Bloom Gaussian blur texture #2 [1] is incomplete.");
-		glCreateFramebuffers(1, &m_fbo_GB);
+			msgMgr.error("Bloom Gaussian blur texture #2 [1] is incomplete.");
 	}
 
 

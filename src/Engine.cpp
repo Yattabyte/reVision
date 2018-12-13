@@ -68,12 +68,11 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwSwapInterval(vsync);
 
 	// Initialize GLAD
-	gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-	/*if (gladLoadGL()) {
-		engine->getMessageManager().error("GLEW unable to initialize, shutting down...");
+	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
+		engine->getMessageManager().error("GLAD unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
-	}*/
+	}
 }
 
 Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
