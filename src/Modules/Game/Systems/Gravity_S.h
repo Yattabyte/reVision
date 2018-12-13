@@ -103,7 +103,7 @@ public:
 							}
 							// Tile has already been dropped to destination, need to move tile upwards now, not down
 							// So use negative reciprical of bounce function to get desired effect
-							board.m_data->data->gravityOffsets[(y * 6) + x] = -((std::max(6.0f, 12.0f - float(dTile.weight))) / 6.0f) * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
+							board.m_data->data->gravityOffsets[(y * 6) + x] = -((std::max<float>(6.0f, 12.0f - float(dTile.weight))) / 6.0f) * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
 							dTile.tick++;
 							break;
 						}

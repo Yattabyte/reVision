@@ -116,6 +116,9 @@ public:
 				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(spotLightComponent->m_radius*spotLightComponent->m_radius)*1.1f);
 				spotLightComponent->m_data->data->mMatrix = (trans)* scl;
 			}
+			if (spotShadowComponent) {
+				// To Do
+			}
 			if (reflectorComponent) {
 				const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
 				reflectorComponent->m_transform = Transform(position, orientation, scale);

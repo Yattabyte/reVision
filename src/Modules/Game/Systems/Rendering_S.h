@@ -8,10 +8,10 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Texture.h"
 #include "Utilities\GL\StaticBuffer.h"
+#include "Utilities\GL\DynamicBuffer.h"
 #include "Engine.h"
 
 /** Component Types Used */
-#include "Modules\Game\Components\GameBoard_C.h"
 #include "Modules\Game\Components\GameScore_C.h"
 
 
@@ -24,7 +24,6 @@ public:
 	~Rendering_System() = default;
 	Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
-		addComponentType(GameBoard_Component::ID);
 		addComponentType(GameScore_Component::ID);
 		
 		m_vaoModels = &engine->getModelManager().getVAO();
@@ -36,7 +35,7 @@ public:
 		// FBO & Texture Creation
 		glCreateFramebuffers(1, &m_fboIDBorder);
 		glCreateTextures(GL_TEXTURE_1D, 1, &m_borderTexID);
-		glTextureImage1DEXT(m_borderTexID, GL_TEXTURE_1D, 0, GL_RGBA16F, tileSize * 16, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage1DEXT(m_borderTexID, GL_TEXTURE_1D, 0, GL_RGBA16F, GLsizei(tileSize * 16), 0, GL_RGBA, GL_FLOAT, NULL);
 		glTextureParameteri(m_borderTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_borderTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_borderTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -46,7 +45,7 @@ public:
 
 		glCreateFramebuffers(1, &m_fboIDField);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_boardTexID);
-		glTextureImage2DEXT(m_boardTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, tileSize * 6, tileSize * 12, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_boardTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, GLsizei(tileSize * 6), GLsizei(tileSize * 12), 0, GL_RGBA, GL_FLOAT, NULL);
 		glTextureParameteri(m_boardTexID, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTextureParameteri(m_boardTexID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		glTextureParameteri(m_boardTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -58,8 +57,8 @@ public:
 		glCreateFramebuffers(1, &m_fboIDBars);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_scoreTexID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_timeTexID);
-		glTextureImage2DEXT(m_scoreTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, tileSize * 6, tileSize * 1.5, 0, GL_RGBA, GL_FLOAT, NULL);
-		glTextureImage2DEXT(m_timeTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, tileSize * 6, tileSize * 1.5, 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_scoreTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, GLsizei(tileSize * 6), GLsizei(tileSize * 1.5), 0, GL_RGBA, GL_FLOAT, NULL);
+		glTextureImage2DEXT(m_timeTexID, GL_TEXTURE_2D, 0, GL_RGBA16F, GLsizei(tileSize * 6), GLsizei(tileSize * 1.5), 0, GL_RGBA, GL_FLOAT, NULL);
 		glTextureParameteri(m_scoreTexID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_scoreTexID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_scoreTexID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -134,19 +133,19 @@ public:
 		});
 		m_bufferIndirectBoard = StaticBuffer(sizeof(GLint) * 16, 0, GL_DYNAMIC_STORAGE_BIT);
 		m_modelBoard->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLint data[4] = { m_modelBoard->m_count, 1, m_modelBoard->m_offset, 1 };
+			const GLint data[4] = { GLint(m_modelBoard->m_count), 1, GLint(m_modelBoard->m_offset), 1 };
 			m_bufferIndirectBoard.write(0, sizeof(GLint) * 4, data);
 		});
 		m_modelField->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLint data[4] = { m_modelField->m_count, 1, m_modelField->m_offset, 1 };
+			const GLint data[4] = { GLint(m_modelField->m_count), 1, GLint(m_modelField->m_offset), 1 };
 			m_bufferIndirectBoard.write(sizeof(GLint) * 4, sizeof(GLint) * 4, data);
 		});
 		m_modelHeader->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLint data[4] = { m_modelHeader->m_count, 1, m_modelHeader->m_offset, 1 };
+			const GLint data[4] = { GLint(m_modelHeader->m_count), 1, GLint(m_modelHeader->m_offset), 1 };
 			m_bufferIndirectBoard.write(sizeof(GLint) * 8, sizeof(GLint) * 4, data);
 		});
 		m_modelFooter->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLint data[4] = { m_modelFooter->m_count, 1, m_modelFooter->m_offset, 1 };
+			const GLint data[4] = { GLint(m_modelFooter->m_count), 1,GLint(m_modelFooter->m_offset), 1 };
 			m_bufferIndirectBoard.write(sizeof(GLint) * 12, sizeof(GLint) * 4, data);
 		});
 	}
@@ -158,8 +157,7 @@ public:
 			return;
 
 		for each (const auto & componentParam in components) {
-			auto & board = *(GameBoard_Component*)componentParam[0];
-			auto & score = *(GameScore_Component*)componentParam[1];
+			auto & score = *(GameScore_Component*)componentParam[0];
 
 			// Update Rendering Data
 			// Determine number of chars in score
@@ -177,7 +175,7 @@ public:
 			// Generate sprite set for scored tiles
 			GLuint matchedCount = 0;
 			for each (const auto & qwe in score.m_scoredTiles)
-				matchedCount += (qwe.first.size() * 16u);
+				matchedCount += (GLuint(qwe.first.size()) * 16u);
 			m_bufferIndirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
 			unsigned long writeIndex = unsigned long(0);
 			// Go through each set of scored tiles
@@ -297,7 +295,7 @@ public:
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 			// Render score header bar to the FBO
-			glViewport(0, 0, tileSize * 6, tileSize * 1.5);
+			glViewport(0, 0, GLsizei(tileSize * 6), GLsizei(tileSize * 1.5));
 			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBars);
 			glDrawBuffer(GL_COLOR_ATTACHMENT0);
 			glClear(GL_COLOR_BUFFER_BIT);

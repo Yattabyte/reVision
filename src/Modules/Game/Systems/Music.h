@@ -36,7 +36,7 @@ public:
 				if (!m_musicPlaying && m_soundSongGood->existsYet()) {
 					m_musicPlaying = true;
 					m_failPlaying = false;
-					soundMgr.stopWavBackground(m_songHandle);
+					soundMgr.stopWav(m_songHandle);
 					m_songHandle = soundMgr.playWavBackground(m_soundSongGood->m_soundObj, 0.75f, true, 3.0);
 				}
 			}
@@ -44,7 +44,7 @@ public:
 				if (!m_failPlaying && m_soundSongBad->existsYet()) {
 					m_failPlaying = true;
 					m_musicPlaying = false;
-					soundMgr.stopWavBackground(m_songHandle);
+					soundMgr.stopWav(m_songHandle);
 					m_songHandle = soundMgr.playWavBackground(m_soundSongBad->m_soundObj, 0.75f, true);
 				}
 			}

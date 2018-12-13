@@ -43,7 +43,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	void initializeDefault(Engine * engine);
+	void initializeDefault();
 	virtual void initialize(Engine * engine, const std::string & relativePath) override;
 
 

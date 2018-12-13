@@ -31,12 +31,11 @@ inline std::string get_between_quotes(std::string & s)
 @return				the index of the value in the list if found, otherwise -1 */
 inline int find_CFG_Property(const std::string & s, const std::vector<std::string> & m_strings)
 {
-	std::string UPPER_STRING;
-	for each (const auto &c in s)
-		UPPER_STRING += toupper(c);
-	bool success = false;
+	std::string upperCase(s);
+	for (size_t x = 0, size = upperCase.size(); x < size; ++x)
+		upperCase[x] = char(toupper(int(upperCase[x])));
 	for (auto value = begin(m_strings); value != end(m_strings); value++)
-		if ((*value) == UPPER_STRING)
+		if ((*value) == upperCase)
 			return (int)std::distance(m_strings.begin(), value);
 	return -1;
 }

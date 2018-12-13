@@ -8,7 +8,7 @@ constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 Asset_Sound::~Asset_Sound()
 {
 	if (m_finalized) 
-		delete m_soundObj;	
+		delete (SoLoud::Wav*)m_soundObj;
 }
 
 Asset_Sound::Asset_Sound(const std::string & filename) : Asset(filename) {}

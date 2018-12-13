@@ -27,9 +27,8 @@ Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, cons
 	);
 }
 
-void Asset_Shader_Geometry::initializeDefault(Engine * engine)
+void Asset_Shader_Geometry::initializeDefault()
 {	
-
 }
 
 void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & relativePath)
@@ -51,7 +50,7 @@ void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & rela
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
 			engine->getMessageManager().error("Asset_Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
-			initializeDefault(engine);
+			initializeDefault();
 		}
 	}
 
@@ -64,7 +63,7 @@ const bool Asset_Shader_Geometry::initShaders(Engine * engine, const std::string
 {
 	const std::string filename = getFileName();
 
-	if (!Asset_Shader_Geometry::initShaders(engine, relativePath) ||
+	if (!Asset_Shader::initShaders(engine, relativePath) ||
 		!m_geometryShader.loadDocument(engine, relativePath + EXT_SHADER_GEOMETRY))
 		return false;
 

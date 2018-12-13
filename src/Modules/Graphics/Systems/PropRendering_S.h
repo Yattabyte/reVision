@@ -6,6 +6,7 @@
 #include "Assets\Asset_Shader.h"
 #include "Assets\Asset_Primitive.h"
 #include "Utilities\GL\FBO.h"
+#include "Utilities\GL\DynamicBuffer.h"
 #include "Engine.h"
 #include <vector>
 

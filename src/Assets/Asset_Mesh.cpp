@@ -17,7 +17,7 @@ Shared_Asset_Mesh Asset_Mesh::Create(Engine * engine, const std::string & filena
 	);
 }
 
-void Asset_Mesh::initializeDefault(Engine * engine)
+void Asset_Mesh::initializeDefault()
 {
 	// Create hard-coded alternative
 	m_geometry.vertices = { glm::vec3(-1, -1, 0), glm::vec3(1, -1, 0), glm::vec3(1, 1, 0),glm::vec3(-1, -1, 0), glm::vec3(1, 1, 0), glm::vec3(-1, 1, 0) };
@@ -31,7 +31,7 @@ void Asset_Mesh::initialize(Engine * engine, const std::string & relativePath)
 {
 	if (!Mesh_IO::Import_Model(engine, relativePath, m_geometry)) {
 		engine->getMessageManager().error("Asset_Mesh \"" + m_filename + "\" failed to initialize.");
-		initializeDefault(engine);
+		initializeDefault();
 	}
 
 	Asset::finalize(engine);

@@ -20,7 +20,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.7.C";
+constexpr char ENGINE_VERSION[] = "2.7.D";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -103,7 +103,7 @@ public:
 private:
 	// Private Methods
 	/** Updates the action state belonging to this engine, iterating through the keybinds and checking if they are active. */
-	void updateInput(const float & deltaTime);
+	void updateInput();
 
 
 	// Private Attributes

@@ -10,7 +10,8 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 	}
 	// Try to load the file stream
 	try {
-		entities = parse_level(std::ifstream(Engine::Get_Current_Dir() + relativePath));
+		auto stream = std::ifstream(Engine::Get_Current_Dir() + relativePath);
+		entities = parse_level(stream);
 		return true;
 	}
 	// Catch failure state

@@ -29,7 +29,10 @@ Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & 
 		"",
 		&initialize,
 		engine,
-		threaded
+		threaded,
+		type,
+		mipmap,
+		anis
 	);
 }
 

@@ -33,7 +33,7 @@ public:
 	@param	anis			use 16x anistropic filtering
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	static Shared_Asset_Texture Create(Engine * engine, const std::string & filename, const GLuint & type = GL_TEXTURE, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
+	static Shared_Asset_Texture Create(Engine * engine, const std::string & filename, const GLuint & type = GL_TEXTURE_2D, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit
 	@param	texture_unit	the texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);

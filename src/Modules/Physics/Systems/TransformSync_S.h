@@ -36,7 +36,6 @@ public:
 			const auto & position = transformComponent->m_transform.m_position;
 			const auto & orientation = transformComponent->m_transform.m_orientation;
 			const auto & scale = transformComponent->m_transform.m_scale;
-			const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
 
 			if (colliderComponent) {
 				if (colliderComponent->m_collider->existsYet()) {

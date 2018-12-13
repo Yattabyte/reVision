@@ -17,12 +17,12 @@ public:
 		}
 	}
 	/** Default. */
-	DynamicBuffer() {
+	DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) 
+		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
 		glCreateBuffers(1, &m_bufferID);
-		glNamedBufferStorage(m_bufferID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
+		glNamedBufferStorage(m_bufferID, m_maxCapacity, data, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);
 		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, m_maxCapacity, m_mapFlags);
 	}
-	DynamicBuffer(const GLsizeiptr & size, const void * data, const GLbitfield & mapFlags) : m_maxCapacity(size), m_mapFlags(mapFlags) {}
 	/** Move gl object from 1 instance to another. */
 	inline DynamicBuffer & operator=(DynamicBuffer && o) noexcept {
 		m_bufferID = (std::move(o.m_bufferID));

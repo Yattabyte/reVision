@@ -348,7 +348,7 @@ private:
 				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.first.size() > 3) {
-					addScore(score, manifold.first.size() + (10 * (manifold.first.size() - 3)));
+					addScore(score, int(manifold.first.size()) + (10 * (int(manifold.first.size()) - 3)));
 					board.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
 					score.m_stopTimer++;
 				}

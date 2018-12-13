@@ -123,6 +123,7 @@ Engine::Engine() :
 	m_messageManager.statement("GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
 	m_messageManager.statement("GLFW         " + std::string(glfwGetVersionString(), 5));
 	m_messageManager.statement("GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
+	m_messageManager.statement("SoLoud       " + std::to_string(m_soundManager.GetVersion()));
 	m_messageManager.statement("");
 	m_messageManager.statement("Graphics Info:");
 	m_messageManager.statement(std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
@@ -204,7 +205,7 @@ void Engine::tick()
 	// Update Managers
 	m_assetManager.notifyObservers();
 	m_modelManager.update();
-	updateInput(deltaTime);
+	updateInput();
 	m_moduleGraphics.setActiveCamera(0);
 
 	/*******************
@@ -249,7 +250,7 @@ std::string Engine::Get_Current_Dir()
 	// Technique to return the running directory of the application
 	char cCurrentPath[FILENAME_MAX];
 	if (_getcwd(cCurrentPath, sizeof(cCurrentPath)))
-		cCurrentPath[sizeof(cCurrentPath) - 1] = char('/0');
+		cCurrentPath[sizeof(cCurrentPath) - 1l] = char('/0');
 	return std::string(cCurrentPath);
 }
 
@@ -260,7 +261,7 @@ bool Engine::File_Exists(const std::string & name)
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
-void Engine::updateInput(const float & deltaTime)
+void Engine::updateInput()
 {
 	const auto &bindings = m_inputBindings.getBindings();
 	if (!bindings->existsYet()) return;

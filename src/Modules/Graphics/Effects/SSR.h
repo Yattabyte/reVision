@@ -183,8 +183,8 @@ private:
 	inline void resize(const glm::ivec2 & size) {
 		m_renderSize = size;
 		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+			const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
+			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, mippedSize.x, mippedSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
 	}

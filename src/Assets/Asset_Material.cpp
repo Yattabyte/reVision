@@ -17,8 +17,8 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &textures, MaterialManager & materialManager) 
-	: Asset(filename), m_textures(textures)
+Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
+	: Asset(filename), m_textures(tx)
 {
 	// We need to reserve a region of gpu memory for all the textures
 	// So we need to pre-emptively figure out the maximum number of textures we may need (can't delay until later)
@@ -111,22 +111,6 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 	Asset::finalize(engine);
 }
 
-/** Fetch the directory of a material texture from its definition file. */
-bool getString(std::istringstream & string_stream, std::string & target, std::string & input = std::string(""))
-{
-	string_stream >> input;
-	if (input == "std::string") {
-		int size = 0; string_stream >> size;
-		target.reserve(size);
-		for (int x = 0; x < size; ++x) {
-			std::string v;
-			string_stream >> v;
-			target += v;
-		}
-	}
-	else return false;
-	return true;
-}
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"
 @return	the std::string between quotation marks */
 std::string const get_between_quotes(std::string & s)

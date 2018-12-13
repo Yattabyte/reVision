@@ -75,7 +75,7 @@ void Asset_Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondary
 				{ GLubyte(secondaryColor.x), GLubyte(secondaryColor.y), GLubyte(secondaryColor.z), GLubyte(secondaryColor.w) }
 			};
 			bool cFlip = false;
-			for (size_t pixel = 0, depth = -1; pixel < pixelCount; ++pixel) {
+			for (size_t pixel = 0, depth = size_t(-1); pixel < pixelCount; ++pixel) {
 				// Flip color if we've drawn enough of the checker
 				if ((pixel % checkerSize) == 0)
 					cFlip = !cFlip;
