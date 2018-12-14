@@ -61,6 +61,7 @@ public:
 							board.m_nearingTop = true;
 						break;
 					}
+			board.m_data->data->nearingTop = int(board.m_nearingTop);
 		}
 	}
 

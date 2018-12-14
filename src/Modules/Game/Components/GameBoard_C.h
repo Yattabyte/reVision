@@ -41,6 +41,7 @@ struct BoardBuffer {
 	int multiplier = 0;
 	int stopTimer = 0;
 	int gameTimer = 0;
+	int nearingTop = 0;	glm::ivec2 padding3;
 };
 /** A component representing a basic player. */
 struct GameBoard_Component : public ECSComponent<GameBoard_Component> {

@@ -24,7 +24,7 @@ public:
 
 		// Asset Loading
 		m_soundPop = Shared_Sound(m_engine, "Game\\pop.wav");
-		m_soundMultiplier = Shared_Sound(m_engine, "Game\\multiplier.wav");
+		m_soundMultiplierInc = Shared_Sound(m_engine, "Game\\multiplier.wav");
 		m_soundMultiplierLost = Shared_Sound(m_engine, "Game\\multiplier lost.wav");
 		m_soundLevelGained = Shared_Sound(m_engine, "Game\\level gain.wav");
 	}
@@ -318,22 +318,23 @@ private:
 				board.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
 				board.m_data->data->scoreAnimLinear++;
 
-				if (m_soundMultiplier->existsYet() && score.m_multiplier >= 2)
-					m_engine->getSoundManager().playWav(m_soundMultiplier->m_soundObj, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
+				if (m_soundMultiplierInc->existsYet())
+					m_engine->getSoundManager().playWav(m_soundMultiplierInc->m_soundObj, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
 		}
 		else if ((!score.m_scoredTiles.size() || !score.m_comboChanged) && score.m_multiplier) {
 			// Reset multiplier if no tiles are scored
 			if (m_soundMultiplierLost->existsYet() && score.m_multiplier >= 2)
-				m_engine->getSoundManager().playWav(m_soundMultiplierLost->m_soundObj, 0.25f);
+				m_engine->getSoundManager().playWav(m_soundMultiplierLost->m_soundObj, 0.5f);
 			score.m_multiplier = 0;
 			score.m_comboChanged = false;
 
 		}
 
+		// Manage scoring manifolds
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
-			// If this manifold hasn't been processed
+			// If this manifold hasn't been processed for scoring yet
 			if (!manifold.second) {
 				manifold.second = true;
 				int offset = 0;
@@ -352,26 +353,33 @@ private:
 					board.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
 					score.m_stopTimer++;
 				}
-
 				score.m_stopTimeTick = 0;
 			}
-		}
-
-
-		// Tick all matched tiles until they pop
-		for (int y = 1; y < 12; ++y)
-			for (int x = 0; x < 6; ++x) {
-				auto & xTile = board.m_tiles[y][x];
-				if (xTile.m_scoreType == TileState::MATCHED) {
-					if (xTile.m_tick >= TickCount_Popping) {
+			else {
+				// Tick all matched tiles until they pop
+				int count = 0;
+				for each (const auto & xy in manifold.first) {
+					const auto & x = xy.x;
+					const auto & y = xy.y;
+					auto & xTile = board.m_tiles[y][x];
+					if (xTile.m_scoreType == TileState::MATCHED) {
+						// Play sound before we pop (lines up better with animation)
+						if (xTile.m_tick == 0) {
+							if (m_soundPop->existsYet())
+								m_engine->getSoundManager().playWav(m_soundPop->m_soundObj, 1.0f, 1.0f + (count / 10.0f));
+						}
 						// Tile SCORED
-						xTile.m_scoreType = TileState::SCORED;
-						addScore(score, 10);
-						score.m_tilesCleared++;
+						if (xTile.m_tick >= TickCount_Popping) {
+							xTile.m_scoreType = TileState::SCORED;
+							addScore(score, 10);
+							score.m_tilesCleared++;
+						}
+						board.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
 					}
-					board.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
+					count++;
 				}
 			}
+		}
 		
 		// Check if all tiles in a scoring set have been popped
 		// If so, empty and reset them
@@ -408,7 +416,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Sound m_soundPop, m_soundMultiplier, m_soundMultiplierLost, m_soundLevelGained;
+	Shared_Sound m_soundPop, m_soundMultiplierInc, m_soundMultiplierLost, m_soundLevelGained;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
