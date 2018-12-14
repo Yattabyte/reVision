@@ -4,6 +4,7 @@
 
 #include "Utilities\GL\FBO.h"
 #include "GLFW\glfw3.h"
+#include "glm\glm.hpp"
 
 
 /** A framebuffer, formatted to support rendering geometry (deferred rendering/gbuffer). */

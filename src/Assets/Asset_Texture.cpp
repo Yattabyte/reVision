@@ -4,6 +4,18 @@
 
 constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
+Shared_Texture::Shared_Texture(Engine * engine, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
+	: std::shared_ptr<Asset_Texture>(engine->getAssetManager().createAsset<Asset_Texture>(
+		filename,
+		DIRECTORY_TEXTURE,
+		"",
+		engine,
+		threaded,
+		type,
+		mipmap,
+		anis
+		)) {}
+
 Asset_Texture::~Asset_Texture()
 {
 	if (existsYet()) {
@@ -21,25 +33,10 @@ Asset_Texture::Asset_Texture(const std::string & filename, const GLuint & t, con
 	m_anis = a;
 }
 
-Shared_Asset_Texture Asset_Texture::Create(Engine * engine, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Texture>(
-		filename,
-		DIRECTORY_TEXTURE,
-		"",
-		&initialize,
-		engine,
-		threaded,
-		type,
-		mipmap,
-		anis
-	);
-}
-
 void Asset_Texture::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_image = Asset_Image::Create(engine, relativePath, {}, false);
+	m_image = Shared_Image(engine, relativePath, {}, false);
 
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);

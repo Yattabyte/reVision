@@ -8,7 +8,18 @@
 class Engine;
 class Asset_Sound;
 class SoundObj;
-using Shared_Asset_Sound = std::shared_ptr<Asset_Sound>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Sound : public std::shared_ptr<Asset_Sound> {
+public:
+	Shared_Sound() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded = true);
+};
 
 /** A Sound object. */
 class Asset_Sound : public Asset
@@ -18,14 +29,6 @@ public:
 	~Asset_Sound();
 	/** Construct the Sound. */
 	Asset_Sound(const std::string & filename);
-
-
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
-	static Shared_Asset_Sound Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 
 
 	// Public Attributes

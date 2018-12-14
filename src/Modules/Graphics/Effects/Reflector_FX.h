@@ -30,12 +30,12 @@ public:
 		Reflector_RenderState * renderState
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO), m_renderState(renderState) {
 		// Asset Loading
-		m_shaderLighting = Asset_Shader::Create(m_engine, "Core\\Reflector\\IBL_Parallax");
-		m_shaderStencil = Asset_Shader::Create(m_engine, "Core\\Reflector\\Stencil");
-		m_shaderCopy = Asset_Shader::Create(m_engine, "Core\\Reflector\\2D_To_Cubemap");
-		m_shaderConvolute = Asset_Shader::Create(m_engine, "Core\\Reflector\\Cube_Convolution");
-		m_shapeCube = Asset_Primitive::Create(m_engine, "cube");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
+		m_shaderStencil = Shared_Shader(m_engine, "Core\\Reflector\\Stencil");
+		m_shaderCopy = Shared_Shader(m_engine, "Core\\Reflector\\2D_To_Cubemap");
+		m_shaderConvolute = Shared_Shader(m_engine, "Core\\Reflector\\Cube_Convolution");
+		m_shapeCube = Shared_Primitive(m_engine, "cube");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -201,8 +201,8 @@ protected:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
+	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
+	Shared_Primitive m_shapeCube, m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Reflector_RenderState * m_renderState = nullptr;

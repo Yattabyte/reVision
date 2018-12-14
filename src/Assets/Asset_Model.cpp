@@ -4,6 +4,16 @@
 
 constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
+Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Model>(engine->getAssetManager().createAsset<Asset_Model>(
+		filename,
+		DIRECTORY_MODEL,
+		"",
+		engine,
+		threaded,
+		engine->getModelManager()
+		)) {}
+
 Asset_Model::~Asset_Model()
 {
 	if (existsYet())
@@ -12,23 +22,10 @@ Asset_Model::~Asset_Model()
 
 Asset_Model::Asset_Model(const std::string & filename, ModelManager & modelManager) : Asset(filename), m_modelManager(&modelManager) {}
 
-Shared_Asset_Model Asset_Model::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Model>(
-		filename,
-		DIRECTORY_MODEL,
-		"",
-		&initialize,
-		engine,
-		threaded,
-		engine->getModelManager()
-	);
-}
-
 void Asset_Model::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
+	m_mesh = Shared_Mesh(engine, relativePath, false);
 
 	// Generate all the required skins
 	loadMaterial(engine, relativePath, m_materialArray, m_mesh->m_geometry.materials);
@@ -91,7 +88,7 @@ void Asset_Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3
 	}
 }
 
-void Asset_Model::loadMaterial(Engine * engine, const std::string & relativePath, Shared_Asset_Material & modelMaterial, const std::vector<Material>& materials)
+void Asset_Model::loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material>& materials)
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
@@ -109,5 +106,5 @@ void Asset_Model::loadMaterial(Engine * engine, const std::string & relativePath
 
 	// Attempt to find a .mat file if it exists
 	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of("."));
-	modelMaterial = Asset_Material::Create(engine, materialFilename, textures);
+	modelMaterial = Shared_Material(engine, materialFilename, textures);
 }

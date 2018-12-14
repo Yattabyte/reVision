@@ -11,30 +11,21 @@
 
 class Engine;
 class Asset_Image;
-using Shared_Asset_Image = std::shared_ptr<Asset_Image>;
 
-/** Holds image data, and nothing more. */
-class Asset_Image : public Asset
-{
+/** Public Policy Enumerations. */
+const enum Fill_Policy : GLenum {
+	Checkered,
+	Solid,
+};
+const enum Resize_Policy : GLenum {
+	Nearest,
+	Linear,
+};
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Image : public std::shared_ptr<Asset_Image> {
 public:
-	/** Public Policy Enumerations. */
-	const enum Fill_Policy : GLenum {
-		Checkered,
-		Solid,
-	};
-	const enum Resize_Policy : GLenum {
-		Nearest,
-		Linear,
-	};
-
-
-	/** Destroy the Image. */
-	~Asset_Image();
-	/** Construct the Image. */
-	Asset_Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
-
-
-	// Public Methods
+	Shared_Image() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -42,9 +33,19 @@ public:
 	@param	category		the category of image, if available
 	@param	threaded		create in a separate thread
 	@return					the desired asset */
-	static Shared_Asset_Image Create(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
+	explicit Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
+};
 
-	
+/** Holds image data, and nothing more. */
+class Asset_Image : public Asset
+{
+public:
+	/** Destroy the Image. */
+	~Asset_Image();
+	/** Construct the Image. */
+	Asset_Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
+
+
 	// Public Attributes
 	glm::ivec2 m_size = glm::ivec2(0);
 	GLubyte	* m_pixelData = nullptr;

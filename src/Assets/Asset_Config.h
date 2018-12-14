@@ -10,7 +10,19 @@ constexpr float UNDEFINED_CVAL = -12345.67890f; // Undefined preference
 
 class Engine;
 class Asset_Config;
-using Shared_Asset_Config = std::shared_ptr<Asset_Config>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Config : public std::shared_ptr<Asset_Config> {
+public:
+	Shared_Config() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	cfg_strings		the configuration strings to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string> & cfg_strings, const bool & threaded = true);
+};
 
 /** A registry for configuration name-value pairs. */
 class Asset_Config : public Asset
@@ -23,13 +35,6 @@ public:
 
 
 	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	cfg_strings		the configuration strings to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */	
-	static Shared_Asset_Config Create(Engine * engine, const std::string & filename, const std::vector<std::string> & cfg_strings, const bool & threaded = true);
 	/** Assigns the specified value to the specified key.
 	@param	cfg_key		the key to apply this new value to
 	@param	cfg_value	the new value to give to this key */

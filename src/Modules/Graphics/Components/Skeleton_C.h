@@ -18,7 +18,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	int m_animation = -1;
 	bool m_playAnim = true;
 	float m_animTime = 0, m_animStart = 0;
-	Shared_Asset_Mesh m_mesh;
+	Shared_Mesh m_mesh;
 	std::vector<glm::mat4> m_transforms;
 	VB_Element<Skeleton_Buffer> * m_data = nullptr;
 };
@@ -35,7 +35,7 @@ struct Skeleton_Constructor : ECSComponentConstructor<Skeleton_Component> {
 		auto animation = castAny(parameters[1], 0);
 		auto * component = new Skeleton_Component();
 		component->m_data = m_elementBuffer->newElement();
-		component->m_mesh = Asset_Mesh::Create(m_engine, "\\Models\\" + directory);
+		component->m_mesh = Shared_Mesh(m_engine, "\\Models\\" + directory);
 		component->m_animation = animation;
 		for (int x = 0; x < NUM_MAX_BONES; ++x)
 			component->m_data->data->bones[x] = glm::mat4(1.0f);

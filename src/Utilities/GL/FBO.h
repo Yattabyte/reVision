@@ -3,8 +3,6 @@
 #define FBO_H
 
 #include "Utilities\GL\StaticBuffer.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
 
 
 /** An OpenGL FBO usage interface. */

@@ -5,6 +5,15 @@
 
 constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 
+Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Sound>(engine->getAssetManager().createAsset<Asset_Sound>(
+		filename,
+		DIRECTORY_SOUNDS,
+		"",
+		engine,
+		threaded
+		)) {}
+
 Asset_Sound::~Asset_Sound()
 {
 	if (m_finalized) 
@@ -12,18 +21,6 @@ Asset_Sound::~Asset_Sound()
 }
 
 Asset_Sound::Asset_Sound(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Sound Asset_Sound::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Sound>(
-		filename,
-		DIRECTORY_SOUNDS,
-		"",
-		&initialize,
-		engine,
-		threaded
-	);
-}
 
 void Asset_Sound::initialize(Engine * engine, const std::string & relativePath)
 {

@@ -6,6 +6,15 @@
 constexpr char* EXT_PRIMITIVE = ".obj";
 constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
+Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Primitive>(engine->getAssetManager().createAsset<Asset_Primitive>(
+		filename,
+		DIRECTORY_PRIMITIVE,
+		EXT_PRIMITIVE,
+		engine,
+		threaded
+		)) {}
+
 Asset_Primitive::~Asset_Primitive()
 {
 	if (existsYet())
@@ -25,22 +34,10 @@ Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-Shared_Asset_Primitive Asset_Primitive::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Primitive>(
-		filename,
-		DIRECTORY_PRIMITIVE,
-		EXT_PRIMITIVE,
-		&initialize,
-		engine,
-		threaded
-	);
-}
-
 void Asset_Primitive::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
+	m_mesh = Shared_Mesh(engine, relativePath, false);
 
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.resize(vertexCount);
@@ -58,7 +55,7 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & relativePa
 	Asset::finalize(engine);
 }
 
-size_t Asset_Primitive::getSize()
+size_t Asset_Primitive::getSize() const
 {
 	return m_data.size();
 }

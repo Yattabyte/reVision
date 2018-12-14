@@ -30,9 +30,9 @@ public:
 	Radiance_Hints(Engine * engine, FBO_Base * geometryFBO, FBO_Base * bounceFBO, std::shared_ptr<RH_Volume> volumeRH)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_bounceFBO(bounceFBO), m_volumeRH(volumeRH) {
 		// Asset Loading
-		m_shaderRecon = Asset_Shader::Create(m_engine, "Effects\\RH Reconstruction");
-		m_shaderRebounce = Asset_Shader::Create(m_engine, "Effects\\RH Rebounce");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
+		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -126,8 +126,8 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_bounceFBO = nullptr;
 	FBO_LightBounce	m_rebounceFBO;
-	Shared_Asset_Shader m_shaderRecon, m_shaderRebounce;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderRecon, m_shaderRebounce;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

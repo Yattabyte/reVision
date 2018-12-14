@@ -22,8 +22,8 @@ public:
 	To_Screen(Engine * engine)
 	: m_engine(engine) {
 		// Asset Loading
-		m_shader = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -48,8 +48,8 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shader;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shader;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

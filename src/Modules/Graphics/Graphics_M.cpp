@@ -94,8 +94,8 @@ void Graphics_Module::initialize(Engine * engine)
 	setActiveCamera(m_defaultCamera->index);
 
 	// Asset Loading
-	m_shaderCull = Asset_Shader::Create(m_engine, "Core\\Props\\culling");
-	m_shaderGeometry = Asset_Shader::Create(m_engine, "Core\\Props\\geometry");
+	m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
+	m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
 
 	// Error Reporting
 	auto & msgMgr = m_engine->getMessageManager();

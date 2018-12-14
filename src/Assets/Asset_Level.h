@@ -10,9 +10,20 @@
 
 class Engine;
 class Asset_Level;
-using Shared_Asset_Level = std::shared_ptr<Asset_Level>;
 struct LevelStruct_Entity;
 struct LevelStruct_Component;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Level : public std::shared_ptr<Asset_Level> {
+public:
+	Shared_Level() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Level(Engine * engine, const std::string & filename, const bool & threaded = true);
+};
 
 /** An asset which represents some intermediate form of a world level. */
 class Asset_Level : public Asset
@@ -22,14 +33,6 @@ public:
 	~Asset_Level() = default;
 	/** Construct the Level. */
 	Asset_Level(const std::string & filename);
-
-
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
-	static Shared_Asset_Level Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	
 	
 	// Public Attributes

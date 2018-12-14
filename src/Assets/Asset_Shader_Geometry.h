@@ -12,7 +12,18 @@
 
 class Engine;
 class Asset_Shader_Geometry;
-using Shared_Asset_Shader_Geometry = std::shared_ptr<Asset_Shader_Geometry>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Shader_Geometry : public std::shared_ptr<Asset_Shader_Geometry> {
+public:
+	Shared_Shader_Geometry() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded = true);
+};
 
 /** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Asset_Shader. */
 class Asset_Shader_Geometry : public Asset_Shader
@@ -22,15 +33,6 @@ public:
 	~Asset_Shader_Geometry();
 	/** Construct the Shader. */
 	Asset_Shader_Geometry(const std::string & filename);
-
-
-	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
-	static Shared_Asset_Shader_Geometry Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 
 	
 	// Public Attributes

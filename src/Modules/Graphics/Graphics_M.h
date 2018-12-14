@@ -68,7 +68,7 @@ private:
 	MappedChar<GFX_Core_Effect*>	m_mappedFX;
 	std::shared_ptr<RH_Volume>		m_volumeRH;
 	VisualFX						m_visualFX;
-	Shared_Asset_Shader				m_shaderCull, m_shaderGeometry;
+	Shared_Shader					m_shaderCull = Shared_Shader(), m_shaderGeometry = Shared_Shader();
 	std::shared_ptr<bool>			m_aliveIndicator = std::make_shared<bool>(true);
 	FBO_Geometry					m_geometryFBO;
 	FBO_Lighting					m_lightingFBO;

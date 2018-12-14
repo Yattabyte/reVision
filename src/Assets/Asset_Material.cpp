@@ -7,6 +7,17 @@
 
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
+Shared_Material::Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string>& textures, const bool & threaded)
+	: std::shared_ptr<Asset_Material>(engine->getAssetManager().createAsset<Asset_Material>(
+		filename,
+		"",
+		MATERIAL_EXTENSION,
+		engine,
+		threaded,
+		textures,
+		engine->getMaterialManager()
+		)) {}
+
 Asset_Material::~Asset_Material()
 {
 	if (existsYet()) {
@@ -47,20 +58,6 @@ Asset_Material::Asset_Material(const std::string & filename, const std::vector<s
 	m_matSpot = materialManager.generateID(m_textures.size());
 }
 
-Shared_Asset_Material Asset_Material::Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Material>(
-		filename,
-		"",
-		MATERIAL_EXTENSION,
-		&initialize,
-		engine,
-		threaded,
-		textures,
-		engine->getMaterialManager()
-	);
-}
-
 void Asset_Material::initialize(Engine * engine, const std::string & relativePath)
 {
 	auto & materialManager = engine->getMaterialManager();
@@ -77,15 +74,15 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 	m_images.resize(textureCount);
 	m_size = glm::ivec2(engine->getMaterialManager().getMaterialSize());
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
-		Asset_Image::Fill_Policy::Checkered,
-		Asset_Image::Fill_Policy::Solid,
-		Asset_Image::Fill_Policy::Solid,
-		Asset_Image::Fill_Policy::Solid,
-		Asset_Image::Fill_Policy::Solid,
-		Asset_Image::Fill_Policy::Solid
+		Fill_Policy::Checkered,
+		Fill_Policy::Solid,
+		Fill_Policy::Solid,
+		Fill_Policy::Solid,
+		Fill_Policy::Solid,
+		Fill_Policy::Solid
 	};
 	for (size_t x = 0; x < textureCount; ++x)
-		m_images[x] = Asset_Image::Create(engine, m_textures[x], m_size, false, fillPolicies[x]);
+		m_images[x] = Shared_Image(engine, m_textures[x], m_size, false, fillPolicies[x]);
 	
 	// Merge data into single array
 	const size_t pixelsPerImage = m_size.x * m_size.y * 4;

@@ -81,7 +81,7 @@
  * \section newAssets New Assets
  * All assets have provide the following functionality - a static Create(...) function, and an overridden virtual initialize(...) function:
  * 
- *	- Shared_Asset_Shader	Asset_Shader::Create(	Engine * engine, const std::string & filename, const bool & threaded	)
+ *	- Shared_Shader	Shared_Shader(	Engine * engine, const std::string & filename, const bool & threaded	)
  *	- void Asset_Shader::initialize(	Engine * engine, const std::string & relativePath	)
  */
 

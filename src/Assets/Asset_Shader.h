@@ -11,7 +11,18 @@
 
 class Engine;
 class Asset_Shader;
-using Shared_Asset_Shader = std::shared_ptr<Asset_Shader>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Shader : public std::shared_ptr<Asset_Shader> {
+public:
+	Shared_Shader() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded = true);
+};
 
 struct ShaderObj 
 {
@@ -54,13 +65,8 @@ public:
 	Asset_Shader(const std::string & filename);
 
 
+public:
 	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
-	static Shared_Asset_Shader Create(Engine * engine, const std::string & filename, const bool & threaded = true);
 	/** Make this shader program active */
 	void bind();
 	/** Inactivate any currently bound shader program. */

@@ -31,11 +31,11 @@ public:
 		Spot_RenderState * renderState
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_renderState(renderState) {
 		// Asset Loading
-		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Spot\\Light");
-		m_shader_Stencil = Asset_Shader::Create(m_engine, "Core\\Spot\\Stencil");
-		m_shader_Shadow = Asset_Shader::Create(m_engine, "Core\\Spot\\Shadow");
-		m_shader_Culling = Asset_Shader::Create(m_engine, "Core\\Spot\\Culling");
-		m_shapeCone = Asset_Primitive::Create(m_engine, "cone");
+		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
+		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Spot\\Stencil");
+		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Spot\\Shadow");
+		m_shader_Culling = Shared_Shader(m_engine, "Core\\Spot\\Culling");
+		m_shapeCone = Shared_Primitive(m_engine, "cone");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -168,8 +168,8 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
-	Shared_Asset_Primitive m_shapeCone;
+	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
+	Shared_Primitive m_shapeCone;
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
 	std::vector<GFX_Core_Effect*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr;

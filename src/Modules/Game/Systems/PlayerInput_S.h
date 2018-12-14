@@ -20,9 +20,9 @@ public:
 		addComponentType(GameBoard_Component::ID);
 
 		// Asset Loading
-		m_soundMove = Asset_Sound::Create(m_engine, "Game\\move.wav");
-		m_soundSwitch = Asset_Sound::Create(m_engine, "Game\\switch.wav");
-		m_soundScroll = Asset_Sound::Create(m_engine, "Game\\scroll.wav");
+		m_soundMove = Shared_Sound(m_engine, "Game\\move.wav");
+		m_soundSwitch = Shared_Sound(m_engine, "Game\\switch.wav");
+		m_soundScroll = Shared_Sound(m_engine, "Game\\scroll.wav");
 	}
 
 
@@ -110,7 +110,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Sound m_soundMove, m_soundSwitch, m_soundScroll;
+	Shared_Sound m_soundMove, m_soundSwitch, m_soundScroll;
 	ActionState * m_actionState = nullptr;
 	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
 };

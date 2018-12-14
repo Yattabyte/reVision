@@ -15,6 +15,15 @@ struct ShaderHeader {
 	GLsizei length; 
 };
 
+Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded) 
+	: std::shared_ptr<Asset_Shader>(engine->getAssetManager().createAsset<Asset_Shader>(
+	filename,
+	DIRECTORY_SHADER,
+	"",
+	engine,
+	threaded
+	)) {}
+
 Asset_Shader::~Asset_Shader()
 {
 	if (existsYet()) 
@@ -23,17 +32,6 @@ Asset_Shader::~Asset_Shader()
 
 Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
 
-Shared_Asset_Shader Asset_Shader::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Shader>(
-		filename,
-		DIRECTORY_SHADER,
-		"",
-		&initialize,
-		engine,
-		threaded
-	);
-}
 void Asset_Shader::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
@@ -220,7 +218,7 @@ const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath
 		// find std::string quotes and remove them
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
-		Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
+		Shared_Shader_Pkg package = Shared_Shader_Pkg(engine, directory, false);
 		std::string left = m_shaderText.substr(0, spot);
 		std::string right = m_shaderText.substr(spot + 1 + qspot2);
 		m_shaderText = left + package->getPackageText() + right;

@@ -27,13 +27,13 @@ public:
 	void loadFile(const std::string & filename);
 	/** Retrieve the key-bindings.
 	@return	the configuration asset used */
-	const Shared_Asset_Config & getBindings() const;
+	const Shared_Config & getBindings() const;
 	
 
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Config m_config;
+	Shared_Config m_config;
 };
 
 #endif // SYSTEM_INPUT_BINDING_H

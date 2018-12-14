@@ -21,8 +21,9 @@ public:
 		addComponentType(GameBoard_Component::ID);
 
 		// Asset Loading
-		m_soundSongGood = Asset_Sound::Create(m_engine, "Game\\song.wav");
-		m_soundSongBad = Asset_Sound::Create(m_engine, "Game\\song fail.wav");
+		m_soundSongGood = Shared_Sound(m_engine, "Game\\song.wav");
+		m_soundSongBad = Shared_Sound(m_engine, "Game\\song fail.wav");
+		
 	}
 
 
@@ -55,7 +56,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Sound m_soundSongGood, m_soundSongBad;
+	Shared_Sound m_soundSongGood, m_soundSongBad;
 	bool m_musicPlaying = false, m_failPlaying = false;
 	unsigned int m_songHandle = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

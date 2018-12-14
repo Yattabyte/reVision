@@ -26,8 +26,8 @@ public:
 	FXAA(Engine * engine) 
 	: m_engine(engine) {
 		// Asset Loading
-		m_shaderFXAA = Asset_Shader::Create(m_engine, "Effects\\FXAA");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderFXAA = Shared_Shader(m_engine, "Effects\\FXAA");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -91,8 +91,8 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shaderFXAA;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderFXAA;
+	Shared_Primitive m_shapeQuad;
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_quadIndirectBuffer;

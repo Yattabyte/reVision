@@ -5,19 +5,16 @@
 
 constexpr char* DIRECTORY_LEVEL = "\\Maps\\";
 
-Asset_Level::Asset_Level(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Level Asset_Level::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Level>(
+Shared_Level::Shared_Level(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Level>(engine->getAssetManager().createAsset<Asset_Level>(
 		filename,
 		DIRECTORY_LEVEL,
 		"",
-		&initialize,
 		engine,
 		threaded
-	);
-}
+		)) {}
+
+Asset_Level::Asset_Level(const std::string & filename) : Asset(filename) {}
 
 void Asset_Level::initialize(Engine * engine, const std::string & relativePath)
 {

@@ -6,24 +6,21 @@
 
 constexpr char* DIRECTORY_COLLIDER = "\\Models\\";
 
-Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Collider Asset_Collider::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Collider>(
+Shared_Collider::Shared_Collider(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Collider>(engine->getAssetManager().createAsset<Asset_Collider>(
 		filename,
 		DIRECTORY_COLLIDER,
 		"",
-		&initialize,
 		engine,
 		threaded
-	);
-}
+	)) {}
+
+Asset_Collider::Asset_Collider(const std::string & filename) : Asset(filename) {}
 
 void Asset_Collider::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
-	m_mesh = Asset_Mesh::Create(engine, relativePath, false);
+	m_mesh = Shared_Mesh(engine, relativePath, false);
 	btConvexHullShape * shape = new btConvexHullShape();
 	for each (const auto & vertex in m_mesh->m_geometry.vertices) 
 		shape->addPoint(btVector3(vertex.x, vertex.y, vertex.z));	

@@ -114,7 +114,7 @@ public:
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
 	inline void loadFile(const std::string & filename) {
-		m_preferences = Asset_Config::Create(m_engine, filename, PreferenceState::Preference_Strings(), false);
+		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	inline void save() {
@@ -170,7 +170,7 @@ public:
 	
 private:
 	Engine * m_engine = nullptr;
-	Shared_Asset_Config m_preferences;
+	Shared_Config m_preferences;
 	std::map< Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>> > m_callbacks;
 };
 

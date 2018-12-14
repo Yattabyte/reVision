@@ -40,20 +40,17 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 	return -1;
 }
 
-Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings) {}
-
-Shared_Asset_Config Asset_Config::Create(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Config>(
+Shared_Config::Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
+	: std::shared_ptr<Asset_Config>(engine->getAssetManager().createAsset<Asset_Config>(
 		filename,
 		DIRECTORY_CONFIG,
 		EXT_CONFIG,
-		&initialize,
 		engine,
 		threaded,
 		cfg_strings
-	);
-}
+		)) {}
+
+Asset_Config::Asset_Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings) {}
 
 void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 {

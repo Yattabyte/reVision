@@ -4,6 +4,18 @@
 #include "glm\gtc\type_ptr.hpp"
 
 
+Shared_Image::Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2>& specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
+	: std::shared_ptr<Asset_Image>(engine->getAssetManager().createAsset<Asset_Image>(
+		filename,
+		"",
+		"",
+		engine,
+		threaded,
+		specificSize,
+		policyFill,
+		policyResize
+		)) {}
+
 Asset_Image::~Asset_Image()
 {
 	delete m_pixelData;
@@ -13,21 +25,6 @@ Asset_Image::Asset_Image(const std::string & filename, const std::optional<glm::
 {
 	if (specificSize)
 		m_size = specificSize.value();
-}
-
-Shared_Asset_Image Asset_Image::Create(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
-{
-	return engine->getAssetManager().createAsset<Asset_Image>(
-		filename,
-		"",
-		"",
-		&initialize,
-		engine,
-		threaded,
-		specificSize,
-		policyFill,
-		policyResize
-	);
 }
 
 void Asset_Image::initialize(Engine * engine, const std::string & relativePath)

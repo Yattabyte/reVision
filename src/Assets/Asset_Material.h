@@ -13,7 +13,20 @@
 
 class Engine;
 class Asset_Material;
-using Shared_Asset_Material = std::shared_ptr<Asset_Material>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Material : public std::shared_ptr<Asset_Material> {
+public:
+	Shared_Material() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	textures		the textures to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded = true);
+};
+
 
 /** A collection of texture surfaces that are used together to approximate a real surface.
 - Support for:
@@ -35,13 +48,6 @@ public:
 	
 
 	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use 
-	@param	textures		the textures to use 
-	@param	threaded		create in a separate thread
-	@return					the desired asset */	
-	static Shared_Asset_Material Create(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded = true);
 	/** Reading from a .mat file, retrieves the individual file names assigned to this material
 	@brief					Updates the appropriate supplied @std::string's with a path to the appropriate file
 	@param	filename		the absolute file path of the '.mat' file to read from
@@ -56,7 +62,7 @@ public:
 	GLubyte * m_materialData = nullptr;
 	glm::ivec2 m_size = glm::ivec2(1);
 	std::vector<std::string> m_textures;
-	std::vector<Shared_Asset_Image> m_images;
+	std::vector<Shared_Image> m_images;
 
 
 private:

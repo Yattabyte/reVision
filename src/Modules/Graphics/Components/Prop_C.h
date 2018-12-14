@@ -19,7 +19,7 @@ struct Prop_Buffer {
 /** A prop component. 
 @note		On its own it provides no support for animation. */
 struct Prop_Component : public ECSComponent<Prop_Component> {
-	Shared_Asset_Model m_model;
+	Shared_Model m_model;
 	VB_Element<Prop_Buffer> * m_data = nullptr;
 	float m_radius = 1.0f;
 	glm::vec3 m_position = glm::vec3(0.0f);
@@ -37,7 +37,7 @@ struct Prop_Constructor : ECSComponentConstructor<Prop_Component> {
 		auto material = castAny(parameters[1], 0u);
 		auto * component = new Prop_Component();
 		component->m_data = m_elementBuffer->newElement();
-		component->m_model = Asset_Model::Create(m_engine, directory);
+		component->m_model = Shared_Model(m_engine, directory);
 		component->m_data->data->materialID = material;
 		return { component, component->ID };
 	}

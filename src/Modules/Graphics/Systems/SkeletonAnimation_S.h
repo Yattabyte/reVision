@@ -86,7 +86,7 @@ protected:
 		}
 		return Result;
 	};
-	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Asset_Mesh & model, const glm::mat4 & ParentTransform) {
+	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
 		const Animation & pAnimation = model->m_geometry.animations[animation_ID];
 		const Node_Animation * pNodeAnim = FindNodeAnim(pAnimation, NodeName);

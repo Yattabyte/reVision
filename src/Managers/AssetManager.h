@@ -41,7 +41,6 @@ public:
 		const std::string & filename, 
 		const std::string & directory, 
 		const std::string & extension,
-		void (Asset_T::*initFunc)(Engine*,const std::string &),
 		Engine * engine,
 		const bool & threaded,
 		Args && ...args
@@ -63,7 +62,7 @@ public:
 
 		// Submit the work order
 		const std::string relativePath(directory + filename + extension);
-		submitNewWorkOrder(std::move(std::bind(initFunc, userAsset.get(), engine, relativePath)), threaded);
+		submitNewWorkOrder(std::move(std::bind(&Asset_T::initialize, userAsset.get(), engine, relativePath)), threaded);
 		return userAsset;
 	}	
 	/** Pop's the first work order and completes it. */

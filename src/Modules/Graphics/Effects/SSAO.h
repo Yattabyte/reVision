@@ -26,9 +26,9 @@ public:
 	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
 		// Asset Loading
-		m_shader = Asset_Shader::Create(m_engine, "Effects\\SSAO");
-		m_shaderCopyAO = Asset_Shader::Create(m_engine, "Effects\\SSAO To AO");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
+		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -165,8 +165,8 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr;
 	VisualFX * m_visualFX = nullptr;
-	Shared_Asset_Shader m_shader, m_shaderCopyAO;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shader, m_shaderCopyAO;
+	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;

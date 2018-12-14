@@ -29,11 +29,11 @@ public:
 	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
-		m_shaderSSR1 = Asset_Shader::Create(m_engine, "Effects\\SSR part 1");
-		m_shaderSSR2 = Asset_Shader::Create(m_engine, "Effects\\SSR part 2");
-		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
-		m_shaderConvMips = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur MIP");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
+		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
+		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
+		m_shaderConvMips = Shared_Shader(m_engine, "Effects\\Gaussian Blur MIP");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -193,8 +193,8 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
-	Shared_Asset_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
+	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	GLuint m_fboMipsID = 0, m_textureMipsID = 0;
 	GLuint m_fboSSRID = 0, m_textureSSRID = 0;

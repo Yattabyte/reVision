@@ -3,19 +3,16 @@
 #include "Engine.h"
 
 
-Asset_Mesh::Asset_Mesh(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Mesh Asset_Mesh::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Mesh>(
+Shared_Mesh::Shared_Mesh(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Mesh>(engine->getAssetManager().createAsset<Asset_Mesh>(
 		filename,
 		"",
 		"",
-		&initialize,
 		engine,
 		threaded
-	);
-}
+		)) {}
+
+Asset_Mesh::Asset_Mesh(const std::string & filename) : Asset(filename) {}
 
 void Asset_Mesh::initializeDefault()
 {

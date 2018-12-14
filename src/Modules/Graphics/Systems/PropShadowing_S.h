@@ -4,7 +4,6 @@
 
 #include "Utilities\ECS\ecsSystem.h"
 #include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
 #include "Engine.h"
 #include <vector>
 

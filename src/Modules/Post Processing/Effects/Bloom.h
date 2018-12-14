@@ -29,10 +29,10 @@ public:
 	Bloom(Engine * engine, const GLuint & lightingFBOID, const GLuint & lightingTexID)
 		: m_engine(engine), m_lightingFBOID(lightingFBOID), m_lightingTexID(lightingTexID) {
 		// Asset Loading
-		m_shaderBloomExtract = Asset_Shader::Create(m_engine, "Effects\\Bloom Extraction");
-		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
-		m_shaderGB = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur");
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_shaderBloomExtract = Shared_Shader(m_engine, "Effects\\Bloom Extraction");
+		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
+		m_shaderGB = Shared_Shader(m_engine, "Effects\\Gaussian Blur");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -168,8 +168,8 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
 	GLuint m_lightingFBOID = 0, m_lightingTexID = 0, m_fboID = 0, m_textureID = 0, m_textureIDS_GB[2] = { 0,0 }, m_fbo_GB = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

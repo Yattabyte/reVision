@@ -9,7 +9,21 @@
 
 class Engine;
 class Asset_Texture;
-using Shared_Asset_Texture = std::shared_ptr<Asset_Texture>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Texture : public std::shared_ptr<Asset_Texture> {
+public:
+	Shared_Texture() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	type			the texture type (2D, 3D, CUBEMAP, etc)
+	@param	mipmap			use mipmaps
+	@param	anis			use 16x anistropic filtering
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Texture(Engine * engine, const std::string & filename, const GLuint & type = GL_TEXTURE_2D, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
+};
 
 /** An encapsulation of an OpenGL texture object.
 Supports MIP-mapping and anisotropic filtering. */
@@ -25,15 +39,6 @@ public:
 
 
 	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	type			the texture type (2D, 3D, CUBEMAP, etc)
-	@param	mipmap			use mipmaps
-	@param	anis			use 16x anistropic filtering
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
-	static Shared_Asset_Texture Create(Engine * engine, const std::string & filename, const GLuint & type = GL_TEXTURE_2D, const bool & mipmap = false, const bool & anis = false, const bool & threaded = true);
 	/** Makes this texture active at a specific texture unit
 	@param	texture_unit	the texture unit to make this texture active at */
 	void bind(const unsigned int & texture_unit);
@@ -43,7 +48,7 @@ public:
 	GLuint m_glTexID = 0, m_pboID = 0, m_type = GL_TEXTURE_2D;
 	bool m_mipmap = false;
 	bool m_anis = false;
-	Shared_Asset_Image m_image;
+	Shared_Image m_image;
 
 
 private:

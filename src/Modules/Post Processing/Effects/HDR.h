@@ -27,8 +27,8 @@ public:
 	HDR(Engine * engine)
 	: m_engine(engine) {
 		// Asset Loading
-		m_shaderHDR = Asset_Shader::Create(m_engine, "Effects\\HDR");
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_shaderHDR = Shared_Shader(m_engine, "Effects\\HDR");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -101,8 +101,8 @@ private:
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	float m_gamma = 1.0f;
-	Shared_Asset_Shader m_shaderHDR;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderHDR;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

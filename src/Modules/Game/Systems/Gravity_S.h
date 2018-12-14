@@ -19,7 +19,7 @@ public:
 		addComponentType(GameBoard_Component::ID);
 
 		// Asset Loading
-		m_soundImpact = Asset_Sound::Create(m_engine, "Game\\impact.wav");
+		m_soundImpact = Shared_Sound(m_engine, "Game\\impact.wav");
 	}
 
 
@@ -133,7 +133,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Sound m_soundImpact;
+	Shared_Sound m_soundImpact;
 };
 
 #endif // GRAVITY_S_H

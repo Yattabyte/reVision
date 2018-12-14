@@ -23,10 +23,10 @@ public:
 		addComponentType(GameScore_Component::ID);		
 
 		// Asset Loading
-		m_soundPop = Asset_Sound::Create(m_engine, "Game\\pop.wav");
-		m_soundMultiplier = Asset_Sound::Create(m_engine, "Game\\multiplier.wav");
-		m_soundMultiplierLost = Asset_Sound::Create(m_engine, "Game\\multiplier lost.wav");
-		m_soundLevelGained = Asset_Sound::Create(m_engine, "Game\\level gain.wav");
+		m_soundPop = Shared_Sound(m_engine, "Game\\pop.wav");
+		m_soundMultiplier = Shared_Sound(m_engine, "Game\\multiplier.wav");
+		m_soundMultiplierLost = Shared_Sound(m_engine, "Game\\multiplier lost.wav");
+		m_soundLevelGained = Shared_Sound(m_engine, "Game\\level gain.wav");
 	}
 
 	
@@ -408,7 +408,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Sound m_soundPop, m_soundMultiplier, m_soundMultiplierLost, m_soundLevelGained;
+	Shared_Sound m_soundPop, m_soundMultiplier, m_soundMultiplierLost, m_soundLevelGained;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

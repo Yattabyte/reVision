@@ -88,24 +88,24 @@ public:
 			msgManager.error("Game Score Texture is incomplete.");
 
 		// Asset Loading
-		m_modelBoard = Asset_Model::Create(engine, "Game\\boardBorder.obj");
-		m_modelField = Asset_Model::Create(engine, "Game\\boardField.obj");
-		m_modelHeader = Asset_Model::Create(engine, "Game\\boardTop.obj");
-		m_modelFooter = Asset_Model::Create(engine, "Game\\boardBottom.obj");
-		m_shaderBorder = Asset_Shader::Create(engine, "Game\\Border");
-		m_shaderBoard = Asset_Shader::Create(engine, "Game\\Board");
-		m_shaderTiles = Asset_Shader::Create(engine, "Game\\Tiles");
-		m_shaderMatchedTiles = Asset_Shader::Create(engine, "Game\\Matched");
-		m_shaderMatchedNo = Asset_Shader::Create(engine, "Game\\MatchedNumber");
-		m_shaderScore = Asset_Shader::Create(engine, "Game\\Score");
-		m_shaderMultiplier = Asset_Shader::Create(engine, "Game\\Multiplier");
-		m_shaderTimer = Asset_Shader::Create(engine, "Game\\Timer");
-		m_textureTile = Asset_Texture::Create(engine, "Game\\tile.png");
-		m_textureTilePlayer = Asset_Texture::Create(engine, "Game\\player.png");
-		m_textureMatchedTiles = Asset_Texture::Create(engine, "Game\\scorePieces.png");
-		m_textureNums = Asset_Texture::Create(engine, "Game\\numbers.png");
-		m_textureTimeStop = Asset_Texture::Create(engine, "Game\\timestop.png");
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_modelBoard = Shared_Model(engine, "Game\\boardBorder.obj");
+		m_modelField = Shared_Model(engine, "Game\\boardField.obj");
+		m_modelHeader = Shared_Model(engine, "Game\\boardTop.obj");
+		m_modelFooter = Shared_Model(engine, "Game\\boardBottom.obj");
+		m_shaderBorder = Shared_Shader(engine, "Game\\Border");
+		m_shaderBoard = Shared_Shader(engine, "Game\\Board");
+		m_shaderTiles = Shared_Shader(engine, "Game\\Tiles");
+		m_shaderMatchedTiles = Shared_Shader(engine, "Game\\Matched");
+		m_shaderMatchedNo = Shared_Shader(engine, "Game\\MatchedNumber");
+		m_shaderScore = Shared_Shader(engine, "Game\\Score");
+		m_shaderMultiplier = Shared_Shader(engine, "Game\\Multiplier");
+		m_shaderTimer = Shared_Shader(engine, "Game\\Timer");
+		m_textureTile = Shared_Texture(engine, "Game\\tile.png");
+		m_textureTilePlayer = Shared_Texture(engine, "Game\\player.png");
+		m_textureMatchedTiles = Shared_Texture(engine, "Game\\scorePieces.png");
+		m_textureNums = Shared_Texture(engine, "Game\\numbers.png");
+		m_textureTimeStop = Shared_Texture(engine, "Game\\timestop.png");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Preferences
 		auto & preferences = engine->getPreferenceState();
@@ -361,44 +361,44 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_lightingFBOID = 0, m_fboIDBorder = 0, m_borderTexID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);	
-	Shared_Asset_Primitive m_shapeQuad;
-	Shared_Asset_Texture m_textureNums;
+	Shared_Primitive m_shapeQuad;
+	Shared_Texture m_textureNums;
 
 	// Board Rendering Resources
-	Shared_Asset_Shader m_shaderBoard;
-	Shared_Asset_Model m_modelBoard, m_modelField, m_modelHeader, m_modelFooter;
+	Shared_Shader m_shaderBoard;
+	Shared_Model m_modelBoard, m_modelField, m_modelHeader, m_modelFooter;
 	StaticBuffer m_bufferIndirectBoard;
 	const GLuint * m_vaoModels;
 
 	// Border Rendering Resources
-	Shared_Asset_Shader m_shaderBorder;
+	Shared_Shader m_shaderBorder;
 	StaticBuffer m_bufferIndirectBorder;
 
 	// Tile Rendering Resources
-	Shared_Asset_Shader m_shaderTiles;
-	Shared_Asset_Texture m_textureTile, m_textureTilePlayer;
+	Shared_Shader m_shaderTiles;
+	Shared_Texture m_textureTile, m_textureTilePlayer;
 	StaticBuffer m_bufferIndirectTiles;
 	glm::mat4 m_orthoProjField;
 
 	// Matched Tiles Rendering Resources
-	Shared_Asset_Shader m_shaderMatchedTiles, m_shaderMatchedNo;
-	Shared_Asset_Texture m_textureMatchedTiles;
+	Shared_Shader m_shaderMatchedTiles, m_shaderMatchedNo;
+	Shared_Texture m_textureMatchedTiles;
 	StaticBuffer m_bufferIndirectMatchedTiles, m_bufferIndirectMatchedNo;
 	DynamicBuffer m_bufferMatchedTiles, m_bufferMatchedNos;
 
 	// Score Rendering Resources
-	Shared_Asset_Shader m_shaderScore;
-	Shared_Asset_Texture m_textureScoreNums;
+	Shared_Shader m_shaderScore;
+	Shared_Texture m_textureScoreNums;
 	StaticBuffer m_bufferIndirectScore;
 	glm::mat4 m_orthoProjHeader;
 
 	// Multiplier Rendering Resources
-	Shared_Asset_Shader m_shaderMultiplier;
+	Shared_Shader m_shaderMultiplier;
 	StaticBuffer m_bufferIndirectMultiplier;
 
 	// Stop-Timer Rendering Resources
-	Shared_Asset_Shader m_shaderTimer;
-	Shared_Asset_Texture m_textureTimeStop;
+	Shared_Shader m_shaderTimer;
+	Shared_Texture m_textureTimeStop;
 	StaticBuffer m_bufferIndirectStop;
 
 };

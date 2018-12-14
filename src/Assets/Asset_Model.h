@@ -17,7 +17,18 @@
 class Engine;
 class ModelManager;
 class Asset_Model;
-using Shared_Asset_Model = std::shared_ptr<Asset_Model>;
+
+/** Responsible for the creation, containing, and sharing of assets. */
+class Shared_Model : public std::shared_ptr<Asset_Model> {
+public:
+	Shared_Model() = default;
+	/** Begins the creation process for this asset.
+	@param	engine			the engine being used
+	@param	filename		the filename to use
+	@param	threaded		create in a separate thread
+	@return					the desired asset */
+	explicit Shared_Model(Engine * engine, const std::string & filename, const bool & threaded = true);
+};
 
 /** A 3D geometric mesh meant to be used in 3D rendering. */
 class Asset_Model : public Asset
@@ -29,23 +40,14 @@ public:
 	Asset_Model(const std::string & filename, ModelManager & modelManager);
 
 
-	// Public Methods
-	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */	
-	static Shared_Asset_Model Create(Engine * engine, const std::string & filename, const bool & threaded = true);
-
-
 	// Public Attributes
-	Shared_Asset_Mesh			m_mesh;
-	Shared_Asset_Material		m_materialArray;
-	GeometryInfo				m_data;
-	size_t						m_offset = 0, m_count = 0;
-	glm::vec3					m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
-	float						m_radius = 0.0f;
-	ModelManager			*	m_modelManager = nullptr;
+	Shared_Mesh				m_mesh;
+	Shared_Material			m_materialArray;
+	GeometryInfo			m_data;
+	size_t					m_offset = 0, m_count = 0;
+	glm::vec3				m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
+	float					m_radius = 0.0f;
+	ModelManager		*	m_modelManager = nullptr;
 
 
 private:
@@ -63,7 +65,7 @@ private:
 	@param	modelMaterial	the material asset to load into
 	@param	meshMaterial	the material asset to load into
 	@param	sceneMaterial	the scene material to use as a guide */
-	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Asset_Material & modelMaterial, const std::vector<Material> & materials);
+	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material> & materials);
 
 
 	// Interface Implementation

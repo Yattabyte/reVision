@@ -4,6 +4,15 @@
 
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
+Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Cubemap>(engine->getAssetManager().createAsset<Asset_Cubemap>(
+		filename,
+		DIRECTORY_CUBEMAP,
+		"",
+		engine,
+		threaded
+		)) {}
+
 Asset_Cubemap::~Asset_Cubemap()
 {
 	if (existsYet()) {
@@ -13,18 +22,6 @@ Asset_Cubemap::~Asset_Cubemap()
 }
 
 Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Cubemap Asset_Cubemap::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Cubemap>(
-		filename,
-		DIRECTORY_CUBEMAP,
-		"",
-		&initialize,
-		engine,
-		threaded
-	);
-}
 
 void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath)
 {
@@ -44,7 +41,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 
 		// Forward image creation
 		// Enforce same size for all images, use the size of the first found image
-		m_images[side] = Asset_Image::Create(
+		m_images[side] = Shared_Image(
 			engine, specific_side_directory, 
 			(size == glm::ivec2(0)) ? std::optional<glm::ivec2>() : size, 
 			false

@@ -34,11 +34,11 @@ public:
 		std::shared_ptr<RH_Volume> volumeRH
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_bounceFBO(bounceFBO), m_renderState(renderState), m_volumeRH(volumeRH) {
 		// Asset Loading
-		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Directional\\Light");
-		m_shader_Shadow = Asset_Shader::Create(m_engine, "Core\\Directional\\Shadow");
-		m_shader_Culling = Asset_Shader::Create(m_engine, "Core\\Directional\\Culling");
-		m_shader_Bounce = Asset_Shader::Create(m_engine, "Core\\Directional\\Bounce");
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
+		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");
+		m_shader_Culling = Shared_Shader(m_engine, "Core\\Directional\\Culling");
+		m_shader_Bounce = Shared_Shader(m_engine, "Core\\Directional\\Bounce");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -198,8 +198,8 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
-	Shared_Asset_Primitive m_shapeQuad;	
+	Shared_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
+	Shared_Primitive m_shapeQuad;	
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	ECSSystemList m_geometrySystems;
 	std::vector<GFX_Core_Effect*> m_geometryEffects;

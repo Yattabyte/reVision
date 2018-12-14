@@ -19,10 +19,10 @@ public:
 	~PropShadowing_Effect() = default;
 	/** Constructor. */
 	PropShadowing_Effect(
-		Engine * engine, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer, PropShadow_RenderState * renderState
+		Engine * engine, Shared_Shader & shaderCull, Shared_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer, PropShadow_RenderState * renderState
 	) : m_engine(engine), m_propBuffer(propBuffer), m_skeletonBuffer(skeletonBuffer), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_renderState(renderState) {
 		// Asset Loading
-		m_shapeCube = Asset_Primitive::Create(engine, "cube");
+		m_shapeCube = Shared_Primitive(engine, "cube");
 		m_modelsVAO = &m_engine->getModelManager().getVAO();
 	}
 
@@ -73,8 +73,8 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader	m_shaderCull, m_shaderShadow;
-	Shared_Asset_Primitive m_shapeCube;
+	Shared_Shader	m_shaderCull, m_shaderShadow;
+	Shared_Primitive m_shapeCube;
 	const GLuint * m_modelsVAO = nullptr;
 	GL_Vector * m_propBuffer = nullptr, * m_skeletonBuffer = nullptr;
 	PropShadow_RenderState * m_renderState = nullptr;

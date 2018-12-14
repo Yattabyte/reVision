@@ -7,6 +7,15 @@
 constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
+Shared_Shader_Geometry::Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Shader_Geometry>(engine->getAssetManager().createAsset<Asset_Shader_Geometry>(
+		filename,
+		DIRECTORY_SHADER,
+		"",
+		engine,
+		threaded
+		)) {}
+
 Asset_Shader_Geometry::~Asset_Shader_Geometry()
 {
 	if (existsYet()) 
@@ -14,18 +23,6 @@ Asset_Shader_Geometry::~Asset_Shader_Geometry()
 }
 
 Asset_Shader_Geometry::Asset_Shader_Geometry(const std::string & filename) : Asset_Shader(filename) {}
-
-Shared_Asset_Shader_Geometry Asset_Shader_Geometry::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Shader_Geometry>(
-		filename,
-		DIRECTORY_SHADER,
-		"",
-		&initialize,
-		engine,
-		threaded
-	);
-}
 
 void Asset_Shader_Geometry::initializeDefault()
 {	

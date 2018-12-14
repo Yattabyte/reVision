@@ -15,7 +15,7 @@ void VisualFX::initialize(Engine * engine)
 {
 	if (!m_Initialized) {
 		m_engine = engine;
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -38,8 +38,8 @@ void VisualFX::initializeGausianBlur()
 {
 	glCreateFramebuffers(1, &m_fbo_GB);
 
-	m_shaderGB = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur");
-	m_shaderGB_A = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur Alpha");
+	m_shaderGB = Shared_Shader(m_engine, "Effects\\Gaussian Blur");
+	m_shaderGB_A = Shared_Shader(m_engine, "Effects\\Gaussian Blur Alpha");
 }
 
 void VisualFX::applyGaussianBlur(const GLuint & desiredTexture, const GLuint * flipTextures, const glm::vec2 & size, const int & amount)

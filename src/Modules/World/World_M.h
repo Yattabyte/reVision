@@ -41,7 +41,7 @@ private:
 	// Private Attributes
 	bool m_finishedLoading = false;
 	std::vector<bool*> m_notifyees;
-	Shared_Asset_Level m_level;
+	Shared_Level m_level;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -13,7 +13,7 @@ struct Collider_Component : public ECSComponent<Collider_Component> {
 	float m_restitution = 1.0f;
 	float m_friction = 1.0f;
 	btScalar m_mass = btScalar(0);
-	Shared_Asset_Collider m_collider;
+	Shared_Collider m_collider;
 	btDefaultMotionState * m_motionState = nullptr;
 	btRigidBody * m_rigidBody = nullptr;
 	btConvexHullShape * m_shape = nullptr;
@@ -28,7 +28,7 @@ struct Collider_Constructor : ECSComponentConstructor<Collider_Component> {
 	// Interface Implementation
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
 		auto * component = new Collider_Component();
-		component->m_collider = Asset_Collider::Create(m_engine, castAny(parameters[0], std::string("")));
+		component->m_collider = Shared_Collider(m_engine, castAny(parameters[0], std::string("")));
 		component->m_mass = btScalar(castAny(parameters[1], 0));
 		component->m_restitution = castAny(parameters[2], 0.0f);
 		component->m_friction = castAny(parameters[3], 0.0f);

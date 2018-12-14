@@ -25,7 +25,7 @@ inline void parse(Engine * engine, Asset_Shader_Pkg & userAsset)
 		// find std::string quotes and remove them
 		directory = directory.substr(qspot1 + 1, qspot2 - 1 - qspot1);
 
-		Shared_Asset_Shader_Pkg package = Asset_Shader_Pkg::Create(engine, directory, false);
+		Shared_Shader_Pkg package = Shared_Shader_Pkg(engine, directory, false);
 		std::string left = input.substr(0, spot);
 		std::string right = input.substr(spot + 1 + qspot2);
 		input = left + package->getPackageText() + right;
@@ -34,19 +34,16 @@ inline void parse(Engine * engine, Asset_Shader_Pkg & userAsset)
 	userAsset.m_packageText = input;
 }
 
-Asset_Shader_Pkg::Asset_Shader_Pkg(const std::string & filename) : Asset(filename) {}
-
-Shared_Asset_Shader_Pkg Asset_Shader_Pkg::Create(Engine * engine, const std::string & filename, const bool & threaded)
-{
-	return engine->getAssetManager().createAsset<Asset_Shader_Pkg>(
+Shared_Shader_Pkg::Shared_Shader_Pkg(Engine * engine, const std::string & filename, const bool & threaded)
+	: std::shared_ptr<Asset_Shader_Pkg>(engine->getAssetManager().createAsset<Asset_Shader_Pkg>(
 		filename,
 		DIRECTORY_SHADER_PKG,
 		"",
-		&initialize,
 		engine,
 		threaded
-	);
-}
+		)) {}
+
+Asset_Shader_Pkg::Asset_Shader_Pkg(const std::string & filename) : Asset(filename) {}
 
 void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativePath)
 {
