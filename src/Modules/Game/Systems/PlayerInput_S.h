@@ -81,7 +81,7 @@ public:
 					swapTiles(std::make_pair(board.m_playerX, board.m_playerY), std::make_pair(board.m_playerX + 1, board.m_playerY), board);
 					m_keyPressStates[ActionState::JUMP] = true;
 					if (m_soundSwitch->existsYet())
-						m_engine->getSoundManager().playWav(m_soundSwitch->m_soundObj, 0.5f);
+						m_engine->getSoundManager().playWav(m_soundSwitch->m_soundObj, 0.5f, 1.5f);
 				}
 			}
 			else

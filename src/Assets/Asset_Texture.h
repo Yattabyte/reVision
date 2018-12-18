@@ -58,7 +58,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Texture;
 };
 
 #endif // ASSET_TEXTURE_H

@@ -73,7 +73,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Model;
 };
 
 #endif // ASSET_MODEL_H

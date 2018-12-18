@@ -5,16 +5,22 @@
 constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
 Shared_Texture::Shared_Texture(Engine * engine, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
-	: std::shared_ptr<Asset_Texture>(engine->getAssetManager().createAsset<Asset_Texture>(
-		filename,
-		DIRECTORY_TEXTURE,
-		"",
-		engine,
-		threaded,
-		type,
-		mipmap,
-		anis
-		)) {}
+	: std::shared_ptr<Asset_Texture>(std::dynamic_pointer_cast<Asset_Texture>(engine->getAssetManager().shareAsset(typeid(Asset_Texture).name(), filename)))	
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Texture>*)(this)) = std::make_shared<Asset_Texture>(filename, type, mipmap, anis);
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Texture).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Texture::initialize, get(), engine, (DIRECTORY_TEXTURE + filename))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));	
+}
 
 Asset_Texture::~Asset_Texture()
 {

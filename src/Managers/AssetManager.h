@@ -27,44 +27,17 @@ public:
 
 	
 	// Public Methods
-	/** Returns an asset matching the parameters specified. If none is found, creates a new one.
-	@param	<Asset_T>	the asset class type to create
-	@param	filename	the asset's file name
-	@param	directory	the asset category's directory (eg \\Shaders\\), can be empty
-	@param	extension	the asset category's file extension (eg .shader), can be empty
-	@param	initFunc	the asset's initialization function
-	@param	engine		the engine pointer
-	@param	threaded	boolean for whether to create the asset in a separate thread or not
-	@param	args		any constructor arguments to use when creating a new asset */
-	template <typename Asset_T, typename ...Args>
-	inline std::shared_ptr<Asset_T> createAsset(
-		const std::string & filename, 
-		const std::string & directory, 
-		const std::string & extension,
-		Engine * engine,
-		const bool & threaded,
-		Args && ...args
-	) {
-		// The standardized name of this asset type, for lookup purposes.
-		const auto assetTypeName = typeid(Asset_T).name();
-
-		// Find out if the asset already exists
-		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
-		auto userAsset = std::dynamic_pointer_cast<Asset_T>(queryExistingAsset(assetTypeName, filename, threaded));
-		if (userAsset) // Asset exists
-			return userAsset;
-		
-		// Asset doesn't exist, make it
-		userAsset = std::make_shared<Asset_T>(filename, std::forward<Args>(args)...);
-		m_AssetMap[assetTypeName].push_back(userAsset);
-		write_guard.unlock();
-		write_guard.release();
-
-		// Submit the work order
-		const std::string relativePath(directory + filename + extension);
-		submitNewWorkOrder(std::move(std::bind(&Asset_T::initialize, userAsset.get(), engine, relativePath)), threaded);
-		return userAsset;
-	}	
+	/** Checks if an asset already exists with the given filename, fetching if true.
+	@param	assetType			the name of the asset type to search for.
+	@param	filename			the relative filename (within the project directory) of the asset to search for.
+	@return						the asset, if found, or blank otherwise. */
+	Shared_Asset shareAsset(const char * assetType, const std::string & filename);
+	/** Submits a new asset to the asset manager for initialization and storage.
+	@param	assetType			the name of the asset type to store it under.
+	@param	asset				the asset to store.
+	@param	ini					asset initialization function.
+	@param	threaded			flag to create in a separate thread	*/
+	void submitNewAsset(const char * assetType, Shared_Asset asset, const Asset_Work_Order && ini, const bool & threaded);
 	/** Pop's the first work order and completes it. */
 	void beginWorkOrder();
 	/** Forwards an asset-is-finalized notification request, which will be activated from the main thread. */
@@ -80,20 +53,6 @@ public:
 
 
 private:
-	// Private Methods
-	/** Queries if an asset already exists with the given filename, fetching if true.
-	@brief						Searches for and updates the supplied container with the desired asset if it already exists.
-	@param	assetType			the name of the asset type to search for.
-	@param	filename			the relative filename (within the project directory) of the asset to search for.
-	@param	dontForceFinalize	if the asset hasn't been finalized, whether or not to wait for it to finalize before returning.
-	@return						the asset, if found, or null if not. */
-	Shared_Asset queryExistingAsset(const char * assetType, const std::string & filename, const bool & dontForceFinalize = false);
-	/** Submits an asset for physical creation, and optionally whether to thread it or not.
-	@param	ini			asset initialization function
-	@param	threaded	flag to create in a separate thread	*/
-	void submitNewWorkOrder(const Asset_Work_Order && ini, const bool & threaded);
-
-
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	std::shared_mutex m_Mutex_Assets;

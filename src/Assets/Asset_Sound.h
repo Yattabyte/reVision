@@ -42,7 +42,7 @@ protected:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Sound;
 };
 
 #endif // ASSET_SOUND_H

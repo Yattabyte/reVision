@@ -5,16 +5,22 @@
 
 
 Shared_Image::Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2>& specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
-	: std::shared_ptr<Asset_Image>(engine->getAssetManager().createAsset<Asset_Image>(
-		filename,
-		"",
-		"",
-		engine,
-		threaded,
-		specificSize,
-		policyFill,
-		policyResize
-		)) {}
+	: std::shared_ptr<Asset_Image>(std::dynamic_pointer_cast<Asset_Image>(engine->getAssetManager().shareAsset(typeid(Asset_Image).name(), filename)))
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Image>*)(this)) = std::make_shared<Asset_Image>(filename, specificSize, policyFill, policyResize);
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Image).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Image::initialize, get(), engine, (filename))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+}
 
 Asset_Image::~Asset_Image()
 {

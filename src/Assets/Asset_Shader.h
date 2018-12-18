@@ -164,7 +164,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Shader;
 };
 
 #endif // ASSET_SHADER_H

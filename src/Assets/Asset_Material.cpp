@@ -8,15 +8,22 @@
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string>& textures, const bool & threaded)
-	: std::shared_ptr<Asset_Material>(engine->getAssetManager().createAsset<Asset_Material>(
-		filename,
-		"",
-		MATERIAL_EXTENSION,
-		engine,
-		threaded,
-		textures,
-		engine->getMaterialManager()
-		)) {}
+	: std::shared_ptr<Asset_Material>(std::dynamic_pointer_cast<Asset_Material>(engine->getAssetManager().shareAsset(typeid(Asset_Material).name(), filename)))
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Material>*)(this)) = std::make_shared<Asset_Material>(filename, textures, engine->getMaterialManager());
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+}
 
 Asset_Material::~Asset_Material()
 {

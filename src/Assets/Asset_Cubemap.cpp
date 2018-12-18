@@ -5,13 +5,22 @@
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
 Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Cubemap>(engine->getAssetManager().createAsset<Asset_Cubemap>(
-		filename,
-		DIRECTORY_CUBEMAP,
-		"",
-		engine,
-		threaded
-		)) {}
+	: std::shared_ptr<Asset_Cubemap>(std::dynamic_pointer_cast<Asset_Cubemap>(engine->getAssetManager().shareAsset(typeid(Asset_Cubemap).name(), filename)))
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Cubemap>*)(this)) = std::make_shared<Asset_Cubemap>(filename);
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+}
 
 Asset_Cubemap::~Asset_Cubemap()
 {

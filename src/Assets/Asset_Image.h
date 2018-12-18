@@ -71,7 +71,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Image;
 };
 
 #endif // ASSET_IMAGE_H

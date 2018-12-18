@@ -5,14 +5,22 @@
 constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
 Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Model>(engine->getAssetManager().createAsset<Asset_Model>(
-		filename,
-		DIRECTORY_MODEL,
-		"",
-		engine,
-		threaded,
-		engine->getModelManager()
-		)) {}
+	: std::shared_ptr<Asset_Model>(std::dynamic_pointer_cast<Asset_Model>(engine->getAssetManager().shareAsset(typeid(Asset_Model).name(), filename)))
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Model>*)(this)) = std::make_shared<Asset_Model>(filename, engine->getModelManager());
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Model).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Model::initialize, get(), engine, (DIRECTORY_MODEL + filename))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+}
 
 Asset_Model::~Asset_Model()
 {

@@ -72,7 +72,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Material;
 };
 
 #endif // ASSET_MATERIAL_H

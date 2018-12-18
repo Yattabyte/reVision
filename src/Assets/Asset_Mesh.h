@@ -51,7 +51,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Mesh;
 };
 
 #endif // ASSET_MESH_H

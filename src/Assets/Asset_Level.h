@@ -45,7 +45,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Level;
 };
 
 struct LevelStruct_Component {

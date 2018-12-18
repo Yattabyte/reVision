@@ -16,13 +16,23 @@ struct ShaderHeader {
 };
 
 Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded) 
-	: std::shared_ptr<Asset_Shader>(engine->getAssetManager().createAsset<Asset_Shader>(
-	filename,
-	DIRECTORY_SHADER,
-	"",
-	engine,
-	threaded
-	)) {}
+	: std::shared_ptr<Asset_Shader>(std::dynamic_pointer_cast<Asset_Shader>(engine->getAssetManager().shareAsset(typeid(Asset_Shader).name(), filename)))
+{
+	// Find out if the asset needs to be created
+	if (!get()) {
+		// Create new asset on shared_ptr portion of this class 
+		(*(std::shared_ptr<Asset_Shader>*)(this)) = std::make_shared<Asset_Shader>(filename);
+		// Submit data to asset manager
+		engine->getAssetManager().submitNewAsset(typeid(Asset_Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
+	}
+	// Check if we need to wait for initialization
+	else
+		if (!threaded)
+			// Stay here until asset finalizes
+			while (!get()->existsYet())
+				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+}
+
 
 Asset_Shader::~Asset_Shader()
 {

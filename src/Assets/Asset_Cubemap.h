@@ -50,7 +50,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Cubemap;
 };
 #endif // ASSET_CUBEMAP_H
 

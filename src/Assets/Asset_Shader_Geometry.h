@@ -53,7 +53,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Shader_Geometry;
 };
 
 #endif // ASSET_SHADER_GEOMETRY_H

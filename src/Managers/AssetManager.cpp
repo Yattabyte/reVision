@@ -3,20 +3,21 @@
  
 AssetManager::AssetManager(Engine * engine) : m_engine(engine) {}
 
-Shared_Asset AssetManager::queryExistingAsset(const char * assetType, const std::string & filename, const bool & dontForceFinalize) {
+Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string & filename)
+{
+	std::shared_lock<std::shared_mutex> read_guard(m_Mutex_Assets);
 	for each (const Shared_Asset asset in m_AssetMap[assetType])
-		if (asset->getFileName() == filename) {
-			// Asset may be found, but not guaranteed to be finalized
-			// Stay here until it is finalized
-			if (!dontForceFinalize)
-				while (!asset->existsYet())
-					std::this_thread::sleep_for(std::chrono::milliseconds(1));
+		if (asset->getFileName() == filename)
 			return asset;
-		}
-	return std::shared_ptr<Asset>();
+	return Shared_Asset();
 }
 
-void AssetManager::submitNewWorkOrder(const Asset_Work_Order && ini, const bool & threaded) {
+void AssetManager::submitNewAsset(const char * assetType, Shared_Asset asset, const Asset_Work_Order && ini, const bool & threaded)
+{	
+	{
+		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
+		m_AssetMap[assetType].push_back(asset);
+	}
 	if (threaded) {
 		std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);
 		m_Workorders.push_back(std::move(ini));

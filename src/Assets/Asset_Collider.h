@@ -43,7 +43,7 @@ protected:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Collider;
 };
 
 #endif // ASSET_COLLIDER_H

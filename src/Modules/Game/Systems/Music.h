@@ -22,7 +22,7 @@ public:
 
 		// Asset Loading
 		m_soundSongGood = Shared_Sound(m_engine, "Game\\song.wav");
-		m_soundSongBad = Shared_Sound(m_engine, "Game\\song fail.wav");
+		m_soundSongBad = Shared_Sound(m_engine, "Game\\song critical.wav");
 		
 	}
 

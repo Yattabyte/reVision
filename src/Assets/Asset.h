@@ -66,7 +66,6 @@ protected:
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_callbacks;
-	friend class AssetManager;
 
 	
 private:

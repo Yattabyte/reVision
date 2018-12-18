@@ -59,7 +59,7 @@ private:
 
 
 	// Private Attributes
-	friend class AssetManager;
+	friend class Shared_Config;
 }; 
 
 #endif //ASSET_CONFIG_H
