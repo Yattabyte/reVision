@@ -63,6 +63,7 @@ struct GameBoard_Component : public ECSComponent<GameBoard_Component> {
 	int m_playerY = 5;
 	int m_rowsToAdd = 0;
 	bool m_stop = false;
+	bool m_skipWaiting = false;
 	bool m_nearingTop = false;
 	VB_Element<BoardBuffer> * m_data = nullptr;
 };

@@ -28,8 +28,9 @@ public:
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			auto & score = *(GameScore_Component*)componentParam[1];
 
-			// Tick row-climbing
-			if (!board.m_stop) {
+			// Push new rows when timer is stopped, or ( when the user requests a new one and scored tiles have finished )
+			if (!board.m_stop || (board.m_skipWaiting && (score.m_scoredTiles.size() == 0))) {
+				board.m_skipWaiting = false;
 				board.m_rowClimbTick += board.m_speed;
 				if (board.m_rowClimbTick >= double(TickCount_NewLine) && !(score.m_scoredTiles.size()))
 					board.m_rowsToAdd++;
@@ -73,8 +74,10 @@ private:
 	void pushNewRow(GameBoard_Component & board) {
 		// Move board up 1 row
 		for (int x = 0; x < BOARD_WIDTH; ++x)
-			for (int y = BOARD_HEIGHT - 1; y > 0; --y)
+			for (int y = BOARD_HEIGHT - 1; y > 0; --y) {
 				swapTiles(std::make_pair(x, y), std::make_pair(x, y - 1), board);
+				board.m_tileDrops[y][x].endIndex++;
+			}
 		board.m_playerY++;
 
 		// Replace row[0] with new row	

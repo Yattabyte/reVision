@@ -23,23 +23,28 @@ int SoundManager::GetVersion()
 	return SOLOUD_VERSION;
 }
 
-void SoundManager::playWav(const SoundObj * const obj, const float & volume, const float & speed) const
+void SoundManager::playSound(const Shared_Sound & sharedSound, const float & volume, const float & speed) const
 {
-	auto & soLoud = *((SoLoud::Soloud*)soundEngine);	
-	auto handle = soLoud.play(*(SoLoud::Wav*)obj, volume);
-	soLoud.setRelativePlaySpeed(handle, speed);
+	if (sharedSound->existsYet()) {
+		auto & soLoud = *((SoLoud::Soloud*)soundEngine);
+		auto handle = soLoud.play(*(SoLoud::Wav*)sharedSound->m_soundObj, volume);
+		soLoud.setRelativePlaySpeed(handle, speed);
+	}
 }
 
-const unsigned int SoundManager::playWavBackground(const SoundObj * const obj, const float & volume, const bool & loop, const double & loopPoint) const
+const unsigned int SoundManager::playWavBackground(const Shared_Sound & sharedSound, const float & volume, const bool & loop, const double & loopPoint) const
 {
-	auto & soLoud = *((SoLoud::Soloud*)soundEngine);
-	auto handle = soLoud.playBackground(*(SoLoud::Wav*)obj, volume);
+	if (sharedSound->existsYet()) {
+		auto & soLoud = *((SoLoud::Soloud*)soundEngine);
+		auto handle = soLoud.playBackground(*(SoLoud::Wav*)sharedSound->m_soundObj, volume);
 
-	if (loop) {
-		soLoud.setLooping(handle, true);
-		soLoud.setLoopPoint(handle, loopPoint);
+		if (loop) {
+			soLoud.setLooping(handle, true);
+			soLoud.setLoopPoint(handle, loopPoint);
+		}
+		return handle;
 	}
-	return handle;
+	return 0;
 }
 
 void SoundManager::stopWav(const unsigned int & handle) const

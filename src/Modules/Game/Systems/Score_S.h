@@ -90,9 +90,7 @@ public:
 				score.m_tilesCleared = 0;
 				score.m_levelUpTick = 0;
 				score.m_level++;
-
-				if (m_soundLevelGained->existsYet())
-					m_engine->getSoundManager().playWav(m_soundLevelGained->m_soundObj, 0.75f);
+				m_engine->getSoundManager().playSound(m_soundLevelGained, 0.75f);
 			}
 			board.m_speed = 1.0 + (double(score.m_level - 1) * 0.2f);
 		}
@@ -318,17 +316,15 @@ private:
 				board.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
 				board.m_data->data->scoreAnimLinear++;
 
-				if (m_soundMultiplierInc->existsYet())
-					m_engine->getSoundManager().playWav(m_soundMultiplierInc->m_soundObj, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
+				m_engine->getSoundManager().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
 		}
 		else if ((!score.m_scoredTiles.size() || !score.m_comboChanged) && score.m_multiplier) {
 			// Reset multiplier if no tiles are scored
-			if (m_soundMultiplierLost->existsYet() && score.m_multiplier >= 2)
-				m_engine->getSoundManager().playWav(m_soundMultiplierLost->m_soundObj, 0.5f);
+			if (score.m_multiplier >= 2)
+				m_engine->getSoundManager().playSound(m_soundMultiplierLost, 0.5f);
 			score.m_multiplier = 0;
 			score.m_comboChanged = false;
-
 		}
 
 		// Manage scoring manifolds
@@ -364,10 +360,8 @@ private:
 					auto & xTile = board.m_tiles[y][x];
 					if (xTile.m_scoreType == TileState::MATCHED) {
 						// Play sound before we pop (lines up better with animation)
-						if (xTile.m_tick == 0) {
-							if (m_soundPop->existsYet())
-								m_engine->getSoundManager().playWav(m_soundPop->m_soundObj, 1.0f, 1.0f + (count / 10.0f));
-						}
+						if (xTile.m_tick == 0) 
+							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 1.0f + (count / 10.0f));						
 						// Tile SCORED
 						if (xTile.m_tick >= TickCount_Popping) {
 							xTile.m_scoreType = TileState::SCORED;

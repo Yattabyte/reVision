@@ -32,73 +32,36 @@ public:
 			auto & board = *(GameBoard_Component*)componentParam[0];
 			
 			// Move Left
-			if (m_actionState->at(ActionState::LEFT) > 0.5f) {
-				if (!m_keyPressStates[ActionState::LEFT]) {
-					board.m_playerX--;
-					m_keyPressStates[ActionState::LEFT] = true;
-					if (m_soundMove->existsYet())
-						m_engine->getSoundManager().playWav(m_soundMove->m_soundObj);
-				}
+			if (isAction(ActionState::LEFT)) {
+				board.m_playerX--;
+				m_engine->getSoundManager().playSound(m_soundMove);
 			}
-			else
-				m_keyPressStates[ActionState::LEFT] = false;
 			// Move Right
-			if (m_actionState->at(ActionState::RIGHT) > 0.5f) {
-				if (!m_keyPressStates[ActionState::RIGHT]) {
-					board.m_playerX++;
-					m_keyPressStates[ActionState::RIGHT] = true;
-					if (m_soundMove->existsYet())
-						m_engine->getSoundManager().playWav(m_soundMove->m_soundObj);
-				}
+			if (isAction(ActionState::RIGHT)) {
+				board.m_playerX++;
+				m_engine->getSoundManager().playSound(m_soundMove);
 			}
-			else
-				m_keyPressStates[ActionState::RIGHT] = false;
 			// Move Down
-			if (m_actionState->at(ActionState::BACKWARD) > 0.5f) {
-				if (!m_keyPressStates[ActionState::BACKWARD]) {
-					board.m_playerY--;
-					m_keyPressStates[ActionState::BACKWARD] = true;
-					if (m_soundMove->existsYet())
-						m_engine->getSoundManager().playWav(m_soundMove->m_soundObj);
-				}
+			if (isAction(ActionState::BACKWARD)) {
+				board.m_playerY--;
+				m_engine->getSoundManager().playSound(m_soundMove);
 			}
-			else
-				m_keyPressStates[ActionState::BACKWARD] = false;
 			// Move Up
-			if (m_actionState->at(ActionState::FORWARD) > 0.5f) {
-				if (!m_keyPressStates[ActionState::FORWARD]) {
-					board.m_playerY++;
-					m_keyPressStates[ActionState::FORWARD] = true;
-					if (m_soundMove->existsYet())
-						m_engine->getSoundManager().playWav(m_soundMove->m_soundObj);
-				}
+			if (isAction(ActionState::FORWARD)) {
+				board.m_playerY++;
+				m_engine->getSoundManager().playSound(m_soundMove);
 			}
-			else
-				m_keyPressStates[ActionState::FORWARD] = false;
 			// Swap Tiles
-			if (m_actionState->at(ActionState::JUMP) > 0.5f) {
-				if (!m_keyPressStates[ActionState::JUMP]) {
-					swapTiles(std::make_pair(board.m_playerX, board.m_playerY), std::make_pair(board.m_playerX + 1, board.m_playerY), board);
-					m_keyPressStates[ActionState::JUMP] = true;
-					if (m_soundSwitch->existsYet())
-						m_engine->getSoundManager().playWav(m_soundSwitch->m_soundObj, 0.5f, 1.5f);
-				}
+			if (isAction(ActionState::JUMP)) {
+				swapTiles(std::make_pair(board.m_playerX, board.m_playerY), std::make_pair(board.m_playerX + 1, board.m_playerY), board);
+				m_engine->getSoundManager().playSound(m_soundSwitch, 0.5f, 1.5f);
 			}
-			else
-				m_keyPressStates[ActionState::JUMP] = false;
 			// Fast Forward
-			if (m_actionState->at(ActionState::RUN) > 0.5f) {
-				if (!m_keyPressStates[ActionState::RUN]) {
-					m_keyPressStates[ActionState::RUN] = true;
-					if (!board.m_stop) {
-						board.m_rowsToAdd++;
-						if (m_soundScroll->existsYet())
-							m_engine->getSoundManager().playWav(m_soundScroll->m_soundObj, 0.33f);
-					}
-				}
+			if (isAction(ActionState::RUN)) {
+				board.m_skipWaiting = true;
+				board.m_rowsToAdd = 1;
+				m_engine->getSoundManager().playSound(m_soundScroll, 0.33f);
 			}
-			else
-				m_keyPressStates[ActionState::RUN] = false;
 
 			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
 			board.m_playerY = std::min(11, std::max(1, board.m_playerY));
@@ -108,6 +71,20 @@ public:
 
 
 private:
+	// Private Functions
+	bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
+		if (m_actionState->at(actionEnum) > 0.5f){
+			if (!m_keyPressStates[actionEnum]) {
+				m_keyPressStates[actionEnum] = true;
+				return true;
+			}
+		}
+		else 
+			m_keyPressStates[actionEnum] = false;
+		return false;
+	}
+
+
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Sound m_soundMove, m_soundSwitch, m_soundScroll;
