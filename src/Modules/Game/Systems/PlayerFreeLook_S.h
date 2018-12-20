@@ -2,24 +2,24 @@
 #ifndef PLAYERFREELOOK_S_H
 #define PLAYERFREELOOK_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Game\Systems\Interface.h"
 #include "Engine.h"
 #include "glm\glm.hpp"
 
 /* Component Types Used */
 #include "Utilities\ECS\Transform_C.h"
-#include "Modules\Game\Components\Player_C.h"
+#include "Modules\Game\Components\Player3D_C.h"
 
 
 /** A system responsible for updating player components based on keyboard/mouse. */
-class PlayerFreeLook_System : public BaseECSSystem {
+class PlayerFreeLook_System : public Game_System_Interface {
 public: 
 	// (de)Constructors
 	~PlayerFreeLook_System() = default;
-	PlayerFreeLook_System(Engine * engine) : BaseECSSystem(), m_engine(engine) {
+	PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
-		addComponentType(Player_Component::ID);
+		addComponentType(Player3D_Component::ID);
 	}
 
 
@@ -28,7 +28,7 @@ public:
 		auto & graphicsModule = m_engine->getGraphicsModule();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
-			Player_Component * playerComponent = (Player_Component*)componentParam[1];
+			Player3D_Component * playerComponent = (Player3D_Component*)componentParam[1];
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;

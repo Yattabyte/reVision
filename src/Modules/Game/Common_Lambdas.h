@@ -1,17 +1,8 @@
 #pragma once
-#ifndef COMMON_H
-#define COMMON_H 
+#ifndef COMMON_LAMBDAS_H
+#define COMMON_LAMBDAS_H 
 
-constexpr unsigned int BOARD_WIDTH = 6;
-constexpr unsigned int BOARD_HEIGHT = 12;
-constexpr float TickCount_GameAnimation		= 750.0f;
-constexpr int	TickCount_NewLine			= 500u;
-constexpr int	TickCount_Time				= 100;
-constexpr float TickCount_TileDrop			= 10.0F;
-constexpr float TickCount_TileBounce		= 15.0F;
-constexpr int	TickCount_Scoring			= 50;
-constexpr int	TickCount_Popping			= 25;
-constexpr int	TickCount_LevelUp			= 75;
+#include "Modules/Game/Components/Board_C.h"
 
 // Bouncing Easing Function
 static constexpr auto easeOutBounce = [](float t) {
@@ -28,13 +19,13 @@ static constexpr auto easeOutBounce = [](float t) {
 /** Swap 2 tiles ONLY if they're active, not falling, and not scored
 	@param		tile1		the first tile, swaps with the second.
 	@param		tile2		the second tile, swaps with the first. */
-static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB, GameBoard_Component & board) {
+static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB, Board_Component & board) {
 	auto & tileState1 = board.m_tiles[coordsA.second][coordsA.first];
 	auto & tileState2 = board.m_tiles[coordsB.second][coordsB.first];
 	auto & tileDrop1 = board.m_tileDrops[coordsA.second][coordsA.first];
 	auto & tileDrop2 = board.m_tileDrops[coordsB.second][coordsB.first];
 	if (tileState1.m_scoreType != TileState::UNMATCHED || tileState2.m_scoreType != TileState::UNMATCHED ||
-		tileDrop1.dropState == GameBoard_Component::TileDropData::FALLING || tileDrop2.dropState == GameBoard_Component::TileDropData::FALLING)
+		tileDrop1.dropState == Board_Component::TileDropData::FALLING || tileDrop2.dropState == Board_Component::TileDropData::FALLING)
 		return;
 
 	// Swap mechanism
@@ -46,4 +37,4 @@ static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB,
 	tileDrop2 = copyDrop;
 };
 
-#endif // COMMON_H
+#endif // COMMON_LAMBDAS_H

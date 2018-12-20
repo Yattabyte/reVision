@@ -2,22 +2,22 @@
 #ifndef PLAYERINPUT_S_H
 #define PLAYERINPUT_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Game\Systems\Interface.h"
+#include "Modules\Game\Components\Board_C.h"
+#include "Modules\Game\Common_Lambdas.h"
 #include "Assets\Asset_Sound.h"
-#include "Modules\Game\Common.h"
-#include "Modules\Game\Components\GameBoard_C.h"
 #include "Utilities\ActionState.h"
 #include "Engine.h"
 
 
 /** Responsible for interfacing the user with the game. */
-class PlayerInput_System : public BaseECSSystem {
+class PlayerInput_System : public Game_System_Interface {
 public:
 	// (de)Constructors
 	~PlayerInput_System() = default;
 	PlayerInput_System(Engine * engine, ActionState * actionState) : m_engine(engine), m_actionState(actionState) {
 		// Declare component types used
-		addComponentType(GameBoard_Component::ID);
+		addComponentType(Board_Component::ID);
 
 		// Asset Loading
 		m_soundMove = Shared_Sound(m_engine, "Game\\move.wav");
@@ -26,10 +26,16 @@ public:
 	}
 
 
-	// Interface Implementation	
+	// Interface Implementation
+	virtual bool readyToUse() override {
+		if (isAction(ActionState::ENTER)) 
+			m_playerReady = true;
+		
+		return m_soundMove->existsYet() && m_soundSwitch->existsYet() && m_soundScroll->existsYet() && m_playerReady;
+	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & board = *(GameBoard_Component*)componentParam[0];
+			auto & board = *(Board_Component*)componentParam[0];
 			
 			// Move Left
 			if (isAction(ActionState::LEFT)) {
@@ -90,6 +96,7 @@ private:
 	Shared_Sound m_soundMove, m_soundSwitch, m_soundScroll;
 	ActionState * m_actionState = nullptr;
 	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
+	bool m_playerReady = false;
 };
 
 #endif // PLAYERINPUT_S_H

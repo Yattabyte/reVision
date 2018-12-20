@@ -88,7 +88,7 @@
  /*! \page ecs ECS
  * \section ent_sec	Engine ECS
  * The engine currently supports the following components:
- *		- Player_Component
+ *		- Player3D_Component
  *		- Collider_Component
  *		- LightDirectional_Component
  *		- LightDirectionalShadow_Component

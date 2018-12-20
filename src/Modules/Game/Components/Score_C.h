@@ -1,10 +1,11 @@
 #pragma once
-#ifndef GAMESCORE_C_H
-#define GAMESCORE_C_H
+#ifndef SCORE_C_H
+#define SCORE_C_H
 
 #include "Utilities\ECS\ecsComponent.h"
+#include "Modules\Game\Common_Definitions.h"
+#include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
-#include <vector>
 
 
 /** Holds an int coordinate pair. */
@@ -12,7 +13,8 @@ struct XY { int x, y; };
 /** Holds tile adjaceny information. */
 struct TileAdj { bool scored[3][3] = { false, false, false, false, false, false, false, false, false }; };
 /** A component representing a basic player. */
-struct GameScore_Component : public ECSComponent<GameScore_Component> {
+struct Score_Component : public ECSComponent<Score_Component> {
+	VB_Element<GameBuffer> * m_data = nullptr;
 	int m_score = 0;
 	int m_lastScore = 0;
 	int m_stopTimeTick = 0;
@@ -29,12 +31,19 @@ struct GameScore_Component : public ECSComponent<GameScore_Component> {
 	std::vector<std::vector<TileAdj>> m_scoredAdjacency;
 };
 /** A constructor to aid in creation. */
-struct GameScore_Constructor : ECSComponentConstructor<GameScore_Component> {
+struct Score_Constructor : ECSComponentConstructor<Score_Component> {
+	// (de)Constructors
+	Score_Constructor(VB_Element<GameBuffer> * gameData)
+		: m_gameData(gameData) {};
 	// Interface Implementation
 	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto * component = new GameScore_Component();
+		auto * component = new Score_Component();
+		component->m_data = m_gameData;
 		return { component, component->ID };
 	}
+private:
+	// Private Attributes
+	VB_Element<GameBuffer> * m_gameData = nullptr;
 };
 
-#endif // GAMESCORE_C_H
+#endif // SCORE_C_H

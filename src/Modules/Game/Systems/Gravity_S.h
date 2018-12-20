@@ -2,37 +2,40 @@
 #ifndef GRAVITY_S_H
 #define GRAVITY_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Game\Systems\Interface.h"
+#include "Modules\Game\Components\Board_C.h"
+#include "Modules\Game\Common_Lambdas.h"
 #include "Assets\Asset_Sound.h"
-#include "Modules\Game\Common.h"
-#include "Modules\Game\Components\GameBoard_C.h"
 #include "Engine.h"
 
 
 /** Responsible for dropping tiles down the board. */
-class Gravity_System : public BaseECSSystem {
+class Gravity_System : public Game_System_Interface {
 public:
 	// (de)Constructors
 	~Gravity_System() = default;
 	Gravity_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
-		addComponentType(GameBoard_Component::ID);
+		addComponentType(Board_Component::ID);
 
 		// Asset Loading
 		m_soundImpact = Shared_Sound(m_engine, "Game\\impact.wav");
 	}
 
 
-	// Interface Implementation	
+	// Interface Implementation
+	virtual bool readyToUse() override { 
+		return m_soundImpact->existsYet();
+	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & board = *(GameBoard_Component*)componentParam[0];
+			auto & board = *(Board_Component*)componentParam[0];
 			// Find any tiles that should START falling
 			for (unsigned int y = 2u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x) {
 					const auto & xTile = board.m_tiles[y][x];
 					// Exclude any background tiles, scored tiles, or already falling tiles
-					if (xTile.m_type != TileState::NONE && xTile.m_scoreType == TileState::UNMATCHED && board.m_tileDrops[y][x].dropState == GameBoard_Component::TileDropData::STATIONARY) {
+					if (xTile.m_type != TileState::NONE && xTile.m_scoreType == TileState::UNMATCHED && board.m_tileDrops[y][x].dropState == Board_Component::TileDropData::STATIONARY) {
 
 						// Determine how far this tile may fall
 						unsigned int dropIndex = y;
@@ -63,7 +66,7 @@ public:
 								// Don't move scored tiles
 								if (board.m_tiles[z][x].m_scoreType == TileState::SCORED)
 									break;
-								board.m_tileDrops[z][x] = { GameBoard_Component::TileDropData::FALLING, z - dropDistance, float(dropDistance), 0.0f, weight };
+								board.m_tileDrops[z][x] = { Board_Component::TileDropData::FALLING, z - dropDistance, float(dropDistance), 0.0f, weight };
 							}
 						}
 					}
@@ -76,11 +79,11 @@ public:
 					auto & dTile = board.m_tileDrops[y][x];
 					switch (dTile.dropState) {
 						// Find falling tiles
-						case GameBoard_Component::TileDropData::FALLING: {
+						case Board_Component::TileDropData::FALLING: {
 							// Increment the tile tick and check if it has finished falling (hit something)
 							if (dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
 								// Tile has finished falling, start bouncing
-								dTile.dropState = GameBoard_Component::TileDropData::BOUNCING;
+								dTile.dropState = Board_Component::TileDropData::BOUNCING;
 								if (impactPerColumn[x] <= 0)
 									impactPerColumn[x] += dTile.weight;
 
@@ -92,14 +95,14 @@ public:
 							break;
 						}
 						// Find Bouncing Tiles
-						case GameBoard_Component::TileDropData::BOUNCING: {
+						case Board_Component::TileDropData::BOUNCING: {
 							const float bounceTime = (TickCount_TileBounce * (12.0f - float(dTile.weight))) / dTile.fallSpeed;
 							const float adjustedTick = (dTile.tick - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
 							// Increment the tile tick and check if it has finished bouncing
 							if (adjustedTick >= bounceTime) {
 								// Tile has finished bouncing
 								dTile.tick = 0;
-								dTile.dropState = GameBoard_Component::TileDropData::STATIONARY;
+								dTile.dropState = Board_Component::TileDropData::STATIONARY;
 							}
 							// Tile has already been dropped to destination, need to move tile upwards now, not down
 							// So use negative reciprical of bounce function to get desired effect
@@ -111,7 +114,7 @@ public:
 						default: {
 							// Reset the data just in case
 							board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
-							board.m_tileDrops[y][x] = GameBoard_Component::TileDropData();
+							board.m_tileDrops[y][x] = Board_Component::TileDropData();
 							break;
 						}
 					}

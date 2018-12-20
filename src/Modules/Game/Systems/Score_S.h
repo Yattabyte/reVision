@@ -1,26 +1,24 @@
 #pragma once
-#ifndef SCOREBOARD_S_H
-#define SCOREBOARD_S_H 
+#pragma once
+#ifndef SCORE_S_H
+#define SCORE_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Modules\Game\Systems\Interface.h"
+#include "Modules\Game\Components\Board_C.h"
+#include "Modules\Game\Components\Score_C.h"
 #include "Assets\Asset_Sound.h"
-#include "Modules\Game\Common.h"
 #include "Engine.h"
 
-/** Component Types Used */
-#include "Modules\Game\Components\GameBoard_C.h"
-#include "Modules\Game\Components\GameScore_C.h"
 
-
-/** Responsible for validating the game state, checking for scoreable events. */
-class Score_System : public BaseECSSystem {
+/** Responsible for validating the score.state, checking for scoreable events. */
+class Score_System : public Game_System_Interface {
 public:
 	// (de)Constructors
 	~Score_System() = default;
 	Score_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
-		addComponentType(GameBoard_Component::ID);
-		addComponentType(GameScore_Component::ID);		
+		addComponentType(Board_Component::ID);
+		addComponentType(Score_Component::ID);		
 
 		// Asset Loading
 		m_soundPop = Shared_Sound(m_engine, "Game\\pop.wav");
@@ -31,15 +29,22 @@ public:
 
 	
 	// Interface Implementation	
+	virtual bool readyToUse() override {
+		return
+			m_soundPop->existsYet() &&
+			m_soundMultiplierInc->existsYet() &&
+			m_soundMultiplierLost->existsYet() &&
+			m_soundLevelGained->existsYet();
+	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & board = *(GameBoard_Component*)componentParam[0];
-			auto & score = *(GameScore_Component*)componentParam[1];
+			auto & board = *(Board_Component*)componentParam[0];
+			auto & score = *(Score_Component*)componentParam[1];
 
 			bool allTilesGrounded = true;
 			for (unsigned int y = 2u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x)
-					if (board.m_tileDrops[y][x].dropState == GameBoard_Component::TileDropData::FALLING) {
+					if (board.m_tileDrops[y][x].dropState == Board_Component::TileDropData::FALLING) {
 						allTilesGrounded = false;
 						break;
 					}
@@ -51,8 +56,8 @@ public:
 			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
 
 			// Animate score climbing
-			if ((score.m_score - board.m_data->data->score) > 0) 
-				board.m_data->data->score = std::min(score.m_score, board.m_data->data->score + 1);			
+			if ((score.m_score - score.m_data->data->score) > 0) 
+				score.m_data->data->score = std::min(score.m_score, score.m_data->data->score + 1);
 			else
 				score.m_lastScore = score.m_score;
 			// Highlight digits that are changing
@@ -71,14 +76,14 @@ public:
 					break;
 				}
 			// Animate multiplier climbing
-			board.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, board.m_data->data->scoreAnimLinear)) : 0.0f;
+			score.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, score.m_data->data->scoreAnimLinear)) : 0.0f;
 			
 			// Synchronize component data to GPU
-			board.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->shakeLinear - 0.01f));
-			board.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
-			board.m_data->data->multiplier = score.m_multiplier;
+			score.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, score.m_data->data->shakeLinear - 0.01f));
+			score.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
+			score.m_data->data->multiplier = score.m_multiplier;
 			score.m_stopTimer = std::min(9, score.m_stopTimer);
-			board.m_data->data->stopTimer = score.m_stopTimer;
+			score.m_data->data->stopTimer = score.m_stopTimer;
 
 			score.m_levelLinear = float(score.m_tilesCleared) / float(score.m_level * 12);
 			score.m_levelUpLinear = glm::clamp(float(score.m_levelUpTick) / float(TickCount_LevelUp), 0.0f, 1.0f);
@@ -181,7 +186,7 @@ private:
 	@param		board		the board containing the tiles of interest.
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
-	bool checkSeries_Horizontally(const GameBoard_Component & board, ScoringManifold & series) {
+	bool checkSeries_Horizontally(const Board_Component & board, ScoringManifold & series) {
 		for each (const auto xy in series) {
 			int horizontalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
@@ -205,7 +210,7 @@ private:
 	@param		board		the board containing the tiles of interest.
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
-	bool checkSeries_Vertically(const GameBoard_Component & board, ScoringManifold & series) {
+	bool checkSeries_Vertically(const Board_Component & board, ScoringManifold & series) {
 		for each (const auto xy in series) {
 			int verticalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
@@ -228,9 +233,9 @@ private:
 	/** Begin checking a board for matching tiles of 3-of-a-kind or greater. Divided into a horizontal and vertical check, forming a scoring manifold.
 	@param		board		the board containing the tiles of interest.
 	@param		score		the scoring component. */
-	void validateBoard(GameBoard_Component & board, GameScore_Component & score) {
+	void validateBoard(Board_Component & board, Score_Component & score) {
 		std::vector<ScoringManifold> allMatchingSets;
-		static constexpr auto findScoredTiles = [](const auto & xCoord, const auto & yCoord, GameScore_Component & score) {
+		static constexpr auto findScoredTiles = [](const auto & xCoord, const auto & yCoord, Score_Component & score) {
 			for each (const auto & pair in score.m_scoredTiles)
 				for each (const auto & xy in pair.first) 
 					if (xy.x == xCoord && xy.y == yCoord)
@@ -304,7 +309,7 @@ private:
 				- All points added are multiplied by the combo multiplier
 	@param		board		the board containing the tiles of interest.
 	@param		score		the score component. */
-	void scoreTiles(GameBoard_Component & board, GameScore_Component & score) {
+	void scoreTiles(Board_Component & board, Score_Component & score) {
 		// Check to see if we should increment combo multiplier and add points
 		if (score.m_scoredTiles.size()) {
 			if (score.m_comboChanged) {
@@ -313,8 +318,8 @@ private:
 
 				score.m_multiplier++;
 				score.m_stopTimer++;
-				board.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
-				board.m_data->data->scoreAnimLinear++;
+				score.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
+				score.m_data->data->scoreAnimLinear++;
 
 				m_engine->getSoundManager().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
@@ -340,13 +345,13 @@ private:
 					// Set as matched
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				board.m_data->data->excitementLinear += (0.075f * (float)manifold.first.size());
+				score.m_data->data->excitementLinear += (0.075f * (float)manifold.first.size());
 				// Add time, but never move timer past 3 seconds
 				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.first.size() > 3) {
 					addScore(score, int(manifold.first.size()) + (10 * (int(manifold.first.size()) - 3)));
-					board.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
+					score.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
 					score.m_stopTimer++;
 				}
 				score.m_stopTimeTick = 0;
@@ -368,7 +373,7 @@ private:
 							addScore(score, 10);
 							score.m_tilesCleared++;
 						}
-						board.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
+						score.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
 					}
 					count++;
 				}
@@ -391,7 +396,7 @@ private:
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
 					board.m_tiles[xy.y][xy.x].m_tick = 0;
-					board.m_data->data->lifeLinear[(xy.y * 6) + xy.x] = 0.0f;
+					score.m_data->data->lifeLinear[(xy.y * 6) + xy.x] = 0.0f;
 				}
 				score.m_scoredTiles.erase(score.m_scoredTiles.begin() + x);
 				score.m_scoredAdjacency.erase(score.m_scoredAdjacency.begin() + x);
@@ -400,10 +405,10 @@ private:
 		}
 
 	}
-	/** A wrapper function for adding points to the game score. Accounts for any other variables like multipliers.
+	/** A wrapper function for adding points to the score.score. Accounts for any other variables like multipliers.
 	@param	score	the score component.
 	@param	amount	the amount of points to add. */
-	void addScore(GameScore_Component & score, const int & amount) {
+	void addScore(Score_Component & score, const int & amount) {
 		score.m_score += amount * score.m_multiplier;
 	}
 
@@ -414,4 +419,4 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
-#endif // SCOREBOARD_S_H
+#endif // SCORE_S_H

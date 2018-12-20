@@ -29,6 +29,7 @@ public:
 		JUMP,
 		CROUCH,
 		RUN,
+		ENTER,
 		LOOK_X,
 		LOOK_Y,
 		ACTION_COUNT
@@ -47,6 +48,7 @@ public:
 			"JUMP",
 			"CROUCH",
 			"RUN",
+			"ENTER",
 			"LOOK_X",
 			"LOOK_Y"
 		};

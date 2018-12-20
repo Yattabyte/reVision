@@ -3,9 +3,11 @@
 #define GAME_MODULE_H
 
 #include "Modules\Engine_Module.h"
-#include "Modules\Game\Components\GameBoard_C.h"
+#include "Modules\Game\Common_Definitions.h"
+#include "Modules\Game\Systems\Interface.h"
+#include "Utilities\ECS\ecsSystem.h"
 #include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\ECS\ECS.h"
+
 
 
 /** A module responsible for the game. */
@@ -28,10 +30,13 @@ public:
 
 private:
 	// Private Attributes
+	bool m_readyToStart = false;
 	float m_timeAccumulator = 0.0f;
-	ECSSystemList m_gameplaySystems;
+	std::vector<Game_System_Interface*> m_gameplaySystems;
+	ECSSystemList m_systemList;
 	BaseECSSystem * m_renderingSystem;
-	VectorBuffer<BoardBuffer> m_boardBuffer;
+	VectorBuffer<GameBuffer> m_boardBuffer;
+	std::vector<VB_Element<GameBuffer>*> m_players;
 };
 
 #endif // GAME_MODULE_H

@@ -2,31 +2,31 @@
 #ifndef PUSH_S_H
 #define PUSH_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
-#include "Modules\Game\Common.h"
-#include "Modules\Game\Components\GameBoard_C.h"
-#include "Modules\Game\Components\GameScore_C.h"
+#include "Modules\Game\Systems\Interface.h"
+#include "Modules\Game\Components\Board_C.h"
+#include "Modules\Game\Components\Score_C.h"
+#include "Modules\Game\Common_Lambdas.h"
 #include <random>
 
 
 /** Responsible for pushing new lines onto the field, climbing it higher towards the top of the board. */
-class Push_System : public BaseECSSystem {
+class Push_System : public Game_System_Interface {
 public:
 	// (de)Constructors
 	~Push_System() = default;
 	Push_System() {
 		// Declare component types used
-		addComponentType(GameBoard_Component::ID);
-		addComponentType(GameScore_Component::ID);
+		addComponentType(Board_Component::ID);
+		addComponentType(Score_Component::ID);
 		m_tileDistributor = std::uniform_int_distribution<unsigned int>(TileState::TileType::A, TileState::TileType::E);
 	}
 
 
-	// Interface Implementation	
+	// Interface Implementation
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & board = *(GameBoard_Component*)componentParam[0];
-			auto & score = *(GameScore_Component*)componentParam[1];
+			auto & board = *(Board_Component*)componentParam[0];
+			auto & score = *(Score_Component*)componentParam[1];
 
 			// Push new rows when timer is stopped, or ( when the user requests a new one and scored tiles have finished )
 			if (!board.m_stop || (board.m_skipWaiting && (score.m_scoredTiles.size() == 0))) {
@@ -71,7 +71,7 @@ private:
 	// Private Methods
 	/** Adds a new row of tiles to the board provided.
 	@param		board		the board to add a new row of tiles to. */
-	void pushNewRow(GameBoard_Component & board) {
+	void pushNewRow(Board_Component & board) {
 		// Move board up 1 row
 		for (int x = 0; x < BOARD_WIDTH; ++x)
 			for (int y = BOARD_HEIGHT - 1; y > 0; --y) {

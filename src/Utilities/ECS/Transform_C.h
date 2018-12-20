@@ -28,4 +28,4 @@ struct Transform_Constructor : ECSComponentConstructor<Transform_Component> {
 	}
 };
 
-#endif // BASICPLAYER_C_H
+#endif // TRANSFORM_C_H

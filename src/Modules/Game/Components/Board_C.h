@@ -1,0 +1,65 @@
+#pragma once
+#ifndef BOARD_C_H
+#define BOARD_C_H
+
+#include "Utilities\ECS\ecsComponent.h"
+#include "Modules\Game\Common_Definitions.h"
+#include "Utilities\GL\VectorBuffer.h"
+#include "glm\glm.hpp"
+
+
+/** Holds Tile State. */
+struct TileState {
+	// Enumerations
+	enum TileType : unsigned int {
+		A, B, C, D, E,
+		NONE,
+	} m_type = NONE;
+	enum ScoreType : unsigned int {
+		UNMATCHED, MATCHED, SCORED
+	} m_scoreType = UNMATCHED;
+	int m_tick = 0;
+
+	TileState(const TileType & t = NONE) : m_type(t) {};
+};
+/** A component representing a basic player. */
+struct Board_Component : public ECSComponent<Board_Component> {
+	VB_Element<GameBuffer> * m_data = nullptr;
+	TileState m_tiles[12][6];
+	struct TileDropData {
+		enum DropState {
+			STATIONARY, FALLING, BOUNCING
+		} dropState = STATIONARY;
+		unsigned int endIndex = 0;
+		float delta = 0.0f;
+		float tick = 0.0f;
+		unsigned int weight = 0;
+		float fallSpeed = 1.0f;
+	} m_tileDrops[12][6];
+	unsigned int m_gameTick = 0;
+	double m_rowClimbTick = 0.0;
+	double m_speed = 1.0f;
+	int m_playerX = 2;
+	int m_playerY = 5;
+	int m_rowsToAdd = 0;
+	bool m_stop = false;
+	bool m_skipWaiting = false;
+	bool m_nearingTop = false;
+};
+/** A constructor to aid in creation. */
+struct Board_Constructor : ECSComponentConstructor<Board_Component> {
+	// (de)Constructors
+	Board_Constructor(VB_Element<GameBuffer> * gameData)
+		: m_gameData(gameData) {};
+	// Interface Implementation
+	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
+		auto * component = new Board_Component();
+		component->m_data = m_gameData;
+		return { component, component->ID };
+	}
+private:
+	// Private Attributes
+	VB_Element<GameBuffer> * m_gameData = nullptr;
+};
+
+#endif // BOARD_C_H
