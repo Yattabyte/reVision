@@ -15,6 +15,9 @@ static constexpr auto easeOutBounce = [](float t) {
 	else
 		return (7.5625f * (t -= (2.625f / 2.75f)) * t + .984375f);
 };
+static constexpr auto easeInBounce = [](float t) {
+	return 1.0f - easeOutBounce(1.0f - t);
+};
 
 /** Swap 2 tiles ONLY if they're active, not falling, and not scored
 	@param		tile1		the first tile, swaps with the second.

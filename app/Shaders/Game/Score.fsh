@@ -27,5 +27,5 @@ void main()
 		DigitModifier.xyz *= 0.5f;
 	
 	const vec4 DigitColor = texture(Numbers, DigitIndex) * DigitModifier * ((NumberToRender >= -0.5f) ? 1.0f : 0.0f);
-	HeaderColor = DigitColor;
+	HeaderColor = DigitColor * introAnimLinear;
 }

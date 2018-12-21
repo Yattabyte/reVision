@@ -11,6 +11,7 @@
 /* Game System Types Used */
 #include "Modules\Game\Systems\IntroOutro_S.h"
 #include "Modules\Game\Systems\Board_S.h"
+#include "Modules\Game\Systems\ColorScheme_S.h"
 #include "Modules\Game\Systems\Gravity_S.h"
 #include "Modules\Game\Systems\PlayerInput_S.h"
 #include "Modules\Game\Systems\PlayerFreeLook_S.h"
@@ -32,6 +33,7 @@ void Game_Module::initialize(Engine * engine)
 	m_gameplaySystems = {
 		new IntroOutro_System(),
 		new Board_System(),
+		new ColorScheme_System(),
 		new Gravity_System(m_engine),
 		new Push_System(),
 		new PlayerInput_System(m_engine, &m_engine->getActionState()),
@@ -47,7 +49,33 @@ void Game_Module::initialize(Engine * engine)
 	m_renderingSystem = new Rendering_System(m_engine, m_engine->getGraphicsModule().getLightingFBOID());
 
 	// Create Players
-	m_players.push_back(m_boardBuffer.newElement());
+	auto * gameBoard = m_boardBuffer.newElement();
+	// Reset game buffer data
+	for (int x = 0; x < BOARD_WIDTH; ++x) {
+		for (int y = 0; y < BOARD_HEIGHT; ++y) {
+			gameBoard->data->types[(y * 6) + x] = TileState::NONE;
+			gameBoard->data->gravityOffsets[(y * 6) + x] = 0.0f;
+			gameBoard->data->lifeLinear[(y * 6) + x] = 0.0f;
+		}
+		gameBoard->data->lanes[x] = 0.0f;
+		gameBoard->data->colorScheme = glm::vec3(0.0f);
+		gameBoard->data->playerCoords = glm::ivec2(0, 0);
+		gameBoard->data->heightOffset = 0.0f;
+		gameBoard->data->sysTime = 0.0f;
+		gameBoard->data->gameWave = 0.0f;
+		gameBoard->data->excitementLinear = 0.0f;
+		gameBoard->data->shakeLinear = 0.0f;
+		gameBoard->data->introAnimLinear = 0.0f;
+		gameBoard->data->scoreAnimLinear = 0.0f;
+		gameBoard->data->timeAnimLinear = 0.0f;
+		gameBoard->data->score = 0;
+		gameBoard->data->highlightIndex = -1;
+		gameBoard->data->multiplier = 0;
+		gameBoard->data->stopTimer = 0;
+		gameBoard->data->gameTimer = 0;
+		gameBoard->data->nearingTop = 0;
+	}
+	m_players.push_back(gameBoard);
 
 	// Component Constructors
 	m_engine->registerECSConstructor("Board_Component", new Board_Constructor(m_players[0]));

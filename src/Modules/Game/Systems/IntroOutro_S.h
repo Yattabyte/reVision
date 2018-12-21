@@ -4,6 +4,7 @@
 
 #include "Modules\Game\Systems\Interface.h"
 #include "Modules\Game\Components\Board_C.h"
+#include "Modules\Game\Common_Lambdas.h"
 
 
 /** Responsible for starting and stopping the game. */
@@ -34,10 +35,9 @@ public:
 			else
 				if (board.m_introStarted && !board.m_gameStarted) {
 					board.m_introStarted = false;
-					board.m_gameStarted = true; 
+					board.m_gameStarted = true;
 				}
-			
-			board.m_data->data->introAnimLinear = float(board.m_introTick) / float(TickCount_Intro);
+			board.m_data->data->introAnimLinear = easeInBounce(float(board.m_introTick) / float(TickCount_Intro));
 		}
 	}
 };

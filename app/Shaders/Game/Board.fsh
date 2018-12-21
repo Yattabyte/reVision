@@ -24,7 +24,9 @@ void main()
 		FragColor = vec4(texture(BorderTexture, TexCoord.y).xyz * Dot, 1);
 		break;
 	case 1:
-		FragColor = texture(BoardTexture, TexCoord);
+		const vec4 grayBackground = vec4(0.125f * introAnimLinear);
+		const vec4 boardTexture = texture(BoardTexture, TexCoord);
+		FragColor = mix(grayBackground, boardTexture, boardTexture.a);
 		break;
 	case 2:
 		FragColor = vec4(texture(ScoreTexture, TexCoord).xyz, 1);

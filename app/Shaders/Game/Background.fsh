@@ -33,10 +33,10 @@ void main()
 
 	// Modify the color
 	vec3 f = (vec3(
-		uvLength + Offsets[0] * c * uvLength * (0.5 + uvLength), 
+		uvLength + Offsets[0] * c * uvLength * (1 + uvLength), 
 		uvLength + Offsets[1] * c * uvLength * (1 - uvLength), 
-		uvLength + Offsets[2] * c * uvLength * (0.5 + uvLength)
+		uvLength + Offsets[2] * c * uvLength * (1 + uvLength)
 	) * uvLength + Offsets[3] * c * uvLength * (1 - uvLength)) * colorScheme;
-	f = f * f * f * f;
-	FragColor = (f / 10.0f) * (10.0f * LinearTop);
+	f = f * f * f * f * colorScheme;
+	FragColor = (f / 20.0f) * (10.0f * LinearTop);
 }

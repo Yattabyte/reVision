@@ -5,8 +5,8 @@
 #include "glm\glm.hpp"
 
 
-constexpr unsigned int BOARD_WIDTH			= 6u;
-constexpr unsigned int BOARD_HEIGHT			= 12u;
+constexpr int	BOARD_WIDTH					= 6u;
+constexpr int	BOARD_HEIGHT				= 12u;
 constexpr unsigned int TILE_SIZE			= 128u;
 constexpr int	TickCount_Intro				= 150;
 constexpr float TickCount_GameAnimation		= 750.0f;
@@ -35,7 +35,7 @@ struct GameBuffer {
 	float scoreAnimLinear = 0.0f;
 	float timeAnimLinear = 0.0f;
 	int score = 0;
-	int highlightIndex = 0;
+	int highlightIndex = -1;
 	int multiplier = 0;
 	int stopTimer = 0;
 	int gameTimer = 0;

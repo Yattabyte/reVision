@@ -17,7 +17,7 @@ void main()
 
 	LinearTop = nearingTop * nearingTop;
 	Time = (sysTime / 2.0f) + (1.0f + LinearTop);
-	Speed = (LinearTop / 20.0f) + 0.02f;
+	Speed = 0.02f + (LinearTop / 20.0f);
 	Count = 2.0f + (8.0f * LinearTop);
 	Offsets = vec4(
 		5.0f + sin(Time) * 10.0f * (0.25 + LinearTop),
