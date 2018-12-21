@@ -9,6 +9,7 @@
 #include "Modules\Game\Components\Player3D_C.h"
 
 /* Game System Types Used */
+#include "Modules\Game\Systems\IntroOutro_S.h"
 #include "Modules\Game\Systems\Board_S.h"
 #include "Modules\Game\Systems\Gravity_S.h"
 #include "Modules\Game\Systems\PlayerInput_S.h"
@@ -29,6 +30,7 @@ void Game_Module::initialize(Engine * engine)
 
 	// Gameplay Systems
 	m_gameplaySystems = {
+		new IntroOutro_System(),
 		new Board_System(),
 		new Gravity_System(m_engine),
 		new Push_System(),

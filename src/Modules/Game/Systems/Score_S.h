@@ -41,6 +41,10 @@ public:
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];
 
+			// Exit early if game hasn't started
+			if (!board.m_gameStarted)
+				continue;
+
 			bool allTilesGrounded = true;
 			for (unsigned int y = 2u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x)

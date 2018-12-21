@@ -3,6 +3,7 @@
 #define TIMER_S_H 
 
 #include "Modules\Game\Systems\Interface.h"
+#include "Modules\Game\Components\Board_C.h"
 #include "Modules\Game\Components\Score_C.h"
 #include "Modules\Game\Common_Lambdas.h"
 
@@ -14,6 +15,7 @@ public:
 	~Timer_System() = default;
 	Timer_System() {
 		// Declare component types used
+		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);
 	}
 
@@ -21,7 +23,12 @@ public:
 	// Interface Implementation	
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & score = *(Score_Component*)componentParam[0];
+			auto & board = *(Board_Component*)componentParam[0];
+			auto & score = *(Score_Component*)componentParam[1];
+
+			// Exit early if game hasn't started
+			if (!board.m_gameStarted)
+				continue;
 
 			// Tick stop-timer
 			if (++score.m_stopTimeTick >= TickCount_Time) {

@@ -27,6 +27,10 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];
+			
+			// Exit early if game hasn't started
+			if (!board.m_gameStarted)
+				continue;
 
 			// Push new rows when timer is stopped, or ( when the user requests a new one and scored tiles have finished )
 			if (!board.m_stop || (board.m_skipWaiting && (score.m_scoredTiles.size() == 0))) {
@@ -54,15 +58,20 @@ public:
 
 			// Find lanes approaching full (top of board)
 			board.m_nearingTop = false;
-			for (int x = 0; x < 6; ++x)
-				for (int y = 11; y >= 0; --y)
+			int largest = 0;
+			for (int x = 0; x < 6; ++x) {
+				int y = 11;
+				for (; y >= 0; --y)
 					if (board.m_tiles[y][x].m_type != TileState::NONE) {
 						board.m_data->data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->data->heightOffset / 2.0f)) / 3.0f : 0.0f;
 						if (y >= 8)
 							board.m_nearingTop = true;
 						break;
 					}
-			board.m_data->data->nearingTop = int(board.m_nearingTop);
+				if (y > largest)
+					largest = y;
+			}
+			board.m_data->data->nearingTop = (float(largest) + (board.m_data->data->heightOffset / 2.0f)) / 12.0f;
 		}
 	}
 

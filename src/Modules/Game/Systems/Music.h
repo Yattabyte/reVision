@@ -33,6 +33,10 @@ public:
 			auto & board = *(Board_Component*)componentParam[0];	
 			const auto & soundMgr = m_engine->getSoundManager();
 
+			// Exit early if game hasn't started
+			if (!board.m_gameStarted)
+				continue;
+
 			if (!board.m_nearingTop) {
 				if (!m_musicPlaying) {
 					m_musicPlaying = true;

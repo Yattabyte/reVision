@@ -93,6 +93,7 @@ public:
 		m_shaderTiles = Shared_Shader(engine, "Game\\Tiles");
 		m_shaderMatchedTiles = Shared_Shader(engine, "Game\\Matched");
 		m_shaderMatchedNo = Shared_Shader(engine, "Game\\MatchedNumber");
+		m_shaderBackground = Shared_Shader(engine, "Game\\Background");
 		m_shaderScore = Shared_Shader(engine, "Game\\Score");
 		m_shaderMultiplier = Shared_Shader(engine, "Game\\Multiplier");
 		m_shaderTimer = Shared_Shader(engine, "Game\\Timer");
@@ -155,6 +156,7 @@ public:
 			m_modelHeader->existsYet() &&
 			m_modelFooter->existsYet() &&
 			m_shapeQuad->existsYet() &&
+			m_shaderBackground->existsYet() &&
 			m_shaderBorder->existsYet() &&
 			m_shaderBoard->existsYet() &&
 			m_shaderTiles->existsYet() &&
@@ -171,195 +173,229 @@ public:
 	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
-			auto & score = *(Score_Component*)componentParam[0];
-
-			// Update Rendering Data
-			// Determine number of chars in score
-			constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
-			GLuint scoreLength = 1;
-			for (GLuint x = 0; x < 8; ++x)
-				if (score.m_score >= decimalPlaces[x]) {
-					scoreLength = 8-x;
-					break;
-				}
-			const GLuint doubledLength = scoreLength * 2u;
-			m_bufferIndirectScore.write(sizeof(GLuint), sizeof(GLuint), &doubledLength);
-			m_shaderScore->setUniform(4, scoreLength);
-		
-			// Generate sprite set for scored tiles
-			GLuint matchedCount = 0;
-			for each (const auto & qwe in score.m_scoredTiles)
-				matchedCount += (GLuint(qwe.first.size()) * 16u);
-			m_bufferIndirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
-			unsigned long writeIndex = unsigned long(0);
-			// Go through each set of scored tiles
-			for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
-				// Go throuh a single set of scored tiles
-				for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x) {
-					const glm::ivec2 coords(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
-					m_bufferMatchedTiles.write(writeIndex, sizeof(glm::ivec2), &coords);
-					writeIndex += sizeof(glm::ivec2);
-					GLuint states[16] = { 10,7,7,11, 4,16,16,6, 4,16,16,6, 8,5,5,9 };
-					// If tile to the left
-					if (score.m_scoredAdjacency[n][x].scored[1][0]) {
-						states[0] = (score.m_scoredAdjacency[n][x].scored[0][1]) ? 3 : 7; // if beneath
-						states[4] = 16;
-						states[8] = 16;
-						states[12] = (score.m_scoredAdjacency[n][x].scored[2][1]) ? 0 : 5; // if above
-					}
-					// If tile to the right
-					if (score.m_scoredAdjacency[n][x].scored[1][2]) {
-						states[3] = (score.m_scoredAdjacency[n][x].scored[0][1]) ? 2 : 7; // if beneath
-						states[7] = 16;
-						states[11] = 16;
-						states[15] = (score.m_scoredAdjacency[n][x].scored[2][1]) ? 1 : 5; // if above
-					}
-					// If tile to the top
-					if (score.m_scoredAdjacency[n][x].scored[2][1]) {
-						states[12] = (score.m_scoredAdjacency[n][x].scored[1][0]) ? 0 : 4; // if left
-						states[13] = 16;
-						states[14] = 16;
-						states[15] = (score.m_scoredAdjacency[n][x].scored[1][2]) ? 1 : 6; // if right
-					}
-					// If tile to the bottom
-					if (score.m_scoredAdjacency[n][x].scored[0][1]) {
-						states[0] = (score.m_scoredAdjacency[n][x].scored[1][0]) ? 3 : 4; // if left
-						states[1] = 16;
-						states[2] = 16;
-						states[3] = (score.m_scoredAdjacency[n][x].scored[1][2]) ? 2 : 6; // if right
-					}
-					// Delete bottom left corner
-					if (score.m_scoredAdjacency[n][x].scored[0][0] && score.m_scoredAdjacency[n][x].scored[0][1] && score.m_scoredAdjacency[n][x].scored[1][0])
-						states[0] = 16;
-					// Delete bottom right corner
-					if (score.m_scoredAdjacency[n][x].scored[0][2] && score.m_scoredAdjacency[n][x].scored[0][1] && score.m_scoredAdjacency[n][x].scored[1][2])
-						states[3] = 16;
-					// Delete top left corner
-					if (score.m_scoredAdjacency[n][x].scored[2][0] && score.m_scoredAdjacency[n][x].scored[2][1] && score.m_scoredAdjacency[n][x].scored[1][0])
-						states[12] = 16;
-					// Delete top right corner
-					if (score.m_scoredAdjacency[n][x].scored[2][2] && score.m_scoredAdjacency[n][x].scored[2][1] && score.m_scoredAdjacency[n][x].scored[1][2])
-						states[15] = 16;
-					for (GLuint y = 0; y < 16u; ++y) {
-						m_bufferMatchedTiles.write(writeIndex, sizeof(GLint), &states[y]);
-						writeIndex += sizeof(GLint);
-					}
-				}
-			}
-			// Get scored tile count
-			writeIndex = unsigned long(0);
-			// Go through each set of scored tiles
-			for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
-				// Find the center point in the set of scored tiles
-				glm::ivec2 countAndType((int)score.m_scoredTiles[n].first.size(), 0);
-				glm::vec2 center(0.0f);
-				for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x)
-					center += glm::vec2(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
-				center /= float(countAndType.x);
-				m_bufferMatchedNos.write(writeIndex, sizeof(glm::vec2), &center);
-				writeIndex += sizeof(glm::vec2);
-				m_bufferMatchedNos.write(writeIndex, sizeof(glm::ivec2), &countAndType);
-				writeIndex += sizeof(glm::ivec2); // using '2' because we need to pad it					
-			}
-			const GLuint scoreCount = (GLuint)score.m_scoredTiles.size();
-			m_bufferIndirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
-
-			// Render level XP to border FBO
-			glViewport(0, 0, TILE_SIZE * 16, 1);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBorder);
-			glClear(GL_COLOR_BUFFER_BIT);
+			// Update elements
+			update(*(Score_Component*)componentParam[0]);
+			
+			// Render elements	
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-			m_shaderBorder->bind();
-			m_shaderBorder->setUniform(0, score.m_levelLinear);
-			m_shaderBorder->setUniform(1, score.m_levelUpLinear);
-			m_bufferIndirectBorder.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-			// Prepare center FBO
-			glViewport(0, 0, TILE_SIZE * 6, TILE_SIZE * 12);
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDField);
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			// Render Matched tiles to the FBO
-			m_shaderMatchedTiles->bind();
-			m_shaderMatchedTiles->setUniform(0, m_orthoProjField);
-			m_textureMatchedTiles->bind(0);
-			m_bufferIndirectMatchedTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			m_bufferMatchedTiles.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-			// Render game tiles to the FBO
-			m_shaderTiles->bind();
-			m_textureTile->bind(0);
-			m_textureTilePlayer->bind(1);
-			m_shaderTiles->setUniform(0, m_orthoProjField);
-			m_shaderTiles->setUniform(4, (float)(glfwGetTime()));
-			glBindVertexArray(m_shapeQuad->m_vaoID);
-			m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);			
-
-			// Render Match count to the FBO
-			m_shaderMatchedNo->bind();
-			m_shaderMatchedNo->setUniform(0, m_orthoProjField);
-			m_textureNums->bind(1);
-			m_bufferIndirectMatchedNo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			m_bufferMatchedNos.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-			// Render score header bar to the FBO
-			glViewport(0, 0, GLsizei(TILE_SIZE * 6), GLsizei(TILE_SIZE * 1.5));
-			glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBars);
-			glDrawBuffer(GL_COLOR_ATTACHMENT0);
-			glClear(GL_COLOR_BUFFER_BIT);
-			m_shaderScore->bind();
-			m_shaderScore->setUniform(0, m_orthoProjHeader);
-			m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-			
-			// Render multiplier into header bar
-			m_shaderMultiplier->bind();
-			m_shaderMultiplier->setUniform(0, m_orthoProjHeader);
-			m_bufferIndirectMultiplier.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-			// Render time footer bar to the FBO			
-			glDrawBuffer(GL_COLOR_ATTACHMENT1);
-			glClear(GL_COLOR_BUFFER_BIT);
-			m_shaderTimer->bind();
-			m_shaderTimer->setUniform(0, m_orthoProjHeader);
-			m_textureTimeStop->bind(0);
-			m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-			
-			// Render all of the textures onto the board model
-			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-			glBindFramebuffer(GL_FRAMEBUFFER, m_lightingFBOID);
-			glEnable(GL_DEPTH_TEST);
-			glBindVertexArray(*m_vaoModels);
-			m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			m_shaderBoard->bind();
-			glBindTextureUnit(0, m_borderTexID);
-			glBindTextureUnit(1, m_boardTexID);
-			glBindTextureUnit(2, m_scoreTexID);
-			glBindTextureUnit(3, m_timeTexID);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, 4, 0);
-
-			// End
-			glDisable(GL_DEPTH_TEST);
+			renderBorder();
+			renderField();
+			renderHeader();
+			renderFooter();
+			renderBackground();
+			renderBoard();
 			glDisable(GL_BLEND);
 		}
 	}
 
 
 private:
+	// Private Logic Functions
+	void update(const Score_Component & score) {
+		// Update Rendering Data
+			// Determine number of chars in score
+		constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
+		GLuint scoreLength = 1;
+		for (GLuint x = 0; x < 8; ++x)
+			if (score.m_score >= decimalPlaces[x]) {
+				scoreLength = 8 - x;
+				break;
+			}
+		const GLuint doubledLength = scoreLength * 2u;
+		m_bufferIndirectScore.write(sizeof(GLuint), sizeof(GLuint), &doubledLength);
+		m_shaderScore->setUniform(4, scoreLength);
+
+		// Generate sprite set for scored tiles
+		GLuint matchedCount = 0;
+		for each (const auto & qwe in score.m_scoredTiles)
+			matchedCount += (GLuint(qwe.first.size()) * 16u);
+		m_bufferIndirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
+		unsigned long writeIndex = unsigned long(0);
+		// Go through each set of scored tiles
+		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
+			// Go throuh a single set of scored tiles
+			for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x) {
+				const glm::ivec2 coords(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
+				m_bufferMatchedTiles.write(writeIndex, sizeof(glm::ivec2), &coords);
+				writeIndex += sizeof(glm::ivec2);
+				GLuint states[16] = { 10,7,7,11, 4,16,16,6, 4,16,16,6, 8,5,5,9 };
+				// If tile to the left
+				if (score.m_scoredAdjacency[n][x].scored[1][0]) {
+					states[0] = (score.m_scoredAdjacency[n][x].scored[0][1]) ? 3 : 7; // if beneath
+					states[4] = 16;
+					states[8] = 16;
+					states[12] = (score.m_scoredAdjacency[n][x].scored[2][1]) ? 0 : 5; // if above
+				}
+				// If tile to the right
+				if (score.m_scoredAdjacency[n][x].scored[1][2]) {
+					states[3] = (score.m_scoredAdjacency[n][x].scored[0][1]) ? 2 : 7; // if beneath
+					states[7] = 16;
+					states[11] = 16;
+					states[15] = (score.m_scoredAdjacency[n][x].scored[2][1]) ? 1 : 5; // if above
+				}
+				// If tile to the top
+				if (score.m_scoredAdjacency[n][x].scored[2][1]) {
+					states[12] = (score.m_scoredAdjacency[n][x].scored[1][0]) ? 0 : 4; // if left
+					states[13] = 16;
+					states[14] = 16;
+					states[15] = (score.m_scoredAdjacency[n][x].scored[1][2]) ? 1 : 6; // if right
+				}
+				// If tile to the bottom
+				if (score.m_scoredAdjacency[n][x].scored[0][1]) {
+					states[0] = (score.m_scoredAdjacency[n][x].scored[1][0]) ? 3 : 4; // if left
+					states[1] = 16;
+					states[2] = 16;
+					states[3] = (score.m_scoredAdjacency[n][x].scored[1][2]) ? 2 : 6; // if right
+				}
+				// Delete bottom left corner
+				if (score.m_scoredAdjacency[n][x].scored[0][0] && score.m_scoredAdjacency[n][x].scored[0][1] && score.m_scoredAdjacency[n][x].scored[1][0])
+					states[0] = 16;
+				// Delete bottom right corner
+				if (score.m_scoredAdjacency[n][x].scored[0][2] && score.m_scoredAdjacency[n][x].scored[0][1] && score.m_scoredAdjacency[n][x].scored[1][2])
+					states[3] = 16;
+				// Delete top left corner
+				if (score.m_scoredAdjacency[n][x].scored[2][0] && score.m_scoredAdjacency[n][x].scored[2][1] && score.m_scoredAdjacency[n][x].scored[1][0])
+					states[12] = 16;
+				// Delete top right corner
+				if (score.m_scoredAdjacency[n][x].scored[2][2] && score.m_scoredAdjacency[n][x].scored[2][1] && score.m_scoredAdjacency[n][x].scored[1][2])
+					states[15] = 16;
+				for (GLuint y = 0; y < 16u; ++y) {
+					m_bufferMatchedTiles.write(writeIndex, sizeof(GLint), &states[y]);
+					writeIndex += sizeof(GLint);
+				}
+			}
+		}
+		// Get scored tile count
+		writeIndex = unsigned long(0);
+		// Go through each set of scored tiles
+		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
+			// Find the center point in the set of scored tiles
+			glm::ivec2 countAndType((int)score.m_scoredTiles[n].first.size(), 0);
+			glm::vec2 center(0.0f);
+			for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x)
+				center += glm::vec2(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
+			center /= float(countAndType.x);
+			m_bufferMatchedNos.write(writeIndex, sizeof(glm::vec2), &center);
+			writeIndex += sizeof(glm::vec2);
+			m_bufferMatchedNos.write(writeIndex, sizeof(glm::ivec2), &countAndType);
+			writeIndex += sizeof(glm::ivec2); // using '2' because we need to pad it					
+		}
+		const GLuint scoreCount = (GLuint)score.m_scoredTiles.size();
+		m_bufferIndirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
+
+		m_shaderBorder->setUniform(0, score.m_levelLinear);
+		m_shaderBorder->setUniform(1, score.m_levelUpLinear);
+		score.m_data->data->sysTime = float(glfwGetTime());
+	}
+	// Private Rendering Functions
+	/** Render game level / border into it's own FBO. */
+	void renderBorder() {
+		glViewport(0, 0, TILE_SIZE * 16, 1);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBorder);
+		glClear(GL_COLOR_BUFFER_BIT);
+		m_shaderBorder->bind();
+		m_bufferIndirectBorder.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
+	/** Render game tiles into it's own FBO. */
+	void renderField() {
+		// Prepare center FBO
+		glViewport(0, 0, TILE_SIZE * 6, TILE_SIZE * 12);
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDField);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		// Matched tiles first, behind everything
+		m_shaderMatchedTiles->bind();
+		m_shaderMatchedTiles->setUniform(0, m_orthoProjField);
+		m_textureMatchedTiles->bind(0);
+		m_bufferIndirectMatchedTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_bufferMatchedTiles.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Game tiles
+		m_shaderTiles->bind();
+		m_textureTile->bind(0);
+		m_textureTilePlayer->bind(1);
+		m_shaderTiles->setUniform(0, m_orthoProjField);
+		m_shaderTiles->setUniform(4, (float)(glfwGetTime()));
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Match count
+		m_shaderMatchedNo->bind();
+		m_shaderMatchedNo->setUniform(0, m_orthoProjField);
+		m_textureNums->bind(1);
+		m_bufferIndirectMatchedNo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_bufferMatchedNos.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
+	/** Render score header bar into it's own FBO. */
+	void renderHeader() {
+		// Score
+		glViewport(0, 0, GLsizei(TILE_SIZE * 6), GLsizei(TILE_SIZE * 1.5));
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBars);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		glClear(GL_COLOR_BUFFER_BIT);
+		m_shaderScore->bind();
+		m_shaderScore->setUniform(0, m_orthoProjHeader);
+		m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Multiplier
+		m_shaderMultiplier->bind();
+		m_shaderMultiplier->setUniform(0, m_orthoProjHeader);
+		m_bufferIndirectMultiplier.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
+	/** Render time footer bar into it's own FBO. */
+	void renderFooter() {
+		glDrawBuffer(GL_COLOR_ATTACHMENT1);
+		glClear(GL_COLOR_BUFFER_BIT);
+		m_shaderTimer->bind();
+		m_shaderTimer->setUniform(0, m_orthoProjHeader);
+		m_textureTimeStop->bind(0);
+		m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
+	/** Render background effect to the screen*/
+	void renderBackground() {
+		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_BLEND);
+		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glBindFramebuffer(GL_FRAMEBUFFER, m_lightingFBOID);
+		m_shaderBackground->bind(); 
+		glDrawArrays(GL_TRIANGLES, 0, 6);
+		glEnable(GL_BLEND);
+	}
+	/** Render all of the textures onto the board model, onto the screen. */
+	void renderBoard() {			
+		glEnable(GL_DEPTH_TEST);
+		glBindVertexArray(*m_vaoModels);
+		m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_shaderBoard->bind();
+		glBindTextureUnit(0, m_borderTexID);
+		glBindTextureUnit(1, m_boardTexID);
+		glBindTextureUnit(2, m_scoreTexID);
+		glBindTextureUnit(3, m_timeTexID);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, 4, 0);
+		glDisable(GL_DEPTH_TEST);
+	}
+	
+
+
+
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_lightingFBOID = 0, m_fboIDBorder = 0, m_borderTexID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);	
 	Shared_Primitive m_shapeQuad;
 	Shared_Texture m_textureNums;
+
+	// Background Rendering Resources
+	Shared_Shader m_shaderBackground;
 
 	// Board Rendering Resources
 	Shared_Shader m_shaderBoard;

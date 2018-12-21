@@ -27,15 +27,23 @@ public:
 
 
 	// Interface Implementation
-	virtual bool readyToUse() override {
-		if (isAction(ActionState::ENTER)) 
-			m_playerReady = true;
-		
-		return m_soundMove->existsYet() && m_soundSwitch->existsYet() && m_soundScroll->existsYet() && m_playerReady;
+	virtual bool readyToUse() override {		
+		return m_soundMove->existsYet() && m_soundSwitch->existsYet() && m_soundScroll->existsYet();
 	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
+			
+			if (isAction(ActionState::PAUSE)) {
+				if (!board.m_gameStarted) {
+					board.m_introStarted = true;
+					continue;
+				}
+				else
+					board.m_gameStarted = !board.m_gameStarted;
+			}
+					
+			
 			
 			// Move Left
 			if (isAction(ActionState::LEFT)) {
@@ -96,7 +104,6 @@ private:
 	Shared_Sound m_soundMove, m_soundSwitch, m_soundScroll;
 	ActionState * m_actionState = nullptr;
 	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
-	bool m_playerReady = false;
 };
 
 #endif // PLAYERINPUT_S_H

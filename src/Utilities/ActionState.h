@@ -30,6 +30,7 @@ public:
 		CROUCH,
 		RUN,
 		ENTER,
+		PAUSE,
 		LOOK_X,
 		LOOK_Y,
 		ACTION_COUNT
@@ -49,6 +50,7 @@ public:
 			"CROUCH",
 			"RUN",
 			"ENTER",
+			"PAUSE",
 			"LOOK_X",
 			"LOOK_Y"
 		};

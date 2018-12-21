@@ -75,19 +75,6 @@ vec4 calcTile_Regular()
 	return vec4(mix(appearance, gray, smoothStop6(TileLifeLinear)).xyz, appearance.a);
 }
 
-vec4 calcTile_Waiting()
-{
-	// Vary illumination amount based on board excitementLinear
-	const float quarterExcitement = excitementLinear / 4.0f;
-	const float texDistance = distance(TexCoord, vec2(0.5f));
-	const float Radius = 0.75f + quarterExcitement;
-	const float range = 1.0f / Radius;	
-	const float attenuationFactor = 1.0f - (texDistance * texDistance) * (range * range) + quarterExcitement; 
-	
-	// Final Appaearance
-	return vec4(tileColors[Type] * 0.25f * attenuationFactor, 1);
-}
-
 void main()
 {		
 	if (Type == 6)
@@ -96,6 +83,6 @@ void main()
 		FragColor = vec4(0);
 	else
 		FragColor = calcTile_Regular();
-	if (TileWaiting == 1)			
-		FragColor *= 0.5f;
+	if (TileWaiting == 1)	
+		FragColor = vec4(FragColor.rgb * 0.5f,  FragColor.a * 0.75);
 }

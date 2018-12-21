@@ -30,6 +30,11 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
+
+			// Exit early if game hasn't started
+			if (!board.m_gameStarted)
+				continue;
+
 			// Find any tiles that should START falling
 			for (unsigned int y = 2u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x) {

@@ -8,6 +8,7 @@
 constexpr unsigned int BOARD_WIDTH			= 6u;
 constexpr unsigned int BOARD_HEIGHT			= 12u;
 constexpr unsigned int TILE_SIZE			= 128u;
+constexpr int	TickCount_Intro				= 200;
 constexpr float TickCount_GameAnimation		= 750.0f;
 constexpr int	TickCount_NewLine			= 500u;
 constexpr int	TickCount_Time				= 100;
@@ -26,9 +27,11 @@ struct GameBuffer {
 	glm::vec3 colorScheme = glm::vec3(0.0f); float pad2;
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
+	float sysTime = 0.0f;
 	float gameWave = 0.0f;
 	float excitementLinear = 0.0f;
 	float shakeLinear = 0.0f;
+	float introAnimLinear = 0.0f;
 	float scoreAnimLinear = 0.0f;
 	float timeAnimLinear = 0.0f;
 	int score = 0;
@@ -36,7 +39,7 @@ struct GameBuffer {
 	int multiplier = 0;
 	int stopTimer = 0;
 	int gameTimer = 0;
-	int nearingTop = 0;	glm::ivec2 pad3;
+	float nearingTop = 0;
 };
 
 #endif // COMMON_DEFINITIONS_H

@@ -42,9 +42,12 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	int m_playerX = 2;
 	int m_playerY = 5;
 	int m_rowsToAdd = 0;
+	bool m_nearingTop = false;
 	bool m_stop = false;
 	bool m_skipWaiting = false;
-	bool m_nearingTop = false;
+	int m_introTick = 0;
+	bool m_introStarted = false;
+	bool m_gameStarted = false;
 };
 /** A constructor to aid in creation. */
 struct Board_Constructor : ECSComponentConstructor<Board_Component> {
