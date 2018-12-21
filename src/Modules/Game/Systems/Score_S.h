@@ -89,18 +89,23 @@ public:
 			score.m_stopTimer = std::min(9, score.m_stopTimer);
 			score.m_data->data->stopTimer = score.m_stopTimer;
 
-			score.m_levelLinear = float(score.m_tilesCleared) / float(score.m_level * 12);
-			score.m_levelUpLinear = glm::clamp(float(score.m_levelUpTick) / float(TickCount_LevelUp), 0.0f, 1.0f);
-			if (score.m_levelUpTick >= 0) 
-				score.m_levelUpTick = std::min(TickCount_LevelUp, score.m_levelUpTick + 1);			
-			if (score.m_levelUpTick >= TickCount_LevelUp)
-				score.m_levelUpTick = -1;
+			// If enough tiles cleared, signal to start the level-up animation
 			if (score.m_tilesCleared >= (score.m_level * 12)) {
-				score.m_tilesCleared = 0;
-				score.m_levelUpTick = 0;
 				score.m_level++;
+				score.m_levelUp = true; 
+				score.m_levelUpTick = 0;
+				score.m_tilesCleared = 0;
 				m_engine->getSoundManager().playSound(m_soundLevelGained, 0.75f);
 			}
+			if (score.m_levelUp) 
+				score.m_levelUpTick++;
+			if (score.m_levelUpTick >= TickCount_LevelUp) {
+				score.m_levelUp = false;
+				score.m_levelUpTick = 0;
+			}
+
+			score.m_levelLinear = float(score.m_tilesCleared) / float(score.m_level * 12);			
+			score.m_levelUpLinear = sinf(float(score.m_levelUpTick) / float(TickCount_LevelUp) * glm::pi<float>());
 			board.m_speed = 1.0 + (double(score.m_level - 1) * 0.2f);
 		}
 	}

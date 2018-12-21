@@ -29,7 +29,7 @@ void main()
 	// Pulses in response to game events
 	const float pulseAmount = calcPulseAmount(gl_FragCoord.y) * stripeAmount;
 	// Border beneath level mark is in game color, rest is white
-	const vec3 color = ((TexCoord.x < LevelLinear) ? colorScheme : mix(vec3(1.0f), vec3(0,1.0f,0), LevelUpMix)) * pulseAmount;	
+	const vec3 color = ((TexCoord.x < LevelLinear) ? colorScheme : vec3(1.0f)) * pulseAmount;	
 	// Add it all together
 	const vec3 diffuseColor = (color * color) / M_PI;
 	const vec3 highlightColor = color * color * excitementLinear * (multiplier/4.0f);

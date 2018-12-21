@@ -8,7 +8,7 @@
 constexpr unsigned int BOARD_WIDTH			= 6u;
 constexpr unsigned int BOARD_HEIGHT			= 12u;
 constexpr unsigned int TILE_SIZE			= 128u;
-constexpr int	TickCount_Intro				= 200;
+constexpr int	TickCount_Intro				= 150;
 constexpr float TickCount_GameAnimation		= 750.0f;
 constexpr int	TickCount_NewLine			= 500u;
 constexpr int	TickCount_Time				= 100;
@@ -16,7 +16,7 @@ constexpr float TickCount_TileDrop			= 10.0F;
 constexpr float TickCount_TileBounce		= 15.0F;
 constexpr int	TickCount_Scoring			= 50;
 constexpr int	TickCount_Popping			= 25;
-constexpr int	TickCount_LevelUp			= 75;
+constexpr int	TickCount_LevelUp			= 150;
 
 /** OpenGL buffer for boards. */
 struct GameBuffer {
