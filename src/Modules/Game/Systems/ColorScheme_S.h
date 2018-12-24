@@ -4,7 +4,7 @@
 
 #include "Modules\Game\Systems\Interface.h"
 #include "Modules\Game\Components\Board_C.h"
-#include "Modules\Game\Components\Score_C.h""
+#include "Modules\Game\Components\Score_C.h"
 
 
 /** Responsible for the overall color scheme for the game. */

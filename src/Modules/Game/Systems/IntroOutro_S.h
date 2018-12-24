@@ -23,21 +23,15 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 
-			// Exit early if intro hasn't started
-			if (!board.m_introStarted)
-				continue;
-
-			// Intro effects
-			if (board.m_introTick <= TickCount_Intro) {
-				board.m_introTick++;
-				board.m_gameStarted = false;
-			}
-			else
-				if (board.m_introStarted && !board.m_gameStarted) {
-					board.m_introStarted = false;
+			if (board.m_intro.start && !board.m_gameStarted) {
+				board.m_intro.tick++;
+				if (board.m_intro.tick >= TickCount_Intro) {
+					board.m_intro.finished = true;
 					board.m_gameStarted = true;
+					board.m_rowsToAdd += 6;
 				}
-			board.m_data->data->introAnimLinear = easeInBounce(float(board.m_introTick) / float(TickCount_Intro));
+			}
+			board.m_data->data->introAnimLinear = easeInBounce(float(board.m_intro.tick) / float(TickCount_Intro));
 		}
 	}
 };

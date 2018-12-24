@@ -6,6 +6,7 @@
 #include "Modules\Game\Components\Board_C.h"
 #include "Modules\Game\Components\Score_C.h"
 #include "Modules\Game\Common_Lambdas.h"
+#include <algorithm>  
 #include <random>
 
 
@@ -18,7 +19,6 @@ public:
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);
-		m_tileDistributor = std::uniform_int_distribution<unsigned int>(TileState::TileType::A, TileState::TileType::E);
 	}
 
 
@@ -90,13 +90,26 @@ private:
 		board.m_playerY++;
 
 		// Replace row[0] with new row	
-		for (int x = 0; x < 6; ++x)
-			board.m_tiles[0][x] = TileState(TileState::TileType(m_tileDistributor(m_tileGenerator)));
+		for (int x = 0; x < 6; ++x) {
+			std::vector<int> vector = { TileState::TileType::A, TileState::TileType::B, TileState::TileType::C, TileState::TileType::D, TileState::TileType::E};
+			// Don't use the same tile as the one above this one
+			if (board.m_tiles[1][x].m_type != TileState::NONE) 
+				vector.erase(vector.begin() + board.m_tiles[1][x].m_type);
+			// Don't use the same tile as the one before this one	
+			if (x > 0 && board.m_tiles[0][x - 1].m_type != TileState::NONE) {
+				auto it = std::find(vector.begin(), vector.end(), board.m_tiles[0][x - 1].m_type);
+				if (it != vector.end())
+					vector.erase(it);
+			}
+			const auto distributor = std::uniform_int_distribution<unsigned int>(0, int(vector.size())-1);
+			const auto vectorIndex = distributor(m_tileGenerator);
+			const auto & element = vector[vectorIndex];
+			board.m_tiles[0][x] = TileState(TileState::TileType(element));
+		}
 	}
 
 
 	// Private Attributes
-	std::uniform_int_distribution<unsigned int> m_tileDistributor;
 	std::default_random_engine m_tileGenerator;
 };
 

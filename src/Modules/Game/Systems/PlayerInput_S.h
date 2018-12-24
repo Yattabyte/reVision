@@ -34,16 +34,14 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			
+			// (un)Pause
 			if (isAction(ActionState::PAUSE)) {
-				if (!board.m_gameStarted) {
-					board.m_introStarted = true;
-					continue;
-				}
-				else
-					board.m_gameStarted = !board.m_gameStarted;
-			}
-					
-			
+				board.m_intro.start = !board.m_intro.start;
+			}					
+
+			// Exit early if game hasn't started
+			if (!board.m_intro.finished)
+				continue;
 			
 			// Move Left
 			if (isAction(ActionState::LEFT)) {

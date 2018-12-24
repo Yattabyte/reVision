@@ -11,7 +11,7 @@
 /** Holds Tile State. */
 struct TileState {
 	// Enumerations
-	enum TileType : unsigned int {
+	enum TileType : int {
 		A, B, C, D, E,
 		NONE,
 	} m_type = NONE;
@@ -45,9 +45,13 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	bool m_nearingTop = false;
 	bool m_stop = false;
 	bool m_skipWaiting = false;
-	int m_introTick = 0;
-	bool m_introStarted = false;
 	bool m_gameStarted = false;
+
+	struct GameIntro {
+		int tick = 0;
+		bool start = false;
+		bool finished = false;
+	} m_intro;
 };
 /** A constructor to aid in creation. */
 struct Board_Constructor : ECSComponentConstructor<Board_Component> {
