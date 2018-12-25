@@ -29,7 +29,8 @@ public:
 			// Board effects
 			board.m_gameTick = ++board.m_gameTick > (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) ? 0 : board.m_gameTick;
 			board.m_data->data->gameWave = 2.0f * float(board.m_gameTick) / (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) - 1.0f;
-			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.001f));			
+			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.001f));
+			board.m_data->data->sysTime = float(glfwGetTime());
 		}
 	}
 };

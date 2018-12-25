@@ -9,7 +9,6 @@ layout (location = 2) flat out uint TileWaiting;
 layout (location = 3) flat out float TileLifeLinear;
 layout (location = 4) flat out float LaneAmt;
 layout (location = 0) uniform mat4 orthoProj;
-layout (location = 4) uniform float Time;
 
 
 float smoothStart(float t) 
@@ -42,8 +41,8 @@ void main()
 		const bool alive = lifeLinear[gl_InstanceID] <= -0.01f ? false : true;
 		TileLifeLinear = clamp(lifeLinear[gl_InstanceID], 0.0F, 1.0F);
 		const float scl = (1.0f - smoothStart(TileLifeLinear)) * (!alive ? 0.85f : 1.0f);
-		const float shakeX = (2.0f * cos((Time / M_PI) * 75.0F) - 1.0f) * 0.01F * LaneAmt;
-		const float shakeY = (2.0f * sin((Time / M_PI) * 75.0F) - 1.0f) * 0.03F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
+		const float shakeX = (2.0f * cos((sysTime / M_PI) * 75.0F) - 1.0f) * 0.01F * LaneAmt;
+		const float shakeY = (2.0f * sin((sysTime / M_PI) * 75.0F) - 1.0f) * 0.03F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
 		const mat4 tileTransform = mat4(
 			vec4(scl, 0.0, 0.0, 0.0),
 			vec4(0.0, scl, 0.0, 0.0),

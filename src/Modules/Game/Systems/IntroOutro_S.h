@@ -28,6 +28,8 @@ public:
 				if (board.m_intro.tick >= TickCount_Intro) {
 					board.m_intro.finished = true;
 					board.m_gameStarted = true;
+					board.m_playerX = 2;
+					board.m_playerY = 0;
 					board.m_rowsToAdd += 6;
 				}
 			}

@@ -10,7 +10,7 @@
 #include "Engine.h"
 
 
-/** Responsible for validating the score.state, checking for scoreable events. */
+/** Responsible for validating the game state, checking for scoreable events. */
 class Score_System : public Game_System_Interface {
 public:
 	// (de)Constructors

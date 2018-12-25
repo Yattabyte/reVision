@@ -13,7 +13,7 @@
 #include "Engine.h"
 
 
-/***/
+/** Responsible for rendering the game to the screen. */
 class Rendering_System : public Game_System_Interface {
 public:
 	// (de)Constructors
@@ -193,9 +193,9 @@ public:
 
 private:
 	// Private Logic Functions
+	/** Update Rendering Data. */
 	void update(const Score_Component & score) {
-		// Update Rendering Data
-			// Determine number of chars in score
+		// Determine number of chars in score
 		constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
 		GLuint scoreLength = 1;
 		for (GLuint x = 0; x < 8; ++x)
@@ -287,7 +287,6 @@ private:
 
 		m_shaderBorder->setUniform(0, score.m_levelLinear);
 		m_shaderBorder->setUniform(1, score.m_levelUpLinear);
-		score.m_data->data->sysTime = float(glfwGetTime());
 	}
 	// Private Rendering Functions
 	/** Render game level / border into it's own FBO. */
@@ -319,7 +318,6 @@ private:
 		m_textureTile->bind(0);
 		m_textureTilePlayer->bind(1);
 		m_shaderTiles->setUniform(0, m_orthoProjField);
-		m_shaderTiles->setUniform(4, (float)(glfwGetTime()));
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);

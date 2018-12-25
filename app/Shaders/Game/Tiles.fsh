@@ -10,7 +10,6 @@ layout (location = 4) flat in float LaneAmt;
 layout (location = 0) out vec4 FragColor;
 layout (binding = 0) uniform sampler2D TileTexture;
 layout (binding = 1) uniform sampler2D PlayerTexture;
-layout (location = 4) uniform float Time;
 
 
 // Different tile type colors
@@ -56,7 +55,7 @@ vec4 calcTile_Regular()
 	// Tile backing appearance	
 	vec4 appearance;
 	if (LaneAmt > 0.0f) {
-		const float DistortionScale = noise(Time) * 0.75f;
+		const float DistortionScale = noise(sysTime) * 0.75f;
 		const float noiseAmt = (noise(gl_FragCoord.x) + noise(gl_FragCoord.y));
 		const vec2 moddedTex = vec2(
 			TexCoord.x,

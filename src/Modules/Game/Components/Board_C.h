@@ -39,8 +39,8 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	unsigned int m_gameTick = 0;
 	double m_rowClimbTick = 0.0;
 	double m_speed = 1.0f;
-	int m_playerX = 2;
-	int m_playerY = 5;
+	int m_playerX = 0;
+	int m_playerY = 0;
 	int m_rowsToAdd = 0;
 	bool m_nearingTop = false;
 	bool m_stop = false;
