@@ -28,7 +28,7 @@ public:
 			// Normal Color
 			glm::vec3 color = glm::mix(glm::vec3(0, 0.5, 1), glm::vec3(1, 0, 0.5), board.m_data->data->excitementLinear);
 			// Critical Color
-			if (board.m_nearingTop)
+			if (board.m_critical)
 				color = glm::vec3(1, 1, 0);
 			// Level Up Color
 			color = glm::mix(color, glm::vec3(0, 1, 0), score.m_levelUpLinear);

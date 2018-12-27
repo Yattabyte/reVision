@@ -58,7 +58,7 @@ public:
 					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
 
 			// Find lanes approaching full (top of board)
-			board.m_nearingTop = false;
+			bool critical = false;
 			int largest = 0;
 			for (int x = 0; x < 6; ++x) {
 				int y = 11;
@@ -66,12 +66,13 @@ public:
 					if (board.m_tiles[y][x].m_type != TileState::NONE) {
 						board.m_data->data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->data->heightOffset / 2.0f)) / 3.0f : 0.0f;
 						if (y >= 8)
-							board.m_nearingTop = true;
+							critical = true;
 						break;
 					}
 				if (y > largest)
 					largest = y;
 			}
+			board.m_critical = (score.m_multiplier != 0 ? board.m_critical : critical);
 			board.m_data->data->nearingTop = (float(largest) + (board.m_data->data->heightOffset / 2.0f)) / 12.0f;
 		}
 	}

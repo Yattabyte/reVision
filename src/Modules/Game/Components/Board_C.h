@@ -42,7 +42,7 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	int m_playerX = 0;
 	int m_playerY = 0;
 	int m_rowsToAdd = 0;
-	bool m_nearingTop = false;
+	bool m_critical = false;
 	bool m_stop = false;
 	bool m_skipWaiting = false;
 	bool m_gameStarted = false;

@@ -37,7 +37,7 @@ public:
 			if (!board.m_gameStarted)
 				continue;
 
-			if (!board.m_nearingTop) {
+			if (!board.m_critical) {
 				if (!m_musicPlaying) {
 					m_musicPlaying = true;
 					m_failPlaying = false;
