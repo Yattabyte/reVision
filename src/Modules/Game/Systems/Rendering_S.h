@@ -94,10 +94,12 @@ public:
 		m_shaderMatchedTiles = Shared_Shader(engine, "Game\\Matched");
 		m_shaderMatchedNo = Shared_Shader(engine, "Game\\MatchedNumber");
 		m_shaderBackground = Shared_Shader(engine, "Game\\Background");
+		m_shaderIntro = Shared_Shader(engine, "Game\\Intro");
 		m_shaderScore = Shared_Shader(engine, "Game\\Score");
 		m_shaderMultiplier = Shared_Shader(engine, "Game\\Multiplier");
 		m_shaderTimer = Shared_Shader(engine, "Game\\Timer");
 		m_textureTile = Shared_Texture(engine, "Game\\tile.png");
+		m_textureCountdown = Shared_Texture(engine, "Game\\countdown.png");
 		m_textureTilePlayer = Shared_Texture(engine, "Game\\player.png");
 		m_textureMatchedTiles = Shared_Texture(engine, "Game\\scorePieces.png");
 		m_textureNums = Shared_Texture(engine, "Game\\numbers.png");
@@ -111,39 +113,44 @@ public:
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint & quadSize = (GLuint)m_shapeQuad->getSize();
-			// count, primCount, first, reserved
-			const GLuint borderData[4] = { quadSize, 1, 0, 0 };
-			m_bufferIndirectBorder = StaticBuffer(sizeof(GLuint) * 4, borderData, 0);
-			const GLuint tileData[4] = { quadSize, (12 * 6) + 2, 0, 0 };
-			m_bufferIndirectTiles = StaticBuffer(sizeof(GLuint) * 4, tileData, 0);
-			const GLuint tileScoreData[4] = { quadSize, 0, 0, 0 };
-			m_bufferIndirectMatchedNo = StaticBuffer(sizeof(GLuint) * 4, tileScoreData, GL_DYNAMIC_STORAGE_BIT);
-			const GLuint tileMatchedData[4] = { quadSize, 0, 0, 0 };
-			m_bufferIndirectMatchedTiles = StaticBuffer(sizeof(GLuint) * 4, tileMatchedData, GL_DYNAMIC_STORAGE_BIT);
-			const GLuint scoreData[4] = { quadSize, 1, 0, 0 };
-			m_bufferIndirectScore = StaticBuffer(sizeof(GLuint) * 4, scoreData);
-			const GLuint stopData[4] = { quadSize, 6, 0, 0 };
-			m_bufferIndirectStop = StaticBuffer(sizeof(GLuint) * 4, stopData, 0);
-			const GLuint multiplierData[4] = { quadSize, 4, 0, 0 };
-			m_bufferIndirectMultiplier = StaticBuffer(sizeof(GLuint) * 4, multiplierData, 0);
+			const GLuint quadSize = (GLuint)m_shapeQuad->getSize();
+			const GLsizeiptr bufferSize = sizeof(GLuint) * 4;
+			/* count, primCount, first, reserved */
+			const GLuint quad1[4] = { quadSize, 1, 0, 0 };
+			m_indirectBorder		= StaticBuffer(bufferSize, quad1, 0);
+			m_indirectBackground	= StaticBuffer(bufferSize, quad1, 0);
+			m_indirectIntro			= StaticBuffer(bufferSize, quad1, 0);
+			m_indirectScore			= StaticBuffer(bufferSize, quad1);
+
+			const GLuint quadAllTiles[4] = { quadSize, (12 * 6) + 2, 0, 0 };
+			m_indirectTiles			= StaticBuffer(bufferSize, quadAllTiles, 0);
+			
+			const GLuint quad0[4] = { quadSize, 0, 0, 0 };
+			m_indirectMatchedNo		= StaticBuffer(bufferSize, quad0, GL_DYNAMIC_STORAGE_BIT);
+			m_indirectMatchedTiles	= StaticBuffer(bufferSize, quad0, GL_DYNAMIC_STORAGE_BIT);
+
+			const GLuint quad6[4] = { quadSize, 6, 0, 0 };
+			m_indirectStop			= StaticBuffer(bufferSize, quad6, 0);
+
+			const GLuint quad4[4] = { quadSize, 4, 0, 0 };
+			m_indirectMultiplier	= StaticBuffer(bufferSize, quad4, 0);
 		});
-		m_bufferIndirectBoard = StaticBuffer(sizeof(GLint) * 16, 0, GL_DYNAMIC_STORAGE_BIT);
+		m_indirectBoard = StaticBuffer(sizeof(GLint) * 16, 0, GL_DYNAMIC_STORAGE_BIT);
 		m_modelBoard->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLint data[4] = { GLint(m_modelBoard->m_count), 1, GLint(m_modelBoard->m_offset), 1 };
-			m_bufferIndirectBoard.write(0, sizeof(GLint) * 4, data);
+			m_indirectBoard.write(0, sizeof(GLint) * 4, data);
 		});
 		m_modelField->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLint data[4] = { GLint(m_modelField->m_count), 1, GLint(m_modelField->m_offset), 1 };
-			m_bufferIndirectBoard.write(sizeof(GLint) * 4, sizeof(GLint) * 4, data);
+			m_indirectBoard.write(sizeof(GLint) * 4, sizeof(GLint) * 4, data);
 		});
 		m_modelHeader->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLint data[4] = { GLint(m_modelHeader->m_count), 1, GLint(m_modelHeader->m_offset), 1 };
-			m_bufferIndirectBoard.write(sizeof(GLint) * 8, sizeof(GLint) * 4, data);
+			m_indirectBoard.write(sizeof(GLint) * 8, sizeof(GLint) * 4, data);
 		});
 		m_modelFooter->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLint data[4] = { GLint(m_modelFooter->m_count), 1,GLint(m_modelFooter->m_offset), 1 };
-			m_bufferIndirectBoard.write(sizeof(GLint) * 12, sizeof(GLint) * 4, data);
+			m_indirectBoard.write(sizeof(GLint) * 12, sizeof(GLint) * 4, data);
 		});
 	}
 
@@ -182,6 +189,7 @@ public:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			renderBorder();
 			renderField();
+			renderIntro();
 			renderHeader();
 			renderFooter();
 			renderBackground();
@@ -204,14 +212,14 @@ private:
 				break;
 			}
 		const GLuint doubledLength = scoreLength * 2u;
-		m_bufferIndirectScore.write(sizeof(GLuint), sizeof(GLuint), &doubledLength);
+		m_indirectScore.write(sizeof(GLuint), sizeof(GLuint), &doubledLength);
 		m_shaderScore->setUniform(4, scoreLength);
 
 		// Generate sprite set for scored tiles
 		GLuint matchedCount = 0;
 		for each (const auto & qwe in score.m_scoredTiles)
 			matchedCount += (GLuint(qwe.first.size()) * 16u);
-		m_bufferIndirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
+		m_indirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
 		unsigned long writeIndex = unsigned long(0);
 		// Go through each set of scored tiles
 		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
@@ -283,7 +291,7 @@ private:
 			writeIndex += sizeof(glm::ivec2); // using '2' because we need to pad it					
 		}
 		const GLuint scoreCount = (GLuint)score.m_scoredTiles.size();
-		m_bufferIndirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
+		m_indirectMatchedNo.write(sizeof(GLuint), sizeof(GLuint), &scoreCount);
 
 		m_shaderBorder->setUniform(0, score.m_levelLinear);
 		m_shaderBorder->setUniform(1, score.m_levelUpLinear);
@@ -295,7 +303,7 @@ private:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBorder);
 		glClear(GL_COLOR_BUFFER_BIT);
 		m_shaderBorder->bind();
-		m_bufferIndirectBorder.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectBorder.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render game tiles into it's own FBO. */
@@ -309,7 +317,7 @@ private:
 		m_shaderMatchedTiles->bind();
 		m_shaderMatchedTiles->setUniform(0, m_orthoProjField);
 		m_textureMatchedTiles->bind(0);
-		m_bufferIndirectMatchedTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectMatchedTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferMatchedTiles.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
@@ -319,15 +327,23 @@ private:
 		m_textureTilePlayer->bind(1);
 		m_shaderTiles->setUniform(0, m_orthoProjField);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_bufferIndirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectTiles.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Match count
 		m_shaderMatchedNo->bind();
 		m_shaderMatchedNo->setUniform(0, m_orthoProjField);
 		m_textureNums->bind(1);
-		m_bufferIndirectMatchedNo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectMatchedNo.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferMatchedNos.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
+	/** Render intro countdown into game field FBO. */
+	void renderIntro() {
+		// Intro
+		m_shaderIntro->bind();
+		m_textureCountdown->bind(0);
+		m_indirectIntro.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render score header bar into it's own FBO. */
@@ -339,13 +355,13 @@ private:
 		glClear(GL_COLOR_BUFFER_BIT);
 		m_shaderScore->bind();
 		m_shaderScore->setUniform(0, m_orthoProjHeader);
-		m_bufferIndirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectScore.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Multiplier
 		m_shaderMultiplier->bind();
 		m_shaderMultiplier->setUniform(0, m_orthoProjHeader);
-		m_bufferIndirectMultiplier.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectMultiplier.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render time footer bar into it's own FBO. */
@@ -355,7 +371,7 @@ private:
 		m_shaderTimer->bind();
 		m_shaderTimer->setUniform(0, m_orthoProjHeader);
 		m_textureTimeStop->bind(0);
-		m_bufferIndirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectStop.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render background effect to the screen*/
@@ -364,15 +380,16 @@ private:
 		glDisable(GL_BLEND);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_lightingFBOID);
-		m_shaderBackground->bind(); 
-		glDrawArrays(GL_TRIANGLES, 0, 6);
+		m_shaderBackground->bind();
+		m_indirectBackground.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glEnable(GL_BLEND);
 	}
-	/** Render all of the textures onto the board model, onto the screen. */
+	/** Render the board model with all the previous textures onto the screen. */
 	void renderBoard() {			
 		glEnable(GL_DEPTH_TEST);
 		glBindVertexArray(*m_vaoModels);
-		m_bufferIndirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_shaderBoard->bind();
 		glBindTextureUnit(0, m_borderTexID);
 		glBindTextureUnit(1, m_boardTexID);
@@ -383,8 +400,6 @@ private:
 	}
 	
 
-
-
 	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_lightingFBOID = 0, m_fboIDBorder = 0, m_borderTexID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
@@ -392,44 +407,50 @@ private:
 	Shared_Primitive m_shapeQuad;
 	Shared_Texture m_textureNums;
 
-	// Background Rendering Resources
+	// Background
 	Shared_Shader m_shaderBackground;
+	StaticBuffer m_indirectBackground;
 
-	// Board Rendering Resources
+	// Board
 	Shared_Shader m_shaderBoard;
 	Shared_Model m_modelBoard, m_modelField, m_modelHeader, m_modelFooter;
-	StaticBuffer m_bufferIndirectBoard;
+	StaticBuffer m_indirectBoard;
 	const GLuint * m_vaoModels;
 
-	// Border Rendering Resources
+	// Border
 	Shared_Shader m_shaderBorder;
-	StaticBuffer m_bufferIndirectBorder;
+	StaticBuffer m_indirectBorder;
 
-	// Tile Rendering Resources
+	// Tile
 	Shared_Shader m_shaderTiles;
 	Shared_Texture m_textureTile, m_textureTilePlayer;
-	StaticBuffer m_bufferIndirectTiles;
+	StaticBuffer m_indirectTiles;
 	glm::mat4 m_orthoProjField;
 
-	// Matched Tiles Rendering Resources
+	// Matched Tiles
 	Shared_Shader m_shaderMatchedTiles, m_shaderMatchedNo;
 	Shared_Texture m_textureMatchedTiles;
-	StaticBuffer m_bufferIndirectMatchedTiles, m_bufferIndirectMatchedNo;
+	StaticBuffer m_indirectMatchedTiles, m_indirectMatchedNo;
 	DynamicBuffer m_bufferMatchedTiles, m_bufferMatchedNos;
 
-	// Score Rendering Resources
+	// Intro-Outro
+	Shared_Shader m_shaderIntro;
+	Shared_Texture m_textureCountdown;
+	StaticBuffer m_indirectIntro;
+
+	// Score
 	Shared_Shader m_shaderScore;
-	StaticBuffer m_bufferIndirectScore;
+	StaticBuffer m_indirectScore;
 	glm::mat4 m_orthoProjHeader;
 
-	// Multiplier Rendering Resources
+	// Multiplier
 	Shared_Shader m_shaderMultiplier;
-	StaticBuffer m_bufferIndirectMultiplier;
+	StaticBuffer m_indirectMultiplier;
 
-	// Stop-Timer Rendering Resources
+	// Stop-Timer
 	Shared_Shader m_shaderTimer;
 	Shared_Texture m_textureTimeStop;
-	StaticBuffer m_bufferIndirectStop;
+	StaticBuffer m_indirectStop;
 
 };
 

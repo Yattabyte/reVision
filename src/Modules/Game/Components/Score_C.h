@@ -20,7 +20,7 @@ struct Score_Component : public ECSComponent<Score_Component> {
 	int m_stopTimeTick = 0;
 	int m_stopTimer = -1;
 	int m_multiplier = 0;
-	int m_timerAnimationTick = 0;
+	int m_timerAnimationTick = -1;
 	int m_level = 1;
 	int m_tilesCleared = 0;
 	int m_levelUpTick = 0;

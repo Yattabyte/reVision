@@ -49,6 +49,7 @@ struct Board_Component : public ECSComponent<Board_Component> {
 
 	struct GameIntro {
 		int tick = 0;
+		int countDown = -1;
 		bool start = false;
 		bool finished = false;
 	} m_intro;

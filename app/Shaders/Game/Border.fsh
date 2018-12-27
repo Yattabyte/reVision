@@ -21,5 +21,5 @@ void main()
 	const vec3 highlightColor = color * color * excitementLinear * (multiplier/4.0f);
 	const float dist = (LevelLinear - TexCoord.x) * 200.0f;
 	const vec3 lineColor = vec3(clamp(1.0f - (dist * dist) * (0.25f), 0.0f, 1.0f));	
-	FragColor = vec4(diffuseColor + highlightColor + lineColor, 1.0f) * introAnimLinear;
+	FragColor = vec4(diffuseColor + highlightColor + lineColor, 1.0f) * intro.powerOn;
 }

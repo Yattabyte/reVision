@@ -84,5 +84,5 @@ void main()
 		FragColor = calcTile_Regular();
 	if (TileWaiting == 1)	
 		FragColor = vec4(FragColor.rgb * 0.5f,  FragColor.a * 0.75);
-	FragColor *= introAnimLinear;
+	FragColor *= intro.powerOn;
 }

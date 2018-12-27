@@ -42,7 +42,7 @@ void main()
 		TileLifeLinear = clamp(lifeLinear[gl_InstanceID], 0.0F, 1.0F);
 		const float scl = (1.0f - smoothStart(TileLifeLinear)) * (!alive ? 0.85f : 1.0f);
 		const float shakeX = (2.0f * cos((sysTime / M_PI) * 75.0F) - 1.0f) * 0.01F * LaneAmt;
-		const float shakeY = (2.0f * sin((sysTime / M_PI) * 75.0F) - 1.0f) * 0.03F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
+		const float shakeY = (2.0f * sin((sysTime / M_PI) * 75.0F) - 1.0f) * 0.05F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
 		const mat4 tileTransform = mat4(
 			vec4(scl, 0.0, 0.0, 0.0),
 			vec4(0.0, scl, 0.0, 0.0),

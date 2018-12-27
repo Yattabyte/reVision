@@ -24,7 +24,7 @@ void main()
 		const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((CharToRender * ElementWidth) / AtlasWidth), TexCoord.y);
 		FooterColor = texture(Numbers, DigitIndex);
 	}
-	FooterColor *= vec4(colorScheme, 1) * timeAnimLinear;
+	FooterColor *= vec4(colorScheme, 1) * timeAnimLinear * intro.powerSecondary;
 	if (stopTimer < 0) 
 		FooterColor.xyz *= calcPulseAmount(gl_FragCoord.y);
 	else {

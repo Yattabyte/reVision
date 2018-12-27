@@ -21,6 +21,7 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];	
+			board.m_data->data->sysTime = float(glfwGetTime());
 
 			// Exit early if game hasn't started
 			if (!board.m_gameStarted)
@@ -30,7 +31,6 @@ public:
 			board.m_gameTick = ++board.m_gameTick > (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) ? 0 : board.m_gameTick;
 			board.m_data->data->gameWave = 2.0f * float(board.m_gameTick) / (TickCount_GameAnimation / (8.0f * board.m_data->data->excitementLinear)) - 1.0f;
 			board.m_data->data->excitementLinear = std::max(0.0f, std::min(1.0f, board.m_data->data->excitementLinear -= 0.001f));
-			board.m_data->data->sysTime = float(glfwGetTime());
 		}
 	}
 };
