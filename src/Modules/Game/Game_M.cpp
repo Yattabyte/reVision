@@ -89,7 +89,7 @@ void Game_Module::frameTick(const float & deltaTime)
 		constexpr float dt = 0.01f;
 		while (m_timeAccumulator >= dt) {
 			// Update ALL systems with our fixed tick rate
-			ecs.updateSystems(m_systemList, deltaTime);
+			ecs.updateSystems(m_systemList, dt);
 			m_timeAccumulator -= dt;
 		}
 

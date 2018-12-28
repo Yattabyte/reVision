@@ -1,7 +1,9 @@
 #package "CameraBuffer"
 #define M_PI 3.1415926535897932384626433832795
-
-struct IntoStruct {
+struct MusicStruct {
+	float beat;
+};
+struct IntroStruct {
 	float powerOn;
 	float powerSecondary;
 	int countDown;
@@ -26,7 +28,8 @@ layout (std430, binding = 8) readonly buffer BoardBuffer {
 	int stopTimer;
 	int gameTimer;
 	float nearingTop;
-	IntoStruct intro;
+	MusicStruct music;
+	IntroStruct intro;
 };
 
 float calcPulseAmount(float yPos) {

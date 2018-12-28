@@ -29,21 +29,25 @@ public:
 		return m_soundSong->existsYet() && m_soundSongCrit->existsYet();
 	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+		const auto & soundMgr = m_engine->getSoundManager();		
+		
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];	
-			const auto & soundMgr = m_engine->getSoundManager();
 
 			// Exit early if game hasn't started
 			if (!board.m_gameStarted)
 				continue;
 
+			float BeatSeconds;
 			if (!board.m_critical) {
 				if (!m_musicPlaying) {
 					m_musicPlaying = true;
 					m_failPlaying = false;
 					soundMgr.stopWav(m_songHandle);
 					m_songHandle = soundMgr.playWavBackground(m_soundSong, 0.75f, true, 3.0);
+					board.m_music.accumulator = 0.0f;
 				}
+				BeatSeconds = (1.0f / 70.0f) * 60.0f;
 			}
 			else {	
 				if (!m_failPlaying) {
@@ -51,8 +55,14 @@ public:
 					m_musicPlaying = false;
 					soundMgr.stopWav(m_songHandle);
 					m_songHandle = soundMgr.playWavBackground(m_soundSongCrit, 0.75f, true);
+					board.m_music.accumulator = 0.0f;
 				}
+				BeatSeconds = (1.0f / 105.0f) * 60.0f;
 			}
+			float test = std::fmodf(board.m_music.accumulator, BeatSeconds);
+			board.m_music.beat = bool(test + deltaTime >= BeatSeconds);
+			board.m_music.accumulator += deltaTime;
+			board.m_data->data->music.beat = (sinf(((board.m_music.accumulator / BeatSeconds) + 0.875) * glm::pi<float>()) + 1.0f) / 2.0f;
 		}
 	}
 

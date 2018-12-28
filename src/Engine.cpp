@@ -193,14 +193,14 @@ void Engine::tick()
 
 	// Performance Debugging
 	m_frameCount++;
-	if (m_frameCount >= 100) {
+	/*if (m_frameCount >= 100) {
 		m_frameAccumulator /= 100.0f;
 		m_messageManager.statement("Avg Frametime = " + std::to_string(m_frameAccumulator * 1000.0f) + " ms");
 		m_frameAccumulator = deltaTime;
 		m_frameCount = 0;
 	}
 	else
-		m_frameAccumulator += deltaTime;
+		m_frameAccumulator += deltaTime;*/
 
 	// Update Managers
 	m_assetManager.notifyObservers();
@@ -236,7 +236,8 @@ bool Engine::shouldClose()
 	return glfwWindowShouldClose(m_renderingContext.window);
 }
 
-void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) {
+void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) 
+{
 	m_ecs.registerConstructor(name, constructor);
 }
 

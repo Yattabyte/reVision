@@ -45,19 +45,12 @@ public:
 			if (!board.m_gameStarted)
 				continue;
 
-			bool allTilesGrounded = true;
-			for (unsigned int y = 2u; y < 12u; ++y)
-				for (unsigned int x = 0u; x < 6u; ++x)
-					if (board.m_tileDrops[y][x].dropState == Board_Component::TileDropData::FALLING) {
-						allTilesGrounded = false;
-						break;
-					}
-			if (allTilesGrounded) {
-				validateBoard(board, score);
+			validateBoard(board, score);
+			if (board.m_music.beat) {
+				checkCombo(board, score);
 				scoreTiles(board, score);
 			}
-
-			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
+			popTiles(board, score);
 
 			// Animate score climbing
 			if ((score.m_score - score.m_data->data->score) > 0) 
@@ -83,6 +76,7 @@ public:
 			score.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, score.m_data->data->scoreAnimLinear)) : 0.0f;
 			
 			// Synchronize component data to GPU
+			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
 			score.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, score.m_data->data->shakeLinear - 0.01f));
 			score.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
 			score.m_data->data->multiplier = score.m_multiplier;
@@ -308,17 +302,10 @@ private:
 			score.m_comboChanged = true;
 		}
 	}
-	/** Try to delete any scored tiles if they've ticked long enough.
-	@brief		Rules: 
-				- Every tile matched		+pts(10) each
-					(Ex: 3 tiles += 30 pts)
-				- Every tile after 3rd in set +pts(10) each, +pts(setSize)
-					(Ex: 5 tiles += 25 pts)
-				- For every chained combo	-> +pts(5), +multiplier(1)
-				- All points added are multiplied by the combo multiplier
+	/** Check if we should change the combo multiplier.
 	@param		board		the board containing the tiles of interest.
 	@param		score		the score component. */
-	void scoreTiles(Board_Component & board, Score_Component & score) {
+	void checkCombo(Board_Component & board, Score_Component & score) {
 		// Check to see if we should increment combo multiplier and add points
 		if (score.m_scoredTiles.size()) {
 			if (score.m_comboChanged) {
@@ -333,14 +320,26 @@ private:
 				m_engine->getSoundManager().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
 		}
-		else if ((!score.m_scoredTiles.size() || !score.m_comboChanged) && score.m_multiplier) {
-			// Reset multiplier if no tiles are scored
-			if (score.m_multiplier >= 2)
-				m_engine->getSoundManager().playSound(m_soundMultiplierLost, 0.5f);
-			score.m_multiplier = 0;
-			score.m_comboChanged = false;
-		}
-
+		// Reset the combo on the music beat, if the combo hasn't changed
+		else if (!score.m_comboChanged && score.m_multiplier) {
+				// Reset multiplier if no tiles are scored
+				if (score.m_multiplier >= 2)
+					m_engine->getSoundManager().playSound(m_soundMultiplierLost, 1.0f);
+				score.m_multiplier = 0;
+				score.m_comboChanged = false;
+			}
+	}
+	/** Find new scoring manifolds, give points for them, and start ticking the tiles (for popping them)
+	@brief		Rules:
+				- Every tile matched		+pts(10) each
+					(Ex: 3 tiles += 30 pts)
+				- Every tile after 3rd in set +pts(10) each, +pts(setSize)
+					(Ex: 5 tiles += 25 pts)
+				- For every chained combo	-> +pts(5), +multiplier(1)
+				- All points added are multiplied by the combo multiplier
+	@param		board		the board containing the tiles of interest.
+	@param		score		the score component. */
+	void scoreTiles(Board_Component & board, Score_Component & score) {		
 		// Manage scoring manifolds
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
@@ -365,7 +364,13 @@ private:
 				}
 				score.m_stopTimeTick = 0;
 			}
-			else {
+		}
+	}
+	void popTiles(Board_Component & board, Score_Component & score) {
+		// Manage scoring manifolds
+		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
+			auto & manifold = score.m_scoredTiles[x];
+			if (manifold.second) {
 				// Tick all matched tiles until they pop
 				int count = 0;
 				for each (const auto & xy in manifold.first) {
@@ -374,8 +379,8 @@ private:
 					auto & xTile = board.m_tiles[y][x];
 					if (xTile.m_scoreType == TileState::MATCHED) {
 						// Play sound before we pop (lines up better with animation)
-						if (xTile.m_tick == 0) 
-							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 1.0f + (count / 10.0f));						
+						if (xTile.m_tick == 0)
+							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 1.0f + (count / 10.0f));
 						// Tile SCORED
 						if (xTile.m_tick >= TickCount_Popping) {
 							xTile.m_scoreType = TileState::SCORED;
@@ -388,7 +393,7 @@ private:
 				}
 			}
 		}
-		
+
 		// Check if all tiles in a scoring set have been popped
 		// If so, empty and reset them
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
@@ -412,7 +417,6 @@ private:
 				x--;
 			}
 		}
-
 	}
 	/** A wrapper function for adding points to the score.score. Accounts for any other variables like multipliers.
 	@param	score	the score component.

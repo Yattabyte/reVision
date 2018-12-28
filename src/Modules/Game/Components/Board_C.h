@@ -46,7 +46,10 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	bool m_stop = false;
 	bool m_skipWaiting = false;
 	bool m_gameStarted = false;
-
+	struct GameMusic {
+		float accumulator = 0.0f;
+		bool beat = false;
+	} m_music;
 	struct GameIntro {
 		int tick = 0;
 		int countDown = -1;

@@ -41,6 +41,9 @@ struct GameBuffer {
 	int stopTimer = -1;
 	int gameTimer = 0;
 	float nearingTop = 0;
+	struct MusicStruct {
+		float beat = 0.0f;
+	} music;
 	struct IntroStruct {
 		float powerOn = 0.0f;
 		float powerSecondary = 0.0f;
