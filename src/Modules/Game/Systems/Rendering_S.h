@@ -203,6 +203,9 @@ private:
 	// Private Logic Functions
 	/** Update Rendering Data. */
 	void update(const Score_Component & score) {
+		// System Time
+		score.m_data->data->sysTime = float(glfwGetTime());
+
 		// Determine number of chars in score
 		constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
 		GLuint scoreLength = 1;
@@ -218,14 +221,14 @@ private:
 		// Generate sprite set for scored tiles
 		GLuint matchedCount = 0;
 		for each (const auto & qwe in score.m_scoredTiles)
-			matchedCount += (GLuint(qwe.first.size()) * 16u);
+			matchedCount += (GLuint(qwe.xy.size()) * 16u);
 		m_indirectMatchedTiles.write(sizeof(GLuint), sizeof(GLuint), &matchedCount);
 		unsigned long writeIndex = unsigned long(0);
 		// Go through each set of scored tiles
 		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
 			// Go throuh a single set of scored tiles
-			for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x) {
-				const glm::ivec2 coords(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
+			for (size_t x = 0; x < score.m_scoredTiles[n].xy.size(); ++x) {
+				const glm::ivec2 coords(score.m_scoredTiles[n].xy[x].x, score.m_scoredTiles[n].xy[x].y);
 				m_bufferMatchedTiles.write(writeIndex, sizeof(glm::ivec2), &coords);
 				writeIndex += sizeof(glm::ivec2);
 				GLuint states[16] = { 10,7,7,11, 4,16,16,6, 4,16,16,6, 8,5,5,9 };
@@ -280,10 +283,10 @@ private:
 		// Go through each set of scored tiles
 		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
 			// Find the center point in the set of scored tiles
-			glm::ivec2 countAndType((int)score.m_scoredTiles[n].first.size(), 0);
+			glm::ivec2 countAndType((int)score.m_scoredTiles[n].xy.size(), 0);
 			glm::vec2 center(0.0f);
-			for (size_t x = 0; x < score.m_scoredTiles[n].first.size(); ++x)
-				center += glm::vec2(score.m_scoredTiles[n].first[x].x, score.m_scoredTiles[n].first[x].y);
+			for (size_t x = 0; x < score.m_scoredTiles[n].xy.size(); ++x)
+				center += glm::vec2(score.m_scoredTiles[n].xy[x].x, score.m_scoredTiles[n].xy[x].y);
 			center /= float(countAndType.x);
 			m_bufferMatchedNos.write(writeIndex, sizeof(glm::vec2), &center);
 			writeIndex += sizeof(glm::vec2);

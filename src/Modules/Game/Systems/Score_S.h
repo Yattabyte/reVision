@@ -6,6 +6,7 @@
 #include "Modules\Game\Systems\Interface.h"
 #include "Modules\Game\Components\Board_C.h"
 #include "Modules\Game\Components\Score_C.h"
+#include "Modules\Game\Common_Lambdas.h"
 #include "Assets\Asset_Sound.h"
 #include "Engine.h"
 
@@ -50,7 +51,7 @@ public:
 				checkCombo(board, score);
 				scoreTiles(board, score);
 			}
-			popTiles(board, score);
+			popTiles(deltaTime, board, score);
 
 			// Animate score climbing
 			if ((score.m_score - score.m_data->data->score) > 0) 
@@ -239,8 +240,8 @@ private:
 	void validateBoard(Board_Component & board, Score_Component & score) {
 		std::vector<ScoringManifold> allMatchingSets;
 		static constexpr auto findScoredTiles = [](const auto & xCoord, const auto & yCoord, Score_Component & score) {
-			for each (const auto & pair in score.m_scoredTiles)
-				for each (const auto & xy in pair.first) 
+			for each (const auto & data in score.m_scoredTiles)
+				for each (const auto & xy in data.xy)
 					if (xy.x == xCoord && xy.y == yCoord)
 						return true;
 			return false;
@@ -297,7 +298,10 @@ private:
 				for each (const auto & xy in matchingSet)
 					combinedManifold.push_back(xy);
 			combinedManifold.sort();
-			score.m_scoredTiles.push_back(std::make_pair(combinedManifold, false));	
+			score.m_scoredTiles.push_back({
+				combinedManifold, 
+				false
+			});
 			score.m_scoredAdjacency.push_back(getAdjacency(combinedManifold));
 			score.m_comboChanged = true;
 		}
@@ -344,52 +348,52 @@ private:
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
 			// If this manifold hasn't been processed for scoring yet
-			if (!manifold.second) {
-				manifold.second = true;
-				int offset = 0;
-				for each (const auto & xy in manifold.first) {
-					// Assign tick timing
-					board.m_tiles[xy.y][xy.x].m_tick = (TickCount_Popping * offset--) - TickCount_Scoring;
+			if (!manifold.scored) {
+				manifold.scored = true;
+				manifold.time = 0.0f;
+				for (size_t tile = 0; tile < manifold.xy.size(); ++tile) {
 					// Set as matched
+					const auto & xy = manifold.xy[tile];
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				score.m_data->data->excitementLinear += (0.075f * (float)manifold.first.size());
+				score.m_data->data->excitementLinear += 0.075f * (float)manifold.xy.size();
 				// Add time, but never move timer past 3 seconds
 				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
-				if (manifold.first.size() > 3) {
-					addScore(score, int(manifold.first.size()) + (10 * (int(manifold.first.size()) - 3)));
-					score.m_data->data->shakeLinear += std::max(0.25f, manifold.first.size() / 9.0f);
+				if (manifold.xy.size() > 3) {
+					addScore(score, int(manifold.xy.size()) + (10 * (int(manifold.xy.size()) - 3)));
+					score.m_data->data->shakeLinear += std::max(0.25f, manifold.xy.size() / 9.0f);
 					score.m_stopTimer++;
 				}
 				score.m_stopTimeTick = 0;
 			}
 		}
 	}
-	void popTiles(Board_Component & board, Score_Component & score) {
+	void popTiles(const float & deltaTime, Board_Component & board, Score_Component & score) {
 		// Manage scoring manifolds
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
-			if (manifold.second) {
+			if (manifold.scored) {
 				// Tick all matched tiles until they pop
-				int count = 0;
-				for each (const auto & xy in manifold.first) {
+				const float beatDuration = board.m_music.beatSeconds / 4.0f;
+				float & time = manifold.time;
+				time += deltaTime;
+				for (size_t tile = 0; tile < manifold.xy.size(); ++tile) {
+					const auto & xy = manifold.xy[tile];
+					const float duration = (tile + 1) * beatDuration;
 					const auto & x = xy.x;
 					const auto & y = xy.y;
-					auto & xTile = board.m_tiles[y][x];
-					if (xTile.m_scoreType == TileState::MATCHED) {
-						// Play sound before we pop (lines up better with animation)
-						if (xTile.m_tick == 0)
-							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 1.0f + (count / 10.0f));
+
+					if (board.m_tiles[y][x].m_scoreType == TileState::MATCHED) {
 						// Tile SCORED
-						if (xTile.m_tick >= TickCount_Popping) {
-							xTile.m_scoreType = TileState::SCORED;
+						if (time >= duration) {
+							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 0.75f + ((tile / 10.0f) * 2.0f));
+							board.m_tiles[y][x].m_scoreType = TileState::SCORED;
 							addScore(score, 10);
 							score.m_tilesCleared++;
 						}
-						score.m_data->data->lifeLinear[(y * 6) + x] = float(++xTile.m_tick) / float(TickCount_Popping);
+						score.m_data->data->lifeLinear[(y * 6) + x] = smoothStart5(glm::clamp(time / duration, 0.0f, 1.0f));
 					}
-					count++;
 				}
 			}
 		}
@@ -399,17 +403,16 @@ private:
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & pair = score.m_scoredTiles[x];
 			bool allPopped = true;
-			for each (const auto & xy in pair.first)
+			for each (const auto & xy in pair.xy)
 				if (board.m_tiles[xy.y][xy.x].m_scoreType != TileState::SCORED) {
 					allPopped = false;
 					break;
 				}
 			if (allPopped) {
 				// Reset the tiles and make them background spaces
-				for each (const auto & xy in pair.first) {
+				for each (const auto & xy in pair.xy) {
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
-					board.m_tiles[xy.y][xy.x].m_tick = 0;
 					score.m_data->data->lifeLinear[(xy.y * 6) + xy.x] = 0.0f;
 				}
 				score.m_scoredTiles.erase(score.m_scoredTiles.begin() + x);

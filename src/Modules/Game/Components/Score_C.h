@@ -28,7 +28,12 @@ struct Score_Component : public ECSComponent<Score_Component> {
 	float m_levelUpLinear = 0.0f;
 	bool m_comboChanged = false;
 	bool m_levelUp = false;
-	std::vector<std::pair<std::vector<XY>, bool>> m_scoredTiles;
+	struct ScoringData {
+		std::vector<XY> xy;		
+		float time;
+		bool scored;
+	};
+	std::vector<ScoringData> m_scoredTiles;
 	std::vector<std::vector<TileAdj>> m_scoredAdjacency;
 };
 /** A constructor to aid in creation. */

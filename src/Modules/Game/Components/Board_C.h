@@ -18,8 +18,6 @@ struct TileState {
 	enum ScoreType : unsigned int {
 		UNMATCHED, MATCHED, SCORED
 	} m_scoreType = UNMATCHED;
-	int m_tick = 0;
-
 	TileState(const TileType & t = NONE) : m_type(t) {};
 };
 /** A component representing a basic player. */
@@ -48,6 +46,7 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	bool m_gameStarted = false;
 	struct GameMusic {
 		float accumulator = 0.0f;
+		float beatSeconds = 0.0f;
 		bool beat = false;
 	} m_music;
 	struct GameIntro {

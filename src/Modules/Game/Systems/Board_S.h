@@ -21,7 +21,6 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];	
-			board.m_data->data->sysTime = float(glfwGetTime());
 
 			// Exit early if game hasn't started
 			if (!board.m_gameStarted)

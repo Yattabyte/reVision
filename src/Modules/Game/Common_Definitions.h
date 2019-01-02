@@ -16,8 +16,6 @@ constexpr int	TickCount_NewLine			= 500u;
 constexpr int	TickCount_Time				= 100;
 constexpr float TickCount_TileDrop			= 10.0F;
 constexpr float TickCount_TileBounce		= 15.0F;
-constexpr int	TickCount_Scoring			= 50;
-constexpr int	TickCount_Popping			= 25;
 constexpr int	TickCount_LevelUp			= 150;
 
 /** OpenGL buffer for boards. */

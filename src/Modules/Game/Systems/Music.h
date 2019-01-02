@@ -57,12 +57,13 @@ public:
 					m_songHandle = soundMgr.playWavBackground(m_soundSongCrit, 0.75f, true);
 					board.m_music.accumulator = 0.0f;
 				}
-				BeatSeconds = (1.0f / 105.0f) * 60.0f;
+				BeatSeconds = (1.0f / 52.5f) * 60.0f;
 			}
 			float test = std::fmodf(board.m_music.accumulator, BeatSeconds);
+			board.m_music.beatSeconds = BeatSeconds;
 			board.m_music.beat = bool(test + deltaTime >= BeatSeconds);
 			board.m_music.accumulator += deltaTime;
-			board.m_data->data->music.beat = (sinf(((board.m_music.accumulator / BeatSeconds) + 0.875) * glm::pi<float>()) + 1.0f) / 2.0f;
+			board.m_data->data->music.beat = (sinf(((board.m_music.accumulator / BeatSeconds) + 0.875f) * glm::pi<float>()) + 1.0f) / 2.0f;
 		}
 	}
 

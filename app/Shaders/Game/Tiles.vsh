@@ -38,16 +38,16 @@ void main()
 	
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6)) {
-		const bool alive = lifeLinear[gl_InstanceID] <= -0.01f ? false : true;
-		TileLifeLinear = clamp(lifeLinear[gl_InstanceID], 0.0F, 1.0F);
-		const float scl = (1.0f - smoothStart(TileLifeLinear)) * (!alive ? 0.85f : 1.0f);
+		const bool scoring = lifeLinear[gl_InstanceID] > 0.0f ? true : false;
+		TileLifeLinear = lifeLinear[gl_InstanceID];
+		const float scl = (1.0f - smoothStart(TileLifeLinear)) * (scoring ? 0.85f : 1.0f);
 		const float shakeX = (2.0f * cos((sysTime / M_PI) * 75.0F) - 1.0f) * 0.01F * LaneAmt;
 		const float shakeY = (2.0f * sin((sysTime / M_PI) * 75.0F) - 1.0f) * 0.05F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
 		const mat4 tileTransform = mat4(
 			vec4(scl, 0.0, 0.0, 0.0),
 			vec4(0.0, scl, 0.0, 0.0),
 			vec4(0.0, 0.0, 1.0, 0.0),
-			vec4(((gl_InstanceID % 6) * 2) + 1 + shakeX, (((gl_InstanceID / 6) * 2) - 1) + heightOffset - (!alive ? 0.0f : gravityOffsets[gl_InstanceID]) + shakeY, 0.0, 1.0)
+			vec4(((gl_InstanceID % 6) * 2) + 1 + shakeX, (((gl_InstanceID / 6) * 2) - 1) + heightOffset - (scoring ? 0.0f : gravityOffsets[gl_InstanceID]) + shakeY, 0.0, 1.0)
 		);		
 		gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.xy, 0, 1);
 	}

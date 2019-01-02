@@ -4,7 +4,7 @@
 
 #include "Modules/Game/Components/Board_C.h"
 
-// Bouncing Easing Function
+// Easing Functions
 static constexpr auto easeOutBounce = [](float t) {
 	if (t < (1.0f / 2.75f))
 		return (7.5625f * t *t);
@@ -18,7 +18,18 @@ static constexpr auto easeOutBounce = [](float t) {
 static constexpr auto easeInBounce = [](float t) {
 	return 1.0f - easeOutBounce(1.0f - t);
 };
-
+static constexpr auto smoothStart2 = [](const float & t) {
+	return t * t;
+};
+static constexpr auto smoothStart3 = [](const float & t) {
+	return t * t * t;
+};
+static constexpr auto smoothStart4 = [](const float & t) {
+	return t * t * t * t;
+};
+static constexpr auto smoothStart5 = [](const float & t) {
+	return t * t * t * t * t;
+};
 /** Swap 2 tiles ONLY if they're active, not falling, and not scored
 	@param		tile1		the first tile, swaps with the second.
 	@param		tile2		the second tile, swaps with the first. */
