@@ -9,7 +9,6 @@ constexpr int	BOARD_WIDTH					= 6u;
 constexpr int	BOARD_HEIGHT				= 12u;
 constexpr int	TILE_SIZE					= 128;
 constexpr float TickCount_GameAnimation		= 750.0f;
-constexpr int	TickCount_Time				= 100;
 constexpr float TickCount_TileDrop			= 10.0F;
 constexpr float TickCount_TileBounce		= 15.0F;
 constexpr int	TickCount_LevelUp			= 150;
@@ -32,8 +31,8 @@ struct GameBuffer {
 	int score = 0;
 	int highlightIndex = -1;
 	int multiplier = 0;
-	int stopTimer = -1;
-	int gameTimer = 0;
+	float stopTimer = -1.0f;
+	float gameTimer = 0;
 	float nearingTop = 0;
 	struct MusicStruct {
 		float beat = 0.0f;

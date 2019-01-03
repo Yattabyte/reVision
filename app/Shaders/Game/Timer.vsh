@@ -19,7 +19,7 @@ void main()
 	// Render Text
 	if (gl_InstanceID == 0) {
 		TexCoord.x *= 0.5f;
-		if (stopTimer >= 0)
+		if (stopTimer > -1.0f)
 			TexCoord.x += 0.5f;
 		CharToRender = -1;
 		// This matrix centers the position of the text within the row
@@ -41,7 +41,7 @@ void main()
 	
 	// Render Numbers
 	else {
-		const int timeToUse = stopTimer < 0 ? gameTimer : stopTimer;
+		const int timeToUse = int(stopTimer > -1.0f ? stopTimer : gameTimer);
 		const int timeInMinutes = timeToUse / 60;
 		const int timeInSeconds = timeToUse % 60;
 		bool isSemiColon = false;

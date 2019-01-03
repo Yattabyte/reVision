@@ -30,24 +30,24 @@ public:
 			if (!board.m_gameStarted)
 				continue;
 
-			// Tick stop-timer
-			if (++score.m_stopTimeTick >= TickCount_Time) {
-				score.m_stopTimeTick = 0;
-				++score.m_data->data->gameTimer;
-				if (score.m_stopTimer >= 0) {
-					score.m_stopTimer--;
-					score.m_timerAnimationTick = 0;
+			// Game Time Logic
+			score.m_data->data->timeAnimLinear = 1.0f;
+
+			if (score.m_stopTimer > -1.0f) {
+				score.m_stopTimer -= deltaTime;
+				score.m_timerPowerOn = 1.0f;
+			}
+			else {
+				score.m_gameTimer += deltaTime;
+				if (score.m_timerPowerOn > 0.0f) {
+					score.m_timerPowerOn -= deltaTime;
+					score.m_data->data->timeAnimLinear = easeInBounce(1.0f - score.m_timerPowerOn);
 				}
 			}
 
-			if (score.m_stopTimer < 0 && score.m_timerAnimationTick != -1) {
-				if (score.m_timerAnimationTick < TickCount_Time)
-					++score.m_timerAnimationTick;
-				score.m_data->data->timeAnimLinear = 1.0f - easeOutBounce(1.0f - (float(score.m_timerAnimationTick) / float(TickCount_Time)));
-				if (score.m_timerAnimationTick == TickCount_Time)
-					score.m_timerAnimationTick = -1;
-			}
-
+			score.m_stopTimer = std::clamp<float>(score.m_stopTimer, -1.0f, 9.0f);
+			score.m_data->data->stopTimer = score.m_stopTimer;
+			score.m_data->data->gameTimer = score.m_gameTimer;
 		}
 	}
 };

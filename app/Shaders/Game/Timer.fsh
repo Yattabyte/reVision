@@ -25,9 +25,7 @@ void main()
 		FooterColor = texture(Numbers, DigitIndex);
 	}
 	FooterColor *= vec4(colorScheme, 1) * timeAnimLinear * intro.powerSecondary;
-	if (stopTimer < 0) 
-		FooterColor.xyz *= calcPulseAmount(gl_FragCoord.y);
-	else {
+	if (stopTimer > -1.0f) {
 		const float blinkSpeed = 10.0f * ((1.0f - (stopTimer / 10.0f)) * (1.0f - (stopTimer / 10.0f)));
 		const float waveAmt = sin( blinkSpeed * gameWave * M_PI );
 		const float pulseAmount = (1.0f - ((1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));

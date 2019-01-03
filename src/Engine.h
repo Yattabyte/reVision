@@ -20,7 +20,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.8.O";
+constexpr char ENGINE_VERSION[] = "2.8.P";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 

@@ -17,13 +17,14 @@ struct Score_Component : public ECSComponent<Score_Component> {
 	VB_Element<GameBuffer> * m_data = nullptr;
 	int m_score = 0;
 	int m_lastScore = 0;
-	int m_stopTimeTick = 0;
-	int m_stopTimer = -1;
 	int m_multiplier = 0;
 	int m_timerAnimationTick = -1;
 	int m_level = 1;
 	int m_tilesCleared = 0;
 	int m_levelUpTick = 0;
+	float m_gameTimer = 0.0f;
+	float m_stopTimer = -1.0f;
+	float m_timerPowerOn = 0.0f;
 	float m_levelLinear = 0.0f;
 	float m_levelUpLinear = 0.0f;
 	bool m_comboChanged = false;

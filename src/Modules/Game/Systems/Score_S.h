@@ -77,12 +77,10 @@ public:
 			score.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, score.m_data->data->scoreAnimLinear)) : 0.0f;
 			
 			// Synchronize component data to GPU
-			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer >= 0);
+			board.m_stop = bool(score.m_scoredTiles.size() || score.m_stopTimer > -1.0f);
 			score.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, score.m_data->data->shakeLinear - 0.01f));
 			score.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
 			score.m_data->data->multiplier = score.m_multiplier;
-			score.m_stopTimer = std::min(9, score.m_stopTimer);
-			score.m_data->data->stopTimer = score.m_stopTimer;
 
 			// If enough tiles cleared, signal to start the level-up animation
 			if (score.m_tilesCleared >= (score.m_level * 12)) {
@@ -358,14 +356,13 @@ private:
 				}
 				score.m_data->data->excitementLinear += 0.075f * (float)manifold.xy.size();
 				// Add time, but never move timer past 3 seconds
-				score.m_stopTimer = std::min(score.m_stopTimer + 1, 3);
+				score.m_stopTimer = std::min<float>(score.m_stopTimer + 1.0f, 3.0f);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.xy.size() > 3) {
 					addScore(score, int(manifold.xy.size()) + (10 * (int(manifold.xy.size()) - 3)));
 					score.m_data->data->shakeLinear += std::max(0.25f, manifold.xy.size() / 9.0f);
 					score.m_stopTimer++;
 				}
-				score.m_stopTimeTick = 0;
 			}
 		}
 	}
