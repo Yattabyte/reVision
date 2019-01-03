@@ -86,6 +86,7 @@ void Game_Module::frameTick(const float & deltaTime)
 	if (m_readyToStart) {
 		m_timeAccumulator += deltaTime;
 		auto & ecs = m_engine->getECS();
+		//constexpr float dt = 1.0f / 60.0f;
 		constexpr float dt = 0.01f;
 		while (m_timeAccumulator >= dt) {
 			// Update ALL systems with our fixed tick rate

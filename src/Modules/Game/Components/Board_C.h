@@ -30,9 +30,9 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		} dropState = STATIONARY;
 		unsigned int endIndex = 0;
 		float delta = 0.0f;
-		float tick = 0.0f;
-		unsigned int weight = 0;
-		float fallSpeed = 1.0f;
+		float time = 0.0f;
+		float velocity = 0.0f;
+		unsigned int weight = 1;
 	} m_tileDrops[12][6];
 	unsigned int m_gameTick = 0;
 	float m_rowClimbTime = 0.0f;

@@ -71,7 +71,7 @@ public:
 								// Don't move scored tiles
 								if (board.m_tiles[z][x].m_scoreType == TileState::SCORED)
 									break;
-								board.m_tileDrops[z][x] = { Board_Component::TileDropData::FALLING, z - dropDistance, float(dropDistance), 0.0f, weight };
+								board.m_tileDrops[z][x] = { Board_Component::TileDropData::FALLING, z - dropDistance, float(dropDistance), 0.0f, 0.0f, weight };
 							}
 						}
 					}
@@ -82,11 +82,13 @@ public:
 			for (unsigned int y = 1u; y < 12u; ++y)
 				for (unsigned int x = 0u; x < 6u; ++x) {
 					auto & dTile = board.m_tileDrops[y][x];
+					dTile.velocity += (Tile_Gravity * dTile.weight) * deltaTime;
+					dTile.time += dTile.velocity;
 					switch (dTile.dropState) {
 						// Find falling tiles
 						case Board_Component::TileDropData::FALLING: {
-							// Increment the tile tick and check if it has finished falling (hit something)
-							if (dTile.tick >= (dTile.delta * TickCount_TileDrop)) {
+							// Check if the tile has finished falling (hit something)							
+							if (dTile.time >= (dTile.delta * Tile_DropDuration)) {
 								// Tile has finished falling, start bouncing
 								dTile.dropState = Board_Component::TileDropData::BOUNCING;
 								if (impactPerColumn[x] <= 0)
@@ -95,37 +97,34 @@ public:
 								// Grab all attributes before we swap the tiles (dTile is a reference, not a copy)
 								swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
 							}
-							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * ((dTile.tick / (dTile.delta * TickCount_TileDrop)) * dTile.delta);
-							dTile.tick += (dTile.fallSpeed += 0.1f);
+							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * ((dTile.time / (dTile.delta * Tile_DropDuration)) * dTile.delta);
 							break;
 						}
 						// Find Bouncing Tiles
 						case Board_Component::TileDropData::BOUNCING: {
-							const float bounceTime = (TickCount_TileBounce * (12.0f - float(dTile.weight))) / dTile.fallSpeed;
-							const float adjustedTick = (dTile.tick - (dTile.delta * TickCount_TileDrop)) + (bounceTime * (1.0f / 2.75f));
-							// Increment the tile tick and check if it has finished bouncing
-							if (adjustedTick >= bounceTime) {
+							// Check if the tile has finished bouncing
+							const float bounceHeight = -(std::max<float>(6.0f, 12.0f - float(dTile.weight))) / 12.0f;
+							const float bounceTime = (Tile_BounceDuration * (12.0f - float(dTile.weight)));
+							const float adjustedTime = (dTile.time - (dTile.delta * Tile_DropDuration)) + (bounceTime * (1.0f / 2.75f));
+							if (adjustedTime >= bounceTime) {
 								// Tile has finished bouncing
-								dTile.tick = 0;
+								dTile.time = 0.0f;
 								dTile.dropState = Board_Component::TileDropData::STATIONARY;
 							}
 							// Tile has already been dropped to destination, need to move tile upwards now, not down
-							// So use negative reciprical of bounce function to get desired effect
-							board.m_data->data->gravityOffsets[(y * 6) + x] = -((std::max<float>(6.0f, 12.0f - float(dTile.weight))) / 6.0f) * (1.0f - (easeOutBounce(adjustedTick / bounceTime)));
-							dTile.tick++;
+							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * (1.0f - (easeOutBounce(adjustedTime / bounceTime))) * bounceHeight;
 							break;
 						}
 						// Find Stationary Tiles
 						default: {
 							// Reset the data just in case
-							board.m_data->data->gravityOffsets[(y * 6) + x] = 0;
+							board.m_data->data->gravityOffsets[(y * 6) + x] = 0.0f;
 							board.m_tileDrops[y][x] = Board_Component::TileDropData();
 							break;
 						}
 					}
 				}
-
-			
+						
 			// Play impact sounds
 			for (unsigned int x = 0u; x < 6u; ++x) 
 				if (impactPerColumn[x] > 0.0f){

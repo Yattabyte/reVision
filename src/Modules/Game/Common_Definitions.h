@@ -8,9 +8,12 @@
 constexpr int	BOARD_WIDTH					= 6u;
 constexpr int	BOARD_HEIGHT				= 12u;
 constexpr int	TILE_SIZE					= 128;
+constexpr float Tile_Gravity				= 0.15f;
+constexpr float Tile_DropDuration			= 0.1f;
+constexpr float Tile_BounceDuration			= 0.2f;
+
+
 constexpr float TickCount_GameAnimation		= 750.0f;
-constexpr float TickCount_TileDrop			= 10.0F;
-constexpr float TickCount_TileBounce		= 15.0F;
 constexpr int	TickCount_LevelUp			= 150;
 
 /** OpenGL buffer for boards. */
