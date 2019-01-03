@@ -21,9 +21,9 @@ struct Score_Component : public ECSComponent<Score_Component> {
 	int m_timerAnimationTick = -1;
 	int m_level = 1;
 	int m_tilesCleared = 0;
-	int m_levelUpTick = 0;
-	float m_gameTimer = 0.0f;
-	float m_stopTimer = -1.0f;
+	float m_timerGame = 0.0f;
+	float m_timerStop = -1.0f;
+	float m_timerLevelUp = 0.0f;
 	float m_timerPowerOn = 0.0f;
 	float m_levelLinear = 0.0f;
 	float m_levelUpLinear = 0.0f;

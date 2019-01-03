@@ -45,7 +45,7 @@ public:
 
 					// Reset height and ticks
 					board.m_rowClimbTime = 0.0f;
-					score.m_stopTimer = -1.0f;
+					score.m_timerStop = -1.0f;
 				}
 			}
 

@@ -11,10 +11,10 @@ constexpr int	TILE_SIZE					= 128;
 constexpr float Tile_Gravity				= 0.15f;
 constexpr float Tile_DropDuration			= 0.1f;
 constexpr float Tile_BounceDuration			= 0.2f;
+constexpr float Game_LevelUpDuration		= 1.0f;
 
 
 constexpr float TickCount_GameAnimation		= 750.0f;
-constexpr int	TickCount_LevelUp			= 150;
 
 /** OpenGL buffer for boards. */
 struct GameBuffer {
