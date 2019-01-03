@@ -14,8 +14,6 @@ constexpr float Tile_BounceDuration			= 0.2f;
 constexpr float Game_LevelUpDuration		= 1.0f;
 
 
-constexpr float TickCount_GameAnimation		= 750.0f;
-
 /** OpenGL buffer for boards. */
 struct GameBuffer {
 	unsigned int types[12 * 6];
@@ -26,8 +24,6 @@ struct GameBuffer {
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);
 	float heightOffset = 0.0f;
 	float sysTime = 0.0f;
-	float gameWave = 0.0f;
-	float excitementLinear = 0.0f;
 	float shakeLinear = 0.0f;
 	float scoreAnimLinear = 0.0f;
 	float timeAnimLinear = 1.0f;

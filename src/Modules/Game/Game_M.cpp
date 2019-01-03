@@ -10,7 +10,6 @@
 
 /* Game System Types Used */
 #include "Modules\Game\Systems\IntroOutro_S.h"
-#include "Modules\Game\Systems\Board_S.h"
 #include "Modules\Game\Systems\ColorScheme_S.h"
 #include "Modules\Game\Systems\Gravity_S.h"
 #include "Modules\Game\Systems\PlayerInput_S.h"
@@ -32,7 +31,6 @@ void Game_Module::initialize(Engine * engine)
 	// Gameplay Systems
 	m_gameplaySystems = {
 		new IntroOutro_System(m_engine),
-		new Board_System(),
 		new ColorScheme_System(),
 		new Gravity_System(m_engine),
 		new Push_System(),
@@ -86,10 +84,9 @@ void Game_Module::frameTick(const float & deltaTime)
 	if (m_readyToStart) {
 		m_timeAccumulator += deltaTime;
 		auto & ecs = m_engine->getECS();
-		//constexpr float dt = 1.0f / 60.0f;
-		constexpr float dt = 0.01f;
+		constexpr float dt = 1.0f / 120.0f;
 		while (m_timeAccumulator >= dt) {
-			// Update ALL systems with our fixed tick rate
+			// Update ALL systems using a fixed tick rate
 			ecs.updateSystems(m_systemList, dt);
 			m_timeAccumulator -= dt;
 		}

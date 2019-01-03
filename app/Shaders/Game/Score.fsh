@@ -19,9 +19,8 @@ void main()
 	const float ElementWidth = float(Size.x / ElementCount);
 	
 	const vec2 DigitIndex = vec2((TexCoord.x / ElementCount) + ((NumberToRender * ElementWidth) / AtlasWidth), TexCoord.y);
-	const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
-	const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI);
-	const vec3 greenColor = vec3(0, 1.0F / M_PI, 0) * pulseAmount * (multiplier + 1);
+	const vec3 boardColor = colorScheme * colorScheme * (colorScheme / M_PI);
+	const vec3 greenColor = vec3(0, 1.0F / M_PI, 0) * (multiplier + 1);
 	vec4 DigitModifier = vec4(mix(boardColor, greenColor, HighlightAmount), 1);
 	if (UseBackdrop != 0)
 		DigitModifier.xyz *= 0.5f;

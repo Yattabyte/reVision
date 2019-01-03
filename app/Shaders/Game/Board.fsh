@@ -16,11 +16,7 @@ layout (binding = 3) uniform sampler2D TimeTexture;
 void main()
 {		
 	switch (Index) {
-	case 0:		
-		const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
-		const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI) * Dot;
-		FragColor = vec4( boardColor, 1 );
-		FragColor.xyz += (FragColor.xyz * excitementLinear) * multiplier;			
+	case 0:				
 		FragColor = vec4(texture(BorderTexture, TexCoord.y).xyz * Dot, 1);
 		break;
 	case 1:

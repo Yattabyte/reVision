@@ -18,7 +18,6 @@ struct Score_Component : public ECSComponent<Score_Component> {
 	int m_score = 0;
 	int m_lastScore = 0;
 	int m_multiplier = 0;
-	int m_timerAnimationTick = -1;
 	int m_level = 1;
 	int m_tilesCleared = 0;
 	float m_timerGame = 0.0f;

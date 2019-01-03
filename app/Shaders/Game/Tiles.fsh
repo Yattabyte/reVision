@@ -42,12 +42,12 @@ vec4 calcTile_Background()
 
 vec4 calcTile_Player()
 {
-	return texture(PlayerTexture, TexCoord) * vec4( colorScheme * calcPulseAmount(gl_FragCoord.y), 1 );
+	return texture(PlayerTexture, TexCoord) * vec4( colorScheme, 1 );
 }
 
 vec4 calcTile_Regular()
 {		
-	const float waveAmt = 0.5f * (sin((gameWave + -length(gl_FragCoord.xy / CameraDimensions.xy)) * M_PI)) + 0.5f;
+	const float waveAmt = 0.5f * (sin((sysTime + -length(gl_FragCoord.xy / CameraDimensions.xy)) * M_PI)) + 0.5f;
 	const float maxBrightness = 1.125f;
 	const float minBrightness = 0.33f;
 	const float pulseAmtDiag = (maxBrightness - (minBrightness * (1.0f - ((1.0f - waveAmt) * (1.0f - waveAmt)))));

@@ -26,7 +26,7 @@ public:
 			auto & score = *(Score_Component*)componentParam[1];
 
 			// Normal Color
-			glm::vec3 color = glm::mix(glm::vec3(0, 0.5, 1), glm::vec3(1, 0, 0.5), board.m_data->data->excitementLinear);
+			glm::vec3 color = glm::mix(glm::vec3(0, 0.5, 1), glm::vec3(1, 0, 0.5), (score.m_multiplier / 10.0f));
 			// Critical Color
 			if (board.m_critical)
 				color = glm::vec3(1, 1, 0);

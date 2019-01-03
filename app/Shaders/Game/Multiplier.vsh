@@ -25,7 +25,7 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),
 		vec4(0.0, 0.0, 0.0, 1.0)
 	);
-	const float angle = sin(gameWave * M_PI) * 0.25f;
+	const float angle = sin(sysTime * M_PI) * 0.25f;
 	const vec3 axis = vec3(0,0,1);
 	const float s = sin(angle);
     const float c = cos(angle);

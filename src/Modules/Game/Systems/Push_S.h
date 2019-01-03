@@ -43,7 +43,7 @@ public:
 					pushNewRow(board);
 					board.m_rowsToAdd--;
 
-					// Reset height and ticks
+					// Reset height and timers
 					board.m_rowClimbTime = 0.0f;
 					score.m_timerStop = -1.0f;
 				}

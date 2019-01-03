@@ -34,9 +34,6 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		float velocity = 0.0f;
 		unsigned int weight = 1;
 	} m_tileDrops[12][6];
-	unsigned int m_gameTick = 0;
-	float m_rowClimbTime = 0.0f;
-	float m_speed = 1.0F;
 	int m_playerX = 0;
 	int m_playerY = 0;
 	int m_rowsToAdd = 0;
@@ -44,6 +41,8 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	bool m_stop = false;
 	bool m_skipWaiting = false;
 	bool m_gameStarted = false;
+	float m_rowClimbTime = 0.0f;
+	float m_speed = 1.0F;
 	struct GameMusic {
 		float accumulator = 0.0f;
 		float beatSeconds = 0.0f;

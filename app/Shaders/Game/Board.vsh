@@ -11,9 +11,9 @@ layout (location = 2) out float Dot;
 
 
 vec2 shake() {
-	const float amount = sin( 1000.0f * gameWave ) * shakeLinear;
-	const float xAmt = cos( 1000.0f * gameWave * 1.5) * amount;
-	const float yAmt = sin( 1000.0f * gameWave * 0.5f) * amount;
+	const float amount = sin( 1000.0f * sysTime * M_PI) * shakeLinear;
+	const float xAmt = cos( 1000.0f * sysTime * 1.5 * M_PI) * amount;
+	const float yAmt = sin( 1000.0f * sysTime * 0.5f * M_PI) * amount;
 	return vec2(xAmt, yAmt) / 5.0f * amount;
 }
 

@@ -290,7 +290,7 @@ private:
 			}
 
 		if (allMatchingSets.size()) {
-			// All matches formed in a single tick count as a single mega set, sized as the sum of all their tiles
+			// All matches formed in a single update tick count as a single mega set, sized as the sum of all their tiles
 			// Combine their sets into 1 manifold
 			ScoringManifold combinedManifold;
 			for each (const auto & matchingSet in allMatchingSets)
@@ -355,7 +355,6 @@ private:
 					const auto & xy = manifold.xy[tile];
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::MATCHED;
 				}
-				score.m_data->data->excitementLinear += 0.075f * (float)manifold.xy.size();
 				// Add time, but never move timer past 3 seconds
 				score.m_timerStop = std::min<float>(score.m_timerStop + 1.0f, 3.0f);
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time

@@ -9,8 +9,7 @@ layout (binding = 0) uniform sampler2D piecesTexture;
 
 void main()
 {	
-	const float pulseAmount = calcPulseAmount(gl_FragCoord.y);
-	const vec3 boardColor = (colorScheme * pulseAmount) * (colorScheme * pulseAmount) * (colorScheme / M_PI);
+	const vec3 boardColor = colorScheme * colorScheme * (colorScheme / M_PI);
 	FragColor = texture(piecesTexture, TexCoord);
 	FragColor.xyz *= boardColor;
 	
