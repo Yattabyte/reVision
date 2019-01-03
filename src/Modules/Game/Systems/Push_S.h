@@ -36,21 +36,21 @@ public:
 			// Push new rows when timer is stopped, or ( when the user requests a new one and scored tiles have finished )
 			if (!board.m_stop || (board.m_skipWaiting && (score.m_scoredTiles.size() == 0))) {
 				board.m_skipWaiting = false;
-				board.m_rowClimbTick += board.m_speed;
-				if (board.m_rowClimbTick >= double(TickCount_NewLine) && !(score.m_scoredTiles.size()))
+				board.m_rowClimbTime += deltaTime;
+				if ((board.m_rowClimbTime >= board.m_speed) && !(score.m_scoredTiles.size()))
 					board.m_rowsToAdd++;
 				while (board.m_rowsToAdd > 0) {
 					pushNewRow(board);
 					board.m_rowsToAdd--;
 
 					// Reset height and ticks
-					board.m_rowClimbTick = 0.0;
+					board.m_rowClimbTime = 0.0f;
 					score.m_stopTimeTick = 0;
 					score.m_stopTimer = -1;
 				}
 			}
 
-			board.m_data->data->heightOffset = 2.0f * (float(board.m_rowClimbTick) / (float)TickCount_NewLine);
+			board.m_data->data->heightOffset = 2.0f * (board.m_rowClimbTime / board.m_speed);
 
 			// Synchronize tile data to GPU
 			for (int y = 0; y < 12; ++y)

@@ -35,8 +35,8 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		float fallSpeed = 1.0f;
 	} m_tileDrops[12][6];
 	unsigned int m_gameTick = 0;
-	double m_rowClimbTick = 0.0;
-	double m_speed = 1.0f;
+	float m_rowClimbTime = 0.0f;
+	float m_speed = 1.0F;
 	int m_playerX = 0;
 	int m_playerY = 0;
 	int m_rowsToAdd = 0;

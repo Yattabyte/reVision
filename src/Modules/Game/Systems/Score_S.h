@@ -101,7 +101,7 @@ public:
 
 			score.m_levelLinear = float(score.m_tilesCleared) / float(score.m_level * 12);			
 			score.m_levelUpLinear = sinf(float(score.m_levelUpTick) / float(TickCount_LevelUp) * glm::pi<float>());
-			board.m_speed = 1.0 + (double(score.m_level - 1) * 0.2f);
+			board.m_speed = 10.0f - (float(score.m_level - 1));
 		}
 	}
 

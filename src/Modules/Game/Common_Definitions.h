@@ -9,7 +9,6 @@ constexpr int	BOARD_WIDTH					= 6u;
 constexpr int	BOARD_HEIGHT				= 12u;
 constexpr int	TILE_SIZE					= 128;
 constexpr float TickCount_GameAnimation		= 750.0f;
-constexpr int	TickCount_NewLine			= 500u;
 constexpr int	TickCount_Time				= 100;
 constexpr float TickCount_TileDrop			= 10.0F;
 constexpr float TickCount_TileBounce		= 15.0F;
