@@ -8,9 +8,6 @@
 constexpr int	BOARD_WIDTH					= 6u;
 constexpr int	BOARD_HEIGHT				= 12u;
 constexpr int	TILE_SIZE					= 128;
-constexpr int	TickCount_IntroPowerOn		= 150;
-constexpr int	TickCount_IntroCountDown	= 300;
-constexpr int	TickCount_IntroSum			= TickCount_IntroPowerOn + TickCount_IntroCountDown;
 constexpr float TickCount_GameAnimation		= 750.0f;
 constexpr int	TickCount_NewLine			= 500u;
 constexpr int	TickCount_Time				= 100;

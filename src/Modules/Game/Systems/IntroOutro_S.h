@@ -31,16 +31,16 @@ public:
 			if (!board.m_gameStarted) {
 				board.m_data->data->intro.powerSecondary = 0.0f;
 				if (board.m_intro.start ) {
-					board.m_intro.tick++;
-					if (board.m_intro.tick >= TickCount_IntroSum) {
+					board.m_intro.time -= deltaTime;
+					if (board.m_intro.time <= 1.0f) {
 						board.m_intro.finished = true;
 						board.m_gameStarted = true;
 						board.m_playerX = 2;
 						board.m_playerY = 0;
 						board.m_rowsToAdd += 6;
 					}
-					if (board.m_intro.tick >= TickCount_IntroPowerOn) {
-						const int number = int((float(board.m_intro.tick - TickCount_IntroPowerOn) / float(TickCount_IntroCountDown)) * 4.0f);
+					else {
+						const int number = 4 - int(board.m_intro.time);
 						if (board.m_intro.countDown != number && number < 4)
 							if (number < 3)
 								m_engine->getSoundManager().playSound(m_soundBeep);
@@ -48,13 +48,13 @@ public:
 								m_engine->getSoundManager().playSound(m_soundBeepEnd);
 						board.m_intro.countDown = number;
 						board.m_data->data->intro.countDown = number;
-						board.m_data->data->intro.powerSecondary = easeOutBounce((float(board.m_intro.tick - TickCount_IntroPowerOn) / float(TickCount_IntroCountDown)));
+						board.m_data->data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));
 					}
 				}
 			}
 			else
 				board.m_data->data->intro.powerSecondary = 1.0f;			
-			board.m_data->data->intro.powerOn = easeInBounce(std::min<float>(1.0f, float(board.m_intro.tick) / float(TickCount_IntroPowerOn)));			
+			board.m_data->data->intro.powerOn = easeInBounce(std::clamp<float>((6.0f - board.m_intro.time) / 4.0f, 0.0f, 1.0f));
 		}
 	}
 

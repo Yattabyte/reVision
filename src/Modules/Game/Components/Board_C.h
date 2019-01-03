@@ -50,7 +50,7 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		bool beat = false;
 	} m_music;
 	struct GameIntro {
-		int tick = 0;
+		float time = 6.0f;
 		int countDown = -1;
 		bool start = false;
 		bool finished = false;
