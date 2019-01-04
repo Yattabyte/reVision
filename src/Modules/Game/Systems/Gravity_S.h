@@ -97,7 +97,7 @@ public:
 								// Grab all attributes before we swap the tiles (dTile is a reference, not a copy)
 								swapTiles(std::make_pair(x, y), std::make_pair(x, dTile.endIndex), board);
 							}
-							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * ((dTile.time / (dTile.delta * Tile_DropDuration)) * dTile.delta);
+							board.m_data->data->tiles[(y * 6) + x].yOffset = 2.0f * ((dTile.time / (dTile.delta * Tile_DropDuration)) * dTile.delta);
 							break;
 						}
 						// Find Bouncing Tiles
@@ -112,13 +112,13 @@ public:
 								dTile.dropState = Board_Component::TileDropData::STATIONARY;
 							}
 							// Tile has already been dropped to destination, need to move tile upwards now, not down
-							board.m_data->data->gravityOffsets[(y * 6) + x] = 2.0f * (1.0f - (easeOutBounce(adjustedTime / bounceTime))) * bounceHeight;
+							board.m_data->data->tiles[(y * 6) + x].yOffset = 2.0f * (1.0f - (easeOutBounce(adjustedTime / bounceTime))) * bounceHeight;
 							break;
 						}
 						// Find Stationary Tiles
 						default: {
 							// Reset the data just in case
-							board.m_data->data->gravityOffsets[(y * 6) + x] = 0.0f;
+							board.m_data->data->tiles[(y * 6) + x].yOffset = 0.0f;
 							board.m_tileDrops[y][x] = Board_Component::TileDropData();
 							break;
 						}

@@ -33,6 +33,20 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
+
+			for (int x = 0; x < (int)board.m_player.tileSwaps.size(); ++x) {
+				auto & tileSwap = board.m_player.tileSwaps[x];
+				tileSwap.time += deltaTime;
+				float xOffset = 2.0f * (1.0f - std::clamp<float>(tileSwap.time / Tile_SwapDuration, 0.0f, 1.0f));
+				board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = xOffset;
+				board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = -xOffset;
+				if (tileSwap.time >= Tile_SwapDuration) {
+					board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = 0.0f;
+					board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = 0.0f;
+					board.m_player.tileSwaps.pop_front();
+					x--;
+				}
+			}
 			
 			// (un)Pause
 			if (isAction(ActionState::PAUSE)) {
@@ -45,28 +59,30 @@ public:
 			
 			// Move Left
 			if (isAction(ActionState::LEFT)) {
-				board.m_playerX--;
+				board.m_player.xPos--;
 				m_engine->getSoundManager().playSound(m_soundMove);
 			}
 			// Move Right
 			if (isAction(ActionState::RIGHT)) {
-				board.m_playerX++;
+				board.m_player.xPos++;
 				m_engine->getSoundManager().playSound(m_soundMove);
 			}
 			// Move Down
 			if (isAction(ActionState::BACKWARD)) {
-				board.m_playerY--;
+				board.m_player.yPos--;
 				m_engine->getSoundManager().playSound(m_soundMove);
 			}
 			// Move Up
 			if (isAction(ActionState::FORWARD)) {
-				board.m_playerY++;
+				board.m_player.yPos++;
 				m_engine->getSoundManager().playSound(m_soundMove);
 			}
 			// Swap Tiles
 			if (isAction(ActionState::JUMP)) {
-				swapTiles(std::make_pair(board.m_playerX, board.m_playerY), std::make_pair(board.m_playerX + 1, board.m_playerY), board);
-				m_engine->getSoundManager().playSound(m_soundSwitch, 0.5f, 1.5f);
+				if (swapTiles(std::make_pair(board.m_player.xPos, board.m_player.yPos), std::make_pair(board.m_player.xPos + 1, board.m_player.yPos), board)) {
+					board.m_player.tileSwaps.push_back({ board.m_player.xPos, board.m_player.xPos + 1, board.m_player.yPos, 0.0f });
+					m_engine->getSoundManager().playSound(m_soundSwitch, 0.5f, 1.5f);
+				}
 			}
 			// Fast Forward
 			if (isAction(ActionState::RUN)) {
@@ -75,9 +91,9 @@ public:
 				m_engine->getSoundManager().playSound(m_soundScroll, 0.33f);
 			}
 
-			board.m_playerX = std::min(4, std::max(0, board.m_playerX));
-			board.m_playerY = std::min(11, std::max(1, board.m_playerY));
-			board.m_data->data->playerCoords = glm::ivec2(board.m_playerX, board.m_playerY);
+			board.m_player.xPos = std::min(4, std::max(0, board.m_player.xPos));
+			board.m_player.yPos = std::min(11, std::max(1, board.m_player.yPos));
+			board.m_data->data->playerCoords = glm::ivec2(board.m_player.xPos, board.m_player.yPos);
 		}
 	}
 

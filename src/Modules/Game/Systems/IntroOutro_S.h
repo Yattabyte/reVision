@@ -35,8 +35,8 @@ public:
 					if (board.m_intro.time <= 1.0f) {
 						board.m_intro.finished = true;
 						board.m_gameStarted = true;
-						board.m_playerX = 2;
-						board.m_playerY = 0;
+						board.m_player.xPos = 2;
+						board.m_player.yPos = 0;
 						board.m_rowsToAdd += 6;
 					}
 					else {

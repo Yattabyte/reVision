@@ -52,9 +52,9 @@ void Game_Module::initialize(Engine * engine)
 	// Reset game buffer data
 	for (int x = 0; x < BOARD_WIDTH; ++x) {
 		for (int y = 0; y < BOARD_HEIGHT; ++y) {
-			gameBoard.data->types[(y * 6) + x] = TileState::NONE;
-			gameBoard.data->gravityOffsets[(y * 6) + x] = 0.0f;
-			gameBoard.data->lifeLinear[(y * 6) + x] = 0.0f;
+			gameBoard.data->tiles[(y * 6) + x].type = TileState::NONE;
+			gameBoard.data->tiles[(y * 6) + x].yOffset = 0.0f;
+			gameBoard.data->tiles[(y * 6) + x].lifeLinear = 0.0f;
 		}
 		gameBoard.data->lanes[x] = 0.0f;
 	}
@@ -84,7 +84,7 @@ void Game_Module::frameTick(const float & deltaTime)
 	if (m_readyToStart) {
 		m_timeAccumulator += deltaTime;
 		auto & ecs = m_engine->getECS();
-		constexpr float dt = 1.0f / 120.0f;
+		constexpr float dt = 1.0f / 60.0f;
 		while (m_timeAccumulator >= dt) {
 			// Update ALL systems using a fixed tick rate
 			ecs.updateSystems(m_systemList, dt);

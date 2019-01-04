@@ -389,7 +389,7 @@ private:
 							addScore(score, 10);
 							score.m_tilesCleared++;
 						}
-						score.m_data->data->lifeLinear[(y * 6) + x] = smoothStart5(glm::clamp(time / duration, 0.0f, 1.0f));
+						score.m_data->data->tiles[(y * 6) + x].lifeLinear = smoothStart5(glm::clamp(time / duration, 0.0f, 1.0f));
 					}
 				}
 			}
@@ -410,7 +410,7 @@ private:
 				for each (const auto & xy in pair.xy) {
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
-					score.m_data->data->lifeLinear[(xy.y * 6) + xy.x] = 0.0f;
+					score.m_data->data->tiles[(xy.y * 6) + xy.x].lifeLinear = 0.0f;
 				}
 				score.m_scoredTiles.erase(score.m_scoredTiles.begin() + x);
 				score.m_scoredAdjacency.erase(score.m_scoredAdjacency.begin() + x);

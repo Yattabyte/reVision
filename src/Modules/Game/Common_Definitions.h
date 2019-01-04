@@ -11,14 +11,18 @@ constexpr int	TILE_SIZE					= 128;
 constexpr float Tile_Gravity				= 0.15f;
 constexpr float Tile_DropDuration			= 0.1f;
 constexpr float Tile_BounceDuration			= 0.2f;
+constexpr float Tile_SwapDuration			= 0.125f;
 constexpr float Game_LevelUpDuration		= 1.0f;
 
 
 /** OpenGL buffer for boards. */
 struct GameBuffer {
-	unsigned int types[12 * 6];
-	float gravityOffsets[12 * 6];
-	float lifeLinear[12 * 6];
+	struct TileStruct {
+		unsigned int type;
+		float xOffset;
+		float yOffset;
+		float lifeLinear;
+	} tiles[12 * 6];
 	float lanes[6]; glm::vec2 pad1;
 	glm::vec3 colorScheme = glm::vec3(0.0f); float pad2;
 	glm::ivec2 playerCoords = glm::ivec2(0, 0);

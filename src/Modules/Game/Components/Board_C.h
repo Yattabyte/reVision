@@ -6,6 +6,7 @@
 #include "Modules\Game\Common_Definitions.h"
 #include "Utilities\GL\VectorBuffer.h"
 #include "glm\glm.hpp"
+#include <deque>
 
 
 /** Holds Tile State. */
@@ -34,8 +35,16 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		float velocity = 0.0f;
 		unsigned int weight = 1;
 	} m_tileDrops[12][6];
-	int m_playerX = 0;
-	int m_playerY = 0;
+	struct GamePlayer {
+		int xPos = 0;
+		int yPos = 0;
+		struct TileSwaps {
+			int xIndices[2] = { -1,-1 };
+			int yIndex = -1;
+			float time = 0.0f;
+		};
+		std::deque<TileSwaps> tileSwaps;
+	} m_player;
 	int m_rowsToAdd = 0;
 	bool m_critical = false;
 	bool m_stop = false;

@@ -19,7 +19,7 @@ float smoothStart(float t)
 void main()
 {	
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	Type = types[gl_InstanceID];
+	Type = tiles[gl_InstanceID].type;
 	TileWaiting = 0;
 	LaneAmt = lanes[gl_InstanceID % 6] * lanes[gl_InstanceID % 6];
 	
@@ -38,8 +38,8 @@ void main()
 	
 	// Draw regular tiles (BLOCKS + BACKGROUND)
 	if (gl_InstanceID < (12*6)) {
-		const bool scoring = lifeLinear[gl_InstanceID] > 0.0f ? true : false;
-		TileLifeLinear = lifeLinear[gl_InstanceID];
+		TileLifeLinear = tiles[gl_InstanceID].lifeLinear;
+		const bool scoring = TileLifeLinear > 0.0f ? true : false;
 		const float scl = (1.0f - smoothStart(TileLifeLinear)) * (scoring ? 0.85f : 1.0f);
 		const float shakeX = (2.0f * cos((sysTime / M_PI) * 75.0F) - 1.0f) * 0.01F * LaneAmt;
 		const float shakeY = (2.0f * sin((sysTime / M_PI) * 75.0F) - 1.0f) * 0.05F * (1.0f - ((1.0f - LaneAmt) * (1.0f - LaneAmt) * (1.0f - LaneAmt)));
@@ -47,7 +47,7 @@ void main()
 			vec4(scl, 0.0, 0.0, 0.0),
 			vec4(0.0, scl, 0.0, 0.0),
 			vec4(0.0, 0.0, 1.0, 0.0),
-			vec4(((gl_InstanceID % 6) * 2) + 1 + shakeX, (((gl_InstanceID / 6) * 2) - 1) + heightOffset - (scoring ? 0.0f : gravityOffsets[gl_InstanceID]) + shakeY, 0.0, 1.0)
+			vec4((((gl_InstanceID % 6) * 2) + 1) + tiles[gl_InstanceID].xOffset + shakeX, (((gl_InstanceID / 6) * 2) - 1) + heightOffset - (scoring ? 0.0f : tiles[gl_InstanceID].yOffset) + shakeY, 0.0, 1.0)
 		);		
 		gl_Position = orthoProj * scaleMat * tileTransform * vec4(vertex.xy, 0, 1);
 	}

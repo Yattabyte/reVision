@@ -40,7 +40,7 @@ static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB,
 	auto & tileDrop2 = board.m_tileDrops[coordsB.second][coordsB.first];
 	if (tileState1.m_scoreType != TileState::UNMATCHED || tileState2.m_scoreType != TileState::UNMATCHED ||
 		tileDrop1.dropState == Board_Component::TileDropData::FALLING || tileDrop2.dropState == Board_Component::TileDropData::FALLING)
-		return;
+		return false;
 
 	// Swap mechanism
 	auto copyState = tileState1;
@@ -49,6 +49,7 @@ static constexpr auto swapTiles = [](const auto & coordsA, const auto & coordsB,
 	auto copyDrop = tileDrop1;
 	tileDrop1 = tileDrop2;
 	tileDrop2 = copyDrop;
+	return true;
 };
 
 #endif // COMMON_LAMBDAS_H

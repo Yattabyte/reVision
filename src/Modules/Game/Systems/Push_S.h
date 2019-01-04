@@ -54,7 +54,7 @@ public:
 			// Synchronize tile data to GPU
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)
-					board.m_data->data->types[(y * 6) + x] = board.m_tiles[y][x].m_type;
+					board.m_data->data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
 
 			// Find lanes approaching full (top of board)
 			bool critical = false;
@@ -85,10 +85,10 @@ private:
 		// Move board up 1 row
 		for (int x = 0; x < BOARD_WIDTH; ++x)
 			for (int y = BOARD_HEIGHT - 1; y > 0; --y) {
-				swapTiles(std::make_pair(x, y), std::make_pair(x, y - 1), board);
-				board.m_tileDrops[y][x].endIndex++;
+				if (swapTiles(std::make_pair(x, y), std::make_pair(x, y - 1), board))
+					board.m_tileDrops[y][x].endIndex++;
 			}
-		board.m_playerY++;
+		board.m_player.yPos++;
 
 		// Replace row[0] with new row	
 		for (int x = 0; x < 6; ++x) {
