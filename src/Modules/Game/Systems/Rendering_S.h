@@ -278,16 +278,53 @@ private:
 				}
 			}
 		}
+
 		// Get scored tile count
 		writeIndex = unsigned long(0);
-		// Go through each set of scored tiles
 		for (size_t n = 0; n < score.m_scoredTiles.size(); ++n) {
-			// Find the center point in the set of scored tiles
-			glm::ivec2 countAndType((int)score.m_scoredTiles[n].xy.size(), 0);
 			glm::vec2 center(0.0f);
-			for (size_t x = 0; x < score.m_scoredTiles[n].xy.size(); ++x)
-				center += glm::vec2(score.m_scoredTiles[n].xy[x].x, score.m_scoredTiles[n].xy[x].y);
-			center /= float(countAndType.x);
+			glm::ivec2 countAndType((int)score.m_scoredTiles[n].xy.size(), 0);
+
+			// Find the center point in the set of scored tiles
+			int commonX[6] = { 0,0,0,0,0,0 };
+			int commonY[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
+			for (size_t a = 0; a < score.m_scoredTiles[n].xy.size(); ++a) {
+				commonX[score.m_scoredTiles[n].xy[a].x]++;
+				commonY[score.m_scoredTiles[n].xy[a].y]++;
+			}
+			// Find most common X
+			int largest = 0;
+			int mostCommon = -1;
+			for (int a = 0; a < 6; ++a) 
+				if (commonX[a] > largest) {
+					largest = commonX[a];
+					mostCommon = a;
+				}
+			if (largest > 1 && mostCommon != -1)
+				center.x = float(mostCommon);
+			else {
+				// Calculate average x instead
+				for (size_t a = 0; a < score.m_scoredTiles[n].xy.size(); ++a)
+					center.x += score.m_scoredTiles[n].xy[a].x;
+				center.x /= float(countAndType.x);
+			}
+			// Find most common Y
+			largest = 0;
+			mostCommon = -1;
+			for (int a = 0; a < 12; ++a) 
+				if (commonY[a] > largest) {
+					largest = commonY[a];
+					mostCommon = a;
+				}			
+			if (largest > 1 && mostCommon != -1) 
+				center.y = float(mostCommon);			
+			else {
+				// Calculate average y instead
+				for (size_t a = 0; a < score.m_scoredTiles[n].xy.size(); ++a)
+					center.y += score.m_scoredTiles[n].xy[a].y;
+				center.y /= float(countAndType.x);
+			}		
+			
 			m_bufferMatchedNos.write(writeIndex, sizeof(glm::vec2), &center);
 			writeIndex += sizeof(glm::vec2);
 			m_bufferMatchedNos.write(writeIndex, sizeof(glm::ivec2), &countAndType);
