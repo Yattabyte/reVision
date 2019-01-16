@@ -17,6 +17,8 @@ public:
 	inline virtual void initialize(Engine * engine) {
 		m_engine = engine;
 	};
+	inline virtual void frameTick(const float & deltaTime) {
+	};
 
 
 protected:

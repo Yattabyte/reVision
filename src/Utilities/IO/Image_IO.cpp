@@ -22,7 +22,7 @@ FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relative
 	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	FIBITMAP * bitmap = nullptr;
 
-	auto & messageManager = engine->getMessageManager();
+	auto & messageManager = engine->getManager_Messages();
 	if (format == -1)
 		messageManager.error("The file \"" + relativePath + "\" does not exist.");
 	else if (format == FIF_UNKNOWN) {

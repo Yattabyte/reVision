@@ -26,7 +26,7 @@
 void Game_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
-	m_engine->getMessageManager().statement("Loading Module: Game...");
+	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Gameplay Systems
 	m_gameplaySystems = {
@@ -44,7 +44,7 @@ void Game_Module::initialize(Engine * engine)
 		m_systemList.addSystem(system);
 
 	// Rendering Systems
-	m_renderingSystem = new Rendering_System(m_engine, m_engine->getGraphicsModule().getLightingFBOID());
+	m_renderingSystem = new Rendering_System(m_engine, m_engine->getModule_Graphics().getLightingFBOID());
 
 	// Create Players
 	auto & gameBoard = *m_boardBuffer.newElement();
@@ -81,7 +81,7 @@ void Game_Module::frameTick(const float & deltaTime)
 	}
 
 	// Update Game
-	if (m_readyToStart) {
+	if (m_readyToStart && m_userReady) {
 		m_timeAccumulator += deltaTime;
 		auto & ecs = m_engine->getECS();
 		constexpr float dt = 1.0f / 60.0f;
@@ -95,4 +95,9 @@ void Game_Module::frameTick(const float & deltaTime)
 		m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		ecs.updateSystem(m_renderingSystem, deltaTime);
 	}
+}
+
+void Game_Module::startGame()
+{
+	m_userReady = true;
 }

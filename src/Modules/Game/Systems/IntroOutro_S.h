@@ -43,9 +43,9 @@ public:
 						const int number = 4 - int(board.m_intro.time);
 						if (board.m_intro.countDown != number && number < 4)
 							if (number < 3)
-								m_engine->getSoundManager().playSound(m_soundBeep);
+								m_engine->getManager_Sounds().playSound(m_soundBeep);
 							else
-								m_engine->getSoundManager().playSound(m_soundBeepEnd);
+								m_engine->getManager_Sounds().playSound(m_soundBeepEnd);
 						board.m_intro.countDown = number;
 						board.m_data->data->intro.countDown = number;
 						board.m_data->data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));

@@ -12,13 +12,26 @@
 #include "Utilities\IO\Mesh_IO.h"
 
 
-// Called when the window resizes
-static void GLFW_Callback_Windowresize(GLFWwindow * window, int width, int height)
+/***************************
+----START GLFW CALLBACKS----
+***************************/
+static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int height)
 {
 	auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
 	preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
 	preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
 }
+static void GLFW_Callback_CursorPosition(GLFWwindow* window, double xPos, double yPos)
+{
+	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
+}
+static void GLFW_Callback_CursorButton(GLFWwindow* window, int button, int action, int mods)
+{
+	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
+}
+/***************************
+-----END GLFW CALLBACKS-----
+***************************/
 
 Rendering_Context::~Rendering_Context()
 {
@@ -29,7 +42,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 {
 	// Begin Initialization
 	if (!glfwInit()) {
-		engine->getMessageManager().error("GLFW unable to initialize, shutting down...");
+		engine->getManager_Messages().error("GLFW unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -63,13 +76,12 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	window = glfwCreateWindow(1, 1, "", NULL, NULL);
 	glfwMakeContextCurrent(window);
 	glfwSetWindowIcon(window, 0, NULL);
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	glfwSetCursorPos(window, 0, 0);
 	glfwSwapInterval(vsync);
 
 	// Initialize GLAD
 	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
-		engine->getMessageManager().error("GLAD unable to initialize, shutting down...");
+		engine->getManager_Messages().error("GLAD unable to initialize, shutting down...");
 		glfwTerminate();
 		exit(-1);
 	}
@@ -98,6 +110,8 @@ Auxilliary_Context::Auxilliary_Context(const Rendering_Context & otherContext)
 
 Engine::~Engine()
 {
+	// Update indicator
+	m_aliveIndicator = false;
 	m_messageManager.statement("Shutting down...");
 	Image_IO::Deinitialize();	
 	glfwTerminate();
@@ -162,18 +176,21 @@ Engine::Engine() :
 	glfwSetWindowSize(m_renderingContext.window, m_windowSize.x, m_windowSize.y);
 	glfwSetWindowPos(m_renderingContext.window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
 	glfwSetWindowUserPointer(m_renderingContext.window, this);
-	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_Windowresize);
+	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_WindowResize);
+	glfwSetCursorPosCallback(m_renderingContext.window, GLFW_Callback_CursorPosition);
+	glfwSetMouseButtonCallback(m_renderingContext.window, GLFW_Callback_CursorButton);
 	glfwMakeContextCurrent(m_renderingContext.window);
 	
 	// Initialize Members
 	registerECSConstructor("Transform_Component", new Transform_Constructor());
 	m_inputBindings.loadFile("binds");
+	m_modelManager.initialize();
 	m_moduleGraphics.initialize(this);
 	m_modulePProcess.initialize(this);
+	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
 	m_moduleWorld.initialize(this);
 	m_moduleGame.initialize(this);
-	m_modelManager.initialize();
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -216,6 +233,7 @@ void Engine::tick()
 	m_moduleGraphics.frameTick(deltaTime);
 	m_moduleGame.frameTick(deltaTime);
 	m_modulePProcess.frameTick(deltaTime);
+	m_moduleUI.frameTick(deltaTime);
 
 	// End Frame
 	glfwSwapBuffers(m_renderingContext.window);
@@ -234,6 +252,11 @@ void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context
 bool Engine::shouldClose()
 {
 	return glfwWindowShouldClose(m_renderingContext.window);
+}
+
+void Engine::shutDown()
+{
+	glfwSetWindowShouldClose(m_renderingContext.window, GLFW_TRUE);
 }
 
 void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) 
@@ -274,9 +297,16 @@ void Engine::updateInput()
 		// If Key is pressed, set state to 1, otherwise set to 0
 		m_actionState.at(action) = (glfwGetKey(m_renderingContext.window, input_button)) ? 1.0f : 0.0f;
 	}
-	double mouseX, mouseY;
-	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
-	m_actionState.at(ActionState::LOOK_X) = (float)mouseX;
-	m_actionState.at(ActionState::LOOK_Y) = (float)mouseY;
-	glfwSetCursorPos(m_renderingContext.window, 0, 0);
+	
+	// UI manager dictates mouse control
+	if (m_moduleUI.isCursorActive()) 
+		glfwSetInputMode(m_renderingContext.window,	GLFW_CURSOR, GLFW_CURSOR_NORMAL);	
+	else {
+		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		double mouseX, mouseY;
+		glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
+		m_actionState.at(ActionState::LOOK_X) = (float)mouseX;
+		m_actionState.at(ActionState::LOOK_Y) = (float)mouseY;
+		glfwSetCursorPos(m_renderingContext.window, 0, 0);
+	}
 }

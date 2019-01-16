@@ -130,7 +130,7 @@ public:
 				if (impactPerColumn[x] > 0.0f){
 					const float impactVolume = (impactPerColumn[x] / 12.0f); // Preportional to num of tiles falling
 					const float impactSpeed = 1.0f + ((2.0f * (1.0f - impactVolume) - 1.0f) * 0.5f); // Reverse preportional to num of tiles falling, from 0.5 to 1.5
-					m_engine->getSoundManager().playSound(m_soundImpact, impactVolume, impactSpeed);
+					m_engine->getManager_Sounds().playSound(m_soundImpact, impactVolume, impactSpeed);
 				}
 		}
 	}

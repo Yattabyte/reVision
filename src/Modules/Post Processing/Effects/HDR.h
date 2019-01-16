@@ -58,9 +58,9 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getMessageManager().error("HDR Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("HDR Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error("HDR Texture is incomplete.");
+			m_engine->getManager_Messages().error("HDR Texture is incomplete.");
 	}
 
 

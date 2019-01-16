@@ -37,11 +37,17 @@
 #include "Modules\Graphics\Effects\SSR.h"
 
 
+Graphics_Module::~Graphics_Module()
+{
+	// Update indicator
+	m_aliveIndicator = false;
+}
+
 void Graphics_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_ecs = &m_engine->getECS();
-	m_engine->getMessageManager().statement("Loading Module: Graphics...");
+	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
 
 	// GL settings
 	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
@@ -98,7 +104,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
 
 	// Error Reporting
-	auto & msgMgr = m_engine->getMessageManager();
+	auto & msgMgr = m_engine->getManager_Messages();
 	if (glCheckNamedFramebufferStatus(m_geometryFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		msgMgr.error("Geometry Framebuffer has encountered an error.");
 	if (glCheckNamedFramebufferStatus(m_lightingFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -149,7 +155,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
 	
 
-	auto & world = m_engine->getWorldModule();
+	auto & world = m_engine->getModule_World();
 	world.addLevelListener(&lightPoint->m_renderState.m_outOfDate);
 	world.addLevelListener(&lightSpot->m_renderState.m_outOfDate);
 	world.addLevelListener(&reflector->m_renderState.m_outOfDate);
@@ -181,7 +187,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
 	m_bounceFBO.clear();
-	m_engine->getMaterialManager().bind();
+	m_engine->getManager_Materials().bind();
 	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
 	m_volumeRH->updateVolume(*getActiveCameraBuffer());
 	m_ecs->updateSystems(m_renderingSystems, deltaTime);

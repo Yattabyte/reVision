@@ -6,14 +6,14 @@
 constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 
 Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Sound>(std::dynamic_pointer_cast<Asset_Sound>(engine->getAssetManager().shareAsset(typeid(Asset_Sound).name(), filename)))
+	: std::shared_ptr<Asset_Sound>(std::dynamic_pointer_cast<Asset_Sound>(engine->getManager_Assets().shareAsset(typeid(Asset_Sound).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Sound>*)(this)) = std::make_shared<Asset_Sound>(filename);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Sound).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Sound::initialize, get(), engine, (DIRECTORY_SOUNDS + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Sound).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Sound::initialize, get(), engine, (DIRECTORY_SOUNDS + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -36,7 +36,7 @@ void Asset_Sound::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
 	SoLoud::Wav * wave = new SoLoud::Wav();
-	auto & msgMgr = engine->getMessageManager();
+	auto & msgMgr = engine->getManager_Messages();
 	switch (wave->load(relativePath.c_str())) {
 	case SoLoud::SO_NO_ERROR: 
 		// No error

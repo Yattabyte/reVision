@@ -29,7 +29,7 @@ public:
 		return m_soundSong->existsYet() && m_soundSongCrit->existsYet();
 	}
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		const auto & soundMgr = m_engine->getSoundManager();		
+		const auto & soundMgr = m_engine->getManager_Sounds();		
 		
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];	
@@ -74,7 +74,6 @@ private:
 	Shared_Sound m_soundSong, m_soundSongCrit;
 	bool m_musicPlaying = false, m_failPlaying = false;
 	unsigned int m_songHandle = 0;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // MUSIC_S_H

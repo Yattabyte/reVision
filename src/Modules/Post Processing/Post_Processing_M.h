@@ -20,12 +20,9 @@ public:
 	// Public Interface Implementation
 	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
-
-
-	// Public Methods
 	/** Applies select post-processing effects to the screen.
 	@param	deltaTime	the amount of time passed since last frame */
-	void frameTick(const float & deltaTime);
+	virtual void frameTick(const float & deltaTime) override;
 
 
 private:

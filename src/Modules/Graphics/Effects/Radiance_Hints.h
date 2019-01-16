@@ -64,9 +64,9 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getMessageManager().error("Radiance_Hints Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("Radiance_Hints Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error("Radiance_Hints Texture is incomplete.");
+			m_engine->getManager_Messages().error("Radiance_Hints Texture is incomplete.");
 	}
 
 

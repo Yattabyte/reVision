@@ -41,14 +41,14 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 }
 
 Shared_Config::Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
-	: std::shared_ptr<Asset_Config>(std::dynamic_pointer_cast<Asset_Config>(engine->getAssetManager().shareAsset(typeid(Asset_Config).name(), filename)))
+	: std::shared_ptr<Asset_Config>(std::dynamic_pointer_cast<Asset_Config>(engine->getManager_Assets().shareAsset(typeid(Asset_Config).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Config>*)(this)) = std::make_shared<Asset_Config>(filename, cfg_strings);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Config).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Config::initialize, get(), engine, (DIRECTORY_CONFIG + filename + EXT_CONFIG))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Config).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Config::initialize, get(), engine, (DIRECTORY_CONFIG + filename + EXT_CONFIG))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -76,7 +76,7 @@ void Asset_Config::initialize(Engine * engine, const std::string & relativePath)
 		}
 	}
 	catch (const std::ifstream::failure) {
-		engine->getMessageManager().error("Asset_Config \"" + m_filename + "\" failed to initialize.");
+		engine->getManager_Messages().error("Asset_Config \"" + m_filename + "\" failed to initialize.");
 	}
 
 	Asset::finalize(engine);

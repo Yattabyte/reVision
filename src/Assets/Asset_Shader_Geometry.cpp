@@ -8,14 +8,14 @@ constexpr char* EXT_SHADER_GEOMETRY = ".gsh";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
 
 Shared_Shader_Geometry::Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Shader_Geometry>(std::dynamic_pointer_cast<Asset_Shader_Geometry>(engine->getAssetManager().shareAsset(typeid(Asset_Shader_Geometry).name(), filename)))
+	: std::shared_ptr<Asset_Shader_Geometry>(std::dynamic_pointer_cast<Asset_Shader_Geometry>(engine->getManager_Assets().shareAsset(typeid(Asset_Shader_Geometry).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Shader_Geometry>*)(this)) = std::make_shared<Asset_Shader_Geometry>(filename);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Shader_Geometry).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader_Geometry::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Shader_Geometry).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader_Geometry::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -55,7 +55,7 @@ void Asset_Shader_Geometry::initialize(Engine * engine, const std::string & rela
 		if (!success) {
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error("Asset_Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
+			engine->getManager_Messages().error("Asset_Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault();
 		}
 	}

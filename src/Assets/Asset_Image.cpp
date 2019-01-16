@@ -5,14 +5,14 @@
 
 
 Shared_Image::Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2>& specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
-	: std::shared_ptr<Asset_Image>(std::dynamic_pointer_cast<Asset_Image>(engine->getAssetManager().shareAsset(typeid(Asset_Image).name(), filename)))
+	: std::shared_ptr<Asset_Image>(std::dynamic_pointer_cast<Asset_Image>(engine->getManager_Assets().shareAsset(typeid(Asset_Image).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Image>*)(this)) = std::make_shared<Asset_Image>(filename, specificSize, policyFill, policyResize);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Image).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Image::initialize, get(), engine, (filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Image).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Image::initialize, get(), engine, (filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -43,7 +43,7 @@ void Asset_Image::initialize(Engine * engine, const std::string & relativePath)
 		m_bpp = dataContainer.bpp;
 	}
 	else {
-		engine->getMessageManager().error("Asset_Image \"" + m_filename + "\" failed to initialize.");
+		engine->getManager_Messages().error("Asset_Image \"" + m_filename + "\" failed to initialize.");
 		fill();
 	}
 	

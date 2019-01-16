@@ -63,7 +63,7 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getMessageManager().error("Reflector_FX Environment Map Framebuffer has encountered an error.");			
+			m_engine->getManager_Messages().error("Reflector_FX Environment Map Framebuffer has encountered an error.");			
 	}
 
 
@@ -90,7 +90,7 @@ protected:
 	/** Render all the geometry for each reflector */
 	inline void renderScene(const float & deltaTime) {
 		auto & preferences = m_engine->getPreferenceState();
-		auto & graphics = m_engine->getGraphicsModule();
+		auto & graphics = m_engine->getModule_Graphics();
 		bool didAnything = false, update = m_renderState->m_outOfDate;
 		m_renderState->m_outOfDate = false;
 		GLuint oldCameraID = 0;

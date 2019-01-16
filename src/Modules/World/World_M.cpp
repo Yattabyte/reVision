@@ -12,10 +12,14 @@ World_Module::~World_Module()
 void World_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
-	m_engine->getMessageManager().statement("Loading Module: World...");
+	m_engine->getManager_Messages().statement("Loading Module: World...");
 
 	// Load world
 	loadWorld();
+}
+
+void World_Module::frameTick(const float & deltaTime)
+{
 }
 
 void World_Module::loadWorld()
@@ -33,9 +37,9 @@ void World_Module::addLevelListener(bool * notifier)
 
 const bool World_Module::checkIfLoaded()
 {
-	auto & assetManager = m_engine->getAssetManager();
-	auto & modelManager = m_engine->getModelManager();
-	auto & materialManager = m_engine->getMaterialManager();
+	auto & assetManager = m_engine->getManager_Assets();
+	auto & modelManager = m_engine->getManager_Models();
+	auto & materialManager = m_engine->getManager_Materials();
 	// Firstly, check and see if the following systems are ready
 	if (assetManager.readyToUse() &&
 		modelManager.readyToUse() &&

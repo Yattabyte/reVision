@@ -18,7 +18,11 @@ public:
 
 
 	// Public Interface Implementation
+	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
+	/** Tick the world by a frame.
+	@param	deltaTime	the amount of time passed since last frame */
+	virtual void frameTick(const float & deltaTime) override;
 
 
 	// Public Methods

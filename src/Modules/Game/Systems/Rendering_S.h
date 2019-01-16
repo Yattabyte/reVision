@@ -17,12 +17,15 @@
 class Rendering_System : public Game_System_Interface {
 public:
 	// (de)Constructors
-	~Rendering_System() = default;
+	~Rendering_System() {
+		// Update indicator
+		m_aliveIndicator = false;
+	}
 	Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
 		addComponentType(Score_Component::ID);
 		
-		m_vaoModels = &engine->getModelManager().getVAO();
+		m_vaoModels = &engine->getManager_Models().getVAO();
 
 		// For rendering tiles to the board
 		m_orthoProjField = glm::ortho<float>(0, TILE_SIZE * 6, 0, TILE_SIZE * 12, -1, 1);
@@ -69,7 +72,7 @@ public:
 		glNamedFramebufferDrawBuffers(m_fboIDBars, 2, drawBuffers);
 
 		// Error Reporting
-		auto & msgManager = engine->getMessageManager();
+		auto & msgManager = engine->getManager_Messages();
 		if (glCheckNamedFramebufferStatus(m_fboIDField, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			msgManager.error("Game Board Framebuffer has encountered an error.");
 		if (glCheckNamedFramebufferStatus(m_fboIDBars, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)

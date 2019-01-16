@@ -5,14 +5,14 @@
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
 Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Cubemap>(std::dynamic_pointer_cast<Asset_Cubemap>(engine->getAssetManager().shareAsset(typeid(Asset_Cubemap).name(), filename)))
+	: std::shared_ptr<Asset_Cubemap>(std::dynamic_pointer_cast<Asset_Cubemap>(engine->getManager_Assets().shareAsset(typeid(Asset_Cubemap).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Cubemap>*)(this)) = std::make_shared<Asset_Cubemap>(filename);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -76,7 +76,7 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		engine->getMessageManager().error("Asset_Texture \"" + m_filename + "\" failed to initialize.");
+		engine->getManager_Messages().error("Asset_Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

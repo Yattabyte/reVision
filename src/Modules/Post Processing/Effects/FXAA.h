@@ -57,9 +57,9 @@ public:
 		
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getMessageManager().error("FXAA Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("FXAA Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error("FXAA Texture is incomplete.");
+			m_engine->getManager_Messages().error("FXAA Texture is incomplete.");
 	}
 
 

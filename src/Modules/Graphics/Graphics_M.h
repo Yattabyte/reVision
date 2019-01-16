@@ -25,19 +25,19 @@ class ECS;
 class Graphics_Module : public Engine_Module {
 public:
 	// (de)Constructors
-	~Graphics_Module() = default;
+	~Graphics_Module();
 	Graphics_Module() = default;
 
 
 	// Public Interface Implementation
 	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
-
-
-	// Public Methods
-	/** Render a single frame. 
+	/** Render a single frame.
 	@param	deltaTime	the amount of time passed since last frame */
-	void frameTick(const float & deltaTime);
+	virtual void frameTick(const float & deltaTime) override;
+
+
+	// Public Methods	
 	/** Update the data for the specified camera. 
 	@param	camera			the camera to update */
 	void updateCamera(Camera_Buffer * camera);

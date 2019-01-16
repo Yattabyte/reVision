@@ -6,7 +6,7 @@
 bool Text_IO::Import_Text(Engine * engine, const std::string & relativePath, std::string & data_container, std::ios_base::openmode mode)
 {
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getMessageManager().error("The file \"" + relativePath + "\" does not exist.");
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 

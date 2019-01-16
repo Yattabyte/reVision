@@ -23,7 +23,7 @@ public:
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_renderState(renderState), m_shaderCull(shaderCull), m_shaderGeometry(shaderGeometry) {
 		// Asset Loading
 		m_shapeCube = Shared_Primitive(engine, "cube");
-		m_modelsVAO = &m_engine->getModelManager().getVAO();
+		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 	}
 
 
@@ -33,7 +33,7 @@ public:
 		if (!m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
 
-		m_engine->getMaterialManager().bind();
+		m_engine->getManager_Materials().bind();
 		m_propBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_renderState->m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);

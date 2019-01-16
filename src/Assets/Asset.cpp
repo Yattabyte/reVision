@@ -51,7 +51,7 @@ void Asset::finalize(Engine * engine)
 	m_finalized = true;
 
 	// Copy callbacks in case any get added while we're busy
-	AssetManager & assetManager = engine->getAssetManager();
+	AssetManager & assetManager = engine->getManager_Assets();
 	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
 	

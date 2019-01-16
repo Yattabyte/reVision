@@ -8,14 +8,14 @@
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string>& textures, const bool & threaded)
-	: std::shared_ptr<Asset_Material>(std::dynamic_pointer_cast<Asset_Material>(engine->getAssetManager().shareAsset(typeid(Asset_Material).name(), filename)))
+	: std::shared_ptr<Asset_Material>(std::dynamic_pointer_cast<Asset_Material>(engine->getManager_Assets().shareAsset(typeid(Asset_Material).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Material>*)(this)) = std::make_shared<Asset_Material>(filename, textures, engine->getMaterialManager());
+		(*(std::shared_ptr<Asset_Material>*)(this)) = std::make_shared<Asset_Material>(filename, textures, engine->getManager_Materials());
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -67,7 +67,7 @@ Asset_Material::Asset_Material(const std::string & filename, const std::vector<s
 
 void Asset_Material::initialize(Engine * engine, const std::string & relativePath)
 {
-	auto & materialManager = engine->getMaterialManager();
+	auto & materialManager = engine->getManager_Materials();
 
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);
@@ -79,7 +79,7 @@ void Asset_Material::initialize(Engine * engine, const std::string & relativePat
 
 	// Load all images	
 	m_images.resize(textureCount);
-	m_size = glm::ivec2(engine->getMaterialManager().getMaterialSize());
+	m_size = glm::ivec2(engine->getManager_Materials().getMaterialSize());
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Fill_Policy::Checkered,
 		Fill_Policy::Solid,

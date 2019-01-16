@@ -65,7 +65,7 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getMessageManager().error("SpotLight Shadowmap Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("SpotLight Shadowmap Framebuffer has encountered an error.");
 	}
 
 

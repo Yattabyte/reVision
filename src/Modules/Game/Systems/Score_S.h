@@ -88,7 +88,7 @@ public:
 				score.m_levelUp = true; 
 				score.m_timerLevelUp = 0.0f;
 				score.m_tilesCleared = 0;
-				m_engine->getSoundManager().playSound(m_soundLevelGained, 0.75f);
+				m_engine->getManager_Sounds().playSound(m_soundLevelGained, 0.75f);
 			}
 			if (score.m_levelUp) {
 				score.m_timerLevelUp += deltaTime;
@@ -320,14 +320,14 @@ private:
 				score.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
 				score.m_data->data->scoreAnimLinear++;
 
-				m_engine->getSoundManager().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
+				m_engine->getManager_Sounds().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
 		}
 		// Reset the combo on the music beat, if the combo hasn't changed
 		else if (!score.m_comboChanged && score.m_multiplier) {
 				// Reset multiplier if no tiles are scored
 				if (score.m_multiplier >= 2)
-					m_engine->getSoundManager().playSound(m_soundMultiplierLost, 1.0f);
+					m_engine->getManager_Sounds().playSound(m_soundMultiplierLost, 1.0f);
 				score.m_multiplier = 0;
 				score.m_comboChanged = false;
 			}
@@ -384,7 +384,7 @@ private:
 					if (board.m_tiles[y][x].m_scoreType == TileState::MATCHED) {
 						// Tile SCORED
 						if (time >= duration) {
-							m_engine->getSoundManager().playSound(m_soundPop, 1.0f, 0.75f + ((tile / 10.0f) * 2.0f));
+							m_engine->getManager_Sounds().playSound(m_soundPop, 1.0f, 0.75f + ((tile / 10.0f) * 2.0f));
 							board.m_tiles[y][x].m_scoreType = TileState::SCORED;
 							addScore(score, 10);
 							score.m_tilesCleared++;
@@ -429,7 +429,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Sound m_soundPop, m_soundMultiplierInc, m_soundMultiplierLost, m_soundLevelGained;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // SCORE_S_H

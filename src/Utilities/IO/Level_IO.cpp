@@ -5,7 +5,7 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getMessageManager().error("The file \"" + relativePath + "\" does not exist.");
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 	// Try to load the file stream
@@ -16,7 +16,7 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 	}
 	// Catch failure state
 	catch (const std::ifstream::failure e) {
-		engine->getMessageManager().error("The file \"" + relativePath + "\" exists, but is corrupted.");
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 }

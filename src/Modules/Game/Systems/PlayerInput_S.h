@@ -60,35 +60,35 @@ public:
 			// Move Left
 			if (isAction(ActionState::LEFT)) {
 				board.m_player.xPos--;
-				m_engine->getSoundManager().playSound(m_soundMove);
+				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Right
 			if (isAction(ActionState::RIGHT)) {
 				board.m_player.xPos++;
-				m_engine->getSoundManager().playSound(m_soundMove);
+				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Down
 			if (isAction(ActionState::BACKWARD)) {
 				board.m_player.yPos--;
-				m_engine->getSoundManager().playSound(m_soundMove);
+				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Up
 			if (isAction(ActionState::FORWARD)) {
 				board.m_player.yPos++;
-				m_engine->getSoundManager().playSound(m_soundMove);
+				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Swap Tiles
 			if (isAction(ActionState::JUMP)) {
 				if (swapTiles(std::make_pair(board.m_player.xPos, board.m_player.yPos), std::make_pair(board.m_player.xPos + 1, board.m_player.yPos), board)) {
 					board.m_player.tileSwaps.push_back({ board.m_player.xPos, board.m_player.xPos + 1, board.m_player.yPos, 0.0f });
-					m_engine->getSoundManager().playSound(m_soundSwitch, 0.5f, 1.5f);
+					m_engine->getManager_Sounds().playSound(m_soundSwitch, 0.5f, 1.5f);
 				}
 			}
 			// Fast Forward
 			if (isAction(ActionState::RUN)) {
 				board.m_skipWaiting = true;
 				board.m_rowsToAdd = 1;
-				m_engine->getSoundManager().playSound(m_soundScroll, 0.33f);
+				m_engine->getManager_Sounds().playSound(m_soundScroll, 0.33f);
 			}
 
 			board.m_player.xPos = std::min(4, std::max(0, board.m_player.xPos));

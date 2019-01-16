@@ -19,18 +19,20 @@ public:
 
 
 	// Public Interface Implementation
+	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
+	/** Increments the game simulation by a single tick.
+	@param		deltaTime		the delta time. */
+	virtual void frameTick(const float & deltaTime) override;
 
 
 	// Public Methods
-	/** Increments the game simulation by a single tick. 
-	@param		deltaTime		the delta time. */
-	void frameTick(const float & deltaTime);
+	void startGame();
 
 
 private:
 	// Private Attributes
-	bool m_readyToStart = false;
+	bool m_readyToStart = false, m_userReady = false;
 	float m_timeAccumulator = 0.0f;
 	std::vector<Game_System_Interface*> m_gameplaySystems;
 	ECSSystemList m_systemList;

@@ -12,7 +12,7 @@
 void Post_Processing_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
-	m_fxTechs.push_back(new Bloom(m_engine, m_engine->getGraphicsModule().getLightingFBOID(), m_engine->getGraphicsModule().getLightingTexID()));
+	m_fxTechs.push_back(new Bloom(m_engine, m_engine->getModule_Graphics().getLightingFBOID(), m_engine->getModule_Graphics().getLightingTexID()));
 	m_fxTechs.push_back(new HDR(m_engine));
 	m_fxTechs.push_back(new FXAA(m_engine));
 	m_fxTechs.push_back(new To_Screen(m_engine));

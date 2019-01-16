@@ -89,7 +89,7 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 
 		// Error Reporting
-		auto & msgMgr = m_engine->getMessageManager();
+		auto & msgMgr = m_engine->getManager_Messages();
 		if (glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			msgMgr.error("SSR Mipmap Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureMipsID))

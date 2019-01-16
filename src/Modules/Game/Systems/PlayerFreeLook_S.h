@@ -25,7 +25,7 @@ public:
 
 	// Interface Implementation
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		auto & graphicsModule = m_engine->getGraphicsModule();
+		auto & graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
 			Player3D_Component * playerComponent = (Player3D_Component*)componentParam[1];

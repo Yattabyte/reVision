@@ -72,7 +72,7 @@ public:
 		glCreateFramebuffers(1, &m_fbo_GB);
 
 		// Error Reporting
-		auto & msgMgr = m_engine->getMessageManager();
+		auto & msgMgr = m_engine->getManager_Messages();
 		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			msgMgr.error("Bloom Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))

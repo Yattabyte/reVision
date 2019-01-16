@@ -11,6 +11,7 @@
 #include "Modules\Graphics\Graphics_M.h"
 #include "Modules\Post Processing\Post_Processing_M.h"
 #include "Modules\Physics\Physics_M.h"
+#include "Modules\UI\UI_M.h"
 #include "Modules\World\World_M.h"
 #include "Modules\Game\Game_M.h"
 #include "Utilities\ActionState.h"
@@ -20,7 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.8.U";
+constexpr char ENGINE_VERSION[] = "2.9";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -53,8 +54,10 @@ public:
 	@param	exitObject	object signaling when to close the thread */
 	void tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context);
 	/** Checks if the engine wants to shut down.
-	@return	true if engine should shut down */
+	@return	true if engine should shut down. */
 	bool shouldClose();
+	/** Tells the engine to shut down. */
+	void shutDown();
 	/** Adds a component constructor to the ecs construction map.
 	@param	name				the component name type.
 	@param	constructor			the component constructor object. */
@@ -70,24 +73,32 @@ public:
 	ActionState & getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
 	PreferenceState & getPreferenceState() { return m_preferenceState; }
+
+	// Manager Accessors
 	/** Returns this engine's asset manager. */
-	AssetManager & getAssetManager() { return m_assetManager; }
+	AssetManager & getManager_Assets() { return m_assetManager; }
 	/** Returns this engine's model manager. */
-	ModelManager & getModelManager() { return m_modelManager; }
+	ModelManager & getManager_Models() { return m_modelManager; }
 	/** Returns this engine's material manager. */
-	MaterialManager & getMaterialManager() { return m_materialManager; }
+	MaterialManager & getManager_Materials() { return m_materialManager; }
 	/** Returns this engine's message manager. */
-	MessageManager & getMessageManager() { return m_messageManager; }
+	MessageManager & getManager_Messages() { return m_messageManager; }
 	/** Returns this engine's sound manager. */
-	SoundManager & getSoundManager() { return m_soundManager; }
+	SoundManager & getManager_Sounds() { return m_soundManager; }
+
+	// Module Accessors
 	/** Returns this engine's graphics module. */
-	Graphics_Module & getGraphicsModule() { return m_moduleGraphics; }
+	Graphics_Module & getModule_Graphics() { return m_moduleGraphics; }
+	/** Returns this engine's post-processing module. */
+	Post_Processing_Module & getModule_PostProcess() { return m_modulePProcess; }
+	/** Returns this engine's user-interface module. */
+	UI_Module & getModule_UI() { return m_moduleUI; }
 	/** Returns this engine's physics module. */
-	Physics_Module & getPhysicsModule() { return m_modulePhysics; }
+	Physics_Module & getModule_Physics() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
-	World_Module & getWorldModule() { return m_moduleWorld; }
+	World_Module & getModule_World() { return m_moduleWorld; }
 	/** Returns this engine's game module. */
-	Game_Module & getGameModule() { return m_moduleGame; }
+	Game_Module & getModule_Game() { return m_moduleGame; }
 
 
 	// Static Methods
@@ -129,6 +140,7 @@ private:
 	// Private Modules
 	Graphics_Module m_moduleGraphics;
 	Post_Processing_Module m_modulePProcess;
+	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
 	Game_Module m_moduleGame;

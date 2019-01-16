@@ -35,14 +35,14 @@ inline void parse(Engine * engine, Asset_Shader_Pkg & userAsset)
 }
 
 Shared_Shader_Pkg::Shared_Shader_Pkg(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Shader_Pkg>(std::dynamic_pointer_cast<Asset_Shader_Pkg>(engine->getAssetManager().shareAsset(typeid(Asset_Shader_Pkg).name(), filename)))
+	: std::shared_ptr<Asset_Shader_Pkg>(std::dynamic_pointer_cast<Asset_Shader_Pkg>(engine->getManager_Assets().shareAsset(typeid(Asset_Shader_Pkg).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Shader_Pkg>*)(this)) = std::make_shared<Asset_Shader_Pkg>(filename);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Shader_Pkg).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader_Pkg::initialize, get(), engine, (DIRECTORY_SHADER_PKG + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Shader_Pkg).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader_Pkg::initialize, get(), engine, (DIRECTORY_SHADER_PKG + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -59,7 +59,7 @@ void Asset_Shader_Pkg::initialize(Engine * engine, const std::string & relativeP
 	const bool found = Text_IO::Import_Text(engine, relativePath + EXT_PACKAGE, m_packageText);
 	
 	if (!found)
-		engine->getMessageManager().error("Asset_Shader_Pkg \"" + m_filename + "\" file does not exist");
+		engine->getManager_Messages().error("Asset_Shader_Pkg \"" + m_filename + "\" file does not exist");
 
 	// parse
 	parse(engine, *this);

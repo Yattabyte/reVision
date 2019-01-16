@@ -16,14 +16,14 @@ struct ShaderHeader {
 };
 
 Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded) 
-	: std::shared_ptr<Asset_Shader>(std::dynamic_pointer_cast<Asset_Shader>(engine->getAssetManager().shareAsset(typeid(Asset_Shader).name(), filename)))
+	: std::shared_ptr<Asset_Shader>(std::dynamic_pointer_cast<Asset_Shader>(engine->getManager_Assets().shareAsset(typeid(Asset_Shader).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
 		(*(std::shared_ptr<Asset_Shader>*)(this)) = std::make_shared<Asset_Shader>(filename);
 		// Submit data to asset manager
-		engine->getAssetManager().submitNewAsset(typeid(Asset_Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Asset_Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -87,7 +87,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 		// If we ever failed, initialize default shader
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
+			engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault(engine);
 		}
 	}
@@ -138,10 +138,10 @@ const bool Asset_Shader::loadCachedBinary(Engine * engine, const std::string & r
 				return true;
 			}
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+			engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 			return false;
 		}
-		engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to open binary cache.");
+		engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to open binary cache.");
 		return false;
 	}
 	// Safe, binary file simply doesn't exist. Don't error report.
@@ -162,7 +162,7 @@ const bool Asset_Shader::saveCachedBinary(Engine * engine, const std::string & r
 		file.close();
 		return true;
 	}
-	engine->getMessageManager().error("Asset_Shader \"" + m_filename + "\" failed to write to binary cache.");
+	engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to write to binary cache.");
 	return false;
 }
 
@@ -255,6 +255,6 @@ const bool ShaderObj::createGLShader(Engine * engine, const std::string & filena
 	// Report any errors
 	std::vector<GLchar> infoLog(getShaderiv(GL_INFO_LOG_LENGTH));
 	glGetShaderInfoLog(m_shaderID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
-	engine->getMessageManager().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+	engine->getManager_Messages().error("ShaderObj \"" + filename + "\" failed to compile. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 	return false;
 }

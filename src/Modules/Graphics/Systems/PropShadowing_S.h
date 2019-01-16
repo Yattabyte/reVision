@@ -49,7 +49,7 @@ public:
 		std::vector<int> skeletonData;
 		const bool renderStatic = m_flags & RenderStatic;
 		const bool renderDynamic = m_flags & RenderDynamic;
-		const glm::vec3 & eyePosition = m_engine->getGraphicsModule().getActiveCameraBuffer()->data->EyePosition;
+		const glm::vec3 & eyePosition = m_engine->getModule_Graphics().getActiveCameraBuffer()->data->EyePosition;
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];

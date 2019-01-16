@@ -70,9 +70,9 @@ public:
 
 			// Error Reporting
 			if (glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-				m_engine->getMessageManager().error("Skybox Framebuffer has encountered an error.");
+				m_engine->getManager_Messages().error("Skybox Framebuffer has encountered an error.");
 			if (!glIsTexture(m_cubemapMipped))
-				m_engine->getMessageManager().error("Skybox Texture is incomplete.");
+				m_engine->getManager_Messages().error("Skybox Texture is incomplete.");
 		});
 	}
 
