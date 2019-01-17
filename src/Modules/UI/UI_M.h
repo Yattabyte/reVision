@@ -44,7 +44,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<std::shared_ptr<UI_Element>> m_uiElements;
-	std::shared_ptr<UI_Element> m_startMenu;
+	std::shared_ptr<UI_Element> m_startMenu, m_optionsMenu;
 	MouseEvent m_mouseEvent;
 };
 

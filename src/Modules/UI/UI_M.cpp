@@ -1,5 +1,6 @@
 #include "Modules/UI/UI_M.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
+#include "Modules/UI/Macro Elements/OptionsMenu.h"
 #include "Engine.h"
 
 
@@ -19,9 +20,16 @@ void UI_Module::initialize(Engine * engine)
 	// Create main menu
 	m_startMenu = std::make_shared<StartMenu>(engine);
 	m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
-	m_startMenu->addCallback(StartMenu::on_start, [&, engine]() {engine->getModule_Game().startGame(); m_startMenu->setVisible(false); });
+	m_startMenu->addCallback(StartMenu::on_start, [&, engine]() { engine->getModule_Game().startGame(); m_startMenu->setVisible(false); });
+	m_startMenu->addCallback(StartMenu::on_options, [&, engine]() { m_startMenu->setVisible(false); m_optionsMenu->setVisible(true); });
 	m_startMenu->addCallback(StartMenu::on_quit, [engine]() {engine->shutDown(); });
-	m_uiElements.push_back(m_startMenu);
+
+	// Create options menu
+	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
+	m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
+	m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { m_startMenu->setVisible(true); m_optionsMenu->setVisible(false); });
+	m_optionsMenu->setVisible(false);
+	m_uiElements = { m_startMenu, m_optionsMenu };
 }
 
 void UI_Module::frameTick(const float & deltaTime)

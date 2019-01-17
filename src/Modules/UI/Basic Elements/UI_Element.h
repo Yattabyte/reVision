@@ -28,6 +28,7 @@ public:
 		on_mouse_exit,
 		on_mouse_press,
 		on_mouse_release,
+		last_interact_index = on_mouse_release + 1
 	};
 
 

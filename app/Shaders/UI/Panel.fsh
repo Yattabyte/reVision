@@ -9,7 +9,7 @@ layout (location = 0) out vec4 FragColor;
 
 void main()
 {	
-	const float border_width = 0.005f;
+	const float border_width = 0.01f * AspectRatio;
 	const float 
 		maxY = 1.0f - border_width,
 		minY = border_width,

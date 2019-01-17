@@ -55,7 +55,10 @@ protected:
 		const float position = innerRectSize - elementSize;
 		for (size_t x = 0; x < m_children.size(); ++x) {
 			m_children[x]->setScale(glm::vec2(elementSize, m_scale.y - m_margin));
-			m_children[x]->setPosition(glm::vec2(((2.0f * (float(x) / (float(m_children.size()) - 1.0f)) - 1.0f) * position), 0));
+			if (m_children.size() > 1)			
+				m_children[x]->setPosition(glm::vec2(((2.0f * (float(x) / (float(m_children.size()) - 1.0f)) - 1.0f) * position), 0));
+			else
+				m_children[x]->setPosition(glm::vec2(0.0f));
 		}
 	}
 
