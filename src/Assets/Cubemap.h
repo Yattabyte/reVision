@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_CUBEMAP_H
-#define	ASSET_CUBEMAP_H
+#ifndef	CUBEMAP_H
+#define	CUBEMAP_H
 
 #include "Assets/Image.h"
 #include "GL/glad/glad.h"
@@ -52,5 +52,5 @@ private:
 	// Private Attributes
 	friend class Shared_Cubemap;
 };
-#endif // ASSET_CUBEMAP_H
+#endif // CUBEMAP_H
 

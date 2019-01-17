@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_MESH_H
-#define	ASSET_MESH_H
+#ifndef	MESH_H
+#define	MESH_H
 
 #include "Assets/Asset.h"
 #include "Utilities/IO/Mesh_IO.h"
@@ -54,4 +54,4 @@ private:
 	friend class Shared_Mesh;
 };
 
-#endif // ASSET_MESH_H
+#endif // MESH_H

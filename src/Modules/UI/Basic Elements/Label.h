@@ -78,6 +78,7 @@ public:
 			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
 			m_shader->setUniform(2, newScale);
+			m_shader->setUniform(3, m_enabled ? glm::vec3(1.0f) : glm::vec3(0.75f));
 			m_textureFont->bind(0);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -85,6 +86,12 @@ public:
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 		UI_Element::renderElement(position, newScale);
+	}
+	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
+		return false;
+	}
+	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
+		return false;
 	}
 
 

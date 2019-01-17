@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_SHADER_PKG_H
-#define	ASSET_SHADER_PKG_H
+#ifndef	SHADER_PKG_H
+#define	SHADER_PKG_H
 
 #include "Assets/Asset.h"
 #include "glm/glm.hpp"
@@ -56,4 +56,4 @@ private:
 	friend class Shared_Shader_Pkg;
 };
 
-#endif // ASSET_SHADER_PKG_H
+#endif // SHADER_PKG_H

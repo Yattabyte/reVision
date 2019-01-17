@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_LEVEL_H
-#define	ASSET_LEVEL_H
+#ifndef	LEVEL_H
+#define	LEVEL_H
 
 #include "Assets/Asset.h"
 #include <any>
@@ -56,4 +56,4 @@ struct LevelStruct_Entity {
 	std::vector<LevelStruct_Component> components;
 };
 
-#endif // ASSET_LEVEL_H
+#endif // LEVEL_H

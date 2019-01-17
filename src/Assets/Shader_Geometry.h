@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_SHADER_GEOMETRY_H
-#define	ASSET_SHADER_GEOMETRY_H
+#ifndef	SHADER_GEOMETRY_H
+#define	SHADER_GEOMETRY_H
 
 #include "Assets/Asset.h"
 #include "Assets/Shader.h"
@@ -56,4 +56,4 @@ private:
 	friend class Shared_Shader_Geometry;
 };
 
-#endif // ASSET_SHADER_GEOMETRY_H
+#endif // SHADER_GEOMETRY_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_PRIMITIVE_H
-#define	ASSET_PRIMITIVE_H
+#ifndef	PRIMITIVE_H
+#define	PRIMITIVE_H
 
 #include "Assets/Mesh.h"
 #include "GL/glad/glad.h"
@@ -61,4 +61,4 @@ struct Single_Primitive_Vertex {
 	glm::vec2 uv;
 };
 
-#endif // ASSET_PRIMITIVE_H
+#endif // PRIMITIVE_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_COLLIDER_H
-#define	ASSET_COLLIDER_H
+#ifndef	COLLIDER_H
+#define	COLLIDER_H
 
 #include "Assets/Mesh.h"
 #include <btBulletDynamicsCommon.h>
@@ -46,4 +46,4 @@ protected:
 	friend class Shared_Collider;
 };
 
-#endif // ASSET_COLLIDER_H
+#endif // COLLIDER_H

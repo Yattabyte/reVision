@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_IMAGE_H
-#define	ASSET_IMAGE_H
+#ifndef	IMAGE_H
+#define	IMAGE_H
 
 #include "Assets/Asset.h"
 #include "GL/glad/glad.h"
@@ -74,4 +74,4 @@ private:
 	friend class Shared_Image;
 };
 
-#endif // ASSET_IMAGE_H
+#endif // IMAGE_H

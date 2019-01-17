@@ -7,6 +7,7 @@ layout (location = 1) flat in int Index;
 layout (location = 0) out vec4 FragColor;
 
 layout (binding = 0) uniform sampler2D FontTexture;
+layout (location = 3) uniform vec3 color;
 
 layout (std430, binding = 8) readonly buffer TextBuffer {
 	int count;
@@ -20,5 +21,5 @@ void main()
 	const float x = float(int(character % 11) / 11.0f);
 	const float y = 1.0f - (float(int(character / 11) / 11.0f) + (1.0f / 11.0f));
 	const vec2 newTexCoord = (TexCoord / 11.0f) + vec2(x, y);
-	FragColor = texture(FontTexture, newTexCoord);
+	FragColor = texture(FontTexture, newTexCoord) * vec4(color, 1);
 }

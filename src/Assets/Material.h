@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_MATERIAL_H
-#define	ASSET_MATERIAL_H
+#ifndef	MATERIAL_H
+#define	MATERIAL_H
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 
@@ -75,4 +75,4 @@ private:
 	friend class Shared_Material;
 };
 
-#endif // ASSET_MATERIAL_H
+#endif // MATERIAL_H

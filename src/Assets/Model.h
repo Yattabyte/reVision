@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_MODEL_H
-#define	ASSET_MODEL_H
+#ifndef	MODEL_H
+#define	MODEL_H
 
 #include "Assets/Mesh.h"
 #include "Assets/Material.h"
@@ -76,4 +76,4 @@ private:
 	friend class Shared_Model;
 };
 
-#endif // ASSET_MODEL_H
+#endif // MODEL_H

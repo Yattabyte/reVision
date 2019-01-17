@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_TEXTURE_H
-#define	ASSET_TEXTURE_H
+#ifndef	TEXTURE_H
+#define	TEXTURE_H
 
 #include "Assets/Image.h"
 #include "GL/glad/glad.h"
@@ -61,4 +61,4 @@ private:
 	friend class Shared_Texture;
 };
 
-#endif // ASSET_TEXTURE_H
+#endif // TEXTURE_H

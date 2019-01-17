@@ -37,9 +37,17 @@ public:
 
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine);
-		optionsButton->setText("Options");
+		optionsButton->setText("Options (disabled)");
 		optionsButton->setBevelRadius(15.0F);
+		optionsButton->setEnabled(false);
 		mainLayout->addElement(optionsButton);
+
+		// Add 'Controls' button
+		auto controlsButton = std::make_shared<Button>(engine);
+		controlsButton->setText("Controls (disabled)");
+		controlsButton->setBevelRadius(15.0F);
+		controlsButton->setEnabled(false);
+		mainLayout->addElement(controlsButton);
 
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine);

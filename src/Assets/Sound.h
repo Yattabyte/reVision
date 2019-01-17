@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_SOUND_H
-#define	ASSET_SOUND_H
+#ifndef	SOUND_H
+#define	SOUND_H
 
 #include "Assets/Asset.h"
 
@@ -45,4 +45,4 @@ protected:
 	friend class Shared_Sound;
 };
 
-#endif // ASSET_SOUND_H
+#endif // SOUND_H

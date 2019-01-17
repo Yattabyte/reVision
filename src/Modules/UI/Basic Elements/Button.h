@@ -44,6 +44,7 @@ public:
 		// All buttons have labels, but it isn't interactive
 		m_label = std::make_shared<Label>(engine);
 		m_label->setText("");
+		addElement(m_label);
 
 		// Callbacks
 		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
@@ -194,13 +195,21 @@ public:
 			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
 			m_shader->setUniform(2, newScale);
-			m_shader->setUniform(3, m_highlighted);
-			m_shader->setUniform(4, m_pressed);
+			glm::vec3 color(0.0f);
+			if (m_enabled) {
+				color = m_highlighted ? glm::vec3(225, 200, 25) : glm::vec3(0.0f);
+				if (m_pressed)
+					color = glm::vec3(33, 99, 66);
+				else
+					color += glm::vec3(50, 200, 50);
+			}
+			else
+				color = glm::vec3(100, 125, 100);
+			m_shader->setUniform(3, color / 255.0f);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
-		m_label->renderElement(newPosition, newScale);
 		UI_Element::renderElement(position, newScale);
 	}
 

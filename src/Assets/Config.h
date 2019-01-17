@@ -1,6 +1,6 @@
 #pragma once
-#ifndef	ASSET_CONFIG_H
-#define	ASSET_CONFIG_H
+#ifndef	CONFIG_H
+#define	CONFIG_H
 
 #include "Assets/Asset.h"
 #include <map>
@@ -63,4 +63,4 @@ private:
 	friend class Shared_Config;
 }; 
 
-#endif //ASSET_CONFIG_H
+#endif //CONFIG_H
