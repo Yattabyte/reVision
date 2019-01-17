@@ -2,8 +2,8 @@
 #ifndef SKELETALANIMATION_C_H
 #define SKELETALANIMATION_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Assets\Asset_Mesh.h"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Assets/Asset_Mesh.h"
 
 
 /** OpenGL buffer for animated props.

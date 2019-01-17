@@ -2,7 +2,7 @@
 #ifndef GAME_SYSTEM_INTERFACE_H
 #define GAME_SYSTEM_INTERFACE_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Utilities/ECS/ecsSystem.h"
 
 
 /** Interface for game systems */

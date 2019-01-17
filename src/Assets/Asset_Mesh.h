@@ -2,12 +2,12 @@
 #ifndef	ASSET_MESH_H
 #define	ASSET_MESH_H
 
-#include "Assets\Asset.h"
-#include "Utilities\IO\Mesh_IO.h"
-#include "assimp\scene.h"
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
-#include "glm\geometric.hpp"
+#include "Assets/Asset.h"
+#include "Utilities/IO/Mesh_IO.h"
+#include "assimp/scene.h"
+#include "GL/glad/glad.h"
+#include "GLM/glm.hpp"
+#include "glm/geometric.hpp"
 #include <map>
 #include <string>
 #include <vector>

@@ -2,14 +2,14 @@
 #ifndef RENDERING_S_H
 #define RENDERING_S_H 
 
-#include "Modules\Game\Systems\Interface.h"
-#include "Modules\Game\Components\Score_C.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Model.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Texture.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\DynamicBuffer.h"
+#include "Modules/Game/Systems/Interface.h"
+#include "Modules/Game/Components/Score_C.h"
+#include "Assets/Asset_Primitive.h"
+#include "Assets/Asset_Model.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Texture.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 
 

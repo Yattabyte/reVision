@@ -2,9 +2,9 @@
 #ifndef	ASSET_TEXTURE_H
 #define	ASSET_TEXTURE_H
 
-#include "Assets\Asset_Image.h"
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
+#include "Assets/Asset_Image.h"
+#include "GL/glad/glad.h"
+#include "GLM/glm.hpp"
 
 
 class Engine;

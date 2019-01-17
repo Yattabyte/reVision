@@ -3,18 +3,18 @@
 #define TRANSFORMSYNC_GFX_S_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Utilities/ECS/ecsSystem.h"
 #include "Engine.h"
-#include "glm\glm.hpp"
-#include "glm\gtx\component_wise.hpp"
+#include "glm/glm.hpp"
+#include "glm/gtx/component_wise.hpp"
 
 /* Component Types Used */
-#include "Utilities\ECS\Transform_C.h"
-#include "Modules\Graphics\Components\Prop_C.h"
-#include "Modules\Graphics\Components\LightDirectional_C.h"
-#include "Modules\Graphics\Components\LightPoint_C.h"
-#include "Modules\Graphics\Components\LightSpot_C.h"
-#include "Modules\Graphics\Components\Reflector_C.h"
+#include "Utilities/ECS/Transform_C.h"
+#include "Modules/Graphics/Components/Prop_C.h"
+#include "Modules/Graphics/Components/LightDirectional_C.h"
+#include "Modules/Graphics/Components/LightPoint_C.h"
+#include "Modules/Graphics/Components/LightSpot_C.h"
+#include "Modules/Graphics/Components/Reflector_C.h"
 
 
 /** A system responsible for updating graphics components that share a common transformation. */

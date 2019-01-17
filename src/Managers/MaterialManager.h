@@ -2,7 +2,7 @@
 #ifndef MATERIALMANAGER_H
 #define MATERIALMANAGER_H
 
-#include "GL\glad\glad.h"
+#include "GL/glad/glad.h"
 #include <deque>
 #include <shared_mutex>
 

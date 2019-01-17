@@ -1,15 +1,15 @@
 #include "Engine.h"
-#include "Utilities\ECS\Transform_C.h"
-#include "LinearMath\btScalar.h"
+#include "Utilities/ECS/Transform_C.h"
+#include "LinearMath/btScalar.h"
 #include <direct.h>
 
 // OpenGL Dependent Systems //
-#include "GL\glad\glad.h"
-#include "GLFW\glfw3.h"
+#include "GL/glad/glad.h"
+#include "GLFW/glfw3.h"
 
 // Importers Used //
-#include "Utilities\IO\Image_IO.h"
-#include "Utilities\IO\Mesh_IO.h"
+#include "Utilities/IO/Image_IO.h"
+#include "Utilities/IO/Mesh_IO.h"
 
 
 /***************************

@@ -2,9 +2,9 @@
 #ifndef MESSAGEMANAGER_H
 #define MESSAGEMANAGER_H
 
-#include <string>
-#include <shared_mutex>
 #include <deque>
+#include <shared_mutex>
+#include <string>
 
 
 /** Provides some message reporting functionality for the engine.

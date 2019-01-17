@@ -2,20 +2,20 @@
 #ifndef GRAPHICS_MODULE_H
 #define GRAPHICS_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Modules\Graphics\Common\FBO_Geometry.h"
-#include "Modules\Graphics\Common\FBO_Lighting.h"
-#include "Modules\Graphics\Common\FBO_Reflection.h"
-#include "Modules\Graphics\Common\FBO_LightBounce.h"
-#include "Modules\Graphics\Common\RH_Volume.h"
-#include "Modules\Graphics\Common\VisualFX.h"
-#include "Modules\Graphics\Components\Camera_C.h"
-#include "Assets\Asset_Shader.h"
-#include "Utilities\ECS\ecsSystem.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\MappedChar.h"
+#include "Modules/Engine_Module.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/FBO_Geometry.h"
+#include "Modules/Graphics/Common/FBO_Lighting.h"
+#include "Modules/Graphics/Common/FBO_Reflection.h"
+#include "Modules/Graphics/Common/FBO_LightBounce.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/VisualFX.h"
+#include "Modules/Graphics/Components/Camera_C.h"
+#include "Assets/Asset_Shader.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/MappedChar.h"
 
 
 class ECS;

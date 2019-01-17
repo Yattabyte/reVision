@@ -2,12 +2,12 @@
 #ifndef JOIN_REFLECTIONS_H
 #define JOIN_REFLECTIONS_H
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Texture.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Texture.h"
+#include "Assets/Asset_Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 

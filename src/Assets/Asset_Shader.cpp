@@ -1,6 +1,6 @@
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Shader_Pkg.h"
-#include "Utilities\IO\Text_IO.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Shader_Pkg.h"
+#include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
 #include <fstream>
 

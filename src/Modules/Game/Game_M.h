@@ -2,12 +2,11 @@
 #ifndef GAME_MODULE_H
 #define GAME_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Modules\Game\Common_Definitions.h"
-#include "Modules\Game\Systems\Interface.h"
-#include "Utilities\ECS\ecsSystem.h"
-#include "Utilities\GL\VectorBuffer.h"
-
+#include "Modules/Engine_Module.h"
+#include "Modules/Game/Common_Definitions.h"
+#include "Modules/Game/Systems/Interface.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Utilities/GL/VectorBuffer.h"
 
 
 /** A module responsible for the game. */

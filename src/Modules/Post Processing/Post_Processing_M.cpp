@@ -1,13 +1,13 @@
-#include "Post_Processing_M.h"
+#include "Modules/Post Processing/Post_Processing_M.h"
+#include "Modules/Graphics/Graphics_M.h"
 
 /* Post Processing Techniques Used */
-#include "Modules\Post Processing\Effects\Bloom.h"
-#include "Modules\Post Processing\Effects\HDR.h"
-#include "Modules\Post Processing\Effects\FXAA.h"
-#include "Modules\Post Processing\Effects\To_Screen.h"
-#include "Modules\Post Processing\Effects\Frametime_Counter.h"
+#include "Modules/Post Processing/Effects/Bloom.h"
+#include "Modules/Post Processing/Effects/HDR.h"
+#include "Modules/Post Processing/Effects/FXAA.h"
+#include "Modules/Post Processing/Effects/To_Screen.h"
+#include "Modules/Post Processing/Effects/Frametime_Counter.h"
 
-#include "Modules\Graphics\Graphics_M.h"
 
 void Post_Processing_Module::initialize(Engine * engine)
 {

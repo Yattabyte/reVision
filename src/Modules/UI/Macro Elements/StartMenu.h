@@ -2,11 +2,11 @@
 #ifndef STARTMENU_H
 #define STARTMENU_H
 
-#include "Modules\UI\Basic Elements\UI_Element.h"
-#include "Modules\UI\Basic Elements\Button.h"
-#include "Modules\UI\Basic Elements\Layout_Horizontal.h"
-#include "Modules\UI\Basic Elements\Layout_Vertical.h"
-#include "Modules\UI\Basic Elements\Panel.h"
+#include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Basic Elements/Button.h"
+#include "Modules/UI/Basic Elements/Layout_Horizontal.h"
+#include "Modules/UI/Basic Elements/Layout_Vertical.h"
+#include "Modules/UI/Basic Elements/Panel.h"
 #include "Engine.h"
 
 

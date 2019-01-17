@@ -2,7 +2,7 @@
 #ifndef STATICBUFFER_H
 #define STATICBUFFER_H
 
-#include "GL\glad\glad.h"
+#include "GL/glad/glad.h"
 #include <utility>
 
 

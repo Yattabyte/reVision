@@ -2,8 +2,8 @@
 #ifndef FBO_SHADOW_DIRECTIONAL_H
 #define FBO_SHADOW_DIRECTIONAL_H 
 
-#include "Utilities\GL\FBO.h"
-#include "GLFW\glfw3.h"
+#include "Utilities/GL/FBO.h"
+#include "GLFW/glfw3.h"
 
 
 /** A framebuffer, formatted for storing directional light shadows, 4 at a time (parallel split cascaded shadow maps). */

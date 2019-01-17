@@ -1,26 +1,26 @@
-#include "Modules\Game\Game_M.h"
-#include "Assets\Asset_Image.h"
+#include "Modules/Game/Game_M.h"
+#include "Assets/Asset_Image.h"
 #include "Engine.h"
 #include <atomic>
 
 /* Component Types Used */
-#include "Modules\Game\Components\Board_C.h"
-#include "Modules\Game\Components\Score_C.h"
-#include "Modules\Game\Components\Player3D_C.h"
+#include "Modules/Game/Components/Board_C.h"
+#include "Modules/Game/Components/Score_C.h"
+#include "Modules/Game/Components/Player3D_C.h"
 
 /* Game System Types Used */
-#include "Modules\Game\Systems\IntroOutro_S.h"
-#include "Modules\Game\Systems\ColorScheme_S.h"
-#include "Modules\Game\Systems\Gravity_S.h"
-#include "Modules\Game\Systems\PlayerInput_S.h"
-#include "Modules\Game\Systems\PlayerFreeLook_S.h"
-#include "Modules\Game\Systems\Push_S.h"
-#include "Modules\Game\Systems\Score_S.h"
-#include "Modules\Game\Systems\Timer_S.h"
-#include "Modules\Game\Systems\Music.h"
+#include "Modules/Game/Systems/IntroOutro_S.h"
+#include "Modules/Game/Systems/ColorScheme_S.h"
+#include "Modules/Game/Systems/Gravity_S.h"
+#include "Modules/Game/Systems/PlayerInput_S.h"
+#include "Modules/Game/Systems/PlayerFreeLook_S.h"
+#include "Modules/Game/Systems/Push_S.h"
+#include "Modules/Game/Systems/Score_S.h"
+#include "Modules/Game/Systems/Timer_S.h"
+#include "Modules/Game/Systems/Music.h"
 
 /* Rendering System Types Used */
-#include "Modules\Game\Systems\Rendering_S.h"
+#include "Modules/Game/Systems/Rendering_S.h"
 
 
 void Game_Module::initialize(Engine * engine)

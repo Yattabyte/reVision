@@ -2,10 +2,10 @@
 #ifndef FXAA_H
 #define FXAA_H
 
-#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
+#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 
 

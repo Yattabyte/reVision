@@ -1,9 +1,9 @@
-#include "Utilities\IO\Mesh_IO.h"
+#include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
-#include "assimp\Importer.hpp"
-#include "assimp\postprocess.h"
-#include "assimp\scene.h"
-#include "assimp\version.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/version.h"
 #include <atomic>
 
 

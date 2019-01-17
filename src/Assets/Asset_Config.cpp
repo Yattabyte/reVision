@@ -1,5 +1,5 @@
-#include "Assets\Asset_Config.h"
-#include "Utilities\IO\Text_IO.h"
+#include "Assets/Asset_Config.h"
+#include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
 #include <fstream>
 

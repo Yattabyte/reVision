@@ -3,10 +3,10 @@
 #define	Mesh_IO_H
 #define NUM_BONES_PER_VEREX 4
 
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\quaternion.hpp"
+#include "GL/glad/glad.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include <map>
 #include <string>
 #include <vector>

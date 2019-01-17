@@ -2,10 +2,10 @@
 #ifndef SCORE_C_H
 #define SCORE_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Modules\Game\Common_Definitions.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "glm\glm.hpp"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/Game/Common_Definitions.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "glm/glm.hpp"
 
 
 /** Holds an int coordinate pair. */

@@ -2,8 +2,8 @@
 #ifndef ASSETMANAGER_H
 #define ASSETMANAGER_H
 
-#include "Assets\Asset.h"
-#include "Utilities\MappedChar.h"
+#include "Assets/Asset.h"
+#include "Utilities/MappedChar.h"
 #include <chrono>
 #include <deque>
 #include <functional>

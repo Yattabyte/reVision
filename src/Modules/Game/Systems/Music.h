@@ -2,10 +2,10 @@
 #ifndef MUSIC_S_H
 #define MUSIC_S_H 
 
-#include "Modules\Game\Systems\Interface.h"
-#include "Modules\Game\Components\Board_C.h"
-#include "Modules\Game\Common_Definitions.h"
-#include "Assets\Asset_Sound.h"
+#include "Modules/Game/Systems/Interface.h"
+#include "Modules/Game/Components/Board_C.h"
+#include "Modules/Game/Common_Definitions.h"
+#include "Assets/Asset_Sound.h"
 #include "Engine.h"
 
 

@@ -2,9 +2,10 @@
 #ifndef	ASSET_CONFIG_H
 #define	ASSET_CONFIG_H
 
-#include "Assets\Asset.h"
+#include "Assets/Asset.h"
 #include <map>
 #include <vector>
+
 
 constexpr float UNDEFINED_CVAL = -12345.67890f; // Undefined preference
 

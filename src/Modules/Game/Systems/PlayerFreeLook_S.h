@@ -2,13 +2,13 @@
 #ifndef PLAYERFREELOOK_S_H
 #define PLAYERFREELOOK_S_H 
 
-#include "Modules\Game\Systems\Interface.h"
+#include "Modules/Game/Systems/Interface.h"
 #include "Engine.h"
-#include "glm\glm.hpp"
+#include "glm/glm.hpp"
 
 /* Component Types Used */
-#include "Utilities\ECS\Transform_C.h"
-#include "Modules\Game\Components\Player3D_C.h"
+#include "Utilities/ECS/Transform_C.h"
+#include "Modules/Game/Components/Player3D_C.h"
 
 
 /** A system responsible for updating player components based on keyboard/mouse. */

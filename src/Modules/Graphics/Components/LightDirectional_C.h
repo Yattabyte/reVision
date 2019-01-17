@@ -2,10 +2,10 @@
 #ifndef LIGHTDIRECTIONAL_C_H
 #define LIGHTDIRECTIONAL_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Modules\Graphics\Common\FBO_Shadow_Directional.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "glm\glm.hpp"
+#include "Modules/Graphics/Common/FBO_Shadow_Directional.h"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "glm/glm.hpp"
 
 
 /////////////////////////

@@ -2,11 +2,11 @@
 #ifndef SKELETONANIMATION_S_H
 #define SKELETONANIMATION_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
+#include "Utilities/ECS/ecsSystem.h"
 
 /* Component Types Used */
-#include "Modules\Graphics\Components\Prop_C.h"
-#include "Modules\Graphics\Components\Skeleton_C.h"
+#include "Modules/Graphics/Components/Prop_C.h"
+#include "Modules/Graphics/Components/Skeleton_C.h"
 
 
 /** A system responsible for animating props with skeleton components. */

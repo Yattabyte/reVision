@@ -2,16 +2,16 @@
 #ifndef LIGHTSPOT_FX_H
 #define LIGHTSPOT_FX_H 
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Modules\Graphics\Systems\LightSpot_S.h"
-#include "Modules\Graphics\Systems\PropShadowing_S.h"
-#include "Modules\Graphics\Common\FBO_Shadow_Spot.h"
-#include "Modules\Graphics\Effects\PropShadowing_FX.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Primitive.h"
+#include "Modules/Graphics/Systems/LightSpot_S.h"
+#include "Modules/Graphics/Systems/PropShadowing_S.h"
+#include "Modules/Graphics/Common/FBO_Shadow_Spot.h"
+#include "Modules/Graphics/Effects/PropShadowing_FX.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW\glfw3.h"
+#include "GLFW/glfw3.h"
 
 
 /** A core-rendering technique which applies spot lighting to the scene. */

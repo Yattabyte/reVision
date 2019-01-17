@@ -2,8 +2,8 @@
 #ifndef POST_PROCESSING_MODULE_H
 #define POST_PROCESSING_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
+#include "Modules/Engine_Module.h"
+#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
 #include <vector>
 
 

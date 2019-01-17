@@ -2,12 +2,12 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Primitive.h"
+#include "Assets/Asset_Texture.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 

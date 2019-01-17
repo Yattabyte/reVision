@@ -2,12 +2,12 @@
 #ifndef FRAMETIME_COUNTER_H
 #define FRAMETIME_COUNTER_H
 
-#include "Modules\Post Processing\Effects\GFX_PP_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Primitive.h"
+#include "Assets/Asset_Texture.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 

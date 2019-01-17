@@ -2,10 +2,10 @@
 #ifndef MODEL_C_H
 #define MODEL_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Assets\Asset_Model.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\Transform.h"
+#include "Assets/Asset_Model.h"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "Utilities/Transform.h"
 
 
 class Engine;

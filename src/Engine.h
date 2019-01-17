@@ -2,26 +2,26 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Utilities\ECS\ecs.h"
-#include "Managers\AssetManager.h"
-#include "Managers\ModelManager.h"
-#include "Managers\MaterialManager.h"
-#include "Managers\MessageManager.h"
-#include "Managers\SoundManager.h"
-#include "Modules\Graphics\Graphics_M.h"
-#include "Modules\Post Processing\Post_Processing_M.h"
-#include "Modules\Physics\Physics_M.h"
-#include "Modules\UI\UI_M.h"
-#include "Modules\World\World_M.h"
-#include "Modules\Game\Game_M.h"
-#include "Utilities\ActionState.h"
-#include "Utilities\InputBinding.h"
-#include "Utilities\PreferenceState.h"
-#include "Utilities\MappedChar.h"
+#include "Utilities/ECS/ecs.h"
+#include "Managers/AssetManager.h"
+#include "Managers/ModelManager.h"
+#include "Managers/MaterialManager.h"
+#include "Managers/MessageManager.h"
+#include "Managers/SoundManager.h"
+#include "Modules/Graphics/Graphics_M.h"
+#include "Modules/Post Processing/Post_Processing_M.h"
+#include "Modules/Physics/Physics_M.h"
+#include "Modules/UI/UI_M.h"
+#include "Modules/World/World_M.h"
+#include "Modules/Game/Game_M.h"
+#include "Utilities/ActionState.h"
+#include "Utilities/InputBinding.h"
+#include "Utilities/PreferenceState.h"
+#include "Utilities/MappedChar.h"
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.9";
+constexpr char ENGINE_VERSION[] = "2.9.A";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 

@@ -2,16 +2,16 @@
 #ifndef PROPRENDERING_S_H
 #define PROPRENDERING_S_H
 
-#include "Utilities\ECS\ecsSystem.h"
-#include "Assets\Asset_Shader.h"
-#include "Utilities\GL\FBO.h"
-#include "Utilities\GL\DynamicBuffer.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Assets/Asset_Shader.h"
+#include "Utilities/GL/FBO.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
 #include <vector>
 
 /* Component Types Used */
-#include "Modules\Graphics\Components\Prop_C.h"
-#include "Modules\Graphics\Components\Skeleton_C.h"
+#include "Modules/Graphics/Components/Prop_C.h"
+#include "Modules/Graphics/Components/Skeleton_C.h"
 
 
 /** A struct that holds rendering data that can change frame-to-frame. */

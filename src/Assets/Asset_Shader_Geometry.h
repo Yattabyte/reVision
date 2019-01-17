@@ -2,11 +2,11 @@
 #ifndef	ASSET_SHADER_GEOMETRY_H
 #define	ASSET_SHADER_GEOMETRY_H
 
-#include "Assets\Asset.h"
-#include "Assets\Asset_Shader.h"
-#include "glm\glm.hpp"
-#include "GL\glad\glad.h"
-#include "GLM\gtc\type_ptr.hpp"
+#include "Assets/Asset.h"
+#include "Assets/Asset_Shader.h"
+#include "glm/glm.hpp"
+#include "GL/glad/glad.h"
+#include "GLM/gtc/type_ptr.hpp"
 #include <string>
 
 

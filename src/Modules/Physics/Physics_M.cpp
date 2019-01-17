@@ -1,9 +1,9 @@
-#include "Physics_M.h"
+#include "Modules/Physics/Physics_M.h"
 #include "Engine.h"
 
 /* Component Types Used */
-#include "Modules\Physics\Components\Collider_C.h"
-#include "Modules\Physics\Systems\TransformSync_S.h"
+#include "Modules/Physics/Components/Collider_C.h"
+#include "Modules/Physics/Systems/TransformSync_S.h"
 
 
 Physics_Module::~Physics_Module()

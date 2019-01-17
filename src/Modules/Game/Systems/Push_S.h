@@ -2,10 +2,10 @@
 #ifndef PUSH_S_H
 #define PUSH_S_H 
 
-#include "Modules\Game\Systems\Interface.h"
-#include "Modules\Game\Components\Board_C.h"
-#include "Modules\Game\Components\Score_C.h"
-#include "Modules\Game\Common_Lambdas.h"
+#include "Modules/Game/Systems/Interface.h"
+#include "Modules/Game/Components/Board_C.h"
+#include "Modules/Game/Components/Score_C.h"
+#include "Modules/Game/Common_Lambdas.h"
 #include <algorithm>  
 #include <chrono>
 #include <random>

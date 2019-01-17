@@ -2,7 +2,7 @@
 #ifndef VECTORBUFFER_H
 #define VECTORBUFFER_H
 
-#include "GL\glad\glad.h"
+#include "GL/glad/glad.h"
 #include <utility>
 
 

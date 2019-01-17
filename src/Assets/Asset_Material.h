@@ -4,11 +4,11 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 
-#include "Assets\Asset_Image.h"
-#include "Managers\MaterialManager.h"
+#include "Assets/Asset_Image.h"
+#include "Managers/MaterialManager.h"
+#include "GL/glad/glad.h"
+#include "GLM/glm.hpp"
 #include <vector>
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
 
 
 class Engine;

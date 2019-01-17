@@ -2,9 +2,9 @@
 #ifndef ECS_H
 #define ECS_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Utilities\ECS\ecsSystem.h"
-#include "Utilities\MappedChar.h"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Utilities/MappedChar.h"
 #include <any>
 #include <map>
 #include <vector>

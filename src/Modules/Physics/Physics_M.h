@@ -2,8 +2,8 @@
 #ifndef PHYSICS_MODULE_H
 #define PHYSICS_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Utilities\ECS\ecsSystem.h"
+#include "Modules/Engine_Module.h"
+#include "Utilities/ECS/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 

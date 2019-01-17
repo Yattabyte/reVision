@@ -2,7 +2,7 @@
 #ifndef COMMON_DEFINITIONS_H
 #define COMMON_DEFINITIONS_H 
 
-#include "glm\glm.hpp"
+#include "glm/glm.hpp"
 
 
 constexpr int	BOARD_WIDTH					= 6u;

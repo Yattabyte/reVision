@@ -2,9 +2,9 @@
 #ifndef FBO_GEOMETRY_H
 #define FBO_GEOMETRY_H 
 
-#include "Utilities\GL\FBO.h"
-#include "GLFW\glfw3.h"
-#include "glm\glm.hpp"
+#include "Utilities/GL/FBO.h"
+#include "GLFW/glfw3.h"
+#include "glm/glm.hpp"
 
 
 /** A framebuffer, formatted to support rendering geometry (deferred rendering/gbuffer). */

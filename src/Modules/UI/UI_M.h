@@ -2,9 +2,9 @@
 #ifndef UI_MODULE_H
 #define UI_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Modules\UI\Basic Elements\UI_Element.h"
-#include "Modules\UI\MouseEvent.h"
+#include "Modules/Engine_Module.h"
+#include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/MouseEvent.h"
 #include <memory>
 #include <vector>
 

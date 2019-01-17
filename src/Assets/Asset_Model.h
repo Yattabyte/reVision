@@ -2,13 +2,13 @@
 #ifndef	ASSET_MODEL_H
 #define	ASSET_MODEL_H
 
-#include "Assets\Asset_Mesh.h"
-#include "Assets\Asset_Material.h"
-#include "Managers\ModelManager.h"
-#include "assimp\scene.h"
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
-#include "glm\geometric.hpp"
+#include "Assets/Asset_Mesh.h"
+#include "Assets/Asset_Material.h"
+#include "Managers/ModelManager.h"
+#include "assimp/scene.h"
+#include "GL/glad/glad.h"
+#include "GLM/glm.hpp"
+#include "glm/geometric.hpp"
 #include <map>
 #include <string>
 #include <vector>

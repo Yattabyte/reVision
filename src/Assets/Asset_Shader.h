@@ -2,10 +2,10 @@
 #ifndef	ASSET_SHADER_H
 #define	ASSET_SHADER_H
 
-#include "Assets\Asset.h"
-#include "glm\glm.hpp"
-#include "GL\glad\glad.h"
-#include "GLM\gtc\type_ptr.hpp"
+#include "Assets/Asset.h"
+#include "glm/glm.hpp"
+#include "GL/glad/glad.h"
+#include "GLM/gtc/type_ptr.hpp"
 #include <string>
 
 

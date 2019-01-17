@@ -2,9 +2,9 @@
 #ifndef	ASSET_PRIMITIVE_H
 #define	ASSET_PRIMITIVE_H
 
-#include "Assets\Asset_Mesh.h"
-#include "GL\glad\glad.h"
-#include "GLM\glm.hpp"
+#include "Assets/Asset_Mesh.h"
+#include "GL/glad/glad.h"
+#include "GLM/glm.hpp"
 #include <vector>
 
 

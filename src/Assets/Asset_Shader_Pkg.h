@@ -2,9 +2,9 @@
 #ifndef	ASSET_SHADER_PKG_H
 #define	ASSET_SHADER_PKG_H
 
-#include "Assets\Asset.h"
-#include "glm\glm.hpp"
-#include "GL\glad\glad.h"
+#include "Assets/Asset.h"
+#include "glm/glm.hpp"
+#include "GL/glad/glad.h"
 #include <string>
 
 

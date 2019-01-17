@@ -1,7 +1,7 @@
-#include "Assets\Asset_Image.h"
-#include "Utilities\IO\Image_IO.h"
+#include "Assets/Asset_Image.h"
+#include "Utilities/IO/Image_IO.h"
 #include "Engine.h"
-#include "glm\gtc\type_ptr.hpp"
+#include "glm/gtc/type_ptr.hpp"
 
 
 Shared_Image::Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2>& specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)

@@ -2,9 +2,9 @@
 #ifndef PLAYER3D_C_H
 #define PLAYER3D_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Utilities\Transform.h"
-#include "glm\glm.hpp"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/Transform.h"
+#include "glm/glm.hpp"
 
 
 /** A component representing a basic player. */

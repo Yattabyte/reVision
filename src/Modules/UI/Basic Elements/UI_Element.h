@@ -2,7 +2,7 @@
 #ifndef UI_ELEMENT_H
 #define UI_ELEMENT_H
 
-#include "Modules\UI\MouseEvent.h"
+#include "Modules/UI/MouseEvent.h"
 #include "GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"

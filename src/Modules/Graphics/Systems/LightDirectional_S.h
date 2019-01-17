@@ -2,11 +2,11 @@
 #ifndef LIGHTINGDIRECTIONAL_S_H
 #define LIGHTINGDIRECTIONAL_S_H 
 
-#include "Utilities\ECS\ecsSystem.h"
-#include "Modules\Graphics\Components\LightDirectional_C.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\DynamicBuffer.h"
-#include "Utilities\PriorityList.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/Graphics/Components/LightDirectional_C.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/PriorityList.h"
 #include "Engine.h"
 #include <vector>
 

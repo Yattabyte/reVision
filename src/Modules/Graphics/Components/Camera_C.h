@@ -2,9 +2,9 @@
 #ifndef CAMERA_C_H
 #define CAMERA_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "glm\glm.hpp"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "glm/glm.hpp"
 
 
 /** OpenGL buffer for point lights.

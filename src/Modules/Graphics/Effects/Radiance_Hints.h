@@ -2,14 +2,14 @@
 #ifndef RADIANCE_HINTS_H
 #define RADIANCE_HINTS_H
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Modules\Graphics\Common\RH_Volume.h"
-#include "Modules\Graphics\Common\FBO_LightBounce.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Texture.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/FBO_LightBounce.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Texture.h"
+#include "Assets/Asset_Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 

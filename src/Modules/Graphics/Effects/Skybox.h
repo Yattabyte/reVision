@@ -2,12 +2,12 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Cubemap.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\FBO.h"
-#include "Utilities\GL\StaticBuffer.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Cubemap.h"
+#include "Assets/Asset_Primitive.h"
+#include "Utilities/GL/FBO.h"
+#include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 
 

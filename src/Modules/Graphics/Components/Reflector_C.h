@@ -2,12 +2,12 @@
 #ifndef REFLECTOR_C_H
 #define REFLECTOR_C_H
 
-#include "Utilities\ECS\ecsComponent.h"
-#include "Modules\Graphics\Components\Camera_C.h"
-#include "Modules\Graphics\Common\FBO_EnvMap.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\Transform.h"
-#include "glm\glm.hpp"
+#include "Modules/Graphics/Components/Camera_C.h"
+#include "Modules/Graphics/Common/FBO_EnvMap.h"
+#include "Utilities/ECS/ecsComponent.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "Utilities/Transform.h"
+#include "glm/glm.hpp"
 
 
 /** OpenGL buffer for Parallax reflectors.

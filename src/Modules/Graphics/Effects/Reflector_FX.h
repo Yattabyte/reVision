@@ -2,16 +2,16 @@
 #ifndef REFLECTOR_FX_H
 #define REFLECTOR_FX_H 
 
-#include "Modules\Graphics\Effects\GFX_Core_Effect.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
-#include "Modules\Graphics\Systems\Reflector_S.h"
-#include "Modules\Graphics\Common\FBO_EnvMap.h"
-#include "Modules\Graphics\Common\FBO_Geometry.h"
-#include "Modules\Graphics\Common\FBO_Lighting.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Asset_Shader.h"
+#include "Assets/Asset_Primitive.h"
+#include "Assets/Asset_Texture.h"
+#include "Modules/Graphics/Systems/Reflector_S.h"
+#include "Modules/Graphics/Common/FBO_EnvMap.h"
+#include "Modules/Graphics/Common/FBO_Geometry.h"
+#include "Modules/Graphics/Common/FBO_Lighting.h"
 #include "Engine.h"
-#include "GLFW\glfw3.h"
+#include "GLFW/glfw3.h"
 
 
 /** A core-rendering technique which applies parallax-corrected local cubemaps to the scene. */

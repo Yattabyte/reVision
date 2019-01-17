@@ -1,7 +1,7 @@
-#include "Assets\Asset_Shader_Pkg.h"
-#include "Utilities\IO\Text_IO.h"
+#include "Assets/Asset_Shader_Pkg.h"
+#include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
-#include "GLM\gtc\type_ptr.hpp"
+#include "GLM/gtc/type_ptr.hpp"
 
 
 constexpr char* EXT_PACKAGE = ".pkg";
