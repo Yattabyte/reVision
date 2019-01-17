@@ -11,7 +11,7 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Components/Camera_C.h"
-#include "Assets/Asset_Shader.h"
+#include "Assets/Shader.h"
 #include "Utilities/ECS/ecsSystem.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"

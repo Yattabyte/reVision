@@ -2,18 +2,18 @@
 #ifndef	ASSET_PRIMITIVE_H
 #define	ASSET_PRIMITIVE_H
 
-#include "Assets/Asset_Mesh.h"
+#include "Assets/Mesh.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 #include <vector>
 
 
 class Engine;
-class Asset_Primitive;
+class Primitive;
 struct Single_Primitive_Vertex;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Primitive : public std::shared_ptr<Asset_Primitive> {
+class Shared_Primitive : public std::shared_ptr<Primitive> {
 public:
 	Shared_Primitive() = default;
 	/** Begins the creation process for this asset.
@@ -25,13 +25,13 @@ public:
 };
 
 /** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
-class Asset_Primitive : public Asset
+class Primitive : public Asset
 {
 public:
 	/** Destroy the Primitive. */
-	~Asset_Primitive();
+	~Primitive();
 	/** Construct the Primitive. */
-	Asset_Primitive(const std::string & filename);
+	Primitive(const std::string & filename);
 
 
 	// Public Methods

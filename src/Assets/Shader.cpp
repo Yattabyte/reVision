@@ -1,5 +1,5 @@
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Shader_Pkg.h"
+#include "Assets/Shader.h"
+#include "Assets/Shader_Pkg.h"
 #include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
 #include <fstream>
@@ -16,14 +16,14 @@ struct ShaderHeader {
 };
 
 Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded) 
-	: std::shared_ptr<Asset_Shader>(std::dynamic_pointer_cast<Asset_Shader>(engine->getManager_Assets().shareAsset(typeid(Asset_Shader).name(), filename)))
+	: std::shared_ptr<Shader>(std::dynamic_pointer_cast<Shader>(engine->getManager_Assets().shareAsset(typeid(Shader).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Shader>*)(this)) = std::make_shared<Asset_Shader>(filename);
+		(*(std::shared_ptr<Shader>*)(this)) = std::make_shared<Shader>(filename);
 		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Asset_Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -34,15 +34,15 @@ Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, cons
 }
 
 
-Asset_Shader::~Asset_Shader()
+Shader::~Shader()
 {
 	if (existsYet()) 
 		glDeleteProgram(m_glProgramID);
 }
 
-Asset_Shader::Asset_Shader(const std::string & filename) : Asset(filename) {}
+Shader::Shader(const std::string & filename) : Asset(filename) {}
 
-void Asset_Shader::initializeDefault(Engine * engine)
+void Shader::initializeDefault(Engine * engine)
 {
 	// Create hard-coded alternative
 	const std::string filename = getFileName();
@@ -65,7 +65,7 @@ void Asset_Shader::initializeDefault(Engine * engine)
 	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 }
 
-void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
+void Shader::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
@@ -87,7 +87,7 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 		// If we ever failed, initialize default shader
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
+			engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
 			initializeDefault(engine);
 		}
 	}
@@ -97,31 +97,31 @@ void Asset_Shader::initialize(Engine * engine, const std::string & relativePath)
 	Asset::finalize(engine);
 }
 
-void Asset_Shader::bind()
+void Shader::bind()
 {
 	glUseProgram(m_glProgramID);
 }
 
-void Asset_Shader::Release()
+void Shader::Release()
 {
 	glUseProgram(0);
 }
 
-const GLint Asset_Shader::getProgramiv(const GLenum & pname) const
+const GLint Shader::getProgramiv(const GLenum & pname) const
 {
 	GLint param;
 	glGetProgramiv(m_glProgramID, pname, &param);
 	return param;
 }
 
-const std::vector<GLchar> Asset_Shader::getErrorLog() const
+const std::vector<GLchar> Shader::getErrorLog() const
 {
 	std::vector<GLchar> infoLog(getProgramiv(GL_INFO_LOG_LENGTH));
 	glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 	return infoLog;
 }
 
-const bool Asset_Shader::loadCachedBinary(Engine * engine, const std::string & relativePath)
+const bool Shader::loadCachedBinary(Engine * engine, const std::string & relativePath)
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
 		ShaderHeader header;
@@ -138,17 +138,17 @@ const bool Asset_Shader::loadCachedBinary(Engine * engine, const std::string & r
 				return true;
 			}
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+			engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 			return false;
 		}
-		engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to open binary cache.");
+		engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
 		return false;
 	}
 	// Safe, binary file simply doesn't exist. Don't error report.
 	return false;
 }
 
-const bool Asset_Shader::saveCachedBinary(Engine * engine, const std::string & relativePath)
+const bool Shader::saveCachedBinary(Engine * engine, const std::string & relativePath)
 {
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
@@ -162,11 +162,11 @@ const bool Asset_Shader::saveCachedBinary(Engine * engine, const std::string & r
 		file.close();
 		return true;
 	}
-	engine->getManager_Messages().error("Asset_Shader \"" + m_filename + "\" failed to write to binary cache.");
+	engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
 	return false;
 }
 
-const bool Asset_Shader::initShaders(Engine * engine, const std::string & relativePath) 
+const bool Shader::initShaders(Engine * engine, const std::string & relativePath) 
 {
 	const std::string filename = getFileName();
 
@@ -186,7 +186,7 @@ const bool Asset_Shader::initShaders(Engine * engine, const std::string & relati
 	return true;
 }
 
-const bool Asset_Shader::validateProgram() 
+const bool Shader::validateProgram() 
 {
 	// Check Validation
 	if (getProgramiv(GL_LINK_STATUS)) {

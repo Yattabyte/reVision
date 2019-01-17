@@ -2,7 +2,7 @@
 #ifndef SYSTEM_INPUT_BINDING_H
 #define SYSTEM_INPUT_BINDING_H
 
-#include "Assets/Asset_Config.h"
+#include "Assets/Config.h"
 #include "Utilities/ActionState.h"
 #include <string>
 

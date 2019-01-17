@@ -2,15 +2,15 @@
 #ifndef	ASSET_COLLIDER_H
 #define	ASSET_COLLIDER_H
 
-#include "Assets/Asset_Mesh.h"
+#include "Assets/Mesh.h"
 #include <btBulletDynamicsCommon.h>
 
 
 class Engine;
-class Asset_Collider;
+class Collider;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Collider : public std::shared_ptr<Asset_Collider> {
+class Shared_Collider : public std::shared_ptr<Collider> {
 public:
 	Shared_Collider() = default;
 	/** Begins the creation process for this asset.
@@ -22,13 +22,13 @@ public:
 };
 
 /** A 3D mesh tuned for use in physics simulations instead of rendering. */
-class Asset_Collider : public Asset
+class Collider : public Asset
 {
 public:
 	/** Destroy the Collider. */
-	~Asset_Collider() = default;
+	~Collider() = default;
 	/** Construct the Collider. */
-	Asset_Collider(const std::string & filename);
+	Collider(const std::string & filename);
 	
 	
 	// Public Attributes

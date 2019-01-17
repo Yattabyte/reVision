@@ -2,16 +2,16 @@
 #ifndef	ASSET_TEXTURE_H
 #define	ASSET_TEXTURE_H
 
-#include "Assets/Asset_Image.h"
+#include "Assets/Image.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 
 
 class Engine;
-class Asset_Texture;
+class Texture;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Texture : public std::shared_ptr<Asset_Texture> {
+class Shared_Texture : public std::shared_ptr<Texture> {
 public:
 	Shared_Texture() = default;
 	/** Begins the creation process for this asset.
@@ -27,15 +27,15 @@ public:
 
 /** An encapsulation of an OpenGL texture object.
 Supports MIP-mapping and anisotropic filtering. */
-class Asset_Texture : public Asset
+class Texture : public Asset
 {
 public:
 	/** Destroy the Texture. */
-	~Asset_Texture();
+	~Texture();
 	/** Construct the Texture. */
-	Asset_Texture(const std::string & filename);
+	Texture(const std::string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
-	Asset_Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);
+	Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);
 
 
 	// Public Methods

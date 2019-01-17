@@ -4,18 +4,18 @@
 #define MAX_PHYSICAL_IMAGES 6
 #define MAX_DIGITAL_IMAGES 3
 
-#include "Assets/Asset_Image.h"
+#include "Assets/Image.h"
 #include "Managers/MaterialManager.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 #include <vector>
 
 
 class Engine;
-class Asset_Material;
+class Material;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Material : public std::shared_ptr<Asset_Material> {
+class Shared_Material : public std::shared_ptr<Material> {
 public:
 	Shared_Material() = default;
 	/** Begins the creation process for this asset.
@@ -38,13 +38,13 @@ public:
 	- occlusion (in conjunction with SSAO)
 - Supports omission of any or all of the files
 - Expects all textures in a material to be the same dimension, and will forcefully resize them (in memory). */
-class Asset_Material : public Asset
+class Material : public Asset
 {
 public:
 	/** Destroy the Material. */
-	~Asset_Material();
+	~Material();
 	/** Construct the Material. */
-	Asset_Material(const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
+	Material(const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
 	
 
 	// Public Methods

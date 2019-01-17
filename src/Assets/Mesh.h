@@ -6,7 +6,7 @@
 #include "Utilities/IO/Mesh_IO.h"
 #include "assimp/scene.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 #include "glm/geometric.hpp"
 #include <map>
 #include <string>
@@ -14,10 +14,10 @@
 
 
 class Engine;
-class Asset_Mesh;
+class Mesh;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Mesh : public std::shared_ptr<Asset_Mesh> {
+class Shared_Mesh : public std::shared_ptr<Mesh> {
 public:
 	Shared_Mesh() = default;
 	/** Begins the creation process for this asset.
@@ -30,13 +30,13 @@ public:
 
 
 /** A 3D geometric mesh. */
-class Asset_Mesh : public Asset
+class Mesh : public Asset
 {
 public:
 	/** Destroy the Mesh. */
-	~Asset_Mesh() = default;
+	~Mesh() = default;
 	/** Construct the Mesh. */
-	Asset_Mesh(const std::string & filename);
+	Mesh(const std::string & filename);
 
 
 	// Public Attributes

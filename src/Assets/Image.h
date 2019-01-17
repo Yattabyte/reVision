@@ -4,13 +4,13 @@
 
 #include "Assets/Asset.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 #include <any>
 #include <optional>
 
 
 class Engine;
-class Asset_Image;
+class Image;
 
 /** Public Policy Enumerations. */
 const enum Fill_Policy : GLenum {
@@ -23,7 +23,7 @@ const enum Resize_Policy : GLenum {
 };
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Image : public std::shared_ptr<Asset_Image> {
+class Shared_Image : public std::shared_ptr<Image> {
 public:
 	Shared_Image() = default;
 	/** Begins the creation process for this asset.
@@ -37,13 +37,13 @@ public:
 };
 
 /** Holds image data, and nothing more. */
-class Asset_Image : public Asset
+class Image : public Asset
 {
 public:
 	/** Destroy the Image. */
-	~Asset_Image();
+	~Image();
 	/** Construct the Image. */
-	Asset_Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
+	Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
 
 
 	// Public Attributes

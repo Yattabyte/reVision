@@ -3,9 +3,9 @@
 #define SKYBOX_H
 
 #include "Modules/Graphics/Effects/GFX_Core_Effect.h"
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Cubemap.h"
-#include "Assets/Asset_Primitive.h"
+#include "Assets/Shader.h"
+#include "Assets/Cubemap.h"
+#include "Assets/Primitive.h"
 #include "Utilities/GL/FBO.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
@@ -145,7 +145,7 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		Asset_Shader::Release();
+		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 

@@ -3,7 +3,7 @@
 #define PROPRENDERING_S_H
 
 #include "Utilities/ECS/ecsSystem.h"
-#include "Assets/Asset_Shader.h"
+#include "Assets/Shader.h"
 #include "Utilities/GL/FBO.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"

@@ -2,12 +2,12 @@
 #ifndef	ASSET_MODEL_H
 #define	ASSET_MODEL_H
 
-#include "Assets/Asset_Mesh.h"
-#include "Assets/Asset_Material.h"
+#include "Assets/Mesh.h"
+#include "Assets/Material.h"
 #include "Managers/ModelManager.h"
 #include "assimp/scene.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 #include "glm/geometric.hpp"
 #include <map>
 #include <string>
@@ -16,10 +16,10 @@
 
 class Engine;
 class ModelManager;
-class Asset_Model;
+class Model;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Model : public std::shared_ptr<Asset_Model> {
+class Shared_Model : public std::shared_ptr<Model> {
 public:
 	Shared_Model() = default;
 	/** Begins the creation process for this asset.
@@ -31,13 +31,13 @@ public:
 };
 
 /** A 3D geometric mesh meant to be used in 3D rendering. */
-class Asset_Model : public Asset
+class Model : public Asset
 {
 public:	
 	/** Destroy the Model. */
-	~Asset_Model();
+	~Model();
 	/** Construct the Model. */
-	Asset_Model(const std::string & filename, ModelManager & modelManager);
+	Model(const std::string & filename, ModelManager & modelManager);
 
 
 	// Public Attributes
@@ -65,7 +65,7 @@ private:
 	@param	modelMaterial	the material asset to load into
 	@param	meshMaterial	the material asset to load into
 	@param	sceneMaterial	the scene material to use as a guide */
-	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material> & materials);
+	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings> & materials);
 
 
 	// Interface Implementation

@@ -3,8 +3,8 @@
 #define PANEL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Assets/Asset_Primitive.h"
-#include "Assets/Asset_Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 

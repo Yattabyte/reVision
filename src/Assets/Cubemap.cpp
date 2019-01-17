@@ -1,18 +1,18 @@
-#include "Assets/Asset_Cubemap.h"
+#include "Assets/Cubemap.h"
 #include "Engine.h"
 
 
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
 Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Cubemap>(std::dynamic_pointer_cast<Asset_Cubemap>(engine->getManager_Assets().shareAsset(typeid(Asset_Cubemap).name(), filename)))
+	: std::shared_ptr<Cubemap>(std::dynamic_pointer_cast<Cubemap>(engine->getManager_Assets().shareAsset(typeid(Cubemap).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Cubemap>*)(this)) = std::make_shared<Asset_Cubemap>(filename);
+		(*(std::shared_ptr<Cubemap>*)(this)) = std::make_shared<Cubemap>(filename);
 		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Asset_Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -22,7 +22,7 @@ Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, co
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
-Asset_Cubemap::~Asset_Cubemap()
+Cubemap::~Cubemap()
 {
 	if (existsYet()) {
 		glDeleteBuffers(6, m_pboIDs);
@@ -30,9 +30,9 @@ Asset_Cubemap::~Asset_Cubemap()
 	}
 }
 
-Asset_Cubemap::Asset_Cubemap(const std::string & filename) : Asset(filename) {}
+Cubemap::Cubemap(const std::string & filename) : Asset(filename) {}
 
-void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath)
+void Cubemap::initialize(Engine * engine, const std::string & relativePath)
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
@@ -76,14 +76,14 @@ void Asset_Cubemap::initialize(Engine * engine, const std::string & relativePath
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		engine->getManager_Messages().error("Asset_Texture \"" + m_filename + "\" failed to initialize.");
+		engine->getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize(engine);
 }
 
-void Asset_Cubemap::bind(const unsigned int & texture_unit)
+void Cubemap::bind(const unsigned int & texture_unit)
 {
 	glBindTextureUnit(texture_unit, m_glTexID);
 }

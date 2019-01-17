@@ -222,7 +222,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 				}
 			}
 
-			data_container.materials.push_back(Material(
+			data_container.materials.push_back(Material_Strings(
 				(albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
 				(normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
 				(metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
@@ -232,7 +232,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 			));
 		}
 	else {
-		data_container.materials.push_back(Material(
+		data_container.materials.push_back(Material_Strings(
 			 "albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"
 		));
 	}

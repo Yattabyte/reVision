@@ -1,4 +1,4 @@
-#include "Assets/Asset_Material.h"
+#include "Assets/Material.h"
 #include "Engine.h"
 #include <math.h>
 #include <fstream>
@@ -8,14 +8,14 @@
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string>& textures, const bool & threaded)
-	: std::shared_ptr<Asset_Material>(std::dynamic_pointer_cast<Asset_Material>(engine->getManager_Assets().shareAsset(typeid(Asset_Material).name(), filename)))
+	: std::shared_ptr<Material>(std::dynamic_pointer_cast<Material>(engine->getManager_Assets().shareAsset(typeid(Material).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Material>*)(this)) = std::make_shared<Asset_Material>(filename, textures, engine->getManager_Materials());
+		(*(std::shared_ptr<Material>*)(this)) = std::make_shared<Material>(filename, textures, engine->getManager_Materials());
 		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Asset_Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -25,7 +25,7 @@ Shared_Material::Shared_Material(Engine * engine, const std::string & filename, 
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
-Asset_Material::~Asset_Material()
+Material::~Material()
 {
 	if (existsYet()) {
 		glDeleteBuffers(1, &m_pboID);
@@ -35,7 +35,7 @@ Asset_Material::~Asset_Material()
 		delete m_materialData;
 }
 
-Asset_Material::Asset_Material(const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
+Material::Material(const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
 	: Asset(filename), m_textures(tx)
 {
 	// We need to reserve a region of gpu memory for all the textures
@@ -46,7 +46,7 @@ Asset_Material::Asset_Material(const std::string & filename, const std::vector<s
 	const std::string relativePath = filename + MATERIAL_EXTENSION;
 	if (Engine::File_Exists(relativePath)) {
 		// Fetch a list of textures as defined in the file
-		auto textures = Asset_Material::Get_Material_Textures(relativePath);
+		auto textures = Material::Get_Material_Textures(relativePath);
 		// Recover the material folder directory from the filename
 		const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
 		const size_t furthestFolderIndex = std::max(slash1Index != std::string::npos ? slash1Index : 0, slash2Index != std::string::npos ? slash2Index : 0);
@@ -65,7 +65,7 @@ Asset_Material::Asset_Material(const std::string & filename, const std::vector<s
 	m_matSpot = materialManager.generateID(m_textures.size());
 }
 
-void Asset_Material::initialize(Engine * engine, const std::string & relativePath)
+void Material::initialize(Engine * engine, const std::string & relativePath)
 {
 	auto & materialManager = engine->getManager_Materials();
 
@@ -179,7 +179,7 @@ std::vector<std::string> parse_pbr(std::ifstream & file_stream)
 	}
 	return textures;
 }
-std::vector<std::string> Asset_Material::Get_Material_Textures(const std::string & relativePath)
+std::vector<std::string> Material::Get_Material_Textures(const std::string & relativePath)
 {
 	std::vector<std::string> textures;
 	std::ifstream file_stream(Engine::Get_Current_Dir() + relativePath);

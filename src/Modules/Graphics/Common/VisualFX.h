@@ -2,8 +2,8 @@
 #ifndef VISUALFX_H
 #define VISUALFX_H
 
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Primitive.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "GL/glad/glad.h"
 #include "glm/glm.hpp"

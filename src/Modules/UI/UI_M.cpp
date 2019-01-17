@@ -39,7 +39,7 @@ void UI_Module::frameTick(const float & deltaTime)
 
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);
-	Asset_Shader::Release();
+	Shader::Release();
 }
 
 void UI_Module::applyCursorPos(const double & xPos, const double & yPos)

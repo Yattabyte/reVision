@@ -10,10 +10,10 @@
 constexpr float UNDEFINED_CVAL = -12345.67890f; // Undefined preference
 
 class Engine;
-class Asset_Config;
+class Config;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Config : public std::shared_ptr<Asset_Config> {
+class Shared_Config : public std::shared_ptr<Config> {
 public:
 	Shared_Config() = default;
 	/** Begins the creation process for this asset.
@@ -26,13 +26,13 @@ public:
 };
 
 /** A registry for configuration name-value pairs. */
-class Asset_Config : public Asset
+class Config : public Asset
 {
 public: 
 	/** Destroy the Config. */
-	~Asset_Config() = default;
+	~Config() = default;
 	/** Construct the config with a particular set of variable names. */
-	Asset_Config(const std::string & filename, const std::vector<std::string> & strings);
+	Config(const std::string & filename, const std::vector<std::string> & strings);
 
 
 	// Public Methods

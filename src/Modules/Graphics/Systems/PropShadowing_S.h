@@ -3,7 +3,7 @@
 #define PROPSHADOWING_S_H
 
 #include "Utilities/ECS/ecsSystem.h"
-#include "Assets/Asset_Shader.h"
+#include "Assets/Shader.h"
 #include "Engine.h"
 #include <vector>
 

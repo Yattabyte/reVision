@@ -6,11 +6,11 @@
 
 
 class Engine;
-class Asset_Sound;
+class Sound;
 class SoundObj;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Sound : public std::shared_ptr<Asset_Sound> {
+class Shared_Sound : public std::shared_ptr<Sound> {
 public:
 	Shared_Sound() = default;
 	/** Begins the creation process for this asset.
@@ -22,13 +22,13 @@ public:
 };
 
 /** A Sound object. */
-class Asset_Sound : public Asset
+class Sound : public Asset
 {
 public:
 	/** Destroy the Sound. */
-	~Asset_Sound();
+	~Sound();
 	/** Construct the Sound. */
-	Asset_Sound(const std::string & filename);
+	Sound(const std::string & filename);
 
 
 	// Public Attributes

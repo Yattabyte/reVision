@@ -3,9 +3,9 @@
 #define FRAMETIME_COUNTER_H
 
 #include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Primitive.h"
-#include "Assets/Asset_Texture.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"

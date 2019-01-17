@@ -5,8 +5,8 @@
 
 #include "Modules/Graphics/Effects/GFX_Core_Effect.h"
 #include "Modules/Graphics/Common/VisualFX.h"
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Primitive.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"

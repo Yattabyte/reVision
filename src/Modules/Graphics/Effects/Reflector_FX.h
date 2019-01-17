@@ -3,9 +3,9 @@
 #define REFLECTOR_FX_H 
 
 #include "Modules/Graphics/Effects/GFX_Core_Effect.h"
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Primitive.h"
-#include "Assets/Asset_Texture.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Texture.h"
 #include "Modules/Graphics/Systems/Reflector_S.h"
 #include "Modules/Graphics/Common/FBO_EnvMap.h"
 #include "Modules/Graphics/Common/FBO_Geometry.h"
@@ -148,7 +148,7 @@ protected:
 		}
 		if (didAnything) {
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-			Asset_Shader::Release();
+			Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			graphics.setActiveCamera(oldCameraID);
 			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);

@@ -1,5 +1,5 @@
 #include "Modules/Game/Game_M.h"
-#include "Assets/Asset_Image.h"
+#include "Assets/Image.h"
 #include "Engine.h"
 #include <atomic>
 

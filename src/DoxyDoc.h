@@ -64,25 +64,25 @@
  * Lastly, all assets supported thus far support multithreading, as to avoid locking the main thread.\n
  * Here's a list of all asset types the engine currently supports.\n
  *
- *	- Asset_Collider
- *	- Asset_Config
- *	- Asset_Cubemap
- *	- Asset_Image
- *	- Asset_Level
- *	- Asset_Material
- *	- Asset_Mesh
- *	- Asset_Model
- *	- Asset_Primitive
- *	- Asset_Shader
- *	- Asset_Shader_Geometry
- *	- Asset_Shader_Pkg
- *	- Asset_Texture
+ *	- Collider
+ *	- Config
+ *	- Cubemap
+ *	- Image
+ *	- Level
+ *	- Material
+ *	- Mesh
+ *	- Model
+ *	- Primitive
+ *	- Shader
+ *	- Shader_Geometry
+ *	- Shader_Pkg
+ *	- Texture
  *
  * \section newAssets New Assets
  * All assets have provide the following functionality - a static Create(...) function, and an overridden virtual initialize(...) function:
  * 
  *	- Shared_Shader	Shared_Shader(	Engine * engine, const std::string & filename, const bool & threaded	)
- *	- void Asset_Shader::initialize(	Engine * engine, const std::string & relativePath	)
+ *	- void Shader::initialize(	Engine * engine, const std::string & relativePath	)
  */
 
  /*! \page ecs ECS

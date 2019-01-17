@@ -9,12 +9,12 @@
 
 
 class Engine;
-class Asset_Level;
+class Level;
 struct LevelStruct_Entity;
 struct LevelStruct_Component;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Level : public std::shared_ptr<Asset_Level> {
+class Shared_Level : public std::shared_ptr<Level> {
 public:
 	Shared_Level() = default;
 	/** Begins the creation process for this asset.
@@ -26,13 +26,13 @@ public:
 };
 
 /** An asset which represents some intermediate form of a world level. */
-class Asset_Level : public Asset
+class Level : public Asset
 {
 public:
 	/** Destroy the Level. */
-	~Asset_Level() = default;
+	~Level() = default;
 	/** Construct the Level. */
-	Asset_Level(const std::string & filename);
+	Level(const std::string & filename);
 	
 	
 	// Public Attributes

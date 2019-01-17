@@ -2,8 +2,8 @@
 #ifndef SCORE_C_H
 #define SCORE_C_H
 
-#include "Utilities/ECS/ecsComponent.h"
 #include "Modules/Game/Common_Definitions.h"
+#include "Utilities/ECS/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "glm/glm.hpp"
 

@@ -2,16 +2,16 @@
 #ifndef	ASSET_CUBEMAP_H
 #define	ASSET_CUBEMAP_H
 
-#include "Assets/Asset_Image.h"
+#include "Assets/Image.h"
 #include "GL/glad/glad.h"
-#include "GLM/glm.hpp"
+#include "glm/glm.hpp"
 
 
 class Engine;
-class Asset_Cubemap;
+class Cubemap;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Cubemap : public std::shared_ptr<Asset_Cubemap> {
+class Shared_Cubemap : public std::shared_ptr<Cubemap> {
 public:
 	Shared_Cubemap() = default;
 	/** Begins the creation process for this asset.
@@ -23,13 +23,13 @@ public:
 };
 
 /** Represents an OpenGL cubemap texture object. */
-class Asset_Cubemap : public Asset
+class Cubemap : public Asset
 {
 public:
 	/** Destroy the Cubemap. */
-	~Asset_Cubemap();
+	~Cubemap();
 	/** Construct the Cubemap. */
-	Asset_Cubemap(const std::string & filename);
+	Cubemap(const std::string & filename);
 
 
 	// Public Methods

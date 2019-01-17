@@ -1,4 +1,4 @@
-#include "Assets/Asset_Sound.h"
+#include "Assets/Sound.h"
 #include "Engine.h"
 #include "soloud_wav.h"
 
@@ -6,14 +6,14 @@
 constexpr char* DIRECTORY_SOUNDS = "Sounds\\";
 
 Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Sound>(std::dynamic_pointer_cast<Asset_Sound>(engine->getManager_Assets().shareAsset(typeid(Asset_Sound).name(), filename)))
+	: std::shared_ptr<Sound>(std::dynamic_pointer_cast<Sound>(engine->getManager_Assets().shareAsset(typeid(Sound).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Sound>*)(this)) = std::make_shared<Asset_Sound>(filename);
+		(*(std::shared_ptr<Sound>*)(this)) = std::make_shared<Sound>(filename);
 		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Asset_Sound).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Sound::initialize, get(), engine, (DIRECTORY_SOUNDS + filename))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Sound).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Sound::initialize, get(), engine, (DIRECTORY_SOUNDS + filename))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -24,15 +24,15 @@ Shared_Sound::Shared_Sound(Engine * engine, const std::string & filename, const 
 }
 
 
-Asset_Sound::~Asset_Sound()
+Sound::~Sound()
 {
 	if (m_finalized) 
 		delete (SoLoud::Wav*)m_soundObj;
 }
 
-Asset_Sound::Asset_Sound(const std::string & filename) : Asset(filename) {}
+Sound::Sound(const std::string & filename) : Asset(filename) {}
 
-void Asset_Sound::initialize(Engine * engine, const std::string & relativePath)
+void Sound::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
 	SoLoud::Wav * wave = new SoLoud::Wav();
@@ -42,17 +42,17 @@ void Asset_Sound::initialize(Engine * engine, const std::string & relativePath)
 		// No error
 		break;
 	case SoLoud::INVALID_PARAMETER:
-		msgMgr.error("Asset_Sound \"" + m_filename + "\" has an invalid parameter.");
+		msgMgr.error("Sound \"" + m_filename + "\" has an invalid parameter.");
 		break;
 	case SoLoud::FILE_NOT_FOUND:
-		msgMgr.error("Asset_Sound \"" + m_filename + "\" file does not exist.");
+		msgMgr.error("Sound \"" + m_filename + "\" file does not exist.");
 		break;
 	case SoLoud::FILE_LOAD_FAILED:
-		msgMgr.error("Asset_Sound \"" + m_filename + "\" file exists, but could not be loaded.");
+		msgMgr.error("Sound \"" + m_filename + "\" file exists, but could not be loaded.");
 		break;
 	case SoLoud::UNKNOWN_ERROR:
 	default:
-		msgMgr.error("Asset_Sound \"" + m_filename + "\" has encountered an unknown error.");
+		msgMgr.error("Sound \"" + m_filename + "\" has encountered an unknown error.");
 		break;
 	}; 
 	m_soundObj = (SoundObj*)wave;

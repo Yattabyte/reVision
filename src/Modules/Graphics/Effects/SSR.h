@@ -3,9 +3,9 @@
 #define SSR_H
 
 #include "Modules/Graphics/Effects/GFX_Core_Effect.h"
-#include "Assets/Asset_Shader.h"
-#include "Assets/Asset_Primitive.h"
-#include "Assets/Asset_Texture.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"

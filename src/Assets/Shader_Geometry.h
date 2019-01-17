@@ -3,18 +3,18 @@
 #define	ASSET_SHADER_GEOMETRY_H
 
 #include "Assets/Asset.h"
-#include "Assets/Asset_Shader.h"
+#include "Assets/Shader.h"
 #include "glm/glm.hpp"
 #include "GL/glad/glad.h"
-#include "GLM/gtc/type_ptr.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include <string>
 
 
 class Engine;
-class Asset_Shader_Geometry;
+class Shader_Geometry;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Shader_Geometry : public std::shared_ptr<Asset_Shader_Geometry> {
+class Shared_Shader_Geometry : public std::shared_ptr<Shader_Geometry> {
 public:
 	Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
@@ -25,14 +25,14 @@ public:
 	explicit Shared_Shader_Geometry(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-/** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Asset_Shader. */
-class Asset_Shader_Geometry : public Asset_Shader
+/** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Shader. */
+class Shader_Geometry : public Shader
 {
 public:	
 	/** Destroy the Shader. */
-	~Asset_Shader_Geometry();
+	~Shader_Geometry();
 	/** Construct the Shader. */
-	Asset_Shader_Geometry(const std::string & filename);
+	Shader_Geometry(const std::string & filename);
 
 	
 	// Public Attributes

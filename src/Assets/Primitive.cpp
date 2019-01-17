@@ -1,4 +1,4 @@
-#include "Assets/Asset_Primitive.h"
+#include "Assets/Primitive.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
 
@@ -7,14 +7,14 @@ constexpr char* EXT_PRIMITIVE = ".obj";
 constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
 Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Asset_Primitive>(std::dynamic_pointer_cast<Asset_Primitive>(engine->getManager_Assets().shareAsset(typeid(Asset_Primitive).name(), filename)))
+	: std::shared_ptr<Primitive>(std::dynamic_pointer_cast<Primitive>(engine->getManager_Assets().shareAsset(typeid(Primitive).name(), filename)))
 {
 	// Find out if the asset needs to be created
 	if (!get()) {
 		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Asset_Primitive>*)(this)) = std::make_shared<Asset_Primitive>(filename);
+		(*(std::shared_ptr<Primitive>*)(this)) = std::make_shared<Primitive>(filename);
 		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Asset_Primitive).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Asset_Primitive::initialize, get(), engine, (DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE))), threaded);
+		engine->getManager_Assets().submitNewAsset(typeid(Primitive).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Primitive::initialize, get(), engine, (DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE))), threaded);
 	}
 	// Check if we need to wait for initialization
 	else
@@ -24,13 +24,13 @@ Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename
 				std::this_thread::sleep_for(std::chrono::milliseconds(1));
 }
 
-Asset_Primitive::~Asset_Primitive()
+Primitive::~Primitive()
 {
 	if (existsYet())
 		glDeleteBuffers(1, &m_uboID);
 }
 
-Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename) 
+Primitive::Primitive(const std::string & filename) : Asset(filename) 
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -43,7 +43,7 @@ Asset_Primitive::Asset_Primitive(const std::string & filename) : Asset(filename)
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-void Asset_Primitive::initialize(Engine * engine, const std::string & relativePath)
+void Primitive::initialize(Engine * engine, const std::string & relativePath)
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(engine, relativePath, false);
@@ -64,7 +64,7 @@ void Asset_Primitive::initialize(Engine * engine, const std::string & relativePa
 	Asset::finalize(engine);
 }
 
-size_t Asset_Primitive::getSize() const
+size_t Primitive::getSize() const
 {
 	return m_data.size();
 }

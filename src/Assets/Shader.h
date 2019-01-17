@@ -5,15 +5,15 @@
 #include "Assets/Asset.h"
 #include "glm/glm.hpp"
 #include "GL/glad/glad.h"
-#include "GLM/gtc/type_ptr.hpp"
+#include "glm/gtc/type_ptr.hpp"
 #include <string>
 
 
 class Engine;
-class Asset_Shader;
+class Shader;
 
 /** Responsible for the creation, containing, and sharing of assets. */
-class Shared_Shader : public std::shared_ptr<Asset_Shader> {
+class Shared_Shader : public std::shared_ptr<Shader> {
 public:
 	Shared_Shader() = default;
 	/** Begins the creation process for this asset.
@@ -56,13 +56,13 @@ struct ShaderObj
 
 /** An encapsulation of a vertex/fragment OpenGL shader program.
 Also provides support for explicitly setting uniform values for a given attribute location. */
-class Asset_Shader : public Asset
+class Shader : public Asset
 {
 public:	
 	/** Destroy the Shader. */
-	~Asset_Shader();
+	~Shader();
 	/** Construct the Shader. */
-	Asset_Shader(const std::string & filename);
+	Shader(const std::string & filename);
 
 
 public:
