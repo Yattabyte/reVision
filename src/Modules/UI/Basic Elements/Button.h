@@ -221,10 +221,20 @@ public:
 		m_label->setText(text);
 		update();
 	}
+	/** Retrieve this buttons' labels text.
+	@return	the text this label uses. */
+	std::string getText() const {
+		return m_label->getText();
+	}
 	/** Set the bevel radius for this button.
 	@param radius	the new radius to use. */
 	void setBevelRadius(const float & radius) {
 		m_bevelRadius = radius;
+	}
+	/** Get the bevel radius from this button.
+	@return radius	this buttons' bevel radius. */
+	float getBevelRadius() const {
+		return m_bevelRadius;
 	}
 
 
@@ -232,7 +242,7 @@ protected:
 	// Protected Attributes
 	std::shared_ptr<Label> m_label;
 	bool m_highlighted = false, m_pressed = false;
-	float m_bevelRadius = 5.0f;
+	float m_bevelRadius = 10.0f;
 
 
 private:

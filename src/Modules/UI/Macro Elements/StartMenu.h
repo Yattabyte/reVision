@@ -59,13 +59,18 @@ public:
 		// Horizontal Layout
 		auto label = std::make_shared<Label>(engine);
 		label->setText("Horizontal Layout:");
+		label->setTextScale(20.0f);
+		label->setAlignment(Label::Alignment::align_left);
 		mainLayout->addElement(label);
 		auto panel = std::make_shared<Panel>(engine);
 		mainLayout->addElement(panel);
 		auto testLayout = std::make_shared<Layout_Horizontal>(engine);
 		testLayout->setScale(panel->getScale());
+		testLayout->setSpacing(2.0f);
 		testLayout->addElement(std::make_shared<Button>(engine));
 		auto testLayout2 = std::make_shared<Layout_Vertical>(engine);
+		testLayout2->setMargin(0.0f);
+		testLayout2->setSpacing(2.0f);
 		testLayout2->addElement(std::make_shared<Button>(engine));
 		testLayout2->addElement(std::make_shared<Button>(engine));
 		testLayout->addElement(testLayout2);
@@ -73,6 +78,8 @@ public:
 		testLayout->addElement(testLayout3);
 		testLayout3->addElement(std::make_shared<Button>(engine));
 		testLayout3->addElement(std::make_shared<Button>(engine));
+		testLayout3->setMargin(0.0f);
+		testLayout3->setSpacing(2.0f);
 		testLayout->addElement(std::make_shared<Button>(engine));
 		panel->addElement(testLayout);
 	}

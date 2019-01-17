@@ -72,13 +72,15 @@ public:
 	virtual void renderElement(const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(glm::vec2(m_scale.x, 15.0f), scale);
+		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet() && m_shapeQuad->existsYet() && m_textureFont->existsYet()) {
 			m_shader->bind();
 			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
 			m_shader->setUniform(2, newScale);
-			m_shader->setUniform(3, m_enabled ? glm::vec3(1.0f) : glm::vec3(0.75f));
+			m_shader->setUniform(3, m_textScale);
+			m_shader->setUniform(4, (int)m_textAlignment);
+			m_shader->setUniform(5, m_enabled ? glm::vec3(1.0f) : glm::vec3(0.75f));
 			m_textureFont->bind(0);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -94,6 +96,13 @@ public:
 		return false;
 	}
 
+	// Alignment enums
+	enum Alignment : int {
+		align_left = -1,
+		align_center = 0,
+		align_right = 1
+	};
+
 
 	// Public Methods
 	/** Set this label element's text. 
@@ -102,11 +111,38 @@ public:
 		m_text = text;
 		update();
 	}
+	/** Retrieve this label's text. 
+	@return	the text this label uses. */
+	std::string getText() const {
+		return m_text;
+	}
+	/** Set this label element's text scaling factor.
+	@param	text	the new scaling factor to use. */
+	void setTextScale(const float & textScale) {
+		m_textScale = textScale;
+	}
+	/** Retrieve this label's text scaling factor.
+	@return	the text scaling factor. */
+	float getTextScale() const {
+		return m_textScale;
+	}
+	/** Set this label element's alignment.
+	@param	text	the alignment (left, center, right). */
+	void setAlignment(const Alignment & alignment) {
+		m_textAlignment = alignment;
+	}
+	/** Retrieve this label's alignment.
+	@return	the alignment. */
+	Alignment getAlignment() const {
+		return m_textAlignment;
+	}
 
 
 protected:
 	// Protected Attributes
 	std::string m_text;
+	float m_textScale = 10.0f;
+	Alignment m_textAlignment = align_center;
 
 
 private:

@@ -7,7 +7,7 @@ layout (location = 1) flat in int Index;
 layout (location = 0) out vec4 FragColor;
 
 layout (binding = 0) uniform sampler2D FontTexture;
-layout (location = 3) uniform vec3 color;
+layout (location = 5) uniform vec3 color;
 
 layout (std430, binding = 8) readonly buffer TextBuffer {
 	int count;

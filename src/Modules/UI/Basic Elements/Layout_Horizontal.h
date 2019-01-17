@@ -24,6 +24,28 @@ public:
 	}
 
 
+	// Public Methods
+	/** Set the margin distance between elements and the edge of this layout.
+	@param	margin		the margin for this layout. */
+	void setMargin(const float & margin) {
+		m_margin = margin;
+	}
+	/** Get the margin distance between elements and the edge of this layout.
+	@return the the margin for this layout. */
+	float getMargin() const {
+		return m_margin;
+	}
+	/** Set the spacing distance between elements in this layout.
+	@param	spacing		the spacing distance between elements. */
+	void setSpacing(const float & spacing) {
+		m_spacing = spacing;
+	}
+	/** Get the spacing distance between elements in this layout.
+	@return the spacing distance between elements. */
+	float getSpacing() const {
+		return m_spacing;
+	}
+
 
 protected:
 	// Protected Methods
