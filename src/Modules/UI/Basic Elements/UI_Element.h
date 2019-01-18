@@ -6,6 +6,7 @@
 #include "GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
+#include <algorithm>
 #include <functional>
 #include <map>
 #include <memory>
@@ -69,6 +70,30 @@ public:
 	glm::vec2 getScale() const {
 		return m_scale;
 	}
+	/** Sets this elements' maximum scale.
+	@param	scale					the new maximum scale to use. */
+	void setMaxScale(const glm::vec2 & scale) {
+		m_maxScale = scale;
+		update();
+		enactCallback(on_resize);
+	}
+	/** Gets this elements' maximum scale.
+	@return	this elements' maximum scale. */
+	glm::vec2 getMaxScale() const {
+		return m_maxScale;
+	}
+	/** Sets this elements' minimum scale.
+	@param	scale					the new minimum scale to use. */
+	void setMinScale(const glm::vec2 & scale) {
+		m_minScale = scale;
+		update();
+		enactCallback(on_resize);
+	}
+	/** Gets this elements' minimum scale.
+	@return	this elements' minimum scale. */
+	glm::vec2 getMinScale() const {
+		return m_minScale;
+	}
 	/** Set this element as visible or not.
 	@param	visible					whether or not this element should be visible. */
 	void setVisible(const bool & visible) {
@@ -97,6 +122,15 @@ public:
 	// Public Interface
 	/** Requests that this element update itself. */
 	virtual void update() {
+		if (!std::isnan(m_minScale.x))
+			m_scale.x = std::max<float>(m_scale.x, m_minScale.x);
+		if (!std::isnan(m_minScale.y))
+			m_scale.y = std::max<float>(m_scale.y, m_minScale.y);
+		if (!std::isnan(m_maxScale.x))
+			m_scale.x = std::min<float>(m_scale.x, m_maxScale.x);
+		if (!std::isnan(m_maxScale.y))
+			m_scale.y = std::min<float>(m_scale.y, m_maxScale.y);
+
 		for each (auto & child in m_children)
 			child->update();
 	}
@@ -175,7 +209,7 @@ protected:
 
 	// Protected Attributes
 	glm::vec2 m_position = glm::vec2(0.0f);
-	glm::vec2 m_scale = glm::vec2(1.0f);
+	glm::vec2 m_scale = glm::vec2(1.0f), m_maxScale = glm::vec2(std::nanf(0)), m_minScale = glm::vec2(std::nanf(0));
 	bool m_visible = true, m_enabled = true;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;

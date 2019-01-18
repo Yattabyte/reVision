@@ -25,22 +25,29 @@ public:
 	~StartMenu() = default;
 	StartMenu(Engine * engine) : Panel(engine) {
 		auto mainLayout = std::make_shared<Layout_Vertical>(engine);
-		setScale(glm::vec2(125, 150));
-		mainLayout->setScale(glm::vec2(125, 150));
-		mainLayout->setSpacing(15.0f);
+		setScale(glm::vec2(125, 250));
+		mainLayout->setScale(glm::vec2(125, 250));
+		mainLayout->setSpacing(5.0f);
 		addElement(mainLayout);
+
+		// Title
+		auto title = std::make_shared<Label>(engine);
+		mainLayout->addElement(title);
+		title->setText("Main Menu");
+		title->setTextScale(20.0f);
 
 		// Add 'Start' button
 		auto startButton = std::make_shared<Button>(engine);
 		startButton->setText("Start");
 		startButton->setBevelRadius(10.0F);
-		startButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_start); });		
+		startButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_start); });
 		mainLayout->addElement(startButton);
-
+			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine);
 		optionsButton->setText("Options");
 		optionsButton->setBevelRadius(10.0F);
+		optionsButton->setMaxScale(glm::vec2(75, 25));
 		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_options); });
 		mainLayout->addElement(optionsButton);
 
@@ -49,6 +56,7 @@ public:
 		controlsButton->setText("Controls (disabled)");
 		controlsButton->setBevelRadius(10.0F);
 		controlsButton->setEnabled(false);
+		controlsButton->setMinScale(glm::vec2(75, 75));
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_controls); });
 		mainLayout->addElement(controlsButton);
 

@@ -52,6 +52,7 @@ public:
 		m_orthoProj = calcOthoProj(m_renderSize);
 
 		setText("Label");
+		setTextScale(m_textScale);
 	}
 
 
@@ -120,6 +121,8 @@ public:
 	@param	text	the new scaling factor to use. */
 	void setTextScale(const float & textScale) {
 		m_textScale = textScale;
+		m_maxScale.y = textScale;
+		update();
 	}
 	/** Retrieve this label's text scaling factor.
 	@return	the text scaling factor. */

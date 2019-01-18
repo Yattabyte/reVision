@@ -50,15 +50,50 @@ public:
 protected:
 	// Protected Methods
 	void alignChildren() {
-		const float innerRectSize = m_scale.y - m_margin;
-		const float elementSize = (innerRectSize / float(m_children.size())) - m_spacing;
-		const float position = innerRectSize - elementSize;
+		const float innerRectSize = m_scale.y;
+
+		// Available space -= margin
+		float sizeUsed = m_margin;
+
+		// Available space -= the dimensions of fixed-sized elements
+		int fixedElementCount = 0;
+		for (size_t x = 0; x < m_children.size(); ++x) 
+			if (!std::isnan(m_children[x]->getMinScale().y) || !std::isnan(m_children[x]->getMaxScale().y)) {
+				sizeUsed += m_children[x]->getScale().y;
+				fixedElementCount++;
+			}
+
+		// Available space -= spacing factor between elements
+		if (m_children.size() > 1)
+			sizeUsed += float(m_children.size() - size_t(1)) * m_spacing;
+		
+		// Remaining space divvied up between remaining elements
+		const float remainder = innerRectSize - sizeUsed;
+		const float elementSize = remainder / (float(m_children.size()) - float(fixedElementCount));
+		
+		float positionFromTop = m_scale.y - m_margin;
+		const float top = positionFromTop;
 		for (size_t x = 0; x < m_children.size(); ++x) {
 			m_children[x]->setScale(glm::vec2(m_scale.x - m_margin, elementSize));
-			if (m_children.size() > 1)
-				m_children[x]->setPosition(glm::vec2(0, -((2.0f * (float(x) / (float(m_children.size()) - 1.0f)) - 1.0f) * position)));
-			else
+			if (m_children.size() == 1) {
 				m_children[x]->setPosition(glm::vec2(0.0f));
+				continue;
+			}
+			const float size = m_children[x]->getScale().y;
+			positionFromTop -= size;
+			m_children[x]->setPosition(glm::vec2(0, positionFromTop));
+			positionFromTop -= size + (m_spacing * 2.0f);
+		}
+		const float bottom = positionFromTop + (m_spacing * 2.0f);
+
+		// Edge Case: all elements are fixed size, gap may be present
+		// Solution: change spacing to fit all elements within bounds
+		if (bottom + top > 0.0f && m_children.size() > 1) {
+			const float delta = (bottom - top) / float(m_children.size() + size_t(1));
+
+			for (size_t x = 1; x < m_children.size(); ++x) {
+				m_children[x]->setPosition(m_children[x]->getPosition() + glm::vec2(0, delta * x));
+			}
 		}
 	}
 
