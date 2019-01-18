@@ -116,8 +116,10 @@ const GLint Shader::getProgramiv(const GLenum & pname) const
 
 const std::vector<GLchar> Shader::getErrorLog() const
 {
-	std::vector<GLchar> infoLog(getProgramiv(GL_INFO_LOG_LENGTH));
-	glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
+	const auto size = getProgramiv(GL_INFO_LOG_LENGTH);
+	std::vector<GLchar> infoLog(size);
+	if (size)
+		glGetProgramInfoLog(m_glProgramID, (GLsizei)infoLog.size(), NULL, &infoLog[0]);
 	return infoLog;
 }
 

@@ -101,25 +101,25 @@ public:
 	inline void setUniform(const GLuint & i, const glm::vec4 * o) { glProgramUniform4fv(m_glProgramID, i, 1, glm::value_ptr(*o)); }
 	inline void setUniform(const GLuint & i, const glm::mat3 * o) { glProgramUniformMatrix3fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
 	inline void setUniform(const GLuint & i, const glm::mat4 * o) { glProgramUniformMatrix4fv(m_glProgramID, i, 1, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint & i, const int & o, const int & size) { glProgramUniform1iv(m_glProgramID, i, size, &o); }
-	inline void setUniformArray(const GLuint & i, const unsigned int & o, const int & size) { glProgramUniform1uiv(m_glProgramID, i, size, &o); }
-	inline void setUniformArray(const GLuint & i, const double & o, const int & size) { glProgramUniform1dv(m_glProgramID, i, size, &o); }
-	inline void setUniformArray(const GLuint & i, const float & o, const int & size) { glProgramUniform1fv(m_glProgramID, i, size, &o); }
-	inline void setUniformArray(const GLuint & i, const GLuint64 & o, const int & size) { glProgramUniformHandleui64vARB(m_glProgramID, i, size, &o); }
-	inline void setUniformArray(const GLuint & i, const glm::vec2 & o, const int & size) { glProgramUniform2fv(m_glProgramID, i, size, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint & i, const glm::vec3 & o, const int & size) { glProgramUniform3fv(m_glProgramID, i, size, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint & i, const glm::vec4 & o, const int & size) { glProgramUniform4fv(m_glProgramID, i, size, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint & i, const glm::mat4 & o, const int & size) { glProgramUniformMatrix4fv(m_glProgramID, i, size, GL_FALSE, glm::value_ptr(o)); }
-	inline void setUniformArray(const GLuint & i, const int * o, const int & size) { glProgramUniform1iv(m_glProgramID, i, size, o); }
-	inline void setUniformArray(const GLuint & i, const unsigned int * o, const int & size) { glProgramUniform1uiv(m_glProgramID, i, size, o); }
-	inline void setUniformArray(const GLuint & i, const double * o, const int & size) { glProgramUniform1dv(m_glProgramID, i, size, o); }
-	inline void setUniformArray(const GLuint & i, const float * o, const int & size) { glProgramUniform1fv(m_glProgramID, i, size, o); }
-	inline void setUniformArray(const GLuint & i, const GLuint64 * o, const int & size) { glProgramUniformHandleui64vARB(m_glProgramID, i, size, o); }
-	inline void setUniformArray(const GLuint & i, const glm::vec2 * o, const int & size) { glProgramUniform2fv(m_glProgramID, i, size, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint & i, const glm::vec3 * o, const int & size) { glProgramUniform3fv(m_glProgramID, i, size, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint & i, const glm::vec4 * o, const int & size) { glProgramUniform4fv(m_glProgramID, i, size, glm::value_ptr(*o)); }
-	inline void setUniformArray(const GLuint & i, const glm::mat4 * o, const int & size) { glProgramUniformMatrix4fv(m_glProgramID, i, size, GL_FALSE, glm::value_ptr(*o)); }
-	inline void setUniformMatrixArray(const GLuint & i, const float * o, const int & size, const GLboolean & transpose) { glProgramUniformMatrix4fv(m_glProgramID, i, size, transpose, o); }
+	inline void setUniformArray(const GLuint & i, const int & o, const int & count) { glProgramUniform1iv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint & i, const unsigned int & o, const int & count) { glProgramUniform1uiv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint & i, const double & o, const int & count) { glProgramUniform1dv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint & i, const float & o, const int & count) { glProgramUniform1fv(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint & i, const GLuint64 & o, const int & count) { glProgramUniformHandleui64vARB(m_glProgramID, i, count, &o); }
+	inline void setUniformArray(const GLuint & i, const glm::vec2 & o, const int & count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint & i, const glm::vec3 & o, const int & count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint & i, const glm::vec4 & o, const int & count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint & i, const glm::mat4 & o, const int & count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(o)); }
+	inline void setUniformArray(const GLuint & i, const int * o, const int & count) { glProgramUniform1iv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint & i, const unsigned int * o, const int & count) { glProgramUniform1uiv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint & i, const double * o, const int & count) { glProgramUniform1dv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint & i, const float * o, const int & count) { glProgramUniform1fv(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint & i, const GLuint64 * o, const int & count) { glProgramUniformHandleui64vARB(m_glProgramID, i, count, o); }
+	inline void setUniformArray(const GLuint & i, const glm::vec2 * o, const int & count) { glProgramUniform2fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint & i, const glm::vec3 * o, const int & count) { glProgramUniform3fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint & i, const glm::vec4 * o, const int & count) { glProgramUniform4fv(m_glProgramID, i, count, glm::value_ptr(*o)); }
+	inline void setUniformArray(const GLuint & i, const glm::mat4 * o, const int & count) { glProgramUniformMatrix4fv(m_glProgramID, i, count, GL_FALSE, glm::value_ptr(*o)); }
+	inline void setUniformMatrixArray(const GLuint & i, const float * o, const int & count, const GLboolean & transpose) { glProgramUniformMatrix4fv(m_glProgramID, i, count, transpose, o); }
 	
 
 	// Public Attributes

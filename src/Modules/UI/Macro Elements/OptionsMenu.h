@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
+#include "Modules/UI/Basic Elements/Toggle.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
 #include "Modules/UI/Basic Elements/Panel.h"
@@ -55,8 +56,7 @@ public:
 			auto e1label = std::make_shared<Label>(engine);
 			e1->addElement(e1label);
 			e1label->setText("Resolution:");
-			e1label->setAlignment(Label::Alignment::align_right);
-			e1label->setMaxScale(glm::vec2(75, 100));
+			e1label->setAlignment(Label::Alignment::align_left);
 			auto e1option = std::make_shared<Button>(engine);
 			e1->addElement(e1option);
 
@@ -65,8 +65,7 @@ public:
 			auto e2label = std::make_shared<Label>(engine);
 			e2->addElement(e2label);
 			e2label->setText("Refresh-rate:");
-			e2label->setMaxScale(glm::vec2(75, 100));
-			e2label->setAlignment(Label::Alignment::align_right);
+			e2label->setAlignment(Label::Alignment::align_left);
 			auto e2option = std::make_shared<Button>(engine);
 			e2->addElement(e2option);
 
@@ -75,9 +74,8 @@ public:
 			auto e3label = std::make_shared<Label>(engine);
 			e3->addElement(e3label);
 			e3label->setText("Gamma:");
-			e3label->setAlignment(Label::Alignment::align_right);
+			e3label->setAlignment(Label::Alignment::align_left);
 			auto e3option = std::make_shared<Button>(engine);
-			e3option->setMaxScale(glm::vec2(75, 100));
 			e3->addElement(e3option);
 
 			auto e4 = std::make_shared<Layout_Horizontal>(engine);
@@ -85,9 +83,8 @@ public:
 			auto e4label = std::make_shared<Label>(engine);
 			e4->addElement(e4label);
 			e4label->setText("VSync:");
-			e4label->setAlignment(Label::Alignment::align_right);
-			auto e4option = std::make_shared<Button>(engine);
-			e4option->setMaxScale(glm::vec2(75, 100));
+			e4label->setAlignment(Label::Alignment::align_left);
+			auto e4option = std::make_shared<Toggle>(engine);
 			e4->addElement(e4option);
 		}
 		// Graphics Options
@@ -108,7 +105,7 @@ public:
 			e1->addElement(e1label);
 			e1label->setText("Bloom:");
 			e1label->setAlignment(Label::Alignment::align_left);
-			auto e1option = std::make_shared<Button>(engine);
+			auto e1option = std::make_shared<Toggle>(engine);
 			e1->addElement(e1option);
 
 			auto e2 = std::make_shared<Layout_Horizontal>(engine);
@@ -117,7 +114,7 @@ public:
 			e2->addElement(e2label);
 			e2label->setText("SSAO:");
 			e2label->setAlignment(Label::Alignment::align_left);
-			auto e2option = std::make_shared<Button>(engine);
+			auto e2option = std::make_shared<Toggle>(engine);
 			e2->addElement(e2option);
 
 			auto e3 = std::make_shared<Layout_Horizontal>(engine);
@@ -126,7 +123,7 @@ public:
 			e3->addElement(e3label);
 			e3label->setText("SSR:");
 			e3label->setAlignment(Label::Alignment::align_left);
-			auto e3option = std::make_shared<Button>(engine);
+			auto e3option = std::make_shared<Toggle>(engine);
 			e3->addElement(e3option);
 
 			auto e4 = std::make_shared<Layout_Horizontal>(engine);
@@ -135,7 +132,7 @@ public:
 			e4->addElement(e4label);
 			e4label->setText("FXAA:");
 			e4label->setAlignment(Label::Alignment::align_left);
-			auto e4option = std::make_shared<Button>(engine);
+			auto e4option = std::make_shared<Toggle>(engine);
 			e4->addElement(e4option);
 		}
 		windowLayout->setMargin(20.0f);

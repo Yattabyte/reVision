@@ -70,7 +70,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void renderElement(const glm::vec2 & position, const glm::vec2 & scale) override {
+	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
@@ -81,14 +81,14 @@ public:
 			m_shader->setUniform(2, newScale);
 			m_shader->setUniform(3, m_textScale);
 			m_shader->setUniform(4, (int)m_textAlignment);
-			m_shader->setUniform(5, m_enabled ? glm::vec3(1.0f) : glm::vec3(0.75f));
+			m_shader->setUniform(5, m_enabled ? m_color : m_color * 0.75f);
 			m_textureFont->bind(0);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
-		UI_Element::renderElement(position, newScale);
+		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
 		return false;
@@ -129,6 +129,16 @@ public:
 	float getTextScale() const {
 		return m_textScale;
 	}
+	/** Set this label's color.
+	@param	text	the new color to render with. */
+	void setColor(const glm::vec3 & color) {
+		m_color = color;
+	}
+	/** Retrieve this label's color.
+	@return	the color used by this label. */
+	glm::vec3 getColor() const {
+		return m_color;
+	}
 	/** Set this label element's alignment.
 	@param	text	the alignment (left, center, right). */
 	void setAlignment(const Alignment & alignment) {
@@ -145,6 +155,7 @@ protected:
 	// Protected Attributes
 	std::string m_text;
 	float m_textScale = 10.0f;
+	glm::vec3 m_color = glm::vec3(1.0f);
 	Alignment m_textAlignment = align_center;
 
 

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef TOGGLE_H
+#define TOGGLE_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
@@ -11,25 +11,25 @@
 #include <memory>
 
 
-/** UI button class, affords being pushed and released. */
-class Button : public UI_Element
+/** UI toggle switch class, affords being switched left and right. */
+class Toggle : public UI_Element
 {
 public:
 	// (de)Constructors
-	~Button() {
+	~Toggle() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	Button(Engine * engine) {
+	Toggle(Engine * engine) {
 		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\Button");
+		m_shader = Shared_Shader(engine, "UI\\Toggle");
 
 		// Preferences
 		auto & preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize) {
-			return glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);			
+			return glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);
 		};
 		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 			m_renderSize.x = f;
@@ -41,55 +41,71 @@ public:
 		});
 		m_orthoProj = calcOthoProj(m_renderSize);
 
-		// All buttons have labels, but it isn't interactive
+		// Generate vertex array
+		glCreateVertexArrays(1, &m_vaoID);
+		glEnableVertexArrayAttrib(m_vaoID, 0);
+		glEnableVertexArrayAttrib(m_vaoID, 1);
+		glVertexArrayAttribBinding(m_vaoID, 0, 0);
+		glVertexArrayAttribBinding(m_vaoID, 1, 1);
+		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
+		glVertexArrayAttribIFormat(m_vaoID, 1, 1, GL_INT, 0);
+		glCreateBuffers(2, m_vboID);
+		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
+		glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
+		constexpr auto num_tri = (5 * 2) + (8 * 5);
+		constexpr auto num_data = num_tri * 3;
+		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
+		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
+		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+
 		m_label = std::make_shared<Label>(engine);
-		m_label->setText("");
+		m_label->setTextScale(12.0f);
+		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
+		m_on = true;
+		m_bevelRadius = 15.0f;
+		setMaxScale(glm::vec2(40.0f, 15.0f));
 		addElement(m_label);
 
 		// Callbacks
 		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
 		addCallback(on_mouse_press, [&]() {m_pressed = true; });
-		addCallback(on_mouse_release, [&]() {m_pressed = false; });
+		addCallback(on_mouse_release, [&]() {m_pressed = false; m_on = !m_on; m_startAnimating = true; m_animateTime = 0.0f; update(); });
 		addCallback(on_mouse_enter, [&]() {m_highlighted = true; });
-		addCallback(on_mouse_exit, [&]() {m_highlighted = false; });
-
-		// Generate vertex array
-		glCreateVertexArrays(1, &m_vaoID);
-		glEnableVertexArrayAttrib(m_vaoID, 0);
-		glVertexArrayAttribBinding(m_vaoID, 0, 0);
-		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-		glCreateBuffers(1, &m_vboID);
-		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
-		constexpr auto num_tri = (5 * 2) + (4 * 5);
-		constexpr auto num_data = num_tri * 3;
-		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		addCallback(on_mouse_exit, [&]() {m_highlighted = false; });	
 	}
 
 
 	// Interface Implementation
 	virtual void update() override {
-		constexpr auto num_tri = (5 * 2) + (4 * 5);
+		m_label->setText(m_on ? "ON   " : "   OFF");
+		m_label->setAlignment(m_on ? Label::align_left : Label::align_right);
+		m_label->setColor(m_on ? UIColor_Static / 255.0f : glm::vec3(1.0f));
+
+		constexpr auto num_tri = (5 * 2) + (8 * 5);
 		constexpr auto num_data = num_tri * 3;
 		std::vector<glm::vec3> m_data(num_data);
+		std::vector<int> m_objIndices(num_data);
+
+		// Center
 		m_data[0] = { -1, -1, 0 };
-		m_data[1] = {  1, -1, 0 };
-		m_data[2] = {  1,  1, 0 };
-		m_data[3] = {  1,  1, 0 };
+		m_data[1] = { 1, -1, 0 };
+		m_data[2] = { 1,  1, 0 };
+		m_data[3] = { 1,  1, 0 };
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
-
 		for (int x = 0; x < 6; ++x)
 			m_data[x] *= glm::vec3(m_scale - m_bevelRadius, 0.0f);
 
+		// Bottom Bar
 		m_data[6] = { -m_scale.x + m_bevelRadius, -m_scale.y, 0 };
-		m_data[7] = {  m_scale.x - m_bevelRadius, -m_scale.y, 0 };
-		m_data[8] = {  m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
-		m_data[9] = {  m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
-		m_data[10] = {  -m_scale.x + m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
+		m_data[7] = { m_scale.x - m_bevelRadius, -m_scale.y, 0 };
+		m_data[8] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
+		m_data[9] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
+		m_data[10] = { -m_scale.x + m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
 		m_data[11] = { -m_scale.x + m_bevelRadius, -m_scale.y, 0 };
 
+		// Left Bar
 		m_data[12] = { -m_scale.x, -m_scale.y + m_bevelRadius, 0 };
 		m_data[13] = { -m_scale.x + m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
 		m_data[14] = { -m_scale.x + m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
@@ -97,6 +113,7 @@ public:
 		m_data[16] = { -m_scale.x, m_scale.y - m_bevelRadius, 0 };
 		m_data[17] = { -m_scale.x, -m_scale.y + m_bevelRadius, 0 };
 
+		// Top Bar
 		m_data[18] = { -m_scale.x + m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
 		m_data[19] = { m_scale.x - m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
 		m_data[20] = { m_scale.x - m_bevelRadius, m_scale.y, 0 };
@@ -104,6 +121,7 @@ public:
 		m_data[22] = { -m_scale.x + m_bevelRadius, m_scale.y, 0 };
 		m_data[23] = { -m_scale.x + m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
 
+		// Right Bar
 		m_data[24] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
 		m_data[25] = { m_scale.x, -m_scale.y + m_bevelRadius, 0 };
 		m_data[26] = { m_scale.x, m_scale.y - m_bevelRadius, 0 };
@@ -111,6 +129,7 @@ public:
 		m_data[28] = { m_scale.x - m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
 		m_data[29] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
 
+		// Corners
 		glm::vec3 circlePoints[20];
 		for (int x = 0; x < 20; ++x)
 			circlePoints[x] = m_bevelRadius * glm::vec3(
@@ -180,9 +199,24 @@ public:
 		m_data[86] = circlePoints[19] + m_data[75];
 		m_data[87] = m_data[75];
 		m_data[88] = circlePoints[19] + m_data[75];
-		m_data[89] = circlePoints[0] + m_data[75];		
-		
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
+		m_data[89] = circlePoints[0] + m_data[75];
+
+		for (int x = 0; x < 90; ++x)
+			m_objIndices[x] = 0;
+
+		// Knob
+		for (int x = 0; x < 20; ++x)
+			circlePoints[x] *= 0.75F;
+		for (int cpx = 0, dx = 90; dx < 150; cpx += 1, dx += 3) {
+			m_data[dx] = glm::vec3(0.0f);
+			m_data[dx + 1] = circlePoints[(cpx + 0) % 20];
+			m_data[dx + 2] = circlePoints[(cpx + 1) % 20];
+		}
+		for (int x = 90; x < 150; ++x)
+			m_objIndices[x] = 1;
+
+		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &m_data[0]);
+		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &m_objIndices[0]);
 
 		UI_Element::update();
 	}
@@ -191,24 +225,33 @@ public:
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
+			if (m_startAnimating) {
+				m_animateTime += deltaTime;
+				if (m_animateTime >= 0.2f)
+					m_startAnimating = false;
+				m_animateTime = std::clamp<float>(m_animateTime, 0.0f, 1.0f);
+			}
 			m_shader->bind();
 			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
-			m_shader->setUniform(2, newScale);
-			glm::vec3 color(0.0f);
+			m_shader->setUniform(2, (2.0f * (m_animateTime / 0.2f) - 1.0f) * (m_on ? 22.5f : -22.5f));
+			glm::vec3 colors[2];
+			colors[0] = m_on ? UIColor_Static2 : UIColor_Disabled2;
 			if (m_enabled) {
 				if (m_highlighted) {
 					if (m_pressed)
-						color = UIColor_Pressed;
+						colors[1] = m_on ? UIColor_Pressed : UIColor_Pressed2;
 					else
-						color = UIColor_Hovered;
+						colors[1] = m_on ? UIColor_Hovered : UIColor_Hovered2;
 				}
 				else
-					color = UIColor_Static;
+					colors[1] = m_on ? UIColor_Static : UIColor_Static2;
 			}
 			else
-				color = UIColor_Disabled;
-			m_shader->setUniform(3, color / 255.0f);
+				colors[1] = m_on ? UIColor_Disabled : UIColor_Disabled2;
+			colors[0] /= 255.0f;
+			colors[1] /= 255.0f;
+			m_shader->setUniformArray(3, colors, 2);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -244,8 +287,10 @@ public:
 protected:
 	// Protected Attributes
 	std::shared_ptr<Label> m_label;
-	bool m_highlighted = false, m_pressed = false;
+	bool m_highlighted = false, m_pressed = false, m_on = true;
 	float m_bevelRadius = 10.0f;
+	bool m_startAnimating = false;
+	float m_animateTime = 0.2f;
 
 
 private:
@@ -253,9 +298,9 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_orthoProj = glm::mat4(1.0f);
-	GLuint m_vaoID = 0, m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };
 
-#endif // BUTTON_H
+#endif // TOGGLE_H

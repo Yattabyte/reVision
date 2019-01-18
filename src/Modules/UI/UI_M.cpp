@@ -43,7 +43,7 @@ void UI_Module::frameTick(const float & deltaTime)
 	glScissor(0, 0, m_renderSize.x, m_renderSize.y);
 
 	for each (auto & element in m_uiElements)
-		element->renderElement(glm::vec2(0.0f), m_renderSize);
+		element->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
 
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);

@@ -13,6 +13,16 @@
 #include <vector>
 
 
+#define UIColor_Static glm::vec3(50, 200, 100)
+#define UIColor_Static2 glm::vec3(50, 75, 100)
+#define UIColor_Hovered glm::vec3(100, 225, 150)
+#define UIColor_Hovered2 glm::vec3(50, 100, 125)
+#define UIColor_Pressed glm::vec3(25, 175, 75)
+#define UIColor_Pressed2 glm::vec3(25, 50, 75)
+#define UIColor_Disabled glm::vec3(100, 125, 100)
+#define UIColor_Disabled2 glm::vec3(100, 100, 125)
+
+
 /** Interface for UI elements, like buttons, labels, panels, etc. */
 class UI_Element
 {
@@ -136,7 +146,7 @@ public:
 	}
 	/** Render this element (and all subelements).
 	@param	transform				transform to use*/
-	virtual void renderElement(const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {	
+	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {	
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
 		for each (auto & child in m_children) {
@@ -148,7 +158,7 @@ public:
 				(newScale.x * 2.0f),
 				(newScale.y * 2.0f)
 			);
-			child->renderElement(newPosition, newScale);
+			child->renderElement(deltaTime, newPosition, newScale);
 		}
 	}
 	/** Applies and checks if mouse movement interacts with this UI element. 

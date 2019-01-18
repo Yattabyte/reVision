@@ -50,7 +50,7 @@ public:
 	
 
 	// Interface Implementation
-	virtual void renderElement(const glm::vec2 & position, const glm::vec2 & scale) override {
+	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
@@ -63,7 +63,7 @@ public:
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
-		UI_Element::renderElement(position, newScale);
+		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 
 
