@@ -52,7 +52,7 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, desiredRate);
 	preferences.getOrSetValue(PreferenceState::C_VSYNC, vsync);
 
-	// Create an invisible window for asset sharing
+	// Create main window
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	glfwWindowHint(GLFW_RED_BITS, mainMode->redBits);
 	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
@@ -267,6 +267,16 @@ void Engine::registerECSConstructor(const char * name, BaseECSComponentConstruct
 GLFWwindow * Engine::getRenderingContext() const
 { 
 	return m_renderingContext.window; 
+}
+
+std::vector<glm::ivec2> Engine::getResolutions() const
+{
+	int count(0);
+	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
+	std::vector<glm::ivec2> resolutions(count);
+	for (int x = 0; x < count; ++x)
+		resolutions[(count - 1) - x] = { modes[x].width, modes[x].height };
+	return resolutions;
 }
 
 std::string Engine::Get_Current_Dir()

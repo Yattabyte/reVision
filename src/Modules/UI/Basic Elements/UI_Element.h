@@ -21,6 +21,10 @@
 #define UIColor_Pressed2 glm::vec3(25, 50, 75)
 #define UIColor_Disabled glm::vec3(100, 125, 100)
 #define UIColor_Disabled2 glm::vec3(100, 100, 125)
+#define UIColor_Background glm::vec3(0.2)
+#define UIColor_Background2 glm::vec3(0.3)
+#define UIColor_Border glm::vec3(0.3)
+#define UIColor_Border2 glm::vec3(0.4)
 
 
 /** Interface for UI elements, like buttons, labels, panels, etc. */

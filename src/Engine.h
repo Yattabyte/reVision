@@ -21,7 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.9.G";
+constexpr char ENGINE_VERSION[] = "2.9.H";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -67,6 +67,8 @@ public:
 	// Public Accessors
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
+	/** Return a list of available resolutions. */
+	std::vector<glm::ivec2> getResolutions() const;
 	/** Returns this engine's entity component system. */
 	ECS & getECS() { return m_ecs; }
 	/** Returns this engine's action state. */

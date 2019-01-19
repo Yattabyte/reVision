@@ -272,13 +272,13 @@ public:
 	std::string getText() const {
 		return m_label->getText();
 	}
-	/** Set the bevel radius for this button.
+	/** Set the bevel radius for this toggle button.
 	@param radius	the new radius to use. */
 	void setBevelRadius(const float & radius) {
 		m_bevelRadius = radius;
 	}
-	/** Get the bevel radius from this button.
-	@return radius	this buttons' bevel radius. */
+	/** Get the bevel radius from this toggle button.
+	@return radius	this toggle buttons' bevel radius. */
 	float getBevelRadius() const {
 		return m_bevelRadius;
 	}
