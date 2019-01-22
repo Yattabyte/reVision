@@ -31,33 +31,28 @@ public:
 		addElement(mainLayout);
 
 		// Title
-		auto title = std::make_shared<Label>(engine);
-		mainLayout->addElement(title);
-		title->setText("Main Menu");
+		auto title = std::make_shared<Label>(engine, "Main Menu");
 		title->setTextScale(20.0f);
+		mainLayout->addElement(title);
 
 		// Add 'Start' button
-		auto startButton = std::make_shared<Button>(engine);
-		startButton->setText("Start");
+		auto startButton = std::make_shared<Button>(engine, "Start");
 		startButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_start); });
 		mainLayout->addElement(startButton);
 			
 		// Add 'Options' button
-		auto optionsButton = std::make_shared<Button>(engine);
-		optionsButton->setText("Options");
+		auto optionsButton = std::make_shared<Button>(engine, "Options");
 		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_options); });
 		mainLayout->addElement(optionsButton);
 
 		// Add 'Controls' button
-		auto controlsButton = std::make_shared<Button>(engine);
-		controlsButton->setText("Controls (disabled)");
+		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
 		controlsButton->setEnabled(false);
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_controls); });
 		mainLayout->addElement(controlsButton);
 
 		// Add 'Quit' button
-		auto quitButton = std::make_shared<Button>(engine);
-		quitButton->setText("Quit");
+		auto quitButton = std::make_shared<Button>(engine, "Quit");
 		quitButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_quit); });
 		mainLayout->addElement(quitButton);
 	}

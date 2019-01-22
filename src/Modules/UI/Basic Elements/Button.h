@@ -20,7 +20,7 @@ public:
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	Button(Engine * engine) {
+	Button(Engine * engine, const std::string & text = "Button") {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Button");
 
@@ -42,8 +42,8 @@ public:
 		m_orthoProj = calcOthoProj(m_renderSize);
 
 		// All buttons have labels, but it isn't interactive
-		m_label = std::make_shared<Label>(engine);
-		m_label->setText("");
+		m_label = std::make_shared<Label>(engine, text);
+		m_label->setAlignment(Label::align_center);
 		addElement(m_label);
 
 		// Callbacks
@@ -60,7 +60,7 @@ public:
 		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 		glCreateBuffers(1, &m_vboID);
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
-		constexpr auto num_tri = (5 * 2) + (4 * 5);
+		constexpr auto num_tri = (5 * 2) + (4 * 10);
 		constexpr auto num_data = num_tri * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
@@ -70,7 +70,7 @@ public:
 
 	// Interface Implementation
 	virtual void update() override {
-		constexpr auto num_tri = (5 * 2) + (4 * 5);
+		constexpr auto num_tri = (5 * 2) + (4 * 10);
 		constexpr auto num_data = num_tri * 3;
 		std::vector<glm::vec3> m_data(num_data);
 		m_data[0] = { -1, -1, 0 };
@@ -111,77 +111,33 @@ public:
 		m_data[28] = { m_scale.x - m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
 		m_data[29] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
 
-		glm::vec3 circlePoints[20];
-		for (int x = 0; x < 20; ++x)
+		glm::vec3 circlePoints[40];
+		for (int x = 0; x < 40; ++x)
 			circlePoints[x] = m_bevelRadius * glm::vec3(
-				cosf((float(x) / 10.0f) * glm::pi<float>()),
-				sinf((float(x) / 10.0f) * glm::pi<float>()),
+				cosf((float(x) / 20.0f) * glm::pi<float>()),
+				sinf((float(x) / 20.0f) * glm::pi<float>()),
 				0
 			);
-		m_data[30] = { m_scale.x - m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
-		m_data[31] = circlePoints[0] + m_data[30];
-		m_data[32] = circlePoints[1] + m_data[30];
-		m_data[33] = m_data[30];
-		m_data[34] = circlePoints[1] + m_data[30];
-		m_data[35] = circlePoints[2] + m_data[30];
-		m_data[36] = m_data[30];
-		m_data[37] = circlePoints[2] + m_data[30];
-		m_data[38] = circlePoints[3] + m_data[30];
-		m_data[39] = m_data[30];
-		m_data[40] = circlePoints[3] + m_data[30];
-		m_data[41] = circlePoints[4] + m_data[30];
-		m_data[42] = m_data[30];
-		m_data[43] = circlePoints[4] + m_data[30];
-		m_data[44] = circlePoints[5] + m_data[30];
-
-		m_data[45] = { -m_scale.x + m_bevelRadius, m_scale.y - m_bevelRadius, 0 };
-		m_data[46] = circlePoints[5] + m_data[45];
-		m_data[47] = circlePoints[6] + m_data[45];
-		m_data[48] = m_data[45];
-		m_data[49] = circlePoints[6] + m_data[45];
-		m_data[50] = circlePoints[7] + m_data[45];
-		m_data[51] = m_data[45];
-		m_data[52] = circlePoints[7] + m_data[45];
-		m_data[53] = circlePoints[8] + m_data[45];
-		m_data[54] = m_data[45];
-		m_data[55] = circlePoints[8] + m_data[45];
-		m_data[56] = circlePoints[9] + m_data[45];
-		m_data[57] = m_data[45];
-		m_data[58] = circlePoints[9] + m_data[45];
-		m_data[59] = circlePoints[10] + m_data[45];
-
-		m_data[60] = { -m_scale.x + m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
-		m_data[61] = circlePoints[10] + m_data[60];
-		m_data[62] = circlePoints[11] + m_data[60];
-		m_data[63] = m_data[60];
-		m_data[64] = circlePoints[11] + m_data[60];
-		m_data[65] = circlePoints[12] + m_data[60];
-		m_data[66] = m_data[60];
-		m_data[67] = circlePoints[12] + m_data[60];
-		m_data[68] = circlePoints[13] + m_data[60];
-		m_data[69] = m_data[60];
-		m_data[70] = circlePoints[13] + m_data[60];
-		m_data[71] = circlePoints[14] + m_data[60];
-		m_data[72] = m_data[60];
-		m_data[73] = circlePoints[14] + m_data[60];
-		m_data[74] = circlePoints[15] + m_data[60];
-
-		m_data[75] = { m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 };
-		m_data[76] = circlePoints[15] + m_data[75];
-		m_data[77] = circlePoints[16] + m_data[75];
-		m_data[78] = m_data[75];
-		m_data[79] = circlePoints[16] + m_data[75];
-		m_data[80] = circlePoints[17] + m_data[75];
-		m_data[81] = m_data[75];
-		m_data[82] = circlePoints[17] + m_data[75];
-		m_data[83] = circlePoints[18] + m_data[75];
-		m_data[84] = m_data[75];
-		m_data[85] = circlePoints[18] + m_data[75];
-		m_data[86] = circlePoints[19] + m_data[75];
-		m_data[87] = m_data[75];
-		m_data[88] = circlePoints[19] + m_data[75];
-		m_data[89] = circlePoints[0] + m_data[75];		
-		
+		glm::vec3 centers[4] = { 
+			{ m_scale.x - m_bevelRadius, m_scale.y - m_bevelRadius, 0 },
+			{ -m_scale.x + m_bevelRadius, m_scale.y - m_bevelRadius, 0 },
+			{ -m_scale.x + m_bevelRadius, -m_scale.y + m_bevelRadius, 0 },
+			{ m_scale.x - m_bevelRadius, -m_scale.y + m_bevelRadius, 0 }
+		};
+		int cIndices[40];
+		for (int a = 0, b = 0, c = 0; a < 40; ++a, ++b) {
+			if (b == 10) {
+				b = 0;
+				c++;
+			}
+			cIndices[a] = c;
+		}
+		for (int cIndex = 0, cpx = 0, dx = 30; dx < num_data; cpx++, dx += 3) {
+			const auto center = centers[cIndices[cpx]];
+			m_data[dx] = center;
+			m_data[dx + 1] = circlePoints[(cpx + 0) % 40] + center;
+			m_data[dx + 2] = circlePoints[(cpx + 1) % 40] + center;
+		}		
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 
 		UI_Element::update();
@@ -243,13 +199,13 @@ public:
 
 protected:
 	// Protected Attributes
-	std::shared_ptr<Label> m_label;
 	bool m_highlighted = false, m_pressed = false;
 	float m_bevelRadius = 10.0f;
 
 
 private:
 	// Private Attributes
+	std::shared_ptr<Label> m_label;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_orthoProj = glm::mat4(1.0f);

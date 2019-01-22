@@ -20,7 +20,7 @@ public:
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	Label(Engine * engine) {
+	Label(Engine * engine, const std::string & text = "Label") {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Label");
 		m_shapeQuad = Shared_Primitive(engine, "quad");
@@ -51,7 +51,7 @@ public:
 		});
 		m_orthoProj = calcOthoProj(m_renderSize);
 
-		setText("Label");
+		setText(text);
 		setTextScale(m_textScale);
 	}
 
@@ -153,10 +153,10 @@ public:
 
 protected:
 	// Protected Attributes
-	std::string m_text;
+	std::string m_text = "";
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
-	Alignment m_textAlignment = align_center;
+	Alignment m_textAlignment = align_left;
 
 
 private:
