@@ -9,6 +9,8 @@
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
 #include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Decorators/Border.h"
+#include "Modules/UI/Decorators/Scrollbar_V.h"
 #include "Engine.h"
 
 
@@ -20,6 +22,7 @@ public:
 	enum interact {
 		on_back = last_interact_index
 	};
+
 
 	// (de)Constructors
 	~OptionsMenu() = default;
@@ -33,15 +36,14 @@ public:
 		auto title = std::make_shared<Label>(engine, "Options");
 		mainLayout->addElement(title);
 		title->setTextScale(20.0f);
-		
+
 		// Window Options
-		auto windowPanel = std::make_shared<Panel>(engine);
-		auto windowLayout = std::make_shared<Layout_Vertical>(engine);
-		auto graphicsPanel = std::make_shared<Panel>(engine);
-		auto graphicsLayout = std::make_shared<Layout_Vertical>(engine);
 		{
-			mainLayout->addElement(windowPanel);
-			windowPanel->addElement(windowLayout);
+			auto windowLayout = std::make_shared<Layout_Vertical>(engine);
+			windowLayout->setMargin(20.0f);
+			windowLayout->setMaxScale(glm::vec2(windowLayout->getMaxScale().x, 500));
+			auto windowBorder = std::make_shared<Border>(engine, windowLayout);
+			mainLayout->addElement(windowBorder);
 
 			// Title
 			auto windowTitle = std::make_shared<Label>(engine, "Window Options");
@@ -51,9 +53,16 @@ public:
 			auto e1 = std::make_shared<Layout_Horizontal>(engine);
 			windowLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
-			auto e1option = std::make_shared<DropList>(engine);
+			auto e1Drop = std::make_shared<DropList>(engine);
+			m_resolutions = engine->getResolutions();
+			std::vector<std::string> resStrings;
+			resStrings.reserve(m_resolutions.size());
+			for each (const auto & res in m_resolutions)
+				resStrings.push_back(std::to_string(res.x) + "x" + std::to_string(res.y));
+			e1Drop->setStrings(resStrings);
+			auto e1option = std::make_shared<Scrollbar_V>(engine, e1Drop);
 			e1->addElement(e1option);
-
+			
 			auto e2 = std::make_shared<Layout_Horizontal>(engine);
 			windowLayout->addElement(e2);
 			e2->addElement(std::make_shared<Label>(engine, "Refresh-rate:"));
@@ -80,8 +89,10 @@ public:
 		}
 		// Graphics Options
 		{
-			mainLayout->addElement(graphicsPanel);
-			graphicsPanel->addElement(graphicsLayout);
+			auto graphicsLayout = std::make_shared<Layout_Vertical>(engine);
+			graphicsLayout->setMargin(20.0f);
+			auto graphicsBorder = std::make_shared<Border>(engine, graphicsLayout);
+			mainLayout->addElement(graphicsBorder);
 
 			auto graphicsTitle = std::make_shared<Label>(engine, "Graphics Options");
 			graphicsLayout->addElement(graphicsTitle);
@@ -90,31 +101,47 @@ public:
 			auto e1 = std::make_shared<Layout_Horizontal>(engine);
 			graphicsLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Bloom:"));
-			auto e1option = std::make_shared<Toggle>(engine);
+			bool e1State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, e1State);
+			auto e1option = std::make_shared<Toggle>(engine, e1State);
+			e1option->addCallback(Toggle::on_toggle, [&, e1option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, e1option->getToggled() ? 1.0f : 0.0f); 
+			});
 			e1->addElement(e1option);
 
 			auto e2 = std::make_shared<Layout_Horizontal>(engine);
 			graphicsLayout->addElement(e2);
 			e2->addElement(std::make_shared<Label>(engine, "SSAO:"));
-			auto e2option = std::make_shared<Toggle>(engine);
+			bool e2State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, e2State);
+			auto e2option = std::make_shared<Toggle>(engine, e2State);
+			e2option->addCallback(Toggle::on_toggle, [&, e2option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_SSAO, e2option->getToggled() ? 1.0f : 0.0f); 
+			});
 			e2->addElement(e2option);
 
 			auto e3 = std::make_shared<Layout_Horizontal>(engine);
 			graphicsLayout->addElement(e3);
 			e3->addElement(std::make_shared<Label>(engine, "SSR:"));
-			auto e3option = std::make_shared<Toggle>(engine);
+			bool e3State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, e3State);
+			auto e3option = std::make_shared<Toggle>(engine, e3State);
+			e3option->addCallback(Toggle::on_toggle, [&, e3option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_SSR, e3option->getToggled() ? 1.0f : 0.0f); 
+			});
 			e3->addElement(e3option);
 
 			auto e4 = std::make_shared<Layout_Horizontal>(engine);
 			graphicsLayout->addElement(e4);
 			e4->addElement(std::make_shared<Label>(engine, "FXAA:"));
-			auto e4option = std::make_shared<Toggle>(engine);
+			bool e4State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, e4State);
+			auto e4option = std::make_shared<Toggle>(engine, e4State);
+			e4option->addCallback(Toggle::on_toggle, [&, e4option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_FXAA, e4option->getToggled() ? 1.0f : 0.0f); 
+			});
 			e4->addElement(e4option);
 		}
-		windowLayout->setMargin(20.0f);
-		graphicsLayout->setMargin(20.0f);
-		windowLayout->setScale(windowPanel->getScale());
-		graphicsLayout->setScale(graphicsPanel->getScale());
 
 		auto bottomBar = std::make_shared<Layout_Horizontal>(engine);
 		bottomBar->setMaxScale(glm::vec2(300, 25));
@@ -122,13 +149,23 @@ public:
 
 		auto backButton = std::make_shared<Button>(engine, "Back");
 		backButton->setBevelRadius(15.0F);
-		backButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_back); });
+		backButton->addCallback(UI_Element::on_mouse_release, [&]() {
+			enactCallback(on_back); 
+		});
 		bottomBar->addElement(backButton);
 
 		auto saveButton = std::make_shared<Button>(engine, "Save");
 		saveButton->setBevelRadius(15.0F);
+		saveButton->addCallback(Button::on_mouse_release, [&, engine]() {
+			engine->getPreferenceState().save();
+		});
 		bottomBar->addElement(saveButton);
 	}
+
+
+private:
+	// Private Attributes
+	std::vector<glm::ivec2> m_resolutions;
 };
 
 #endif // OPTIONSMENU_H

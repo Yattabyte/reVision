@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LAYOUT_HORIZONTAL_H
-#define LAYOUT_HORIZONTAL_H
+#ifndef UI_LAYOUT_HORIZONTAL_H
+#define UI_LAYOUT_HORIZONTAL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 
@@ -103,4 +103,4 @@ protected:
 	float m_spacing = 10.0f;
 };
 
-#endif // LAYOUT_HORIZONTAL_H
+#endif // UI_LAYOUT_HORIZONTAL_H

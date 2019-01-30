@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TOGGLE_H
-#define TOGGLE_H
+#ifndef UI_TOGGLE_H
+#define UI_TOGGLE_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
@@ -15,12 +15,21 @@
 class Toggle : public UI_Element
 {
 public:
+	// Interaction enums
+	enum interact {
+		on_toggle = UI_Element::last_interact_index
+	};
+
+
 	// (de)Constructors
 	~Toggle() {
 		// Update indicator
 		m_aliveIndicator = false;
+		// Delete geometry
+		glDeleteBuffers(2, m_vboID);
+		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Toggle(Engine * engine) {
+	Toggle(Engine * engine, const bool & toggleState = true) : m_on(toggleState) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Toggle");
 
@@ -61,8 +70,7 @@ public:
 
 		m_label = std::make_shared<Label>(engine);
 		m_label->setTextScale(12.0f);
-		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
-		m_on = true;
+		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));		
 		m_bevelRadius = 15.0f;
 		setMaxScale(glm::vec2(40.0f, 15.0f));
 		addElement(m_label);
@@ -70,7 +78,7 @@ public:
 		// Callbacks
 		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
 		addCallback(on_mouse_press, [&]() {m_pressed = true; });
-		addCallback(on_mouse_release, [&]() {m_pressed = false; m_on = !m_on; m_startAnimating = true; m_animateTime = 0.0f; update(); });
+		addCallback(on_mouse_release, [&]() {m_pressed = false; m_on = !m_on; m_startAnimating = true; m_animateTime = 0.0f; update(); enactCallback(on_toggle); });
 		addCallback(on_mouse_enter, [&]() {m_highlighted = true; });
 		addCallback(on_mouse_exit, [&]() {m_highlighted = false; });	
 	}
@@ -282,6 +290,10 @@ public:
 	float getBevelRadius() const {
 		return m_bevelRadius;
 	}
+	/** Return the toggle state of this button. */
+	bool getToggled() const {
+		return m_on;
+	}
 
 
 protected:
@@ -303,4 +315,4 @@ private:
 	StaticBuffer m_indirect;
 };
 
-#endif // TOGGLE_H
+#endif // UI_TOGGLE_H

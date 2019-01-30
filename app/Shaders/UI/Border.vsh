@@ -1,4 +1,4 @@
-/* UI Panel Shader. */
+/* UI Border Shader. */
 #version 460
 
 layout (location = 0) in vec3 vertex;

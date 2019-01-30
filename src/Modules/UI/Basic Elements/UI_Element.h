@@ -31,7 +31,7 @@
 class UI_Element
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	~UI_Element() = default;
 	UI_Element() = default;
 
@@ -47,93 +47,13 @@ public:
 	};
 
 
-	// Public Methods	
-	/** Add a child ui element to this one.
-	@param		child				the element to be chained to this one. */
-	virtual void addElement(const std::shared_ptr<UI_Element> & child) {
-		m_children.push_back(child);
-		update();
-	}
-	/** Add a callback function, to be called when the given event occurs.
-	@param		interactionEventID		the ID corresponding to an event type
-	@param		func				the callback function to be called. */
-	void addCallback(const int & interactionEventID, const std::function<void()> && func) {
-		m_callbacks[interactionEventID].push_back(func);
-		update();
-	}
+	// Public Interface
 	/** Sets this elements' position.
 	@param	position				the new position to use. */
-	void setPosition(const glm::vec2 & position) {
+	virtual void setPosition(const glm::vec2 & position) {
 		m_position = position;
 		update();
 	}
-	/** Gets this elements' position. 
-	@return	this elements' position. */
-	glm::vec2 getPosition() const {
-		return m_position;
-	}
-	/** Sets this elements' scale.
-	@param	scale					the new scale to use. */
-	void setScale(const glm::vec2 & scale) {
-		m_scale = scale;
-		update();
-		enactCallback(on_resize);
-	}
-	/** Gets this elements' scale.
-	@return	this elements' scale. */
-	glm::vec2 getScale() const {
-		return m_scale;
-	}
-	/** Sets this elements' maximum scale.
-	@param	scale					the new maximum scale to use. */
-	void setMaxScale(const glm::vec2 & scale) {
-		m_maxScale = scale;
-		update();
-		enactCallback(on_resize);
-	}
-	/** Gets this elements' maximum scale.
-	@return	this elements' maximum scale. */
-	glm::vec2 getMaxScale() const {
-		return m_maxScale;
-	}
-	/** Sets this elements' minimum scale.
-	@param	scale					the new minimum scale to use. */
-	void setMinScale(const glm::vec2 & scale) {
-		m_minScale = scale;
-		update();
-		enactCallback(on_resize);
-	}
-	/** Gets this elements' minimum scale.
-	@return	this elements' minimum scale. */
-	glm::vec2 getMinScale() const {
-		return m_minScale;
-	}
-	/** Set this element as visible or not.
-	@param	visible					whether or not this element should be visible. */
-	void setVisible(const bool & visible) {
-		m_visible = visible;
-		for each (auto & child in m_children)
-			child->setVisible(visible);
-	}
-	/** Gets this elements' visibility.
-	@return	if this element is visible. */
-	bool getVisible() const {
-		return m_visible;
-	}
-	/** Set this element as enabled or not.
-	@param	visible					whether or not this element should be enabled. */
-	void setEnabled(const bool & enabled) {
-		m_enabled = enabled;
-		for each (auto & child in m_children)
-			child->setEnabled(enabled);
-	}
-	/** Get the enabled state of this element.
-	@return	if this element is enabled. */
-	bool getEnabled() const {
-		return m_enabled;
-	}
-
-	// Public Interface
 	/** Requests that this element update itself. */
 	virtual void update() {
 		if (!std::isnan(m_minScale.x))
@@ -204,6 +124,92 @@ public:
 			return true;
 		}
 		return false;
+	}
+
+
+	// Public Methods
+	/** Add a child UI element to this one.
+	@param		child				the element to be chained to this one. */
+	void addElement(const std::shared_ptr<UI_Element> & child) {
+		m_children.push_back(child);
+		update();
+	}
+	/** Remove all child UI elements. */
+	void clearElements() {
+		m_children.clear();
+		update();
+	}
+	/** Add a callback function, to be called when the given event occurs.
+	@param		interactionEventID		the ID corresponding to an event type
+	@param		func				the callback function to be called. */
+	void addCallback(const int & interactionEventID, const std::function<void()> && func) {
+		m_callbacks[interactionEventID].push_back(func);
+		update();
+	}
+	/** Gets this elements' position.
+	@return	this elements' position. */
+	glm::vec2 getPosition() const {
+		return m_position;
+	}
+	/** Sets this elements' scale.
+	@param	scale					the new scale to use. */
+	void setScale(const glm::vec2 & scale) {
+		m_scale = scale;
+		update();
+		enactCallback(on_resize);
+	}
+	/** Gets this elements' scale.
+	@return	this elements' scale. */
+	glm::vec2 getScale() const {
+		return m_scale;
+	}
+	/** Sets this elements' maximum scale.
+	@param	scale					the new maximum scale to use. */
+	void setMaxScale(const glm::vec2 & scale) {
+		m_maxScale = scale;
+		update();
+		enactCallback(on_resize);
+	}
+	/** Gets this elements' maximum scale.
+	@return	this elements' maximum scale. */
+	glm::vec2 getMaxScale() const {
+		return m_maxScale;
+	}
+	/** Sets this elements' minimum scale.
+	@param	scale					the new minimum scale to use. */
+	void setMinScale(const glm::vec2 & scale) {
+		m_minScale = scale;
+		update();
+		enactCallback(on_resize);
+	}
+	/** Gets this elements' minimum scale.
+	@return	this elements' minimum scale. */
+	glm::vec2 getMinScale() const {
+		return m_minScale;
+	}
+	/** Set this element as visible or not.
+	@param	visible					whether or not this element should be visible. */
+	void setVisible(const bool & visible) {
+		m_visible = visible;
+		for each (auto & child in m_children)
+			child->setVisible(visible);
+	}
+	/** Gets this elements' visibility.
+	@return	if this element is visible. */
+	bool getVisible() const {
+		return m_visible;
+	}
+	/** Set this element as enabled or not.
+	@param	visible					whether or not this element should be enabled. */
+	void setEnabled(const bool & enabled) {
+		m_enabled = enabled;
+		for each (auto & child in m_children)
+			child->setEnabled(enabled);
+	}
+	/** Get the enabled state of this element.
+	@return	if this element is enabled. */
+	bool getEnabled() const {
+		return m_enabled;
 	}
 
 

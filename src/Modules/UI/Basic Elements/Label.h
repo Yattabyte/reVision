@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LABEL_H
-#define LABEL_H
+#ifndef UI_LABEL_H
+#define UI_LABEL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Primitive.h"
@@ -171,4 +171,4 @@ private:
 	DynamicBuffer m_bufferString;
 };
 
-#endif // PANEL_H
+#endif // UI_PANEL_H

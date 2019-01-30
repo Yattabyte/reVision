@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LAYOUT_VERTICAL_H
-#define LAYOUT_VERTICAL_H
+#ifndef UI_LAYOUT_VERTICAL_H
+#define UI_LAYOUT_VERTICAL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 
@@ -103,4 +103,4 @@ protected:
 	float m_spacing = 10.0f;
 };
 
-#endif // LAYOUT_VERTICAL_H
+#endif // UI_LAYOUT_VERTICAL_H

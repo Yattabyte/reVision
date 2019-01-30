@@ -1,6 +1,6 @@
 #pragma once
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef UI_BUTTON_H
+#define UI_BUTTON_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
@@ -19,6 +19,9 @@ public:
 	~Button() {
 		// Update indicator
 		m_aliveIndicator = false;
+		// Delete geometry
+		glDeleteBuffers(1, &m_vboID);
+		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	Button(Engine * engine, const std::string & text = "Button") {
 		// Asset Loading
@@ -195,6 +198,10 @@ public:
 	float getBevelRadius() const {
 		return m_bevelRadius;
 	}
+	/** Get if this button is pressed. */
+	bool getPressed() const {
+		return m_pressed;
+	}
 
 
 protected:
@@ -214,4 +221,4 @@ private:
 	StaticBuffer m_indirect;
 };
 
-#endif // BUTTON_H
+#endif // UI_BUTTON_H
