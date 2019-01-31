@@ -5,16 +5,19 @@ layout (location = 0) in vec3 vertex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out int Index;
 
-layout (location = 0) uniform mat4 ScreenProjection;
 layout (location = 1) uniform vec2 ElementTransform;
 layout (location = 2) uniform vec2 Scale;
 layout (location = 3) uniform float TextScale;
 layout (location = 4) uniform int Alignment;
 
+layout (std430, binding = 2) readonly coherent buffer ProjectionBuffer { 
+	mat4 ScreenProjection;
+};
 layout (std430, binding = 8) readonly buffer TextBuffer {
 	int count;
 	int characters[];
 };
+
 
 void main()
 {

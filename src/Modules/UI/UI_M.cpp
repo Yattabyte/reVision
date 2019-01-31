@@ -8,14 +8,22 @@ void UI_Module::initialize(Engine * engine)
 {
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
+	constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize, StaticBuffer & projectionBuffer) {
+		const glm::mat4 proj = glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);
+		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
+	};
+	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), 0, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.x = f;
+		calcOthoProj(m_renderSize, m_projectionBuffer);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = f;
+		calcOthoProj(m_renderSize, m_projectionBuffer);
 	});
+	calcOthoProj(m_renderSize, m_projectionBuffer);
 
 	// Create main menu
 	m_startMenu = std::make_shared<StartMenu>(engine);
@@ -41,7 +49,8 @@ void UI_Module::frameTick(const float & deltaTime)
 	glEnable(GL_SCISSOR_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	glScissor(0, 0, m_renderSize.x, m_renderSize.y);
-
+	
+	m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto & element in m_uiElements)
 		element->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
 

@@ -1,7 +1,6 @@
 /* UI Button Shader. */
 #version 460
 
-layout (location = 0) in vec2 TexCoord;
 layout (location = 0) out vec4 FragColor;
 
 layout (location = 3) uniform vec3 color;

@@ -6,9 +6,12 @@ layout (location = 1) in int objIndex;
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out int Index;
 
-layout (location = 0) uniform mat4 ScreenProjection;
 layout (location = 1) uniform vec2 ElementTransform;
 layout (location = 2) uniform float AnimAmount;
+
+layout (std430, binding = 2) readonly coherent buffer ProjectionBuffer { 
+	mat4 ScreenProjection;
+};
 
 
 void main()

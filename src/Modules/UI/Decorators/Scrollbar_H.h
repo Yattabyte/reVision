@@ -21,8 +21,6 @@ public:
 
 	// Public (de)Constructors
 	~Scrollbar_H() {
-		// Update indicator
-		m_aliveIndicator = false;
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
@@ -30,23 +28,6 @@ public:
 	Scrollbar_H(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
-
-		// Preferences
-		auto & preferences = engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize) {
-			return glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);
-		};
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.x = f;
-			m_orthoProj = calcOthoProj(m_renderSize);
-		});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.y = f;
-			m_orthoProj = calcOthoProj(m_renderSize);
-		});
-		m_orthoProj = calcOthoProj(m_renderSize);
 
 		auto & topButton = std::make_shared<Button>(engine, ""), &bottomButton = std::make_shared<Button>(engine, ""), &panel = std::make_shared<Button>(engine, "");
 		addElement(topButton);
@@ -141,7 +122,6 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
 			glm::vec3 colors[3];
 			colors[0] = UIColor_Static2;
@@ -195,9 +175,6 @@ protected:
 
 private:
 	// Private Attributes
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	glm::mat4 m_orthoProj = glm::mat4(1.0f);
 	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;

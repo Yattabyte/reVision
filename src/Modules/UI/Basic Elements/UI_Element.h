@@ -229,8 +229,11 @@ protected:
 
 	// Protected Attributes
 	glm::vec2 m_position = glm::vec2(0.0f);
-	glm::vec2 m_scale = glm::vec2(1.0f), m_maxScale = glm::vec2(std::nanf(0)), m_minScale = glm::vec2(std::nanf(0));
-	bool m_visible = true, m_enabled = true;
+	glm::vec2 m_scale = glm::vec2(1.0f), 
+		m_maxScale = glm::vec2(std::nanf(0)), 
+		m_minScale = glm::vec2(std::nanf(0));
+	bool m_visible = true, 
+		m_enabled = true;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;
 };

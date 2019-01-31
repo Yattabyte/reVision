@@ -16,8 +16,6 @@ class DropList : public UI_Element
 public:
 	// (de)Constructors
 	~DropList() {
-		// Update indicator
-		m_aliveIndicator = false;
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
@@ -28,23 +26,6 @@ public:
 
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\DropList");
-
-		// Preferences
-		auto & preferences = engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize) {
-			return glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);
-		};
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.x = f;
-			m_orthoProj = calcOthoProj(m_renderSize);
-		});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.y = f;
-			m_orthoProj = calcOthoProj(m_renderSize);
-		});
-		m_orthoProj = calcOthoProj(m_renderSize);
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -93,7 +74,6 @@ public:
 				m_animateTime = std::clamp<float>(m_animateTime, 0.0f, 1.0f);
 			}
 			m_shader->bind();
-			m_shader->setUniform(0, m_orthoProj);
 			m_shader->setUniform(1, newPosition);
 			m_shader->setUniform(2, (2.0f * (m_animateTime / 0.2f) - 1.0f));
 			glm::vec3 colors[2];
@@ -157,9 +137,6 @@ protected:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	glm::mat4 m_orthoProj = glm::mat4(1.0f);
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;

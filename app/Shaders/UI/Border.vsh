@@ -3,8 +3,11 @@
 
 layout (location = 0) in vec3 vertex;
 
-layout (location = 0) uniform mat4 ScreenProjection;
 layout (location = 1) uniform vec2 ElementTransform;
+
+layout (std430, binding = 2) readonly coherent buffer ProjectionBuffer { 
+	mat4 ScreenProjection;
+};
 
 
 void main()
