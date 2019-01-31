@@ -4,7 +4,6 @@
 
 #include "Modules/UI/Decorators/UI_Decorator.h"
 #include <memory>
-#include "Engine.h"
 
 
 /** Border decorator object*/

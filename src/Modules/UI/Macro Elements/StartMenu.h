@@ -37,23 +37,23 @@ public:
 
 		// Add 'Start' button
 		auto startButton = std::make_shared<Button>(engine, "Start");
-		startButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_start); });
+		startButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_start); });
 		mainLayout->addElement(startButton);
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "Options");
-		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_options); });
+		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_options); });
 		mainLayout->addElement(optionsButton);
 
 		// Add 'Controls' button
 		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
 		controlsButton->setEnabled(false);
-		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_controls); });
+		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_controls); });
 		mainLayout->addElement(controlsButton);
 
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "Quit");
-		quitButton->addCallback(UI_Element::on_mouse_release, [&]() {enactCallback(on_quit); });
+		quitButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_quit); });
 		mainLayout->addElement(quitButton);
 	}
 };

@@ -7,7 +7,6 @@
 #include "Assets/Primitive.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "Engine.h"
 #include <memory>
 
 

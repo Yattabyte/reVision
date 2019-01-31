@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/DropList.h"
+#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
@@ -40,8 +40,8 @@ public:
 		// Window Options
 		{
 			auto windowLayout = std::make_shared<Layout_Vertical>(engine);
-			windowLayout->setMargin(20.0f);
-			windowLayout->setMaxScale(glm::vec2(windowLayout->getMaxScale().x, 500));
+			windowLayout->setMargin(5.0f);
+			windowLayout->setSpacing(1.0f);
 			auto windowBorder = std::make_shared<Border>(engine, windowLayout);
 			mainLayout->addElement(windowBorder);
 
@@ -53,35 +53,40 @@ public:
 			auto e1 = std::make_shared<Layout_Horizontal>(engine);
 			windowLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
-			auto e1Drop = std::make_shared<DropList>(engine);
+			auto e1Drop = std::make_shared<List>(engine);
 			m_resolutions = engine->getResolutions();
-			std::vector<std::string> resStrings;
-			resStrings.reserve(m_resolutions.size());
-			for each (const auto & res in m_resolutions)
-				resStrings.push_back(std::to_string(res.x) + "x" + std::to_string(res.y));
-			e1Drop->setStrings(resStrings);
-			auto e1option = std::make_shared<Scrollbar_V>(engine, e1Drop);
-			e1->addElement(e1option);
+			for each (const auto & res in m_resolutions) {
+				const auto string  = std::to_string(res.x) + "x" + std::to_string(res.y);
+				auto & label = std::make_shared<Label>(engine, string);
+				label->setColor(glm::vec3(0.0f));
+				label->setAlignment(Label::align_center);
+				e1Drop->addListElement(label);
+			}
+			e1->addElement(e1Drop);
 			
 			auto e2 = std::make_shared<Layout_Horizontal>(engine);
+			e2->setMaxScale(glm::vec2(e2->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e2);
 			e2->addElement(std::make_shared<Label>(engine, "Refresh-rate:"));
 			auto e2option = std::make_shared<Button>(engine);
 			e2->addElement(e2option);
 
 			auto e3 = std::make_shared<Layout_Horizontal>(engine);
+			e3->setMaxScale(glm::vec2(e3->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e3);
 			e3->addElement(std::make_shared<Label>(engine, "Gamma:"));
 			auto e3option = std::make_shared<Button>(engine);
 			e3->addElement(e3option);
 
 			auto e4 = std::make_shared<Layout_Horizontal>(engine);
+			e4->setMaxScale(glm::vec2(e4->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e4);
 			e4->addElement(std::make_shared<Label>(engine, "VSync:"));
 			auto e4option = std::make_shared<Toggle>(engine);
 			e4->addElement(e4option);
 
 			auto e5 = std::make_shared<Layout_Horizontal>(engine);
+			e5->setMaxScale(glm::vec2(e5->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e5);
 			e5->addElement(std::make_shared<Label>(engine, "Full-screen:"));
 			auto e5option = std::make_shared<Toggle>(engine);
@@ -90,8 +95,10 @@ public:
 		// Graphics Options
 		{
 			auto graphicsLayout = std::make_shared<Layout_Vertical>(engine);
-			graphicsLayout->setMargin(20.0f);
+			graphicsLayout->setMargin(5.0f);
+			graphicsLayout->setSpacing(1.0f);
 			auto graphicsBorder = std::make_shared<Border>(engine, graphicsLayout);
+			graphicsBorder->setMaxScale(glm::vec2(graphicsBorder->getMaxScale().x, 150.0f));
 			mainLayout->addElement(graphicsBorder);
 
 			auto graphicsTitle = std::make_shared<Label>(engine, "Graphics Options");

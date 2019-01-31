@@ -48,6 +48,13 @@ public:
 
 
 	// Public Interface
+	/** Sets this elements' scale.
+	@param	scale					the new scale to use. */
+	virtual void setScale(const glm::vec2 & scale) {
+		m_scale = scale;
+		update();
+		enactCallback(on_resize);
+	}
 	/** Sets this elements' position.
 	@param	position				the new position to use. */
 	virtual void setPosition(const glm::vec2 & position) {
@@ -150,13 +157,6 @@ public:
 	@return	this elements' position. */
 	glm::vec2 getPosition() const {
 		return m_position;
-	}
-	/** Sets this elements' scale.
-	@param	scale					the new scale to use. */
-	void setScale(const glm::vec2 & scale) {
-		m_scale = scale;
-		update();
-		enactCallback(on_resize);
 	}
 	/** Gets this elements' scale.
 	@return	this elements' scale. */

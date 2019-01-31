@@ -1,31 +1,36 @@
 #pragma once
-#ifndef UI_DROPLIST_H
-#define UI_DROPLIST_H
+#ifndef UI_LIST_H
+#define UI_LIST_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Decorators/Scrollbar_V.h"
-#include "Engine.h"
 #include <memory>
 #include <string>
 
 
-/** UI drop-down list class. */
-class DropList : public UI_Element
+/** UI vertical list class. */
+class List : public UI_Element
 {
 public:
 	// (de)Constructors
-	~DropList() {
+	~List() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	DropList(Engine * engine) : m_engine(engine) {
+	List(Engine * engine) {
+		m_container = std::make_shared<UI_Element>();
+		m_scrollbar = std::make_shared<Scrollbar_V>(engine, m_container);
+		m_scrollbar->addCallback(Scrollbar_V::on_scroll_change, [&]() {
+			updateListElements();
+		});
+
 		// List
 		setIndex(0);
 
 		// Asset Loading
-		m_shader = Shared_Shader(engine, "UI\\DropList");
+		m_shader = Shared_Shader(engine, "UI\\List");
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -44,6 +49,10 @@ public:
 
 
 	// Interface Implementation
+	virtual void setScale(const glm::vec2 & scale) override {
+		UI_Element::setScale(scale);
+		m_scrollbar->setScale(scale);
+	}
 	virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
@@ -56,9 +65,11 @@ public:
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
 		for (int x = 0; x < 6; ++x) 
-			m_data[x] = (m_data[x] * glm::vec3(m_scale.x, m_maxScale.y, 0.0f)) - glm::vec3(0, 35.0f, 0);
+			m_data[x] *= glm::vec3(m_scale.x, m_scale.y, 0.0f);
 
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
+
+		updateListElements();
 
 		UI_Element::update();
 	}
@@ -84,9 +95,30 @@ public:
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
-		for each (auto & label in m_labels) 
-			label->renderElement(deltaTime, newPosition, newScale);
+		m_scrollbar->renderElement(deltaTime, newPosition, newScale);
 		UI_Element::renderElement(deltaTime, position, newScale);
+	}
+	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return false;
+		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			if (m_scrollbar->mouseMove(subEvent))
+				return true;
+		}
+		return (UI_Element::mouseMove(mouseEvent));
+	}
+	virtual bool mouseButton(const MouseEvent & mouseEvent) {
+		if (!getVisible() || !getEnabled()) return false;
+		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			if (m_scrollbar->mouseButton(subEvent))
+				return true;
+		}
+		return (UI_Element::mouseButton(mouseEvent));
 	}
 
 
@@ -94,40 +126,35 @@ public:
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
 	void setIndex(const int & index) {
-		m_index = std::clamp<int>(index, 0, m_strings.size());
+		m_index = std::clamp<int>(index, 0, m_listElements.size());
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
 	int getIndex() const {
 		return m_index;
 	}
-	/** Set the list of strings to display in this list.
-	@param		strings		the new list of strings to use. */
-	void setStrings(const std::vector<std::string> & strings) {
-		m_strings = strings;
-		m_labels.clear();
-		int counter = 1;
-		for each (const auto & string in strings) {
-			auto & label = std::make_shared<Label>(m_engine, string);
-			label->setColor(glm::vec3(0.0f));
-			label->setAlignment(Label::align_center);
-			label->setPosition(glm::vec2(0.0f, (counter * -25.0f) + ((25.0f * 8.0f) / 2.0f) - 25.0f));
-			m_labels.push_back(label);
-			counter++;
-		}
-		setMinScale(glm::vec2(getMinScale().x, 25.0f));
-		setMaxScale(glm::vec2(getMaxScale().x, (25.0f * float(strings.size())) / 2.0f));
-	}
-	/** Get the current list of strings used in this list.
-	@return		currently active list of strings. */
-	std::vector<std::string> getStrings() const {
-		return m_strings;
+	void addListElement(const std::shared_ptr<UI_Element> & element) {
+		m_container->addElement(element);
+		m_listElements.push_back(element);
 	}
 
 
 protected:
+	// Protected Methods
+	void updateListElements() {
+		auto visible_height = getScale().y * 2.0f;
+		auto all_elements_height = ((25.0f * m_listElements.size()));
+		auto diff = visible_height - all_elements_height;
+		const auto offset = (1.0f - (0.5f * m_scrollbar->getLinear() + 0.5f)) * diff;
+		int counter = 0;	
+		for each (auto & element in m_listElements) {
+			element->setPosition(glm::vec2(0.0f, ((counter * -25.0f) + (m_scale.y) -12.5f) - offset));
+			counter++;
+		}
+	}
+
+
 	// Protected Attributes
-	std::vector<std::string> m_strings;
 	int m_index = 0;
 	bool m_open = false;
 	bool m_startAnimating = false;
@@ -136,11 +163,12 @@ protected:
 
 private:
 	// Private Attributes
-	Engine * m_engine = nullptr;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
-	std::vector<std::shared_ptr<Label>> m_labels;
+	std::shared_ptr<UI_Element> m_container;
+	std::shared_ptr<Scrollbar_V> m_scrollbar;
+	std::vector<std::shared_ptr<UI_Element>> m_listElements;
 };
 
-#endif // UI_DROPLIST_H
+#endif // UI_LIST_H

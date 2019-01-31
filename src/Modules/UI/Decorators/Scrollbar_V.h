@@ -4,7 +4,6 @@
 
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Decorators/UI_Decorator.h"
-#include "Engine.h"
 #include <memory>
 #include <string>
 
@@ -41,6 +40,7 @@ public:
 		bottomButton->setMaxScale(glm::vec2(12.5f));
 		panel->setMinScale(glm::vec2(12.5f, 12.5));
 		panel->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 25.0f));
+		setMinScale(glm::vec2(12.5f, getMinScale().y));
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -105,7 +105,7 @@ public:
 			if (consumed) {
 				if (m_children.size() == 3) {
 					if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
-						setLinear(subEvent.m_yPos / (m_scale.y - 25.0f - 25.0f));
+						setLinear(subEvent.m_yPos / (m_scale.y - 25.0f - 12.5f));
 						updateElements();
 					}
 				}
@@ -144,10 +144,6 @@ public:
 	@param	linear		the linear amount to put the scroll bar. */
 	void setLinear(const float & linear) {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
-
-		const auto qwe = m_component->getMaxScale().y - m_component->getScale().y;
-		m_component->setPosition(glm::vec2(m_component->getPosition().x, (m_linear * -qwe) + qwe));
-
 		enactCallback(on_scroll_change);
 	}
 	/** Get the lienar value for this scrollbar. 
@@ -167,8 +163,8 @@ protected:
 			m_children[1]->setPosition(glm::vec2(getScale().x - 12.5f, -getScale().y + 12.5f));
 
 			// Panel
-			m_children[2]->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 25.0f));
-			m_children[2]->setPosition(glm::vec2(getScale().x - 12.5f, m_linear * (m_scale.y - 25.0f - 25.0f)));
+			m_children[2]->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 12.5));
+			m_children[2]->setPosition(glm::vec2(getScale().x - 12.5f, m_linear * (m_scale.y - 25.0f - 12.5f)));
 		}
 	}
 

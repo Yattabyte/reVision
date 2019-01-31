@@ -7,7 +7,6 @@
 #include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Engine.h"
 #include <string>
 
 
