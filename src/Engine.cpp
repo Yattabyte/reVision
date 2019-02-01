@@ -46,11 +46,6 @@ Rendering_Context::Rendering_Context(Engine * engine)
 		glfwTerminate();
 		exit(-1);
 	}
-	auto & preferences = engine->getPreferenceState();
-	int useMonitorRate = 1, desiredRate = 60, vsync = 1;
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, useMonitorRate);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, desiredRate);
-	preferences.getOrSetValue(PreferenceState::C_VSYNC, vsync);
 
 	// Create main window
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -58,10 +53,6 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwWindowHint(GLFW_GREEN_BITS, mainMode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mainMode->blueBits);
 	glfwWindowHint(GLFW_ALPHA_BITS, 0);
-	if (useMonitorRate > 0)
-		glfwWindowHint(GLFW_REFRESH_RATE, mainMode->refreshRate);
-	else 
-		glfwWindowHint(GLFW_REFRESH_RATE, desiredRate > 0 ? desiredRate : GLFW_DONT_CARE);	
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, DESIRED_OGL_VER_MAJOR);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, DESIRED_OGL_VER_MINOR);
 	glfwWindowHint(GLFW_CONTEXT_ROBUSTNESS, GLFW_NO_RESET_NOTIFICATION);
@@ -77,7 +68,6 @@ Rendering_Context::Rendering_Context(Engine * engine)
 	glfwMakeContextCurrent(window);
 	glfwSetWindowIcon(window, 0, NULL);
 	glfwSetCursorPos(window, 0, 0);
-	glfwSwapInterval(vsync);
 
 	// Initialize GLAD
 	if (gladLoadGLLoader((GLADloadproc)glfwGetProcAddress) == 0) {
@@ -153,6 +143,7 @@ Engine::Engine() :
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_useMonitorRate);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_FULLSCREEN, m_useFullscreen);
+	m_preferenceState.getOrSetValue(PreferenceState::C_VSYNC, m_vsync);
 
 	// Preference Callbacks
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
@@ -175,7 +166,10 @@ Engine::Engine() :
 		m_useFullscreen = f;
 		configureWindow();
 	});
-	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {glfwSwapInterval((int)f);});
+	m_preferenceState.addCallback(PreferenceState::C_VSYNC, m_aliveIndicator, [&](const float &f) {
+		m_vsync = f;
+		glfwSwapInterval((int)f);
+	});
 
 	// Configure Rendering Context
 	configureWindow();
@@ -184,6 +178,7 @@ Engine::Engine() :
 	glfwSetCursorPosCallback(m_renderingContext.window, GLFW_Callback_CursorPosition);
 	glfwSetMouseButtonCallback(m_renderingContext.window, GLFW_Callback_CursorButton);
 	glfwMakeContextCurrent(m_renderingContext.window);
+	glfwSwapInterval((int)m_vsync);
 	
 	// Initialize Members
 	registerECSConstructor("Transform_Component", new Transform_Constructor());

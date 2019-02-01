@@ -54,13 +54,20 @@ public:
 			windowLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
 			auto e1Drop = std::make_shared<List>(engine);
+			float width = 1920.0f, height = 1080.0f;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
 			m_resolutions = engine->getResolutions();
+			int counter = 0;
 			for each (const auto & res in m_resolutions) {
 				const auto string  = std::to_string(res.x) + "x" + std::to_string(res.y);
 				auto & label = std::make_shared<Label>(engine, string);
 				label->setColor(glm::vec3(0.0f));
 				label->setAlignment(Label::align_center);
 				e1Drop->addListElement(label);
+				if (res.x == width && res.y == height)
+					e1Drop->setIndex(counter);
+				counter++;
 			}
 			e1Drop->addCallback(List::on_index_changed, [&, e1Drop, engine]() {
 				const auto & index = e1Drop->getIndex();
@@ -87,7 +94,12 @@ public:
 			e4->setMaxScale(glm::vec2(e4->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e4);
 			e4->addElement(std::make_shared<Label>(engine, "VSync:"));
-			auto e4option = std::make_shared<Toggle>(engine);
+			bool e4State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, e4State);
+			auto e4option = std::make_shared<Toggle>(engine, e4State);
+			e4option->addCallback(Toggle::on_toggle, [&, e4option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, e4option->getToggled() ? 1.0f : 0.0f);
+			});
 			e4->addElement(e4option);
 
 			auto e5 = std::make_shared<Layout_Horizontal>(engine);
