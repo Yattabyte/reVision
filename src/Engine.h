@@ -21,7 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.9.N";
+constexpr char ENGINE_VERSION[] = "2.9.O";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -125,8 +125,7 @@ private:
 	float m_lastTime = 0;
 	float m_frameAccumulator = 0;
 	int m_frameCount = 0;
-	float m_refreshRate = 60.0f;
-	float m_useMonitorRate = 0.0f;
+	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);

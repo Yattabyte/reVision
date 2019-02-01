@@ -138,10 +138,10 @@ Engine::Engine() :
 	Image_IO::Initialize();
 
 	// Preference Values
+	m_refreshRate = glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate;
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
-	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_useMonitorRate);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_FULLSCREEN, m_useFullscreen);
 	m_preferenceState.getOrSetValue(PreferenceState::C_VSYNC, m_vsync);
 
@@ -152,10 +152,6 @@ Engine::Engine() :
 	});
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_windowSize.y = f;
-		configureWindow();
-	});
-	m_preferenceState.addCallback(PreferenceState::C_WINDOW_USE_MONITOR_RATE, m_aliveIndicator, [&](const float &f) {
-		m_useMonitorRate = f;
 		configureWindow();
 	});
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
@@ -331,9 +327,8 @@ void Engine::configureWindow()
 		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL, 
 		0, 0, 
 		m_windowSize.x, m_windowSize.y, 
-		m_useMonitorRate > 0.5f 
-			? glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate 
-			: m_refreshRate > 0.0f 
-				? (int)m_refreshRate : GLFW_DONT_CARE
+		m_refreshRate > 0.0f 
+			? (int)m_refreshRate 
+			: GLFW_DONT_CARE
 	);
 }
