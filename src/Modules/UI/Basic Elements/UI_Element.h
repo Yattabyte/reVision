@@ -211,6 +211,15 @@ public:
 	bool getEnabled() const {
 		return m_enabled;
 	}
+	/** Get whether or not the mouse is within this element. 
+	@return			true if the mouse is within this element. */
+	bool mouseWithin(const MouseEvent & mouseEvent) const {
+		return withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos));
+	}
+	/** Returns whether or not a point is within the bbox specified. */
+	static bool withinBBox(const glm::vec2 & box_p1, const glm::vec2 & box_p2, const glm::vec2 & point) {
+		return (point.x >= box_p1.x && point.x <= box_p2.x && point.y >= box_p1.y && point.y <= box_p2.y);
+	}
 
 
 protected:
@@ -220,10 +229,6 @@ protected:
 	void enactCallback(const int & interactionEventID) {
 		for each (const auto & func in m_callbacks[interactionEventID])
 			func();
-	}
-	/** Returns whether or not a point is within the bbox specified. */
-	static bool withinBBox(const glm::vec2 & box_p1, const glm::vec2 & box_p2, const glm::vec2 & point) {
-		return (point.x >= box_p1.x && point.x <= box_p2.x && point.y >= box_p1.y && point.y <= box_p2.y);
 	}
 
 

@@ -21,7 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.9.L";
+constexpr char ENGINE_VERSION[] = "2.9.M";
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
@@ -117,6 +117,8 @@ private:
 	// Private Methods
 	/** Updates the action state belonging to this engine, iterating through the keybinds and checking if they are active. */
 	void updateInput();
+	/** Updates the window attributes. */
+	void configureWindow();
 
 
 	// Private Attributes
@@ -124,6 +126,8 @@ private:
 	float m_frameAccumulator = 0;
 	int m_frameCount = 0;
 	float m_refreshRate = 60.0f;
+	float m_useMonitorRate = 0.0f;
+	float m_useFullscreen = 1.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;

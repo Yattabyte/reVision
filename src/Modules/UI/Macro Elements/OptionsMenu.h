@@ -62,6 +62,11 @@ public:
 				label->setAlignment(Label::align_center);
 				e1Drop->addListElement(label);
 			}
+			e1Drop->addCallback(List::on_index_changed, [&, e1Drop, engine]() {
+				const auto & index = e1Drop->getIndex();
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
+			});
 			e1->addElement(e1Drop);
 			
 			auto e2 = std::make_shared<Layout_Horizontal>(engine);
@@ -89,7 +94,12 @@ public:
 			e5->setMaxScale(glm::vec2(e5->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e5);
 			e5->addElement(std::make_shared<Label>(engine, "Full-screen:"));
-			auto e5option = std::make_shared<Toggle>(engine);
+			bool e5State = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, e5State);
+			auto e5option = std::make_shared<Toggle>(engine, e5State);
+			e5option->addCallback(Toggle::on_toggle, [&, e5option, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, e5option->getToggled() ? 1.0f : 0.0f);
+			});
 			e5->addElement(e5option);
 		}
 		// Graphics Options

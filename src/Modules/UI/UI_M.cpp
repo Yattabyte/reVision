@@ -18,10 +18,14 @@ void UI_Module::initialize(Engine * engine)
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.x = f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
+		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
+		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
+		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
+		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 	});
 	calcOthoProj(m_renderSize, m_projectionBuffer);
 

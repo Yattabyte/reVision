@@ -13,6 +13,12 @@
 class List : public UI_Element
 {
 public:
+	// Interaction enums
+	enum interact {
+		on_index_changed = UI_Element::last_interact_index
+	};
+
+
 	// (de)Constructors
 	~List() {
 		// Delete geometry
@@ -52,6 +58,8 @@ public:
 	virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_scrollbar->setScale(scale);
+		for each (const auto & element in m_listElements)
+			element->setScale(glm::vec2(scale.x, 25.0f));
 	}
 	virtual void update() override {
 		constexpr auto num_data = 2 * 3;
@@ -111,7 +119,18 @@ public:
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent)) {
+			MouseEvent subsubEvent = mouseEvent;
+			subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;
+			subsubEvent.m_yPos = ((mouseEvent.m_yPos - m_position.y) - m_scrollbar->getPosition().y) - m_container->getPosition().y;
+			int counter = 0;
+			for each (const auto & element in m_listElements) {
+				if (element->mouseWithin(subsubEvent)) {
+					setIndex(counter);
+					return true;
+				}
+				counter++;
+			}
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
@@ -127,6 +146,7 @@ public:
 	@param		index		the new integer index to use. */
 	void setIndex(const int & index) {
 		m_index = std::clamp<int>(index, 0, m_listElements.size());
+		enactCallback(on_index_changed);
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
@@ -134,6 +154,7 @@ public:
 		return m_index;
 	}
 	void addListElement(const std::shared_ptr<UI_Element> & element) {
+		element->setScale(glm::vec2(getScale().x, 25.0f));
 		m_container->addElement(element);
 		m_listElements.push_back(element);
 	}
