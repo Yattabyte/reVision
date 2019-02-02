@@ -13,7 +13,7 @@
 class List : public UI_Element
 {
 public:
-	// Interaction enums
+	// Public interaction enums
 	enum interact {
 		on_index_changed = UI_Element::last_interact_index
 	};
@@ -104,7 +104,7 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec4(m_backgroundTransform.x, m_backgroundTransform.y, newPosition));
+			m_shader->setUniform(0, newPosition);
 			glBindVertexArray(m_vaoID);
 			m_indirectBackground.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -148,16 +148,18 @@ public:
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent)) {
-			MouseEvent subsubEvent = mouseEvent;
-			subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;
-			subsubEvent.m_yPos = ((mouseEvent.m_yPos - m_position.y) - m_scrollbar->getPosition().y) - m_container->getPosition().y;
-			int counter = 0;
-			for each (const auto & element in m_listElements) {
-				if (element->mouseWithin(subsubEvent)) {
-					setIndex(counter);
-					return true;
+			if (mouseEvent.m_action == GLFW_RELEASE && mouseEvent.m_button == 0) {
+				MouseEvent subsubEvent = mouseEvent;
+				subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;
+				subsubEvent.m_yPos = ((mouseEvent.m_yPos - m_position.y) - m_scrollbar->getPosition().y) - m_container->getPosition().y;
+				int counter = 0;
+				for each (const auto & element in m_listElements) {
+					if (element->mouseWithin(subsubEvent)) {
+						setIndex(counter);
+						return true;
+					}
+					counter++;
 				}
-				counter++;
 			}
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
@@ -182,10 +184,17 @@ public:
 	int getIndex() const {
 		return m_indexSelection;
 	}
+	/** Add a new list element to this list.
+	@oaram		element		the new ui element to add to the list. */
 	void addListElement(const std::shared_ptr<UI_Element> & element) {
 		element->setScale(glm::vec2(getScale().x, 25.0f));
 		m_container->addElement(element);
 		m_listElements.push_back(element);
+	}
+	/** Remove all list elements from this list. */
+	void clearListElements() {
+		m_container->clearElements();
+		m_listElements.clear();
 	}
 
 

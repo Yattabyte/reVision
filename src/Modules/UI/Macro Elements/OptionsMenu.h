@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/List.h"
+#include "Modules/UI/Basic Elements/DropList.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
@@ -50,7 +50,7 @@ public:
 			windowLayout->addElement(windowTitle);
 			windowTitle->setTextScale(15.0f);
 
-			auto e1 = std::make_shared<Layout_Horizontal>(engine);
+		/*	auto e1 = std::make_shared<Layout_Horizontal>(engine);
 			windowLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
 			auto e1Drop = std::make_shared<List>(engine);
@@ -74,9 +74,36 @@ public:
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			});
+			e1->addElement(e1Drop);*/
+
+			auto e1 = std::make_shared<Layout_Horizontal>(engine);
+			e1->setMaxScale(glm::vec2(e1->getMaxScale().x, 75.0f));
+			windowLayout->addElement(e1);
+			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
+			auto e1Drop = std::make_shared<DropList>(engine);
+			float width = 1920.0f, height = 1080.0f;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
+			m_resolutions = engine->getResolutions();
+			std::vector<std::string> strings(m_resolutions.size());
+			int counter = 0, index = 0;
+			for each (const auto & res in m_resolutions) {
+				const auto string = std::to_string(res.x) + "x" + std::to_string(res.y);
+				strings[counter] = string;
+				if (res.x == width && res.y == height)
+					index = counter;
+				counter++;
+			}
+			e1Drop->setStrings(strings);
+			e1Drop->setIndex(index);
+			e1Drop->addCallback(List::on_index_changed, [&, e1Drop, engine]() {
+				const auto & index = e1Drop->getIndex();
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
+			});
 			e1->addElement(e1Drop);
 			
-			auto e2 = std::make_shared<Layout_Horizontal>(engine);
+			/*auto e2 = std::make_shared<Layout_Horizontal>(engine);
 			e2->setMaxScale(glm::vec2(e2->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e2);
 			e2->addElement(std::make_shared<Label>(engine, "Refresh-rate:"));
@@ -88,7 +115,7 @@ public:
 			windowLayout->addElement(e3);
 			e3->addElement(std::make_shared<Label>(engine, "Gamma:"));
 			auto e3option = std::make_shared<Button>(engine);
-			e3->addElement(e3option);
+			e3->addElement(e3option);*/
 
 			auto e4 = std::make_shared<Layout_Horizontal>(engine);
 			e4->setMaxScale(glm::vec2(e4->getMaxScale().x, 25.0f));
