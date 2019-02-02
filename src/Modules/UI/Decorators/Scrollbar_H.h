@@ -88,7 +88,7 @@ public:
 	}
 	virtual bool mouseMove(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			bool consumed = false;
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;

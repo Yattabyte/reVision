@@ -16,9 +16,24 @@ public:
 
 
 	// Public Interface Implementations
+	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const {
+		if (m_component->doElementsExceedBounds(scale, positionOffset + m_component->getPosition()))
+			return true;
+		const auto childPos = m_component->getPosition();
+		const auto childScl = m_component->getScale();
+		if (
+			((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
+			((childPos.x + positionOffset.x) + childScl.x) > (scale.x) ||
+			((childPos.y + positionOffset.y) - childScl.y) < (-scale.y) ||
+			((childPos.y + positionOffset.y) + childScl.y) > (scale.y)
+			)
+			return true;			
+		
+		return UI_Element::doElementsExceedBounds(scale, positionOffset);
+	}
 	virtual bool mouseMove(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
@@ -39,7 +54,7 @@ public:
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;

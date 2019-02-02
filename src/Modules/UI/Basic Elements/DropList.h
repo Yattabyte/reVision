@@ -77,6 +77,7 @@ public:
 	virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_list->setScale(glm::vec2(scale.x, 75.0f));
+		m_list->setPosition(glm::vec2(m_list->getPosition().x, -62.5f ));
 		m_label->setScale(scale);
 	}
 	virtual void update() override {
@@ -106,6 +107,19 @@ public:
 
 		UI_Element::update();
 		m_list->update();
+	}
+	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const override {
+		if (m_list->getVisible()) {
+			const auto childPos = m_list->getPosition();
+			const auto childScl = m_list->getScale();
+			if (
+				((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
+				((childPos.x + positionOffset.x) + childScl.x) > (scale.x) ||
+				((childPos.y + positionOffset.y) - childScl.y) < (-scale.y) ||
+				((childPos.y + positionOffset.y) + childScl.y) > (scale.y))
+				return true;
+		}
+		return UI_Element::doElementsExceedBounds(scale, positionOffset);
 	}
 	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
@@ -152,9 +166,9 @@ public:
 			// Render List
 			glScissor(
 				newPosition.x - (newScale.x),
-				newPosition.y - (75),
+				newPosition.y - (75.0f) - (75.0f / 2.0f) - 25.0f,
 				(newScale.x * 2.0f),
-				(75 * 2.0f)
+				(75.0f * 2.0f)
 			);
 			m_list->renderElement(deltaTime, newPosition, glm::vec2(newScale.x, 75.0f));
 		}

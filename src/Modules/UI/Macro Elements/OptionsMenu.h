@@ -77,7 +77,7 @@ public:
 			e1->addElement(e1Drop);*/
 
 			auto e1 = std::make_shared<Layout_Horizontal>(engine);
-			e1->setMaxScale(glm::vec2(e1->getMaxScale().x, 75.0f));
+			e1->setMaxScale(glm::vec2(e1->getMaxScale().x, 25.0f));
 			windowLayout->addElement(e1);
 			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
 			auto e1Drop = std::make_shared<DropList>(engine);

@@ -124,7 +124,7 @@ public:
 	}
 	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subsubEvent = mouseEvent;
 			subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;
 			subsubEvent.m_yPos = ((mouseEvent.m_yPos - m_position.y) - m_scrollbar->getPosition().y) - m_container->getPosition().y;
@@ -147,7 +147,7 @@ public:
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			if (mouseEvent.m_action == GLFW_RELEASE && mouseEvent.m_button == 0) {
 				MouseEvent subsubEvent = mouseEvent;
 				subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;

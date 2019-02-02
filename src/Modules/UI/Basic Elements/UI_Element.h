@@ -75,6 +75,23 @@ public:
 		for each (auto & child in m_children)
 			child->update();
 	}
+	/***/
+	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const {
+		for each (auto & child in m_children) {
+			if (child->doElementsExceedBounds(scale, positionOffset + child->getPosition()))
+				return true;
+
+			const auto childPos = child->getPosition();
+			const auto childScl = child->getScale();
+			if (
+				((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
+				((childPos.x + positionOffset.x) + childScl.x) > (scale.x) || 
+				((childPos.y + positionOffset.y) - childScl.y) < (-scale.y) || 
+				((childPos.y + positionOffset.y) + childScl.y) > (scale.y))
+				return true;			
+		}
+		return false;
+	}
 	/** Render this element (and all subelements).
 	@param	transform				transform to use*/
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {	
@@ -96,7 +113,7 @@ public:
 	@param		mouseEvent			the mouse event occuring.*/
 	virtual bool mouseMove(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
@@ -114,7 +131,7 @@ public:
 	@param		mouseEvent			the mouse event occuring.*/
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (withinBBox(m_position - m_scale, m_position + m_scale, glm::vec2(mouseEvent.m_xPos, mouseEvent.m_yPos))) {
+		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;		
