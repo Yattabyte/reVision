@@ -117,6 +117,7 @@ public:
 			m_shader->setUniform(1, m_backgroundTransform);
 			m_shader->setUniform(2, m_highlightTransform);
 			m_shader->setUniform(3, m_selectionTransform);
+			m_shader->setUniform(4, m_enabled);
 			glBindVertexArray(m_vaoID);
 			m_indirectHighlights.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -237,9 +238,13 @@ protected:
 
 private:
 	// Private Attributes
-	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
+	GLuint 
+		m_vaoID = 0, 
+		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
-	StaticBuffer m_indirectBackground, m_indirectHighlights;
+	StaticBuffer 
+		m_indirectBackground, 
+		m_indirectHighlights;
 	std::shared_ptr<UI_Element> m_container;
 	std::shared_ptr<Scrollbar_V> m_scrollbar;
 	std::vector<std::shared_ptr<UI_Element>> m_listElements;

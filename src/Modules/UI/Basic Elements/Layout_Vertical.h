@@ -99,8 +99,9 @@ protected:
 
 
 	// Protected Attributes
-	float m_margin = 10.0f;
-	float m_spacing = 10.0f;
+	float
+		m_margin = 10.0f,
+		m_spacing = 10.0f;
 };
 
 #endif // UI_LAYOUT_VERTICAL_H

@@ -1,22 +1,27 @@
 /* UI Label Shader. */
 #version 460
 
+// Inputs
 layout (location = 0) in vec3 vertex;
-layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out int Index;
 
-layout (location = 1) uniform vec2 ElementTransform;
-layout (location = 2) uniform vec2 Scale;
-layout (location = 3) uniform float TextScale;
-layout (location = 4) uniform int Alignment;
+// Uniforms
+layout (location = 0) uniform vec2 ElementTransform;
+layout (location = 1) uniform vec2 Scale;
+layout (location = 2) uniform float TextScale;
+layout (location = 3) uniform int Alignment;
 
+// Buffers
 layout (std430, binding = 2) readonly coherent buffer ProjectionBuffer { 
 	mat4 ScreenProjection;
 };
-layout (std430, binding = 8) readonly buffer TextBuffer {
+layout (std430, binding = 8) readonly coherent buffer TextBuffer {
 	int count;
 	int characters[];
 };
+
+// Outputs
+layout (location = 0) out vec2 TexCoord;
+layout (location = 1) flat out int Character;
 
 
 void main()
@@ -31,6 +36,6 @@ void main()
 		vec4(0.0, 0.0, 1.0, 0.0),		
 		vec4(ElementTransform.x + (gl_InstanceID * TextScale) - ((TextScale * count) / 2.0f) + TextScale + (Alignment * (diff / 2.0f)), ElementTransform.y, 0.0, 1.0)
 	);
-	Index = gl_InstanceID;
+	Character = characters[gl_InstanceID];
 	gl_Position = ScreenProjection * transformMat * vec4(vertex.xy, 0, 1);
 }

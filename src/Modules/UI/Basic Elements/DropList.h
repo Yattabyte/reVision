@@ -153,8 +153,9 @@ public:
 			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, glm::vec4(m_scale.x, 12.5f, 0, 0));
 			m_shader->setUniform(2, glm::vec4(12.5f, 6.25f, m_scale.x - 25.0f, 0));
-			m_shader->setUniform(3, m_highlighted);
-			m_shader->setUniform(4, m_pressed);
+			m_shader->setUniform(3, m_enabled);
+			m_shader->setUniform(4, m_highlighted);
+			m_shader->setUniform(5, m_pressed);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -208,13 +209,17 @@ protected:
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<List> m_list;
 	std::vector<std::string> m_strings;
-	bool m_highlighted = false, m_pressed = false;
+	bool 
+		m_highlighted = false, 
+		m_pressed = false;
 	
 
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
+	GLuint 
+		m_vaoID = 0, 
+		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

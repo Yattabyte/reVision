@@ -1,8 +1,10 @@
 /* UI Border Shader. */
 #version 460
 
-layout (location = 2) uniform vec3 color;
+// Uniforms
+layout (location = 1) uniform vec3 color;
 
+// Outputs
 layout (location = 0) out vec4 FragColor;
 
 

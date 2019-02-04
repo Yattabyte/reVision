@@ -61,8 +61,8 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(1, newPosition);
-			m_shader->setUniform(2, UIColor_Background);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, m_color);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -71,9 +71,29 @@ public:
 	}
 
 
+	// Public Methods
+	/** Set this panel's color.
+	@param	text	the new color to render with. */
+	void setColor(const glm::vec3 & color) {
+		m_color = color;
+	}
+	/** Retrieve this panel's color.
+	@return	the color used by this element. */
+	glm::vec3 getColor() const {
+		return m_color;
+	}
+
+
+protected:
+	// Protected Attributes
+	glm::vec3 m_color = glm::vec3(0.2f);
+
+
 private:
 	// Private Attributes
-	GLuint m_vaoID = 0, m_vboID = 0;
+	GLuint 
+		m_vaoID = 0, 
+		m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

@@ -26,7 +26,7 @@ public:
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Toggle(Engine * engine, const bool & toggleState = true) : m_on(toggleState) {
+	Toggle(Engine * engine, const bool & toggleState = true) : m_toggledOn(toggleState) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Toggle");
 
@@ -58,7 +58,7 @@ public:
 		// Callbacks
 		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
 		addCallback(on_mouse_press, [&]() {m_pressed = true; });
-		addCallback(on_mouse_release, [&]() {m_pressed = false; m_on = !m_on; m_startAnimating = true; m_animateTime = 0.0f; update(); enactCallback(on_toggle); });
+		addCallback(on_mouse_release, [&]() {m_pressed = false; m_toggledOn = !m_toggledOn; m_startAnimating = true; m_animateTime = 0.0f; update(); enactCallback(on_toggle); });
 		addCallback(on_mouse_enter, [&]() {m_highlighted = true; });
 		addCallback(on_mouse_exit, [&]() {m_highlighted = false; });	
 	}
@@ -66,9 +66,9 @@ public:
 
 	// Interface Implementation
 	virtual void update() override {
-		m_label->setText(m_on ? "ON   " : "   OFF");
-		m_label->setAlignment(m_on ? Label::align_left : Label::align_right);
-		m_label->setColor(m_on ? UIColor_Static / 255.0f : glm::vec3(1.0f));
+		m_label->setText(m_toggledOn ? "ON   " : "   OFF");
+		m_label->setAlignment(m_toggledOn ? Label::align_left : Label::align_right);
+		m_label->setColor(m_toggledOn ? UIColor_Static / 255.0f : glm::vec3(1.0f));
 
 		constexpr auto num_tri = (5 * 2) + (8 * 5);
 		constexpr auto num_data = num_tri * 3;
@@ -220,25 +220,12 @@ public:
 				m_animateTime = std::clamp<float>(m_animateTime, 0.0f, 1.0f);
 			}
 			m_shader->bind();
-			m_shader->setUniform(1, newPosition);
-			m_shader->setUniform(2, (2.0f * (m_animateTime / 0.2f) - 1.0f) * (m_on ? 22.5f : -22.5f));
-			glm::vec3 colors[2];
-			colors[0] = m_on ? UIColor_Static2 : UIColor_Disabled2;
-			if (m_enabled) {
-				if (m_highlighted) {
-					if (m_pressed)
-						colors[1] = m_on ? UIColor_Pressed : UIColor_Pressed2;
-					else
-						colors[1] = m_on ? UIColor_Hovered : UIColor_Hovered2;
-				}
-				else
-					colors[1] = m_on ? UIColor_Static : UIColor_Static2;
-			}
-			else
-				colors[1] = m_on ? UIColor_Disabled : UIColor_Disabled2;
-			colors[0] /= 255.0f;
-			colors[1] /= 255.0f;
-			m_shader->setUniformArray(3, colors, 2);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, (2.0f * (m_animateTime / 0.2f) - 1.0f) * (m_toggledOn ? 22.5f : -22.5f));
+			m_shader->setUniform(2, m_enabled);
+			m_shader->setUniform(3, m_highlighted);
+			m_shader->setUniform(4, m_pressed);
+			m_shader->setUniform(5, m_toggledOn);			
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -271,22 +258,28 @@ public:
 	}
 	/** Return the toggle state of this button. */
 	bool getToggled() const {
-		return m_on;
+		return m_toggledOn;
 	}
 
 
 protected:
 	// Protected Attributes
 	std::shared_ptr<Label> m_label;
-	bool m_highlighted = false, m_pressed = false, m_on = true;
-	float m_bevelRadius = 10.0f;
-	bool m_startAnimating = false;
-	float m_animateTime = 0.2f;
+	bool 
+		m_highlighted = false, 
+		m_pressed = false,
+		m_toggledOn = true,
+		m_startAnimating = false;
+	float 
+		m_bevelRadius = 10.0f,
+		m_animateTime = 0.2f;
 
 
 private:
 	// Private Attributes
-	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
+	GLuint 
+		m_vaoID = 0,
+		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

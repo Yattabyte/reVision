@@ -131,22 +131,10 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(1, newPosition);
-			m_shader->setUniform(2, newScale);
-			glm::vec3 color(0.0f);
-			if (m_enabled) {
-				if (m_highlighted) {
-					if (m_pressed)
-						color = UIColor_Pressed;
-					else
-						color = UIColor_Hovered;
-				}
-				else
-					color = UIColor_Static;
-			}
-			else
-				color = UIColor_Disabled;
-			m_shader->setUniform(3, color / 255.0f);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, m_enabled);
+			m_shader->setUniform(2, m_highlighted);
+			m_shader->setUniform(3, m_pressed);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -185,14 +173,18 @@ public:
 
 protected:
 	// Protected Attributes
-	bool m_highlighted = false, m_pressed = false;
+	bool 
+		m_highlighted = false, 
+		m_pressed = false;
 	float m_bevelRadius = 10.0f;
 
 
 private:
 	// Private Attributes
 	std::shared_ptr<Label> m_label;
-	GLuint m_vaoID = 0, m_vboID = 0;
+	GLuint 
+		m_vaoID = 0, 
+		m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

@@ -1,15 +1,17 @@
 /* UI Scrollbar Shader. */
 #version 460
 
+// Inputs
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in int Index;
 
+// Uniforms
+layout (location = 1) uniform vec3 color =  vec3(0.20f, 0.30f, 0.40f);
+
+// Outputs
 layout (location = 0) out vec4 FragColor;
-
-layout (location = 3) uniform vec3 colors[3];
 
 
 void main()
 {		
-	FragColor = vec4(colors[Index], 1.0f);	
+	FragColor = vec4(color, 1.0f);	
 }

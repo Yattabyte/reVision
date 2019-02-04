@@ -77,11 +77,12 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet() && m_textureFont->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(1, newPosition);
-			m_shader->setUniform(2, newScale);
-			m_shader->setUniform(3, m_textScale);
-			m_shader->setUniform(4, (int)m_textAlignment);
-			m_shader->setUniform(5, m_enabled ? m_color : m_color * 0.75f);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, newScale);
+			m_shader->setUniform(2, m_textScale);
+			m_shader->setUniform(3, (int)m_textAlignment);
+			m_shader->setUniform(4, m_enabled);
+			m_shader->setUniform(5, m_color);
 			m_textureFont->bind(0);
 			m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			glBindVertexArray(m_vaoID);
@@ -128,7 +129,7 @@ public:
 		m_color = color;
 	}
 	/** Retrieve this label's color.
-	@return	the color used by this label. */
+	@return	the color used by this element. */
 	glm::vec3 getColor() const {
 		return m_color;
 	}
@@ -154,7 +155,9 @@ protected:
 
 private:
 	// Private Attributes
-	GLuint m_vaoID = 0, m_vboID = 0;
+	GLuint 
+		m_vaoID = 0, 
+		m_vboID = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;
 	StaticBuffer m_indirect;

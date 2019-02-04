@@ -1,12 +1,28 @@
 /* UI Button Shader. */
 #version 460
 
-layout (location = 0) out vec4 FragColor;
+// Uniforms
+layout (location = 1) uniform bool enabled;
+layout (location = 2) uniform bool highlighted;
+layout (location = 3) uniform bool pressed;
+layout (location = 4) uniform vec3 colors[3] = { 
+	vec3(0.20f, 0.80f, 0.40f), 	// regular
+	vec3(0.40f, 0.90f, 0.60f), 	// highlighted
+	vec3(0.10f, 0.70f, 0.30f) 	// pressed
+};
 
-layout (location = 3) uniform vec3 color;
+// Outputs
+layout (location = 0) out vec4 FragColor;
 
 
 void main()
-{		
-	FragColor = vec4(color, 1.0f);	
+{	
+	int colorIndex = 0;
+	if (highlighted)
+		colorIndex = 1;
+	if (pressed)
+		colorIndex = 2;	
+	FragColor = vec4(colors[colorIndex], 1.0f);
+	if (!enabled)
+		FragColor *= 0.75f;
 }

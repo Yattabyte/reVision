@@ -21,7 +21,7 @@ public:
 	// Public (de)Constructors
 	~Scrollbar_H() {
 		// Delete geometry
-		glDeleteBuffers(2, m_vboID);
+		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	Scrollbar_H(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
@@ -44,17 +44,12 @@ public:
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
 		glEnableVertexArrayAttrib(m_vaoID, 0);
-		glEnableVertexArrayAttrib(m_vaoID, 1);
 		glVertexArrayAttribBinding(m_vaoID, 0, 0);
-		glVertexArrayAttribBinding(m_vaoID, 1, 1);
 		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-		glVertexArrayAttribIFormat(m_vaoID, 1, 1, GL_INT, 0);
-		glCreateBuffers(2, m_vboID);
-		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
-		glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
+		glCreateBuffers(1, &m_vboID);
+		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
-		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
 	}
@@ -64,7 +59,6 @@ public:
 	virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
-		std::vector<int> m_objIndices(num_data);
 
 		// Background
 		m_data[0] = { -1, -1, 0 };
@@ -73,13 +67,10 @@ public:
 		m_data[3] = { 1,  1, 0 };
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
-		for (int x = 0; x < 6; ++x) {
-			m_data[x] = glm::vec3(0, -m_scale.y + 12.5f, 0) + (m_data[x] * glm::vec3(m_scale.x, 12.5f, 0.0f));
-			m_objIndices[x] = 0;
-		}
+		for (int x = 0; x < 6; ++x) 
+			m_data[x] = glm::vec3(0, -m_scale.y + 12.5f, 0) + (m_data[x] * glm::vec3(m_scale.x, 12.5f, 0.0f));		
 
-		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &m_data[0]);
-		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &m_objIndices[0]);
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 
 		updateElements();
 		UI_Element::update();
@@ -121,15 +112,7 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(1, newPosition);
-			glm::vec3 colors[3];
-			colors[0] = UIColor_Static2;
-			colors[1] = UIColor_Background2;
-			colors[2] = UIColor_Static2;
-			colors[0] /= 255.0f;
-			colors[1] /= 255.0f;
-			colors[2] /= 255.0f;
-			m_shader->setUniformArray(3, colors, 3);
+			m_shader->setUniform(0, newPosition);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -174,7 +157,7 @@ protected:
 
 private:
 	// Private Attributes
-	GLuint m_vaoID = 0, m_vboID[2] = { 0, 0 };
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };
