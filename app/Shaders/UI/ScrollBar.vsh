@@ -5,7 +5,7 @@
 layout (location = 0) in vec3 vertex;
 
 // Uniforms
-layout (location = 0) uniform vec2 ElementTransform;
+layout (location = 0) uniform vec3 ElementTransform;
 
 // Buffers
 layout (std430, binding = 2) readonly coherent buffer ProjectionBuffer { 
@@ -20,5 +20,5 @@ layout (location = 1) flat out int ObjIndex;
 void main()
 {
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
-	gl_Position = ScreenProjection * vec4(vertex.xy + ElementTransform, 0, 1);
+	gl_Position = ScreenProjection * vec4(vertex.xyz + ElementTransform, 1);
 }

@@ -48,6 +48,14 @@ public:
 
 
 	// Public Interface
+	/** Set the depth value for this element.
+	Depth is used to aid in rendering elements on top of other elements.
+	@param		depth					the depth value for this element. */
+	virtual void setDepth(const float & depth) {
+		m_depth = depth;
+		for each (const auto & child in m_children)
+			child->setDepth(depth + 1.0f);
+	}
 	/** Sets this elements' scale.
 	@param	scale					the new scale to use. */
 	virtual void setScale(const glm::vec2 & scale) {
@@ -156,6 +164,7 @@ public:
 	@param		child				the element to be chained to this one. */
 	void addElement(const std::shared_ptr<UI_Element> & child) {
 		m_children.push_back(child);
+		child->setDepth(m_depth + 1.0f);
 		update();
 	}
 	/** Remove all child UI elements. */
@@ -165,10 +174,16 @@ public:
 	}
 	/** Add a callback function, to be called when the given event occurs.
 	@param		interactionEventID		the ID corresponding to an event type
-	@param		func				the callback function to be called. */
+	@param		func					the callback function to be called. */
 	void addCallback(const int & interactionEventID, const std::function<void()> && func) {
 		m_callbacks[interactionEventID].push_back(func);
 		update();
+	}
+	/** Return the depth value for this element.
+	Depth is used to aid in rendering elements on top of other elements. 
+	@return		the depth value for this element. */
+	float getDepth() const {
+		return m_depth;
 	}
 	/** Gets this elements' position.
 	@return	this elements' position. */
@@ -250,11 +265,13 @@ protected:
 
 
 	// Protected Attributes
-	glm::vec2 m_position = glm::vec2(0.0f);
 	glm::vec2 
+		m_position = glm::vec2(0.0f),
 		m_scale = glm::vec2(1.0f), 
 		m_maxScale = glm::vec2(std::nanf(0)), 
 		m_minScale = glm::vec2(std::nanf(0));
+	float 
+		m_depth = 0.0f;
 	bool 
 		m_visible = true, 
 		m_enabled = true;

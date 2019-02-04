@@ -51,6 +51,7 @@ public:
 			m_pressed = false; 
 			m_list->setVisible(true);
 		});
+		m_list->setDepth(m_depth + 1.0f);
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -74,6 +75,10 @@ public:
 
 
 	// Interface Implementation
+	virtual void setDepth(const float & depth) override {
+		UI_Element::setDepth(depth);
+		m_list->setDepth(depth + 1.0f);
+	}
 	virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_list->setScale(glm::vec2(scale.x, 75.0f));
@@ -150,7 +155,7 @@ public:
 		if (m_shader->existsYet() && !m_list->getVisible()) {
 			// Render Background
 			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
 			m_shader->setUniform(1, glm::vec4(m_scale.x, 12.5f, 0, 0));
 			m_shader->setUniform(2, glm::vec4(12.5f, 6.25f, m_scale.x - 25.0f, 0));
 			m_shader->setUniform(3, m_enabled);

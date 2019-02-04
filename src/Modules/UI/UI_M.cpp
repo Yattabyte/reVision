@@ -9,7 +9,7 @@ void UI_Module::initialize(Engine * engine)
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize, StaticBuffer & projectionBuffer) {
-		const glm::mat4 proj = glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -1.0f, 1.0f);
+		const glm::mat4 proj = glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -10.0f, 10.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
 	};
 	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), 0, GL_DYNAMIC_STORAGE_BIT);
@@ -48,7 +48,8 @@ void UI_Module::frameTick(const float & deltaTime)
 {
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
-	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH_TEST);
+	glClear(GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_SCISSOR_TEST);
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);

@@ -16,6 +16,10 @@ public:
 
 
 	// Public Interface Implementations
+	virtual void setDepth(const float & depth) override {
+		UI_Element::setDepth(depth + 1.0f);
+		m_component->setDepth(depth);
+	}
 	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const {
 		if (m_component->doElementsExceedBounds(scale, positionOffset + m_component->getPosition()))
 			return true;

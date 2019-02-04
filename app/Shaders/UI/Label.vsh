@@ -5,7 +5,7 @@
 layout (location = 0) in vec3 vertex;
 
 // Uniforms
-layout (location = 0) uniform vec2 ElementTransform;
+layout (location = 0) uniform vec3 ElementTransform;
 layout (location = 1) uniform vec2 Scale;
 layout (location = 2) uniform float TextScale;
 layout (location = 3) uniform int Alignment;
@@ -34,7 +34,7 @@ void main()
 		vec4(TextScale, 0.0, 0.0, 0.0),
 		vec4(0.0, TextScale, 0.0, 0.0),
 		vec4(0.0, 0.0, 1.0, 0.0),		
-		vec4(ElementTransform.x + (gl_InstanceID * TextScale) - ((TextScale * count) / 2.0f) + TextScale + (Alignment * (diff / 2.0f)), ElementTransform.y, 0.0, 1.0)
+		vec4(ElementTransform.x + (gl_InstanceID * TextScale) - ((TextScale * count) / 2.0f) + TextScale + (Alignment * (diff / 2.0f)), ElementTransform.y, ElementTransform.z, 1.0)
 	);
 	Character = characters[gl_InstanceID];
 	gl_Position = ScreenProjection * transformMat * vec4(vertex.xy, 0, 1);

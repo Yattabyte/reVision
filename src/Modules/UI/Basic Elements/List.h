@@ -32,6 +32,7 @@ public:
 			updateListElements();
 			updateSelection();
 		});
+		m_scrollbar->setDepth(m_depth + 1.0f);
 
 		// List
 		setIndex(0);
@@ -63,6 +64,10 @@ public:
 
 
 	// Interface Implementation
+	virtual void setDepth(const float & depth) override {
+		UI_Element::setDepth(depth);
+		m_scrollbar->setDepth(depth + 1.0f);
+	}
 	virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_scrollbar->setScale(scale);
@@ -104,7 +109,7 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
 			glBindVertexArray(m_vaoID);
 			m_indirectBackground.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -113,7 +118,7 @@ public:
 			UI_Element::renderElement(deltaTime, position, newScale);
 
 			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(0, glm::vec3(newPosition, m_depth + 2.0f));
 			m_shader->setUniform(1, m_backgroundTransform);
 			m_shader->setUniform(2, m_highlightTransform);
 			m_shader->setUniform(3, m_selectionTransform);
