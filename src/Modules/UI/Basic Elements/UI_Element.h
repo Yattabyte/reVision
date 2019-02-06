@@ -119,21 +119,18 @@ public:
 	}
 	/** Applies and checks if mouse movement interacts with this UI element. 
 	@param		mouseEvent			the mouse event occuring.*/
-	virtual bool mouseMove(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) {
+		if (!getVisible() || !getEnabled()) return;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children) {
-				if (child->mouseMove(subEvent))
-					return true;
-			}
+			for each (auto & child in m_children)
+				child->mouseMove(subEvent);			
 			enactCallback(on_mouse_enter);
-			return true;
 		}
-		enactCallback(on_mouse_exit);
-		return false;
+		else
+			enactCallback(on_mouse_exit);
 	}
 	/** Applies and checks if mouse button interacts with this UI element.
 	@param		mouseEvent			the mouse event occuring.*/
@@ -156,6 +153,12 @@ public:
 			return true;
 		}
 		return false;
+	}
+	/** Propogates a key press event from this UI element to its children.
+	@param		character			the character typed. */
+	virtual void keyButton(const unsigned int & character) {
+		for each (auto & child in m_children)
+			child->keyButton(character);
 	}
 
 

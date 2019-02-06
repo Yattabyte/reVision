@@ -36,6 +36,9 @@ public:
 	@param		action	the mouse button action (pressed, released, etc)
 	@param		mods	any mouse modifiers used. */
 	void applyCursorButton(const int & button, const int & action, const int & mods);
+	/** Propagates keyboard character input to all UI elements.
+	@param		character	the character inputed. */
+	void applyChar(const unsigned int & character);
 	/** Returns whether or not this module requires the mouse.
 	@returns	true when active, false otherwise. */
 	bool isCursorActive() const;

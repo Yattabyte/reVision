@@ -29,6 +29,10 @@ static void GLFW_Callback_CursorButton(GLFWwindow* window, int button, int actio
 {
 	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
 }
+static void GLFW_Callback_Char(GLFWwindow* window, unsigned int character)
+{
+	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
+}
 /***************************
 -----END GLFW CALLBACKS-----
 ***************************/
@@ -173,6 +177,7 @@ Engine::Engine() :
 	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_WindowResize);
 	glfwSetCursorPosCallback(m_renderingContext.window, GLFW_Callback_CursorPosition);
 	glfwSetMouseButtonCallback(m_renderingContext.window, GLFW_Callback_CursorButton);
+	glfwSetCharCallback(m_renderingContext.window, GLFW_Callback_Char);
 	glfwMakeContextCurrent(m_renderingContext.window);
 	glfwSwapInterval((int)m_vsync);
 	
@@ -327,8 +332,6 @@ void Engine::configureWindow()
 		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL, 
 		0, 0, 
 		m_windowSize.x, m_windowSize.y, 
-		m_refreshRate > 0.0f 
-			? (int)m_refreshRate 
-			: GLFW_DONT_CARE
+		(int)m_refreshRate 
 	);
 }

@@ -44,7 +44,10 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_renderState->m_envmapSize);
-		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);});
+		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
+			m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);
+			m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);
+		});
 
 		// Environment Map
 		m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);

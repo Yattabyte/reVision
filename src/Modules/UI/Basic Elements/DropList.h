@@ -49,7 +49,7 @@ public:
 		addCallback(on_mouse_press, [&]() {m_pressed = true; });
 		addCallback(on_mouse_release, [&]() {
 			m_pressed = false; 
-			m_list->setVisible(true);
+			m_list->setVisible(!m_list->getVisible());
 		});
 		m_list->setDepth(m_depth + 1.0f);
 
@@ -82,8 +82,9 @@ public:
 	virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_list->setScale(glm::vec2(scale.x, 75.0f));
-		m_list->setPosition(glm::vec2(m_list->getPosition().x, -62.5f ));
-		m_label->setScale(scale);
+		m_list->setPosition(glm::vec2(m_list->getPosition().x, -100.0f + 12.5f));
+		m_label->setPosition(glm::vec2(-12.5f, m_label->getPosition().y));
+		m_label->setScale(glm::vec2(scale.x - 12.5f, scale.y));
 	}
 	virtual void update() override {
 		constexpr auto num_data = 3 * 3;
@@ -126,16 +127,15 @@ public:
 		}
 		return UI_Element::doElementsExceedBounds(scale, positionOffset);
 	}
-	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return;
 		if (m_list->getVisible()) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			if (m_list->mouseMove(subEvent))
-				return true;
+			m_list->mouseMove(subEvent);
 		}
-		return (UI_Element::mouseMove(mouseEvent));
+		UI_Element::mouseMove(mouseEvent);
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
@@ -152,7 +152,7 @@ public:
 		if (!getVisible()) return;
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet() && !m_list->getVisible()) {
+		if (m_shader->existsYet()) {
 			// Render Background
 			m_shader->bind();
 			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
@@ -168,13 +168,13 @@ public:
 			// Render Text
 			UI_Element::renderElement(deltaTime, position, newScale);		
 		}
-		else if (m_list->getVisible()) {
+		if (m_list->getVisible()) {
 			// Render List
 			glScissor(
 				newPosition.x - (newScale.x),
-				newPosition.y - (75.0f) - (75.0f / 2.0f) - 25.0f,
+				newPosition.y - (75.0f) - (75.0f / 2.0f) - 50.0f,
 				(newScale.x * 2.0f),
-				(75.0f * 2.0f)
+				(75.0f * 2.0f) + 75.0f
 			);
 			m_list->renderElement(deltaTime, newPosition, glm::vec2(newScale.x, 75.0f));
 		}

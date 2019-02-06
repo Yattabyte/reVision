@@ -68,8 +68,7 @@ void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
 {
 	m_mouseEvent = { xPos, m_renderSize.y - yPos };
 	for each (auto & element in m_uiElements)
-		if (element->mouseMove(m_mouseEvent))
-			break;
+		element->mouseMove(m_mouseEvent);
 }
 
 void UI_Module::applyCursorButton(const int & button, const int & action, const int & mods)
@@ -80,6 +79,12 @@ void UI_Module::applyCursorButton(const int & button, const int & action, const 
 	for each (auto & element in m_uiElements)
 		if (element->mouseButton(m_mouseEvent))
 			break;
+}
+
+void UI_Module::applyChar(const unsigned int & character)
+{
+	for each (auto & element in m_uiElements)
+		element->keyButton(character);
 }
 
 bool UI_Module::isCursorActive() const

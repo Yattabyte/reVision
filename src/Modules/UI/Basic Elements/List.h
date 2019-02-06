@@ -114,8 +114,8 @@ public:
 			m_indirectBackground.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			m_scrollbar->renderElement(deltaTime, newPosition, newScale);
 			UI_Element::renderElement(deltaTime, position, newScale);
+			m_scrollbar->renderElement(deltaTime, newPosition, newScale);
 
 			m_shader->bind();
 			m_shader->setUniform(0, glm::vec3(newPosition, m_depth + 2.0f));
@@ -128,8 +128,8 @@ public:
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 		}
 	}
-	virtual bool mouseMove(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subsubEvent = mouseEvent;
 			subsubEvent.m_xPos = ((mouseEvent.m_xPos - m_position.x) - m_scrollbar->getPosition().x) - m_container->getPosition().x;
@@ -139,17 +139,16 @@ public:
 				if (element->mouseWithin(subsubEvent)) {
 					m_indexHighlight = counter;	
 					updateSelection();
-					return true;
+					break;
 				}
 				counter++;
 			}
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			if (m_scrollbar->mouseMove(subEvent))
-				return true;
+			m_scrollbar->mouseMove(subEvent);
 		}
-		return (UI_Element::mouseMove(mouseEvent));
+		UI_Element::mouseMove(mouseEvent);
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;

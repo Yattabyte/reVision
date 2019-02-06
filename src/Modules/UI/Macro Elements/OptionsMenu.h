@@ -5,6 +5,7 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Basic Elements/DropList.h"
+#include "Modules/UI/Basic Elements/TextInput.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
@@ -27,15 +28,26 @@ public:
 	// (de)Constructors
 	~OptionsMenu() = default;
 	OptionsMenu(Engine * engine) : Panel(engine) {
-		auto mainLayout = std::make_shared<Layout_Vertical>(engine);
-		setScale(glm::vec2(250, 500));
-		mainLayout->setScale(glm::vec2(250, 500));
-		addElement(mainLayout);
+		auto TopDownLayout = std::make_shared<Layout_Vertical>(engine);
+		setScale(glm::vec2(600, 400));
+		TopDownLayout->setScale(glm::vec2(600, 400));
+		addElement(TopDownLayout);
 
 		// Title
 		auto title = std::make_shared<Label>(engine, "Options");
-		mainLayout->addElement(title);
+		TopDownLayout->addElement(title);
 		title->setTextScale(20.0f);
+
+		auto mainLayout = std::make_shared<Layout_Horizontal>(engine);
+		TopDownLayout->addElement(mainLayout);
+
+		const auto addLabledSetting = [engine](auto & layout, auto & element, const std::string & text) {
+			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
+			//horizontalLayout->setMaxScale(glm::vec2(horizontalLayout->getMaxScale().x, 25.0f));
+			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
+			horizontalLayout->addElement(element);
+			layout->addElement(horizontalLayout);
+		};
 
 		// Window Options
 		{
@@ -50,37 +62,7 @@ public:
 			windowLayout->addElement(windowTitle);
 			windowTitle->setTextScale(15.0f);
 
-		/*	auto e1 = std::make_shared<Layout_Horizontal>(engine);
-			windowLayout->addElement(e1);
-			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
-			auto e1Drop = std::make_shared<List>(engine);
-			float width = 1920.0f, height = 1080.0f;
-			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
-			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
-			m_resolutions = engine->getResolutions();
-			int counter = 0;
-			for each (const auto & res in m_resolutions) {
-				const auto string  = std::to_string(res.x) + "x" + std::to_string(res.y);
-				auto & label = std::make_shared<Label>(engine, string);
-				label->setColor(glm::vec3(0.0f));
-				label->setAlignment(Label::align_center);
-				e1Drop->addListElement(label);
-				if (res.x == width && res.y == height)
-					e1Drop->setIndex(counter);
-				counter++;
-			}
-			e1Drop->addCallback(List::on_index_changed, [&, e1Drop, engine]() {
-				const auto & index = e1Drop->getIndex();
-				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
-				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
-			});
-			e1->addElement(e1Drop);*/
-
-			auto e1 = std::make_shared<Layout_Horizontal>(engine);
-			e1->setMaxScale(glm::vec2(e1->getMaxScale().x, 25.0f));
-			windowLayout->addElement(e1);
-			e1->addElement(std::make_shared<Label>(engine, "Resolution:"));
-			auto e1Drop = std::make_shared<DropList>(engine);
+			auto element_res = std::make_shared<DropList>(engine);
 			float width = 1920.0f, height = 1080.0f;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -94,52 +76,38 @@ public:
 					index = counter;
 				counter++;
 			}
-			e1Drop->setStrings(strings);
-			e1Drop->setIndex(index);
-			e1Drop->addCallback(List::on_index_changed, [&, e1Drop, engine]() {
-				const auto & index = e1Drop->getIndex();
+			element_res->setStrings(strings);
+			element_res->setIndex(index);
+			element_res->addCallback(List::on_index_changed, [&, element_res, engine]() {
+				const auto & index = element_res->getIndex();
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			});
-			e1->addElement(e1Drop);
+			addLabledSetting(windowLayout, element_res, "Resolution:");
+		
+			auto element_hz_input = std::make_shared<TextInput>(engine);
+			element_hz_input->setText("60");
+			element_hz_input->setMaxScale(glm::vec2(element_hz_input->getMaxScale().x, 12.5));
+			addLabledSetting(windowLayout, element_hz_input, "Refresh-rate:");
+
+			auto element_gamma = std::make_shared<Button>(engine);
+			addLabledSetting(windowLayout, element_gamma, "Gamma:");
 			
-			/*auto e2 = std::make_shared<Layout_Horizontal>(engine);
-			e2->setMaxScale(glm::vec2(e2->getMaxScale().x, 25.0f));
-			windowLayout->addElement(e2);
-			e2->addElement(std::make_shared<Label>(engine, "Refresh-rate:"));
-			auto e2option = std::make_shared<Button>(engine);
-			e2->addElement(e2option);
-
-			auto e3 = std::make_shared<Layout_Horizontal>(engine);
-			e3->setMaxScale(glm::vec2(e3->getMaxScale().x, 25.0f));
-			windowLayout->addElement(e3);
-			e3->addElement(std::make_shared<Label>(engine, "Gamma:"));
-			auto e3option = std::make_shared<Button>(engine);
-			e3->addElement(e3option);*/
-
-			auto e4 = std::make_shared<Layout_Horizontal>(engine);
-			e4->setMaxScale(glm::vec2(e4->getMaxScale().x, 25.0f));
-			windowLayout->addElement(e4);
-			e4->addElement(std::make_shared<Label>(engine, "VSync:"));
-			bool e4State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, e4State);
-			auto e4option = std::make_shared<Toggle>(engine, e4State);
-			e4option->addCallback(Toggle::on_toggle, [&, e4option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, e4option->getToggled() ? 1.0f : 0.0f);
+			bool element_sync_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
+			auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
+			element_sync->addCallback(Toggle::on_toggle, [&, element_sync, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
 			});
-			e4->addElement(e4option);
+			addLabledSetting(windowLayout, element_sync, "VSync:");
 
-			auto e5 = std::make_shared<Layout_Horizontal>(engine);
-			e5->setMaxScale(glm::vec2(e5->getMaxScale().x, 25.0f));
-			windowLayout->addElement(e5);
-			e5->addElement(std::make_shared<Label>(engine, "Full-screen:"));
-			bool e5State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, e5State);
-			auto e5option = std::make_shared<Toggle>(engine, e5State);
-			e5option->addCallback(Toggle::on_toggle, [&, e5option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, e5option->getToggled() ? 1.0f : 0.0f);
+			bool element_fs_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
+			auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);
+			element_fs->addCallback(Toggle::on_toggle, [&, element_fs, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 			});
-			e5->addElement(e5option);
+			addLabledSetting(windowLayout, element_fs, "Full-screen:");
 		}
 		// Graphics Options
 		{
@@ -147,61 +115,130 @@ public:
 			graphicsLayout->setMargin(5.0f);
 			graphicsLayout->setSpacing(1.0f);
 			auto graphicsBorder = std::make_shared<Border>(engine, graphicsLayout);
-			graphicsBorder->setMaxScale(glm::vec2(graphicsBorder->getMaxScale().x, 150.0f));
 			mainLayout->addElement(graphicsBorder);
 
 			auto graphicsTitle = std::make_shared<Label>(engine, "Graphics Options");
 			graphicsLayout->addElement(graphicsTitle);
 			graphicsTitle->setTextScale(15.0f);
 
-			auto e1 = std::make_shared<Layout_Horizontal>(engine);
-			graphicsLayout->addElement(e1);
-			e1->addElement(std::make_shared<Label>(engine, "Bloom:"));
-			bool e1State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, e1State);
-			auto e1option = std::make_shared<Toggle>(engine, e1State);
-			e1option->addCallback(Toggle::on_toggle, [&, e1option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, e1option->getToggled() ? 1.0f : 0.0f); 
+			
+			float materialSize = 1024;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
+			auto element_material_list = std::make_shared<DropList>(engine);
+			const std::vector<std::string> strings =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
+			const std::vector<float> sizes =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+			int counter = 0, index = 0;
+			for each (const auto & size in sizes) {
+				if (materialSize == size)
+					index = counter;
+				counter++;
+			}
+			element_material_list->setStrings(strings);
+			element_material_list->setIndex(index);
+			element_material_list->addCallback(List::on_index_changed, [&, sizes, element_material_list, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, sizes[element_material_list->getIndex()]);
 			});
-			e1->addElement(e1option);
+			addLabledSetting(graphicsLayout, element_material_list, "Texture Quality:");
 
-			auto e2 = std::make_shared<Layout_Horizontal>(engine);
-			graphicsLayout->addElement(e2);
-			e2->addElement(std::make_shared<Label>(engine, "SSAO:"));
-			bool e2State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, e2State);
-			auto e2option = std::make_shared<Toggle>(engine, e2State);
-			e2option->addCallback(Toggle::on_toggle, [&, e2option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_SSAO, e2option->getToggled() ? 1.0f : 0.0f); 
+			float shadowSize = 1024, shadowQuality = 4;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_QUALITY, shadowQuality);
+			auto element_shadow_list = std::make_shared<DropList>(engine);
+			const std::vector<std::string> strings2 =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
+			const std::vector<float> sizes2 =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+			const std::vector<float> qualities =		{ 1,		2,			3,			4,				5 };
+			counter = 0;
+			index = 0;
+			for each (const auto & size in sizes2) {
+				if (shadowSize == size)
+					index = counter;
+				counter++;
+			}
+			element_shadow_list->setStrings(strings2);
+			element_shadow_list->setIndex(index);
+			element_shadow_list->addCallback(List::on_index_changed, [&, sizes2, qualities, element_shadow_list, engine]() {
+				const auto & index = element_shadow_list->getIndex();
+				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, std::min(sizes2[index] * 2, 2048.0f));
+				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_POINT, sizes2[index]);
+				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_SPOT, sizes2[index]);
+				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_QUALITY, qualities[index]);
 			});
-			e2->addElement(e2option);
+			addLabledSetting(graphicsLayout, element_shadow_list, "Shadow Quality:");
 
-			auto e3 = std::make_shared<Layout_Horizontal>(engine);
-			graphicsLayout->addElement(e3);
-			e3->addElement(std::make_shared<Label>(engine, "SSR:"));
-			bool e3State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, e3State);
-			auto e3option = std::make_shared<Toggle>(engine, e3State);
-			e3option->addCallback(Toggle::on_toggle, [&, e3option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_SSR, e3option->getToggled() ? 1.0f : 0.0f); 
+			float envSize = 1024;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_SIZE, envSize);
+			auto element_env_list = std::make_shared<DropList>(engine);
+			const std::vector<std::string> strings3 =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
+			const std::vector<float> sizes3 =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+			counter = 0;
+			index = 0;
+			for each (const auto & size in sizes3) {
+				if (envSize == size)
+					index = counter;
+				counter++;
+			}
+			element_env_list->setStrings(strings3);
+			element_env_list->setIndex(index);
+			element_env_list->addCallback(List::on_index_changed, [&, sizes3, element_env_list, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, sizes3[element_env_list->getIndex()]);
 			});
-			e3->addElement(e3option);
+			addLabledSetting(graphicsLayout, element_env_list, "Reflection Quality:");
 
-			auto e4 = std::make_shared<Layout_Horizontal>(engine);
-			graphicsLayout->addElement(e4);
-			e4->addElement(std::make_shared<Label>(engine, "FXAA:"));
-			bool e4State = true;
-			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, e4State);
-			auto e4option = std::make_shared<Toggle>(engine, e4State);
-			e4option->addCallback(Toggle::on_toggle, [&, e4option, engine]() {
-				engine->getPreferenceState().setValue(PreferenceState::C_FXAA, e4option->getToggled() ? 1.0f : 0.0f); 
+			float bounceSize = 1024;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, bounceSize);
+			auto element_bounce_list = std::make_shared<DropList>(engine);
+			const std::vector<std::string> strings4 =	{ "Very Low",	"Low",		"Medium",	"High",		"Very High",	"Ultra" };
+			const std::vector<float> sizes4 =			{ 8,			12,			16,			24,			32,				64 };
+			counter = 0;
+			index = 0;
+			for each (const auto & size in sizes4) {
+				if (bounceSize == size)
+					index = counter;
+				counter++;
+			}
+			element_bounce_list->setStrings(strings4);
+			element_bounce_list->setIndex(index);
+			element_bounce_list->addCallback(List::on_index_changed, [&, sizes4, element_bounce_list, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, sizes4[element_bounce_list->getIndex()]);
 			});
-			e4->addElement(e4option);
+			addLabledSetting(graphicsLayout, element_bounce_list, "Light Bounce Quality:");
+
+			bool element_bloom_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, element_bloom_state);
+			auto element_bloom = std::make_shared<Toggle>(engine, element_bloom_state);
+			element_bloom->addCallback(Toggle::on_toggle, [&, element_bloom, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, element_bloom->getToggled() ? 1.0f : 0.0f);
+			});
+			addLabledSetting(graphicsLayout, element_bloom, "Bloom:");
+
+			bool element_ssao_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, element_ssao_state);
+			auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state);
+			element_ssao->addCallback(Toggle::on_toggle, [&, element_ssao, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_SSAO, element_ssao->getToggled() ? 1.0f : 0.0f);
+			});
+			addLabledSetting(graphicsLayout, element_ssao, "SSAO:");
+
+			bool element_ssr_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, element_ssr_state);
+			auto element_ssr = std::make_shared<Toggle>(engine, element_ssr_state);
+			element_ssr->addCallback(Toggle::on_toggle, [&, element_ssr, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_SSR, element_ssr->getToggled() ? 1.0f : 0.0f);
+			});
+			addLabledSetting(graphicsLayout, element_ssr, "SSR:");
+
+			bool element_fxaa_state = true;
+			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, element_fxaa_state);
+			auto element_fxaa = std::make_shared<Toggle>(engine, element_fxaa_state);
+			element_fxaa->addCallback(Toggle::on_toggle, [&, element_fxaa, engine]() {
+				engine->getPreferenceState().setValue(PreferenceState::C_FXAA, element_fxaa->getToggled() ? 1.0f : 0.0f);
+			});
+			addLabledSetting(graphicsLayout, element_fxaa, "FXAA:");
 		}
 
 		auto bottomBar = std::make_shared<Layout_Horizontal>(engine);
-		bottomBar->setMaxScale(glm::vec2(300, 25));
-		mainLayout->addElement(bottomBar);
+		bottomBar->setMaxScale(glm::vec2(bottomBar->getMaxScale().x, 30.0f));
+		TopDownLayout->addElement(bottomBar);
 
 		auto backButton = std::make_shared<Button>(engine, "Back");
 		backButton->setBevelRadius(15.0F);

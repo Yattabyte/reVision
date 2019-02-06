@@ -20,7 +20,7 @@ public:
 		UI_Element::setDepth(depth + 1.0f);
 		m_component->setDepth(depth);
 	}
-	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const {
+	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const override {
 		if (m_component->doElementsExceedBounds(scale, positionOffset + m_component->getPosition()))
 			return true;
 		const auto childPos = m_component->getPosition();
@@ -35,28 +35,21 @@ public:
 		
 		return UI_Element::doElementsExceedBounds(scale, positionOffset);
 	}
-	virtual bool mouseMove(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			bool consumed = false;
-			for each (auto & child in m_children) {
-				if (child->mouseMove(subEvent)) {
-					consumed = true;
-					break;
-				}
-			}
-			if (!consumed)
-				consumed = m_component->mouseMove(subEvent);
+			for each (auto & child in m_children)
+				child->mouseMove(subEvent);
+			m_component->mouseMove(subEvent);
 			enactCallback(on_mouse_enter);
-			return true;
 		}
-		enactCallback(on_mouse_exit);
-		return false;
+		else
+			enactCallback(on_mouse_exit);
 	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) {
+	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
 			MouseEvent subEvent = mouseEvent;
@@ -81,7 +74,11 @@ public:
 		}
 		return false;
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {
+	virtual void keyButton(const unsigned int & character) {
+		UI_Element::keyButton(character);
+		m_component->keyButton(character);
+	}
+	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);

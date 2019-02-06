@@ -38,7 +38,7 @@ public:
 		bottomButton->setBevelRadius(0.0F);
 		bottomButton->setMinScale(glm::vec2(12.5f));
 		bottomButton->setMaxScale(glm::vec2(12.5f));
-		panel->setMinScale(glm::vec2(12.5f, 12.5));
+		panel->setMinScale(glm::vec2(12.5f, 12.5f));
 		panel->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 25.0f));
 		setMinScale(glm::vec2(12.5f, getMinScale().y));
 
@@ -69,7 +69,7 @@ public:
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
 		for (int x = 0; x < 6; ++x)
-			m_data[x] = glm::vec3(m_scale.x - 12.5f, 0, 0) + (m_data[x] * glm::vec3(12.5, m_scale.y, 0.0f));		
+			m_data[x] = glm::vec3(m_scale.x - 12.5f, 0, 0) + (m_data[x] * glm::vec3(12.5f, m_scale.y, 0.0f));		
 
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 
@@ -78,34 +78,25 @@ public:
 		m_component->setPosition(glm::vec2(-12.5f, 0));
 		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 	}
-	virtual bool mouseMove(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			bool consumed = false;
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children) {
-				if (child->mouseMove(subEvent)) {
-					consumed = true;
-					break;
+			for each (auto & child in m_children) 
+				child->mouseMove(subEvent);
+			m_component->mouseMove(subEvent);
+			if (m_children.size() == 3) {
+				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
+					setLinear(subEvent.m_yPos / (m_scale.y - 25.0f - 12.5f));
+					updateElements();
 				}
-			}
-			if (!consumed)
-				consumed = m_component->mouseMove(subEvent);
-			if (consumed) {
-				if (m_children.size() == 3) {
-					if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
-						setLinear(subEvent.m_yPos / (m_scale.y - 25.0f - 12.5f));
-						updateElements();
-					}
-				}
-			}
+			}			
 			enactCallback(on_mouse_enter);
-			return true;
 		}
-		enactCallback(on_mouse_exit);
-		return false;
+		else
+			enactCallback(on_mouse_exit);
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;

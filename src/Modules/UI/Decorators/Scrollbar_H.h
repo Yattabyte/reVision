@@ -77,34 +77,25 @@ public:
 		m_component->setPosition(glm::vec2(0, 12.5f));
 		m_component->setScale(glm::vec2(m_scale.x, m_scale.y - 12.5f));
 	}
-	virtual bool mouseMove(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
+	virtual void mouseMove(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return;
 		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			bool consumed = false;
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children) {
-				if (child->mouseMove(subEvent)) {
-					consumed = true;
-					break;
-				}
-			}
-			if (!consumed)
-				consumed = m_component->mouseMove(subEvent);
-			if (consumed) {
-				if (m_children.size() == 3) {
-					if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
-						setLinear(subEvent.m_xPos / (m_scale.x - 25.0f - 25.0f));
-						updateElements();
-					}
+			for each (auto & child in m_children) 
+				child->mouseMove(subEvent);			
+			m_component->mouseMove(subEvent);
+			if (m_children.size() == 3) {
+				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
+					setLinear(subEvent.m_xPos / (m_scale.x - 25.0f - 25.0f));
+					updateElements();
 				}
 			}
 			enactCallback(on_mouse_enter);
-			return true;
 		}
-		enactCallback(on_mouse_exit);
-		return false;
+		else
+			enactCallback(on_mouse_exit);
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
