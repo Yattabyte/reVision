@@ -16,7 +16,7 @@ class Push_System : public Game_System_Interface {
 public:
 	// (de)Constructors
 	~Push_System() = default;
-	Push_System() : m_tileGenerator(std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {
+	Push_System() : m_tileGenerator((unsigned int)std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);

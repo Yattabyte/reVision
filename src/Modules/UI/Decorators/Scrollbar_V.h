@@ -89,7 +89,7 @@ public:
 			m_component->mouseMove(subEvent);
 			if (m_children.size() == 3) {
 				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
-					setLinear(subEvent.m_yPos / (m_scale.y - 25.0f - 12.5f));
+					setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
 					updateElements();
 				}
 			}			

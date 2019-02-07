@@ -105,8 +105,8 @@ public:
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
-		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(m_scale, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
 			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
@@ -180,7 +180,7 @@ public:
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
 	void setIndex(const int & index) {
-		m_indexSelection = std::clamp<int>(index, 0, m_listElements.size());
+		m_indexSelection = std::clamp<int>(index, 0, (int)m_listElements.size());
 		updateSelection();
 		enactCallback(on_index_changed);
 	}

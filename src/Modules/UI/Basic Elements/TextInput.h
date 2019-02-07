@@ -25,16 +25,9 @@ public:
 
 		// Label
 		m_label = std::make_shared<Label>(engine);
-		m_label->setAlignment(Label::align_center);
+		m_label->setAlignment(Label::align_left);
 		m_label->setColor(glm::vec3(0.0f));
 		addElement(m_label);
-
-		addCallback(on_mouse_release, [&]() {
-			m_edit = !m_edit;
-			if (m_edit) {
-				setText("");
-			}
-		});
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -47,7 +40,7 @@ public:
 		glCreateBuffers(2, m_vboID);
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
 		glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
-		constexpr auto num_data = 2 * 3;
+		constexpr auto num_data = 4 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
@@ -57,24 +50,30 @@ public:
 
 	// Interface Implementation
 	virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(scale);
 		m_label->setScale(scale);
+		UI_Element::setScale(scale);
 	}
 	virtual void update() override {
-		constexpr auto num_data = 2 * 3;
+		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
 
-		// Main
-		data[0] = { -1, -1, 0 };
-		data[1] = { 1, -1, 0 };
-		data[2] = { 1,  1, 0 };
-		data[3] = { 1,  1, 0 };
-		data[4] = { -1,  1, 0 };
-		data[5] = { -1, -1, 0 };
+		for (int x = 0; x < 12; x += 6) {
+			data[x + 0] = { -1, -1, 0 };
+			data[x + 1] = { 1, -1, 0 };
+			data[x + 2] = { 1,  1, 0 };
+			data[x + 3] = { 1,  1, 0 };
+			data[x + 4] = { -1,  1, 0 };
+			data[x + 5] = { -1, -1, 0 };
+		}
 		for (int x = 0; x < 6; ++x) {
 			data[x] *= glm::vec3(m_scale, 0.0f);
 			objIndices[x] = 0;
+		}
+		for (int x = 6; x < 12; ++x) {
+			data[x] *= glm::vec3(1.0, 10, 1);
+			data[x].x = (data[x].x - m_scale.x) + (10.0f * m_caretIndex);
+			objIndices[x] = 1;
 		}
 
 		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
@@ -84,24 +83,60 @@ public:
 	}
 	virtual bool mouseButton(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (!mouseWithin(mouseEvent) && m_edit) 
-			m_edit = false;			
+		if (mouseEvent.m_action == GLFW_RELEASE) {
+			if (mouseWithin(mouseEvent)) {
+				// If already editing, move caret to mouse position
+				if (m_edit) {
+					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
+					setCaret((int)std::roundf(float(mx) / 10.0f));
+				}
+				m_edit = true;
+			}
+			else if (m_edit)
+				m_edit = false;
+		}
 		return UI_Element::mouseButton(mouseEvent);
 	}
-	virtual void keyButton(const unsigned int & character) override {
+	virtual void keyChar(const unsigned int & character) override {
 		if (m_edit) {
-			setText(getText() + char(character));
+			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
+			setCaret(m_caretIndex + 1);
+		}
+	}
+	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
+		if (m_edit) {
+			if (key == GLFW_KEY_ENTER || key == GLFW_KEY_ESCAPE)
+				m_edit = false;
+			if (action == GLFW_PRESS) {
+				if (key == GLFW_KEY_BACKSPACE) {
+					if (m_caretIndex > 0) {
+						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
+						setCaret(m_caretIndex - 1);
+					}
+				}
+				else if (key == GLFW_KEY_DELETE) {
+					if (m_caretIndex + 1 <= m_text.size())
+						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
+				}
+				else if (key == GLFW_KEY_LEFT)
+					setCaret(m_caretIndex - 1);
+				else if (key == GLFW_KEY_RIGHT)
+					setCaret(m_caretIndex + 1);
+			}
 		}
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		m_blinkTime += deltaTime;
 		if (!getVisible()) return;
-		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(m_scale, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			// Render Background
 			m_shader->bind();
 			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
 			m_shader->setUniform(1, m_enabled);
+			m_shader->setUniform(2, m_edit);
+			m_shader->setUniform(3, m_blinkTime);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -117,6 +152,7 @@ public:
 	void setText(const std::string & text) {
 		m_text = text;
 		m_label->setText(text);
+		update();
 	}
 	/** Get the text displayed in this field.
 	@return					the text displayed in this field. */
@@ -136,10 +172,18 @@ public:
 
 
 protected:
+	// Protected Methods
+	void setCaret(const int & index) {
+		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
+		update();
+	}
+
+
 	// Protected Attributes
 	std::shared_ptr<Label> m_label;
 	std::string m_text;
 	bool m_edit = false;
+	int m_caretIndex = 0;
 
 
 private:
@@ -147,6 +191,7 @@ private:
 	GLuint
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };
+	float m_blinkTime = 0.0f;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

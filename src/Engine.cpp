@@ -33,6 +33,10 @@ static void GLFW_Callback_Char(GLFWwindow* window, unsigned int character)
 {
 	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
 }
+static void GLFW_Callback_Key(GLFWwindow* window, int a, int b, int c, int d)
+{
+	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a,b,c,d);
+}
 /***************************
 -----END GLFW CALLBACKS-----
 ***************************/
@@ -142,7 +146,7 @@ Engine::Engine() :
 	Image_IO::Initialize();
 
 	// Preference Values
-	m_refreshRate = glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate;
+	m_refreshRate = float(glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);
@@ -151,11 +155,11 @@ Engine::Engine() :
 
 	// Preference Callbacks
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_windowSize.x = f;
+		m_windowSize.x = int(f);
 		configureWindow();
 	});
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_windowSize.y = f;
+		m_windowSize.y = int(f);
 		configureWindow();
 	});
 	m_preferenceState.addCallback(PreferenceState::C_WINDOW_REFRESH_RATE, m_aliveIndicator, [&](const float &f) {
@@ -178,6 +182,7 @@ Engine::Engine() :
 	glfwSetCursorPosCallback(m_renderingContext.window, GLFW_Callback_CursorPosition);
 	glfwSetMouseButtonCallback(m_renderingContext.window, GLFW_Callback_CursorButton);
 	glfwSetCharCallback(m_renderingContext.window, GLFW_Callback_Char);
+	glfwSetKeyCallback(m_renderingContext.window, GLFW_Callback_Key);
 	glfwMakeContextCurrent(m_renderingContext.window);
 	glfwSwapInterval((int)m_vsync);
 	

@@ -65,3 +65,5 @@ app/reVision.exe - Shortcut.lnk
 CMakeDoxyfile.tpl.bak
 CMakeDoxyfile.in
 *.shader
+PredictedInputCache_Debug_x64.dat
+PredictedInputCache_Release_x64.dat

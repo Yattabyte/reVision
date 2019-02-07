@@ -103,16 +103,16 @@ public:
 	/** Render this element (and all subelements).
 	@param	transform				transform to use*/
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {	
-		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(m_scale, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
 		for each (auto & child in m_children) {
 			if (!child->getVisible()) continue;
 			// Scissor the region, preventing sub elements to render outside of the bounds of this element
 			glScissor(
-				newPosition.x - (newScale.x),
-				newPosition.y - (newScale.y),
-				(newScale.x * 2.0f),
-				(newScale.y * 2.0f)
+				GLint(newPosition.x - (newScale.x)),
+				GLint(newPosition.y - (newScale.y)),
+				GLsizei(newScale.x * 2.0f),
+				GLsizei(newScale.y * 2.0f)
 			);
 			child->renderElement(deltaTime, newPosition, newScale);
 		}
@@ -156,9 +156,18 @@ public:
 	}
 	/** Propogates a key press event from this UI element to its children.
 	@param		character			the character typed. */
-	virtual void keyButton(const unsigned int & character) {
+	virtual void keyChar(const unsigned int & character) {
 		for each (auto & child in m_children)
-			child->keyButton(character);
+			child->keyChar(character);
+	}
+	/** Propogates a regular key press event from this UI element to its children.
+	@param		key			The keyboard key that was pressed or released.
+	@param		scancode	The system-specific scancode of the key.
+	@param		action		GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.
+	@param		mods		Bit field describing which modifier keys were held down. */
+	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) {
+		for each (auto & child in m_children)
+			child->keyboardAction(key, scancode, action, mods);
 	}
 
 

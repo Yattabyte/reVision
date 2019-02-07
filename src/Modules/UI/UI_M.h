@@ -39,6 +39,12 @@ public:
 	/** Propagates keyboard character input to all UI elements.
 	@param		character	the character inputed. */
 	void applyChar(const unsigned int & character);
+	/** Propagates keyboard key input to all UI elements.
+	@param		key			The keyboard key that was pressed or released.
+	@param		scancode	The system-specific scancode of the key.
+	@param		action		GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.
+	@param		mods		Bit field describing which modifier keys were held down. */
+	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
 	/** Returns whether or not this module requires the mouse.
 	@returns	true when active, false otherwise. */
 	bool isCursorActive() const;

@@ -116,8 +116,8 @@ public:
 	}
 	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const override {
 		if (m_list->getVisible()) {
-			const auto childPos = m_list->getPosition();
-			const auto childScl = m_list->getScale();
+			const glm::vec2 childPos = m_list->getPosition();
+			const glm::vec2 childScl = m_list->getScale();
 			if (
 				((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
 				((childPos.x + positionOffset.x) + childScl.x) > (scale.x) ||
@@ -150,8 +150,8 @@ public:
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
-		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(m_scale, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			// Render Background
 			m_shader->bind();
@@ -171,10 +171,10 @@ public:
 		if (m_list->getVisible()) {
 			// Render List
 			glScissor(
-				newPosition.x - (newScale.x),
-				newPosition.y - (75.0f) - (75.0f / 2.0f) - 50.0f,
-				(newScale.x * 2.0f),
-				(75.0f * 2.0f) + 75.0f
+				GLint(newPosition.x - (newScale.x)),
+				GLint(newPosition.y - (75.0f) - (75.0f / 2.0f) - 50.0f),
+				GLsizei(newScale.x * 2.0f),
+				GLsizei((75.0f * 2.0f) + 75.0f)
 			);
 			m_list->renderElement(deltaTime, newPosition, glm::vec2(newScale.x, 75.0f));
 		}

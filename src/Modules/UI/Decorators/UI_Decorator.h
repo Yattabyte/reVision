@@ -74,19 +74,23 @@ public:
 		}
 		return false;
 	}
-	virtual void keyButton(const unsigned int & character) {
-		UI_Element::keyButton(character);
-		m_component->keyButton(character);
+	virtual void keyChar(const unsigned int & character) override {
+		UI_Element::keyChar(character);
+		m_component->keyChar(character);
+	}
+	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
+		UI_Element::keyboardAction(key, scancode, action, mods);
+		m_component->keyboardAction(key, scancode, action, mods);
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);
-		const auto newPosition = position + m_position;
-		const auto newScale = glm::min(m_scale, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
 		glScissor(
-			newPosition.x - (newScale.x),
-			newPosition.y - (newScale.y),
-			(newScale.x * 2.0f),
-			(newScale.y * 2.0f)
+			GLint(newPosition.x - (newScale.x)),
+			GLint(newPosition.y - (newScale.y)),
+			GLsizei(newScale.x * 2.0f),
+			GLsizei(newScale.y * 2.0f)
 		);
 		m_component->renderElement(deltaTime, newPosition, newScale);
 	}

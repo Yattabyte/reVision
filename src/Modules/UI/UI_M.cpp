@@ -9,20 +9,20 @@ void UI_Module::initialize(Engine * engine)
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize, StaticBuffer & projectionBuffer) {
-		const glm::mat4 proj = glm::ortho<float>(0.0f, renderSize.x, 0.0f, renderSize.y, -10.0f, 10.0f);
+		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -10.0f, 10.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
 	};
 	m_projectionBuffer = StaticBuffer(sizeof(glm::mat4), 0, GL_DYNAMIC_STORAGE_BIT);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.x = f;
+		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.y = f;
+		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
 		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
@@ -52,8 +52,8 @@ void UI_Module::frameTick(const float & deltaTime)
 	glClear(GL_DEPTH_BUFFER_BIT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glEnable(GL_SCISSOR_TEST);
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	glScissor(0, 0, m_renderSize.x, m_renderSize.y);
+	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
+	glScissor(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
 	
 	m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	for each (auto & element in m_uiElements)
@@ -84,7 +84,13 @@ void UI_Module::applyCursorButton(const int & button, const int & action, const 
 void UI_Module::applyChar(const unsigned int & character)
 {
 	for each (auto & element in m_uiElements)
-		element->keyButton(character);
+		element->keyChar(character);
+}
+
+void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
+{
+	for each (auto & element in m_uiElements)
+		element->keyboardAction(key, scancode, action, mods);
 }
 
 bool UI_Module::isCursorActive() const
