@@ -120,7 +120,7 @@ public:
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		enactCallback(on_scroll_change);
 	}
-	/** Get the lienar value for this scrollbar. 
+	/** Get the linear value for this scrollbar. 
 	@return				the linear value for this scroll bar. */
 	float getLinear() const {
 		return m_linear;

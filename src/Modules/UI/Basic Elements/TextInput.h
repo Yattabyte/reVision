@@ -13,6 +13,12 @@
 class TextInput : public UI_Element
 {
 public:
+	// Interaction enums
+	enum interact {
+		on_text_change = UI_Element::last_interact_index
+	};
+
+
 	// (de)Constructors
 	~TextInput() {
 		// Delete geometry
@@ -91,16 +97,18 @@ public:
 					setCaret((int)std::roundf(float(mx) / 10.0f));
 				}
 				m_edit = true;
+				return true;
 			}
 			else if (m_edit)
 				m_edit = false;
-		}
-		return UI_Element::mouseButton(mouseEvent);
+		};
+		return false;
 	}
 	virtual void keyChar(const unsigned int & character) override {
 		if (m_edit) {
 			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
 			setCaret(m_caretIndex + 1);
+			enactCallback(on_text_change);
 		}
 	}
 	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
@@ -112,11 +120,14 @@ public:
 					if (m_caretIndex > 0) {
 						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
 						setCaret(m_caretIndex - 1);
+						enactCallback(on_text_change);
 					}
 				}
 				else if (key == GLFW_KEY_DELETE) {
-					if (m_caretIndex + 1 <= m_text.size())
+					if (m_caretIndex + 1 <= m_text.size()) {
 						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
+						enactCallback(on_text_change);
+					}
 				}
 				else if (key == GLFW_KEY_LEFT)
 					setCaret(m_caretIndex - 1);

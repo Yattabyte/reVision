@@ -5,11 +5,14 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Basic Elements/DropList.h"
-#include "Modules/UI/Basic Elements/TextInput.h"
-#include "Modules/UI/Basic Elements/Toggle.h"
+#include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
+#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Basic Elements/Slider.h"
+#include "Modules/UI/Basic Elements/TextInput.h"
+#include "Modules/UI/Basic Elements/Toggle.h"
 #include "Modules/UI/Decorators/Border.h"
 #include "Modules/UI/Decorators/Scrollbar_V.h"
 #include "Engine.h"
@@ -43,7 +46,6 @@ public:
 
 		const auto addLabledSetting = [engine](auto & layout, auto & element, const std::string & text) {
 			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
-			//horizontalLayout->setMaxScale(glm::vec2(horizontalLayout->getMaxScale().x, 25.0f));
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
 			horizontalLayout->addElement(element);
 			layout->addElement(horizontalLayout);
@@ -70,7 +72,7 @@ public:
 			std::vector<std::string> strings(m_resolutions.size());
 			int counter = 0, index = 0;
 			for each (const auto & res in m_resolutions) {
-				const auto string = std::to_string(res.x) + "x" + std::to_string(res.y);
+				const auto string = std::to_string(res.x) + "x" + std::to_string(res.y) + " @ " + std::to_string(res.z) + "Hz";
 				strings[counter] = string;
 				if (res.x == width && res.y == height)
 					index = counter;
@@ -82,16 +84,39 @@ public:
 				const auto & index = element_res->getIndex();
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
+				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
 			});
 			addLabledSetting(windowLayout, element_res, "Resolution:");
-		
-			auto element_hz_input = std::make_shared<TextInput>(engine);
-			element_hz_input->setText("60");
-			element_hz_input->setMaxScale(glm::vec2(element_hz_input->getMaxScale().x, 12.5));
-			addLabledSetting(windowLayout, element_hz_input, "Refresh-rate:");
 
-			auto element_gamma = std::make_shared<Button>(engine);
-			addLabledSetting(windowLayout, element_gamma, "Gamma:");
+			auto gamma_layout = std::make_shared<Layout_Horizontal>(engine);
+			auto gamma_slider = std::make_shared<Slider>(engine);
+			auto gamma_tinput = std::make_shared<TextInput>(engine);
+			float gamma = 1.0f;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
+			gamma_layout->setMargin(0);
+			gamma_layout->setMaxScale(glm::vec2(gamma_layout->getMaxScale().x, 12.5));
+			gamma_slider->setMaxScale(glm::vec2(gamma_slider->getMaxScale().x, 12.5));
+			gamma_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
+			gamma_tinput->setText(std::to_string(gamma));
+			gamma_slider->setPercentage(gamma / 2.0f);
+			gamma_slider->addCallback(Slider::on_slider_change, [&, gamma_slider, gamma_tinput, engine]() {
+				const float value = 2.0f * gamma_slider->getPercentage();
+				engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
+				gamma_tinput->setText(std::to_string(value));
+			});
+			gamma_tinput->addCallback(TextInput::on_text_change, [&, gamma_slider, gamma_tinput, engine]() {
+				float 
+					value = 1.0f;
+				try 
+					{value = std::stof(gamma_tinput->getText());}
+				catch (const std::exception& e) 
+					{value = 0.0f;}
+				engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
+				gamma_slider->setPercentage(value / 2.0f);
+			});
+			gamma_layout->addElement(gamma_slider);
+			gamma_layout->addElement(gamma_tinput);
+			addLabledSetting(windowLayout, gamma_layout, "Gamma:");
 			
 			bool element_sync_state = true;
 			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
@@ -258,7 +283,7 @@ public:
 
 private:
 	// Private Attributes
-	std::vector<glm::ivec2> m_resolutions;
+	std::vector<glm::ivec3> m_resolutions;
 };
 
 #endif // OPTIONSMENU_H

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef UI_SCROLLBAR_H_H
-#define UI_SCROLLBAR_H_H
+#ifndef UI_SCROLLBAR_H
+#define UI_SCROLLBAR_H
 
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Decorators/UI_Decorator.h"
@@ -119,7 +119,7 @@ public:
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		enactCallback(on_scroll_change);
 	}
-	/** Get the lienar value for this scrollbar. 
+	/** Get the linear value for this scrollbar. 
 	@return				the linear value for this scroll bar. */
 	float getLinear() const {
 		return m_linear;
@@ -153,4 +153,4 @@ private:
 	StaticBuffer m_indirect;
 };
 
-#endif // UI_SCROLLBAR_H_H
+#endif // UI_SCROLLBAR_H

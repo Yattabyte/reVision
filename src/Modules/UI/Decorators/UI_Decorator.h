@@ -70,7 +70,7 @@ public:
 				else
 					enactCallback(on_mouse_release);
 			}
-			return true;
+			return consumed;
 		}
 		return false;
 	}

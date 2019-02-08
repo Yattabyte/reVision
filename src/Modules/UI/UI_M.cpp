@@ -66,7 +66,9 @@ void UI_Module::frameTick(const float & deltaTime)
 
 void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
 {
-	m_mouseEvent = { xPos, m_renderSize.y - yPos };
+	m_mouseEvent.m_xPos = xPos;
+	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
+
 	for each (auto & element in m_uiElements)
 		element->mouseMove(m_mouseEvent);
 }
