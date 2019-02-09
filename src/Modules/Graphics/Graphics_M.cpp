@@ -84,6 +84,12 @@ void Graphics_Module::initialize(Engine * engine)
 		m_defaultCamera->data->FarPlane = f;
 		updateCamera(m_defaultCamera->data);
 	});
+	float fov = 90.0f;
+	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
+	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
+		m_defaultCamera->data->FOV = f;
+		updateCamera(m_defaultCamera->data);
+	});
 
 	// Camera Setup
 	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint));
@@ -95,7 +101,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_defaultCamera->data->EyePosition = glm::vec3(0.0f);
 	m_defaultCamera->data->Dimensions = m_renderSize;
 	m_defaultCamera->data->FarPlane = farPlane;
-	m_defaultCamera->data->FOV = 110.0f;
+	m_defaultCamera->data->FOV = fov;
 	updateCamera(m_defaultCamera->data);
 	setActiveCamera(m_defaultCamera->index);
 

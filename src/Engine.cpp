@@ -280,7 +280,7 @@ std::vector<glm::ivec3> Engine::getResolutions() const
 	const GLFWvidmode* modes = glfwGetVideoModes(glfwGetPrimaryMonitor(), &count);
 	std::vector<glm::ivec3> resolutions(count);
 	for (int x = 0; x < count; ++x)
-		resolutions[(count - 1) - x] = { modes[x].width, modes[x].height, modes[x].refreshRate };
+		resolutions[x] = { modes[x].width, modes[x].height, modes[x].refreshRate };
 	return resolutions;
 }
 

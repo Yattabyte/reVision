@@ -4,12 +4,12 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/DropList.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
 #include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
 #include "Modules/UI/Basic Elements/TextInput.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
@@ -64,7 +64,8 @@ public:
 			windowLayout->addElement(windowTitle);
 			windowTitle->setTextScale(15.0f);
 
-			auto element_res = std::make_shared<DropList>(engine);
+			auto element_res = std::make_shared<SideList>(engine);
+			element_res->setMaxScale(glm::vec2(element_res->getMaxScale().x, 12.5f));
 			float width = 1920.0f, height = 1080.0f;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -108,15 +109,75 @@ public:
 				float 
 					value = 1.0f;
 				try 
-					{value = std::stof(gamma_tinput->getText());}
+					{ value = std::stof(gamma_tinput->getText()); }
 				catch (const std::exception& e) 
-					{value = 0.0f;}
+					{ value = 0.0f; }
 				engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
 				gamma_slider->setPercentage(value / 2.0f);
 			});
 			gamma_layout->addElement(gamma_slider);
 			gamma_layout->addElement(gamma_tinput);
 			addLabledSetting(windowLayout, gamma_layout, "Gamma:");
+
+			auto ddistance_layout = std::make_shared<Layout_Horizontal>(engine);
+			auto ddistance_slider = std::make_shared<Slider>(engine);
+			auto ddistance_tinput = std::make_shared<TextInput>(engine);
+			float ddistance = 1000.0f;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
+			ddistance_layout->setMargin(0);
+			ddistance_layout->setMaxScale(glm::vec2(ddistance_layout->getMaxScale().x, 12.5));
+			ddistance_slider->setMaxScale(glm::vec2(ddistance_slider->getMaxScale().x, 12.5));
+			ddistance_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
+			ddistance_tinput->setText(std::to_string(ddistance));
+			ddistance_slider->setPercentage(ddistance / 1000.0f);
+			ddistance_slider->addCallback(Slider::on_slider_change, [&, ddistance_slider, ddistance_tinput, engine]() {
+				const float value = 1000.0f * ddistance_slider->getPercentage();
+				engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
+				ddistance_tinput->setText(std::to_string(value));
+			});
+			ddistance_tinput->addCallback(TextInput::on_text_change, [&, ddistance_slider, ddistance_tinput, engine]() {
+				float
+					value = 1000.0f;
+				try
+					{ value = std::stof(ddistance_tinput->getText()); }
+				catch (const std::exception& e)
+					{ value = 0.0f; }
+				engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
+				ddistance_slider->setPercentage(value / 1000.0f);
+			});
+			ddistance_layout->addElement(ddistance_slider);
+			ddistance_layout->addElement(ddistance_tinput);
+			addLabledSetting(windowLayout, ddistance_layout, "Draw Distance:");
+
+			auto fov_layout = std::make_shared<Layout_Horizontal>(engine);
+			auto fov_slider = std::make_shared<Slider>(engine);
+			auto fov_tinput = std::make_shared<TextInput>(engine);
+			float fov = 90.0f;
+			engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
+			fov_layout->setMargin(0);
+			fov_layout->setMaxScale(glm::vec2(fov_layout->getMaxScale().x, 12.5));
+			fov_slider->setMaxScale(glm::vec2(fov_slider->getMaxScale().x, 12.5));
+			fov_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
+			fov_tinput->setText(std::to_string(fov));
+			fov_slider->setPercentage(fov / 180.0f);
+			fov_slider->addCallback(Slider::on_slider_change, [&, fov_slider, fov_tinput, engine]() {
+				const float value = 180.0f * fov_slider->getPercentage();
+				engine->getPreferenceState().setValue(PreferenceState::C_FOV, value);
+				fov_tinput->setText(std::to_string(value));
+			});
+			fov_tinput->addCallback(TextInput::on_text_change, [&, fov_slider, fov_tinput, engine]() {
+				float
+					value = 90.0F;
+				try
+					{ value = std::stof(fov_tinput->getText()); }
+				catch (const std::exception& e)
+					{ value = 0.0f; }
+				engine->getPreferenceState().setValue(PreferenceState::C_FOV, value);
+				fov_slider->setPercentage(value / 180.0f);
+			});
+			fov_layout->addElement(fov_slider);
+			fov_layout->addElement(fov_tinput);
+			addLabledSetting(windowLayout, fov_layout, "Field of view:");
 			
 			bool element_sync_state = true;
 			engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
@@ -149,7 +210,8 @@ public:
 			
 			float materialSize = 1024;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
-			auto element_material_list = std::make_shared<DropList>(engine);
+			auto element_material_list = std::make_shared<SideList>(engine);
+			element_material_list->setMaxScale(glm::vec2(element_material_list->getMaxScale().x, 12.5f));
 			const std::vector<std::string> strings =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
 			const std::vector<float> sizes =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 			int counter = 0, index = 0;
@@ -168,7 +230,8 @@ public:
 			float shadowSize = 1024, shadowQuality = 4;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_QUALITY, shadowQuality);
-			auto element_shadow_list = std::make_shared<DropList>(engine);
+			auto element_shadow_list = std::make_shared<SideList>(engine);
+			element_shadow_list->setMaxScale(glm::vec2(element_shadow_list->getMaxScale().x, 12.5f));
 			const std::vector<std::string> strings2 =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
 			const std::vector<float> sizes2 =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 			const std::vector<float> qualities =		{ 1,		2,			3,			4,				5 };
@@ -192,7 +255,8 @@ public:
 
 			float envSize = 1024;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_SIZE, envSize);
-			auto element_env_list = std::make_shared<DropList>(engine);
+			auto element_env_list = std::make_shared<SideList>(engine);
+			element_env_list->setMaxScale(glm::vec2(element_env_list->getMaxScale().x, 12.5f));
 			const std::vector<std::string> strings3 =	{ "Low",	"Medium",	"High",		"Very High",	"Ultra" };
 			const std::vector<float> sizes3 =			{ 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 			counter = 0;
@@ -211,7 +275,8 @@ public:
 
 			float bounceSize = 1024;
 			engine->getPreferenceState().getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, bounceSize);
-			auto element_bounce_list = std::make_shared<DropList>(engine);
+			auto element_bounce_list = std::make_shared<SideList>(engine);
+			element_bounce_list->setMaxScale(glm::vec2(element_bounce_list->getMaxScale().x, 12.5f));
 			const std::vector<std::string> strings4 =	{ "Very Low",	"Low",		"Medium",	"High",		"Very High",	"Ultra" };
 			const std::vector<float> sizes4 =			{ 8,			12,			16,			24,			32,				64 };
 			counter = 0;
