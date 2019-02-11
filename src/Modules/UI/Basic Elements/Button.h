@@ -130,7 +130,7 @@ public:
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, m_enabled);
 			m_shader->setUniform(2, m_highlighted);
 			m_shader->setUniform(3, m_pressed);

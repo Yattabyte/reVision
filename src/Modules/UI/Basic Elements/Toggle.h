@@ -220,7 +220,7 @@ public:
 				m_animateTime = std::clamp<float>(m_animateTime, 0.0f, 1.0f);
 			}
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, (2.0f * (m_animateTime / 0.2f) - 1.0f) * (m_toggledOn ? 22.5f : -22.5f));
 			m_shader->setUniform(2, m_enabled);
 			m_shader->setUniform(3, m_highlighted);

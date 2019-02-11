@@ -7,7 +7,6 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/Layout_Vertical.h"
-#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
@@ -81,7 +80,7 @@ public:
 			}
 			element_res->setStrings(strings);
 			element_res->setIndex(index);
-			element_res->addCallback(List::on_index_changed, [&, element_res, engine]() {
+			element_res->addCallback(SideList::on_index_changed, [&, element_res, engine]() {
 				const auto & index = element_res->getIndex();
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 				engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
@@ -110,7 +109,7 @@ public:
 					value = 1.0f;
 				try 
 					{ value = std::stof(gamma_tinput->getText()); }
-				catch (const std::exception& e) 
+				catch (const std::exception&) 
 					{ value = 0.0f; }
 				engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
 				gamma_slider->setPercentage(value / 2.0f);
@@ -140,7 +139,7 @@ public:
 					value = 1000.0f;
 				try
 					{ value = std::stof(ddistance_tinput->getText()); }
-				catch (const std::exception& e)
+				catch (const std::exception&)
 					{ value = 0.0f; }
 				engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
 				ddistance_slider->setPercentage(value / 1000.0f);
@@ -170,7 +169,7 @@ public:
 					value = 90.0F;
 				try
 					{ value = std::stof(fov_tinput->getText()); }
-				catch (const std::exception& e)
+				catch (const std::exception&)
 					{ value = 0.0f; }
 				engine->getPreferenceState().setValue(PreferenceState::C_FOV, value);
 				fov_slider->setPercentage(value / 180.0f);
@@ -222,7 +221,7 @@ public:
 			}
 			element_material_list->setStrings(strings);
 			element_material_list->setIndex(index);
-			element_material_list->addCallback(List::on_index_changed, [&, sizes, element_material_list, engine]() {
+			element_material_list->addCallback(SideList::on_index_changed, [&, sizes, element_material_list, engine]() {
 				engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, sizes[element_material_list->getIndex()]);
 			});
 			addLabledSetting(graphicsLayout, element_material_list, "Texture Quality:");
@@ -244,7 +243,7 @@ public:
 			}
 			element_shadow_list->setStrings(strings2);
 			element_shadow_list->setIndex(index);
-			element_shadow_list->addCallback(List::on_index_changed, [&, sizes2, qualities, element_shadow_list, engine]() {
+			element_shadow_list->addCallback(SideList::on_index_changed, [&, sizes2, qualities, element_shadow_list, engine]() {
 				const auto & index = element_shadow_list->getIndex();
 				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, std::min(sizes2[index] * 2, 2048.0f));
 				engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_POINT, sizes2[index]);
@@ -268,7 +267,7 @@ public:
 			}
 			element_env_list->setStrings(strings3);
 			element_env_list->setIndex(index);
-			element_env_list->addCallback(List::on_index_changed, [&, sizes3, element_env_list, engine]() {
+			element_env_list->addCallback(SideList::on_index_changed, [&, sizes3, element_env_list, engine]() {
 				engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, sizes3[element_env_list->getIndex()]);
 			});
 			addLabledSetting(graphicsLayout, element_env_list, "Reflection Quality:");
@@ -288,7 +287,7 @@ public:
 			}
 			element_bounce_list->setStrings(strings4);
 			element_bounce_list->setIndex(index);
-			element_bounce_list->addCallback(List::on_index_changed, [&, sizes4, element_bounce_list, engine]() {
+			element_bounce_list->addCallback(SideList::on_index_changed, [&, sizes4, element_bounce_list, engine]() {
 				engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, sizes4[element_bounce_list->getIndex()]);
 			});
 			addLabledSetting(graphicsLayout, element_bounce_list, "Light Bounce Quality:");

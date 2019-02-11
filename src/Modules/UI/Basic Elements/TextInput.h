@@ -87,10 +87,16 @@ public:
 
 		UI_Element::update();
 	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) {
+	virtual bool mouseAction(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
-		if (mouseEvent.m_action == GLFW_RELEASE) {
-			if (mouseWithin(mouseEvent)) {
+		if (mouseWithin(mouseEvent)) {			
+			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+				m_pressed = true;
+				enactCallback(on_mouse_press);
+				return true;
+			}
+			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+				m_pressed = false;
 				// If already editing, move caret to mouse position
 				if (m_edit) {
 					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
@@ -99,11 +105,10 @@ public:
 				m_edit = true;
 				return true;
 			}
-			else if (m_edit)
-				m_edit = false;
-		};
-		return false;
-	}
+		}
+		m_edit = false;
+		return UI_Element::mouseAction(mouseEvent);;
+	}				
 	virtual void keyChar(const unsigned int & character) override {
 		if (m_edit) {
 			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
@@ -144,7 +149,7 @@ public:
 		if (m_shader->existsYet()) {
 			// Render Background
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, m_enabled);
 			m_shader->setUniform(2, m_edit);
 			m_shader->setUniform(3, m_blinkTime);

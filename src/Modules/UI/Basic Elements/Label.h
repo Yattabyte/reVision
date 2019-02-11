@@ -77,7 +77,7 @@ public:
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet() && m_textureFont->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, newScale);
 			m_shader->setUniform(2, m_textScale);
 			m_shader->setUniform(3, (int)m_textAlignment);
@@ -91,7 +91,7 @@ public:
 		}
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
+	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		return false;
 	}
 

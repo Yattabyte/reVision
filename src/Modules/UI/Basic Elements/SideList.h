@@ -13,7 +13,7 @@ class SideList : public UI_Element
 public:
 	// Public interaction enums
 	enum interact {
-		on_index_changed = List::on_index_changed
+		on_index_changed = UI_Element::last_interact_index
 	};
 
 
@@ -98,42 +98,31 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void mouseMove(const MouseEvent & mouseEvent) override {
-		m_lhighlighted = false;
-		m_rhighlighted = false;
-		if (!getVisible() || !getEnabled()) return;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			const float mx = mouseEvent.m_xPos - m_position.x;
-			// Left button
-			if (mx >= -m_scale.x && mx <= (-m_scale.x + (m_scale.y * 2.0f)))
-				m_lhighlighted = true;
-			// Right button
-			if (mx >= (m_scale.x - (m_scale.y * 2.0f)) && mx <= m_scale.x)
-				m_rhighlighted = true;
-		}
-		UI_Element::mouseMove(mouseEvent);
-	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
-		m_lpressed = false;
-		m_rpressed = false;
+	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			const float mx = mouseEvent.m_xPos - m_position.x;
+		if (mouseWithin(mouseEvent)) {
+			const float mx = float(mouseEvent.m_xPos) - m_position.x;
 			// Left button
 			if (mx >= -m_scale.x && mx <= (-m_scale.x + (m_scale.y * 2.0f))) {
-				m_lpressed = (bool)mouseEvent.m_action;
-				if (mouseEvent.m_action == GLFW_RELEASE) {
+				m_lhighlighted = true;
+				if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS) 
+					m_lpressed = true;				
+				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_lpressed = false;
 					int index = getIndex() - 1;
 					if (index < 0)
-						index = m_strings.size() - 1;
+						index = int(m_strings.size()) - 1;
 					setIndex(index);
 					enactCallback(on_index_changed);
 				}
 			}
 			// Right button
 			if (mx >= (m_scale.x - (m_scale.y * 2.0f)) && mx <= m_scale.x) {
-				m_rpressed = (bool)mouseEvent.m_action;
-				if (mouseEvent.m_action == GLFW_RELEASE) {
+				m_rhighlighted = true;
+				if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
+					m_rpressed = true;
+				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_rpressed = false;
 					int index = getIndex() + 1;
 					if (index >= m_strings.size())
 						index = 0;
@@ -142,7 +131,11 @@ public:
 				}
 			}
 		}
-		return (UI_Element::mouseButton(mouseEvent));
+		else {
+			m_lhighlighted = false;
+			m_rhighlighted = false;
+		}
+		return (UI_Element::mouseAction(mouseEvent));
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
@@ -151,7 +144,7 @@ public:
 		if (m_shader->existsYet()) {
 			// Render Background
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, m_enabled);
 			m_shader->setUniform(2, m_lhighlighted);
 			m_shader->setUniform(3, m_rhighlighted);

@@ -79,27 +79,20 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void mouseMove(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
+	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+		m_highlighted = false;
+		m_pressed = false;
+		if (!getVisible() || !getEnabled()) return false;
+		if (mouseWithin(mouseEvent)) {
 			m_highlighted = true;
-			if (mouseEvent.m_action == GLFW_PRESS) {
+			m_pressed = (bool)mouseEvent.m_action;
+			if (mouseEvent.m_action == MouseEvent::PRESS) {
 				const float mx = float(mouseEvent.m_xPos) - m_position.x + m_scale.x;
 				setPercentage(mx / (m_scale.x * 2.0f));
 				enactCallback(on_slider_change);
 			}
 		}
-		else
-			m_highlighted = false;
-		UI_Element::mouseMove(mouseEvent);
-	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) 
-			m_pressed = mouseEvent.m_action == GLFW_PRESS;		
-		else
-			m_pressed = false;
-		return UI_Element::mouseButton(mouseEvent);
+		return UI_Element::mouseAction(mouseEvent);
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
@@ -107,7 +100,7 @@ public:
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {			
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, m_enabled);
 			m_shader->setUniform(2, m_highlighted);
 			m_shader->setUniform(3, m_pressed);

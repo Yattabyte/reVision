@@ -78,15 +78,17 @@ public:
 		m_component->setPosition(glm::vec2(-12.5f, 0));
 		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 	}
-	virtual void mouseMove(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
+	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+		if (!getVisible() || !getEnabled()) return false;
+		if (mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			for each (auto & child in m_children) 
-				child->mouseMove(subEvent);
-			m_component->mouseMove(subEvent);
+				if (child->mouseAction(subEvent))
+					return true;
+			if (m_component->mouseAction(subEvent))
+				return true;
 			if (m_children.size() == 3) {
 				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
 					setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
@@ -94,9 +96,14 @@ public:
 				}
 			}			
 			enactCallback(on_mouse_enter);
+			if (mouseEvent.m_action == MouseEvent::PRESS)
+				enactCallback(on_mouse_press);
+			else
+				enactCallback(on_mouse_release);
+			return true;
 		}
-		else
-			enactCallback(on_mouse_exit);
+		enactCallback(on_mouse_exit);
+		return false;
 	}
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
@@ -104,7 +111,7 @@ public:
 		const auto newScale = glm::min(m_scale, scale);
 		if (m_shader->existsYet()) {
 			m_shader->bind();
-			m_shader->setUniform(0, glm::vec3(newPosition, m_depth));
+			m_shader->setUniform(0, newPosition);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);

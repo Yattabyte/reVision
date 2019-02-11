@@ -22,19 +22,6 @@ public:
 
 		UI_Element::update();
 	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children) {
-				if (child->mouseButton(subEvent))
-					return true;
-			}
-		}
-		return false;
-	}
 
 
 	// Public Methods

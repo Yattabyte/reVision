@@ -7,6 +7,14 @@
 class MouseEvent
 {
 public:
+	// Public interaction enums
+	enum Actions {
+		RELEASE = 0,
+		PRESS = 1,
+		MOVE = 2,
+	};
+
+
 	// (de)Constructors
 	~MouseEvent() = default;
 	MouseEvent() = default;

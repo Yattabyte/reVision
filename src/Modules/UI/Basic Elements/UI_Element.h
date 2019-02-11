@@ -48,14 +48,6 @@ public:
 
 
 	// Public Interface
-	/** Set the depth value for this element.
-	Depth is used to aid in rendering elements on top of other elements.
-	@param		depth					the depth value for this element. */
-	virtual void setDepth(const float & depth) {
-		m_depth = depth;
-		for each (const auto & child in m_children)
-			child->setDepth(depth + 1.0f);
-	}
 	/** Sets this elements' scale.
 	@param	scale					the new scale to use. */
 	virtual void setScale(const glm::vec2 & scale) {
@@ -83,23 +75,6 @@ public:
 		for each (auto & child in m_children)
 			child->update();
 	}
-	/***/
-	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const {
-		for each (auto & child in m_children) {
-			if (child->doElementsExceedBounds(scale, positionOffset + child->getPosition()))
-				return true;
-
-			const auto childPos = child->getPosition();
-			const auto childScl = child->getScale();
-			if (
-				((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
-				((childPos.x + positionOffset.x) + childScl.x) > (scale.x) || 
-				((childPos.y + positionOffset.y) - childScl.y) < (-scale.y) || 
-				((childPos.y + positionOffset.y) + childScl.y) > (scale.y))
-				return true;			
-		}
-		return false;
-	}
 	/** Render this element (and all subelements).
 	@param	transform				transform to use*/
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {	
@@ -117,41 +92,36 @@ public:
 			child->renderElement(deltaTime, newPosition, newScale);
 		}
 	}
-	/** Applies and checks if mouse movement interacts with this UI element. 
-	@param		mouseEvent			the mouse event occuring.*/
-	virtual void mouseMove(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
+	/** Applies a mouse action across this ui element.
+	@param		mouseEvent			the mouse event occuring. */
+	virtual bool mouseAction(const MouseEvent & mouseEvent) {
+		if (!getVisible() || !getEnabled()) return false;
+		if (mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			for each (auto & child in m_children)
-				child->mouseMove(subEvent);			
-			enactCallback(on_mouse_enter);
-		}
-		else
-			enactCallback(on_mouse_exit);
-	}
-	/** Applies and checks if mouse button interacts with this UI element.
-	@param		mouseEvent			the mouse event occuring.*/
-	virtual bool mouseButton(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;		
-			for each (auto & child in m_children) {
-				if (child->mouseButton(subEvent))
+				if (child->mouseAction(subEvent))
 					return true;
-			}			
-			if (mouseEvent.m_button == 0) {
-				if (mouseEvent.m_action == 1) 
-					enactCallback(on_mouse_press);				
-				else 
-					enactCallback(on_mouse_release);				
+			if (!m_entered) {
+				m_entered = true;
+				enactCallback(on_mouse_enter);
 			}
+			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+				m_pressed = true;
+				enactCallback(on_mouse_press);
+			}
+			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+				m_pressed = false;
+				enactCallback(on_mouse_release);
+			}	
 			return true;
 		}
+		else
+			if (m_entered) {
+				m_entered = false;
+				enactCallback(on_mouse_exit);
+			}
 		return false;
 	}
 	/** Propogates a key press event from this UI element to its children.
@@ -176,7 +146,6 @@ public:
 	@param		child				the element to be chained to this one. */
 	void addElement(const std::shared_ptr<UI_Element> & child) {
 		m_children.push_back(child);
-		child->setDepth(m_depth + 1.0f);
 		update();
 	}
 	/** Remove all child UI elements. */
@@ -190,12 +159,6 @@ public:
 	void addCallback(const int & interactionEventID, const std::function<void()> && func) {
 		m_callbacks[interactionEventID].push_back(func);
 		update();
-	}
-	/** Return the depth value for this element.
-	Depth is used to aid in rendering elements on top of other elements. 
-	@return		the depth value for this element. */
-	float getDepth() const {
-		return m_depth;
 	}
 	/** Gets this elements' position.
 	@return	this elements' position. */
@@ -282,11 +245,11 @@ protected:
 		m_scale = glm::vec2(1.0f), 
 		m_maxScale = glm::vec2(std::nanf(0)), 
 		m_minScale = glm::vec2(std::nanf(0));
-	float 
-		m_depth = 0.0f;
-	bool 
-		m_visible = true, 
-		m_enabled = true;
+	bool
+		m_visible = true,
+		m_enabled = true,
+		m_entered = false,
+		m_pressed = false;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;
 };

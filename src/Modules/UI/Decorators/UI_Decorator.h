@@ -16,62 +16,29 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void setDepth(const float & depth) override {
-		UI_Element::setDepth(depth + 1.0f);
-		m_component->setDepth(depth);
-	}
-	virtual bool doElementsExceedBounds(const glm::vec2 & scale, const glm::vec2 & positionOffset = glm::vec2(0.0f)) const override {
-		if (m_component->doElementsExceedBounds(scale, positionOffset + m_component->getPosition()))
-			return true;
-		const auto childPos = m_component->getPosition();
-		const auto childScl = m_component->getScale();
-		if (
-			((childPos.x + positionOffset.x) - childScl.x) < (-scale.x) ||
-			((childPos.x + positionOffset.x) + childScl.x) > (scale.x) ||
-			((childPos.y + positionOffset.y) - childScl.y) < (-scale.y) ||
-			((childPos.y + positionOffset.y) + childScl.y) > (scale.y)
-			)
-			return true;			
-		
-		return UI_Element::doElementsExceedBounds(scale, positionOffset);
-	}
-	virtual void mouseMove(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children)
-				child->mouseMove(subEvent);
-			m_component->mouseMove(subEvent);
-			enactCallback(on_mouse_enter);
-		}
-		else
-			enactCallback(on_mouse_exit);
-	}
-	virtual bool mouseButton(const MouseEvent & mouseEvent) override {
+	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent) || doElementsExceedBounds(m_scale)) {
+		if (mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			bool consumed = false;
 			for each (auto & child in m_children) {
-				if (child->mouseButton(subEvent)) {
+				if (child->mouseAction(subEvent)) {
 					consumed = true;
 					break;
 				}
 			}
 			if (!consumed)
-				consumed = m_component->mouseButton(subEvent);
-			if (mouseEvent.m_button == 0) {
-				if (mouseEvent.m_action == 1)
-					enactCallback(on_mouse_press);
-				else
-					enactCallback(on_mouse_release);
-			}
+				consumed = m_component->mouseAction(subEvent);
+			enactCallback(on_mouse_enter);
+			if (mouseEvent.m_action == MouseEvent::PRESS)
+				enactCallback(on_mouse_press);
+			else
+				enactCallback(on_mouse_release);
 			return consumed;
 		}
+		enactCallback(on_mouse_exit);
 		return false;
 	}
 	virtual void keyChar(const unsigned int & character) override {
