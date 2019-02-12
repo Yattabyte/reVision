@@ -7,21 +7,14 @@ constexpr char* EXT_PRIMITIVE = ".obj";
 constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
 Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Primitive>(std::dynamic_pointer_cast<Primitive>(engine->getManager_Assets().shareAsset(typeid(Primitive).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Primitive>*)(this)) = std::make_shared<Primitive>(filename);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Primitive).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Primitive::initialize, get(), engine, (DIRECTORY_PRIMITIVE + filename + EXT_PRIMITIVE))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Primitive>*)(this)) = std::dynamic_pointer_cast<Primitive>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Primitive).name(),
+			filename,
+			[engine, filename]() { return std::make_shared<Primitive>(engine, filename); },
+			threaded
+		));
 }
 
 Primitive::~Primitive()
@@ -30,7 +23,7 @@ Primitive::~Primitive()
 		glDeleteBuffers(1, &m_uboID);
 }
 
-Primitive::Primitive(const std::string & filename) : Asset(filename) 
+Primitive::Primitive(Engine * engine, const std::string & filename) : Asset(engine, filename) 
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -43,10 +36,10 @@ Primitive::Primitive(const std::string & filename) : Asset(filename)
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-void Primitive::initialize(Engine * engine, const std::string & relativePath)
+void Primitive::initialize()
 {
 	// Forward asset creation
-	m_mesh = Shared_Mesh(engine, relativePath, false);
+	m_mesh = Shared_Mesh(m_engine, DIRECTORY_PRIMITIVE + getFileName() + EXT_PRIMITIVE, false);
 
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.resize(vertexCount);
@@ -61,7 +54,7 @@ void Primitive::initialize(Engine * engine, const std::string & relativePath)
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 size_t Primitive::getSize() const

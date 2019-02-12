@@ -62,7 +62,7 @@ public:
 	/** Destroy the Shader. */
 	~Shader();
 	/** Construct the Shader. */
-	Shader(const std::string & filename);
+	Shader(Engine * engine, const std::string & filename);
 
 
 public:
@@ -138,20 +138,17 @@ protected:
 	@return						an error log for this shader program. */
 	const std::vector<GLchar> getErrorLog() const;
 	/** Attempt to load a shader program from a cached binary file.
-	@param		engine			the active engine to use
 	@param		relativePath	the relative path of the binary file
 	@return						true on success, false otherwise. */
-	const bool loadCachedBinary(Engine * engine, const std::string & relativePath);
+	const bool loadCachedBinary(const std::string & relativePath);
 	/** Attempt to save a shader program to a cached binary file.
-	@param		engine			the active engine to use
 	@param		relativePath	the relative path of the binary file
 	@return						true on success, false otherwise. */
-	const bool saveCachedBinary(Engine * engine, const std::string & relativePath);
+	const bool saveCachedBinary(const std::string & relativePath);
 	/** Attempt to load a shader program from separate shader files.
-	@param		engine			the active engine to use
 	@param		relativePath	the relative path of the shader files
 	@return						true on success, false otherwise. */
-	virtual const bool initShaders(Engine * engine, const std::string & relativePath);
+	virtual const bool initShaders(const std::string & relativePath);
 	/** Use to validate this shader program after linking.
 	@return						true on success, false otherwise. */
 	const bool validateProgram();
@@ -159,8 +156,8 @@ protected:
 
 private:
 	// Interface Implementation
-	void initializeDefault(Engine * engine);
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	void initializeDefault();
+	virtual void initialize() override;
 
 
 	// Private Attributes

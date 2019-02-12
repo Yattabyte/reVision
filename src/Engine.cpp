@@ -118,7 +118,7 @@ Engine::~Engine()
 Engine::Engine() : 
 	// Initialize engine-dependent members first
 	m_soundManager(),
-	m_assetManager(this), 
+	m_assetManager(), 
 	m_inputBindings(this), 
 	m_preferenceState(this),
 	m_renderingContext(this), 

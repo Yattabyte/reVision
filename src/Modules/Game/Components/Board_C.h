@@ -60,7 +60,7 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	struct GameIntro {
 		float time = 6.0f;
 		int countDown = -1;
-		bool start = false;
+		bool start = true;
 		bool finished = false;
 	} m_intro;
 };

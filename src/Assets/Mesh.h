@@ -36,7 +36,7 @@ public:
 	/** Destroy the Mesh. */
 	~Mesh() = default;
 	/** Construct the Mesh. */
-	Mesh(const std::string & filename);
+	Mesh(Engine * engine, const std::string & filename);
 
 
 	// Public Attributes
@@ -47,7 +47,7 @@ private:
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault();
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

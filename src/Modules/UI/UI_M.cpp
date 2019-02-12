@@ -33,7 +33,7 @@ void UI_Module::initialize(Engine * engine)
 	m_startMenu = std::make_shared<StartMenu>(engine);
 	m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
 	m_startMenu->addCallback(StartMenu::on_start, [&, engine]() { engine->getModule_Game().startGame(); m_startMenu->setVisible(false); });
-	m_startMenu->addCallback(StartMenu::on_options, [&, engine]() { m_startMenu->setVisible(false); m_optionsMenu->setVisible(true); });
+	m_startMenu->addCallback(StartMenu::on_options, [&, engine]() { m_optionsMenu->setVisible(true); m_startMenu->setVisible(false); });
 	m_startMenu->addCallback(StartMenu::on_quit, [engine]() {engine->shutDown(); });
 
 	// Create options menu

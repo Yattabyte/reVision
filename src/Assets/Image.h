@@ -43,7 +43,7 @@ public:
 	/** Destroy the Image. */
 	~Image();
 	/** Construct the Image. */
-	Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
+	Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
 
 
 	// Public Attributes
@@ -67,7 +67,7 @@ private:
 
 
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

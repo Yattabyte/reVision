@@ -29,7 +29,7 @@ public:
 	/** Destroy the Cubemap. */
 	~Cubemap();
 	/** Construct the Cubemap. */
-	Cubemap(const std::string & filename);
+	Cubemap(Engine * engine, const std::string & filename);
 
 
 	// Public Methods
@@ -46,7 +46,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

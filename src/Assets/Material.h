@@ -44,7 +44,7 @@ public:
 	/** Destroy the Material. */
 	~Material();
 	/** Construct the Material. */
-	Material(const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
+	Material(Engine * engine, const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
 	
 
 	// Public Methods
@@ -68,7 +68,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

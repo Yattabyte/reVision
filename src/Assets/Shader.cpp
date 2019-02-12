@@ -15,24 +15,16 @@ struct ShaderHeader {
 	GLsizei length; 
 };
 
-Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded) 
-	: std::shared_ptr<Shader>(std::dynamic_pointer_cast<Shader>(engine->getManager_Assets().shareAsset(typeid(Shader).name(), filename)))
+Shared_Shader::Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded)	
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Shader>*)(this)) = std::make_shared<Shader>(filename);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Shader).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Shader::initialize, get(), engine, (DIRECTORY_SHADER + filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Shader>*)(this)) = std::dynamic_pointer_cast<Shader>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Shader).name(),
+			filename,
+			[engine, filename]() { return std::make_shared<Shader>(engine, filename); },
+			threaded
+		));
 }
-
 
 Shader::~Shader()
 {
@@ -40,21 +32,21 @@ Shader::~Shader()
 		glDeleteProgram(m_glProgramID);
 }
 
-Shader::Shader(const std::string & filename) : Asset(filename) {}
+Shader::Shader(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-void Shader::initializeDefault(Engine * engine)
+void Shader::initializeDefault()
 {
 	// Create hard-coded alternative
 	const std::string filename = getFileName();
 
 	// Create Vertex Shader
 	m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	m_vertexShader.createGLShader(engine, filename);
+	m_vertexShader.createGLShader(m_engine, filename);
 	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
 
 	// Create Fragment Shader
 	m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	m_fragmentShader.createGLShader(engine, filename);
+	m_fragmentShader.createGLShader(m_engine, filename);
 	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 
 	glLinkProgram(m_glProgramID);
@@ -65,36 +57,36 @@ void Shader::initializeDefault(Engine * engine)
 	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 }
 
-void Shader::initialize(Engine * engine, const std::string & relativePath)
+void Shader::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
-	if (!loadCachedBinary(engine, relativePath))
+	if (!loadCachedBinary(DIRECTORY_SHADER + getFileName()))
 #endif
 	{
 		// Create Vertex and Fragment shaders
-		bool success = initShaders(engine, relativePath);
+		bool success = initShaders(DIRECTORY_SHADER + getFileName());
 		if (success) {
 			glLinkProgram(m_glProgramID);
 			success = validateProgram();
 #ifdef NDEBUG
 			if (success)
-				saveCachedBinary(engine, relativePath);
+				saveCachedBinary(DIRECTORY_SHADER + getFileName());
 #endif
 		}
 		// If we ever failed, initialize default shader
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
-			initializeDefault(engine);
+			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
+			initializeDefault();
 		}
 	}
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Shader::bind()
@@ -123,7 +115,7 @@ const std::vector<GLchar> Shader::getErrorLog() const
 	return infoLog;
 }
 
-const bool Shader::loadCachedBinary(Engine * engine, const std::string & relativePath)
+const bool Shader::loadCachedBinary(const std::string & relativePath)
 {
 	if (Engine::File_Exists(relativePath + EXT_SHADER_BINARY)) {
 		ShaderHeader header;
@@ -140,17 +132,17 @@ const bool Shader::loadCachedBinary(Engine * engine, const std::string & relativ
 				return true;
 			}
 			const std::vector<GLchar> infoLog = getErrorLog();
-			engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
+			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to use binary cache. Reason:\n" + std::string(infoLog.data(), infoLog.size()));
 			return false;
 		}
-		engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
+		m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to open binary cache.");
 		return false;
 	}
 	// Safe, binary file simply doesn't exist. Don't error report.
 	return false;
 }
 
-const bool Shader::saveCachedBinary(Engine * engine, const std::string & relativePath)
+const bool Shader::saveCachedBinary(const std::string & relativePath)
 {
 	glProgramParameteri(m_glProgramID, GL_PROGRAM_BINARY_RETRIEVABLE_HINT, GL_TRUE);
 	ShaderHeader header = { 0,  getProgramiv(GL_PROGRAM_BINARY_LENGTH) };
@@ -164,25 +156,25 @@ const bool Shader::saveCachedBinary(Engine * engine, const std::string & relativ
 		file.close();
 		return true;
 	}
-	engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
+	m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to write to binary cache.");
 	return false;
 }
 
-const bool Shader::initShaders(Engine * engine, const std::string & relativePath) 
+const bool Shader::initShaders(const std::string & relativePath) 
 {
 	const std::string filename = getFileName();
 
-	if (!m_vertexShader.loadDocument(engine, relativePath + EXT_SHADER_VERTEX) ||
-		!m_fragmentShader.loadDocument(engine, relativePath + EXT_SHADER_FRAGMENT))	
+	if (!m_vertexShader.loadDocument(m_engine, relativePath + EXT_SHADER_VERTEX) ||
+		!m_fragmentShader.loadDocument(m_engine, relativePath + EXT_SHADER_FRAGMENT))
 		return false;
 	
 
 	// Create Vertex Shader
-	m_vertexShader.createGLShader(engine, filename);
+	m_vertexShader.createGLShader(m_engine, filename);
 	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
 
 	// Create Fragment Shader
-	m_fragmentShader.createGLShader(engine, filename);
+	m_fragmentShader.createGLShader(m_engine, filename);
 	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 
 	return true;

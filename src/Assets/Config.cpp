@@ -40,30 +40,23 @@ inline int find_CFG_Property(const std::string & s, const std::vector<std::strin
 	return -1;
 }
 
-Shared_Config::Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string>& cfg_strings, const bool & threaded)
-	: std::shared_ptr<Config>(std::dynamic_pointer_cast<Config>(engine->getManager_Assets().shareAsset(typeid(Config).name(), filename)))
+Shared_Config::Shared_Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings, const bool & threaded)
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Config>*)(this)) = std::make_shared<Config>(filename, cfg_strings);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Config).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Config::initialize, get(), engine, (DIRECTORY_CONFIG + filename + EXT_CONFIG))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Config>*)(this)) = std::dynamic_pointer_cast<Config>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Config).name(),
+			filename,
+			[engine, filename, strings]() { return std::make_shared<Config>(engine, filename, strings); },
+			threaded
+		));
 }
 
-Config::Config(const std::string & filename, const std::vector<std::string> & strings) : Asset(filename), m_strings(strings) {}
+Config::Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings) : Asset(engine, filename), m_strings(strings) {}
 
-void Config::initialize(Engine * engine, const std::string & relativePath)
+void Config::initialize()
 {
 	try {
-		std::ifstream file_stream(Engine::Get_Current_Dir() + relativePath);
+		std::ifstream file_stream(Engine::Get_Current_Dir() + DIRECTORY_CONFIG + getFileName() + EXT_CONFIG);
 		for (std::string line; std::getline(file_stream, line); ) {
 			if (line.length()) {
 				const std::string cfg_property = get_between_quotes(line);
@@ -76,10 +69,10 @@ void Config::initialize(Engine * engine, const std::string & relativePath)
 		}
 	}
 	catch (const std::ifstream::failure) {
-		engine->getManager_Messages().error("Config \"" + m_filename + "\" failed to initialize.");
+		m_engine->getManager_Messages().error("Config \"" + m_filename + "\" failed to initialize.");
 	}
 
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Config::setValue(const unsigned int & cfg_key, const float & cfg_value)

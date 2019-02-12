@@ -5,21 +5,14 @@
 constexpr char* DIRECTORY_MODEL = "\\Models\\";
 
 Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Model>(std::dynamic_pointer_cast<Model>(engine->getManager_Assets().shareAsset(typeid(Model).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Model>*)(this)) = std::make_shared<Model>(filename, engine->getManager_Models());
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Model).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Model::initialize, get(), engine, (DIRECTORY_MODEL + filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Model>*)(this)) = std::dynamic_pointer_cast<Model>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Model).name(),
+			filename,
+			[engine, filename]() { return std::make_shared<Model>(engine, filename, engine->getManager_Models()); },
+			threaded
+		));
 }
 
 Model::~Model()
@@ -28,15 +21,15 @@ Model::~Model()
 		m_modelManager->unregisterGeometry(m_data, m_offset, m_count);
 }
 
-Model::Model(const std::string & filename, ModelManager & modelManager) : Asset(filename), m_modelManager(&modelManager) {}
+Model::Model(Engine * engine, const std::string & filename, ModelManager & modelManager) : Asset(engine, filename), m_modelManager(&modelManager) {}
 
-void Model::initialize(Engine * engine, const std::string & relativePath)
+void Model::initialize()
 {
 	// Forward asset creation
-	m_mesh = Shared_Mesh(engine, relativePath, false);
+	m_mesh = Shared_Mesh(m_engine, DIRECTORY_MODEL + getFileName(), false);
 
 	// Generate all the required skins
-	loadMaterial(engine, relativePath, m_materialArray, m_mesh->m_geometry.materials);
+	loadMaterial(DIRECTORY_MODEL + getFileName(), m_materialArray, m_mesh->m_geometry.materials);
 
 	const size_t vertexCount = m_mesh->m_geometry.vertices.size();
 	m_data.m_vertices.resize(vertexCount);
@@ -65,7 +58,7 @@ void Model::initialize(Engine * engine, const std::string & relativePath)
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
@@ -96,7 +89,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & min
 	}
 }
 
-void Model::loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings>& materials)
+void Model::loadMaterial(const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings>& materials)
 {
 	// Retrieve texture directories from the mesh file
 	const size_t slash1Index = relativePath.find_last_of('/'), slash2Index = relativePath.find_last_of('\\');
@@ -114,5 +107,5 @@ void Model::loadMaterial(Engine * engine, const std::string & relativePath, Shar
 
 	// Attempt to find a .mat file if it exists
 	std::string materialFilename = relativePath.substr(0, relativePath.find_first_of("."));
-	modelMaterial = Shared_Material(engine, materialFilename, textures);
+	modelMaterial = Shared_Material(m_engine, materialFilename, textures);
 }

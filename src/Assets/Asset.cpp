@@ -3,7 +3,7 @@
 #include <algorithm>
 
 
-Asset::Asset(const std::string & filename) : m_filename(filename) {}
+Asset::Asset(Engine * engine, const std::string & filename) : m_engine(engine), m_filename(filename) {}
 
 std::string Asset::getFileName() const
 {
@@ -15,7 +15,7 @@ void Asset::setFileName(const std::string & fn)
 	m_filename = fn;
 }
 
-void Asset::addCallback(const std::shared_ptr<bool>& alive, AssetFinalizedCallback && callback)
+void Asset::addCallback(const std::shared_ptr<bool> & alive, AssetFinalizedCallback && callback)
 {
 	if (!existsYet())
 		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
@@ -46,12 +46,12 @@ bool Asset::existsYet() const
 	return true;	
 }
 
-void Asset::finalize(Engine * engine)
+void Asset::finalize()
 {
 	m_finalized = true;
 
 	// Copy callbacks in case any get added while we're busy
-	AssetManager & assetManager = engine->getManager_Assets();
+	AssetManager & assetManager = m_engine->getManager_Assets();
 	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
 	

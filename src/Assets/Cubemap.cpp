@@ -5,21 +5,14 @@
 constexpr char* DIRECTORY_CUBEMAP = "\\Textures\\Cubemaps\\";
 
 Shared_Cubemap::Shared_Cubemap(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Cubemap>(std::dynamic_pointer_cast<Cubemap>(engine->getManager_Assets().shareAsset(typeid(Cubemap).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Cubemap>*)(this)) = std::make_shared<Cubemap>(filename);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Cubemap).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Cubemap::initialize, get(), engine, (DIRECTORY_CUBEMAP + filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Cubemap>*)(this)) = std::dynamic_pointer_cast<Cubemap>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Cubemap).name(),
+			filename,
+			[engine, filename]() { return std::make_shared<Cubemap>(engine, filename); },
+			threaded
+		));
 }
 
 Cubemap::~Cubemap()
@@ -30,9 +23,9 @@ Cubemap::~Cubemap()
 	}
 }
 
-Cubemap::Cubemap(const std::string & filename) : Asset(filename) {}
+Cubemap::Cubemap(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-void Cubemap::initialize(Engine * engine, const std::string & relativePath)
+void Cubemap::initialize()
 {
 	static const std::string side_suffixes[6] = { "right", "left", "bottom", "top", "front", "back" };
 	static const std::string extensions[3] = { ".png", ".jpg", ".tga" };
@@ -40,10 +33,10 @@ void Cubemap::initialize(Engine * engine, const std::string & relativePath)
 	for (int side = 0; side < 6; ++side) {
 		std::string specific_side_directory = "";
 		for (int x = 0; x < 3; ++x) {
-			specific_side_directory = relativePath + side_suffixes[side] + extensions[x];
+			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + side_suffixes[side] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))
 				break;
-			specific_side_directory = relativePath + "\\" + side_suffixes[side] + extensions[x];
+			specific_side_directory = DIRECTORY_CUBEMAP + getFileName() + "\\" + side_suffixes[side] + extensions[x];
 			if (Engine::File_Exists(specific_side_directory))
 				break;
 		}
@@ -51,7 +44,7 @@ void Cubemap::initialize(Engine * engine, const std::string & relativePath)
 		// Forward image creation
 		// Enforce same size for all images, use the size of the first found image
 		m_images[side] = Shared_Image(
-			engine, specific_side_directory, 
+			m_engine, specific_side_directory, 
 			(size == glm::ivec2(0)) ? std::optional<glm::ivec2>() : size, 
 			false
 		);
@@ -76,11 +69,11 @@ void Cubemap::initialize(Engine * engine, const std::string & relativePath)
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_glTexID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 	if (!glIsTexture(m_glTexID))
-		engine->getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
+		m_engine->getManager_Messages().error("Texture \"" + m_filename + "\" failed to initialize.");
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Cubemap::bind(const unsigned int & texture_unit)

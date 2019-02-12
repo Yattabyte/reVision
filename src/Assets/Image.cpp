@@ -5,21 +5,14 @@
 
 
 Shared_Image::Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2>& specificSize, const bool & threaded, const GLenum & policyFill, const GLenum & policyResize)
-	: std::shared_ptr<Image>(std::dynamic_pointer_cast<Image>(engine->getManager_Assets().shareAsset(typeid(Image).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Image>*)(this)) = std::make_shared<Image>(filename, specificSize, policyFill, policyResize);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Image).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Image::initialize, get(), engine, (filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Image>*)(this)) = std::dynamic_pointer_cast<Image>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Image).name(),
+			filename,
+			[engine, filename, specificSize, policyFill, policyResize]() { return std::make_shared<Image>(engine, filename, specificSize, policyFill, policyResize); },
+			threaded
+		));
 }
 
 Image::~Image()
@@ -27,27 +20,27 @@ Image::~Image()
 	delete m_pixelData;
 }
 
-Image::Image(const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize) : Asset(filename), m_policyFill(policyFill), m_policyResize(policyResize) 
+Image::Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize) : Asset(engine, filename), m_policyFill(policyFill), m_policyResize(policyResize) 
 {
 	if (specificSize)
 		m_size = specificSize.value();
 }
 
-void Image::initialize(Engine * engine, const std::string & relativePath)
+void Image::initialize()
 {
 	Image_Data dataContainer{ m_pixelData, m_size, m_pitch, m_bpp };
-	if (Image_IO::Import_Image(engine, relativePath, dataContainer, m_policyResize)) {
+	if (Image_IO::Import_Image(m_engine, getFileName(), dataContainer, m_policyResize)) {
 		m_size = dataContainer.dimensions;
 		m_pixelData = dataContainer.pixelData;
 		m_pitch = dataContainer.pitch;
 		m_bpp = dataContainer.bpp;
 	}
 	else {
-		engine->getManager_Messages().error("Image \"" + m_filename + "\" failed to initialize.");
+		m_engine->getManager_Messages().error("Image \"" + m_filename + "\" failed to initialize.");
 		fill();
 	}
 	
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)

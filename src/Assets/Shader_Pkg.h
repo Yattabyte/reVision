@@ -31,7 +31,7 @@ public:
 	/** Destroy the Shader Package. */
 	~Shader_Pkg() = default;
 	/** Construct the Shader Package. */
-	Shader_Pkg(const std::string & filename);
+	Shader_Pkg(Engine * engine, const std::string & filename);
 
 	
 	// Public Methods
@@ -49,7 +49,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

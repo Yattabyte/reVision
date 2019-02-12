@@ -5,21 +5,14 @@
 constexpr char* DIRECTORY_TEXTURE = "\\Textures\\";
 
 Shared_Texture::Shared_Texture(Engine * engine, const std::string & filename, const GLuint & type, const bool & mipmap, const bool & anis, const bool & threaded)
-	: std::shared_ptr<Texture>(std::dynamic_pointer_cast<Texture>(engine->getManager_Assets().shareAsset(typeid(Texture).name(), filename)))	
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Texture>*)(this)) = std::make_shared<Texture>(filename, type, mipmap, anis);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Texture).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Texture::initialize, get(), engine, (DIRECTORY_TEXTURE + filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));	
+	(*(std::shared_ptr<Texture>*)(this)) = std::dynamic_pointer_cast<Texture>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Texture).name(),
+			filename,
+			[engine, filename, type, mipmap, anis]() { return std::make_shared<Texture>(engine, filename, type, mipmap, anis); },
+			threaded
+		));
 }
 
 Texture::~Texture()
@@ -30,19 +23,19 @@ Texture::~Texture()
 	}
 }
 
-Texture::Texture(const std::string & filename) : Asset(filename) {}
+Texture::Texture(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-Texture::Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a) : Texture(filename)
+Texture::Texture(Engine * engine, const std::string & filename, const GLuint & t, const bool & m, const bool & a) : Texture(engine, filename)
 {
 	m_type = t;
 	m_mipmap = m;
 	m_anis = a;
 }
 
-void Texture::initialize(Engine * engine, const std::string & relativePath)
+void Texture::initialize()
 {
 	// Forward asset creation
-	m_image = Shared_Image(engine, relativePath, {}, false);
+	m_image = Shared_Image(m_engine, DIRECTORY_TEXTURE + getFileName(), {}, false);
 
 	// Create Texture
 	glCreateTextures(m_type, 1, &m_glTexID);
@@ -90,7 +83,7 @@ void Texture::initialize(Engine * engine, const std::string & relativePath)
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 void Texture::bind(const unsigned int & texture_unit)

@@ -28,7 +28,7 @@ public:
 	/** Destroy the Sound. */
 	~Sound();
 	/** Construct the Sound. */
-	Sound(const std::string & filename);
+	Sound(Engine * engine, const std::string & filename);
 
 
 	// Public Attributes
@@ -38,7 +38,7 @@ public:
 protected:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

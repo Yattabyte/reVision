@@ -32,7 +32,7 @@ public:
 	/** Destroy the Config. */
 	~Config() = default;
 	/** Construct the config with a particular set of variable names. */
-	Config(const std::string & filename, const std::vector<std::string> & strings);
+	Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings);
 
 
 	// Public Methods
@@ -56,7 +56,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

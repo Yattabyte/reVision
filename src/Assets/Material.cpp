@@ -8,21 +8,14 @@
 constexpr char* MATERIAL_EXTENSION = ".mat";
 
 Shared_Material::Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string>& textures, const bool & threaded)
-	: std::shared_ptr<Material>(std::dynamic_pointer_cast<Material>(engine->getManager_Assets().shareAsset(typeid(Material).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Material>*)(this)) = std::make_shared<Material>(filename, textures, engine->getManager_Materials());
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Material).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Material::initialize, get(), engine, (filename + MATERIAL_EXTENSION))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Material>*)(this)) = std::dynamic_pointer_cast<Material>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Material).name(),
+			filename,
+			[engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures, engine->getManager_Materials()); },
+			threaded
+		));
 }
 
 Material::~Material()
@@ -35,8 +28,8 @@ Material::~Material()
 		delete m_materialData;
 }
 
-Material::Material(const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
-	: Asset(filename), m_textures(tx)
+Material::Material(Engine * engine, const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
+	: Asset(engine, filename), m_textures(tx)
 {
 	// We need to reserve a region of gpu memory for all the textures
 	// So we need to pre-emptively figure out the maximum number of textures we may need (can't delay until later)
@@ -65,9 +58,9 @@ Material::Material(const std::string & filename, const std::vector<std::string> 
 	m_matSpot = materialManager.generateID(m_textures.size());
 }
 
-void Material::initialize(Engine * engine, const std::string & relativePath)
+void Material::initialize()
 {
-	auto & materialManager = engine->getManager_Materials();
+	auto & materialManager = m_engine->getManager_Materials();
 
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);
@@ -79,7 +72,7 @@ void Material::initialize(Engine * engine, const std::string & relativePath)
 
 	// Load all images	
 	m_images.resize(textureCount);
-	m_size = glm::ivec2(engine->getManager_Materials().getMaterialSize());
+	m_size = glm::ivec2(m_engine->getManager_Materials().getMaterialSize());
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Fill_Policy::Checkered,
 		Fill_Policy::Solid,
@@ -89,7 +82,7 @@ void Material::initialize(Engine * engine, const std::string & relativePath)
 		Fill_Policy::Solid
 	};
 	for (size_t x = 0; x < textureCount; ++x)
-		m_images[x] = Shared_Image(engine, m_textures[x], m_size, false, fillPolicies[x]);
+		m_images[x] = Shared_Image(m_engine, m_textures[x], m_size, false, fillPolicies[x]);
 	
 	// Merge data into single array
 	const size_t pixelsPerImage = m_size.x * m_size.y * 4;
@@ -112,7 +105,7 @@ void Material::initialize(Engine * engine, const std::string & relativePath)
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	Asset::finalize(engine);
+	Asset::finalize();
 }
 
 /** Attempts to retrieve a std::string between quotation marks "<std::string>"

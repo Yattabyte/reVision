@@ -31,7 +31,7 @@ public:
 	/** Destroy the Primitive. */
 	~Primitive();
 	/** Construct the Primitive. */
-	Primitive(const std::string & filename);
+	Primitive(Engine * engine, const std::string & filename);
 
 
 	// Public Methods
@@ -49,7 +49,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

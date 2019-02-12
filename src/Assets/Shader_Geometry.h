@@ -32,7 +32,7 @@ public:
 	/** Destroy the Shader. */
 	~Shader_Geometry();
 	/** Construct the Shader. */
-	Shader_Geometry(const std::string & filename);
+	Shader_Geometry(Engine * engine, const std::string & filename);
 
 	
 	// Public Attributes
@@ -42,14 +42,14 @@ public:
 protected:
 	// Protected Methods
 	// Interface Implementation
-	virtual const bool initShaders(Engine * engine, const std::string & relativePath) override;
+	virtual const bool initShaders(const std::string & relativePath) override;
 
 
 private:
 	// Private Methods
 	// Interface Implementation
 	void initializeDefault();
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

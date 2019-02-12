@@ -35,34 +35,27 @@ inline void parse(Engine * engine, Shader_Pkg & userAsset)
 }
 
 Shared_Shader_Pkg::Shared_Shader_Pkg(Engine * engine, const std::string & filename, const bool & threaded)
-	: std::shared_ptr<Shader_Pkg>(std::dynamic_pointer_cast<Shader_Pkg>(engine->getManager_Assets().shareAsset(typeid(Shader_Pkg).name(), filename)))
 {
-	// Find out if the asset needs to be created
-	if (!get()) {
-		// Create new asset on shared_ptr portion of this class 
-		(*(std::shared_ptr<Shader_Pkg>*)(this)) = std::make_shared<Shader_Pkg>(filename);
-		// Submit data to asset manager
-		engine->getManager_Assets().submitNewAsset(typeid(Shader_Pkg).name(), (*(std::shared_ptr<Asset>*)(this)), std::move(std::bind(&Shader_Pkg::initialize, get(), engine, (DIRECTORY_SHADER_PKG + filename))), threaded);
-	}
-	// Check if we need to wait for initialization
-	else
-		if (!threaded)
-			// Stay here until asset finalizes
-			while (!get()->existsYet())
-				std::this_thread::sleep_for(std::chrono::milliseconds(1));
+	(*(std::shared_ptr<Shader_Pkg>*)(this)) = std::dynamic_pointer_cast<Shader_Pkg>(
+		engine->getManager_Assets().shareAsset(
+			typeid(Shader_Pkg).name(),
+			filename,
+			[engine, filename]() { return std::make_shared<Shader_Pkg>(engine, filename); },
+			threaded
+		));
 }
 
-Shader_Pkg::Shader_Pkg(const std::string & filename) : Asset(filename) {}
+Shader_Pkg::Shader_Pkg(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-void Shader_Pkg::initialize(Engine * engine, const std::string & relativePath)
+void Shader_Pkg::initialize()
 {
-	const bool found = Text_IO::Import_Text(engine, relativePath + EXT_PACKAGE, m_packageText);
+	const bool found = Text_IO::Import_Text(m_engine, DIRECTORY_SHADER_PKG + getFileName() + EXT_PACKAGE, m_packageText);
 	
 	if (!found)
-		engine->getManager_Messages().error("Shader_Pkg \"" + m_filename + "\" file does not exist");
+		m_engine->getManager_Messages().error("Shader_Pkg \"" + m_filename + "\" file does not exist");
 
 	// parse
-	parse(engine, *this);
+	parse(m_engine, *this);
 
-	Asset::finalize(engine);
+	Asset::finalize();
 }

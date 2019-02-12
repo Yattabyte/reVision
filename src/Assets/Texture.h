@@ -33,9 +33,9 @@ public:
 	/** Destroy the Texture. */
 	~Texture();
 	/** Construct the Texture. */
-	Texture(const std::string & filename);
+	Texture(Engine * engine, const std::string & filename);
 	/** Construct the Texture with a specific texture type, and optionally enable mipmapping and anisotropic filtering. */
-	Texture(const std::string & filename, const GLuint & t, const bool & m, const bool & a);
+	Texture(Engine * engine, const std::string & filename, const GLuint & t, const bool & m, const bool & a);
 
 
 	// Public Methods
@@ -54,7 +54,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

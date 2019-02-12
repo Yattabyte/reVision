@@ -32,7 +32,7 @@ public:
 	/** Destroy the Level. */
 	~Level() = default;
 	/** Construct the Level. */
-	Level(const std::string & filename);
+	Level(Engine * engine, const std::string & filename);
 	
 	
 	// Public Attributes
@@ -41,7 +41,7 @@ public:
 private:
 	// Private Methods
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

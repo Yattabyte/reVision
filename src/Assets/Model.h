@@ -37,7 +37,7 @@ public:
 	/** Destroy the Model. */
 	~Model();
 	/** Construct the Model. */
-	Model(const std::string & filename, ModelManager & modelManager);
+	Model(Engine * engine, const std::string & filename, ModelManager & modelManager);
 
 
 	// Public Attributes
@@ -65,11 +65,11 @@ private:
 	@param	modelMaterial	the material asset to load into
 	@param	meshMaterial	the material asset to load into
 	@param	sceneMaterial	the scene material to use as a guide */
-	void loadMaterial(Engine * engine, const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings> & materials);
+	void loadMaterial(const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings> & materials);
 
 
 	// Interface Implementation
-	virtual void initialize(Engine * engine, const std::string & relativePath) override;
+	virtual void initialize() override;
 
 
 	// Private Attributes

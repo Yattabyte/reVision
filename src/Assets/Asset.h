@@ -48,20 +48,22 @@ public:
 protected:
 	// Protected Constructors
 	/** Create asset that uses the specified file-path. */
-	Asset(const std::string & filename);
+	Asset(Engine * engine, const std::string & filename);
 
 
 	// Protected Interface
 	/** Initializes the asset. */
-	virtual void initialize(Engine * engine, const std::string & relativePath) = 0;
+	virtual void initialize() = 0;
+	friend class AssetManager;
 
 	
 	// Protected Methods
 	/** Declares this asset ready-to-use. */
-	void finalize(Engine * engine);
+	void finalize();
 
 
 	// Protected Attributes
+	Engine * m_engine = nullptr;
 	std::atomic_bool m_finalized = false;
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";

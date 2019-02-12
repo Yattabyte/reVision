@@ -1,29 +1,38 @@
 #include "Managers/AssetManager.h"
 
- 
-AssetManager::AssetManager(Engine * engine) : m_engine(engine) {}
 
-Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string & filename)
+Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string & filename, const std::function<Shared_Asset(void)> & constructor, const bool & threaded)
 {
-	std::shared_lock<std::shared_mutex> read_guard(m_Mutex_Assets);
+	// Find out if the asset already exists
+	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
 	for each (const Shared_Asset asset in m_AssetMap[assetType])
-		if (asset->getFileName() == filename)
+		if (asset->getFileName() == filename) {
+			// Check if we need to wait for initialization
+			if (!threaded)
+				// Stay here until asset finalizes
+				while (!asset->existsYet())
+					std::this_thread::sleep_for(std::chrono::milliseconds(1));
 			return asset;
-	return Shared_Asset();
-}
+		}
+	asset_read_guard.unlock();
+	asset_read_guard.release();
 
-void AssetManager::submitNewAsset(const char * assetType, Shared_Asset asset, const Asset_Work_Order && ini, const bool & threaded)
-{	
-	{
-		std::unique_lock<std::shared_mutex> write_guard(m_Mutex_Assets);
-		m_AssetMap[assetType].push_back(asset);
-	}
+	// Create the asset
+	const auto & asset = constructor();
+	std::unique_lock<std::shared_mutex> asset_write_guard(m_Mutex_Assets);
+	m_AssetMap[assetType].push_back(asset);
+	asset_write_guard.unlock();
+	asset_write_guard.release();
+
+	// Initialize now or later, depending if we are threading this order or not
+	const auto & function = std::bind(&Asset::initialize, asset);
 	if (threaded) {
-		std::unique_lock<std::shared_mutex> worker_writeGuard(m_Mutex_Workorders);
-		m_Workorders.push_back(std::move(ini));
+		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
+		m_Workorders.push_back(std::move(function));
 	}
 	else
-		ini();
+		function();
+	return asset;
 }
 
 void AssetManager::beginWorkOrder()
