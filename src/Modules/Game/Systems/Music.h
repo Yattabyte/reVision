@@ -35,8 +35,11 @@ public:
 			auto & board = *(Board_Component*)componentParam[0];	
 
 			// Exit early if game hasn't started
-			if (!board.m_gameStarted)
+			if (!board.m_gameInProgress) {
+				if (m_songHandle != 0)
+					soundMgr.stopWav(m_songHandle);
 				continue;
+			}
 
 			float BeatSeconds;
 			if (!board.m_critical) {

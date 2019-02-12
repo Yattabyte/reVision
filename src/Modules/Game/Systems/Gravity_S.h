@@ -32,7 +32,7 @@ public:
 			auto & board = *(Board_Component*)componentParam[0];
 
 			// Exit early if game hasn't started
-			if (!board.m_gameStarted)
+			if (!board.m_gameInProgress)
 				continue;
 
 			// Find any tiles that should START falling

@@ -69,7 +69,6 @@ void AssetManager::notifyObservers()
 	for each (const auto & pair in copyNotifyees)
 		if (pair.first)
 			pair.second();
-
 }
 
 const bool AssetManager::readyToUse()

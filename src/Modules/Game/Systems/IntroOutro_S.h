@@ -28,32 +28,52 @@ public:
 			auto & board = *(Board_Component*)componentParam[0];
 
 			board.m_data->data->intro.countDown = -1;
-			if (!board.m_gameStarted) {
+			if (!board.m_gameInProgress && !board.m_intro.finished) {
 				board.m_data->data->intro.powerSecondary = 0.0f;
-				if (board.m_intro.start ) {
-					board.m_intro.time -= deltaTime;
-					if (board.m_intro.time <= 1.0f) {
-						board.m_intro.finished = true;
-						board.m_gameStarted = true;
-						board.m_player.xPos = 2;
-						board.m_player.yPos = 0;
-						board.m_rowsToAdd += 6;
-					}
-					else {
-						const int number = 4 - int(board.m_intro.time);
-						if (board.m_intro.countDown != number && number < 4)
-							if (number < 3)
-								m_engine->getManager_Sounds().playSound(m_soundBeep);
-							else
-								m_engine->getManager_Sounds().playSound(m_soundBeepEnd);
-						board.m_intro.countDown = number;
-						board.m_data->data->intro.countDown = number;
-						board.m_data->data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));
-					}
+				board.m_intro.time -= deltaTime;
+				if (board.m_intro.time <= 1.0f) {
+					board.m_intro.finished = true;
+					board.m_gameInProgress = true;
+					board.m_player.xPos = 2;
+					board.m_player.yPos = 0;
+					board.m_rowsToAdd += 6;
+				}
+				else {
+					const int number = 4 - int(board.m_intro.time);
+					if (board.m_intro.countDown != number && number < 4)
+						if (number < 3)
+							m_engine->getManager_Sounds().playSound(m_soundBeep);
+						else
+							m_engine->getManager_Sounds().playSound(m_soundBeepEnd);
+					board.m_intro.countDown = number;
+					board.m_data->data->intro.countDown = number;
+					board.m_data->data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));
 				}
 			}
-			else
-				board.m_data->data->intro.powerSecondary = 1.0f;			
+			else 
+				board.m_data->data->intro.powerSecondary = 1.0f;	
+			if (board.m_gameEnded && !board.m_outro.finished) {
+				if (board.m_outro.time < 1.0f) {
+					board.m_outro.time += deltaTime;
+					const float life = board.m_outro.time / 1.0f;
+					for (int x = 0; x < 6; ++x) {
+						board.m_data->data->lanes[x] = 0.0f;
+						for (int y = 0; y < 12; ++y) 
+							board.m_data->data->tiles[(y * 6) + x].lifeLinear = life;
+					}
+
+				}
+				else {
+					board.m_outro.finished = true;
+					for (int x = 0; x < 6; ++x)
+						for (int y = 0; y < 12; ++y) {
+							board.m_tiles[y][x].m_type = TileState::NONE;
+							board.m_tiles[y][x].m_scoreType = TileState::UNMATCHED;
+							board.m_data->data->tiles[(y * 6) + x].lifeLinear = 0.0f;
+							board.m_data->data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
+						}
+				}
+			}
 			board.m_data->data->intro.powerOn = easeInBounce(std::clamp<float>((6.0f - board.m_intro.time) / 4.0f, 0.0f, 1.0f));
 		}
 	}

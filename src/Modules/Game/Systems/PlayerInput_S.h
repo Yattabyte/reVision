@@ -46,15 +46,10 @@ public:
 					board.m_player.tileSwaps.pop_front();
 					x--;
 				}
-			}
-			
-			// (un)Pause
-			if (isAction(ActionState::PAUSE)) {
-				board.m_intro.start = !board.m_intro.start;
-			}					
+			}			
 
 			// Exit early if game hasn't started
-			if (!board.m_intro.finished)
+			if (!board.m_gameInProgress)
 				continue;
 			
 			// Move Left

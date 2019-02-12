@@ -43,7 +43,7 @@ public:
 			auto & score = *(Score_Component*)componentParam[1];
 
 			// Exit early if game hasn't started
-			if (!board.m_gameStarted)
+			if (!board.m_gameInProgress)
 				continue;
 
 			validateBoard(board, score);

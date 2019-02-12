@@ -49,7 +49,8 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	bool m_critical = false;
 	bool m_stop = false;
 	bool m_skipWaiting = false;
-	bool m_gameStarted = false;
+	bool m_gameInProgress = false;
+	bool m_gameEnded = false;
 	float m_rowClimbTime = 0.0f;
 	float m_speed = 1.0F;
 	struct GameMusic {
@@ -60,9 +61,12 @@ struct Board_Component : public ECSComponent<Board_Component> {
 	struct GameIntro {
 		float time = 6.0f;
 		int countDown = -1;
-		bool start = true;
 		bool finished = false;
 	} m_intro;
+	struct GameOutro {
+		float time = 0.0f;
+		bool finished = false;
+	} m_outro;
 };
 /** A constructor to aid in creation. */
 struct Board_Constructor : ECSComponentConstructor<Board_Component> {

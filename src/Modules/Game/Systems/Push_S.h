@@ -30,15 +30,28 @@ public:
 			auto & score = *(Score_Component*)componentParam[1];
 			
 			// Exit early if game hasn't started
-			if (!board.m_gameStarted)
+			if (!board.m_gameInProgress)
 				continue;
 
 			// Push new rows when timer is stopped, or ( when the user requests a new one and scored tiles have finished )
 			if (!board.m_stop || (board.m_skipWaiting && (score.m_scoredTiles.size() == 0))) {
 				board.m_skipWaiting = false;
 				board.m_rowClimbTime += deltaTime;
-				if ((board.m_rowClimbTime >= board.m_speed) && !(score.m_scoredTiles.size()))
-					board.m_rowsToAdd++;
+				if ((board.m_rowClimbTime >= board.m_speed) && !(score.m_scoredTiles.size())) {
+					bool gameShouldEnd = false;
+					for (int x = 0; x < 6; ++x)
+						if (board.m_tiles[11][x].m_type != TileState::NONE && board.m_tiles[11][x].m_scoreType == TileState::UNMATCHED) {
+							gameShouldEnd = true;
+							break;
+						}
+					if (gameShouldEnd) {
+						board.m_gameEnded = true;
+						board.m_gameInProgress = false;
+
+					}
+					else
+						board.m_rowsToAdd++;
+				}
 				while (board.m_rowsToAdd > 0) {
 					pushNewRow(board);
 					board.m_rowsToAdd--;
@@ -49,7 +62,7 @@ public:
 				}
 			}
 
-			board.m_data->data->heightOffset = 2.0f * (board.m_rowClimbTime / board.m_speed);
+			board.m_data->data->heightOffset = 2.0f * std::min(board.m_rowClimbTime / board.m_speed, board.m_speed);
 
 			// Synchronize tile data to GPU
 			for (int y = 0; y < 12; ++y)
