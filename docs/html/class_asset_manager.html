@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">2.10</span>
+   &#160;<span id="projectnumber">3.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -85,8 +85,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad0e3cc8f6d3c695e07b9c01025a86312"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad125a95ba65885b8d0eba81946aea30f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#ad125a95ba65885b8d0eba81946aea30f">submitNotifyee</a> (const std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; void()&gt;&gt; &amp;callBack)</td></tr>
 <tr class="separator:ad125a95ba65885b8d0eba81946aea30f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a544e2aa8b646452f304a7a87df4f6a29"><td class="memItemLeft" align="right" valign="top"><a id="a544e2aa8b646452f304a7a87df4f6a29"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>notifyObservers</b> ()</td></tr>
+<tr class="memitem:a544e2aa8b646452f304a7a87df4f6a29"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#a544e2aa8b646452f304a7a87df4f6a29">notifyObservers</a> ()</td></tr>
 <tr class="separator:a544e2aa8b646452f304a7a87df4f6a29"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf4ffb8ac76a1bf85c6ac76929f39d57"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset_manager.html#abf4ffb8ac76a1bf85c6ac76929f39d57">readyToUse</a> ()</td></tr>
 <tr class="separator:abf4ffb8ac76a1bf85c6ac76929f39d57"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,6 +181,24 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>notifyObservers</b> (
       </table>
 </div><div class="memdoc">
 <p>Returns whether or not any changes have occured to this manager since the last check </p><dl class="section return"><dt>Returns</dt><dd>true if any changes occured, false otherwise </dd></dl>
+
+</div>
+</div>
+<a id="a544e2aa8b646452f304a7a87df4f6a29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a544e2aa8b646452f304a7a87df4f6a29">&#9670;&nbsp;</a></span>notifyObservers()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void AssetManager::notifyObservers </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>From the main thread, calls all notification calls (for completed asset loading). </p>
 
 </div>
 </div>
