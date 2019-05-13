@@ -2,20 +2,20 @@
 #ifndef LIGHTSPOT_FX_H
 #define LIGHTSPOT_FX_H 
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "ECS\Systems\LightSpot_S.h"
-#include "ECS\Systems\PropShadowing_S.h"
-#include "Modules\Graphics\Common\FBO_Shadow_Spot.h"
-#include "Modules\Graphics\Effects\PropShadowing_FX.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Modules/Graphics/Systems/LightSpot_S.h"
+#include "Modules/Graphics/Systems/PropShadowing_S.h"
+#include "Modules/Graphics/Common/FBO_Shadow_Spot.h"
+#include "Modules/Graphics/Effects/PropShadowing_FX.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW\glfw3.h"
+#include "GLFW/glfw3.h"
 
 
-/** A core rendering effect which applies spot lighting to the scene. */
-class LightSpot_Effect : public Effect_Base {
+/** A core-rendering technique which applies spot lighting to the scene. */
+class LightSpot_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -31,11 +31,11 @@ public:
 		Spot_RenderState * renderState
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_renderState(renderState) {
 		// Asset Loading
-		m_shader_Lighting = Asset_Shader::Create(m_engine, "Core\\Spot\\Light");
-		m_shader_Stencil = Asset_Shader::Create(m_engine, "Core\\Spot\\Stencil");
-		m_shader_Shadow = Asset_Shader::Create(m_engine, "Core\\Spot\\Shadow");
-		m_shader_Culling = Asset_Shader::Create(m_engine, "Core\\Spot\\Culling");
-		m_shapeCone = Asset_Primitive::Create(m_engine, "cone");
+		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
+		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Spot\\Stencil");
+		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Spot\\Shadow");
+		m_shader_Culling = Shared_Shader(m_engine, "Core\\Spot\\Culling");
+		m_shapeCone = Shared_Primitive(m_engine, "cone");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -64,9 +64,8 @@ public:
 		m_geometryEffectsDynamic.push_back(new PropShadowing_Effect(engine, m_shader_Culling, m_shader_Shadow, propBuffer, skeletonBuffer, &((PropShadowing_System*)m_geometryDynamicSystems[0])->m_renderState));
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Spot Shadowmap FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			m_engine->getManager_Messages().error("SpotLight Shadowmap Framebuffer has encountered an error.");
 	}
 
 
@@ -169,10 +168,10 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
-	Shared_Asset_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
-	Shared_Asset_Primitive m_shapeCone;
+	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
+	Shared_Primitive m_shapeCone;
 	ECSSystemList m_geometryStaticSystems, m_geometryDynamicSystems;
-	std::vector<Effect_Base*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
+	std::vector<GFX_Core_Effect*> m_geometryEffectsStatic, m_geometryEffectsDynamic;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr;
 	Spot_RenderState * m_renderState = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

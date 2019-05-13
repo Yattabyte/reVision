@@ -2,9 +2,7 @@
 #ifndef FBO_H
 #define FBO_H
 
-#include "Utilities\GL\StaticBuffer.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
 
 
 /** An OpenGL FBO usage interface. */

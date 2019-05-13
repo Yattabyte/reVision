@@ -1,11 +1,13 @@
 /* Number printing shader. */
 #version 460
-#extension GL_ARB_bindless_texture : require
 
 layout (location = 0) in vec2 UV;
 layout (location = 0) out vec4 fragColor;
-layout (location = 0, bindless_sampler) uniform sampler2D Numbers;
 layout (location = 3) uniform int index;
+
+layout (binding = 0) uniform sampler2D Numbers;
+
+
 void main()
 {			
 	const float AtlasWidth = 264.0f;

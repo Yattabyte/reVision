@@ -2,20 +2,20 @@
 #ifndef GRAPHICS_MODULE_H
 #define GRAPHICS_MODULE_H
 
-#include "Modules\Engine_Module.h"
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Modules\Graphics\Common\FBO_Geometry.h"
-#include "Modules\Graphics\Common\FBO_Lighting.h"
-#include "Modules\Graphics\Common\FBO_Reflection.h"
-#include "Modules\Graphics\Common\FBO_LightBounce.h"
-#include "Modules\Graphics\Common\RH_Volume.h"
-#include "Modules\Graphics\Common\VisualFX.h"
-#include "Assets\Asset_Shader.h"
-#include "ECS\Systems\ecsSystem.h"
-#include "ECS\Components\Camera_C.h"
-#include "Utilities\GL\VectorBuffer.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\MappedChar.h"
+#include "Modules/Engine_Module.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/FBO_Geometry.h"
+#include "Modules/Graphics/Common/FBO_Lighting.h"
+#include "Modules/Graphics/Common/FBO_Reflection.h"
+#include "Modules/Graphics/Common/FBO_LightBounce.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/VisualFX.h"
+#include "Modules/Graphics/Components/Camera_C.h"
+#include "Assets/Shader.h"
+#include "Utilities/ECS/ecsSystem.h"
+#include "Utilities/GL/VectorBuffer.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/MappedChar.h"
 
 
 class ECS;
@@ -25,43 +25,19 @@ class ECS;
 class Graphics_Module : public Engine_Module {
 public:
 	// (de)Constructors
-	~Graphics_Module() = default;
-	Graphics_Module(Engine * engine);
+	~Graphics_Module();
+	Graphics_Module() = default;
 
 
 	// Public Interface Implementation
 	/** Initialize the module. */
-	virtual void initialize() override;
-
-
-	// Public Methods
-	/** Render a single frame. 
+	virtual void initialize(Engine * engine) override;
+	/** Render a single frame.
 	@param	deltaTime	the amount of time passed since last frame */
-	void renderFrame(const float & deltaTime);
-	/** Add a single system to this module. */
-	template <typename T>
-	inline void addSystem(T * t) {
-		m_mappedGFXSystems[typeid(T).name()] = t;
-		m_renderingSystems.addSystem(t);
-	}
-	/** Add a single effect to this module. */
-	template <typename T>
-	inline void addEffect(T * t) {
-		m_mappedFX[typeid(T).name()] = t;
-		m_fxTechs.push_back(t);
-	}
-	/** Returns a pointer to the system type requested. 
-	@param	return		system of type specified. */
-	template <typename T>
-	inline T * getSystem() {
-		return (T*)m_mappedGFXSystems[typeid(T).name()];
-	}
-	/** Returns a pointer to the effect type requested.
-	@param	return		system of type specified. */
-	template <typename T>
-	inline T * getEffect() {
-		return (T*)m_mappedFX[typeid(T).name()];
-	}
+	virtual void frameTick(const float & deltaTime) override;
+
+
+	// Public Methods	
 	/** Update the data for the specified camera. 
 	@param	camera			the camera to update */
 	void updateCamera(Camera_Buffer * camera);
@@ -71,31 +47,36 @@ public:
 	/** Return the index of the camera last active. 
 	@return					the camera index of the last active camera */
 	const GLuint getActiveCamera() const;
-
-	
-	// Public Attributes
-	FBO_Geometry				m_geometryFBO;
-	FBO_Lighting				m_lightingFBO;
-	FBO_Reflection				m_reflectionFBO;
-	FBO_LightBounce				m_bounceFBO;
-	VB_Element<Camera_Buffer> *	m_defaultCamera;
-	StaticBuffer				m_cameraIndexBuffer;
-	VectorBuffer<Camera_Buffer>	m_cameraBuffer;
-	MappedChar<BaseECSSystem*>	m_mappedGFXSystems;
+	/** Returns the active camera's data buffer.
+	@return					the active camera's data buffer. */
+	VB_Element<Camera_Buffer> * getActiveCameraBuffer();
+	/** Returns the lighting buffer's FBO ID. 
+	@return					the lighting buffer FBO ID. */
+	const GLuint getLightingFBOID() const { return m_lightingFBO.m_fboID; };
+	/** Returns the lighting buffer's texture ID.
+	@return					the lighting buffer texture ID. */
+	const GLuint getLightingTexID() const { return m_lightingFBO.m_textureID; };
 
 	
 private:
 	// Private Attributes
-	ECS *						m_ecs = nullptr;
-	GLuint						m_activeCamera = 0;
-	glm::ivec2					m_renderSize = glm::ivec2(1);
-	ECSSystemList				m_renderingSystems;
-	std::vector<Effect_Base*>	m_fxTechs;
-	MappedChar<Effect_Base*>	m_mappedFX;
-	std::shared_ptr<RH_Volume>	m_volumeRH;
-	VisualFX					m_visualFX;
-	Shared_Asset_Shader			m_shaderCull, m_shaderGeometry;
-	std::shared_ptr<bool>		m_aliveIndicator = std::make_shared<bool>(true);
+	ECS *							m_ecs = nullptr;
+	GLuint							m_activeCamera = 0;
+	glm::ivec2						m_renderSize = glm::ivec2(1);
+	ECSSystemList					m_renderingSystems;
+	std::vector<GFX_Core_Effect*>	m_fxTechs;
+	MappedChar<GFX_Core_Effect*>	m_mappedFX;
+	std::shared_ptr<RH_Volume>		m_volumeRH;
+	VisualFX						m_visualFX;
+	Shared_Shader					m_shaderCull = Shared_Shader(), m_shaderGeometry = Shared_Shader();
+	std::shared_ptr<bool>			m_aliveIndicator = std::make_shared<bool>(true);
+	FBO_Geometry					m_geometryFBO;
+	FBO_Lighting					m_lightingFBO;
+	FBO_Reflection					m_reflectionFBO;
+	FBO_LightBounce					m_bounceFBO;
+	StaticBuffer					m_cameraIndexBuffer;
+	VectorBuffer<Camera_Buffer>		m_cameraBuffer;
+	VB_Element<Camera_Buffer> *		m_defaultCamera;
 };
 
 #endif // GRAPHICS_MODULE_H

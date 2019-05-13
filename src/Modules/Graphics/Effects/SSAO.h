@@ -3,18 +3,18 @@
 #define SSAO_H
 #define MAX_KERNEL_SIZE 128
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Modules\Graphics\Common\VisualFX.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/VisualFX.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 #include <random>
 
 
-/** A post-processing technique for deriving an ambient occlusion factor from the viewport itself. */
-class SSAO : public Effect_Base {
+/** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */
+class SSAO : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -26,9 +26,9 @@ public:
 	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
 		// Asset Loading
-		m_shader = Asset_Shader::Create(m_engine, "Effects\\SSAO");
-		m_shaderCopyAO = Asset_Shader::Create(m_engine, "Effects\\SSAO To AO");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
+		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
@@ -84,9 +84,7 @@ public:
 		glTextureParameteri(m_noiseID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTextureParameteri(m_noiseID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);		
-		m_noiseHandle = glGetTextureHandleARB(m_noiseID);
-		glMakeTextureHandleResidentARB(m_noiseHandle);
+		glTextureParameteri(m_noiseID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		m_shader->addCallback(m_aliveIndicator, [&] {
 			std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 			std::default_random_engine generator;
@@ -106,19 +104,17 @@ public:
 			}
 			m_shader->setUniform(0, m_radius);
 			m_shader->setUniform(1, m_quality);
-			m_shader->setUniform(2, m_noiseHandle);
 			m_shader->setUniformArray(3, new_kernel, MAX_KERNEL_SIZE);
 		});
 		
-
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSAO Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		auto & msgMgr = m_engine->getManager_Messages();
+		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSAO Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO Texture");
+			msgMgr.error("SSAO Texture is incomplete.");
 		if (!glIsTexture(m_noiseID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSAO - Noise texture");
+			msgMgr.error("SSAO Noise Texture is incomplete.");
 	}
 
 
@@ -131,6 +127,7 @@ public:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shader->bind();
 		m_geometryFBO->bindForReading();
+		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -168,13 +165,12 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr;
 	VisualFX * m_visualFX = nullptr;
-	Shared_Asset_Shader m_shader, m_shaderCopyAO;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shader, m_shaderCopyAO;
+	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;
 	GLuint m_fboID = 0, m_textureID = 0, m_textureIDSGB[2] = { 0,0 }, m_noiseID = 0;
-	GLuint64 m_noiseHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

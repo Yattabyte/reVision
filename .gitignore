@@ -13,6 +13,7 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.dll
 
 # Fortran module files
 *.mod
@@ -59,9 +60,11 @@ CMakeCache.txt
 *.db-shm
 *.log
 *.ipch
-Doxyfile.out
+*.lnk
+*.shader
 app/nsight_profiler.cfg
-app/reVision.exe - Shortcut.lnk
 CMakeDoxyfile.tpl.bak
 CMakeDoxyfile.in
-*.shader
+PredictedInputCache_Debug_x64.dat
+PredictedInputCache_Release_x64.dat
+Doxyfile.Documentation

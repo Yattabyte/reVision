@@ -1,9 +1,9 @@
-#include "Utilities\IO\Mesh_IO.h"
+#include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
-#include "assimp\Importer.hpp"
-#include "assimp\postprocess.h"
-#include "assimp\scene.h"
-#include "assimp\version.h"
+#include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/scene.h"
+#include "assimp/version.h"
 #include <atomic>
 
 
@@ -63,7 +63,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getMessageManager().error(MessageManager::FILE_MISSING, relativePath);
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 
@@ -83,7 +83,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 
 	// Check if scene imported successfully
 	if (!scene) {
-		engine->getMessageManager().error(MessageManager::FILE_CORRUPT, relativePath);
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 
@@ -222,7 +222,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 				}
 			}
 
-			data_container.materials.push_back(Material(
+			data_container.materials.push_back(Material_Strings(
 				(albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
 				(normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
 				(metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
@@ -232,7 +232,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 			));
 		}
 	else {
-		data_container.materials.push_back(Material(
+		data_container.materials.push_back(Material_Strings(
 			 "albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"
 		));
 	}

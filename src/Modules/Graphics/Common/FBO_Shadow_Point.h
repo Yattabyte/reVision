@@ -2,8 +2,8 @@
 #ifndef FBO_SHADOW_POINT_H
 #define FBO_SHADOW_POINT_H 
 
-#include "Utilities\GL\FBO.h"
-#include "GLFW\glfw3.h"
+#include "Utilities/GL/FBO.h"
+#include "GLFW/glfw3.h"
 
 
 /** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */

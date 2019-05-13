@@ -2,7 +2,7 @@
 #ifndef PREFERENCE_STATE_H
 #define PREFERENCE_STATE_H
 
-#include "Assets\Asset_Config.h"
+#include "Assets/Config.h"
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -31,39 +31,36 @@ public:
 	// Public Static Enumerations
 	/** Enumeration for indexing into preferences. */
 	const enum Preference {
+		// Window Options
 		C_WINDOW_WIDTH,
 		C_WINDOW_HEIGHT,
-		C_WINDOW_USE_MONITOR_RATE,
 		C_WINDOW_REFRESH_RATE,
-		C_VSYNC,
-
-		C_BLOOM,
-		C_BLOOM_STRENGTH,
-
-		C_DRAW_DISTANCE,
-
-		C_SSAO,
-		C_SSAO_BLUR_STRENGTH,
-		C_SSAO_RADIUS,
-		C_SSAO_QUALITY,
-
+		C_WINDOW_FULLSCREEN,
 		C_GAMMA,
+		C_VSYNC,
+		C_DRAW_DISTANCE,
+		C_FOV,
 
-		C_TEXTURE_ANISOTROPY,
+		// Graphics Options
 		C_MATERIAL_SIZE,
+		C_ENVMAP_SIZE,
+		C_RH_BOUNCE_SIZE,
 
 		C_SHADOW_SIZE_DIRECTIONAL,
 		C_SHADOW_SIZE_POINT,
 		C_SHADOW_SIZE_SPOT,
 		C_SHADOW_QUALITY,
 
-		C_ENVMAP_SIZE,
+		C_BLOOM,
+		C_BLOOM_STRENGTH,
 
-		C_RH_BOUNCE_SIZE,
+		C_SSAO,
+		C_SSAO_BLUR_STRENGTH,
+		C_SSAO_RADIUS,
+		C_SSAO_QUALITY,
 
 		C_SSR,
-
-		C_FXAA,
+		C_FXAA
 	};
 
 
@@ -72,38 +69,35 @@ public:
 	@return	std::vector of preference names as strings */
 	static std::vector<std::string> Preference_Strings() {
 		static const std::vector<std::string> preferenceStrings = {
+			// Window Options
 			"C_WINDOW_WIDTH",
 			"C_WINDOW_HEIGHT",
-			"C_WINDOW_USE_MONITOR_RATE",
 			"C_WINDOW_REFRESH_RATE",
-			"C_VSYNC",
-
-			"C_BLOOM",
-			"C_BLOOM_STRENGTH",
-
-			"C_DRAW_DISTANCE",
-
-			"C_SSAO",
-			"C_SSAO_BLUR_STRENGTH",
-			"C_SSAO_RADIUS",
-			"C_SSAO_QUALITY",
-
+			"C_WINDOW_FULLSCREEN",
 			"C_GAMMA",
+			"C_VSYNC",
+			"C_DRAW_DISTANCE",
+			"C_FOV",
 
-			"C_TEXTURE_ANISOTROPY",
+			// Graphics Options
 			"C_MATERIAL_SIZE",
+			"C_ENVMAP_SIZE",
+			"C_RH_BOUNCE_SIZE",
 
 			"C_SHADOW_SIZE_DIRECTIONAL",
 			"C_SHADOW_SIZE_POINT",
 			"C_SHADOW_SIZE_SPOT",
 			"C_SHADOW_QUALITY",
 
-			"C_ENVMAP_SIZE",
+			"C_BLOOM",
+			"C_BLOOM_STRENGTH",
 
-			"C_RH_BOUNCE_SIZE",
+			"C_SSAO",
+			"C_SSAO_BLUR_STRENGTH",
+			"C_SSAO_RADIUS",
+			"C_SSAO_QUALITY",
 
 			"C_SSR",
-
 			"C_FXAA"
 		};
 		return preferenceStrings;
@@ -114,7 +108,7 @@ public:
 	/** Loads a preference file from disk.
 	@param	filename	the relative path to the preference file to load */
 	inline void loadFile(const std::string & filename) {
-		m_preferences = Asset_Config::Create(m_engine, filename, PreferenceState::Preference_Strings(), false);
+		m_preferences = Shared_Config(m_engine, filename, PreferenceState::Preference_Strings(), false);
 	}
 	/** Saves the preference file to disk, using the same filename as when loaded. */
 	inline void save() {
@@ -170,7 +164,7 @@ public:
 	
 private:
 	Engine * m_engine = nullptr;
-	Shared_Asset_Config m_preferences;
+	Shared_Config m_preferences;
 	std::map< Preference, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(float)>>> > m_callbacks;
 };
 

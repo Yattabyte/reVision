@@ -61,34 +61,34 @@
  * Different file types need to be handled in different ways.
  * Assets are designed to be ultra-efficient.\n
  * We sort and store them within an asset manager, and we share them whenever possible to avoid redundant disk reads.\n
- * Lastly, all assets supported thusfar support multithreading, as to avoid locking the main thread.\n
+ * Lastly, all assets supported thus far support multithreading, as to avoid locking the main thread.\n
  * Here's a list of all asset types the engine currently supports.\n
  *
- *	- Asset_Collider
- *	- Asset_Config
- *	- Asset_Cubemap
- *	- Asset_Image
- *	- Asset_Level
- *	- Asset_Material
- *	- Asset_Mesh
- *	- Asset_Model
- *	- Asset_Primitive
- *	- Asset_Shader
- *	- Asset_Shader_Geometry
- *	- Asset_Shader_Pkg
- *	- Asset_Texture
+ *	- Collider
+ *	- Config
+ *	- Cubemap
+ *	- Image
+ *	- Level
+ *	- Material
+ *	- Mesh
+ *	- Model
+ *	- Primitive
+ *	- Shader
+ *	- Shader_Geometry
+ *	- Shader_Pkg
+ *	- Texture
  *
  * \section newAssets New Assets
- * All assets have provide the following functionality - a static Create(...) function, and an overriden virtual initialize(...) function:
+ * All assets have provide the following functionality - a static Create(...) function, and an overridden virtual initialize(...) function:
  * 
- *	- Shared_Asset_Shader	Asset_Shader::Create(	Engine * engine, const std::string & filename, const bool & threaded	)
- *	- void Asset_Shader::initialize(	Engine * engine, const std::string & relativePath	)
+ *	- Shared_Shader	Shared_Shader(	Engine * engine, const std::string & filename, const bool & threaded	)
+ *	- void Shader::initialize(	Engine * engine, const std::string & relativePath	)
  */
 
  /*! \page ecs ECS
  * \section ent_sec	Engine ECS
  * The engine currently supports the following components:
- *		- BasicPlayer_Component
+ *		- Player3D_Component
  *		- Collider_Component
  *		- LightDirectional_Component
  *		- LightDirectionalShadow_Component
@@ -109,15 +109,14 @@
  *		- PropRendering_System (rendering)
  *		- PropShadowing_System (rendering)
  *		- Reflector_System  (rendering)
- *		- PlayerMovement_System (update the player transform)
+ *		- PlayerFreeLook_System (update the player transform)
  *		- SkeletonAnimation_System (update bone transforms when animating)
  *		- TransformSync_System (update transform information for every other component type)
  */
 
  /*! \page managers Managers
  * \section mgr_sec Engine Managers
- * This section contains all the managers the Engine owns.\n
- *
+ * This section contains all the managers the Engine owns:
  *	- Asset_Manager
  *		- Used to create, find, and share assets (specialized representations of files from disk).
  *	- Material_Manager
@@ -130,8 +129,7 @@
 
  /*! \page modules Modules
   * \section mdul_sec Engine Modules
-  * This section contains all the modules currently implemented.\n
-  *
+  * This section contains all the modules currently implemented:
   *	- Graphics_Module
   *		- Used to render a physically based 3D scene, renders components using systems and effects.
   *	- Physics_Module
@@ -152,7 +150,7 @@
  *			- Image_IO
  *				- Image Importing using FreeImage.
  *			- Level_IO
- *				- Level Importing
+ *				- Level Importing.
  *			- Mesh_IO
  *				- Model Importing using ASSIMP.
  *			- Text_IO
@@ -165,7 +163,7 @@
  *			- StaticBuffer
  *				- Buffer Object Encapsulation, static in size.
  *			- StaticMappedBuffer
- *				- Buffer Object Encapsulation, static in size, mapped to local memory
+ *				- Buffer Object Encapsulation, static in size, mapped to local memory.
  *			- VectorBuffer
  *				- Like the std::vector class, encapsulates a dynamic buffer in a templated fashion, allowing adding/removing of elements as the way to interact with.
  */

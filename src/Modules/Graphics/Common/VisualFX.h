@@ -2,11 +2,11 @@
 #ifndef VISUALFX_H
 #define VISUALFX_H
 
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "GL\glew.h"
-#include "glm\glm.hpp"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "GL/glad/glad.h"
+#include "glm/glm.hpp"
 
 
 class Engine;
@@ -53,8 +53,8 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	bool m_Initialized = false;
-	Shared_Asset_Primitive m_shapeQuad;
-	Shared_Asset_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
+	Shared_Primitive m_shapeQuad;
+	Shared_Shader m_shaderGB, m_shaderGB_A, m_shaderCF;
 	GLuint m_fbo_GB = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

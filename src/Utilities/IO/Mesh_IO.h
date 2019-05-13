@@ -3,10 +3,10 @@
 #define	Mesh_IO_H
 #define NUM_BONES_PER_VEREX 4
 
-#include "GL\glew.h"
-#include "GLM\glm.hpp"
-#include "glm\gtc\matrix_transform.hpp"
-#include "glm\gtc\quaternion.hpp"
+#include "GL/glad/glad.h"
+#include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
+#include "glm/gtc/quaternion.hpp"
 #include <map>
 #include <string>
 #include <vector>
@@ -23,9 +23,9 @@ struct VertexBoneData {
 	void Reset();
 	void AddBoneData(const int & BoneID, const float & Weight);
 };
-struct Material {
+struct Material_Strings {
 	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
-	Material(const std::string & al = "albedo" , const std::string & n = "normal", const std::string & m = "metalness", const std::string & r = "roughness", const std::string & h = "height", const std::string & a = "ao")
+	Material_Strings(const std::string & al = "albedo" , const std::string & n = "normal", const std::string & m = "metalness", const std::string & r = "roughness", const std::string & h = "height", const std::string & a = "ao")
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
 template<typename T>
@@ -66,7 +66,7 @@ struct Mesh_Geometry {
 	std::vector<GLuint> materialIndices;
 
 	// Materials
-	std::vector<Material> materials;
+	std::vector<Material_Strings> materials;
 
 	// Animation
 	std::vector<VertexBoneData> bones;

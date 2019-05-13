@@ -2,27 +2,28 @@
 #ifndef PROPSHADOWING_FX_H
 #define PROPSHADOWING_FX_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "ECS\Systems\PropShadowing_S.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Modules/Graphics/Systems/PropShadowing_S.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW\glfw3.h"
+#include "GLFW/glfw3.h"
 
-/** A core rendering effect which renders prop geometry to the active shadow map. */
-class PropShadowing_Effect : public Effect_Base {
+
+/** A core-rendering technique which renders prop geometry to the active shadow map. */
+class PropShadowing_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
 	~PropShadowing_Effect() = default;
 	/** Constructor. */
 	PropShadowing_Effect(
-		Engine * engine, Shared_Asset_Shader & shaderCull, Shared_Asset_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer, PropShadow_RenderState * renderState
+		Engine * engine, Shared_Shader & shaderCull, Shared_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer, PropShadow_RenderState * renderState
 	) : m_engine(engine), m_propBuffer(propBuffer), m_skeletonBuffer(skeletonBuffer), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_renderState(renderState) {
 		// Asset Loading
-		m_shapeCube = Asset_Primitive::Create(engine, "cube");
-		m_modelsVAO = &m_engine->getModelManager().getVAO();
+		m_shapeCube = Shared_Primitive(engine, "cube");
+		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 	}
 
 
@@ -32,7 +33,7 @@ public:
 		if (!m_shapeCube->existsYet())
 			return;
 
-		m_engine->getMaterialManager().bind();
+		m_engine->getManager_Materials().bind();
 		m_propBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_renderState->m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_skeletonBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
@@ -72,8 +73,8 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader	m_shaderCull, m_shaderShadow;
-	Shared_Asset_Primitive m_shapeCube;
+	Shared_Shader	m_shaderCull, m_shaderShadow;
+	Shared_Primitive m_shapeCube;
 	const GLuint * m_modelsVAO = nullptr;
 	GL_Vector * m_propBuffer = nullptr, * m_skeletonBuffer = nullptr;
 	PropShadow_RenderState * m_renderState = nullptr;

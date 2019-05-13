@@ -1,21 +1,23 @@
-#include "Level_IO.h"
+#include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
+
 
 bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, std::vector<LevelStruct_Entity> & entities)
 {
 	// Check if the file exists
 	if (!Engine::File_Exists(relativePath)) {
-		engine->getMessageManager().error(MessageManager::FILE_MISSING, relativePath);
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" does not exist.");
 		return false;
 	}
 	// Try to load the file stream
 	try {
-		entities = parse_level(std::ifstream(Engine::Get_Current_Dir() + relativePath));
+		auto stream = std::ifstream(Engine::Get_Current_Dir() + relativePath);
+		entities = parse_level(stream);
 		return true;
 	}
 	// Catch failure state
 	catch (const std::ifstream::failure e) {
-		engine->getMessageManager().error(MessageManager::FILE_CORRUPT, relativePath, e.what());
+		engine->getManager_Messages().error("The file \"" + relativePath + "\" exists, but is corrupted.");
 		return false;
 	}
 }

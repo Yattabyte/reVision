@@ -1,6 +1,6 @@
 entity
 {
-	BasicPlayer_Component
+	Player_Component
 	{
 		vec3 "0,10,30"
 	}

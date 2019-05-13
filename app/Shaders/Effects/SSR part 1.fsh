@@ -1,6 +1,5 @@
 /* Screen space reflection shader - part 1 - UV Lookup Creation. */
 #version 460
-#extension GL_ARB_bindless_texture : require
 #pragma optionNV(fastmath on)
 #pragma optionNV(fastprecision on)
 #pragma optionNV(ifcvt none)
@@ -15,11 +14,11 @@ const uint maxBinarySteps = 6u;
 const float maxDistance = -1000.0f;
 
 // The screen texture
-layout (location = 0, bindless_sampler) uniform sampler2D BayerMatrix;
 layout (binding = 0) uniform sampler2D ColorMap;
 layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D SpecularMap;
 layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 6) uniform sampler2D BayerMatrix;
 
 layout (location = 0) in vec2 TexCoord;
 layout (location = 1) flat in mat4 CamPMatrix;
@@ -30,6 +29,7 @@ layout (location = 17) flat in vec3 CamEyePosition;
 layout (location = 18) flat in vec2 CamDimensions;
 
 layout (location = 0) out vec4 LightingColor;
+
 
 struct ViewData {
 	vec4 World_Pos;

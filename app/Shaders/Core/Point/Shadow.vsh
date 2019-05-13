@@ -1,6 +1,6 @@
 /* Point light - geometry shadowing shader. */
 #version 460
-#extension GL_ARB_shader_viewport_layer_array : require
+#extension GL_ARB_shader_viewport_layer_array : enable
 #define MAX_BONES 100
 #define TEXTURES_PER_MATERIAL 3
 

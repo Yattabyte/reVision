@@ -2,7 +2,7 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
-#include "GL\glew.h"
+#include "GL/glad/glad.h"
 #include <atomic>
 #include <functional>
 #include <map>
@@ -15,11 +15,11 @@
 class Asset;
 class Engine;
 using Shared_Asset = std::shared_ptr<Asset>;
+using AssetFinalizedCallback = std::function<void(void)>;
 
 /** An abstract base-class for assets.
 @brief	Represents some form of data to be loaded from disk, such as shaders, models, levels, and sounds.
-@note		is an abstract class instead of interface to reduce redundant code.
-@usage	Should be created once, and its pointer passed around using shared pointers. */
+@note	is an abstract class instead of interface to reduce redundant code. Should be created once, and its pointer passed around using shared pointers. */
 class Asset
 {
 public:
@@ -38,13 +38,7 @@ public:
 	/** Attaches a callback method to be triggered when the asset finishes loading.
 	@param	alive		a shared pointer indicating whether the caller is alive or not
 	@param	callback	the method to be triggered */
-	template <typename Callback>
-	inline void addCallback(const std::shared_ptr<bool> & alive, Callback && callback) {
-		if (!existsYet()) 
-			m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
-		else
-			callback();
-	}
+	void addCallback(const std::shared_ptr<bool> & alive, AssetFinalizedCallback && callback);
 	/** Returns whether or not this asset has completed finalizing.
 	@return				true if this asset has finished finalizing, false otherwise. */
 	bool existsYet() const;
@@ -53,25 +47,26 @@ public:
 protected:
 	// Protected Constructors
 	/** Create asset that uses the specified file-path. */
-	Asset(const std::string & filename);
+	Asset(Engine * engine, const std::string & filename);
 
 
 	// Protected Interface
 	/** Initializes the asset. */
-	virtual void initialize(Engine * engine, const std::string & relativePath) = 0;
+	virtual void initialize() = 0;
+	friend class AssetManager;
 
 	
 	// Protected Methods
 	/** Declares this asset ready-to-use. */
-	void finalize(Engine * engine);
+	void finalize();
 
 
 	// Protected Attributes
+	Engine * m_engine = nullptr;
 	std::atomic_bool m_finalized = false;
 	mutable GLsync m_fence = nullptr;
 	std::string m_filename = "";
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void()>>> m_callbacks;
-	friend class AssetManager;
 
 	
 private:

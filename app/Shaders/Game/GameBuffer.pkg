@@ -1,0 +1,36 @@
+#package "CameraBuffer"
+#define M_PI 3.1415926535897932384626433832795
+
+struct TileStruct {
+	uint type;
+	float xOffset;
+	float yOffset;
+	float lifeLinear;
+};
+struct MusicStruct {
+	float beat;
+};
+struct IntroStruct {
+	float powerOn;
+	float powerSecondary;
+	int countDown;
+};
+layout (std430, binding = 8) readonly buffer BoardBuffer {
+	TileStruct tiles[12*6];
+	float lanes[6];
+	vec3 colorScheme;
+	ivec2 playerCoords;
+	float heightOffset;
+	float sysTime;
+	float shakeLinear;
+	float scoreAnimLinear;
+	float timeAnimLinear;
+	int score;
+	int highlightIndex;
+	int multiplier;
+	float stopTimer;
+	float gameTimer;
+	float nearingTop;
+	MusicStruct music;
+	IntroStruct intro;
+};

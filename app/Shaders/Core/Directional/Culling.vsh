@@ -1,6 +1,6 @@
 /* Directional light - geometry culling shader. */
 #version 460
-#extension GL_ARB_shader_viewport_layer_array : require
+#extension GL_ARB_shader_viewport_layer_array : enable
 #define NUM_CASCADES 4
 
 struct PropAttributes {

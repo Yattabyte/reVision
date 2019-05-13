@@ -2,20 +2,20 @@
 #ifndef REFLECTOR_FX_H
 #define REFLECTOR_FX_H 
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
-#include "ECS\Systems\Reflector_S.h"
-#include "Modules\Graphics\Common\FBO_EnvMap.h"
-#include "Modules\Graphics\Common\FBO_Geometry.h"
-#include "Modules\Graphics\Common\FBO_Lighting.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Texture.h"
+#include "Modules/Graphics/Systems/Reflector_S.h"
+#include "Modules/Graphics/Common/FBO_EnvMap.h"
+#include "Modules/Graphics/Common/FBO_Geometry.h"
+#include "Modules/Graphics/Common/FBO_Lighting.h"
 #include "Engine.h"
-#include "GLFW\glfw3.h"
+#include "GLFW/glfw3.h"
 
 
-/** A core rendering effect which applies parallax-corrected local cubemaps to the scene. */
-class Reflector_Effect : public Effect_Base {
+/** A core-rendering technique which applies parallax-corrected local cubemaps to the scene. */
+class Reflector_Effect : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -30,12 +30,12 @@ public:
 		Reflector_RenderState * renderState
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO), m_renderState(renderState) {
 		// Asset Loading
-		m_shaderLighting = Asset_Shader::Create(m_engine, "Core\\Reflector\\IBL_Parallax");
-		m_shaderStencil = Asset_Shader::Create(m_engine, "Core\\Reflector\\Stencil");
-		m_shaderCopy = Asset_Shader::Create(m_engine, "Core\\Reflector\\2D_To_Cubemap");
-		m_shaderConvolute = Asset_Shader::Create(m_engine, "Core\\Reflector\\Cube_Convolution");
-		m_shapeCube = Asset_Primitive::Create(m_engine, "cube");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
+		m_shaderStencil = Shared_Shader(m_engine, "Core\\Reflector\\Stencil");
+		m_shaderCopy = Shared_Shader(m_engine, "Core\\Reflector\\2D_To_Cubemap");
+		m_shaderConvolute = Shared_Shader(m_engine, "Core\\Reflector\\Cube_Convolution");
+		m_shapeCube = Shared_Primitive(m_engine, "cube");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -44,7 +44,10 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_renderState->m_envmapSize);
-		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);});
+		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
+			m_renderState->m_envmapSize = std::max(1u, (unsigned int)f);
+			m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);
+		});
 
 		// Environment Map
 		m_envmapFBO.resize(m_renderState->m_envmapSize, m_renderState->m_envmapSize, 6);
@@ -62,9 +65,8 @@ public:
 		});
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Reflector Environment map FBO", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			m_engine->getManager_Messages().error("Reflector_FX Environment Map Framebuffer has encountered an error.");			
 	}
 
 
@@ -91,7 +93,7 @@ protected:
 	/** Render all the geometry for each reflector */
 	inline void renderScene(const float & deltaTime) {
 		auto & preferences = m_engine->getPreferenceState();
-		auto & graphics = m_engine->getGraphicsModule();
+		auto & graphics = m_engine->getModule_Graphics();
 		bool didAnything = false, update = m_renderState->m_outOfDate;
 		m_renderState->m_outOfDate = false;
 		GLuint oldCameraID = 0;
@@ -109,7 +111,7 @@ protected:
 				reflector->m_outOfDate = false;
 				for (int x = 0; x < 6; ++x) {
 					graphics.setActiveCamera(reflector->m_Cameradata[x]->index);
-					graphics.renderFrame(deltaTime);
+					graphics.frameTick(deltaTime);
 
 					// Copy lighting frame into cube-face
 					m_lightingFBO->bindForReading();
@@ -149,7 +151,7 @@ protected:
 		}
 		if (didAnything) {
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
-			Asset_Shader::Release();
+			Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			graphics.setActiveCamera(oldCameraID);
 			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -202,8 +204,8 @@ protected:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Shared_Asset_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	Shared_Asset_Primitive m_shapeCube, m_shapeQuad;
+	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
+	Shared_Primitive m_shapeCube, m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Reflector_RenderState * m_renderState = nullptr;

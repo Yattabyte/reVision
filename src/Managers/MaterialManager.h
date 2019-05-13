@@ -2,8 +2,7 @@
 #ifndef MATERIALMANAGER_H
 #define MATERIALMANAGER_H
 
-#include "Utilities\GL\DynamicBuffer.h"
-#include "GL\glew.h"
+#include "GL/glad/glad.h"
 #include <deque>
 #include <shared_mutex>
 

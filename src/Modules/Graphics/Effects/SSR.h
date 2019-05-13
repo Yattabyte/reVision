@@ -2,17 +2,17 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Primitive.h"
-#include "Assets\Asset_Texture.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Assets/Texture.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 
-/** A post-processing technique for deriving extra reflection information from the viewport itself. */
-class SSR : public Effect_Base {
+/** A core-rendering technique for deriving extra reflection information from the viewport itself. */
+class SSR : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -29,11 +29,11 @@ public:
 	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
-		m_shaderSSR1 = Asset_Shader::Create(m_engine, "Effects\\SSR part 1");
-		m_shaderSSR2 = Asset_Shader::Create(m_engine, "Effects\\SSR part 2");
-		m_shaderCopy = Asset_Shader::Create(m_engine, "Effects\\Copy Texture");
-		m_shaderConvMips = Asset_Shader::Create(m_engine, "Effects\\Gaussian Blur MIP");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
+		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
+		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
+		m_shaderConvMips = Shared_Shader(m_engine, "Effects\\Gaussian Blur MIP");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -87,25 +87,19 @@ public:
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		m_bayerHandle = glGetTextureHandleARB(m_bayerID);
-		glMakeTextureHandleResidentARB(m_bayerHandle);
-		m_shaderSSR1->addCallback(m_aliveIndicator, [&] {
-			m_shaderSSR1->setUniform(0, m_bayerHandle);
-		});
 
 		// Error Reporting
-		GLenum Status = glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSR Mipmap Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		auto & msgMgr = m_engine->getManager_Messages();
+		if (glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSR Mipmap Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureMipsID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR Mipmap Texture");
-		Status = glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "SSR Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+			msgMgr.error("SSR Mipmap Texture is incomplete.");
+		if (glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			msgMgr.error("SSR Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureSSRID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR Texture");
+			msgMgr.error("SSR Texture is incomplete.");
 		if (!glIsTexture(m_bayerID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "SSR - Bayer matrix texture");
+			msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 	}
 
 
@@ -122,6 +116,7 @@ public:
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboSSRID);
 		m_geometryFBO->bindForReading();
 		m_shaderSSR1->bind();
+		glBindTextureUnit(6, m_bayerID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glEnable(GL_BLEND);
@@ -188,8 +183,8 @@ private:
 	inline void resize(const glm::ivec2 & size) {
 		m_renderSize = size;
 		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
+			const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
+			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, mippedSize.x, mippedSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
 	}
@@ -198,13 +193,12 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
-	Shared_Asset_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
+	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	GLuint m_fboMipsID = 0, m_textureMipsID = 0;
 	GLuint m_fboSSRID = 0, m_textureSSRID = 0;
 	GLuint m_bayerID = 0;
-	GLuint64 m_bayerHandle = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

@@ -2,19 +2,19 @@
 #ifndef RADIANCE_HINTS_H
 #define RADIANCE_HINTS_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Modules\Graphics\Common\RH_Volume.h"
-#include "Modules\Graphics\Common\FBO_LightBounce.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Texture.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\StaticBuffer.h"
-#include "Utilities\GL\FBO.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/FBO_LightBounce.h"
+#include "Assets/Shader.h"
+#include "Assets/Texture.h"
+#include "Assets/Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 
 
-/** A post-processing technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
-class Radiance_Hints : public Effect_Base {
+/** A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
+class Radiance_Hints : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -30,9 +30,9 @@ public:
 	Radiance_Hints(Engine * engine, FBO_Base * geometryFBO, FBO_Base * bounceFBO, std::shared_ptr<RH_Volume> volumeRH)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_bounceFBO(bounceFBO), m_volumeRH(volumeRH) {
 		// Asset Loading
-		m_shaderRecon = Asset_Shader::Create(m_engine, "Effects\\RH Reconstruction");
-		m_shaderRebounce = Asset_Shader::Create(m_engine, "Effects\\RH Rebounce");
-		m_shapeQuad = Asset_Primitive::Create(m_engine, "quad");
+		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
+		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");
+		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -63,11 +63,10 @@ public:
 		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 
 		// Error Reporting
-		const GLenum Status = glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER);
-		if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-			m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Radiance Hints Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			m_engine->getManager_Messages().error("Radiance_Hints Framebuffer has encountered an error.");
 		if (!glIsTexture(m_textureID))
-			m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Radiance Hints Texture");
+			m_engine->getManager_Messages().error("Radiance_Hints Texture is incomplete.");
 	}
 
 
@@ -127,8 +126,8 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_bounceFBO = nullptr;
 	FBO_LightBounce	m_rebounceFBO;
-	Shared_Asset_Shader m_shaderRecon, m_shaderRebounce;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Shader m_shaderRecon, m_shaderRebounce;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

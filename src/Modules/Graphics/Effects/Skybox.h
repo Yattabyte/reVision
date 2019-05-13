@@ -2,17 +2,17 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules\Graphics\Effects\Effect_Base.h"
-#include "Assets\Asset_Shader.h"
-#include "Assets\Asset_Cubemap.h"
-#include "Assets\Asset_Primitive.h"
-#include "Utilities\GL\FBO.h"
-#include "Utilities\GL\StaticBuffer.h"
+#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Assets/Shader.h"
+#include "Assets/Cubemap.h"
+#include "Assets/Primitive.h"
+#include "Utilities/GL/FBO.h"
+#include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 
 
-/** A post-processing technique for writing the frame time to the screen. */
-class Skybox : public Effect_Base {
+/** A core-rendering technique for writing the frame time to the screen. */
+class Skybox : public GFX_Core_Effect {
 public:
 	// (de)Constructors
 	/** Virtual Destructor. */
@@ -24,11 +24,11 @@ public:
 	Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
-		m_cubemapSky = Asset_Cubemap::Create(engine, "sky\\");
-		m_shaderSky = Asset_Shader::Create(engine, "Effects\\Skybox");
-		m_shaderSkyReflect = Asset_Shader::Create(engine, "Effects\\Skybox Reflection");
-		m_shaderConvolute = Asset_Shader::Create(engine, "Effects\\Sky_Convolution");
-		m_shapeQuad = Asset_Primitive::Create(engine, "quad");
+		m_cubemapSky = Shared_Cubemap(engine, "none\\");
+		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
+		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
+		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");
+		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		glCreateFramebuffers(1, &m_cubeFBO);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_cubemapMipped);
@@ -67,11 +67,12 @@ public:
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
 			glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 			glNamedFramebufferDrawBuffer(m_cubeFBO, GL_COLOR_ATTACHMENT0);
-			const GLenum Status = glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER);
-			if (Status != GL_FRAMEBUFFER_COMPLETE && Status != GL_NO_ERROR)
-				m_engine->getMessageManager().error(MessageManager::FBO_INCOMPLETE, "Skybox Framebuffer", std::string(reinterpret_cast<char const *>(glewGetErrorString(Status))));
+
+			// Error Reporting
+			if (glCheckNamedFramebufferStatus(m_cubeFBO, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+				m_engine->getManager_Messages().error("Skybox Framebuffer has encountered an error.");
 			if (!glIsTexture(m_cubemapMipped))
-				m_engine->getMessageManager().error(MessageManager::TEXTURE_INCOMPLETE, "Skybox Texture");
+				m_engine->getManager_Messages().error("Skybox Texture is incomplete.");
 		});
 	}
 
@@ -144,7 +145,7 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-		Asset_Shader::Release();
+		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 
@@ -153,9 +154,9 @@ private:
 	Engine * m_engine = nullptr;
 	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
-	Shared_Asset_Cubemap m_cubemapSky;
-	Shared_Asset_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
-	Shared_Asset_Primitive m_shapeQuad;
+	Shared_Cubemap m_cubemapSky;
+	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
+	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_renderSize = glm::ivec2(1), m_skySize = glm::ivec2(1);

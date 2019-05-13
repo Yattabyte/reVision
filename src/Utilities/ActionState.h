@@ -23,12 +23,14 @@ public:
 	/** Enumeration for indexing into actions. */
 	const enum ACTION_ENUM {
 		FORWARD,
-		BACK,
+		BACKWARD,
 		LEFT,
 		RIGHT,
 		JUMP,
 		CROUCH,
 		RUN,
+		ENTER,
+		PAUSE,
 		LOOK_X,
 		LOOK_Y,
 		ACTION_COUNT
@@ -41,12 +43,14 @@ public:
 	static std::vector<std::string> Action_Strings() {
 		static const std::vector<std::string> actionStrings = {
 			"FORWARD",
-			"BACK",
+			"BACKWARD",
 			"LEFT",
 			"RIGHT",
 			"JUMP",
 			"CROUCH",
 			"RUN",
+			"ENTER",
+			"PAUSE",
 			"LOOK_X",
 			"LOOK_Y"
 		};
