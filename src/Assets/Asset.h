@@ -19,8 +19,7 @@ using AssetFinalizedCallback = std::function<void(void)>;
 
 /** An abstract base-class for assets.
 @brief	Represents some form of data to be loaded from disk, such as shaders, models, levels, and sounds.
-@note		is an abstract class instead of interface to reduce redundant code.
-@usage	Should be created once, and its pointer passed around using shared pointers. */
+@note	is an abstract class instead of interface to reduce redundant code. Should be created once, and its pointer passed around using shared pointers. */
 class Asset
 {
 public:

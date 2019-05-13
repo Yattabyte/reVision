@@ -38,7 +38,7 @@ public:
 	void beginWorkOrder();
 	/** Forwards an asset-is-finalized notification request, which will be activated from the main thread. */
 	void submitNotifyee(const std::pair<std::shared_ptr<bool>, std::function<void()>> & callBack);
-	/* From the main thread, calls all notification calls (for completed asset loading). */
+	/** From the main thread, calls all notification calls (for completed asset loading). */
 	void notifyObservers();
 	/** Returns whether or not this manager is ready to use.
 	@return					true if all work is finished, false otherwise. */
