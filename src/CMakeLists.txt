@@ -7,6 +7,8 @@ foreach(source IN LISTS ROOT)
     source_group("${source_path_msvc}" FILES "${source}")
 endforeach()
 
+configure_file(Engine.h.in Engine.h)
+
 
 ############
 #   EXEC   #

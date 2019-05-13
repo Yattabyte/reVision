@@ -21,9 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "2.9.Z";
-constexpr int DESIRED_OGL_VER_MAJOR = 4;
-constexpr int DESIRED_OGL_VER_MINOR = 5;
+constexpr char ENGINE_VERSION[] = "2.10";
 
 struct GLFWwindow;
 class Engine;
