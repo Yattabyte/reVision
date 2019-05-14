@@ -12,12 +12,12 @@
 class Panel : public UI_Element
 {
 public:
-	~Panel() {
+	inline ~Panel() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Panel(Engine * engine) {
+	inline Panel(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Panel");
 
@@ -37,7 +37,7 @@ public:
 	
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
 
@@ -55,7 +55,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -74,12 +74,12 @@ public:
 	// Public Methods
 	/** Set this panel's color.
 	@param	text	the new color to render with. */
-	void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec3 & color) {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.
 	@return	the color used by this element. */
-	glm::vec3 getColor() const {
+	inline glm::vec3 getColor() const {
 		return m_color;
 	}
 

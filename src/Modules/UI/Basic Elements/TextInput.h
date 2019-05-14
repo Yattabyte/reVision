@@ -6,6 +6,7 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include "GLFW/glfw3.h"
 #include <string>
 
 
@@ -20,12 +21,12 @@ public:
 
 
 	// (de)Constructors
-	~TextInput() {
+	inline ~TextInput() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	TextInput(Engine * engine) {
+	inline TextInput(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
 
@@ -55,11 +56,11 @@ public:
 
 
 	// Interface Implementation
-	virtual void setScale(const glm::vec2 & scale) override {
+	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_label->setScale(scale);
 		UI_Element::setScale(scale);
 	}
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -87,7 +88,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent)) {			
 			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
@@ -109,14 +110,14 @@ public:
 		m_edit = false;
 		return UI_Element::mouseAction(mouseEvent);;
 	}				
-	virtual void keyChar(const unsigned int & character) override {
+	inline virtual void keyChar(const unsigned int & character) override {
 		if (m_edit) {
 			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
 			setCaret(m_caretIndex + 1);
 			enactCallback(on_text_change);
 		}
 	}
-	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
+	inline virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
 		if (m_edit) {
 			if (key == GLFW_KEY_ENTER || key == GLFW_KEY_ESCAPE)
 				m_edit = false;
@@ -141,7 +142,7 @@ public:
 			}
 		}
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		m_blinkTime += deltaTime;
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
@@ -165,31 +166,31 @@ public:
 	// Public Methods
 	/** Set the text to display in this field.
 	@param		string		the new text to display. */
-	void setText(const std::string & text) {
+	inline void setText(const std::string & text) {
 		m_text = text;
 		m_label->setText(text);
 		update();
 	}
 	/** Get the text displayed in this field.
 	@return					the text displayed in this field. */
-	std::string getText() const {
+	inline std::string getText() const {
 		return m_text;
 	}
 	/** Set this field's alignment.
 	@param	text			the alignment (left, center, right). */
-	void setAlignment(const Label::Alignment & alignment) {
+	inline void setAlignment(const Label::Alignment & alignment) {
 		m_label->setAlignment(alignment);
 	}
 	/** Retrieve this field's alignment.
 	@return					the alignment. */
-	Label::Alignment getAlignment() const {
+	inline Label::Alignment getAlignment() const {
 		return m_label->getAlignment();
 	}
 
 
 protected:
 	// Protected Methods
-	void setCaret(const int & index) {
+	inline void setCaret(const int & index) {
 		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
 		update();
 	}

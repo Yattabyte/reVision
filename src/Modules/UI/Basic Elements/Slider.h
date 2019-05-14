@@ -18,12 +18,12 @@ public:
 
 
 	// Public (de)Constructors
-	~Slider() {
+	inline ~Slider() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Slider(Engine * engine) {
+	inline Slider(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Slider");
 
@@ -47,7 +47,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 6 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -79,7 +79,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		m_highlighted = false;
 		m_pressed = false;
 		if (!getVisible() || !getEnabled()) return false;
@@ -94,7 +94,7 @@ public:
 		}
 		return UI_Element::mouseAction(mouseEvent);
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -115,13 +115,13 @@ public:
 	// Public Methods
 	/** Set the percentage for this slider.
 	@param	percentage	the percentage amount to put this slider at. */
-	void setPercentage(const float & linear) {
+	inline void setPercentage(const float & linear) {
 		m_percentage = std::clamp<float>(linear, -1.0f, 1.0f);
 		update();
 	}
 	/** Get the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */
-	float getPercentage() const {
+	inline float getPercentage() const {
 		return m_percentage;
 	}
 

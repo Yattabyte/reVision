@@ -10,14 +10,14 @@ class Layout_Horizontal : public UI_Element
 {
 public:
 	// (de)Constructors
-	~Layout_Horizontal() = default;
-	Layout_Horizontal(Engine * engine) {
+	inline ~Layout_Horizontal() = default;
+	inline Layout_Horizontal(Engine *) {
 		alignChildren();
 	}
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		alignChildren();
 
 		UI_Element::update();
@@ -27,29 +27,29 @@ public:
 	// Public Methods
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
-	void setMargin(const float & margin) {
+	inline void setMargin(const float & margin) {
 		m_margin = margin;
 	}
 	/** Get the margin distance between elements and the edge of this layout.
 	@return the the margin for this layout. */
-	float getMargin() const {
+	inline float getMargin() const {
 		return m_margin;
 	}
 	/** Set the spacing distance between elements in this layout.
 	@param	spacing		the spacing distance between elements. */
-	void setSpacing(const float & spacing) {
+	inline void setSpacing(const float & spacing) {
 		m_spacing = spacing;
 	}
 	/** Get the spacing distance between elements in this layout.
 	@return the spacing distance between elements. */
-	float getSpacing() const {
+	inline float getSpacing() const {
 		return m_spacing;
 	}
 
 
 protected:
 	// Protected Methods
-	void alignChildren() {
+	inline void alignChildren() {
 		const float innerRectSize = m_scale.x;
 
 		// Available space -= margin
@@ -88,7 +88,7 @@ protected:
 
 		// Edge Case: all elements are fixed size, gap may be present
 		// Solution: change spacing to fit all elements within bounds
-		if (left + right < 0.0f && m_children.size() > 1) {
+		if (m_children.size() > 1 && fixedElementCount == m_children.size()) {
 			const float delta = (left - right) / float(m_children.size() + size_t(1));
 
 			for (size_t x = 1; x < m_children.size(); ++x) {

@@ -23,12 +23,12 @@ public:
 
 
 	// (de)Constructors
-	~Label() {
+	inline ~Label() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Label(Engine * engine, const std::string & text = "Label") {
+	inline Label(Engine * engine, const std::string & text = "Label") {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Label");
 		m_textureFont = Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true);
@@ -59,7 +59,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		// Write letters to a buffer
 		const GLuint count = (GLuint)m_text.size();
 		std::vector<int> data(count + 1);
@@ -71,7 +71,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -91,7 +91,7 @@ public:
 		}
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		return false;
 	}
 
@@ -99,45 +99,45 @@ public:
 	// Public Methods
 	/** Set this label element's text. 
 	@param	text	the text to use. */
-	void setText(const std::string & text) {
+	inline void setText(const std::string & text) {
 		m_text = text;
 		update();
 	}
 	/** Retrieve this label's text. 
 	@return	the text this label uses. */
-	std::string getText() const {
+	inline std::string getText() const {
 		return m_text;
 	}
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
-	void setTextScale(const float & textScale) {
+	inline void setTextScale(const float & textScale) {
 		m_textScale = textScale;
 		m_maxScale.y = textScale;
 		update();
 	}
 	/** Retrieve this label's text scaling factor.
 	@return	the text scaling factor. */
-	float getTextScale() const {
+	inline float getTextScale() const {
 		return m_textScale;
 	}
 	/** Set this label's color.
 	@param	text	the new color to render with. */
-	void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec3 & color) {
 		m_color = color;
 	}
 	/** Retrieve this label's color.
 	@return	the color used by this element. */
-	glm::vec3 getColor() const {
+	inline glm::vec3 getColor() const {
 		return m_color;
 	}
 	/** Set this label element's alignment.
 	@param	text	the alignment (left, center, right). */
-	void setAlignment(const Alignment & alignment) {
+	inline void setAlignment(const Alignment & alignment) {
 		m_textAlignment = alignment;
 	}
 	/** Retrieve this label's alignment.
 	@return	the alignment. */
-	Alignment getAlignment() const {
+	inline Alignment getAlignment() const {
 		return m_textAlignment;
 	}
 

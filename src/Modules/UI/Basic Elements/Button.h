@@ -14,12 +14,12 @@ class Button : public UI_Element
 {
 public:
 	// (de)Constructors
-	~Button() {
+	inline ~Button() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Button(Engine * engine, const std::string & text = "Button") {
+	inline Button(Engine * engine, const std::string & text = "Button") {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Button");
 
@@ -51,7 +51,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_tri = (5 * 2) + (4 * 10);
 		constexpr auto num_data = num_tri * 3;
 		std::vector<glm::vec3> m_data(num_data);
@@ -124,7 +124,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -145,27 +145,27 @@ public:
 	// Public Methods
 	/** Set this label element's text.
 	@param	text	the text to use. */
-	void setText(const std::string & text) {
+	inline void setText(const std::string & text) {
 		m_label->setText(text);
 		update();
 	}
 	/** Retrieve this buttons' labels text.
 	@return	the text this label uses. */
-	std::string getText() const {
+	inline std::string getText() const {
 		return m_label->getText();
 	}
 	/** Set the bevel radius for this button.
 	@param radius	the new radius to use. */
-	void setBevelRadius(const float & radius) {
+	inline void setBevelRadius(const float & radius) {
 		m_bevelRadius = radius;
 	}
 	/** Get the bevel radius from this button.
 	@return radius	this buttons' bevel radius. */
-	float getBevelRadius() const {
+	inline float getBevelRadius() const {
 		return m_bevelRadius;
 	}
 	/** Get if this button is pressed. */
-	bool getPressed() const {
+	inline bool getPressed() const {
 		return m_pressed;
 	}
 

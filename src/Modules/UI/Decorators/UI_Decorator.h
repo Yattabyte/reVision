@@ -11,12 +11,12 @@ class UI_Decorator : public UI_Element
 {
 public:
 	// Public (de)Constructors
-	~UI_Decorator() = default;
-	UI_Decorator(const std::shared_ptr<UI_Element> & component) : m_component(component) {}
+	inline ~UI_Decorator() = default;
+	inline UI_Decorator(const std::shared_ptr<UI_Element> & component) : m_component(component) {}
 
 
 	// Public Interface Implementations
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
@@ -41,15 +41,15 @@ public:
 		enactCallback(on_mouse_exit);
 		return false;
 	}
-	virtual void keyChar(const unsigned int & character) override {
+	inline virtual void keyChar(const unsigned int & character) override {
 		UI_Element::keyChar(character);
 		m_component->keyChar(character);
 	}
-	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
+	inline virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
 		UI_Element::keyboardAction(key, scancode, action, mods);
 		m_component->keyboardAction(key, scancode, action, mods);
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);

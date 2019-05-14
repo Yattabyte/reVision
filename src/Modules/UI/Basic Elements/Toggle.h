@@ -21,12 +21,12 @@ public:
 
 
 	// (de)Constructors
-	~Toggle() {
+	inline ~Toggle() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Toggle(Engine * engine, const bool & toggleState = true) : m_toggledOn(toggleState) {
+	inline Toggle(Engine * engine, const bool & toggleState = true) : m_toggledOn(toggleState) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Toggle");
 
@@ -65,7 +65,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		m_label->setText(m_toggledOn ? "ON   " : "   OFF");
 		m_label->setAlignment(m_toggledOn ? Label::align_left : Label::align_right);
 		m_label->setColor(m_toggledOn ? UIColor_Static / 255.0f : glm::vec3(1.0f));
@@ -208,7 +208,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -237,27 +237,27 @@ public:
 	// Public Methods
 	/** Set this label element's text.
 	@param	text	the text to use. */
-	void setText(const std::string & text) {
+	inline void setText(const std::string & text) {
 		m_label->setText(text);
 		update();
 	}
 	/** Retrieve this buttons' labels text.
 	@return	the text this label uses. */
-	std::string getText() const {
+	inline std::string getText() const {
 		return m_label->getText();
 	}
 	/** Set the bevel radius for this toggle button.
 	@param radius	the new radius to use. */
-	void setBevelRadius(const float & radius) {
+	inline void setBevelRadius(const float & radius) {
 		m_bevelRadius = radius;
 	}
 	/** Get the bevel radius from this toggle button.
 	@return radius	this toggle buttons' bevel radius. */
-	float getBevelRadius() const {
+	inline float getBevelRadius() const {
 		return m_bevelRadius;
 	}
 	/** Return the toggle state of this button. */
-	bool getToggled() const {
+	inline bool getToggled() const {
 		return m_toggledOn;
 	}
 

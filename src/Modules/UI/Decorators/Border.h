@@ -11,12 +11,12 @@ class Border : public UI_Decorator
 {
 public:
 	// Public (de)Constructors
-	~Border() {
+	inline ~Border() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Border(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
+	inline Border(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Border");
 
@@ -35,7 +35,7 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 8 * 3;
 		std::vector<glm::vec3> m_data(num_data);
 
@@ -76,7 +76,7 @@ public:
 		UI_Element::update();
 		m_component->setScale(getScale() - m_borderSize);
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -95,13 +95,13 @@ public:
 	// Public Methods
 	/** Set the border size.
 	@param		size		the new border size to use. */
-	void setBorderSize(const float & size) {
+	inline void setBorderSize(const float & size) {
 		m_borderSize = size;
 		update();
 	}
 	/** Set the border color.
 		@param		size		the new border color to use. */
-	void setBorderColor(const glm::vec3 & color) {
+	inline void setBorderColor(const glm::vec3 & color) {
 		m_borderColor = color;
 	}
 	

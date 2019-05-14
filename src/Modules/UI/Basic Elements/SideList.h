@@ -18,12 +18,12 @@ public:
 
 
 	// (de)Constructors
-	~SideList() {
+	inline ~SideList() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	SideList(Engine * engine) {
+	inline SideList(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\SideList");
 
@@ -56,11 +56,11 @@ public:
 
 
 	// Interface Implementation
-	virtual void setScale(const glm::vec2 & scale) {
+	inline virtual void setScale(const glm::vec2 & scale) {
 		UI_Element::setScale(scale);
 		m_label->setScale(scale);
 	}
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -98,7 +98,7 @@ public:
 
 		UI_Element::update();
 	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent)) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x;
@@ -137,7 +137,7 @@ public:
 		}
 		return (UI_Element::mouseAction(mouseEvent));
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
@@ -163,19 +163,19 @@ public:
 	// Public Methods
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
-	void setIndex(const int & index) {
+	inline void setIndex(const int & index) {
 		m_index = index;
 		if (m_index < m_strings.size())
 			m_label->setText(m_strings[m_index]);
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
-	int getIndex() const {
+	inline int getIndex() const {
 		return m_index;
 	}
 	/** Set the strings to display in this list.
 	@param		strings		the new strings to use in this list. */
-	void setStrings(const std::vector<std::string> & strings) {
+	inline void setStrings(const std::vector<std::string> & strings) {
 		m_strings = strings;
 		setIndex(getIndex());
 	}

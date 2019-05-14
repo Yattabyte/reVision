@@ -19,12 +19,12 @@ public:
 
 
 	// Public (de)Constructors
-	~Scrollbar_V() {
+	inline ~Scrollbar_V() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
+	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
 
@@ -57,7 +57,7 @@ public:
 
 
 	// Interface Implementation
-	virtual void update() override {
+	inline virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
 
@@ -78,7 +78,7 @@ public:
 		m_component->setPosition(glm::vec2(-12.5f, 0));
 		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
 		if (!getVisible() || !getEnabled()) return false;
 		if (mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
@@ -105,7 +105,7 @@ public:
 		enactCallback(on_mouse_exit);
 		return false;
 	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
@@ -123,13 +123,13 @@ public:
 	// Public Methods
 	/** Set the linear amount for the location of the scroll bar.
 	@param	linear		the linear amount to put the scroll bar. */
-	void setLinear(const float & linear) {
+	inline void setLinear(const float & linear) {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
 		enactCallback(on_scroll_change);
 	}
 	/** Get the linear value for this scrollbar. 
 	@return				the linear value for this scroll bar. */
-	float getLinear() const {
+	inline float getLinear() const {
 		return m_linear;
 	}
 
@@ -137,7 +137,7 @@ public:
 protected:
 	// Protected Methods
 	/** Update the position of all scrollbar elements. */
-	void updateElements() {
+	inline void updateElements() {
 		if (m_children.size() == 3) {
 			// Buttons
 			m_children[0]->setPosition(glm::vec2(getScale() - 12.5f));
