@@ -31,7 +31,7 @@ public:
 		addElement(panel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<Layout_Vertical>(engine);
+		auto layout = std::make_shared<Layout_Vertical>();
 		layout->setSpacing(1.0f);
 		layout->setMargin(5.0f);
 		m_layout = layout;
@@ -45,7 +45,7 @@ public:
 		m_backPanel->addElement(title);
 
 		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
-			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
+			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
 			horizontalLayout->addElement(element);
 			layout->addElement(horizontalLayout);
@@ -76,7 +76,7 @@ public:
 		});
 		addLabledSetting(element_res, "Resolution:");
 
-		auto gamma_layout = std::make_shared<Layout_Horizontal>(engine);
+		auto gamma_layout = std::make_shared<Layout_Horizontal>();
 		auto gamma_slider = std::make_shared<Slider>(engine);
 		auto gamma_tinput = std::make_shared<TextInput>(engine);
 		float gamma = 1.0f;
@@ -110,7 +110,7 @@ public:
 		gamma_layout->addElement(gamma_tinput);
 		addLabledSetting(gamma_layout, "Gamma:");
 
-		auto ddistance_layout = std::make_shared<Layout_Horizontal>(engine);
+		auto ddistance_layout = std::make_shared<Layout_Horizontal>();
 		auto ddistance_slider = std::make_shared<Slider>(engine);
 		auto ddistance_tinput = std::make_shared<TextInput>(engine);
 		float ddistance = 1000.0f;
@@ -144,7 +144,7 @@ public:
 		ddistance_layout->addElement(ddistance_tinput);
 		addLabledSetting(ddistance_layout, "Draw Distance:");
 
-		auto fov_layout = std::make_shared<Layout_Horizontal>(engine);
+		auto fov_layout = std::make_shared<Layout_Horizontal>();
 		auto fov_slider = std::make_shared<Slider>(engine);
 		auto fov_tinput = std::make_shared<TextInput>(engine);
 		float fov = 90.0f;

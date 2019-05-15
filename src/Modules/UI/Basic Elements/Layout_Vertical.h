@@ -11,9 +11,7 @@ class Layout_Vertical : public UI_Element
 public:
 	// (de)Constructors
 	inline ~Layout_Vertical() = default;
-	inline Layout_Vertical(Engine * engine) {
-		alignChildren();
-	}
+	inline Layout_Vertical() = default;
 
 
 	// Interface Implementation

@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/Layout_Vertical.h"
+#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
 #include "Engine.h"
@@ -31,7 +31,7 @@ public:
 		addElement(panel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<Layout_Vertical>(engine);
+		auto layout = std::make_shared<List>();
 		layout->setSpacing(10.0f);
 		m_layout = layout;
 		m_backPanel->addElement(layout);
@@ -45,6 +45,7 @@ public:
 
 		// Add 'Start' button
 		auto startButton = std::make_shared<Button>(engine, "Start");
+		startButton->setScale({ 125, 20 });
 		startButton->addCallback(UI_Element::on_mouse_release, [&, engine]() { 
 			setVisible(false);
 			engine->getModule_Game().startGame(); 
@@ -54,6 +55,7 @@ public:
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "       Options      >");
+		optionsButton->setScale({ 125, 20 });
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		m_optionsMenu->setVisible(false);
 		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -70,6 +72,7 @@ public:
 		
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "Quit");
+		quitButton->setScale({ 125, 20 });
 		quitButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			engine->shutDown();

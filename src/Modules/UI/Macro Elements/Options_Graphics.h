@@ -31,7 +31,7 @@ public:
 		addElement(panel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<Layout_Vertical>(engine);
+		auto layout = std::make_shared<Layout_Vertical>();
 		layout->setSpacing(1.0f);
 		layout->setMargin(5.0f);
 		m_layout = layout;
@@ -45,7 +45,7 @@ public:
 		m_backPanel->addElement(title);
 
 		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
-			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
+			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));
 			horizontalLayout->addElement(element);
 			layout->addElement(horizontalLayout);

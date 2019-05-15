@@ -11,9 +11,7 @@ class Layout_Horizontal : public UI_Element
 public:
 	// (de)Constructors
 	inline ~Layout_Horizontal() = default;
-	inline Layout_Horizontal(Engine *) {
-		alignChildren();
-	}
+	inline Layout_Horizontal() = default;
 
 
 	// Interface Implementation

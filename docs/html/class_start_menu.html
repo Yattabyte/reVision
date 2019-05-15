@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">3.1.1</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -79,7 +79,6 @@ Inheritance diagram for StartMenu:</div>
  <div class="center">
   <img src="class_start_menu.png" usemap="#StartMenu_map" alt=""/>
   <map id="StartMenu_map" name="StartMenu_map">
-<area href="class_panel.html" alt="Panel" shape="rect" coords="0,56,74,80"/>
 <area href="class_u_i___element.html" alt="UI_Element" shape="rect" coords="0,0,74,24"/>
   </map>
 </div></div>
@@ -88,7 +87,6 @@ Inheritance diagram for StartMenu:</div>
 Public Types</h2></td></tr>
 <tr class="memitem:a59a55f11ddfea94ae7d526ffba25f0b1"><td class="memItemLeft" align="right" valign="top"><a id="a59a55f11ddfea94ae7d526ffba25f0b1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>interact</b> { <b>on_start</b> = last_interact_index, 
 <b>on_options</b>, 
-<b>on_controls</b>, 
 <b>on_quit</b>
  }</td></tr>
 <tr class="separator:a59a55f11ddfea94ae7d526ffba25f0b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -110,23 +108,15 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a87fee3dae24b0b9894d950dbe980a437"><td class="memItemLeft" align="right" valign="top"><a id="a87fee3dae24b0b9894d950dbe980a437"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>StartMenu</b> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
 <tr class="separator:a87fee3dae24b0b9894d950dbe980a437"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_class_panel"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_panel')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_panel.html">Panel</a></td></tr>
-<tr class="memitem:abd1ae99135e0d0f04379f2aade7af8e6 inherit pub_methods_class_panel"><td class="memItemLeft" align="right" valign="top"><a id="abd1ae99135e0d0f04379f2aade7af8e6"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Panel</b> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
-<tr class="separator:abd1ae99135e0d0f04379f2aade7af8e6 inherit pub_methods_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad5316a10a2233029a2365241cdc6423 inherit pub_methods_class_panel"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_panel.html#aad5316a10a2233029a2365241cdc6423">update</a> () override</td></tr>
-<tr class="separator:aad5316a10a2233029a2365241cdc6423 inherit pub_methods_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a36e160ba23f9a3c3db428792d9184f80 inherit pub_methods_class_panel"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_panel.html#a36e160ba23f9a3c3db428792d9184f80">renderElement</a> (const float &amp;deltaTime, const glm::vec2 &amp;position, const glm::vec2 &amp;scale) override</td></tr>
-<tr class="separator:a36e160ba23f9a3c3db428792d9184f80 inherit pub_methods_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a236888068ff407dcf5b2b39a2bf1b84c inherit pub_methods_class_panel"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_panel.html#a236888068ff407dcf5b2b39a2bf1b84c">setColor</a> (const glm::vec3 &amp;color)</td></tr>
-<tr class="separator:a236888068ff407dcf5b2b39a2bf1b84c inherit pub_methods_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af23cfdf95a0b842b72af65c1597aa296 inherit pub_methods_class_panel"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_panel.html#af23cfdf95a0b842b72af65c1597aa296">getColor</a> () const</td></tr>
-<tr class="separator:af23cfdf95a0b842b72af65c1597aa296 inherit pub_methods_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a80b93f5dde9d98e8d73c57a04194832f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_start_menu.html#a80b93f5dde9d98e8d73c57a04194832f">setScale</a> (const glm::vec2 &amp;scale) override</td></tr>
+<tr class="separator:a80b93f5dde9d98e8d73c57a04194832f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
-<tr class="memitem:aedfc0e3695736e0a8379a65c0ba5908b inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aedfc0e3695736e0a8379a65c0ba5908b">setScale</a> (const glm::vec2 &amp;scale)</td></tr>
-<tr class="separator:aedfc0e3695736e0a8379a65c0ba5908b inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05a029c7e81074769f3f932b55afac5d inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a05a029c7e81074769f3f932b55afac5d">setPosition</a> (const glm::vec2 &amp;position)</td></tr>
 <tr class="separator:a05a029c7e81074769f3f932b55afac5d inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab2d60b1d642e748a0c35ca4b69bd502 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aab2d60b1d642e748a0c35ca4b69bd502">update</a> ()</td></tr>
+<tr class="separator:aab2d60b1d642e748a0c35ca4b69bd502 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a350825c9df931245e6f07fd1de0d1c31 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a350825c9df931245e6f07fd1de0d1c31">renderElement</a> (const float &amp;deltaTime, const glm::vec2 &amp;position=glm::vec2(0.0f), const glm::vec2 &amp;scale=glm::vec2(1.0f))</td></tr>
+<tr class="separator:a350825c9df931245e6f07fd1de0d1c31 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac25296513ad9478ba6cb59c394a93cbc inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ac25296513ad9478ba6cb59c394a93cbc">mouseAction</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent)</td></tr>
 <tr class="separator:ac25296513ad9478ba6cb59c394a93cbc inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe1657bf07fd95667d097258865f40a4 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#abe1657bf07fd95667d097258865f40a4">keyChar</a> (const unsigned int &amp;character)</td></tr>
@@ -170,10 +160,6 @@ Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
 <tr class="memitem:adb13a2705ff187a09d78fc83608c671f inherit pro_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#adb13a2705ff187a09d78fc83608c671f">enactCallback</a> (const int &amp;interactionEventID)</td></tr>
 <tr class="separator:adb13a2705ff187a09d78fc83608c671f inherit pro_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pro_attribs_class_panel"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_panel')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_panel.html">Panel</a></td></tr>
-<tr class="memitem:af25978d7ff0233b0b129ebe827b1e4d9 inherit pro_attribs_class_panel"><td class="memItemLeft" align="right" valign="top"><a id="af25978d7ff0233b0b129ebe827b1e4d9"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_color</b> = glm::vec3(0.2f)</td></tr>
-<tr class="separator:af25978d7ff0233b0b129ebe827b1e4d9 inherit pro_attribs_class_panel"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
 <tr class="memitem:a425ae0dda5b5d1e8710c4d5be2afbb11 inherit pro_attribs_class_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a425ae0dda5b5d1e8710c4d5be2afbb11"></a>
 glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec2(0.0f)</td></tr>
@@ -208,7 +194,42 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A UI element serving as a start menu. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a80b93f5dde9d98e8d73c57a04194832f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a80b93f5dde9d98e8d73c57a04194832f">&#9670;&nbsp;</a></span>setScale()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void StartMenu::setScale </td>
+          <td>(</td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>scale</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Sets this elements' scale. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">scale</td><td>the new scale to use. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_u_i___element.html#aedfc0e3695736e0a8379a65c0ba5908b">UI_Element</a>.</p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/UI/Macro Elements/<a class="el" href="_start_menu_8h_source.html">StartMenu.h</a></li>
 </ul>
 </div><!-- contents -->

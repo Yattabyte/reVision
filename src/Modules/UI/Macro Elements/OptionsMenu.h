@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/Layout_Vertical.h"
+#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Macro Elements/Options_Video.h"
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
@@ -33,7 +33,7 @@ public:
 		addElement(panel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<Layout_Vertical>(engine);
+		auto layout = std::make_shared<List>();
 		layout->setSpacing(10.0f);
 		m_layout = layout;
 		m_backPanel->addElement(layout);
@@ -47,6 +47,7 @@ public:
 
 		// Add 'Video' button
 		auto videoButton = std::make_shared<Button>(engine, "Video");
+		videoButton->setScale({ 125, 20 });
 		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(true);
 		videoButton->addCallback(UI_Element::on_mouse_release, [&]() { 
@@ -59,6 +60,7 @@ public:
 
 		// Add 'Graphics' button
 		auto graphicsButton = std::make_shared<Button>(engine, "Graphics");
+		graphicsButton->setScale({ 125, 20 });
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
 		graphicsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -71,6 +73,7 @@ public:
 
 		// Add 'Controls' button
 		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
+		controlsButton->setScale({ 125, 20 });
 		controlsButton->setEnabled(false);
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			enactCallback(on_controls); 
@@ -79,6 +82,7 @@ public:
 
 		// Add 'Back' button
 		auto backButton = std::make_shared<Button>(engine, "<       Back        ");
+		backButton->setScale({ 125, 20 });
 		backButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			m_videoMenu->setVisible(false);
