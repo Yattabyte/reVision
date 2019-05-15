@@ -21,6 +21,7 @@ public:
 		on_quit,
 	};
 
+
 	// (de)Constructors
 	inline ~StartMenu() = default;
 	inline StartMenu(Engine * engine) : UI_Element() {

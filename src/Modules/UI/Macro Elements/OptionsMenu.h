@@ -23,6 +23,7 @@ public:
 		on_back,
 	};
 
+
 	// (de)Constructors
 	inline ~OptionsMenu() = default;
 	inline OptionsMenu(Engine * engine) : UI_Element() {

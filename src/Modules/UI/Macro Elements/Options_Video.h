@@ -6,7 +6,7 @@
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
-#include "Modules/UI/Basic Elements/Layout_Vertical.h"
+#include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
@@ -31,7 +31,7 @@ public:
 		addElement(panel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<Layout_Vertical>();
+		auto layout = std::make_shared<List>();
 		layout->setSpacing(1.0f);
 		layout->setMargin(5.0f);
 		m_layout = layout;
@@ -48,6 +48,7 @@ public:
 			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
 			horizontalLayout->addElement(element);
+			horizontalLayout->setScale({ 125, 30 });
 			layout->addElement(horizontalLayout);
 		};
 
