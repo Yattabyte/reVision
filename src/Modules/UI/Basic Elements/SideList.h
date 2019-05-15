@@ -103,29 +103,27 @@ public:
 		if (mouseWithin(mouseEvent)) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x;
 			// Left button
-			if (mx >= -m_scale.x && mx <= (-m_scale.x + (m_scale.y * 2.0f))) {
+			if (mx >= -m_scale.x && mx <= (-m_scale.x + (m_scale.y * 2.0f)) && m_lEnabled) {
 				m_lhighlighted = true;
 				if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS) 
 					m_lpressed = true;				
 				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
 					m_lpressed = false;
-					int index = getIndex() - 1;
-					if (index < 0)
-						index = int(m_strings.size()) - 1;
+					const int index = std::max<int>(getIndex() - 1, 0);
+
 					setIndex(index);
 					enactCallback(on_index_changed);
 				}
 			}
 			// Right button
-			if (mx >= (m_scale.x - (m_scale.y * 2.0f)) && mx <= m_scale.x) {
+			if (mx >= (m_scale.x - (m_scale.y * 2.0f)) && mx <= m_scale.x && m_rEnabled) {
 				m_rhighlighted = true;
 				if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
 					m_rpressed = true;
 				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
 					m_rpressed = false;
-					int index = getIndex() + 1;
-					if (index >= m_strings.size())
-						index = 0;
+					const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
+
 					setIndex(index);
 					enactCallback(on_index_changed);
 				}
@@ -146,10 +144,12 @@ public:
 			m_shader->bind();
 			m_shader->setUniform(0, newPosition);
 			m_shader->setUniform(1, m_enabled);
-			m_shader->setUniform(2, m_lhighlighted);
-			m_shader->setUniform(3, m_rhighlighted);
-			m_shader->setUniform(4, m_lpressed);
-			m_shader->setUniform(5, m_rpressed);
+			m_shader->setUniform(2, m_lEnabled);
+			m_shader->setUniform(3, m_rEnabled);
+			m_shader->setUniform(4, m_lhighlighted);
+			m_shader->setUniform(5, m_rhighlighted);
+			m_shader->setUniform(6, m_lpressed);
+			m_shader->setUniform(7, m_rpressed);
 			glBindVertexArray(m_vaoID);
 			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -167,6 +167,9 @@ public:
 		m_index = index;
 		if (m_index < m_strings.size())
 			m_label->setText(m_strings[m_index]);
+
+		m_lEnabled = (index > 0);
+		m_rEnabled = (index < m_strings.size() - 1);
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
@@ -187,6 +190,8 @@ protected:
 	std::vector<std::string> m_strings;
 	int m_index = 0;
 	bool
+		m_lEnabled = true,
+		m_rEnabled = true,
 		m_lhighlighted = false,
 		m_rhighlighted = false,
 		m_lpressed = false,

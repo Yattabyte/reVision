@@ -8,6 +8,7 @@
 #include "Modules/UI/Basic Elements/Layout_Horizontal.h"
 #include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Basic Elements/Separator.h"
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
 #include "Modules/UI/Basic Elements/TextInput.h"
@@ -44,6 +45,11 @@ public:
 		m_title = title;
 		m_backPanel->addElement(title);
 
+		// Top Separator
+		m_separatorTop = std::make_shared<Separator>(engine);
+		m_backPanel->addElement(m_separatorTop);
+
+		// All Other Settings
 		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
 			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
@@ -194,6 +200,10 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 		});
 		addLabledSetting(element_fs, "Full-screen:");
+
+		// Bottom Separator
+		m_separatorBot = std::make_shared<Separator>(engine);
+		m_backPanel->addElement(m_separatorBot);
 	}
 
 
@@ -201,9 +211,12 @@ public:
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
 		m_backPanel->setScale(scale);
-		m_layout->setScale(scale - glm::vec2(50));
-		m_layout->setPosition({ 0, -50 });
+		m_layout->setScale(scale - glm::vec2(50, 100));
 		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
+		m_separatorTop->setScale(scale);
+		m_separatorTop->setPosition({ 0, scale.y - 100 });
+		m_separatorBot->setScale(scale);
+		m_separatorBot->setPosition({ 0, -scale.y + 100 });
 		enactCallback(on_resize);
 	}
 
@@ -211,7 +224,7 @@ public:
 private:
 	// Private Attributes
 	std::vector<glm::ivec3> m_resolutions;
-	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout;
+	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_separatorTop, m_separatorBot;
 };
 
 #endif // OPTIONS_VIDEO_H

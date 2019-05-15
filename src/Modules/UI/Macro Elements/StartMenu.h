@@ -46,7 +46,7 @@ public:
 
 		// Add 'Start' button
 		auto startButton = std::make_shared<Button>(engine, "Start");
-		startButton->setScale({ 125, 20 });
+		startButton->setScale({ 128, 20 });
 		startButton->addCallback(UI_Element::on_mouse_release, [&, engine]() { 
 			setVisible(false);
 			engine->getModule_Game().startGame(); 
@@ -56,7 +56,7 @@ public:
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "       Options      >");
-		optionsButton->setScale({ 125, 20 });
+		optionsButton->setScale({ 128, 20 });
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		m_optionsMenu->setVisible(false);
 		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -73,7 +73,7 @@ public:
 		
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "Quit");
-		quitButton->setScale({ 125, 20 });
+		quitButton->setScale({ 128, 20 });
 		quitButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			engine->shutDown();
@@ -86,11 +86,11 @@ public:
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
-		m_backPanel->setScale({ 125, scale.y });
-		m_backPanel->setPosition(glm::vec2(250, scale.y));
-		m_layout->setScale({ 125, 100 });
-		m_layout->setPosition(glm::vec2(0, -400));
-		m_title->setPosition({ 0, -200 });
+		m_backPanel->setScale({ 128, scale.y });
+		m_backPanel->setPosition(glm::vec2(256, scale.y));
+		m_layout->setScale({ 128, 128 });
+		m_layout->setPosition(glm::vec2(0, -425));
+		m_title->setPosition({ 0, -50 });
 		m_optionsMenu->setScale(scale);
 		enactCallback(on_resize);
 	}

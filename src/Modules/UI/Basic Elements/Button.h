@@ -114,7 +114,7 @@ public:
 			}
 			cIndices[a] = c;
 		}
-		for (int cIndex = 0, cpx = 0, dx = 30; dx < num_data; cpx++, dx += 3) {
+		for (int cpx = 0, dx = 30; dx < num_data; cpx++, dx += 3) {
 			const auto center = centers[cIndices[cpx]];
 			m_data[dx] = center;
 			m_data[dx + 1] = circlePoints[(cpx + 0) % 40] + center;

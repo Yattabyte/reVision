@@ -48,7 +48,7 @@ public:
 
 		// Add 'Video' button
 		auto videoButton = std::make_shared<Button>(engine, "Video");
-		videoButton->setScale({ 125, 20 });
+		videoButton->setScale({ 128, 20 });
 		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(true);
 		videoButton->addCallback(UI_Element::on_mouse_release, [&]() { 
@@ -61,7 +61,7 @@ public:
 
 		// Add 'Graphics' button
 		auto graphicsButton = std::make_shared<Button>(engine, "Graphics");
-		graphicsButton->setScale({ 125, 20 });
+		graphicsButton->setScale({ 128, 20 });
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
 		graphicsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -74,7 +74,7 @@ public:
 
 		// Add 'Controls' button
 		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
-		controlsButton->setScale({ 125, 20 });
+		controlsButton->setScale({ 128, 20 });
 		controlsButton->setEnabled(false);
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			enactCallback(on_controls); 
@@ -83,7 +83,7 @@ public:
 
 		// Add 'Back' button
 		auto backButton = std::make_shared<Button>(engine, "<       Back        ");
-		backButton->setScale({ 125, 20 });
+		backButton->setScale({ 128, 20 });
 		backButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			m_videoMenu->setVisible(false);
@@ -98,15 +98,15 @@ public:
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
-		m_backPanel->setScale({ 125, scale.y });
-		m_backPanel->setPosition(glm::vec2(250, scale.y));
-		m_layout->setScale({ 125, 125 });
+		m_backPanel->setScale({ 128, scale.y });
+		m_backPanel->setPosition(glm::vec2(256, scale.y));
+		m_layout->setScale({ 128, 128 });
 		m_layout->setPosition(glm::vec2(0, -425));
-		m_title->setPosition({ 0, -200 });
-		m_videoMenu->setScale({ (scale.x / 2.0f) - 250.0f, scale.y / 2.0f});
-		m_gfxMenu->setScale({ (scale.x / 2.0f) - 250.0f, scale.y / 2.0f});
-		m_videoMenu->setPosition({ (scale.x / 2.0f) + 250.0f, scale.y / 2.0f });
-		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 250.0f, scale.y / 2.0f });
+		m_title->setPosition({ 0, -50 });
+		m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f});
+		m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f});
+		m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
+		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
 		enactCallback(on_resize);
 	}
 
