@@ -18,28 +18,39 @@
 
 
 /** A UI element serving as a graphics options menu. */
-class Options_Graphics : public Layout_Vertical
+class Options_Graphics : public UI_Element
 {
 public:
 	// (de)Constructors
 	inline ~Options_Graphics() = default;
-	inline Options_Graphics(Engine * engine) : Layout_Vertical(engine) {
-		setScale(glm::vec2(300, 400));
-		setMargin(5.0f);
-		setSpacing(1.0f);
+	inline Options_Graphics(Engine * engine) : UI_Element() {
+		// Make a background panel for cosemetic purposes
+		auto panel = std::make_shared<Panel>(engine);
+		panel->setColor({ 0.1, 0.1, 0.1 });
+		m_backPanel = panel;
+		addElement(panel);
+
+		// Make a vertical layout to house list items
+		auto layout = std::make_shared<Layout_Vertical>(engine);
+		layout->setSpacing(1.0f);
+		layout->setMargin(5.0f);
+		m_layout = layout;
+		m_backPanel->addElement(layout);
 
 		// Title
-		auto title = std::make_shared<Label>(engine, "Graphics");
-		addElement(title);
+		auto title = std::make_shared<Label>(engine, "Graphics Options");
 		title->setTextScale(20.0f);
+		title->setAlignment(Label::align_left);
+		m_title = title;
+		m_backPanel->addElement(title);
 
 		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
 			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));
 			horizontalLayout->addElement(element);
-			addElement(horizontalLayout);
+			layout->addElement(horizontalLayout);
 		};
-		
+
 		float materialSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
 		auto element_material_list = std::make_shared<SideList>(engine);
@@ -159,9 +170,21 @@ public:
 	}
 
 
+	// Public Interface Implementations
+	inline virtual void setScale(const glm::vec2 & scale) override {
+		UI_Element::setScale(scale);
+		m_backPanel->setScale(scale);
+		m_layout->setScale(scale - glm::vec2(50));
+		m_layout->setPosition({ 0, -50 });
+		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
+		enactCallback(on_resize);
+	}
+
+
 private:
 	// Private Attributes
 	std::vector<glm::ivec3> m_resolutions;
+	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout;
 };
 
 #endif // OPTIONS_GRAPICS_H

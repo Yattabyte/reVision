@@ -26,23 +26,29 @@ public:
 	// (de)Constructors
 	inline ~OptionsMenu() = default;
 	inline OptionsMenu(Engine * engine) : UI_Element() {
+		// Make a background panel for cosemetic purposes
+		auto panel = std::make_shared<Panel>(engine);
+		panel->setColor({ 0.1, 0.1, 0.1 });
+		m_backPanel = panel;
+		addElement(panel);
+
 		// Make a vertical layout to house list items
 		auto layout = std::make_shared<Layout_Vertical>(engine);
 		layout->setSpacing(10.0f);
 		m_layout = layout;
-		addElement(m_layout);
+		m_backPanel->addElement(layout);
 		
 		// Title
 		auto title = std::make_shared<Label>(engine, "Options Menu");
 		title->setTextScale(20.0f);
 		title->setAlignment(Label::align_center);
 		m_title = title;
-		addElement(title);
+		m_backPanel->addElement(title);
 
 		// Add 'Video' button
 		auto videoButton = std::make_shared<Button>(engine, "Video");
 		m_videoMenu = std::make_shared<Options_Video>(engine);
-		m_videoMenu->setVisible(false);
+		m_videoMenu->setVisible(true);
 		videoButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			m_videoMenu->setVisible(true);
 			m_gfxMenu->setVisible(false);
@@ -87,20 +93,22 @@ public:
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(scale);
+		m_backPanel->setScale({ 125, scale.y });
+		m_backPanel->setPosition(glm::vec2(250, scale.y));
 		m_layout->setScale({ 125, 125 });
-		m_layout->setPosition(glm::vec2(250, scale.y - 400));
-		m_title->setPosition({ 250, scale.y - 100 });
-		m_videoMenu->setScale({ (scale.x / 2.0f) - 275.0f, (scale.y / 2.0f) - 50.0f });
-		m_gfxMenu->setScale({ (scale.x / 2.0f) - 275.0f, (scale.y / 2.0f) - 50.0f });
-		m_videoMenu->setPosition({ (scale.x / 2.0f) + 225.0f, scale.y / 2.0f });
-		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 225.0f, scale.y / 2.0f });
+		m_layout->setPosition(glm::vec2(0, -425));
+		m_title->setPosition({ 0, -200 });
+		m_videoMenu->setScale({ (scale.x / 2.0f) - 250.0f, scale.y / 2.0f});
+		m_gfxMenu->setScale({ (scale.x / 2.0f) - 250.0f, scale.y / 2.0f});
+		m_videoMenu->setPosition({ (scale.x / 2.0f) + 250.0f, scale.y / 2.0f });
+		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 250.0f, scale.y / 2.0f });
 		enactCallback(on_resize);
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<UI_Element> m_layout, m_title, m_videoMenu, m_gfxMenu;
+	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_videoMenu, m_gfxMenu;
 };
 
 #endif // OPTIONSMENU_H

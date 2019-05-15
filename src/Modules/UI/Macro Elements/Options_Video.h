@@ -18,36 +18,38 @@
 
 
 /** A UI element serving as a video options menu. */
-class Options_Video : public Layout_Vertical
+class Options_Video : public UI_Element
 {
 public:
-	// UI interaction enums
-	enum interact {
-		on_back = last_interact_index
-	};
-
-
 	// (de)Constructors
 	inline ~Options_Video() = default;
-	inline Options_Video(Engine * engine) : Layout_Vertical(engine) {
-		setScale(glm::vec2(300, 400));
+	inline Options_Video(Engine * engine) : UI_Element() {
+		// Make a background panel for cosemetic purposes
+		auto panel = std::make_shared<Panel>(engine);
+		panel->setColor({ 0.1, 0.1, 0.1 });
+		m_backPanel = panel;
+		addElement(panel);
+
+		// Make a vertical layout to house list items
+		auto layout = std::make_shared<Layout_Vertical>(engine);
+		layout->setSpacing(1.0f);
+		layout->setMargin(5.0f);
+		m_layout = layout;
+		m_backPanel->addElement(layout);
 
 		// Title
-		auto title = std::make_shared<Label>(engine, "Video");
-		addElement(title);
+		auto title = std::make_shared<Label>(engine, "Video Options");
 		title->setTextScale(20.0f);
+		title->setAlignment(Label::align_left);
+		m_title = title;
+		m_backPanel->addElement(title);
 
-		const auto addLabledSetting = [&, engine](auto & layout, auto & element, const std::string & text) {
+		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
 			auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
 			horizontalLayout->addElement(element);
-			addElement(horizontalLayout);
+			layout->addElement(horizontalLayout);
 		};
-
-		// Video Options
-		auto windowLayout = std::make_shared<Layout_Vertical>(engine);
-		windowLayout->setMargin(5.0f);
-		windowLayout->setSpacing(1.0f);
 
 		auto element_res = std::make_shared<SideList>(engine);
 		element_res->setMaxScale(glm::vec2(element_res->getMaxScale().x, 12.5f));
@@ -72,7 +74,7 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
 		});
-		addLabledSetting(windowLayout, element_res, "Resolution:");
+		addLabledSetting(element_res, "Resolution:");
 
 		auto gamma_layout = std::make_shared<Layout_Horizontal>(engine);
 		auto gamma_slider = std::make_shared<Slider>(engine);
@@ -106,7 +108,7 @@ public:
 		});
 		gamma_layout->addElement(gamma_slider);
 		gamma_layout->addElement(gamma_tinput);
-		addLabledSetting(windowLayout, gamma_layout, "Gamma:");
+		addLabledSetting(gamma_layout, "Gamma:");
 
 		auto ddistance_layout = std::make_shared<Layout_Horizontal>(engine);
 		auto ddistance_slider = std::make_shared<Slider>(engine);
@@ -140,7 +142,7 @@ public:
 		});
 		ddistance_layout->addElement(ddistance_slider);
 		ddistance_layout->addElement(ddistance_tinput);
-		addLabledSetting(windowLayout, ddistance_layout, "Draw Distance:");
+		addLabledSetting(ddistance_layout, "Draw Distance:");
 
 		auto fov_layout = std::make_shared<Layout_Horizontal>(engine);
 		auto fov_slider = std::make_shared<Slider>(engine);
@@ -174,7 +176,7 @@ public:
 		});
 		fov_layout->addElement(fov_slider);
 		fov_layout->addElement(fov_tinput);
-		addLabledSetting(windowLayout, fov_layout, "Field of view:");
+		addLabledSetting(fov_layout, "Field of view:");
 
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
@@ -182,7 +184,7 @@ public:
 		element_sync->addCallback(Toggle::on_toggle, [&, element_sync, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(windowLayout, element_sync, "VSync:");
+		addLabledSetting(element_sync, "VSync:");
 
 		bool element_fs_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
@@ -190,13 +192,25 @@ public:
 		element_fs->addCallback(Toggle::on_toggle, [&, element_fs, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(windowLayout, element_fs, "Full-screen:");
+		addLabledSetting(element_fs, "Full-screen:");
+	}
+
+
+	// Public Interface Implementations
+	inline virtual void setScale(const glm::vec2 & scale) override {
+		UI_Element::setScale(scale);
+		m_backPanel->setScale(scale);
+		m_layout->setScale(scale - glm::vec2(50));
+		m_layout->setPosition({ 0, -50 });
+		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
+		enactCallback(on_resize);
 	}
 
 
 private:
 	// Private Attributes
 	std::vector<glm::ivec3> m_resolutions;
+	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout;
 };
 
 #endif // OPTIONS_VIDEO_H
