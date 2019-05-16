@@ -2,16 +2,13 @@
 #ifndef STARTMENU_H
 #define STARTMENU_H
 
-#include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/List.h"
-#include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
 #include "Engine.h"
 
 
 /** A UI element serving as a start menu. */
-class StartMenu : public UI_Element
+class StartMenu : public Menu
 {
 public:
 	// UI interaction enums
@@ -24,38 +21,22 @@ public:
 
 	// (de)Constructors
 	inline ~StartMenu() = default;
-	inline StartMenu(Engine * engine) : UI_Element() {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor({ 0.1, 0.1, 0.1 });
-		m_backPanel = panel;
-		addElement(panel);
-
-		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>();
-		layout->setSpacing(10.0f);
-		m_layout = layout;
-		m_backPanel->addElement(layout);
-
+	inline StartMenu(Engine * engine) : Menu(engine) {
 		// Title
-		auto title = std::make_shared<Label>(engine, "Main Menu");
-		title->setTextScale(20.0f);
-		title->setAlignment(Label::align_center);
-		m_title = title;
-		m_backPanel->addElement(title);
+		m_title->setText("MAIN MENU");
 
 		// Add 'Start' button
-		auto startButton = std::make_shared<Button>(engine, "Start");
+		auto startButton = std::make_shared<Button>(engine, "START");
 		startButton->setScale({ 128, 20 });
 		startButton->addCallback(UI_Element::on_mouse_release, [&, engine]() { 
 			setVisible(false);
 			engine->getModule_Game().startGame(); 
 			enactCallback(on_start); 
 		});
-		layout->addElement(startButton);
+		m_layout->addElement(startButton);
 			
 		// Add 'Options' button
-		auto optionsButton = std::make_shared<Button>(engine, "       Options      >");
+		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		optionsButton->setScale({ 128, 20 });
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		m_optionsMenu->setVisible(false);
@@ -68,37 +49,31 @@ public:
 			m_backPanel->setVisible(true);
 			m_optionsMenu->setVisible(false);
 		});
-		layout->addElement(optionsButton);
+		m_layout->addElement(optionsButton);
 		addElement(m_optionsMenu);
 		
 		// Add 'Quit' button
-		auto quitButton = std::make_shared<Button>(engine, "Quit");
+		auto quitButton = std::make_shared<Button>(engine, "QUIT");
 		quitButton->setScale({ 128, 20 });
 		quitButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			engine->shutDown();
 			enactCallback(on_quit);
 		});
-		layout->addElement(quitButton);
+		m_layout->addElement(quitButton);
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(scale);
-		m_backPanel->setScale({ 128, scale.y });
-		m_backPanel->setPosition(glm::vec2(256, scale.y));
-		m_layout->setScale({ 128, 128 });
-		m_layout->setPosition(glm::vec2(0, -425));
-		m_title->setPosition({ 0, -50 });
 		m_optionsMenu->setScale(scale);
-		enactCallback(on_resize);
+		Menu::setScale(scale);
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_optionsMenu;
+	std::shared_ptr<UI_Element> m_optionsMenu;
 };
 
 #endif // STARTMENU_H

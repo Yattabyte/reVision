@@ -2,62 +2,26 @@
 #ifndef OPTIONS_GRAPICS_H
 #define OPTIONS_GRAPICS_H
 
-#include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Macro Elements/Options_Pane.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/Label.h"
-#include "Modules/UI/Basic Elements/Layout_Horizontal.h"
-#include "Modules/UI/Basic Elements/List.h"
-#include "Modules/UI/Basic Elements/Panel.h"
-#include "Modules/UI/Basic Elements/Separator.h"
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
 #include "Modules/UI/Basic Elements/TextInput.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
-#include "Modules/UI/Decorators/Border.h"
-#include "Modules/UI/Decorators/Scrollbar_V.h"
 #include "Engine.h"
 
 
 /** A UI element serving as a graphics options menu. */
-class Options_Graphics : public UI_Element
+class Options_Graphics : public Options_Pane
 {
 public:
 	// (de)Constructors
 	inline ~Options_Graphics() = default;
-	inline Options_Graphics(Engine * engine) : UI_Element() {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor({ 0.1, 0.1, 0.1 });
-		m_backPanel = panel;
-		addElement(panel);
-
-		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>();
-		layout->setSpacing(1.0f);
-		layout->setMargin(5.0f);
-		m_layout = layout;
-		m_backPanel->addElement(layout);
-
+	inline Options_Graphics(Engine * engine) : Options_Pane(engine) {
 		// Title
-		auto title = std::make_shared<Label>(engine, "Graphics Options");
-		title->setTextScale(20.0f);
-		title->setAlignment(Label::align_left);
-		m_title = title;
-		m_backPanel->addElement(title);
+		m_title->setText("Graphics Options");
 
-		// Top Separator
-		m_separatorTop = std::make_shared<Separator>(engine);
-		m_backPanel->addElement(m_separatorTop);
-
-		// All Other Settings
-		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
-			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
-			horizontalLayout->addElement(std::make_shared<Label>(engine, text));
-			horizontalLayout->addElement(element);
-			horizontalLayout->setScale({ 125, 30 });
-			layout->addElement(horizontalLayout);
-		};
-
+		// Add Options
 		float materialSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
 		auto element_material_list = std::make_shared<SideList>(engine);
@@ -75,7 +39,7 @@ public:
 		element_material_list->addCallback(SideList::on_index_changed, [&, sizes, element_material_list, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, sizes[element_material_list->getIndex()]);
 		});
-		addLabledSetting(element_material_list, "Texture Quality:");
+		addOption(engine, element_material_list, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.");
 
 		float shadowSize = 1024, shadowQuality = 4;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
@@ -101,7 +65,7 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_SPOT, sizes2[index]);
 			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_QUALITY, qualities[index]);
 		});
-		addLabledSetting(element_shadow_list, "Shadow Quality:");
+		addOption(engine, element_shadow_list, "Shadow Quality:", "Adjusts the resolution of all dynamic light shadows textures.");
 
 		float envSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_SIZE, envSize);
@@ -121,7 +85,7 @@ public:
 		element_env_list->addCallback(SideList::on_index_changed, [&, sizes3, element_env_list, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, sizes3[element_env_list->getIndex()]);
 		});
-		addLabledSetting(element_env_list, "Reflection Quality:");
+		addOption(engine, element_env_list, "Reflection Quality:", "Adjusts the resolution of all environment map textures.");
 
 		float bounceSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, bounceSize);
@@ -141,7 +105,7 @@ public:
 		element_bounce_list->addCallback(SideList::on_index_changed, [&, sizes4, element_bounce_list, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, sizes4[element_bounce_list->getIndex()]);
 		});
-		addLabledSetting(element_bounce_list, "Light Bounce Quality:");
+		addOption(engine, element_bounce_list, "Light Bounce Quality:", "Adjusts the resolution of the real-time GI simulation.");
 
 		bool element_bloom_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, element_bloom_state);
@@ -149,7 +113,7 @@ public:
 		element_bloom->addCallback(Toggle::on_toggle, [&, element_bloom, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, element_bloom->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_bloom, "Bloom:");
+		addOption(engine, element_bloom, "Bloom:", "Turns the bloom effect on or off.");
 
 		bool element_ssao_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, element_ssao_state);
@@ -157,7 +121,7 @@ public:
 		element_ssao->addCallback(Toggle::on_toggle, [&, element_ssao, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_SSAO, element_ssao->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_ssao, "SSAO:");
+		addOption(engine, element_ssao, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.");
 
 		bool element_ssr_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, element_ssr_state);
@@ -165,7 +129,7 @@ public:
 		element_ssr->addCallback(Toggle::on_toggle, [&, element_ssr, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_SSR, element_ssr->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_ssr, "SSR:");
+		addOption(engine, element_ssr, "SSR:", "Turns screen-space reflections on or off. Works with baked reflections.");
 
 		bool element_fxaa_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, element_fxaa_state);
@@ -173,35 +137,8 @@ public:
 		element_fxaa->addCallback(Toggle::on_toggle, [&, element_fxaa, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_FXAA, element_fxaa->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_fxaa, "FXAA:");
-
-		// Bottom Separator
-		m_separatorBot = std::make_shared<Separator>(engine);
-		m_backPanel->addElement(m_separatorBot);
+		addOption(engine, element_fxaa, "FXAA:", "Turns fast approximate anti-aliasing on or off.");
 	}
-
-
-	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(scale);
-		m_backPanel->setScale(scale);
-		m_layout->setScale(scale - glm::vec2(50, 100));
-		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
-		m_separatorTop->setScale(scale);
-		m_separatorTop->setPosition({ 0, scale.y - 100 });
-		m_separatorBot->setScale(scale);
-		m_separatorBot->setPosition({ 0, -scale.y + 100 });
-		enactCallback(on_resize);
-	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {		
-		UI_Element::renderElement(deltaTime, position, scale);
-	}
-
-
-private:
-	// Private Attributes
-	std::vector<glm::ivec3> m_resolutions;
-	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_separatorTop, m_separatorBot;
 };
 
 #endif // OPTIONS_GRAPICS_H

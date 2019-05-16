@@ -2,17 +2,14 @@
 #ifndef OPTIONSMENU_H
 #define OPTIONSMENU_H
 
-#include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/List.h"
-#include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/Options_Video.h"
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
 #include "Engine.h"
 
 
 /** A UI element serving as an options menu. */
-class OptionsMenu : public UI_Element
+class OptionsMenu : public Menu
 {
 public:
 	// UI interaction enums
@@ -26,41 +23,25 @@ public:
 
 	// (de)Constructors
 	inline ~OptionsMenu() = default;
-	inline OptionsMenu(Engine * engine) : UI_Element() {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor({ 0.1, 0.1, 0.1 });
-		m_backPanel = panel;
-		addElement(panel);
-
-		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>();
-		layout->setSpacing(10.0f);
-		m_layout = layout;
-		m_backPanel->addElement(layout);
-		
+	inline OptionsMenu(Engine * engine) : Menu(engine) {
 		// Title
-		auto title = std::make_shared<Label>(engine, "Options Menu");
-		title->setTextScale(20.0f);
-		title->setAlignment(Label::align_center);
-		m_title = title;
-		m_backPanel->addElement(title);
+		m_title->setText("OPTIONS");
 
 		// Add 'Video' button
-		auto videoButton = std::make_shared<Button>(engine, "Video");
+		auto videoButton = std::make_shared<Button>(engine, "VIDEO");
 		videoButton->setScale({ 128, 20 });
 		m_videoMenu = std::make_shared<Options_Video>(engine);
-		m_videoMenu->setVisible(true);
+		m_videoMenu->setVisible(false);
 		videoButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			m_videoMenu->setVisible(true);
 			m_gfxMenu->setVisible(false);
 			enactCallback(on_video); 
 		});
-		layout->addElement(videoButton);
+		m_layout->addElement(videoButton);
 		addElement(m_videoMenu);
 
 		// Add 'Graphics' button
-		auto graphicsButton = std::make_shared<Button>(engine, "Graphics");
+		auto graphicsButton = std::make_shared<Button>(engine, "GRAPHICS");
 		graphicsButton->setScale({ 128, 20 });
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
@@ -69,20 +50,20 @@ public:
 			m_gfxMenu->setVisible(true);
 			enactCallback(on_graphics); 
 		});
-		layout->addElement(graphicsButton);
+		m_layout->addElement(graphicsButton);
 		addElement(m_gfxMenu);
 
 		// Add 'Controls' button
-		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
+		auto controlsButton = std::make_shared<Button>(engine, "CONTROLS");
 		controlsButton->setScale({ 128, 20 });
 		controlsButton->setEnabled(false);
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			enactCallback(on_controls); 
 		});
-		layout->addElement(controlsButton);
+		m_layout->addElement(controlsButton);
 
 		// Add 'Back' button
-		auto backButton = std::make_shared<Button>(engine, "<       Back        ");
+		auto backButton = std::make_shared<Button>(engine, "< BACK  ");
 		backButton->setScale({ 128, 20 });
 		backButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
@@ -91,29 +72,23 @@ public:
 			engine->getPreferenceState().save();
 			enactCallback(on_back); 
 		});
-		layout->addElement(backButton);
+		m_layout->addElement(backButton);
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(scale);
-		m_backPanel->setScale({ 128, scale.y });
-		m_backPanel->setPosition(glm::vec2(256, scale.y));
-		m_layout->setScale({ 128, 128 });
-		m_layout->setPosition(glm::vec2(0, -425));
-		m_title->setPosition({ 0, -50 });
 		m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f});
 		m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f});
 		m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
 		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-		enactCallback(on_resize);
+		Menu::setScale(scale);
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_videoMenu, m_gfxMenu;
+	std::shared_ptr<UI_Element> m_videoMenu, m_gfxMenu;
 };
 
 #endif // OPTIONSMENU_H

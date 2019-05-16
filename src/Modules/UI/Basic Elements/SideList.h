@@ -57,8 +57,8 @@ public:
 
 	// Interface Implementation
 	inline virtual void setScale(const glm::vec2 & scale) {
-		UI_Element::setScale(scale);
 		m_label->setScale(scale);
+		UI_Element::setScale(scale);
 	}
 	inline virtual void update() override {
 		constexpr auto num_data = 4 * 3;

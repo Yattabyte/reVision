@@ -74,19 +74,19 @@ public:
 	// Public Methods
 	/** Set this panel's color.
 	@param	text	the new color to render with. */
-	inline void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec4 & color) {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.
 	@return	the color used by this element. */
-	inline glm::vec3 getColor() const {
+	inline glm::vec4 getColor() const {
 		return m_color;
 	}
 
 
 protected:
 	// Protected Attributes
-	glm::vec3 m_color = glm::vec3(0.2f);
+	glm::vec4 m_color = glm::vec4(0.2f);
 
 
 private:

@@ -45,7 +45,6 @@ public:
 	// Interface Implementation
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(glm::vec2(scale.x, 2));
-		enactCallback(on_resize);
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;

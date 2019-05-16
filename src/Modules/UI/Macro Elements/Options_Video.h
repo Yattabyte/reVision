@@ -2,62 +2,26 @@
 #ifndef OPTIONS_VIDEO_H
 #define OPTIONS_VIDEO_H
 
-#include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Macro Elements/Options_Pane.h"
 #include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/Label.h"
-#include "Modules/UI/Basic Elements/Layout_Horizontal.h"
-#include "Modules/UI/Basic Elements/List.h"
-#include "Modules/UI/Basic Elements/Panel.h"
-#include "Modules/UI/Basic Elements/Separator.h"
 #include "Modules/UI/Basic Elements/SideList.h"
 #include "Modules/UI/Basic Elements/Slider.h"
 #include "Modules/UI/Basic Elements/TextInput.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
-#include "Modules/UI/Decorators/Border.h"
-#include "Modules/UI/Decorators/Scrollbar_V.h"
 #include "Engine.h"
 
 
 /** A UI element serving as a video options menu. */
-class Options_Video : public UI_Element
+class Options_Video : public Options_Pane
 {
 public:
 	// (de)Constructors
 	inline ~Options_Video() = default;
-	inline Options_Video(Engine * engine) : UI_Element() {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor({ 0.1, 0.1, 0.1 });
-		m_backPanel = panel;
-		addElement(panel);
-
-		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>();
-		layout->setSpacing(1.0f);
-		layout->setMargin(5.0f);
-		m_layout = layout;
-		m_backPanel->addElement(layout);
-
+	inline Options_Video(Engine * engine) : Options_Pane(engine) {
 		// Title
-		auto title = std::make_shared<Label>(engine, "Video Options");
-		title->setTextScale(20.0f);
-		title->setAlignment(Label::align_left);
-		m_title = title;
-		m_backPanel->addElement(title);
+		m_title->setText("Video Options");
 
-		// Top Separator
-		m_separatorTop = std::make_shared<Separator>(engine);
-		m_backPanel->addElement(m_separatorTop);
-
-		// All Other Settings
-		const auto addLabledSetting = [&, engine](auto & element, const std::string & text) {
-			auto horizontalLayout = std::make_shared<Layout_Horizontal>();
-			horizontalLayout->addElement(std::make_shared<Label>(engine, text));			
-			horizontalLayout->addElement(element);
-			horizontalLayout->setScale({ 125, 30 });
-			layout->addElement(horizontalLayout);
-		};
-
+		// Add Options
 		auto element_res = std::make_shared<SideList>(engine);
 		element_res->setMaxScale(glm::vec2(element_res->getMaxScale().x, 12.5f));
 		float width = 1920.0f, height = 1080.0f;
@@ -81,7 +45,7 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
 		});
-		addLabledSetting(element_res, "Resolution:");
+		addOption(engine, element_res, "Resolution:", "Changes the resolution the game renders at.");
 
 		auto gamma_layout = std::make_shared<Layout_Horizontal>();
 		auto gamma_slider = std::make_shared<Slider>(engine);
@@ -115,7 +79,7 @@ public:
 		});
 		gamma_layout->addElement(gamma_slider);
 		gamma_layout->addElement(gamma_tinput);
-		addLabledSetting(gamma_layout, "Gamma:");
+		addOption(engine, gamma_layout, "Gamma:", "Changes the gamma correction value used.");
 
 		auto ddistance_layout = std::make_shared<Layout_Horizontal>();
 		auto ddistance_slider = std::make_shared<Slider>(engine);
@@ -149,7 +113,7 @@ public:
 		});
 		ddistance_layout->addElement(ddistance_slider);
 		ddistance_layout->addElement(ddistance_tinput);
-		addLabledSetting(ddistance_layout, "Draw Distance:");
+		addOption(engine, ddistance_layout, "Draw Distance:", "Changes how far geometry can be seen from.");
 
 		auto fov_layout = std::make_shared<Layout_Horizontal>();
 		auto fov_slider = std::make_shared<Slider>(engine);
@@ -183,7 +147,7 @@ public:
 		});
 		fov_layout->addElement(fov_slider);
 		fov_layout->addElement(fov_tinput);
-		addLabledSetting(fov_layout, "Field of view:");
+		addOption(engine, fov_layout, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
 
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
@@ -191,7 +155,7 @@ public:
 		element_sync->addCallback(Toggle::on_toggle, [&, element_sync, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_sync, "VSync:");
+		addOption(engine, element_sync, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.");
 
 		bool element_fs_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
@@ -199,32 +163,13 @@ public:
 		element_fs->addCallback(Toggle::on_toggle, [&, element_fs, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 		});
-		addLabledSetting(element_fs, "Full-screen:");
-
-		// Bottom Separator
-		m_separatorBot = std::make_shared<Separator>(engine);
-		m_backPanel->addElement(m_separatorBot);
-	}
-
-
-	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(scale);
-		m_backPanel->setScale(scale);
-		m_layout->setScale(scale - glm::vec2(50, 100));
-		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
-		m_separatorTop->setScale(scale);
-		m_separatorTop->setPosition({ 0, scale.y - 100 });
-		m_separatorBot->setScale(scale);
-		m_separatorBot->setPosition({ 0, -scale.y + 100 });
-		enactCallback(on_resize);
+		addOption(engine, element_fs, "Full-screen:", "Render the game full-screen instead of as a window.");
 	}
 
 
 private:
 	// Private Attributes
 	std::vector<glm::ivec3> m_resolutions;
-	std::shared_ptr<UI_Element> m_backPanel, m_title, m_layout, m_separatorTop, m_separatorBot;
 };
 
 #endif // OPTIONS_VIDEO_H
