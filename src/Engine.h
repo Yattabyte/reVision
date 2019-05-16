@@ -21,7 +21,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.1.4";
+constexpr char ENGINE_VERSION[] = "3.1.5";
 
 struct GLFWwindow;
 class Engine;

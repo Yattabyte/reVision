@@ -55,6 +55,13 @@ public:
 
 
 protected:
+	// Protected Methods
+	void addButton(std::shared_ptr<UI_Element> element) {
+		element->setScale({ 120, 20 });
+		m_layout->addElement(element);
+	};
+
+
 	// Private Attributes
 	std::shared_ptr<Label> m_title;
 	std::shared_ptr<UI_Element> m_backPanel, m_separator, m_layout;

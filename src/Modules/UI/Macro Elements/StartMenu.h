@@ -27,17 +27,15 @@ public:
 
 		// Add 'Start' button
 		auto startButton = std::make_shared<Button>(engine, "START");
-		startButton->setScale({ 128, 20 });
 		startButton->addCallback(UI_Element::on_mouse_release, [&, engine]() { 
 			setVisible(false);
 			engine->getModule_Game().startGame(); 
 			enactCallback(on_start); 
 		});
-		m_layout->addElement(startButton);
+		addButton(startButton);
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
-		optionsButton->setScale({ 128, 20 });
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		m_optionsMenu->setVisible(false);
 		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -49,18 +47,17 @@ public:
 			m_backPanel->setVisible(true);
 			m_optionsMenu->setVisible(false);
 		});
-		m_layout->addElement(optionsButton);
+		addButton(optionsButton);
 		addElement(m_optionsMenu);
 		
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		quitButton->setScale({ 128, 20 });
 		quitButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			engine->shutDown();
 			enactCallback(on_quit);
 		});
-		m_layout->addElement(quitButton);
+		addButton(quitButton);
 	}
 
 

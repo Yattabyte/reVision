@@ -29,7 +29,6 @@ public:
 
 		// Add 'Video' button
 		auto videoButton = std::make_shared<Button>(engine, "VIDEO");
-		videoButton->setScale({ 128, 20 });
 		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(false);
 		videoButton->addCallback(UI_Element::on_mouse_release, [&]() { 
@@ -37,12 +36,11 @@ public:
 			m_gfxMenu->setVisible(false);
 			enactCallback(on_video); 
 		});
-		m_layout->addElement(videoButton);
+		addButton(videoButton);
 		addElement(m_videoMenu);
 
 		// Add 'Graphics' button
 		auto graphicsButton = std::make_shared<Button>(engine, "GRAPHICS");
-		graphicsButton->setScale({ 128, 20 });
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
 		graphicsButton->addCallback(UI_Element::on_mouse_release, [&]() {
@@ -50,21 +48,19 @@ public:
 			m_gfxMenu->setVisible(true);
 			enactCallback(on_graphics); 
 		});
-		m_layout->addElement(graphicsButton);
+		addButton(graphicsButton);
 		addElement(m_gfxMenu);
 
 		// Add 'Controls' button
 		auto controlsButton = std::make_shared<Button>(engine, "CONTROLS");
-		controlsButton->setScale({ 128, 20 });
 		controlsButton->setEnabled(false);
 		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { 
 			enactCallback(on_controls); 
 		});
-		m_layout->addElement(controlsButton);
+		addButton(controlsButton);
 
 		// Add 'Back' button
 		auto backButton = std::make_shared<Button>(engine, "< BACK  ");
-		backButton->setScale({ 128, 20 });
 		backButton->addCallback(UI_Element::on_mouse_release, [&, engine]() {
 			setVisible(false);
 			m_videoMenu->setVisible(false);
@@ -72,7 +68,7 @@ public:
 			engine->getPreferenceState().save();
 			enactCallback(on_back); 
 		});
-		m_layout->addElement(backButton);
+		addButton(backButton);
 	}
 
 

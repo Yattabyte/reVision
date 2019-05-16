@@ -27,7 +27,7 @@ public:
 		// Make a vertical layout to house list items
 		auto layout = std::make_shared<List>(engine);
 		layout->setSpacing(1.0f);
-		layout->setMargin(5.0f);
+		layout->setMargin(50.0f);
 		layout->addCallback(List::on_hover, [&]() {
 			const auto index = (std::dynamic_pointer_cast<List>(m_layout)->getHoveredIndex());
 			if (index > -1 && size_t(index) < m_descriptions.size())
@@ -65,7 +65,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_backPanel->setScale(scale);
-		m_layout->setScale(scale - glm::vec2(50, 100));
+		m_layout->setScale(scale - glm::vec2(0, 50));
 		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
 		m_separatorTop->setScale(scale);
 		m_separatorTop->setPosition({ 0, scale.y - 100 });
@@ -80,7 +80,9 @@ protected:
 	// Protected Methods
 	void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description) {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>();
-		horizontalLayout->addElement(std::make_shared<Label>(engine, text));
+		auto label = std::make_shared<Label>(engine, text);
+		label->setColor(glm::vec3(0.75f));
+		horizontalLayout->addElement(label);
 		horizontalLayout->addElement(element);
 		horizontalLayout->setScale({ 0, 30 });
 		m_layout->addElement(horizontalLayout);
