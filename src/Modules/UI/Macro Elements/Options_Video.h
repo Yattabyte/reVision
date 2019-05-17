@@ -9,6 +9,7 @@
 #include "Modules/UI/Basic Elements/TextInput.h"
 #include "Modules/UI/Basic Elements/Toggle.h"
 #include "Engine.h"
+#include <sstream>
 
 
 /** A UI element serving as a video options menu. */
@@ -47,107 +48,53 @@ public:
 		});
 		addOption(engine, element_res, "Resolution:", "Changes the resolution the game renders at.");
 
-		auto gamma_layout = std::make_shared<Layout_Horizontal>();
-		auto gamma_slider = std::make_shared<Slider>(engine);
-		auto gamma_tinput = std::make_shared<TextInput>(engine);
 		float gamma = 1.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
-		gamma_layout->setMargin(0);
-		gamma_layout->setMaxScale(glm::vec2(gamma_layout->getMaxScale().x, 12.5));
-		gamma_slider->setMaxScale(glm::vec2(gamma_slider->getMaxScale().x, 12.5));
-		gamma_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
-		gamma_tinput->setText(std::to_string(gamma));
-		gamma_slider->setPercentage(gamma / 2.0f);
-		gamma_slider->addCallback(Slider::on_slider_change, [&, gamma_slider, gamma_tinput, engine]() {
+		auto gamma_slider = std::make_shared<Slider>(engine, gamma / 2.0f);
+		std::ostringstream out;
+		out.precision(2);
+		out << std::fixed << gamma;
+		gamma_slider->setText(out.str());
+		gamma_slider->addCallback(Slider::on_slider_change, [&, gamma_slider, engine]() {
+			// Get a round version of the input
 			const float value = 2.0f * gamma_slider->getPercentage();
-			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
-			gamma_tinput->setText(std::to_string(value));
-		});
-		gamma_tinput->addCallback(TextInput::on_text_change, [&, gamma_slider, gamma_tinput, engine]() {
-			float
-				value = 1.0f;
-			try
-			{
-				value = std::stof(gamma_tinput->getText());
-			}
-			catch (const std::exception&)
-			{
-				value = 0.0f;
-			}
-			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, value);
-			gamma_slider->setPercentage(value / 2.0f);
-		});
-		gamma_layout->addElement(gamma_slider);
-		gamma_layout->addElement(gamma_tinput);
-		addOption(engine, gamma_layout, "Gamma:", "Changes the gamma correction value used.");
+			const float round_value = (int)(value * 100.0f + .5f) / 100.0f;
 
-		auto ddistance_layout = std::make_shared<Layout_Horizontal>();
-		auto ddistance_slider = std::make_shared<Slider>(engine);
-		auto ddistance_tinput = std::make_shared<TextInput>(engine);
+			std::ostringstream out;
+			out.precision(2);
+			out << std::fixed << value;
+			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, round_value);
+			gamma_slider->setText(out.str());
+		});
+		addOption(engine, gamma_slider, "Gamma:", "Changes the gamma correction value used.");
+
 		float ddistance = 1000.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
-		ddistance_layout->setMargin(0);
-		ddistance_layout->setMaxScale(glm::vec2(ddistance_layout->getMaxScale().x, 12.5));
-		ddistance_slider->setMaxScale(glm::vec2(ddistance_slider->getMaxScale().x, 12.5));
-		ddistance_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
-		ddistance_tinput->setText(std::to_string(ddistance));
-		ddistance_slider->setPercentage(ddistance / 1000.0f);
-		ddistance_slider->addCallback(Slider::on_slider_change, [&, ddistance_slider, ddistance_tinput, engine]() {
+		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance / 1000.0f);
+		ddistance_slider->setText(std::to_string((int)std::round<int>(ddistance)));
+		ddistance_slider->addCallback(Slider::on_slider_change, [&, ddistance_slider, engine]() {
+			// Get a round version of the input
 			const float value = 1000.0f * ddistance_slider->getPercentage();
+			const int round_value = (int)std::round<int>(value);
 			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
-			ddistance_tinput->setText(std::to_string(value));
+			ddistance_slider->setText(std::to_string(round_value));
 		});
-		ddistance_tinput->addCallback(TextInput::on_text_change, [&, ddistance_slider, ddistance_tinput, engine]() {
-			float
-				value = 1000.0f;
-			try
-			{
-				value = std::stof(ddistance_tinput->getText());
-			}
-			catch (const std::exception&)
-			{
-				value = 0.0f;
-			}
-			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
-			ddistance_slider->setPercentage(value / 1000.0f);
-		});
-		ddistance_layout->addElement(ddistance_slider);
-		ddistance_layout->addElement(ddistance_tinput);
-		addOption(engine, ddistance_layout, "Draw Distance:", "Changes how far geometry can be seen from.");
+		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.");
 
-		auto fov_layout = std::make_shared<Layout_Horizontal>();
-		auto fov_slider = std::make_shared<Slider>(engine);
-		auto fov_tinput = std::make_shared<TextInput>(engine);
 		float fov = 90.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
-		fov_layout->setMargin(0);
-		fov_layout->setMaxScale(glm::vec2(fov_layout->getMaxScale().x, 12.5));
-		fov_slider->setMaxScale(glm::vec2(fov_slider->getMaxScale().x, 12.5));
-		fov_tinput->setMaxScale(glm::vec2(25.0f, 12.5));
-		fov_tinput->setText(std::to_string(fov));
-		fov_slider->setPercentage(fov / 180.0f);
-		fov_slider->addCallback(Slider::on_slider_change, [&, fov_slider, fov_tinput, engine]() {
+		auto fov_slider = std::make_shared<Slider>(engine, fov / 180.0f);
+		fov_slider->setText(std::to_string((int)std::round<int>(fov)));
+		fov_slider->addCallback(Slider::on_slider_change, [&, fov_slider, engine]() {
+			// Get a round version of the input
 			const float value = 180.0f * fov_slider->getPercentage();
-			engine->getPreferenceState().setValue(PreferenceState::C_FOV, value);
-			fov_tinput->setText(std::to_string(value));
+			const int round_value = (int)std::round<int>(value);
+
+			// We store as a float, but we want to ensure round numbers
+			engine->getPreferenceState().setValue(PreferenceState::C_FOV, (float)round_value);
+			fov_slider->setText(std::to_string(round_value));			
 		});
-		fov_tinput->addCallback(TextInput::on_text_change, [&, fov_slider, fov_tinput, engine]() {
-			float
-				value = 90.0F;
-			try
-			{
-				value = std::stof(fov_tinput->getText());
-			}
-			catch (const std::exception&)
-			{
-				value = 0.0f;
-			}
-			engine->getPreferenceState().setValue(PreferenceState::C_FOV, value);
-			fov_slider->setPercentage(value / 180.0f);
-		});
-		fov_layout->addElement(fov_slider);
-		fov_layout->addElement(fov_tinput);
-		addOption(engine, fov_layout, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
+		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
 
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);

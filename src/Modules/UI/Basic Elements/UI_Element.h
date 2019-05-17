@@ -103,7 +103,7 @@ public:
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			for each (auto & child in m_children)
 				if (child->mouseAction(subEvent))
-					return true;
+					break;				
 			if (!m_entered) {
 				m_entered = true;
 				enactCallback(on_mouse_enter);

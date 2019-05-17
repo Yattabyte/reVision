@@ -41,36 +41,36 @@ public:
 		std::vector<glm::vec3> m_data(num_data);
 
 		// Bottom Bar
-		m_data[0] = { -m_scale.x, -m_scale.y, 0 };
-		m_data[1] = { m_scale.x, -m_scale.y, 0 };
-		m_data[2] = { m_scale.x, -m_scale.y + m_borderSize, 0 };
-		m_data[3] = { m_scale.x, -m_scale.y + m_borderSize, 0 };
-		m_data[4] = { -m_scale.x, -m_scale.y + m_borderSize, 0 };
-		m_data[5] = { -m_scale.x, -m_scale.y, 0 };
+		m_data[0] = { -m_scale.x - m_borderSize, -m_scale.y, 0 };
+		m_data[1] = { m_scale.x + m_borderSize, -m_scale.y, 0 };
+		m_data[2] = { m_scale.x + m_borderSize, -m_scale.y + m_borderSize, 0 };
+		m_data[3] = { m_scale.x + m_borderSize, -m_scale.y + m_borderSize, 0 };
+		m_data[4] = { -m_scale.x - m_borderSize, -m_scale.y + m_borderSize, 0 };
+		m_data[5] = { -m_scale.x - m_borderSize, -m_scale.y, 0 };
 
 		// Left Bar
-		m_data[6] = { -m_scale.x, -m_scale.y + m_borderSize, 0 };
-		m_data[7] = { -m_scale.x + m_borderSize, -m_scale.y + m_borderSize, 0 };
-		m_data[8] = { -m_scale.x + m_borderSize, m_scale.y - m_borderSize, 0 };
-		m_data[9] = { -m_scale.x + m_borderSize, m_scale.y - m_borderSize, 0 };
-		m_data[10] = { -m_scale.x, m_scale.y - m_borderSize, 0 };
-		m_data[11] = { -m_scale.x, -m_scale.y + m_borderSize, 0 };
+		m_data[6] = { -m_scale.x, -m_scale.y - m_borderSize, 0 };
+		m_data[7] = { -m_scale.x + m_borderSize, -m_scale.y - m_borderSize, 0 };
+		m_data[8] = { -m_scale.x + m_borderSize, m_scale.y + m_borderSize, 0 };
+		m_data[9] = { -m_scale.x + m_borderSize, m_scale.y + m_borderSize, 0 };
+		m_data[10] = { -m_scale.x, m_scale.y + m_borderSize, 0 };
+		m_data[11] = { -m_scale.x, -m_scale.y - m_borderSize, 0 };
 
 		// Top Bar
-		m_data[12] = { -m_scale.x, m_scale.y - m_borderSize, 0 };
-		m_data[13] = { m_scale.x, m_scale.y - m_borderSize, 0 };
-		m_data[14] = { m_scale.x, m_scale.y, 0 };
-		m_data[15] = { m_scale.x, m_scale.y, 0 };
-		m_data[16] = { -m_scale.x, m_scale.y, 0 };
-		m_data[17] = { -m_scale.x, m_scale.y - m_borderSize, 0 };
+		m_data[12] = { -m_scale.x - m_borderSize, m_scale.y - m_borderSize, 0 };
+		m_data[13] = { m_scale.x + m_borderSize, m_scale.y - m_borderSize, 0 };
+		m_data[14] = { m_scale.x + m_borderSize, m_scale.y, 0 };
+		m_data[15] = { m_scale.x + m_borderSize, m_scale.y, 0 };
+		m_data[16] = { -m_scale.x - m_borderSize, m_scale.y, 0 };
+		m_data[17] = { -m_scale.x - m_borderSize, m_scale.y - m_borderSize, 0 };
 
 		// Right Bar
-		m_data[18] = { m_scale.x - m_borderSize, -m_scale.y + m_borderSize, 0 };
-		m_data[19] = { m_scale.x, -m_scale.y + m_borderSize, 0 };
-		m_data[20] = { m_scale.x, m_scale.y - m_borderSize, 0 };
-		m_data[21] = { m_scale.x, m_scale.y - m_borderSize, 0 };
-		m_data[22] = { m_scale.x - m_borderSize, m_scale.y - m_borderSize, 0 };
-		m_data[23] = { m_scale.x - m_borderSize, -m_scale.y + m_borderSize, 0 };
+		m_data[18] = { m_scale.x - m_borderSize, -m_scale.y - m_borderSize, 0 };
+		m_data[19] = { m_scale.x, -m_scale.y - m_borderSize, 0 };
+		m_data[20] = { m_scale.x, m_scale.y + m_borderSize, 0 };
+		m_data[21] = { m_scale.x, m_scale.y + m_borderSize, 0 };
+		m_data[22] = { m_scale.x - m_borderSize, m_scale.y + m_borderSize, 0 };
+		m_data[23] = { m_scale.x - m_borderSize, -m_scale.y - m_borderSize, 0 };
 
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 
@@ -109,7 +109,7 @@ public:
 
 protected:
 	// Protected Attributes
-	float m_borderSize = 1.0f;
+	float m_borderSize = 2.0f;
 	glm::vec3 m_borderColor = glm::vec3(1.0f);
 
 
