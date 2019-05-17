@@ -60,58 +60,57 @@ public:
 		}
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			// Find which list item the mouse is over
-			int index(0);
-			bool interacted(false);
-			for each (auto & child in m_children) {
-				if (child->mouseAction(subEvent)) {
-					interacted = true;
-					break;
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+		if (getVisible() & getEnabled()) {
+			if (mouseWithin(mouseEvent)) {
+				MouseEvent subEvent = mouseEvent;
+				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+				// Find which list item the mouse is over
+				int index(0);
+				bool interacted(false);
+				for each (auto & child in m_children) {
+					child->mouseAction(subEvent);
+					if (child->mouseWithin(subEvent))
+						interacted = true;
+					if (!interacted)
+						index++;
 				}
-				index++;
-			}
 
-			// Emit when the hovered item changes
-			if (interacted && m_hoverIndex != index) {
-				m_hoverIndex = index;
-				updateSelectionGeometry();
-				enactCallback(on_hover);
-			}			
-
-			// Emit when the mouse enters the list (for the first time)
-			if (!m_entered) {
-				m_entered = true;
-				enactCallback(on_mouse_enter);
-			}
-
-			// Emit when the selected item changes
-			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-				if (interacted) {
-					m_selectionIndex = m_hoverIndex;
+				// Emit when the hovered item changes
+				if (interacted && m_hoverIndex != index) {
+					m_hoverIndex = index;
 					updateSelectionGeometry();
-					enactCallback(on_selection);
+					enactCallback(on_hover);
 				}
-				enactCallback(on_mouse_press);
+
+				// Emit when the mouse enters the list (for the first time)
+				if (!m_entered) {
+					m_entered = true;
+					enactCallback(on_mouse_enter);
+				}
+
+				// Emit when the selected item changes
+				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+					if (interacted) {
+						m_selectionIndex = m_hoverIndex;
+						updateSelectionGeometry();
+						enactCallback(on_selection);
+					}
+					enactCallback(on_mouse_press);
+				}
+				// Emit when the mouse releases
+				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_pressed = false;
+					enactCallback(on_mouse_release);
+				}
 			}
-			// Emit when the mouse releases
-			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-				m_pressed = false;
-				enactCallback(on_mouse_release);
+			else {
+				for each (auto & child in m_children)
+					child->clearFocus();
+				clearFocus();
 			}
-			return true;
 		}
-		else
-			if (m_entered) {
-				m_entered = false;
-				enactCallback(on_mouse_exit);
-			}
-		return false;
 	}
 
 

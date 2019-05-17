@@ -16,30 +16,34 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			bool consumed = false;
-			for each (auto & child in m_children) {
-				if (child->mouseAction(subEvent)) {
-					consumed = true;
-					break;
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+		if (getVisible() && !getEnabled()) {
+			if (mouseWithin(mouseEvent)) {
+				MouseEvent subEvent = mouseEvent;
+				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+				for each (auto & child in m_children)
+					child->mouseAction(subEvent);
+				m_component->mouseAction(subEvent);
+				if (!m_entered) {
+					m_entered = true;
+					enactCallback(on_mouse_enter);
+				}
+				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+					m_pressed = true;
+					enactCallback(on_mouse_press);
+				}
+				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_pressed = false;
+					enactCallback(on_mouse_release);
 				}
 			}
-			if (!consumed)
-				consumed = m_component->mouseAction(subEvent);
-			enactCallback(on_mouse_enter);
-			if (mouseEvent.m_action == MouseEvent::PRESS)
-				enactCallback(on_mouse_press);
-			else
-				enactCallback(on_mouse_release);
-			return consumed;
+			else {
+				for each (auto & child in m_children)
+					child->clearFocus();
+				clearFocus();
+			}
 		}
-		enactCallback(on_mouse_exit);
-		return false;
 	}
 	inline virtual void keyChar(const unsigned int & character) override {
 		UI_Element::keyChar(character);

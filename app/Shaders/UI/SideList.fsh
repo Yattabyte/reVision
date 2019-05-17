@@ -12,10 +12,7 @@ layout (location = 4) uniform bool lhighlighted;
 layout (location = 5) uniform bool rhighlighted;
 layout (location = 6) uniform bool lpressed;
 layout (location = 7) uniform bool rpressed;
-layout (location = 8) uniform vec3 colors[2] = { 
-	vec3(1.0f), 				// Background
-	vec3(0.20f, 0.80f, 0.40f) 	// Arrow
-};
+layout (location = 8) uniform vec4 color =  vec4(0.75f);
 
 // Outputs
 layout (location = 0) out vec4 FragColor;
@@ -23,26 +20,23 @@ layout (location = 0) out vec4 FragColor;
 
 void main()
 {			
-	if (ObjIndex == 0)
-		FragColor = vec4(colors[0], 1.0f);
-	else if (ObjIndex == 1) {
-		FragColor = vec4(colors[1], 1.0f);			
+	FragColor = color;		
+	if (ObjIndex == 0) {	
 		if (lhighlighted)
-			FragColor.xyz *= 1.25f;
+			FragColor *= 1.5f;
 		if (lpressed)
-			FragColor.xyz *= 0.75f;
+			FragColor *= 0.5f;
 		if (!lEnabled)
-			FragColor.xyz *= 0.50f;
+			FragColor *= 0.25f;
 	}
-	else if (ObjIndex == 2) {
-		FragColor = vec4(colors[1], 1.0f);			
+	else if (ObjIndex == 1) {
 		if (rhighlighted)
-			FragColor.xyz *= 1.25f;
+			FragColor *= 1.5f;
 		if (rpressed)
-			FragColor.xyz *= 0.75f;
+			FragColor *= 0.5f;
 		if (!rEnabled)
-			FragColor.xyz *= 0.50f;
+			FragColor *= 0.25f;
 	}
 	if (!enabled)
-		FragColor.xyz *= 0.75f;
+		FragColor *= 0.5f;
 }

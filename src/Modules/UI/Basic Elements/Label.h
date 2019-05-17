@@ -91,9 +91,7 @@ public:
 		}
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
-		return false;
-	}
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {}
 
 
 	// Public Methods

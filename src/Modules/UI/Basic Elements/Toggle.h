@@ -22,13 +22,17 @@ public:
 	inline Toggle(Engine * engine, const bool & toggleState = true) : m_toggledOn(toggleState) {		
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.4f));
+		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
+		panel->addCallback(UI_Element::on_mouse_enter, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
+		panel->addCallback(UI_Element::on_mouse_exit, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		panel->addCallback(UI_Element::on_mouse_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
+		panel->addCallback(UI_Element::on_mouse_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
 
@@ -73,7 +77,15 @@ public:
 		setMaxScale({ 150, 28 });
 		UI_Element::setScale({ 150, 28 });
 	}
-
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		glm::vec4 color(0.75);
+		if (m_pressed)
+			color *= 0.5f;
+		if (m_highlighted)
+			color *= 1.5f;
+		m_paddle->setColor(color);
+		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
+	}
 
 	// Public Methods
 	/** Set this slider's text.
@@ -107,7 +119,8 @@ private:
 		m_pressed = false,
 		m_toggledOn = true;
 	std::shared_ptr<Label> m_label;
-	std::shared_ptr<UI_Element> m_backPanel, m_paddle;
+	std::shared_ptr<Border> m_backPanel;
+	std::shared_ptr<Panel> m_paddle;
 };
 
 #endif // UI_TOGGLE_H

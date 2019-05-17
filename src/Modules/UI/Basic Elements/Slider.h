@@ -22,7 +22,7 @@ public:
 	inline Slider(Engine * engine, const float & startingValue = 0.0f) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.4f));
+		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
 		addElement(m_backPanel);
 
@@ -68,20 +68,21 @@ public:
 		setMaxScale({ 250, 28 });
 		UI_Element::setScale({ 250, 28 });
 	}
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		m_highlighted = false;
 		m_pressed = false;
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
-			m_highlighted = true;
-			m_pressed = (bool)mouseEvent.m_action;
-			if (mouseEvent.m_action == MouseEvent::PRESS) {
-				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
-				setPercentage(mx / (m_backPanel->getScale().x * 2.0f));
-				enactCallback(on_slider_change);
+		if (getVisible() && getEnabled()) {
+			if (mouseWithin(mouseEvent)) {
+				m_highlighted = true;
+				m_pressed = (bool)mouseEvent.m_action;
+				if (mouseEvent.m_action == MouseEvent::PRESS) {
+					const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
+					setPercentage(mx / (m_backPanel->getScale().x * 2.0f));
+					enactCallback(on_slider_change);
+				}
 			}
+			UI_Element::mouseAction(mouseEvent);
 		}
-		return UI_Element::mouseAction(mouseEvent);
 	}
 
 

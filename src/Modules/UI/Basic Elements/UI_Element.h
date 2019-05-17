@@ -95,35 +95,33 @@ public:
 	}
 	/** Applies a mouse action across this ui element.
 	@param		mouseEvent			the mouse event occuring. */
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
-			MouseEvent subEvent = mouseEvent;
-			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			for each (auto & child in m_children)
-				if (child->mouseAction(subEvent))
-					break;				
-			if (!m_entered) {
-				m_entered = true;
-				enactCallback(on_mouse_enter);
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) {
+		if (getVisible() && getEnabled()) {
+			if (mouseWithin(mouseEvent)) {
+				MouseEvent subEvent = mouseEvent;
+				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+				for each (auto & child in m_children)
+					child->mouseAction(subEvent);
+				if (!m_entered) {
+					m_entered = true;
+					enactCallback(on_mouse_enter);
+				}
+				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+					m_pressed = true;
+					enactCallback(on_mouse_press);
+				}
+				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_pressed = false;
+					enactCallback(on_mouse_release);
+				}
 			}
-			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-				m_pressed = true;
-				enactCallback(on_mouse_press);
+			else {
+				for each (auto & child in m_children)
+					child->clearFocus();
+				clearFocus();
 			}
-			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-				m_pressed = false;
-				enactCallback(on_mouse_release);
-			}	
-			return true;
 		}
-		else
-			if (m_entered) {
-				m_entered = false;
-				enactCallback(on_mouse_exit);
-			}
-		return false;
 	}
 	/** Propogates a key press event from this UI element to its children.
 	@param		character			the character typed. */
@@ -216,6 +214,12 @@ public:
 	@return	if this element is enabled. */
 	inline bool getEnabled() const {
 		return m_enabled;
+	}
+	inline void clearFocus() {
+		if (m_entered) {
+			m_entered = false;
+			enactCallback(on_mouse_exit);
+		}
 	}
 	/** Get whether or not the mouse is within this element. 
 	@return			true if the mouse is within this element. */

@@ -3,6 +3,7 @@
 #define UI_SIDELIST_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Decorators/Border.h"
 #include <string>
 #include <vector>
 
@@ -24,6 +25,12 @@ public:
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
 	inline SideList(Engine * engine) {
+		// Make a background panel for cosemetic purposes
+		auto panel = std::make_shared<Panel>(engine);
+		panel->setColor(glm::vec4(0.3f));
+		m_backPanel = std::make_shared<Border>(engine, panel);
+		addElement(m_backPanel);
+
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\SideList");
 
@@ -31,7 +38,7 @@ public:
 		// Label
 		m_label = std::make_shared<Label>(engine);
 		m_label->setAlignment(Label::align_center);
-		m_label->setColor(glm::vec3(0.0f));
+		m_label->setColor(glm::vec3(1.0f));
 		addElement(m_label);
 
 		// Generate vertex array
@@ -45,7 +52,7 @@ public:
 		glCreateBuffers(2, m_vboID);
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID[0], 0, sizeof(glm::vec3));
 		glVertexArrayVertexBuffer(m_vaoID, 1, m_vboID[1], 0, sizeof(int));
-		constexpr auto num_data = 4 * 3;
+		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
@@ -57,40 +64,32 @@ public:
 
 	// Interface Implementation
 	inline virtual void setScale(const glm::vec2 & scale) {
-		m_label->setScale(scale);
-		UI_Element::setScale(scale);
+		m_backPanel->setMaxScale({ 172, 14 });
+		m_backPanel->setScale({ 172, 14 });
+		m_label->setScale({ 200, 28 });
+		setMaxScale({ 200, 28 });
+		UI_Element::setScale({ 200, 28 });
 	}
 	inline virtual void update() override {
-		constexpr auto num_data = 4 * 3;
+		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
 
-		// Main
-		data[0] = { -1, -1, 0 };
-		data[1] = { 1, -1, 0 };
-		data[2] = { 1,  1, 0 };
-		data[3] = { 1,  1, 0 };
-		data[4] = { -1,  1, 0 };
-		data[5] = { -1, -1, 0 };
-		for (int x = 0; x < 6; ++x) {
-			data[x] *= glm::vec3(m_scale.x - (m_scale.y * 2.0f), m_scale.y, 0);
+		// Arrows
+		const float arrowHeight = m_scale.y / 2.0f;
+		data[0] = { -1,  0, 0 };
+		data[1] = { 0, -1, 0 };
+		data[2] = { 0, 1, 0 };
+		for (int x = 0; x < 3; ++x) {
+			data[x] = (data[x] * glm::vec3(arrowHeight)) - glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
 			objIndices[x] = 0;
 		}
-
-		// Arrows
-		data[6] = { -1,  0, 0 };
-		data[7] = { 0, -1, 0 };
-		data[8] = { 0, 1, 0 };
-		for (int x = 6; x < 9; ++x) {
-			data[x] = (data[x] * glm::vec3(m_scale.y, m_scale.y, 0)) - glm::vec3(m_scale.x - m_scale.y, 0, 0);
+		data[3] = { 1,  0, 0 };
+		data[4] = { 0, 1, 0 };
+		data[5] = { 0, -1, 0 };
+		for (int x = 3; x < 6; ++x) {
+			data[x] = (data[x] * glm::vec3(arrowHeight)) + glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
 			objIndices[x] = 1;
-		}
-		data[9] = { 1,  0, 0 };
-		data[10] = { 0, 1, 0 };
-		data[11] = { 0, -1, 0 };
-		for (int x = 9; x < 12; ++x) {
-			data[x] = (data[x] * glm::vec3(m_scale.y, m_scale.y, 0)) + glm::vec3(m_scale.x - m_scale.y, 0, 0);
-			objIndices[x] = 2;
 		}
 
 		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
@@ -98,42 +97,43 @@ public:
 
 		UI_Element::update();
 	}
-	inline virtual bool mouseAction(const MouseEvent & mouseEvent) override {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {
-			const float mx = float(mouseEvent.m_xPos) - m_position.x;
-			// Left button
-			if (mx >= -m_scale.x && mx <= (-m_scale.x + (m_scale.y * 2.0f)) && m_lEnabled) {
-				m_lhighlighted = true;
-				if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS) 
-					m_lpressed = true;				
-				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_lpressed = false;
-					const int index = std::max<int>(getIndex() - 1, 0);
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+		if (getVisible() && getEnabled()) {
+			if (mouseWithin(mouseEvent)) {
+				const float mx = float(mouseEvent.m_xPos) - m_position.x;
+				// Left button
+				if (mx >= -m_scale.x && mx <= (-m_scale.x + 14) && m_lEnabled) {
+					m_lhighlighted = true;
+					if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS)
+						m_lpressed = true;
+					else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+						m_lpressed = false;
+						const int index = std::max<int>(getIndex() - 1, 0);
 
-					setIndex(index);
-					enactCallback(on_index_changed);
+						setIndex(index);
+						enactCallback(on_index_changed);
+					}
+				}
+				// Right button
+				if (mx >= (m_scale.x - 14) && mx <= m_scale.x && m_rEnabled) {
+					m_rhighlighted = true;
+					if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
+						m_rpressed = true;
+					else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+						m_rpressed = false;
+						const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
+
+						setIndex(index);
+						enactCallback(on_index_changed);
+					}
 				}
 			}
-			// Right button
-			if (mx >= (m_scale.x - (m_scale.y * 2.0f)) && mx <= m_scale.x && m_rEnabled) {
-				m_rhighlighted = true;
-				if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
-					m_rpressed = true;
-				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_rpressed = false;
-					const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
-
-					setIndex(index);
-					enactCallback(on_index_changed);
-				}
+			else {
+				m_lhighlighted = false;
+				m_rhighlighted = false;
 			}
+			UI_Element::mouseAction(mouseEvent);
 		}
-		else {
-			m_lhighlighted = false;
-			m_rhighlighted = false;
-		}
-		return (UI_Element::mouseAction(mouseEvent));
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
@@ -205,6 +205,7 @@ private:
 		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
+	std::shared_ptr<UI_Element> m_backPanel;
 };
 
 #endif // UI_SIDELIST_H
