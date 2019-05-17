@@ -7,19 +7,24 @@
 #include "Utilities/GL/StaticBuffer.h"
 
 
-/** Represents a vertical list of UI elements. */
+/** A UI container class that laysout its children vertically, in a list.
+Only modifies the position of its children, not their scale.
+If children need to expand to fit inside a parent container, consider using a vertical layout. */
 class List : public UI_Element
 {
 public:
-	// Interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_hover = UI_Element::last_interact_index,
 		on_selection
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the list. */
 	inline ~List() = default;
+	/** Constructs a list. 
+	@param	engine		the engine. */
 	inline List(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\List");
@@ -38,7 +43,7 @@ public:
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void update() override {
 		alignChildren();
 		updateSelectionGeometry();

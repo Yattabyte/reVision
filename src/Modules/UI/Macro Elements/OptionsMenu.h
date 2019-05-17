@@ -12,7 +12,7 @@
 class OptionsMenu : public Menu
 {
 public:
-	// UI interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_video = last_interact_index,
 		on_graphics,
@@ -21,8 +21,11 @@ public:
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the options menu. */
 	inline ~OptionsMenu() = default;
+	/** Construct an options menu.
+	@param	engine		the engine to use. */
 	inline OptionsMenu(Engine * engine) : Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
@@ -82,8 +85,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	std::shared_ptr<UI_Element> m_videoMenu, m_gfxMenu;
 };
 

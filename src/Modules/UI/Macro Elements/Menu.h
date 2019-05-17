@@ -3,20 +3,24 @@
 #define MENU_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Modules/UI/Basic Elements/Button.h"
+#include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Basic Elements/Separator.h"
 #include "Engine.h"
 
 
-/** A UI element serving as a menu. */
+/** A UI element serving as a menu. 
+Made to be subclassed and expanded upon, provides a method for adding menu buttons. */
 class Menu : public UI_Element
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the menu. */
 	inline ~Menu() = default;
-	inline Menu(Engine * engine) : UI_Element() {
+	/** Construct a menu.
+	@param	engine		the engine to use. */
+	inline Menu(Engine * engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.20f));
@@ -56,15 +60,15 @@ public:
 
 protected:
 	// Protected Methods
-	void addButton(std::shared_ptr<UI_Element> element) {
+	inline void addButton(std::shared_ptr<UI_Element> element) {
 		element->setScale({ 120, 20 });
 		m_layout->addElement(element);
 	};
 
 
-	// Private Attributes
+	// Protected Attributes
 	std::shared_ptr<Label> m_title;
 	std::shared_ptr<UI_Element> m_backPanel, m_separator, m_layout;
 };
 
-#endif // STARTMENU_H
+#endif // MENU_H

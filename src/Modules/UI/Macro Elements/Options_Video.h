@@ -16,8 +16,11 @@
 class Options_Video : public Options_Pane
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the video pane. */
 	inline ~Options_Video() = default;
+	/** Contsruct a video pane. 
+	@param	engine		the engine to use. */
 	inline Options_Video(Engine * engine) : Options_Pane(engine) {
 		// Title
 		m_title->setText("Video Options");
@@ -114,8 +117,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	std::vector<glm::ivec3> m_resolutions;
 };
 

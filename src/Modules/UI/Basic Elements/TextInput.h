@@ -10,22 +10,25 @@
 #include <string>
 
 
-/** UI Text input element. */
+/** UI element which displays an editable text box. */
 class TextInput : public UI_Element
 {
 public:
-	// Interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_text_change = UI_Element::last_interact_index
 	};
 
 
-	// (de)Constructors
+	// public (de)Constructors
+	/** Destroy the text input. */
 	inline ~TextInput() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a text input.
+	@param	engine		the engine to use. */
 	inline TextInput(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
@@ -55,7 +58,7 @@ public:
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_label->setScale(scale);
 		UI_Element::setScale(scale);
@@ -88,7 +91,7 @@ public:
 
 		UI_Element::update();
 	}
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) {
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		if (getVisible() && getEnabled()) {
 			if (mouseWithin(mouseEvent)) {
 				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
@@ -202,10 +205,6 @@ protected:
 	std::string m_text;
 	bool m_edit = false;
 	int m_caretIndex = 0;
-
-
-private:
-	// Private Attributes
 	GLuint
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };
@@ -214,4 +213,4 @@ private:
 	StaticBuffer m_indirect;
 };
 
-#endif // UI_DROPLIST_H
+#endif // UI_TEXTINPUT_H

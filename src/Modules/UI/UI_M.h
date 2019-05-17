@@ -13,16 +13,15 @@
 /** A module responsible for the overall user interface. */
 class UI_Module : public Engine_Module {
 public:
-	// (de)Constructors
-	~UI_Module() = default;
-	UI_Module() = default;
+	// Public (de)Constructors
+	/** Destroy the UI module. */
+	inline ~UI_Module() = default;
+	/** Construct a UI module. */
+	inline UI_Module() = default;
 
 
 	// Public Interface Implementation
-	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
-	/** Tick the ui by a frame. 
-	@param	deltaTime	the amount of time passed since last frame. */
 	virtual void frameTick(const float & deltaTime) override;
 
 

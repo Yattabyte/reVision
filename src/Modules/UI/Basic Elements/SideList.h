@@ -8,22 +8,26 @@
 #include <vector>
 
 
-/** UI drop list class, press to expose the list, select an element to close it. */
+/** UI list class, scrolls horizontally, displays one element at a time. 
+Controllable by directional arrows. */
 class SideList : public UI_Element
 {
 public:
-	// Public interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_index_changed = UI_Element::last_interact_index
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the side list. */
 	inline ~SideList() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct the side list.
+	@param	engine		the engine to use. */
 	inline SideList(Engine * engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
@@ -62,8 +66,8 @@ public:
 	}
 
 
-	// Interface Implementation
-	inline virtual void setScale(const glm::vec2 & scale) {
+	// Public Interface Implementation
+	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_backPanel->setMaxScale({ 172, 14 });
 		m_backPanel->setScale({ 172, 14 });
 		m_label->setScale({ 200, 28 });
@@ -196,10 +200,6 @@ protected:
 		m_rhighlighted = false,
 		m_lpressed = false,
 		m_rpressed = false;
-
-
-private:
-	// Private Attributes
 	GLuint
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };

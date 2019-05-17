@@ -8,22 +8,26 @@
 #include <string>
 
 
-/** Scrollbar decorator object*/
+/** Scrollbar decorator object. */
 class Scrollbar_V : public UI_Decorator
 {
 public:
-	// Interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_scroll_change = UI_Element::last_interact_index
 	};
 
 
 	// Public (de)Constructors
+	/** Destroy this scrollbar. */
 	inline ~Scrollbar_V() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a vertical scrollbar, decorating the supplied component. 
+	@param	engine		the engine to use.
+	@param	component	the component to decorate. */
 	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
@@ -56,7 +60,7 @@ public:
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
@@ -153,10 +157,6 @@ protected:
 
 	// Protected Attributes
 	float m_linear = 1.0f;
-
-
-private:
-	// Private Attributes
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;

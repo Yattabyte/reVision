@@ -11,7 +11,7 @@
 class StartMenu : public Menu
 {
 public:
-	// UI interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_start = last_interact_index,
 		on_options,
@@ -19,8 +19,11 @@ public:
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the start menu. */
 	inline ~StartMenu() = default;
+	/** Construct a start menu. 
+	@param	engine		the engine to use. */
 	inline StartMenu(Engine * engine) : Menu(engine) {
 		// Title
 		m_title->setText("MAIN MENU");
@@ -68,8 +71,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	std::shared_ptr<UI_Element> m_optionsMenu;
 };
 

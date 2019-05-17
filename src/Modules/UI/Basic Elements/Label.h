@@ -14,7 +14,7 @@
 class Label : public UI_Element
 {
 public:
-	// Alignment enums
+	// Public Alignment Enums
 	enum Alignment : int {
 		align_left = -1,
 		align_center = 0,
@@ -22,12 +22,16 @@ public:
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the label. */
 	inline ~Label() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a label, giving it the desired text. 
+	@param	engine		the engine.
+	@param	text		the label text. */
 	inline Label(Engine * engine, const std::string & text = "Label") {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Label");
@@ -58,7 +62,7 @@ public:
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void update() override {
 		// Write letters to a buffer
 		const GLuint count = (GLuint)m_text.size();
@@ -91,7 +95,6 @@ public:
 		}
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
-	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {}
 
 
 	// Public Methods
@@ -146,10 +149,6 @@ protected:
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
 	Alignment m_textAlignment = align_left;
-
-
-private:
-	// Private Attributes
 	GLuint 
 		m_vaoID = 0, 
 		m_vboID = 0;
@@ -159,4 +158,4 @@ private:
 	DynamicBuffer m_bufferString;
 };
 
-#endif // UI_PANEL_H
+#endif // UI_LABEL_H

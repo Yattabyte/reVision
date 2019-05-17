@@ -3,20 +3,23 @@
 #define UI_PANEL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Assets/Primitive.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
 
 
-/** UI panel class, affords containing other elements only. */
+/** UI panel class, affords containing other elements, and rendering a fixed color. */
 class Panel : public UI_Element
 {
 public:
+	// Public (de)Constructors
+	/** Destroy the panel. */
 	inline ~Panel() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a panel.
+	@param	engine		the engine to use. */
 	inline Panel(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Panel");
@@ -36,7 +39,7 @@ public:
 	}
 	
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void update() override {
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> m_data(num_data);
@@ -87,10 +90,6 @@ public:
 protected:
 	// Protected Attributes
 	glm::vec4 m_color = glm::vec4(0.2f);
-
-
-private:
-	// Private Attributes
 	GLuint 
 		m_vaoID = 0, 
 		m_vboID = 0;

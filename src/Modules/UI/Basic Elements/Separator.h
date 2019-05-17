@@ -7,16 +7,19 @@
 #include "Utilities/GL/StaticBuffer.h"
 
 
-/** UI separator class. Appears as some sort of line. */
+/** UI separator class. Renders a faded out line across its width. */
 class Separator : public UI_Element
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the separator. */
 	inline ~Separator() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a separator. 
+	@param	engine		the engine to use. */
 	inline Separator(Engine * engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Separator");
@@ -42,7 +45,7 @@ public:
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		UI_Element::setScale(glm::vec2(scale.x, 2));
 	}
@@ -62,8 +65,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	GLuint
 		m_vaoID = 0,
 		m_vboID = 0;

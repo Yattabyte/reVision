@@ -11,7 +11,10 @@ class UI_Decorator : public UI_Element
 {
 public:
 	// Public (de)Constructors
+	/** Destroy this decorator. */
 	inline ~UI_Decorator() = default;
+	/** Construct a decorator, decorating the supplied component.
+	@param	component		the component to decorate. */
 	inline UI_Decorator(const std::shared_ptr<UI_Element> & component) : m_component(component) {}
 
 

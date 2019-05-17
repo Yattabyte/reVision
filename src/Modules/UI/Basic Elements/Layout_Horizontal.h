@@ -9,12 +9,14 @@
 class Layout_Horizontal : public UI_Element
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the layout. */
 	inline ~Layout_Horizontal() = default;
+	/** Construct the layout. */
 	inline Layout_Horizontal() = default;
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	inline virtual void update() override {
 		alignChildren();
 

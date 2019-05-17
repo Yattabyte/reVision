@@ -15,8 +15,10 @@
 class Options_Graphics : public Options_Pane
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the graphics panel. */
 	inline ~Options_Graphics() = default;
+	/** Construct a graphics panel. */
 	inline Options_Graphics(Engine * engine) : Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");

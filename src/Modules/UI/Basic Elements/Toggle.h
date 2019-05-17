@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
+#include "Modules/UI/Basic Elements/Panel.h"
 #include "Modules/UI/Decorators/Border.h"
 
 
@@ -11,15 +12,19 @@
 class Toggle : public UI_Element
 {
 public:
-	// Interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_toggle = UI_Element::last_interact_index
 	};
 
 
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the toggle switch. */
 	inline ~Toggle() = default;
-	inline Toggle(Engine * engine, const bool & toggleState = true) : m_toggledOn(toggleState) {		
+	/** Construct a toggle switch with a given on/off state.
+	@param	engine		the engine to use.
+	@param	state		the on/off state to use. */
+	inline Toggle(Engine * engine, const bool & state = true) : m_toggledOn(state) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -37,7 +42,7 @@ public:
 		panel->addElement(m_paddle);
 
 		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine, toggleState ? "ON" : "OFF");
+		m_label = std::make_shared<Label>(engine, state ? "ON" : "OFF");
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
@@ -57,14 +62,8 @@ public:
 		update();
 	}
 
-	// Interface Implementation	
-	inline virtual void update() override {
-		if (!m_paddle) return;
-		if (m_toggledOn)
-			m_paddle->setPosition({ 50, 0 });
-		else
-			m_paddle->setPosition({ -50, 0 });
-	}
+
+	// Public Interface Implementation	
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_paddle->setMaxScale({ 50.0f, 14 });
 		m_paddle->setScale({ 50.0f, 14 });
@@ -77,6 +76,13 @@ public:
 		setMaxScale({ 150, 28 });
 		UI_Element::setScale({ 150, 28 });
 	}
+	inline virtual void update() override {
+		if (!m_paddle) return;
+		if (m_toggledOn)
+			m_paddle->setPosition({ 50, 0 });
+		else
+			m_paddle->setPosition({ -50, 0 });
+	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		glm::vec4 color(0.75);
 		if (m_pressed)
@@ -86,6 +92,7 @@ public:
 		m_paddle->setColor(color);
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
+
 
 	// Public Methods
 	/** Set this slider's text.
@@ -112,8 +119,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	bool
 		m_highlighted = false,
 		m_pressed = false,

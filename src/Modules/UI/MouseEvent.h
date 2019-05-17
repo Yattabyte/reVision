@@ -7,7 +7,7 @@
 class MouseEvent
 {
 public:
-	// Public interaction enums
+	// Public Interaction Enums
 	enum Actions {
 		RELEASE = 0,
 		PRESS = 1,
@@ -15,14 +15,16 @@ public:
 	};
 
 
-	// (de)Constructors
-	~MouseEvent() = default;
-	MouseEvent() = default;
+	// Public (de)Constructors
+	/** Destroy the mouse event. */
+	inline ~MouseEvent() = default;
+	/** Construct a mouse event. */
+	inline MouseEvent() = default;
 
 
 	// Public Attributes
 	double m_xPos = 0.0, m_yPos = 0.0;
-	int m_button, m_action, m_mods;
+	int m_button = 0, m_action = 0, m_mods = 0;
 };
 
 #endif // MOUSEEVENT_H

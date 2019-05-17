@@ -4,9 +4,6 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
-#include "Assets/Shader.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include <memory>
 
 
 /** UI button class, affords being pushed and released. */
@@ -14,10 +11,13 @@ class Button : public UI_Element
 {
 public:
 	// (de)Constructors
+	/** Destroy the button. */
 	inline ~Button() = default;
+	/** Creates a button with specific text inside. 
+	@param	engine		the engine.
+	@param	text		the button text. */
 	inline Button(Engine * engine, const std::string & text = "Button") {
-
-		// All buttons have labels, but it isn't interactive
+		// All buttons have labels
 		m_label = std::make_shared<Label>(engine, text);
 		m_label->setAlignment(Label::align_center);
 		m_label->setTextScale(12.5f);
@@ -25,22 +25,10 @@ public:
 
 		// Callbacks
 		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
-		addCallback(on_mouse_press, [&]() {m_pressed = true; });
-		addCallback(on_mouse_release, [&]() {m_pressed = false; });
-		addCallback(on_mouse_enter, [&]() {m_highlighted = true; });
-		addCallback(on_mouse_exit, [&]() {m_highlighted = false; });
-	}
-
-
-	// Interface Implementation
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		glm::vec3 textColor(0.75);
-		if (m_pressed)
-			textColor *= 0.5f;
-		if (m_highlighted)
-			textColor *= 1.5f;
-		m_label->setColor(textColor);
-		UI_Element::renderElement(deltaTime, position, scale);
+		addCallback(on_mouse_press, [&]() {m_pressed = true; updateColors(); });
+		addCallback(on_mouse_release, [&]() {m_pressed = false; updateColors(); });
+		addCallback(on_mouse_enter, [&]() {m_highlighted = true; updateColors(); });
+		addCallback(on_mouse_exit, [&]() {m_highlighted = false; updateColors(); });
 	}
 
 
@@ -73,15 +61,23 @@ public:
 
 
 protected:
+	// Protected Methods
+	/** Modifies the color button text, depending on the state of the button. */
+	inline void updateColors() {
+		glm::vec3 textColor(0.75);
+		if (m_pressed)
+			textColor *= 0.5f;
+		if (m_highlighted)
+			textColor *= 1.5f;
+		m_label->setColor(textColor);
+	}
+
+
 	// Protected Attributes
 	bool 
 		m_highlighted = false, 
 		m_pressed = false;
 	float m_bevelRadius = 10.0f;
-
-
-private:
-	// Private Attributes
 	std::shared_ptr<Label> m_label;
 };
 

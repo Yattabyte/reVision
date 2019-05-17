@@ -7,16 +7,20 @@
 #include <memory>
 
 
-/** Border decorator object*/
+/** Border decorator object. */
 class Border : public UI_Decorator
 {
 public:
 	// Public (de)Constructors
+	/** Destroy the border. */
 	inline ~Border() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
+	/** Construct a border, decorating the supplied component. 
+	@param	engine		the engine to use.
+	@param	component	the component to decorate. */
 	inline Border(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Border");
@@ -94,16 +98,26 @@ public:
 
 
 	// Public Methods
-	/** Set the border size.
+	/** Set the border size for this decorator.
 	@param		size		the new border size to use. */
 	inline void setBorderSize(const float & size) {
 		m_borderSize = size;
 		update();
 	}
+	/** Retrieve the border size of this decorator.
+	@return					the size of the border this decorator uses. */
+	inline float getBorderSize() const {
+		return m_borderSize;
+	}
 	/** Set the border color.
-		@param		size		the new border color to use. */
+	@param		size		the new border color to use. */
 	inline void setBorderColor(const glm::vec3 & color) {
 		m_borderColor = color;
+	}
+	/** Retrieve the border color of this decorator.
+	@return					the color of the border this decorator uses. */
+	inline glm::vec3 getBorderColor() const {
+		return m_borderColor;
 	}
 	
 
@@ -111,10 +125,6 @@ protected:
 	// Protected Attributes
 	float m_borderSize = 2.0f;
 	glm::vec3 m_borderColor = glm::vec3(1.0f);
-
-
-private:
-	// Private Attributes
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;

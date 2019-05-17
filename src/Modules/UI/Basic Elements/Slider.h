@@ -7,19 +7,23 @@
 #include "Modules/UI/Decorators/Border.h"
 
 
-/** Slider ui element. */
+/** A UI component with a bar and a sliding paddle control. */
 class Slider : public UI_Element
 {
 public:
-	// Interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_slider_change = UI_Element::last_interact_index
 	};
 
 
 	// Public (de)Constructors
+	/** Destroy the slider. */
 	inline ~Slider() = default;
-	inline Slider(Engine * engine, const float & startingValue = 0.0f) {
+	/** Construct a slider with a given starting value. 
+	@param	engine		the engine to use.
+	@param	value		the starting value to use. */
+	inline Slider(Engine * engine, const float & value = 0.0f) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -33,7 +37,7 @@ public:
 		panel->addElement(m_paddle);
 
 		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine, std::to_string(startingValue));
+		m_label = std::make_shared<Label>(engine, std::to_string(value));
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
@@ -46,16 +50,12 @@ public:
 		addCallback(on_mouse_press, [&]() { m_pressed = true; });
 		addCallback(on_mouse_release, [&]() { m_pressed = false; });
 
-		m_percentage = startingValue;
+		m_percentage = value;
 		update();
 	}
 
 
-	// Interface Implementation	
-	inline virtual void update() override {
-		if (!m_paddle) return;
-		m_paddle->setPosition({(2.0f * m_percentage - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
-	}
+	// Public Interface Implementation	
 	inline virtual void setScale(const glm::vec2 & scale) override {
 		m_paddle->setMaxScale({ 25, 14 });
 		m_paddle->setScale({ 25, 14 });
@@ -67,6 +67,10 @@ public:
 		m_label->setPosition({ -225, 0 });
 		setMaxScale({ 250, 28 });
 		UI_Element::setScale({ 250, 28 });
+	}
+	inline virtual void update() override {
+		if (!m_paddle) return;
+		m_paddle->setPosition({ (2.0f * m_percentage - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		m_highlighted = false;
@@ -111,8 +115,8 @@ public:
 	}
 
 
-private:
-	// Private Attributes
+protected:
+	// Protected Attributes
 	float m_percentage = 0.0f;
 	bool
 		m_highlighted = false,

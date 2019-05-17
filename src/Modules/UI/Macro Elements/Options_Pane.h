@@ -11,13 +11,17 @@
 #include "Engine.h"
 
 
-/** A UI element serving as an options panel, with a title and a description. */
+/** A UI element serving as an options panel, with a title and a description.
+Made to be subclassed and expanded upon. Provides a method for adding new settings. */
 class Options_Pane : public UI_Element
 {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/** Destroy the options pane. */
 	inline ~Options_Pane() = default;
-	inline Options_Pane(Engine * engine) : UI_Element() {
+	/** Construct a options pane.
+	@param	engine		the engine to use. */
+	inline Options_Pane(Engine * engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.20f));
@@ -78,7 +82,7 @@ public:
 
 protected:
 	// Protected Methods
-	void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description) {
+	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description) {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>();
 		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));

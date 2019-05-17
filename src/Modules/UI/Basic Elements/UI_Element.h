@@ -5,38 +5,17 @@
 #include "Modules/UI/MouseEvent.h"
 #include "GL/glad/glad.h"
 #include "glm/glm.hpp"
-#include "glm/gtc/matrix_transform.hpp"
 #include <algorithm>
 #include <functional>
 #include <map>
-#include <memory>
 #include <vector>
-
-
-#define UIColor_Static glm::vec3(50, 200, 100)
-#define UIColor_Static2 glm::vec3(50, 75, 100)
-#define UIColor_Hovered glm::vec3(100, 225, 150)
-#define UIColor_Hovered2 glm::vec3(50, 100, 125)
-#define UIColor_Pressed glm::vec3(25, 175, 75)
-#define UIColor_Pressed2 glm::vec3(25, 50, 75)
-#define UIColor_Disabled glm::vec3(100, 125, 100)
-#define UIColor_Disabled2 glm::vec3(100, 100, 125)
-#define UIColor_Background glm::vec3(0.2)
-#define UIColor_Background2 glm::vec3(0.3)
-#define UIColor_Border glm::vec3(0.3)
-#define UIColor_Border2 glm::vec3(0.4)
 
 
 /** Interface for UI elements, like buttons, labels, panels, etc. */
 class UI_Element
 {
 public:
-	// Public (de)Constructors
-	~UI_Element() = default;
-	UI_Element() = default;
-
-
-	// Basic UI interaction enums
+	// Public Interaction Enums
 	enum interact {
 		on_resize,
 		on_mouse_enter,
@@ -47,7 +26,14 @@ public:
 	};
 
 
-	// Public Interface
+	// Public (de)Constructors
+	/** Destroy this ui element. */
+	inline ~UI_Element() = default;
+	/** Construct a ui element. */
+	inline UI_Element() = default;
+
+
+	// Public Interface Declaration
 	/** Sets this elements' scale.
 	@param	scale					the new scale to use. */
 	inline virtual void setScale(const glm::vec2 & scale) {
@@ -78,7 +64,7 @@ public:
 	/** Render this element (and all subelements).
 	@param	transform				transform to use*/
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) {
-	if (!getVisible()) return;
+		if (!getVisible()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		for each (auto & child in m_children) {
@@ -236,9 +222,10 @@ protected:
 	// Protected Methods
 	/** Triggers all callback functions identified by the event ID specified.
 	@param		interactionEventID	the event type. */
-	inline void enactCallback(const int & interactionEventID) {
-		for each (const auto & func in m_callbacks[interactionEventID])
-			func();
+	inline void enactCallback(const int & interactionEventID) const {
+		if (m_callbacks.find(interactionEventID) != m_callbacks.end())
+			for each (const auto & func in m_callbacks.at(interactionEventID))
+				func();
 	}
 
 
