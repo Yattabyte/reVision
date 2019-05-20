@@ -22,8 +22,12 @@ public:
 
 	// Public (de)Constructors
 	/** Destroy the list. */
-	inline ~List() = default;
-	/** Constructs a list. 
+	inline ~List() {
+		// Delete geometry
+		glDeleteBuffers(1, &m_vboID);
+		glDeleteVertexArrays(1, &m_vaoID);
+	}
+	/** Constructs a list.
 	@param	engine		the engine. */
 	inline List(Engine * engine) {
 		// Asset Loading

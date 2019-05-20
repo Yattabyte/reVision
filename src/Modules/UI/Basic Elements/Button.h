@@ -10,6 +10,12 @@
 class Button : public UI_Element
 {
 public:
+	// Public Interaction Enums
+	enum interact {
+		on_pressed = UI_Element::last_interact_index
+	};
+
+
 	// (de)Constructors
 	/** Destroy the button. */
 	inline ~Button() = default;
@@ -24,11 +30,17 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_resize, [&]() {m_label->setScale(getScale()); });
-		addCallback(on_mouse_press, [&]() {m_pressed = true; updateColors(); });
-		addCallback(on_mouse_release, [&]() {m_pressed = false; updateColors(); });
-		addCallback(on_mouse_enter, [&]() {m_highlighted = true; updateColors(); });
-		addCallback(on_mouse_exit, [&]() {m_highlighted = false; updateColors(); });
+		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
+		addCallback(on_mouse_press, [&]() { m_pressed = true; updateColors(); });
+		addCallback(on_mouse_release, [&]() {
+			if (m_pressed) {
+				m_pressed = false;
+				enactCallback(on_pressed);
+			}
+			updateColors(); 
+		});
+		addCallback(on_mouse_enter, [&]() { m_highlighted = true; updateColors(); });
+		addCallback(on_mouse_exit, [&]() { m_highlighted = false; updateColors(); });
 	}
 
 

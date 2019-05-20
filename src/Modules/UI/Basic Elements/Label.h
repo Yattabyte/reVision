@@ -14,6 +14,10 @@
 class Label : public UI_Element
 {
 public:
+	// Public Interaction Enums
+	enum interact {
+		on_textChanged = UI_Element::last_interact_index
+	};
 	// Public Alignment Enums
 	enum Alignment : int {
 		align_left = -1,
@@ -103,6 +107,7 @@ public:
 	inline void setText(const std::string & text) {
 		m_text = text;
 		update();
+		enactCallback(on_textChanged);
 	}
 	/** Retrieve this label's text. 
 	@return	the text this label uses. */
