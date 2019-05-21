@@ -85,6 +85,8 @@ public:
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
 	void updateSystem(BaseECSSystem * system, const float & deltaTime);
+	/** Purge the ECS, unloading all entities and components. */
+	void purge();
 
 
 private:

@@ -11,6 +11,9 @@
 #include "Utilities/IO/Image_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
 
+// Starting States Used
+#include "States/MainMenuState.h"
+
 
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
@@ -23,14 +26,6 @@ static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int heigh
 	auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
 	preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
 	preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
-}
-static void GLFW_Callback_CursorPosition(GLFWwindow* window, double xPos, double yPos)
-{
-	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
-}
-static void GLFW_Callback_CursorButton(GLFWwindow* window, int button, int action, int mods)
-{
-	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
 }
 static void GLFW_Callback_Char(GLFWwindow* window, unsigned int character)
 {
@@ -114,17 +109,17 @@ Engine::~Engine()
 	// Update indicator
 	m_aliveIndicator = false;
 	m_messageManager.statement("Shutting down...");
-	Image_IO::Deinitialize();	
+	Image_IO::Deinitialize();
 	glfwTerminate();
 }
 
-Engine::Engine() : 
+Engine::Engine() :
 	// Initialize engine-dependent members first
 	m_soundManager(),
-	m_assetManager(), 
-	m_inputBindings(this), 
+	m_assetManager(),
+	m_inputBindings(this),
 	m_preferenceState(this),
-	m_renderingContext(this), 
+	m_renderingContext(this),
 	m_materialManager(this)
 {
 	// Output engine boiler-plate
@@ -180,15 +175,14 @@ Engine::Engine() :
 
 	// Configure Rendering Context
 	configureWindow();
+	glfwSetInputMode(m_renderingContext.window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_renderingContext.window, this);
 	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_WindowResize);
-	glfwSetCursorPosCallback(m_renderingContext.window, GLFW_Callback_CursorPosition);
-	glfwSetMouseButtonCallback(m_renderingContext.window, GLFW_Callback_CursorButton);
 	glfwSetCharCallback(m_renderingContext.window, GLFW_Callback_Char);
 	glfwSetKeyCallback(m_renderingContext.window, GLFW_Callback_Key);
 	glfwMakeContextCurrent(m_renderingContext.window);
 	glfwSwapInterval((int)m_vsync);
-	
+
 	// Initialize Members
 	registerECSConstructor("Transform_Component", new Transform_Constructor());
 	m_inputBindings.loadFile("binds");
@@ -198,7 +192,6 @@ Engine::Engine() :
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
 	m_moduleWorld.initialize(this);
-	m_moduleGame.initialize(this);
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -207,7 +200,10 @@ Engine::Engine() :
 		std::thread workerThread(&Engine::tickThreaded, this, std::move(exitObject), std::move(Auxilliary_Context(m_renderingContext)));
 		workerThread.detach();
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
-	}	
+	}
+
+	// Initialize starting state LAST
+	m_engineState = new MainMenuState(this);
 }
 
 void Engine::tick()
@@ -216,36 +212,36 @@ void Engine::tick()
 	const float deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
-	// Performance Debugging
-	m_frameCount++;
-	/*if (m_frameCount >= 100) {
-		m_frameAccumulator /= 100.0f;
-		m_messageManager.statement("Avg Frametime = " + std::to_string(m_frameAccumulator * 1000.0f) + " ms");
-		m_frameAccumulator = deltaTime;
-		m_frameCount = 0;
-	}
-	else
-		m_frameAccumulator += deltaTime;*/
-
 	// Update Managers
 	m_assetManager.notifyObservers();
 	m_modelManager.update();
-	updateInput();
-	m_moduleGraphics.setActiveCamera(0);
 
-	/*******************
-	--- Tick Modules ---
-	*******************/
-	if (m_moduleWorld.checkIfLoaded()) 
-		m_modulePhysics.frameTick(deltaTime);	
-	m_moduleGraphics.frameTick(deltaTime);
-	m_moduleGame.frameTick(deltaTime);
-	m_modulePProcess.frameTick(deltaTime);
-	m_moduleUI.frameTick(deltaTime);
+	// Update persistent binding state
+	if (const auto &bindings = m_inputBindings.getBindings())
+		if (bindings->existsYet())
+			for each (const auto &pair in bindings.get()->m_configuration) {
+				// If Key is pressed, set state to 1, otherwise set to 0
+				m_actionState[pair.first] = glfwGetKey(m_renderingContext.window, (int)pair.second) ? 1.0f : 0.0f;
+			}
+	// Updated hard-coded bindings
+	double mouseX, mouseY;
+	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
+	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
+	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
+	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_LEFT);
+	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_RIGHT);
+
+	// Update Engine State
+	if (auto * state = m_engineState->handleInput(m_actionState)) {
+		if (state != m_engineState)
+			delete m_engineState;
+		m_engineState = state;
+	}
+	m_engineState->handleTick(deltaTime);
 
 	// End Frame
 	glfwSwapBuffers(m_renderingContext.window);
-	glfwPollEvents();	
+	glfwPollEvents();
 }
 
 void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context)
@@ -253,8 +249,8 @@ void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context
 	glfwMakeContextCurrent(context.window);
 
 	// Check if thread should shutdown
-	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout) 
-		m_assetManager.beginWorkOrder();	
+	while (exitObject.wait_for(std::chrono::milliseconds(1)) == std::future_status::timeout)
+		m_assetManager.beginWorkOrder();
 }
 
 bool Engine::shouldClose()
@@ -267,14 +263,14 @@ void Engine::shutDown()
 	glfwSetWindowShouldClose(m_renderingContext.window, GLFW_TRUE);
 }
 
-void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor) 
+void Engine::registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor)
 {
 	m_ecs.registerConstructor(name, constructor);
 }
 
 GLFWwindow * Engine::getRenderingContext() const
-{ 
-	return m_renderingContext.window; 
+{
+	return m_renderingContext.window;
 }
 
 std::vector<glm::ivec3> Engine::getResolutions() const
@@ -303,43 +299,17 @@ bool Engine::File_Exists(const std::string & name)
 	return (stat((Engine::Get_Current_Dir() + name).c_str(), &buffer) == 0);
 }
 
-void Engine::updateInput()
-{
-	const auto &bindings = m_inputBindings.getBindings();
-	if (!bindings->existsYet()) return;
-	const auto &bind_map = bindings.get()->m_configuration;
-	// Pair is the action followed by the key assigned to it
-	for each (const auto &pair in bind_map) {
-		const auto &action = pair.first;
-		const auto &input_button = (int)pair.second;
-		// If Key is pressed, set state to 1, otherwise set to 0
-		m_actionState.at(action) = (glfwGetKey(m_renderingContext.window, input_button)) ? 1.0f : 0.0f;
-	}
-	
-	// UI manager dictates mouse control
-	if (m_moduleUI.isCursorActive()) 
-		glfwSetInputMode(m_renderingContext.window,	GLFW_CURSOR, GLFW_CURSOR_NORMAL);	
-	else {
-		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		double mouseX, mouseY;
-		glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
-		m_actionState.at(ActionState::LOOK_X) = (float)mouseX;
-		m_actionState.at(ActionState::LOOK_Y) = (float)mouseY;
-		glfwSetCursorPos(m_renderingContext.window, 0, 0);
-	}
-}
-
-void Engine::configureWindow() 
+void Engine::configureWindow()
 {
 	const GLFWvidmode* mainMode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 	const int maxWidth = mainMode->width, maxHeight = mainMode->height;
 	glfwSetWindowSize(m_renderingContext.window, m_windowSize.x, m_windowSize.y);
 	glfwSetWindowPos(m_renderingContext.window, (maxWidth - m_windowSize.x) / 2, (maxHeight - m_windowSize.y) / 2);
 	glfwSetWindowMonitor(
-		m_renderingContext.window, 
-		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL, 
-		0, 0, 
-		m_windowSize.x, m_windowSize.y, 
-		(int)m_refreshRate 
+		m_renderingContext.window,
+		m_useFullscreen ? glfwGetPrimaryMonitor() : NULL,
+		0, 0,
+		m_windowSize.x, m_windowSize.y,
+		(int)m_refreshRate
 	);
 }

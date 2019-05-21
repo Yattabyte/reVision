@@ -6,23 +6,23 @@
 #include <random>
 
 /* Component Types Used */
-#include "Modules/Graphics/Components/Prop_C.h"
-#include "Modules/Graphics/Components/Skeleton_C.h"
-#include "Modules/Graphics/Components/LightDirectional_C.h"
-#include "Modules/Graphics/Components/LightPoint_C.h"
-#include "Modules/Graphics/Components/LightSpot_C.h"
-#include "Modules/Graphics/Components/Reflector_C.h"
-#include "Modules/Graphics/Components/Skeleton_C.h"
-#include "Modules/Graphics/Components/Camera_C.h"
+#include "Modules/Graphics/ECS/Prop_C.h"
+#include "Modules/Graphics/ECS/Skeleton_C.h"
+#include "Modules/Graphics/ECS/LightDirectional_C.h"
+#include "Modules/Graphics/ECS/LightPoint_C.h"
+#include "Modules/Graphics/ECS/LightSpot_C.h"
+#include "Modules/Graphics/ECS/Reflector_C.h"
+#include "Modules/Graphics/ECS/Skeleton_C.h"
+#include "Modules/Graphics/ECS/Camera_C.h"
 
 /* System Types Used */
-#include "Modules/Graphics/Systems/TransformSync_S.h"
-#include "Modules/Graphics/Systems/SkeletonAnimation_S.h"
-#include "Modules/Graphics/Systems/PropRendering_S.h"
-#include "Modules/Graphics/Systems/LightDirectional_S.h"
-#include "Modules/Graphics/Systems/LightSpot_S.h"
-#include "Modules/Graphics/Systems/LightPoint_S.h"
-#include "Modules/Graphics/Systems/Reflector_S.h"
+#include "Modules/Graphics/ECS/TransformSync_S.h"
+#include "Modules/Graphics/ECS/SkeletonAnimation_S.h"
+#include "Modules/Graphics/ECS/PropRendering_S.h"
+#include "Modules/Graphics/ECS/LightDirectional_S.h"
+#include "Modules/Graphics/ECS/LightSpot_S.h"
+#include "Modules/Graphics/ECS/LightPoint_S.h"
+#include "Modules/Graphics/ECS/Reflector_S.h"
 
 /* Post Processing Techniques Used */
 #include "Modules/Graphics/Effects/PropRendering_FX.h"

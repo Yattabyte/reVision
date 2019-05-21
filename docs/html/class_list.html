@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.1.2</span>
+   &#160;<span id="projectnumber">3.2.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,6 +64,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pro-methods">Protected Member Functions</a> &#124;
 <a href="#pro-attribs">Protected Attributes</a> &#124;
@@ -84,10 +85,41 @@ Inheritance diagram for List:</div>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a0d19d1000851cf636ee15bf3f382fe76"><td class="memItemLeft" align="right" valign="top"><a id="a0d19d1000851cf636ee15bf3f382fe76"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>interact</b> { <b>on_hover</b> = UI_Element::last_interact_index, 
+<b>on_selection</b>
+ }</td></tr>
+<tr class="separator:a0d19d1000851cf636ee15bf3f382fe76"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_types_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
+<tr class="memitem:a5eb2528a2edc989f74c5da1a2e8a1043 inherit pub_types_class_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a5eb2528a2edc989f74c5da1a2e8a1043"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>interact</b> { <br />
+&#160;&#160;<b>on_resize</b>, 
+<b>on_mouse_enter</b>, 
+<b>on_mouse_exit</b>, 
+<b>on_mouse_press</b>, 
+<br />
+&#160;&#160;<b>on_mouse_release</b>, 
+<b>last_interact_index</b> = on_mouse_release + 1
+<br />
+ }</td></tr>
+<tr class="separator:a5eb2528a2edc989f74c5da1a2e8a1043 inherit pub_types_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a70aecf37bd9d779a394e4d50377fbf5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a70aecf37bd9d779a394e4d50377fbf5f">~List</a> ()</td></tr>
+<tr class="separator:a70aecf37bd9d779a394e4d50377fbf5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04a6181df945e6c193ae72564838f32d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a04a6181df945e6c193ae72564838f32d">List</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
+<tr class="separator:a04a6181df945e6c193ae72564838f32d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ae4df272ff06a2cf1a39076e3b2d7f9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a5ae4df272ff06a2cf1a39076e3b2d7f9">update</a> () override</td></tr>
 <tr class="separator:a5ae4df272ff06a2cf1a39076e3b2d7f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20d01f7651156ce40e358a434b97173f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a20d01f7651156ce40e358a434b97173f">renderElement</a> (const float &amp;deltaTime, const glm::vec2 &amp;position, const glm::vec2 &amp;scale) override</td></tr>
+<tr class="separator:a20d01f7651156ce40e358a434b97173f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab8ce0b40f006b4a777778c344bb05dd7"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#ab8ce0b40f006b4a777778c344bb05dd7">mouseAction</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent) override</td></tr>
+<tr class="separator:ab8ce0b40f006b4a777778c344bb05dd7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7c9a76b0ade401c9229074b219647f8e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a7c9a76b0ade401c9229074b219647f8e">getSelectionIndex</a> () const</td></tr>
+<tr class="separator:a7c9a76b0ade401c9229074b219647f8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a495afc9749e491a9cf4d1c3951374aa6"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a495afc9749e491a9cf4d1c3951374aa6">getHoveredIndex</a> () const</td></tr>
+<tr class="separator:a495afc9749e491a9cf4d1c3951374aa6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac25b8c65d476041c76636ab1a8ae5e80"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#ac25b8c65d476041c76636ab1a8ae5e80">setMargin</a> (const float &amp;margin)</td></tr>
 <tr class="separator:ac25b8c65d476041c76636ab1a8ae5e80"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a112672dbe1f0c17545119182f613585a"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a112672dbe1f0c17545119182f613585a">getMargin</a> () const</td></tr>
@@ -96,15 +128,19 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac0fe78ee730fcb7348fc6fb74949c848"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a9a70e841fbd1d3d274b1c3f34749f8"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a1a9a70e841fbd1d3d274b1c3f34749f8">getSpacing</a> () const</td></tr>
 <tr class="separator:a1a9a70e841fbd1d3d274b1c3f34749f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa834a97802016c45a8e0866f8b258fa8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#aa834a97802016c45a8e0866f8b258fa8">setBorderSize</a> (const float &amp;size)</td></tr>
+<tr class="separator:aa834a97802016c45a8e0866f8b258fa8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9ce7c0aff35966e29217c5f774ef508d"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a9ce7c0aff35966e29217c5f774ef508d">getBorderSize</a> () const</td></tr>
+<tr class="separator:a9ce7c0aff35966e29217c5f774ef508d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
+<tr class="memitem:a4c19379dc429254012f0f958e3410103 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4c19379dc429254012f0f958e3410103">~UI_Element</a> ()=default</td></tr>
+<tr class="separator:a4c19379dc429254012f0f958e3410103 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0f04290f05d35a698e1049e7efcce9f inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aa0f04290f05d35a698e1049e7efcce9f">UI_Element</a> ()=default</td></tr>
+<tr class="separator:aa0f04290f05d35a698e1049e7efcce9f inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aedfc0e3695736e0a8379a65c0ba5908b inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#aedfc0e3695736e0a8379a65c0ba5908b">setScale</a> (const glm::vec2 &amp;scale)</td></tr>
 <tr class="separator:aedfc0e3695736e0a8379a65c0ba5908b inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a05a029c7e81074769f3f932b55afac5d inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a05a029c7e81074769f3f932b55afac5d">setPosition</a> (const glm::vec2 &amp;position)</td></tr>
 <tr class="separator:a05a029c7e81074769f3f932b55afac5d inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a350825c9df931245e6f07fd1de0d1c31 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a350825c9df931245e6f07fd1de0d1c31">renderElement</a> (const float &amp;deltaTime, const glm::vec2 &amp;position=glm::vec2(0.0f), const glm::vec2 &amp;scale=glm::vec2(1.0f))</td></tr>
-<tr class="separator:a350825c9df931245e6f07fd1de0d1c31 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac25296513ad9478ba6cb59c394a93cbc inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#ac25296513ad9478ba6cb59c394a93cbc">mouseAction</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent)</td></tr>
-<tr class="separator:ac25296513ad9478ba6cb59c394a93cbc inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe1657bf07fd95667d097258865f40a4 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#abe1657bf07fd95667d097258865f40a4">keyChar</a> (const unsigned int &amp;character)</td></tr>
 <tr class="separator:abe1657bf07fd95667d097258865f40a4 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5ef7abb4d2ee2ae374ecb9eca33d194e inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a5ef7abb4d2ee2ae374ecb9eca33d194e">keyboardAction</a> (const int &amp;key, const int &amp;scancode, const int &amp;action, const int &amp;mods)</td></tr>
@@ -135,17 +171,21 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:adf034155826cf96ed85035f8a4ca5181 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ad4d1d4ff44dbffbd41c4f9ddb4d049 inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">getEnabled</a> () const</td></tr>
 <tr class="separator:a4ad4d1d4ff44dbffbd41c4f9ddb4d049 inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca284d59dee5b318b590ded7b653790e inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="aca284d59dee5b318b590ded7b653790e"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>clearFocus</b> ()</td></tr>
+<tr class="separator:aca284d59dee5b318b590ded7b653790e inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4e2be442fceb11c0ac8cac5dc04688be inherit pub_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a4e2be442fceb11c0ac8cac5dc04688be">mouseWithin</a> (const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;mouseEvent) const</td></tr>
 <tr class="separator:a4e2be442fceb11c0ac8cac5dc04688be inherit pub_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
-<tr class="memitem:ae4551ce0f9e818d36174eead46ac5798"><td class="memItemLeft" align="right" valign="top"><a id="ae4551ce0f9e818d36174eead46ac5798"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>alignChildren</b> ()</td></tr>
+<tr class="memitem:ae4551ce0f9e818d36174eead46ac5798"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#ae4551ce0f9e818d36174eead46ac5798">alignChildren</a> ()</td></tr>
 <tr class="separator:ae4551ce0f9e818d36174eead46ac5798"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7d3f724f0f2ae4e0971720c2399017f5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_list.html#a7d3f724f0f2ae4e0971720c2399017f5">updateSelectionGeometry</a> ()</td></tr>
+<tr class="separator:a7d3f724f0f2ae4e0971720c2399017f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
-<tr class="memitem:adb13a2705ff187a09d78fc83608c671f inherit pro_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#adb13a2705ff187a09d78fc83608c671f">enactCallback</a> (const int &amp;interactionEventID)</td></tr>
-<tr class="separator:adb13a2705ff187a09d78fc83608c671f inherit pro_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f8cb7234bc25fb29914734bf559268f inherit pro_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a6f8cb7234bc25fb29914734bf559268f">enactCallback</a> (const int &amp;interactionEventID) const</td></tr>
+<tr class="separator:a6f8cb7234bc25fb29914734bf559268f inherit pro_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -155,6 +195,27 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_margin</b> = 10.0f
 <tr class="memitem:a6a6062e9f705486e6834ea5a729d2bcb"><td class="memItemLeft" align="right" valign="top"><a id="a6a6062e9f705486e6834ea5a729d2bcb"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>m_spacing</b> = 10.0f</td></tr>
 <tr class="separator:a6a6062e9f705486e6834ea5a729d2bcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44f2f565930d404734e27d754aee8c05"><td class="memItemLeft" align="right" valign="top"><a id="a44f2f565930d404734e27d754aee8c05"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>m_borderSize</b> = 2.0f</td></tr>
+<tr class="separator:a44f2f565930d404734e27d754aee8c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9b55babee3e02f7e3a3f04c9ecf4393"><td class="memItemLeft" align="right" valign="top"><a id="ad9b55babee3e02f7e3a3f04c9ecf4393"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_hoverIndex</b> = -1</td></tr>
+<tr class="separator:ad9b55babee3e02f7e3a3f04c9ecf4393"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a383c5cc08313892dd6895f8dcdab6ff4"><td class="memItemLeft" align="right" valign="top"><a id="a383c5cc08313892dd6895f8dcdab6ff4"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_selectionIndex</b> = -1</td></tr>
+<tr class="separator:a383c5cc08313892dd6895f8dcdab6ff4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aea8025ff1b0d65de7ae39cd0d4fde574"><td class="memItemLeft" align="right" valign="top"><a id="aea8025ff1b0d65de7ae39cd0d4fde574"></a>
+GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_vaoID</b> = 0</td></tr>
+<tr class="separator:aea8025ff1b0d65de7ae39cd0d4fde574"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a549bd3a7145ad996d9a83e2e44756c5a"><td class="memItemLeft" align="right" valign="top"><a id="a549bd3a7145ad996d9a83e2e44756c5a"></a>
+GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_vboID</b> = 0</td></tr>
+<tr class="separator:a549bd3a7145ad996d9a83e2e44756c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0d24d8bb31c1a0d69555c29a4e06c2d"><td class="memItemLeft" align="right" valign="top"><a id="ab0d24d8bb31c1a0d69555c29a4e06c2d"></a>
+<a class="el" href="class_shared___shader.html">Shared_Shader</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_shader</b></td></tr>
+<tr class="separator:ab0d24d8bb31c1a0d69555c29a4e06c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a77eb370e848326ed0397ebb0de8bbe34"><td class="memItemLeft" align="right" valign="top"><a id="a77eb370e848326ed0397ebb0de8bbe34"></a>
+<a class="el" href="class_static_buffer.html">StaticBuffer</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_indirect</b></td></tr>
+<tr class="separator:a77eb370e848326ed0397ebb0de8bbe34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
 <tr class="memitem:a425ae0dda5b5d1e8710c4d5be2afbb11 inherit pro_attribs_class_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a425ae0dda5b5d1e8710c4d5be2afbb11"></a>
 glm::vec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec2(0.0f)</td></tr>
@@ -189,25 +250,150 @@ std::map&lt; int, std::vector&lt; std::function&lt; void()&gt; &gt; &gt;&#160;</
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pub_types_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
-<tr class="memitem:a5eb2528a2edc989f74c5da1a2e8a1043 inherit pub_types_class_u_i___element"><td class="memItemLeft" align="right" valign="top"><a id="a5eb2528a2edc989f74c5da1a2e8a1043"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>interact</b> { <br />
-&#160;&#160;<b>on_resize</b>, 
-<b>on_mouse_enter</b>, 
-<b>on_mouse_exit</b>, 
-<b>on_mouse_press</b>, 
-<br />
-&#160;&#160;<b>on_mouse_release</b>, 
-<b>last_interact_index</b> = on_mouse_release + 1
-<br />
- }</td></tr>
-<tr class="separator:a5eb2528a2edc989f74c5da1a2e8a1043 inherit pub_types_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_methods_class_u_i___element"><td colspan="2" onclick="javascript:toggleInherit('pub_static_methods_class_u_i___element')"><img src="closed.png" alt="-"/>&#160;Static Public Member Functions inherited from <a class="el" href="class_u_i___element.html">UI_Element</a></td></tr>
 <tr class="memitem:a66dde05036e269313a1f92139a3eded0 inherit pub_static_methods_class_u_i___element"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_u_i___element.html#a66dde05036e269313a1f92139a3eded0">withinBBox</a> (const glm::vec2 &amp;box_p1, const glm::vec2 &amp;box_p2, const glm::vec2 &amp;point)</td></tr>
 <tr class="separator:a66dde05036e269313a1f92139a3eded0 inherit pub_static_methods_class_u_i___element"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents a vertical list of UI elements. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+<div class="textblock"><p>A UI container class that laysout its children vertically, in a list. Only modifies the position of its children, not their scale. If children need to expand to fit inside a parent container, consider using a vertical layout. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a70aecf37bd9d779a394e4d50377fbf5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a70aecf37bd9d779a394e4d50377fbf5f">&#9670;&nbsp;</a></span>~List()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">List::~List </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy the list. </p>
+
+</div>
+</div>
+<a id="a04a6181df945e6c193ae72564838f32d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04a6181df945e6c193ae72564838f32d">&#9670;&nbsp;</a></span>List()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">List::List </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
+          <td class="paramname"><em>engine</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Constructs a list. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae4551ce0f9e818d36174eead46ac5798"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4551ce0f9e818d36174eead46ac5798">&#9670;&nbsp;</a></span>alignChildren()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void List::alignChildren </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Update position of each child element. </p>
+
+</div>
+</div>
+<a id="a9ce7c0aff35966e29217c5f774ef508d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9ce7c0aff35966e29217c5f774ef508d">&#9670;&nbsp;</a></span>getBorderSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">float List::getBorderSize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the border size. </p><dl class="section return"><dt>Returns</dt><dd>border size. </dd></dl>
+
+</div>
+</div>
+<a id="a495afc9749e491a9cf4d1c3951374aa6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a495afc9749e491a9cf4d1c3951374aa6">&#9670;&nbsp;</a></span>getHoveredIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int List::getHoveredIndex </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the hovered item index. </p><dl class="section return"><dt>Returns</dt><dd>index of the hovered item in this list. </dd></dl>
+
+</div>
+</div>
 <a id="a112672dbe1f0c17545119182f613585a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a112672dbe1f0c17545119182f613585a">&#9670;&nbsp;</a></span>getMargin()</h2>
 
@@ -234,6 +420,32 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
+<a id="a7c9a76b0ade401c9229074b219647f8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7c9a76b0ade401c9229074b219647f8e">&#9670;&nbsp;</a></span>getSelectionIndex()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int List::getSelectionIndex </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the selected item index. </p><dl class="section return"><dt>Returns</dt><dd>index of the selected item in this list. </dd></dl>
+
+</div>
+</div>
 <a id="a1a9a70e841fbd1d3d274b1c3f34749f8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1a9a70e841fbd1d3d274b1c3f34749f8">&#9670;&nbsp;</a></span>getSpacing()</h2>
 
@@ -257,6 +469,122 @@ Additional Inherited Members</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Get the spacing distance between elements in this layout. </p><dl class="section return"><dt>Returns</dt><dd>the spacing distance between elements. </dd></dl>
+
+</div>
+</div>
+<a id="ab8ce0b40f006b4a777778c344bb05dd7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab8ce0b40f006b4a777778c344bb05dd7">&#9670;&nbsp;</a></span>mouseAction()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void List::mouseAction </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_mouse_event.html">MouseEvent</a> &amp;&#160;</td>
+          <td class="paramname"><em>mouseEvent</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Applies a mouse action across this ui element. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mouseEvent</td><td>the mouse event occuring. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_u_i___element.html#aa0a0e8eead57dfb9d0f995dd327e8585">UI_Element</a>.</p>
+
+</div>
+</div>
+<a id="a20d01f7651156ce40e358a434b97173f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20d01f7651156ce40e358a434b97173f">&#9670;&nbsp;</a></span>renderElement()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void List::renderElement </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>position</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::vec2 &amp;&#160;</td>
+          <td class="paramname"><em>scale</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Render this element (and all subelements). </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">transform</td><td>transform to use </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_u_i___element.html#a350825c9df931245e6f07fd1de0d1c31">UI_Element</a>.</p>
+
+</div>
+</div>
+<a id="aa834a97802016c45a8e0866f8b258fa8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa834a97802016c45a8e0866f8b258fa8">&#9670;&nbsp;</a></span>setBorderSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void List::setBorderSize </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>size</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Set the border size. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>the new border size to use. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -349,6 +677,32 @@ Additional Inherited Members</h2></td></tr>
 <p>Requests that this element update itself. </p>
 
 <p>Reimplemented from <a class="el" href="class_u_i___element.html#aab2d60b1d642e748a0c35ca4b69bd502">UI_Element</a>.</p>
+
+</div>
+</div>
+<a id="a7d3f724f0f2ae4e0971720c2399017f5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7d3f724f0f2ae4e0971720c2399017f5">&#9670;&nbsp;</a></span>updateSelectionGeometry()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void List::updateSelectionGeometry </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Update the geometry of the selection box. </p>
 
 </div>
 </div>

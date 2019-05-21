@@ -13,7 +13,8 @@ class StartMenu : public Menu
 public:
 	// Public Interaction Enums
 	enum interact {
-		on_start = last_interact_index,
+		on_start_game = last_interact_index,
+		on_start_puzzle,
 		on_options,
 		on_quit,
 	};
@@ -28,14 +29,21 @@ public:
 		// Title
 		m_title->setText("MAIN MENU");
 
-		// Add 'Start' button
-		auto startButton = std::make_shared<Button>(engine, "START");
-		startButton->addCallback(Button::on_pressed, [&, engine]() {
+		// Add 'Start Game' button
+		auto startButton = std::make_shared<Button>(engine, "START GAME");
+		startButton->addCallback(Button::on_pressed, [&]() {
 			setVisible(false);
-			engine->getModule_Game().startGame(); 
-			enactCallback(on_start); 
+			enactCallback(on_start_game); 
 		});
 		addButton(startButton);
+
+		// Add 'Start Puzzle' button
+		auto puzzleButton = std::make_shared<Button>(engine, "START PUZZLE");
+		puzzleButton->addCallback(Button::on_pressed, [&]() {
+			setVisible(false);
+			enactCallback(on_start_puzzle);
+		});
+		addButton(puzzleButton);
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");

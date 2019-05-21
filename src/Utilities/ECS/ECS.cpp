@@ -83,6 +83,15 @@ void ECS::updateSystem(BaseECSSystem * system, const float & deltaTime)
 		updateSystemWithMultipleComponents(system, deltaTime, componentTypes);
 }
 
+void ECS::purge()
+{
+	for (size_t x = 0; x < m_entities.size(); ++x)
+		removeEntity(m_entities[x]);
+
+	m_entities.clear();
+	m_components.clear();
+}
+
 void ECS::deleteComponent(const uint32_t & componentID, const uint32_t & index)
 {
 	std::vector<uint8_t> mem_array = m_components[componentID];

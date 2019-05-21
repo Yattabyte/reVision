@@ -5,6 +5,7 @@ var searchData=
   ['score_5fsystem',['Score_System',['../class_score___system.html',1,'']]],
   ['scoringdata',['ScoringData',['../struct_score___component_1_1_scoring_data.html',1,'Score_Component']]],
   ['scrollbar_5fv',['Scrollbar_V',['../class_scrollbar___v.html',1,'']]],
+  ['separator',['Separator',['../class_separator.html',1,'']]],
   ['shader',['Shader',['../class_shader.html',1,'']]],
   ['shader_5fgeometry',['Shader_Geometry',['../class_shader___geometry.html',1,'']]],
   ['shader_5fpkg',['Shader_Pkg',['../class_shader___pkg.html',1,'']]],

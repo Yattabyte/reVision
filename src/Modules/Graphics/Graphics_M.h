@@ -10,7 +10,7 @@
 #include "Modules/Graphics/Common/FBO_LightBounce.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/VisualFX.h"
-#include "Modules/Graphics/Components/Camera_C.h"
+#include "Modules/Graphics/ECS/Camera_C.h"
 #include "Assets/Shader.h"
 #include "Utilities/ECS/ecsSystem.h"
 #include "Utilities/GL/VectorBuffer.h"

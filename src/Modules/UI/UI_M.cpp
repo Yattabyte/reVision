@@ -5,8 +5,11 @@
 
 void UI_Module::initialize(Engine * engine)
 {
+	Engine_Module::initialize(engine);
+	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
+
 	// Preferences
-	auto & preferences = engine->getPreferenceState();
+	auto & preferences = m_engine->getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize, StaticBuffer & projectionBuffer) {
 		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -1.0f, 1.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
@@ -27,8 +30,20 @@ void UI_Module::initialize(Engine * engine)
 	calcOthoProj(m_renderSize, m_projectionBuffer);
 
 	// Create main menu
-	m_startMenu = std::make_shared<StartMenu>(engine);
+	m_startMenu = std::make_shared<StartMenu>(m_engine);
 	m_startMenu->setScale(m_renderSize);
+	m_startMenu->addCallback(StartMenu::on_start_game, [&]() {
+		m_menuState = on_game;
+	});
+	m_startMenu->addCallback(StartMenu::on_start_puzzle, [&]() {
+		m_menuState = on_puzzle;
+	});
+	m_startMenu->addCallback(StartMenu::on_options, [&]() {
+		m_menuState = on_menu;
+	});
+	m_startMenu->addCallback(StartMenu::on_quit, [&]() {
+		m_menuState = on_exit;
+	});
 }
 
 void UI_Module::frameTick(const float & deltaTime)
@@ -47,6 +62,16 @@ void UI_Module::frameTick(const float & deltaTime)
 	glDisable(GL_SCISSOR_TEST);
 	glDisable(GL_BLEND);
 	Shader::Release();
+}
+
+UI_Module::MenuState UI_Module::getMenuState() const
+{
+	return m_menuState;
+}
+
+void UI_Module::applyMouseEvent(const MouseEvent & mouseEvent)
+{
+	m_startMenu->mouseAction(mouseEvent);
 }
 
 void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
@@ -73,9 +98,4 @@ void UI_Module::applyChar(const unsigned int & character)
 void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
 {
 	m_startMenu->keyboardAction(key, scancode, action, mods);
-}
-
-bool UI_Module::isCursorActive() const
-{
-	return true;
 }

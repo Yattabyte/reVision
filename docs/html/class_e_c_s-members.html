@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.1.2</span>
+   &#160;<span id="projectnumber">3.2.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -79,12 +79,13 @@ $(function() {
   <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#adc6e953b538753a27ac7cc77a830911e">makeEntity</a>(Args &amp;...args)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_e_c_s.html#a8dc182e86b4cbd41a30765818a4671c2">makeEntity</a>(Args *...args)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>operator=</b>(const ECS &amp;other)=delete (defined in <a class="el" href="class_e_c_s.html">ECS</a>)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_e_c_s.html#ac0042afa1746b1fb2eba8db5839f195e">registerConstructor</a>(const char *name, BaseECSComponentConstructor *constructor)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#a5ded6f4a38c2dd82d51fe3c575c98d95">removeComponent</a>(const EntityHandle &amp;entity)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_e_c_s.html#a1d898736bcaa6e0338a2c6ce7ccdbd4b">removeEntity</a>(const EntityHandle &amp;handle)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#ac9d91c3cf4e9c75a5bb78a1f3510d666">updateSystem</a>(BaseECSSystem *system, const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_e_c_s.html#a2f584c216f688dd6aee528fb6c6a4517">updateSystems</a>(ECSSystemList &amp;systems, const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~ECS</b>() (defined in <a class="el" href="class_e_c_s.html">ECS</a>)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_e_c_s.html#a85706251c2c708ef594660f501faac02">purge</a>()</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#ac0042afa1746b1fb2eba8db5839f195e">registerConstructor</a>(const char *name, BaseECSComponentConstructor *constructor)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_e_c_s.html#a5ded6f4a38c2dd82d51fe3c575c98d95">removeComponent</a>(const EntityHandle &amp;entity)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#a1d898736bcaa6e0338a2c6ce7ccdbd4b">removeEntity</a>(const EntityHandle &amp;handle)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_e_c_s.html#ac9d91c3cf4e9c75a5bb78a1f3510d666">updateSystem</a>(BaseECSSystem *system, const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_e_c_s.html#a2f584c216f688dd6aee528fb6c6a4517">updateSystems</a>(ECSSystemList &amp;systems, const float &amp;deltaTime)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~ECS</b>() (defined in <a class="el" href="class_e_c_s.html">ECS</a>)</td><td class="entry"><a class="el" href="class_e_c_s.html">ECS</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

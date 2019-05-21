@@ -12,6 +12,7 @@
 void Post_Processing_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
+	m_engine->getManager_Messages().statement("Loading Module: Post-Processing...");
 	m_fxTechs.push_back(new Bloom(m_engine, m_engine->getModule_Graphics().getLightingFBOID(), m_engine->getModule_Graphics().getLightingTexID()));
 	m_fxTechs.push_back(new HDR(m_engine));
 	m_fxTechs.push_back(new FXAA(m_engine));

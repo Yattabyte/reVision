@@ -1,0 +1,99 @@
+entity
+{
+	Transform_Component
+	{
+		vec3 "0,10,30"
+		quat "0.906,-0.075,-0.375,0.180"
+		vec3 "1,1,1"
+	}
+	Player3D_Component
+	{
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "0,0,0"
+		quat "0.854,-0.146,0.354,-0.354"
+		vec3 "1,1,1"
+	}
+	LightDirectional_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightDirectionalShadow_Component
+	{		
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "10,10,0"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "0"
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "0,10,-10"
+		quat "0.707,0,0.707,0"
+		vec3 "1,1,1"
+	}
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "1"
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "0,0,0"
+		quat "0.5,-0.5,0.5,-.5"
+		vec3 "1,1,1"
+	}
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "2"
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "-10,-10,0"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "3"
+	}
+}
+entity
+{
+	Transform_Component
+	{
+		vec3 "0,-10,10"
+		quat "0.707,0,0.707,0"
+		vec3 "1,1,1"
+	}
+	Prop_Component
+	{
+		string "Dev\Wall2.obj"
+		uint "4"
+	}
+}

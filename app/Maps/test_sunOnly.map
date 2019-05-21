@@ -1,6 +1,6 @@
 entity
 {
-	Player_Component
+	Player3D_Component
 	{
 		vec3 "0,10,30"
 	}

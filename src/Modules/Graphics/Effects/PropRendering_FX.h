@@ -5,7 +5,7 @@
 #include "Modules/Graphics/Effects/GFX_Core_Effect.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
-#include "Modules/Graphics/Systems/PropRendering_S.h"
+#include "Modules/Graphics/ECS/PropRendering_S.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"
 #include "GLFW/glfw3.h"

@@ -24,7 +24,7 @@ public:
 	Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
-		m_cubemapSky = Shared_Cubemap(engine, "none\\");
+		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
 		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");

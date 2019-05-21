@@ -14,6 +14,6 @@ var searchData=
   ['bloom',['Bloom',['../class_bloom.html',1,'Bloom'],['../class_bloom.html#ad9a8c612a7adeee18c655f9c51e41cca',1,'Bloom::Bloom()']]],
   ['board_5fcomponent',['Board_Component',['../struct_board___component.html',1,'']]],
   ['board_5fconstructor',['Board_Constructor',['../struct_board___constructor.html',1,'']]],
-  ['border',['Border',['../class_border.html',1,'']]],
-  ['button',['Button',['../class_button.html',1,'']]]
+  ['border',['Border',['../class_border.html',1,'Border'],['../class_border.html#a2373ba954a4acd97186fcf53a690b03b',1,'Border::Border()']]],
+  ['button',['Button',['../class_button.html',1,'Button'],['../class_button.html#a84900643fee89c45856b457c738df07b',1,'Button::Button()']]]
 ];

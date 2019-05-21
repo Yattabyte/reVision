@@ -2,26 +2,33 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Utilities/ECS/ecs.h"
+// Managers
 #include "Managers/AssetManager.h"
 #include "Managers/ModelManager.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MessageManager.h"
 #include "Managers/SoundManager.h"
+
+// Modules
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Post Processing/Post_Processing_M.h"
 #include "Modules/Physics/Physics_M.h"
 #include "Modules/UI/UI_M.h"
 #include "Modules/World/World_M.h"
-#include "Modules/Game/Game_M.h"
+
+// Utilities
+#include "Utilities/ECS/ecs.h"
 #include "Utilities/ActionState.h"
 #include "Utilities/InputBinding.h"
 #include "Utilities/PreferenceState.h"
 #include "Utilities/MappedChar.h"
+
+// Other
+#include "States/EngineState.h"
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.1.9";
+constexpr char ENGINE_VERSION[] = "3.2.0";
 
 struct GLFWwindow;
 class Engine;
@@ -97,8 +104,6 @@ public:
 	Physics_Module & getModule_Physics() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
 	World_Module & getModule_World() { return m_moduleWorld; }
-	/** Returns this engine's game module. */
-	Game_Module & getModule_Game() { return m_moduleGame; }
 
 
 	// Static Methods
@@ -113,8 +118,6 @@ public:
 	
 private:
 	// Private Methods
-	/** Updates the action state belonging to this engine, iterating through the keybinds and checking if they are active. */
-	void updateInput();
 	/** Updates the window attributes. */
 	void configureWindow();
 
@@ -147,7 +150,9 @@ private:
 	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
-	Game_Module m_moduleGame;
+	
+	// Private Engine State
+	EngineState * m_engineState = nullptr;
 };
 
 #endif // ENGINE_H

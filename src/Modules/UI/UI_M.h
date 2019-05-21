@@ -13,6 +13,15 @@
 /** A module responsible for the overall user interface. */
 class UI_Module : public Engine_Module {
 public:
+	// Public State Enumeration
+	enum MenuState {
+		on_menu,
+		on_game,
+		on_puzzle,
+		on_exit
+	};
+
+
 	// Public (de)Constructors
 	/** Destroy the UI module. */
 	inline ~UI_Module() = default;
@@ -26,6 +35,10 @@ public:
 
 
 	// Public Methods
+	/***/
+	MenuState getMenuState() const;
+	/***/
+	void applyMouseEvent(const MouseEvent & mouseEvent);
 	/** Propagates mouse movement input to all UI elements.
 	@param		xPos	the 'x' axis position of the mouse
 	@param		yPos	the 'y' axis position of the mouse. */
@@ -44,9 +57,6 @@ public:
 	@param		action		GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.
 	@param		mods		Bit field describing which modifier keys were held down. */
 	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
-	/** Returns whether or not this module requires the mouse.
-	@returns	true when active, false otherwise. */
-	bool isCursorActive() const;
 
 
 private:
@@ -55,6 +65,7 @@ private:
 	StaticBuffer m_projectionBuffer;
 	std::shared_ptr<UI_Element> m_startMenu, m_optionsMenu;
 	MouseEvent m_mouseEvent;
+	MenuState m_menuState = on_menu;
 };
 
 #endif // UI_MODULE_H

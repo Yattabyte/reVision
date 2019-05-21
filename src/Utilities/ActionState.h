@@ -22,6 +22,10 @@ public:
 	// Public Static Enumerations
 	/** Enumeration for indexing into actions. */
 	const enum ACTION_ENUM {
+		MOUSE_X,
+		MOUSE_Y,
+		MOUSE_L,
+		MOUSE_R,
 		FORWARD,
 		BACKWARD,
 		LEFT,
@@ -42,6 +46,10 @@ public:
 	@return	std::vector of action names as strings */
 	static std::vector<std::string> Action_Strings() {
 		static const std::vector<std::string> actionStrings = {
+			"MOUSE_X",
+			"MOUSE_Y",
+			"MOUSE_L",
+			"MOUSE_R",
 			"FORWARD",
 			"BACKWARD",
 			"LEFT",

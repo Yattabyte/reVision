@@ -6,7 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
-#include "Modules/Graphics/Systems/Reflector_S.h"
+#include "Modules/Graphics/ECS/Reflector_S.h"
 #include "Modules/Graphics/Common/FBO_EnvMap.h"
 #include "Modules/Graphics/Common/FBO_Geometry.h"
 #include "Modules/Graphics/Common/FBO_Lighting.h"

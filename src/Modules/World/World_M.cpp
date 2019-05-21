@@ -13,18 +13,18 @@ void World_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: World...");
-
-	// Load world
-	loadWorld();
 }
 
 void World_Module::frameTick(const float & deltaTime)
 {
 }
 
-void World_Module::loadWorld()
+void World_Module::loadWorld(const std::string & mapName)
 {
-	m_level = Shared_Level(m_engine, "game.map");
+	/*// Unload any previous map
+	if (m_level && m_level->existsYet())
+		m_engine->getECS().purge();*/
+	m_level = Shared_Level(m_engine, mapName);
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
 }
 
