@@ -8,13 +8,17 @@
 
 /** A framebuffer, formatted for rendering lighting (deferred, using volumetric lights). */
 struct FBO_Lighting : FBO_Base {
+	// Attributes
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
-	~FBO_Lighting() {
+
+
+	// (de)Constructors
+	inline 	~FBO_Lighting() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
-	FBO_Lighting() {
+	inline FBO_Lighting() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		resize();
@@ -26,6 +30,8 @@ struct FBO_Lighting : FBO_Base {
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
 		glNamedFramebufferDrawBuffers(m_fboID, 1, drawBuffers);
 	}
+
+
 	// Interface Implementation
 	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_size = glm::ivec2(width, height);

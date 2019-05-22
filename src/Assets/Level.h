@@ -39,8 +39,7 @@ public:
 	std::vector<LevelStruct_Entity> m_entities;
 
 private:
-	// Private Methods
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

@@ -2,7 +2,7 @@
 #ifndef REFLECTOR_C_H
 #define REFLECTOR_C_H
 
-#include "Modules/Graphics/ECS/Camera_C.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/FBO_EnvMap.h"
 #include "Utilities/ECS/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
@@ -27,13 +27,13 @@ struct Reflector_Component: public ECSComponent<Reflector_Component> {
 	bool m_outOfDate = true;
 	float m_updateTime = 0.0f;
 	Transform m_transform;
-	VB_Element<Camera_Buffer> * m_Cameradata[6] = { nullptr,  nullptr,  nullptr,  nullptr,  nullptr,  nullptr };
+	CameraBuffer::BufferStructure m_Cameradata[6];
 };
 /** A constructor to aid in creation. */
 struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 	// Public (de)Constructors
-	Reflector_Constructor(VectorBuffer<Camera_Buffer> * camElementBuffer, VectorBuffer<Reflection_Buffer> * refElementBuffer, FBO_EnvMap * envmapFBO)
-		: m_camElementBuffer(camElementBuffer), m_refElementBuffer(refElementBuffer), m_envmapFBO(envmapFBO) {};
+	Reflector_Constructor(VectorBuffer<Reflection_Buffer> * refElementBuffer, FBO_EnvMap * envmapFBO)
+		: m_refElementBuffer(refElementBuffer), m_envmapFBO(envmapFBO) {};
 
 
 	// Interface Implementation
@@ -46,9 +46,8 @@ struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 		m_envmapFBO->resize(m_envmapFBO->m_size.x, m_envmapFBO->m_size.y, m_envCount);		
 		component->m_outOfDate = true;		
 		for (int x = 0; x < 6; ++x) {
-			component->m_Cameradata[x] = m_camElementBuffer->newElement();
-			component->m_Cameradata[x]->data->Dimensions = m_envmapFBO->m_size;
-			component->m_Cameradata[x]->data->FOV = 90.0f;
+			component->m_Cameradata[x].Dimensions = m_envmapFBO->m_size;
+			component->m_Cameradata[x].FOV = 90.0f;
 		}
 		return { component, component->ID };
 	}
@@ -57,7 +56,6 @@ struct Reflector_Constructor : ECSComponentConstructor<Reflector_Component> {
 private:
 	// Private Attributes
 	GLuint m_envCount = 0;
-	VectorBuffer<Camera_Buffer> * m_camElementBuffer = nullptr;
 	VectorBuffer<Reflection_Buffer> * m_refElementBuffer = nullptr;
 	FBO_EnvMap * m_envmapFBO = nullptr;
 };

@@ -96,7 +96,6 @@ protected:
 		auto & graphics = m_engine->getModule_Graphics();
 		bool didAnything = false, update = m_renderState->m_outOfDate;
 		m_renderState->m_outOfDate = false;
-		GLuint oldCameraID = 0;
 		for each (auto reflector in std::vector<Reflector_Component*>(m_renderState->m_reflectorsToUpdate)) {
 			if (update || reflector->m_outOfDate) {
 				if (!didAnything) {
@@ -105,12 +104,13 @@ protected:
 					preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_renderState->m_envmapSize);
 					glViewport(0, 0, m_renderState->m_envmapSize, m_renderState->m_envmapSize);
 					m_renderSize = copySize;
-					oldCameraID = graphics.getActiveCamera();
 					didAnything = true;
 				}
 				reflector->m_outOfDate = false;
 				for (int x = 0; x < 6; ++x) {
-					graphics.setActiveCamera(reflector->m_Cameradata[x]->index);
+					// For line below, figure out a way to copy data from the reflector data into main camera, temporarily
+					// We removed the camera buffer array, as it only served this one purpose ever, and slowed everything down
+					//graphics.setActiveCamera(reflector->m_Cameradata[x]->index);
 					graphics.frameTick(deltaTime);
 
 					// Copy lighting frame into cube-face
@@ -153,7 +153,6 @@ protected:
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 			Shader::Release();
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-			graphics.setActiveCamera(oldCameraID);
 			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 			preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 		}

@@ -8,13 +8,17 @@
 
 /** A framebuffer, formatted for storing spot light shadows. */
 struct FBO_Shadow_Spot {
+	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[3] = { 0,0,0 };
 	glm::ivec2 m_size = glm::ivec2(1);
-	~FBO_Shadow_Spot() {
+
+
+	// (de)Constructors
+	inline ~FBO_Shadow_Spot() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(3, m_textureIDS);
 	}
-	FBO_Shadow_Spot() {
+	inline FBO_Shadow_Spot() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
 		resize(glm::vec2(1), 1);

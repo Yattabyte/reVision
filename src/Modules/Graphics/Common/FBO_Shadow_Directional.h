@@ -8,13 +8,17 @@
 
 /** A framebuffer, formatted for storing directional light shadows, 4 at a time (parallel split cascaded shadow maps). */
 struct FBO_Shadow_Directional {
+	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[3] = { 0,0,0 };
 	glm::ivec2 m_size = glm::ivec2(1);
-	~FBO_Shadow_Directional() {
+
+
+	// (de)Constructors
+	inline ~FBO_Shadow_Directional() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(3, m_textureIDS);
 	}
-	FBO_Shadow_Directional() {
+	inline FBO_Shadow_Directional() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
 		resize(glm::vec2(1), 4);

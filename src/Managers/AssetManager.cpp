@@ -7,6 +7,8 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
 	for each (const Shared_Asset asset in m_AssetMap[assetType])
 		if (asset->getFileName() == filename) {
+			asset_read_guard.unlock();
+			asset_read_guard.release();
 			// Check if we need to wait for initialization
 			if (!threaded)
 				// Stay here until asset finalizes
@@ -18,8 +20,8 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 	asset_read_guard.release();
 
 	// Create the asset
-	const auto & asset = constructor();
 	std::unique_lock<std::shared_mutex> asset_write_guard(m_Mutex_Assets);
+	const auto & asset = constructor();
 	m_AssetMap[assetType].push_back(asset);
 	asset_write_guard.unlock();
 	asset_write_guard.release();

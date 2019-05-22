@@ -9,13 +9,17 @@
 
 /** A framebuffer, formatted for rendering radiance hints (indirect radiant diffuse lighting). */
 struct FBO_LightBounce : FBO_Base {
+	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[RH_TEXTURE_COUNT] = { 0,0,0,0 };
 	GLuint m_resolution = 1;
-	~FBO_LightBounce() {
+
+
+	// (de)Constructors
+	inline ~FBO_LightBounce() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS);
 	}
-	FBO_LightBounce() {
+	inline FBO_LightBounce() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_3D, RH_TEXTURE_COUNT, m_textureIDS);
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel) {
@@ -36,6 +40,9 @@ struct FBO_LightBounce : FBO_Base {
 		
 		resize();
 	}
+
+
+	// Interface Implementation
 	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_resolution = width;
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)

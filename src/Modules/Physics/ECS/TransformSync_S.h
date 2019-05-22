@@ -9,7 +9,7 @@
 #include "glm/gtx/component_wise.hpp"
 
 /* Component Types Used */
-#include "Utilities/ECS/Transform_C.h"
+#include "Modules/Graphics/ECS/Transform_C.h"
 #include "Modules/Physics/ECS/Collider_C.h"
 
 

@@ -40,12 +40,12 @@ public:
 	virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Accumulate Light Data		
 		auto & graphics = m_engine->getModule_Graphics();
-		const auto cameraBuffer = graphics.getActiveCameraBuffer();
-		const glm::vec2 &size = cameraBuffer->data->Dimensions;
+		const auto & cameraBuffer = graphics.getCameraBuffer();
+		const glm::vec2 &size = cameraBuffer->Dimensions;
 		const float ar = size.x / size.y;
-		const float tanHalfHFOV = glm::radians(cameraBuffer->data->FOV) / 2.0f;
+		const float tanHalfHFOV = glm::radians(cameraBuffer->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-		const float near_plane = -CAMERA_NEAR_PLANE;
+		const float near_plane = -CameraBuffer::BufferStructure::CAMERA_NEAR_PLANE;
 		const float far_plane = -m_renderState.m_drawDistance/2.0F;
 		float cascadeEnd[NUM_CASCADES + 1];
 		glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
@@ -74,8 +74,8 @@ public:
 			// Use to make a bounding sphere, but then convert into a bounding box
 			aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
 		}
-		const glm::mat4 CamInv = glm::inverse(cameraBuffer->data->vMatrix);
-		const glm::mat4 CamP = cameraBuffer->data->pMatrix;
+		const glm::mat4 CamInv = glm::inverse(cameraBuffer->vMatrix);
+		const glm::mat4 CamP = cameraBuffer->pMatrix;
 		std::vector<GLint> lightIndices, shadowIndices;
 		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest;
 		for each (const auto & componentParam in components) {

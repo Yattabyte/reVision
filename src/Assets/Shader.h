@@ -155,8 +155,7 @@ protected:
 
 
 private:
-	// Interface Implementation
-	void initializeDefault();
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

@@ -1,5 +1,4 @@
 #include "Engine.h"
-#include "Utilities/ECS/Transform_C.h"
 #include "LinearMath/btScalar.h"
 #include <direct.h>
 
@@ -184,7 +183,6 @@ Engine::Engine() :
 	glfwSwapInterval((int)m_vsync);
 
 	// Initialize Members
-	registerECSConstructor("Transform_Component", new Transform_Constructor());
 	m_inputBindings.loadFile("binds");
 	m_modelManager.initialize();
 	m_moduleGraphics.initialize(this);
@@ -231,7 +229,8 @@ void Engine::tick()
 	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_LEFT);
 	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_RIGHT);
 
-	// Update Engine State
+	// Update Engine State / Begin Frame
+	m_moduleGraphics.getCameraBuffer().waitFrame(m_frameCount);
 	if (auto * state = m_engineState->handleInput(m_actionState)) {
 		if (state != m_engineState)
 			delete m_engineState;
@@ -240,8 +239,10 @@ void Engine::tick()
 	m_engineState->handleTick(deltaTime);
 
 	// End Frame
+	m_moduleGraphics.getCameraBuffer().lockFrame(m_frameCount);
 	glfwSwapBuffers(m_renderingContext.window);
 	glfwPollEvents();
+	m_frameCount = (m_frameCount + 1) % 3;
 }
 
 void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context)

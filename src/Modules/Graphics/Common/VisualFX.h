@@ -14,7 +14,7 @@ class Engine;
 /** A utility class that applies graphical effects/filters to images, such as Gaussian blur.*/
 class VisualFX {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destructor. */
 	~VisualFX();
 	/** Constructor. */

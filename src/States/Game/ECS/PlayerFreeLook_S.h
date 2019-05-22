@@ -4,7 +4,7 @@
 
 #include "States/GameSystemInterface.h"
 #include "States/Game/ECS/Player3D_C.h"
-#include "Utilities/ECS/Transform_C.h"
+#include "Modules/Graphics/ECS/Transform_C.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -60,11 +60,8 @@ public:
 			transform.m_position += glm::vec3(rotatedPosition / rotatedPosition.w);
 
 			// Update the engine pointer
-			auto & cameraBuffer = graphicsModule.getActiveCameraBuffer()->data;
-			cameraBuffer->EyePosition = transform.m_position;
-			glm::mat4 vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
-			cameraBuffer->vMatrix = vMatrix;
-			cameraBuffer->vMatrix_Inverse = glm::inverse(vMatrix);
+			graphicsModule.getCameraBuffer()->EyePosition = transform.m_position;
+			graphicsModule.getCameraBuffer()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);	
 		}
 	};
 

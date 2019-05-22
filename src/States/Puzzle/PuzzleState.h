@@ -99,7 +99,6 @@ public:
 			}
 
 			// Render Game
-			m_engine->getModule_Graphics().setActiveCamera(0);
 			m_engine->getModule_Graphics().frameTick(deltaTime);
 			m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			ecs.updateSystem(m_renderingSystem, deltaTime);

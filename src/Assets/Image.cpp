@@ -35,10 +35,8 @@ void Image::initialize()
 		m_pitch = dataContainer.pitch;
 		m_bpp = dataContainer.bpp;
 	}
-	else {
-		m_engine->getManager_Messages().error("Image \"" + m_filename + "\" failed to initialize.");
-		fill();
-	}
+	else 
+		fill();	
 	
 	Asset::finalize();
 }

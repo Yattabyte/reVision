@@ -66,7 +66,7 @@ private:
 	void resize(const glm::ivec2 newSize);
 
 
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

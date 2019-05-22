@@ -12,11 +12,9 @@ struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
 
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
+layout (std430, binding = 2) buffer Camera_Buffer {		
 	mat4 pMatrix;
 	mat4 vMatrix;
-	mat4 pMatrix_Inverse;
-	mat4 vMatrix_Inverse;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
 };

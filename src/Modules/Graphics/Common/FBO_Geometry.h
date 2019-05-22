@@ -9,13 +9,17 @@
 
 /** A framebuffer, formatted to support rendering geometry (deferred rendering/gbuffer). */
 struct FBO_Geometry : FBO_Base {
+	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[4] = { 0,0,0,0 };
 	glm::ivec2 m_size = glm::ivec2(1);
-	~FBO_Geometry() {
+
+
+	// (de)Constructors
+	inline ~FBO_Geometry() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(4, m_textureIDS);
 	}
-	FBO_Geometry() {
+	inline FBO_Geometry() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 4, m_textureIDS);
 		resize();
@@ -42,6 +46,8 @@ struct FBO_Geometry : FBO_Base {
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_fboID, 3, drawBuffers);
 	}
+
+
 	// Interface Implementation
 	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_size = glm::ivec2(width, height);

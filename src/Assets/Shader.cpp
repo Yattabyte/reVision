@@ -34,29 +34,6 @@ Shader::~Shader()
 
 Shader::Shader(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-void Shader::initializeDefault()
-{
-	// Create hard-coded alternative
-	const std::string filename = getFileName();
-
-	// Create Vertex Shader
-	m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	m_vertexShader.createGLShader(m_engine, filename);
-	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
-
-	// Create Fragment Shader
-	m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	m_fragmentShader.createGLShader(m_engine, filename);
-	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
-
-	glLinkProgram(m_glProgramID);
-	glValidateProgram(m_glProgramID);
-
-	// Detach the shaders now that the program is complete
-	glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
-	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
-}
-
 void Shader::initialize()
 {
 	// Attempt to load cache, otherwise load manually
@@ -80,7 +57,26 @@ void Shader::initialize()
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
 			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
-			initializeDefault();
+			
+			// Create hard-coded alternative
+			const std::string filename = getFileName();
+
+			// Create Vertex Shader
+			m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
+			m_vertexShader.createGLShader(m_engine, filename);
+			glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
+
+			// Create Fragment Shader
+			m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+			m_fragmentShader.createGLShader(m_engine, filename);
+			glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+
+			glLinkProgram(m_glProgramID);
+			glValidateProgram(m_glProgramID);
+
+			// Detach the shaders now that the program is complete
+			glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
+			glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 		}
 	}
 

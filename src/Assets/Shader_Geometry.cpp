@@ -26,10 +26,6 @@ Shader_Geometry::~Shader_Geometry()
 
 Shader_Geometry::Shader_Geometry(Engine * engine, const std::string & filename) : Shader(engine, filename) {}
 
-void Shader_Geometry::initializeDefault()
-{	
-}
-
 void Shader_Geometry::initialize()
 {
 	// Attempt to load cache, otherwise load manually
@@ -49,7 +45,6 @@ void Shader_Geometry::initialize()
 			// Initialize default
 			const std::vector<GLchar> infoLog = getErrorLog();
 			m_engine->getManager_Messages().error("Shader_Geometry \"" + m_filename + "\" failed to initialize. Reason: \n" + std::string(infoLog.data(), infoLog.size()));
-			initializeDefault();
 		}
 	}
 

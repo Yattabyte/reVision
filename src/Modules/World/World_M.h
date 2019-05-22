@@ -26,7 +26,8 @@ public:
 
 
 	// Public Methods
-	/** Loads the world. */
+	/** Loads the world.
+	@param	mapName		the name of the map to load. */
 	void loadWorld(const std::string & mapName);
 	/** Registers a notification flag to be updated when level loaded.
 	@param	notifier	flag to be set when level loaded*/

@@ -30,7 +30,6 @@ template <typename T>
 struct VB_Element {
 	GLuint index = 0u;
 	T * data = nullptr;
-	GLsync fence = nullptr;
 	inline T* operator->() { 
 		return data; 
 	}
@@ -49,7 +48,7 @@ public:
 	}
 	/** Default Constructor. */
 	VectorBuffer() {
-		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | flags);
 		m_ptrContainer = glMapNamedBufferRange(m_bufferID, 0, m_maxCapacity, flags);
@@ -137,7 +136,7 @@ private:
 			m_maxCapacity += offset + (size * 2);
 
 			// Create new buffer
-			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_READ_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 			GLuint newBuffer = 0;
 			glCreateBuffers(1, &newBuffer);
 			glNamedBufferStorage(newBuffer, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | flags);

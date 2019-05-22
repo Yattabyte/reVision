@@ -44,9 +44,7 @@ public:
 
 
 private:
-	// Private Methods
-	// Interface Implementation
-	void initializeDefault();
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

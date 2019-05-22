@@ -28,7 +28,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.0";
+constexpr char ENGINE_VERSION[] = "3.2.1";
 
 struct GLFWwindow;
 class Engine;
@@ -70,6 +70,8 @@ public:
 
 
 	// Public Accessors
+	/***/
+	inline int getCurrentFrame() const { return m_frameCount; }
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
 	/** Return a list of available resolutions. */
@@ -150,6 +152,7 @@ private:
 	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
+
 	
 	// Private Engine State
 	EngineState * m_engineState = nullptr;

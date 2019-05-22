@@ -50,7 +50,6 @@ public:
 		return nullptr;
 	}
 	inline virtual void handleTick(const float & deltaTime) override {
-		m_engine->getModule_Graphics().setActiveCamera(0);
 		m_engine->getModule_Graphics().frameTick(deltaTime);
 		m_engine->getModule_PostProcess().frameTick(deltaTime);
 		m_engine->getModule_UI().frameTick(deltaTime);

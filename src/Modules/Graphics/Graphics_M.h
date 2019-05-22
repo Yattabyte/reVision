@@ -10,10 +10,9 @@
 #include "Modules/Graphics/Common/FBO_LightBounce.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/VisualFX.h"
-#include "Modules/Graphics/ECS/Camera_C.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Assets/Shader.h"
 #include "Utilities/ECS/ecsSystem.h"
-#include "Utilities/GL/VectorBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 
@@ -40,16 +39,10 @@ public:
 	// Public Methods	
 	/** Update the data for the specified camera. 
 	@param	camera			the camera to update */
-	void updateCamera(Camera_Buffer * camera);
-	/** Set the specified camera index as the active camera. 
-	@param	newCameraID		the camera index to use */
-	void setActiveCamera(const GLuint & newCameraID);
-	/** Return the index of the camera last active. 
-	@return					the camera index of the last active camera */
-	const GLuint getActiveCamera() const;
+	void updateCamera(CameraBuffer & cameraBuffer);
 	/** Returns the active camera's data buffer.
 	@return					the active camera's data buffer. */
-	VB_Element<Camera_Buffer> * getActiveCameraBuffer();
+	CameraBuffer & getCameraBuffer();
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
 	const GLuint getLightingFBOID() const { return m_lightingFBO.m_fboID; };
@@ -61,7 +54,6 @@ public:
 private:
 	// Private Attributes
 	ECS *							m_ecs = nullptr;
-	GLuint							m_activeCamera = 0;
 	glm::ivec2						m_renderSize = glm::ivec2(1);
 	ECSSystemList					m_renderingSystems;
 	std::vector<GFX_Core_Effect*>	m_fxTechs;
@@ -74,9 +66,7 @@ private:
 	FBO_Lighting					m_lightingFBO;
 	FBO_Reflection					m_reflectionFBO;
 	FBO_LightBounce					m_bounceFBO;
-	StaticBuffer					m_cameraIndexBuffer;
-	VectorBuffer<Camera_Buffer>		m_cameraBuffer;
-	VB_Element<Camera_Buffer> *		m_defaultCamera;
+	CameraBuffer					m_cameraBuffer;
 };
 
 #endif // GRAPHICS_MODULE_H

@@ -10,7 +10,8 @@
 constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
 	Assimp::Importer* pool[MAX_IMPORTERS];
-	std::atomic_size_t available = MAX_IMPORTERS;
+	size_t available = MAX_IMPORTERS;
+	std::mutex poolMutex;
 
 	Importer_Pool() {
 		std::generate(pool, pool + MAX_IMPORTERS, [](){return new Assimp::Importer(); });
@@ -20,7 +21,8 @@ struct Importer_Pool {
 	@return		returns a single importer*/
 	Assimp::Importer * rentImporter() {
 		// Check if any of our importers are free to be used
-		if (available) 
+		std::unique_lock<std::mutex> readGuard(poolMutex);
+		if (available)
 			return pool[--available];		
 		// Otherwise create a new one
 		else
@@ -29,6 +31,7 @@ struct Importer_Pool {
 
 	void returnImporter(Assimp::Importer * returnedImporter) {
 		// Check if we have enough importers, free extra
+		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available >= 4)
 			delete returnedImporter;
 		else 

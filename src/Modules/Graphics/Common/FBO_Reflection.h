@@ -8,13 +8,17 @@
 
 /** A framebuffer, formatted for rendering reflections. */
 struct FBO_Reflection : FBO_Base {
+	// Attributes
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
-	~FBO_Reflection() {
+
+
+	// (de)Constructors
+	inline ~FBO_Reflection() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
-	FBO_Reflection() {
+	inline FBO_Reflection() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
 		resize();
@@ -26,6 +30,8 @@ struct FBO_Reflection : FBO_Base {
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
 		glNamedFramebufferDrawBuffers(m_fboID, 1, drawBuffers);
 	}
+
+
 	// Interface Implementation
 	inline virtual void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) override {
 		m_size = glm::ivec2(width, height);

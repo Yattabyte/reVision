@@ -9,7 +9,7 @@
 #include "glm/gtx/component_wise.hpp"
 
 /* Component Types Used */
-#include "Utilities/ECS/Transform_C.h"
+#include "Modules/Graphics/ECS/Transform_C.h"
 #include "Modules/Graphics/ECS/Prop_C.h"
 #include "Modules/Graphics/ECS/LightDirectional_C.h"
 #include "Modules/Graphics/ECS/LightPoint_C.h"
@@ -137,12 +137,10 @@ public:
 				const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
 				const glm::mat4 pMatrix_Inverse = glm::inverse(pMatrix);
 				for (int x = 0; x < 6; ++x) {
-					reflectorComponent->m_Cameradata[x]->data->FarPlane = largest;
-					reflectorComponent->m_Cameradata[x]->data->EyePosition = position;
-					reflectorComponent->m_Cameradata[x]->data->pMatrix = pMatrix;
-					reflectorComponent->m_Cameradata[x]->data->pMatrix_Inverse = pMatrix_Inverse;
-					reflectorComponent->m_Cameradata[x]->data->vMatrix = vMatrices[x];
-					reflectorComponent->m_Cameradata[x]->data->vMatrix_Inverse = glm::inverse(vMatrices[x]);
+					reflectorComponent->m_Cameradata[x].FarPlane = largest;
+					reflectorComponent->m_Cameradata[x].EyePosition = position;
+					reflectorComponent->m_Cameradata[x].pMatrix = pMatrix;
+					reflectorComponent->m_Cameradata[x].vMatrix = vMatrices[x];
 				}
 			}
 		}

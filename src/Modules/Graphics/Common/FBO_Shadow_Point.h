@@ -8,13 +8,17 @@
 
 /** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
 struct FBO_Shadow_Point {
+	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[4] = { 0,0,0,0 };
 	glm::ivec2 m_size;
-	~FBO_Shadow_Point() {
+
+
+	// (de)Constructors
+	inline ~FBO_Shadow_Point() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(4, m_textureIDS);
 	}
-	FBO_Shadow_Point() {
+	inline FBO_Shadow_Point() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 4, m_textureIDS);
 		resize(glm::vec2(1), 6);

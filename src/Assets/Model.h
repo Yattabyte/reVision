@@ -68,7 +68,7 @@ private:
 	void loadMaterial(const std::string & relativePath, Shared_Material & modelMaterial, const std::vector<Material_Strings> & materials);
 
 
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

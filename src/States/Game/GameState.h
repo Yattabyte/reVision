@@ -32,7 +32,6 @@ public:
 			if (m_engine->getModule_World().checkIfLoaded())
 				m_engine->getModule_Physics().frameTick(deltaTime);
 			m_engine->getECS().updateSystem(m_freeLookSystem, deltaTime);
-			m_engine->getModule_Graphics().setActiveCamera(0);
 			m_engine->getModule_Graphics().frameTick(deltaTime);
 			m_engine->getModule_PostProcess().frameTick(deltaTime);
 		}

@@ -8,8 +8,12 @@
 
 /** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
 struct FBO_EnvMap : FBO_Base {
+	// Attributes
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
+
+
+	// (de)Constructors
 	~FBO_EnvMap() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
