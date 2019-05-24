@@ -28,7 +28,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.1";
+constexpr char ENGINE_VERSION[] = "3.2.2";
 
 struct GLFWwindow;
 class Engine;
@@ -70,7 +70,7 @@ public:
 
 
 	// Public Accessors
-	/***/
+	/** Returns the frame number (triple buffered, so either 0, 1, 2).*/
 	inline int getCurrentFrame() const { return m_frameCount; }
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
@@ -145,14 +145,12 @@ private:
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
-
 	// Private Modules
 	Graphics_Module m_moduleGraphics;
 	Post_Processing_Module m_modulePProcess;
 	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
-
 	
 	// Private Engine State
 	EngineState * m_engineState = nullptr;

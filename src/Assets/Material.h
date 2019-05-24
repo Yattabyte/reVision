@@ -6,7 +6,7 @@
 
 #include "Assets/Image.h"
 #include "Managers/MaterialManager.h"
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include <vector>
 

@@ -70,6 +70,8 @@ public:
 
 
 	// Public Accessors
+	/** Returns the frame number (triple buffered, so either 0, 1, 2).*/
+	inline int getCurrentFrame() const { return m_frameCount; }
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
 	/** Return a list of available resolutions. */
@@ -142,7 +144,6 @@ private:
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-
 
 	// Private Modules
 	Graphics_Module m_moduleGraphics;

@@ -2,8 +2,8 @@
 #ifndef	IMAGE_IO_H
 #define	IMAGE_IO_H
 
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
-#include "GL/glad/glad.h"
 #include <string>
 
 

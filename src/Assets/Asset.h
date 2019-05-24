@@ -2,7 +2,7 @@
 #ifndef	ASSET_H
 #define	ASSET_H
 
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include <atomic>
 #include <functional>
 #include <map>

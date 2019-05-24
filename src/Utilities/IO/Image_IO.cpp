@@ -17,28 +17,30 @@ GLubyte * RGBA_to_BGRA(const GLubyte * pixels, const unsigned int & size)
 
 FIBITMAP * Image_IO::Import_Bitmap(Engine * engine, const std::string & relativePath)
 {
-	std::string fullPath(Engine::Get_Current_Dir() + relativePath);
-	const char * file = fullPath.c_str();
-	FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 	FIBITMAP * bitmap = nullptr;
+	if (!relativePath.empty()) {
+		std::string fullPath(Engine::Get_Current_Dir() + relativePath);
+		const char * file = fullPath.c_str();
+		FREE_IMAGE_FORMAT format = FreeImage_GetFileType(file, 0);
 
-	auto & messageManager = engine->getManager_Messages();
-	if (format == -1)
-		messageManager.error("The file \"" + relativePath + "\" does not exist.");
-	else if (format == FIF_UNKNOWN) {
-		messageManager.error("The file \"" + relativePath + "\" exists, but is corrupted. Attempting to recover...");
-		format = FreeImage_GetFIFFromFilename(file);
-		if (!FreeImage_FIFSupportsReading(format))
-			messageManager.warning("Failed to recover the file \"" + relativePath + ".");
-	}
-	else if (format == FIF_GIF)
-		messageManager.warning("GIF loading unsupported!");
-	else {
-		bitmap = FreeImage_Load(format, file);
-		if (FreeImage_GetBPP(bitmap) != 32) {
-			FIBITMAP * temp = FreeImage_ConvertTo32Bits(bitmap);
-			FreeImage_Unload(bitmap);
-			bitmap = temp;
+		auto & messageManager = engine->getManager_Messages();
+		if (format == -1) 
+			messageManager.error("The file \"" + relativePath + "\" does not exist.");		
+		else if (format == FIF_UNKNOWN) {
+			messageManager.error("The file \"" + relativePath + "\" exists, but is corrupted. Attempting to recover...");
+			format = FreeImage_GetFIFFromFilename(file);
+			if (!FreeImage_FIFSupportsReading(format))
+				messageManager.warning("Failed to recover the file \"" + relativePath + ".");
+		}
+		else if (format == FIF_GIF)
+			messageManager.warning("GIF loading unsupported!");
+		else {
+			bitmap = FreeImage_Load(format, file);
+			if (FreeImage_GetBPP(bitmap) != 32) {
+				FIBITMAP * temp = FreeImage_ConvertTo32Bits(bitmap);
+				FreeImage_Unload(bitmap);
+				bitmap = temp;
+			}
 		}
 	}
 	return bitmap;

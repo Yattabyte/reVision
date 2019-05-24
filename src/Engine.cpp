@@ -3,7 +3,7 @@
 #include <direct.h>
 
 // OpenGL Dependent Systems //
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "GLFW/glfw3.h"
 
 // Importers Used //

@@ -47,7 +47,7 @@ void Model::initialize()
 		m_data.m_vertices[x].weights.y = m_mesh->m_geometry.bones[x].Weights[1];
 		m_data.m_vertices[x].weights.z = m_mesh->m_geometry.bones[x].Weights[2];
 		m_data.m_vertices[x].weights.w = m_mesh->m_geometry.bones[x].Weights[3];
-		m_data.m_vertices[x].matID = m_materialArray->m_matSpot + m_mesh->m_geometry.materialIndices[x];
+		m_data.m_vertices[x].matID = m_materialArray->m_matSpot + (m_mesh->m_geometry.materialIndices[x] * 3);
 	}
 
 	// Calculate the mesh's min, max, center, and radius
@@ -97,12 +97,18 @@ void Model::loadMaterial(const std::string & relativePath, Shared_Material & mod
 	const std::string meshDirectory = relativePath.substr(0, furthestFolderIndex + 1);
 	std::vector<std::string> textures(materials.size() * (size_t)MAX_PHYSICAL_IMAGES);
 	for (size_t tx = 0, mx = 0; tx < textures.size() && mx < materials.size(); tx += MAX_PHYSICAL_IMAGES, ++mx) {
-		textures[tx + 0] = meshDirectory + materials[mx].albedo;
-		textures[tx + 1] = meshDirectory + materials[mx].normal;
-		textures[tx + 2] = meshDirectory + materials[mx].metalness;
-		textures[tx + 3] = meshDirectory + materials[mx].roughness;
-		textures[tx + 4] = meshDirectory + materials[mx].height;
-		textures[tx + 5] = meshDirectory + materials[mx].ao;
+		if (!materials[mx].albedo.empty())
+			textures[tx + 0] = meshDirectory + materials[mx].albedo;
+		if (!materials[mx].normal.empty())
+			textures[tx + 1] = meshDirectory + materials[mx].normal;
+		if (!materials[mx].metalness.empty())
+			textures[tx + 2] = meshDirectory + materials[mx].metalness;
+		if (!materials[mx].roughness.empty())
+			textures[tx + 3] = meshDirectory + materials[mx].roughness;
+		if (!materials[mx].height.empty())
+			textures[tx + 4] = meshDirectory + materials[mx].height;
+		if (!materials[mx].albedo.empty())
+			textures[tx + 5] = meshDirectory + materials[mx].ao;
 	}
 
 	// Attempt to find a .mat file if it exists

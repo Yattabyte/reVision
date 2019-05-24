@@ -2,7 +2,7 @@
 #ifndef CAMERABUFFER_H
 #define CAMERABUFFER_H
 
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 
 

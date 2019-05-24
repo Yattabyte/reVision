@@ -4,8 +4,8 @@
 
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
+#include "Utilities/GL/glad/glad.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "GL/glad/glad.h"
 #include "glm/glm.hpp"
 
 
