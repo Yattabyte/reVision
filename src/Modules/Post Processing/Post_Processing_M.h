@@ -7,8 +7,6 @@
 #include <vector>
 
 
-class ECS;
-
 /** A module responsible for post-processing rendering effects. */
 class Post_Processing_Module : public Engine_Module {
 public:

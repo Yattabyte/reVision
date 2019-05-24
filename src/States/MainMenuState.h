@@ -13,8 +13,9 @@ public:
 	// Public (de)Constructors
 	inline ~MainMenuState() = default;
 	inline MainMenuState(Engine * engine) : EngineState(engine) {
-		m_engine->registerECSConstructor("Player3D_Component", new Player3D_Constructor());
-		//m_engine->getModule_World().loadWorld("background.map");
+		auto & world = m_engine->getModule_World();
+		world.registerConstructor("Player3D_Component", new Player3D_Constructor());
+		//world.loadWorld("background.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
 		auto & preferences = m_engine->getPreferenceState();

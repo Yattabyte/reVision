@@ -2,7 +2,7 @@
 #ifndef ECSSYSTEM_H
 #define ECSSYSTEM_H
 
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 
 
 /** An interface for ECS Systems. */

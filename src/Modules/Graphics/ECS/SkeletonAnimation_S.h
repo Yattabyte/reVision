@@ -2,7 +2,7 @@
 #ifndef SKELETONANIMATION_S_H
 #define SKELETONANIMATION_S_H 
 
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 
 /* Component Types Used */
 #include "Modules/Graphics/ECS/Prop_C.h"

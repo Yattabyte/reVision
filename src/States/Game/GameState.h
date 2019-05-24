@@ -14,8 +14,9 @@ public:
 	inline ~GameState() = default;
 	inline GameState(Engine * engine) : EngineState(engine) {
 		m_freeLookSystem = new PlayerFreeLook_System(engine);
-		m_engine->registerECSConstructor("Player3D_Component", new Player3D_Constructor());
-		m_engine->getModule_World().loadWorld("A.map");
+		auto & world = m_engine->getModule_World();
+		world.registerConstructor("Player3D_Component", new Player3D_Constructor());
+		world.loadWorld("A.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 	 
@@ -29,9 +30,10 @@ public:
 	}
 	inline virtual void handleTick(const float & deltaTime) override {
 		if (m_freeLookSystem->isValid()) {
-			if (m_engine->getModule_World().checkIfLoaded())
+			auto & world = m_engine->getModule_World();
+			if (world.checkIfLoaded())
 				m_engine->getModule_Physics().frameTick(deltaTime);
-			m_engine->getECS().updateSystem(m_freeLookSystem, deltaTime);
+			world.updateSystem(m_freeLookSystem, deltaTime);
 			m_engine->getModule_Graphics().frameTick(deltaTime);
 			m_engine->getModule_PostProcess().frameTick(deltaTime);
 		}

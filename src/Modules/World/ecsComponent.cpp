@@ -1,4 +1,4 @@
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 
 
 std::vector<std::tuple<ECSComponentCreateFunction, ECSComponentFreeFunction, size_t> >* BaseECSComponent::componentTypes;

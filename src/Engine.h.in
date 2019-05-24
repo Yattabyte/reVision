@@ -17,7 +17,6 @@
 #include "Modules/World/World_M.h"
 
 // Utilities
-#include "Utilities/ECS/ecs.h"
 #include "Utilities/ActionState.h"
 #include "Utilities/InputBinding.h"
 #include "Utilities/PreferenceState.h"
@@ -76,8 +75,6 @@ public:
 	GLFWwindow * getRenderingContext() const;
 	/** Return a list of available resolutions. */
 	std::vector<glm::ivec3> getResolutions() const;
-	/** Returns this engine's entity component system. */
-	ECS & getECS() { return m_ecs; }
 	/** Returns this engine's action state. */
 	ActionState & getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
@@ -139,7 +136,6 @@ private:
 	Rendering_Context m_renderingContext;
 	MaterialManager m_materialManager;
 	ModelManager m_modelManager;
-	ECS	m_ecs;
 	ActionState	m_actionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;

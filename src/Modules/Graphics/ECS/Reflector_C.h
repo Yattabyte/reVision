@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/FBO_EnvMap.h"
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Utilities/Transform.h"
 #include "glm/glm.hpp"

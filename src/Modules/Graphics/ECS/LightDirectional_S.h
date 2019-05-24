@@ -2,7 +2,7 @@
 #ifndef LIGHTINGDIRECTIONAL_S_H
 #define LIGHTINGDIRECTIONAL_S_H 
 
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 #include "Modules/Graphics/ECS/LightDirectional_C.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"

@@ -5,7 +5,7 @@
 #include "States/EngineState.h"
 #include "States/Puzzle/Common_Definitions.h"
 #include "States/GameSystemInterface.h"
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Engine.h"
 
@@ -65,10 +65,11 @@ public:
 		m_players.push_back(&gameBoard);
 
 		// Component Constructors
-		m_engine->registerECSConstructor("Board_Component", new Board_Constructor(m_players[0]));
-		m_engine->registerECSConstructor("Score_Component", new Score_Constructor(m_players[0]));
-		m_engine->registerECSConstructor("Player2D_Component", new Player2D_Constructor());
-		m_engine->getModule_World().loadWorld("game.map");
+		auto & world = m_engine->getModule_World();
+		world.registerConstructor("Board_Component", new Board_Constructor(m_players[0]));
+		world.registerConstructor("Score_Component", new Score_Constructor(m_players[0]));
+		world.registerConstructor("Player2D_Component", new Player2D_Constructor());
+		world.loadWorld("game.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
@@ -90,18 +91,18 @@ public:
 		// Update Game
 		if (m_readyToStart) {
 			m_timeAccumulator += deltaTime;
-			auto & ecs = m_engine->getECS();
+			auto & world = m_engine->getModule_World();
 			constexpr float dt = 1.0f / 60.0f;
 			while (m_timeAccumulator >= dt) {
 				// Update ALL systems using a fixed tick rate
-				ecs.updateSystems(m_systemList, dt);
+				world.updateSystems(m_systemList, dt);
 				m_timeAccumulator -= dt;
 			}
 
 			// Render Game
 			m_engine->getModule_Graphics().frameTick(deltaTime);
 			m_boardBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			ecs.updateSystem(m_renderingSystem, deltaTime);
+			world.updateSystem(m_renderingSystem, deltaTime);
 			m_engine->getModule_PostProcess().frameTick(deltaTime);
 		}
 	}

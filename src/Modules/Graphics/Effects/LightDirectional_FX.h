@@ -119,7 +119,7 @@ private:
 	// Private Methods
 	/** Render all the geometry from each light. */
 	inline void renderShadows(const float & deltaTime) {
-		ECS & ecs = m_engine->getECS();
+		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_renderState->m_shadowSize.x, m_renderState->m_shadowSize.y);
 		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
@@ -131,7 +131,7 @@ private:
 			glUniform1i(1, pair.second->m_data->index);
 			m_shadowFBO.clear(pair.second->m_shadowSpot);
 			// Update geometry components
-			ecs.updateSystems(m_geometrySystems, deltaTime);
+			world.updateSystems(m_geometrySystems, deltaTime);
 			// Render geometry components
 			for each (auto *tech in m_geometryEffects)
 				if (tech->isEnabled())

@@ -3,7 +3,7 @@
 #define SCORE_C_H
 
 #include "States/Puzzle/Common_Definitions.h"
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "glm/glm.hpp"
 

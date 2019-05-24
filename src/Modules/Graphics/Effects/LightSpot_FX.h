@@ -96,7 +96,7 @@ protected:
 	// Protected Methods
 	/** Render all the geometry from each light. */
 	inline void renderShadows(const float & deltaTime) {
-		ECS & ecs = m_engine->getECS();
+		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_renderState->m_shadowSize.x, m_renderState->m_shadowSize.y);
 		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
@@ -106,7 +106,7 @@ protected:
 			// Update static shadows
 			if (pair.second->m_outOfDate || m_renderState->m_outOfDate) {
 				m_shadowFBO.clear(pair.second->m_shadowSpot + 1);
-				ecs.updateSystems(m_geometryStaticSystems, deltaTime);
+				world.updateSystems(m_geometryStaticSystems, deltaTime);
 				for each (auto *tech in m_geometryEffectsStatic)
 					if (tech->isEnabled())
 						tech->applyEffect(deltaTime);
@@ -114,7 +114,7 @@ protected:
 			}
 			// Update dynamic shadows
 			m_shadowFBO.clear(pair.second->m_shadowSpot);
-			ecs.updateSystems(m_geometryDynamicSystems, deltaTime);
+			world.updateSystems(m_geometryDynamicSystems, deltaTime);
 			for each (auto *tech in m_geometryEffectsDynamic)
 				if (tech->isEnabled())
 					tech->applyEffect(deltaTime);

@@ -3,7 +3,7 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 

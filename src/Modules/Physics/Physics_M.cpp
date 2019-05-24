@@ -31,11 +31,11 @@ void Physics_Module::initialize(Engine * engine)
 	m_physicsSystems.addSystem(new TransformSync_Phys_System(m_world));
 
 	// Component Constructors
-	m_engine->registerECSConstructor("Collider_Component", new Collider_Constructor(m_engine));
+	m_engine->getModule_World().registerConstructor("Collider_Component", new Collider_Constructor(m_engine));
 }
 
 void Physics_Module::frameTick(const float & deltaTime)
 {
 	m_world->stepSimulation(deltaTime);
-	m_engine->getECS().updateSystems(m_physicsSystems, deltaTime);
+	m_engine->getModule_World().updateSystems(m_physicsSystems, deltaTime);
 }

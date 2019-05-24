@@ -45,7 +45,6 @@ Graphics_Module::~Graphics_Module()
 void Graphics_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
-	m_ecs = &m_engine->getECS();
 	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
 
 	// GL settings
@@ -160,16 +159,16 @@ void Graphics_Module::initialize(Engine * engine)
 	world.addLevelListener(&reflector->m_renderState.m_outOfDate);
 	   
 	// Component Constructors
-	m_engine->registerECSConstructor("Transform_Component", new Transform_Constructor());
-	m_engine->registerECSConstructor("Prop_Component", new Prop_Constructor(m_engine, &propRenderingEffect->m_propBuffer));
-	m_engine->registerECSConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &propRenderingEffect->m_skeletonBuffer));
-	m_engine->registerECSConstructor("LightDirectional_Component", new LightDirectional_Constructor(&lightDirectionalEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightDirectionalShadow_Component", new LightDirectionalShadow_Constructor(&lightDirectionalEffect->m_shadowBuffer, &lightDirectionalEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("LightPoint_Component", new LightPoint_Constructor(&lightPointEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightPointShadow_Component", new LightPointShadow_Constructor(&lightPointEffect->m_shadowBuffer, &lightPointEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("LightSpot_Component", new LightSpot_Constructor(&lightSpotEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightSpotShadow_Component", new LightSpotShadow_Constructor(&lightSpotEffect->m_shadowBuffer, &lightSpotEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("Reflector_Component", new Reflector_Constructor(&reflectorEffect->m_reflectorBuffer, &reflectorEffect->m_envmapFBO));
+	world.registerConstructor("Transform_Component", new Transform_Constructor());
+	world.registerConstructor("Prop_Component", new Prop_Constructor(m_engine, &propRenderingEffect->m_propBuffer));
+	world.registerConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &propRenderingEffect->m_skeletonBuffer));
+	world.registerConstructor("LightDirectional_Component", new LightDirectional_Constructor(&lightDirectionalEffect->m_lightBuffer));
+	world.registerConstructor("LightDirectionalShadow_Component", new LightDirectionalShadow_Constructor(&lightDirectionalEffect->m_shadowBuffer, &lightDirectionalEffect->m_shadowFBO));
+	world.registerConstructor("LightPoint_Component", new LightPoint_Constructor(&lightPointEffect->m_lightBuffer));
+	world.registerConstructor("LightPointShadow_Component", new LightPointShadow_Constructor(&lightPointEffect->m_shadowBuffer, &lightPointEffect->m_shadowFBO));
+	world.registerConstructor("LightSpot_Component", new LightSpot_Constructor(&lightSpotEffect->m_lightBuffer));
+	world.registerConstructor("LightSpotShadow_Component", new LightSpotShadow_Constructor(&lightSpotEffect->m_shadowBuffer, &lightSpotEffect->m_shadowFBO));
+	world.registerConstructor("Reflector_Component", new Reflector_Constructor(&reflectorEffect->m_reflectorBuffer, &reflectorEffect->m_envmapFBO));
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)
@@ -184,7 +183,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_bounceFBO.clear();
 	m_engine->getManager_Materials().bind();
 	m_volumeRH->updateVolume(getCameraBuffer());
-	m_ecs->updateSystems(m_renderingSystems, deltaTime);
+	m_engine->getModule_World().updateSystems(m_renderingSystems, deltaTime);
 
 	// Rendering
 	for each (auto *tech in m_fxTechs)

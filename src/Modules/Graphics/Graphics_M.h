@@ -12,12 +12,10 @@
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Assets/Shader.h"
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 
-
-class ECS;
 
 /** A module responsible for rendering.
 @note	performs physically based rendering techniques using deferred rendering. */
@@ -53,7 +51,6 @@ public:
 	
 private:
 	// Private Attributes
-	ECS *							m_ecs = nullptr;
 	glm::ivec2						m_renderSize = glm::ivec2(1);
 	ECSSystemList					m_renderingSystems;
 	std::vector<GFX_Core_Effect*>	m_fxTechs;

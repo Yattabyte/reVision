@@ -2,7 +2,7 @@
 #ifndef SKELETALANIMATION_C_H
 #define SKELETALANIMATION_C_H
 
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 #include "Assets/Mesh.h"
 
 

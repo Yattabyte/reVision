@@ -3,7 +3,7 @@
 #define MODEL_C_H
 
 #include "Assets/Model.h"
-#include "Utilities/ECS/ecsComponent.h"
+#include "Modules/World/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Utilities/Transform.h"
 

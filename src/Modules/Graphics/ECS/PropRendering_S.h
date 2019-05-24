@@ -2,7 +2,7 @@
 #ifndef PROPRENDERING_S_H
 #define PROPRENDERING_S_H
 
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/FBO.h"
 #include "Utilities/GL/DynamicBuffer.h"
