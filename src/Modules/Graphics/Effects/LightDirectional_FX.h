@@ -110,8 +110,8 @@ public:
 	
 
 	// Public Attributes
-	VectorBuffer<LightDirectional_Buffer> m_lightBuffer;
-	VectorBuffer<LightDirectionalShadow_Buffer> m_shadowBuffer;
+	VectorBuffer<LightDirectional_Component::GL_Buffer> m_lightBuffer;
+	VectorBuffer<LightDirectionalShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Directional m_shadowFBO;
 
 

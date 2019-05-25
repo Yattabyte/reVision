@@ -84,7 +84,7 @@ public:
 
 
 	// Public Attributes
-	VectorBuffer<Reflection_Buffer> m_reflectorBuffer;
+	VectorBuffer<Reflector_Component::GL_Buffer> m_reflectorBuffer;
 	FBO_EnvMap m_envmapFBO;
 
 

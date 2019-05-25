@@ -6,7 +6,7 @@ entity
 		quat "0.906,-0.075,-0.375,0.180"
 		vec3 "1,1,1"
 	}
-	Player3D_Component
+	MenuCamera_Component
 	{
 	}
 }

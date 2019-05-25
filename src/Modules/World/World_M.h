@@ -4,10 +4,11 @@
 
 #include "Modules/Engine_Module.h"
 #include "Assets/Level.h"
-#include "Modules/World/ecsComponent.h"
-#include "Modules/World/ecsSystem.h"
+#include "Modules/World/ECS/ecsComponent.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/MappedChar.h"
 #include <map>
+#include <functional>
 #include <vector>
 
 
@@ -85,14 +86,10 @@ public:
 	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
 		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
 	}
-	/** Adds a component constructor to the construction map.
-	@param	name				the component name type.
-	@param	constructor			the component constructor object. */
-	void registerConstructor(const char * name, BaseECSComponentConstructor * constructor);
-	/** Construct a component of the type provided, using the parameters specified.
-	@param	typeName			the component name type.
-	@param	parameters			the construction parameters (arguments). */
-	const Component_and_ID constructComponent(const char * typeName, const std::vector<std::any> & parameters);
+	/***/
+	void addComponentType(const char * name, const std::function<std::pair<uint32_t, BaseECSComponent*>(const ParamList &)> & func);
+	/***/
+	void removeComponentType(const char * name);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -138,7 +135,7 @@ private:
 	bool m_finishedLoading = false;
 	std::map<uint32_t, std::vector<uint8_t>> m_components;
 	std::vector<std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t>>>*> m_entities;
-	MappedChar<BaseECSComponentConstructor*> m_constructorMap;
+	MappedChar<std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
 	Shared_Level m_level;
 	std::vector<bool*> m_notifyees;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

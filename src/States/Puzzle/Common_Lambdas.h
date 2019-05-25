@@ -2,7 +2,7 @@
 #ifndef COMMON_LAMBDAS_H
 #define COMMON_LAMBDAS_H 
 
-#include "States/Puzzle/ECS/Board_C.h"
+#include "States/Puzzle/ECS/components.h"
 
 
 // Easing Functions

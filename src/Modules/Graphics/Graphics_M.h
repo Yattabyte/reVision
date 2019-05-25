@@ -12,7 +12,7 @@
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Assets/Shader.h"
-#include "Modules/World/ecsSystem.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 

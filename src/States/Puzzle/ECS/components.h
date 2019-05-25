@@ -1,9 +1,9 @@
 #pragma once
-#ifndef BOARD_C_H
-#define BOARD_C_H
+#ifndef PUZZLE_COMPONENTS_H
+#define PUZZLE_COMPONENTS_H
 
+#include "Modules/World/ECS/ecsComponent.h"
 #include "States/Puzzle/Common_Definitions.h"
-#include "Modules/World/ecsComponent.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "glm/glm.hpp"
 #include <deque>
@@ -68,20 +68,39 @@ struct Board_Component : public ECSComponent<Board_Component> {
 		bool finished = false;
 	} m_outro;
 };
-/** A constructor to aid in creation. */
-struct Board_Constructor : ECSComponentConstructor<Board_Component> {
-	// (de)Constructors
-	Board_Constructor(VB_Element<GameBuffer> * gameData)
-		: m_gameData(gameData) {};
-	// Interface Implementation
-	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto * component = new Board_Component();
-		component->m_data = m_gameData;
-		return { component, component->ID };
-	}
-private:
-	// Private Attributes
-	VB_Element<GameBuffer> * m_gameData = nullptr;
+
+/** Holds an int coordinate pair. */
+struct XY { int x, y; };
+/** Holds tile adjaceny information. */
+struct TileAdj { bool scored[3][3] = { false, false, false, false, false, false, false, false, false }; };
+/** A component representing a basic player. */
+struct Score_Component : public ECSComponent<Score_Component> {
+	VB_Element<GameBuffer> * m_data = nullptr;
+	int m_score = 0;
+	int m_lastScore = 0;
+	int m_multiplier = 0;
+	int m_level = 1;
+	int m_tilesCleared = 0;
+	float m_timerGame = 0.0f;
+	float m_timerStop = -1.0f;
+	float m_timerLevelUp = 0.0f;
+	float m_timerPowerOn = 0.0f;
+	float m_levelLinear = 0.0f;
+	float m_levelUpLinear = 0.0f;
+	bool m_comboChanged = false;
+	bool m_levelUp = false;
+	struct ScoringData {
+		std::vector<XY> xy;
+		float time;
+		bool scored;
+	};
+	std::vector<ScoringData> m_scoredTiles;
+	std::vector<std::vector<TileAdj>> m_scoredAdjacency;
 };
 
-#endif // BOARD_C_H
+/** A component representing a basic player. */
+struct Player2D_Component : public ECSComponent<Player2D_Component> {
+	glm::vec3 m_rotation = glm::vec3(0.0f);
+};
+
+#endif // PUZZLE_COMPONENTS_H

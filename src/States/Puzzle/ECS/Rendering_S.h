@@ -3,7 +3,7 @@
 #define RENDERING_S_H 
 
 #include "States/GameSystemInterface.h"
-#include "States/Puzzle/ECS/Score_C.h"
+#include "States/Puzzle/ECS/components.h"
 #include "Assets/Primitive.h"
 #include "Assets/Model.h"
 #include "Assets/Shader.h"

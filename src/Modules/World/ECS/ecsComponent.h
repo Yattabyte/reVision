@@ -12,6 +12,7 @@ struct BaseECSComponent;
 using EntityHandle = void*;
 using ECSComponentCreateFunction = const uint32_t(*)(std::vector<uint8_t>& memory, const EntityHandle & entity, BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
+using ParamList = std::vector<std::any>;
 #define NULL_ENTITY_HANDLE nullptr
 
 /** A base type component. */
@@ -27,7 +28,7 @@ public:
 	
 	// Public Attributes
 	EntityHandle entity = NULL_ENTITY_HANDLE;
-	
+
 
 private:
 	// Private Attributes
@@ -71,40 +72,11 @@ const ECSComponentCreateFunction ECSComponent<T>::CREATE_FUNCTION(ECSComponentCr
 template <typename T>
 const ECSComponentFreeFunction ECSComponent<T>::FREE_FUNCTION(ECSComponentFree<T>);
 
-struct Component_and_ID {
-	BaseECSComponent * component = nullptr;
-	uint32_t id = (unsigned)(-1);
-
-	inline const bool success() const {
-		return bool(component && id != (unsigned)(-1));
-	}
-	inline void clear() {
-		component = nullptr;
-		id = (unsigned)(-1);
-	}
-};
-struct BaseECSComponentConstructor {	
-	// Public Interface
-	virtual Component_and_ID construct(const std::vector<std::any> & parameters) = 0;
-
-
-protected:
-	// Protected Methods
-	template <typename ParamT>
-	inline ParamT const castAny(const std::any & parameter, const ParamT & fallback) const {
-		if (parameter.has_value() && parameter.type() == typeid(ParamT))
-			return std::any_cast<ParamT>(parameter);
-		return fallback;
-	}
-};
-
-template <typename BaseECSComponent>
-struct ECSComponentConstructor : BaseECSComponentConstructor {
-	// Default Interface Implementation
-	inline virtual Component_and_ID construct(const std::vector<std::any> & parameters) override {
-		auto * component = new BaseECSComponent();
-		return { component, component->ID };
-	}
-};
+template <typename T>
+inline static T const CastAny(const std::any & parameter, const T & fallback) {
+	if (parameter.has_value() && parameter.type() == typeid(T))
+		return std::any_cast<T>(parameter);
+	return fallback;
+}
 
 #endif // ECSCOMPONENT_H

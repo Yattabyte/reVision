@@ -11,10 +11,15 @@
 class MainMenuState : public EngineState {
 public:
 	// Public (de)Constructors
-	inline ~MainMenuState() = default;
+	inline ~MainMenuState() {
+		m_engine->getModule_World().removeComponentType("MenuCamera_Component");
+	}
 	inline MainMenuState(Engine * engine) : EngineState(engine) {
 		auto & world = m_engine->getModule_World();
-		world.registerConstructor("Player3D_Component", new Player3D_Constructor());
+		world.addComponentType("MenuCamera_Component", [](const ParamList & parameters) {
+			auto * component = new Player3D_Component();
+			return std::make_pair(component->ID, component);
+		});
 		//world.loadWorld("background.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 

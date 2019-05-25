@@ -1,18 +1,10 @@
 #include "Modules/Graphics/Graphics_M.h"
+#include "Modules/Graphics/ECS/components.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/World/World_M.h"
 #include "Engine.h"
 #include <memory>
 #include <random>
-
-/* Component Types Used */
-#include "Modules/Graphics/ECS/Prop_C.h"
-#include "Modules/Graphics/ECS/Skeleton_C.h"
-#include "Modules/Graphics/ECS/LightDirectional_C.h"
-#include "Modules/Graphics/ECS/LightPoint_C.h"
-#include "Modules/Graphics/ECS/LightSpot_C.h"
-#include "Modules/Graphics/ECS/Reflector_C.h"
-#include "Modules/Graphics/ECS/Skeleton_C.h"
 
 /* System Types Used */
 #include "Modules/Graphics/ECS/TransformSync_S.h"
@@ -40,6 +32,17 @@ Graphics_Module::~Graphics_Module()
 {
 	// Update indicator
 	m_aliveIndicator = false;
+	auto & world = m_engine->getModule_World();
+	world.removeComponentType("Transform_Component");
+	world.removeComponentType("Prop_Component");
+	world.removeComponentType("Skeleton_Component");
+	world.removeComponentType("LightDirectional_Component");
+	world.removeComponentType("LightDirectionalShadow_Component");
+	world.removeComponentType("LightPoint_Component");
+	world.removeComponentType("LightPointShadow_Component");
+	world.removeComponentType("LightSpot_Component");
+	world.removeComponentType("LightSpotShadow_Component");
+	world.removeComponentType("Reflector_Component");
 }
 
 void Graphics_Module::initialize(Engine * engine)
@@ -159,16 +162,128 @@ void Graphics_Module::initialize(Engine * engine)
 	world.addLevelListener(&reflector->m_renderState.m_outOfDate);
 	   
 	// Component Constructors
-	world.registerConstructor("Transform_Component", new Transform_Constructor());
-	world.registerConstructor("Prop_Component", new Prop_Constructor(m_engine, &propRenderingEffect->m_propBuffer));
-	world.registerConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &propRenderingEffect->m_skeletonBuffer));
-	world.registerConstructor("LightDirectional_Component", new LightDirectional_Constructor(&lightDirectionalEffect->m_lightBuffer));
-	world.registerConstructor("LightDirectionalShadow_Component", new LightDirectionalShadow_Constructor(&lightDirectionalEffect->m_shadowBuffer, &lightDirectionalEffect->m_shadowFBO));
-	world.registerConstructor("LightPoint_Component", new LightPoint_Constructor(&lightPointEffect->m_lightBuffer));
-	world.registerConstructor("LightPointShadow_Component", new LightPointShadow_Constructor(&lightPointEffect->m_shadowBuffer, &lightPointEffect->m_shadowFBO));
-	world.registerConstructor("LightSpot_Component", new LightSpot_Constructor(&lightSpotEffect->m_lightBuffer));
-	world.registerConstructor("LightSpotShadow_Component", new LightSpotShadow_Constructor(&lightSpotEffect->m_shadowBuffer, &lightSpotEffect->m_shadowFBO));
-	world.registerConstructor("Reflector_Component", new Reflector_Constructor(&reflectorEffect->m_reflectorBuffer, &reflectorEffect->m_envmapFBO));
+	world.addComponentType("Transform_Component", [](const ParamList & parameters) { 
+		const auto position = CastAny(parameters[0], glm::vec3(0.0f));
+		const auto orientation = CastAny(parameters[1], glm::quat(1, 0, 0, 0));
+		const auto scale = CastAny(parameters[2], glm::vec3(1.0f));
+
+		auto * component = new Transform_Component();
+		component->m_transform.m_position = position;
+		component->m_transform.m_orientation = orientation;
+		component->m_transform.m_scale = scale;
+		component->m_transform.update();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Prop_Component", [engine, propRenderingEffect](const ParamList & parameters) {
+		auto directory = CastAny(parameters[0], std::string(""));
+		auto material = CastAny(parameters[1], 0u);
+		auto * component = new Prop_Component();
+		component->m_data = propRenderingEffect->m_propBuffer.newElement();
+		component->m_model = Shared_Model(engine, directory);
+		component->m_data->data->materialID = material;
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Skeleton_Component", [engine, propRenderingEffect](const ParamList & parameters) {
+		auto directory = CastAny(parameters[0], std::string(""));
+		auto animation = CastAny(parameters[1], 0);
+		auto * component = new Skeleton_Component();
+		component->m_data = propRenderingEffect->m_skeletonBuffer.newElement();
+		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + directory);
+		component->m_animation = animation;
+		for (int x = 0; x < NUM_MAX_BONES; ++x)
+			component->m_data->data->bones[x] = glm::mat4(1.0f);
+		return std::make_pair(component->ID, component);
+	});	
+	world.addComponentType("LightDirectional_Component", [engine, lightDirectionalEffect](const ParamList & parameters) {
+		auto color = CastAny(parameters[0], glm::vec3(1.0f));
+		auto intensity = CastAny(parameters[1], 1.0f);
+		auto * component = new LightDirectional_Component();
+		component->m_data = lightDirectionalEffect->m_lightBuffer.newElement();
+		component->m_data->data->LightColor = color;
+		component->m_data->data->LightIntensity = intensity;
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightDirectionalShadow_Component", [engine, lightDirectionalEffect](const ParamList & parameters) {
+		auto shadowSpot = (int)(lightDirectionalEffect->m_shadowBuffer.getCount() * 4);
+		auto * component = new LightDirectionalShadow_Component();
+		component->m_data = lightDirectionalEffect->m_shadowBuffer.newElement();
+		component->m_data->data->Shadow_Spot = shadowSpot;
+		component->m_updateTime = 0.0f;
+		component->m_shadowSpot = shadowSpot;
+		lightDirectionalEffect->m_shadowFBO.resize(lightDirectionalEffect->m_shadowFBO.m_size, shadowSpot + 4);
+		// Default Values
+		component->m_data->data->lightV = glm::mat4(1.0f);
+		for (int x = 0; x < NUM_CASCADES; ++x) {
+			component->m_data->data->lightVP[x] = glm::mat4(1.0f);
+			component->m_data->data->inverseVP[x] = glm::inverse(glm::mat4(1.0f));
+		}
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightPoint_Component", [engine, lightPointEffect](const ParamList & parameters) {
+		auto color = CastAny(parameters[0], glm::vec3(1.0f));
+		auto intensity = CastAny(parameters[1], 1.0f);
+		auto radius = CastAny(parameters[2], 1.0f);
+		auto * component = new LightPoint_Component();
+		component->m_data = lightPointEffect->m_lightBuffer.newElement();
+		component->m_data->data->LightColor = color;
+		component->m_data->data->LightIntensity = intensity;
+		component->m_data->data->LightRadius = radius;
+		component->m_radius = radius;
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightPointShadow_Component", [engine, lightPointEffect](const ParamList & parameters) {
+		auto shadowSpot = (int)(lightPointEffect->m_shadowBuffer.getCount() * 12);
+		auto * component = new LightPointShadow_Component();
+		component->m_radius = CastAny(parameters[0], 1.0f);
+		component->m_data = lightPointEffect->m_shadowBuffer.newElement();
+		component->m_data->data->Shadow_Spot = shadowSpot;
+		component->m_updateTime = 0.0f;
+		component->m_shadowSpot = shadowSpot;
+		component->m_outOfDate = true;
+		lightPointEffect->m_shadowFBO.resize(lightPointEffect->m_shadowFBO.m_size, shadowSpot + 12);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightSpot_Component", [engine, lightSpotEffect](const ParamList & parameters) {
+		auto color = CastAny(parameters[0], glm::vec3(1.0f));
+		auto intensity = CastAny(parameters[1], 1.0f);
+		auto radius = CastAny(parameters[2], 1.0f);
+		auto cutoff = CastAny(parameters[3], 45.0f);
+		auto * component = new LightSpot_Component();
+		component->m_data = lightSpotEffect->m_lightBuffer.newElement();
+		component->m_data->data->LightColor = color;
+		component->m_data->data->LightIntensity = intensity;
+		component->m_data->data->LightRadius = radius;
+		component->m_data->data->LightCutoff = cosf(glm::radians(cutoff));
+		component->m_radius = radius;
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightSpotShadow_Component", [engine, lightSpotEffect](const ParamList & parameters) {
+		auto shadowSpot = (int)(lightSpotEffect->m_shadowBuffer.getCount() * 2);
+		auto * component = new LightSpotShadow_Component();
+		component->m_radius = CastAny(parameters[0], 1.0f);
+		component->m_cutoff = CastAny(parameters[1], 45.0f);
+		component->m_data = lightSpotEffect->m_shadowBuffer.newElement();
+		component->m_data->data->Shadow_Spot = shadowSpot;
+		component->m_updateTime = 0.0f;
+		component->m_shadowSpot = shadowSpot;
+		component->m_outOfDate = true;
+		lightSpotEffect->m_shadowFBO.resize(lightSpotEffect->m_shadowFBO.m_size, shadowSpot + 2);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Reflector_Component", [engine, reflectorEffect](const ParamList & parameters) {
+		auto envCount = (int)(reflectorEffect->m_reflectorBuffer.getCount() * 6);
+		auto * component = new Reflector_Component();
+		component->m_data = reflectorEffect->m_reflectorBuffer.newElement();
+		component->m_data->data->CubeSpot = envCount;
+		component->m_cubeSpot = envCount;
+		reflectorEffect->m_envmapFBO.resize(reflectorEffect->m_envmapFBO.m_size.x, reflectorEffect->m_envmapFBO.m_size.y, envCount + 6);
+		component->m_outOfDate = true;
+		for (int x = 0; x < 6; ++x) {
+			component->m_Cameradata[x].Dimensions = reflectorEffect->m_envmapFBO.m_size;
+			component->m_Cameradata[x].FOV = 90.0f;
+		}
+		return std::make_pair(component->ID, component);
+	});
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)

@@ -40,6 +40,7 @@ template <typename T>
 class VectorBuffer : public GL_Vector {
 public:
 	// Public (de)Constructors
+	/***/
 	~VectorBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
@@ -94,9 +95,15 @@ public:
 	inline void removeElement(const unsigned int * uboIndex) {
 		replaceWithEnd(uboIndex);
 	}
+	/***/
 	inline VB_Element<T> * getElement(const GLuint & index) {
 		return m_elements[index];
 	}
+	/***/
+	inline unsigned int getCount() const {
+		return m_count;
+	}
+	/***/
 	inline void setOffsetAlignment(const GLint & offsetAlignment) {
 		m_offsetAlignment = offsetAlignment;
 
@@ -106,6 +113,7 @@ public:
 			element->data = &reinterpret_cast<T*>(bytePtr)[element->index];
 		}
 	}
+	/***/
 	inline const GLint getOffsetAlignment() {
 		return m_offsetAlignment;
 	}

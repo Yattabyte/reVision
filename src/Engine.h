@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.3";
+constexpr char ENGINE_VERSION[] = "3.2.4";
 
 struct GLFWwindow;
 class Engine;
@@ -62,10 +62,6 @@ public:
 	bool shouldClose();
 	/** Tells the engine to shut down. */
 	void shutDown();
-	/** Adds a component constructor to the ecs construction map.
-	@param	name				the component name type.
-	@param	constructor			the component constructor object. */
-	void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor);
 
 
 	// Public Accessors

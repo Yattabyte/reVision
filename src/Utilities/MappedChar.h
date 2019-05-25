@@ -38,6 +38,12 @@ public:
 	inline void insert(const char * key) {
 		m_map.insert(std::pair<const char *, T>(key, T())); 
 	}
+	/***/
+	inline void erase(const char * key) {
+		auto spot = m_map.find(key);
+		if (spot != m_map.end())	
+			m_map.erase(spot);		
+	}
 	/** Clears the map of all entries. */
 	inline void	clear() { 
 		m_map.clear(); 

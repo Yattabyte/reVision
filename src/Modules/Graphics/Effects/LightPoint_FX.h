@@ -87,8 +87,8 @@ public:
 
 
 	// Public Attributes
-	VectorBuffer<LightPoint_Buffer> m_lightBuffer;
-	VectorBuffer<LightPointShadow_Buffer> m_shadowBuffer;
+	VectorBuffer<LightPoint_Component::GL_Buffer> m_lightBuffer;
+	VectorBuffer<LightPointShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Point m_shadowFBO;
 
 

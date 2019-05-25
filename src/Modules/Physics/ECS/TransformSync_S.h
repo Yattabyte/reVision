@@ -3,14 +3,12 @@
 #define TRANSFORMSYNC_PHYS_S_H
 #define GLM_ENABLE_EXPERIMENTAL
 
-#include "Modules/World/ecsSystem.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/ECS/components.h"
+#include "Modules/Physics/ECS/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/component_wise.hpp"
-
-/* Component Types Used */
-#include "Modules/Graphics/ECS/Transform_C.h"
-#include "Modules/Physics/ECS/Collider_C.h"
 
 
 /** A system responsible for updating physics components that share a common transformation. */

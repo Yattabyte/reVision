@@ -3,8 +3,7 @@
 #define COLORSCHEME_S_H 
 
 #include "States/GameSystemInterface.h"
-#include "States/Puzzle/ECS/Board_C.h"
-#include "States/Puzzle/ECS/Score_C.h"
+#include "States/Puzzle/ECS/components.h"
 
 
 /** Responsible for the overall color scheme for the game. */

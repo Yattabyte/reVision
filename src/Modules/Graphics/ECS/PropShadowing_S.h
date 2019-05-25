@@ -2,14 +2,11 @@
 #ifndef PROPSHADOWING_S_H
 #define PROPSHADOWING_S_H
 
-#include "Modules/World/ecsSystem.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/ECS/components.h" 
 #include "Assets/Shader.h"
 #include "Engine.h"
 #include <vector>
-
-/* Component Types Used */
-#include "Modules/Graphics/ECS/Prop_C.h"
-#include "Modules/Graphics/ECS/Skeleton_C.h"
 
 
 /** A struct that holds rendering data that can change frame-to-frame. */

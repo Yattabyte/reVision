@@ -3,7 +3,7 @@
 #define PLAYERINPUT_S_H 
 
 #include "States/GameSystemInterface.h"
-#include "States/Puzzle/ECS/Board_C.h"
+#include "States/Puzzle/ECS/components.h"
 #include "States/Puzzle/Common_Lambdas.h"
 #include "Assets/Sound.h"
 #include "Utilities/ActionState.h"

@@ -68,8 +68,8 @@ public:
 
 
 	// Public Attributes
-	VectorBuffer<Prop_Buffer> m_propBuffer;
-	VectorBuffer<Skeleton_Buffer> m_skeletonBuffer;
+	VectorBuffer<Prop_Component::GL_Buffer> m_propBuffer;
+	VectorBuffer<Skeleton_Component::GL_Buffer> m_skeletonBuffer;
 
 
 private:

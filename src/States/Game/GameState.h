@@ -3,7 +3,7 @@
 #define GAMESTATE_H
 
 #include "States/EngineState.h"
-#include "States/Game/ECS/Player3D_C.h"
+#include "States/Game/ECS/components.h"
 #include "States/Game/ECS/PlayerFreeLook_S.h"
 #include "Engine.h"
 
@@ -11,11 +11,16 @@
 class GameState : public EngineState {
 public:
 	// Public (de)Constructors
-	inline ~GameState() = default;
+	inline ~GameState() {
+		m_engine->getModule_World().removeComponentType("Player3D_Component");
+	}
 	inline GameState(Engine * engine) : EngineState(engine) {
 		m_freeLookSystem = new PlayerFreeLook_System(engine);
 		auto & world = m_engine->getModule_World();
-		world.registerConstructor("Player3D_Component", new Player3D_Constructor());
+		world.addComponentType("Player3D_Component", [](const ParamList & parameters) {
+			auto * component = new Player3D_Component();
+			return std::make_pair(component->ID, component);
+		});
 		world.loadWorld("A.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}

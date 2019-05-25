@@ -103,18 +103,14 @@ void World_Module::removeEntity(const EntityHandle & handle)
 	m_entities.pop_back();
 }
 
-void World_Module::registerConstructor(const char * name, BaseECSComponentConstructor * constructor)
+void World_Module::addComponentType(const char * name, const std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)> & func)
 {
-	if (m_constructorMap.find(name))
-		delete m_constructorMap[name];
-	m_constructorMap[name] = constructor;
+	m_constructorMap[name] = func;
 }
 
-const Component_and_ID World_Module::constructComponent(const char * typeName, const std::vector<std::any>& parameters)
+void World_Module::removeComponentType(const char * name)
 {
-	if (m_constructorMap.find(typeName))
-		return m_constructorMap[typeName]->construct(parameters);
-	return Component_and_ID();
+	m_constructorMap.erase(name);
 }
 
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
@@ -144,19 +140,18 @@ void World_Module::processLevel()
 	if (m_level->existsYet()) {
 		std::vector<BaseECSComponent*> components; // holds each entity's components
 		std::vector<unsigned int> ids; // holds each entity's component id's
-		Component_and_ID outputComponent; // holds a single component
 		const char * type;
 		for each (auto & lvlEntity in m_level->m_entities) {
 			for each (const auto & lvlComponent in lvlEntity.components) {
 				// Get component type
 				type = lvlComponent.type.c_str();
 				// Call the appropriate creator if available
-				outputComponent = constructComponent(type, lvlComponent.parameters);
-				// Push back our result if successfull
-				if (outputComponent.success()) {
-					components.push_back(outputComponent.component);
-					ids.push_back(outputComponent.id);
-					outputComponent.clear();
+				if (m_constructorMap.find(type)) {
+					auto ret = m_constructorMap[type](lvlComponent.parameters);
+					if (ret.first != -1u && ret.second != nullptr) {
+						components.push_back(ret.second);
+						ids.push_back(ret.first);
+					}
 				}
 			}
 			// Make an entity out of the available components

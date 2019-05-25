@@ -2,8 +2,8 @@
 #ifndef LIGHTSPOT_S_H
 #define LIGHTSPOT_S_H 
 
-#include "Modules/World/ecsSystem.h"
-#include "Modules/Graphics/ECS/LightSpot_C.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/ECS/components.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/PriorityList.h"

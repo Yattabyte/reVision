@@ -2,11 +2,8 @@
 #ifndef SKELETONANIMATION_S_H
 #define SKELETONANIMATION_S_H 
 
-#include "Modules/World/ecsSystem.h"
-
-/* Component Types Used */
-#include "Modules/Graphics/ECS/Prop_C.h"
-#include "Modules/Graphics/ECS/Skeleton_C.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/ECS/components.h"
 
 
 /** A system responsible for animating props with skeleton components. */
@@ -27,7 +24,7 @@ public:
 			if (!skeletonComponent->m_mesh->existsYet())
 				return;
 
-			Skeleton_Buffer * uboData = skeletonComponent->m_data->data;
+			Skeleton_Component::GL_Buffer * uboData = skeletonComponent->m_data->data;
 			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_mesh->m_geometry.boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_mesh->m_geometry.animations.size())
 				return;
 			else {

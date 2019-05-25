@@ -4,15 +4,11 @@
 
 #include "States/EngineState.h"
 #include "States/Puzzle/Common_Definitions.h"
+#include "States/Puzzle/ECS/components.h"
 #include "States/GameSystemInterface.h"
-#include "Modules/World/ecsSystem.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Engine.h"
-
-/* Component Types Used */
-#include "States/Puzzle/ECS/Board_C.h"
-#include "States/Puzzle/ECS/Score_C.h"
-#include "States/Puzzle/ECS/Player2D_C.h"
 
 /* Game System Types Used */
 #include "States/Puzzle/ECS/IntroOutro_S.h"
@@ -31,7 +27,12 @@
 class PuzzleState : public EngineState {
 public:
 	// Public (de)Constructors
-	inline ~PuzzleState() = default;
+	inline ~PuzzleState() {
+		auto & world = m_engine->getModule_World();
+		world.removeComponentType("Board_Component");
+		world.removeComponentType("Score_Component");
+		world.removeComponentType("Player2D_Component");
+	}
 	inline PuzzleState(Engine * engine) : EngineState(engine) {
 		// Gameplay Systems
 		m_gameplaySystems = {
@@ -66,9 +67,20 @@ public:
 
 		// Component Constructors
 		auto & world = m_engine->getModule_World();
-		world.registerConstructor("Board_Component", new Board_Constructor(m_players[0]));
-		world.registerConstructor("Score_Component", new Score_Constructor(m_players[0]));
-		world.registerConstructor("Player2D_Component", new Player2D_Constructor());
+		world.addComponentType("Board_Component", [&](const ParamList & parameters) {
+			auto * component = new Board_Component();
+			component->m_data = m_players[0];
+			return std::make_pair(component->ID, component);
+		});
+		world.addComponentType("Score_Component", [&](const ParamList & parameters) {
+			auto * component = new Score_Component();
+			component->m_data = m_players[0];
+			return std::make_pair(component->ID, component);
+		});
+		world.addComponentType("Player2D_Component", [](const ParamList & parameters) {
+			auto * component = new Player2D_Component();
+			return std::make_pair(component->ID, component);
+		});
 		world.loadWorld("game.map");
 		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
