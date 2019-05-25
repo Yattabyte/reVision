@@ -15,7 +15,9 @@ struct Single_Primitive_Vertex;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Primitive : public std::shared_ptr<Primitive> {
 public:
-	Shared_Primitive() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Primitive() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -25,9 +27,9 @@ public:
 };
 
 /** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
-class Primitive : public Asset
-{
+class Primitive : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Primitive. */
 	~Primitive();
 	/** Construct the Primitive. */
@@ -53,11 +55,6 @@ private:
 
 	// Private Attributes
 	friend class Shared_Primitive;
-};
-
-struct Single_Primitive_Vertex {
-	glm::vec3 vertex;
-	glm::vec2 uv;
 };
 
 #endif // PRIMITIVE_H

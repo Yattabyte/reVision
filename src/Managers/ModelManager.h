@@ -15,11 +15,11 @@ struct GeometryInfo;
 /** A single storage point for all model geometry. Maintains a single vertex array object. */
 class ModelManager {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the model manager. */
 	~ModelManager();
 	/** Construct the model manager. */
-	ModelManager() = default;
+	inline ModelManager() = default;
 
 	
 	// Public Functions
@@ -41,10 +41,10 @@ public:
 	const GLuint & getVAO() const;
 	/** Returns whether or not this manager is ready to use.
 	@return			true if all work is finished, false otherwise. */
-	const bool readyToUse();
+	bool readyToUse();
 	/** Returns whether or not any changes have occured to this manager since the last check
 	@return			true if any changes occured, false otherwise */
-	const bool hasChanged();
+	bool hasChanged();
 
 
 private:

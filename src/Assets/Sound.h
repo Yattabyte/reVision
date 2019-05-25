@@ -12,7 +12,9 @@ class SoundObj;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Sound : public std::shared_ptr<Sound> {
 public:
-	Shared_Sound() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Sound() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -22,9 +24,9 @@ public:
 };
 
 /** A Sound object. */
-class Sound : public Asset
-{
+class Sound : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Sound. */
 	~Sound();
 	/** Construct the Sound. */

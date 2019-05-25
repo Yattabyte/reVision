@@ -17,8 +17,8 @@ public:
 
 
 	// Public (de)Constructors
-	~BaseECSSystem() = default;
-	BaseECSSystem() = default;
+	inline ~BaseECSSystem() = default;
+	inline BaseECSSystem() = default;
 
 
 	// Public Methods

@@ -239,7 +239,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	return true;
 }
 
-const std::string Mesh_IO::Get_Version()
+std::string Mesh_IO::Get_Version()
 {
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }

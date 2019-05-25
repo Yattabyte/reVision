@@ -8,8 +8,7 @@
 
 
 /** UI separator class. Renders a faded out line across its width. */
-class Separator : public UI_Element
-{
+class Separator : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the separator. */

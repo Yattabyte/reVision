@@ -8,8 +8,7 @@
 
 
 /** UI panel class, affords containing other elements, and rendering a fixed color. */
-class Panel : public UI_Element
-{
+class Panel : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the panel. */

@@ -10,22 +10,22 @@
 class StaticMappedBuffer {
 public:
 	// Public (de)Constructors
-	~StaticMappedBuffer() {
+	inline ~StaticMappedBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
 		}
 	}
 	/** Default Constructor. */
-	StaticMappedBuffer() = default;
+	inline StaticMappedBuffer() = default;
 	/** Explicit Instantion. */
-	StaticMappedBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
+	inline StaticMappedBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, GL_DYNAMIC_STORAGE_BIT | mapFlags);
 		m_bufferPtr = glMapNamedBufferRange(m_bufferID, 0, size, mapFlags);
 	}
 	/** Explicit Instantion. */
-	StaticMappedBuffer(StaticMappedBuffer && other) : m_bufferID(0), m_bufferPtr(nullptr) {
+	inline StaticMappedBuffer(StaticMappedBuffer && other) : m_bufferID(0), m_bufferPtr(nullptr) {
 		*this = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */

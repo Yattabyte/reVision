@@ -53,7 +53,7 @@ void Shader_Geometry::initialize()
 	Asset::finalize();
 }
 
-const bool Shader_Geometry::initShaders(const std::string & relativePath)
+bool Shader_Geometry::initShaders(const std::string & relativePath)
 {
 	const std::string filename = getFileName();
 

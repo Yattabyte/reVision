@@ -31,7 +31,7 @@ void MaterialManager::bind()
 	glBindTextureUnit(0, m_arrayID);
 }
 
-const GLsizei MaterialManager::getMaterialSize() const
+GLsizei MaterialManager::getMaterialSize() const
 {
 	return m_materialSize;
 }
@@ -62,7 +62,7 @@ void MaterialManager::writeMaterials(const GLuint & materialID, const GLubyte * 
 	m_changed = true;
 }
 
-const bool MaterialManager::readyToUse()
+bool MaterialManager::readyToUse()
 {
 	std::unique_lock<std::shared_mutex> writeGuard(m_DataMutex);
 	// Check if we have a fence
@@ -79,7 +79,7 @@ const bool MaterialManager::readyToUse()
 	return true;
 }
 
-const bool MaterialManager::hasChanged()
+bool MaterialManager::hasChanged()
 {
 	// Changes every time materials are written to this material manager
 	std::shared_lock<std::shared_mutex> readGuard(m_DataMutex);

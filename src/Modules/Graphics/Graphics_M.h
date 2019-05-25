@@ -21,9 +21,11 @@
 @note	performs physically based rendering techniques using deferred rendering. */
 class Graphics_Module : public Engine_Module {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/***/
 	~Graphics_Module();
-	Graphics_Module() = default;
+	/***/
+	inline Graphics_Module() = default;
 
 
 	// Public Interface Implementation
@@ -43,10 +45,14 @@ public:
 	CameraBuffer & getCameraBuffer();
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
-	const GLuint getLightingFBOID() const { return m_lightingFBO.m_fboID; };
+	inline GLuint getLightingFBOID() const {
+		return m_lightingFBO.m_fboID; 
+	};
 	/** Returns the lighting buffer's texture ID.
 	@return					the lighting buffer texture ID. */
-	const GLuint getLightingTexID() const { return m_lightingFBO.m_textureID; };
+	inline GLuint getLightingTexID() const {
+		return m_lightingFBO.m_textureID; 
+	};
 
 	
 private:

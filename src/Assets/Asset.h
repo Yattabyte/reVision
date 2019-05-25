@@ -20,12 +20,11 @@ using AssetFinalizedCallback = std::function<void(void)>;
 /** An abstract base-class for assets.
 @brief	Represents some form of data to be loaded from disk, such as shaders, models, levels, and sounds.
 @note	is an abstract class instead of interface to reduce redundant code. Should be created once, and its pointer passed around using shared pointers. */
-class Asset
-{
+class Asset {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the asset only when all references are destroyed. */
-	~Asset() = default;
+	inline ~Asset() = default;
 
 
 	// Public Methods	
@@ -71,8 +70,10 @@ protected:
 	
 private:
 	// Private but deleted
-	Asset(const Asset &) = delete;
-	const Asset &operator =(const Asset &) = delete;
+	/** Disallow asset assignment. */
+	inline Asset(const Asset &) = delete;
+	/** Disallow asset assignment. */
+	inline const Asset &operator =(const Asset &) = delete;
 };
 
 #endif // ASSET_H

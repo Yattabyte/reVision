@@ -10,8 +10,7 @@
 
 /** UI list class, scrolls horizontally, displays one element at a time. 
 Controllable by directional arrows. */
-class SideList : public UI_Element
-{
+class SideList : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

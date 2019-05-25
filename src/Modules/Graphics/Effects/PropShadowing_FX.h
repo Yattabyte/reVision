@@ -14,11 +14,11 @@
 /** A core-rendering technique which renders prop geometry to the active shadow map. */
 class PropShadowing_Effect : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~PropShadowing_Effect() = default;
+	inline ~PropShadowing_Effect() = default;
 	/** Constructor. */
-	PropShadowing_Effect(
+	inline PropShadowing_Effect(
 		Engine * engine, Shared_Shader & shaderCull, Shared_Shader & shaderShadow, GL_Vector * propBuffer, GL_Vector * skeletonBuffer, PropShadow_RenderState * renderState
 	) : m_engine(engine), m_propBuffer(propBuffer), m_skeletonBuffer(skeletonBuffer), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_renderState(renderState) {
 		// Asset Loading
@@ -27,7 +27,7 @@ public:
 	}
 
 
-	// Interface Implementation	
+	// Public Interface Implementation	
 	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCube->existsYet())

@@ -17,7 +17,9 @@ class Material;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Material : public std::shared_ptr<Material> {
 public:
-	Shared_Material() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Material() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -26,7 +28,6 @@ public:
 	@return					the desired asset */
 	explicit Shared_Material(Engine * engine, const std::string & filename, const std::vector<std::string> &textures, const bool & threaded = true);
 };
-
 
 /** A collection of texture surfaces that are used together to approximate a real surface.
 - Support for:
@@ -38,9 +39,9 @@ public:
 	- occlusion (in conjunction with SSAO)
 - Supports omission of any or all of the files
 - Expects all textures in a material to be the same dimension, and will forcefully resize them (in memory). */
-class Material : public Asset
-{
+class Material : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Material. */
 	~Material();
 	/** Construct the Material. */

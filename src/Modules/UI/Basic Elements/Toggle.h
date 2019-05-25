@@ -9,8 +9,7 @@
 
 
 /** UI toggle switch class, affords being switched left and right. */
-class Toggle : public UI_Element
-{
+class Toggle : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

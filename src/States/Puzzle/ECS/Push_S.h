@@ -13,17 +13,19 @@
 /** Responsible for pushing new lines onto the field, climbing it higher towards the top of the board. */
 class Push_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Push_System() = default;
-	Push_System() : m_tileGenerator((unsigned int)std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {
+	// Public (de)Constructors
+	/***/
+	inline ~Push_System() = default;
+	/***/
+	inline Push_System() : m_tileGenerator((unsigned int)std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);
 	}
 
 
-	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];
@@ -93,7 +95,7 @@ private:
 	// Private Methods
 	/** Adds a new row of tiles to the board provided.
 	@param		board		the board to add a new row of tiles to. */
-	void pushNewRow(Board_Component & board) {
+	inline void pushNewRow(Board_Component & board) {
 		// Move board up 1 row
 		for (int x = 0; x < BOARD_WIDTH; ++x)
 			for (int y = BOARD_HEIGHT - 1; y > 0; --y) {

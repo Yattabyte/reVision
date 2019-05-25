@@ -107,7 +107,7 @@ const GLuint & ModelManager::getVAO() const
 	return m_vaoID;
 }
 
-const bool ModelManager::readyToUse()
+bool ModelManager::readyToUse()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_mutex);	
 	if (!m_fence)
@@ -121,7 +121,7 @@ const bool ModelManager::readyToUse()
 	return false;
 }
 
-const bool ModelManager::hasChanged()
+bool ModelManager::hasChanged()
 {
 	// Changes every time another piece of geometry is added
 	std::shared_lock<std::shared_mutex> readGuard(m_mutex);

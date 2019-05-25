@@ -10,9 +10,11 @@
 /** A module responsible for post-processing rendering effects. */
 class Post_Processing_Module : public Engine_Module {
 public:
-	// (de)Constructors
-	~Post_Processing_Module() = default;
-	Post_Processing_Module() = default;
+	// Public (de)Constructors
+	/***/
+	inline ~Post_Processing_Module() = default;
+	/***/
+	inline Post_Processing_Module() = default;
 
 
 	// Public Interface Implementation

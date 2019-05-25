@@ -14,11 +14,11 @@
 /** A core-rendering technique which renders prop geometry to the scene. */
 class PropRendering_Effect : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~PropRendering_Effect() = default;
+	inline ~PropRendering_Effect() = default;
 	/** Constructor. */
-	PropRendering_Effect(
+	inline PropRendering_Effect(
 		Engine * engine, FBO_Base * geometryFBO, Prop_RenderState * renderState, Shared_Shader & shaderCull, Shared_Shader & shaderGeometry
 	) : m_engine(engine), m_geometryFBO(geometryFBO), m_renderState(renderState), m_shaderCull(shaderCull), m_shaderGeometry(shaderGeometry) {
 		// Asset Loading
@@ -27,7 +27,7 @@ public:
 	}
 
 
-	// Interface Implementation	
+	// Public Interface Implementation	
 	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
@@ -75,8 +75,8 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO;
-	Shared_Shader	m_shaderCull, m_shaderGeometry;
+	FBO_Base * m_geometryFBO = nullptr;
+	Shared_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Primitive m_shapeCube;
 	const GLuint * m_modelsVAO = nullptr;
 	Prop_RenderState * m_renderState = nullptr;

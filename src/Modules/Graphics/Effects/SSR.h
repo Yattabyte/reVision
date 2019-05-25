@@ -14,9 +14,9 @@
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */
 class SSR : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~SSR() {
+	inline ~SSR() {
 		// Update indicator
 		m_aliveIndicator = false;
 
@@ -26,8 +26,8 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
-	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
+		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
@@ -103,7 +103,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;

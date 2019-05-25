@@ -113,7 +113,7 @@ void Image_IO::Resize_Image(const glm::ivec2 newSize, Image_Data & importedData,
 		}
 }
 
-const std::string Image_IO::Get_Version()
+std::string Image_IO::Get_Version()
 {
 	return std::string(FreeImage_GetVersion());
 }

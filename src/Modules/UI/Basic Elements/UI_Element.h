@@ -12,8 +12,7 @@
 
 
 /** Interface for UI elements, like buttons, labels, panels, etc. */
-class UI_Element
-{
+class UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

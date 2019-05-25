@@ -21,7 +21,9 @@ class Model;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Model : public std::shared_ptr<Model> {
 public:
-	Shared_Model() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Model() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -31,9 +33,9 @@ public:
 };
 
 /** A 3D geometric mesh meant to be used in 3D rendering. */
-class Model : public Asset
-{
-public:	
+class Model : public Asset {
+public:
+	// Public (de)Constructors
 	/** Destroy the Model. */
 	~Model();
 	/** Construct the Model. */

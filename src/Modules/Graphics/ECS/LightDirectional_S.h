@@ -25,9 +25,11 @@ struct Directional_RenderState {
 /** A system that updates the rendering state for directional lighting, using the ECS system. */
 class LightDirectional_System : public BaseECSSystem {
 public: 
-	// (de)Constructors
-	~LightDirectional_System() = default;
-	LightDirectional_System(Engine * engine) : m_engine(engine) {
+	// Public (de)Constructors
+	/** Destroy the directional lighting system. */
+	inline ~LightDirectional_System() = default;
+	/** Construct a directional lighting system. */
+	inline LightDirectional_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(LightDirectional_Component::ID);
 		addComponentType(LightDirectionalShadow_Component::ID, FLAG_OPTIONAL);
@@ -36,8 +38,8 @@ public:
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Accumulate Light Data		
 		auto & graphics = m_engine->getModule_Graphics();
 		const auto & cameraBuffer = graphics.getCameraBuffer();
@@ -124,7 +126,7 @@ public:
 private:
 	// Private Methods
 	/** Converts a priority queue into an stl vector.*/
-	const std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest) const {
+	inline std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest) const {
 		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::greater<float>> m_closest(m_renderState.m_updateQuality / 2);
 		std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> outList;
 		outList.reserve(m_renderState.m_updateQuality);

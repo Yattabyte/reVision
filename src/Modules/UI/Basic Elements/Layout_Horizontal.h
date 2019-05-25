@@ -6,8 +6,7 @@
 
 
 /** A layout class which controls the position and sizes of its children, laying them out evenly in a row. */
-class Layout_Horizontal : public UI_Element
-{
+class Layout_Horizontal : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the layout. */

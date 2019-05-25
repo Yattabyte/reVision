@@ -8,8 +8,7 @@
 
 
 /** A UI element serving as a start menu. */
-class StartMenu : public Menu
-{
+class StartMenu : public Menu {
 public:
 	// Public Interaction Enums
 	enum interact {

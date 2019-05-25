@@ -7,8 +7,7 @@
 
 
 /** UI button class, affords being pushed and released. */
-class Button : public UI_Element
-{
+class Button : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

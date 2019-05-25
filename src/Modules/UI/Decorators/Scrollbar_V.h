@@ -9,8 +9,7 @@
 
 
 /** Scrollbar decorator object. */
-class Scrollbar_V : public UI_Decorator
-{
+class Scrollbar_V : public UI_Decorator {
 public:
 	// Public Interaction Enums
 	enum interact {

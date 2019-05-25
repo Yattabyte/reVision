@@ -15,7 +15,9 @@ class Shader;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader : public std::shared_ptr<Shader> {
 public:
-	Shared_Shader() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Shader() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -24,10 +26,11 @@ public:
 	explicit Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-struct ShaderObj 
-{
+struct ShaderObj {
 	// (de)Constructors
+	/** Destroy the shader object. */
 	~ShaderObj();
+	/** Construct a shader object. */
 	ShaderObj(const GLenum & type);
 
 
@@ -35,17 +38,17 @@ struct ShaderObj
 	/** Retrieve a shader parameter by the name specified.
 	@param		pname			the program parameter name
 	@return						the parameter value matching the name specified. */
-	const GLint getShaderiv(const GLenum & pname) const;
+	GLint getShaderiv(const GLenum & pname) const;
 	/** Load a shader document from the file path specified.
 	@param		engine			the active engine to use
 	@param		filePath		the relative path to the file to read
 	@return						true on success, false otherwise. */
-	const bool loadDocument(Engine * engine, const std::string & filePath);
+	bool loadDocument(Engine * engine, const std::string & filePath);
 	/** Create an OpenGL shader object from this class, using the document string loaded.
 	@param		engine			the active engine to use
 	@param		filename		the shader file name (for reporting purposes)
 	@return						true on success, false otherwise. */
-	const bool createGLShader(Engine * engine, const std::string & filename);
+	bool createGLShader(Engine * engine, const std::string & filename);
 
 	
 	// Attributes
@@ -56,9 +59,9 @@ struct ShaderObj
 
 /** An encapsulation of a vertex/fragment OpenGL shader program.
 Also provides support for explicitly setting uniform values for a given attribute location. */
-class Shader : public Asset
-{
-public:	
+class Shader : public Asset {
+public:
+	// Public (de)Constructors
 	/** Destroy the Shader. */
 	~Shader();
 	/** Construct the Shader. */
@@ -148,7 +151,7 @@ protected:
 	/** Attempt to load a shader program from separate shader files.
 	@param		relativePath	the relative path of the shader files
 	@return						true on success, false otherwise. */
-	virtual const bool initShaders(const std::string & relativePath);
+	virtual bool initShaders(const std::string & relativePath);
 	/** Use to validate this shader program after linking.
 	@return						true on success, false otherwise. */
 	const bool validateProgram();

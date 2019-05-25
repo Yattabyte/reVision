@@ -8,8 +8,7 @@
 
 
 /** Border decorator object. */
-class Border : public UI_Decorator
-{
+class Border : public UI_Decorator {
 public:
 	// Public (de)Constructors
 	/** Destroy the border. */

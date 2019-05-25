@@ -12,9 +12,9 @@
 /** A post-processing technique for applying fxaa to the currently bound 2D image. */
 class FXAA : public GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~FXAA() {
+	inline ~FXAA() {
 		// Update indicator
 		m_aliveIndicator = false;
 
@@ -23,8 +23,8 @@ public:
 		glDeleteTextures(1, &m_textureID);
 	}
 	/** Constructor. */
-	FXAA(Engine * engine) 
-	: m_engine(engine) {
+	inline FXAA(Engine * engine) 
+		: m_engine(engine) {
 		// Asset Loading
 		m_shaderFXAA = Shared_Shader(m_engine, "Effects\\FXAA");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");
@@ -63,7 +63,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;

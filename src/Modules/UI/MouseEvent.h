@@ -4,8 +4,7 @@
 
 
 /** Holds mouse interaction information. */
-class MouseEvent
-{
+class MouseEvent {
 public:
 	// Public Interaction Enums
 	enum Actions {

@@ -30,7 +30,7 @@ void SoundManager::playSound(const Shared_Sound & sharedSound, const float & vol
 	soLoud.setRelativePlaySpeed(handle, speed);
 }
 
-const unsigned int SoundManager::playWavBackground(const Shared_Sound & sharedSound, const float & volume, const bool & loop, const double & loopPoint) const
+unsigned int SoundManager::playWavBackground(const Shared_Sound & sharedSound, const float & volume, const bool & loop, const double & loopPoint) const
 {
 	auto & soLoud = *((SoLoud::Soloud*)soundEngine);
 	auto handle = soLoud.playBackground(*(SoLoud::Wav*)sharedSound->m_soundObj, volume);

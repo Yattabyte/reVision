@@ -12,7 +12,9 @@ class Collider;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Collider : public std::shared_ptr<Collider> {
 public:
-	Shared_Collider() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Collider() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -22,18 +24,18 @@ public:
 };
 
 /** A 3D mesh tuned for use in physics simulations instead of rendering. */
-class Collider : public Asset
-{
+class Collider : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Collider. */
-	~Collider() = default;
+	inline ~Collider() = default;
 	/** Construct the Collider. */
 	Collider(Engine * engine, const std::string & filename);
 	
 	
 	// Public Attributes
 	Shared_Mesh m_mesh;
-	btCollisionShape * m_shape;
+	btCollisionShape * m_shape = nullptr;
 
 
 protected:

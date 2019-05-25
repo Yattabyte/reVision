@@ -14,9 +14,9 @@ class Lighting_FBO;
 /** A post-processing technique for generating bloom from a lighting buffer. */
 class Bloom : public GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Bloom() {
+	inline ~Bloom() {
 		// Update indicator
 		m_aliveIndicator = false;
 
@@ -26,7 +26,7 @@ public:
 		glDeleteTextures(2, m_textureIDS_GB); 
 	}
 	/** Constructor. */
-	Bloom(Engine * engine, const GLuint & lightingFBOID, const GLuint & lightingTexID)
+	inline Bloom(Engine * engine, const GLuint & lightingFBOID, const GLuint & lightingTexID)
 		: m_engine(engine), m_lightingFBOID(lightingFBOID), m_lightingTexID(lightingTexID) {
 		// Asset Loading
 		m_shaderBloomExtract = Shared_Shader(m_engine, "Effects\\Bloom Extraction");
@@ -84,7 +84,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime ) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;

@@ -16,15 +16,15 @@
 /** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */
 class SSAO : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~SSAO() {
+	inline ~SSAO() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
-	: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
+	inline SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
+		: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
@@ -118,7 +118,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
 			return;

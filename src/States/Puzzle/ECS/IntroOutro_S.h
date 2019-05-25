@@ -12,8 +12,10 @@
 /** Responsible for starting and stopping the game. */
 class IntroOutro_System : public Game_System_Interface {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/***/
 	~IntroOutro_System() = default;
+	/***/
 	IntroOutro_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
@@ -22,8 +24,8 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 

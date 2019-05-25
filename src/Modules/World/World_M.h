@@ -15,9 +15,11 @@
 /** A module responsible for the world/level. */
 class World_Module : public Engine_Module {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
+	/***/
 	~World_Module();
-	World_Module() = default;
+	/***/
+	inline World_Module() = default;
 
 
 	// Public Interface Implementation

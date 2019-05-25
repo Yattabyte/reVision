@@ -17,14 +17,14 @@
 /** A core-rendering technique which applies spot lighting to the scene. */
 class LightSpot_Effect : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~LightSpot_Effect() {
+	inline ~LightSpot_Effect() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	LightSpot_Effect(
+	inline LightSpot_Effect(
 		Engine * engine,
 		FBO_Base * geometryFBO, FBO_Base * lightingFBO,
 		GL_Vector * propBuffer, GL_Vector * skeletonBuffer,
@@ -69,7 +69,7 @@ public:
 	}
 
 
-	// Interface Implementation	
+	// Public Interface Implementation	
 	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())

@@ -16,9 +16,9 @@
 /** A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
 class Radiance_Hints : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Radiance_Hints() {
+	inline ~Radiance_Hints() {
 		// Update indicator
 		m_aliveIndicator = false;
 
@@ -27,7 +27,7 @@ public:
 		glDeleteTextures(1, &m_textureID);
 	}
 	/** Constructor. */
-	Radiance_Hints(Engine * engine, FBO_Base * geometryFBO, FBO_Base * bounceFBO, std::shared_ptr<RH_Volume> volumeRH)
+	inline Radiance_Hints(Engine * engine, FBO_Base * geometryFBO, FBO_Base * bounceFBO, std::shared_ptr<RH_Volume> volumeRH)
 	: m_engine(engine), m_geometryFBO(geometryFBO), m_bounceFBO(bounceFBO), m_volumeRH(volumeRH) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
@@ -70,7 +70,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;

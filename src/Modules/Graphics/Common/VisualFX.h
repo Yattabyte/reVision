@@ -18,7 +18,7 @@ public:
 	/** Destructor. */
 	~VisualFX();
 	/** Constructor. */
-	VisualFX() = default;
+	inline VisualFX() = default;
 
 	
 	// Public Methods

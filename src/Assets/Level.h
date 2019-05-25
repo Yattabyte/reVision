@@ -16,7 +16,9 @@ struct LevelStruct_Component;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Level : public std::shared_ptr<Level> {
 public:
-	Shared_Level() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Level() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -26,17 +28,18 @@ public:
 };
 
 /** An asset which represents some intermediate form of a world level. */
-class Level : public Asset
-{
+class Level : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Level. */
-	~Level() = default;
+	inline ~Level() = default;
 	/** Construct the Level. */
 	Level(Engine * engine, const std::string & filename);
 	
 	
 	// Public Attributes
 	std::vector<LevelStruct_Entity> m_entities;
+
 
 private:
 	// Private Interface Implementation

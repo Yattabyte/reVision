@@ -73,13 +73,13 @@ void AssetManager::notifyObservers()
 			pair.second();
 }
 
-const bool AssetManager::readyToUse()
+bool AssetManager::readyToUse()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
 	return !bool(m_Workorders.size() + m_Workorders.size());
 }
 
-const bool AssetManager::hasChanged()
+bool AssetManager::hasChanged()
 {
 	// Changes every time assets finalize, when this manager notifies the assets' observers.
 	std::shared_lock<std::shared_mutex> readGuard(m_mutexNofications);

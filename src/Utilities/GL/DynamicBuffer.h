@@ -10,14 +10,14 @@
 class DynamicBuffer {
 public:
 	// Public (de)Constructors
-	~DynamicBuffer() {
+	inline ~DynamicBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
 		}
 	}
 	/** Default. */
-	DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT) 
+	inline DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
 		: m_maxCapacity(capacity), m_mapFlags(mapFlags) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, m_maxCapacity, data, GL_DYNAMIC_STORAGE_BIT | m_mapFlags);

@@ -9,17 +9,19 @@
 /** Responsible for the overall color scheme for the game. */
 class ColorScheme_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~ColorScheme_System() = default;
-	ColorScheme_System() {
+	// Public (de)Constructors
+	/***/
+	inline ~ColorScheme_System() = default;
+	/***/
+	inline ColorScheme_System() {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);
 	}
 
 
-	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];

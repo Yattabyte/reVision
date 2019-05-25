@@ -14,8 +14,10 @@
 class PlayerInput_System : public Game_System_Interface {
 public:
 	// (de)Constructors
-	~PlayerInput_System() = default;
-	PlayerInput_System(Engine * engine, ActionState * actionState) : m_engine(engine), m_actionState(actionState) {
+	/***/
+	inline ~PlayerInput_System() = default;
+	/***/
+	inline PlayerInput_System(Engine * engine, ActionState * actionState) : m_engine(engine), m_actionState(actionState) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 
@@ -26,11 +28,11 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual bool readyToUse() override {		
+	// Public Interface Implementation
+	inline virtual bool readyToUse() override {		
 		return m_soundMove->existsYet() && m_soundSwitch->existsYet() && m_soundScroll->existsYet();
 	}
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 
@@ -95,7 +97,7 @@ public:
 
 private:
 	// Private Functions
-	bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
+	inline bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
 		if (m_actionState->at(actionEnum) > 0.5f){
 			if (!m_keyPressStates[actionEnum]) {
 				m_keyPressStates[actionEnum] = true;

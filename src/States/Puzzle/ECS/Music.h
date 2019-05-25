@@ -12,9 +12,11 @@
 /** Responsible for playing music in response to game events. */
 class Music_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Music_System() = default;
-	Music_System(Engine * engine) : m_engine(engine) {
+	// Public (de)Constructors
+	/***/
+	inline ~Music_System() = default;
+	/***/
+	inline Music_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 
@@ -24,11 +26,11 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual bool readyToUse() override {
+	// Public Interface Implementation
+	inline virtual bool readyToUse() override {
 		return m_soundSong->existsYet() && m_soundSongCrit->existsYet();
 	}
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		const auto & soundMgr = m_engine->getManager_Sounds();		
 		
 		for each (const auto & componentParam in components) {

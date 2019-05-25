@@ -9,16 +9,18 @@
 /** A system responsible for animating props with skeleton components. */
 class SkeletonAnimation_System : public BaseECSSystem {
 public: 
-	// (de)Constructors
-	~SkeletonAnimation_System() = default;
-	SkeletonAnimation_System() : BaseECSSystem() {
+	// Public (de)Constructors
+	/** Destroy the skeletal animation system. */
+	inline ~SkeletonAnimation_System() = default;
+	/** Construct a skeletal animation system. */
+	inline SkeletonAnimation_System() : BaseECSSystem() {
 		// Declare component types used
 		addComponentType(Skeleton_Component::ID);
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
 			if (!skeletonComponent->m_mesh->existsYet())
@@ -48,13 +50,17 @@ public:
 
 	
 	// Public functions
-	template <typename T> static inline T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
+	template <typename T> inline static T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
 	template <> inline static glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
 
 
 protected:
 	// Protected functions
-	static constexpr auto FindNodeAnim = [](const Animation & pAnimation, const std::string & NodeName) -> const Node_Animation* {
+	/** Search for a node in the animation system matching the name specified.
+	@param	pAnimation		the animation system to search through.
+	@param	NodeName		the name of the node to find.
+	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
+	inline static constexpr auto FindNodeAnim = [](const Animation & pAnimation, const std::string & NodeName) -> const Node_Animation* {
 		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
 			const Node_Animation * pNodeAnim = pAnimation.channels[i];
 			if (pNodeAnim->nodeName == NodeName)
@@ -62,13 +68,15 @@ protected:
 		}
 		return nullptr;
 	};
-	static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
+	/***/
+	inline static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
 		for (size_t i = 0; i < count; i++)
 			if (AnimationTime < (float)(keyVector[i + 1]).time)
 				return i;
 		return size_t(0);
 	};	
-	static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
+	/***/
+	inline static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
 		const size_t & keyCount = keyVector.size();
 		assert(keyCount > 0);
 		const auto & Result = keyVector[0].value;
@@ -83,6 +91,7 @@ protected:
 		}
 		return Result;
 	};
+	/***/
 	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
 		const Animation & pAnimation = model->m_geometry.animations[animation_ID];

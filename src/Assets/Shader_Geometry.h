@@ -16,7 +16,9 @@ class Shader_Geometry;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader_Geometry : public std::shared_ptr<Shader_Geometry> {
 public:
-	Shared_Shader_Geometry() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Shader_Geometry() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -26,9 +28,9 @@ public:
 };
 
 /** An encapsulation of a vertex/geometry/fragment OpenGL shader program, extending Shader. */
-class Shader_Geometry : public Shader
-{
-public:	
+class Shader_Geometry : public Shader {
+public:
+	// Public (de)Constructors
 	/** Destroy the Shader. */
 	~Shader_Geometry();
 	/** Construct the Shader. */
@@ -42,7 +44,7 @@ public:
 protected:
 	// Protected Methods
 	// Interface Implementation
-	virtual const bool initShaders(const std::string & relativePath) override;
+	virtual bool initShaders(const std::string & relativePath) override;
 
 
 private:

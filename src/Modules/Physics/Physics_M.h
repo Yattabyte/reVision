@@ -11,9 +11,9 @@
 /** A module responsible for physics. */
 class Physics_Module : public Engine_Module {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	~Physics_Module();
-	Physics_Module() = default;
+	inline Physics_Module() = default;
 
 
 	// Public Interface Implementation

@@ -156,7 +156,7 @@ const bool Shader::saveCachedBinary(const std::string & relativePath)
 	return false;
 }
 
-const bool Shader::initShaders(const std::string & relativePath) 
+bool Shader::initShaders(const std::string & relativePath) 
 {
 	const std::string filename = getFileName();
 
@@ -195,14 +195,14 @@ ShaderObj::~ShaderObj() { glDeleteShader(m_shaderID); }
 
 ShaderObj::ShaderObj(const GLenum & type) : m_type(type) {}
 
-const GLint ShaderObj::getShaderiv(const GLenum & pname) const
+GLint ShaderObj::getShaderiv(const GLenum & pname) const
 {
 	GLint param;
 	glGetShaderiv(m_shaderID, pname, &param);
 	return param;
 }
 
-const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
+bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
@@ -229,7 +229,7 @@ const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath
 	return true;
 }
 
-const bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
+bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
 {
 	// Create shader object
 	const char * source = m_shaderText.c_str();

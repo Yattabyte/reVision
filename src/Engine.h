@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.4";
+constexpr char ENGINE_VERSION[] = "3.2.5";
 
 struct GLFWwindow;
 class Engine;
@@ -44,7 +44,7 @@ struct Auxilliary_Context {
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
 public:
-	// Constructors
+	// Public (de)Constructors
 	/** Destroys the engine. */
 	~Engine();
 	/** Zero-initialize the engine. */

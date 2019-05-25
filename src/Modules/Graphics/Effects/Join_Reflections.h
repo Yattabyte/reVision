@@ -14,15 +14,15 @@
 /** A core-rendering technique for writing the final scene reflections back into the lighting. */
 class Join_Reflections : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Join_Reflections() {
+	inline ~Join_Reflections() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
-	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
+		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Shared_Texture(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
@@ -36,7 +36,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;

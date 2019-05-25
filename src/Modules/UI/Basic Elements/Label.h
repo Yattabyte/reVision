@@ -11,8 +11,7 @@
 
 
 /** UI text label class, affords displaying text on the screen. */
-class Label : public UI_Element
-{
+class Label : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

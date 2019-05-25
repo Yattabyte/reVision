@@ -6,11 +6,11 @@
 /** An interface for rendering post-processing effects. */
 class GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	virtual ~GFX_PP_Effect() = default;
+	inline virtual ~GFX_PP_Effect() = default;
 	/** Constructor. */
-	GFX_PP_Effect() = default;
+	inline GFX_PP_Effect() = default;
 
 
 	// Public Methods

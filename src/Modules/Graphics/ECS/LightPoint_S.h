@@ -24,9 +24,11 @@ struct Point_RenderState {
 /** A system that updates the rendering state for point lighting, using the ECS system. */
 class LightPoint_System : public BaseECSSystem {
 public: 
-	// (de)Constructors
-	~LightPoint_System() = default;
-	LightPoint_System() {
+	// Public (de)Constructors
+	/** Destroy the point lighting system. */
+	inline ~LightPoint_System() = default;
+	/** Construct a point lighting system. */
+	inline LightPoint_System() {
 		// Declare component types used
 		addComponentType(LightPoint_Component::ID);
 		addComponentType(LightPointShadow_Component::ID, FLAG_OPTIONAL);
@@ -35,8 +37,8 @@ public:
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data	
 		std::vector<GLint> lightIndices, shadowIndices;
 		PriorityList<float, std::pair<LightPoint_Component*, LightPointShadow_Component*>, std::less<float>> oldest;
@@ -68,7 +70,7 @@ public:
 private:
 	// Private methods
 	/** Converts a priority queue into an stl vector.*/
-	const std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightPoint_Component*, LightPointShadow_Component*>, std::less<float>> oldest) const {
+	inline std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightPoint_Component*, LightPointShadow_Component*>, std::less<float>> oldest) const {
 		PriorityList<float, std::pair<LightPoint_Component*, LightPointShadow_Component*>, std::greater<float>> m_closest(m_renderState.m_updateQuality / 2);
 		std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> outList;
 		outList.reserve(m_renderState.m_updateQuality);

@@ -13,9 +13,11 @@
 /** Responsible for validating the game state, checking for scoreable events. */
 class Score_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Score_System() = default;
-	Score_System(Engine * engine) : m_engine(engine) {
+	// Public (de)Constructors
+	/***/
+	inline ~Score_System() = default;
+	/***/
+	inline Score_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);		
@@ -28,15 +30,15 @@ public:
 	}
 
 	
-	// Interface Implementation	
-	virtual bool readyToUse() override {
+	// Public Interface Implementation	
+	inline virtual bool readyToUse() override {
 		return
 			m_soundPop->existsYet() &&
 			m_soundMultiplierInc->existsYet() &&
 			m_soundMultiplierLost->existsYet() &&
 			m_soundLevelGained->existsYet();
 	}
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];
@@ -114,7 +116,7 @@ private:
 					return;
 			push_back(newTile);
 		}
-		static bool sortFunc(const XY & a, const XY & b) {
+		inline static bool sortFunc(const XY & a, const XY & b) {
 			if (a.y > b.y)
 				return true;
 			else if (a.y == b.y)
@@ -132,7 +134,7 @@ private:
 	/** Determines which scored tiles are next to each other.
 	@param		tileSet	the set of tiles to act on.
 	@return		a vector of tile adjacency information. */
-	std::vector<TileAdj> getAdjacency(const std::vector<XY> & tileSet) {
+	inline std::vector<TileAdj> getAdjacency(const std::vector<XY> & tileSet) {
 		std::vector<TileAdj> adj(tileSet.size());
 		for (size_t n = 0; n < tileSet.size(); ++n) {
 			const auto & x = tileSet[n].x;
@@ -188,7 +190,7 @@ private:
 	@param		board		the board containing the tiles of interest.
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
-	bool checkSeries_Horizontally(const Board_Component & board, ScoringManifold & series) {
+	inline bool checkSeries_Horizontally(const Board_Component & board, ScoringManifold & series) {
 		for each (const auto xy in series) {
 			int horizontalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
@@ -212,7 +214,7 @@ private:
 	@param		board		the board containing the tiles of interest.
 	@param		series		the scoring manifold referencing the active tiles to check againts.
 	@return					true if any further matches are found, false otherwise. */
-	bool checkSeries_Vertically(const Board_Component & board, ScoringManifold & series) {
+	inline bool checkSeries_Vertically(const Board_Component & board, ScoringManifold & series) {
 		for each (const auto xy in series) {
 			int verticalCount = 1;
 			const auto & sTile = board.m_tiles[xy.y][xy.x].m_type;
@@ -235,7 +237,7 @@ private:
 	/** Begin checking a board for matching tiles of 3-of-a-kind or greater. Divided into a horizontal and vertical check, forming a scoring manifold.
 	@param		board		the board containing the tiles of interest.
 	@param		score		the scoring component. */
-	void validateBoard(Board_Component & board, Score_Component & score) {
+	inline void validateBoard(Board_Component & board, Score_Component & score) {
 		std::vector<ScoringManifold> allMatchingSets;
 		static constexpr auto findScoredTiles = [](const auto & xCoord, const auto & yCoord, Score_Component & score) {
 			for each (const auto & data in score.m_scoredTiles)
@@ -307,7 +309,7 @@ private:
 	/** Check if we should change the combo multiplier.
 	@param		board		the board containing the tiles of interest.
 	@param		score		the score component. */
-	void checkCombo(Board_Component & board, Score_Component & score) {
+	inline void checkCombo(Board_Component & board, Score_Component & score) {
 		// Check to see if we should increment combo multiplier and add points
 		if (score.m_scoredTiles.size()) {
 			if (score.m_comboChanged) {
@@ -341,7 +343,7 @@ private:
 				- All points added are multiplied by the combo multiplier
 	@param		board		the board containing the tiles of interest.
 	@param		score		the score component. */
-	void scoreTiles(Board_Component & board, Score_Component & score) {		
+	inline void scoreTiles(Board_Component & board, Score_Component & score) {		
 		// Manage scoring manifolds
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
@@ -365,7 +367,7 @@ private:
 			}
 		}
 	}
-	void popTiles(const float & deltaTime, Board_Component & board, Score_Component & score) {
+	inline void popTiles(const float & deltaTime, Board_Component & board, Score_Component & score) {
 		// Manage scoring manifolds
 		for (size_t x = 0; x < score.m_scoredTiles.size(); ++x) {
 			auto & manifold = score.m_scoredTiles[x];
@@ -420,7 +422,7 @@ private:
 	/** A wrapper function for adding points to the score.score. Accounts for any other variables like multipliers.
 	@param	score	the score component.
 	@param	amount	the amount of points to add. */
-	void addScore(Score_Component & score, const int & amount) {
+	inline void addScore(Score_Component & score, const int & amount) {
 		score.m_score += amount * score.m_multiplier;
 	}
 

@@ -17,13 +17,13 @@ class PreferenceState {
 public:
 	// (de)Constructors
 	/** Destroy the preference state. */
-	~PreferenceState() {
+	inline ~PreferenceState() {
 		save();
 	}
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	PreferenceState(Engine * engine, const std::string & filename = "preferences") : m_engine(engine) {
+	inline PreferenceState(Engine * engine, const std::string & filename = "preferences") : m_engine(engine) {
 		loadFile(filename);
 	}
 	
@@ -124,7 +124,7 @@ public:
 			const float value = m_preferences->getValue(targetKey);
 
 			// Only modify if the value exists
-			if (value != UNDEFINED_CVAL)
+			if (!std::isnan(value))
 				container = (T)value;
 			else
 				m_preferences->setValue(targetKey, (float)container);

@@ -19,11 +19,11 @@ class Engine;
 /** Manages the storage and retrieval of assets. */
 class AssetManager {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the asset manager. */
-	~AssetManager() = default;
+	inline ~AssetManager() = default;
 	/** Create the asset manager. */
-	AssetManager() = default;
+	inline AssetManager() = default;
 
 	
 	// Public Methods
@@ -42,10 +42,10 @@ public:
 	void notifyObservers();
 	/** Returns whether or not this manager is ready to use.
 	@return					true if all work is finished, false otherwise. */
-	const bool readyToUse();
+	bool readyToUse();
 	/** Returns whether or not any changes have occured to this manager since the last check
 	@return					true if any changes occured, false otherwise */
-	const bool hasChanged();
+	bool hasChanged();
 
 
 private:

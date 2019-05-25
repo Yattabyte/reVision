@@ -10,12 +10,11 @@
 class Engine;
 
 /** Responsible for loading a particular key-binding configuration. */
-class InputBinding
-{
-public: 
-	// (de)Constructors
+class InputBinding {
+public:
+	// Public (de)Constructors
 	/** Destroy the binding (not from disk) */
-	~InputBinding() = default;
+	inline ~InputBinding() = default;
 	/** Construct a key-binding.
 	@param	engine		the engine */
 	InputBinding(Engine * engine);

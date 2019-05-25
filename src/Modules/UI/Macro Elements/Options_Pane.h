@@ -13,8 +13,7 @@
 
 /** A UI element serving as an options panel, with a title and a description.
 Made to be subclassed and expanded upon. Provides a method for adding new settings. */
-class Options_Pane : public UI_Element
-{
+class Options_Pane : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the options pane. */

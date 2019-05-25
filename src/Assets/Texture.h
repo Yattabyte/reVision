@@ -13,7 +13,9 @@ class Texture;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Texture : public std::shared_ptr<Texture> {
 public:
-	Shared_Texture() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Texture() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -27,9 +29,9 @@ public:
 
 /** An encapsulation of an OpenGL texture object.
 Supports MIP-mapping and anisotropic filtering. */
-class Texture : public Asset
-{
+class Texture : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Texture. */
 	~Texture();
 	/** Construct the Texture. */

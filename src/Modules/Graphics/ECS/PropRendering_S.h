@@ -20,9 +20,11 @@ struct Prop_RenderState {
 /** A core rendering effect which renders props to the scene. */
 class PropRendering_System : public BaseECSSystem {
 public: 
-	// (de)Constructors
-	~PropRendering_System() = default;
-	PropRendering_System(
+	// Public (de)Constructors
+	/** Destroy the prop rendering system. */
+	inline ~PropRendering_System() = default;
+	/** Construct a prop rendering system. */
+	inline PropRendering_System(
 		Engine * engine
 	) : m_engine(engine) {
 		// Declare component types used
@@ -31,8 +33,8 @@ public:
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;

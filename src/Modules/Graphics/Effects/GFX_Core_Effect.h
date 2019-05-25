@@ -6,11 +6,11 @@
 /** An interface for rendering core lighting effects. */
 class GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	virtual ~GFX_Core_Effect() = default;
+	inline virtual ~GFX_Core_Effect() = default;
 	/** Constructor. */
-	GFX_Core_Effect() = default;
+	inline GFX_Core_Effect() = default;
 
 
 	// Public Methods

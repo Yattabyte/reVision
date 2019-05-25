@@ -24,15 +24,19 @@
 #include "States/Puzzle/ECS/Rendering_S.h"
 
 
+/***/
 class PuzzleState : public EngineState {
 public:
 	// Public (de)Constructors
+	/** Destroy the puzzle state. */
 	inline ~PuzzleState() {
 		auto & world = m_engine->getModule_World();
 		world.removeComponentType("Board_Component");
 		world.removeComponentType("Score_Component");
 		world.removeComponentType("Player2D_Component");
 	}
+	/** Construct this puzzle state. 
+	@param	engine		the engine to use. */
 	inline PuzzleState(Engine * engine) : EngineState(engine) {
 		// Gameplay Systems
 		m_gameplaySystems = {

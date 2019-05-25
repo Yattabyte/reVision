@@ -7,15 +7,15 @@
 #include <vector>
 
 
-constexpr float UNDEFINED_CVAL = -12345.67890f; // Undefined preference
-
 class Engine;
 class Config;
 
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Config : public std::shared_ptr<Config> {
 public:
-	Shared_Config() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Config() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -26,11 +26,11 @@ public:
 };
 
 /** A registry for configuration name-value pairs. */
-class Config : public Asset
-{
-public: 
+class Config : public Asset {
+public:
+	// Public (de)Constructors
 	/** Destroy the Config. */
-	~Config() = default;
+	inline ~Config() = default;
 	/** Construct the config with a particular set of variable names. */
 	Config(Engine * engine, const std::string & filename, const std::vector<std::string> & strings);
 
@@ -42,8 +42,8 @@ public:
 	void setValue(const unsigned int & cfg_key, const float & cfg_value);
 	/** Retrieves the value assigned to the supplied key.
 	@param	cfg_key		the key in which to fetch the value from
-	@return				the value assigned to supplied key (UNDEFINED_CVAL if the supplied key doesn't exist) */
-	const float getValue(const unsigned int & cfg_key) const;
+	@return				the value assigned to supplied key (NaN if the supplied key doesn't exist) */
+	float getValue(const unsigned int & cfg_key) const;
 	/** Writes the configuration file back to disk within the \\Config\\ folder. */
 	void saveConfig();
 

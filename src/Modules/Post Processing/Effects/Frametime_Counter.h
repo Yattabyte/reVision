@@ -14,15 +14,15 @@
 /** A post-processing technique for writing the frame time to the screen. */
 class Frametime_Counter : public GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Frametime_Counter() {
+	inline ~Frametime_Counter() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	Frametime_Counter(Engine * engine)
-	: m_engine(engine) {
+	inline Frametime_Counter(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_numberTexture = Shared_Texture(m_engine, "numbers.png", GL_TEXTURE_2D, false, false);
 		m_shader = Shared_Shader(m_engine, "Utilities\\numberPrint");
@@ -38,7 +38,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;

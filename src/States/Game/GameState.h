@@ -8,12 +8,15 @@
 #include "Engine.h"
 
 
+/***/
 class GameState : public EngineState {
 public:
 	// Public (de)Constructors
+	/** Destroy the game state. */
 	inline ~GameState() {
 		m_engine->getModule_World().removeComponentType("Player3D_Component");
 	}
+	/** Construct a game state. */
 	inline GameState(Engine * engine) : EngineState(engine) {
 		m_freeLookSystem = new PlayerFreeLook_System(engine);
 		auto & world = m_engine->getModule_World();

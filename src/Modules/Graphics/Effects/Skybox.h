@@ -14,15 +14,15 @@
 /** A core-rendering technique for writing the frame time to the screen. */
 class Skybox : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Skybox() {
+	inline ~Skybox() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO
-	) : m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
+		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
@@ -77,7 +77,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
@@ -115,6 +115,7 @@ public:
 
 private:
 	// Private Methods
+	/***/
 	inline void convoluteSky() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

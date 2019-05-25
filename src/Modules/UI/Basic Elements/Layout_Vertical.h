@@ -6,8 +6,7 @@
 
 
 /** A layout class which controls the position and sizes of its children, laying them out evenly in a column. */
-class Layout_Vertical : public UI_Element
-{
+class Layout_Vertical : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the layout. */

@@ -19,14 +19,14 @@
 /** A core-rendering technique which applies directional lighting to the scene. */
 class LightDirectional_Effect : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~LightDirectional_Effect() {
+	inline ~LightDirectional_Effect() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	LightDirectional_Effect(
+	inline LightDirectional_Effect(
 		Engine * engine,
 		FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * bounceFBO,
 		GL_Vector * propBuffer, GL_Vector * skeletonBuffer,
@@ -90,7 +90,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())

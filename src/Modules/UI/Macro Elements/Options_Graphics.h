@@ -12,8 +12,7 @@
 
 
 /** A UI element serving as a graphics options menu. */
-class Options_Graphics : public Options_Pane
-{
+class Options_Graphics : public Options_Pane {
 public:
 	// Public (de)Constructors
 	/** Destroy the graphics panel. */

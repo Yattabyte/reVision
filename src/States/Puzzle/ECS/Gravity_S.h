@@ -12,9 +12,11 @@
 /** Responsible for dropping tiles down the board. */
 class Gravity_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Gravity_System() = default;
-	Gravity_System(Engine * engine) : m_engine(engine) {
+	// Public (de)Constructors
+	/***/
+	inline ~Gravity_System() = default;
+	/***/
+	inline Gravity_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 
@@ -23,11 +25,11 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual bool readyToUse() override { 
+	// Public Interface Implementation
+	inline virtual bool readyToUse() override { 
 		return m_soundImpact->existsYet();
 	}
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 

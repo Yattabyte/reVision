@@ -22,9 +22,11 @@ struct Reflector_RenderState {
 /** A system that updates the rendering state for local reflectors, using the ECS system. */
 class Reflector_System : public BaseECSSystem {
 public:
-	// (de)Constructors
-	~Reflector_System() = default;
-	Reflector_System() {
+	// Public (de)Constructors
+	/** Destroy the reflector lighting system. */
+	inline ~Reflector_System() = default;
+	/** Construct a reflector lighting system. */
+	inline Reflector_System() {
 		// Declare component types used
 		addComponentType(Reflector_Component::ID);
 		GLuint data[] = { 0,0,0,0 };
@@ -34,8 +36,8 @@ public:
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Reflector Data		
 		std::vector<GLint> reflectionIndicies;
 		PriorityList<float, Reflector_Component*, std::less<float>> oldest;
@@ -60,7 +62,7 @@ public:
 private:
 	// Private methods
 	/** Converts a priority queue into an stl vector.*/
-	const std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest) const {
+	inline std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest) const {
 		PriorityList<float, Reflector_Component*, std::greater<float>> m_closest(2);
 		std::vector<Reflector_Component*> outList;
 		outList.reserve(2);

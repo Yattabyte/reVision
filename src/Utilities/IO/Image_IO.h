@@ -43,7 +43,7 @@ public:
 	static void Resize_Image(const glm::ivec2 newSize, Image_Data & importedData, const bool & linear = true);
 	/** Get the plugin version.
 	@return the plugin version */
-	static const std::string Get_Version();
+	static std::string Get_Version();
 
 
 private:

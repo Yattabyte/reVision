@@ -13,8 +13,7 @@
 
 
 /** A UI element serving as a video options menu. */
-class Options_Video : public Options_Pane
-{
+class Options_Video : public Options_Pane {
 public:
 	// Public (de)Constructors
 	/** Destroy the video pane. */

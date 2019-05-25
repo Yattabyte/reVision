@@ -16,12 +16,14 @@
 /** Responsible for rendering the game to the screen. */
 class Rendering_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Rendering_System() {
+	// Public (de)Constructors
+	/***/
+	inline ~Rendering_System() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
+	/***/
+	inline Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
 		addComponentType(Score_Component::ID);
 		
@@ -160,8 +162,8 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual bool readyToUse() override {
+	// Public Interface Implementation
+	inline virtual bool readyToUse() override {
 		return 
 			m_modelBoard->existsYet() &&
 			m_modelField->existsYet() &&
@@ -183,7 +185,7 @@ public:
 			m_textureNums->existsYet() &&
 			m_textureTimeStop->existsYet();
 	}
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			// Update elements
 			update(*(Score_Component*)componentParam[0]);
@@ -207,7 +209,7 @@ public:
 private:
 	// Private Logic Functions
 	/** Update Rendering Data. */
-	void update(const Score_Component & score) {
+	inline void update(const Score_Component & score) {
 		// System Time
 		score.m_data->data->sysTime = float(glfwGetTime());
 
@@ -343,7 +345,7 @@ private:
 	}
 	// Private Rendering Functions
 	/** Render game level / border into it's own FBO. */
-	void renderBorder() {
+	inline void renderBorder() {
 		glViewport(0, 0, TILE_SIZE * 16, 1);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBorder);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -352,7 +354,7 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render game tiles into it's own FBO. */
-	void renderField() {
+	inline void renderField() {
 		// Prepare center FBO
 		glViewport(0, 0, TILE_SIZE * 6, TILE_SIZE * 12);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDField);
@@ -384,7 +386,7 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render intro countdown into game field FBO. */
-	void renderIntro() {
+	inline void renderIntro() {
 		// Intro
 		m_shaderIntro->bind();
 		m_textureCountdown->bind(0);
@@ -392,7 +394,7 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render score header bar into it's own FBO. */
-	void renderHeader() {
+	inline void renderHeader() {
 		// Score
 		glViewport(0, 0, GLsizei(TILE_SIZE * 6), GLsizei(TILE_SIZE * 1.5));
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboIDBars);
@@ -410,7 +412,7 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render time footer bar into it's own FBO. */
-	void renderFooter() {
+	inline void renderFooter() {
 		glDrawBuffer(GL_COLOR_ATTACHMENT1);
 		glClear(GL_COLOR_BUFFER_BIT);
 		m_shaderTimer->bind();
@@ -420,7 +422,7 @@ private:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 	/** Render background effect to the screen*/
-	void renderBackground() {
+	inline void renderBackground() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
@@ -431,7 +433,7 @@ private:
 		glEnable(GL_BLEND);
 	}
 	/** Render the board model with all the previous textures onto the screen. */
-	void renderBoard() {			
+	inline void renderBoard() {			
 		glEnable(GL_DEPTH_TEST);
 		glBindVertexArray(*m_vaoModels);
 		m_indirectBoard.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

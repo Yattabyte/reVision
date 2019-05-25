@@ -73,7 +73,7 @@ template <typename T>
 const ECSComponentFreeFunction ECSComponent<T>::FREE_FUNCTION(ECSComponentFree<T>);
 
 template <typename T>
-inline static T const CastAny(const std::any & parameter, const T & fallback) {
+inline static T CastAny(const std::any & parameter, const T & fallback) {
 	if (parameter.has_value() && parameter.type() == typeid(T))
 		return std::any_cast<T>(parameter);
 	return fallback;

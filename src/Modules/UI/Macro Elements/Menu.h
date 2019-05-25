@@ -12,8 +12,7 @@
 
 /** A UI element serving as a menu. 
 Made to be subclassed and expanded upon, provides a method for adding menu buttons. */
-class Menu : public UI_Element
-{
+class Menu : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy the menu. */

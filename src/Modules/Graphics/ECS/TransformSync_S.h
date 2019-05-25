@@ -13,9 +13,11 @@
 /** A system responsible for updating graphics components that share a common transformation. */
 class TransformSync_Gfx_System : public BaseECSSystem {
 public:
-	// (de)Constructors
-	~TransformSync_Gfx_System() = default;
-	TransformSync_Gfx_System() {
+	// Public (de)Constructors
+	/***/
+	inline ~TransformSync_Gfx_System() = default;
+	/***/
+	inline TransformSync_Gfx_System() {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Prop_Component::ID, FLAG_OPTIONAL);
@@ -29,8 +31,8 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * propComponent = (Prop_Component*)componentParam[1];

@@ -12,15 +12,15 @@
 /** The final post-processing technique which outputs the last bound texture to the screen. */
 class To_Screen : public GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~To_Screen() {
+	inline ~To_Screen() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	To_Screen(Engine * engine)
-	: m_engine(engine) {
+	inline To_Screen(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");
@@ -33,7 +33,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;

@@ -10,17 +10,19 @@
 /** Responsible for updating the game timer elements. */
 class Timer_System : public Game_System_Interface {
 public:
-	// (de)Constructors
-	~Timer_System() = default;
-	Timer_System() {
+	// Public (de)Constructors
+	/***/
+	inline ~Timer_System() = default;
+	/***/
+	inline Timer_System() {
 		// Declare component types used
 		addComponentType(Board_Component::ID);
 		addComponentType(Score_Component::ID);
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 			auto & score = *(Score_Component*)componentParam[1];

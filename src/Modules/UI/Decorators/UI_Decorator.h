@@ -7,8 +7,7 @@
 
 
 /** A UI decorator object, following the Decorator design pattern. */
-class UI_Decorator : public UI_Element
-{
+class UI_Decorator : public UI_Element {
 public:
 	// Public (de)Constructors
 	/** Destroy this decorator. */

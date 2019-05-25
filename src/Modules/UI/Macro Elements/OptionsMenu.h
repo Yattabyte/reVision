@@ -9,8 +9,7 @@
 
 
 /** A UI element serving as an options menu. */
-class OptionsMenu : public Menu
-{
+class OptionsMenu : public Menu {
 public:
 	// Public Interaction Enums
 	enum interact {

@@ -10,7 +10,7 @@ constexpr char* DIRECTORY_SHADER_PKG = "\\Shaders\\";
 /** Parse the shader snippet, looking for any directives that require us to modify the document.
 @param	engine			the engine being used
 @param	userAsset		the asset we are loading from */
-inline void parse(Engine * engine, Shader_Pkg & userAsset)
+inline static void parse(Engine * engine, Shader_Pkg & userAsset)
 {
 	std::string input;
 	input = userAsset.m_packageText;

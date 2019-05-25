@@ -11,8 +11,7 @@
 
 
 /** UI element which displays an editable text box. */
-class TextInput : public UI_Element
-{
+class TextInput : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {
@@ -20,7 +19,7 @@ public:
 	};
 
 
-	// public (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the text input. */
 	inline ~TextInput() {
 		// Delete geometry

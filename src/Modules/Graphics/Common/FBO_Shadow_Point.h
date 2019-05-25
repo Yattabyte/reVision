@@ -10,7 +10,7 @@
 struct FBO_Shadow_Point {
 	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[4] = { 0,0,0,0 };
-	glm::ivec2 m_size;
+	glm::ivec2 m_size = glm::ivec2(1);
 
 
 	// (de)Constructors

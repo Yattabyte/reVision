@@ -19,7 +19,9 @@ class Mesh;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Mesh : public std::shared_ptr<Mesh> {
 public:
-	Shared_Mesh() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Mesh() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -30,9 +32,9 @@ public:
 
 
 /** A 3D geometric mesh. */
-class Mesh : public Asset
-{
+class Mesh : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Mesh. */
 	~Mesh() = default;
 	/** Construct the Mesh. */

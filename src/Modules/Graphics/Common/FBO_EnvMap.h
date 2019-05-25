@@ -14,11 +14,11 @@ struct FBO_EnvMap : FBO_Base {
 
 
 	// (de)Constructors
-	~FBO_EnvMap() {
+	inline ~FBO_EnvMap() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
-	FBO_EnvMap() {
+	inline FBO_EnvMap() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

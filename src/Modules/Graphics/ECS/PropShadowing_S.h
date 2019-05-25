@@ -26,9 +26,11 @@ public:
 	};
 
 
-	// (de)Constructors
-	~PropShadowing_System() = default;
-	PropShadowing_System(
+	// Public (de)Constructors
+	/** Destroy the prop shadowing system. */
+	inline ~PropShadowing_System() = default;
+	/** Construct a prop shadowing system. */
+	inline PropShadowing_System(
 		Engine * engine, const unsigned int & instanceCount, const unsigned int & flags
 	) : m_engine(engine), m_instanceCount(instanceCount), m_flags(flags) {
 		// Declare component types used
@@ -37,8 +39,8 @@ public:
 	}
 
 
-	// Interface Implementation	
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation	
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
 		std::vector<glm::ivec4> cullingDrawData;
 		std::vector<glm::ivec4> renderingDrawData;
@@ -90,8 +92,8 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	unsigned int m_instanceCount;
-	unsigned int m_flags;
+	unsigned int m_instanceCount = 0;
+	unsigned int m_flags = 0;
 };
 
 #endif // PROPSHADOWING_S_H

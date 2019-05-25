@@ -12,17 +12,19 @@
 /** A system responsible for updating player components based on keyboard/mouse. */
 class PlayerFreeLook_System : public Game_System_Interface {
 public: 
-	// (de)Constructors
-	~PlayerFreeLook_System() = default;
-	PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
+	// Public (de)Constructors
+	/***/
+	inline ~PlayerFreeLook_System() = default;
+	/***/
+	inline PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Player3D_Component::ID);
 	}
 
 
-	// Interface Implementation
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	// Public Interface Implementation
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		auto & graphicsModule = m_engine->getModule_Graphics();
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];

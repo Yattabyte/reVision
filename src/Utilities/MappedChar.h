@@ -24,11 +24,11 @@ private:
 
 
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the map. */
-	~MappedChar() = default;
+	inline ~MappedChar() = default;
 	/** Construct the map. */
-	MappedChar() = default;
+	inline MappedChar() = default;
 
 
 	// Public Methods
@@ -117,8 +117,8 @@ Extends the MappedChar class, but exists to shorten 'MappedChar<std::vector<T>> 
 template <typename T>
 class VectorMap : public MappedChar<std::vector<T>> {
 public:
-	~VectorMap() = default;
-	VectorMap() = default;
+	inline ~VectorMap() = default;
+	inline VectorMap() = default;
 };
 
 #endif // MAPPEDCHAR_H

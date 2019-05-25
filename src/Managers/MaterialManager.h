@@ -14,7 +14,7 @@ class Engine;
 * Uses sparse textures to avoid consuming all the memory at once. */
 class MaterialManager {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the material manager. */
 	~MaterialManager();
 	/** Construct the material manager. */
@@ -25,19 +25,22 @@ public:
 	/** Make this buffer active. */
 	void bind();
 	/** Retrieve the required size materials must be to fit in this buffer. */
-	const GLsizei getMaterialSize() const;
+	GLsizei getMaterialSize() const;
 	/** Generates a material ID 
 	@param	textureCount	the number of textures used for this material
 	@return					a new material ID */
 	GLuint generateID(const size_t & textureCount);
-	/***/
+	/** Commit image data to the GPU, creating a full material. 
+	@param	materialID		the material to commit data to.
+	@param	imageData		the image data to source from.
+	@param	imageCount		the number of images. */
 	void writeMaterials(const GLuint & materialID, const GLubyte * imageData, const GLsizei & imageCount);
 	/** Returns whether or not this manager is ready to use.
 	@return					true if all work is finished, false otherwise. */
-	const bool readyToUse();
+	bool readyToUse();
 	/** Returns whether or not any changes have occured to this manager since the last check
 	@return					true if any changes occured, false otherwise */
-	const bool hasChanged();
+	bool hasChanged();
 
 
 private:

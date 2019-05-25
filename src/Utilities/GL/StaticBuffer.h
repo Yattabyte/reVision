@@ -10,20 +10,20 @@
 class StaticBuffer {
 public:
 	// Public (de)Constructors
-	~StaticBuffer() {
+	inline ~StaticBuffer() {
 		if (m_bufferID != 0) {
 			glDeleteBuffers(1, &m_bufferID);
 		}
 	}
 	/** Default Constructor. */
-	StaticBuffer() = default;
+	inline StaticBuffer() = default;
 	/** Explicit Instantion. */
-	StaticBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT) {
+	inline StaticBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, storageFlags);
 	}
 	/** Explicit Instantion. */
-	StaticBuffer(StaticBuffer && other) : m_bufferID(0) {
+	inline StaticBuffer(StaticBuffer && other) : m_bufferID(0) {
 		*this = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */

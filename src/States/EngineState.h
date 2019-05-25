@@ -7,18 +7,21 @@
 
 class Engine;
 
+/***/
 class EngineState {
 public:
 	// Public (de)Constructors
+	/** Destroy this state. */
 	inline virtual ~EngineState() = default;
+	/** Construct this state. */
 	inline EngineState(Engine * engine) : m_engine(engine) {}
 
 
 	// Public Interface Declaration
 	/***/
-	virtual EngineState * handleInput(ActionState & actionState) { return nullptr; } 
+	inline virtual EngineState * handleInput(ActionState & actionState) { return nullptr; }
 	/***/
-	virtual void handleTick(const float & deltaTime) {}
+	inline virtual void handleTick(const float & deltaTime) {}
 
 
 protected:

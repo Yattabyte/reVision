@@ -13,9 +13,9 @@
 /** A post-processing technique for tone-mapping and gamma correcting the final lighting product. */
 class HDR : public GFX_PP_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~HDR() {
+	inline ~HDR() {
 		// Update indicator
 		m_aliveIndicator = false;
 
@@ -24,8 +24,8 @@ public:
 		glDeleteTextures(1, &m_textureID);
 	}
 	/** Constructor. */
-	HDR(Engine * engine)
-	: m_engine(engine) {
+	inline HDR(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shaderHDR = Shared_Shader(m_engine, "Effects\\HDR");
 		m_shapeQuad = Shared_Primitive(engine, "quad");
@@ -64,7 +64,7 @@ public:
 	}
 
 
-	// Interface Implementations.
+	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;

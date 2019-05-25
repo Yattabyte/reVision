@@ -6,6 +6,11 @@
 constexpr char* EXT_PRIMITIVE = ".obj";
 constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
 
+struct Single_Primitive_Vertex {
+	glm::vec3 vertex;
+	glm::vec2 uv;
+};
+
 Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded)
 {
 	(*(std::shared_ptr<Primitive>*)(this)) = std::dynamic_pointer_cast<Primitive>(

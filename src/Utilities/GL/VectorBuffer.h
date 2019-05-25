@@ -114,7 +114,7 @@ public:
 		}
 	}
 	/***/
-	inline const GLint getOffsetAlignment() {
+	inline GLint getOffsetAlignment() {
 		return m_offsetAlignment;
 	}
 

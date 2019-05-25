@@ -8,8 +8,7 @@
 
 
 /** A UI component with a bar and a sliding paddle control. */
-class Slider : public UI_Element
-{
+class Slider : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {

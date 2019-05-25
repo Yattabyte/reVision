@@ -14,18 +14,19 @@
 /** A system responsible for updating physics components that share a common transformation. */
 class TransformSync_Phys_System : public BaseECSSystem {
 public:
-	// (de)Constructors
-	~TransformSync_Phys_System() = default;
-	TransformSync_Phys_System(btDiscreteDynamicsWorld * world)
-		: BaseECSSystem(), m_world(world) 
-	{
+	// Public (de)Constructors
+	/***/
+	inline ~TransformSync_Phys_System() = default;
+	/***/
+	inline TransformSync_Phys_System(btDiscreteDynamicsWorld * world)
+		: BaseECSSystem(), m_world(world) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
 	}
 
 
-	// Interface Implementation
+	// Public Interface Implementation
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];

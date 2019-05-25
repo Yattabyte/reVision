@@ -13,7 +13,9 @@ class Cubemap;
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Cubemap : public std::shared_ptr<Cubemap> {
 public:
-	Shared_Cubemap() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Cubemap() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -23,9 +25,9 @@ public:
 };
 
 /** Represents an OpenGL cubemap texture object. */
-class Cubemap : public Asset
-{
+class Cubemap : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Cubemap. */
 	~Cubemap();
 	/** Construct the Cubemap. */

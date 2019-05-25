@@ -25,7 +25,9 @@ const enum Resize_Policy : GLenum {
 /** Responsible for the creation, containing, and sharing of assets. */
 class Shared_Image : public std::shared_ptr<Image> {
 public:
-	Shared_Image() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used
 	@param	filename		the filename to use
@@ -37,9 +39,9 @@ public:
 };
 
 /** Holds image data, and nothing more. */
-class Image : public Asset
-{
+class Image : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Image. */
 	~Image();
 	/** Construct the Image. */

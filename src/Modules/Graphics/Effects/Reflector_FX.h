@@ -17,14 +17,14 @@
 /** A core-rendering technique which applies parallax-corrected local cubemaps to the scene. */
 class Reflector_Effect : public GFX_Core_Effect {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~Reflector_Effect() {
+	inline ~Reflector_Effect() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	Reflector_Effect(
+	inline Reflector_Effect(
 		Engine * engine,
 		FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO,
 		Reflector_RenderState * renderState
@@ -70,7 +70,7 @@ public:
 	}
 
 
-	// Interface Implementation	
+	// Public Interface Implementation	
 	inline virtual void applyEffect(const float & deltaTime) override {
 		// Exit Early
 		if (!m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())

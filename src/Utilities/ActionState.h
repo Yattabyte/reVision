@@ -9,11 +9,11 @@
 /** A container class that holds the action state for the engine, such as forward/back/left/right and amount. */
 class ActionState : public std::map<unsigned int, float> {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the action state. */
-	~ActionState() = default;
+	inline ~ActionState() = default;
 	/** Construct the action state. */
-	ActionState() {
+	inline ActionState() {
 		for (unsigned int x = 0; x < ACTION_COUNT; ++x)
 			insert(std::pair<unsigned int, float>(x, 0.0f));
 	}
