@@ -7,6 +7,7 @@
 #include "Modules/Post Processing/Effects/FXAA.h"
 #include "Modules/Post Processing/Effects/To_Screen.h"
 #include "Modules/Post Processing/Effects/Frametime_Counter.h"
+#include "Modules/Post Processing/Effects/LoadingIndicator.h"
 
 
 void Post_Processing_Module::initialize(Engine * engine)
@@ -18,6 +19,7 @@ void Post_Processing_Module::initialize(Engine * engine)
 	m_fxTechs.push_back(new FXAA(m_engine));
 	m_fxTechs.push_back(new To_Screen(m_engine));
 	m_fxTechs.push_back(new Frametime_Counter(m_engine));
+	m_fxTechs.push_back(new LoadingIndicator(m_engine));
 }
 
 void Post_Processing_Module::frameTick(const float & deltaTime)

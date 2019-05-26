@@ -41,7 +41,7 @@ public:
 	void addLevelListener(bool * notifier);
 	/** Checks whether the level has finished loading. 
 	@return				true if level sufficiently loaded, false otherwise. */
-	const bool checkIfLoaded();
+	bool checkIfLoaded();
 	/** Construct an entity from the array of components and IDS*/
 	EntityHandle makeEntity(BaseECSComponent ** components, const uint32_t * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.

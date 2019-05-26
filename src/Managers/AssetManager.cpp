@@ -76,7 +76,14 @@ void AssetManager::notifyObservers()
 bool AssetManager::readyToUse()
 {
 	std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
-	return !bool(m_Workorders.size() + m_Workorders.size());
+	if (!bool(m_Workorders.size() + m_Workorders.size())) {
+		for each (const auto & assetCategory in m_AssetMap)
+			for each (const auto & asset in assetCategory.second)
+				if (!asset->existsYet())
+					return false;
+		return true;
+	}
+	return false;
 }
 
 bool AssetManager::hasChanged()

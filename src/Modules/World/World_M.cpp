@@ -49,7 +49,7 @@ void World_Module::addLevelListener(bool * notifier)
 		*notifier = true;
 }
 
-const bool World_Module::checkIfLoaded()
+bool World_Module::checkIfLoaded()
 {
 	auto & assetManager = m_engine->getManager_Assets();
 	auto & modelManager = m_engine->getManager_Models();
