@@ -2,7 +2,7 @@
 #ifndef COLORSCHEME_S_H
 #define COLORSCHEME_S_H 
 
-#include "States/GameSystemInterface.h"
+#include "States/Puzzle/GameSystemInterface.h"
 #include "States/Puzzle/ECS/components.h"
 
 

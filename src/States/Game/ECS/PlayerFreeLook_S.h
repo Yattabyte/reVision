@@ -2,15 +2,15 @@
 #ifndef PLAYERFREELOOK_S_H
 #define PLAYERFREELOOK_S_H 
 
-#include "States/GameSystemInterface.h"
-#include "States/Game/ECS/components.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/ECS/components.h"
+#include "States/Game/ECS/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
 
 /** A system responsible for updating player components based on keyboard/mouse. */
-class PlayerFreeLook_System : public Game_System_Interface {
+class PlayerFreeLook_System : public BaseECSSystem {
 public: 
 	// Public (de)Constructors
 	/** Destroy this free-look system. */

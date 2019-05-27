@@ -20,66 +20,64 @@ void UI_Module::initialize(Engine * engine)
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		m_startMenu->setScale(m_renderSize);
+		if (m_uiElement)
+			m_uiElement->setScale(m_renderSize);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		m_startMenu->setScale(m_renderSize);
+		if (m_uiElement)
+			m_uiElement->setScale(m_renderSize);
 	});
-	calcOthoProj(m_renderSize, m_projectionBuffer);
-
-	// Create main menu
-	m_startMenu = std::make_shared<StartMenu>(m_engine);
-	m_startMenu->setScale(m_renderSize);
-	m_startMenu->addCallback(StartMenu::on_start_game, [&]() {
-		m_menuState = on_game;
-	});
-	m_startMenu->addCallback(StartMenu::on_start_puzzle, [&]() {
-		m_menuState = on_puzzle;
-	});
-	m_startMenu->addCallback(StartMenu::on_options, [&]() {
-		m_menuState = on_menu;
-	});
-	m_startMenu->addCallback(StartMenu::on_quit, [&]() {
-		m_menuState = on_exit;
-	});
+	calcOthoProj(m_renderSize, m_projectionBuffer);	
 }
 
 void UI_Module::frameTick(const float & deltaTime)
 {
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_SCISSOR_TEST);
-	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
-	glScissor(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
-	
-	m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	m_startMenu->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
+	if (m_uiElement) {
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_SCISSOR_TEST);
+		glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
+		glScissor(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
 
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_BLEND);
-	Shader::Release();
+		m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+		m_uiElement->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
+
+		glDisable(GL_SCISSOR_TEST);
+		glDisable(GL_BLEND);
+		Shader::Release();
+	}
 }
 
-UI_Module::MenuState UI_Module::getMenuState() const
+void UI_Module::setRootElement(const std::shared_ptr<UI_Element>& rootElement)
 {
-	return m_menuState;
+	m_uiElement = rootElement;
+	m_uiElement->setScale(m_renderSize);
+}
+
+void UI_Module::clearRootElement()
+{
+	if (m_uiElement)
+		m_uiElement.reset();
 }
 
 void UI_Module::applyMouseEvent(const MouseEvent & mouseEvent)
 {
-	m_startMenu->mouseAction(mouseEvent);
+	if (m_uiElement)
+		m_uiElement->mouseAction(mouseEvent);
 }
 
 void UI_Module::applyChar(const unsigned int & character)
 {
-	m_startMenu->keyChar(character);
+	if (m_uiElement)
+		m_uiElement->keyChar(character);
 }
 
 void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
 {
-	m_startMenu->keyboardAction(key, scancode, action, mods);
+	if (m_uiElement)
+		m_uiElement->keyboardAction(key, scancode, action, mods);
 }

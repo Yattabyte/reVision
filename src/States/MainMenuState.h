@@ -5,25 +5,35 @@
 #include "States/EngineState.h"
 #include "States/Puzzle/PuzzleState.h"
 #include "States/Game/GameState.h"
+#include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Engine.h"
 
 
 /** Represents the state for the engine while on the main menu. */
 class MainMenuState : public EngineState {
 public:
+	// Public State Enumeration
+	enum MenuState {
+		on_menu,
+		on_game,
+		on_puzzle,
+		on_exit
+	};
+
+
 	// Public (de)Constructors
 	inline ~MainMenuState() {
 		m_engine->getModule_World().removeComponentType("MenuCamera_Component");
+		m_engine->getModule_UI().clearRootElement();
 	}
 	inline MainMenuState(Engine * engine) : EngineState(engine) {
-		auto & world = m_engine->getModule_World();
-		world.addComponentType("MenuCamera_Component", [](const ParamList & parameters) {
+		// Register Component Types
+		m_engine->getModule_World().addComponentType("MenuCamera_Component", [](const ParamList & parameters) {
 			auto * component = new Player3D_Component();
 			return std::make_pair(component->ID, component);
 		});
-		//world.loadWorld("background.map");
-		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 
+		// Tap-in to preference changes
 		auto & preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
@@ -33,6 +43,23 @@ public:
 		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 			m_renderSize.y = (int)f;
 		});
+
+		// Create main menu
+		m_startMenu = std::make_shared<StartMenu>(m_engine);
+		m_startMenu->addCallback(StartMenu::on_start_game, [&]() {
+			m_menuState = on_game;
+		});
+		m_startMenu->addCallback(StartMenu::on_start_puzzle, [&]() {
+			m_menuState = on_puzzle;
+		});
+		m_startMenu->addCallback(StartMenu::on_options, [&]() {
+			m_menuState = on_menu;
+		});
+		m_startMenu->addCallback(StartMenu::on_quit, [&]() {
+			m_menuState = on_exit;
+		});
+		m_engine->getModule_UI().setRootElement(m_startMenu);
+		m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
 	}
 
 
@@ -46,12 +73,12 @@ public:
 		m_mouseEvent.m_button = GLFW_MOUSE_BUTTON_LEFT;
 		m_mouseEvent.m_action = (int)actionState[ActionState::MOUSE_L];
 
+		// Update our UI element
 		m_engine->getModule_UI().applyMouseEvent(m_mouseEvent);
-
-		switch (m_engine->getModule_UI().getMenuState()) {
-		case UI_Module::on_game:
+		switch (m_menuState) {
+		case on_game:
 			return new GameState(m_engine);
-		case UI_Module::on_puzzle:
+		case on_puzzle:
 			return new PuzzleState(m_engine);
 		}
 		return nullptr;
@@ -68,6 +95,9 @@ protected:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	MouseEvent m_mouseEvent;
+	std::shared_ptr<UI_Element> m_startMenu;
+	MenuState m_menuState = on_menu;
+
 };
 
 #endif // MAINMENUSTATE_H

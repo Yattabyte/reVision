@@ -2,7 +2,7 @@
 #ifndef PLAYERINPUT_S_H
 #define PLAYERINPUT_S_H 
 
-#include "States/GameSystemInterface.h"
+#include "States/Puzzle/GameSystemInterface.h"
 #include "States/Puzzle/ECS/components.h"
 #include "States/Puzzle/Common_Lambdas.h"
 #include "Assets/Sound.h"

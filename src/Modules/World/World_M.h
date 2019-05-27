@@ -50,7 +50,7 @@ public:
 	template <class...Args>
 	inline EntityHandle makeEntity(Args&...args) {
 		BaseECSComponent * components[] = { &args... };
-		uint32_t componentIDS[] = { Args::ID... };
+		const uint32_t componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Construct an entity from the array of component pointers.
@@ -59,7 +59,7 @@ public:
 	template <class...Args>
 	inline EntityHandle makeEntity(Args*...args) {
 		BaseECSComponent * components[] = { args... };
-		uint32_t componentIDS[] = { Args::ID... };
+		const uint32_t componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Remove an entity.
@@ -103,7 +103,6 @@ public:
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
 	void updateSystem(BaseECSSystem * system, const float & deltaTime);
-	/** Purge the ECS, unloading all entities and components. */
 
 
 private:

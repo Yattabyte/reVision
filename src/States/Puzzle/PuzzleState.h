@@ -5,7 +5,7 @@
 #include "States/EngineState.h"
 #include "States/Puzzle/Common_Definitions.h"
 #include "States/Puzzle/ECS/components.h"
-#include "States/GameSystemInterface.h"
+#include "States/Puzzle/GameSystemInterface.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/VectorBuffer.h"
 #include "Engine.h"
@@ -85,13 +85,12 @@ public:
 			auto * component = new Player2D_Component();
 			return std::make_pair(component->ID, component);
 		});
-		world.loadWorld("game.map");
-		glfwSetInputMode(m_engine->getRenderingContext(), GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void handleTick(const float & deltaTime) override {
+		m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 		// Check if safe to start game
 		if (!m_readyToStart) {
 			bool allReady = true;

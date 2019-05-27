@@ -13,15 +13,6 @@
 /** A module responsible for the overall user interface. */
 class UI_Module : public Engine_Module {
 public:
-	// Public State Enumeration
-	enum MenuState {
-		on_menu,
-		on_game,
-		on_puzzle,
-		on_exit
-	};
-
-
 	// Public (de)Constructors
 	/** Destroy the UI module. */
 	inline ~UI_Module() = default;
@@ -35,9 +26,11 @@ public:
 
 
 	// Public Methods
-	/** Return the current state of this menu. 
-	@return				enum representing the state of this menu. */
-	MenuState getMenuState() const;
+	/** Place a root UI element to receive input and be rendered. 
+	@param	rootElement		the main element of focus for this UI system. */
+	void setRootElement(const std::shared_ptr<UI_Element> & rootElement);
+	/** Remove the root UI element from the UI system. */
+	void clearRootElement();
 	/** Propagates a mouse event to all UI elements. 
 	@param	mouseEvent	the mouse event to apply. */
 	void applyMouseEvent(const MouseEvent & mouseEvent);	
@@ -56,9 +49,8 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
-	std::shared_ptr<UI_Element> m_startMenu, m_optionsMenu;
+	std::shared_ptr<UI_Element> m_uiElement;
 	MouseEvent m_mouseEvent;
-	MenuState m_menuState = on_menu;
 };
 
 #endif // UI_MODULE_H

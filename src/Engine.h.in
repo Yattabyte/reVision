@@ -44,6 +44,13 @@ struct Auxilliary_Context {
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
 public:
+	/***/
+	enum MouseInputMode {
+		NORMAL,
+		FREE_LOOK
+	};
+
+
 	// Public (de)Constructors
 	/** Destroys the engine. */
 	~Engine();
@@ -62,6 +69,8 @@ public:
 	bool shouldClose();
 	/** Tells the engine to shut down. */
 	void shutDown();
+	/***/
+	void setMouseInputMode(const MouseInputMode & mode);
 
 
 	// Public Accessors
@@ -124,6 +133,7 @@ private:
 	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
+	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;

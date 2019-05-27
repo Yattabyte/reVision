@@ -26,6 +26,7 @@ public:
 		MOUSE_Y,
 		MOUSE_L,
 		MOUSE_R,
+		ESCAPE,
 		FORWARD,
 		BACKWARD,
 		LEFT,
@@ -50,6 +51,7 @@ public:
 			"MOUSE_Y",
 			"MOUSE_L",
 			"MOUSE_R",
+			"ESCAPE",
 			"FORWARD",
 			"BACKWARD",
 			"LEFT",
@@ -64,6 +66,25 @@ public:
 		};
 		return actionStrings;
 	};	
+
+
+	// Public Methods
+	inline bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
+		if (at(actionEnum) > 0.5f) {
+			if (!m_keyPressStates[actionEnum]) {
+				m_keyPressStates[actionEnum] = true;
+				return true;
+			}
+		}
+		else
+			m_keyPressStates[actionEnum] = false;
+		return false;
+	}
+
+
+private:
+	// Private Attributes
+	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
 };
 
 #endif // ACTION_STATE_H

@@ -226,10 +226,19 @@ void Engine::tick()
 	// Updated hard-coded bindings
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
-	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
-	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
 	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_LEFT);
 	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_RIGHT);
+	switch (m_mouseInputMode) {
+	case NORMAL:
+		m_actionState[ActionState::MOUSE_X] = (float)mouseX;
+		m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
+		break;
+	case FREE_LOOK:
+		m_actionState[ActionState::LOOK_X] = (float)mouseX;
+		m_actionState[ActionState::LOOK_Y] = (float)mouseY;
+		glfwSetCursorPos(m_renderingContext.window, 0, 0);
+		break;
+	};
 
 	// Update Engine State / Begin Frame
 	m_moduleGraphics.getCameraBuffer().waitFrame(m_frameCount);
@@ -264,6 +273,19 @@ bool Engine::shouldClose()
 void Engine::shutDown()
 {
 	glfwSetWindowShouldClose(m_renderingContext.window, GLFW_TRUE);
+}
+
+void Engine::setMouseInputMode(const MouseInputMode & mode)
+{
+	m_mouseInputMode = mode;
+	switch (mode) {
+	case NORMAL:
+		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		break;
+	case FREE_LOOK:
+		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		glfwSetCursorPos(m_renderingContext.window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
+	}
 }
 
 GLFWwindow * Engine::getRenderingContext() const
