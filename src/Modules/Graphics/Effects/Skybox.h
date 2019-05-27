@@ -115,7 +115,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Convolute the skybox cubemap, generating blurred mips (for rougher materials). */
 	inline void convoluteSky() {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

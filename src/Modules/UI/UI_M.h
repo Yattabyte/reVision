@@ -35,19 +35,12 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Return the current state of this menu. 
+	@return				enum representing the state of this menu. */
 	MenuState getMenuState() const;
-	/***/
-	void applyMouseEvent(const MouseEvent & mouseEvent);
-	/** Propagates mouse movement input to all UI elements.
-	@param		xPos	the 'x' axis position of the mouse
-	@param		yPos	the 'y' axis position of the mouse. */
-	void applyCursorPos(const double & xPos, const double & yPos);
-	/** Propagates mouse button input to all UI elements.
-	@param		button	the mouse button used
-	@param		action	the mouse button action (pressed, released, etc)
-	@param		mods	any mouse modifiers used. */
-	void applyCursorButton(const int & button, const int & action, const int & mods);
+	/** Propagates a mouse event to all UI elements. 
+	@param	mouseEvent	the mouse event to apply. */
+	void applyMouseEvent(const MouseEvent & mouseEvent);	
 	/** Propagates keyboard character input to all UI elements.
 	@param		character	the character inputed. */
 	void applyChar(const unsigned int & character);

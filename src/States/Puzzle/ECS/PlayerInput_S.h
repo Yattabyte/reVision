@@ -14,9 +14,9 @@
 class PlayerInput_System : public Game_System_Interface {
 public:
 	// (de)Constructors
-	/***/
+	/** Destroy this puzzle player-input system. */
 	inline ~PlayerInput_System() = default;
-	/***/
+	/** Construct a puzzle player-input system. */
 	inline PlayerInput_System(Engine * engine, ActionState * actionState) : m_engine(engine), m_actionState(actionState) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

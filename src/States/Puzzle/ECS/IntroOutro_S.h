@@ -13,9 +13,9 @@
 class IntroOutro_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle intro/outro system. */
 	~IntroOutro_System() = default;
-	/***/
+	/** Construct a puzzle intro/outro system. */
 	IntroOutro_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

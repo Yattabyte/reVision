@@ -40,22 +40,24 @@ template <typename T>
 class VectorBuffer : public GL_Vector {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this vector buffer. */
 	~VectorBuffer() {
 		if (m_bufferID != 0) {
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
 		}
 	}
-	/** Default Constructor. */
+	/** Construct an empty vector buffer. */
 	VectorBuffer() {
 		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT | flags);
 		m_ptrContainer = glMapNamedBufferRange(m_bufferID, 0, m_maxCapacity, flags);
 	}
-	/** Explicit Constructor. */
-	explicit VectorBuffer(const GLsizeiptr & sizeHint, const GLint & offsetAlignment) : m_maxCapacity(sizeHint), m_offsetAlignment(offsetAllighnment) {}
+	/** Constructor a vector buffer with a specific size and offset alignment.
+	@param	sizeHint	the size to use.
+	@param	offAlign	the offset alignment to use. */
+	explicit VectorBuffer(const GLsizeiptr & sizeHint, const GLint & offAlign) : m_maxCapacity(sizeHint), m_offsetAlignment(offAlign) {}
 	/** Move gl object from 1 instance to another. */
 	inline VectorBuffer & operator=(VectorBuffer && o) noexcept {
 		m_count = (std::move(o.m_count));
@@ -95,17 +97,21 @@ public:
 	inline void removeElement(const unsigned int * uboIndex) {
 		replaceWithEnd(uboIndex);
 	}
-	/***/
+	/** Retrieve the element found in this buffer at the index specified. 
+	@param	index		the index to the element to retrieve.
+	@return				the element matching the index specified. */
 	inline VB_Element<T> * getElement(const GLuint & index) {
 		return m_elements[index];
 	}
-	/***/
+	/** Retrieve the number of elements in this vector.
+	@return				the number of elements. */
 	inline unsigned int getCount() const {
 		return m_count;
 	}
-	/***/
-	inline void setOffsetAlignment(const GLint & offsetAlignment) {
-		m_offsetAlignment = offsetAlignment;
+	/** Set the offset alignment for this buffer.
+	@param	offAlign	the offset alignment to use. */
+	inline void setOffsetAlignment(const GLint & offAlign) {
+		m_offsetAlignment = offAlign;
 
 		// Update all buffer references
 		for each (VB_Element<T>* element in m_elements) {
@@ -113,7 +119,8 @@ public:
 			element->data = &reinterpret_cast<T*>(bytePtr)[element->index];
 		}
 	}
-	/***/
+	/** Retrieve the offset alignment of this buffer.
+	@return				the offset alignment used by this buffer. */
 	inline GLint getOffsetAlignment() {
 		return m_offsetAlignment;
 	}

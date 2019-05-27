@@ -1,7 +1,6 @@
 var searchData=
 [
   ['score_5fcomponent',['Score_Component',['../struct_score___component.html',1,'']]],
-  ['score_5fconstructor',['Score_Constructor',['../struct_score___constructor.html',1,'']]],
   ['score_5fsystem',['Score_System',['../class_score___system.html',1,'']]],
   ['scoringdata',['ScoringData',['../struct_score___component_1_1_scoring_data.html',1,'Score_Component']]],
   ['scrollbar_5fv',['Scrollbar_V',['../class_scrollbar___v.html',1,'']]],
@@ -28,9 +27,7 @@ var searchData=
   ['sidelist',['SideList',['../class_side_list.html',1,'']]],
   ['single_5fprimitive_5fvertex',['Single_Primitive_Vertex',['../struct_single___primitive___vertex.html',1,'']]],
   ['singlevertex',['SingleVertex',['../struct_single_vertex.html',1,'']]],
-  ['skeleton_5fbuffer',['Skeleton_Buffer',['../struct_skeleton___buffer.html',1,'']]],
   ['skeleton_5fcomponent',['Skeleton_Component',['../struct_skeleton___component.html',1,'']]],
-  ['skeleton_5fconstructor',['Skeleton_Constructor',['../struct_skeleton___constructor.html',1,'']]],
   ['skeletonanimation_5fsystem',['SkeletonAnimation_System',['../class_skeleton_animation___system.html',1,'']]],
   ['skybox',['Skybox',['../class_skybox.html',1,'']]],
   ['slider',['Slider',['../class_slider.html',1,'']]],

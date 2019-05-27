@@ -14,9 +14,9 @@
 class TransformSync_Gfx_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy the sync system. */
 	inline ~TransformSync_Gfx_System() = default;
-	/***/
+	/** Construct the sync system. */
 	inline TransformSync_Gfx_System() {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);

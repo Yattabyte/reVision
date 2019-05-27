@@ -13,9 +13,9 @@
 class Gravity_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle gravity system. */
 	inline ~Gravity_System() = default;
-	/***/
+	/** Construct a puzzle gravity system. */
 	inline Gravity_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

@@ -8,7 +8,7 @@
 #include "Engine.h"
 
 
-/***/
+/** Represents the state for the engine while on the main menu. */
 class MainMenuState : public EngineState {
 public:
 	// Public (de)Constructors

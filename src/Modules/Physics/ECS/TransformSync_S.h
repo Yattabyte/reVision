@@ -15,9 +15,9 @@
 class TransformSync_Phys_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
-	/***/
+	/** Construct a physics sync system. */
 	inline TransformSync_Phys_System(btDiscreteDynamicsWorld * world)
 		: BaseECSSystem(), m_world(world) {
 		// Declare component types used

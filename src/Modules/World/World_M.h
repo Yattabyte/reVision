@@ -16,9 +16,9 @@
 class World_Module : public Engine_Module {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this world module. */
 	~World_Module();
-	/***/
+	/** Construct a world module. */
 	inline World_Module() = default;
 
 
@@ -31,10 +31,10 @@ public:
 
 
 	// Public Methods
-	/** Loads the world.
+	/** Loads the world, specified by the map name.
 	@param	mapName		the name of the map to load. */
 	void loadWorld(const std::string & mapName);
-	/***/
+	/** Unload the current world. */
 	void unloadWorld();
 	/** Registers a notification flag to be updated when level loaded.
 	@param	notifier	flag to be set when level loaded*/
@@ -88,9 +88,12 @@ public:
 	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
 		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
 	}
-	/***/
+	/** Add support for a specific component type at level-creation-time.
+	@param	name				the component class name.
+	@param	func				the component creation function. */
 	void addComponentType(const char * name, const std::function<std::pair<uint32_t, BaseECSComponent*>(const ParamList &)> & func);
-	/***/
+	/** Remove support for a specific component type at level-creation-time. 
+	@param	name				the component class name. */
 	void removeComponentType(const char * name);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
@@ -107,29 +110,53 @@ private:
 	// Private Methods
 	/** Process the level asset, generating components and entities. */
 	void processLevel();
-	/***/
+	/** Convert an entity handle to the specific raw type. 
+	@param	handle				the entity handle to process.
+	@return						raw handle. */
 	inline std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* handleToRawType(const EntityHandle & handle) {
 		return (std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >*)handle;
 	}
-	/***/
+	/** Convert an entity handle to its raw index. 
+	@param	handle				the entity handle to process.
+	@return						raw entity index. */
 	inline uint32_t handleToEntityIndex(const EntityHandle & handle) {
 		return handleToRawType(handle)->first;
 	}
-	/***/
+	/** Convert an entity handle to its raw data.
+	@param	handle				the entity handle to process.
+	@return						raw entity data. */
 	inline std::vector<std::pair<uint32_t, uint32_t> >& handleToEntity(const EntityHandle & handle) {
 		return handleToRawType(handle)->second;
 	}
-	/***/
+	/** Delete a component matching the category ID supplied, at the given index. 
+	@param	componentID			the component class/category ID.
+	@param	index				the component index to delete. */
 	void deleteComponent(const uint32_t & componentID, const uint32_t & index);
-	/***/
+	/** Adds a component to the entity specified.
+	@param	handle				the entity handle, to add the component to.
+	@param	entity				the specific entity data array.
+	@param	componentID			the class ID of the component.
+	@param	component			the specific component to add to the entity. */
 	void addComponentInternal(EntityHandle handle, std::vector<std::pair<uint32_t, uint32_t>> & entity, const uint32_t & componentID, BaseECSComponent * component);
-	/***/
+	/** Remove a component from the entity specified.
+	@param	handle				the entity handle, to remove the component from.
+	@param	componentID			the class ID of the component. 
+	@return						true on remove success, false otherwise. */
 	bool removeComponentInternal(EntityHandle handle, const uint32_t & componentID);
-	/***/
+	/** Retrieve the component from an entity matching the class specified.
+	@param	entityComponents	the array of entity component IDS.
+	@param	array				the array of component data.
+	@param	componentID			the class ID of the component.
+	@return						the component pointer matching the ID specified. */
 	BaseECSComponent * getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>>& entityComponents, std::vector<uint8_t> & array, const uint32_t & componentID);
-	/***/
+	/** Update a system that has multiple component types.
+	@param	system				the system to update
+	@param	deltaTime			the amount of time that passed since the last update.
+	@param	componentTypes		the component types this system uses. */
 	void updateSystemWithMultipleComponents(BaseECSSystem * system, const float & deltaTime, const std::vector<uint32_t> & componentTypes);
-	/***/
+	/** Find the least common component.
+	@param	componentTypes		the component types.
+	@param	componentFlags		the component flags. */
 	size_t findLeastCommonComponent(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
 
 

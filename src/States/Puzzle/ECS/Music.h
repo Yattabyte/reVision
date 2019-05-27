@@ -13,9 +13,9 @@
 class Music_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle music system. */
 	inline ~Music_System() = default;
-	/***/
+	/** Construct a puzzle music system. */
 	inline Music_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

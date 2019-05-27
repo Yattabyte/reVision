@@ -38,7 +38,8 @@ public:
 	inline void insert(const char * key) {
 		m_map.insert(std::pair<const char *, T>(key, T())); 
 	}
-	/***/
+	/** Remove the element found in the map matching the key specified. 
+	@param	key		the key to erase from the map. */
 	inline void erase(const char * key) {
 		auto spot = m_map.find(key);
 		if (spot != m_map.end())	

@@ -37,7 +37,7 @@ public:
 					? skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond
 					: 25.0f;
 				const double TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const double AnimationTime = fmod(TimeInTicks, skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration);
+				const float AnimationTime = fmodf(TimeInTicks, skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration);
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
 				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
@@ -68,14 +68,21 @@ protected:
 		}
 		return nullptr;
 	};
-	/***/
+	/** Search for a keyframe appropriate for the current animation time.
+	@param	AnimationTime	the current time in the animation.
+	@param	count			the number of key frames.
+	@param	keyVector		array of key frames.
+	@return					an appropriate keyframe, 0 otherwise. */
 	inline static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
 		for (size_t i = 0; i < count; i++)
 			if (AnimationTime < (float)(keyVector[i + 1]).time)
 				return i;
 		return size_t(0);
 	};	
-	/***/
+	/** Interpolate between this keyframe, and the next one, based on the animation time.
+	@param	AnimationTime	the current time in the animation.
+	@param	keyVector		array of key frames. 
+	@return					a new keyframe value. */
 	inline static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
 		const size_t & keyCount = keyVector.size();
 		assert(keyCount > 0);
@@ -91,8 +98,14 @@ protected:
 		}
 		return Result;
 	};
-	/***/
-	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const double & animation_time, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
+	/** Process animation nodes from a scene, updating a series of transformation matrix representing the bones in the skeleton.
+	@param	transforms		matrix vector representing bones in the skeleton.
+	@param	AnimationTime	the current time in the animation.
+	@param	animation_ID	id for the current animation to proccess.
+	@param	parentNode		parent node in the node hierarchy.
+	@param	model			the model to process the animations from.
+	@param	ParentTransform	parent transform in the node hierarchy. */
+	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const float & AnimationTime, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
 		const std::string & NodeName = parentNode->name;
 		const Animation & pAnimation = model->m_geometry.animations[animation_ID];
 		const Node_Animation * pNodeAnim = FindNodeAnim(pAnimation, NodeName);
@@ -101,9 +114,9 @@ protected:
 		// Interpolate scaling, rotation, and translation.
 		// Generate their matrices and apply their transformations.
 		if (pNodeAnim) {
-			const glm::vec3 Scaling = InterpolateKeys((float)animation_time, pNodeAnim->scalingKeys);
-			const glm::quat Rotation = InterpolateKeys((float)animation_time, pNodeAnim->rotationKeys);
-			const glm::vec3 Translation = InterpolateKeys((float)animation_time, pNodeAnim->positionKeys);
+			const glm::vec3 Scaling = InterpolateKeys(AnimationTime, pNodeAnim->scalingKeys);
+			const glm::quat Rotation = InterpolateKeys(AnimationTime, pNodeAnim->rotationKeys);
+			const glm::vec3 Translation = InterpolateKeys(AnimationTime, pNodeAnim->positionKeys);
 
 			NodeTransformation = glm::translate(glm::mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0f), Scaling);
 		}
@@ -117,7 +130,7 @@ protected:
 		}
 
 		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
-			ReadNodeHeirarchy(transforms, animation_time, animation_ID, parentNode->children[i], model, GlobalTransformation);
+			ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, parentNode->children[i], model, GlobalTransformation);
 	}
 };
 

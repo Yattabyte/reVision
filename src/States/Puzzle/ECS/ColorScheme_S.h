@@ -10,9 +10,9 @@
 class ColorScheme_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle color-scheme system. */
 	inline ~ColorScheme_System() = default;
-	/***/
+	/** Construct a puzzle color-scheme system. */
 	inline ColorScheme_System() {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

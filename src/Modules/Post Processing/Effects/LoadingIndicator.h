@@ -10,7 +10,7 @@
 #include "Engine.h"
 
 
-/***/
+/** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */
 class LoadingIndicator : public GFX_PP_Effect {
 public:
 	// Public (de)Constructors

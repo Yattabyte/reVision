@@ -24,7 +24,7 @@
 #include "States/Puzzle/ECS/Rendering_S.h"
 
 
-/***/
+/** Represents the engine state for the puzzle game, and the actions the engine will perform. */
 class PuzzleState : public EngineState {
 public:
 	// Public (de)Constructors

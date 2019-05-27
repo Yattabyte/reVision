@@ -22,9 +22,9 @@
 class Graphics_Module : public Engine_Module {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this graphics rendering module. */
 	~Graphics_Module();
-	/***/
+	/** Construct a graphics rendering module. */
 	inline Graphics_Module() = default;
 
 

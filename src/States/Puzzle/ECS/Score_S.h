@@ -14,9 +14,9 @@
 class Score_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle score system. */
 	inline ~Score_System() = default;
-	/***/
+	/** Construct a puzzle score system. */
 	inline Score_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

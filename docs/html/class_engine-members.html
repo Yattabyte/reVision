@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,7 +74,7 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_engine.html#ad25ed1753eed289a7f7d2c60ddeddc3e">File_Exists</a>(const std::string &amp;name)</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a7336cc5d876f9511ff372f2b18fdb534">Get_Current_Dir</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">static</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine.html#a2064c3142815e4396db1e016f474b8ff">getActionState</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#ab995b1f645592a2f7517e527f19ae0cf">getECS</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a689393fbdf8c3059780e7fd1ce30f4ed">getCurrentFrame</a>() const</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine.html#ae63c610667d58f693d9aeadfaa12b5de">getManager_Assets</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a081bdc29fd70c1be30137106f4bb8af8">getManager_Materials</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine.html#a07fb517385f84afb4658f6cd17b5cb0b">getManager_Messages</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
@@ -88,12 +88,11 @@ $(function() {
   <tr><td class="entry"><a class="el" href="class_engine.html#aa86a65ad825186658bd35cc7dca0b42c">getPreferenceState</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_engine.html#afda3fac79affefe8f7384bb580c3082d">getRenderingContext</a>() const</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">getResolutions</a>() const</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a50e351531bf11737dc02de026ca7743d">registerECSConstructor</a>(const char *name, BaseECSComponentConstructor *constructor)</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_engine.html#a000f99ef9755f3415ee4fb101019e373">shouldClose</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_engine.html#a862870af01354ec1327bae82074e836f">tick</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a88e41e7d7bdbabe2b20ea4c92f1a8f79">tickThreaded</a>(std::future&lt; void &gt; exitObject, const Auxilliary_Context &amp;&amp;context)</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_engine.html#a8ef7030a089ecb30bbfcb9e43094717a">~Engine</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a000f99ef9755f3415ee4fb101019e373">shouldClose</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a862870af01354ec1327bae82074e836f">tick</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_engine.html#a88e41e7d7bdbabe2b20ea4c92f1a8f79">tickThreaded</a>(std::future&lt; void &gt; exitObject, const Auxilliary_Context &amp;&amp;context)</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_engine.html#a8ef7030a089ecb30bbfcb9e43094717a">~Engine</a>()</td><td class="entry"><a class="el" href="class_engine.html">Engine</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

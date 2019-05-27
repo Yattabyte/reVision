@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -81,17 +81,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af49d13cae0fa9dd69765b372f0f9e888"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd55a96b55e3e332a5ac6d71bf6981ee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#afd55a96b55e3e332a5ac6d71bf6981ee">bind</a> ()</td></tr>
 <tr class="separator:afd55a96b55e3e332a5ac6d71bf6981ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f83adac0badd0d17bc54809b492dce5"><td class="memItemLeft" align="right" valign="top">const GLsizei&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a8f83adac0badd0d17bc54809b492dce5">getMaterialSize</a> () const</td></tr>
-<tr class="separator:a8f83adac0badd0d17bc54809b492dce5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a710fb2fc9a28e1eac29f07a2edee885f"><td class="memItemLeft" align="right" valign="top">GLsizei&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a710fb2fc9a28e1eac29f07a2edee885f">getMaterialSize</a> () const</td></tr>
+<tr class="separator:a710fb2fc9a28e1eac29f07a2edee885f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc7822a03521389588c722bef02ac0d1"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#abc7822a03521389588c722bef02ac0d1">generateID</a> (const size_t &amp;textureCount)</td></tr>
 <tr class="separator:abc7822a03521389588c722bef02ac0d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04e1194e4a23b30be8fe4532dd43834c"><td class="memItemLeft" align="right" valign="top"><a id="a04e1194e4a23b30be8fe4532dd43834c"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>writeMaterials</b> (const GLuint &amp;materialID, const GLubyte *imageData, const GLsizei &amp;imageCount)</td></tr>
+<tr class="memitem:a04e1194e4a23b30be8fe4532dd43834c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a04e1194e4a23b30be8fe4532dd43834c">writeMaterials</a> (const GLuint &amp;materialID, const GLubyte *imageData, const GLsizei &amp;imageCount)</td></tr>
 <tr class="separator:a04e1194e4a23b30be8fe4532dd43834c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e1ad748479cfc85711fe586ecab7055"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a2e1ad748479cfc85711fe586ecab7055">readyToUse</a> ()</td></tr>
-<tr class="separator:a2e1ad748479cfc85711fe586ecab7055"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22ab078d8b120511dd02ed7c79332675"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a22ab078d8b120511dd02ed7c79332675">hasChanged</a> ()</td></tr>
-<tr class="separator:a22ab078d8b120511dd02ed7c79332675"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a77d9e1af791dcf945568c27e80d25d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#a1a77d9e1af791dcf945568c27e80d25d">readyToUse</a> ()</td></tr>
+<tr class="separator:a1a77d9e1af791dcf945568c27e80d25d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae916945fe4853b899c4b1a66bf74c216"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material_manager.html#ae916945fe4853b899c4b1a66bf74c216">hasChanged</a> ()</td></tr>
+<tr class="separator:ae916945fe4853b899c4b1a66bf74c216"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Manages the creation and storage of materials, and to a lesser degree their destruction. * Creates a gigantic texture array for all the model's material textures Uses sparse textures to avoid consuming all the memory at once. </p>
@@ -177,14 +176,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>writeMaterials</b> (c
 
 </div>
 </div>
-<a id="a8f83adac0badd0d17bc54809b492dce5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f83adac0badd0d17bc54809b492dce5">&#9670;&nbsp;</a></span>getMaterialSize()</h2>
+<a id="a710fb2fc9a28e1eac29f07a2edee885f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a710fb2fc9a28e1eac29f07a2edee885f">&#9670;&nbsp;</a></span>getMaterialSize()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const GLsizei MaterialManager::getMaterialSize </td>
+          <td class="memname">GLsizei MaterialManager::getMaterialSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -195,14 +194,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>writeMaterials</b> (c
 
 </div>
 </div>
-<a id="a22ab078d8b120511dd02ed7c79332675"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a22ab078d8b120511dd02ed7c79332675">&#9670;&nbsp;</a></span>hasChanged()</h2>
+<a id="ae916945fe4853b899c4b1a66bf74c216"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae916945fe4853b899c4b1a66bf74c216">&#9670;&nbsp;</a></span>hasChanged()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const bool MaterialManager::hasChanged </td>
+          <td class="memname">bool MaterialManager::hasChanged </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -213,14 +212,14 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>writeMaterials</b> (c
 
 </div>
 </div>
-<a id="a2e1ad748479cfc85711fe586ecab7055"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2e1ad748479cfc85711fe586ecab7055">&#9670;&nbsp;</a></span>readyToUse()</h2>
+<a id="a1a77d9e1af791dcf945568c27e80d25d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1a77d9e1af791dcf945568c27e80d25d">&#9670;&nbsp;</a></span>readyToUse()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const bool MaterialManager::readyToUse </td>
+          <td class="memname">bool MaterialManager::readyToUse </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -228,6 +227,48 @@ void&#160;</td><td class="memItemRight" valign="bottom"><b>writeMaterials</b> (c
       </table>
 </div><div class="memdoc">
 <p>Returns whether or not this manager is ready to use. </p><dl class="section return"><dt>Returns</dt><dd>true if all work is finished, false otherwise. </dd></dl>
+
+</div>
+</div>
+<a id="a04e1194e4a23b30be8fe4532dd43834c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04e1194e4a23b30be8fe4532dd43834c">&#9670;&nbsp;</a></span>writeMaterials()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void MaterialManager::writeMaterials </td>
+          <td>(</td>
+          <td class="paramtype">const GLuint &amp;&#160;</td>
+          <td class="paramname"><em>materialID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const GLubyte *&#160;</td>
+          <td class="paramname"><em>imageData</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const GLsizei &amp;&#160;</td>
+          <td class="paramname"><em>imageCount</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Commit image data to the GPU, creating a full material. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">materialID</td><td>the material to commit data to. </td></tr>
+    <tr><td class="paramname">imageData</td><td>the image data to source from. </td></tr>
+    <tr><td class="paramname">imageCount</td><td>the number of images. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -8,7 +8,7 @@
 #include "Engine.h"
 
 
-/***/
+/** Represents an engine state for the "game". */
 class GameState : public EngineState {
 public:
 	// Public (de)Constructors

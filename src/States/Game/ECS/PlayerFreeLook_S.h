@@ -13,9 +13,9 @@
 class PlayerFreeLook_System : public Game_System_Interface {
 public: 
 	// Public (de)Constructors
-	/***/
+	/** Destroy this free-look system. */
 	inline ~PlayerFreeLook_System() = default;
-	/***/
+	/** Construct a free-look system. */
 	inline PlayerFreeLook_System(Engine * engine) : m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);

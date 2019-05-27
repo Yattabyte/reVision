@@ -11,9 +11,9 @@
 class Post_Processing_Module : public Engine_Module {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this post-processing module. */
 	inline ~Post_Processing_Module() = default;
-	/***/
+	/** Construct a post-processing module. */
 	inline Post_Processing_Module() = default;
 
 

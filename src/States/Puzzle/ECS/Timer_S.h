@@ -11,9 +11,9 @@
 class Timer_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle timer system. */
 	inline ~Timer_System() = default;
-	/***/
+	/** Construct a puzzle timer system. */
 	inline Timer_System() {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

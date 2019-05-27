@@ -14,9 +14,9 @@
 class Push_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle-block push system. */
 	inline ~Push_System() = default;
-	/***/
+	/** Construct a puzzle-block push system. */
 	inline Push_System() : m_tileGenerator((unsigned int)std::chrono::system_clock::to_time_t(std::chrono::system_clock::now())) {
 		// Declare component types used
 		addComponentType(Board_Component::ID);

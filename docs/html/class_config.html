@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -92,8 +92,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aac5e2e16cd746998c53d2baaacea54b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6554e71f50ad2011ba15bbe1eb4878de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a6554e71f50ad2011ba15bbe1eb4878de">setValue</a> (const unsigned int &amp;cfg_key, const float &amp;cfg_value)</td></tr>
 <tr class="separator:a6554e71f50ad2011ba15bbe1eb4878de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55b0b2f05a191bb0d1384a0f2839d658"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a55b0b2f05a191bb0d1384a0f2839d658">getValue</a> (const unsigned int &amp;cfg_key) const</td></tr>
-<tr class="separator:a55b0b2f05a191bb0d1384a0f2839d658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add78e6e048fc3abef33d1af424122d8b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#add78e6e048fc3abef33d1af424122d8b">getValue</a> (const unsigned int &amp;cfg_key) const</td></tr>
+<tr class="separator:add78e6e048fc3abef33d1af424122d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64000eb3f2292cba44278cec34fc076d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a64000eb3f2292cba44278cec34fc076d">saveConfig</a> ()</td></tr>
 <tr class="separator:a64000eb3f2292cba44278cec34fc076d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
@@ -168,7 +168,7 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -212,14 +212,14 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a55b0b2f05a191bb0d1384a0f2839d658"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55b0b2f05a191bb0d1384a0f2839d658">&#9670;&nbsp;</a></span>getValue()</h2>
+<a id="add78e6e048fc3abef33d1af424122d8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add78e6e048fc3abef33d1af424122d8b">&#9670;&nbsp;</a></span>getValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const float Config::getValue </td>
+          <td class="memname">float Config::getValue </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>cfg_key</em></td><td>)</td>
@@ -233,7 +233,7 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the value assigned to supplied key (UNDEFINED_CVAL if the supplied key doesn't exist) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the value assigned to supplied key (NaN if the supplied key doesn't exist) </dd></dl>
 
 </div>
 </div>

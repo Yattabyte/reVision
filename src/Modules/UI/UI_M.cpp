@@ -74,22 +74,6 @@ void UI_Module::applyMouseEvent(const MouseEvent & mouseEvent)
 	m_startMenu->mouseAction(mouseEvent);
 }
 
-void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
-{
-	m_mouseEvent.m_xPos = xPos;
-	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
-
-	m_startMenu->mouseAction(m_mouseEvent);
-}
-
-void UI_Module::applyCursorButton(const int & button, const int & action, const int & mods)
-{
-	m_mouseEvent.m_button = button;
-	m_mouseEvent.m_action = action;
-	m_mouseEvent.m_mods = mods;
-	m_startMenu->mouseAction(m_mouseEvent);
-}
-
 void UI_Module::applyChar(const unsigned int & character)
 {
 	m_startMenu->keyChar(character);

@@ -2,7 +2,6 @@ var searchData=
 [
   ['mainmenustate',['MainMenuState',['../class_main_menu_state.html',1,'']]],
   ['mappedchar',['MappedChar',['../class_mapped_char.html',1,'']]],
-  ['mappedchar_3c_20baseecscomponentconstructor_20_2a_20_3e',['MappedChar&lt; BaseECSComponentConstructor * &gt;',['../class_mapped_char.html',1,'']]],
   ['mappedchar_3c_20gfx_5fcore_5feffect_20_2a_20_3e',['MappedChar&lt; GFX_Core_Effect * &gt;',['../class_mapped_char.html',1,'']]],
   ['mappedchar_3c_20std_3a_3avector_3c_20shared_5fasset_20_3e_20_3e',['MappedChar&lt; std::vector&lt; Shared_Asset &gt; &gt;',['../class_mapped_char.html',1,'']]],
   ['mappedchar_3c_20std_3a_3avector_3c_20t_20_3e_20_3e',['MappedChar&lt; std::vector&lt; T &gt; &gt;',['../class_mapped_char.html',1,'']]],

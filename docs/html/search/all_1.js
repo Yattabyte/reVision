@@ -1,11 +1,10 @@
 var searchData=
 [
   ['baseecscomponent',['BaseECSComponent',['../struct_base_e_c_s_component.html',1,'']]],
-  ['baseecscomponentconstructor',['BaseECSComponentConstructor',['../struct_base_e_c_s_component_constructor.html',1,'']]],
   ['baseecssystem',['BaseECSSystem',['../class_base_e_c_s_system.html',1,'']]],
   ['begin',['begin',['../class_mapped_char.html#affb0756a48f43bc281620430dce4990d',1,'MappedChar::begin()'],['../class_mapped_char.html#a6e6aa08a89e153bf90fd3fd4d12f5f12',1,'MappedChar::begin() const']]],
   ['beginworkorder',['beginWorkOrder',['../class_asset_manager.html#ad0e3cc8f6d3c695e07b9c01025a86312',1,'AssetManager']]],
-  ['bind',['bind',['../class_cubemap.html#ae28247dd395f8615c9852d339ed07a96',1,'Cubemap::bind()'],['../class_shader.html#a6f6e280a343d6c7662909f7dfbc89ad9',1,'Shader::bind()'],['../class_texture.html#af48cda04f61378c6222209279850f17f',1,'Texture::bind()'],['../class_material_manager.html#afd55a96b55e3e332a5ac6d71bf6981ee',1,'MaterialManager::bind()']]],
+  ['bind',['bind',['../class_cubemap.html#ae28247dd395f8615c9852d339ed07a96',1,'Cubemap::bind()'],['../class_shader.html#a6f6e280a343d6c7662909f7dfbc89ad9',1,'Shader::bind()'],['../class_texture.html#af48cda04f61378c6222209279850f17f',1,'Texture::bind()'],['../class_material_manager.html#afd55a96b55e3e332a5ac6d71bf6981ee',1,'MaterialManager::bind()'],['../class_camera_buffer.html#ae867f650a85902b6ae96ce8eb87d006f',1,'CameraBuffer::bind()']]],
   ['bindbuffer',['bindBuffer',['../class_dynamic_buffer.html#ad728dc18d22febf9eb48d8056a52165f',1,'DynamicBuffer::bindBuffer()'],['../class_static_buffer.html#a41d00685ab9012e08df0678e7a8fc57c',1,'StaticBuffer::bindBuffer()'],['../class_static_mapped_buffer.html#a00146325fc48c78e7ec72c0e7090bb15',1,'StaticMappedBuffer::bindBuffer()'],['../class_g_l___vector.html#a85b1c98d8163f9f58d7f1ba112d3a590',1,'GL_Vector::bindBuffer()'],['../class_vector_buffer.html#a8114f053206dadb73d1c738b1aec136a',1,'VectorBuffer::bindBuffer()']]],
   ['bindbufferbase',['bindBufferBase',['../class_dynamic_buffer.html#a5aa5b62493b92151ed4abed24c2b4191',1,'DynamicBuffer::bindBufferBase()'],['../class_static_buffer.html#ac386de80fb6975bcf0f374025bf78e1d',1,'StaticBuffer::bindBufferBase()'],['../class_static_mapped_buffer.html#a8bf2612fae91d8d59327670c357fe60d',1,'StaticMappedBuffer::bindBufferBase()'],['../class_g_l___vector.html#ad56420dc8f39fdadbe15382b53c327cc',1,'GL_Vector::bindBufferBase()'],['../class_vector_buffer.html#a8daf415e3028187da8891d018882c9bf',1,'VectorBuffer::bindBufferBase()']]],
   ['bindbufferbaserange',['bindBufferBaseRange',['../class_g_l___vector.html#acab0a37908ae4fd4eb4319ee52c7017c',1,'GL_Vector::bindBufferBaseRange()'],['../class_vector_buffer.html#afa8ddaff79443a7c646286b26bc7bccf',1,'VectorBuffer::bindBufferBaseRange()']]],
@@ -13,7 +12,7 @@ var searchData=
   ['bindforwriting',['bindForWriting',['../struct_f_b_o___env_map.html#a6e99044e55f25a9028718cd17372facc',1,'FBO_EnvMap::bindForWriting()'],['../struct_f_b_o___geometry.html#a5df0117a6a79620e440d8dc2d7176498',1,'FBO_Geometry::bindForWriting()'],['../struct_f_b_o___light_bounce.html#a2626e8fbcdc695325b3f66dcc6dfb970',1,'FBO_LightBounce::bindForWriting()'],['../struct_f_b_o___lighting.html#a3e3af3914c04a9f71ff594284473b4ea',1,'FBO_Lighting::bindForWriting()'],['../struct_f_b_o___reflection.html#adea864c9030ad0e5498022a1d08339b2',1,'FBO_Reflection::bindForWriting()'],['../struct_f_b_o___base.html#ab27adc06369347ebeb2abc7e730eec85',1,'FBO_Base::bindForWriting()']]],
   ['bloom',['Bloom',['../class_bloom.html',1,'Bloom'],['../class_bloom.html#ad9a8c612a7adeee18c655f9c51e41cca',1,'Bloom::Bloom()']]],
   ['board_5fcomponent',['Board_Component',['../struct_board___component.html',1,'']]],
-  ['board_5fconstructor',['Board_Constructor',['../struct_board___constructor.html',1,'']]],
   ['border',['Border',['../class_border.html',1,'Border'],['../class_border.html#a2373ba954a4acd97186fcf53a690b03b',1,'Border::Border()']]],
+  ['bufferstructure',['BufferStructure',['../struct_camera_buffer_1_1_buffer_structure.html',1,'CameraBuffer']]],
   ['button',['Button',['../class_button.html',1,'Button'],['../class_button.html#a84900643fee89c45856b457c738df07b',1,'Button::Button()']]]
 ];

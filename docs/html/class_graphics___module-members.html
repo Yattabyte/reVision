@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,17 +72,15 @@ $(function() {
 <table class="directory">
   <tr class="even"><td class="entry"><a class="el" href="class_engine___module.html#ab31ce873a9023ad9515caeb2d6376530">Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_graphics___module.html#a1c5ef0d9f300993f2cca57a22a9f864b">frameTick</a>(const float &amp;deltaTime) override</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#a57a78e7788cd1cfb98c53450e230443a">getActiveCamera</a>() const</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_graphics___module.html#a79e144280a775b40d98d1c15b871ec92">getActiveCameraBuffer</a>()</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#a17157cfe5db3151cb9a09980852aacea">getLightingFBOID</a>() const</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_graphics___module.html#ab2740d69c31047a9db8d7c497ce35576">getLightingTexID</a>() const</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Graphics_Module</b>()=default (defined in <a class="el" href="class_graphics___module.html">Graphics_Module</a>)</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_graphics___module.html#a6630e8852923ea501371df61ad5318aa">initialize</a>(Engine *engine) override</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_engine___module.html">Engine_Module</a>)</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_graphics___module.html#a378c96f7250c9e97714bd3143e259c8b">setActiveCamera</a>(const GLuint &amp;newCameraID)</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#a3a92722516107e1588e9144a952f3f25">updateCamera</a>(Camera_Buffer *camera)</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#a54abe12e91ec0043e90d491d516aa3ea">getCameraBuffer</a>()</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_graphics___module.html#a4383c283b0a2daeebe2e844820341e3b">getLightingFBOID</a>() const</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#af995a8353bed27d406c15b0568495d89">getLightingTexID</a>() const</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_graphics___module.html#a40ad88192229b9ae4d70699438b36bba">Graphics_Module</a>()=default</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#a6630e8852923ea501371df61ad5318aa">initialize</a>(Engine *engine) override</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_engine___module.html">Engine_Module</a>)</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#ad03346ca566ee0e573ad865c716ed1ea">updateCamera</a>(CameraBuffer &amp;cameraBuffer)</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a>()=default</td><td class="entry"><a class="el" href="class_engine___module.html">Engine_Module</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~Graphics_Module</b>() (defined in <a class="el" href="class_graphics___module.html">Graphics_Module</a>)</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___module.html#ac6fbd62777d2844d1c69b5818ed2198a">~Graphics_Module</a>()</td><td class="entry"><a class="el" href="class_graphics___module.html">Graphics_Module</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

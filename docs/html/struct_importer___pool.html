@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -85,9 +85,12 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a9301ff244875a57c080cfd6b63fd890f"><td class="memItemLeft" align="right" valign="top"><a id="a9301ff244875a57c080cfd6b63fd890f"></a>
 Assimp::Importer *&#160;</td><td class="memItemRight" valign="bottom"><b>pool</b> [MAX_IMPORTERS]</td></tr>
 <tr class="separator:a9301ff244875a57c080cfd6b63fd890f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89fce97a41f10bd342fe7be6d5cb80ee"><td class="memItemLeft" align="right" valign="top"><a id="a89fce97a41f10bd342fe7be6d5cb80ee"></a>
-std::atomic_size_t&#160;</td><td class="memItemRight" valign="bottom"><b>available</b> = MAX_IMPORTERS</td></tr>
-<tr class="separator:a89fce97a41f10bd342fe7be6d5cb80ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad151b275b510401ea724a6d3aeb78c36"><td class="memItemLeft" align="right" valign="top"><a id="ad151b275b510401ea724a6d3aeb78c36"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>available</b> = MAX_IMPORTERS</td></tr>
+<tr class="separator:ad151b275b510401ea724a6d3aeb78c36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f85e64ec02518956bc570561dfa8927"><td class="memItemLeft" align="right" valign="top"><a id="a1f85e64ec02518956bc570561dfa8927"></a>
+std::mutex&#160;</td><td class="memItemRight" valign="bottom"><b>poolMutex</b></td></tr>
+<tr class="separator:a1f85e64ec02518956bc570561dfa8927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a3e6ac5a23d47bdb660aca26b6ad76447"></a>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.0</span>
+   &#160;<span id="projectnumber">3.2.9</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -88,14 +88,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a000f99ef9755f3415ee4fb101019e373"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4493849a14880965dc52e33a3c4b39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a> ()</td></tr>
 <tr class="separator:aeb4493849a14880965dc52e33a3c4b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50e351531bf11737dc02de026ca7743d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a50e351531bf11737dc02de026ca7743d">registerECSConstructor</a> (const char *name, <a class="el" href="struct_base_e_c_s_component_constructor.html">BaseECSComponentConstructor</a> *constructor)</td></tr>
-<tr class="separator:a50e351531bf11737dc02de026ca7743d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a689393fbdf8c3059780e7fd1ce30f4ed"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a689393fbdf8c3059780e7fd1ce30f4ed">getCurrentFrame</a> () const</td></tr>
+<tr class="separator:a689393fbdf8c3059780e7fd1ce30f4ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afda3fac79affefe8f7384bb580c3082d"><td class="memItemLeft" align="right" valign="top">GLFWwindow *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afda3fac79affefe8f7384bb580c3082d">getRenderingContext</a> () const</td></tr>
 <tr class="separator:afda3fac79affefe8f7384bb580c3082d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48f724b864a6a5251791af8b4cf0d55e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::ivec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">getResolutions</a> () const</td></tr>
 <tr class="separator:a48f724b864a6a5251791af8b4cf0d55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab995b1f645592a2f7517e527f19ae0cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_e_c_s.html">ECS</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab995b1f645592a2f7517e527f19ae0cf">getECS</a> ()</td></tr>
-<tr class="separator:ab995b1f645592a2f7517e527f19ae0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2064c3142815e4396db1e016f474b8ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html">ActionState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2064c3142815e4396db1e016f474b8ff">getActionState</a> ()</td></tr>
 <tr class="separator:a2064c3142815e4396db1e016f474b8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa86a65ad825186658bd35cc7dca0b42c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_preference_state.html">PreferenceState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aa86a65ad825186658bd35cc7dca0b42c">getPreferenceState</a> ()</td></tr>
@@ -253,8 +251,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab995b1f645592a2f7517e527f19ae0cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab995b1f645592a2f7517e527f19ae0cf">&#9670;&nbsp;</a></span>getECS()</h2>
+<a id="a689393fbdf8c3059780e7fd1ce30f4ed"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a689393fbdf8c3059780e7fd1ce30f4ed">&#9670;&nbsp;</a></span>getCurrentFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -263,10 +261,10 @@ Static Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_e_c_s.html">ECS</a>&amp; Engine::getECS </td>
+          <td class="memname">int Engine::getCurrentFrame </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -275,7 +273,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns this engine's entity component system. </p>
+<p>Returns the frame number (triple buffered, so either 0, 1, 2). </p>
 
 </div>
 </div>
@@ -598,41 +596,6 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Return a list of available resolutions. </p>
-
-</div>
-</div>
-<a id="a50e351531bf11737dc02de026ca7743d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e351531bf11737dc02de026ca7743d">&#9670;&nbsp;</a></span>registerECSConstructor()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void Engine::registerECSConstructor </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="struct_base_e_c_s_component_constructor.html">BaseECSComponentConstructor</a> *&#160;</td>
-          <td class="paramname"><em>constructor</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Adds a component constructor to the ecs construction map. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">name</td><td>the component name type. </td></tr>
-    <tr><td class="paramname">constructor</td><td>the component constructor object. </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>

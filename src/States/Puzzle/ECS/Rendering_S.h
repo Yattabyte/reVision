@@ -17,12 +17,12 @@
 class Rendering_System : public Game_System_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this puzzle rendering system. */
 	inline ~Rendering_System() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	/***/
+	/** Construct a puzzle rendering system. */
 	inline Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
 		addComponentType(Score_Component::ID);
