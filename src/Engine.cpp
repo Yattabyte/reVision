@@ -144,6 +144,8 @@ Engine::Engine() :
 
 	// Preference Values
 	m_refreshRate = float(glfwGetVideoMode(glfwGetPrimaryMonitor())->refreshRate);
+	m_windowSize.x = glfwGetVideoMode(glfwGetPrimaryMonitor())->width;
+	m_windowSize.y = glfwGetVideoMode(glfwGetPrimaryMonitor())->height;
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_windowSize.x);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_windowSize.y);
 	m_preferenceState.getOrSetValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_refreshRate);

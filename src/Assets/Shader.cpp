@@ -2,6 +2,7 @@
 #include "Assets/Shader_Pkg.h"
 #include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
+#include <filesystem>
 #include <fstream>
 
 
@@ -9,6 +10,7 @@ constexpr char* EXT_SHADER_VERTEX = ".vsh";
 constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
 constexpr char* EXT_SHADER_BINARY = ".shader";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
+constexpr char* DIRECTORY_SHADER_CACHE = "\\cache\\shaders\\";
 
 struct ShaderHeader { 
 	GLenum format; 
@@ -40,7 +42,7 @@ void Shader::initialize()
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
-	if (!loadCachedBinary(DIRECTORY_SHADER + getFileName()))
+	if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
 	{
 		// Create Vertex and Fragment shaders
@@ -50,7 +52,7 @@ void Shader::initialize()
 			success = validateProgram();
 #ifdef NDEBUG
 			if (success)
-				saveCachedBinary(DIRECTORY_SHADER + getFileName());
+				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());
 #endif
 		}
 		// If we ever failed, initialize default shader
@@ -145,7 +147,9 @@ const bool Shader::saveCachedBinary(const std::string & relativePath)
 	std::vector<char> binary(header.length);
 	glGetProgramBinary(m_glProgramID, header.length, NULL, &header.format, binary.data());
 
-	std::ofstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+	const auto fullPath = Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY;
+	std::filesystem::create_directories(std::filesystem::path(fullPath).parent_path());
+	std::ofstream file(fullPath, std::ios::binary);
 	if (file.is_open()) {
 		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 		file.write(binary.data(), header.length);

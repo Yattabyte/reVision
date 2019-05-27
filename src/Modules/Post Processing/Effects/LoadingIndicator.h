@@ -47,12 +47,9 @@ public:
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
-
-		if (!m_engine->getModule_World().checkIfLoaded())
-			m_blendAmt = 1.0f;
-		else
-			m_blendAmt = std::max<float>(0.0f, m_blendAmt - (deltaTime * 0.5f));
-		if (m_blendAmt > 0.0001f) {
+		m_blendAmt += (!m_engine->getModule_World().checkIfLoaded()) ? deltaTime : -deltaTime;
+		m_blendAmt = std::max<float>(0.0f, std::min<float>(1.0f, m_blendAmt));
+		if (m_blendAmt > -0.0001f || m_blendAmt < 1.0001f) {
 			m_time += deltaTime;
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
