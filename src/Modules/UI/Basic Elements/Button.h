@@ -40,6 +40,7 @@ public:
 		});
 		addCallback(on_mouse_enter, [&]() { m_highlighted = true; updateColors(); });
 		addCallback(on_mouse_exit, [&]() { m_highlighted = false; updateColors(); });
+		updateColors();
 	}
 
 
