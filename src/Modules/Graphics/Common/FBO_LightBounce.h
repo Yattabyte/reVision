@@ -4,7 +4,6 @@
 #define RH_TEXTURE_COUNT 4
 
 #include "Utilities/GL/FBO.h"
-#include "GLFW/glfw3.h"
 
 
 /** A framebuffer, formatted for rendering radiance hints (indirect radiant diffuse lighting). */

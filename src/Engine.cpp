@@ -288,6 +288,11 @@ void Engine::setMouseInputMode(const MouseInputMode & mode)
 	}
 }
 
+float Engine::getTime() const
+{
+	return (float)glfwGetTime();
+}
+
 GLFWwindow * Engine::getRenderingContext() const
 {
 	return m_renderingContext.window;

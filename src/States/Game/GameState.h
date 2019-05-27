@@ -48,12 +48,14 @@ public:
 		// Create main menu
 		m_pauseMenu = std::make_shared<PauseMenu>(m_engine);
 		m_pauseMenu->addCallback(PauseMenu::on_resume_game, [&]() {
-			m_engine->getModule_UI().clearRootElement();
+			showPauseMenu(false);
+			m_pauseMenu->setVisible(true);
 		});
 		m_pauseMenu->addCallback(PauseMenu::on_options, [&]() {
 			m_menuState = in_menu;
 		});
 		m_pauseMenu->addCallback(PauseMenu::on_quit, [&]() {
+			showPauseMenu(false);
 			m_engine->getModule_UI().clearRootElement();
 		});
 
@@ -65,11 +67,8 @@ public:
 	inline virtual EngineState * handleInput(ActionState & actionState) override {
 		if (m_menuState == in_game) {
 			// Check if we should enable the overlay
-			if (actionState.isAction(ActionState::ESCAPE)) {
-				m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
-				m_engine->getModule_UI().setRootElement(m_pauseMenu);
-				m_menuState = in_menu;
-			}
+			if (actionState.isAction(ActionState::ESCAPE)) 
+				showPauseMenu(true);			
 		}
 		else if (m_menuState == in_menu) {		
 			// Update Mouse Position
@@ -80,11 +79,8 @@ public:
 			m_engine->getModule_UI().applyMouseEvent(m_mouseEvent);
 
 			// Check if we should disable the overlay
-			if (actionState.isAction(ActionState::ESCAPE)) {
-				m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
-				m_engine->getModule_UI().clearRootElement();
-				m_menuState = in_game;
-			}				
+			if (actionState.isAction(ActionState::ESCAPE)) 
+				showPauseMenu(false);			
 		}
 		return nullptr;
 	}
@@ -102,6 +98,21 @@ public:
 
 
 protected:
+	// Protected Methods
+	void showPauseMenu(const bool & show) {
+		if (show) {
+			m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
+			m_engine->getModule_UI().setRootElement(m_pauseMenu);
+			m_menuState = in_menu;
+		}			
+		else {
+			m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
+			m_engine->getModule_UI().clearRootElement();
+			m_menuState = in_game;
+		}		
+	}
+
+
 	// Protected Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	BaseECSSystem * m_freeLookSystem;

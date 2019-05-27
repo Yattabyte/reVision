@@ -11,7 +11,6 @@
 #include "Modules/Graphics/Effects/PropShadowing_FX.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW/glfw3.h"
 
 
 /** A core-rendering technique which applies point lighting to the scene. */
@@ -118,7 +117,7 @@ protected:
 			for each (auto *tech in m_geometryEffectsDynamic)
 				if (tech->isEnabled())
 					tech->applyEffect(deltaTime);
-			pair.second->m_updateTime = (float)glfwGetTime();
+			pair.second->m_updateTime = m_engine->getTime();
 		}
 
 		if (m_renderState->m_outOfDate)

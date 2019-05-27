@@ -3,7 +3,6 @@
 #define FBO_REFLECTION_H 
 
 #include "Utilities/GL/FBO.h"
-#include "GLFW/glfw3.h"
 
 
 /** A framebuffer, formatted for rendering reflections. */

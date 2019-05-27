@@ -3,7 +3,6 @@
 #define FBO_GEOMETRY_H 
 
 #include "Utilities/GL/FBO.h"
-#include "GLFW/glfw3.h"
 #include "glm/glm.hpp"
 
 

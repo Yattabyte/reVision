@@ -8,7 +8,6 @@
 #include "Modules/Graphics/ECS/PropRendering_S.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW/glfw3.h"
 
 
 /** A core-rendering technique which renders prop geometry to the scene. */

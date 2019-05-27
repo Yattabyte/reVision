@@ -23,7 +23,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Construct a puzzle rendering system. */
-	inline Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_lightingFBOID(lightingFBOID) {
+	inline Rendering_System(Engine * engine, const GLuint & lightingFBOID) : m_engine(engine), m_lightingFBOID(lightingFBOID) {
 		// Declare component types used
 		addComponentType(Score_Component::ID);
 		
@@ -211,7 +211,7 @@ private:
 	/** Update Rendering Data. */
 	inline void update(const Score_Component & score) {
 		// System Time
-		score.m_data->data->sysTime = float(glfwGetTime());
+		score.m_data->data->sysTime = m_engine->getTime();
 
 		// Determine number of chars in score
 		constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };
@@ -448,6 +448,7 @@ private:
 	
 
 	// Private Attributes
+	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	GLuint m_lightingFBOID = 0, m_fboIDBorder = 0, m_borderTexID = 0, m_fboIDField = 0, m_boardTexID = 0, m_fboIDBars = 0, m_scoreTexID = 0, m_timeTexID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);	

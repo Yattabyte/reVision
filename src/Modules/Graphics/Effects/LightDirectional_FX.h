@@ -12,7 +12,6 @@
 #include "Modules/Graphics/Effects/PropShadowing_FX.h"
 #include "Utilities/GL/FBO.h"
 #include "Engine.h"
-#include "GLFW/glfw3.h"
 #include <random>
 
 
@@ -136,7 +135,7 @@ private:
 			for each (auto *tech in m_geometryEffects)
 				if (tech->isEnabled())
 					tech->applyEffect(deltaTime);
-			pair.second->m_updateTime = (float)glfwGetTime();
+			pair.second->m_updateTime = m_engine->getTime();
 		}
 
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);

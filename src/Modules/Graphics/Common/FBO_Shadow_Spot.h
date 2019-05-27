@@ -3,7 +3,6 @@
 #define FBO_SHADOW_SPOT_H 
 
 #include "Utilities/GL/FBO.h"
-#include "GLFW/glfw3.h"
 
 
 /** A framebuffer, formatted for storing spot light shadows. */

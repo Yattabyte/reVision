@@ -11,7 +11,6 @@
 #include "Modules/Graphics/Common/FBO_Geometry.h"
 #include "Modules/Graphics/Common/FBO_Lighting.h"
 #include "Engine.h"
-#include "GLFW/glfw3.h"
 
 
 /** A core-rendering technique which applies parallax-corrected local cubemaps to the scene. */
@@ -146,7 +145,7 @@ protected:
 				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, 0);
 				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, 5);
 				glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, 0);
-				reflector->m_updateTime = (float)glfwGetTime();
+				reflector->m_updateTime = m_engine->getTime();
 			}
 		}
 		if (didAnything) {

@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.10";
+constexpr char ENGINE_VERSION[] = "3.2.11";
 
 struct GLFWwindow;
 class Engine;
@@ -44,7 +44,8 @@ struct Auxilliary_Context {
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
 public:
-	/***/
+	// Public Enumerations
+	/** Different mouse input modes. */
 	enum MouseInputMode {
 		NORMAL,
 		FREE_LOOK
@@ -69,8 +70,11 @@ public:
 	bool shouldClose();
 	/** Tells the engine to shut down. */
 	void shutDown();
-	/***/
+	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
+	@param	mode		the new mouse input mode to use. */
 	void setMouseInputMode(const MouseInputMode & mode);
+	/** Retrieve the current time. */
+	float getTime() const;
 
 
 	// Public Accessors
