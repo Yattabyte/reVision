@@ -6,8 +6,11 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
-#include "GLFW/glfw3.h"
 #include <string>
+
+
+/*@TODO	remove this dependency when we have our own keyboard enumerations, rather than GLFW_* specific ones. **/
+#include "GLFW/glfw3.h"
 
 
 /** UI element which displays an editable text box. */

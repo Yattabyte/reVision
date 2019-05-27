@@ -85,6 +85,7 @@ public:
 			auto * component = new Player2D_Component();
 			return std::make_pair(component->ID, component);
 		});
+		world.loadWorld("game.map");
 	}
 
 
