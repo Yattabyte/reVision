@@ -56,12 +56,12 @@ public:
 	inline virtual EngineState * handleInput(ActionState & actionState) override {
 		if (m_menuState == in_game) {
 			// Check if we should enable the overlay
-			if (actionState.isAction(ActionState::ESCAPE)) 
+			if (actionState.isAction(ActionState::UI_ESCAPE)) 
 				showPauseMenu(true);			
 		}
 		else if (m_menuState == in_menu) {	
 			// Check if we should disable the overlay
-			if (actionState.isAction(ActionState::ESCAPE)) 
+			if (actionState.isAction(ActionState::UI_ESCAPE))
 				showPauseMenu(false);			
 		}
 		return nullptr;

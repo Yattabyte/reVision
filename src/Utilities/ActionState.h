@@ -26,7 +26,8 @@ public:
 		MOUSE_Y,
 		MOUSE_L,
 		MOUSE_R,
-		ESCAPE,
+		LOOK_X,
+		LOOK_Y,
 		FORWARD,
 		BACKWARD,
 		LEFT,
@@ -34,10 +35,12 @@ public:
 		JUMP,
 		CROUCH,
 		RUN,
-		ENTER,
-		PAUSE,
-		LOOK_X,
-		LOOK_Y,
+		UI_UP,
+		UI_DOWN,
+		UI_LEFT,
+		UI_RIGHT,
+		UI_ENTER,
+		UI_ESCAPE,
 		ACTION_COUNT
 	};
 
@@ -51,7 +54,8 @@ public:
 			"MOUSE_Y",
 			"MOUSE_L",
 			"MOUSE_R",
-			"ESCAPE",
+			"LOOK_X",
+			"LOOK_Y",
 			"FORWARD",
 			"BACKWARD",
 			"LEFT",
@@ -59,13 +63,21 @@ public:
 			"JUMP",
 			"CROUCH",
 			"RUN",
-			"ENTER",
-			"PAUSE",
-			"LOOK_X",
-			"LOOK_Y"
+			"UI_UP",
+			"UI_DOWN",
+			"UI_LEFT",
+			"UI_RIGHT",
+			"UI_ENTER",
+			"UI_ESCAPE",
 		};
 		return actionStrings;
 	};	
+
+	const enum Test : char {
+		A, 
+		B,
+		C,
+	};
 
 
 	// Public Methods
