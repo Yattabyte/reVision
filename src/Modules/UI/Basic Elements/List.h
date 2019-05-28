@@ -14,8 +14,7 @@ class List : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {
-		on_hover = UI_Element::last_interact_index,
-		on_selection
+		on_selection = UI_Element::last_interact_index,
 	};
 
 
@@ -54,9 +53,9 @@ public:
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
-		if (m_hoverIndex > -1) {
-			const glm::vec2 newPosition = position + m_position + m_children[m_hoverIndex]->getPosition();
-			const glm::vec2 newScale = glm::min(m_children[m_hoverIndex]->getScale(), scale);
+		if (m_index > -1) {
+			const glm::vec2 newPosition = position + m_position + m_children[m_index]->getPosition();
+			const glm::vec2 newScale = glm::min(m_children[m_index]->getScale(), scale);
 			if (m_shader->existsYet()) {
 				m_shader->bind();
 				m_shader->setUniform(0, newPosition);
@@ -69,69 +68,33 @@ public:
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		if (getVisible() & getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				MouseEvent subEvent = mouseEvent;
-				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-				// Find which list item the mouse is over
-				int index(0);
-				bool interacted(false);
-				for each (auto & child in m_children) {
-					child->mouseAction(subEvent);
-					if (child->mouseWithin(subEvent))
-						interacted = true;
-					if (!interacted)
-						index++;
-				}
-
-				// Emit when the hovered item changes
-				if (interacted && m_hoverIndex != index) {
-					m_hoverIndex = index;
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			// Find which list item the mouse is over
+			int index(0);
+			for each (auto & child in m_children) {
+				if (child->mouseWithin(subEvent)) {
+					// Emit when the hovered item changes
+					m_index = index;
 					updateSelectionGeometry();
-					enactCallback(on_hover);
+					enactCallback(on_selection);
+					break;
 				}
-
-				// Emit when the mouse enters the list (for the first time)
-				if (!m_entered) {
-					m_entered = true;
-					enactCallback(on_mouse_enter);
-				}
-
-				// Emit when the selected item changes
-				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-					if (interacted) {
-						m_selectionIndex = m_hoverIndex;
-						updateSelectionGeometry();
-						enactCallback(on_selection);
-					}
-					enactCallback(on_mouse_press);
-				}
-				// Emit when the mouse releases
-				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_pressed = false;
-					enactCallback(on_mouse_release);
-				}
-			}
-			else {
-				for each (auto & child in m_children)
-					child->clearFocus();
-				clearFocus();
-			}
+				else
+					index++;
+			}			
 		}
 	}
 
 
 	// Public Methods
-	/** Get the selected item index.
-	@return				index of the selected item in this list. */
-	inline int getSelectionIndex() const {
-		return m_selectionIndex;
-	}
 	/** Get the hovered item index.
 	@return				index of the hovered item in this list. */
-	inline int getHoveredIndex() const {
-		return m_hoverIndex;
+	inline int getIndex() const {
+		return m_index;
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
@@ -185,8 +148,8 @@ protected:
 	}
 	/** Update the geometry of the selection box. */
 	inline void updateSelectionGeometry() {
-		if (m_hoverIndex <= -1) return;
-		const auto scale = glm::min(m_children[m_hoverIndex]->getScale() + m_spacing, m_scale - m_borderSize);
+		if (m_index <= -1) return;
+		const auto scale = glm::min(m_children[m_index]->getScale() + m_spacing, m_scale - m_borderSize);
 		constexpr auto num_data = 8 * 3;
 		std::vector<glm::vec3> m_data(num_data);
 
@@ -231,9 +194,7 @@ protected:
 		m_margin = 10.0f,
 		m_spacing = 10.0f,
 		m_borderSize = 2.0f;
-	int
-		m_hoverIndex = -1,
-		m_selectionIndex = -1;
+	int m_index = -1;
 	GLuint
 		m_vaoID = 0,
 		m_vboID = 0;

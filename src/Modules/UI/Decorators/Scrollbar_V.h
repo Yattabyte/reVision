@@ -82,32 +82,23 @@ public:
 		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		if (getVisible() && getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				MouseEvent subEvent = mouseEvent;
-				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-				for each (auto & child in m_children)
-					child->mouseAction(subEvent);
-				m_component->mouseAction(subEvent);
-				if (m_children.size() == 3) {
-					if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed()) {
-						setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
-						updateElements();
-					}
+		UI_Decorator::mouseAction(mouseEvent);
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {		
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			if (m_children.size() == 3) {
+				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::MOVE) {
+					setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
+					updateElements();
 				}
-				enactCallback(on_mouse_enter);
-				if (mouseEvent.m_action == MouseEvent::PRESS)
-					enactCallback(on_mouse_press);
-				else
-					enactCallback(on_mouse_release);
 			}
-			else {
-				for each (auto & child in m_children)
-					child->clearFocus();
-				clearFocus();
-			}
-		}
+			enactCallback(on_hover_start);
+			if (mouseEvent.m_action == MouseEvent::PRESS)
+				enactCallback(on_press);
+			else
+				enactCallback(on_release);
+		}		
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;

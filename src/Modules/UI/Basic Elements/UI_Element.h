@@ -18,11 +18,11 @@ public:
 	// Public Interaction Enums
 	enum interact {
 		on_resize,
-		on_mouse_enter,
-		on_mouse_exit,
-		on_mouse_press,
-		on_mouse_release,
-		last_interact_index = on_mouse_release + 1
+		on_hover_start,
+		on_hover_stop,
+		on_press,
+		on_release,
+		last_interact_index = on_release + 1
 	};
 
 
@@ -82,33 +82,32 @@ public:
 	/** Applies a mouse action across this ui element.
 	@param		mouseEvent			the mouse event occuring. */
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) {
-		if (getVisible() && getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				MouseEvent subEvent = mouseEvent;
-				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-				for each (auto & child in m_children)
-					child->mouseAction(subEvent);
-				if (!m_entered) {
-					m_entered = true;
-					enactCallback(on_mouse_enter);
-				}
-				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-					m_pressed = true;
-					enactCallback(on_mouse_press);
-				}
-				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_pressed = false;
-					enactCallback(on_mouse_release);
-				}
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {		
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			for each (auto & child in m_children)
+				child->mouseAction(subEvent);
+			if (!m_hovered) {
+				m_hovered = true;
+				enactCallback(on_hover_start);
 			}
-			else {
-				for each (auto & child in m_children)
-					child->clearFocus();
-				clearFocus();
+			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
+				m_pressed = true;
+				enactCallback(on_press);
+			}
+			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+				m_pressed = false;
+				enactCallback(on_release);
 			}
 		}
+		else {
+			clearFocus();
+			for each (auto & child in m_children)
+				child->clearFocus();
+		}
 	}
+	
 	/** Propogates a keyboard action event from this UI element to its children.
 	@param keyboardEvent			the event to propagate. */
 	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
@@ -193,9 +192,10 @@ public:
 		return m_enabled;
 	}
 	inline void clearFocus() {
-		if (m_entered) {
-			m_entered = false;
-			enactCallback(on_mouse_exit);
+		m_pressed = false;
+		if (m_hovered) {
+			m_hovered = false;
+			enactCallback(on_hover_stop);
 		}
 	}
 	/** Get whether or not the mouse is within this element. 
@@ -229,7 +229,7 @@ protected:
 	bool
 		m_visible = true,
 		m_enabled = true,
-		m_entered = false,
+		m_hovered = false,
 		m_pressed = false;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;

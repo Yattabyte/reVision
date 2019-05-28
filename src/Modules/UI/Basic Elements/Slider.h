@@ -44,10 +44,10 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_mouse_enter, [&]() { m_highlighted = true; });
-		addCallback(on_mouse_exit, [&]() { m_highlighted = false; });
-		addCallback(on_mouse_press, [&]() { m_pressed = true; });
-		addCallback(on_mouse_release, [&]() { m_pressed = false; });
+		addCallback(on_hover_start, [&]() { m_hovered = true; });
+		addCallback(on_hover_stop, [&]() { m_hovered = false; });
+		addCallback(on_press, [&]() { m_pressed = true; });
+		addCallback(on_release, [&]() { m_pressed = false; });
 
 		m_percentage = value;
 		update();
@@ -72,19 +72,13 @@ public:
 		m_paddle->setPosition({ (2.0f * m_percentage - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		m_highlighted = false;
-		m_pressed = false;
-		if (getVisible() && getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				m_highlighted = true;
-				m_pressed = (bool)mouseEvent.m_action;
-				if (mouseEvent.m_action == MouseEvent::PRESS) {
-					const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
-					setPercentage(mx / (m_backPanel->getScale().x * 2.0f));
-					enactCallback(on_slider_change);
-				}
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
+				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
+				setPercentage(mx / (m_backPanel->getScale().x * 2.0f));
+				enactCallback(on_slider_change);
 			}
-			UI_Element::mouseAction(mouseEvent);
 		}
 	}
 
@@ -117,9 +111,6 @@ public:
 protected:
 	// Protected Attributes
 	float m_percentage = 0.0f;
-	bool
-		m_highlighted = false,
-		m_pressed = false;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<UI_Element> m_backPanel, m_paddle;
 };

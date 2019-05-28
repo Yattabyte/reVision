@@ -29,7 +29,7 @@ public:
 	enum Action {
 		RELEASE,
 		PRESS,
-		REPEAT
+		MOVE,
 	};
 	enum Key : int {
 		LEFT = 0,

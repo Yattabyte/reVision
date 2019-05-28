@@ -31,8 +31,8 @@ public:
 		auto layout = std::make_shared<List>(engine);
 		layout->setSpacing(1.0f);
 		layout->setMargin(50.0f);
-		layout->addCallback(List::on_hover, [&]() {
-			const auto index = (std::dynamic_pointer_cast<List>(m_layout)->getHoveredIndex());
+		layout->addCallback(List::on_selection, [&]() {
+			const auto index = (std::dynamic_pointer_cast<List>(m_layout)->getIndex());
 			if (index > -1 && size_t(index) < m_descriptions.size())
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
 			else

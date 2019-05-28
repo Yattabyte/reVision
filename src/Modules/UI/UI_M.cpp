@@ -69,6 +69,7 @@ void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
 {
 	m_mouseEvent.m_xPos = xPos;
 	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
+	m_mouseEvent.m_action = MouseEvent::MOVE;
 
 	if (m_uiElement)
 		m_uiElement->mouseAction(m_mouseEvent);

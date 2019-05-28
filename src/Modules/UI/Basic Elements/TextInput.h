@@ -90,27 +90,21 @@ public:
 		UI_Element::update();
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		if (getVisible() && getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-					m_pressed = true;
-					enactCallback(on_mouse_press);
-					return;
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+			if (m_pressed) {
+				m_pressed = false;
+				// If already editing, move caret to mouse position
+				if (m_edit) {
+					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
+					setCaret((int)std::roundf(float(mx) / 10.0f));
 				}
-				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_pressed = false;
-					// If already editing, move caret to mouse position
-					if (m_edit) {
-						const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
-						setCaret((int)std::roundf(float(mx) / 10.0f));
-					}
-					m_edit = true;
-					return;
-				}
+				m_edit = true;
+				return;
 			}
-			m_edit = false;
-			UI_Element::mouseAction(mouseEvent);
 		}
+		else 
+			m_edit = false;		
 	}
 	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
 		if (m_edit) {

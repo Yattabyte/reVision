@@ -11,7 +11,7 @@ class Button : public UI_Element {
 public:
 	// Public Interaction Enums
 	enum interact {
-		on_pressed = UI_Element::last_interact_index
+		on_clicked = UI_Element::last_interact_index
 	};
 
 
@@ -30,16 +30,10 @@ public:
 
 		// Callbacks
 		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
-		addCallback(on_mouse_press, [&]() { m_pressed = true; updateColors(); });
-		addCallback(on_mouse_release, [&]() {
-			if (m_pressed) {
-				m_pressed = false;
-				enactCallback(on_pressed);
-			}
-			updateColors(); 
-		});
-		addCallback(on_mouse_enter, [&]() { m_highlighted = true; updateColors(); });
-		addCallback(on_mouse_exit, [&]() { m_highlighted = false; updateColors(); });
+		addCallback(on_press, [&]() { updateColors(); });
+		addCallback(on_release, [&]() {	updateColors(); enactCallback(on_clicked); });
+		addCallback(on_hover_start, [&]() { updateColors(); });
+		addCallback(on_hover_stop, [&]() { updateColors(); });
 		updateColors();
 	}
 
@@ -79,16 +73,13 @@ protected:
 		glm::vec3 textColor(0.75);
 		if (m_pressed)
 			textColor *= 0.5f;
-		if (m_highlighted)
+		if (m_hovered)
 			textColor *= 1.5f;
 		m_label->setColor(textColor);
 	}
 
 
 	// Protected Attributes
-	bool 
-		m_highlighted = false, 
-		m_pressed = false;
 	float m_bevelRadius = 10.0f;
 	std::shared_ptr<Label> m_label;
 };

@@ -33,10 +33,10 @@ public:
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
-		panel->addCallback(UI_Element::on_mouse_enter, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
-		panel->addCallback(UI_Element::on_mouse_exit, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
-		panel->addCallback(UI_Element::on_mouse_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
-		panel->addCallback(UI_Element::on_mouse_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		panel->addCallback(UI_Element::on_hover_start, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
+		panel->addCallback(UI_Element::on_hover_stop, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		panel->addCallback(UI_Element::on_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
+		panel->addCallback(UI_Element::on_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
 
@@ -49,10 +49,10 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_mouse_enter, [&]() { m_highlighted = true; });
-		addCallback(on_mouse_exit, [&]() { m_highlighted = false; });
-		addCallback(on_mouse_press, [&]() { m_pressed = true; });
-		addCallback(on_mouse_release, [&]() { 
+		addCallback(on_hover_start, [&]() { m_hovered = true; });
+		addCallback(on_hover_stop, [&]() { m_hovered = false; });
+		addCallback(on_press, [&]() { m_pressed = true; });
+		addCallback(on_release, [&]() { 
 			m_pressed = false;
 			setToggled(!m_toggledOn);
 			setText(m_toggledOn ? "ON" : "OFF");
@@ -86,7 +86,7 @@ public:
 		glm::vec4 color(0.75);
 		if (m_pressed)
 			color *= 0.5f;
-		if (m_highlighted)
+		if (m_hovered)
 			color *= 1.5f;
 		m_paddle->setColor(color);
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
@@ -121,7 +121,7 @@ public:
 protected:
 	// Protected Attributes
 	bool
-		m_highlighted = false,
+		m_hovered = false,
 		m_pressed = false,
 		m_toggledOn = true;
 	std::shared_ptr<Label> m_label;

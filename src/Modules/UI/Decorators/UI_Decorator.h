@@ -19,34 +19,16 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		if (getVisible() && !getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				MouseEvent subEvent = mouseEvent;
-				subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
-				subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-				for each (auto & child in m_children)
-					child->mouseAction(subEvent);
-				m_component->mouseAction(subEvent);
-				if (!m_entered) {
-					m_entered = true;
-					enactCallback(on_mouse_enter);
-				}
-				if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-					m_pressed = true;
-					enactCallback(on_mouse_press);
-				}
-				else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-					m_pressed = false;
-					enactCallback(on_mouse_release);
-				}
-			}
-			else {
-				for each (auto & child in m_children)
-					child->clearFocus();
-				clearFocus();
-			}
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
+			MouseEvent subEvent = mouseEvent;
+			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
+			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
+			m_component->mouseAction(subEvent);			
 		}
-	}
+		else
+			m_component->clearFocus();
+	}	
 	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
 		UI_Element::keyboardAction(keyboardEvent);
 		m_component->keyboardAction(keyboardEvent);

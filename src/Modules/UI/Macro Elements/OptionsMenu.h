@@ -33,7 +33,7 @@ public:
 		auto videoButton = std::make_shared<Button>(engine, "VIDEO");
 		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(false);
-		videoButton->addCallback(Button::on_pressed, [&]() {
+		videoButton->addCallback(Button::on_clicked, [&]() {
 			m_videoMenu->setVisible(true);
 			m_gfxMenu->setVisible(false);
 			enactCallback(on_video); 
@@ -45,7 +45,7 @@ public:
 		auto graphicsButton = std::make_shared<Button>(engine, "GRAPHICS");
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
-		graphicsButton->addCallback(Button::on_pressed, [&]() {
+		graphicsButton->addCallback(Button::on_clicked, [&]() {
 			m_videoMenu->setVisible(false);
 			m_gfxMenu->setVisible(true);
 			enactCallback(on_graphics); 
@@ -56,14 +56,14 @@ public:
 		// Add 'Controls' button
 		auto controlsButton = std::make_shared<Button>(engine, "CONTROLS");
 		controlsButton->setEnabled(false);
-		controlsButton->addCallback(Button::on_pressed, [&]() {
+		controlsButton->addCallback(Button::on_clicked, [&]() {
 			enactCallback(on_controls); 
 		});
 		addButton(controlsButton);
 
 		// Add 'Back' button
 		auto backButton = std::make_shared<Button>(engine, "< BACK  ");
-		backButton->addCallback(Button::on_pressed, [&, engine]() {
+		backButton->addCallback(Button::on_clicked, [&, engine]() {
 			setVisible(false);
 			m_videoMenu->setVisible(false);
 			m_gfxMenu->setVisible(false);

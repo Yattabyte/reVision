@@ -8,7 +8,7 @@
 #include <vector>
 
 
-/** UI list class, scrolls horizontally, displays one element at a time. 
+/** UI list class, scrolls horizontally, displays one element at a time.
 Controllable by directional arrows. */
 class SideList : public UI_Element {
 public:
@@ -101,41 +101,41 @@ public:
 		UI_Element::update();
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
-		if (getVisible() && getEnabled()) {
-			if (mouseWithin(mouseEvent)) {
-				const float mx = float(mouseEvent.m_xPos) - m_position.x;
-				// Left button
-				if (mx >= -m_scale.x && mx <= (-m_scale.x + 14) && m_lEnabled) {
-					m_lhighlighted = true;
-					if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS)
-						m_lpressed = true;
-					else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-						m_lpressed = false;
-						const int index = std::max<int>(getIndex() - 1, 0);
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+			const float mx = float(mouseEvent.m_xPos) - m_position.x;
+			// Left button
+			if (mx >= -m_scale.x && mx <= (-m_scale.x + 14) && m_lEnabled) {
+				m_lhighlighted = true;
+				if (!m_lpressed && mouseEvent.m_action == MouseEvent::PRESS)
+					m_lpressed = true;
+				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_lpressed = false;
+					const int index = std::max<int>(getIndex() - 1, 0);
 
-						setIndex(index);
-						enactCallback(on_index_changed);
-					}
-				}
-				// Right button
-				if (mx >= (m_scale.x - 14) && mx <= m_scale.x && m_rEnabled) {
-					m_rhighlighted = true;
-					if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
-						m_rpressed = true;
-					else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-						m_rpressed = false;
-						const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
-
-						setIndex(index);
-						enactCallback(on_index_changed);
-					}
+					setIndex(index);
+					enactCallback(on_index_changed);
 				}
 			}
-			else {
-				m_lhighlighted = false;
-				m_rhighlighted = false;
+			// Right button
+			if (mx >= (m_scale.x - 14) && mx <= m_scale.x && m_rEnabled) {
+				m_rhighlighted = true;
+				if (!m_rpressed && mouseEvent.m_action == MouseEvent::PRESS)
+					m_rpressed = true;
+				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
+					m_rpressed = false;
+					const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
+
+					setIndex(index);
+					enactCallback(on_index_changed);
+				}
 			}
-			UI_Element::mouseAction(mouseEvent);
+		}
+		else {
+			m_lhighlighted = false;
+			m_rhighlighted = false;
+			m_lpressed = false;
+			m_rpressed = false;			
 		}
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
