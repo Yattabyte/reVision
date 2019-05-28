@@ -47,13 +47,9 @@ public:
 			}
 		}
 	}
-	inline virtual void keyChar(const unsigned int & character) override {
-		UI_Element::keyChar(character);
-		m_component->keyChar(character);
-	}
-	inline virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
-		UI_Element::keyboardAction(key, scancode, action, mods);
-		m_component->keyboardAction(key, scancode, action, mods);
+	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
+		UI_Element::keyboardAction(keyboardEvent);
+		m_component->keyboardAction(keyboardEvent);
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);

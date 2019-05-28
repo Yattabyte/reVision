@@ -34,17 +34,6 @@ public:
 		});
 		world.loadWorld("A.map");
 
-		// Tap-in to preference changes
-		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.x = (int)f;
-		});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.y = (int)f;
-		});
-
 		// Create main menu
 		m_pauseMenu = std::make_shared<PauseMenu>(m_engine);
 		m_pauseMenu->addCallback(PauseMenu::on_resume_game, [&]() {
@@ -70,14 +59,7 @@ public:
 			if (actionState.isAction(ActionState::ESCAPE)) 
 				showPauseMenu(true);			
 		}
-		else if (m_menuState == in_menu) {		
-			// Update Mouse Position
-			m_mouseEvent.m_xPos = (double)actionState[ActionState::MOUSE_X];
-			m_mouseEvent.m_yPos = m_renderSize.y - (double)actionState[ActionState::MOUSE_Y];
-			m_mouseEvent.m_button = GLFW_MOUSE_BUTTON_LEFT;
-			m_mouseEvent.m_action = (int)actionState[ActionState::MOUSE_L];
-			m_engine->getModule_UI().applyMouseEvent(m_mouseEvent);
-
+		else if (m_menuState == in_menu) {	
 			// Check if we should disable the overlay
 			if (actionState.isAction(ActionState::ESCAPE)) 
 				showPauseMenu(false);			
@@ -114,11 +96,8 @@ protected:
 
 
 	// Protected Attributes
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	BaseECSSystem * m_freeLookSystem;
 	std::shared_ptr<UI_Element> m_pauseMenu;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	MouseEvent m_mouseEvent;
 	MenuState m_menuState = in_game;
 };
 

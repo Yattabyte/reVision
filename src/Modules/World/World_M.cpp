@@ -77,7 +77,7 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 	for (size_t i = 0; i < numComponents; ++i) {
 		// Check if componentID is actually valid
 		if (!BaseECSComponent::isTypeValid(componentIDs[i])) {
-			// todo report error
+			m_engine->getManager_Messages().error("ECS Error: attempted to make an unsupported component, cancelling entity creation...\r\n");
 			delete newEntity;
 			return NULL_ENTITY_HANDLE;
 		}

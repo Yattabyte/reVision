@@ -33,17 +33,6 @@ public:
 			return std::make_pair(component->ID, component);
 		});
 
-		// Tap-in to preference changes
-		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.x = (int)f;
-		});
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-			m_renderSize.y = (int)f;
-		});
-
 		// Create main menu
 		m_startMenu = std::make_shared<StartMenu>(m_engine);
 		m_startMenu->addCallback(StartMenu::on_start_game, [&]() {
@@ -65,16 +54,6 @@ public:
 
 	// Public Interface Implementation
 	inline virtual EngineState * handleInput(ActionState & actionState) override {
-		// Update Mouse Position
-		m_mouseEvent.m_xPos = (double)actionState[ActionState::MOUSE_X];
-		m_mouseEvent.m_yPos = m_renderSize.y - (double)actionState[ActionState::MOUSE_Y];
-
-		// Update Mouse Buttons
-		m_mouseEvent.m_button = GLFW_MOUSE_BUTTON_LEFT;
-		m_mouseEvent.m_action = (int)actionState[ActionState::MOUSE_L];
-
-		// Update our UI element
-		m_engine->getModule_UI().applyMouseEvent(m_mouseEvent);
 		switch (m_menuState) {
 		case on_game:
 			return new GameState(m_engine);
@@ -92,9 +71,6 @@ public:
 
 protected:
 	// Protected Attributes
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	MouseEvent m_mouseEvent;
 	std::shared_ptr<UI_Element> m_startMenu;
 	MenuState m_menuState = on_menu;
 

@@ -5,6 +5,7 @@
 #include "Modules/Engine_Module.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/MouseEvent.h"
+#include "Modules/UI/KeyboardEvent.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include <memory>
 #include <vector>
@@ -31,16 +32,22 @@ public:
 	void setRootElement(const std::shared_ptr<UI_Element> & rootElement);
 	/** Remove the root UI element from the UI system. */
 	void clearRootElement();
-	/** Propagates a mouse event to all UI elements. 
-	@param	mouseEvent	the mouse event to apply. */
-	void applyMouseEvent(const MouseEvent & mouseEvent);	
+	/** Propagates mouse movement input to all UI elements.
+	@param		xPos	the 'x' axis position of the mouse
+	@param		yPos	the 'y' axis position of the mouse. */
+	void applyCursorPos(const double & xPos, const double & yPos);
+	/** Propagates mouse button input to all UI elements.
+	@param		button	the mouse button used
+	@param		action	the mouse button action (pressed, released, etc)
+	@param		mods	any mouse modifiers used. */
+	void applyCursorButton(const int & button, const int & action, const int & mods);
 	/** Propagates keyboard character input to all UI elements.
 	@param		character	the character inputed. */
 	void applyChar(const unsigned int & character);
 	/** Propagates keyboard key input to all UI elements.
 	@param		key			The keyboard key that was pressed or released.
 	@param		scancode	The system-specific scancode of the key.
-	@param		action		GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.
+	@param		action		Action::PRESS, RELEASE or REPEAT.
 	@param		mods		Bit field describing which modifier keys were held down. */
 	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
 
@@ -51,6 +58,7 @@ private:
 	StaticBuffer m_projectionBuffer;
 	std::shared_ptr<UI_Element> m_uiElement;
 	MouseEvent m_mouseEvent;
+	KeyboardEvent m_keyboardEvent;
 };
 
 #endif // UI_MODULE_H

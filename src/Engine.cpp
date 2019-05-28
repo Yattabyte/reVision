@@ -17,26 +17,6 @@
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
 
-/***************************
-----START GLFW CALLBACKS----
-***************************/
-static void GLFW_Callback_WindowResize(GLFWwindow * window, int width, int height)
-{
-	auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
-	preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
-	preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
-}
-static void GLFW_Callback_Char(GLFWwindow* window, unsigned int character)
-{
-	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
-}
-static void GLFW_Callback_Key(GLFWwindow* window, int a, int b, int c, int d)
-{
-	((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a,b,c,d);
-}
-/***************************
------END GLFW CALLBACKS-----
-***************************/
 
 Rendering_Context::~Rendering_Context()
 {
@@ -178,9 +158,23 @@ Engine::Engine() :
 	configureWindow();
 	glfwSetInputMode(m_renderingContext.window, GLFW_STICKY_MOUSE_BUTTONS, GLFW_TRUE);
 	glfwSetWindowUserPointer(m_renderingContext.window, this);
-	glfwSetWindowSizeCallback(m_renderingContext.window, GLFW_Callback_WindowResize);
-	glfwSetCharCallback(m_renderingContext.window, GLFW_Callback_Char);
-	glfwSetKeyCallback(m_renderingContext.window, GLFW_Callback_Key);
+	glfwSetWindowSizeCallback(m_renderingContext.window, [](GLFWwindow * window, int width, int height) {
+		auto & preferences = ((Engine*)glfwGetWindowUserPointer(window))->getPreferenceState();
+		preferences.setValue(PreferenceState::C_WINDOW_WIDTH, width);
+		preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, height);
+	});
+	glfwSetCursorPosCallback(m_renderingContext.window, [](GLFWwindow* window, double xPos, double yPos) {
+		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorPos(xPos, yPos);
+	});
+	glfwSetMouseButtonCallback(m_renderingContext.window, [](GLFWwindow* window, int button, int action, int mods){
+		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyCursorButton(button, action, mods);
+	});
+	glfwSetCharCallback(m_renderingContext.window, [](GLFWwindow* window, unsigned int character) {
+		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyChar(character);
+	});
+	glfwSetKeyCallback(m_renderingContext.window, [](GLFWwindow* window, int a, int b, int c, int d) {
+		((Engine*)glfwGetWindowUserPointer(window))->getModule_UI().applyKey(a, b, c, d);
+	});
 	glfwMakeContextCurrent(m_renderingContext.window);
 	glfwSwapInterval((int)m_vsync);
 
@@ -216,14 +210,15 @@ void Engine::tick()
 	m_assetManager.notifyObservers();
 	m_modelManager.update();
 
-	// Update persistent binding state
+	// Update key binding states, manually
 	if (const auto &bindings = m_inputBindings.getBindings())
 		if (bindings->existsYet())
 			for each (const auto &pair in bindings.get()->m_configuration) {
 				// If Key is pressed, set state to 1, otherwise set to 0
 				m_actionState[pair.first] = glfwGetKey(m_renderingContext.window, (int)pair.second) ? 1.0f : 0.0f;
 			}
-	// Updated hard-coded bindings
+
+	// Updated mouse states, manually
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
 	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_LEFT);

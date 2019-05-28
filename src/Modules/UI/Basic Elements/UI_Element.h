@@ -3,6 +3,7 @@
 #define UI_ELEMENT_H
 
 #include "Modules/UI/MouseEvent.h"
+#include "Modules/UI/KeyboardEvent.h"
 #include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include <algorithm>
@@ -108,20 +109,11 @@ public:
 			}
 		}
 	}
-	/** Propogates a key press event from this UI element to its children.
-	@param		character			the character typed. */
-	inline virtual void keyChar(const unsigned int & character) {
+	/** Propogates a keyboard action event from this UI element to its children.
+	@param keyboardEvent			the event to propagate. */
+	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
 		for each (auto & child in m_children)
-			child->keyChar(character);
-	}
-	/** Propogates a regular key press event from this UI element to its children.
-	@param		key			The keyboard key that was pressed or released.
-	@param		scancode	The system-specific scancode of the key.
-	@param		action		GLFW_PRESS, GLFW_RELEASE or GLFW_REPEAT.
-	@param		mods		Bit field describing which modifier keys were held down. */
-	inline virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) {
-		for each (auto & child in m_children)
-			child->keyboardAction(key, scancode, action, mods);
+			child->keyboardAction(keyboardEvent);
 	}
 
 

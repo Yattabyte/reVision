@@ -55,7 +55,8 @@ void UI_Module::frameTick(const float & deltaTime)
 void UI_Module::setRootElement(const std::shared_ptr<UI_Element>& rootElement)
 {
 	m_uiElement = rootElement;
-	m_uiElement->setScale(m_renderSize);
+	if (m_uiElement)
+		m_uiElement->setScale(m_renderSize);
 }
 
 void UI_Module::clearRootElement()
@@ -64,20 +65,35 @@ void UI_Module::clearRootElement()
 		m_uiElement.reset();
 }
 
-void UI_Module::applyMouseEvent(const MouseEvent & mouseEvent)
+void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
 {
+	m_mouseEvent.m_xPos = xPos;
+	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
+
 	if (m_uiElement)
-		m_uiElement->mouseAction(mouseEvent);
+		m_uiElement->mouseAction(m_mouseEvent);
+}
+
+void UI_Module::applyCursorButton(const int & button, const int & action, const int & mods)
+{
+	m_mouseEvent.m_button = button;
+	m_mouseEvent.m_action = action;
+	m_mouseEvent.m_mods = mods;
+
+	if (m_uiElement)
+		m_uiElement->mouseAction(m_mouseEvent);
 }
 
 void UI_Module::applyChar(const unsigned int & character)
 {
+	m_keyboardEvent.setChar(character);
 	if (m_uiElement)
-		m_uiElement->keyChar(character);
+		m_uiElement->keyboardAction(m_keyboardEvent);
 }
 
 void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
 {
+	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
 	if (m_uiElement)
-		m_uiElement->keyboardAction(key, scancode, action, mods);
+		m_uiElement->keyboardAction(m_keyboardEvent);
 }

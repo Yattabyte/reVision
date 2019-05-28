@@ -9,10 +9,6 @@
 #include <string>
 
 
-/*@TODO	remove this dependency when we have our own keyboard enumerations, rather than GLFW_* specific ones. **/
-#include "GLFW/glfw3.h"
-
-
 /** UI element which displays an editable text box. */
 class TextInput : public UI_Element {
 public:
@@ -115,35 +111,35 @@ public:
 			m_edit = false;
 			UI_Element::mouseAction(mouseEvent);
 		}
-	}				
-	inline virtual void keyChar(const unsigned int & character) override {
-		if (m_edit) {
-			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
-			setCaret(m_caretIndex + 1);
-			enactCallback(on_text_change);
-		}
 	}
-	inline virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
+	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
 		if (m_edit) {
-			if (key == GLFW_KEY_ENTER || key == GLFW_KEY_ESCAPE)
-				m_edit = false;
-			if (action == GLFW_PRESS) {
-				if (key == GLFW_KEY_BACKSPACE) {
+			// Check for a text stream
+			if (auto character = keyboardEvent.getChar()) {
+				setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
+				setCaret(m_caretIndex + 1);
+				enactCallback(on_text_change);
+			}
+			// Otherwise, check keyboard states
+			else {
+				if (keyboardEvent.getState(KeyboardEvent::ENTER) || keyboardEvent.getState(KeyboardEvent::ESCAPE))
+					m_edit = false;
+				else if (keyboardEvent.getState(KeyboardEvent::BACKSPACE)) {
 					if (m_caretIndex > 0) {
 						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
 						setCaret(m_caretIndex - 1);
 						enactCallback(on_text_change);
 					}
 				}
-				else if (key == GLFW_KEY_DELETE) {
+				else if (keyboardEvent.getState(KeyboardEvent::DEL)) {
 					if (m_caretIndex + 1 <= m_text.size()) {
 						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
 						enactCallback(on_text_change);
 					}
 				}
-				else if (key == GLFW_KEY_LEFT)
+				else if (keyboardEvent.getState(KeyboardEvent::LEFT))
 					setCaret(m_caretIndex - 1);
-				else if (key == GLFW_KEY_RIGHT)
+				else if (keyboardEvent.getState(KeyboardEvent::RIGHT))
 					setCaret(m_caretIndex + 1);
 			}
 		}
