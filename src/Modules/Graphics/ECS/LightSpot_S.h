@@ -28,12 +28,16 @@ public:
 	/** Destroy the spot lighting system. */
 	inline ~LightSpot_System() = default;
 	/** Construct a spot lighting system. */
-	inline LightSpot_System() {
+	inline LightSpot_System(Engine * engine) {
 		// Declare component types used
 		addComponentType(LightSpot_Component::ID);
 		addComponentType(LightSpotShadow_Component::ID, FLAG_OPTIONAL);
 		GLuint data[] = { 0,0,0,0 };
 		m_renderState.m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: LightSpot_System");
 	}
 
 

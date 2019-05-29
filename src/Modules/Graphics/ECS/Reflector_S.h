@@ -26,13 +26,17 @@ public:
 	/** Destroy the reflector lighting system. */
 	inline ~Reflector_System() = default;
 	/** Construct a reflector lighting system. */
-	inline Reflector_System() {
+	inline Reflector_System(Engine * engine) {
 		// Declare component types used
 		addComponentType(Reflector_Component::ID);
 		GLuint data[] = { 0,0,0,0 };
 		m_renderState.m_indirectCube.write(0, sizeof(GLuint) * 4, &data);
 		m_renderState.m_indirectQuad.write(0, sizeof(GLuint) * 4, &data);
 		m_renderState.m_indirectQuad6Faces.write(0, sizeof(GLuint) * 4, &data);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: Reflector_System");
 	}
 
 

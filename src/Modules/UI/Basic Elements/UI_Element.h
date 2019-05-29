@@ -5,6 +5,7 @@
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
 #include "Utilities/GL/glad/glad.h"
+#include "Utilities/ActionState.h"
 #include "glm/glm.hpp"
 #include <algorithm>
 #include <functional>
@@ -16,7 +17,7 @@
 class UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_resize,
 		on_hover_start,
 		on_hover_stop,
@@ -69,13 +70,6 @@ public:
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		for each (auto & child in m_children) {
 			if (!child->getVisible()) continue;
-			// Scissor the region, preventing sub elements to render outside of the bounds of this element
-			glScissor(
-				GLint(newPosition.x - (newScale.x)),
-				GLint(newPosition.y - (newScale.y)),
-				GLsizei(newScale.x * 2.0f),
-				GLsizei(newScale.y * 2.0f)
-			);
 			child->renderElement(deltaTime, newPosition, newScale);
 		}
 	}
@@ -106,13 +100,19 @@ public:
 			for each (auto & child in m_children)
 				child->clearFocus();
 		}
-	}
-	
+	}	
 	/** Propogates a keyboard action event from this UI element to its children.
 	@param keyboardEvent			the event to propagate. */
 	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
 		for each (auto & child in m_children)
 			child->keyboardAction(keyboardEvent);
+	}
+	/***/
+	inline virtual bool userAction(ActionState & actionState) {
+		for each (auto & child in m_children)
+			if (child->userAction(actionState))
+				return true;
+		return false;
 	}
 
 
@@ -122,6 +122,10 @@ public:
 	inline void addElement(const std::shared_ptr<UI_Element> & child) {
 		m_children.push_back(child);
 		update();
+	}
+	/***/
+	inline std::shared_ptr<UI_Element> getElement(const size_t & index) {
+		return m_children[index];
 	}
 	/** Remove all child UI elements. */
 	inline void clearElements() {
@@ -191,12 +195,18 @@ public:
 	inline bool getEnabled() const {
 		return m_enabled;
 	}
+	/***/
 	inline void clearFocus() {
 		m_pressed = false;
 		if (m_hovered) {
 			m_hovered = false;
 			enactCallback(on_hover_stop);
 		}
+	}
+	/***/
+	inline void fullPress() {
+		m_hovered = true;
+		enactCallback(on_release);
 	}
 	/** Get whether or not the mouse is within this element. 
 	@return			true if the mouse is within this element. */

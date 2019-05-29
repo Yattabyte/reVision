@@ -102,23 +102,25 @@ Engine::Engine() :
 	m_materialManager(this)
 {
 	// Output engine boiler-plate
-	m_messageManager.statement("**************************************************");
-	m_messageManager.statement("Engine Version " + std::string(ENGINE_VERSION));
-	m_messageManager.statement("");
-	m_messageManager.statement("Library Info:");
-	m_messageManager.statement("ASSIMP       " + Mesh_IO::Get_Version());
-	m_messageManager.statement("Bullet       " + std::to_string(BT_BULLET_VERSION));
-	m_messageManager.statement("FreeImage    " + Image_IO::Get_Version());
-	m_messageManager.statement("GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor));
-	m_messageManager.statement("GLFW         " + std::string(glfwGetVersionString(), 5));
-	m_messageManager.statement("GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION));
-	m_messageManager.statement("SoLoud       " + std::to_string(m_soundManager.GetVersion()));
-	m_messageManager.statement("");
-	m_messageManager.statement("Graphics Info:");
-	m_messageManager.statement(std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))));
-	m_messageManager.statement("OpenGL " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))));
-	m_messageManager.statement("GLSL " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))));
-	m_messageManager.statement("**************************************************");
+	m_messageManager.statement("*****************************************");
+	m_messageManager.statement("* > reVision Engine:\t\t\t*");
+	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + "\t\t*");
+	m_messageManager.statement("*  - Build Date   May 29th, 2019\t*");
+	m_messageManager.statement("*****************************************");
+	m_messageManager.statement("* > Library Info:\t\t\t*");
+	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t*");
+	m_messageManager.statement("*  - Bullet       " + std::to_string(BT_BULLET_VERSION) + "\t\t\t*");
+	m_messageManager.statement("*  - FreeImage    " + Image_IO::Get_Version() + "\t\t*");
+	m_messageManager.statement("*  - GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + "\t\t\t*");
+	m_messageManager.statement("*  - GLFW         " + std::string(glfwGetVersionString(), 5) + "\t\t\t*");
+	m_messageManager.statement("*  - GLM          " + std::to_string(GLM_VERSION_MAJOR) + "." + std::to_string(GLM_VERSION_MINOR) + "." + std::to_string(GLM_VERSION_PATCH) + "." + std::to_string(GLM_VERSION_REVISION) + "\t\t*");;
+	m_messageManager.statement("*  - SoLoud       " + std::to_string(m_soundManager.GetVersion()) + "\t\t*");
+	m_messageManager.statement("*****************************************");
+	m_messageManager.statement("* > Graphics Info:\t\t\t*");
+	m_messageManager.statement("*  - " + std::string(reinterpret_cast<char const *>(glGetString(GL_RENDERER))) + "\t\t*");
+	m_messageManager.statement("*  - OpenGL " + std::string(reinterpret_cast<char const *>(glGetString(GL_VERSION))) + "\t\t*");
+	m_messageManager.statement("*  - GLSL " + std::string(reinterpret_cast<char const *>(glGetString(GL_SHADING_LANGUAGE_VERSION))) + "\t\t\t*");
+	m_messageManager.statement("*****************************************");
 
 	Image_IO::Initialize();
 
@@ -202,53 +204,41 @@ Engine::Engine() :
 
 void Engine::tick()
 {
-	const float thisTime = (float)glfwGetTime();
-	const float deltaTime = thisTime - m_lastTime;
+	///*----------------------------------------------------BEGIN FRAME----------------------------------------------------*///
+	const float thisTime = (float)glfwGetTime(), deltaTime = thisTime - m_lastTime;
 	m_lastTime = thisTime;
 
 	// Update Managers
 	m_assetManager.notifyObservers();
 	m_modelManager.update();
-
-	// Update key binding states, manually
-	if (const auto &bindings = m_inputBindings.getBindings())
-		if (bindings->existsYet())
-			for each (const auto &pair in bindings.get()->m_configuration) {
-				// If Key is pressed, set state to 1, otherwise set to 0
-				m_actionState[pair.first] = glfwGetKey(m_renderingContext.window, (int)pair.second) ? 1.0f : 0.0f;
-			}
-
+	
 	// Updated mouse states, manually
 	double mouseX, mouseY;
 	glfwGetCursorPos(m_renderingContext.window, &mouseX, &mouseY);
 	m_actionState[ActionState::MOUSE_L] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_LEFT);
 	m_actionState[ActionState::MOUSE_R] = (float)glfwGetMouseButton(m_renderingContext.window, GLFW_MOUSE_BUTTON_RIGHT);
-	switch (m_mouseInputMode) {
-	case NORMAL:
-		m_actionState[ActionState::MOUSE_X] = (float)mouseX;
-		m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
-		break;
-	case FREE_LOOK:
-		m_actionState[ActionState::LOOK_X] = (float)mouseX;
-		m_actionState[ActionState::LOOK_Y] = (float)mouseY;
-		glfwSetCursorPos(m_renderingContext.window, 0, 0);
-		break;
-	};
+	m_actionState[ActionState::MOUSE_X] = (float)mouseX;
+	m_actionState[ActionState::MOUSE_Y] = (float)mouseY;
+	if (m_mouseInputMode == FREE_LOOK)
+		glfwSetCursorPos(m_renderingContext.window, 0, 0);	
 
-	// Update Engine State / Begin Frame
-	m_moduleGraphics.getCameraBuffer().waitFrame(m_frameCount);
-	if (auto * state = m_engineState->handleInput(m_actionState)) {
-		if (state != m_engineState)
-			delete m_engineState;
-		m_engineState = state;
-	}
+	// Update key binding states, manually
+	if (const auto &bindings = m_inputBindings.getBindings())
+		if (bindings->existsYet())
+			for each (const auto &pair in bindings.get()->m_configuration)
+				m_actionState[pair.first] = glfwGetKey(m_renderingContext.window, (int)pair.second) ? 1.0f : 0.0f;
+
+	// Update UI module based on action state, manually
+	m_moduleUI.applyActionState(m_actionState);
+	
+	// Call on specialized engine-state-tick-handler
 	m_engineState->handleTick(deltaTime);
 
-	// End Frame
-	m_moduleGraphics.getCameraBuffer().lockFrame(m_frameCount);
+	// Swap buffers and end
 	glfwSwapBuffers(m_renderingContext.window);
 	glfwPollEvents();
 	m_frameCount = (m_frameCount + 1) % 3;
+	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
 }
 
 void Engine::tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context)
@@ -280,6 +270,19 @@ void Engine::setMouseInputMode(const MouseInputMode & mode)
 	case FREE_LOOK:
 		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetCursorPos(m_renderingContext.window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
+		break;
+	}
+}
+
+void Engine::setEngineState(EngineState * engineState)
+{
+	// Check if valid and different
+	if (engineState && engineState != m_engineState) {
+		// If old one existed, delete it
+		if (m_engineState)
+			delete m_engineState;
+		// Make new one current
+		m_engineState = engineState;
 	}
 }
 

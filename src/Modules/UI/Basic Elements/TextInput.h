@@ -13,7 +13,7 @@
 class TextInput : public UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_text_change = UI_Element::last_interact_index
 	};
 

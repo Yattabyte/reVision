@@ -14,11 +14,11 @@
 class Label : public UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_textChanged = UI_Element::last_interact_index
 	};
 	// Public Alignment Enums
-	enum Alignment : int {
+	const enum Alignment : int {
 		align_left = -1,
 		align_center = 0,
 		align_right = 1

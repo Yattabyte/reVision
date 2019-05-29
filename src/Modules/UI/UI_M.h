@@ -7,6 +7,7 @@
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/ActionState.h"
 #include <memory>
 #include <vector>
 
@@ -29,9 +30,15 @@ public:
 	// Public Methods
 	/** Place a root UI element to receive input and be rendered. 
 	@param	rootElement		the main element of focus for this UI system. */
-	void setRootElement(const std::shared_ptr<UI_Element> & rootElement);
+	void pushRootElement(const std::shared_ptr<UI_Element> & rootElement);
+	/***/
+	void popRootElement();
+	/***/
+	void pushFocusedElement(const std::shared_ptr<UI_Element> & focusedElement);
+	/***/
+	void popFocusedElement();
 	/** Remove the root UI element from the UI system. */
-	void clearRootElement();
+	void clear();
 	/** Propagates mouse movement input to all UI elements.
 	@param		xPos	the 'x' axis position of the mouse
 	@param		yPos	the 'y' axis position of the mouse. */
@@ -50,13 +57,15 @@ public:
 	@param		action		Action::PRESS, RELEASE or REPEAT.
 	@param		mods		Bit field describing which modifier keys were held down. */
 	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
-
+	/***/
+	void applyActionState(ActionState & actionState);
+	
 
 private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
-	std::shared_ptr<UI_Element> m_uiElement;
+	std::vector<std::shared_ptr<UI_Element>> m_rootElement, m_focusedElement;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
 };

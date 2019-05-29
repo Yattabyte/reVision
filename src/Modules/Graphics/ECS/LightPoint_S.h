@@ -28,12 +28,16 @@ public:
 	/** Destroy the point lighting system. */
 	inline ~LightPoint_System() = default;
 	/** Construct a point lighting system. */
-	inline LightPoint_System() {
+	inline LightPoint_System(Engine * engine) {
 		// Declare component types used
 		addComponentType(LightPoint_Component::ID);
 		addComponentType(LightPointShadow_Component::ID, FLAG_OPTIONAL);
 		GLuint data[] = { 0,0,0,0 };
 		m_renderState.m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: LightPoint_System");
 	}
 
 

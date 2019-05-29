@@ -12,13 +12,6 @@
 /** Represents an engine state for the "game". */
 class GameState : public EngineState {
 public:
-	// Public State Enumeration
-	enum MenuState {
-		in_game,
-		in_menu,
-	};
-
-
 	// Public (de)Constructors
 	/** Destroy the game state. */
 	inline ~GameState() {
@@ -27,6 +20,7 @@ public:
 	/** Construct a game state. */
 	inline GameState(Engine * engine) : EngineState(engine) {
 		m_freeLookSystem = new PlayerFreeLook_System(engine);
+
 		auto & world = m_engine->getModule_World();
 		world.addComponentType("Player3D_Component", [](const ParamList & parameters) {
 			auto * component = new Player3D_Component();
@@ -41,11 +35,11 @@ public:
 			m_pauseMenu->setVisible(true);
 		});
 		m_pauseMenu->addCallback(PauseMenu::on_options, [&]() {
-			m_menuState = in_menu;
+			m_paused = true;
 		});
 		m_pauseMenu->addCallback(PauseMenu::on_quit, [&]() {
 			showPauseMenu(false);
-			m_engine->getModule_UI().clearRootElement();
+			m_engine->getModule_UI().clear();
 		});
 
 		m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
@@ -53,29 +47,29 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual EngineState * handleInput(ActionState & actionState) override {
-		if (m_menuState == in_game) {
-			// Check if we should enable the overlay
-			if (actionState.isAction(ActionState::UI_ESCAPE)) 
-				showPauseMenu(true);			
-		}
-		else if (m_menuState == in_menu) {	
-			// Check if we should disable the overlay
-			if (actionState.isAction(ActionState::UI_ESCAPE))
-				showPauseMenu(false);			
-		}
-		return nullptr;
-	}
 	inline virtual void handleTick(const float & deltaTime) override {
-		if (m_freeLookSystem->isValid()) {
-			auto & world = m_engine->getModule_World();
-			if (world.checkIfLoaded())
-				m_engine->getModule_Physics().frameTick(deltaTime);
-			world.updateSystem(m_freeLookSystem, deltaTime);
-			m_engine->getModule_Graphics().frameTick(deltaTime);
-			m_engine->getModule_PostProcess().frameTick(deltaTime);
-			m_engine->getModule_UI().frameTick(deltaTime);
+		// Handle GLOBAL user input
+		auto & actionState = m_engine->getActionState();
+		if (m_engine->getMouseInputMode() == Engine::FREE_LOOK) {
+			actionState[ActionState::LOOK_X] = actionState[ActionState::MOUSE_X];
+			actionState[ActionState::LOOK_Y] = actionState[ActionState::MOUSE_Y];
 		}
+		// Check if we should show the overlay
+		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+			showPauseMenu(!m_paused);
+
+		// Enable physics once world is fully loaded
+		auto & world = m_engine->getModule_World();
+		if (world.checkIfLoaded())
+			m_engine->getModule_Physics().frameTick(deltaTime);
+
+		// Appy our free-look system
+		world.updateSystem(m_freeLookSystem, deltaTime);
+
+		// Render graphics-related systems
+		m_engine->getModule_Graphics().frameTick(deltaTime);
+		m_engine->getModule_PostProcess().frameTick(deltaTime);
+		m_engine->getModule_UI().frameTick(deltaTime);		
 	}
 
 
@@ -84,21 +78,21 @@ protected:
 	void showPauseMenu(const bool & show) {
 		if (show) {
 			m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
-			m_engine->getModule_UI().setRootElement(m_pauseMenu);
-			m_menuState = in_menu;
-		}			
+			m_engine->getModule_UI().pushRootElement(m_pauseMenu);
+			m_paused = true;
+		}
 		else {
 			m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
-			m_engine->getModule_UI().clearRootElement();
-			m_menuState = in_game;
-		}		
+			m_engine->getModule_UI().clear();
+			m_paused = false;
+		}
 	}
 
 
 	// Protected Attributes
 	BaseECSSystem * m_freeLookSystem;
 	std::shared_ptr<UI_Element> m_pauseMenu;
-	MenuState m_menuState = in_game;
+	bool m_paused = false;
 };
 
 #endif // GAMESTATE_H

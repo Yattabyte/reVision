@@ -86,12 +86,12 @@ public:
 			return std::make_pair(component->ID, component);
 		});
 		world.loadWorld("game.map");
+		m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void handleTick(const float & deltaTime) override {
-		m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 		// Check if safe to start game
 		if (!m_readyToStart) {
 			bool allReady = true;

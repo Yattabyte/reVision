@@ -21,16 +21,14 @@ public:
 	@param	engine		the engine to use. */
 	inline Menu(Engine * engine) {
 		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.20f));
-		m_backPanel = panel;
-		addElement(panel);
+		m_backPanel = std::make_shared<Panel>(engine);
+		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
+		addElement(m_backPanel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>(engine);
-		layout->setSpacing(10.0f);
-		m_layout = layout;
-		m_backPanel->addElement(layout);
+		m_layout = std::make_shared<List>(engine);
+		m_layout->setSpacing(10.0f);
+		m_backPanel->addElement(m_layout);
 
 		// Title
 		m_title = std::make_shared<Label>(engine, "");
@@ -67,7 +65,9 @@ protected:
 
 	// Protected Attributes
 	std::shared_ptr<Label> m_title;
-	std::shared_ptr<UI_Element> m_backPanel, m_separator, m_layout;
+	std::shared_ptr<List> m_layout;
+	std::shared_ptr<Separator> m_separator;
+	std::shared_ptr<Panel> m_backPanel;
 };
 
 #endif // MENU_H

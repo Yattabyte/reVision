@@ -139,6 +139,37 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_FXAA, element_fxaa->getToggled() ? 1.0f : 0.0f);
 		});
 		addOption(engine, element_fxaa, "FXAA:", "Turns fast approximate anti-aliasing on or off.");
+			
+		auto qwe = std::make_shared<TextInput>(engine);		
+		addOption(engine, qwe, "Text Box:", "Test text box.");
+	}
+
+
+	// Public Interface Implementations
+	inline virtual bool userAction(ActionState & actionState) override {
+		/*
+
+			CAN PROBABLY CHANGE THE FUNCTION SIGNATURE TO NOT RETURN ANYTHING
+
+		*/
+		/*if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
+			m_layout->setIndex(m_layout->getIndex() - 1);
+			return true;
+		}
+		else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
+			m_layout->setIndex(m_layout->getIndex() + 1);
+			return true;
+		}
+		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
+			if (auto index = m_layout->getIndex(); index > -1)
+				m_layout->getElement(index)->fullPress();
+			return true;
+		}
+		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS) {
+			pressBack();
+			return true;
+		}*/
+		return false;
 	}
 };
 

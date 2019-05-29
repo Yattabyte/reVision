@@ -17,7 +17,7 @@ public:
 	/** Destroy the sync system. */
 	inline ~TransformSync_Gfx_System() = default;
 	/** Construct the sync system. */
-	inline TransformSync_Gfx_System() {
+	inline TransformSync_Gfx_System(Engine * engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Prop_Component::ID, FLAG_OPTIONAL);
@@ -28,6 +28,10 @@ public:
 		addComponentType(LightSpot_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightSpotShadow_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Reflector_Component::ID, FLAG_OPTIONAL);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: TransformSync_Gfx_System");
 	}
 
 

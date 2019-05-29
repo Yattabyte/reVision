@@ -55,34 +55,34 @@ public:
 				continue;
 			
 			// Move Left
-			if (isAction(ActionState::LEFT)) {
+			if (m_actionState->isAction(ActionState::LEFT) == ActionState::PRESS) {
 				board.m_player.xPos--;
 				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Right
-			if (isAction(ActionState::RIGHT)) {
+			if (m_actionState->isAction(ActionState::RIGHT) == ActionState::PRESS) {
 				board.m_player.xPos++;
 				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Down
-			if (isAction(ActionState::BACKWARD)) {
+			if (m_actionState->isAction(ActionState::BACKWARD) == ActionState::PRESS) {
 				board.m_player.yPos--;
 				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Move Up
-			if (isAction(ActionState::FORWARD)) {
+			if (m_actionState->isAction(ActionState::FORWARD) == ActionState::PRESS) {
 				board.m_player.yPos++;
 				m_engine->getManager_Sounds().playSound(m_soundMove);
 			}
 			// Swap Tiles
-			if (isAction(ActionState::JUMP)) {
+			if (m_actionState->isAction(ActionState::JUMP) == ActionState::PRESS) {
 				if (swapTiles(std::make_pair(board.m_player.xPos, board.m_player.yPos), std::make_pair(board.m_player.xPos + 1, board.m_player.yPos), board)) {
 					board.m_player.tileSwaps.push_back({ board.m_player.xPos, board.m_player.xPos + 1, board.m_player.yPos, 0.0f });
 					m_engine->getManager_Sounds().playSound(m_soundSwitch, 0.5f, 1.5f);
 				}
 			}
 			// Fast Forward
-			if (isAction(ActionState::RUN)) {
+			if (m_actionState->isAction(ActionState::RUN) == ActionState::PRESS) {
 				board.m_skipWaiting = true;
 				board.m_rowsToAdd = 1;
 				m_engine->getManager_Sounds().playSound(m_soundScroll, 0.33f);
@@ -96,25 +96,10 @@ public:
 
 
 private:
-	// Private Functions
-	inline bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
-		if (m_actionState->at(actionEnum) > 0.5f){
-			if (!m_keyPressStates[actionEnum]) {
-				m_keyPressStates[actionEnum] = true;
-				return true;
-			}
-		}
-		else 
-			m_keyPressStates[actionEnum] = false;
-		return false;
-	}
-
-
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Sound m_soundMove, m_soundSwitch, m_soundScroll;
 	ActionState * m_actionState = nullptr;
-	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
 };
 
 #endif // PLAYERINPUT_S_H

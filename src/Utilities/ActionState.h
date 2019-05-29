@@ -20,6 +20,12 @@ public:
 
 
 	// Public Static Enumerations
+	/***/
+	const enum STATE {
+		RELEASE,
+		PRESS,
+		REPEAT		
+	};
 	/** Enumeration for indexing into actions. */
 	const enum ACTION_ENUM {
 		MOUSE_X,
@@ -73,30 +79,29 @@ public:
 		return actionStrings;
 	};	
 
-	const enum Test : char {
-		A, 
-		B,
-		C,
-	};
-
 
 	// Public Methods
-	inline bool isAction(const ActionState::ACTION_ENUM && actionEnum) {
-		if (at(actionEnum) > 0.5f) {
-			if (!m_keyPressStates[actionEnum]) {
-				m_keyPressStates[actionEnum] = true;
-				return true;
+	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum) {
+		return isAction(actionEnum, &m_keyStates);
+	}
+	inline ActionState::STATE isAction(const ActionState::ACTION_ENUM & actionEnum, std::map<ActionState::ACTION_ENUM, bool> * keyStates) const {
+		if (find(actionEnum) != end())
+			if (at(actionEnum) > 0.5f) {
+				if (!(*keyStates)[actionEnum]) {
+					(*keyStates)[actionEnum] = true;
+					return PRESS;
+				}
+				return REPEAT;
 			}
-		}
-		else
-			m_keyPressStates[actionEnum] = false;
-		return false;
+			else
+				(*keyStates)[actionEnum] = false;
+		return RELEASE;
 	}
 
 
-private:
-	// Private Attributes
-	std::map<ActionState::ACTION_ENUM, bool> m_keyPressStates;
+protected:
+	// Protected Attributes
+	std::map<ActionState::ACTION_ENUM, bool> m_keyStates;
 };
 
 #endif // ACTION_STATE_H

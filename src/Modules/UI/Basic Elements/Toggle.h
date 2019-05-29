@@ -12,7 +12,7 @@
 class Toggle : public UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_toggle = UI_Element::last_interact_index
 	};
 

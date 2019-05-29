@@ -33,16 +33,15 @@ public:
 		UI_Element::keyboardAction(keyboardEvent);
 		m_component->keyboardAction(keyboardEvent);
 	}
+	inline virtual bool userAction(ActionState & actionState) {
+		if (!UI_Element::userAction(actionState))
+			return m_component->userAction(actionState);
+		return false;
+	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		glScissor(
-			GLint(newPosition.x - (newScale.x)),
-			GLint(newPosition.y - (newScale.y)),
-			GLsizei(newScale.x * 2.0f),
-			GLsizei(newScale.y * 2.0f)
-		);
 		m_component->renderElement(deltaTime, newPosition, newScale);
 	}
 

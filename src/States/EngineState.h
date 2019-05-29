@@ -18,10 +18,6 @@ public:
 
 
 	// Public Interface Declaration
-	/** Handles the input for the engine.
-	@param	actionState		the engine action state.
-	@return					a potentially new engine state if the input dictates a change of state, nullptr otherwise. */
-	inline virtual EngineState * handleInput(ActionState & actionState) { return nullptr; }
 	/** Peforms additional tick operations.
 	@param	deltaTime		amount of time that passed since last tick. */
 	inline virtual void handleTick(const float & deltaTime) {}

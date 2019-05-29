@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
+#include "Modules/UI/Basic Elements/Button.h"
 #include "Engine.h"
 
 
@@ -11,7 +12,7 @@
 class PauseMenu : public Menu {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_resume_game = last_interact_index,
 		on_options,
 		on_quit,

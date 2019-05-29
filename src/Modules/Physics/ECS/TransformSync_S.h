@@ -18,11 +18,15 @@ public:
 	/** Destroy this physics sync system. */
 	inline ~TransformSync_Phys_System() = default;
 	/** Construct a physics sync system. */
-	inline TransformSync_Phys_System(btDiscreteDynamicsWorld * world)
+	inline TransformSync_Phys_System(Engine * engine, btDiscreteDynamicsWorld * world)
 		: BaseECSSystem(), m_world(world) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: TransformSync_Phys_System");
 	}
 
 

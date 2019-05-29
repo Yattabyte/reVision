@@ -30,6 +30,10 @@ public:
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: PropRendering_System");
 	}
 
 

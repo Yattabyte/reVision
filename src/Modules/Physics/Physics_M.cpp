@@ -29,7 +29,7 @@ void Physics_Module::initialize(Engine * engine)
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.addSystem(new TransformSync_Phys_System(m_world));
+	m_physicsSystems.addSystem(new TransformSync_Phys_System(engine, m_world));
 
 	// Component Constructors
 	m_engine->getModule_World().addComponentType("Collider_Component", [engine](const ParamList & parameters) {

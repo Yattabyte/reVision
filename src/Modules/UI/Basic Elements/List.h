@@ -5,6 +5,7 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include "Engine.h"
 
 
 /** A UI container class that laysout its children vertically, in a list.
@@ -13,7 +14,7 @@ If children need to expand to fit inside a parent container, consider using a ve
 class List : public UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_selection = UI_Element::last_interact_index,
 	};
 
@@ -53,7 +54,7 @@ public:
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
-		if (m_index > -1) {
+		if (m_index > -1 && m_children.size()) {
 			const glm::vec2 newPosition = position + m_position + m_children[m_index]->getPosition();
 			const glm::vec2 newScale = glm::min(m_children[m_index]->getScale(), scale);
 			if (m_shader->existsYet()) {
@@ -78,23 +79,48 @@ public:
 			for each (auto & child in m_children) {
 				if (child->mouseWithin(subEvent)) {
 					// Emit when the hovered item changes
-					m_index = index;
-					updateSelectionGeometry();
-					enactCallback(on_selection);
+					setIndex(index);
 					break;
 				}
 				else
 					index++;
-			}			
+			}
 		}
 	}
-
+	inline virtual bool userAction(ActionState & actionState) {
+		bool consumed = UI_Element::userAction(actionState);
+		if (!consumed) {
+			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
+				setIndex(m_index - 1);
+				consumed = true;
+			}
+			else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
+				setIndex(m_index + 1);
+				consumed = true;
+			}
+		}
+		return consumed;
+	}
 
 	// Public Methods
 	/** Get the hovered item index.
 	@return				index of the hovered item in this list. */
 	inline int getIndex() const {
 		return m_index;
+	}
+	/***/
+	inline void setIndex(const int & newIndex) {
+		if (newIndex < 0)
+			m_index = (int)m_children.size() - 1ull;
+		else {
+			if (newIndex > m_children.size() - 1ull)
+				m_index = 0;
+			else
+				m_index = newIndex;
+		}
+		updateSelectionGeometry();
+		enactCallback(on_selection);
+
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
@@ -145,10 +171,10 @@ protected:
 			m_children[x]->setPosition(glm::vec2(0, positionFromTop));
 			positionFromTop -= size + (m_spacing * 2.0f);
 		}
-	}
+	}	
 	/** Update the geometry of the selection box. */
 	inline void updateSelectionGeometry() {
-		if (m_index <= -1) return;
+		if (m_index <= -1 || m_children.size() < 1) return;
 		const auto scale = glm::min(m_children[m_index]->getScale() + m_spacing, m_scale - m_borderSize);
 		constexpr auto num_data = 8 * 3;
 		std::vector<glm::vec3> m_data(num_data);

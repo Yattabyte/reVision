@@ -12,7 +12,7 @@
 class Scrollbar_V : public UI_Decorator {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_scroll_change = UI_Element::last_interact_index
 	};
 

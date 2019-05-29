@@ -4,6 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/ECS/components.h"
+#include "Engine.h"
 
 
 /** A system responsible for animating props with skeleton components. */
@@ -13,9 +14,13 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~SkeletonAnimation_System() = default;
 	/** Construct a skeletal animation system. */
-	inline SkeletonAnimation_System() : BaseECSSystem() {
+	inline SkeletonAnimation_System(Engine * engine) : BaseECSSystem() {
 		// Declare component types used
 		addComponentType(Skeleton_Component::ID);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: SkeletonAnimation_System");
 	}
 
 

@@ -23,7 +23,7 @@ public:
 	inline Options_Pane(Engine * engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.20f));
+		panel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		m_backPanel = panel;
 		addElement(panel);
 

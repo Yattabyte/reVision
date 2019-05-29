@@ -20,6 +20,10 @@ public:
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Player3D_Component::ID);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: PlayerFreeLook_System");
 	}
 
 
@@ -49,13 +53,13 @@ public:
 			const float velocity = 25.0f;
 			const float moveAmount = velocity * deltaTime;
 			glm::vec3 deltaPosition(0.0f);
-			if (actionState.at(ActionState::FORWARD) > 0.5f)
+			if (actionState.isAction(ActionState::FORWARD))
 				deltaPosition += glm::vec3(0, 0, -moveAmount);
-			if (actionState.at(ActionState::BACKWARD) > 0.5f)
+			if (actionState.isAction(ActionState::BACKWARD))
 				deltaPosition += glm::vec3(0, 0, moveAmount);
-			if (actionState.at(ActionState::LEFT) > 0.5f)
+			if (actionState.isAction(ActionState::LEFT))
 				deltaPosition += glm::vec3(-moveAmount, 0, 0);
-			if (actionState.at(ActionState::RIGHT) > 0.5f)
+			if (actionState.isAction(ActionState::RIGHT))
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);

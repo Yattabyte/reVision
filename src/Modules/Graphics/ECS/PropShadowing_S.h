@@ -19,7 +19,7 @@ struct PropShadow_RenderState {
 class PropShadowing_System : public BaseECSSystem {
 public: 
 	// Public Enumerations
-	enum RenderType_Flags {
+	const enum RenderType_Flags {
 		RenderStatic = 0b0000'0001,
 		RenderDynamic = 0b0000'0010,
 		RenderAll = 0b0000'0011,
@@ -36,6 +36,10 @@ public:
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
+
+		// Error Reporting
+		if (!isValid())
+			engine->getManager_Messages().error("Invalid ECS System: PropShadowing_System");
 	}
 
 

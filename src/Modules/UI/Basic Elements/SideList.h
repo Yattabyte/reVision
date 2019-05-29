@@ -13,7 +13,7 @@ Controllable by directional arrows. */
 class SideList : public UI_Element {
 public:
 	// Public Interaction Enums
-	enum interact {
+	const enum interact {
 		on_index_changed = UI_Element::last_interact_index
 	};
 

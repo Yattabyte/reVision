@@ -127,11 +127,11 @@ void Graphics_Module::initialize(Engine * engine)
 	// Graphics-related Component Updating
 	auto * propRendering = new PropRendering_System(m_engine);
 	auto * lightDirectional = new LightDirectional_System(m_engine);
-	auto * lightPoint = new LightPoint_System();
-	auto * lightSpot = new LightSpot_System();
-	auto * reflector = new Reflector_System();
-	m_renderingSystems.addSystem(new TransformSync_Gfx_System());
-	m_renderingSystems.addSystem(new SkeletonAnimation_System());
+	auto * lightPoint = new LightPoint_System(m_engine);
+	auto * lightSpot = new LightSpot_System(m_engine);
+	auto * reflector = new Reflector_System(m_engine);
+	m_renderingSystems.addSystem(new TransformSync_Gfx_System(m_engine));
+	m_renderingSystems.addSystem(new SkeletonAnimation_System(m_engine));
 	m_renderingSystems.addSystem(propRendering);
 	m_renderingSystems.addSystem(lightDirectional);
 	m_renderingSystems.addSystem(lightPoint);
@@ -288,22 +288,28 @@ void Graphics_Module::initialize(Engine * engine)
 
 void Graphics_Module::frameTick(const float & deltaTime)
 {
-	// Update rendering pipeline
+	// Wait on tripple-buffered camera buffer lock
+	m_cameraBuffer.waitFrame(m_engine->getCurrentFrame());
+
+	// Bind the camera buffer, commit changes, clear buffers
+	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	m_cameraBuffer.bind(2, m_engine->getCurrentFrame());
 	m_cameraBuffer.pushChanges(m_engine->getCurrentFrame());
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	m_geometryFBO.clear();
 	m_lightingFBO.clear();
 	m_reflectionFBO.clear();
 	m_bounceFBO.clear();
 	m_engine->getManager_Materials().bind();
-	m_volumeRH->updateVolume(getCameraBuffer());
+	m_volumeRH->updateVolume(m_cameraBuffer);
 	m_engine->getModule_World().updateSystems(m_renderingSystems, deltaTime);
 
 	// Rendering
 	for each (auto *tech in m_fxTechs)
 		if (tech->isEnabled())
 			tech->applyEffect(deltaTime);
+
+	// Set lock for 3 frames from now
+	m_cameraBuffer.lockFrame(m_engine->getCurrentFrame());
 }
 
 void Graphics_Module::updateCamera(CameraBuffer & cameraBuffer)
