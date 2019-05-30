@@ -20,7 +20,7 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline Options_Pane(Engine * engine) {
+	inline Options_Pane(Engine * engine) : m_engine(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
@@ -32,8 +32,8 @@ public:
 		layout->setSpacing(1.0f);
 		layout->setMargin(50.0f);
 		layout->addCallback(List::on_selection, [&]() {
-			const auto index = (std::dynamic_pointer_cast<List>(m_layout)->getIndex());
-			if (index > -1 && size_t(index) < m_descriptions.size())
+			const auto index = m_layout->getSelectionIndex();
+			if (index > -1 && size_t(index) < m_descriptions.size()) 
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
 			else
 				std::dynamic_pointer_cast<Label>(m_description)->setText("");
@@ -59,6 +59,7 @@ public:
 		auto description = std::make_shared<Label>(engine);
 		description->setAlignment(Label::align_left);
 		description->setTextScale(10.0f);
+		description->setColor(glm::vec3(0.8, 0.6, 0.1));
 		description->setText("");
 		m_description = description;
 		m_backPanel->addElement(description);
@@ -77,6 +78,24 @@ public:
 		m_description->setPosition({ -scale.x + 50, -scale.y + 50 });
 		UI_Element::setScale(scale);
 	}
+	inline virtual void userAction(ActionState & actionState) override {		
+		const auto index = m_layout->getSelectionIndex();
+		// Only allow list traversal if we've cancelled our selection
+		if (index > -1 && index < m_focused.size()) {
+			// Cancel selection if ui escape action issued
+			if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+				m_layout->setSelectionIndex(-1);
+			else
+				m_focused[index]->userAction(actionState);
+		}
+		else {
+			// Escape Options Pane if no selection and escape action issued
+			if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+				m_engine->getModule_UI().popFocusedElement();
+			else
+				m_layout->userAction(actionState);
+		}
+	}
 	
 
 protected:
@@ -87,6 +106,7 @@ protected:
 		label->setColor(glm::vec3(0.75f));
 		horizontalLayout->addElement(label);
 		horizontalLayout->addElement(element);
+		m_focused.push_back(element);
 		horizontalLayout->setScale({ 0, 30 });
 		m_layout->addElement(horizontalLayout);
 		m_descriptions.push_back(description);
@@ -94,9 +114,14 @@ protected:
 
 
 	// Protected Attributes
-	std::shared_ptr<Label> m_title;
-	std::shared_ptr<UI_Element> m_backPanel, m_layout, m_separatorTop, m_separatorBot, m_description;
+	Engine * m_engine = nullptr;
+	std::shared_ptr<Label> m_title, m_description;
+	std::shared_ptr<List> m_layout;
+	std::shared_ptr<Separator> m_separatorTop, m_separatorBot;
+	std::shared_ptr<Panel> m_backPanel;
 	std::vector<std::string> m_descriptions;
+	std::vector<std::function<void()>> m_selectionCallbacks;
+	std::vector<std::shared_ptr<UI_Element>> m_focused;
 };
 
 #endif // OPTIONS_PANE_H

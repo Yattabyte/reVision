@@ -9,12 +9,6 @@
 /** UI button class, affords being pushed and released. */
 class Button : public UI_Element {
 public:
-	// Public Interaction Enums
-	const enum interact {
-		on_clicked = UI_Element::last_interact_index
-	};
-
-
 	// (de)Constructors
 	/** Destroy the button. */
 	inline ~Button() = default;
@@ -31,14 +25,27 @@ public:
 		// Callbacks
 		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
 		addCallback(on_press, [&]() { updateColors(); });
-		addCallback(on_release, [&]() {	updateColors(); enactCallback(on_clicked); });
+		addCallback(on_release, [&]() {	updateColors(); });
+		addCallback(on_clicked, [&]() {	updateColors(); });
 		addCallback(on_hover_start, [&]() { updateColors(); });
 		addCallback(on_hover_stop, [&]() { updateColors(); });
 		updateColors();
 	}
 
 
+	// Public Interface Implementation
+	inline virtual void userAction(ActionState & actionState) {
+		// Only thing a user can do is press the button
+		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
+			pressButton();
+	}
+
+
 	// Public Methods
+	/***/
+	inline void pressButton() {
+		enactCallback(UI_Element::on_clicked);
+	}
 	/** Set this label element's text.
 	@param	text	the text to use. */
 	inline void setText(const std::string & text) {
@@ -59,10 +66,6 @@ public:
 	@return radius	this buttons' bevel radius. */
 	inline float getBevelRadius() const {
 		return m_bevelRadius;
-	}
-	/** Get if this button is pressed. */
-	inline bool getPressed() const {
-		return m_pressed;
 	}
 
 

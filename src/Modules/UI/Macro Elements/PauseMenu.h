@@ -30,36 +30,33 @@ public:
 
 		// Add 'Start Game' button
 		auto startButton = std::make_shared<Button>(engine, "RESUME");
-		startButton->addCallback(Button::on_clicked, [&]() {
+		addButton(startButton, [&]() {
 			setVisible(false);
-			enactCallback(on_resume_game); 
+			enactCallback(on_resume_game);
 		});
-		addButton(startButton);
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
 		m_optionsMenu->setVisible(false);
-		optionsButton->addCallback(Button::on_clicked, [&]() {
-			m_backPanel->setVisible(false);
-			m_optionsMenu->setVisible(true);
-			enactCallback(on_options); 
-		});
 		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() {
 			m_backPanel->setVisible(true);
 			m_optionsMenu->setVisible(false);
 		});
-		addButton(optionsButton);
+		addButton(optionsButton, [&]() {
+			m_backPanel->setVisible(false);
+			m_optionsMenu->setVisible(true);
+			enactCallback(on_options);
+		});
 		addElement(m_optionsMenu);
 		
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		quitButton->addCallback(Button::on_clicked, [&, engine]() {
+		addButton(quitButton, [&, engine]() {
 			setVisible(false);
 			engine->shutDown();
 			enactCallback(on_quit);
 		});
-		addButton(quitButton);
 	}
 
 

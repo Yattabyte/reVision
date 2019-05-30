@@ -56,8 +56,7 @@ void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
 		rootElement->setScale(m_renderSize);
 
 	// Clear focus stack, set it to root
-	m_focusedElement.clear();
-	pushFocusedElement(rootElement);
+	m_focusedElement = m_rootElement;
 }
 
 void UI_Module::popRootElement()
@@ -66,8 +65,7 @@ void UI_Module::popRootElement()
 		m_rootElement.pop_back();
 
 	// Clear focus stack, set it to root
-	m_focusedElement.clear();
-	pushFocusedElement(m_rootElement.back());
+	m_focusedElement = m_rootElement;
 }
 
 void UI_Module::pushFocusedElement(const std::shared_ptr<UI_Element>& focusedElement)

@@ -4,8 +4,6 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Shader.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Engine.h"
 
 
 /** A UI container class that laysout its children vertically, in a list.
@@ -39,10 +37,8 @@ public:
 		glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 		glCreateBuffers(1, &m_vboID);
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
-		constexpr auto num_data = 8 * 3;
+		constexpr auto num_data = 8 * 6;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
 	}
 
 
@@ -53,17 +49,25 @@ public:
 		UI_Element::update();
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
-		if (m_index > -1 && m_children.size()) {
-			const glm::vec2 newPosition = position + m_position + m_children[m_index]->getPosition();
-			const glm::vec2 newScale = glm::min(m_children[m_index]->getScale(), scale);
-			if (m_shader->existsYet()) {
-				m_shader->bind();
+		if (!getVisible() || !m_children.size()) return;
+		if (m_shader->existsYet()) {
+			m_shader->bind();
+			glBindVertexArray(m_vaoID);
+			if (m_hoverIndex > -1) {
+				const glm::vec2 newPosition = position + m_position + m_children[m_hoverIndex]->getPosition();
+				const glm::vec2 newScale = glm::min(m_children[m_hoverIndex]->getScale(), scale);
 				m_shader->setUniform(0, newPosition);
 				m_shader->setUniform(1, newScale);
-				glBindVertexArray(m_vaoID);
-				m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-				glDrawArraysIndirect(GL_TRIANGLES, 0);
+				m_shader->setUniform(2, glm::vec4(1));
+				glDrawArrays(GL_TRIANGLES, 0, 24);
+			}
+			if (m_selectionIndex > -1) {
+				const glm::vec2 newPosition = position + m_position + m_children[m_selectionIndex]->getPosition();
+				const glm::vec2 newScale = glm::min(m_children[m_selectionIndex]->getScale(), scale);
+				m_shader->setUniform(0, newPosition);
+				m_shader->setUniform(1, newScale);
+				m_shader->setUniform(2, glm::vec4(0.8, 0.6, 0.1, 1));
+				glDrawArrays(GL_TRIANGLES, 24, 24);
 			}
 		}
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
@@ -71,56 +75,81 @@ public:
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+			// Move hover selection to whatever is beneath mouse
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
-			// Find which list item the mouse is over
 			int index(0);
+			bool interacted = false;
 			for each (auto & child in m_children) {
 				if (child->mouseWithin(subEvent)) {
-					// Emit when the hovered item changes
-					setIndex(index);
+					setHoverIndex(index);
+					interacted = true;
 					break;
 				}
 				else
 					index++;
 			}
+
+			// Set confirmed selection to whatever is beneath mouse
+			if (interacted && mouseEvent.m_action == MouseEvent::RELEASE)
+				setSelectionIndex(index);
+
+			// Force current selection to stay highlighted
+			if (m_children.size() && m_hoverIndex > -1)
+				m_children[m_hoverIndex]->setHovered();
 		}
 	}
-	inline virtual bool userAction(ActionState & actionState) {
-		bool consumed = UI_Element::userAction(actionState);
-		if (!consumed) {
-			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
-				setIndex(m_index - 1);
-				consumed = true;
-			}
-			else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
-				setIndex(m_index + 1);
-				consumed = true;
-			}
+	inline virtual void userAction(ActionState & actionState) {
+		// User can go up or down the list with an input device
+		// User input wraps around, and if an item is selected, moving will deselect it
+		if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
+			setHoverIndex(m_hoverIndex - 1);
+			if (m_selectionIndex != -1)
+				setSelectionIndex(-1);
 		}
-		return consumed;
+		else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
+			setHoverIndex(m_hoverIndex + 1);
+			if (m_selectionIndex != -1)
+				setSelectionIndex(-1);
+		}
+		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
+			if (m_hoverIndex > -1 && m_hoverIndex < m_children.size()) 
+				setSelectionIndex(m_hoverIndex);			
+		}
 	}
 
 	// Public Methods
-	/** Get the hovered item index.
-	@return				index of the hovered item in this list. */
-	inline int getIndex() const {
-		return m_index;
+	/***/
+	inline void setHoverIndex(const int & newIndex) {
+		if (m_children.size()) {
+			if (newIndex < 0)
+				m_hoverIndex = (int)m_children.size() - 1ull;
+			else {
+				if (newIndex > m_children.size() - 1ull)
+					m_hoverIndex = 0;
+				else
+					m_hoverIndex = newIndex;
+			}
+			for each (auto & child in m_children)
+				child->clearFocus();
+			m_children[m_hoverIndex]->setHovered();
+			updateSelectionGeometry();
+		}
 	}
 	/***/
-	inline void setIndex(const int & newIndex) {
-		if (newIndex < 0)
-			m_index = (int)m_children.size() - 1ull;
-		else {
-			if (newIndex > m_children.size() - 1ull)
-				m_index = 0;
-			else
-				m_index = newIndex;
-		}
+	inline int getHoverIndex() const {
+		return m_hoverIndex;
+	}
+	/***/
+	inline void setSelectionIndex(const int & newIndex) {
+		m_selectionIndex = newIndex;
 		updateSelectionGeometry();
 		enactCallback(on_selection);
-
+	}
+	/***/
+	inline int getSelectionIndex() const {
+		return m_selectionIndex;
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
@@ -174,42 +203,79 @@ protected:
 	}	
 	/** Update the geometry of the selection box. */
 	inline void updateSelectionGeometry() {
-		if (m_index <= -1 || m_children.size() < 1) return;
-		const auto scale = glm::min(m_children[m_index]->getScale() + m_spacing, m_scale - m_borderSize);
-		constexpr auto num_data = 8 * 3;
+		if (m_children.size() < 1) return;
+		constexpr auto num_data = 8 * 6;
 		std::vector<glm::vec3> m_data(num_data);
 
-		// Bottom Bar
-		m_data[0] = { -scale.x - m_borderSize, -scale.y, 0 };
-		m_data[1] = { scale.x + m_borderSize, -scale.y, 0 };
-		m_data[2] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
-		m_data[3] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
-		m_data[4] = { -scale.x - m_borderSize, -scale.y + m_borderSize, 0 };
-		m_data[5] = { -scale.x - m_borderSize, -scale.y, 0 };
+		if (m_hoverIndex > -1) {
+			auto scale = glm::min(m_children[m_hoverIndex]->getScale() + m_spacing, m_scale - m_borderSize);
+			// Bottom Bar
+			m_data[0] = { -scale.x - m_borderSize, -scale.y, 0 };
+			m_data[1] = { scale.x + m_borderSize, -scale.y, 0 };
+			m_data[2] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[3] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[4] = { -scale.x - m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[5] = { -scale.x - m_borderSize, -scale.y, 0 };
 
-		// Left Bar
-		m_data[6] = { -scale.x, -scale.y - m_borderSize, 0 };
-		m_data[7] = { -scale.x + m_borderSize, -scale.y - m_borderSize, 0 };
-		m_data[8] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
-		m_data[9] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
-		m_data[10] = { -scale.x, scale.y + m_borderSize, 0 };
-		m_data[11] = { -scale.x, -scale.y - m_borderSize, 0 };
+			// Left Bar
+			m_data[6] = { -scale.x, -scale.y - m_borderSize, 0 };
+			m_data[7] = { -scale.x + m_borderSize, -scale.y - m_borderSize, 0 };
+			m_data[8] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[9] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[10] = { -scale.x, scale.y + m_borderSize, 0 };
+			m_data[11] = { -scale.x, -scale.y - m_borderSize, 0 };
 
-		// Top Bar
-		m_data[12] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
-		m_data[13] = { scale.x + m_borderSize, scale.y - m_borderSize, 0 };
-		m_data[14] = { scale.x + m_borderSize, scale.y, 0 };
-		m_data[15] = { scale.x + m_borderSize, scale.y, 0 };
-		m_data[16] = { -scale.x - m_borderSize, scale.y, 0 };
-		m_data[17] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
+			// Top Bar
+			m_data[12] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
+			m_data[13] = { scale.x + m_borderSize, scale.y - m_borderSize, 0 };
+			m_data[14] = { scale.x + m_borderSize, scale.y, 0 };
+			m_data[15] = { scale.x + m_borderSize, scale.y, 0 };
+			m_data[16] = { -scale.x - m_borderSize, scale.y, 0 };
+			m_data[17] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
 
-		// Right Bar
-		m_data[18] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
-		m_data[19] = { scale.x, -scale.y - m_borderSize, 0 };
-		m_data[20] = { scale.x, scale.y + m_borderSize, 0 };
-		m_data[21] = { scale.x, scale.y + m_borderSize, 0 };
-		m_data[22] = { scale.x - m_borderSize, scale.y + m_borderSize, 0 };
-		m_data[23] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
+			// Right Bar
+			m_data[18] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
+			m_data[19] = { scale.x, -scale.y - m_borderSize, 0 };
+			m_data[20] = { scale.x, scale.y + m_borderSize, 0 };
+			m_data[21] = { scale.x, scale.y + m_borderSize, 0 };
+			m_data[22] = { scale.x - m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[23] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
+		}
+		
+		if (m_selectionIndex > -1) {
+			auto scale = glm::min(m_children[m_selectionIndex]->getScale() + m_spacing, m_scale - m_borderSize);
+			// Bottom Bar
+			m_data[24] = { -scale.x - m_borderSize, -scale.y, 0 };
+			m_data[25] = { scale.x + m_borderSize, -scale.y, 0 };
+			m_data[26] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[27] = { scale.x + m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[28] = { -scale.x - m_borderSize, -scale.y + m_borderSize, 0 };
+			m_data[29] = { -scale.x - m_borderSize, -scale.y, 0 };
+
+			// Left Bar
+			m_data[30] = { -scale.x, -scale.y - m_borderSize, 0 };
+			m_data[31] = { -scale.x + m_borderSize, -scale.y - m_borderSize, 0 };
+			m_data[32] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[33] = { -scale.x + m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[34] = { -scale.x, scale.y + m_borderSize, 0 };
+			m_data[35] = { -scale.x, -scale.y - m_borderSize, 0 };
+
+			// Top Bar
+			m_data[36] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
+			m_data[37] = { scale.x + m_borderSize, scale.y - m_borderSize, 0 };
+			m_data[38] = { scale.x + m_borderSize, scale.y, 0 };
+			m_data[39] = { scale.x + m_borderSize, scale.y, 0 };
+			m_data[40] = { -scale.x - m_borderSize, scale.y, 0 };
+			m_data[41] = { -scale.x - m_borderSize, scale.y - m_borderSize, 0 };
+
+			// Right Bar
+			m_data[42] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
+			m_data[43] = { scale.x, -scale.y - m_borderSize, 0 };
+			m_data[44] = { scale.x, scale.y + m_borderSize, 0 };
+			m_data[45] = { scale.x, scale.y + m_borderSize, 0 };
+			m_data[46] = { scale.x - m_borderSize, scale.y + m_borderSize, 0 };
+			m_data[47] = { scale.x - m_borderSize, -scale.y - m_borderSize, 0 };
+		}
 
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 	}
@@ -220,12 +286,11 @@ protected:
 		m_margin = 10.0f,
 		m_spacing = 10.0f,
 		m_borderSize = 2.0f;
-	int m_index = -1;
+	int m_hoverIndex = -1, m_selectionIndex = -1;
 	GLuint
 		m_vaoID = 0,
 		m_vboID = 0;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirect;
 };
 
 #endif // UI_LIST_H

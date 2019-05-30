@@ -23,7 +23,8 @@ public:
 		on_hover_stop,
 		on_press,
 		on_release,
-		last_interact_index = on_release + 1
+		on_clicked,
+		last_interact_index = on_clicked + 1
 	};
 
 
@@ -82,18 +83,11 @@ public:
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			for each (auto & child in m_children)
 				child->mouseAction(subEvent);
-			if (!m_hovered) {
-				m_hovered = true;
-				enactCallback(on_hover_start);
-			}
-			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-				m_pressed = true;
-				enactCallback(on_press);
-			}
-			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-				m_pressed = false;
-				enactCallback(on_release);
-			}
+			setHovered();
+			if (mouseEvent.m_action == MouseEvent::PRESS)
+				setPressed();
+			else if (mouseEvent.m_action == MouseEvent::RELEASE)
+				setReleased();
 		}
 		else {
 			clearFocus();
@@ -108,12 +102,7 @@ public:
 			child->keyboardAction(keyboardEvent);
 	}
 	/***/
-	inline virtual bool userAction(ActionState & actionState) {
-		for each (auto & child in m_children)
-			if (child->userAction(actionState))
-				return true;
-		return false;
-	}
+	inline virtual void userAction(ActionState & actionState) {}
 
 
 	// Public Methods
@@ -135,7 +124,7 @@ public:
 	/** Add a callback function, to be called when the given event occurs.
 	@param		interactionEventID		the ID corresponding to an event type
 	@param		func					the callback function to be called. */
-	inline void addCallback(const int & interactionEventID, const std::function<void()> && func) {
+	inline void addCallback(const int & interactionEventID, const std::function<void()> & func) {
 		m_callbacks[interactionEventID].push_back(func);
 		update();
 	}
@@ -196,17 +185,52 @@ public:
 		return m_enabled;
 	}
 	/***/
-	inline void clearFocus() {
+	inline void setHovered() {
+		if (!m_hovered) {
+			m_hovered = true;
+			enactCallback(on_hover_start);
+		}
+	}
+	/***/
+	inline bool getHovered() const {
+		return m_hovered;
+	}
+	/***/
+	inline void setPressed() {
+		if (!m_pressed) {
+			m_pressed = true;
+			enactCallback(on_press);
+		}
+	}
+	/***/
+	inline bool getPressed() const {
+		return m_pressed;
+	}
+	/***/
+	inline void setReleased() {
+		if (m_pressed) 
+			setClicked();		
 		m_pressed = false;
+		enactCallback(on_release);
+	}
+	/***/
+	inline bool getReleased() const {
+		return !m_pressed;
+	}
+	/***/
+	inline void setClicked() {
+		m_hovered = true;
+		m_clicked = true;
+		enactCallback(on_clicked);
+	}
+	/***/
+	inline void clearFocus() {
+		//m_pressed = false;
+		m_clicked = false;
 		if (m_hovered) {
 			m_hovered = false;
 			enactCallback(on_hover_stop);
 		}
-	}
-	/***/
-	inline void fullPress() {
-		m_hovered = true;
-		enactCallback(on_release);
 	}
 	/** Get whether or not the mouse is within this element. 
 	@return			true if the mouse is within this element. */
@@ -240,7 +264,8 @@ protected:
 		m_visible = true,
 		m_enabled = true,
 		m_hovered = false,
-		m_pressed = false;
+		m_pressed = false,
+		m_clicked = false;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;
 };

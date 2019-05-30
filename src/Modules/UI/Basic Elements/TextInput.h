@@ -92,8 +92,7 @@ public:
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
-			if (m_pressed) {
-				m_pressed = false;
+			if (m_clicked) {
 				// If already editing, move caret to mouse position
 				if (m_edit) {
 					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);

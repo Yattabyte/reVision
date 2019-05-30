@@ -111,10 +111,7 @@ public:
 					m_lpressed = true;
 				else if (m_lpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
 					m_lpressed = false;
-					const int index = std::max<int>(getIndex() - 1, 0);
-
-					setIndex(index);
-					enactCallback(on_index_changed);
+					setIndex(getIndex() - 1);
 				}
 			}
 			// Right button
@@ -124,10 +121,7 @@ public:
 					m_rpressed = true;
 				else if (m_rpressed && mouseEvent.m_action == MouseEvent::RELEASE) {
 					m_rpressed = false;
-					const int index = std::min<int>(getIndex() + 1, m_strings.size() - 1);
-
-					setIndex(index);
-					enactCallback(on_index_changed);
+					setIndex(getIndex() + 1);
 				}
 			}
 		}
@@ -137,6 +131,13 @@ public:
 			m_lpressed = false;
 			m_rpressed = false;			
 		}
+	}
+	inline virtual void userAction(ActionState & actionState) override {
+		// User can only change selection by using the left/right directional key actions
+		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+			setIndex(m_index - 1);
+		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS) 
+			setIndex(m_index + 1);
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		if (!getVisible()) return;
@@ -167,12 +168,15 @@ public:
 	/** Set the index to display as selected in the list.
 	@param		index		the new integer index to use. */
 	inline void setIndex(const int & index) {
-		m_index = index;
-		if (m_index < m_strings.size())
-			m_label->setText(m_strings[m_index]);
+		if (m_index != index) {
+			m_index = std::clamp<int>(index, 0, m_strings.size());
+			if (m_index < m_strings.size())
+				m_label->setText(m_strings[m_index]);
 
-		m_lEnabled = (index > 0);
-		m_rEnabled = (index < m_strings.size() - 1);
+			m_lEnabled = (index > 0);
+			m_rEnabled = (index < (int)(m_strings.size() - 1ull));
+			enactCallback(on_index_changed);
+		}
 	}
 	/** Get the index currently used in this list.
 	@return		currently active index. */
@@ -184,6 +188,10 @@ public:
 	inline void setStrings(const std::vector<std::string> & strings) {
 		m_strings = strings;
 		setIndex(getIndex());
+	}
+	/***/
+	inline std::vector<std::string> getStrings() const {
+		return m_strings;
 	}
 
 

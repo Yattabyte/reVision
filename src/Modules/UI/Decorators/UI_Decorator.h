@@ -33,10 +33,9 @@ public:
 		UI_Element::keyboardAction(keyboardEvent);
 		m_component->keyboardAction(keyboardEvent);
 	}
-	inline virtual bool userAction(ActionState & actionState) {
-		if (!UI_Element::userAction(actionState))
-			return m_component->userAction(actionState);
-		return false;
+	inline virtual void userAction(ActionState & actionState) {
+		UI_Element::userAction(actionState);
+		m_component->userAction(actionState);
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
 		UI_Element::renderElement(deltaTime, position, scale);

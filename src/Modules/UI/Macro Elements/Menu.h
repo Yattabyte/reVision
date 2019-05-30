@@ -3,6 +3,7 @@
 #define MENU_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Modules/UI/Basic Elements/List.h"
 #include "Modules/UI/Basic Elements/Panel.h"
@@ -27,13 +28,19 @@ public:
 
 		// Make a vertical layout to house list items
 		m_layout = std::make_shared<List>(engine);
-		m_layout->setSpacing(10.0f);
+		m_layout->setSpacing(10.0f); 
+		m_layout->addCallback(List::on_selection, [&]() {
+			const auto index = m_layout->getSelectionIndex();
+			if (index >= 0 && index < m_selectionCallbacks.size())
+				m_selectionCallbacks[index]();
+		});
 		m_backPanel->addElement(m_layout);
 
 		// Title
 		m_title = std::make_shared<Label>(engine, "");
 		m_title->setTextScale(15.0f);
 		m_title->setAlignment(Label::align_center);
+		m_title->setColor(glm::vec3(0.8, 0.6, 0.1));
 		m_backPanel->addElement(m_title);
 
 		// Title Separator
@@ -57,8 +64,10 @@ public:
 
 protected:
 	// Protected Methods
-	inline void addButton(std::shared_ptr<UI_Element> element) {
+	inline void addButton(std::shared_ptr<Button> element, const std::function<void()> & callback) {
 		element->setScale({ 120, 20 });
+		element->addCallback(Button::on_clicked, callback);
+		m_selectionCallbacks.push_back(callback);
 		m_layout->addElement(element);
 	};
 
@@ -66,6 +75,7 @@ protected:
 	// Protected Attributes
 	std::shared_ptr<Label> m_title;
 	std::shared_ptr<List> m_layout;
+	std::vector<std::function<void()>> m_selectionCallbacks;
 	std::shared_ptr<Separator> m_separator;
 	std::shared_ptr<Panel> m_backPanel;
 };

@@ -49,14 +49,8 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_hover_start, [&]() { m_hovered = true; });
-		addCallback(on_hover_stop, [&]() { m_hovered = false; });
-		addCallback(on_press, [&]() { m_pressed = true; });
-		addCallback(on_release, [&]() { 
-			m_pressed = false;
+		addCallback(on_clicked, [&]() { 
 			setToggled(!m_toggledOn);
-			setText(m_toggledOn ? "ON" : "OFF");
-			enactCallback(on_toggle);
 		});
 		update();
 	}
@@ -91,6 +85,14 @@ public:
 		m_paddle->setColor(color);
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
+	inline virtual void userAction(ActionState & actionState) {
+		if (m_toggledOn && actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+			setToggled(false);
+		else if (!m_toggledOn && actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+			setToggled(true);
+		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
+			setToggled(!m_toggledOn);
+	}
 
 
 	// Public Methods
@@ -109,7 +111,9 @@ public:
 	@param	state	the new state to use. */
 	inline void setToggled(const bool & state) {
 		m_toggledOn = state;
+		setText(m_toggledOn ? "ON" : "OFF");
 		update();
+		enactCallback(on_toggle);
 	}
 	/** Return the toggle state of this button. 
 	@return			whether or not this toggle is on or off. */
@@ -120,10 +124,7 @@ public:
 
 protected:
 	// Protected Attributes
-	bool
-		m_hovered = false,
-		m_pressed = false,
-		m_toggledOn = true;
+	bool m_toggledOn = true;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<Border> m_backPanel;
 	std::shared_ptr<Panel> m_paddle;

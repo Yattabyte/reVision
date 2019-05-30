@@ -28,18 +28,16 @@ public:
 		auto element_material_list = std::make_shared<SideList>(engine);
 		element_material_list->setMaxScale(glm::vec2(element_material_list->getMaxScale().x, 12.5f));
 		const std::vector<std::string> strings = { "Low",	"Medium",	"High",		"Very High",	"Ultra" };
-		const std::vector<float> sizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+		m_materialSizes = { 128.0f,		256.0f,		512.0f,		1024.0f,	2048.0f };
 		int counter = 0, index = 0;
-		for each (const auto & size in sizes) {
+		for each (const auto & size in m_materialSizes) {
 			if (materialSize == size)
 				index = counter;
 			counter++;
 		}
 		element_material_list->setStrings(strings);
 		element_material_list->setIndex(index);
-		element_material_list->addCallback(SideList::on_index_changed, [&, sizes, element_material_list, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, sizes[element_material_list->getIndex()]);
-		});
+		element_material_list->addCallback(SideList::on_index_changed, [&]() { setResolution(element_material_list->getIndex()); });
 		addOption(engine, element_material_list, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.");
 
 		float shadowSize = 1024, shadowQuality = 4;
@@ -139,38 +137,21 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_FXAA, element_fxaa->getToggled() ? 1.0f : 0.0f);
 		});
 		addOption(engine, element_fxaa, "FXAA:", "Turns fast approximate anti-aliasing on or off.");
-			
-		auto qwe = std::make_shared<TextInput>(engine);		
+
+		auto qwe = std::make_shared<TextInput>(engine);
 		addOption(engine, qwe, "Text Box:", "Test text box.");
 	}
 
 
-	// Public Interface Implementations
-	inline virtual bool userAction(ActionState & actionState) override {
-		/*
-
-			CAN PROBABLY CHANGE THE FUNCTION SIGNATURE TO NOT RETURN ANYTHING
-
-		*/
-		/*if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
-			m_layout->setIndex(m_layout->getIndex() - 1);
-			return true;
-		}
-		else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
-			m_layout->setIndex(m_layout->getIndex() + 1);
-			return true;
-		}
-		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
-			if (auto index = m_layout->getIndex(); index > -1)
-				m_layout->getElement(index)->fullPress();
-			return true;
-		}
-		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS) {
-			pressBack();
-			return true;
-		}*/
-		return false;
+protected:
+	// Protected Methods
+	inline void setResolution(const size_t & index) {		
+		m_engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, m_materialSizes[index]);
 	}
+
+
+	// Protected Attributes
+	std::vector<float> m_materialSizes;
 };
 
 #endif // OPTIONS_GRAPICS_H

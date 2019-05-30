@@ -4,7 +4,6 @@
 
 #include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/OptionsMenu.h"
-#include "Modules/UI/Basic Elements/Button.h"
 #include "Engine.h"
 
 
@@ -31,25 +30,20 @@ public:
 
 		// Add 'Start Game' button
 		auto startButton = std::make_shared<Button>(engine, "START GAME");
-		startButton->addCallback(Button::on_clicked, [&]() { pressStartGame(); });
-		addButton(startButton);
+		addButton(startButton, [&]() { pressStartGame(); });
 
 		// Add 'Start Puzzle' button
 		auto puzzleButton = std::make_shared<Button>(engine, "START PUZZLE");
-		puzzleButton->addCallback(Button::on_clicked, [&]() { pressStartPuzzle(); });
-		addButton(puzzleButton);
+		addButton(puzzleButton, [&]() { pressStartPuzzle(); });
 
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		optionsButton->addCallback(Button::on_clicked, [&]() { pressOptions(); });		
-		addButton(optionsButton);
+		addButton(optionsButton, [&]() { pressOptions(); });
 
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		quitButton->addCallback(Button::on_clicked, [&, engine]() { pressQuit(); });
-		addButton(quitButton);
-		m_layout->setIndex(0);
+		addButton(quitButton, [&]() { pressQuit(); });
 	}
 
 
@@ -58,21 +52,9 @@ public:
 		m_optionsMenu->setScale(scale);
 		Menu::setScale(scale);
 	}
-	inline virtual bool userAction(ActionState & actionState) override {
-		if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
-			m_layout->setIndex(m_layout->getIndex() - 1);
-			return true;
-		}
-		else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
-			m_layout->setIndex(m_layout->getIndex() + 1);
-			return true;
-		}
-		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
-			if (auto index = m_layout->getIndex(); index > -1)
-				m_layout->getElement(index)->fullPress();
-			return true;
-		}
-		return false;
+	inline virtual void userAction(ActionState & actionState) override {
+		// Start menu doesn't implement any custom controls, focus is on the list
+		m_layout->userAction(actionState);
 	}
 
 
@@ -89,7 +71,9 @@ protected:
 	}
 	/***/
 	inline void pressOptions() {
+		// Transfer appearance and control to options menu
 		m_engine->getModule_UI().pushRootElement(m_optionsMenu);
+		m_layout->setSelectionIndex(-1);
 		enactCallback(on_options);
 	}
 	/***/
