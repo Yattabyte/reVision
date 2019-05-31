@@ -5,7 +5,6 @@
 #include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/Options_Video.h"
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
-#include "Engine.h"
 
 
 /** A UI element serving as an options menu. */
@@ -25,7 +24,7 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline OptionsMenu(Engine * engine) : Menu(engine), m_engine(engine) {
+	inline OptionsMenu(Engine * engine) : Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
 
@@ -105,7 +104,6 @@ protected:
 
 
 	// Protected Attributes
-	Engine * m_engine = nullptr;
 	std::shared_ptr<UI_Element> m_videoMenu, m_gfxMenu;
 };
 

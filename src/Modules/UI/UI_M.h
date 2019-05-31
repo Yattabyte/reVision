@@ -59,6 +59,8 @@ public:
 	void applyKey(const int & key, const int & scancode, const int & action, const int & mods);
 	/***/
 	void applyActionState(ActionState & actionState);
+	/***/
+	void pushCallback(const std::function<void()> & callback);
 	
 
 private:
@@ -66,6 +68,7 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
 	std::vector<std::shared_ptr<UI_Element>> m_rootElement, m_focusedElement;
+	std::vector<std::function<void()>> m_callbacks;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
 };

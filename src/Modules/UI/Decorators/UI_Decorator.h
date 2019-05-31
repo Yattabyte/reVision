@@ -14,7 +14,7 @@ public:
 	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
-	inline UI_Decorator(const std::shared_ptr<UI_Element> & component) : m_component(component) {}
+	inline UI_Decorator(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Element(engine), m_component(component) {}
 
 
 	// Public Interface Implementations

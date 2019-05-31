@@ -27,7 +27,7 @@ public:
 	}
 	/** Construct a text input.
 	@param	engine		the engine to use. */
-	inline TextInput(Engine * engine) {
+	inline TextInput(Engine * engine) : UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
 
@@ -36,6 +36,11 @@ public:
 		m_label->setAlignment(Label::align_left);
 		m_label->setColor(glm::vec3(0.0f));
 		addElement(m_label);
+
+		// Callbacks
+		addCallback(UI_Element::on_clicked, []() {
+
+		});
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -91,7 +96,7 @@ public:
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
-		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_clicked) {
 				// If already editing, move caret to mouse position
 				if (m_edit) {
@@ -99,6 +104,7 @@ public:
 					setCaret((int)std::roundf(float(mx) / 10.0f));
 				}
 				m_edit = true;
+				m_clicked = false;
 				return;
 			}
 		}

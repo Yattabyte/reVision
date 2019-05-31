@@ -3,7 +3,6 @@
 #define UI_BORDER_H
 
 #include "Modules/UI/Decorators/UI_Decorator.h"
-#include "Engine.h"
 #include <memory>
 
 
@@ -20,7 +19,7 @@ public:
 	/** Construct a border, decorating the supplied component. 
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Border(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(component) {
+	inline Border(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(engine, component) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Border");
 

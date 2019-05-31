@@ -12,7 +12,7 @@ public:
 	/** Destroy the layout. */
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout. */
-	inline Layout_Horizontal() = default;
+	inline Layout_Horizontal(Engine * engine) : UI_Element(engine) {}
 
 
 	// Public Interface Implementation

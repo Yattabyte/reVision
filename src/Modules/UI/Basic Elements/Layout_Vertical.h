@@ -12,7 +12,7 @@ public:
 	/** Destroy the layout. */
 	inline ~Layout_Vertical() = default;
 	/** Construct the layout. */
-	inline Layout_Vertical() = default;
+	inline Layout_Vertical(Engine * engine) : UI_Element(engine) {}
 
 
 	// Public Interface Implementation

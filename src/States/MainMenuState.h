@@ -25,11 +25,11 @@ public:
 
 		// Create main menu
 		m_startMenu = std::make_shared<StartMenu>(m_engine);
-		m_startMenu->addCallback(StartMenu::on_start_game, [&]() {
-			m_engine->setEngineState(new GameState(m_engine));
+		m_startMenu->addCallback(StartMenu::on_start_game, [engine]() {
+			engine->setEngineState(new GameState(engine));
 		});
-		m_startMenu->addCallback(StartMenu::on_start_puzzle, [&]() {
-			m_engine->setEngineState(new PuzzleState(m_engine));
+		m_startMenu->addCallback(StartMenu::on_start_puzzle, [engine]() {
+			engine->setEngineState(new PuzzleState(engine));
 		});
 		m_startMenu->addCallback(StartMenu::on_options, [&]() {
 		});

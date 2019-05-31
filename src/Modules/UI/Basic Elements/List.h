@@ -26,7 +26,7 @@ public:
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline List(Engine * engine) {
+	inline List(Engine * engine) : UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\List");
 
@@ -74,7 +74,7 @@ public:
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
-		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			// Move hover selection to whatever is beneath mouse
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;

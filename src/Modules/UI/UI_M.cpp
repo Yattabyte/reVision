@@ -34,6 +34,13 @@ void UI_Module::initialize(Engine * engine)
 
 void UI_Module::frameTick(const float & deltaTime)
 {
+	// Copy the list of callbacks, execute a copy of them
+	// We use a copy because any callback may alter the list, 
+	auto copy = m_callbacks;
+	m_callbacks.clear();
+	for each (const auto & func in copy)
+		func();
+
 	if (m_rootElement.size() && m_rootElement.back()) {
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -124,4 +131,9 @@ void UI_Module::applyActionState(ActionState & actionState)
 {
 	if (m_focusedElement.size())
 		m_focusedElement.back()->userAction(actionState);
+}
+
+void UI_Module::pushCallback(const std::function<void()> & callback)
+{
+	m_callbacks.push_back(callback);
 }

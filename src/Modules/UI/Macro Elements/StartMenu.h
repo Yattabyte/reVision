@@ -24,7 +24,7 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu. 
 	@param	engine		the engine to use. */
-	inline StartMenu(Engine * engine) : Menu(engine), m_engine(engine) {
+	inline StartMenu(Engine * engine) : Menu(engine) {
 		// Title
 		m_title->setText("MAIN MENU");
 
@@ -85,7 +85,6 @@ protected:
 
 
 	// Protected Attributes
-	Engine * m_engine = nullptr;
 	std::shared_ptr<UI_Element> m_optionsMenu;
 };
 

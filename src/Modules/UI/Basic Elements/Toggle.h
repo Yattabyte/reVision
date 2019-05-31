@@ -23,7 +23,7 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
-	inline Toggle(Engine * engine, const bool & state = true) : m_toggledOn(state) {
+	inline Toggle(Engine * engine, const bool & state = true) : UI_Element(engine), m_toggledOn(state) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));

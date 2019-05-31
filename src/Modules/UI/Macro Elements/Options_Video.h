@@ -52,19 +52,18 @@ public:
 
 		float gamma = 1.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
-		auto gamma_slider = std::make_shared<Slider>(engine, gamma / 2.0f);
+		auto gamma_slider = std::make_shared<Slider>(engine, gamma);
+		gamma_slider->setRanges(0.0f, 2.0f);
 		std::ostringstream out;
 		out.precision(2);
 		out << std::fixed << gamma;
 		gamma_slider->setText(out.str());
-		gamma_slider->addCallback(Slider::on_slider_change, [&, gamma_slider, engine]() {
+		gamma_slider->addCallback(Slider::on_value_change, [&, gamma_slider, engine]() {
 			// Get a round version of the input
-			const float value = 2.0f * gamma_slider->getPercentage();
-			const float round_value = (int)(value * 100.0f + .5f) / 100.0f;
-
+			const float round_value = (int)(gamma_slider->getValue() * 100.0f + .5f) / 100.0f;
 			std::ostringstream out;
 			out.precision(2);
-			out << std::fixed << value;
+			out << std::fixed << gamma_slider->getValue();
 			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, round_value);
 			gamma_slider->setText(out.str());
 		});
@@ -72,29 +71,24 @@ public:
 
 		float ddistance = 1000.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
-		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance / 1000.0f);
+		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance);
 		ddistance_slider->setText(std::to_string((int)std::round<int>(ddistance)));
-		ddistance_slider->addCallback(Slider::on_slider_change, [&, ddistance_slider, engine]() {
-			// Get a round version of the input
-			const float value = 1000.0f * ddistance_slider->getPercentage();
-			const int round_value = (int)std::round<int>(value);
-			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, value);
-			ddistance_slider->setText(std::to_string(round_value));
+		ddistance_slider->setRanges(0.0f, 1000.0f);
+		ddistance_slider->addCallback(Slider::on_value_change, [&, ddistance_slider, engine]() {
+			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, ddistance_slider->getValue());
 		});
 		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.");
 
 		float fov = 90.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
-		auto fov_slider = std::make_shared<Slider>(engine, fov / 180.0f);
+		auto fov_slider = std::make_shared<Slider>(engine, fov);
+		fov_slider->setRanges(0.0f, 180.0f);
 		fov_slider->setText(std::to_string((int)std::round<int>(fov)));
-		fov_slider->addCallback(Slider::on_slider_change, [&, fov_slider, engine]() {
+		fov_slider->addCallback(Slider::on_value_change, [&, fov_slider, engine]() {
 			// Get a round version of the input
-			const float value = 180.0f * fov_slider->getPercentage();
-			const int round_value = (int)std::round<int>(value);
-
+			const int round_value = (int)std::round<int>(fov_slider->getValue());
 			// We store as a float, but we want to ensure round numbers
 			engine->getPreferenceState().setValue(PreferenceState::C_FOV, (float)round_value);
-			fov_slider->setText(std::to_string(round_value));			
 		});
 		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
 

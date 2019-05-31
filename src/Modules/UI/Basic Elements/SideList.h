@@ -27,7 +27,7 @@ public:
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline SideList(Engine * engine) {
+	inline SideList(Engine * engine) : UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -102,7 +102,7 @@ public:
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
-		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			const float mx = float(mouseEvent.m_xPos) - m_position.x;
 			// Left button
 			if (mx >= -m_scale.x && mx <= (-m_scale.x + 14) && m_lEnabled) {

@@ -30,33 +30,16 @@ public:
 
 		// Add 'Start Game' button
 		auto startButton = std::make_shared<Button>(engine, "RESUME");
-		addButton(startButton, [&]() {
-			setVisible(false);
-			enactCallback(on_resume_game);
-		});
+		addButton(startButton, [&]() { pressResume(); });
 			
 		// Add 'Options' button
 		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		m_optionsMenu->setVisible(false);
-		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() {
-			m_backPanel->setVisible(true);
-			m_optionsMenu->setVisible(false);
-		});
-		addButton(optionsButton, [&]() {
-			m_backPanel->setVisible(false);
-			m_optionsMenu->setVisible(true);
-			enactCallback(on_options);
-		});
-		addElement(m_optionsMenu);
-		
+		addButton(optionsButton, [&]() { pressOptions(); });
+
 		// Add 'Quit' button
 		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		addButton(quitButton, [&, engine]() {
-			setVisible(false);
-			engine->shutDown();
-			enactCallback(on_quit);
-		});
+		addButton(quitButton, [&]() { pressQuit(); });
 	}
 
 
@@ -65,9 +48,33 @@ public:
 		m_optionsMenu->setScale(scale);
 		Menu::setScale(scale);
 	}
+	inline virtual void userAction(ActionState & actionState) override {
+		// Start menu doesn't implement any custom controls, focus is on the list
+		m_layout->userAction(actionState);
+	}
 
 
 protected:
+	// Protected Methods
+	/***/
+	inline void pressResume() {
+		enactCallback(on_resume_game);
+	}
+	/***/
+	inline void pressOptions() {
+		// Transfer appearance and control to options menu
+		m_engine->getModule_UI().pushRootElement(m_optionsMenu);
+		m_layout->setSelectionIndex(-1);
+		enactCallback(on_options);
+	}
+	/***/
+	inline void pressQuit() {
+		m_engine->getModule_UI().clear();
+		m_engine->shutDown();
+		enactCallback(on_quit);
+	}
+
+
 	// Protected Attributes
 	std::shared_ptr<UI_Element> m_optionsMenu;
 };

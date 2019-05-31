@@ -20,7 +20,7 @@ public:
 	inline ~Menu() = default;
 	/** Construct a menu.
 	@param	engine		the engine to use. */
-	inline Menu(Engine * engine) {
+	inline Menu(Engine * engine) : UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		m_backPanel = std::make_shared<Panel>(engine);
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));

@@ -20,7 +20,7 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline Options_Pane(Engine * engine) : m_engine(engine) {
+	inline Options_Pane(Engine * engine) : UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
@@ -101,7 +101,7 @@ public:
 protected:
 	// Protected Methods
 	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description) {
-		auto horizontalLayout = std::make_shared<Layout_Horizontal>();
+		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));
 		horizontalLayout->addElement(label);
@@ -114,7 +114,6 @@ protected:
 
 
 	// Protected Attributes
-	Engine * m_engine = nullptr;
 	std::shared_ptr<Label> m_title, m_description;
 	std::shared_ptr<List> m_layout;
 	std::shared_ptr<Separator> m_separatorTop, m_separatorBot;

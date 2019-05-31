@@ -12,7 +12,7 @@ class Slider : public UI_Element {
 public:
 	// Public Interaction Enums
 	const enum interact {
-		on_slider_change = UI_Element::last_interact_index
+		on_value_change = UI_Element::last_interact_index
 	};
 
 
@@ -22,7 +22,7 @@ public:
 	/** Construct a slider with a given starting value. 
 	@param	engine		the engine to use.
 	@param	value		the starting value to use. */
-	inline Slider(Engine * engine, const float & value = 0.0f) {
+	inline Slider(Engine * engine, const float & value = 0.0f) : UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -49,7 +49,7 @@ public:
 		addCallback(on_press, [&]() { m_pressed = true; });
 		addCallback(on_release, [&]() { m_pressed = false; });
 
-		m_percentage = value;
+		m_value = value;
 		update();
 	}
 
@@ -69,32 +69,44 @@ public:
 	}
 	inline virtual void update() override {
 		if (!m_paddle) return;
-		m_paddle->setPosition({ (2.0f * m_percentage - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
+		m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
-		if (getVisible() & getEnabled() && mouseWithin(mouseEvent)) {
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
 				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
-				setPercentage(mx / (m_backPanel->getScale().x * 2.0f));
-				enactCallback(on_slider_change);
+				setValue(((mx / (m_backPanel->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
 			}
 		}
+	}
+	inline virtual void userAction(ActionState & actionState) {
+		const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
+		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+			setValue(getValue() - offsetAmount);
+		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+			setValue(getValue() + offsetAmount);
 	}
 
 
 	// Public Methods
 	/** Set the percentage for this slider.
-	@param	percentage	the percentage amount to put this slider at. */
-	inline void setPercentage(const float & linear) {
-		m_percentage = std::clamp<float>(linear, 0.0f, 1.0f);
-		setText(std::to_string((int)std::round<int>(m_percentage * 100.0f)) + "%");
+	@param	amount		the value to put this slider at. */
+	inline void setValue(const float & amount) {
+		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
+		setText(std::to_string((int)std::round<int>(m_value)));
 		update();
+		enactCallback(on_value_change);
 	}
 	/** Get the percentage value for this scrollbar.
 	@return				the percentage value for this slider. */
-	inline float getPercentage() const {
-		return m_percentage;
+	inline float getValue() const {
+		return m_value;
+	}
+	/***/
+	inline void setRanges(const float & lowerRange, const float & upperRange) {
+		m_lowerRange = lowerRange;
+		m_upperRange = upperRange;
 	}
 	/** Set this slider's text.
 	@param	text	the text to use. */
@@ -110,7 +122,7 @@ public:
 
 protected:
 	// Protected Attributes
-	float m_percentage = 0.0f;
+	float m_value = 0.0f, m_lowerRange = 0.0f, m_upperRange = 1.0f;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<UI_Element> m_backPanel, m_paddle;
 };
