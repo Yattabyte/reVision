@@ -23,18 +23,19 @@ public:
 	/** Construct a toggle switch with a given on/off state.
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
-	inline Toggle(Engine * engine, const bool & state = true) : UI_Element(engine), m_toggledOn(state) {
+	inline Toggle(Engine * engine, const bool & state = true, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent), m_toggledOn(state) {
 		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
+		auto panel = std::make_shared<Panel>(engine, this);
 		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel);
+		m_backPanel = std::make_shared<Border>(engine, panel, this);
 		m_backPanel->setMaxScale({ 100, 14 });
 		m_backPanel->setScale({ 100, 14 });
 		m_backPanel->setPosition({ 48, 0 });
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
-		auto paddle = std::make_shared<Panel>(engine);
+		auto paddle = std::make_shared<Panel>(engine, this);
 		paddle->setColor(glm::vec4(0.75f));
 		paddle ->setMaxScale({ 50.0f, 14 });
 		paddle->setScale({ 50.0f, 14 });
@@ -42,7 +43,7 @@ public:
 		panel->addElement(m_paddle);
 		
 		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine, state ? "ON" : "OFF");
+		m_label = std::make_shared<Label>(engine, state ? "ON" : "OFF", this);
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
@@ -91,6 +92,8 @@ public:
 			setToggled(true);
 		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			setToggled(!m_toggledOn);
+		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+			focusParent();
 	}
 
 

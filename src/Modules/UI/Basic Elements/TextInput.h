@@ -27,12 +27,13 @@ public:
 	}
 	/** Construct a text input.
 	@param	engine		the engine to use. */
-	inline TextInput(Engine * engine) : UI_Element(engine) {
+	inline TextInput(Engine * engine, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
 
 		// Label
-		m_label = std::make_shared<Label>(engine);
+		m_label = std::make_shared<Label>(engine, "", this);
 		m_label->setAlignment(Label::align_left);
 		m_label->setColor(glm::vec3(0.0f));
 		addElement(m_label);

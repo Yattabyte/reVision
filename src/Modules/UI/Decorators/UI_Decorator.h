@@ -14,7 +14,8 @@ public:
 	inline ~UI_Decorator() = default;
 	/** Construct a decorator, decorating the supplied component.
 	@param	component		the component to decorate. */
-	inline UI_Decorator(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Element(engine), m_component(component) {}
+	inline UI_Decorator(Engine * engine, const std::shared_ptr<UI_Element> & component, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent), m_component(component) {}
 
 
 	// Public Interface Implementations
@@ -40,8 +41,8 @@ public:
 		m_component->keyboardAction(keyboardEvent);
 	}
 	inline virtual void userAction(ActionState & actionState) override {
-		UI_Element::userAction(actionState);
 		m_component->userAction(actionState);
+		UI_Element::userAction(actionState);
 	}
 
 

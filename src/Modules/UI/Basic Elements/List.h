@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Shader.h"
+#include "Engine.h"
 
 
 /** A UI container class that laysout its children vertically, in a list.
@@ -26,7 +27,8 @@ public:
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline List(Engine * engine) : UI_Element(engine) {
+	inline List(Engine * engine, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\List");
 
@@ -106,19 +108,28 @@ public:
 	inline virtual void userAction(ActionState & actionState) {
 		// User can go up or down the list with an input device
 		// User input wraps around, and if an item is selected, moving will deselect it
-		if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
-			setHoverIndex(m_hoverIndex - 1);
-			if (m_selectionIndex != -1)
-				setSelectionIndex(-1);
+		if (m_children.size()) {
+			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
+				setHoverIndex(m_hoverIndex - 1 < 0 ? (int)m_children.size() - 1ull : m_hoverIndex - 1);
+
+				if (m_selectionIndex != -1)
+					setSelectionIndex(-1);
+			}
+			else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
+				setHoverIndex(m_hoverIndex + 1 > m_children.size() - 1ull ? 0 : m_hoverIndex + 1);
+
+				if (m_selectionIndex != -1)
+					setSelectionIndex(-1);
+			}
+			else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
+				if (m_hoverIndex > -1 && m_hoverIndex < m_children.size()) 
+					setSelectionIndex(m_hoverIndex);			
+			}
 		}
-		else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
-			setHoverIndex(m_hoverIndex + 1);
-			if (m_selectionIndex != -1)
-				setSelectionIndex(-1);
-		}
-		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS) {
-			if (m_hoverIndex > -1 && m_hoverIndex < m_children.size()) 
-				setSelectionIndex(m_hoverIndex);			
+		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS) {
+			setSelectionIndex(-1);
+			setHoverIndex(-1);
+			focusParent();
 		}
 	}
 
@@ -126,18 +137,12 @@ public:
 	/** Change the item this list is hovered over.
 	@param	newIndex		the new hover index to use. */
 	inline void setHoverIndex(const int & newIndex) {
+		m_hoverIndex = newIndex;
 		if (m_children.size()) {
-			if (newIndex < 0)
-				m_hoverIndex = (int)m_children.size() - 1ull;
-			else {
-				if (newIndex > m_children.size() - 1ull)
-					m_hoverIndex = 0;
-				else
-					m_hoverIndex = newIndex;
-			}
 			for each (auto & child in m_children)
 				child->clearFocus();
-			m_children[m_hoverIndex]->setHovered();
+			if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
+				m_children[m_hoverIndex]->setHovered();
 			updateSelectionGeometry();
 		}
 	}
@@ -150,6 +155,8 @@ public:
 	@param	newIndex		the new selected index. */
 	inline void setSelectionIndex(const int & newIndex) {
 		m_selectionIndex = newIndex;
+		if (m_selectionIndex > -1 && m_selectionIndex < m_children.size())
+			m_engine->getModule_UI().setFocusedElement(m_children[m_selectionIndex].get());
 		updateSelectionGeometry();
 		enactCallback(on_selection);
 	}

@@ -15,9 +15,10 @@ public:
 	/** Creates a button with specific text inside. 
 	@param	engine		the engine.
 	@param	text		the button text. */
-	inline Button(Engine * engine, const std::string & text = "Button") : UI_Element(engine) {
+	inline Button(Engine * engine, const std::string & text = "Button", UI_Element * parent = nullptr)
+		: UI_Element(engine, parent) {
 		// All buttons have labels
-		m_label = std::make_shared<Label>(engine, text);
+		m_label = std::make_shared<Label>(engine, text, this);
 		m_label->setAlignment(Label::align_center);
 		m_label->setTextScale(12.5f);
 		addElement(m_label);
@@ -38,6 +39,8 @@ public:
 		// Only thing a user can do is press the button
 		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			pressButton();
+		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+			focusParent();
 	}
 
 

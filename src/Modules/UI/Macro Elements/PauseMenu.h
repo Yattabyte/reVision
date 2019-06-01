@@ -24,7 +24,8 @@ public:
 	inline ~PauseMenu() = default;
 	/** Construct a start menu. 
 	@param	engine		the engine to use. */
-	inline PauseMenu(Engine * engine) : Menu(engine) {
+	inline PauseMenu(Engine * engine, UI_Element * parent = nullptr)
+		: Menu(engine, parent) {
 		// Title
 		m_title->setText("PAUSE MENU");
 
@@ -43,13 +44,6 @@ public:
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
 		});
-	}
-
-
-	// Public Interface Implementations
-	inline virtual void userAction(ActionState & actionState) override {
-		// Start menu doesn't implement any custom controls, focus is on the list
-		m_layout->userAction(actionState);
 	}
 
 

@@ -34,8 +34,9 @@ public:
 	/** Destroy this ui element. */
 	inline ~UI_Element() = default;
 	/** Construct a ui element. 
-	@param	engine		the engine to use. */
-	UI_Element(Engine * engine);
+	@param	engine		the engine to use. 
+	@param	parent		(optional) a parent pointer. */
+	UI_Element(Engine * engine, UI_Element * parent = nullptr);
 
 
 	// Public Interface Declaration
@@ -127,6 +128,10 @@ public:
 	bool getClicked() const;
 	/** Reset this element, releasing, unpressing, unhovering this element and all its children. */
 	void clearFocus();
+	/** Switch the focus to this element. */
+	void setFocused();
+	/** Switch the focus from this element to its parent. */
+	void focusParent() const;
 	/** Get whether or not the mouse is within this element. 
 	@return			true if the mouse is within this element. */
 	bool mouseWithin(const MouseEvent & mouseEvent) const;
@@ -154,6 +159,7 @@ protected:
 		m_hovered = false,
 		m_pressed = false,
 		m_clicked = false;
+	UI_Element * m_parent = nullptr;
 	std::vector<std::shared_ptr<UI_Element>> m_children;
 	std::map<int, std::vector<std::function<void()>>> m_callbacks;
 };

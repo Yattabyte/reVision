@@ -19,7 +19,8 @@ public:
 	}
 	/** Construct a panel.
 	@param	engine		the engine to use. */
-	inline Panel(Engine * engine) : UI_Element(engine) {
+	inline Panel(Engine * engine, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Panel");
 

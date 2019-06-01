@@ -27,11 +27,12 @@ public:
 	/** Construct a vertical scrollbar, decorating the supplied component. 
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
-	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component) : UI_Decorator(engine, component) {
+	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component, UI_Element * parent = nullptr)
+		: UI_Decorator(engine, component, parent) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\ScrollBar");
 
-		auto & topButton = std::make_shared<Button>(engine, ""), &bottomButton = std::make_shared<Button>(engine, ""), &panel = std::make_shared<Button>(engine, "");
+		auto topButton = std::make_shared<Button>(engine, "", this), bottomButton = std::make_shared<Button>(engine, "", this), panel = std::make_shared<Button>(engine, "", this);
 		addElement(topButton);
 		addElement(bottomButton);
 		addElement(panel);

@@ -35,9 +35,7 @@ public:
 	void popRootElement();
 	/** Push a new UI element onto a stack to receive userAction input only.
 	@param	focusedElement		a separate element to receive input. */
-	void pushFocusedElement(const std::shared_ptr<UI_Element> & focusedElement);
-	/** Pop the top focused element off the stack. */
-	void popFocusedElement();
+	void setFocusedElement(UI_Element * focusedElement);
 	/** Remove the root UI element from the UI system. */
 	void clear();
 	/** Propagates mouse movement input to all UI elements.
@@ -70,7 +68,8 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
-	std::vector<std::shared_ptr<UI_Element>> m_rootElement, m_focusedElement;
+	std::vector<std::shared_ptr<UI_Element>> m_rootElement;
+	UI_Element * m_focusedElement = nullptr;
 	std::vector<std::function<void()>> m_callbacks;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;

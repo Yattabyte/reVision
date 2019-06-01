@@ -13,7 +13,7 @@ public:
 	inline ~Layout_Vertical() = default;
 	/** Construct the layout.
 	@param	engine		the engine to use. */
-	inline Layout_Vertical(Engine * engine) : UI_Element(engine) {}
+	inline Layout_Vertical(Engine * engine, UI_Element * parent = nullptr) : UI_Element(engine, parent) {}
 
 
 	// Public Interface Implementation

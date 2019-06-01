@@ -20,12 +20,13 @@ public:
 	inline ~Options_Video() = default;
 	/** Contsruct a video pane. 
 	@param	engine		the engine to use. */
-	inline Options_Video(Engine * engine) : Options_Pane(engine) {
+	inline Options_Video(Engine * engine, UI_Element * parent = nullptr)
+		: Options_Pane(engine, parent) {
 		// Title
 		m_title->setText("Video Options");
 
 		// Resolution Option
-		auto element_res = std::make_shared<SideList>(engine);
+		auto element_res = std::make_shared<SideList>(engine, this);
 		float width = 1920.0f, height = 1080.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -41,23 +42,22 @@ public:
 		}
 		element_res->setStrings(strings);
 		element_res->setIndex(index);
-		element_res->addCallback(SideList::on_index_changed, [&, element_res, engine]() {
+		addOption(engine, element_res, "Resolution:", "Changes the resolution the game renders at.", SideList::on_index_changed, [&, element_res, engine]() {
 			const auto & index = element_res->getIndex();
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_WIDTH, m_resolutions[index].x);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_HEIGHT, m_resolutions[index].y);
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_REFRESH_RATE, m_resolutions[index].z);
 		});
-		addOption(engine, element_res, "Resolution:", "Changes the resolution the game renders at.");
 
 		// Gamma Option
 		float gamma = 1.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
-		auto gamma_slider = std::make_shared<Slider>(engine, gamma, glm::vec2(0.0f, 2.0f));
+		auto gamma_slider = std::make_shared<Slider>(engine, gamma, glm::vec2(0.0f, 2.0f), this);
 		std::ostringstream out;
 		out.precision(2);
 		out << std::fixed << gamma;
 		gamma_slider->setText(out.str());
-		gamma_slider->addCallback(Slider::on_value_change, [&, gamma_slider, engine]() {
+		addOption(engine, gamma_slider, "Gamma:", "Changes the gamma correction value used.", Slider::on_value_change, [&, gamma_slider, engine]() {
 			// Get a round version of the input
 			const float round_value = (int)(gamma_slider->getValue() * 100.0f + .5f) / 100.0f;
 			std::ostringstream out;
@@ -66,46 +66,41 @@ public:
 			engine->getPreferenceState().setValue(PreferenceState::C_GAMMA, round_value);
 			gamma_slider->setText(out.str());
 		});
-		addOption(engine, gamma_slider, "Gamma:", "Changes the gamma correction value used.");
 
 		// Draw Distance Option
 		float ddistance = 1000.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
-		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f));
-		ddistance_slider->addCallback(Slider::on_value_change, [&, ddistance_slider, engine]() {
+		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f), this);
+		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.", Slider::on_value_change, [&, ddistance_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, ddistance_slider->getValue());
 		});
-		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.");
 
 		// FOV Option
 		float fov = 90.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
-		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180));
-		fov_slider->addCallback(Slider::on_value_change, [&, fov_slider, engine]() {
+		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180), this);
+		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.", Slider::on_value_change, [&, fov_slider, engine]() {
 			// Get a round version of the input
 			const int round_value = (int)std::round<int>(fov_slider->getValue());
 			// We store as a float, but we want to ensure round numbers
 			engine->getPreferenceState().setValue(PreferenceState::C_FOV, (float)round_value);
 		});
-		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
 
 		// VSync Option
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
-		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
-		element_sync->addCallback(Toggle::on_toggle, [&, element_sync, engine]() {
+		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state, this);
+		addOption(engine, element_sync, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.", Toggle::on_toggle, [&, element_sync, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
 		});
-		addOption(engine, element_sync, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.");
 
 		// Full Screen Option
 		bool element_fs_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
-		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);
-		element_fs->addCallback(Toggle::on_toggle, [&, element_fs, engine]() {
+		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state, this);
+		addOption(engine, element_fs, "Full-screen:", "Render the game full-screen instead of as a window.", Toggle::on_toggle, [&, element_fs, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 		});
-		addOption(engine, element_fs, "Full-screen:", "Render the game full-screen instead of as a window.");
 	}
 
 

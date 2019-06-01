@@ -24,18 +24,19 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline OptionsMenu(Engine * engine) : Menu(engine) {
+	inline OptionsMenu(Engine * engine, UI_Element * parent = nullptr)
+		: Menu(engine, parent) {
 		// Title
 		m_title->setText("OPTIONS");
 
 		// Add 'Video' button
-		m_videoMenu = std::make_shared<Options_Video>(engine);
+		m_videoMenu = std::make_shared<Options_Video>(engine, this);
 		m_videoMenu->setVisible(false);
 		addButton(engine, "VIDEO", [&]() { video(); });
 		addElement(m_videoMenu);
 
 		// Add 'Graphics' button
-		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
+		m_gfxMenu = std::make_shared<Options_Graphics>(engine, this);
 		m_gfxMenu->setVisible(false);
 		addButton(engine, "GRAPHICS", [&]() { graphics(); });
 		addElement(m_gfxMenu);
@@ -73,7 +74,7 @@ protected:
 		m_videoMenu->setVisible(true);
 		m_gfxMenu->setVisible(false);
 		// Transfer control only to the video menu
-		m_engine->getModule_UI().pushFocusedElement(m_videoMenu);
+		m_engine->getModule_UI().setFocusedElement(m_videoMenu.get());
 		enactCallback(on_video);
 	}
 	/** Choose 'graphics' from the options menu. */
@@ -81,7 +82,7 @@ protected:
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(true);
 		// Transfer control only to the video menu
-		m_engine->getModule_UI().pushFocusedElement(m_gfxMenu);
+		m_engine->getModule_UI().setFocusedElement(m_gfxMenu.get());
 		enactCallback(on_graphics);
 	}
 	/** Choose 'controls' from the options menu. */
@@ -93,6 +94,7 @@ protected:
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(false);
 		m_engine->getPreferenceState().save();
+
 		// Revert appearance and control back to previous element (start menu, pause menu, etc)
 		m_engine->getModule_UI().popRootElement();
 		m_layout->setSelectionIndex(-1);

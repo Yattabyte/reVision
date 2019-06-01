@@ -24,7 +24,8 @@ public:
 	inline ~StartMenu() = default;
 	/** Construct a start menu. 
 	@param	engine		the engine to use. */
-	inline StartMenu(Engine * engine) : Menu(engine) {
+	inline StartMenu(Engine * engine, UI_Element * parent = nullptr)
+		: Menu(engine, parent) {
 		// Title
 		m_title->setText("MAIN MENU");
 
@@ -46,13 +47,6 @@ public:
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
 		});
-	}
-
-
-	// Public Interface Implementations
-	inline virtual void userAction(ActionState & actionState) override {
-		// Start menu doesn't implement any custom controls, focus is on the list
-		m_layout->userAction(actionState);
 	}
 
 

@@ -4,8 +4,8 @@
 
 // Public (de)Constructors
 
-UI_Element::UI_Element(Engine * engine) 
-	: m_engine(engine) 
+UI_Element::UI_Element(Engine * engine, UI_Element * parent)
+	: m_engine(engine), m_parent(parent)
 {
 }
 
@@ -78,6 +78,9 @@ void UI_Element::userAction(ActionState & actionState)
 	// Base UI element has no specific user action support
 	// User actions are specific actions like navigating a menu, toggling a switch
 	// Input standardized as action state, but may come from things like keyboard or controller, but NOT a mouse.
+
+	if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+		focusParent();
 }
 
 
@@ -259,6 +262,17 @@ void UI_Element::clearFocus()
 		m_hovered = false;
 		enactCallback(on_hover_stop);
 	}
+}
+
+void UI_Element::setFocused()
+{
+	m_engine->getModule_UI().setFocusedElement(this);
+}
+
+void UI_Element::focusParent() const
+{
+	if (m_parent)
+		m_engine->getModule_UI().setFocusedElement(m_parent);
 }
 
 bool UI_Element::mouseWithin(const MouseEvent & mouseEvent) const 

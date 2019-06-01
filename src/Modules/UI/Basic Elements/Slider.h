@@ -23,19 +23,19 @@ public:
 	@param	engine		the engine to use.
 	@param	value		the starting value to use. 
 	@param	range		the starting range to use. */
-	inline Slider(Engine * engine, const float & value = 0.0f, const glm::vec2 & range = {0.0f, 1.0f}) 
-		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
+	inline Slider(Engine * engine, const float & value = 0.0f, const glm::vec2 & range = {0.0f, 1.0f}, UI_Element * parent = nullptr)
+		: UI_Element(engine, parent), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
 		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
+		auto panel = std::make_shared<Panel>(engine, this);
 		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel);
+		m_backPanel = std::make_shared<Border>(engine, panel, this);
 		m_backPanel->setMaxScale({ 200, 14 });
 		m_backPanel->setScale({ 200, 14 });
 		m_backPanel->setPosition({ 48, 0 });
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
-		auto paddle = std::make_shared<Panel>(engine);
+		auto paddle = std::make_shared<Panel>(engine, this);
 		paddle->setColor(glm::vec4(0.75f));
 		paddle->setMaxScale({ 25, 14 });
 		paddle->setScale({ 25, 14 });
@@ -43,7 +43,7 @@ public:
 		panel->addElement(m_paddle);
 
 		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine, std::to_string(value));
+		m_label = std::make_shared<Label>(engine, std::to_string(value), this);
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
@@ -80,6 +80,8 @@ public:
 			setValue(getValue() - offsetAmount);
 		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
 			setValue(getValue() + offsetAmount);
+		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
+			focusParent();
 	}
 
 
