@@ -49,27 +49,30 @@ public:
 		UI_Element::update();
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible() || !m_children.size()) return;
-		if (m_shader->existsYet()) {
-			m_shader->bind();
-			glBindVertexArray(m_vaoID);
-			if (m_hoverIndex > -1) {
-				const glm::vec2 newPosition = position + m_position + m_children[m_hoverIndex]->getPosition();
-				const glm::vec2 newScale = glm::min(m_children[m_hoverIndex]->getScale(), scale);
-				m_shader->setUniform(0, newPosition);
-				m_shader->setUniform(1, newScale);
-				m_shader->setUniform(2, glm::vec4(1));
-				glDrawArrays(GL_TRIANGLES, 0, 24);
-			}
-			if (m_selectionIndex > -1) {
-				const glm::vec2 newPosition = position + m_position + m_children[m_selectionIndex]->getPosition();
-				const glm::vec2 newScale = glm::min(m_children[m_selectionIndex]->getScale(), scale);
-				m_shader->setUniform(0, newPosition);
-				m_shader->setUniform(1, newScale);
-				m_shader->setUniform(2, glm::vec4(0.8, 0.6, 0.1, 1));
-				glDrawArrays(GL_TRIANGLES, 24, 24);
-			}
+		// Exit Early
+		if (!getVisible() || !m_children.size() || !m_shader->existsYet()) return;
+		
+		// Render
+		m_shader->bind();
+		glBindVertexArray(m_vaoID);
+		if (m_hoverIndex > -1) {
+			const glm::vec2 newPosition = position + m_position + m_children[m_hoverIndex]->getPosition();
+			const glm::vec2 newScale = glm::min(m_children[m_hoverIndex]->getScale(), scale);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, newScale);
+			m_shader->setUniform(2, glm::vec4(1));
+			glDrawArrays(GL_TRIANGLES, 0, 24);
 		}
+		if (m_selectionIndex > -1) {
+			const glm::vec2 newPosition = position + m_position + m_children[m_selectionIndex]->getPosition();
+			const glm::vec2 newScale = glm::min(m_children[m_selectionIndex]->getScale(), scale);
+			m_shader->setUniform(0, newPosition);
+			m_shader->setUniform(1, newScale);
+			m_shader->setUniform(2, glm::vec4(0.8, 0.6, 0.1, 1));
+			glDrawArrays(GL_TRIANGLES, 24, 24);
+		}
+		
+		// Render Children	
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
@@ -120,7 +123,8 @@ public:
 	}
 
 	// Public Methods
-	/***/
+	/** Change the item this list is hovered over.
+	@param	newIndex		the new hover index to use. */
 	inline void setHoverIndex(const int & newIndex) {
 		if (m_children.size()) {
 			if (newIndex < 0)
@@ -137,17 +141,20 @@ public:
 			updateSelectionGeometry();
 		}
 	}
-	/***/
+	/** Retrieve this list's hovered item index.
+	@return					this list's hovered index. */
 	inline int getHoverIndex() const {
 		return m_hoverIndex;
 	}
-	/***/
+	/** Change this lists selected item.
+	@param	newIndex		the new selected index. */
 	inline void setSelectionIndex(const int & newIndex) {
 		m_selectionIndex = newIndex;
 		updateSelectionGeometry();
 		enactCallback(on_selection);
 	}
-	/***/
+	/** Retrieve this list's selected item index.
+	@return					this list's selected index. */
 	inline int getSelectionIndex() const {
 		return m_selectionIndex;
 	}

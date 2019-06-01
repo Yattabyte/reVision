@@ -1,4 +1,4 @@
-/* UI Separator Shader. */
+/* UI List Shader. */
 #version 460
 
 // Inputs

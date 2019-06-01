@@ -41,34 +41,34 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), &m_data[0], GL_CLIENT_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		setMaxScale(glm::vec2(getMaxScale().x, 2.0f));
+		setMinScale(glm::vec2(getMinScale().x, 2.0f));
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		UI_Element::setScale(glm::vec2(scale.x, 2));
-	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
+		
+		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, newScale);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, newScale);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		
+		// Render Children
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 
 
 protected:
 	// Protected Attributes
-	GLuint
-		m_vaoID = 0,
-		m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

@@ -38,8 +38,8 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(UI_Element::on_clicked, []() {
-
+		addCallback(UI_Element::on_resize, [&]() {
+			m_label->setScale(getScale());
 		});
 
 		// Generate vertex array
@@ -62,11 +62,8 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_label->setScale(scale);
-		UI_Element::setScale(scale);
-	}
 	inline virtual void update() override {
+		UI_Element::update();
 		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -91,8 +88,6 @@ public:
 
 		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
 		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
-
-		UI_Element::update();
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
@@ -144,22 +139,22 @@ public:
 		}
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		m_blinkTime += deltaTime;
-		if (!getVisible()) return;
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			// Render Background
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, m_enabled);
-			m_shader->setUniform(2, m_edit);
-			m_shader->setUniform(3, m_blinkTime);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
-		// Render Text
+		
+		// Render (background)
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, m_enabled);
+		m_shader->setUniform(2, m_edit);
+		m_shader->setUniform(3, m_blinkTime += deltaTime);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+
+		// Render Children (text)
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 

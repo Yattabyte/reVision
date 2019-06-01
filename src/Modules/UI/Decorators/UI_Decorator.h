@@ -18,6 +18,12 @@ public:
 
 
 	// Public Interface Implementations
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
+		UI_Element::renderElement(deltaTime, position, scale);
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
+		m_component->renderElement(deltaTime, newPosition, newScale);
+	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -29,19 +35,13 @@ public:
 		else
 			m_component->clearFocus();
 	}	
-	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) {
+	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
 		UI_Element::keyboardAction(keyboardEvent);
 		m_component->keyboardAction(keyboardEvent);
 	}
-	inline virtual void userAction(ActionState & actionState) {
+	inline virtual void userAction(ActionState & actionState) override {
 		UI_Element::userAction(actionState);
 		m_component->userAction(actionState);
-	}
-	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f)) override {
-		UI_Element::renderElement(deltaTime, position, scale);
-		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
-		m_component->renderElement(deltaTime, newPosition, newScale);
 	}
 
 

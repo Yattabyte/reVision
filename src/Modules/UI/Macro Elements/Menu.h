@@ -46,29 +46,33 @@ public:
 		// Title Separator
 		m_separator = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separator);
-	}
 
-
-	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_backPanel->setScale({ 128, scale.y });
-		m_backPanel->setPosition(glm::vec2(256, scale.y));
-		m_layout->setScale({ 128, 128 });
-		m_layout->setPosition(glm::vec2(0, -500));
-		m_title->setPosition({ 0, -300 });
-		m_separator->setScale({ 128, scale.y });
-		m_separator->setPosition({ 0, -325 });
-		UI_Element::setScale(scale);
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_backPanel->setScale({ 128, scale.y });
+			m_backPanel->setPosition(glm::vec2(256, scale.y));
+			m_layout->setScale({ 128, 128 });
+			m_layout->setPosition(glm::vec2(0, -500));
+			m_title->setPosition({ 0, -300 });
+			m_separator->setScale({ 128, scale.y });
+			m_separator->setPosition({ 0, -325 });
+		});
 	}
 
 
 protected:
 	// Protected Methods
-	inline void addButton(std::shared_ptr<Button> element, const std::function<void()> & callback) {
-		element->setScale({ 120, 20 });
-		element->addCallback(Button::on_clicked, callback);
+	/** Create a button with the text and callback specified.
+	@param	engine		the engine to use.
+	@param	buttonText	the text to label the button with.
+	@param	callback	the callback to use when the button is pressed. */
+	inline void addButton(Engine * engine, const char * buttonText, const std::function<void()> & callback) {
+		auto button = std::make_shared<Button>(engine, buttonText);
+		button->setScale({ 120, 20 });
+		button->addCallback(Button::on_clicked, callback);
 		m_selectionCallbacks.push_back(callback);
-		m_layout->addElement(element);
+		m_layout->addElement(button);
 	};
 
 

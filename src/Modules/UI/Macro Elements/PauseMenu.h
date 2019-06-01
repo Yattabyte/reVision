@@ -29,25 +29,24 @@ public:
 		m_title->setText("PAUSE MENU");
 
 		// Add 'Start Game' button
-		auto startButton = std::make_shared<Button>(engine, "RESUME");
-		addButton(startButton, [&]() { pressResume(); });
+		addButton(engine, "RESUME", [&]() { resume(); });
 			
 		// Add 'Options' button
-		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		addButton(optionsButton, [&]() { pressOptions(); });
+		addButton(engine, "  OPTIONS >", [&]() { options(); });
 
 		// Add 'Quit' button
-		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		addButton(quitButton, [&]() { pressQuit(); });
+		addButton(engine, "QUIT", [&]() { quit(); });
+		
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_optionsMenu->setScale(scale);
+		});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_optionsMenu->setScale(scale);
-		Menu::setScale(scale);
-	}
 	inline virtual void userAction(ActionState & actionState) override {
 		// Start menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
@@ -56,19 +55,19 @@ public:
 
 protected:
 	// Protected Methods
-	/***/
-	inline void pressResume() {
+	/** Choose 'resume' from the pause menu. */
+	inline void resume() {
 		enactCallback(on_resume_game);
 	}
-	/***/
-	inline void pressOptions() {
+	/** Choose 'options' from the pause menu. */
+	inline void options() {
 		// Transfer appearance and control to options menu
 		m_engine->getModule_UI().pushRootElement(m_optionsMenu);
 		m_layout->setSelectionIndex(-1);
 		enactCallback(on_options);
 	}
-	/***/
-	inline void pressQuit() {
+	/** Choose 'quit' from the pause menu. */
+	inline void quit() {
 		m_engine->getModule_UI().clear();
 		m_engine->shutDown();
 		enactCallback(on_quit);

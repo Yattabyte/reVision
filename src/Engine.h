@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.2.18";
+constexpr char ENGINE_VERSION[] = "3.2.19";
 
 struct GLFWwindow;
 class Engine;
@@ -73,12 +73,12 @@ public:
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
 	void setMouseInputMode(const MouseInputMode & mode);
-	/***/
+	/** Set the engine state, such as main menu, in game, etc. */
 	void setEngineState(EngineState * engineState);
 
 
 	// Public Accessors
-	/***/
+	/** Set the mouse input mode, such as free-look or normal cursor. */
 	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
 	/** Retrieve the current time. */
 	float getTime() const;

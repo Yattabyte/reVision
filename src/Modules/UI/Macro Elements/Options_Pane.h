@@ -22,24 +22,22 @@ public:
 	@param	engine		the engine to use. */
 	inline Options_Pane(Engine * engine) : UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
-		m_backPanel = panel;
-		addElement(panel);
+		m_backPanel = std::make_shared<Panel>(engine);
+		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
+		addElement(m_backPanel);
 
 		// Make a vertical layout to house list items
-		auto layout = std::make_shared<List>(engine);
-		layout->setSpacing(1.0f);
-		layout->setMargin(50.0f);
-		layout->addCallback(List::on_selection, [&]() {
+		m_layout = std::make_shared<List>(engine);
+		m_layout->setSpacing(1.0f);
+		m_layout->setMargin(50.0f);
+		m_layout->addCallback(List::on_selection, [&]() {
 			const auto index = m_layout->getSelectionIndex();
 			if (index > -1 && size_t(index) < m_descriptions.size()) 
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
 			else
 				std::dynamic_pointer_cast<Label>(m_description)->setText("");
 		});
-		m_layout = layout;
-		m_backPanel->addElement(layout);
+		m_backPanel->addElement(m_layout);
 
 		// Title
 		m_title = std::make_shared<Label>(engine, "");
@@ -56,28 +54,29 @@ public:
 		m_backPanel->addElement(m_separatorBot);
 
 		// Bottom Description Label
-		auto description = std::make_shared<Label>(engine);
-		description->setAlignment(Label::align_left);
-		description->setTextScale(10.0f);
-		description->setColor(glm::vec3(0.8, 0.6, 0.1));
-		description->setText("");
-		m_description = description;
-		m_backPanel->addElement(description);
+		m_description = std::make_shared<Label>(engine);
+		m_description->setAlignment(Label::align_left);
+		m_description->setTextScale(10.0f);
+		m_description->setColor(glm::vec3(0.8, 0.6, 0.1));
+		m_description->setText("");
+		m_backPanel->addElement(m_description);
+
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_backPanel->setScale(scale);
+			m_layout->setScale(scale - glm::vec2(0, 50));
+			m_title->setPosition({ -scale.x + 50, scale.y - 50 });
+			m_separatorTop->setScale(scale);
+			m_separatorTop->setPosition({ 0, scale.y - 100 });
+			m_separatorBot->setScale(scale);
+			m_separatorBot->setPosition({ 0, -scale.y + 100 });
+			m_description->setPosition({ -scale.x + 50, -scale.y + 50 });
+		});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_backPanel->setScale(scale);
-		m_layout->setScale(scale - glm::vec2(0, 50));
-		m_title->setPosition({ -scale.x + 50, scale.y - 50 });
-		m_separatorTop->setScale(scale);
-		m_separatorTop->setPosition({ 0, scale.y - 100 });
-		m_separatorBot->setScale(scale);
-		m_separatorBot->setPosition({ 0, -scale.y + 100 });
-		m_description->setPosition({ -scale.x + 50, -scale.y + 50 });
-		UI_Element::setScale(scale);
-	}
 	inline virtual void userAction(ActionState & actionState) override {		
 		const auto index = m_layout->getSelectionIndex();
 		// Only allow list traversal if we've cancelled our selection
@@ -100,6 +99,11 @@ public:
 
 protected:
 	// Protected Methods
+	/** Add an option to the options menu.
+	@param	engine		the engine to use.
+	@param	element		the element to add to the options menu.
+	@param	text		the text to title the option.
+	@param	description	the text to describe the option. */
 	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description) {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 		auto label = std::make_shared<Label>(engine, text);

@@ -21,17 +21,24 @@ public:
 	inline ~Slider() = default;
 	/** Construct a slider with a given starting value. 
 	@param	engine		the engine to use.
-	@param	value		the starting value to use. */
-	inline Slider(Engine * engine, const float & value = 0.0f) : UI_Element(engine) {
+	@param	value		the starting value to use. 
+	@param	range		the starting range to use. */
+	inline Slider(Engine * engine, const float & value = 0.0f, const glm::vec2 & range = {0.0f, 1.0f}) 
+		: UI_Element(engine), m_value(value), m_lowerRange(range.x), m_upperRange(range.y) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
+		m_backPanel->setMaxScale({ 200, 14 });
+		m_backPanel->setScale({ 200, 14 });
+		m_backPanel->setPosition({ 48, 0 });
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
+		paddle->setMaxScale({ 25, 14 });
+		paddle->setScale({ 25, 14 });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
 
@@ -41,33 +48,20 @@ public:
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
 		m_label->setColor(glm::vec3(0.75f));
-		addElement(m_label);
-
-		// Callbacks
-		addCallback(on_hover_start, [&]() { m_hovered = true; });
-		addCallback(on_hover_stop, [&]() { m_hovered = false; });
-		addCallback(on_press, [&]() { m_pressed = true; });
-		addCallback(on_release, [&]() { m_pressed = false; });
-
-		m_value = value;
-		update();
-	}
-
-
-	// Public Interface Implementation	
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_paddle->setMaxScale({ 25, 14 });
-		m_paddle->setScale({ 25, 14 });
-		m_backPanel->setMaxScale({ 200, 14 });
-		m_backPanel->setScale({ 200, 14 });
-		m_backPanel->setPosition({ 48, 0 });
 		m_label->setMaxScale({ 50, 28 });
 		m_label->setScale({ 50, 28 });
 		m_label->setPosition({ -225, 0 });
+		addElement(m_label);
+
 		setMaxScale({ 250, 28 });
-		UI_Element::setScale({ 250, 28 });
+		setMinScale({ 250, 28 });
+		setValue(value);
 	}
+
+
+	// Public Interface Implementation
 	inline virtual void update() override {
+		UI_Element::update();
 		if (!m_paddle) return;
 		m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
 	}
@@ -80,7 +74,7 @@ public:
 			}
 		}
 	}
-	inline virtual void userAction(ActionState & actionState) {
+	inline virtual void userAction(ActionState & actionState) override {
 		const float offsetAmount = std::min<float>((m_upperRange - m_lowerRange) / 100.0f, 1.0f);
 		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setValue(getValue() - offsetAmount);
@@ -103,10 +97,13 @@ public:
 	inline float getValue() const {
 		return m_value;
 	}
-	/***/
+	/** Set the lower and upper ranges for this slider.
+	@param	lowerRange	the lowest number this slider can use.
+	@param	upperRange	the highest number this slider can use. */
 	inline void setRanges(const float & lowerRange, const float & upperRange) {
 		m_lowerRange = lowerRange;
 		m_upperRange = upperRange;
+		m_value = std::clamp<float>(m_value, m_lowerRange, m_upperRange);
 	}
 	/** Set this slider's text.
 	@param	text	the text to use. */

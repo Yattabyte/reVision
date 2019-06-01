@@ -20,7 +20,7 @@ public:
 
 
 	// Public Static Enumerations
-	/***/
+	/** Enumeration for whether the action key was pressed, released, or repeating. */
 	const enum STATE {
 		RELEASE,
 		PRESS,

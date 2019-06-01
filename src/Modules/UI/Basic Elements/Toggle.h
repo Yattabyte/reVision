@@ -28,47 +28,46 @@ public:
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
+		m_backPanel->setMaxScale({ 100, 14 });
+		m_backPanel->setScale({ 100, 14 });
+		m_backPanel->setPosition({ 48, 0 });
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
-		panel->addCallback(UI_Element::on_hover_start, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
-		panel->addCallback(UI_Element::on_hover_stop, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
-		panel->addCallback(UI_Element::on_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
-		panel->addCallback(UI_Element::on_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		paddle ->setMaxScale({ 50.0f, 14 });
+		paddle->setScale({ 50.0f, 14 });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
-
+		
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine, state ? "ON" : "OFF");
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
 		m_label->setColor(glm::vec3(0.75f));
+		m_label->setMaxScale({ 50, 28 });
+		m_label->setScale({ 50, 28 });
+		m_label->setPosition({ -125, 0 });
 		addElement(m_label);
-
+		
 		// Callbacks
-		addCallback(on_clicked, [&]() { 
+		panel->addCallback(UI_Element::on_hover_start, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
+		panel->addCallback(UI_Element::on_hover_stop, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		panel->addCallback(UI_Element::on_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
+		panel->addCallback(UI_Element::on_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
+		addCallback(on_clicked, [&]() {
 			setToggled(!m_toggledOn);
 		});
+
+		setMaxScale({ 150, 28 });
+		setMinScale({ 150, 28 });
 		update();
 	}
 
 
-	// Public Interface Implementation	
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_paddle->setMaxScale({ 50.0f, 14 });
-		m_paddle->setScale({ 50.0f, 14 });
-		m_backPanel->setMaxScale({ 100, 14 });
-		m_backPanel->setScale({ 100, 14 });
-		m_backPanel->setPosition({ 48, 0 });
-		m_label->setMaxScale({ 50, 28 });
-		m_label->setScale({ 50, 28 });
-		m_label->setPosition({ -125, 0 });
-		setMaxScale({ 150, 28 });
-		UI_Element::setScale({ 150, 28 });
-	}
+	// Public Interface Implementation
 	inline virtual void update() override {
 		if (!m_paddle) return;
 		if (m_toggledOn)
@@ -85,7 +84,7 @@ public:
 		m_paddle->setColor(color);
 		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
 	}
-	inline virtual void userAction(ActionState & actionState) {
+	inline virtual void userAction(ActionState & actionState) override {
 		if (m_toggledOn && actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setToggled(false);
 		else if (!m_toggledOn && actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)

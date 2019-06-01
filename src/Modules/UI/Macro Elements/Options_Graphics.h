@@ -17,17 +17,17 @@ public:
 	// Public (de)Constructors
 	/** Destroy the graphics panel. */
 	inline ~Options_Graphics() = default;
-	/** Construct a graphics panel. */
+	/** Construct a graphics panel.
+	@param	engine		the engine to use. */
 	inline Options_Graphics(Engine * engine) : Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");
 
-		// Add Options
+		// Material Size Option
 		float materialSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
 		auto element_material_list = std::make_shared<SideList>(engine);
-		element_material_list->setMaxScale(glm::vec2(element_material_list->getMaxScale().x, 12.5f));
-		const std::vector<std::string> strings = { "Low",	"Medium",	"High",		"Very High",	"Ultra" };
+		element_material_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_materialSizes = { 128.0f,		256.0f,		512.0f,		1024.0f,	2048.0f };
 		int counter = 0, index = 0;
 		for each (const auto & size in m_materialSizes) {
@@ -35,123 +35,142 @@ public:
 				index = counter;
 			counter++;
 		}
-		element_material_list->setStrings(strings);
 		element_material_list->setIndex(index);
 		element_material_list->addCallback(SideList::on_index_changed, [&]() { setResolution(element_material_list->getIndex()); });
 		addOption(engine, element_material_list, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.");
 
+		// Shadow Size Option
 		float shadowSize = 1024, shadowQuality = 4;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_QUALITY, shadowQuality);
 		auto element_shadow_list = std::make_shared<SideList>(engine);
-		element_shadow_list->setMaxScale(glm::vec2(element_shadow_list->getMaxScale().x, 12.5f));
-		const std::vector<std::string> strings2 = { "Low",	"Medium",	"High",		"Very High",	"Ultra" };
-		const std::vector<float> sizes2 = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
-		const std::vector<float> qualities = { 1,		2,			3,			4,				5 };
+		element_shadow_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
+		m_shadowSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+		m_shadowQualities = { 1,		2,			3,			4,				5 };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in sizes2) {
+		for each (const auto & size in m_shadowSizes) {
 			if (shadowSize == size)
 				index = counter;
 			counter++;
 		}
-		element_shadow_list->setStrings(strings2);
 		element_shadow_list->setIndex(index);
-		element_shadow_list->addCallback(SideList::on_index_changed, [&, sizes2, qualities, element_shadow_list, engine]() {
-			const auto & index = element_shadow_list->getIndex();
-			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, std::min(sizes2[index] * 2, 2048.0f));
-			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_POINT, sizes2[index]);
-			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_SPOT, sizes2[index]);
-			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_QUALITY, qualities[index]);
-		});
+		element_shadow_list->addCallback(SideList::on_index_changed, [&]() { setShadowSize(element_shadow_list->getIndex()); });
 		addOption(engine, element_shadow_list, "Shadow Quality:", "Adjusts the resolution of all dynamic light shadows textures.");
 
+		// Reflection Size Option
 		float envSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_SIZE, envSize);
 		auto element_env_list = std::make_shared<SideList>(engine);
-		element_env_list->setMaxScale(glm::vec2(element_env_list->getMaxScale().x, 12.5f));
-		const std::vector<std::string> strings3 = { "Low",	"Medium",	"High",		"Very High",	"Ultra" };
-		const std::vector<float> sizes3 = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
+		element_env_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
+		m_reflectionSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in sizes3) {
+		for each (const auto & size in m_reflectionSizes) {
 			if (envSize == size)
 				index = counter;
 			counter++;
 		}
-		element_env_list->setStrings(strings3);
 		element_env_list->setIndex(index);
-		element_env_list->addCallback(SideList::on_index_changed, [&, sizes3, element_env_list, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, sizes3[element_env_list->getIndex()]);
-		});
+		element_env_list->addCallback(SideList::on_index_changed, [&]() { setReflectionSize(element_env_list->getIndex()); });
 		addOption(engine, element_env_list, "Reflection Quality:", "Adjusts the resolution of all environment map textures.");
 
+		// Light Bounce Option
 		float bounceSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, bounceSize);
 		auto element_bounce_list = std::make_shared<SideList>(engine);
-		element_bounce_list->setMaxScale(glm::vec2(element_bounce_list->getMaxScale().x, 12.5f));
-		const std::vector<std::string> strings4 = { "Very Low",	"Low",		"Medium",	"High",		"Very High",	"Ultra" };
-		const std::vector<float> sizes4 = { 8,			12,			16,			24,			32,				64 };
+		element_bounce_list->setStrings({ "Very Low",	"Low",		"Medium",	"High",		"Very High",	"Ultra" });
+		m_bounceQuality = { 8,			12,			16,			24,			32,				64 };
 		counter = 0;
 		index = 0;
-		for each (const auto & size in sizes4) {
+		for each (const auto & size in m_bounceQuality) {
 			if (bounceSize == size)
 				index = counter;
 			counter++;
 		}
-		element_bounce_list->setStrings(strings4);
 		element_bounce_list->setIndex(index);
-		element_bounce_list->addCallback(SideList::on_index_changed, [&, sizes4, element_bounce_list, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, sizes4[element_bounce_list->getIndex()]);
-		});
+		element_bounce_list->addCallback(SideList::on_index_changed, [&]() { setBounceQuality(element_bounce_list->getIndex()); });
 		addOption(engine, element_bounce_list, "Light Bounce Quality:", "Adjusts the resolution of the real-time GI simulation.");
 
+		// Bloom Option
 		bool element_bloom_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, element_bloom_state);
 		auto element_bloom = std::make_shared<Toggle>(engine, element_bloom_state);
-		element_bloom->addCallback(Toggle::on_toggle, [&, element_bloom, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, element_bloom->getToggled() ? 1.0f : 0.0f);
-		});
+		element_bloom->addCallback(Toggle::on_toggle, [&, element_bloom]() { setBloom(element_bloom->getToggled()); });
 		addOption(engine, element_bloom, "Bloom:", "Turns the bloom effect on or off.");
 
+		// SSAO Option
 		bool element_ssao_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, element_ssao_state);
 		auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state);
-		element_ssao->addCallback(Toggle::on_toggle, [&, element_ssao, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_SSAO, element_ssao->getToggled() ? 1.0f : 0.0f);
-		});
+		element_ssao->addCallback(Toggle::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->getToggled()); });
 		addOption(engine, element_ssao, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.");
 
+		// SSR Option
 		bool element_ssr_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, element_ssr_state);
 		auto element_ssr = std::make_shared<Toggle>(engine, element_ssr_state);
-		element_ssr->addCallback(Toggle::on_toggle, [&, element_ssr, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_SSR, element_ssr->getToggled() ? 1.0f : 0.0f);
-		});
+		element_ssr->addCallback(Toggle::on_toggle, [&, element_ssr]() { setSSR(element_ssr->getToggled()); });
 		addOption(engine, element_ssr, "SSR:", "Turns screen-space reflections on or off. Works with baked reflections.");
 
+		// FXAA Option
 		bool element_fxaa_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, element_fxaa_state);
 		auto element_fxaa = std::make_shared<Toggle>(engine, element_fxaa_state);
-		element_fxaa->addCallback(Toggle::on_toggle, [&, element_fxaa, engine]() {
-			engine->getPreferenceState().setValue(PreferenceState::C_FXAA, element_fxaa->getToggled() ? 1.0f : 0.0f);
-		});
+		element_fxaa->addCallback(Toggle::on_toggle, [&, element_fxaa]() { setFXAA(element_fxaa->getToggled()); });
 		addOption(engine, element_fxaa, "FXAA:", "Turns fast approximate anti-aliasing on or off.");
-
-		auto qwe = std::make_shared<TextInput>(engine);
-		addOption(engine, qwe, "Text Box:", "Test text box.");
 	}
 
 
 protected:
 	// Protected Methods
-	inline void setResolution(const size_t & index) {		
+	/** Set the resolution.
+	@param	index	the resolution index to use. */
+	inline void setResolution(const size_t & index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, m_materialSizes[index]);
+	}
+	/** Set the shadow size.
+	@param	index	the shadow size index to use. */
+	inline void setShadowSize(const size_t & index) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, std::min(m_shadowSizes[index] * 2, 2048.0f));
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_POINT, m_shadowSizes[index]);
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_SPOT, m_shadowSizes[index]);
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_QUALITY, m_shadowQualities[index]);
+	}
+	/** Set the reflection size.
+	@param	index	the reflection size index to use. */
+	inline void setReflectionSize(const size_t & index) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_SIZE, m_reflectionSizes[index]);
+	}
+	/** Set the light bounce quality.
+	@param	index	the light bounce quality index to use. */
+	inline void setBounceQuality(const size_t & index) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceQuality[index]);
+	}
+	/** Turn the bloom on or off.
+	@param	b		whether to turn bloom on or off. */
+	inline void setBloom(const bool & b) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_BLOOM, b ? 1.0f : 0.0f);
+	}
+	/** Turn the SSAO on or off.
+	@param	b		whether to turn SSAO on or off. */
+	inline void setSSAO(const bool & b) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SSAO, b ? 1.0f : 0.0f);
+	}
+	/** Turn the SSR on or off.
+	@param	b		whether to turn SSR on or off. */
+	inline void setSSR(const bool & b) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SSR, b ? 1.0f : 0.0f);
+	}
+	/** Turn the FXAA on or off.
+	@param	b		whether to turn FXAA on or off. */
+	inline void setFXAA(const bool & b) {
+		m_engine->getPreferenceState().setValue(PreferenceState::C_FXAA, b ? 1.0f : 0.0f);
 	}
 
 
 	// Protected Attributes
-	std::vector<float> m_materialSizes;
+	std::vector<float> m_materialSizes, m_shadowSizes, m_shadowQualities, m_reflectionSizes, m_bounceQuality;
 };
 
 #endif // OPTIONS_GRAPICS_H

@@ -28,21 +28,8 @@ public:
 	/** Construct the side list.
 	@param	engine		the engine to use. */
 	inline SideList(Engine * engine) : UI_Element(engine) {
-		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine);
-		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel);
-		addElement(m_backPanel);
-
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\SideList");
-
-		// Other UI elements
-		// Label
-		m_label = std::make_shared<Label>(engine);
-		m_label->setAlignment(Label::align_center);
-		m_label->setColor(glm::vec3(1.0f));
-		addElement(m_label);
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -61,19 +48,30 @@ public:
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
 
+		// Make a background panel for cosemetic purposes
+		auto panel = std::make_shared<Panel>(engine);
+		panel->setColor(glm::vec4(0.3f));
+		m_backPanel = std::make_shared<Border>(engine, panel);
+		m_backPanel->setMaxScale({ 172, 14 });
+		m_backPanel->setScale({ 172, 14 });
+
+		// Other UI elements
+		m_label = std::make_shared<Label>(engine);
+		m_label->setAlignment(Label::align_center);
+		m_label->setColor(glm::vec3(1.0f));
+		m_label->setScale({ 200, 28 });
+
+		setMaxScale({ 200, 28 });
+		setMinScale({ 200, 28 });
+		addElement(m_backPanel);
+		addElement(m_label);
 		setIndex(0);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_backPanel->setMaxScale({ 172, 14 });
-		m_backPanel->setScale({ 172, 14 });
-		m_label->setScale({ 200, 28 });
-		setMaxScale({ 200, 28 });
-		UI_Element::setScale({ 200, 28 });
-	}
 	inline virtual void update() override {
+		UI_Element::update();
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -97,8 +95,6 @@ public:
 
 		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
 		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
-
-		UI_Element::update();
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
@@ -140,27 +136,27 @@ public:
 			setIndex(m_index + 1);
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			// Render Background
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, m_enabled);
-			m_shader->setUniform(2, m_lEnabled);
-			m_shader->setUniform(3, m_rEnabled);
-			m_shader->setUniform(4, m_lhighlighted);
-			m_shader->setUniform(5, m_rhighlighted);
-			m_shader->setUniform(6, m_lpressed);
-			m_shader->setUniform(7, m_rpressed);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		
+		// Render (background)
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, m_enabled);
+		m_shader->setUniform(2, m_lEnabled);
+		m_shader->setUniform(3, m_rEnabled);
+		m_shader->setUniform(4, m_lhighlighted);
+		m_shader->setUniform(5, m_rhighlighted);
+		m_shader->setUniform(6, m_lpressed);
+		m_shader->setUniform(7, m_rpressed);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			// Render Text
-			UI_Element::renderElement(deltaTime, position, newScale);
-		}
+		// Render children (text)
+		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 
 
@@ -169,9 +165,8 @@ public:
 	@param		index		the new integer index to use. */
 	inline void setIndex(const int & index) {
 		if (m_index != index) {
-			m_index = std::clamp<int>(index, 0, m_strings.size());
-			if (m_index < m_strings.size())
-				m_label->setText(m_strings[m_index]);
+			m_index = std::clamp<int>(index, 0, m_strings.size() - 1ull);
+			m_label->setText(m_strings[m_index]);
 
 			m_lEnabled = (index > 0);
 			m_rEnabled = (index < (int)(m_strings.size() - 1ull));
@@ -189,7 +184,8 @@ public:
 		m_strings = strings;
 		setIndex(getIndex());
 	}
-	/***/
+	/** Retrieve the strings this list uses for each item in this list. 
+	@return					the list of strgings describing each item. */
 	inline std::vector<std::string> getStrings() const {
 		return m_strings;
 	}

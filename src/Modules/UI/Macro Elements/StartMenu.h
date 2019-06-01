@@ -29,29 +29,27 @@ public:
 		m_title->setText("MAIN MENU");
 
 		// Add 'Start Game' button
-		auto startButton = std::make_shared<Button>(engine, "START GAME");
-		addButton(startButton, [&]() { pressStartGame(); });
+		addButton(engine, "START GAME", [&]() { startGame(); });
 
 		// Add 'Start Puzzle' button
-		auto puzzleButton = std::make_shared<Button>(engine, "START PUZZLE");
-		addButton(puzzleButton, [&]() { pressStartPuzzle(); });
+		addButton(engine, "START PUZZLE", [&]() { startPuzzle(); });
 
 		// Add 'Options' button
-		auto optionsButton = std::make_shared<Button>(engine, "  OPTIONS >");
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		addButton(optionsButton, [&]() { pressOptions(); });
+		addButton(engine, "  OPTIONS >", [&]() { options(); });
 
 		// Add 'Quit' button
-		auto quitButton = std::make_shared<Button>(engine, "QUIT");
-		addButton(quitButton, [&]() { pressQuit(); });
+		addButton(engine, "QUIT", [&]() { quit(); });
+
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_optionsMenu->setScale(scale);
+		});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_optionsMenu->setScale(scale);
-		Menu::setScale(scale);
-	}
 	inline virtual void userAction(ActionState & actionState) override {
 		// Start menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
@@ -60,24 +58,24 @@ public:
 
 protected:
 	// Protected Methods
-	/***/
-	inline void pressStartGame() {
+	/** Choose 'start game' from the main menu. */
+	inline void startGame() {
 		enactCallback(on_start_game);
 		m_engine->getModule_UI().clear();
 	}
-	/***/
-	inline void pressStartPuzzle() {
+	/** Choose 'start puzzle' from the main menu. */
+	inline void startPuzzle() {
 		enactCallback(on_start_puzzle);
 	}
-	/***/
-	inline void pressOptions() {
+	/** Choose 'options' from the main menu. */
+	inline void options() {
 		// Transfer appearance and control to options menu
 		m_engine->getModule_UI().pushRootElement(m_optionsMenu);
 		m_layout->setSelectionIndex(-1);
 		enactCallback(on_options);
 	}
-	/***/
-	inline void pressQuit() {
+	/** Choose 'quit' from the main menu. */
+	inline void quit() {
 		m_engine->getModule_UI().clear();
 		m_engine->shutDown();
 		enactCallback(on_quit);

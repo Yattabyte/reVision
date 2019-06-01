@@ -11,14 +11,14 @@ public:
 	// Public (de)Constructors
 	/** Destroy the layout. */
 	inline ~Layout_Horizontal() = default;
-	/** Construct the layout. */
+	/** Construct the layout.
+	@param	engine		the engine to use. */
 	inline Layout_Horizontal(Engine * engine) : UI_Element(engine) {}
 
 
 	// Public Interface Implementation
 	inline virtual void update() override {
 		alignChildren();
-
 		UI_Element::update();
 	}
 
@@ -98,9 +98,7 @@ protected:
 
 
 	// Protected Attributes
-	float 
-		m_margin = 10.0f,
-		m_spacing = 10.0f;
+	float m_margin = 10.0f, m_spacing = 10.0f;
 };
 
 #endif // UI_LAYOUT_HORIZONTAL_H

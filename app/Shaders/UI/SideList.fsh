@@ -1,4 +1,4 @@
-/* UI DropList Shader. */
+/* UI Side-list Shader. */
 #version 460
 
 // Inputs

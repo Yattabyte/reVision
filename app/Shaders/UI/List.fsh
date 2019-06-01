@@ -1,4 +1,4 @@
-/* UI Separator Shader. */
+/* UI List Shader. */
 #version 460
 
 // Uniforms
@@ -16,6 +16,6 @@ void main()
 	const float distY = length(ElementPosition.y - gl_FragCoord.y);
 	const float rangeX = 1.0f / ElementScale.x;
 	const float rangeY = 1.0f / ElementScale.y;
-	const float atten = (distX * distX) * (rangeX * rangeX) * (distY * distY) * (rangeY * rangeY);
-	FragColor = vec4(Color * atten * 0.75f);
+	const float atten = clamp((distX * distX) * (rangeX * rangeX) * (distY * distY) * (rangeY * rangeY), 0.0f, 1.0f);
+	FragColor = vec4(Color * atten);
 }

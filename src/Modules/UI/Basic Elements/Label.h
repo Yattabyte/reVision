@@ -79,23 +79,26 @@ public:
 		UI_Element::update();
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
+
+		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet() && m_textureFont->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, newScale);
-			m_shader->setUniform(2, m_textScale);
-			m_shader->setUniform(3, (int)m_textAlignment);
-			m_shader->setUniform(4, m_enabled);
-			m_shader->setUniform(5, m_color);
-			m_textureFont->bind(0);
-			m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, newScale);
+		m_shader->setUniform(2, m_textScale);
+		m_shader->setUniform(3, (int)m_textAlignment);
+		m_shader->setUniform(4, m_enabled);
+		m_shader->setUniform(5, m_color);
+		m_textureFont->bind(0);
+		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Render Children
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 
@@ -153,9 +156,7 @@ protected:
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
 	Alignment m_textAlignment = align_left;
-	GLuint 
-		m_vaoID = 0, 
-		m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;
 	StaticBuffer m_indirect;

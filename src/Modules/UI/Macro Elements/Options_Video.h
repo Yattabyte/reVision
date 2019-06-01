@@ -24,9 +24,8 @@ public:
 		// Title
 		m_title->setText("Video Options");
 
-		// Add Options
+		// Resolution Option
 		auto element_res = std::make_shared<SideList>(engine);
-		element_res->setMaxScale(glm::vec2(element_res->getMaxScale().x, 12.5f));
 		float width = 1920.0f, height = 1080.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -50,10 +49,10 @@ public:
 		});
 		addOption(engine, element_res, "Resolution:", "Changes the resolution the game renders at.");
 
+		// Gamma Option
 		float gamma = 1.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
-		auto gamma_slider = std::make_shared<Slider>(engine, gamma);
-		gamma_slider->setRanges(0.0f, 2.0f);
+		auto gamma_slider = std::make_shared<Slider>(engine, gamma, glm::vec2(0.0f, 2.0f));
 		std::ostringstream out;
 		out.precision(2);
 		out << std::fixed << gamma;
@@ -69,21 +68,19 @@ public:
 		});
 		addOption(engine, gamma_slider, "Gamma:", "Changes the gamma correction value used.");
 
+		// Draw Distance Option
 		float ddistance = 1000.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
-		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance);
-		ddistance_slider->setText(std::to_string((int)std::round<int>(ddistance)));
-		ddistance_slider->setRanges(0.0f, 1000.0f);
+		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f));
 		ddistance_slider->addCallback(Slider::on_value_change, [&, ddistance_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, ddistance_slider->getValue());
 		});
 		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.");
 
+		// FOV Option
 		float fov = 90.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
-		auto fov_slider = std::make_shared<Slider>(engine, fov);
-		fov_slider->setRanges(0.0f, 180.0f);
-		fov_slider->setText(std::to_string((int)std::round<int>(fov)));
+		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180));
 		fov_slider->addCallback(Slider::on_value_change, [&, fov_slider, engine]() {
 			// Get a round version of the input
 			const int round_value = (int)std::round<int>(fov_slider->getValue());
@@ -92,6 +89,7 @@ public:
 		});
 		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.");
 
+		// VSync Option
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
 		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
@@ -100,6 +98,7 @@ public:
 		});
 		addOption(engine, element_sync, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.");
 
+		// Full Screen Option
 		bool element_fs_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
 		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);

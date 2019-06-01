@@ -29,41 +29,38 @@ public:
 		m_title->setText("OPTIONS");
 
 		// Add 'Video' button
-		auto videoButton = std::make_shared<Button>(engine, "VIDEO");
 		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(false);
-		addButton(videoButton, [&]() { pressVideo(); });
+		addButton(engine, "VIDEO", [&]() { video(); });
 		addElement(m_videoMenu);
 
 		// Add 'Graphics' button
-		auto graphicsButton = std::make_shared<Button>(engine, "GRAPHICS");
 		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
-		addButton(graphicsButton, [&]() { pressGraphics(); });
+		addButton(engine, "GRAPHICS", [&]() { graphics(); });
 		addElement(m_gfxMenu);
 
 		// Add 'Controls' button
-		auto controlsButton = std::make_shared<Button>(engine, "CONTROLS");
-		controlsButton->setEnabled(false);
-		addButton(controlsButton, [&]() { pressControls(); });
+		addButton(engine, "CONTROLS", [&]() { controls(); });
 
 		// Add 'Back' button
-		auto backButton = std::make_shared<Button>(engine, "< BACK  ");
-		addButton(backButton, [&]() { pressBack(); });
+		addButton(engine, "< BACK  ", [&]() { back(); });
+
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
+			m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
+			m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
+			m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
+		});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void setScale(const glm::vec2 & scale) override {
-		m_videoMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
-		m_gfxMenu->setScale({ (scale.x / 2.0f) - 320.0f, scale.y / 2.0f });
-		m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-		m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
-		Menu::setScale(scale);
-	}
 	inline virtual void userAction(ActionState & actionState) override {
 		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
-			pressBack();
+			back();
 		else
 			m_layout->userAction(actionState);
 	}
@@ -71,28 +68,28 @@ public:
 
 protected:	
 	// Protected Methods
-	/***/
-	inline void pressVideo() {
+	/** Choose 'video' from the options menu. */
+	inline void video() {
 		m_videoMenu->setVisible(true);
 		m_gfxMenu->setVisible(false);
 		// Transfer control only to the video menu
 		m_engine->getModule_UI().pushFocusedElement(m_videoMenu);
 		enactCallback(on_video);
 	}
-	/***/
-	inline void pressGraphics() {
+	/** Choose 'graphics' from the options menu. */
+	inline void graphics() {
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(true);
 		// Transfer control only to the video menu
 		m_engine->getModule_UI().pushFocusedElement(m_gfxMenu);
 		enactCallback(on_graphics);
 	}
-	/***/
-	inline void pressControls() {
+	/** Choose 'controls' from the options menu. */
+	inline void controls() {
 		enactCallback(on_controls);
 	}
-	/***/
-	inline void pressBack() {
+	/** Choose 'back' from the options menu. */
+	inline void back() {
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(false);
 		m_engine->getPreferenceState().save();

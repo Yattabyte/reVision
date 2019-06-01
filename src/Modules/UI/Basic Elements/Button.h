@@ -9,7 +9,7 @@
 /** UI button class, affords being pushed and released. */
 class Button : public UI_Element {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the button. */
 	inline ~Button() = default;
 	/** Creates a button with specific text inside. 
@@ -23,18 +23,18 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
+		addCallback(on_hover_start, [&]() { updateColors(); });
+		addCallback(on_hover_stop, [&]() { updateColors(); });
 		addCallback(on_press, [&]() { updateColors(); });
 		addCallback(on_release, [&]() {	updateColors(); });
 		addCallback(on_clicked, [&]() {	updateColors(); });
-		addCallback(on_hover_start, [&]() { updateColors(); });
-		addCallback(on_hover_stop, [&]() { updateColors(); });
+		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
 		updateColors();
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void userAction(ActionState & actionState) {
+	inline virtual void userAction(ActionState & actionState) override {
 		// Only thing a user can do is press the button
 		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			pressButton();
@@ -42,7 +42,7 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Fully press and release this button, enacting its on_clicked callback. */
 	inline void pressButton() {
 		enactCallback(UI_Element::on_clicked);
 	}

@@ -52,23 +52,25 @@ public:
 		m_data[5] = { -1, -1, 0 };
 		for (int x = 0; x < 6; ++x)
 			m_data[x] *= glm::vec3(m_scale, 0.0f);
-
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
 
 		UI_Element::update();
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
+		
+		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, m_color);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, m_color);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		
+		// Render Children
 		UI_Element::renderElement(deltaTime, position, newScale);
 	}
 
@@ -89,9 +91,7 @@ public:
 protected:
 	// Protected Attributes
 	glm::vec4 m_color = glm::vec4(0.2f);
-	GLuint 
-		m_vaoID = 0, 
-		m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };
