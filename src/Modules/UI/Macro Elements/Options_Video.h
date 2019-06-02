@@ -20,13 +20,13 @@ public:
 	inline ~Options_Video() = default;
 	/** Contsruct a video pane. 
 	@param	engine		the engine to use. */
-	inline Options_Video(Engine * engine, UI_Element * parent = nullptr)
-		: Options_Pane(engine, parent) {
+	inline Options_Video(Engine * engine)
+		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Video Options");
 
 		// Resolution Option
-		auto element_res = std::make_shared<SideList>(engine, this);
+		auto element_res = std::make_shared<SideList>(engine);
 		float width = 1920.0f, height = 1080.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_WIDTH, width);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, height);
@@ -52,7 +52,7 @@ public:
 		// Gamma Option
 		float gamma = 1.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_GAMMA, gamma);
-		auto gamma_slider = std::make_shared<Slider>(engine, gamma, glm::vec2(0.0f, 2.0f), this);
+		auto gamma_slider = std::make_shared<Slider>(engine, gamma, glm::vec2(0.0f, 2.0f));
 		std::ostringstream out;
 		out.precision(2);
 		out << std::fixed << gamma;
@@ -70,7 +70,7 @@ public:
 		// Draw Distance Option
 		float ddistance = 1000.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_DRAW_DISTANCE, ddistance);
-		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f), this);
+		auto ddistance_slider = std::make_shared<Slider>(engine, ddistance, glm::vec2(0.0f, 1000.0f));
 		addOption(engine, ddistance_slider, "Draw Distance:", "Changes how far geometry can be seen from.", Slider::on_value_change, [&, ddistance_slider, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_DRAW_DISTANCE, ddistance_slider->getValue());
 		});
@@ -78,7 +78,7 @@ public:
 		// FOV Option
 		float fov = 90.0f;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_FOV, fov);
-		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180), this);
+		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180));
 		addOption(engine, fov_slider, "Field of view:", "Changes how wide of an angle the scene can be viewed from.", Slider::on_value_change, [&, fov_slider, engine]() {
 			// Get a round version of the input
 			const int round_value = (int)std::round<int>(fov_slider->getValue());
@@ -89,7 +89,7 @@ public:
 		// VSync Option
 		bool element_sync_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_VSYNC, element_sync_state);
-		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state, this);
+		auto element_sync = std::make_shared<Toggle>(engine, element_sync_state);
 		addOption(engine, element_sync, "VSync:", "Lock the game's frame-rate to the monitor's refresh rate.", Toggle::on_toggle, [&, element_sync, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_VSYNC, element_sync->getToggled() ? 1.0f : 0.0f);
 		});
@@ -97,7 +97,7 @@ public:
 		// Full Screen Option
 		bool element_fs_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_WINDOW_FULLSCREEN, element_fs_state);
-		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state, this);
+		auto element_fs = std::make_shared<Toggle>(engine, element_fs_state);
 		addOption(engine, element_fs, "Full-screen:", "Render the game full-screen instead of as a window.", Toggle::on_toggle, [&, element_fs, engine]() {
 			engine->getPreferenceState().setValue(PreferenceState::C_WINDOW_FULLSCREEN, element_fs->getToggled() ? 1.0f : 0.0f);
 		});

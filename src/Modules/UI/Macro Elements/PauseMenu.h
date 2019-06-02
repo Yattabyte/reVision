@@ -24,8 +24,8 @@ public:
 	inline ~PauseMenu() = default;
 	/** Construct a start menu. 
 	@param	engine		the engine to use. */
-	inline PauseMenu(Engine * engine, UI_Element * parent = nullptr)
-		: Menu(engine, parent) {
+	inline PauseMenu(Engine * engine)
+		: Menu(engine) {
 		// Title
 		m_title->setText("PAUSE MENU");
 
@@ -34,7 +34,8 @@ public:
 			
 		// Add 'Options' button
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-		addButton(engine, "  OPTIONS >", [&]() { options(); });
+		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
+		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { returnFromOptions(); });
 
 		// Add 'Quit' button
 		addButton(engine, "QUIT", [&]() { quit(); });
@@ -44,6 +45,11 @@ public:
 			const auto scale = getScale();
 			m_optionsMenu->setScale(scale);
 		});
+
+		// Populate Focus Map
+		m_focusMap = std::make_shared<FocusMap>();
+		m_focusMap->addElement(m_layout);
+		m_engine->getModule_UI().setFocusMap(getFocusMap());
 	}
 
 
@@ -53,12 +59,19 @@ protected:
 	inline void resume() {
 		enactCallback(on_resume_game);
 	}
-	/** Choose 'options' from the pause menu. */
-	inline void options() {
+	/** Choose 'options' from the main menu. */
+	inline void goToOptions() {
 		// Transfer appearance and control to options menu
-		m_engine->getModule_UI().pushRootElement(m_optionsMenu);
+		auto & ui = m_engine->getModule_UI();
+		ui.pushRootElement(m_optionsMenu);
+		ui.setFocusMap(m_optionsMenu->getFocusMap());
 		m_layout->setSelectionIndex(-1);
 		enactCallback(on_options);
+	}
+	/** Chosen when control is returned from the options menu. */
+	inline void returnFromOptions() {
+		// Transfer control back to this menu
+		m_engine->getModule_UI().setFocusMap(getFocusMap());
 	}
 	/** Choose 'quit' from the pause menu. */
 	inline void quit() {
@@ -69,7 +82,7 @@ protected:
 
 
 	// Protected Attributes
-	std::shared_ptr<UI_Element> m_optionsMenu;
+	std::shared_ptr<OptionsMenu> m_optionsMenu;
 };
 
 #endif // PAUSEMENU_H

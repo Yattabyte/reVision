@@ -4,6 +4,7 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/FocusMap.h"
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -33,9 +34,12 @@ public:
 	void pushRootElement(const std::shared_ptr<UI_Element> & rootElement);
 	/** Pop the top UI element off the stack. */
 	void popRootElement();
-	/** Push a new UI element onto a stack to receive userAction input only.
-	@param	focusedElement		a separate element to receive input. */
-	void setFocusedElement(UI_Element * focusedElement);
+	/** Set a new focus map to be used for user action input. 
+	@param	focusMap			the new focus map to use. */
+	void setFocusMap(const std::shared_ptr<FocusMap> & focusMap);
+	/** Retrieve the active focus map, used for user input. 
+	@return						the active focus map. */
+	std::shared_ptr<FocusMap> getFocusMap() const;
 	/** Remove the root UI element from the UI system. */
 	void clear();
 	/** Propagates mouse movement input to all UI elements.
@@ -69,8 +73,8 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
 	std::vector<std::shared_ptr<UI_Element>> m_rootElement;
-	UI_Element * m_focusedElement = nullptr;
 	std::vector<std::function<void()>> m_callbacks;
+	std::shared_ptr<FocusMap> m_focusMap;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
 };

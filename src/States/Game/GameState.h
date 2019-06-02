@@ -79,6 +79,7 @@ protected:
 		if (show) {
 			m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
 			m_engine->getModule_UI().pushRootElement(m_pauseMenu);
+			m_engine->getModule_UI().setFocusMap(m_pauseMenu->getFocusMap());
 			m_paused = true;
 		}
 		else {
@@ -91,7 +92,7 @@ protected:
 
 	// Protected Attributes
 	BaseECSSystem * m_freeLookSystem;
-	std::shared_ptr<UI_Element> m_pauseMenu;
+	std::shared_ptr<PauseMenu> m_pauseMenu;
 	bool m_paused = false;
 };
 

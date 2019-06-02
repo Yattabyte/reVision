@@ -13,7 +13,7 @@ public:
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		the engine to use. */
-	inline Layout_Horizontal(Engine * engine, UI_Element * parent = nullptr) : UI_Element(engine, parent) {}
+	inline Layout_Horizontal(Engine * engine) : UI_Element(engine) {}
 
 
 	// Public Interface Implementation

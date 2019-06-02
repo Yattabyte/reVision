@@ -19,8 +19,8 @@ public:
 	}
 	/** Construct a separator. 
 	@param	engine		the engine to use. */
-	inline Separator(Engine * engine, UI_Element * parent = nullptr)
-		: UI_Element(engine, parent) {
+	inline Separator(Engine * engine)
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Separator");
 

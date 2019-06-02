@@ -3,6 +3,7 @@
 #define UI_LIST_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/FocusMap.h"
 #include "Assets/Shader.h"
 #include "Engine.h"
 
@@ -27,8 +28,8 @@ public:
 	}
 	/** Constructs a list.
 	@param	engine		the engine. */
-	inline List(Engine * engine, UI_Element * parent = nullptr)
-		: UI_Element(engine, parent) {
+	inline List(Engine * engine)
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\List");
 
@@ -109,6 +110,11 @@ public:
 		// User can go up or down the list with an input device
 		// User input wraps around, and if an item is selected, moving will deselect it
 		if (m_children.size()) {
+			// Allow selected child to receive input first
+			if (m_selectionIndex >= 0 && m_selectionIndex < m_children.size())
+				m_focusMap.applyActionState(actionState);
+
+			// After, process remaining input for the list
 			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
 				setHoverIndex(m_hoverIndex - 1 < 0 ? (int)m_children.size() - 1ull : m_hoverIndex - 1);
 
@@ -126,11 +132,6 @@ public:
 					setSelectionIndex(m_hoverIndex);			
 			}
 		}
-		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS) {
-			setSelectionIndex(-1);
-			setHoverIndex(-1);
-			focusParent();
-		}
 	}
 
 	// Public Methods
@@ -143,8 +144,8 @@ public:
 				child->clearFocus();
 			if (m_hoverIndex > -1 && m_hoverIndex < m_children.size())
 				m_children[m_hoverIndex]->setHovered();
-			updateSelectionGeometry();
 		}
+		updateSelectionGeometry();
 	}
 	/** Retrieve this list's hovered item index.
 	@return					this list's hovered index. */
@@ -155,8 +156,9 @@ public:
 	@param	newIndex		the new selected index. */
 	inline void setSelectionIndex(const int & newIndex) {
 		m_selectionIndex = newIndex;
-		if (m_selectionIndex > -1 && m_selectionIndex < m_children.size())
-			m_engine->getModule_UI().setFocusedElement(m_children[m_selectionIndex].get());
+		//if (m_selectionIndex > -1 && m_selectionIndex < m_children.size())
+		//	m_engine->getModule_UI().setFocusedElement(m_children[m_selectionIndex].get());
+		m_focusMap.focusIndex(m_selectionIndex);
 		updateSelectionGeometry();
 		enactCallback(on_selection);
 	}
@@ -164,6 +166,12 @@ public:
 	@return					this list's selected index. */
 	inline int getSelectionIndex() const {
 		return m_selectionIndex;
+	}
+	/** Retrieve this list's focus map.
+	Lists use a separate focus map, because the top-level element in each list slot may be a container or cosmetic only.
+	@return					the focus map for this list. */
+	FocusMap & getFocusMap() {
+		return m_focusMap;
 	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
@@ -305,6 +313,7 @@ protected:
 		m_vaoID = 0,
 		m_vboID = 0;
 	Shared_Shader m_shader;
+	FocusMap m_focusMap;
 };
 
 #endif // UI_LIST_H

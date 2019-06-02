@@ -19,15 +19,15 @@ public:
 	inline ~Options_Graphics() = default;
 	/** Construct a graphics panel.
 	@param	engine		the engine to use. */
-	inline Options_Graphics(Engine * engine, UI_Element * parent = nullptr)
-		: Options_Pane(engine, parent) {
+	inline Options_Graphics(Engine * engine)
+		: Options_Pane(engine) {
 		// Title
 		m_title->setText("Graphics Options");
 
 		// Material Size Option
 		float materialSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
-		auto element_material_list = std::make_shared<SideList>(engine, this);
+		auto element_material_list = std::make_shared<SideList>(engine);
 		element_material_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_materialSizes = { 128.0f,		256.0f,		512.0f,		1024.0f,	2048.0f };
 		int counter = 0, index = 0;
@@ -43,7 +43,7 @@ public:
 		float shadowSize = 1024, shadowQuality = 4;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_QUALITY, shadowQuality);
-		auto element_shadow_list = std::make_shared<SideList>(engine, this);
+		auto element_shadow_list = std::make_shared<SideList>(engine);
 		element_shadow_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_shadowSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 		m_shadowQualities = { 1,		2,			3,			4,				5 };
@@ -60,7 +60,7 @@ public:
 		// Reflection Size Option
 		float envSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_SIZE, envSize);
-		auto element_env_list = std::make_shared<SideList>(engine, this);
+		auto element_env_list = std::make_shared<SideList>(engine);
 		element_env_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_reflectionSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
 		counter = 0;
@@ -76,7 +76,7 @@ public:
 		// Light Bounce Option
 		float bounceSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, bounceSize);
-		auto element_bounce_list = std::make_shared<SideList>(engine, this);
+		auto element_bounce_list = std::make_shared<SideList>(engine);
 		element_bounce_list->setStrings({ "Very Low",	"Low",		"Medium",	"High",		"Very High",	"Ultra" });
 		m_bounceQuality = { 8,			12,			16,			24,			32,				64 };
 		counter = 0;
@@ -92,25 +92,25 @@ public:
 		// Bloom Option
 		bool element_bloom_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_BLOOM, element_bloom_state);
-		auto element_bloom = std::make_shared<Toggle>(engine, element_bloom_state, this);
+		auto element_bloom = std::make_shared<Toggle>(engine, element_bloom_state);
 		addOption(engine, element_bloom, "Bloom:", "Turns the bloom effect on or off.", Toggle::on_toggle, [&, element_bloom]() { setBloom(element_bloom->getToggled()); });
 
 		// SSAO Option
 		bool element_ssao_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSAO, element_ssao_state);
-		auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state, this);
+		auto element_ssao = std::make_shared<Toggle>(engine, element_ssao_state);
 		addOption(engine, element_ssao, "SSAO:", "Turns screen-space ambient occlusion effect on or off. Works with baked AO.", Toggle::on_toggle, [&, element_ssao]() { setSSAO(element_ssao->getToggled()); });;
 
 		// SSR Option
 		bool element_ssr_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_SSR, element_ssr_state);
-		auto element_ssr = std::make_shared<Toggle>(engine, element_ssr_state, this);
+		auto element_ssr = std::make_shared<Toggle>(engine, element_ssr_state);
 		addOption(engine, element_ssr, "SSR:", "Turns screen-space reflections on or off. Works with baked reflections.", Toggle::on_toggle, [&, element_ssr]() { setSSR(element_ssr->getToggled()); });
 
 		// FXAA Option
 		bool element_fxaa_state = true;
 		engine->getPreferenceState().getOrSetValue<bool>(PreferenceState::C_FXAA, element_fxaa_state);
-		auto element_fxaa = std::make_shared<Toggle>(engine, element_fxaa_state, this);
+		auto element_fxaa = std::make_shared<Toggle>(engine, element_fxaa_state);
 		addOption(engine, element_fxaa, "FXAA:", "Turns fast approximate anti-aliasing on or off.", Toggle::on_toggle, [&, element_fxaa]() { setFXAA(element_fxaa->getToggled()); });
 	}
 

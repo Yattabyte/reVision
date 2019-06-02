@@ -61,31 +61,28 @@ void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
 	m_rootElement.push_back(rootElement);
 	if (rootElement)
 		rootElement->setScale(m_renderSize);
-
-	// Clear focus stack, set it to root
-	m_focusedElement = m_rootElement.back().get();
 }
 
 void UI_Module::popRootElement()
 {
 	if (m_rootElement.size() > 1)
 		m_rootElement.pop_back();
-
-	// Clear focus stack, set it to root
-	m_focusedElement = m_rootElement.back().get();
 }
 
-void UI_Module::setFocusedElement(UI_Element * focusedElement)
+void UI_Module::setFocusMap(const std::shared_ptr<FocusMap> & focusMap)
 {
-	m_focusedElement = focusedElement;
-	if (m_focusedElement)
-		m_focusedElement->setHovered();
+	m_focusMap = focusMap;
+}
+
+std::shared_ptr<FocusMap> UI_Module::getFocusMap() const
+{
+	return m_focusMap;
 }
 
 void UI_Module::clear()
 {
 	m_rootElement.clear();
-	m_focusedElement = nullptr;
+	m_focusMap.reset();
 }
 
 void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
@@ -125,8 +122,8 @@ void UI_Module::applyKey(const int & key, const int & scancode, const int & acti
 
 void UI_Module::applyActionState(ActionState & actionState)
 {
-	if (m_focusedElement)
-		m_focusedElement->userAction(actionState);
+	if (m_focusMap)
+		m_focusMap->applyActionState(actionState);
 }
 
 void UI_Module::pushCallback(const std::function<void()> & callback)

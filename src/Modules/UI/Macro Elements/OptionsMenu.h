@@ -5,6 +5,8 @@
 #include "Modules/UI/Macro Elements/Menu.h"
 #include "Modules/UI/Macro Elements/Options_Video.h"
 #include "Modules/UI/Macro Elements/Options_Graphics.h"
+#include "Modules/UI/FocusMap.h"
+#include "Engine.h"
 
 
 /** A UI element serving as an options menu. */
@@ -24,19 +26,19 @@ public:
 	inline ~OptionsMenu() = default;
 	/** Construct an options menu.
 	@param	engine		the engine to use. */
-	inline OptionsMenu(Engine * engine, UI_Element * parent = nullptr)
-		: Menu(engine, parent) {
+	inline OptionsMenu(Engine * engine)
+		: Menu(engine) {
 		// Title
 		m_title->setText("OPTIONS");
 
 		// Add 'Video' button
-		m_videoMenu = std::make_shared<Options_Video>(engine, this);
+		m_videoMenu = std::make_shared<Options_Video>(engine);
 		m_videoMenu->setVisible(false);
 		addButton(engine, "VIDEO", [&]() { video(); });
 		addElement(m_videoMenu);
 
 		// Add 'Graphics' button
-		m_gfxMenu = std::make_shared<Options_Graphics>(engine, this);
+		m_gfxMenu = std::make_shared<Options_Graphics>(engine);
 		m_gfxMenu->setVisible(false);
 		addButton(engine, "GRAPHICS", [&]() { graphics(); });
 		addElement(m_gfxMenu);
@@ -55,34 +57,39 @@ public:
 			m_videoMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
 			m_gfxMenu->setPosition({ (scale.x / 2.0f) + 192.0f, scale.y / 2.0f });
 		});
+
+		m_focusMap = std::make_shared<FocusMap>();
+		m_focusMap->addElement(m_layout);
+		m_focusMap->focusElement(m_layout);
 	}
 
 
-	// Public Interface Implementations
-	inline virtual void userAction(ActionState & actionState) override {
-		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
-			back();
-		else
-			m_layout->userAction(actionState);
-	}
-
-
-protected:	
+protected:
 	// Protected Methods
 	/** Choose 'video' from the options menu. */
 	inline void video() {
-		m_videoMenu->setVisible(true);
+		// Remove control from the graphics menu
 		m_gfxMenu->setVisible(false);
-		// Transfer control only to the video menu
-		m_engine->getModule_UI().setFocusedElement(m_videoMenu.get());
+		m_focusMap->clear();
+
+		// Transfer control to the video menu
+		m_videoMenu->setVisible(true);
+		m_focusMap->addElement(m_layout);
+		m_focusMap->addElement(m_videoMenu);
+		m_focusMap->focusElement(m_videoMenu);
 		enactCallback(on_video);
 	}
 	/** Choose 'graphics' from the options menu. */
 	inline void graphics() {
+		// Remove control from the video menu
 		m_videoMenu->setVisible(false);
+		m_focusMap->clear();
+
+		// Transfer control to the graphics menu
 		m_gfxMenu->setVisible(true);
-		// Transfer control only to the video menu
-		m_engine->getModule_UI().setFocusedElement(m_gfxMenu.get());
+		m_focusMap->addElement(m_layout);
+		m_focusMap->addElement(m_gfxMenu);
+		m_focusMap->focusElement(m_gfxMenu);
 		enactCallback(on_graphics);
 	}
 	/** Choose 'controls' from the options menu. */
@@ -93,6 +100,7 @@ protected:
 	inline void back() {
 		m_videoMenu->setVisible(false);
 		m_gfxMenu->setVisible(false);
+		m_focusMap->clear();
 		m_engine->getPreferenceState().save();
 
 		// Revert appearance and control back to previous element (start menu, pause menu, etc)

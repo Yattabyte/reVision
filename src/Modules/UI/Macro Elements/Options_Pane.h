@@ -20,15 +20,15 @@ public:
 	inline ~Options_Pane() = default;
 	/** Construct a options pane.
 	@param	engine		the engine to use. */
-	inline Options_Pane(Engine * engine, UI_Element * parent = nullptr)
-		: UI_Element(engine, parent) {
+	inline Options_Pane(Engine * engine)
+		: UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
-		m_backPanel = std::make_shared<Panel>(engine, parent);
+		m_backPanel = std::make_shared<Panel>(engine);
 		m_backPanel->setColor(glm::vec4(0.1, 0.1, 0.1, 0.5));
 		addElement(m_backPanel);
 
 		// Make a vertical layout to house list items
-		m_layout = std::make_shared<List>(engine, parent);
+		m_layout = std::make_shared<List>(engine);
 		m_layout->setSpacing(1.0f);
 		m_layout->setMargin(50.0f);
 		m_layout->addCallback(List::on_selection, [&]() {
@@ -37,27 +37,25 @@ public:
 				std::dynamic_pointer_cast<Label>(m_description)->setText(m_descriptions[index]);
 			else
 				std::dynamic_pointer_cast<Label>(m_description)->setText("");
-			if (index >= 0 && index < m_elements.size())
-				m_elements[index]->setFocused();
 		});
 		m_backPanel->addElement(m_layout);
 
 		// Title
-		m_title = std::make_shared<Label>(engine, "", parent);
+		m_title = std::make_shared<Label>(engine);
 		m_title->setTextScale(20.0f);
 		m_title->setAlignment(Label::align_left);
 		m_backPanel->addElement(m_title);
 
 		// Top Separator
-		m_separatorTop = std::make_shared<Separator>(engine, parent);
+		m_separatorTop = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separatorTop);
 
 		// Bottom Separator
-		m_separatorBot = std::make_shared<Separator>(engine, parent);
+		m_separatorBot = std::make_shared<Separator>(engine);
 		m_backPanel->addElement(m_separatorBot);
 
 		// Bottom Description Label
-		m_description = std::make_shared<Label>(engine, "", parent);
+		m_description = std::make_shared<Label>(engine);
 		m_description->setAlignment(Label::align_left);
 		m_description->setTextScale(10.0f);
 		m_description->setColor(glm::vec3(0.8, 0.6, 0.1));
@@ -81,10 +79,10 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void userAction(ActionState & actionState) override {
-		// Start menu doesn't implement any custom controls, focus is on the list
+		// Options menu doesn't implement any custom controls, focus is on the list
 		m_layout->userAction(actionState);
 		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
-			focusParent();
+			m_engine->getModule_UI().getFocusMap()->back();
 	}
 	
 
@@ -96,13 +94,14 @@ protected:
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */
 	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description, const int & eventType, const std::function<void()> & callback) {
-		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine, this);
-		auto label = std::make_shared<Label>(engine, text, this);
+		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
+		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));
 		horizontalLayout->addElement(label);
 		horizontalLayout->addElement(element);
 		horizontalLayout->setScale({ 0, 30 });
 		m_layout->addElement(horizontalLayout);
+		m_layout->getFocusMap().addElement(element);
 		element->addCallback(eventType, callback);
 		m_elements.push_back(element);
 		m_descriptions.push_back(description);

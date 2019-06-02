@@ -27,8 +27,8 @@ public:
 	}
 	/** Construct the side list.
 	@param	engine		the engine to use. */
-	inline SideList(Engine * engine, UI_Element * parent = nullptr)
-		: UI_Element(engine, parent) {
+	inline SideList(Engine * engine)
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\SideList");
 
@@ -50,14 +50,14 @@ public:
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
 
 		// Make a background panel for cosemetic purposes
-		auto panel = std::make_shared<Panel>(engine, this);
+		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel, this);
+		m_backPanel = std::make_shared<Border>(engine, panel);
 		m_backPanel->setMaxScale({ 172, 14 });
 		m_backPanel->setScale({ 172, 14 });
 
 		// Other UI elements
-		m_label = std::make_shared<Label>(engine, "", this);
+		m_label = std::make_shared<Label>(engine, "");
 		m_label->setAlignment(Label::align_center);
 		m_label->setColor(glm::vec3(1.0f));
 		m_label->setScale({ 200, 28 });
@@ -135,8 +135,6 @@ public:
 			setIndex(m_index - 1);
 		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS) 
 			setIndex(m_index + 1);
-		else if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
-			focusParent();
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		// Exit Early
