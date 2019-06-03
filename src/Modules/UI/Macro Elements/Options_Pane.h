@@ -67,7 +67,8 @@ public:
 			const auto scale = getScale();
 			m_backPanel->setScale(scale);
 			m_layout->setScale(scale - glm::vec2(0, 50));
-			m_title->setPosition({ -scale.x + 50, scale.y - 50 });
+			m_title->setScale(scale);
+			m_title->setPosition({ 50, scale.y - 50 });
 			m_separatorTop->setScale(scale);
 			m_separatorTop->setPosition({ 0, scale.y - 100 });
 			m_separatorBot->setScale(scale);
@@ -93,16 +94,17 @@ protected:
 	@param	element		the element to add to the options menu.
 	@param	text		the text to title the option.
 	@param	description	the text to describe the option. */
-	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const std::string & text, const std::string & description, const int & eventType, const std::function<void()> & callback) {
+	inline void addOption(Engine * engine, std::shared_ptr<UI_Element> element, const float & ratio, const std::string & text, const std::string & description, const int & eventType, const std::function<void()> & callback) {
 		auto horizontalLayout = std::make_shared<Layout_Horizontal>(engine);
 		auto label = std::make_shared<Label>(engine, text);
 		label->setColor(glm::vec3(0.75f));
-		horizontalLayout->addElement(label);
-		horizontalLayout->addElement(element);
+		element->addCallback(eventType, callback);
+		element->setMaxHeight(14.0f);
+		horizontalLayout->addElement(label, (1.0f - ratio) + 1.0f);
+		horizontalLayout->addElement(element, ratio);
 		horizontalLayout->setScale({ 0, 30 });
 		m_layout->addElement(horizontalLayout);
 		m_layout->getFocusMap().addElement(element);
-		element->addCallback(eventType, callback);
 		m_elements.push_back(element);
 		m_descriptions.push_back(description);
 	};

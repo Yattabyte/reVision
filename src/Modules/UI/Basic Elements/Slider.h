@@ -28,33 +28,25 @@ public:
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
-		m_back = std::make_shared<Border>(engine, panel);
-		m_back->setMaxScale({ 200, 14 });
-		m_back->setScale({ 200, 14 });
-		m_back->setPosition({ 48, 0 });
-		addElement(m_back);
+		m_backPanel = std::make_shared<Border>(engine, panel);
+		addElement(m_backPanel);
 
 		// Create the sliding paddle
-		auto paddle = std::make_shared<Panel>(engine);
-		paddle->setColor(glm::vec4(0.75f));
-		paddle->setMaxScale({ 25, 12 });
-		paddle->setScale({ 25, 12 });
-		m_paddle = paddle;
+		m_paddle = std::make_shared<Panel>(engine);
+		m_paddle->setColor(glm::vec4(0.75f));
 		panel->addElement(m_paddle);
 
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine, std::to_string(value));
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
-		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
 		m_label->setColor(glm::vec3(0.75f));
-		m_label->setMaxScale({ 50, 28 });
-		m_label->setScale({ 50, 28 });
-		m_label->setPosition({ -225, 0 });
 		addElement(m_label);
 
-		setMaxScale({ 250, 28 });
-		setMinScale({ 250, 28 });
+		// Callbacks
+		addCallback(on_resize, [&]() { updateGeometry(); });
+
+		// Configure THIS element
 		setValue(value);
 	}
 
@@ -76,8 +68,8 @@ public:
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
-				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_back->getPosition().x + m_back->getScale().x;
-				setValue(((mx / (m_back->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
+				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
+				setValue(((mx / (m_backPanel->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
 			}
 		}
 	}
@@ -129,17 +121,31 @@ public:
 
 protected:
 	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {	
+		// Shorten the back panel by 50 units, and it is offset to the right by 50 units
+		m_backPanel->setPosition({ 50, 0 });
+		m_backPanel->setScale(glm::vec2(getScale().x - m_backPanel->getPosition().x, getScale().y));
+		// Move the label to the left side of the back panel
+		m_label->setPosition(-glm::vec2(getScale().x - 25, 0));
+		m_label->setScale({ 50, 28 });
+		// Update the paddle
+		updatePaddle();
+	}
 	/** Update the position of the paddle for this element. */
 	inline void updatePaddle() {
-		if (m_paddle);
-			m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
+		if (m_paddle) {
+			// The paddle fills a 6th of the back panel, or 10 pixels, whichever is bigger
+			m_paddle->setScale(glm::vec2(std::max<float>((getScale().x - 50) / 6.0f, 10.0), getScale().y - 2.0f) - 2.0f);
+			m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (getScale().x - 54.0f - m_paddle->getScale().x), 0 });
+		}
 	}
 
 
 	// Protected Attributes
 	float m_value = 0.0f, m_lowerRange = 0.0f, m_upperRange = 1.0f;
 	std::shared_ptr<Label> m_label;
-	std::shared_ptr<UI_Element> m_back;
+	std::shared_ptr<Border> m_backPanel;
 	std::shared_ptr<Panel> m_paddle;	
 };
 

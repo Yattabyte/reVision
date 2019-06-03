@@ -7,6 +7,7 @@
 #include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
+#include <algorithm>
 #include <string>
 
 
@@ -50,17 +51,18 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		std::vector<glm::vec3> m_data(num_data);
-		m_data[0] = { -1, -1, 0 };
-		m_data[1] = { 1, -1, 0 };
-		m_data[2] = { 1,  1, 0 };
-		m_data[3] = { 1,  1, 0 };
-		m_data[4] = { -1,  1, 0 };
-		m_data[5] = { -1, -1, 0 };
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
+		std::vector<glm::vec3> data(num_data);
+		data[0] = { -1, -1, 0 };
+		data[1] = { 1, -1, 0 };
+		data[2] = { 1,  1, 0 };
+		data[3] = { 1,  1, 0 };
+		data[4] = { -1,  1, 0 };
+		data[5] = { -1, -1, 0 };
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_DYNAMIC_STORAGE_BIT);
 
+		// Configure THIS element
 		setText(text);
 		setTextScale(m_textScale);
 	}
@@ -77,7 +79,7 @@ public:
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
 		m_shader->setUniform(1, newScale);
-		m_shader->setUniform(2, m_textScale);
+		m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0f, 5.0f, m_textScale));
 		m_shader->setUniform(3, (int)m_textAlignment);
 		m_shader->setUniform(4, m_enabled);
 		m_shader->setUniform(5, m_color);

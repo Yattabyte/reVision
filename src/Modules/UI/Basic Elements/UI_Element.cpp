@@ -79,7 +79,7 @@ void UI_Element::userAction(ActionState & actionState)
 
 // Public Methods
 
-void UI_Element::addElement(const std::shared_ptr<UI_Element>& child) 
+void UI_Element::addElement(const std::shared_ptr<UI_Element> & child) 
 {
 	m_children.push_back(child);
 	enactCallback(on_childrenChange);
@@ -152,6 +152,18 @@ glm::vec2 UI_Element::getMaxScale() const
 	return m_maxScale;
 }
 
+void UI_Element::setMaxWidth(const float & width)
+{
+	m_maxScale.x = width;
+	enactCallback(on_resize);
+}
+
+void UI_Element::setMaxHeight(const float & height)
+{
+	m_maxScale.y = height;
+	enactCallback(on_resize);
+}
+
 void UI_Element::setMinScale(const glm::vec2 & scale)
 {
 	m_minScale = scale;
@@ -168,6 +180,18 @@ void UI_Element::setMinScale(const glm::vec2 & scale)
 glm::vec2 UI_Element::getMinScale() const
 {
 	return m_minScale;
+}
+
+void UI_Element::setMinWidth(const float & width)
+{
+	m_minScale.x = width;
+	enactCallback(on_resize);
+}
+
+void UI_Element::setMinHeight(const float & height)
+{
+	m_minScale.y = height;
+	enactCallback(on_resize);
 }
 
 void UI_Element::setVisible(const bool & visible) 

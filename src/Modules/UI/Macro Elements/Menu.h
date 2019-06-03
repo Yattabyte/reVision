@@ -55,6 +55,7 @@ public:
 			m_backPanel->setPosition(glm::vec2(256, scale.y));
 			m_layout->setScale({ 128, 128 });
 			m_layout->setPosition(glm::vec2(0, -500));
+			m_title->setScale({ 128, scale.y });
 			m_title->setPosition({ 0, -300 });
 			m_separator->setScale({ 128, scale.y });
 			m_separator->setPosition({ 0, -325 });

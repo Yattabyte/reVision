@@ -44,7 +44,7 @@ public:
 		bottomButton->setMaxScale(glm::vec2(12.5f));
 		panel->setMinScale(glm::vec2(12.5f, 12.5f));
 		panel->setMaxScale(glm::vec2(12.5f, m_scale.y - 25.0f - 25.0f));
-		setMinScale(glm::vec2(12.5f, getMinScale().y));
+		setMinWidth(12.5f);
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);

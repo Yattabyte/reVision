@@ -29,37 +29,25 @@ public:
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
-		m_backPanel->setMaxScale({ 100, 14 });
-		m_backPanel->setScale({ 100, 14 });
-		m_backPanel->setPosition({ 48, 0 });
 		addElement(m_backPanel);
 
 		// Create the sliding paddle
-		auto paddle = std::make_shared<Panel>(engine);
-		paddle->setColor(glm::vec4(0.75f));
-		paddle ->setMaxScale({ 50.0f, 12 });
-		paddle->setScale({ 50.0f, 12 });
-		m_paddle = paddle;
+		m_paddle = std::make_shared<Panel>(engine);
+		m_paddle->setColor(glm::vec4(0.75f));
 		panel->addElement(m_paddle);
 		
 		// Add a label indicating the toggle state
 		m_label = std::make_shared<Label>(engine);
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
-		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
 		m_label->setColor(glm::vec3(0.75f));
-		m_label->setMaxScale({ 50, 28 });
-		m_label->setScale({ 50, 28 });
-		m_label->setPosition({ -125, 0 });
 		addElement(m_label);
 		
 		// Callbacks
-		addCallback(on_clicked, [&]() {
-			setToggled(!m_toggledOn);
-		});
-
-		setMaxScale({ 150, 28 });
-		setMinScale({ 150, 28 });
+		addCallback(on_clicked, [&]() { setToggled(!m_toggledOn); });
+		addCallback(on_resize, [&]() { updateGeometry(); });
+		
+		// Configure THIS element
 		setToggled(state);
 	}
 
@@ -103,10 +91,7 @@ public:
 	inline void setToggled(const bool & state) {
 		m_toggledOn = state;
 		setText(m_toggledOn ? "ON" : "OFF");
-		if (m_toggledOn)
-			m_paddle->setPosition({ 50, 0 });
-		else
-			m_paddle->setPosition({ -50, 0 });
+		updateGeometry();
 		enactCallback(on_toggle);
 	}
 	/** Return the toggle state of this button. 
@@ -117,6 +102,21 @@ public:
 
 
 protected:
+	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		// Shorten the back panel by 50 units, and it is offset to the right by 50 units
+		m_backPanel->setPosition({ 50, 0 });
+		m_backPanel->setScale(glm::vec2(getScale().x - m_backPanel->getPosition().x, getScale().y));
+		// Move the label to the left side of the back panel
+		m_label->setPosition(-glm::vec2(getScale().x - 25, 0));
+		m_label->setScale({ 50, 28 });
+		// The paddle fills HALF of the back panel, and is positioned on one of the 2 sides of it.
+		m_paddle->setScale(glm::vec2((getScale().x - 50) / 2.0f, getScale().y - 2.0f) - 2.0f);
+		m_paddle->setPosition(glm::vec2(m_paddle->getScale().x, 0) * (m_toggledOn ? 1.0f : -1.0f));
+	}
+
+
 	// Protected Attributes
 	bool m_toggledOn = true;
 	std::shared_ptr<Label> m_label;

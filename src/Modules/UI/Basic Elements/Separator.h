@@ -42,8 +42,8 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), &m_data[0], GL_CLIENT_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
-		setMaxScale(glm::vec2(getMaxScale().x, 2.0f));
-		setMinScale(glm::vec2(getMinScale().x, 2.0f));
+		setMaxHeight(2.0f);
+		setMinHeight(2.0f);
 	}
 
 

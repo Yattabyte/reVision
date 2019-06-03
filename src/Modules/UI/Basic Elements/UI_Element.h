@@ -85,12 +85,20 @@ public:
 	/** Gets this elements' maximum scale.
 	@return	this elements' maximum scale. */
 	glm::vec2 getMaxScale() const;
+	/***/
+	void setMaxWidth(const float & width);
+	/***/
+	void setMaxHeight(const float & height);
 	/** Sets this elements' minimum scale.
 	@param	scale					the new minimum scale to use. */
 	void setMinScale(const glm::vec2 & scale);
 	/** Gets this elements' minimum scale.
 	@return	this elements' minimum scale. */
 	glm::vec2 getMinScale() const;
+	/***/
+	void setMinWidth(const float & width);
+	/***/
+	void setMinHeight(const float & height);
 	/** Set this element as visible or not.
 	@param	visible					whether or not this element should be visible. */
 	void setVisible(const bool & visible);

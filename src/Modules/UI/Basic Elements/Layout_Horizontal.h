@@ -21,6 +21,13 @@ public:
 
 
 	// Public Methods
+	/** Add a child to this layout, optionally using a specific fraction of size alloted to it.
+	@param	child		the child to add to this layout.
+	@param	sizeRatio	the fractional amount of size this element should retain when resizing. */
+	inline void addElement(const std::shared_ptr<UI_Element> & child, const float & sizeRatio = 1.0f) {
+		UI_Element::addElement(child);
+		m_sizedChildren.push_back(std::make_pair(child, sizeRatio));
+	}
 	/** Set the margin distance between elements and the edge of this layout.
 	@param	margin		the margin for this layout. */
 	inline void setMargin(const float & margin) {
@@ -56,49 +63,52 @@ protected:
 
 		// Available space -= the dimensions of fixed-sized elements
 		int fixedElementCount = 0;
-		for (size_t x = 0; x < m_children.size(); ++x)
-			if (!std::isnan(m_children[x]->getMinScale().x) || !std::isnan(m_children[x]->getMaxScale().x)) {
-				sizeUsed += m_children[x]->getScale().x;
+		for each (const auto & pair in m_sizedChildren) {
+			auto[child, ratio] = pair;
+			if (!std::isnan(child->getMinScale().x) || !std::isnan(child->getMaxScale().x)) {
+				sizeUsed += child->getScale().x * ratio;
 				fixedElementCount++;
 			}
+		}
 
 		// Available space -= spacing factor between elements
-		if (m_children.size() > 1)
-			sizeUsed += float(m_children.size() - size_t(1)) * m_spacing;
+		if (m_sizedChildren.size() > 1)
+			sizeUsed += float(m_sizedChildren.size() - size_t(1)) * m_spacing;
 
 		// Remaining space divvied up between remaining elements
 		const float remainder = innerRectSize - sizeUsed;
-		const float elementSize = remainder / (float(m_children.size()) - float(fixedElementCount));
+		const float elementSize = remainder / (float(m_sizedChildren.size()) - float(fixedElementCount));
 
 		float positionFromLeft = -m_scale.x + m_margin;
 		const float left = positionFromLeft;
-		for (size_t x = 0; x < m_children.size(); ++x) {
-			m_children[x]->setScale(glm::vec2(elementSize, m_scale.y - m_margin));
-			if (m_children.size() == 1) {
-				m_children[x]->setPosition(glm::vec2(0.0f));
+		for each (const auto & pair in m_sizedChildren) {
+			auto[child, ratio] = pair;
+			child->setScale(glm::vec2(elementSize * ratio, m_scale.y - m_margin));
+			if (m_sizedChildren.size() == 1) {
+				child->setPosition(glm::vec2(0.0f));
 				continue;
 			}
-			const float size = m_children[x]->getScale().x;
+			const float size = child->getScale().x;
 			positionFromLeft += size;
-			m_children[x]->setPosition(glm::vec2(positionFromLeft, 0));
+			child->setPosition(glm::vec2(positionFromLeft, 0));
 			positionFromLeft += size + (m_spacing * 2.0f);
 		}
 		const float right = positionFromLeft - (m_spacing * 2.0f);
 
 		// Edge Case: all elements are fixed size, gap may be present
 		// Solution: change spacing to fit all elements within bounds
-		if (m_children.size() > 1 && fixedElementCount == m_children.size()) {
-			const float delta = (left - right) / float(m_children.size() + size_t(1));
+		if (m_sizedChildren.size() > 1 && fixedElementCount == m_sizedChildren.size()) {
+			const float delta = (left - right) / float(m_sizedChildren.size() + size_t(1));
 
-			for (size_t x = 1; x < m_children.size(); ++x) {
-				m_children[x]->setPosition(m_children[x]->getPosition() + glm::vec2(delta * x, 0));
-			}
+			for (size_t x = 1; x < m_sizedChildren.size(); ++x) 
+				m_sizedChildren[x].first->setPosition(m_sizedChildren[x].first->getPosition() + glm::vec2(delta * x, 0));			
 		}
 	}
 
 
 	// Protected Attributes
 	float m_margin = 10.0f, m_spacing = 10.0f;
+	std::vector<std::pair<std::shared_ptr<UI_Element>, float>> m_sizedChildren;
 };
 
 #endif // UI_LAYOUT_HORIZONTAL_H

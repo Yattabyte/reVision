@@ -53,22 +53,18 @@ public:
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
 		m_backPanel = std::make_shared<Border>(engine, panel);
-		m_backPanel->setMaxScale({ 172, 14 });
-		m_backPanel->setScale({ 172, 14 });
+		addElement(m_backPanel);
 
 		// Other UI elements
 		m_label = std::make_shared<Label>(engine, "");
 		m_label->setAlignment(Label::align_center);
 		m_label->setColor(glm::vec3(1.0f));
-		m_label->setScale({ 200, 28 });
+		addElement(m_label);
 
 		// Add Callbacks
 		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
 
-		setMaxScale({ 200, 28 });
-		setMinScale({ 200, 28 });
-		addElement(m_backPanel);
-		addElement(m_label);
+		// Configure THIS element
 		setIndex(0);
 	}
 
@@ -173,24 +169,30 @@ protected:
 	// Protected Methods
 	/** Update the data dependant on the scale of this element. */
 	inline void updateGeometry() {
+		// Shorten the back panel by the width of the arrowws
+		const float arrowHeight = m_scale.y;
+		m_backPanel->setScale(glm::vec2(getScale().x - (arrowHeight * 2.0f), getScale().y));
+
+		// Adjust the size of the text font, ensuring it at least fits within bounds (automatic when setting scale)
+		m_label->setScale(m_backPanel->getScale());		
+		
 		constexpr auto num_data = 2 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
 
 		// Arrows
-		const float arrowHeight = m_scale.y / 2.0f;
 		data[0] = { -1,  0, 0 };
 		data[1] = { 0, -1, 0 };
 		data[2] = { 0, 1, 0 };
 		for (int x = 0; x < 3; ++x) {
-			data[x] = (data[x] * glm::vec3(arrowHeight)) - glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
+			data[x] = (data[x] * glm::vec3(arrowHeight)) - glm::vec3(getScale().x - arrowHeight, 0, 0);
 			objIndices[x] = 0;
 		}
 		data[3] = { 1,  0, 0 };
 		data[4] = { 0, 1, 0 };
 		data[5] = { 0, -1, 0 };
 		for (int x = 3; x < 6; ++x) {
-			data[x] = (data[x] * glm::vec3(arrowHeight)) + glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
+			data[x] = (data[x] * glm::vec3(arrowHeight)) + glm::vec3(getScale().x - arrowHeight, 0, 0);
 			objIndices[x] = 1;
 		}
 
@@ -200,7 +202,6 @@ protected:
 
 
 	// Protected Attributes
-	std::shared_ptr<Label> m_label;
 	std::vector<std::string> m_strings;
 	int m_index = 0;
 	bool
@@ -215,7 +216,8 @@ protected:
 		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
-	std::shared_ptr<UI_Element> m_backPanel;
+	std::shared_ptr<Label> m_label;
+	std::shared_ptr<Border> m_backPanel;
 };
 
 #endif // UI_SIDELIST_H
