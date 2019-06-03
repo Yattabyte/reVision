@@ -3,27 +3,28 @@
 #include <algorithm>
 
 
-RH_Volume::~RH_Volume() {
+RH_Volume::~RH_Volume() 
+{
 	// Update indicator
 	m_aliveIndicator = false;
 }
 
-RH_Volume::RH_Volume(Engine * engine) : m_engine(engine) {
+RH_Volume::RH_Volume(Engine * engine) : m_engine(engine) 
+{
 	// Preferences
 	auto & preferences = m_engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, m_farPlane);
-	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_farPlane = f; });
 	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_resolution);
 	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_resolution = f; });
 }
 
-void RH_Volume::updateVolume(const CameraBuffer & cameraBuffer) {
+void RH_Volume::updateVolume(const CameraBuffer & cameraBuffer) 
+{
 	const glm::mat4 InverseView = glm::inverse(cameraBuffer->vMatrix);
 	const glm::vec2 ViewDimensions = cameraBuffer->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
 	const float tanHalfHFOV = glm::radians(cameraBuffer->FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { m_nearPlane, (m_farPlane * 0.25f) };
+	const float frustumSlice[2] = { cameraBuffer->ConstNearPlane, (cameraBuffer->FarPlane * 0.25f) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,

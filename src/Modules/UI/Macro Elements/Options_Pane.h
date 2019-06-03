@@ -73,7 +73,8 @@ public:
 			m_separatorTop->setPosition({ 0, scale.y - 100 });
 			m_separatorBot->setScale(scale);
 			m_separatorBot->setPosition({ 0, -scale.y + 100 });
-			m_description->setPosition({ -scale.x + 50, -scale.y + 50 });
+			m_description->setScale(scale);
+			m_description->setPosition({ 50, -scale.y + 50 });
 		});
 	}
 

@@ -37,11 +37,18 @@ public:
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::ivec2(f, m_renderSize.y)); });
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::ivec2(m_renderSize.x, f)); });
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_rebounceFBO.resize((GLuint)f); });		
+		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { 
+			m_bounceSize = (GLuint)f; 
+			m_rebounceFBO.resize((GLuint)f);
+			if (m_shapeQuad && m_shapeQuad->existsYet()) {
+				const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
+				m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
+			}
+		});
 		m_rebounceFBO.resize(m_bounceSize);
 
 		// Asset-Finished callbacks

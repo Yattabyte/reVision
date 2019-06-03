@@ -16,7 +16,6 @@ struct Directional_RenderState {
 	GLint m_shadowCount = 0;
 	glm::ivec2 m_shadowSize = glm::ivec2(1024);
 	GLuint m_bounceSize = 16u,  m_updateQuality = 1u;
-	float m_drawDistance = 1000.0f;
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4), m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
 	DynamicBuffer m_visLights, m_visShadows;
 	std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> m_shadowsToUpdate;
@@ -51,8 +50,8 @@ public:
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians(cameraBuffer->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-		const float near_plane = -CameraBuffer::BufferStructure::CAMERA_NEAR_PLANE;
-		const float far_plane = -m_renderState.m_drawDistance/2.0F;
+		const float near_plane = -CameraBuffer::BufferStructure::ConstNearPlane;
+		const float far_plane = -cameraBuffer->FarPlane;
 		float cascadeEnd[NUM_CASCADES + 1];
 		glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
 		constexpr float lambda = 0.75f;

@@ -39,7 +39,7 @@ public:
 	// Public Methods	
 	/** Update the data for the specified camera. 
 	@param	camera			the camera to update */
-	void updateCamera(CameraBuffer & cameraBuffer);
+	void updateCamera(CameraBuffer & cameraBuffer) const;
 	/** Returns the active camera's data buffer.
 	@return					the active camera's data buffer. */
 	CameraBuffer & getCameraBuffer();

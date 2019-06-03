@@ -78,7 +78,7 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	GLuint m_bounceSize = 16;
 	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
+	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceSize = (GLuint)f;  m_bounceFBO.resize((GLuint)f); });
 	m_bounceFBO.resize(m_bounceSize);
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
@@ -312,13 +312,13 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_cameraBuffer.lockFrame(m_engine->getCurrentFrame());
 }
 
-void Graphics_Module::updateCamera(CameraBuffer & cameraBuffer)
+void Graphics_Module::updateCamera(CameraBuffer & cameraBuffer) const
 {
 	// Update Perspective Matrix
 	const float ar = std::max(1.0f, cameraBuffer->Dimensions.x) / std::max(1.0f, cameraBuffer->Dimensions.y);
 	const float horizontalRad = glm::radians(cameraBuffer->FOV);
 	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	cameraBuffer->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::CAMERA_NEAR_PLANE, cameraBuffer->FarPlane);
+	cameraBuffer->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::ConstNearPlane, cameraBuffer->FarPlane);
 }
 
 CameraBuffer & Graphics_Module::getCameraBuffer()

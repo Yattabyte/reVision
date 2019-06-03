@@ -35,11 +35,11 @@ public:
 			counter++;
 		}
 		element_material_list->setIndex(index);
-		addOption(engine, element_material_list, 1.0f, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.", SideList::on_index_changed, [&, element_material_list]() { setResolution(element_material_list->getIndex()); });
+		addOption(engine, element_material_list, 1.0f, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.", SideList::on_index_changed, [&, element_material_list]() { setTextureResolution(element_material_list->getIndex()); });
 
 		// Shadow Size Option
 		float shadowSize = 1024, shadowQuality = 4;
-		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, shadowSize);
+		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, shadowSize);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_QUALITY, shadowQuality);
 		auto element_shadow_list = std::make_shared<SideList>(engine);
 		element_shadow_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
@@ -117,7 +117,7 @@ protected:
 	// Protected Methods
 	/** Set the resolution.
 	@param	index	the resolution index to use. */
-	inline void setResolution(const size_t & index) {
+	inline void setTextureResolution(const size_t & index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_MATERIAL_SIZE, m_materialSizes[index]);
 	}
 	/** Set the shadow size.

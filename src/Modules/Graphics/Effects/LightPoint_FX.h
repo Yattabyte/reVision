@@ -39,13 +39,18 @@ public:
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(f, m_renderSize.y); });
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_renderState->m_updateQuality);
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, m_renderState->m_shadowSize.x);
-		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });		
+		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) { 
+			m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f));
+			m_shadowFBO.resize(m_renderState->m_shadowSize, 6);
+			if (m_shader_Lighting && m_shader_Lighting->existsYet())
+				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_renderState->m_shadowSize.x); });
+		});		
 		m_renderState->m_shadowSize = glm::ivec2(std::max(1, m_renderState->m_shadowSize.x));
 		m_shadowFBO.resize(m_renderState->m_shadowSize, 6);
 
@@ -54,7 +59,7 @@ public:
 			const GLuint data = { (GLuint)m_shapeSphere->getSize() };
 			m_renderState->m_indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
 		});
-		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / (float)m_renderState->m_shadowSize.x); });
+		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_renderState->m_shadowSize.x); });
 
 		// Geometry rendering pipeline
 		m_geometryStaticSystems.addSystem(new PropShadowing_System(m_engine, 6, PropShadowing_System::RenderStatic));

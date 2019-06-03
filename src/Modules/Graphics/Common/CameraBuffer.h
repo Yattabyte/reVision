@@ -11,7 +11,7 @@ class CameraBuffer {
 public:
 	// Public Structs
 	struct BufferStructure {
-		constexpr static float CAMERA_NEAR_PLANE = 0.01f;
+		constexpr static float ConstNearPlane = 0.01f;
 		glm::mat4 pMatrix;
 		glm::mat4 vMatrix;
 		glm::vec3 EyePosition; float padding1;

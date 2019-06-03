@@ -42,15 +42,18 @@ public:
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(f, m_renderSize.y); });
+		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
 		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {m_renderSize = glm::ivec2(m_renderSize.x, f); });
-		preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, m_renderState->m_drawDistance);
-		preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) { m_renderState->m_drawDistance = f; });
+		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_renderState->m_updateQuality);
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_renderState->m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_renderState->m_shadowSize.x);
-		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) { m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f)); });
+		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) { 
+			m_renderState->m_shadowSize = glm::ivec2(std::max(1, (int)f));
+			m_shadowFBO.resize(m_renderState->m_shadowSize, 4);
+			if (m_shader_Lighting && m_shader_Lighting->existsYet())
+				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_renderState->m_shadowSize.x); });
+		});
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_renderState->m_bounceSize);
 		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_renderState->m_bounceSize = (GLuint)f; });
 		m_renderState->m_shadowSize = glm::ivec2(std::max(1, m_renderState->m_shadowSize.x));
@@ -63,7 +66,7 @@ public:
 			m_renderState->m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
 			m_renderState->m_indirectBounce.write(0, sizeof(GLuint) * 4, &data);
 		});
-		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) {m_shader_Lighting->setUniform(0, 1.0f / m_renderState->m_shadowSize.x); });
+		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_renderState->m_shadowSize.x); });
 
 		// Noise Texture
 		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
