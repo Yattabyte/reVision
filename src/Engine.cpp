@@ -182,12 +182,12 @@ Engine::Engine() :
 
 	// Initialize Members
 	m_inputBindings.loadFile("binds");
+	m_moduleWorld.initialize(this);
 	m_modelManager.initialize();
 	m_moduleGraphics.initialize(this);
 	m_modulePProcess.initialize(this);
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
-	m_moduleWorld.initialize(this);
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
