@@ -4,10 +4,8 @@
 
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
-#include "Utilities/GL/glad/glad.h"
 #include "Utilities/ActionState.h"
 #include "glm/glm.hpp"
-#include <algorithm>
 #include <functional>
 #include <map>
 #include <vector>
@@ -21,6 +19,8 @@ public:
 	// Public Interaction Enums
 	const enum interact {
 		on_resize,
+		on_reposition,
+		on_childrenChange,
 		on_hover_start,
 		on_hover_stop,
 		on_press,
@@ -39,10 +39,8 @@ public:
 
 
 	// Public Interface Declaration
-	/** Requests that this element update itself. */
-	virtual void update();
 	/** Render this element (and all subelements).
-	@param	transform				transform to use*/
+	@param	transform				transform to use. */
 	virtual void renderElement(const float & deltaTime, const glm::vec2 & position = glm::vec2(0.0f), const glm::vec2 & scale = glm::vec2(1.0f));
 	/** Applies a mouse action across this ui element.
 	@param	mouseEvent				the mouse event occuring. */

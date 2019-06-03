@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Decorators/UI_Decorator.h"
-#include <memory>
+#include <algorithm>
 #include <string>
 
 
@@ -24,7 +24,7 @@ public:
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	/** Construct a vertical scrollbar, decorating the supplied component. 
+	/** Construct a vertical scrollbar, decorating the supplied component.
 	@param	engine		the engine to use.
 	@param	component	the component to decorate. */
 	inline Scrollbar_V(Engine * engine, const std::shared_ptr<UI_Element> & component)
@@ -57,61 +57,45 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		constexpr auto num_data = 2 * 3;
-		std::vector<glm::vec3> m_data(num_data);
-
-		// Background
-		m_data[0] = { -1, -1, 0 };
-		m_data[1] = { 1, -1, 0 };
-		m_data[2] = { 1,  1, 0 };
-		m_data[3] = { 1,  1, 0 };
-		m_data[4] = { -1,  1, 0 };
-		m_data[5] = { -1, -1, 0 };
-		for (int x = 0; x < 6; ++x)
-			m_data[x] = glm::vec3(m_scale.x - 12.5f, 0, 0) + (m_data[x] * glm::vec3(12.5f, m_scale.y, 0.0f));		
-
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
-
-		updateElements();
-		UI_Element::update();
-		m_component->setPosition(glm::vec2(-12.5f, 0));
-		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
-	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Decorator::mouseAction(mouseEvent);
-		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {		
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			MouseEvent subEvent = mouseEvent;
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			if (m_children.size() == 3) {
-				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::MOVE) {
+				if (std::dynamic_pointer_cast<Button>(m_children[2])->getPressed() && mouseEvent.m_action == MouseEvent::MOVE)
 					setLinear(float(subEvent.m_yPos) / (m_scale.y - 25.0f - 12.5f));
-					updateElements();
-				}
 			}
 			enactCallback(on_hover_start);
 			if (mouseEvent.m_action == MouseEvent::PRESS)
 				enactCallback(on_press);
 			else
 				enactCallback(on_release);
-		}		
+		}
 	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Quit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
 		const auto newPosition = position + m_position;
 		const auto newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
+
+		// Render
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		
+
+		// Render Children
 		UI_Decorator::renderElement(deltaTime, position, newScale);
 	}
 
@@ -121,9 +105,10 @@ public:
 	@param	linear		the linear amount to put the scroll bar. */
 	inline void setLinear(const float & linear) {
 		m_linear = std::clamp<float>(linear, -1.0f, 1.0f);
+		updateElementPosition();
 		enactCallback(on_scroll_change);
 	}
-	/** Get the linear value for this scrollbar. 
+	/** Get the linear value for this scrollbar.
 	@return				the linear value for this scroll bar. */
 	inline float getLinear() const {
 		return m_linear;
@@ -132,8 +117,29 @@ public:
 
 protected:
 	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		constexpr auto num_data = 2 * 3;
+		std::vector<glm::vec3> data(num_data);
+
+		// Background
+		data[0] = { -1, -1, 0 };
+		data[1] = { 1, -1, 0 };
+		data[2] = { 1,  1, 0 };
+		data[3] = { 1,  1, 0 };
+		data[4] = { -1,  1, 0 };
+		data[5] = { -1, -1, 0 };
+		for (int x = 0; x < 6; ++x)
+			data[x] = glm::vec3(m_scale.x - 12.5f, 0, 0) + (data[x] * glm::vec3(12.5f, m_scale.y, 0.0f));
+
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
+
+		updateElementPosition();
+		m_component->setPosition(glm::vec2(-12.5f, 0));
+		m_component->setScale(glm::vec2(m_scale.x - 12.5f, m_scale.y));
+	}
 	/** Update the position of all scrollbar elements. */
-	inline void updateElements() {
+	inline void updateElementPosition() {
 		if (m_children.size() == 3) {
 			// Buttons
 			m_children[0]->setPosition(glm::vec2(getScale() - 12.5f));

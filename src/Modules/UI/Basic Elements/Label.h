@@ -18,7 +18,7 @@ public:
 		on_textChanged = UI_Element::last_interact_index
 	};
 	// Public Alignment Enums
-	const enum Alignment : int {
+	const enum Alignment {
 		align_left = -1,
 		align_center = 0,
 		align_right = 1
@@ -67,18 +67,6 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		// Write letters to a buffer
-		const GLuint count = (GLuint)m_text.size();
-		std::vector<int> data(count + 1);
-		data[0] = count;
-		for (int x = 0; x < (int)count; ++x)
-			data[x + 1] = (int)(m_text[x]) - 32;
-		m_bufferString.write(0, sizeof(int)*(count + 1), data.data());
-		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
-
-		UI_Element::update();
-	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
@@ -100,7 +88,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Render Children
-		UI_Element::renderElement(deltaTime, position, newScale);
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
@@ -109,7 +97,17 @@ public:
 	@param	text	the text to use. */
 	inline void setText(const std::string & text) {
 		m_text = text;
-		update();
+
+		// Write letters to a buffer
+		const GLuint count = (GLuint)m_text.size();
+		std::vector<int> data(count + 1);
+		data[0] = count;
+		for (int x = 0; x < (int)count; ++x)
+			data[x + 1] = (int)(m_text[x]) - 32;
+		m_bufferString.write(0, sizeof(int)*(count + 1), data.data());
+		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
+
+		// Notify text changed
 		enactCallback(on_textChanged);
 	}
 	/** Retrieve this label's text. 
@@ -122,7 +120,6 @@ public:
 	inline void setTextScale(const float & textScale) {
 		m_textScale = textScale;
 		m_maxScale.y = textScale;
-		update();
 	}
 	/** Retrieve this label's text scaling factor.
 	@return	the text scaling factor. */

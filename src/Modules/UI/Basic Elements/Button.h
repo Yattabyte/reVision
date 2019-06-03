@@ -24,13 +24,7 @@ public:
 		addElement(m_label);
 
 		// Callbacks
-		addCallback(on_hover_start, [&]() { updateColors(); });
-		addCallback(on_hover_stop, [&]() { updateColors(); });
-		addCallback(on_press, [&]() { updateColors(); });
-		addCallback(on_release, [&]() {	updateColors(); });
-		addCallback(on_clicked, [&]() {	updateColors(); });
 		addCallback(on_resize, [&]() { m_label->setScale(getScale()); });
-		updateColors();
 	}
 
 
@@ -39,6 +33,18 @@ public:
 		// Only thing a user can do is press the button
 		if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			pressButton();
+	}
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Update Colors
+		glm::vec4 color(0.75);
+		if (m_pressed)
+			color *= 0.5f;
+		if (m_hovered)
+			color *= 1.5f;
+		m_label->setColor(color);
+
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
@@ -51,10 +57,9 @@ public:
 	@param	text	the text to use. */
 	inline void setText(const std::string & text) {
 		m_label->setText(text);
-		update();
 	}
 	/** Retrieve this buttons' labels text.
-	@return	the text this label uses. */
+	@return			the text this label uses. */
 	inline std::string getText() const {
 		return m_label->getText();
 	}
@@ -64,25 +69,13 @@ public:
 		m_bevelRadius = radius;
 	}
 	/** Get the bevel radius from this button.
-	@return radius	this buttons' bevel radius. */
+	@return			this buttons' bevel radius. */
 	inline float getBevelRadius() const {
 		return m_bevelRadius;
 	}
 
 
 protected:
-	// Protected Methods
-	/** Modifies the color button text, depending on the state of the button. */
-	inline void updateColors() {
-		glm::vec3 textColor(0.75);
-		if (m_pressed)
-			textColor *= 0.5f;
-		if (m_hovered)
-			textColor *= 1.5f;
-		m_label->setColor(textColor);
-	}
-
-
 	// Protected Attributes
 	float m_bevelRadius = 10.0f;
 	std::shared_ptr<Label> m_label;

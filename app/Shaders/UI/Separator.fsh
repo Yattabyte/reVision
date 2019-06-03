@@ -4,6 +4,7 @@
 // Uniforms
 layout(location = 0) uniform vec2 ElementPosition;
 layout(location = 1) uniform vec2 ElementScale;
+layout(location = 2) uniform vec4 ElementColor;
 
 // Outputs
 layout (location = 0) out vec4 FragColor;
@@ -16,5 +17,5 @@ void main()
 	const float rangeX = 1.0f / ElementScale.x;
 	const float rangeY = 1.0f / ElementScale.y;
 	const float atten = (1.0f - (distX * distX) * (rangeX * rangeX)) * (1.0f - (distY * distY) * (rangeY * rangeY));
-	FragColor = vec4(atten);
+	FragColor = vec4(atten) * ElementColor;
 }

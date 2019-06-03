@@ -36,27 +36,13 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
 	}
 	
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		constexpr auto num_data = 2 * 3;
-		std::vector<glm::vec3> m_data(num_data);
-
-		// Center
-		m_data[0] = { -1, -1, 0 };
-		m_data[1] = { 1, -1, 0 };
-		m_data[2] = { 1,  1, 0 };
-		m_data[3] = { 1,  1, 0 };
-		m_data[4] = { -1,  1, 0 };
-		m_data[5] = { -1, -1, 0 };
-		for (int x = 0; x < 6; ++x)
-			m_data[x] *= glm::vec3(m_scale, 0.0f);
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
-
-		UI_Element::update();
-	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		// Exit Early
 		if (!getVisible() || !m_shader->existsYet()) return;
@@ -72,7 +58,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
 		// Render Children
-		UI_Element::renderElement(deltaTime, position, newScale);
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
@@ -90,6 +76,25 @@ public:
 
 
 protected:
+	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		constexpr auto num_data = 2 * 3;
+		std::vector<glm::vec3> data(num_data);
+
+		// Center
+		data[0] = { -1, -1, 0 };
+		data[1] = { 1, -1, 0 };
+		data[2] = { 1,  1, 0 };
+		data[3] = { 1,  1, 0 };
+		data[4] = { -1,  1, 0 };
+		data[5] = { -1, -1, 0 };
+		for (int x = 0; x < 6; ++x)
+			data[x] *= glm::vec3(m_scale, 0.0f);
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
+	}
+
+
 	// Protected Attributes
 	glm::vec4 m_color = glm::vec4(0.2f);
 	GLuint m_vaoID = 0, m_vboID = 0;

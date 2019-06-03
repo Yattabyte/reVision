@@ -24,7 +24,7 @@ public:
 	@param	engine		the engine to use.
 	@param	state		the on/off state to use. */
 	inline Toggle(Engine * engine, const bool & state = true)
-		: UI_Element(engine), m_toggledOn(state) {
+		: UI_Element(engine) {
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
@@ -37,13 +37,13 @@ public:
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
-		paddle ->setMaxScale({ 50.0f, 14 });
-		paddle->setScale({ 50.0f, 14 });
+		paddle ->setMaxScale({ 50.0f, 12 });
+		paddle->setScale({ 50.0f, 12 });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
 		
 		// Add a label indicating the toggle state
-		m_label = std::make_shared<Label>(engine, state ? "ON" : "OFF");
+		m_label = std::make_shared<Label>(engine);
 		m_label->setAlignment(Label::align_right);
 		m_label->setTextScale(12.0f);
 		m_label->setMaxScale(glm::vec2(30.0f, m_label->getMaxScale().y));
@@ -54,41 +54,33 @@ public:
 		addElement(m_label);
 		
 		// Callbacks
-		panel->addCallback(UI_Element::on_hover_start, [paddle]() {paddle->setColor(glm::vec4(0.75f * 1.5f)); });
-		panel->addCallback(UI_Element::on_hover_stop, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
-		panel->addCallback(UI_Element::on_press, [paddle]() {paddle->setColor(glm::vec4(0.75f * 0.5f)); });
-		panel->addCallback(UI_Element::on_release, [paddle]() {paddle->setColor(glm::vec4(0.75f)); });
 		addCallback(on_clicked, [&]() {
 			setToggled(!m_toggledOn);
 		});
 
 		setMaxScale({ 150, 28 });
 		setMinScale({ 150, 28 });
-		update();
+		setToggled(state);
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		if (!m_paddle) return;
-		if (m_toggledOn)
-			m_paddle->setPosition({ 50, 0 });
-		else
-			m_paddle->setPosition({ -50, 0 });
-	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Update Colors
 		glm::vec4 color(0.75);
 		if (m_pressed)
 			color *= 0.5f;
 		if (m_hovered)
 			color *= 1.5f;
 		m_paddle->setColor(color);
-		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
+
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 	inline virtual void userAction(ActionState & actionState) override {
-		if (m_toggledOn && actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
+		if (actionState.isAction(ActionState::UI_LEFT) == ActionState::PRESS)
 			setToggled(false);
-		else if (!m_toggledOn && actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
+		else if (actionState.isAction(ActionState::UI_RIGHT) == ActionState::PRESS)
 			setToggled(true);
 		else if (actionState.isAction(ActionState::UI_ENTER) == ActionState::PRESS)
 			setToggled(!m_toggledOn);
@@ -99,8 +91,7 @@ public:
 	/** Set this slider's text.
 	@param	text	the text to use. */
 	inline void setText(const std::string & text) {
-		m_label->setText(text);
-		update();
+		m_label->setText(text);		
 	}
 	/** Retrieve this slider's text.
 	@return			the text this label uses. */
@@ -112,7 +103,10 @@ public:
 	inline void setToggled(const bool & state) {
 		m_toggledOn = state;
 		setText(m_toggledOn ? "ON" : "OFF");
-		update();
+		if (m_toggledOn)
+			m_paddle->setPosition({ 50, 0 });
+		else
+			m_paddle->setPosition({ -50, 0 });
 		enactCallback(on_toggle);
 	}
 	/** Return the toggle state of this button. 

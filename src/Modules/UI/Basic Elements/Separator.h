@@ -58,17 +58,32 @@ public:
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
 		m_shader->setUniform(1, newScale);
+		m_shader->setUniform(2, m_color);
 		glBindVertexArray(m_vaoID);
 		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		
 		// Render Children
-		UI_Element::renderElement(deltaTime, position, newScale);
+		UI_Element::renderElement(deltaTime, position, scale);
+	}
+
+
+	// Public Methods
+	/** Set this element's color.
+	@param	text	the new color to render with. */
+	inline void setColor(const glm::vec4 & color) {
+		m_color = color;
+	}
+	/** Retrieve this element's color.
+	@return			the color used by this element. */
+	inline glm::vec4 getColor() const {
+		return m_color;
 	}
 
 
 protected:
 	// Protected Attributes
+	glm::vec4 m_color = glm::vec4(1.0f);
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;

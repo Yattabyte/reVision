@@ -7,9 +7,8 @@
 #include "Modules/UI/FocusMap.h"
 #include "Modules/UI/MouseEvent.h"
 #include "Modules/UI/KeyboardEvent.h"
-#include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/ActionState.h"
-#include <memory>
+#include "Utilities/GL/StaticBuffer.h"
 #include <vector>
 
 

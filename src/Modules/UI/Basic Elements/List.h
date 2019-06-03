@@ -5,7 +5,6 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/FocusMap.h"
 #include "Assets/Shader.h"
-#include "Engine.h"
 
 
 /** A UI container class that laysout its children vertically, in a list.
@@ -42,15 +41,19 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 8 * 6;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
+
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { 
+			alignChildren();
+			updateSelectionGeometry();
+		});
+		addCallback(UI_Element::on_childrenChange, [&]() { 
+			alignChildren();
+		});
 	}
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		alignChildren();
-		updateSelectionGeometry();
-		UI_Element::update();
-	}
 	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
 		// Exit Early
 		if (!getVisible() || !m_children.size() || !m_shader->existsYet()) return;
@@ -75,8 +78,8 @@ public:
 			glDrawArrays(GL_TRIANGLES, 24, 24);
 		}
 		
-		// Render Children	
-		UI_Element::renderElement(deltaTime, position, glm::min(m_scale, scale));
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
@@ -86,20 +89,16 @@ public:
 			subEvent.m_xPos = mouseEvent.m_xPos - m_position.x;
 			subEvent.m_yPos = mouseEvent.m_yPos - m_position.y;
 			int index(0);
-			bool interacted = false;
 			for each (auto & child in m_children) {
-				if (child->mouseWithin(subEvent)) {
-					setHoverIndex(index);
-					interacted = true;
+				if (child->mouseWithin(subEvent)) {					
+					setHoverIndex(index); // Set hovered item to whatever is beneath mouse
+					if (mouseEvent.m_action == MouseEvent::RELEASE)						
+						setSelectionIndex(index); // Set selected item to whatever is beneath mouse
 					break;
 				}
 				else
 					index++;
 			}
-
-			// Set confirmed selection to whatever is beneath mouse
-			if (interacted && mouseEvent.m_action == MouseEvent::RELEASE)
-				setSelectionIndex(index);
 
 			// Force current selection to stay highlighted
 			if (m_children.size() && m_hoverIndex > -1)
@@ -156,8 +155,6 @@ public:
 	@param	newIndex		the new selected index. */
 	inline void setSelectionIndex(const int & newIndex) {
 		m_selectionIndex = newIndex;
-		//if (m_selectionIndex > -1 && m_selectionIndex < m_children.size())
-		//	m_engine->getModule_UI().setFocusedElement(m_children[m_selectionIndex].get());
 		m_focusMap.focusIndex(m_selectionIndex);
 		updateSelectionGeometry();
 		enactCallback(on_selection);
@@ -177,9 +174,10 @@ public:
 	@param	margin		the margin for this layout. */
 	inline void setMargin(const float & margin) {
 		m_margin = margin;
+		alignChildren();
 	}
 	/** Get the margin distance between elements and the edge of this layout.
-	@return the the margin for this layout. */
+	@return				the margin for this layout. */
 	inline float getMargin() const {
 		return m_margin;
 	}
@@ -187,6 +185,8 @@ public:
 	@param	spacing		the spacing distance between elements. */
 	inline void setSpacing(const float & spacing) {
 		m_spacing = spacing;
+		alignChildren();
+		updateSelectionGeometry();
 	}
 	/** Get the spacing distance between elements in this layout.
 	@return				the spacing distance between elements. */
@@ -197,7 +197,7 @@ public:
 	@param		size		the new border size to use. */
 	inline void setBorderSize(const float & size) {
 		m_borderSize = size;
-		update();
+		updateSelectionGeometry();
 	}
 	/** Get the border size.
 	@return				border size. */
@@ -308,7 +308,9 @@ protected:
 		m_margin = 10.0f,
 		m_spacing = 10.0f,
 		m_borderSize = 2.0f;
-	int m_hoverIndex = -1, m_selectionIndex = -1;
+	int 
+		m_hoverIndex = -1, 
+		m_selectionIndex = -1;
 	GLuint
 		m_vaoID = 0,
 		m_vboID = 0;

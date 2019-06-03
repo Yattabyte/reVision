@@ -15,21 +15,21 @@ class FocusMap {
 public:
 	// Public (de)Constructors
 	/** Destroy this focus map. */
-	~FocusMap() = default;
+	inline ~FocusMap() = default;
 	/** Construct a focus map. */
-	FocusMap() = default;
+	inline FocusMap() = default;
 
 
 	// Public Methods
 	/** Add an element to this focus map, setting it in focus. 
 	@param	element			the new element to add to the map. */
-	void addElement(const std::shared_ptr<UI_Element> & element) {
+	inline void addElement(const std::shared_ptr<UI_Element> & element) {
 		m_elements.push_back(element);
 	}
 	/** Remove an element from this focus map, comparing its underlying pointer. 
 	@param	element			the element to remove from the map. 
 	@return					true if found and removed, false otherwise. */
-	bool removeElement(const std::shared_ptr<UI_Element> & element) {
+	inline bool removeElement(const std::shared_ptr<UI_Element> & element) {
 		size_t index(0ull);
 		bool found = false;
 		for each (const auto & e in m_elements) {
@@ -45,20 +45,20 @@ public:
 		return found;
 	}
 	/** Remove all elements from this focus map.*/
-	void clear() {
+	inline void clear() {
 		m_elements.clear();
 		m_index = -1;
 	}
 	/** Set the focus onto a specific index, if it is able to be focused on. 
 	@param	newIndex		the index to attempt to focus on. */
-	void focusIndex(const int & newIndex) {		
+	inline void focusIndex(const int & newIndex) {
 		if (newIndex >= 0 && newIndex < m_elements.size() && elementFocusable(m_elements[newIndex]))
 			m_index = newIndex;
 	}
 	/** Set the focus onto a specific element, if it is able to be focused on, if it's pointer can be found.
 	@param	element			the element to attempt to focus on.
 	@return					true if found and focused, false otherwise. */
-	bool focusElement(const std::shared_ptr<UI_Element> & element) {
+	inline bool focusElement(const std::shared_ptr<UI_Element> & element) {
 		size_t index(0ull);
 		bool found = false;
 		for each (const auto & e in m_elements) {
@@ -102,7 +102,7 @@ private:
 	/** Shorthand method returning if we can tab/switch to an element.
 	@param	element		the element to check.
 	@return				true if focusable, false otherwise. */
-	bool elementFocusable(const std::shared_ptr<UI_Element> & element) const {
+	inline bool elementFocusable(const std::shared_ptr<UI_Element> & element) const {
 		return element->getVisible() && element->getEnabled();
 	};
 

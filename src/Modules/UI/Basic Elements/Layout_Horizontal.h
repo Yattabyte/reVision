@@ -13,13 +13,10 @@ public:
 	inline ~Layout_Horizontal() = default;
 	/** Construct the layout.
 	@param	engine		the engine to use. */
-	inline Layout_Horizontal(Engine * engine) : UI_Element(engine) {}
-
-
-	// Public Interface Implementation
-	inline virtual void update() override {
-		alignChildren();
-		UI_Element::update();
+	inline Layout_Horizontal(Engine * engine) : UI_Element(engine) {
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { alignChildren(); });
+		addCallback(UI_Element::on_childrenChange, [&]() { alignChildren(); });
 	}
 
 
@@ -28,9 +25,10 @@ public:
 	@param	margin		the margin for this layout. */
 	inline void setMargin(const float & margin) {
 		m_margin = margin;
+		alignChildren();
 	}
 	/** Get the margin distance between elements and the edge of this layout.
-	@return the the margin for this layout. */
+	@return				the the margin for this layout. */
 	inline float getMargin() const {
 		return m_margin;
 	}
@@ -38,9 +36,10 @@ public:
 	@param	spacing		the spacing distance between elements. */
 	inline void setSpacing(const float & spacing) {
 		m_spacing = spacing;
+		alignChildren();
 	}
 	/** Get the spacing distance between elements in this layout.
-	@return the spacing distance between elements. */
+	@return				the spacing distance between elements. */
 	inline float getSpacing() const {
 		return m_spacing;
 	}
@@ -48,6 +47,7 @@ public:
 
 protected:
 	// Protected Methods
+	/** Rearrange the position and scale of children, to uniformally fit in this layout. */
 	inline void alignChildren() {
 		const float innerRectSize = m_scale.x;
 

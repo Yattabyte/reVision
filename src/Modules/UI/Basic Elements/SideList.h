@@ -62,6 +62,9 @@ public:
 		m_label->setColor(glm::vec3(1.0f));
 		m_label->setScale({ 200, 28 });
 
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
+
 		setMaxScale({ 200, 28 });
 		setMinScale({ 200, 28 });
 		addElement(m_backPanel);
@@ -71,32 +74,6 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		UI_Element::update();
-		constexpr auto num_data = 2 * 3;
-		std::vector<glm::vec3> data(num_data);
-		std::vector<int> objIndices(num_data);
-
-		// Arrows
-		const float arrowHeight = m_scale.y / 2.0f;
-		data[0] = { -1,  0, 0 };
-		data[1] = { 0, -1, 0 };
-		data[2] = { 0, 1, 0 };
-		for (int x = 0; x < 3; ++x) {
-			data[x] = (data[x] * glm::vec3(arrowHeight)) - glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
-			objIndices[x] = 0;
-		}
-		data[3] = { 1,  0, 0 };
-		data[4] = { 0, 1, 0 };
-		data[5] = { 0, -1, 0 };
-		for (int x = 3; x < 6; ++x) {
-			data[x] = (data[x] * glm::vec3(arrowHeight)) + glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
-			objIndices[x] = 1;
-		}
-
-		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
-		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
-	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -157,7 +134,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Render children (text)
-		UI_Element::renderElement(deltaTime, position, newScale);
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
@@ -193,6 +170,35 @@ public:
 
 
 protected:
+	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		constexpr auto num_data = 2 * 3;
+		std::vector<glm::vec3> data(num_data);
+		std::vector<int> objIndices(num_data);
+
+		// Arrows
+		const float arrowHeight = m_scale.y / 2.0f;
+		data[0] = { -1,  0, 0 };
+		data[1] = { 0, -1, 0 };
+		data[2] = { 0, 1, 0 };
+		for (int x = 0; x < 3; ++x) {
+			data[x] = (data[x] * glm::vec3(arrowHeight)) - glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
+			objIndices[x] = 0;
+		}
+		data[3] = { 1,  0, 0 };
+		data[4] = { 0, 1, 0 };
+		data[5] = { 0, -1, 0 };
+		for (int x = 3; x < 6; ++x) {
+			data[x] = (data[x] * glm::vec3(arrowHeight)) + glm::vec3(m_backPanel->getScale().x + arrowHeight, 0, 0);
+			objIndices[x] = 1;
+		}
+
+		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
+		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
+	}
+
+
 	// Protected Attributes
 	std::shared_ptr<Label> m_label;
 	std::vector<std::string> m_strings;

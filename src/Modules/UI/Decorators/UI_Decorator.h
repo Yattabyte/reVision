@@ -3,7 +3,6 @@
 #define UI_DECORATOR_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include <memory>
 
 
 /** A UI decorator object, following the Decorator design pattern. */
@@ -37,8 +36,8 @@ public:
 			m_component->clearFocus();
 	}	
 	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
-		UI_Element::keyboardAction(keyboardEvent);
 		m_component->keyboardAction(keyboardEvent);
+		UI_Element::keyboardAction(keyboardEvent);
 	}
 	inline virtual void userAction(ActionState & actionState) override {
 		m_component->userAction(actionState);

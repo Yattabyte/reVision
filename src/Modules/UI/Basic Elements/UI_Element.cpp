@@ -1,5 +1,7 @@
 #include "Modules\UI\Basic Elements\UI_Element.h"
+#include "Utilities/GL/glad/glad.h"
 #include "Engine.h"
+#include <algorithm>
 
 
 // Public (de)Constructors
@@ -11,12 +13,6 @@ UI_Element::UI_Element(Engine * engine)
 
 
 // Public Interface Declaration
-
-void UI_Element::update() 
-{
-	for each (auto & child in m_children)
-		child->update();
-}
 
 void UI_Element::renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) 
 {
@@ -86,7 +82,7 @@ void UI_Element::userAction(ActionState & actionState)
 void UI_Element::addElement(const std::shared_ptr<UI_Element>& child) 
 {
 	m_children.push_back(child);
-	update();
+	enactCallback(on_childrenChange);
 }
 
 std::shared_ptr<UI_Element> UI_Element::getElement(const size_t & index) const
@@ -97,19 +93,18 @@ std::shared_ptr<UI_Element> UI_Element::getElement(const size_t & index) const
 void UI_Element::clearElements() 
 {
 	m_children.clear();
-	update();
+	enactCallback(on_childrenChange);
 }
 
 void UI_Element::addCallback(const int & interactionEventID, const std::function<void()>& func) 
 {
 	m_callbacks[interactionEventID].push_back(func);
-	update();
 }
 
 void UI_Element::setPosition(const glm::vec2 & position)
 {
 	m_position = position;
-	update();
+	enactCallback(on_reposition);
 }
 
 glm::vec2 UI_Element::getPosition() const 
@@ -131,7 +126,6 @@ void UI_Element::setScale(const glm::vec2 & scale)
 	if (!std::isnan(m_maxScale.y))
 		m_scale.y = std::min<float>(m_scale.y, m_maxScale.y);
 
-	update();
 	enactCallback(on_resize);
 }
 
@@ -150,7 +144,6 @@ void UI_Element::setMaxScale(const glm::vec2 & scale)
 	if (!std::isnan(m_maxScale.y))
 		m_scale.y = std::min<float>(m_scale.y, m_maxScale.y);
 
-	update();
 	enactCallback(on_resize);
 }
 
@@ -169,7 +162,6 @@ void UI_Element::setMinScale(const glm::vec2 & scale)
 	if (!std::isnan(m_minScale.y))
 		m_scale.y = std::max<float>(m_scale.y, m_minScale.y);
 
-	update();
 	enactCallback(on_resize);
 }
 

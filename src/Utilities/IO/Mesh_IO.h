@@ -100,7 +100,7 @@ public:
 	@return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & importedData);
 	/** Get the plugin version.
-	@return the plugin version */
+	@return					the plugin version */
 	static std::string Get_Version();
 };
 

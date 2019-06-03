@@ -6,6 +6,7 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include <algorithm>
 #include <string>
 
 
@@ -41,6 +42,7 @@ public:
 		// Callbacks
 		addCallback(UI_Element::on_resize, [&]() {
 			m_label->setScale(getScale());
+			updateGeometry();
 		});
 
 		// Generate vertex array
@@ -63,33 +65,6 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void update() override {
-		UI_Element::update();
-		constexpr auto num_data = 4 * 3;
-		std::vector<glm::vec3> data(num_data);
-		std::vector<int> objIndices(num_data);
-
-		for (int x = 0; x < 12; x += 6) {
-			data[x + 0] = { -1, -1, 0 };
-			data[x + 1] = { 1, -1, 0 };
-			data[x + 2] = { 1,  1, 0 };
-			data[x + 3] = { 1,  1, 0 };
-			data[x + 4] = { -1,  1, 0 };
-			data[x + 5] = { -1, -1, 0 };
-		}
-		for (int x = 0; x < 6; ++x) {
-			data[x] *= glm::vec3(m_scale, 0.0f);
-			objIndices[x] = 0;
-		}
-		for (int x = 6; x < 12; ++x) {
-			data[x] *= glm::vec3(1.0, 10, 1);
-			data[x].x = (data[x].x - m_scale.x) + (10.0f * m_caretIndex);
-			objIndices[x] = 1;
-		}
-
-		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
-		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
-	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
@@ -156,7 +131,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
 		// Render Children (text)
-		UI_Element::renderElement(deltaTime, position, newScale);
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
@@ -166,30 +141,47 @@ public:
 	inline void setText(const std::string & text) {
 		m_text = text;
 		m_label->setText(text);
-		update();
 	}
 	/** Get the text displayed in this field.
 	@return					the text displayed in this field. */
 	inline std::string getText() const {
 		return m_text;
 	}
-	/** Set this field's alignment.
-	@param	text			the alignment (left, center, right). */
-	inline void setAlignment(const Label::Alignment & alignment) {
-		m_label->setAlignment(alignment);
-	}
-	/** Retrieve this field's alignment.
-	@return					the alignment. */
-	inline Label::Alignment getAlignment() const {
-		return m_label->getAlignment();
-	}
 
 
 protected:
 	// Protected Methods
+	/** Set the caret position in this text box. */
 	inline void setCaret(const int & index) {
 		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
-		update();
+		updateGeometry();
+	}
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		constexpr auto num_data = 4 * 3;
+		std::vector<glm::vec3> data(num_data);
+		std::vector<int> objIndices(num_data);
+
+		for (int x = 0; x < 12; x += 6) {
+			data[x + 0] = { -1, -1, 0 };
+			data[x + 1] = { 1, -1, 0 };
+			data[x + 2] = { 1,  1, 0 };
+			data[x + 3] = { 1,  1, 0 };
+			data[x + 4] = { -1,  1, 0 };
+			data[x + 5] = { -1, -1, 0 };
+		}
+		for (int x = 0; x < 6; ++x) {
+			data[x] *= glm::vec3(m_scale, 0.0f);
+			objIndices[x] = 0;
+		}
+		for (int x = 6; x < 12; ++x) {
+			data[x] *= glm::vec3(1.0, 10, 1);
+			data[x].x = (data[x].x - m_scale.x) + (10.0f * m_caretIndex);
+			objIndices[x] = 1;
+		}
+
+		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
+		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
 	}
 
 

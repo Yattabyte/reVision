@@ -28,17 +28,17 @@ public:
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
 		panel->setColor(glm::vec4(0.3f));
-		m_backPanel = std::make_shared<Border>(engine, panel);
-		m_backPanel->setMaxScale({ 200, 14 });
-		m_backPanel->setScale({ 200, 14 });
-		m_backPanel->setPosition({ 48, 0 });
-		addElement(m_backPanel);
+		m_back = std::make_shared<Border>(engine, panel);
+		m_back->setMaxScale({ 200, 14 });
+		m_back->setScale({ 200, 14 });
+		m_back->setPosition({ 48, 0 });
+		addElement(m_back);
 
 		// Create the sliding paddle
 		auto paddle = std::make_shared<Panel>(engine);
 		paddle->setColor(glm::vec4(0.75f));
-		paddle->setMaxScale({ 25, 14 });
-		paddle->setScale({ 25, 14 });
+		paddle->setMaxScale({ 25, 12 });
+		paddle->setScale({ 25, 12 });
 		m_paddle = paddle;
 		panel->addElement(m_paddle);
 
@@ -59,18 +59,25 @@ public:
 	}
 
 
-	// Public Interface Implementation
-	inline virtual void update() override {
-		UI_Element::update();
-		if (!m_paddle) return;
-		m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
+	// Public Interface Implementation	
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Update Colors
+		glm::vec4 color(0.75);
+		if (m_pressed)
+			color *= 0.5f;
+		if (m_hovered)
+			color *= 1.5f;
+		m_paddle->setColor(color);
+
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
 		UI_Element::mouseAction(mouseEvent);
 		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
 			if (m_pressed && mouseEvent.m_action == MouseEvent::MOVE) {
-				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_backPanel->getPosition().x + m_backPanel->getScale().x;
-				setValue(((mx / (m_backPanel->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
+				const float mx = float(mouseEvent.m_xPos) - m_position.x - m_back->getPosition().x + m_back->getScale().x;
+				setValue(((mx / (m_back->getScale().x * 2.0f)) * (m_upperRange - m_lowerRange)) + m_lowerRange);
 			}
 		}
 	}
@@ -89,7 +96,7 @@ public:
 	inline void setValue(const float & amount) {
 		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
 		setText(std::to_string((int)std::round<int>(m_value)));
-		update();
+		updatePaddle();
 		enactCallback(on_value_change);
 	}
 	/** Get the percentage value for this scrollbar.
@@ -103,7 +110,10 @@ public:
 	inline void setRanges(const float & lowerRange, const float & upperRange) {
 		m_lowerRange = lowerRange;
 		m_upperRange = upperRange;
-		m_value = std::clamp<float>(m_value, m_lowerRange, m_upperRange);
+		
+		// Set the value again, in case it falls outside of the new ranges
+		setValue(m_value);
+		updatePaddle();
 	}
 	/** Set this slider's text.
 	@param	text	the text to use. */
@@ -111,17 +121,26 @@ public:
 		m_label->setText(text);
 	}
 	/** Retrieve this slider's text.
-	@return	the text this label uses. */
+	@return			the text this label uses. */
 	inline std::string getText() const {
 		return m_label->getText();
 	}
 
 
 protected:
+	// Protected Methods
+	/** Update the position of the paddle for this element. */
+	inline void updatePaddle() {
+		if (m_paddle);
+			m_paddle->setPosition({ (2.0f * ((m_value - m_lowerRange) / (m_upperRange - m_lowerRange)) - 1.0f) * (200.0f - m_paddle->getScale().x), 0 });
+	}
+
+
 	// Protected Attributes
 	float m_value = 0.0f, m_lowerRange = 0.0f, m_upperRange = 1.0f;
 	std::shared_ptr<Label> m_label;
-	std::shared_ptr<UI_Element> m_backPanel, m_paddle;
+	std::shared_ptr<UI_Element> m_back;
+	std::shared_ptr<Panel> m_paddle;	
 };
 
 #endif // UI_SLIDER_H
