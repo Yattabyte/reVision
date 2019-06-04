@@ -2,7 +2,7 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
@@ -12,7 +12,7 @@
 
 
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */
-class SSR : public GFX_Core_Effect {
+class SSR : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -105,7 +105,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

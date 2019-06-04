@@ -3,7 +3,7 @@
 #define SSAO_H
 #define MAX_KERNEL_SIZE 128
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -14,7 +14,7 @@
 
 
 /** A core-rendering technique for deriving an ambient occlusion factor from the viewport itself. */
-class SSAO : public GFX_Core_Effect {
+class SSAO : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -120,7 +120,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
 			return;
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);

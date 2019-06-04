@@ -211,6 +211,7 @@ void Engine::tick()
 	// Update Managers
 	m_assetManager.notifyObservers();
 	m_modelManager.update();
+	m_materialManager.bind();
 	
 	// Updated mouse states, manually
 	double mouseX, mouseY;

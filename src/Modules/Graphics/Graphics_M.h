@@ -3,16 +3,15 @@
 #define GRAPHICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Modules/Graphics/Common/FBO_Geometry.h"
 #include "Modules/Graphics/Common/FBO_Lighting.h"
 #include "Modules/Graphics/Common/FBO_Reflection.h"
 #include "Modules/Graphics/Common/FBO_LightBounce.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
-#include "Assets/Shader.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/Common/VisualFX.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 
@@ -58,18 +57,16 @@ public:
 private:
 	// Private Attributes
 	glm::ivec2						m_renderSize = glm::ivec2(1);
-	ECSSystemList					m_renderingSystems;
-	std::vector<GFX_Core_Effect*>	m_fxTechs;
-	MappedChar<GFX_Core_Effect*>	m_mappedFX;
-	std::shared_ptr<RH_Volume>		m_volumeRH;
-	VisualFX						m_visualFX;
-	Shared_Shader					m_shaderCull = Shared_Shader(), m_shaderGeometry = Shared_Shader();
-	std::shared_ptr<bool>			m_aliveIndicator = std::make_shared<bool>(true);
+	ECSSystemList					m_ecsSystems;
+	std::vector<Graphics_Technique*>	m_gfxTechs;
 	FBO_Geometry					m_geometryFBO;
 	FBO_Lighting					m_lightingFBO;
 	FBO_Reflection					m_reflectionFBO;
 	FBO_LightBounce					m_bounceFBO;
 	CameraBuffer					m_cameraBuffer;
+	VisualFX						m_visualFX;
+	std::shared_ptr<RH_Volume>		m_volumeRH;
+	std::shared_ptr<bool>			m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // GRAPHICS_MODULE_H

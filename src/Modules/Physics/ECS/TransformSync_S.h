@@ -4,7 +4,8 @@
 #define GLM_ENABLE_EXPERIMENTAL
 
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/Graphics/ECS/components.h"
+#include "Modules/World/ECS/TransformComponent.h"
+#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Physics/ECS/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"

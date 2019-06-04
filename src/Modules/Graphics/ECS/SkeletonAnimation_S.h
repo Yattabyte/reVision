@@ -3,7 +3,7 @@
 #define SKELETONANIMATION_S_H 
 
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/Graphics/ECS/components.h"
+#include "Modules/Graphics/Geometry/components.h"
 #include "Engine.h"
 
 

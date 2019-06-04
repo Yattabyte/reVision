@@ -2,7 +2,7 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Cubemap.h"
 #include "Assets/Primitive.h"
@@ -12,7 +12,7 @@
 
 
 /** A core-rendering technique for writing the frame time to the screen. */
-class Skybox : public GFX_Core_Effect {
+class Skybox : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -79,7 +79,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
 			convoluteSky();

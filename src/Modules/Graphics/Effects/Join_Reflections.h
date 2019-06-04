@@ -2,7 +2,7 @@
 #ifndef JOIN_REFLECTIONS_H
 #define JOIN_REFLECTIONS_H
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
 #include "Assets/Primitive.h"
@@ -12,7 +12,7 @@
 
 
 /** A core-rendering technique for writing the final scene reflections back into the lighting. */
-class Join_Reflections : public GFX_Core_Effect {
+class Join_Reflections : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -38,7 +38,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);

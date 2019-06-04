@@ -1,4 +1,5 @@
 #include "Modules/World/World_M.h"
+#include "Modules/World/ECS/TransformComponent.h"
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 
@@ -8,12 +9,27 @@ World_Module::~World_Module()
 	// Update indicator
 	m_aliveIndicator = false;
 	unloadWorld();
+	removeComponentType("Transform_Component");
 }
 
 void World_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: World...");
+
+	// Add New Component Type
+	addComponentType("Transform_Component", [](const ParamList & parameters) {
+		const auto position = CastAny(parameters[0], glm::vec3(0.0f));
+		const auto orientation = CastAny(parameters[1], glm::quat(1, 0, 0, 0));
+		const auto scale = CastAny(parameters[2], glm::vec3(1.0f));
+
+		auto * component = new Transform_Component();
+		component->m_transform.m_position = position;
+		component->m_transform.m_orientation = orientation;
+		component->m_transform.m_scale = scale;
+		component->m_transform.update();
+		return std::make_pair(component->ID, component);
+	});
 }
 
 void World_Module::frameTick(const float & deltaTime)

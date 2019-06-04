@@ -2,7 +2,7 @@
 #ifndef RADIANCE_HINTS_H
 #define RADIANCE_HINTS_H
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Graphics_Technique.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/FBO_LightBounce.h"
 #include "Assets/Shader.h"
@@ -14,7 +14,7 @@
 
 
 /** A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) */
-class Radiance_Hints : public GFX_Core_Effect {
+class Radiance_Hints : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -79,7 +79,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 		
 		// Clear buffers and bind common data
