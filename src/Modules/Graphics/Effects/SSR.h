@@ -2,7 +2,8 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
@@ -26,8 +27,8 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline SSR(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
+		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
@@ -50,7 +51,7 @@ public:
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
-		// GL loading
+		// Create framebuffer and texture with mipchain specifically for convoluting an input texture
 		glCreateFramebuffers(1, &m_fboMipsID);
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureMipsID);
 		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -114,7 +115,7 @@ public:
 
 		glDisable(GL_BLEND);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboSSRID);
-		m_geometryFBO->bindForReading();
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		m_shaderSSR1->bind();
 		glBindTextureUnit(6, m_bayerID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -122,7 +123,7 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		m_reflectionFBO->bindForWriting();
+		m_gfxFBOS->bindForWriting("REFLECTION");
 		glBindTextureUnit(5, m_textureSSRID);
 		glBindTextureUnit(6, m_textureMipsID);
 		m_shaderSSR2->bind();
@@ -141,11 +142,11 @@ private:
 
 		// Copy lighting texture to one with a MIP chain
 		m_shaderCopy->bind();
-		m_lightingFBO->bindForReading();
+		m_gfxFBOS->bindForReading("LIGHTING", 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboMipsID);
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		glClearNamedFramebufferfv(m_fboMipsID, GL_COLOR, 0, clearColor);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Blur MIP chain, reading from 1 MIP level and writing into next
 		m_shaderConvMips->bind();
@@ -187,12 +188,15 @@ private:
 			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, mippedSize.x, mippedSize.y, 0, GL_RGB, GL_FLOAT, NULL);
 		}
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
+
+		glTextureImage2DEXT(m_textureSSRID, GL_TEXTURE_2D, 0, GL_RGB8, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
+		glNamedFramebufferTexture(m_fboSSRID, GL_COLOR_ATTACHMENT0, m_textureSSRID, 0);
 	}
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

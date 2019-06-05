@@ -45,79 +45,61 @@ void Graphics_Module::initialize(Engine * engine)
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
-		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_cameraBuffer->Dimensions = m_renderSize;
-		updateCamera(m_cameraBuffer);
+		(*m_cameraBuffer)->Dimensions = m_renderSize;
+		updateCamera();
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
-		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_cameraBuffer->Dimensions = m_renderSize;
-		updateCamera(m_cameraBuffer);
-		
+		(*m_cameraBuffer)->Dimensions = m_renderSize;
+		updateCamera();
 	});
-	GLuint m_bounceSize = 16;
-	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceSize = (GLuint)f;  m_bounceFBO.resize((GLuint)f); });
-	m_bounceFBO.resize(m_bounceSize);
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
-	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {		
-		m_cameraBuffer->FarPlane = f;
-		updateCamera(m_cameraBuffer);		
+	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
+		(*m_cameraBuffer)->FarPlane = f;
+		updateCamera();
 	});
 	float fov = 90.0f;
 	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
 	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
-		m_cameraBuffer->FOV = f;
-		updateCamera(m_cameraBuffer);		
+		(*m_cameraBuffer)->FOV = f;
+		updateCamera();
 	});
 
 	// Camera Setup
-	m_cameraBuffer->pMatrix = glm::mat4(1.0f);
-	m_cameraBuffer->vMatrix = glm::mat4(1.0f);
-	m_cameraBuffer->EyePosition = glm::vec3(0.0f);
-	m_cameraBuffer->Dimensions = m_renderSize;
-	m_cameraBuffer->FarPlane = farPlane;
-	m_cameraBuffer->FOV = fov;
-	updateCamera(m_cameraBuffer);		
-
-	// Error Reporting
-	auto & msgMgr = m_engine->getManager_Messages();
-	if (glCheckNamedFramebufferStatus(m_geometryFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Geometry Framebuffer has encountered an error.");
-	if (glCheckNamedFramebufferStatus(m_lightingFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Lighting Framebuffer has encountered an error.");
-	if (glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Reflection Framebuffer has encountered an error.");
+	m_cameraBuffer = std::make_shared<CameraBuffer>();
+	(*m_cameraBuffer)->pMatrix = glm::mat4(1.0f);
+	(*m_cameraBuffer)->vMatrix = glm::mat4(1.0f);
+	(*m_cameraBuffer)->EyePosition = glm::vec3(0.0f);
+	(*m_cameraBuffer)->Dimensions = m_renderSize;
+	(*m_cameraBuffer)->FarPlane = farPlane;
+	(*m_cameraBuffer)->FOV = fov;
+	updateCamera();
 
 	// Initialization
+	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(engine);
+	m_graphicsFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
+	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);	
+	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);		
 	m_visualFX.initialize(m_engine);
-	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_lightingFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
-	m_reflectionFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
-	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
+	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_cameraBuffer));
 
 	// Rendering Effects & systems
-	auto * propView = new Prop_View(m_engine, &m_geometryFBO);
-	auto * directionalLighting = new Directional_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, m_volumeRH, propView);
-	auto * pointLighting = new Point_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, propView);
-	auto * spotLighting = new Spot_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, propView);
-	auto * reflectorLighting = new Reflector_Lighting(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO);
 	auto * transformSync = new TransformSync_Gfx_System(m_engine);
 	auto * skeleAnimation = new SkeletonAnimation_System(m_engine);
-	auto * skybox = new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO);
-	auto * radianceHints = new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH);
-	auto * ssao = new SSAO(m_engine, &m_geometryFBO, &m_visualFX);
-	auto * ssr = new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO);
-	auto * joinReflections = new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO);
+	auto * propView = new Prop_View(m_engine, m_cameraBuffer, m_graphicsFBOS);
+	auto * directionalLighting = new Directional_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH, propView);
+	auto * pointLighting = new Point_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView);
+	auto * spotLighting = new Spot_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView);
+	auto * reflectorLighting = new Reflector_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS);
+	auto * skybox = new Skybox(m_engine, m_graphicsFBOS);
+	auto * radianceHints = new Radiance_Hints(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
+	auto * ssao = new SSAO(m_engine, m_graphicsFBOS, &m_visualFX);
+	auto * ssr = new SSR(m_engine, m_graphicsFBOS);
+	auto * joinReflections = new Join_Reflections(m_engine, m_graphicsFBOS);
 
 	// ECS Pipeline
 	m_ecsSystems.addSystem(transformSync);
@@ -145,16 +127,14 @@ void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Clear Frame Buffers
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	m_geometryFBO.clear();
-	m_lightingFBO.clear();
-	m_reflectionFBO.clear();
-	m_bounceFBO.clear();
+	m_graphicsFBOS->clear();
+	m_volumeRH->clear();
 
 	// Wait on triple-buffered camera lock, then update camera
-	m_cameraBuffer.waitFrame(m_engine->getCurrentFrame());
-	m_cameraBuffer.bind(2, m_engine->getCurrentFrame());
-	m_cameraBuffer.pushChanges(m_engine->getCurrentFrame());
-	m_volumeRH->updateVolume(m_cameraBuffer);
+	m_cameraBuffer->waitFrame(m_engine->getCurrentFrame());
+	m_cameraBuffer->bind(2, m_engine->getCurrentFrame());
+	m_cameraBuffer->pushChanges(m_engine->getCurrentFrame());
+	m_volumeRH->updateVolume();
 
 	// Update Components
 	m_engine->getModule_World().updateSystems(m_ecsSystems, deltaTime);
@@ -164,19 +144,19 @@ void Graphics_Module::frameTick(const float & deltaTime)
 		tech->applyEffect(deltaTime);
 
 	// Set lock for 3 frames from now
-	m_cameraBuffer.lockFrame(m_engine->getCurrentFrame());
+	m_cameraBuffer->lockFrame(m_engine->getCurrentFrame());
 }
 
-void Graphics_Module::updateCamera(CameraBuffer & cameraBuffer) const
+void Graphics_Module::updateCamera()
 {
 	// Update Perspective Matrix
-	const float ar = std::max(1.0f, cameraBuffer->Dimensions.x) / std::max(1.0f, cameraBuffer->Dimensions.y);
-	const float horizontalRad = glm::radians(cameraBuffer->FOV);
+	const float ar = std::max(1.0f, (*m_cameraBuffer)->Dimensions.x) / std::max(1.0f, (*m_cameraBuffer)->Dimensions.y);
+	const float horizontalRad = glm::radians((*m_cameraBuffer)->FOV);
 	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	cameraBuffer->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::ConstNearPlane, cameraBuffer->FarPlane);
+	(*m_cameraBuffer)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::ConstNearPlane, (*m_cameraBuffer)->FarPlane);
 }
 
-CameraBuffer & Graphics_Module::getCameraBuffer()
+std::shared_ptr<CameraBuffer> Graphics_Module::getCameraBuffer() const
 {
 	return m_cameraBuffer;
 }

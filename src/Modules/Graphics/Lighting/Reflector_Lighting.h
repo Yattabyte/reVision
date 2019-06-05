@@ -2,16 +2,16 @@
 #ifndef REFLECTOR_LIGHTING_H
 #define REFLECTOR_LIGHTING_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/Graphics/Common/FBO_Shadow_Spot.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/FBO.h"
 #include "Utilities/PriorityList.h"
 #include "Engine.h"
 #include <vector>
@@ -29,8 +29,8 @@ public:
 		world.removeComponentType("Reflector_Component");
 	}
 	/** Constructor. */
-	inline Reflector_Lighting(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline Reflector_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
 		m_shaderStencil = Shared_Shader(m_engine, "Core\\Reflector\\Stencil");
@@ -41,10 +41,6 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_envmapSize);
 		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 			m_envmapSize = std::max(1u, (unsigned int)f);
@@ -68,7 +64,7 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getManager_Messages().error("Reflector_FX Environment Map Framebuffer has encountered an error.");		
+			m_engine->getManager_Messages().error("Reflector_Lighting Environment Map Framebuffer has encountered an error.");		
 		
 		// Declare component types used
 		addComponentType(Reflector_Component::ID);
@@ -136,15 +132,14 @@ private:
 		auto & preferences = m_engine->getPreferenceState();
 		auto & graphics = m_engine->getModule_Graphics();
 		bool didAnything = false, update = m_outOfDate;
+		auto copySize = (*m_cameraBuffer)->Dimensions;
 		m_outOfDate = false;
 		for each (auto reflector in std::vector<Reflector_Component*>(m_reflectorsToUpdate)) {
 			if (update || reflector->m_outOfDate) {
 				if (!didAnything) {
-					auto copySize = m_renderSize;
 					preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_envmapSize);
 					preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_envmapSize);
 					glViewport(0, 0, m_envmapSize, m_envmapSize);
-					m_renderSize = copySize;
 					didAnything = true;
 				}
 				reflector->m_outOfDate = false;
@@ -155,7 +150,7 @@ private:
 					graphics.frameTick(deltaTime);
 
 					// Copy lighting frame into cube-face
-					m_lightingFBO->bindForReading();
+					m_gfxFBOS->bindForReading("LIGHTING", 0);
 					m_envmapFBO.bindForWriting();
 					m_shaderCopy->bind();
 					m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
@@ -193,9 +188,9 @@ private:
 		if (didAnything) {
 			glBindBuffer(GL_DRAW_INDIRECT_BUFFER, 0);
 			Shader::Release();
-			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-			preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+			glViewport(0, 0, copySize.x, copySize.y);
+			preferences.setValue(PreferenceState::C_WINDOW_WIDTH, copySize.x);
+			preferences.setValue(PreferenceState::C_WINDOW_HEIGHT, copySize.y);
 		}
 	}
 	/** Render all the lights */
@@ -206,14 +201,14 @@ private:
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Draw only into depth-stencil buffer
-		m_shaderStencil->bind();													// Shader (reflector)
-		m_reflectionFBO->bindForWriting();											// Ensure writing to reflection FBO
-		m_geometryFBO->bindForReading();											// Read from Geometry FBO
-		glBindTextureUnit(4, m_envmapFBO.m_textureID);								// Reflection map (environment texture)
+		m_shaderStencil->bind();										// Shader (reflector)
+		m_gfxFBOS->bindForWriting("REFLECTION");					// Ensure writing to reflection FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+		glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
-		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);				// Reflection buffer
-		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_shapeCube->m_vaoID);								 	// Quad VAO
+		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
+		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
+		glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
 		glClear(GL_STENCIL_BUFFER_BIT);
@@ -264,10 +259,10 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Primitive m_shapeCube, m_shapeQuad;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	FBO_Base * m_geometryFBO = nullptr, *m_lightingFBO = nullptr, *m_reflectionFBO = nullptr;
 	VectorBuffer<Reflector_Component::GL_Buffer> m_reflectorBuffer;
 	FBO_EnvMap m_envmapFBO;
 	StaticBuffer m_indirectCube = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);

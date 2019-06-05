@@ -2,16 +2,17 @@
 #ifndef SPOT_LIGHTING_H
 #define SPOT_LIGHTING_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Lighting/FBO_Shadow_Spot.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/Graphics/Common/FBO_Shadow_Spot.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/FBO.h"
 #include "Utilities/PriorityList.h"
 #include "Engine.h"
 #include <vector>
@@ -30,8 +31,8 @@ public:
 		world.removeComponentType("LightSpotShadow_Component");
 	}
 	/** Constructor. */
-	inline Spot_Lighting(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, Prop_View * propView)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO) {
+	inline Spot_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, Prop_View * propView)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Spot\\Stencil");
@@ -41,10 +42,6 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_updateQuality);
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, m_shadowSize.x);
@@ -65,12 +62,12 @@ public:
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
 		// Geometry rendering pipeline
-		m_propShadow_Static = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
-		m_propShadow_Dynamic = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Static = new Prop_Shadow(m_engine, cameraBuffer, 1, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Dynamic = new Prop_Shadow(m_engine, cameraBuffer, 1, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
 		
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getManager_Messages().error("Point_Lighting Shadowmap Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("Spot_Lighting Shadowmap Framebuffer has encountered an error.");
 		
 		// Declare component types used
 		addComponentType(LightSpot_Component::ID);
@@ -80,12 +77,12 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: Spot_Lighting");
+			m_engine->getManager_Messages().error("Invalid ECS System: Spot_Lighting");
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
 		world.addLevelListener(&m_outOfDate);
-		world.addComponentType("LightSpot_Component", [&, engine](const ParamList & parameters) {
+		world.addComponentType("LightSpot_Component", [&](const ParamList & parameters) {
 			auto color = CastAny(parameters[0], glm::vec3(1.0f));
 			auto intensity = CastAny(parameters[1], 1.0f);
 			auto radius = CastAny(parameters[2], 1.0f);
@@ -99,7 +96,7 @@ public:
 			component->m_radius = radius;
 			return std::make_pair(component->ID, component);
 		});
-		world.addComponentType("LightSpotShadow_Component", [&, engine](const ParamList & parameters) {
+		world.addComponentType("LightSpotShadow_Component", [&](const ParamList & parameters) {
 			auto shadowSpot = (int)(m_shadowBuffer.getCount() * 2);
 			auto * component = new LightSpotShadow_Component();
 			component->m_radius = CastAny(parameters[0], 1.0f);
@@ -186,7 +183,7 @@ private:
 
 		if (m_outOfDate)
 			m_outOfDate = false;
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
@@ -196,14 +193,14 @@ private:
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Stencil->bind();													// Shader (spot)
-		m_lightingFBO->bindForWriting();											// Ensure writing to lighting FBO
-		m_geometryFBO->bindForReading();											// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);							// Shadow map (depth texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+		m_shader_Stencil->bind();									// Shader (spot)
+		m_gfxFBOS->bindForWriting("LIGHTING");							// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
+		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
+		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
-		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);			// Draw call buffer
-		glBindVertexArray(m_shapeCone->m_vaoID);									// Quad VAO
+		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		glBindVertexArray(m_shapeCone->m_vaoID);					// Quad VAO
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
@@ -249,12 +246,12 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
+	Engine * m_engine = nullptr; 
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeCone;
 	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, *m_lightingFBO = nullptr;
 	VectorBuffer<LightSpot_Component::GL_Buffer> m_lightBuffer;
 	VectorBuffer<LightSpotShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Spot m_shadowFBO;

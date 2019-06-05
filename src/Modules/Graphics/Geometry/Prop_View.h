@@ -2,13 +2,14 @@
 #ifndef PROP_VIEW_H
 #define PROP_VIEW_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/FBO.h"
 #include "Engine.h"
 #include <vector>
 
@@ -24,8 +25,8 @@ public:
 		world.removeComponentType("Skeleton_Component");
 	}
 	/** Constructor. */
-	inline Prop_View(Engine * engine, FBO_Base * geometryFBO)
-		: m_engine(engine), m_geometryFBO(geometryFBO) {
+	inline Prop_View(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {		
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
@@ -85,7 +86,7 @@ public:
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		m_shaderCull->bind();
-		m_geometryFBO->bindForWriting();
+		m_gfxFBOS->bindForWriting("GEOMETRY");
 		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
@@ -108,7 +109,7 @@ public:
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;
-		const glm::vec3 & eyePosition = m_engine->getModule_Graphics().getCameraBuffer()->EyePosition;
+		const glm::vec3 & eyePosition = (*m_cameraBuffer)->EyePosition;
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
@@ -155,8 +156,9 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr;
 	const GLuint * m_modelsVAO = nullptr;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	Shared_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Primitive m_shapeCube;
 	GLsizei m_propCount = 0;

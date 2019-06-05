@@ -2,16 +2,17 @@
 #ifndef POINT_LIGHTING_H
 #define POINT_LIGHTING_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Lighting/FBO_Shadow_Point.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/Graphics/Common/FBO_Shadow_Point.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/FBO.h"
 #include "Utilities/PriorityList.h"
 #include "Engine.h"
 #include <vector>
@@ -30,8 +31,8 @@ public:
 		world.removeComponentType("LightPointShadow_Component");
 	}
 	/** Constructor. */
-	inline Point_Lighting(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, Prop_View * propView)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO) {
+	inline Point_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, Prop_View * propView)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Point\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");
@@ -41,10 +42,6 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_updateQuality);
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, m_shadowSize.x);
@@ -65,8 +62,8 @@ public:
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
 		// Geometry rendering pipeline
-		m_propShadow_Static = new Prop_Shadow(m_engine, 6, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
-		m_propShadow_Dynamic = new Prop_Shadow(m_engine, 6, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Static = new Prop_Shadow(m_engine, cameraBuffer, 6, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Dynamic = new Prop_Shadow(m_engine, cameraBuffer, 6, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
 		
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -183,7 +180,7 @@ private:
 
 		if (m_outOfDate)
 			m_outOfDate = false;
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
@@ -194,8 +191,8 @@ private:
 
 		// Draw only into depth-stencil buffer
 		m_shader_Stencil->bind();									// Shader (point)
-		m_lightingFBO->bindForWriting();							// Ensure writing to lighting FBO
-		m_geometryFBO->bindForReading();							// Read from Geometry FBO
+		m_gfxFBOS->bindForWriting("LIGHTING");							// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);			// Shadow map(linear depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
@@ -246,11 +243,11 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeSphere;
 	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, *m_lightingFBO = nullptr;
 	VectorBuffer<LightPoint_Component::GL_Buffer> m_lightBuffer;
 	VectorBuffer<LightPointShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Point m_shadowFBO;

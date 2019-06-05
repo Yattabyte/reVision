@@ -2,17 +2,18 @@
 #ifndef DIRECTIONAL_LIGHTING_H
 #define DIRECTIONAL_LIGHTING_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
-#include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/Graphics/Common/FBO_Shadow_Directional.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
+#include "Modules/Graphics/Geometry/Prop_Shadow.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/FBO.h"
 #include "Utilities/PriorityList.h"
 #include "Engine.h"
 #include <vector>
@@ -31,8 +32,8 @@ public:
 		world.removeComponentType("LightDirectionalShadow_Component");
 	}
 	/** Constructor. */
-	inline Directional_Lighting(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * bounceFBO, const std::shared_ptr<RH_Volume> & volumeRH, Prop_View * propView)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_bounceFBO(bounceFBO), m_volumeRH(volumeRH) {
+	inline Directional_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, Prop_View * propView)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS), m_volumeRH(volumeRH) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
 		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");
@@ -42,10 +43,6 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(f, m_renderSize.y); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { m_renderSize = glm::ivec2(m_renderSize.x, f); });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_updateQuality);
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_shadowSize.x);
@@ -84,7 +81,7 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// Geometry rendering pipeline
-		m_propShadowSystem = new Prop_Shadow(engine, 4, Prop_Shadow::RenderAll, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadowSystem = new Prop_Shadow(engine, cameraBuffer, 4, Prop_Shadow::RenderAll, m_shader_Culling, m_shader_Shadow, propView);
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -150,13 +147,12 @@ public:
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data		
 		auto & graphics = m_engine->getModule_Graphics();
-		const auto & cameraBuffer = graphics.getCameraBuffer();
-		const glm::vec2 &size = cameraBuffer->Dimensions;
+		const glm::vec2 &size = (*m_cameraBuffer)->Dimensions;
 		const float ar = size.x / size.y;
-		const float tanHalfHFOV = glm::radians(cameraBuffer->FOV) / 2.0f;
+		const float tanHalfHFOV = glm::radians((*m_cameraBuffer)->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
 		const float near_plane = -CameraBuffer::BufferStructure::ConstNearPlane;
-		const float far_plane = -cameraBuffer->FarPlane;
+		const float far_plane = -(*m_cameraBuffer)->FarPlane;
 		float cascadeEnd[NUM_CASCADES + 1];
 		glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
 		constexpr float lambda = 0.75f;
@@ -184,8 +180,8 @@ public:
 			// Use to make a bounding sphere, but then convert into a bounding box
 			aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
 		}
-		const glm::mat4 CamInv = glm::inverse(cameraBuffer->vMatrix);
-		const glm::mat4 CamP = cameraBuffer->pMatrix;
+		const glm::mat4 CamInv = glm::inverse((*m_cameraBuffer)->vMatrix);
+		const glm::mat4 CamP = (*m_cameraBuffer)->pMatrix;
 		std::vector<GLint> lightIndices, shadowIndices;
 		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest;
 		for each (const auto & componentParam in components) {
@@ -249,7 +245,7 @@ private:
 			pair.second->m_updateTime = m_engine->getTime();
 		}
 
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
@@ -260,8 +256,8 @@ private:
 		glDepthMask(GL_FALSE);
 
 		m_shader_Lighting->bind();									// Shader (directional)
-		m_lightingFBO->bindForWriting();							// Ensure writing to lighting FBO
-		m_geometryFBO->bindForReading();							// Read from Geometry FBO
+		m_gfxFBOS->bindForWriting("LIGHTING");							// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
@@ -291,9 +287,9 @@ private:
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 
 		glViewport(0, 0, (GLsizei)m_volumeRH->m_resolution, (GLsizei)m_volumeRH->m_resolution);
-		m_bounceFBO->bindForWriting();
 		m_shader_Bounce->bind();
-		m_geometryFBO->bindForReading(0); // depth -> 3		
+		m_volumeRH->writePrimary();
+		m_gfxFBOS->bindForReading("GEOMETRY", 0); // depth -> 3		
 		glBindTextureUnit(0, m_shadowFBO.m_textureIDS[0]);
 		glBindTextureUnit(1, m_shadowFBO.m_textureIDS[1]);
 		glBindTextureUnit(2, m_shadowFBO.m_textureIDS[2]);
@@ -301,8 +297,7 @@ private:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glDrawArraysIndirect(GL_TRIANGLES, 0); glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 	}
 	/** Converts a priority queue into an stl vector.*/
 	inline std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest) const {
@@ -329,11 +324,11 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, *m_lightingFBO = nullptr, *m_bounceFBO = nullptr;
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	Shared_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
 	Shared_Primitive m_shapeQuad;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
 	VectorBuffer<LightDirectional_Component::GL_Buffer> m_lightBuffer;
 	VectorBuffer<LightDirectionalShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Directional m_shadowFBO;

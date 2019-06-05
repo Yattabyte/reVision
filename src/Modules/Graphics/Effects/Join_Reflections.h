@@ -2,7 +2,8 @@
 #ifndef JOIN_REFLECTIONS_H
 #define JOIN_REFLECTIONS_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
 #include "Assets/Primitive.h"
@@ -21,8 +22,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Join_Reflections(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline Join_Reflections(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
+		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Shared_Texture(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
@@ -43,9 +44,9 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		m_lightingFBO->bindForWriting();
-		m_geometryFBO->bindForReading(0);
-		m_reflectionFBO->bindForReading(5);
+		m_gfxFBOS->bindForWriting("LIGHTING");
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);
+		m_gfxFBOS->bindForReading("REFLECTION", 5);
 		m_brdfMap->bind(6);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -58,7 +59,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader;
 	Shared_Texture m_brdfMap;
 	Shared_Primitive m_shapeQuad;

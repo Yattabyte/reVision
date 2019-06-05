@@ -2,7 +2,8 @@
 #ifndef PROP_SHADOW_H
 #define PROP_SHADOW_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
 #include "Modules/World/ECS/ecsSystem.h"
@@ -27,8 +28,8 @@ public:
 	/** Destructor. */
 	inline ~Prop_Shadow() = default;
 	/** Constructor. */
-	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
-		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
+	inline Prop_Shadow(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
+		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
 		// Asset Loading
 		m_shapeCube = Shared_Primitive(engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();
@@ -39,7 +40,7 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: PropShadowing_System");
+			engine->getManager_Messages().error("Invalid ECS System: Prop_Shadow");
 	}
 
 
@@ -92,7 +93,7 @@ public:
 		std::vector<int> skeletonData;
 		const bool renderStatic = m_flags & RenderStatic;
 		const bool renderDynamic = m_flags & RenderDynamic;
-		const glm::vec3 & eyePosition = m_engine->getModule_Graphics().getCameraBuffer()->EyePosition;
+		const glm::vec3 & eyePosition = (*m_cameraBuffer)->EyePosition;
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
@@ -133,6 +134,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Prop_View * m_propView = nullptr;
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	unsigned int m_instanceCount = 0;
 	unsigned int m_flags = 0;
 	Shared_Shader m_shaderCull, m_shaderShadow;

@@ -3,7 +3,8 @@
 #define SSAO_H
 #define MAX_KERNEL_SIZE 128
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -23,8 +24,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline SSAO(Engine * engine, FBO_Base * geometryFBO, VisualFX * visualFX)
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_visualFX(visualFX) {
+	inline SSAO(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, VisualFX * visualFX)
+		: m_engine(engine), m_gfxFBOS(gfxFBOS), m_visualFX(visualFX) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
@@ -126,7 +127,7 @@ public:
 		glDisable(GL_BLEND);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shader->bind();
-		m_geometryFBO->bindForReading();
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
@@ -139,7 +140,7 @@ public:
 		glEnable(GL_BLEND);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
 		m_shaderCopyAO->bind();
-		m_geometryFBO->bindForWriting();
+		m_gfxFBOS->bindForWriting("GEOMETRY");
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
 		glBindTextureUnit(0, m_textureID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -163,8 +164,8 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr;
 	VisualFX * m_visualFX = nullptr;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader, m_shaderCopyAO;
 	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

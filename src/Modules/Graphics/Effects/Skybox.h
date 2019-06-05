@@ -2,11 +2,11 @@
 #ifndef SKYBOX_H
 #define SKYBOX_H
 
-#include "Modules/Graphics/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Cubemap.h"
 #include "Assets/Primitive.h"
-#include "Utilities/GL/FBO.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 
@@ -21,8 +21,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Skybox(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO) 
-		: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline Skybox(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
+		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
@@ -90,7 +90,6 @@ public:
 		glEnable(GL_DEPTH_TEST);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		m_geometryFBO->bindForReading();
 		glBindTextureUnit(4, m_cubemapMipped);
 
 		// Render skybox to reflection buffer
@@ -98,13 +97,13 @@ public:
 		glEnable(GL_STENCIL_TEST);
 		glStencilFunc(GL_EQUAL, 0, 0xFF);
 		m_shaderSkyReflect->bind();
-		m_reflectionFBO->bindForWriting();
+		m_gfxFBOS->bindForWriting("REFLECTION");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_STENCIL_TEST);
 
 		// Render skybox to lighting buffer
 		m_shaderSky->bind();
-		m_lightingFBO->bindForWriting();
+		m_gfxFBOS->bindForWriting("LIGHTING");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glEnable(GL_BLEND);
@@ -153,7 +152,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
