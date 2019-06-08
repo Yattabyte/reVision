@@ -81,7 +81,7 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// Geometry rendering pipeline
-		m_propShadowSystem = new Prop_Shadow(engine, cameraBuffer, 4, Prop_Shadow::RenderAll, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadowSystem = new Prop_Shadow(engine, 4, Prop_Shadow::RenderAll, m_shader_Culling, m_shader_Shadow, propView);
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -183,14 +183,14 @@ public:
 		const glm::mat4 CamInv = glm::inverse((*m_cameraBuffer)->vMatrix);
 		const glm::mat4 CamP = (*m_cameraBuffer)->pMatrix;
 		std::vector<GLint> lightIndices, shadowIndices;
-		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest;
+		m_shadowsToUpdate.clear();
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
 			lightIndices.push_back(lightComponent->m_data->index);
 			if (shadowComponent) {
 				shadowIndices.push_back(shadowComponent->m_data->index);
-				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
+				m_shadowsToUpdate.push_back(std::make_pair(lightComponent, shadowComponent));
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;
 					const glm::vec3 frustumpos = glm::vec3(shadowComponent->m_mMatrix * CamInv * glm::vec4(middle[i], 1.0f));
@@ -218,7 +218,6 @@ public:
 		m_visShadows.write(0, sizeof(GLuint) * shadowSize, shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
-		m_shadowsToUpdate = PQtoVector(oldest);
 		m_shadowCount = (GLint)shadowSize;
 	}
 
@@ -232,17 +231,16 @@ private:
 		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
 
-		for each (const auto & pair in m_shadowsToUpdate) {
+		for (const auto[light, shadow] : m_shadowsToUpdate) {
 			const float clearDepth(1.0f);
 			const glm::vec3 clear(0.0f);
-			glUniform1i(0, pair.first->m_data->index);
-			glUniform1i(1, pair.second->m_data->index);
-			m_shadowFBO.clear(pair.second->m_shadowSpot);
+			m_shadowFBO.clear(shadow->m_shadowSpot);
 			// Update geometry components
+			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, light->m_data->index, shadow->m_data->index);
 			world.updateSystem(m_propShadowSystem, deltaTime);
 			// Render geometry components
 			m_propShadowSystem->applyEffect(deltaTime);
-			pair.second->m_updateTime = m_engine->getTime();
+			shadow->m_updateTime = m_engine->getTime();
 		}
 
 		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
@@ -256,8 +254,8 @@ private:
 		glDepthMask(GL_FALSE);
 
 		m_shader_Lighting->bind();									// Shader (directional)
-		m_gfxFBOS->bindForWriting("LIGHTING");							// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
+		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
@@ -265,10 +263,6 @@ private:
 		glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
 
-		glDepthMask(GL_TRUE);
-		glEnable(GL_DEPTH_TEST);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_BLEND);
 	}
 	/** Render light bounces. */
 	inline void renderBounce(const float & deltaTime) {
@@ -279,10 +273,6 @@ private:
 		m_shader_Bounce->setUniform(6, m_volumeRH->m_unitSize);
 
 		// Prepare rendering state
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
 		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 
@@ -297,28 +287,14 @@ private:
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0); glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
-	}
-	/** Converts a priority queue into an stl vector.*/
-	inline std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::less<float>> oldest) const {
-		PriorityList<float, std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>, std::greater<float>> m_closest(m_updateQuality / 2);
-		std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> outList;
-		outList.reserve(m_updateQuality);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 
-		for each (const auto &element in oldest.toList()) {
-			if (outList.size() < (m_updateQuality / 2))
-				outList.push_back(element);
-			else
-				m_closest.insert(element.second->m_updateTime, element);
-		}
-
-		for each (const auto &element in m_closest.toList()) {
-			if (outList.size() >= m_updateQuality)
-				break;
-			outList.push_back(element);
-		}
-
-		return outList;
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		glDisable(GL_BLEND);
 	}
 
 

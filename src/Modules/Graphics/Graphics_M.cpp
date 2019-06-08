@@ -5,16 +5,16 @@
 #include <memory>
 #include <random>
 
+/* System Types Used */
+#include "Modules/Graphics/ECS/TransformSync_S.h"
+#include "Modules/Graphics/ECS/SkeletonAnimation_S.h"
+
 /* Graphics Effects Used */
 #include "Modules/Graphics/Geometry/Prop_View.h"
 #include "Modules/Graphics/Lighting/Directional_Lighting.h"
 #include "Modules/Graphics/Lighting/Point_Lighting.h"
 #include "Modules/Graphics/Lighting/Spot_Lighting.h"
 #include "Modules/Graphics/Lighting/Reflector_Lighting.h"
-
-/* System Types Used */
-#include "Modules/Graphics/ECS/TransformSync_S.h"
-#include "Modules/Graphics/ECS/SkeletonAnimation_S.h"
 
 /* Other Effects Used */
 #include "Modules/Graphics/Effects/Skybox.h"

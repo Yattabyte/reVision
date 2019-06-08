@@ -46,8 +46,9 @@ public:
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_SPOT, m_shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_SPOT, m_aliveIndicator, [&](const float &f) {
+			m_outOfDate = true;
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, 1);
+			m_shadowFBO.resize(m_shadowSize, m_shadowBuffer.getCount() * 2);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 		});
@@ -62,8 +63,8 @@ public:
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
 		// Geometry rendering pipeline
-		m_propShadow_Static = new Prop_Shadow(m_engine, cameraBuffer, 1, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
-		m_propShadow_Dynamic = new Prop_Shadow(m_engine, cameraBuffer, 1, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Static = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Dynamic = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
 		
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
@@ -136,6 +137,8 @@ public:
 			LightSpotShadow_Component * shadowComponent = (LightSpotShadow_Component*)componentParam[1];
 			lightIndices.push_back(lightComponent->m_data->index);
 			if (shadowComponent) {
+				if (m_outOfDate)
+					shadowComponent->m_outOfDate = true;
 				shadowIndices.push_back(shadowComponent->m_data->index);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 			}
@@ -158,27 +161,26 @@ private:
 	inline void renderShadows(const float & deltaTime) {
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
-		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
-		for each (const auto & pair in m_shadowsToUpdate) {
-			glUniform1i(0, pair.first->m_data->index);
-			glUniform1i(1, pair.second->m_data->index);
+		for (const auto[light, shadow] : m_shadowsToUpdate) {
 			// Update static shadows
-			if (pair.second->m_outOfDate || m_outOfDate) {
-				m_shadowFBO.clear(pair.second->m_shadowSpot + 1);
+			if (shadow->m_outOfDate || m_outOfDate) {
+				m_shadowFBO.clear(shadow->m_shadowSpot + 1); 
+				m_propShadow_Static->setData(light->m_data->data->LightPosition, light->m_data->index, shadow->m_data->index);
 				// Update components
 				world.updateSystem(m_propShadow_Static, deltaTime);
 				// Render components
 				m_propShadow_Static->applyEffect(deltaTime);
-				pair.second->m_outOfDate = false;
+				shadow->m_outOfDate = false;
 			}
 			// Update dynamic shadows
-			m_shadowFBO.clear(pair.second->m_shadowSpot);
+			m_shadowFBO.clear(shadow->m_shadowSpot);
+			m_propShadow_Static->setData(light->m_data->data->LightPosition, light->m_data->index, shadow->m_data->index);
 			// Update components
 			world.updateSystem(m_propShadow_Dynamic, deltaTime);
 			// Render components
 			m_propShadow_Dynamic->applyEffect(deltaTime);
-			pair.second->m_updateTime = m_engine->getTime();
+			shadow->m_updateTime = m_engine->getTime();
 		}
 
 		if (m_outOfDate)

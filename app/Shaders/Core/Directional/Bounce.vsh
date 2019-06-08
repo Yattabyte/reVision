@@ -5,10 +5,10 @@
 
 struct Shadow_Struct {
 	mat4 lightV;	
-	int Shadow_Spot;
-	float CascadeEndClipSpace[NUM_CASCADES];
 	mat4 LightVP[NUM_CASCADES];
 	mat4 InverseLightVP[NUM_CASCADES];	
+	float CascadeEndClipSpace[NUM_CASCADES];
+	int Shadow_Spot;
 };
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
 	mat4 pMatrix;

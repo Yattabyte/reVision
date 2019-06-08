@@ -118,14 +118,16 @@ public:
 
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
-			const GLuint & index = propComponent->m_data->index;
+			const auto & index = propComponent->m_data->index;
 			visibleIndices.push_back(index);
-			// Flag for occlusion culling  if mesh complexity is high enough and if viewer is NOT within BSphere
-			if ((count >= 100) && !(propComponent->m_radius > glm::distance(propComponent->m_position, eyePosition))) { // Allow
+			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
+			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) { 
+				// Allow
 				cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
 			}
-			else { // Skip occlusion culling		
+			else { 
+				// Skip occlusion culling		
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
 			}
@@ -133,12 +135,11 @@ public:
 		}
 
 		// Update camera buffers
-		const GLsizei size = (GLsizei)visibleIndices.size();
-		m_propCount = size;
-		m_bufferPropIndex.write(0, sizeof(GLuint) * size, visibleIndices.data());
-		m_bufferCulling.write(0, sizeof(glm::ivec4) * size, cullingDrawData.data());
-		m_bufferRender.write(0, sizeof(glm::ivec4) * size, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(0, sizeof(int) * size, skeletonData.data());
+		m_propCount = (GLsizei)visibleIndices.size();
+		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
+		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
+		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
 	}
 
 

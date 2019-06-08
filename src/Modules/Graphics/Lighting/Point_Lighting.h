@@ -46,8 +46,9 @@ public:
 		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, m_shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) {
+			m_outOfDate = true;
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, 6);
+			m_shadowFBO.resize(m_shadowSize, m_shadowBuffer.getCount() * 12);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 		});
@@ -62,13 +63,13 @@ public:
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
 		// Geometry rendering pipeline
-		m_propShadow_Static = new Prop_Shadow(m_engine, cameraBuffer, 6, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
-		m_propShadow_Dynamic = new Prop_Shadow(m_engine, cameraBuffer, 6, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
-		
+		m_propShadow_Static = new Prop_Shadow(m_engine, 6, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
+		m_propShadow_Dynamic = new Prop_Shadow(m_engine, 6, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
+
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			m_engine->getManager_Messages().error("Point_Lighting Shadowmap Framebuffer has encountered an error.");
-		
+
 		// Declare component types used
 		addComponentType(LightPoint_Component::ID);
 		addComponentType(LightPointShadow_Component::ID, FLAG_OPTIONAL);
@@ -133,6 +134,8 @@ public:
 			LightPointShadow_Component * shadowComponent = (LightPointShadow_Component*)componentParam[1];
 			lightIndices.push_back(lightComponent->m_data->index);
 			if (shadowComponent) {
+				if (m_outOfDate)
+					shadowComponent->m_outOfDate = true;
 				shadowIndices.push_back(shadowComponent->m_data->index);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 			}
@@ -155,27 +158,26 @@ private:
 	inline void renderShadows(const float & deltaTime) {
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
-		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
-		for each (const auto & pair in m_shadowsToUpdate) {
-			glUniform1i(0, pair.first->m_data->index);
-			glUniform1i(1, pair.second->m_data->index);
+		for (const auto[light, shadow] : m_shadowsToUpdate) {
 			// Update static shadows
-			if (pair.second->m_outOfDate || m_outOfDate) {
-				m_shadowFBO.clear(pair.second->m_shadowSpot + 6);
+			if (shadow->m_outOfDate || m_outOfDate) {
+				m_shadowFBO.clear(shadow->m_shadowSpot + 6);
+				m_propShadow_Static->setData(light->m_data->data->LightPosition, light->m_data->index, shadow->m_data->index);
 				// Update components
 				world.updateSystem(m_propShadow_Static, deltaTime);
 				// Render components
 				m_propShadow_Static->applyEffect(deltaTime);
-				pair.second->m_outOfDate = false;
+				shadow->m_outOfDate = false;
 			}
 			// Update dynamic shadows
-			m_shadowFBO.clear(pair.second->m_shadowSpot);
+			m_shadowFBO.clear(shadow->m_shadowSpot);
+			m_propShadow_Dynamic->setData(light->m_data->data->LightPosition, light->m_data->index, shadow->m_data->index);			
 			// Update components
 			world.updateSystem(m_propShadow_Dynamic, deltaTime);
 			// Render components
 			m_propShadow_Dynamic->applyEffect(deltaTime);
-			pair.second->m_updateTime = m_engine->getTime();
+			shadow->m_updateTime = m_engine->getTime();
 		}
 
 		if (m_outOfDate)
@@ -191,8 +193,8 @@ private:
 
 		// Draw only into depth-stencil buffer
 		m_shader_Stencil->bind();									// Shader (point)
-		m_gfxFBOS->bindForWriting("LIGHTING");							// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
+		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);			// Shadow map(linear depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
@@ -247,7 +249,7 @@ private:
 	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeSphere;
-	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;
+	Prop_Shadow * m_propShadow_Static = nullptr, *m_propShadow_Dynamic = nullptr;
 	VectorBuffer<LightPoint_Component::GL_Buffer> m_lightBuffer;
 	VectorBuffer<LightPointShadow_Component::GL_Buffer> m_shadowBuffer;
 	FBO_Shadow_Point m_shadowFBO;

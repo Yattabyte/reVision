@@ -27,7 +27,7 @@
 #include <string>
 
 
-constexpr char ENGINE_VERSION[] = "3.3.6";
+constexpr char ENGINE_VERSION[] = "3.3.7";
 
 struct GLFWwindow;
 class Engine;
@@ -156,11 +156,11 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Private Modules
+	World_Module m_moduleWorld;
 	Graphics_Module m_moduleGraphics;
 	Post_Processing_Module m_modulePProcess;
 	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;
-	World_Module m_moduleWorld;
 	
 	// Private Engine State
 	EngineState * m_engineState = nullptr;

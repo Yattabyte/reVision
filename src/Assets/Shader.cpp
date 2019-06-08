@@ -42,7 +42,7 @@ void Shader::initialize()
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
-	if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
+	//if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
 	{
 		// Create Vertex and Fragment shaders

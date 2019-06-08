@@ -30,10 +30,10 @@ struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalSh
 	struct GL_Buffer {
 	#define NUM_CASCADES 4
 		glm::mat4 lightV = glm::mat4(1.0f);
-		int Shadow_Spot = 0;
-		float CascadeEndClipSpace[NUM_CASCADES]; glm::vec3 padding1; // end of scalars, pad by 2
 		glm::mat4 lightVP[NUM_CASCADES];
 		glm::mat4 inverseVP[NUM_CASCADES];
+		float CascadeEndClipSpace[NUM_CASCADES]; 
+		int Shadow_Spot = 0; glm::vec3 padding1; // end of scalars, pad by 2
 	};
 
 	float m_updateTime = 0.0f;
