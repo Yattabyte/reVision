@@ -54,6 +54,7 @@ public:
 			const auto & orientation = transformComponent->m_transform.m_orientation;
 			const auto & scale = transformComponent->m_transform.m_scale;
 			const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
+			const auto matRot = glm::mat4_cast(orientation);
 
 			if (propComponent) {
 				if (propComponent->m_model->existsYet()) {
@@ -65,7 +66,6 @@ public:
 					const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;
 					const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
 					glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
-					glm::mat4 matRot = glm::mat4_cast(orientation);
 					glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
 					glm::mat4 matFinal = (matTrans * matRot * matScale);
 					propComponent->m_data->data->bBoxMatrix = matFinal;
@@ -74,12 +74,12 @@ public:
 				}
 			}
 			if (directionalLightComponent) {
-				const glm::mat4 sunTransform = glm::mat4_cast(orientation);
+				const glm::mat4 sunTransform = matRot;
 				directionalLightComponent->m_data->data->LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 			}
 			if (directionalShadowComponent) {
 				if (directionalShadowComponent->m_orientation != orientation) {
-					const glm::mat4 sunTransform = glm::mat4_cast(orientation);
+					const glm::mat4 sunTransform = matRot;
 					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 					directionalShadowComponent->m_mMatrix = sunModelMatrix;
 					directionalShadowComponent->m_data->data->lightV = sunModelMatrix;
@@ -112,19 +112,28 @@ public:
 			}
 			if (spotLightComponent) {
 				spotLightComponent->m_data->data->LightPosition = position;
-				spotLightComponent->m_data->data->LightDirection = glm::vec3(1, 0, 0);
+				auto dir = matRot * glm::vec4(0, 0, -1, 1);
+				dir /= dir.w;
+				spotLightComponent->m_data->data->LightDirection = glm::normalize(glm::vec3(dir));
 				const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(spotLightComponent->m_radius*spotLightComponent->m_radius)*1.1f);
-				spotLightComponent->m_data->data->mMatrix = (trans)* scl;
+				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(spotLightComponent->m_radius * spotLightComponent->m_radius)*1.1f);
+				spotLightComponent->m_data->data->mMatrix = trans * matRot * scl;
 			}
 			if (spotShadowComponent) {
-				// To Do
+				if (spotShadowComponent->m_position != position) {
+					spotShadowComponent->m_position = position;
+					const glm::mat4 pMatrix = glm::perspective(glm::radians(spotShadowComponent->m_cutoff * 2.0f), 1.0f, 0.01f, spotLightComponent->m_radius * spotLightComponent->m_radius);
+					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
+					spotShadowComponent->m_data->data->lightV = trans;
+					spotShadowComponent->m_data->data->lightPV = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
+					spotShadowComponent->m_data->data->inversePV = glm::inverse(spotShadowComponent->m_data->data->lightPV);
+				}
 			}
 			if (reflectorComponent) {
 				const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
 				reflectorComponent->m_transform = Transform(position, orientation, scale);
 				reflectorComponent->m_data->data->mMatrix = modelMatrix;
-				reflectorComponent->m_data->data->rotMatrix = glm::inverse(glm::toMat4(orientation));
+				reflectorComponent->m_data->data->rotMatrix = glm::inverse(matRot);
 				reflectorComponent->m_data->data->BoxCamPos = position;
 				reflectorComponent->m_data->data->BoxScale = scale;
 				const glm::mat4 vMatrices[6] = {

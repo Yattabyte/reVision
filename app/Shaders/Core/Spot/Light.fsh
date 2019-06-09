@@ -93,7 +93,7 @@ void main(void)
 	if (NdotL <= 0.f && abs(NdotV) <= 0.f) discard; // Discard if light will be zero anyway
 	
 	// Attenuation	
-	const float Distance 			= length(LightToPixel);
+	const float Distance 			= length(LightPosition - data.World_Pos.xyz);
 	const float range 				= 1.0f / LightRadius2;
 	const float Attenuation 		= 1.0f - (Distance * Distance) * (range * range); 	
 	if (Attenuation <= 0.0f) 		discard; // Discard if outside of radius	
