@@ -5,11 +5,8 @@
 #include <memory>
 #include <random>
 
-/* System Types Used */
-#include "Modules/Graphics/ECS/TransformSync_S.h"
-#include "Modules/Graphics/ECS/SkeletonAnimation_S.h"
-
 /* Graphics Effects Used */
+#include "Modules/Graphics/Geometry/Prop_Animation.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
 #include "Modules/Graphics/Lighting/Directional_Lighting.h"
 #include "Modules/Graphics/Lighting/Point_Lighting.h"
@@ -28,6 +25,18 @@ Graphics_Module::~Graphics_Module()
 {
 	// Update indicator
 	m_aliveIndicator = false;
+
+	// Remove support for the following list of component types
+	auto & world = m_engine->getModule_World();
+	world.removeComponentType("Prop_Component");
+	world.removeComponentType("Skeleton_Component");
+	world.removeComponentType("LightDirectional_Component");
+	world.removeComponentType("LightDirectionalShadow_Component");
+	world.removeComponentType("LightPoint_Component");
+	world.removeComponentType("LightPointShadow_Component");
+	world.removeComponentType("LightSpot_Component");
+	world.removeComponentType("LightSpotShadow_Component");
+	world.removeComponentType("Reflector_Component");
 }
 
 void Graphics_Module::initialize(Engine * engine)
@@ -88,39 +97,75 @@ void Graphics_Module::initialize(Engine * engine)
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_cameraBuffer));
 
 	// Rendering Effects & systems
-	auto * transformSync = new TransformSync_Gfx_System(m_engine);
-	auto * skeleAnimation = new SkeletonAnimation_System(m_engine);
-	auto * propView = new Prop_View(m_engine, m_cameraBuffer, m_graphicsFBOS);
-	auto * directionalLighting = new Directional_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH, propView);
-	auto * pointLighting = new Point_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView);
-	auto * spotLighting = new Spot_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView);
-	auto * reflectorLighting = new Reflector_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS);
-	auto * skybox = new Skybox(m_engine, m_graphicsFBOS);
-	auto * radianceHints = new Radiance_Hints(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
-	auto * ssao = new SSAO(m_engine, m_graphicsFBOS, &m_visualFX);
-	auto * ssr = new SSR(m_engine, m_graphicsFBOS);
-	auto * joinReflections = new Join_Reflections(m_engine, m_graphicsFBOS);
+	auto propView = new Prop_View(m_engine, m_cameraBuffer, m_graphicsFBOS);
+	m_pipeline = Graphics_Pipeline(m_engine, {
+		new Prop_Animation(m_engine),
+		propView,
+		new Directional_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH, propView),
+		new Point_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView),
+		new Spot_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView),
+		//new Reflector_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS),
+		new Skybox(m_engine, m_graphicsFBOS),
+		new Radiance_Hints(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH),
+		new SSAO(m_engine, m_graphicsFBOS, &m_visualFX),
+		new SSR(m_engine, m_graphicsFBOS),
+		new Join_Reflections(m_engine, m_graphicsFBOS)
+	});
 
-	// ECS Pipeline
-	m_ecsSystems.addSystem(transformSync);
-	m_ecsSystems.addSystem(skeleAnimation);
-	m_ecsSystems.addSystem(propView);
-	m_ecsSystems.addSystem(directionalLighting);
-	m_ecsSystems.addSystem(pointLighting);
-	m_ecsSystems.addSystem(spotLighting);
-	m_ecsSystems.addSystem(reflectorLighting);
-
-	// Rendering Pipeline
-	m_gfxTechs.push_back(propView);
-	m_gfxTechs.push_back(directionalLighting);
-	m_gfxTechs.push_back(pointLighting);
-	m_gfxTechs.push_back(spotLighting);
-	m_gfxTechs.push_back(reflectorLighting);
-	m_gfxTechs.push_back(skybox);	
-	m_gfxTechs.push_back(radianceHints);
-	m_gfxTechs.push_back(ssao);
-	m_gfxTechs.push_back(ssr);
-	m_gfxTechs.push_back(joinReflections);
+	// Add support for the following list of component types
+	auto & world = m_engine->getModule_World();
+	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
+		auto * component = new Prop_Component();
+		component->m_model = Shared_Model(engine, CastAny(parameters[0], std::string("")));
+		component->m_skin = CastAny(parameters[1], 0u);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Skeleton_Component", [engine](const ParamList & parameters) {
+		auto * component = new Skeleton_Component();
+		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + CastAny(parameters[0], std::string("")));
+		component->m_animation = CastAny(parameters[1], 0);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
+		auto * component = new LightDirectional_Component();
+		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters[1], 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightDirectionalShadow_Component", [](const ParamList & parameters) {
+		auto * component = new LightDirectionalShadow_Component();		
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
+		auto * component = new LightPoint_Component();
+		component->LightColor = CastAny(parameters[0], glm::vec3(1.0f));
+		component->LightIntensity = CastAny(parameters[1], 1.0f);
+		component->m_radius = CastAny(parameters[2], 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightPointShadow_Component", [](const ParamList & parameters) {
+		auto * component = new LightPointShadow_Component();
+		component->m_radius = CastAny(parameters[0], 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
+		auto * component = new LightSpot_Component();
+		component->LightColor = CastAny(parameters[0], glm::vec3(1.0f));
+		component->LightIntensity = CastAny(parameters[1], 1.0f);
+		component->m_radius = CastAny(parameters[2], 1.0f);
+		component->m_cutoff = CastAny(parameters[3], 45.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightSpotShadow_Component", [](const ParamList & parameters) {
+		auto * component = new LightSpotShadow_Component();
+		component->m_radius = CastAny(parameters[0], 1.0f);
+		component->m_cutoff = CastAny(parameters[1], 45.0f);
+		return std::make_pair(component->ID, component);
+	});
+	/*world.addComponentType("Reflector_Component", [](const ParamList & parameters) {
+		auto * component = new Reflector_Component();
+		return std::make_pair(component->ID, component);
+	});*/
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)
@@ -136,12 +181,8 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_cameraBuffer->pushChanges(m_engine->getCurrentFrame());
 	m_volumeRH->updateVolume();
 
-	// Update Components
-	m_engine->getModule_World().updateSystems(m_ecsSystems, deltaTime);
-
-	// Render Techniques
-	for each (auto *tech in m_gfxTechs)
-		tech->applyEffect(deltaTime);
+	// Apply Graphics Pipeline
+	m_pipeline.render(deltaTime);
 
 	// Set lock for 3 frames from now
 	m_cameraBuffer->lockFrame(m_engine->getCurrentFrame());

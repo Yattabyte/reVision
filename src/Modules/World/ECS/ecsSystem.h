@@ -34,7 +34,7 @@ public:
 	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
 	@return		true if the system is valid, false otherwise. */
-	inline const bool  isValid() const {
+	inline const bool isValid() const {
 		for (size_t i = 0; i < componentFlags.size(); ++i) 
 			if ((componentFlags[i] & BaseECSSystem::FLAG_OPTIONAL) == 0)
 				return true;		

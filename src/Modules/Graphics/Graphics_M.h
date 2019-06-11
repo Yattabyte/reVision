@@ -4,7 +4,7 @@
 
 #include "Modules/Engine_Module.h"
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/VisualFX.h"
@@ -53,8 +53,7 @@ public:
 private:
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
-	ECSSystemList							m_ecsSystems;
-	std::vector<Graphics_Technique*>		m_gfxTechs;
+	Graphics_Pipeline						m_pipeline;
 	std::shared_ptr<Graphics_Framebuffers>	m_graphicsFBOS;
 	VisualFX								m_visualFX;
 	std::shared_ptr<CameraBuffer>			m_cameraBuffer;

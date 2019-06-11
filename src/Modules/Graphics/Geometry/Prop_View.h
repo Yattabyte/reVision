@@ -6,23 +6,27 @@
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Geometry/components.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/World/ECS/TransformComponent.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Engine.h"
+#include "glm/gtx/component_wise.hpp"
 #include <vector>
+
+#define NUM_MAX_BONES 100
 
 
 /***/
-class Prop_View : public Graphics_Technique, public BaseECSSystem {
+class Prop_View : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
 	inline ~Prop_View() {
 		auto & world = m_engine->getModule_World();
-		world.removeComponentType("Prop_Component");
-		world.removeComponentType("Skeleton_Component");
+		world.removeNotifyOnComponentType("Prop_Component", m_notifyProp);
+		world.removeNotifyOnComponentType("Skeleton_Component", m_notifySkeleton);
 	}
 	/** Constructor. */
 	inline Prop_View(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
@@ -36,6 +40,7 @@ public:
 		// Declare component types used
 		addComponentType(Prop_Component::ID);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 
 		// Error Reporting
 		if (!isValid())
@@ -43,25 +48,16 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		world.addComponentType("Prop_Component", [&, engine](const ParamList & parameters) {
-			auto directory = CastAny(parameters[0], std::string(""));
-			auto material = CastAny(parameters[1], 0u);
-			auto * component = new Prop_Component();
-			component->m_data = m_propBuffer.newElement();
-			component->m_model = Shared_Model(engine, directory);
-			component->m_data->data->materialID = material;
-			return std::make_pair(component->ID, component);
+		m_notifyProp = world.addNotifyOnComponentType("Prop_Component", [&](BaseECSComponent * c) {
+			auto * component = (Prop_Component*)c;
+			component->m_propBufferIndex = m_propBuffer.newElement();
+			m_propBuffer[*component->m_propBufferIndex].materialID = component->m_skin;
 		});
-		world.addComponentType("Skeleton_Component", [&, engine](const ParamList & parameters) {
-			auto directory = CastAny(parameters[0], std::string(""));
-			auto animation = CastAny(parameters[1], 0);
-			auto * component = new Skeleton_Component();
-			component->m_data = m_skeletonBuffer.newElement();
-			component->m_mesh = Shared_Mesh(engine, "\\Models\\" + directory);
-			component->m_animation = animation;
+		m_notifySkeleton = world.addNotifyOnComponentType("Skeleton_Component", [&](BaseECSComponent * c) {
+			auto * component = (Skeleton_Component*)c;
+			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
 			for (int x = 0; x < NUM_MAX_BONES; ++x)
-				component->m_data->data->bones[x] = glm::mat4(1.0f);
-			return std::make_pair(component->ID, component);
+				m_skeletonBuffer[*component->m_skeleBufferIndex].bones[x] = glm::mat4(1.0f);
 		});
 	}
 
@@ -113,14 +109,48 @@ public:
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
-			if (!propComponent->m_model->existsYet())
-				continue;
-
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
-			const auto & index = propComponent->m_data->index;
-			visibleIndices.push_back(index);
+			const auto & index = *propComponent->m_propBufferIndex;
+			if (!propComponent->m_model->existsYet())	continue;
+
+			// Sync Transform Attributes
+			if (transformComponent) {
+				const auto & position = transformComponent->m_transform.m_position;
+				const auto & orientation = transformComponent->m_transform.m_orientation;
+				const auto & scale = transformComponent->m_transform.m_scale;
+				const auto matRot = glm::mat4_cast(orientation);
+				propComponent->mMatrix = transformComponent->m_transform.m_modelMatrix;
+
+				// Update bounding sphere
+				const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * scale) + position;
+				const glm::vec3 bboxMin_World = (propComponent->m_model->m_bboxMin * scale) + position;
+				const glm::vec3 bboxCenter = (bboxMax_World + bboxMin_World) / 2.0f;
+				const glm::vec3 bboxScale = (bboxMax_World - bboxMin_World) / 2.0f;
+				glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
+				glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
+				glm::mat4 matFinal = (matTrans * matRot * matScale);
+				propComponent->bBoxMatrix = matFinal;
+				propComponent->m_radius = glm::compMax(propComponent->m_model->m_radius * scale);
+				propComponent->m_position = propComponent->m_model->m_bboxCenter + position;
+				
+			}
+
+			// Sync Animation Attributes
+			if (skeletonComponent) {
+				auto & bones = m_skeletonBuffer[*skeletonComponent->m_skeleBufferIndex].bones;
+				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
+					bones[i] = skeletonComponent->m_transforms[i];
+			}
+
+			// Sync Prop Attributes
+			m_propBuffer[index].materialID = propComponent->m_skin;
+			m_propBuffer[index].mMatrix = propComponent->mMatrix;
+			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;
+
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
+			visibleIndices.push_back(index);
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) { 
 				// Allow
 				cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
@@ -131,7 +161,7 @@ public:
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
 			}
-			skeletonData.push_back(skeletonComponent ? skeletonComponent->m_data->index : -1); // get skeleton ID if this entity has one
+			skeletonData.push_back(skeletonComponent ? *skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
 		}
 
 		// Update camera buffers
@@ -164,8 +194,21 @@ private:
 	Shared_Primitive m_shapeCube;
 	GLsizei m_propCount = 0;
 	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
-	VectorBuffer<Prop_Component::GL_Buffer> m_propBuffer;
-	VectorBuffer<Skeleton_Component::GL_Buffer> m_skeletonBuffer;
+	int m_notifyProp = -1, m_notifySkeleton = -1;
+
+	// Core Prop Data
+	/** OpenGL buffer for props. */
+	struct Prop_Buffer {
+		GLuint materialID; glm::vec3 padding1;
+		glm::mat4 mMatrix;
+		glm::mat4 bBoxMatrix;
+	};
+	/** OpenGL buffer for prop skeletons. */
+	struct Skeleton_Buffer {
+		glm::mat4 bones[NUM_MAX_BONES];
+	};
+	GL_ArrayBuffer<Prop_Buffer> m_propBuffer;
+	GL_ArrayBuffer<Skeleton_Buffer> m_skeletonBuffer;
 };
 
 #endif // PROP_VIEW_H

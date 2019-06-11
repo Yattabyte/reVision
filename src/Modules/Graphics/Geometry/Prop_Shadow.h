@@ -5,7 +5,6 @@
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
@@ -13,7 +12,7 @@
 
 
 /***/
-class Prop_Shadow : public Graphics_Technique, public BaseECSSystem {
+class Prop_Shadow : public Graphics_Technique {
 public:
 	// Public Enumerations
 	const enum RenderType_Flags {
@@ -107,7 +106,7 @@ public:
 
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
-			const auto & index = propComponent->m_data->index;
+			const auto & index = *propComponent->m_propBufferIndex;
 			visibleIndices.push_back(index);
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, m_lightPos)) { 
@@ -120,7 +119,7 @@ public:
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, m_instanceCount, offset, 1));
 			}
-			skeletonData.push_back(skeletonComponent ? skeletonComponent->m_data->index : -1); // get skeleton ID if this entity has one
+			skeletonData.push_back(skeletonComponent ? *skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
 		}
 
 		// Update camera buffers

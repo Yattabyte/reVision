@@ -9,18 +9,21 @@
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/World/ECS/TransformComponent.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/PriorityList.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Engine.h"
+#include <random>
 #include <vector>
+
+#define NUM_CASCADES 4
 
 
 /***/
-class Directional_Lighting : public Graphics_Technique, public BaseECSSystem {
+class Directional_Lighting : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -28,8 +31,8 @@ public:
 		// Update indicator
 		m_aliveIndicator = false;
 		auto & world = m_engine->getModule_World();
-		world.removeComponentType("LightDirectional_Component");
-		world.removeComponentType("LightDirectionalShadow_Component");
+		world.removeNotifyOnComponentType("LightDirectional_Component", m_notifyLight);
+		world.removeNotifyOnComponentType("LightDirectionalShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
 	inline Directional_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, Prop_View * propView)
@@ -90,6 +93,7 @@ public:
 		// Declare component types used
 		addComponentType(LightDirectional_Component::ID);
 		addComponentType(LightDirectionalShadow_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 		GLuint indData[] = { 0,0,0,0 };
 		m_indirectShape.write(0, sizeof(GLuint) * 4, &indData);
 
@@ -99,30 +103,23 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		world.addComponentType("LightDirectional_Component", [&, engine](const ParamList & parameters) {
-			auto color = CastAny(parameters[0], glm::vec3(1.0f));
-			auto intensity = CastAny(parameters[1], 1.0f);
-			auto * component = new LightDirectional_Component();
-			component->m_data = m_lightBuffer.newElement();
-			component->m_data->data->LightColor = color;
-			component->m_data->data->LightIntensity = intensity;
-			return std::make_pair(component->ID, component);
+		m_notifyLight = world.addNotifyOnComponentType("LightDirectional_Component", [&](BaseECSComponent * c) {
+			auto * component = (LightDirectional_Component*)c;
+			component->m_lightIndex = m_lightBuffer.newElement();
 		});
-		world.addComponentType("LightDirectionalShadow_Component", [&, engine](const ParamList & parameters) {
-			auto shadowSpot = (int)(m_shadowBuffer.getCount() * 4);
-			auto * component = new LightDirectionalShadow_Component();
-			component->m_data = m_shadowBuffer.newElement();
-			component->m_data->data->Shadow_Spot = shadowSpot;
-			component->m_updateTime = 0.0f;
+		m_notifyShadow = world.addNotifyOnComponentType("LightDirectionalShadow_Component", [&](BaseECSComponent * c) {
+			auto * component = (LightDirectionalShadow_Component*)c;
+			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 4);
+			component->m_shadowIndex = m_shadowBuffer.newElement();
+			m_shadowBuffer[*component->m_shadowIndex].Shadow_Spot = shadowSpot;
 			component->m_shadowSpot = shadowSpot;
 			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 4);
 			// Default Values
-			component->m_data->data->lightV = glm::mat4(1.0f);
+			m_shadowBuffer[*component->m_shadowIndex].lightV = glm::mat4(1.0f);
 			for (int x = 0; x < NUM_CASCADES; ++x) {
-				component->m_data->data->lightVP[x] = glm::mat4(1.0f);
-				component->m_data->data->inverseVP[x] = glm::inverse(glm::mat4(1.0f));
+				m_shadowBuffer[*component->m_shadowIndex].lightVP[x] = glm::mat4(1.0f);
+				m_shadowBuffer[*component->m_shadowIndex].inverseVP[x] = glm::inverse(glm::mat4(1.0f));
 			}
-			return std::make_pair(component->ID, component);
 		});
 	}
 
@@ -187,9 +184,32 @@ public:
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
-			lightIndices.push_back(lightComponent->m_data->index);
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
+			const auto & index = *lightComponent->m_lightIndex;
+
+			// Sync Transform Attributes
+			if (transformComponent) {
+				const auto & orientation = transformComponent->m_transform.m_orientation;
+				const auto matRot = glm::mat4_cast(orientation);
+				const glm::mat4 sunTransform = matRot;
+				lightComponent->m_direction = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+				
+				if (shadowComponent) {
+					const glm::mat4 sunTransform = matRot;
+					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+					shadowComponent->m_orientation = orientation;					
+					shadowComponent->m_mMatrix = sunModelMatrix;
+					m_shadowBuffer[*shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
+				}
+			}
+
+			// Update Buffer Attributes
+			m_lightBuffer[index].LightColor = lightComponent->m_color;
+			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
+			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
+			lightIndices.push_back(index);
 			if (shadowComponent) {
-				shadowIndices.push_back(shadowComponent->m_data->index);
+				shadowIndices.push_back(*shadowComponent->m_shadowIndex);
 				m_shadowsToUpdate.push_back(std::make_pair(lightComponent, shadowComponent));
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;
@@ -200,11 +220,11 @@ public:
 					const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 					const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
 					const glm::mat4 pvMatrix = pMatrix * shadowComponent->m_mMatrix;
-					shadowComponent->m_data->data->lightVP[i] = pvMatrix;
-					shadowComponent->m_data->data->inverseVP[i] = inverse(pvMatrix);
 					const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
 					const glm::vec4 v2 = CamP * v1;
-					shadowComponent->m_data->data->CascadeEndClipSpace[i] = v2.z;
+					m_shadowBuffer[*shadowComponent->m_shadowIndex].lightVP[i] = pvMatrix;
+					m_shadowBuffer[*shadowComponent->m_shadowIndex].inverseVP[i] = inverse(pvMatrix);
+					m_shadowBuffer[*shadowComponent->m_shadowIndex].CascadeEndClipSpace[i] = v2.z;
 				}
 			}
 			else
@@ -236,7 +256,7 @@ private:
 			const glm::vec3 clear(0.0f);
 			m_shadowFBO.clear(shadow->m_shadowSpot);
 			// Update geometry components
-			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, light->m_data->index, shadow->m_data->index);
+			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, *light->m_lightIndex, *shadow->m_shadowIndex);
 			world.updateSystem(m_propShadowSystem, deltaTime);
 			// Render geometry components
 			m_propShadowSystem->applyEffect(deltaTime);
@@ -305,9 +325,6 @@ private:
 	std::shared_ptr<RH_Volume> m_volumeRH;
 	Shared_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
 	Shared_Primitive m_shapeQuad;
-	VectorBuffer<LightDirectional_Component::GL_Buffer> m_lightBuffer;
-	VectorBuffer<LightDirectionalShadow_Component::GL_Buffer> m_shadowBuffer;
-	FBO_Shadow_Directional m_shadowFBO;
 	GLuint m_textureNoise32 = 0;
 	GLint m_shadowCount = 0;
 	glm::ivec2 m_shadowSize = glm::ivec2(1024);
@@ -317,6 +334,26 @@ private:
 	Prop_Shadow * m_propShadowSystem = nullptr;
 	std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> m_shadowsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	int m_notifyLight = -1, m_notifyShadow = -1;
+
+	// Core Lighting Data
+	/** OpenGL buffer for directional lights. */
+	struct Directional_Buffer {
+		glm::vec3 LightColor; float padding1;
+		glm::vec3 LightDirection; float padding2;
+		float LightIntensity; glm::vec3 padding3;
+	};
+	/** OpenGL buffer for directional light shadows. */
+	struct Directional_Shadow_Buffer {
+		glm::mat4 lightV = glm::mat4(1.0f);
+		glm::mat4 lightVP[NUM_CASCADES];
+		glm::mat4 inverseVP[NUM_CASCADES];
+		float CascadeEndClipSpace[NUM_CASCADES];
+		int Shadow_Spot = 0; glm::vec3 padding1;
+	};
+	GL_ArrayBuffer<Directional_Buffer> m_lightBuffer;
+	GL_ArrayBuffer<Directional_Shadow_Buffer> m_shadowBuffer;
+	FBO_Shadow_Directional m_shadowFBO;
 };
 
 #endif // DIRECTIONAL_LIGHTING_H

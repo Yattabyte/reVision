@@ -129,6 +129,20 @@ void World_Module::removeComponentType(const char * name)
 	m_constructorMap.erase(name);
 }
 
+int World_Module::addNotifyOnComponentType(const char * name, const std::function<void(BaseECSComponent*)>& func)
+{
+	const int index = (int)m_constructionNotifyees[name].size();
+	m_constructionNotifyees[name].push_back(func);
+	return index;
+}
+
+void World_Module::removeNotifyOnComponentType(const char * name, const int & index)
+{
+	// Unless we want to generate handles that we must deal with internally, just overwrite the index specified
+	if (index > -1)
+		m_constructionNotifyees[name][index] = [](auto) {};
+}
+
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
 {
 	for (size_t i = 0; i < systems.size(); ++i)
@@ -138,7 +152,8 @@ void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTim
 void World_Module::updateSystem(BaseECSSystem * system, const float & deltaTime)
 {
 	const std::vector<uint32_t> & componentTypes = system->getComponentTypes();
-	if (componentTypes.size() == 1u) {
+	if (componentTypes.size() == 0u) return;
+	else if (componentTypes.size() == 1u) {
 		const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
 		const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
 		std::vector< std::vector<BaseECSComponent*> > components(mem_array.size() / typeSize);
@@ -168,6 +183,10 @@ void World_Module::processLevel()
 						components.push_back(ret.second);
 						ids.push_back(ret.first);
 					}
+					// Notify component construction-observers
+					if (m_constructionNotifyees.find(type))
+						for each (const auto func in m_constructionNotifyees[type])
+							func(ret.second);
 				}
 			}
 			// Make an entity out of the available components
@@ -266,7 +285,7 @@ void World_Module::updateSystemWithMultipleComponents(BaseECSSystem * system, co
 			if (j == minSizeIndex)
 				continue;
 			componentParam[j] = getComponentInternal(entityComponents, *componentArrays[j], componentTypes[j]);
-			if ((componentParam[j] == nullptr && (componentFlags[j] & BaseECSSystem::FLAG_REQUIRED))) {
+			if ((componentParam[j] == nullptr) && (componentFlags[j] & BaseECSSystem::FLAG_REQUIRED)) {
 				isValid = false;
 				break;
 			}

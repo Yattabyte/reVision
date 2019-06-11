@@ -56,6 +56,14 @@ public:
 	inline BufferStructure * operator-> () {
 		return &m_localData;
 	}
+	/** Retrieve a const pointer to the underlying data structure. */
+	inline const BufferStructure * get() const {
+		return &m_localData;
+	}
+	/** Retrieve a pointer to the underlying data structure. */
+	inline BufferStructure * get() {
+		return &m_localData;
+	}
 	/** Create a fence at for the current point in time.
 	@param	frameIndex		which frame of this triple buffer to use (0-2). */
 	inline void lockFrame(const size_t & frameIndex) {

@@ -95,6 +95,10 @@ public:
 	/** Remove support for a specific component type at level-creation-time. 
 	@param	name				the component class name. */
 	void removeComponentType(const char * name);
+	/***/
+	int addNotifyOnComponentType(const char * name, const std::function<void(BaseECSComponent *)> & func);
+	/***/
+	void removeNotifyOnComponentType(const char * name, const int & index);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -164,6 +168,7 @@ private:
 	std::map<uint32_t, std::vector<uint8_t>> m_components;
 	std::vector<std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t>>>*> m_entities;
 	MappedChar<std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
+	MappedChar<std::vector<std::function<void(BaseECSComponent*)>>> m_constructionNotifyees;
 	Shared_Level m_level;
 	std::vector<bool*> m_notifyees;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

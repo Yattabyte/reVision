@@ -2,25 +2,25 @@
 #ifndef SKELETONANIMATION_S_H
 #define SKELETONANIMATION_S_H 
 
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Engine.h"
 
 
 /** A system responsible for animating props with skeleton components. */
-class SkeletonAnimation_System : public BaseECSSystem {
+class Prop_Animation : public Graphics_Technique {
 public: 
 	// Public (de)Constructors
 	/** Destroy the skeletal animation system. */
-	inline ~SkeletonAnimation_System() = default;
+	inline ~Prop_Animation() = default;
 	/** Construct a skeletal animation system. */
-	inline SkeletonAnimation_System(Engine * engine) : BaseECSSystem() {
+	inline Prop_Animation(Engine * engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::ID);
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: SkeletonAnimation_System");
+			engine->getManager_Messages().error("Invalid ECS System: Prop_Animation");
 	}
 
 
@@ -31,7 +31,6 @@ public:
 			if (!skeletonComponent->m_mesh->existsYet())
 				return;
 
-			Skeleton_Component::GL_Buffer * uboData = skeletonComponent->m_data->data;
 			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_mesh->m_geometry.boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_mesh->m_geometry.animations.size())
 				return;
 			else {
@@ -46,9 +45,6 @@ public:
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
 				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
-
-				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
-					uboData->bones[i] = skeletonComponent->m_transforms[i];
 			}
 		}
 	};
@@ -93,13 +89,13 @@ protected:
 		assert(keyCount > 0);
 		const auto & Result = keyVector[0].value;
 		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
-			const size_t Index = SkeletonAnimation_System::FindKey(AnimationTime, keyCount - 1, keyVector);
+			const size_t Index = Prop_Animation::FindKey(AnimationTime, keyCount - 1, keyVector);
 			const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
 			const auto & Key = keyVector[Index];
 			const auto & NextKey = keyVector[NextIndex];
 			const float DeltaTime = (float)(NextKey.time - Key.time);
 			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
-			return SkeletonAnimation_System::valueMix(Key.value, NextKey.value, Factor);
+			return Prop_Animation::valueMix(Key.value, NextKey.value, Factor);
 		}
 		return Result;
 	};

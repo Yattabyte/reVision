@@ -14,35 +14,21 @@
 
 /** A directional light component, emulating the appearance of sun lighting. */
 struct LightDirectional_Component : public ECSComponent<LightDirectional_Component> {
-	/** OpenGL buffer for directional lights. */
-	struct GL_Buffer {
-		glm::vec3 LightColor; float padding1;
-		glm::vec3 LightDirection; float padding2;
-		float LightIntensity; glm::vec3 padding3;
-	};
-
-	VB_Element<GL_Buffer> * m_data = nullptr;
+	glm::vec3 m_color = glm::vec3(1.0f);
+	glm::vec3 m_direction = (glm::vec3(0, -1, 0));
+	float m_intensity = 1.0f;
+	size_t * m_lightIndex = nullptr;
 };
 
 /** A directional light shadow component, formatted for 4 parallel split cascaded shadow maps. */
 struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalShadow_Component> {
-	/** OpenGL buffer for directional light shadows. */
-	struct GL_Buffer {
-	#define NUM_CASCADES 4
-		glm::mat4 lightV = glm::mat4(1.0f);
-		glm::mat4 lightVP[NUM_CASCADES];
-		glm::mat4 inverseVP[NUM_CASCADES];
-		float CascadeEndClipSpace[NUM_CASCADES]; 
-		int Shadow_Spot = 0; glm::vec3 padding1; // end of scalars, pad by 2
-	};
-
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
 	size_t m_visSize[2];
-	float m_shadowSize = 0.0f;
+	float m_shadowSize = 512.0f;
 	glm::mat4 m_mMatrix = glm::mat4(1.0f);
 	glm::quat m_orientation = glm::quat(1, 0, 0, 0);
-	VB_Element<GL_Buffer> * m_data = nullptr;
+	size_t * m_shadowIndex = nullptr;
 };
 
 /** A point light component, emulating a light bulb like appearance. */
@@ -56,8 +42,10 @@ struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
 		float LightRadius; glm::vec2 padding3;
 	};
 
+	glm::vec3 LightColor = glm::vec3(1.0f);
+	float LightIntensity = 1.0f;
+	float m_radius = 1.0f;
 	VB_Element<GL_Buffer> * m_data = nullptr;
-	float m_radius = 0.0f;
 };
 
 /** A point light shadow component, formatted to support using a cubemap for shadows. */
@@ -70,7 +58,7 @@ struct LightPointShadow_Component : public ECSComponent<LightPointShadow_Compone
 		int Shadow_Spot; glm::vec3 padding1;
 	};
 
-	float m_radius = 0.0f;
+	float m_radius = 1.0f;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
 	bool m_outOfDate = true;
@@ -91,8 +79,11 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 		float LightCutoff; float padding4;
 	};
 
+	glm::vec3 LightColor = glm::vec3(1.0f);
+	float LightIntensity = 1.0f;
+	float m_radius = 1.0f;
+	float m_cutoff = 90.0f;
 	VB_Element<GL_Buffer> * m_data = nullptr;
-	float m_radius = 0.0f;
 };
 
 /** A spot light shadow component, formatted to support a single shadow map. */
@@ -106,8 +97,8 @@ struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component
 	};
 
 	glm::vec3 m_position = glm::vec3(0.0f);
-	float m_radius = 0.0f;
-	float m_cutoff = 45.0f;
+	float m_radius = 1.0f;
+	float m_cutoff = 90.0f;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
 	bool m_outOfDate = true;

@@ -8,7 +8,7 @@
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Point.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/World/ECS/TransformComponent.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -19,7 +19,7 @@
 
 
 /***/
-class Point_Lighting : public Graphics_Technique, public BaseECSSystem {
+class Point_Lighting : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
@@ -27,8 +27,8 @@ public:
 		// Update indicator
 		m_aliveIndicator = false;
 		auto & world = m_engine->getModule_World();
-		world.removeComponentType("LightPoint_Component");
-		world.removeComponentType("LightPointShadow_Component");
+		world.removeNotifyOnComponentType("LightPoint_Component", m_notifyLight);
+		world.removeNotifyOnComponentType("LightShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
 	inline Point_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, Prop_View * propView)
@@ -73,6 +73,7 @@ public:
 		// Declare component types used
 		addComponentType(LightPoint_Component::ID);
 		addComponentType(LightPointShadow_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 		GLuint data[] = { 0,0,0,0 };
 		m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
 
@@ -82,30 +83,21 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		world.addLevelListener(&m_outOfDate);
-		world.addComponentType("LightPoint_Component", [&, engine](const ParamList & parameters) {
-			auto color = CastAny(parameters[0], glm::vec3(1.0f));
-			auto intensity = CastAny(parameters[1], 1.0f);
-			auto radius = CastAny(parameters[2], 1.0f);
-			auto * component = new LightPoint_Component();
+		world.addLevelListener(&m_outOfDate);	
+		m_notifyLight = world.addNotifyOnComponentType("LightPoint_Component", [&](BaseECSComponent * c) {
+			auto * component = (LightPoint_Component*)c;
 			component->m_data = m_lightBuffer.newElement();
-			component->m_data->data->LightColor = color;
-			component->m_data->data->LightIntensity = intensity;
-			component->m_data->data->LightRadius = radius;
-			component->m_radius = radius;
-			return std::make_pair(component->ID, component);
+			component->m_data->data->LightColor = component->LightColor;
+			component->m_data->data->LightIntensity = component->LightIntensity;
+			component->m_data->data->LightRadius = component->m_radius;
 		});
-		world.addComponentType("LightPointShadow_Component", [&, engine](const ParamList & parameters) {
+		m_notifyShadow = world.addNotifyOnComponentType("LightPointShadow_Component", [&](BaseECSComponent * c) {
+			auto * component = (LightPointShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getCount() * 12);
-			auto * component = new LightPointShadow_Component();
-			component->m_radius = CastAny(parameters[0], 1.0f);
 			component->m_data = m_shadowBuffer.newElement();
 			component->m_data->data->Shadow_Spot = shadowSpot;
-			component->m_updateTime = 0.0f;
 			component->m_shadowSpot = shadowSpot;
-			component->m_outOfDate = true;
-			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 12);
-			return std::make_pair(component->ID, component);
+			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 12);			
 		});
 	}
 
@@ -132,7 +124,35 @@ public:
 		for each (const auto & componentParam in components) {
 			LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[0];
 			LightPointShadow_Component * shadowComponent = (LightPointShadow_Component*)componentParam[1];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			lightIndices.push_back(lightComponent->m_data->index);
+
+			// Sync Transform Attributes
+			if (transformComponent) {
+				const auto & position = transformComponent->m_transform.m_position;
+				lightComponent->m_data->data->LightPosition = position;
+				const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
+				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(lightComponent->m_radius*lightComponent->m_radius)*1.1f);
+				lightComponent->m_data->data->mMatrix = (trans)* scl;
+			
+				if (shadowComponent) {				
+					shadowComponent->m_position = position;
+					shadowComponent->m_data->data->lightV = glm::translate(glm::mat4(1.0f), -position);
+					glm::mat4 rotMats[6];
+					const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, shadowComponent->m_radius * shadowComponent->m_radius);
+					rotMats[0] = pMatrix * glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0));
+					rotMats[1] = pMatrix * glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0));
+					rotMats[2] = pMatrix * glm::lookAt(position, position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1));
+					rotMats[3] = pMatrix * glm::lookAt(position, position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1));
+					rotMats[4] = pMatrix * glm::lookAt(position, position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0));
+					rotMats[5] = pMatrix * glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0));
+					for (int x = 0; x < 6; ++x) {
+						shadowComponent->m_data->data->lightPV[x] = rotMats[x];
+						shadowComponent->m_data->data->inversePV[x] = glm::inverse(rotMats[x]);
+					}
+				}				
+			}
+
 			if (shadowComponent) {
 				if (m_outOfDate)
 					shadowComponent->m_outOfDate = true;
@@ -260,6 +280,7 @@ private:
 	std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> m_shadowsToUpdate;
 	bool m_outOfDate = true;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	int m_notifyLight = -1, m_notifyShadow = -1;
 };
 
 #endif // DIRECTIONAL_LIGHTING_H

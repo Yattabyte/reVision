@@ -61,14 +61,12 @@ public:
 	/** Move gl object from 1 instance to another. */
 	inline VectorBuffer & operator=(VectorBuffer && o) noexcept {
 		m_count = (std::move(o.m_count));
-		m_indexPointers = (std::move(o.m_indexPointers));
 		m_bufferID = (std::move(o.m_bufferID));
 		m_ptrContainer = (std::move(o.m_ptrContainer));
 		m_maxCapacity = (std::move(o.m_maxCapacity));
 		m_offsetAlignment = (std::move(o.m_offsetAlignment));
 
 		o.m_count = 0;
-		o.m_indexPointers = 0;
 		o.m_bufferID = 0;
 		o.m_ptrContainer = 0;
 		o.m_maxCapacity = 0;
