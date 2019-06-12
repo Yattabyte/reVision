@@ -91,25 +91,26 @@ void Graphics_Module::initialize(Engine * engine)
 	m_graphicsFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	m_graphicsFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);	
 	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);		
 	m_visualFX.initialize(m_engine);
 	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_cameraBuffer));
 
 	// Rendering Effects & systems
-	auto propView = new Prop_View(m_engine, m_cameraBuffer, m_graphicsFBOS);
+	auto propView = new Prop_View(m_engine);
 	m_pipeline = Graphics_Pipeline(m_engine, {
 		new Prop_Animation(m_engine),
 		propView,
-		new Directional_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH, propView),
-		new Point_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView),
-		new Spot_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS, propView),
-		//new Reflector_Lighting(m_engine, m_cameraBuffer, m_graphicsFBOS),
-		new Skybox(m_engine, m_graphicsFBOS),
-		new Radiance_Hints(m_engine, m_cameraBuffer, m_graphicsFBOS, m_volumeRH),
-		new SSAO(m_engine, m_graphicsFBOS, &m_visualFX),
-		new SSR(m_engine, m_graphicsFBOS),
-		new Join_Reflections(m_engine, m_graphicsFBOS)
+		new Directional_Lighting(m_engine, propView),
+		new Point_Lighting(m_engine, propView),
+		new Spot_Lighting(m_engine, propView),
+		new Reflector_Lighting(m_engine),
+		new Skybox(m_engine),
+		new Radiance_Hints(m_engine),
+		new SSAO(m_engine, &m_visualFX),
+		new SSR(m_engine),
+		new Join_Reflections(m_engine)
 	});
 
 	// Add support for the following list of component types
@@ -162,10 +163,10 @@ void Graphics_Module::initialize(Engine * engine)
 		component->m_cutoff = CastAny(parameters[1], 45.0f);
 		return std::make_pair(component->ID, component);
 	});
-	/*world.addComponentType("Reflector_Component", [](const ParamList & parameters) {
+	world.addComponentType("Reflector_Component", [](const ParamList & parameters) {
 		auto * component = new Reflector_Component();
 		return std::make_pair(component->ID, component);
-	});*/
+	});
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)
@@ -182,7 +183,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_volumeRH->updateVolume();
 
 	// Apply Graphics Pipeline
-	m_pipeline.render(deltaTime);
+	render(deltaTime, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
 
 	// Set lock for 3 frames from now
 	m_cameraBuffer->lockFrame(m_engine->getCurrentFrame());
@@ -200,4 +201,9 @@ void Graphics_Module::updateCamera()
 std::shared_ptr<CameraBuffer> Graphics_Module::getCameraBuffer() const
 {
 	return m_cameraBuffer;
+}
+
+void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH)
+{
+	m_pipeline.render(deltaTime, cameraBuffer, gfxFBOS, volumeRH);
 }

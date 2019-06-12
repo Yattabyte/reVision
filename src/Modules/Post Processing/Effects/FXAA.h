@@ -64,7 +64,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);

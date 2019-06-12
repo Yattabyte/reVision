@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
 		m_blendAmt += (!m_engine->getModule_World().checkIfLoaded()) ? deltaTime : -deltaTime;

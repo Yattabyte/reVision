@@ -3,9 +3,6 @@
 #define DIRECTIONAL_LIGHTING_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
@@ -35,8 +32,8 @@ public:
 		world.removeNotifyOnComponentType("LightDirectionalShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
-	inline Directional_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, Prop_View * propView)
-		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS), m_volumeRH(volumeRH) {
+	inline Directional_Lighting(Engine * engine, Prop_View * propView)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
 		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");
@@ -125,7 +122,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
 			return;
@@ -259,7 +256,7 @@ private:
 			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, *light->m_lightIndex, *shadow->m_shadowIndex);
 			world.updateSystem(m_propShadowSystem, deltaTime);
 			// Render geometry components
-			m_propShadowSystem->applyEffect(deltaTime);
+			m_propShadowSystem->applyTechnique(deltaTime);
 			shadow->m_updateTime = m_engine->getTime();
 		}
 
@@ -320,9 +317,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
-	std::shared_ptr<RH_Volume> m_volumeRH;
 	Shared_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
 	Shared_Primitive m_shapeQuad;
 	GLuint m_textureNoise32 = 0;

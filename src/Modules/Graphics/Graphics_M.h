@@ -38,6 +38,8 @@ public:
 	/** Returns the active camera's data buffer.
 	@return					the active camera's data buffer. */
 	std::shared_ptr<CameraBuffer> getCameraBuffer() const;
+	/***/
+	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH);
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
 	inline GLuint getLightingFBOID() const {

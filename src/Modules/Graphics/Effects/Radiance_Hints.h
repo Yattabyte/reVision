@@ -23,8 +23,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Radiance_Hints(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH)
-		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS), m_volumeRH(volumeRH) {
+	inline Radiance_Hints(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
 		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");
@@ -48,13 +48,11 @@ public:
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
 
-		m_gfxFBOS->createFBO("RADIANCE_HINTS", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-		m_textureID = std::get<0>(m_gfxFBOS->m_fbos["RADIANCE_HINTS"].second.front());
 	}
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 		
@@ -83,24 +81,21 @@ public:
 		m_shaderRecon->bind();
 		m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		m_volumeRH->readSecondary(4);
-		m_gfxFBOS->bindForWriting("RADIANCE_HINTS");
+		m_gfxFBOS->bindForWriting("BOUNCE");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
 		// Bind for reading by next effect	
-		glBindTextureUnit(4, m_textureID);
+		glBindTextureUnit(4, std::get<0>(m_gfxFBOS->m_fbos["BOUNCE"].second.front()));
 	}
 
 
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
 	Shared_Primitive m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;
-	std::shared_ptr<RH_Volume> m_volumeRH;
-	GLuint m_textureID = 0, m_bounceSize = 16;
+	GLuint m_bounceSize = 16;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

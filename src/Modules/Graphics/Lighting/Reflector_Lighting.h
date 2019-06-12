@@ -3,10 +3,7 @@
 #define REFLECTOR_LIGHTING_H
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/VisualFX.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -25,11 +22,11 @@ public:
 	/** Destructor. */
 	~Reflector_Lighting();
 	/** Constructor. */
-	Reflector_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS);
+	Reflector_Lighting(Engine * engine);
 
 
 	// Public Interface Implementations
-	virtual void applyEffect(const float & deltaTime) override;
+	virtual void applyTechnique(const float & deltaTime) override;
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override;
 	
 
@@ -68,14 +65,9 @@ private:
 
 	// Reflector POV rendering
 	std::shared_ptr<CameraBuffer> m_reflectorCamera;
-	Graphics_Pipeline m_pipeline;
-	std::shared_ptr<Graphics_Framebuffers> m_graphicsFBOS;
-	VisualFX m_visualFX;
-	std::shared_ptr<RH_Volume> m_volumeRH;
-
-	// Parent POV rendering
-	std::shared_ptr<CameraBuffer> m_userCamera;
-	std::shared_ptr<Graphics_Framebuffers> m_userFBOS;
+	std::shared_ptr<Graphics_Framebuffers> m_reflectorFBOS;
+	std::shared_ptr<RH_Volume> m_reflectorVRH;
+	bool m_renderingSelf = false; // used to avoid calling self infinitely
 };
 
 #endif // REFLECTOR_LIGHTING_H

@@ -43,7 +43,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
 			return;

@@ -3,8 +3,6 @@
 #define PROP_VIEW_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/World/ECS/TransformComponent.h"
 #include "Assets/Shader.h"
@@ -29,8 +27,8 @@ public:
 		world.removeNotifyOnComponentType("Skeleton_Component", m_notifySkeleton);
 	}
 	/** Constructor. */
-	inline Prop_View(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
-		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {		
+	inline Prop_View(Engine * engine)
+		: m_engine(engine) {		
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
@@ -63,7 +61,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
@@ -188,8 +186,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	const GLuint * m_modelsVAO = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	Shared_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Primitive m_shapeCube;
 	GLsizei m_propCount = 0;

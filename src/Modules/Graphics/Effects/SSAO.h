@@ -4,7 +4,6 @@
 #define MAX_KERNEL_SIZE 128
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/VisualFX.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -24,8 +23,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline SSAO(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, VisualFX * visualFX)
-		: m_engine(engine), m_gfxFBOS(gfxFBOS), m_visualFX(visualFX) {
+	inline SSAO(Engine * engine, VisualFX * visualFX)
+		: m_engine(engine), m_visualFX(visualFX) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
@@ -120,7 +119,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
 			return;
 		glDisable(GL_DEPTH_TEST);
@@ -165,7 +164,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	VisualFX * m_visualFX = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader, m_shaderCopyAO;
 	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

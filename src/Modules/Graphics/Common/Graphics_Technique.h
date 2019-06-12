@@ -3,6 +3,9 @@
 #define GRAPHICS_TECHNIQUE_H
 
 #include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
 
 
 /** An interface for core graphics effect techniques. */
@@ -21,21 +24,30 @@ public:
 	inline void setEnabled(const bool & state) { 
 		m_enabled = state; 
 	};
+	/***/
+	inline void setViewingParameters(const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume) {
+		m_cameraBuffer = cameraBuffer;
+		m_gfxFBOS = gfxFBOS;
+		m_volumeRH = rhVolume;
+	}
 	
 
 	// Public Interface
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. */
-	virtual void applyEffect(const float & deltaTime) {}
+	virtual void applyTechnique(const float & deltaTime) {}
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {};
+	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {};
 
 
 protected:
 	// Protected Attributes
 	bool m_enabled = true;
+	std::shared_ptr<CameraBuffer> m_cameraBuffer;
+	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
+	std::shared_ptr<RH_Volume> m_volumeRH;
 };
 
 struct Null_Component : public ECSComponent<Null_Component> {

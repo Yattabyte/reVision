@@ -19,7 +19,7 @@ public:
 	// Public Interface
 	/** Apply this lighting technique. 
 	@param	deltaTime	the amount of time passed since last frame. */
-	virtual void applyEffect(const float & deltaTime) = 0;
+	virtual void applyTechnique(const float & deltaTime) = 0;
 
 
 protected:

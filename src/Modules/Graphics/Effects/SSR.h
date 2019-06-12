@@ -3,7 +3,6 @@
 #define SSR_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
@@ -27,8 +26,8 @@ public:
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	inline SSR(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
-		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
+	inline SSR(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
@@ -105,7 +104,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -196,7 +195,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Primitive m_shapeQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

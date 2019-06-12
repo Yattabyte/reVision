@@ -3,7 +3,6 @@
 #define JOIN_REFLECTIONS_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
 #include "Assets/Primitive.h"
@@ -22,8 +21,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Join_Reflections(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
-		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
+	inline Join_Reflections(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Shared_Texture(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
@@ -38,7 +37,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glEnable(GL_BLEND);
@@ -59,7 +58,6 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader;
 	Shared_Texture m_brdfMap;
 	Shared_Primitive m_shapeQuad;

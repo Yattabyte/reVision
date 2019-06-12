@@ -3,7 +3,6 @@
 #define SKYBOX_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Assets/Shader.h"
 #include "Assets/Cubemap.h"
 #include "Assets/Primitive.h"
@@ -21,8 +20,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Skybox(Engine * engine, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS)
-		: m_engine(engine), m_gfxFBOS(gfxFBOS) {
+	inline Skybox(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
@@ -78,7 +77,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
@@ -152,7 +151,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;

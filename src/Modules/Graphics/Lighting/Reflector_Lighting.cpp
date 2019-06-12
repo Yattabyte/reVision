@@ -1,18 +1,5 @@
 #include "Modules/Graphics/Lighting/Reflector_Lighting.h"
 #include "Modules/World/ECS/TransformComponent.h"
-
-/* Graphics Effects Used */
-#include "Modules/Graphics/Geometry/Prop_View.h"
-#include "Modules/Graphics/Lighting/Directional_Lighting.h"
-#include "Modules/Graphics/Lighting/Point_Lighting.h"
-#include "Modules/Graphics/Lighting/Spot_Lighting.h"
-
-/* Other Effects Used */
-#include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/SSAO.h"
-#include "Modules/Graphics/Effects/Radiance_Hints.h"
-#include "Modules/Graphics/Effects/Join_Reflections.h"
-#include "Modules/Graphics/Effects/SSR.h"
 #include "Engine.h"
 
 
@@ -24,8 +11,8 @@ Reflector_Lighting::~Reflector_Lighting()
 	world.removeNotifyOnComponentType("Reflector_Component", m_notifyReflector);
 }
 
-Reflector_Lighting::Reflector_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer>& cameraBuffer, const std::shared_ptr<Graphics_Framebuffers>& gfxFBOS)
-	: m_engine(engine), m_userCamera(cameraBuffer), m_userFBOS(gfxFBOS)
+Reflector_Lighting::Reflector_Lighting(Engine * engine)
+	: m_engine(engine)
 {
 	// Asset Loading
 	m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
@@ -80,29 +67,14 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine, const std::shared_ptr<Ca
 		m_engine->getManager_Messages().error("Reflector_Lighting Environment Map Framebuffer has encountered an error.");
 
 	// Graphics Pipeline Initialization
-	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(engine);
-	m_graphicsFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGBA16F, GL_RGBA, GL_FLOAT },{ GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
-	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);
-	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);
-	m_visualFX.initialize(m_engine);
-	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_reflectorCamera));
-
-	// Rendering Effects & systems
-	auto propView = new Prop_View(m_engine, m_reflectorCamera, m_graphicsFBOS);
-	m_pipeline = Graphics_Pipeline(m_engine, {
-		propView,
-		new Directional_Lighting(m_engine, m_reflectorCamera, m_graphicsFBOS, m_volumeRH, propView),
-		new Point_Lighting(m_engine, m_reflectorCamera, m_graphicsFBOS, propView),
-		new Spot_Lighting(m_engine, m_reflectorCamera, m_graphicsFBOS, propView),
-		// new Reflector_Lighting(m_engine, m_reflectorCamera, m_graphicsFBOS),
-		new Skybox(m_engine, m_graphicsFBOS),
-		new Radiance_Hints(m_engine, m_reflectorCamera, m_graphicsFBOS, m_volumeRH),
-		new SSAO(m_engine, m_graphicsFBOS, &m_visualFX),
-		new SSR(m_engine, m_graphicsFBOS),
-		new Join_Reflections(m_engine, m_graphicsFBOS)
-	});
+	m_reflectorFBOS = std::make_shared<Graphics_Framebuffers>(engine);
+	m_reflectorFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGBA16F, GL_RGBA, GL_FLOAT },{ GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
+	m_reflectorFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	m_reflectorFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	m_reflectorFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
+	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
+	m_reflectorVRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_reflectorCamera));
 
 	// Declare component types used
 	addComponentType(Reflector_Component::ID);
@@ -129,20 +101,24 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine, const std::shared_ptr<Ca
 	});
 }
 
-void Reflector_Lighting::applyEffect(const float & deltaTime) 
+void Reflector_Lighting::applyTechnique(const float & deltaTime) 
 {
 	// Exit Early
 	if (!m_enabled || !m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
 		return;
+	if (!m_renderingSelf) {
+		m_renderingSelf = true;
 
-	// Render scene
-	//renderScene(deltaTime);
-	// Render reflectors
-	renderReflectors(deltaTime);
+		renderScene(deltaTime);
+		renderReflectors(deltaTime);
+
+		m_renderingSelf = false;
+	}
 }
 
 void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
 {
+	if (m_renderingSelf) return;
 	// Accumulate Reflector Data		
 	std::vector<GLint> reflectionIndicies;
 	PriorityList<float, Reflector_Component*, std::less<float>> oldest;
@@ -187,10 +163,10 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 	}
 
 	// Update Draw Buffers
-	/*const size_t & refSize = reflectionIndicies.size();
+	const size_t & refSize = reflectionIndicies.size();
 	m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
-	m_reflectorsToUpdate = PQtoVector(oldest);*/
+	m_reflectorsToUpdate = PQtoVector(oldest);
 }
 
 void Reflector_Lighting::renderScene(const float & deltaTime)
@@ -201,8 +177,8 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 			for (int x = 0; x < 6; ++x) {
 				// Clear Frame Buffers
 				glViewport(0, 0, m_envmapSize, m_envmapSize);
-				m_graphicsFBOS->clear();
-				m_volumeRH->clear();
+				m_reflectorFBOS->clear();
+				m_reflectorVRH->clear();
 
 				// Repurpose camera's tripple buffer
 				m_reflectorCamera->waitFrame(0);
@@ -210,13 +186,13 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				*(m_reflectorCamera.get())->get() = reflector->m_Cameradata[x];
 				m_reflectorCamera->pushChanges(0);
 				m_reflectorCamera->lockFrame(0);
-				m_volumeRH->updateVolume();
+				m_reflectorVRH->updateVolume();
 
 				// Apply Graphics Pipeline
-				m_pipeline.render(deltaTime);
+				m_engine->getModule_Graphics().render(deltaTime, m_reflectorCamera, m_reflectorFBOS, m_reflectorVRH);
 
 				// Copy lighting frame into cube-face
-				m_graphicsFBOS->bindForReading("LIGHTING", 0);
+				m_reflectorFBOS->bindForReading("LIGHTING", 0);
 				m_envmapFBO.bindForWriting();
 				m_shaderCopy->bind();
 				m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
@@ -255,7 +231,7 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 	}
 
 	m_outOfDate = false;
-	glViewport(0, 0, (*m_userCamera)->Dimensions.x, (*m_userCamera)->Dimensions.y);
+	glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 }
 
 void Reflector_Lighting::renderReflectors(const float & deltaTime) 
@@ -267,8 +243,8 @@ void Reflector_Lighting::renderReflectors(const float & deltaTime)
 
 	// Draw only into depth-stencil buffer
 	m_shaderStencil->bind();										// Shader (reflector)
-	m_userFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
-	m_userFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+	m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
+	m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
 	glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
 	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer

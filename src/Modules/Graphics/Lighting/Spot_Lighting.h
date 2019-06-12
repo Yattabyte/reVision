@@ -3,8 +3,6 @@
 #define SPOT_LIGHTING_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Spot.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
@@ -31,8 +29,8 @@ public:
 		world.removeNotifyOnComponentType("LightSpotShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
-	inline Spot_Lighting(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, Prop_View * propView)
-		: m_engine(engine), m_cameraBuffer(cameraBuffer), m_gfxFBOS(gfxFBOS) {
+	inline Spot_Lighting(Engine * engine, Prop_View * propView)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Spot\\Stencil");
@@ -104,7 +102,7 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void applyEffect(const float & deltaTime) override {
+	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
@@ -187,7 +185,7 @@ private:
 				// Update components
 				world.updateSystem(m_propShadow_Static, deltaTime);
 				// Render components
-				m_propShadow_Static->applyEffect(deltaTime);
+				m_propShadow_Static->applyTechnique(deltaTime);
 				shadow->m_outOfDate = false;
 			}
 			// Update dynamic shadows
@@ -196,7 +194,7 @@ private:
 			// Update components
 			world.updateSystem(m_propShadow_Dynamic, deltaTime);
 			// Render components
-			m_propShadow_Dynamic->applyEffect(deltaTime);
+			m_propShadow_Dynamic->applyTechnique(deltaTime);
 			shadow->m_updateTime = m_engine->getTime();
 		}
 
@@ -266,8 +264,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr; 
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeCone;
 	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;

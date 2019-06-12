@@ -27,5 +27,5 @@ void Post_Processing_Module::frameTick(const float & deltaTime)
 	// Apply each effect
 	for each (auto *tech in m_fxTechs)
 		if (tech->isEnabled())
-			tech->applyEffect(deltaTime);
+			tech->applyTechnique(deltaTime);
 }
