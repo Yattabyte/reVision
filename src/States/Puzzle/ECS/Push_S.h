@@ -63,12 +63,12 @@ public:
 				}
 			}
 
-			board.m_data->data->heightOffset = 2.0f * std::min(board.m_rowClimbTime / board.m_speed, board.m_speed);
+			board.m_data->heightOffset = 2.0f * std::min(board.m_rowClimbTime / board.m_speed, board.m_speed);
 
 			// Synchronize tile data to GPU
 			for (int y = 0; y < 12; ++y)
 				for (int x = 0; x < 6; ++x)
-					board.m_data->data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
+					board.m_data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
 
 			// Find lanes approaching full (top of board)
 			bool critical = false;
@@ -77,7 +77,7 @@ public:
 				int y = 11;
 				for (; y >= 0; --y)
 					if (board.m_tiles[y][x].m_type != TileState::NONE) {
-						board.m_data->data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->data->heightOffset / 2.0f)) / 3.0f : 0.0f;
+						board.m_data->lanes[x] = y >= 8 ? (float(y - 8) + (board.m_data->heightOffset / 2.0f)) / 3.0f : 0.0f;
 						if (y >= 8)
 							critical = true;
 						break;
@@ -86,7 +86,7 @@ public:
 					largest = y;
 			}
 			board.m_critical = (score.m_multiplier != 0 ? board.m_critical : critical);
-			board.m_data->data->nearingTop = (float(largest) + (board.m_data->data->heightOffset / 2.0f)) / 12.0f;
+			board.m_data->nearingTop = (float(largest) + (board.m_data->heightOffset / 2.0f)) / 12.0f;
 		}
 	}
 

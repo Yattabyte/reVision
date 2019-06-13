@@ -55,8 +55,8 @@ public:
 			popTiles(deltaTime, board, score);
 
 			// Animate score climbing
-			if ((score.m_score - score.m_data->data->score) > 0) 
-				score.m_data->data->score = std::min(score.m_score, score.m_data->data->score + 1);
+			if ((score.m_score - score.m_data->score) > 0) 
+				score.m_data->score = std::min(score.m_score, score.m_data->score + 1);
 			else
 				score.m_lastScore = score.m_score;
 			// Highlight digits that are changing
@@ -75,13 +75,13 @@ public:
 					break;
 				}
 			// Animate multiplier climbing
-			score.m_data->data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, score.m_data->data->scoreAnimLinear)) : 0.0f;
+			score.m_data->scoreAnimLinear = score.m_multiplier > 1 ? std::max(0.0f, std::min(1.0f, score.m_data->scoreAnimLinear)) : 0.0f;
 			
 			// Synchronize component data to GPU
 			board.m_stop = bool(score.m_scoredTiles.size() || score.m_timerStop > -1.0f);
-			score.m_data->data->shakeLinear = std::max(0.0f, std::min(1.0f, score.m_data->data->shakeLinear - 0.01f));
-			score.m_data->data->highlightIndex = scoreLength - (8 - firstMostDigit);
-			score.m_data->data->multiplier = score.m_multiplier;
+			score.m_data->shakeLinear = std::max(0.0f, std::min(1.0f, score.m_data->shakeLinear - 0.01f));
+			score.m_data->highlightIndex = scoreLength - (8 - firstMostDigit);
+			score.m_data->multiplier = score.m_multiplier;
 
 			// If enough tiles cleared, signal to start the level-up animation
 			if (score.m_tilesCleared >= (score.m_level * 12)) {
@@ -318,8 +318,8 @@ private:
 
 				score.m_multiplier++;
 				score.m_timerStop++;
-				score.m_data->data->shakeLinear += (score.m_multiplier / 5.0f);
-				score.m_data->data->scoreAnimLinear++;
+				score.m_data->shakeLinear += (score.m_multiplier / 5.0f);
+				score.m_data->scoreAnimLinear++;
 
 				m_engine->getManager_Sounds().playSound(m_soundMultiplierInc, 0.75f, 1.0f + (score.m_multiplier / 10.0f));
 			}
@@ -361,7 +361,7 @@ private:
 				// Add another 10 bonus points for every extra tile past 3, plus a base amount of 10, also add time
 				if (manifold.xy.size() > 3) {
 					addScore(score, int(manifold.xy.size()) + (10 * (int(manifold.xy.size()) - 3)));
-					score.m_data->data->shakeLinear += std::max(0.25f, manifold.xy.size() / 9.0f);
+					score.m_data->shakeLinear += std::max(0.25f, manifold.xy.size() / 9.0f);
 					score.m_timerStop++;
 				}
 			}
@@ -390,7 +390,7 @@ private:
 							addScore(score, 10);
 							score.m_tilesCleared++;
 						}
-						score.m_data->data->tiles[(y * 6) + x].lifeLinear = smoothStart5(glm::clamp(time / duration, 0.0f, 1.0f));
+						score.m_data->tiles[(y * 6) + x].lifeLinear = smoothStart5(glm::clamp(time / duration, 0.0f, 1.0f));
 					}
 				}
 			}
@@ -411,7 +411,7 @@ private:
 				for each (const auto & xy in pair.xy) {
 					board.m_tiles[xy.y][xy.x].m_type = TileState::NONE;
 					board.m_tiles[xy.y][xy.x].m_scoreType = TileState::UNMATCHED;
-					score.m_data->data->tiles[(xy.y * 6) + xy.x].lifeLinear = 0.0f;
+					score.m_data->tiles[(xy.y * 6) + xy.x].lifeLinear = 0.0f;
 				}
 				score.m_scoredTiles.erase(score.m_scoredTiles.begin() + x);
 				score.m_scoredAdjacency.erase(score.m_scoredAdjacency.begin() + x);

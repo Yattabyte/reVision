@@ -141,28 +141,25 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
 		auto * component = new LightPoint_Component();
-		component->LightColor = CastAny(parameters[0], glm::vec3(1.0f));
-		component->LightIntensity = CastAny(parameters[1], 1.0f);
+		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters[1], 1.0f);
 		component->m_radius = CastAny(parameters[2], 1.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightPointShadow_Component", [](const ParamList & parameters) {
 		auto * component = new LightPointShadow_Component();
-		component->m_radius = CastAny(parameters[0], 1.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
 		auto * component = new LightSpot_Component();
-		component->LightColor = CastAny(parameters[0], glm::vec3(1.0f));
-		component->LightIntensity = CastAny(parameters[1], 1.0f);
+		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters[1], 1.0f);
 		component->m_radius = CastAny(parameters[2], 1.0f);
 		component->m_cutoff = CastAny(parameters[3], 45.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpotShadow_Component", [](const ParamList & parameters) {
 		auto * component = new LightSpotShadow_Component();
-		component->m_radius = CastAny(parameters[0], 1.0f);
-		component->m_cutoff = CastAny(parameters[1], 45.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("Reflector_Component", [](const ParamList & parameters) {

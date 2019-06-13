@@ -211,7 +211,7 @@ private:
 	/** Update Rendering Data. */
 	inline void update(const Score_Component & score) {
 		// System Time
-		score.m_data->data->sysTime = m_engine->getTime();
+		score.m_data->sysTime = m_engine->getTime();
 
 		// Determine number of chars in score
 		constexpr int decimalPlaces[8] = { 10000000,1000000,100000,10000,1000,100,10,1 };

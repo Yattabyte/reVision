@@ -33,7 +33,7 @@ public:
 				color = glm::vec3(1, 1, 0);
 			// Level Up Color
 			color = glm::mix(color, glm::vec3(0, 1, 0), score.m_levelUpLinear);
-			board.m_data->data->colorScheme = glm::mix(board.m_data->data->colorScheme, color, 0.25f);
+			board.m_data->colorScheme = glm::mix(board.m_data->colorScheme, color, 0.25f);
 		}
 	}
 };

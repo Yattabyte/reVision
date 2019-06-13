@@ -68,7 +68,7 @@ public:
 			board.m_music.beatSeconds = BeatSeconds;
 			board.m_music.beat = bool(test + deltaTime >= BeatSeconds);
 			board.m_music.accumulator += deltaTime;
-			board.m_data->data->music.beat = (sinf(((board.m_music.accumulator / BeatSeconds) + 0.875f) * glm::pi<float>()) + 1.0f) / 2.0f;
+			board.m_data->music.beat = (sinf(((board.m_music.accumulator / BeatSeconds) + 0.875f) * glm::pi<float>()) + 1.0f) / 2.0f;
 		}
 	}
 

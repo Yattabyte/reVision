@@ -6,18 +6,18 @@
 
 
 /** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
-struct FBO_EnvMap : FBO_Base {
+struct FBO_Env_Reflector : FBO_Base {
 	// Attributes
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
 
 
 	// (de)Constructors
-	inline ~FBO_EnvMap() {
+	inline ~FBO_Env_Reflector() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
-	inline FBO_EnvMap() {
+	inline FBO_Env_Reflector() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

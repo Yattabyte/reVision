@@ -7,7 +7,7 @@
 #include "States/Puzzle/ECS/components.h"
 #include "States/Puzzle/GameSystemInterface.h"
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Utilities/GL/VectorBuffer.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Engine.h"
 
 /* Game System Types Used */
@@ -56,16 +56,17 @@ public:
 		m_renderingSystem = new Rendering_System(m_engine, m_engine->getModule_Graphics().getLightingFBOID());
 
 		// Create Players
-		auto & gameBoard = *m_boardBuffer.newElement();
-		(*gameBoard.data) = GameBuffer();
+		auto index = *m_boardBuffer.newElement();
+		auto & gameBoard = m_boardBuffer[index];
+		(gameBoard) = GameBuffer();
 		// Reset game buffer data
 		for (int x = 0; x < BOARD_WIDTH; ++x) {
 			for (int y = 0; y < BOARD_HEIGHT; ++y) {
-				gameBoard.data->tiles[(y * 6) + x].type = TileState::NONE;
-				gameBoard.data->tiles[(y * 6) + x].yOffset = 0.0f;
-				gameBoard.data->tiles[(y * 6) + x].lifeLinear = 0.0f;
+				gameBoard.tiles[(y * 6) + x].type = TileState::NONE;
+				gameBoard.tiles[(y * 6) + x].yOffset = 0.0f;
+				gameBoard.tiles[(y * 6) + x].lifeLinear = 0.0f;
 			}
-			gameBoard.data->lanes[x] = 0.0f;
+			gameBoard.lanes[x] = 0.0f;
 		}
 		m_players.push_back(&gameBoard);
 
@@ -131,8 +132,8 @@ protected:
 	std::vector<Game_System_Interface*> m_gameplaySystems;
 	ECSSystemList m_systemList;
 	BaseECSSystem * m_renderingSystem;
-	VectorBuffer<GameBuffer> m_boardBuffer;
-	std::vector<VB_Element<GameBuffer>*> m_players;
+	GL_ArrayBuffer<GameBuffer> m_boardBuffer;
+	std::vector<GameBuffer*> m_players;
 };
 
 #endif // PUZZLESTATE_H

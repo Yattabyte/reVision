@@ -32,7 +32,7 @@ public:
 				continue;
 
 			// Game Time Logic
-			score.m_data->data->timeAnimLinear = 1.0f;
+			score.m_data->timeAnimLinear = 1.0f;
 
 			if (score.m_timerStop > -1.0f) {
 				score.m_timerStop -= deltaTime;
@@ -42,13 +42,13 @@ public:
 				score.m_timerGame += deltaTime;
 				if (score.m_timerPowerOn > 0.0f) {
 					score.m_timerPowerOn -= deltaTime;
-					score.m_data->data->timeAnimLinear = easeInBounce(1.0f - score.m_timerPowerOn);
+					score.m_data->timeAnimLinear = easeInBounce(1.0f - score.m_timerPowerOn);
 				}
 			}
 
 			score.m_timerStop = std::clamp<float>(score.m_timerStop, -1.0f, 9.0f);
-			score.m_data->data->stopTimer = score.m_timerStop;
-			score.m_data->data->gameTimer = score.m_timerGame;
+			score.m_data->stopTimer = score.m_timerStop;
+			score.m_data->gameTimer = score.m_timerGame;
 		}
 	}
 };

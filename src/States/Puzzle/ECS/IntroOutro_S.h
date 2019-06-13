@@ -29,9 +29,9 @@ public:
 		for each (const auto & componentParam in components) {
 			auto & board = *(Board_Component*)componentParam[0];
 
-			board.m_data->data->intro.countDown = -1;
+			board.m_data->intro.countDown = -1;
 			if (!board.m_gameInProgress && !board.m_intro.finished) {
-				board.m_data->data->intro.powerSecondary = 0.0f;
+				board.m_data->intro.powerSecondary = 0.0f;
 				board.m_intro.time -= deltaTime;
 				if (board.m_intro.time <= 1.0f) {
 					board.m_intro.finished = true;
@@ -48,20 +48,20 @@ public:
 						else
 							m_engine->getManager_Sounds().playSound(m_soundBeepEnd);
 					board.m_intro.countDown = number;
-					board.m_data->data->intro.countDown = number;
-					board.m_data->data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));
+					board.m_data->intro.countDown = number;
+					board.m_data->intro.powerSecondary = easeInBounce(std::clamp<float>((4.0f - board.m_intro.time) / 2.0f, 0.0f, 1.0f));
 				}
 			}
 			else 
-				board.m_data->data->intro.powerSecondary = 1.0f;	
+				board.m_data->intro.powerSecondary = 1.0f;	
 			if (board.m_gameEnded && !board.m_outro.finished) {
 				if (board.m_outro.time < 1.0f) {
 					board.m_outro.time += deltaTime;
 					const float life = board.m_outro.time / 1.0f;
 					for (int x = 0; x < 6; ++x) {
-						board.m_data->data->lanes[x] = 0.0f;
+						board.m_data->lanes[x] = 0.0f;
 						for (int y = 0; y < 12; ++y) 
-							board.m_data->data->tiles[(y * 6) + x].lifeLinear = life;
+							board.m_data->tiles[(y * 6) + x].lifeLinear = life;
 					}
 
 				}
@@ -71,12 +71,12 @@ public:
 						for (int y = 0; y < 12; ++y) {
 							board.m_tiles[y][x].m_type = TileState::NONE;
 							board.m_tiles[y][x].m_scoreType = TileState::UNMATCHED;
-							board.m_data->data->tiles[(y * 6) + x].lifeLinear = 0.0f;
-							board.m_data->data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
+							board.m_data->tiles[(y * 6) + x].lifeLinear = 0.0f;
+							board.m_data->tiles[(y * 6) + x].type = board.m_tiles[y][x].m_type;
 						}
 				}
 			}
-			board.m_data->data->intro.powerOn = easeInBounce(std::clamp<float>((6.0f - board.m_intro.time) / 4.0f, 0.0f, 1.0f));
+			board.m_data->intro.powerOn = easeInBounce(std::clamp<float>((6.0f - board.m_intro.time) / 4.0f, 0.0f, 1.0f));
 		}
 	}
 

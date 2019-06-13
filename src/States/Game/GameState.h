@@ -26,7 +26,7 @@ public:
 			auto * component = new Player3D_Component();
 			return std::make_pair(component->ID, component);
 		});
-		world.loadWorld("A.map");
+		world.loadWorld("Lighting Tests//Reflector_Test.map");
 
 		// Create main menu
 		m_pauseMenu = std::make_shared<PauseMenu>(m_engine);

@@ -23,7 +23,7 @@ struct TileState {
 };
 /** A component representing a basic player. */
 struct Board_Component : public ECSComponent<Board_Component> {
-	VB_Element<GameBuffer> * m_data = nullptr;
+	GameBuffer * m_data = nullptr;
 	TileState m_tiles[12][6];
 	struct TileDropData {
 		enum DropState {
@@ -75,7 +75,7 @@ struct XY { int x, y; };
 struct TileAdj { bool scored[3][3] = { false, false, false, false, false, false, false, false, false }; };
 /** A component representing a basic player. */
 struct Score_Component : public ECSComponent<Score_Component> {
-	VB_Element<GameBuffer> * m_data = nullptr;
+	GameBuffer * m_data = nullptr;
 	int m_score = 0;
 	int m_lastScore = 0;
 	int m_multiplier = 0;

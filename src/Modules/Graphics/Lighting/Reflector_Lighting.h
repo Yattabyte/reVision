@@ -4,10 +4,12 @@
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Lighting/FBO_Env_Reflector.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Utilities/PriorityList.h"
 #include <vector>
 
@@ -57,8 +59,6 @@ private:
 	DynamicBuffer m_visLights;
 	std::vector<Reflector_Component*> m_reflectorsToUpdate;
 	bool m_outOfDate = true;
-	VectorBuffer<Reflector_Component::GL_Buffer> m_reflectorBuffer;
-	FBO_EnvMap m_envmapFBO;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	int m_notifyReflector = -1;
 
@@ -67,6 +67,18 @@ private:
 	std::shared_ptr<Graphics_Framebuffers> m_reflectorFBOS;
 	std::shared_ptr<RH_Volume> m_reflectorVRH;
 	bool m_renderingSelf = false; // used to avoid calling self infinitely
+
+	// Core Lighting Data
+	/** OpenGL buffer for Parallax reflectors. */
+	struct Reflector_Buffer {
+		glm::mat4 mMatrix;
+		glm::mat4 rotMatrix;
+		glm::vec3 BoxCamPos; float padding1;
+		glm::vec3 BoxScale; float padding2;
+		int CubeSpot; glm::vec3 padding3;
+	};
+	GL_ArrayBuffer<Reflector_Buffer> m_reflectorBuffer;
+	FBO_Env_Reflector m_envmapFBO;
 };
 
 #endif // REFLECTOR_LIGHTING_H

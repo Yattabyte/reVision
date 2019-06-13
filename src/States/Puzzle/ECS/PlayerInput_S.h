@@ -40,11 +40,11 @@ public:
 				auto & tileSwap = board.m_player.tileSwaps[x];
 				tileSwap.time += deltaTime;
 				float xOffset = 2.0f * (1.0f - std::clamp<float>(tileSwap.time / Tile_SwapDuration, 0.0f, 1.0f));
-				board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = xOffset;
-				board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = -xOffset;
+				board.m_data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = xOffset;
+				board.m_data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = -xOffset;
 				if (tileSwap.time >= Tile_SwapDuration) {
-					board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = 0.0f;
-					board.m_data->data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = 0.0f;
+					board.m_data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[0]].xOffset = 0.0f;
+					board.m_data->tiles[(tileSwap.yIndex * 6) + tileSwap.xIndices[1]].xOffset = 0.0f;
 					board.m_player.tileSwaps.pop_front();
 					x--;
 				}
@@ -90,7 +90,7 @@ public:
 
 			board.m_player.xPos = std::min(4, std::max(0, board.m_player.xPos));
 			board.m_player.yPos = std::min(11, std::max(1, board.m_player.yPos));
-			board.m_data->data->playerCoords = glm::ivec2(board.m_player.xPos, board.m_player.yPos);
+			board.m_data->playerCoords = glm::ivec2(board.m_player.xPos, board.m_player.yPos);
 		}
 	}
 

@@ -89,9 +89,9 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	world.addLevelListener(&m_outOfDate);
 	m_notifyReflector = world.addNotifyOnComponentType("Reflector_Component", [&](BaseECSComponent * c) {
 		auto * component = (Reflector_Component*)c;
-		auto envCount = (int)(m_reflectorBuffer.getCount() * 6);
-		component->m_data = m_reflectorBuffer.newElement();
-		component->m_data->data->CubeSpot = envCount;
+		auto envCount = (int)(m_reflectorBuffer.getLength() * 6);
+		component->m_reflectorIndex = m_reflectorBuffer.newElement();
+		m_reflectorBuffer[*component->m_reflectorIndex].CubeSpot = envCount;
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
 		component->m_outOfDate = true;
@@ -99,6 +99,12 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 			component->m_Cameradata[x].Dimensions = m_envmapFBO.m_size;
 			component->m_Cameradata[x].FOV = 90.0f;
 		}
+
+		// Default Values
+		m_reflectorBuffer[*component->m_reflectorIndex].mMatrix = glm::mat4(1.0f);
+		m_reflectorBuffer[*component->m_reflectorIndex].rotMatrix = glm::mat4(1.0f);
+		m_reflectorBuffer[*component->m_reflectorIndex].BoxCamPos = glm::vec3(0.0f);
+		m_reflectorBuffer[*component->m_reflectorIndex].BoxScale = glm::vec3(1.0f);
 	});
 }
 
@@ -126,6 +132,7 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 	for each (const auto & componentParam in components) {
 		Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
 		Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
+		const auto & index = *reflectorComponent->m_reflectorIndex;
 
 		// Sync Transform Attributes
 		if (transformComponent) {
@@ -135,10 +142,10 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
 			const auto matRot = glm::mat4_cast(orientation);
 			const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
-			reflectorComponent->m_data->data->mMatrix = modelMatrix;
-			reflectorComponent->m_data->data->rotMatrix = glm::inverse(matRot);
-			reflectorComponent->m_data->data->BoxCamPos = position;
-			reflectorComponent->m_data->data->BoxScale = scale;
+			m_reflectorBuffer[index].mMatrix = modelMatrix;
+			m_reflectorBuffer[index].rotMatrix = glm::inverse(matRot);
+			m_reflectorBuffer[index].BoxCamPos = position;
+			m_reflectorBuffer[index].BoxScale = scale;
 			const glm::mat4 vMatrices[6] = {
 				glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
 				glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
@@ -158,7 +165,7 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 		}
 
 		// Update Buffer Attributes
-		reflectionIndicies.push_back(reflectorComponent->m_data->index);
+		reflectionIndicies.push_back(index);
 		oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
 	}
 

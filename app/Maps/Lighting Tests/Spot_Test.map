@@ -14,23 +14,6 @@ entity
 {
 	Transform_Component
 	{
-		vec3 "0,0,0"
-		quat "0.0828278884,-0.373612523,0.901980519,0.199964225"
-		vec3 "1,1,1"
-	}
-	LightDirectional_Component
-	{		
-		vec3 "0.75,0.75,0.9"
-		float "4"
-	}
-	LightDirectionalShadow_Component
-	{		
-	}
-}
-entity
-{
-	Transform_Component
-	{
 		vec3 "-40,40,40"
 		quat "0.854,0.146,-0.354,-0.354"
 		vec3 "1,1,1"
@@ -44,8 +27,6 @@ entity
 	}
 	LightSpotShadow_Component
 	{
-		float "15"
-		float "35"
 	}
 }
 entity
@@ -65,8 +46,6 @@ entity
 	}
 	LightSpotShadow_Component
 	{
-		float "10"
-		float "35"
 	}
 }
 entity
@@ -86,8 +65,6 @@ entity
 	}
 	LightSpotShadow_Component
 	{
-		float "15"
-		float "35"
 	}
 }
 entity

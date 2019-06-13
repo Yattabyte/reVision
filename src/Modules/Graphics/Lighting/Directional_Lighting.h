@@ -111,6 +111,7 @@ public:
 			m_shadowBuffer[*component->m_shadowIndex].Shadow_Spot = shadowSpot;
 			component->m_shadowSpot = shadowSpot;
 			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 4);
+
 			// Default Values
 			m_shadowBuffer[*component->m_shadowIndex].lightV = glm::mat4(1.0f);
 			for (int x = 0; x < NUM_CASCADES; ++x) {
@@ -192,8 +193,7 @@ public:
 				
 				if (shadowComponent) {
 					const glm::mat4 sunTransform = matRot;
-					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
-					shadowComponent->m_orientation = orientation;					
+					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));				
 					shadowComponent->m_mMatrix = sunModelMatrix;
 					m_shadowBuffer[*shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
 				}
