@@ -176,7 +176,7 @@ private:
 		glTextureParameteri(m_textureMipsID, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
+		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
 	}
 	/** Resize the frame buffer.
 	@param	size	the new size of the frame buffer */

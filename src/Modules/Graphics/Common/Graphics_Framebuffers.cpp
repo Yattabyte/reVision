@@ -12,14 +12,9 @@ Graphics_Framebuffers::~Graphics_Framebuffers()
 	}
 }
 
-Graphics_Framebuffers::Graphics_Framebuffers(Engine * engine)
-{
-	// Preferences
-	auto & preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize({ f, m_renderSize.y }); });
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize({ m_renderSize.x, f }); });
+Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
+{	
+	m_renderSize = size;
 }
 
 void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::tuple<GLenum, GLenum, GLenum>> textureFormats)

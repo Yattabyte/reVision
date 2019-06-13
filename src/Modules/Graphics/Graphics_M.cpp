@@ -56,12 +56,14 @@ void Graphics_Module::initialize(Engine * engine)
 		m_renderSize = glm::ivec2(f, m_renderSize.y);
 		(*m_cameraBuffer)->Dimensions = m_renderSize;
 		updateCamera();
+		m_graphicsFBOS->resize(m_renderSize);
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		(*m_cameraBuffer)->Dimensions = m_renderSize;
 		updateCamera();
+		m_graphicsFBOS->resize(m_renderSize);
 	});
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
@@ -87,7 +89,7 @@ void Graphics_Module::initialize(Engine * engine)
 	updateCamera();
 
 	// Initialization
-	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(engine);
+	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(m_renderSize);
 	m_graphicsFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
@@ -95,7 +97,7 @@ void Graphics_Module::initialize(Engine * engine)
 	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);	
 	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);		
 	m_visualFX.initialize(m_engine);
-	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_cameraBuffer));
+	m_volumeRH = std::make_shared<RH_Volume>(m_engine);
 
 	// Rendering Effects & systems
 	auto propView = new Prop_View(m_engine);
@@ -178,9 +180,9 @@ void Graphics_Module::frameTick(const float & deltaTime)
 
 	// Wait on triple-buffered camera lock, then update camera
 	m_cameraBuffer->waitFrame(m_engine->getCurrentFrame());
-	m_cameraBuffer->bind(2, m_engine->getCurrentFrame());
 	m_cameraBuffer->pushChanges(m_engine->getCurrentFrame());
-	m_volumeRH->updateVolume();
+	m_cameraBuffer->bind(2, m_engine->getCurrentFrame());
+	m_volumeRH->updateVolume(m_cameraBuffer);
 
 	// Apply Graphics Pipeline
 	render(deltaTime, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);

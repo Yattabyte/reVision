@@ -74,11 +74,14 @@ public:
 	/** Wait for the current fence to pass, for the current frame index.
 	@param	frameIndex		which frame of this triple buffer to use (0-2). */
 	inline void waitFrame(const size_t & frameIndex) {
-		if (m_fence[frameIndex])
+		if (m_fence[frameIndex] != nullptr)
 			while (1) {
 				GLenum waitReturn = glClientWaitSync(m_fence[frameIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-				if (waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED)
+				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
+					glDeleteSync(m_fence[frameIndex]);
+					m_fence[frameIndex] = nullptr;
 					return;
+				}
 			}
 	}
 	/** Commit the changes held in the local data, to the GPU, for a given frame index. 

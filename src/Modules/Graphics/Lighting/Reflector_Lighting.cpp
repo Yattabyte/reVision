@@ -30,6 +30,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		m_envmapFBO.resize(m_envmapSize, m_envmapSize, 6);
 		(*m_reflectorCamera)->Dimensions = glm::vec2(m_envmapSize);
 		updateCamera();
+		m_reflectorFBOS->resize(glm::ivec2(m_envmapSize));
 	});
 
 	// Camera Setup
@@ -67,14 +68,14 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		m_engine->getManager_Messages().error("Reflector_Lighting Environment Map Framebuffer has encountered an error.");
 
 	// Graphics Pipeline Initialization
-	m_reflectorFBOS = std::make_shared<Graphics_Framebuffers>(engine);
+	m_reflectorFBOS = std::make_shared<Graphics_Framebuffers>(glm::ivec2(m_envmapSize));
 	m_reflectorFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGBA16F, GL_RGBA, GL_FLOAT },{ GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	m_reflectorFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
 	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
-	m_reflectorVRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine, m_reflectorCamera));
+	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
 
 	// Declare component types used
 	addComponentType(Reflector_Component::ID);
@@ -134,7 +135,6 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
 			const auto matRot = glm::mat4_cast(orientation);
 			const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
-			reflectorComponent->m_transform = Transform(position, orientation, scale);
 			reflectorComponent->m_data->data->mMatrix = modelMatrix;
 			reflectorComponent->m_data->data->rotMatrix = glm::inverse(matRot);
 			reflectorComponent->m_data->data->BoxCamPos = position;
@@ -148,8 +148,8 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 				glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
 			};
 			const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
-			const glm::mat4 pMatrix_Inverse = glm::inverse(pMatrix);
 			for (int x = 0; x < 6; ++x) {
+				reflectorComponent->m_Cameradata[x].Dimensions = glm::vec2(m_envmapSize);
 				reflectorComponent->m_Cameradata[x].FarPlane = largest;
 				reflectorComponent->m_Cameradata[x].EyePosition = position;
 				reflectorComponent->m_Cameradata[x].pMatrix = pMatrix;
@@ -180,13 +180,12 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				m_reflectorFBOS->clear();
 				m_reflectorVRH->clear();
 
-				// Repurpose camera's tripple buffer
-				m_reflectorCamera->waitFrame(0);
-				m_reflectorCamera->bind(2, 0);
+				// Repurpose camera's tripple buffer, use a different section every time
+				m_reflectorCamera->waitFrame(x % 3);
 				*(m_reflectorCamera.get())->get() = reflector->m_Cameradata[x];
-				m_reflectorCamera->pushChanges(0);
-				m_reflectorCamera->lockFrame(0);
-				m_reflectorVRH->updateVolume();
+				m_reflectorCamera->pushChanges(x % 3);
+				m_reflectorCamera->bind(2, x % 3);
+				m_reflectorVRH->updateVolume(m_reflectorCamera);
 
 				// Apply Graphics Pipeline
 				m_engine->getModule_Graphics().render(deltaTime, m_reflectorCamera, m_reflectorFBOS, m_reflectorVRH);
@@ -199,6 +198,8 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glBindVertexArray(m_shapeQuad->m_vaoID);
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+				m_reflectorCamera->lockFrame(x % 3);
 			}
 
 			// Once cubemap is generated, convolute it

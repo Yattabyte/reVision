@@ -5,6 +5,7 @@
 #include "Utilities/MappedChar.h"
 #include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
+#include <functional>
 #include <memory>
 #include <tuple>
 #include <vector>
@@ -19,7 +20,7 @@ public:
 	/***/
 	~Graphics_Framebuffers();
 	/***/
-	Graphics_Framebuffers(Engine * engine);
+	Graphics_Framebuffers(const glm::ivec2 & size);
 
 
 	// Public Methods

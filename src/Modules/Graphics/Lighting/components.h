@@ -120,7 +120,6 @@ struct Reflector_Component : public ECSComponent<Reflector_Component> {
 	int m_cubeSpot = 0;
 	bool m_outOfDate = true;
 	float m_updateTime = 0.0f;
-	Transform m_transform;
 	CameraBuffer::BufferStructure m_Cameradata[6];
 };
 

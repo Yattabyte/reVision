@@ -3,7 +3,6 @@
 #define REFLECTOR_LIGHTING_H
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"

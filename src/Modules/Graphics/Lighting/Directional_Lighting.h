@@ -139,8 +139,7 @@ public:
 		renderBounce(deltaTime);
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		// Accumulate Light Data		
-		auto & graphics = m_engine->getModule_Graphics();
+		// Accumulate Light Data
 		const glm::vec2 &size = (*m_cameraBuffer)->Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians((*m_cameraBuffer)->FOV) / 2.0f;

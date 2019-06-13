@@ -2,7 +2,7 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
-project(reVision VERSION 3.3.10 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 3.3.11 DESCRIPTION "Video game engine project.")
 
 # Get dependency directory locations from the user
 set(ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
@@ -16,7 +16,7 @@ set(PROJECT_BIN ${CMAKE_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
 # Include directories of dependencies for entire project
-include_directories ( 	
+include_directories( 	
 	${CORE_DIR} 
 	${ASSIMP_DIR}/include/
 	${BULLET_DIR}/src/			
@@ -27,7 +27,7 @@ include_directories (
 )
 
 # Add external dependencies						
-link_libraries 	(	
+link_libraries(	
 	debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
 	optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib
 	debug		${ASSIMP_DIR}/lib/Debug/IrrXML.lib

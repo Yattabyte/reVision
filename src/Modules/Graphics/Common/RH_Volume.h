@@ -15,14 +15,14 @@ public:
 	/** Destroy the radiance hint volume. */
 	~RH_Volume();
 	/** Construct a radiance hint volume. 
-	@param	engine			the engine to use.
-	@param	cameraBuffer	the camera to use the frustum of. */
-	RH_Volume(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer);
+	@param	engine			the engine to use. */
+	RH_Volume(Engine * engine);
 
 
 	// Public Methods
-	/** Update the volume's attributes based on the input camera.*/
-	void updateVolume();
+	/** Update the volume's attributes based on the input camera.
+	@param	cameraBuffer	the camera to use the frustum of. */
+	void updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer);
 	/***/
 	void resize(const float & resolution = 16.0f);
 	/***/
@@ -46,7 +46,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	GLuint m_fboIDS[2] = { 0,0 }, m_textureIDS[2][RH_TEXTURE_COUNT] = { { 0,0,0,0 }, { 0,0,0,0 } };
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

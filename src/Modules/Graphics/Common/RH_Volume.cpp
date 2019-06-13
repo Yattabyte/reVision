@@ -12,8 +12,8 @@ RH_Volume::~RH_Volume()
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);
 }
 
-RH_Volume::RH_Volume(Engine * engine, const std::shared_ptr<CameraBuffer> & cameraBuffer) 
-	: m_engine(engine), m_cameraBuffer(cameraBuffer)
+RH_Volume::RH_Volume(Engine * engine) 
+	: m_engine(engine)
 {
 	// Preferences
 	auto & preferences = m_engine->getPreferenceState();
@@ -43,14 +43,14 @@ RH_Volume::RH_Volume(Engine * engine, const std::shared_ptr<CameraBuffer> & came
 	}
 }
 
-void RH_Volume::updateVolume() 
+void RH_Volume::updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer)
 {
-	const glm::mat4 InverseView = glm::inverse((*m_cameraBuffer)->vMatrix);
-	const glm::vec2 ViewDimensions = (*m_cameraBuffer)->Dimensions;
+	const glm::mat4 InverseView = glm::inverse((*cameraBuffer)->vMatrix);
+	const glm::vec2 ViewDimensions = (*cameraBuffer)->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
-	const float tanHalfHFOV = glm::radians((*m_cameraBuffer)->FOV) / 2.0f;
+	const float tanHalfHFOV = glm::radians((*cameraBuffer)->FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { (*m_cameraBuffer)->ConstNearPlane, ((*m_cameraBuffer)->FarPlane * 0.25f) };
+	const float frustumSlice[2] = { (*cameraBuffer)->ConstNearPlane, ((*cameraBuffer)->FarPlane * 0.25f) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,
