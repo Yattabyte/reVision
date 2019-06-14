@@ -16,6 +16,16 @@ Graphics_Framebuffers::~Graphics_Framebuffers()
 Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
 {	
 	m_renderSize = size;
+	createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
+	createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
+	createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
+	createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("HDR", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("FXAA", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 }
 
 void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::tuple<GLenum, GLenum, GLenum>> & textureFormats, const bool & mipmapped)

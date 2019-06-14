@@ -21,6 +21,7 @@
 #include "Modules/Graphics/Effects/Join_Reflections.h"
 #include "Modules/Graphics/Effects/Bloom.h"
 #include "Modules/Graphics/Effects/HDR.h"
+#include "Modules/Graphics/Effects/FXAA.h"
 
 
 Graphics_Module::~Graphics_Module()
@@ -92,15 +93,6 @@ void Graphics_Module::initialize(Engine * engine)
 
 	// Initialization
 	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(m_renderSize);
-	m_graphicsFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
-	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
-	m_graphicsFBOS->createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	m_graphicsFBOS->createFBO("HDR", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	m_visualFX.initialize(m_engine);
@@ -121,7 +113,8 @@ void Graphics_Module::initialize(Engine * engine)
 		new SSR(m_engine),
 		new Join_Reflections(m_engine),
 		new Bloom(m_engine),
-		new HDR(m_engine)
+		new HDR(m_engine),
+		new FXAA(m_engine)
 	});
 
 	// Add support for the following list of component types
