@@ -78,6 +78,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	m_reflectorFBOS->createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
 	m_reflectorFBOS->createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	m_reflectorFBOS->createFBO("HDR", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
