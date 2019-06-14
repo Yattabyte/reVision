@@ -27,7 +27,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_envmapSize);
 	preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 		m_envmapSize = std::max(1u, (unsigned int)f);
-		m_envmapFBO.resize(m_envmapSize, m_envmapSize, 6);
+		m_envmapFBO.resize(m_envmapSize, m_envmapSize, m_reflectorBuffer.getLength() * 6);
 		(*m_reflectorCamera)->Dimensions = glm::vec2(m_envmapSize);
 		updateCamera();
 		m_reflectorFBOS->resize(glm::ivec2(m_envmapSize));
@@ -94,7 +94,6 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		m_reflectorBuffer[*component->m_reflectorIndex].CubeSpot = envCount;
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
-		component->m_outOfDate = true;
 		for (int x = 0; x < 6; ++x) {
 			component->m_Cameradata[x].Dimensions = m_envmapFBO.m_size;
 			component->m_Cameradata[x].FOV = 90.0f;
@@ -115,12 +114,10 @@ void Reflector_Lighting::applyTechnique(const float & deltaTime)
 		return;
 	if (!m_renderingSelf) {
 		m_renderingSelf = true;
-
 		renderScene(deltaTime);
-		renderReflectors(deltaTime);
-
 		m_renderingSelf = false;
 	}
+	renderReflectors(deltaTime);
 }
 
 void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 

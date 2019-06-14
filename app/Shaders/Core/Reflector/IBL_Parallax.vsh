@@ -40,9 +40,9 @@ void main(void)
 	rotMatrix = reflectorBuffers[ReflectorIndex].rotMatrix;
 	BoxCamPos = reflectorBuffers[ReflectorIndex].BoxCamPos;
 	BoxScale = reflectorBuffers[ReflectorIndex].BoxScale;
-	CubeSpot = reflectorBuffers[ReflectorIndex].CubeSpot;
+	CubeSpot = reflectorBuffers[ReflectorIndex].CubeSpot / 6;
 	CamPInverse = inverse(pMatrix);
 	CamVInverse = inverse(vMatrix);
 	CamDimensions = CameraDimensions;
-	gl_Position = pMatrix * vMatrix * mMatrix * vec4(vertex, 1);	
+	gl_Position = pMatrix * vMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
 }
