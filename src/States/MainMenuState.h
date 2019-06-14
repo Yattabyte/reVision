@@ -3,7 +3,6 @@
 #define MAINMENUSTATE_H
 
 #include "States/EngineState.h"
-#include "States/Puzzle/PuzzleState.h"
 #include "States/Game/GameState.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Engine.h"
@@ -27,9 +26,6 @@ public:
 		m_startMenu = std::make_shared<StartMenu>(m_engine);
 		m_startMenu->addCallback(StartMenu::on_start_game, [engine]() {
 			engine->setEngineState(new GameState(engine));
-		});
-		m_startMenu->addCallback(StartMenu::on_start_puzzle, [engine]() {
-			engine->setEngineState(new PuzzleState(engine));
 		});
 		m_startMenu->addCallback(StartMenu::on_options, [&]() {
 		});

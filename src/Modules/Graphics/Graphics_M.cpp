@@ -15,10 +15,11 @@
 
 /* Other Effects Used */
 #include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/SSAO.h"
 #include "Modules/Graphics/Effects/Radiance_Hints.h"
-#include "Modules/Graphics/Effects/Join_Reflections.h"
+#include "Modules/Graphics/Effects/SSAO.h"
 #include "Modules/Graphics/Effects/SSR.h"
+#include "Modules/Graphics/Effects/Join_Reflections.h"
+#include "Modules/Graphics/Effects/Bloom.h"
 
 
 Graphics_Module::~Graphics_Module()
@@ -97,6 +98,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_graphicsFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
+	m_graphicsFBOS->createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	m_visualFX.initialize(m_engine);
@@ -115,7 +117,8 @@ void Graphics_Module::initialize(Engine * engine)
 		new Radiance_Hints(m_engine),
 		new SSAO(m_engine, &m_visualFX),
 		new SSR(m_engine),
-		new Join_Reflections(m_engine)
+		new Join_Reflections(m_engine),
+		new Bloom(m_engine)
 	});
 
 	// Add support for the following list of component types
