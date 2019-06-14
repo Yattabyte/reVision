@@ -22,6 +22,7 @@
 #include "Modules/Graphics/Effects/Bloom.h"
 #include "Modules/Graphics/Effects/HDR.h"
 #include "Modules/Graphics/Effects/FXAA.h"
+#include "Modules/Graphics/Effects/To_Screen.h"
 
 
 Graphics_Module::~Graphics_Module()
@@ -114,7 +115,8 @@ void Graphics_Module::initialize(Engine * engine)
 		new Join_Reflections(m_engine),
 		new Bloom(m_engine),
 		new HDR(m_engine),
-		new FXAA(m_engine)
+		new FXAA(m_engine),
+		new To_Screen(m_engine)
 	});
 
 	// Add support for the following list of component types

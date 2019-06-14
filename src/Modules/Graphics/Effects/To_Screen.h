@@ -2,7 +2,7 @@
 #ifndef TO_SCREEN_H
 #define TO_SCREEN_H
 
-#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -10,7 +10,7 @@
 
 
 /** The final post-processing technique which outputs the last bound texture to the screen. */
-class To_Screen : public GFX_PP_Effect {
+class To_Screen : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
