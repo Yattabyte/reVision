@@ -43,12 +43,12 @@ public:
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
 	inline GLuint getLightingFBOID() const {
-		return m_graphicsFBOS->m_fbos["LIGHTING"].first;
+		return m_graphicsFBOS->getFboID("LIGHTING");
 	};
 	/** Returns the lighting buffer's texture ID.
 	@return					the lighting buffer texture ID. */
 	inline GLuint getLightingTexID() const {
-		return std::get<0>(m_graphicsFBOS->m_fbos["LIGHTING"].second.front());
+		return m_graphicsFBOS->getTexID("LIGHTING", 0);
 	};
 
 	

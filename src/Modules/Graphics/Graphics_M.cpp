@@ -94,8 +94,9 @@ void Graphics_Module::initialize(Engine * engine)
 	m_graphicsFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);	
-	glNamedFramebufferTexture(m_graphicsFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_graphicsFBOS->m_fbos["GEOMETRY"].second.back()), 0);		
+	m_graphicsFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
+	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	m_visualFX.initialize(m_engine);
 	m_volumeRH = std::make_shared<RH_Volume>(m_engine);
 

@@ -69,12 +69,13 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 
 	// Graphics Pipeline Initialization
 	m_reflectorFBOS = std::make_shared<Graphics_Framebuffers>(glm::ivec2(m_envmapSize));
-	m_reflectorFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGB16F, GL_RGB, GL_FLOAT },{ GL_RGBA16F, GL_RGBA, GL_FLOAT },{ GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
+	m_reflectorFBOS->createFBO("GEOMETRY", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGBA16F, GL_RGBA, GL_FLOAT }, { GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8 } });
 	m_reflectorFBOS->createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["LIGHTING"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
-	glNamedFramebufferTexture(m_reflectorFBOS->m_fbos["REFLECTION"].first, GL_DEPTH_STENCIL_ATTACHMENT, std::get<0>(m_reflectorFBOS->m_fbos["GEOMETRY"].second.back()), 0);
+	m_reflectorFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
+	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
 
 	// Declare component types used

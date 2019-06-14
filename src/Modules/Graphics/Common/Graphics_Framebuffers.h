@@ -34,6 +34,10 @@ public:
 	void clear();
 	/***/
 	void resize(const glm::ivec2 & newSize);
+	/***/
+	GLuint getFboID(const char * name);
+	/***/
+	GLuint getTexID(const char * name, const size_t & index);
 
 
 	// Public Attributes

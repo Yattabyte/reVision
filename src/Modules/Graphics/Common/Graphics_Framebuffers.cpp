@@ -67,7 +67,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 
 void Graphics_Framebuffers::bindForWriting(const char * name)
 {
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fbos[name].first);
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, getFboID(name));
 }
 
 void Graphics_Framebuffers::bindForReading(const char * name, const GLuint & binding) 
@@ -103,5 +103,15 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize)
 	for (const auto[name, fboData] : m_fbos)
 		for (const auto[texID, internalFormat, format, type, attachment] : fboData.second)
 			glTextureImage2DEXT(texID, GL_TEXTURE_2D, 0, internalFormat, m_renderSize.x, m_renderSize.y, 0, format, type, NULL);
+}
+
+GLuint Graphics_Framebuffers::getFboID(const char * name)
+{
+	return m_fbos[name].first;
+}
+
+GLuint Graphics_Framebuffers::getTexID(const char * name, const size_t & index)
+{
+	return std::get<0>(m_fbos[name].second[index]);
 }
 

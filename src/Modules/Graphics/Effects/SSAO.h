@@ -38,10 +38,6 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) { resize(glm::ivec2(f, m_renderSize.y)); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) { resize(glm::ivec2(m_renderSize.x, f)); });
 		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);
 		preferences.addCallback(PreferenceState::C_SSAO, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
 		preferences.getOrSetValue(PreferenceState::C_SSAO_RADIUS, m_radius);
@@ -50,26 +46,7 @@ public:
 		preferences.addCallback(PreferenceState::C_SSAO_QUALITY, m_aliveIndicator, [&](const float &f) { m_quality = (int)f; if (m_shader->existsYet()) m_shader->setUniform(1, m_quality); });
 		preferences.getOrSetValue(PreferenceState::C_SSAO_BLUR_STRENGTH, m_blurStrength);
 		preferences.addCallback(PreferenceState::C_SSAO_BLUR_STRENGTH, m_aliveIndicator, [&](const float &f) { m_blurStrength = (int)f; });
-	
-		// GL loading
-		glCreateFramebuffers(1, &m_fboID);
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureID);
-		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
-		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
-		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
-		glCreateTextures(GL_TEXTURE_2D, 2, m_textureIDSGB);
-		for (int x = 0; x < 2; ++x) {
-			glTextureImage2DEXT(m_textureIDSGB[x], GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
-			glTextureParameteri(m_textureIDSGB[x], GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-			glTextureParameteri(m_textureIDSGB[x], GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTextureParameteri(m_textureIDSGB[x], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-			glTextureParameteri(m_textureIDSGB[x], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		}
-		
+			
 		// Prepare the noise texture and kernal	
 		std::uniform_real_distribution<GLfloat> randomFloats(0.0, 1.0);
 		std::default_random_engine generator;
@@ -109,10 +86,6 @@ public:
 		
 		// Error Reporting
 		auto & msgMgr = m_engine->getManager_Messages();
-		if (glCheckNamedFramebufferStatus(m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			msgMgr.error("SSAO Framebuffer has encountered an error.");
-		if (!glIsTexture(m_textureID))
-			msgMgr.error("SSAO Texture is incomplete.");
 		if (!glIsTexture(m_noiseID))
 			msgMgr.error("SSAO Noise Texture is incomplete.");
 	}
@@ -124,8 +97,8 @@ public:
 			return;
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 		m_shader->bind();
+		m_gfxFBOS->bindForWriting("SSAO");
 		m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
@@ -133,7 +106,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Gaussian blur the result
-		m_visualFX->applyGaussianBlur_Alpha(m_textureID, m_textureIDSGB, m_renderSize, m_blurStrength);
+		m_visualFX->applyGaussianBlur_Alpha(m_gfxFBOS->getTexID("SSAO", 0), m_gfxFBOS->getTexID("SSAO", 1), m_gfxFBOS->getTexID("SSAO", 2), (*m_cameraBuffer)->Dimensions, m_blurStrength);
 
 		// Write result back to AO channel
 		glEnable(GL_BLEND);
@@ -141,7 +114,7 @@ public:
 		m_shaderCopyAO->bind();
 		m_gfxFBOS->bindForWriting("GEOMETRY");
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
-		glBindTextureUnit(0, m_textureID);
+		glBindTextureUnit(0, m_gfxFBOS->getTexID("SSAO", 0));
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glDrawBuffers(3, drawBuffers);
@@ -150,26 +123,14 @@ public:
 
 
 private:
-	// Private Methods
-	/** Resize the frame buffer.
-	@param	size	the new size of the frame buffer */
-	inline void resize(const glm::ivec2 & size) {
-		m_renderSize = size;
-		glTextureImage2DEXT(m_textureID, GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
-		for (int x = 0; x < 2; ++x) 
-			glTextureImage2DEXT(m_textureIDSGB[x], GL_TEXTURE_2D, 0, GL_R8, m_renderSize.x, m_renderSize.y, 0, GL_RED, GL_FLOAT, NULL);
-	}
-
-
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	VisualFX * m_visualFX = nullptr;
 	Shared_Shader m_shader, m_shaderCopyAO;
 	Shared_Primitive m_shapeQuad;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;
-	GLuint m_fboID = 0, m_textureID = 0, m_textureIDSGB[2] = { 0,0 }, m_noiseID = 0;
+	GLuint m_noiseID = 0;
 	StaticBuffer m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

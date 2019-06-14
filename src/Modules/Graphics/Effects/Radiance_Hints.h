@@ -85,7 +85,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
 		// Bind for reading by next effect	
-		glBindTextureUnit(4, std::get<0>(m_gfxFBOS->m_fbos["BOUNCE"].second.front()));
+		glBindTextureUnit(4, m_gfxFBOS->getTexID("BOUNCE", 0));
 	}
 
 
