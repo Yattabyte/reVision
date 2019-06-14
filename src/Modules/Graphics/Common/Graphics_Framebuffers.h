@@ -25,7 +25,7 @@ public:
 
 	// Public Methods
 	/***/
-	void createFBO(const char * name, const std::vector<std::tuple<GLenum, GLenum, GLenum>> textureFormats);
+	void createFBO(const char * name, const std::vector<std::tuple<GLenum, GLenum, GLenum>> & textureFormats, const bool & mipmapped = false);
 	/***/
 	void bindForWriting(const char * name);
 	/***/
@@ -41,8 +41,9 @@ public:
 
 
 	// Public Attributes
-	MappedChar<std::pair<
-		GLuint,				// FBO ID
+	MappedChar<std::tuple<
+		GLuint,			// FBO ID
+		bool,			// MIPMAPPED
 		std::vector<std::tuple<
 		GLuint,			// Texture ID
 		GLenum,			// Internal Format

@@ -95,6 +95,8 @@ void Graphics_Module::initialize(Engine * engine)
 	m_graphicsFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_graphicsFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	m_graphicsFBOS->createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
+	m_graphicsFBOS->createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
 	m_visualFX.initialize(m_engine);

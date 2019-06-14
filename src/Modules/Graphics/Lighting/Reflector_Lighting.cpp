@@ -31,6 +31,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		(*m_reflectorCamera)->Dimensions = glm::vec2(m_envmapSize);
 		updateCamera();
 		m_reflectorFBOS->resize(glm::ivec2(m_envmapSize));
+		m_outOfDate = true;
 	});
 
 	// Camera Setup
@@ -74,6 +75,8 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	m_reflectorFBOS->createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	m_reflectorFBOS->createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	m_reflectorFBOS->createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
+	m_reflectorFBOS->createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
 	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
@@ -161,6 +164,9 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 				reflectorComponent->m_Cameradata[x].vMatrix = vMatrices[x];
 			}
 		}
+
+		if (m_outOfDate)
+			reflectorComponent->m_outOfDate = true;
 
 		// Update Buffer Attributes
 		reflectionIndicies.push_back(index);
