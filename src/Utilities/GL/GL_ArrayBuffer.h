@@ -18,8 +18,8 @@ public:
 			glUnmapNamedBuffer(m_bufferID);
 			glDeleteBuffers(1, &m_bufferID);
 		}
-		for (int x = 0; x < m_indexPointers.size(); ++x)
-			delete m_indexPointers[x];
+		for (auto pointer : m_indexPointers)
+			*pointer = 0ull;
 		m_indexPointers.clear();
 	}
 	/** Construct a buffer.
@@ -51,9 +51,9 @@ public:
 	// Public Methods
 	/** Add a new element to this array. 
 	@return					pointer to the index into this array (buffer owns pointer). */
-	inline size_t * newElement() {
+	inline std::shared_ptr<size_t> newElement() {
 		constexpr auto elementSize = sizeof(T);
-		size_t * index = new size_t(m_indexPointers.size());
+		auto index = std::make_shared<size_t>(m_indexPointers.size());
 
 		// See if we must expand this container
 		if (m_indexPointers.size() >= m_capacity) {
@@ -96,8 +96,8 @@ public:
 	}
 	/** Functionally clears the buffer, but doesn't zero the underlying data. Retains capacity. */
 	inline void clear() {
-		for (auto * pointer : m_indexPointers)
-			delete pointer;
+		for (auto pointer : m_indexPointers)
+			*pointer = 0ull;
 		m_indexPointers.clear();
 	}
 	/** Retrieve a reference to the element contained at the index specified.
@@ -135,7 +135,7 @@ public:
 private:
 	// Private Attributes
 	GLuint m_bufferID = 0;
-	std::vector<size_t*> m_indexPointers;
+	std::vector<std::shared_ptr<size_t>> m_indexPointers;
 	size_t m_capacity = 0;
 	T * m_ptrContainer = nullptr;
 };

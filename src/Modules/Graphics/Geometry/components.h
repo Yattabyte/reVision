@@ -16,7 +16,7 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 	glm::vec3 m_position = glm::vec3(0.0f);
 	glm::mat4 mMatrix;
 	glm::mat4 bBoxMatrix;
-	size_t * m_propBufferIndex = 0ull;
+	std::shared_ptr<size_t> m_propBufferIndex = 0ull;
 };
 
 /** A skeleton component is used in combination with prop components to allow for skeletal animation.
@@ -27,7 +27,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	bool m_playAnim = true;
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
-	size_t * m_skeleBufferIndex = 0ull;
+	std::shared_ptr<size_t> m_skeleBufferIndex = 0ull;
 };
 
 #endif // GRAPHICS_GEOMETRY_COMPONENTS_H
