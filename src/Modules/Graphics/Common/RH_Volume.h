@@ -23,17 +23,20 @@ public:
 	/** Update the volume's attributes based on the input camera.
 	@param	cameraBuffer	the camera to use the frustum of. */
 	void updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer);
-	/***/
+	/** Resize this volume's 3D texture.
+	@param	resolution		the new size to use. */
 	void resize(const float & resolution = 16.0f);
-	/***/
+	/** Clear the data out of this framebuffer's textures. */
 	void clear();
-	/***/
+	/** Write to the first bounce framebuffer. */
 	void writePrimary();
-	/***/
+	/** Read from the first bounce framebuffer.
+	@param	binding			the reading index to bind to. */
 	void readPrimary(const GLuint & binding = 0);
-	/***/
+	/** Write to the second bounce framebuffer. */
 	void writeSecondary();
-	/***/
+	/** Read from the second bounce framebuffer.
+	@param	binding			the reading index to bind to. */
 	void readSecondary(const GLuint & binding = 0);
 
 

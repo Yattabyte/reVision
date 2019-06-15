@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,7 +64,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_light_directional_shadow___component-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -72,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for LightDirectionalShadow_Component:</div>
 <div class="dyncontent">
@@ -84,11 +83,6 @@ Inheritance diagram for LightDirectionalShadow_Component:</div>
   </map>
 </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_light_directional_shadow___component_1_1_g_l___buffer.html">GL_Buffer</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a486e1dda63828b3c352db200692a0d3e"><td class="memItemLeft" align="right" valign="top"><a id="a486e1dda63828b3c352db200692a0d3e"></a>
@@ -97,21 +91,12 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTime</b> = 0
 <tr class="memitem:aae36805141d9129e185314f04d9cf5db"><td class="memItemLeft" align="right" valign="top"><a id="aae36805141d9129e185314f04d9cf5db"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowSpot</b> = 0</td></tr>
 <tr class="separator:aae36805141d9129e185314f04d9cf5db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a217fd46317c15857158b5327ff489db7"><td class="memItemLeft" align="right" valign="top"><a id="a217fd46317c15857158b5327ff489db7"></a>
-size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_visSize</b> [2]</td></tr>
-<tr class="separator:a217fd46317c15857158b5327ff489db7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb8c779a36a661540c99b4943b91a5d8"><td class="memItemLeft" align="right" valign="top"><a id="acb8c779a36a661540c99b4943b91a5d8"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowSize</b> = 0.0f</td></tr>
-<tr class="separator:acb8c779a36a661540c99b4943b91a5d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69a77e89f12f1aa2080068a9c5ed15c1"><td class="memItemLeft" align="right" valign="top"><a id="a69a77e89f12f1aa2080068a9c5ed15c1"></a>
 glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_mMatrix</b> = glm::mat4(1.0f)</td></tr>
 <tr class="separator:a69a77e89f12f1aa2080068a9c5ed15c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52b575f64637562afacfb44e3af532f2"><td class="memItemLeft" align="right" valign="top"><a id="a52b575f64637562afacfb44e3af532f2"></a>
-glm::quat&#160;</td><td class="memItemRight" valign="bottom"><b>m_orientation</b> = glm::quat(1, 0, 0, 0)</td></tr>
-<tr class="separator:a52b575f64637562afacfb44e3af532f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa89110572071a732ed613ab11f6a937c"><td class="memItemLeft" align="right" valign="top"><a id="aa89110572071a732ed613ab11f6a937c"></a>
-<a class="el" href="struct_v_b___element.html">VB_Element</a>&lt; <a class="el" href="struct_light_directional_shadow___component_1_1_g_l___buffer.html">GL_Buffer</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b> = nullptr</td></tr>
-<tr class="separator:aa89110572071a732ed613ab11f6a937c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af602875ffebe4adcb23ab55c91a21131"><td class="memItemLeft" align="right" valign="top"><a id="af602875ffebe4adcb23ab55c91a21131"></a>
+size_t *&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowIndex</b> = nullptr</td></tr>
+<tr class="separator:af602875ffebe4adcb23ab55c91a21131"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -152,7 +137,7 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A directional light shadow component, formatted for 4 parallel split cascaded shadow maps. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/ECS/<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a></li>
+<li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

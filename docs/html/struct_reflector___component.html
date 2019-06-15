@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,7 +64,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_reflector___component-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -72,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Reflector_Component:</div>
 <div class="dyncontent">
@@ -84,31 +83,23 @@ Inheritance diagram for Reflector_Component:</div>
   </map>
 </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_reflector___component_1_1_g_l___buffer.html">GL_Buffer</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a6230e27718d650da514b8aed96d49e68"><td class="memItemLeft" align="right" valign="top"><a id="a6230e27718d650da514b8aed96d49e68"></a>
-<a class="el" href="struct_v_b___element.html">VB_Element</a>&lt; <a class="el" href="struct_reflector___component_1_1_g_l___buffer.html">GL_Buffer</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b> = nullptr</td></tr>
-<tr class="separator:a6230e27718d650da514b8aed96d49e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca44d0ada3f69b9cf40c24e11c45b626"><td class="memItemLeft" align="right" valign="top"><a id="aca44d0ada3f69b9cf40c24e11c45b626"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTime</b> = 0.0f</td></tr>
+<tr class="separator:aca44d0ada3f69b9cf40c24e11c45b626"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8052aa3ef9acc031b048e53f768c8984"><td class="memItemLeft" align="right" valign="top"><a id="a8052aa3ef9acc031b048e53f768c8984"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>m_cubeSpot</b> = 0</td></tr>
 <tr class="separator:a8052aa3ef9acc031b048e53f768c8984"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d1a3df19e2c48d15d9590ce00579ea4"><td class="memItemLeft" align="right" valign="top"><a id="a1d1a3df19e2c48d15d9590ce00579ea4"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_outOfDate</b> = true</td></tr>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_outOfDate</b> = false</td></tr>
 <tr class="separator:a1d1a3df19e2c48d15d9590ce00579ea4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca44d0ada3f69b9cf40c24e11c45b626"><td class="memItemLeft" align="right" valign="top"><a id="aca44d0ada3f69b9cf40c24e11c45b626"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTime</b> = 0.0f</td></tr>
-<tr class="separator:aca44d0ada3f69b9cf40c24e11c45b626"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a22a95948ef4f366e3f7e75b7046abbee"><td class="memItemLeft" align="right" valign="top"><a id="a22a95948ef4f366e3f7e75b7046abbee"></a>
-<a class="el" href="struct_transform.html">Transform</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_transform</b></td></tr>
-<tr class="separator:a22a95948ef4f366e3f7e75b7046abbee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae6f63df57a4600f141992af2b3d583cb"><td class="memItemLeft" align="right" valign="top"><a id="ae6f63df57a4600f141992af2b3d583cb"></a>
 <a class="el" href="struct_camera_buffer_1_1_buffer_structure.html">CameraBuffer::BufferStructure</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_Cameradata</b> [6]</td></tr>
 <tr class="separator:ae6f63df57a4600f141992af2b3d583cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d2a187a6a0086fdfae0ab565457557b"><td class="memItemLeft" align="right" valign="top"><a id="a1d2a187a6a0086fdfae0ab565457557b"></a>
+size_t *&#160;</td><td class="memItemRight" valign="bottom"><b>m_reflectorIndex</b> = nullptr</td></tr>
+<tr class="separator:a1d2a187a6a0086fdfae0ab565457557b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -149,7 +140,7 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Represents an environment map buffer component. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/ECS/<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a></li>
+<li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

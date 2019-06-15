@@ -79,9 +79,9 @@ public:
 		auto fov_slider = std::make_shared<Slider>(engine, fov, glm::vec2(0.0f, 180));
 		addOption(engine, fov_slider, 0.75f, "Field of view:", "Changes how wide of an angle the scene can be viewed from.", Slider::on_value_change, [&, fov_slider, engine]() {
 			// Get a round version of the input
-			const int round_value = (int)std::round<int>(fov_slider->getValue());
+			const int round_value = (int)std::round(fov_slider->getValue());
 			// We store as a float, but we want to ensure round numbers
-			engine->getPreferenceState().setValue(PreferenceState::C_FOV, (float)round_value);
+			engine->getPreferenceState().setValue(PreferenceState::C_FOV, float((int)std::round(fov_slider->getValue())));
 		});
 
 		// VSync Option

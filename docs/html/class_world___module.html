@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -123,6 +123,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a02181357483e79f0c8527d83596ef6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1721bc72dd8295fc695eeffcf7f6b08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#af1721bc72dd8295fc695eeffcf7f6b08">removeComponentType</a> (const char *name)</td></tr>
 <tr class="separator:af1721bc72dd8295fc695eeffcf7f6b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2af135b49ad3884ce5310620fc01d80"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#af2af135b49ad3884ce5310620fc01d80">addNotifyOnComponentType</a> (const char *name, const std::function&lt; void(<a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> *)&gt; &amp;func)</td></tr>
+<tr class="separator:af2af135b49ad3884ce5310620fc01d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11c19dcd687b4f6744758f900c6d3b70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a11c19dcd687b4f6744758f900c6d3b70">removeNotifyOnComponentType</a> (const char *name, const int &amp;index)</td></tr>
+<tr class="separator:a11c19dcd687b4f6744758f900c6d3b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a865aea41120a49939776e51c7dadfeec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a865aea41120a49939776e51c7dadfeec">updateSystems</a> (<a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;systems, const float &amp;deltaTime)</td></tr>
 <tr class="separator:a865aea41120a49939776e51c7dadfeec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fe806be3a21eadedf6c94cc71c72367"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a0fe806be3a21eadedf6c94cc71c72367">updateSystem</a> (<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *system, const float &amp;deltaTime)</td></tr>
@@ -289,6 +293,42 @@ template&lt;typename BaseECSComponent &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="af2af135b49ad3884ce5310620fc01d80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2af135b49ad3884ce5310620fc01d80">&#9670;&nbsp;</a></span>addNotifyOnComponentType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int World_Module::addNotifyOnComponentType </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::function&lt; void(<a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> *)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>func</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Add a callback method for when a component of the given type is created. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>the component class name. </td></tr>
+    <tr><td class="paramname">func</td><td>the function to callback when a component of class name is created. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>index to use for removing the notification. </dd></dl>
 
 </div>
 </div>
@@ -615,6 +655,41 @@ template&lt;typename BaseECSComponent &gt; </div>
 <p>Remove an entity. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">handle</td><td>the entity to remove. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a11c19dcd687b4f6744758f900c6d3b70"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11c19dcd687b4f6744758f900c6d3b70">&#9670;&nbsp;</a></span>removeNotifyOnComponentType()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void World_Module::removeNotifyOnComponentType </td>
+          <td>(</td>
+          <td class="paramtype">const char *&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Remove a notification function from being called back on component creation. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>the component class name. </td></tr>
+    <tr><td class="paramname">index</td><td>index to delete the function from (given when notification category added). </td></tr>
   </table>
   </dd>
 </dl>

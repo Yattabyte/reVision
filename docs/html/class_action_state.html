@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,6 +67,7 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="class_action_state-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">ActionState Class Reference</div>  </div>
@@ -83,25 +84,35 @@ Inheritance diagram for ActionState:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
+<tr class="memitem:a46682c5dc6dfc21581d7386c4e9acde1"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">STATE</a> { <b>RELEASE</b>, 
+<b>PRESS</b>, 
+<b>REPEAT</b>
+ }</td></tr>
+<tr class="separator:a46682c5dc6dfc21581d7386c4e9acde1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ACTION_ENUM</a> { <br />
 &#160;&#160;<b>MOUSE_X</b>, 
 <b>MOUSE_Y</b>, 
 <b>MOUSE_L</b>, 
 <b>MOUSE_R</b>, 
 <br />
-&#160;&#160;<b>FORWARD</b>, 
-<b>BACKWARD</b>, 
-<b>LEFT</b>, 
-<b>RIGHT</b>, 
-<br />
-&#160;&#160;<b>JUMP</b>, 
-<b>CROUCH</b>, 
-<b>RUN</b>, 
-<b>ENTER</b>, 
-<br />
-&#160;&#160;<b>PAUSE</b>, 
-<b>LOOK_X</b>, 
+&#160;&#160;<b>LOOK_X</b>, 
 <b>LOOK_Y</b>, 
+<b>FORWARD</b>, 
+<b>BACKWARD</b>, 
+<br />
+&#160;&#160;<b>LEFT</b>, 
+<b>RIGHT</b>, 
+<b>JUMP</b>, 
+<b>CROUCH</b>, 
+<br />
+&#160;&#160;<b>RUN</b>, 
+<b>UI_UP</b>, 
+<b>UI_DOWN</b>, 
+<b>UI_LEFT</b>, 
+<br />
+&#160;&#160;<b>UI_RIGHT</b>, 
+<b>UI_ENTER</b>, 
+<b>UI_ESCAPE</b>, 
 <b>ACTION_COUNT</b>
 <br />
  }</td></tr>
@@ -113,11 +124,23 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ac8affb0a9580259e61a82827afa54248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a064d9a224a78f6388ccc104601483a7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a064d9a224a78f6388ccc104601483a7a">ActionState</a> ()</td></tr>
 <tr class="separator:a064d9a224a78f6388ccc104601483a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa79f24a5fd998546c1da20f27c9f2001"><td class="memItemLeft" align="right" valign="top"><a id="aa79f24a5fd998546c1da20f27c9f2001"></a>
+<a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>isAction</b> (const <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a> &amp;actionEnum)</td></tr>
+<tr class="separator:aa79f24a5fd998546c1da20f27c9f2001"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69544b1049d65f78d106bbe5832de5d3"><td class="memItemLeft" align="right" valign="top"><a id="a69544b1049d65f78d106bbe5832de5d3"></a>
+<a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>isAction</b> (const <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a> &amp;actionEnum, std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a>, bool &gt; *keyStates) const</td></tr>
+<tr class="separator:a69544b1049d65f78d106bbe5832de5d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#ae6f1c5b9dbe8fc25388f905641013d2f">Action_Strings</a> ()</td></tr>
 <tr class="separator:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:a5cd16d2399747cb78662cba4055698b2"><td class="memItemLeft" align="right" valign="top"><a id="a5cd16d2399747cb78662cba4055698b2"></a>
+std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a>, bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_keyStates</b></td></tr>
+<tr class="separator:a5cd16d2399747cb78662cba4055698b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A container class that holds the action state for the engine, such as forward/back/left/right and amount. </p>
@@ -134,6 +157,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 <p>Enumeration for indexing into actions. </p>
+
+</div>
+</div>
+<a id="a46682c5dc6dfc21581d7386c4e9acde1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46682c5dc6dfc21581d7386c4e9acde1">&#9670;&nbsp;</a></span>STATE</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Enumeration for whether the action key was pressed, released, or repeating. </p>
 
 </div>
 </div>

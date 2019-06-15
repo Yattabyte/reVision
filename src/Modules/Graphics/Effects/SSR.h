@@ -138,7 +138,7 @@ private:
 		glTextureParameteri(mipTexID, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(mipTexID, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, 0);
-		glViewport(0, 0, dimensions.x, dimensions.y);
+		glViewport(0, 0, (GLsizei)dimensions.x, (GLsizei)dimensions.y);
 	}
 
 

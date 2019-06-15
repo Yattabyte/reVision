@@ -17,7 +17,7 @@
 #include <vector>
 
 
-/***/
+/** A core lighting technique responsible for all spot lights. */
 class Spot_Lighting : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -47,7 +47,7 @@ public:
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_SPOT, m_aliveIndicator, [&](const float &f) {
 			m_outOfDate = true;
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, m_shadowBuffer.getLength() * 2);
+			m_shadowFBO.resize(m_shadowSize, (unsigned int)(m_shadowBuffer.getLength()) * 2u);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 		});
@@ -157,11 +157,11 @@ public:
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			m_lightBuffer[index].LightRadius = lightComponent->m_radius;
 			m_lightBuffer[index].LightCutoff = cosf(glm::radians(lightComponent->m_cutoff));
-			lightIndices.push_back(index);
+			lightIndices.push_back((GLuint)index);
 			if (shadowComponent) {
 				if (m_outOfDate)
 					shadowComponent->m_outOfDate = true;
-				shadowIndices.push_back(*shadowComponent->m_shadowIndex);
+				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 			}
 			else
@@ -188,7 +188,7 @@ private:
 			// Update static shadows
 			if (shadow->m_outOfDate || m_outOfDate) {
 				m_shadowFBO.clear(shadow->m_shadowSpot + 1);
-				m_propShadow_Static->setData(light->m_position, *light->m_lightIndex, *shadow->m_shadowIndex);
+				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
 				// Update components
 				world.updateSystem(m_propShadow_Static, deltaTime);
 				// Render components
@@ -197,7 +197,7 @@ private:
 			}
 			// Update dynamic shadows
 			m_shadowFBO.clear(shadow->m_shadowSpot);
-			m_propShadow_Dynamic->setData(light->m_position, *light->m_lightIndex, *shadow->m_shadowIndex);
+			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
 			// Update components
 			world.updateSystem(m_propShadow_Dynamic, deltaTime);
 			// Render components
@@ -207,7 +207,7 @@ private:
 
 		if (m_outOfDate)
 			m_outOfDate = false;
-		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {

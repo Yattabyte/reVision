@@ -27,8 +27,8 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_envmapSize);
 	preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 		m_envmapSize = std::max(1u, (unsigned int)f);
-		m_envmapFBO.resize(m_envmapSize, m_envmapSize, m_reflectorBuffer.getLength() * 6);
-		(*m_reflectorCamera)->Dimensions = glm::vec2(m_envmapSize);
+		m_envmapFBO.resize(m_envmapSize, m_envmapSize, (GLuint)(m_reflectorBuffer.getLength()) * 6u);
+		(*m_reflectorCamera)->Dimensions = glm::vec2((float)m_envmapSize);
 		updateCamera();
 		m_reflectorFBOS->resize(glm::ivec2(m_envmapSize));
 		m_outOfDate = true;
@@ -39,7 +39,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	(*m_reflectorCamera)->pMatrix = glm::mat4(1.0f);
 	(*m_reflectorCamera)->vMatrix = glm::mat4(1.0f);
 	(*m_reflectorCamera)->EyePosition = glm::vec3(0.0f);
-	(*m_reflectorCamera)->Dimensions = glm::vec2(m_envmapSize);
+	(*m_reflectorCamera)->Dimensions = glm::vec2((float)m_envmapSize);
 	(*m_reflectorCamera)->FarPlane = 100.0f;
 	(*m_reflectorCamera)->FOV = 90.0f;
 	updateCamera();
@@ -92,7 +92,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
 		for (int x = 0; x < 6; ++x) {
-			component->m_Cameradata[x].Dimensions = m_envmapFBO.m_size;
+			component->m_Cameradata[x].Dimensions = glm::vec2(m_envmapFBO.m_size);
 			component->m_Cameradata[x].FOV = 90.0f;
 		}
 
@@ -150,7 +150,7 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			};
 			const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
 			for (int x = 0; x < 6; ++x) {
-				reflectorComponent->m_Cameradata[x].Dimensions = glm::vec2(m_envmapSize);
+				reflectorComponent->m_Cameradata[x].Dimensions = glm::vec2((float)m_envmapSize);
 				reflectorComponent->m_Cameradata[x].FarPlane = largest;
 				reflectorComponent->m_Cameradata[x].EyePosition = position;
 				reflectorComponent->m_Cameradata[x].pMatrix = pMatrix;
@@ -162,7 +162,7 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			reflectorComponent->m_outOfDate = true;
 
 		// Update Buffer Attributes
-		reflectionIndicies.push_back(index);
+		reflectionIndicies.push_back(GLuint(index));
 		oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
 	}
 
@@ -236,7 +236,7 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 	}
 
 	m_outOfDate = false;
-	glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+	glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 }
 
 void Reflector_Lighting::renderReflectors(const float & deltaTime) 

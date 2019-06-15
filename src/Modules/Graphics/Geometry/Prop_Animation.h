@@ -37,11 +37,11 @@ public:
 				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
 				if (skeletonComponent->m_playAnim)
 					skeletonComponent->m_animTime += deltaTime;
-				const double TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0
-					? skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond
+				const float TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0.00
+					? (float)(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond)
 					: 25.0f;
-				const double TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const float AnimationTime = fmodf(TimeInTicks, skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration);
+				const float TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
+				const float AnimationTime = fmodf(TimeInTicks, float(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration));
 				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
 				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));

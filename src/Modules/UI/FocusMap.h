@@ -59,7 +59,7 @@ public:
 	@param	element			the element to attempt to focus on.
 	@return					true if found and focused, false otherwise. */
 	inline bool focusElement(const std::shared_ptr<UI_Element> & element) {
-		size_t index(0ull);
+		int index(0);
 		bool found = false;
 		for each (const auto & e in m_elements) {
 			if (e.get() == element.get()) {

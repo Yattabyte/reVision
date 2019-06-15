@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['join_5freflections',['Join_Reflections',['../class_join___reflections.html',1,'Join_Reflections'],['../class_join___reflections.html#a01fd1aa33b037512e024fdc9d264fba4',1,'Join_Reflections::Join_Reflections()']]]
+  ['join_5freflections',['Join_Reflections',['../class_join___reflections.html',1,'Join_Reflections'],['../class_join___reflections.html#a49a919114a4cf2b5a2a9b4620a2ad453',1,'Join_Reflections::Join_Reflections()']]]
 ];

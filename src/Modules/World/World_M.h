@@ -95,9 +95,14 @@ public:
 	/** Remove support for a specific component type at level-creation-time. 
 	@param	name				the component class name. */
 	void removeComponentType(const char * name);
-	/***/
+	/** Add a callback method for when a component of the given type is created.
+	@param	name				the component class name. 
+	@param	func				the function to callback when a component of class name is created. 
+	@return						index to use for removing the notification. */
 	int addNotifyOnComponentType(const char * name, const std::function<void(BaseECSComponent *)> & func);
-	/***/
+	/** Remove a notification function from being called back on component creation.
+	@param	name				the component class name.
+	@param	index				index to delete the function from (given when notification category added). */
 	void removeNotifyOnComponentType(const char * name, const int & index);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.

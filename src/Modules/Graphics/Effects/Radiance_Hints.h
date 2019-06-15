@@ -75,7 +75,7 @@ public:
 		m_volumeRH->writeSecondary();
 		glViewport(0, 0, (GLsizei)m_volumeRH->m_resolution, (GLsizei)m_volumeRH->m_resolution);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 
 		// Reconstruct indirect radiance
 		m_shaderRecon->bind();

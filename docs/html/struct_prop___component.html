@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,7 +64,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="struct_prop___component-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -72,7 +71,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p><code>#include &lt;<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="_graphics_2_geometry_2components_8h_source.html">components.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Prop_Component:</div>
 <div class="dyncontent">
@@ -84,25 +83,29 @@ Inheritance diagram for Prop_Component:</div>
   </map>
 </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_prop___component_1_1_g_l___buffer.html">GL_Buffer</a></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a512ebc1ed4b7ddd9e1608c8208055124"><td class="memItemLeft" align="right" valign="top"><a id="a512ebc1ed4b7ddd9e1608c8208055124"></a>
 <a class="el" href="class_shared___model.html">Shared_Model</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_model</b></td></tr>
 <tr class="separator:a512ebc1ed4b7ddd9e1608c8208055124"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6958d6f7c5e271c09bf914e7ee6cb6a"><td class="memItemLeft" align="right" valign="top"><a id="af6958d6f7c5e271c09bf914e7ee6cb6a"></a>
-<a class="el" href="struct_v_b___element.html">VB_Element</a>&lt; <a class="el" href="struct_prop___component_1_1_g_l___buffer.html">GL_Buffer</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b> = nullptr</td></tr>
-<tr class="separator:af6958d6f7c5e271c09bf914e7ee6cb6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1037157f62f222255027c9c8d0080ea6"><td class="memItemLeft" align="right" valign="top"><a id="a1037157f62f222255027c9c8d0080ea6"></a>
+unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>m_skin</b> = 0u</td></tr>
+<tr class="separator:a1037157f62f222255027c9c8d0080ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7174e20c1df52022ab6715a697be7a09"><td class="memItemLeft" align="right" valign="top"><a id="a7174e20c1df52022ab6715a697be7a09"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>m_radius</b> = 1.0f</td></tr>
 <tr class="separator:a7174e20c1df52022ab6715a697be7a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afadcfa2b97b18606b6d0a28b75a2fb56"><td class="memItemLeft" align="right" valign="top"><a id="afadcfa2b97b18606b6d0a28b75a2fb56"></a>
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:afadcfa2b97b18606b6d0a28b75a2fb56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad71ff365451ad60885abc779f2094557"><td class="memItemLeft" align="right" valign="top"><a id="ad71ff365451ad60885abc779f2094557"></a>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>mMatrix</b></td></tr>
+<tr class="separator:ad71ff365451ad60885abc779f2094557"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9fb5d740ddb1cd0d9828758947f39de"><td class="memItemLeft" align="right" valign="top"><a id="ab9fb5d740ddb1cd0d9828758947f39de"></a>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>bBoxMatrix</b></td></tr>
+<tr class="separator:ab9fb5d740ddb1cd0d9828758947f39de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aefb44c6fcd6afe5022eb44fb02b90cac"><td class="memItemLeft" align="right" valign="top"><a id="aefb44c6fcd6afe5022eb44fb02b90cac"></a>
+size_t *&#160;</td><td class="memItemRight" valign="bottom"><b>m_propBufferIndex</b> = 0ull</td></tr>
+<tr class="separator:aefb44c6fcd6afe5022eb44fb02b90cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -143,7 +146,7 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A static, animation-less prop component. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/ECS/<a class="el" href="_modules_2_graphics_2_e_c_s_2components_8h_source.html">components.h</a></li>
+<li>src/Modules/Graphics/Geometry/<a class="el" href="_graphics_2_geometry_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

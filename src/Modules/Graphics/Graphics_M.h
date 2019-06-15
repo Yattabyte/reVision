@@ -7,7 +7,6 @@
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/CameraBuffer.h"
-#include "Modules/Graphics/Common/VisualFX.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
@@ -38,7 +37,11 @@ public:
 	/** Returns the active camera's data buffer.
 	@return					the active camera's data buffer. */
 	std::shared_ptr<CameraBuffer> getCameraBuffer() const;
-	/***/
+	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
+	@param	deltaTime		the amount of time since last frame.
+	@param	cameraBuffer	the camera buffer to use in rendering.
+	@param	gfxFBOS			the framebuffers to render into.
+	@param	rhVolume		the volume fbo to render into for indirect lighting. */
 	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH);
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
@@ -55,9 +58,8 @@ public:
 private:
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
-	Graphics_Pipeline						m_pipeline;
+	std::unique_ptr<Graphics_Pipeline>		m_pipeline;
 	std::shared_ptr<Graphics_Framebuffers>	m_graphicsFBOS;
-	VisualFX								m_visualFX;
 	std::shared_ptr<CameraBuffer>			m_cameraBuffer;
 	std::shared_ptr<RH_Volume>				m_volumeRH;
 	std::shared_ptr<bool>					m_aliveIndicator = std::make_shared<bool>(true);

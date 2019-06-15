@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -92,10 +92,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a6630e8852923ea501371df61ad5318aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1c5ef0d9f300993f2cca57a22a9f864b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#a1c5ef0d9f300993f2cca57a22a9f864b">frameTick</a> (const float &amp;deltaTime) override</td></tr>
 <tr class="separator:a1c5ef0d9f300993f2cca57a22a9f864b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad03346ca566ee0e573ad865c716ed1ea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#ad03346ca566ee0e573ad865c716ed1ea">updateCamera</a> (<a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp;cameraBuffer)</td></tr>
-<tr class="separator:ad03346ca566ee0e573ad865c716ed1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54abe12e91ec0043e90d491d516aa3ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#a54abe12e91ec0043e90d491d516aa3ea">getCameraBuffer</a> ()</td></tr>
-<tr class="separator:a54abe12e91ec0043e90d491d516aa3ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5160ea01c4d334f115d6ff0111fbb6b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#ab5160ea01c4d334f115d6ff0111fbb6b">updateCamera</a> ()</td></tr>
+<tr class="separator:ab5160ea01c4d334f115d6ff0111fbb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac02a824c17a51e555c6ae720bf0fdfb1"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#ac02a824c17a51e555c6ae720bf0fdfb1">getCameraBuffer</a> () const</td></tr>
+<tr class="separator:ac02a824c17a51e555c6ae720bf0fdfb1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ade6da57cb57bfd24302dd1b49e47cb7a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#ade6da57cb57bfd24302dd1b49e47cb7a">render</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;cameraBuffer, const std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt; &amp;gfxFBOS, const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;volumeRH)</td></tr>
+<tr class="separator:ade6da57cb57bfd24302dd1b49e47cb7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4383c283b0a2daeebe2e844820341e3b"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#a4383c283b0a2daeebe2e844820341e3b">getLightingFBOID</a> () const</td></tr>
 <tr class="separator:a4383c283b0a2daeebe2e844820341e3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af995a8353bed27d406c15b0568495d89"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___module.html#af995a8353bed27d406c15b0568495d89">getLightingTexID</a> () const</td></tr>
@@ -195,17 +197,17 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="a54abe12e91ec0043e90d491d516aa3ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54abe12e91ec0043e90d491d516aa3ea">&#9670;&nbsp;</a></span>getCameraBuffer()</h2>
+<a id="ac02a824c17a51e555c6ae720bf0fdfb1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac02a824c17a51e555c6ae720bf0fdfb1">&#9670;&nbsp;</a></span>getCameraBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp; Graphics_Module::getCameraBuffer </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; Graphics_Module::getCameraBuffer </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
-          <td></td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -294,8 +296,57 @@ Additional Inherited Members</h2></td></tr>
 
 </div>
 </div>
-<a id="ad03346ca566ee0e573ad865c716ed1ea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad03346ca566ee0e573ad865c716ed1ea">&#9670;&nbsp;</a></span>updateCamera()</h2>
+<a id="ade6da57cb57bfd24302dd1b49e47cb7a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade6da57cb57bfd24302dd1b49e47cb7a">&#9670;&nbsp;</a></span>render()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Graphics_Module::render </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>cameraBuffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>gfxFBOS</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>volumeRH</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time since last frame. </td></tr>
+    <tr><td class="paramname">cameraBuffer</td><td>the camera buffer to use in rendering. </td></tr>
+    <tr><td class="paramname">gfxFBOS</td><td>the framebuffers to render into. </td></tr>
+    <tr><td class="paramname">rhVolume</td><td>the volume fbo to render into for indirect lighting. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ab5160ea01c4d334f115d6ff0111fbb6b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5160ea01c4d334f115d6ff0111fbb6b">&#9670;&nbsp;</a></span>updateCamera()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -303,18 +354,12 @@ Additional Inherited Members</h2></td></tr>
         <tr>
           <td class="memname">void Graphics_Module::updateCamera </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp;&#160;</td>
-          <td class="paramname"><em>cameraBuffer</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Update the data for the specified camera. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">camera</td><td>the camera to update </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Update the data for the specified camera. </p>
 
 </div>
 </div>

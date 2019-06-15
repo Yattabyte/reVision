@@ -87,7 +87,7 @@ public:
 	@param	amount		the value to put this slider at. */
 	inline void setValue(const float & amount) {
 		m_value = std::clamp<float>(amount, m_lowerRange, m_upperRange);
-		setText(std::to_string((int)std::round<int>(m_value)));
+		setText(std::to_string((int)std::round(m_value)));
 		updatePaddle();
 		enactCallback(on_value_change);
 	}

@@ -1,8 +1,6 @@
 var searchData=
 [
-  ['ecs',['ECS',['../ecs.html',1,'']]],
   ['ecscomponent',['ECSComponent',['../struct_e_c_s_component.html',1,'']]],
-  ['ecscomponent_3c_20board_5fcomponent_20_3e',['ECSComponent&lt; Board_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20collider_5fcomponent_20_3e',['ECSComponent&lt; Collider_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20lightdirectional_5fcomponent_20_3e',['ECSComponent&lt; LightDirectional_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20lightdirectionalshadow_5fcomponent_20_3e',['ECSComponent&lt; LightDirectionalShadow_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
@@ -10,11 +8,10 @@ var searchData=
   ['ecscomponent_3c_20lightpointshadow_5fcomponent_20_3e',['ECSComponent&lt; LightPointShadow_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20lightspot_5fcomponent_20_3e',['ECSComponent&lt; LightSpot_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20lightspotshadow_5fcomponent_20_3e',['ECSComponent&lt; LightSpotShadow_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
-  ['ecscomponent_3c_20player2d_5fcomponent_20_3e',['ECSComponent&lt; Player2D_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
+  ['ecscomponent_3c_20null_5fcomponent_20_3e',['ECSComponent&lt; Null_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20player3d_5fcomponent_20_3e',['ECSComponent&lt; Player3D_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20prop_5fcomponent_20_3e',['ECSComponent&lt; Prop_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20reflector_5fcomponent_20_3e',['ECSComponent&lt; Reflector_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
-  ['ecscomponent_3c_20score_5fcomponent_20_3e',['ECSComponent&lt; Score_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20skeleton_5fcomponent_20_3e',['ECSComponent&lt; Skeleton_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecscomponent_3c_20transform_5fcomponent_20_3e',['ECSComponent&lt; Transform_Component &gt;',['../struct_e_c_s_component.html',1,'']]],
   ['ecssystemlist',['ECSSystemList',['../class_e_c_s_system_list.html',1,'']]],
@@ -22,7 +19,6 @@ var searchData=
   ['end',['end',['../class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd',1,'MappedChar::end()'],['../class_mapped_char.html#a18dcc3e785cb5563d5688cf9ea21634e',1,'MappedChar::end() const']]],
   ['engine',['Engine',['../class_engine.html',1,'Engine'],['../class_engine.html#a8c98683b0a3aa28d8ab72a8bcd0d52f2',1,'Engine::Engine()']]],
   ['engine_5fmodule',['Engine_Module',['../class_engine___module.html',1,'Engine_Module'],['../class_engine___module.html#ab31ce873a9023ad9515caeb2d6376530',1,'Engine_Module::Engine_Module()']]],
-  ['enginestate',['EngineState',['../class_engine_state.html',1,'EngineState'],['../class_engine_state.html#a72b5c824fd2aac48697723677bca4a0d',1,'EngineState::EngineState()']]],
   ['erase',['erase',['../class_mapped_char.html#ada37faecf34afdbcd7f1782b66279090',1,'MappedChar']]],
   ['error',['error',['../class_message_manager.html#a337fe1fd9e832647b567f2d1e719391a',1,'MessageManager']]],
   ['existsyet',['existsYet',['../class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0',1,'Asset']]]

@@ -136,7 +136,7 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
-		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}

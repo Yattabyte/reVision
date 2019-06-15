@@ -139,7 +139,7 @@ public:
 	@param		index		the new integer index to use. */
 	inline void setIndex(const int & index) {
 		if (m_index != index) {
-			m_index = std::clamp<int>(index, 0, m_strings.size() - 1ull);
+			m_index = std::clamp<int>(index, 0, int(m_strings.size()) - 1);
 			m_label->setText(m_strings[m_index]);
 
 			m_lEnabled = (index > 0);

@@ -179,7 +179,7 @@ void World_Module::processLevel()
 				// Call the appropriate creator if available
 				if (m_constructorMap.find(type)) {
 					auto ret = m_constructorMap[type](lvlComponent.parameters);
-					if (ret.first != -1u && ret.second != nullptr) {
+					if (ret.second != nullptr) {
 						components.push_back(ret.second);
 						ids.push_back(ret.first);
 					}

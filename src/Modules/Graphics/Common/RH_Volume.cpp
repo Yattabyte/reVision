@@ -25,7 +25,7 @@ RH_Volume::RH_Volume(Engine * engine)
 	for (int bounce = 0; bounce < 2; ++bounce) {
 		glCreateTextures(GL_TEXTURE_3D, RH_TEXTURE_COUNT, m_textureIDS[bounce]);
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel) {
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, m_resolution, m_resolution, m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 			glTextureParameteri(m_textureIDS[bounce][channel], GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -46,7 +46,7 @@ RH_Volume::RH_Volume(Engine * engine)
 void RH_Volume::updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer)
 {
 	const glm::mat4 InverseView = glm::inverse((*cameraBuffer)->vMatrix);
-	const glm::vec2 ViewDimensions = (*cameraBuffer)->Dimensions;
+	const auto & ViewDimensions = (*cameraBuffer)->Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
 	const float tanHalfHFOV = glm::radians((*cameraBuffer)->FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
@@ -76,7 +76,7 @@ void RH_Volume::resize(const float & resolution)
 	m_resolution = resolution;
 	for (int bounce = 0; bounce < 2; ++bounce)
 		for (int channel = 0; channel < RH_TEXTURE_COUNT; ++channel)
-			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, m_resolution, m_resolution, m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
+			glTextureImage3DEXT(m_textureIDS[bounce][channel], GL_TEXTURE_3D, 0, GL_RGBA16F, (GLsizei)m_resolution, (GLsizei)m_resolution, (GLsizei)m_resolution, 0, GL_RGBA, GL_FLOAT, 0);
 }
 
 void RH_Volume::clear()

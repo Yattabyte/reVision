@@ -105,7 +105,7 @@ Engine::Engine() :
 	m_messageManager.statement("*  - Build Date   June 15th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
-	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t*");
+	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
 	m_messageManager.statement("*  - Bullet       " + std::to_string(BT_BULLET_VERSION) + "\t\t\t*");
 	m_messageManager.statement("*  - FreeImage    " + Image_IO::Get_Version() + "\t\t*");
 	m_messageManager.statement("*  - GLAD         " + std::to_string(GLVersion.major) + "." + std::to_string(GLVersion.minor) + "\t\t\t*");

@@ -16,7 +16,7 @@
 
 class Engine;
 
-/***/
+/** A core lighting technique responsible for all parallax reflectors. */
 class Reflector_Lighting : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -32,7 +32,8 @@ public:
 	
 
 	// Public Methods
-	/***/
+	/** Retrieve the reflector buffer.
+	@return		the reflector buffer. */
 	inline auto & getReflectorBuffer() {
 		return m_reflectorBuffer;
 	}
@@ -44,7 +45,7 @@ private:
 	void renderScene(const float & deltaTime);
 	/** Render all the lights */
 	void renderReflectors(const float & deltaTime);
-	/***/
+	/** Update the reflector effects' camera. */
 	void updateCamera();
 	/** Converts a priority queue into an stl vector.*/
 	static std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest);

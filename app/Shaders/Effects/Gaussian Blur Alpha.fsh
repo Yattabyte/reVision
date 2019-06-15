@@ -15,17 +15,17 @@ void main()
 {			
 	const ivec2 uvs = ivec2(TexCoord * Size);
 	if (horizontal) {
-		BlurColor = texelFetch(TextureMap1, uvs, 0).r * weights[0];	
+		BlurColor = texelFetch(TextureMap0, uvs, 0).r * weights[0];	
 		for (int i = 1; i < 5; ++i) {
-			BlurColor += texelFetch(TextureMap1, uvs + ivec2(i, 0), 0).r * weights[i];	
-			BlurColor += texelFetch(TextureMap1, uvs - ivec2(i, 0), 0).r * weights[i];	
+			BlurColor += texelFetch(TextureMap0, uvs + ivec2(i, 0), 0).r * weights[i];	
+			BlurColor += texelFetch(TextureMap0, uvs - ivec2(i, 0), 0).r * weights[i];	
 		}
 	}			
 	else  {
-		BlurColor = texelFetch(TextureMap0, uvs, 0).r * weights[0];	
+		BlurColor = texelFetch(TextureMap1, uvs, 0).r * weights[0];	
 		for (int i = 1; i < 5; ++i) {
-			BlurColor += texelFetch(TextureMap0, uvs + ivec2(0, i), 0).r * weights[i];	
-			BlurColor += texelFetch(TextureMap0, uvs - ivec2(0, i), 0).r * weights[i];	
+			BlurColor += texelFetch(TextureMap1, uvs + ivec2(0, i), 0).r * weights[i];	
+			BlurColor += texelFetch(TextureMap1, uvs - ivec2(0, i), 0).r * weights[i];	
 		}
 	}
 }

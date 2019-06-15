@@ -11,7 +11,7 @@
 #include <vector>
 
 
-/***/
+/** A reusable secondary technique for rendering props into shadow maps. */
 class Prop_Shadow : public Graphics_Technique {
 public:
 	// Public Enumerations
@@ -107,7 +107,7 @@ public:
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
 			const auto & index = *propComponent->m_propBufferIndex;
-			visibleIndices.push_back(index);
+			visibleIndices.push_back((GLuint)index);
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, m_lightPos)) { 
 				// Allow
@@ -119,7 +119,7 @@ public:
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, m_instanceCount, offset, 1));
 			}
-			skeletonData.push_back(skeletonComponent ? *skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
+			skeletonData.push_back(skeletonComponent ? (GLint)*skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
 		}
 
 		// Update camera buffers
@@ -132,7 +132,10 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Set critical information relating to the position and buffer indicies for the next draw-call. 
+	@param	lightPosition		the position of the light.
+	@param	lightIndex			the buffer index for the light source.
+	@param	shadowIndex			the buffer index for the shadow source. */
 	inline void setData(const glm::vec3 & lightPosition, const int & lightIndex, const int & shadowIndex) {
 		m_lightPos = lightPosition;
 		m_lightIndex = lightIndex;

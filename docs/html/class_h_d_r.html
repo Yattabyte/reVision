@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -78,7 +78,8 @@ Inheritance diagram for HDR:</div>
  <div class="center">
   <img src="class_h_d_r.png" usemap="#HDR_map" alt=""/>
   <map id="HDR_map" name="HDR_map">
-<area href="class_g_f_x___p_p___effect.html" alt="GFX_PP_Effect" shape="rect" coords="0,0,101,24"/>
+<area href="class_graphics___technique.html" alt="Graphics_Technique" shape="rect" coords="0,56,128,80"/>
+<area href="class_base_e_c_s_system.html" alt="BaseECSSystem" shape="rect" coords="0,0,128,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -88,22 +89,50 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:af799e2cc6e01119bcc50759c78ebbcb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e61c16c864fbc493611bf5880d4ae41"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_d_r.html#a5e61c16c864fbc493611bf5880d4ae41">HDR</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
 <tr class="separator:a5e61c16c864fbc493611bf5880d4ae41"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1291b9152f8270718a2a712b19103f3e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_d_r.html#a1291b9152f8270718a2a712b19103f3e">applyEffect</a> (const float &amp;deltaTime) override</td></tr>
-<tr class="separator:a1291b9152f8270718a2a712b19103f3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_class_g_f_x___p_p___effect"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_g_f_x___p_p___effect')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_g_f_x___p_p___effect.html">GFX_PP_Effect</a></td></tr>
-<tr class="memitem:acf64c732b813889a868368d0f8b7fd98 inherit pub_methods_class_g_f_x___p_p___effect"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___p_p___effect.html#acf64c732b813889a868368d0f8b7fd98">~GFX_PP_Effect</a> ()=default</td></tr>
-<tr class="separator:acf64c732b813889a868368d0f8b7fd98 inherit pub_methods_class_g_f_x___p_p___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88db1c71ed4f497cf57de530e125072f inherit pub_methods_class_g_f_x___p_p___effect"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___p_p___effect.html#a88db1c71ed4f497cf57de530e125072f">GFX_PP_Effect</a> ()=default</td></tr>
-<tr class="separator:a88db1c71ed4f497cf57de530e125072f inherit pub_methods_class_g_f_x___p_p___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd061024236c2713a6e0671178f873f5 inherit pub_methods_class_g_f_x___p_p___effect"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___p_p___effect.html#acd061024236c2713a6e0671178f873f5">isEnabled</a> () const</td></tr>
-<tr class="separator:acd061024236c2713a6e0671178f873f5 inherit pub_methods_class_g_f_x___p_p___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a638dcdcabf667a9b1c4d9865d1047987"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_h_d_r.html#a638dcdcabf667a9b1c4d9865d1047987">applyTechnique</a> (const float &amp;deltaTime) override</td></tr>
+<tr class="separator:a638dcdcabf667a9b1c4d9865d1047987"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
+<tr class="memitem:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">~Graphics_Technique</a> ()=default</td></tr>
+<tr class="separator:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada1f27301241f45eabd95c9a4b70ca58 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ada1f27301241f45eabd95c9a4b70ca58">Graphics_Technique</a> ()=default</td></tr>
+<tr class="separator:ada1f27301241f45eabd95c9a4b70ca58 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">setEnabled</a> (const bool &amp;state)</td></tr>
+<tr class="separator:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fccd1e207271f4ffa0ce741b768c69f inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a9fccd1e207271f4ffa0ce741b768c69f">setViewingParameters</a> (const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;cameraBuffer, const std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt; &amp;gfxFBOS, const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;rhVolume)</td></tr>
+<tr class="separator:a9fccd1e207271f4ffa0ce741b768c69f inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f55db21df70dd87116a8c8f52ea1ce3 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a3f55db21df70dd87116a8c8f52ea1ce3">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt; &gt; &amp;components)</td></tr>
+<tr class="separator:a3f55db21df70dd87116a8c8f52ea1ce3 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
+<tr class="memitem:a58fe4e77db995162c381813a5e4c3b82 inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a58fe4e77db995162c381813a5e4c3b82">getComponentTypes</a> ()</td></tr>
+<tr class="separator:a58fe4e77db995162c381813a5e4c3b82 inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a847e096bb6d393441ec6692400e39d5d inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a847e096bb6d393441ec6692400e39d5d">getComponentFlags</a> ()</td></tr>
+<tr class="separator:a847e096bb6d393441ec6692400e39d5d inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">isValid</a> () const</td></tr>
+<tr class="separator:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_class_g_f_x___p_p___effect"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_g_f_x___p_p___effect')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_g_f_x___p_p___effect.html">GFX_PP_Effect</a></td></tr>
-<tr class="memitem:a8f51ee569ad352942e97af3284e5b0d4 inherit pro_attribs_class_g_f_x___p_p___effect"><td class="memItemLeft" align="right" valign="top"><a id="a8f51ee569ad352942e97af3284e5b0d4"></a>
+<tr class="inherit_header pub_types_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
+<tr class="memitem:a2d64b0f24d1159e1f633f079ef3c0181 inherit pub_types_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top"><a id="a2d64b0f24d1159e1f633f079ef3c0181"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>RequirementsFlag</b> { <b>FLAG_REQUIRED</b> = 0, 
+<b>FLAG_OPTIONAL</b> = 1
+ }</td></tr>
+<tr class="separator:a2d64b0f24d1159e1f633f079ef3c0181 inherit pub_types_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
+<tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
+<tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
+<tr class="memitem:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a91a3066c3cc1125e327f511cc51eeb30"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true</td></tr>
-<tr class="separator:a8f51ee569ad352942e97af3284e5b0d4 inherit pro_attribs_class_g_f_x___p_p___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afe061d7c8ac714e47bb390cd780ced2a inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="afe061d7c8ac714e47bb390cd780ced2a"></a>
+std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_cameraBuffer</b></td></tr>
+<tr class="separator:afe061d7c8ac714e47bb390cd780ced2a inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a63e1a22723339535fd63f7e3ecb2558c inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a63e1a22723339535fd63f7e3ecb2558c"></a>
+std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_gfxFBOS</b></td></tr>
+<tr class="separator:a63e1a22723339535fd63f7e3ecb2558c inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af995fd0d2cf98c5ca446cbb9163ef4ab inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="af995fd0d2cf98c5ca446cbb9163ef4ab"></a>
+std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_volumeRH</b></td></tr>
+<tr class="separator:af995fd0d2cf98c5ca446cbb9163ef4ab inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A post-processing technique for tone-mapping and gamma correcting the final lighting product. </p>
@@ -162,8 +191,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a1291b9152f8270718a2a712b19103f3e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1291b9152f8270718a2a712b19103f3e">&#9670;&nbsp;</a></span>applyEffect()</h2>
+<a id="a638dcdcabf667a9b1c4d9865d1047987"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a638dcdcabf667a9b1c4d9865d1047987">&#9670;&nbsp;</a></span>applyTechnique()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -172,7 +201,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void HDR::applyEffect </td>
+          <td class="memname">virtual void HDR::applyTechnique </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -192,12 +221,12 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="class_g_f_x___p_p___effect.html#aebe7e47e1330292fedc444ce0860301a">GFX_PP_Effect</a>.</p>
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a7fbdc905185b83ff6bc2c717ebcd64b3">Graphics_Technique</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Modules/Post Processing/Effects/<a class="el" href="_h_d_r_8h_source.html">HDR.h</a></li>
+<li>src/Modules/Graphics/Effects/<a class="el" href="_h_d_r_8h_source.html">HDR.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

@@ -16,7 +16,7 @@
 #define NUM_MAX_BONES 100
 
 
-/***/
+/** A core rendering technique for rendering props from a given viewing perspective. */
 class Prop_View : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -148,7 +148,7 @@ public:
 			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;
 
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
-			visibleIndices.push_back(index);
+			visibleIndices.push_back((GLuint)index);
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) { 
 				// Allow
 				cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
@@ -159,7 +159,7 @@ public:
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
 			}
-			skeletonData.push_back(skeletonComponent ? *skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
+			skeletonData.push_back(skeletonComponent ? (GLint)*skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
 		}
 
 		// Update camera buffers
@@ -172,11 +172,13 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Retrieve the prop buffer.
+	@return		the prop buffer. */
 	inline auto & getPropBuffer() {
 		return m_propBuffer;
 	}
-	/***/
+	/** Retrieve the skeleton buffer. 
+	@return		the skeleton buffer. */
 	inline auto & getSkeletonBuffer() {
 		return m_skeletonBuffer;
 	}

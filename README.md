@@ -49,8 +49,12 @@ To avoid duplicating the engine assets for multiple builds (debug, release, x32/
 
 ## Versioning
 
-We version our project in the following format: (Major #).(Minor #).(Patch Letter)
-For example, Version: 1.2.C, where the major version is 1, minor version is 2, and the patch version is C.
+We version our project in the following format: (Major #).(Minor #).(Patch #). For example, Version: 1.2.3, where the major version is 1, minor version is 2, and the patch version is 3.  
+The major version number increases when all planned changes and features have been implemented, and is followed with a pull into the master branch + a release on github.  
+The minor version number increases when a single planned feature is implemented or a small collection of related changes have been completed.  
+The patch version number increases when a patch, hotfix, or small miscellaneous changes have been implemented.  
+
+I try to commit every time the version changes, including the new version in the summary.
 
 ## License
 
@@ -60,4 +64,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 Thanks to everyone who has helped me over the years!
 
-Special thanks to programming members of [Facepunch](https://forum.facepunch.com/f/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
+Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -80,25 +80,34 @@ Inheritance diagram for BaseECSSystem:</div>
  <div class="center">
   <img src="class_base_e_c_s_system.png" usemap="#BaseECSSystem_map" alt=""/>
   <map id="BaseECSSystem_map" name="BaseECSSystem_map">
-<area href="class_game___system___interface.html" alt="Game_System_Interface" shape="rect" coords="190,56,370,80"/>
-<area href="class_light_directional___system.html" alt="LightDirectional_System" shape="rect" coords="190,112,370,136"/>
-<area href="class_light_point___system.html" alt="LightPoint_System" shape="rect" coords="190,168,370,192"/>
-<area href="class_light_spot___system.html" alt="LightSpot_System" shape="rect" coords="190,224,370,248"/>
-<area href="class_prop_rendering___system.html" alt="PropRendering_System" shape="rect" coords="190,280,370,304"/>
-<area href="class_prop_shadowing___system.html" alt="PropShadowing_System" shape="rect" coords="190,336,370,360"/>
-<area href="class_reflector___system.html" alt="Reflector_System" shape="rect" coords="190,392,370,416"/>
-<area href="class_skeleton_animation___system.html" alt="SkeletonAnimation_System" shape="rect" coords="190,448,370,472"/>
-<area href="class_transform_sync___gfx___system.html" alt="TransformSync_Gfx_System" shape="rect" coords="190,504,370,528"/>
-<area href="class_transform_sync___phys___system.html" alt="TransformSync_Phys_System" shape="rect" coords="190,560,370,584"/>
+<area href="class_graphics___technique.html" alt="Graphics_Technique" shape="rect" coords="0,56,180,80"/>
+<area href="class_player_free_look___system.html" alt="PlayerFreeLook_System" shape="rect" coords="190,56,370,80"/>
+<area href="class_transform_sync___phys___system.html" alt="TransformSync_Phys_System" shape="rect" coords="380,56,560,80"/>
+<area href="class_bloom.html" alt="Bloom" shape="rect" coords="190,112,370,136"/>
+<area href="class_directional___lighting.html" alt="Directional_Lighting" shape="rect" coords="190,168,370,192"/>
+<area href="class_f_x_a_a.html" alt="FXAA" shape="rect" coords="190,224,370,248"/>
+<area href="class_h_d_r.html" alt="HDR" shape="rect" coords="190,280,370,304"/>
+<area href="class_join___reflections.html" alt="Join_Reflections" shape="rect" coords="190,336,370,360"/>
+<area href="class_point___lighting.html" alt="Point_Lighting" shape="rect" coords="190,392,370,416"/>
+<area href="class_prop___animation.html" alt="Prop_Animation" shape="rect" coords="190,448,370,472"/>
+<area href="class_prop___shadow.html" alt="Prop_Shadow" shape="rect" coords="190,504,370,528"/>
+<area href="class_prop___view.html" alt="Prop_View" shape="rect" coords="190,560,370,584"/>
+<area href="class_radiance___hints.html" alt="Radiance_Hints" shape="rect" coords="190,616,370,640"/>
+<area href="class_reflector___lighting.html" alt="Reflector_Lighting" shape="rect" coords="190,672,370,696"/>
+<area href="class_skybox.html" alt="Skybox" shape="rect" coords="190,728,370,752"/>
+<area href="class_spot___lighting.html" alt="Spot_Lighting" shape="rect" coords="190,784,370,808"/>
+<area href="class_s_s_a_o.html" alt="SSAO" shape="rect" coords="190,840,370,864"/>
+<area href="class_s_s_r.html" alt="SSR" shape="rect" coords="190,896,370,920"/>
+<area href="class_to___screen.html" alt="To_Screen" shape="rect" coords="190,952,370,976"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:ac20217704f153cc25d30a5e2afe69e83"><td class="memItemLeft" align="right" valign="top"><a id="ac20217704f153cc25d30a5e2afe69e83"></a>enum &#160;</td><td class="memItemRight" valign="bottom">{ <b>FLAG_REQUIRED</b> = 0, 
+<tr class="memitem:a2d64b0f24d1159e1f633f079ef3c0181"><td class="memItemLeft" align="right" valign="top"><a id="a2d64b0f24d1159e1f633f079ef3c0181"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>RequirementsFlag</b> { <b>FLAG_REQUIRED</b> = 0, 
 <b>FLAG_OPTIONAL</b> = 1
  }</td></tr>
-<tr class="separator:ac20217704f153cc25d30a5e2afe69e83"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a2d64b0f24d1159e1f633f079ef3c0181"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -281,7 +290,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_rendering___system.html#a752043d28a5ba403496ef9e32e978354">Rendering_System</a>, <a class="el" href="class_prop_shadowing___system.html#a733a36e6158fc9d8abc3d1479c0e6299">PropShadowing_System</a>, <a class="el" href="class_light_point___system.html#ad3211180828ac13bb16c8ae5550e2112">LightPoint_System</a>, <a class="el" href="class_light_spot___system.html#a24866a081889335c596a1518bde4ecc4">LightSpot_System</a>, <a class="el" href="class_score___system.html#a44e8be03d2b9e3eae767fc18952c4f1f">Score_System</a>, <a class="el" href="class_reflector___system.html#a0dc15da97ca109a0b6cd6682eee3137e">Reflector_System</a>, <a class="el" href="class_prop_rendering___system.html#a6efbc38f8055f7f5819c3088a0ac322b">PropRendering_System</a>, <a class="el" href="class_transform_sync___gfx___system.html#af130d6e24f46dbfcfdc9737fbb84d06d">TransformSync_Gfx_System</a>, <a class="el" href="class_player_input___system.html#aa41df239d0fad1002c6990a87b61c2ca">PlayerInput_System</a>, <a class="el" href="class_music___system.html#a85ecf8740107f331d1cb45ad081af2c4">Music_System</a>, <a class="el" href="class_gravity___system.html#a4a6377fd28497d6fcaa19d6a59d04a64">Gravity_System</a>, <a class="el" href="class_transform_sync___phys___system.html#a21557e7787b8a54437d6652945b263aa">TransformSync_Phys_System</a>, <a class="el" href="class_intro_outro___system.html#a914a2f138bd5437bb3cc5c783a3da6ec">IntroOutro_System</a>, <a class="el" href="class_push___system.html#a1164e55c4bc392c187dc96ea79cdea05">Push_System</a>, <a class="el" href="class_player_free_look___system.html#a2da49d1359b6c05d2c7d928a9ed64358">PlayerFreeLook_System</a>, <a class="el" href="class_timer___system.html#a57eb52a2b310b036edc2d58c1c00057c">Timer_System</a>, <a class="el" href="class_color_scheme___system.html#a99396441362a4f781744ca180ac8e8b4">ColorScheme_System</a>, and <a class="el" href="class_skeleton_animation___system.html#aebc18e271c2ce4b028cc62bf0c722499">SkeletonAnimation_System</a>.</p>
+<p>Implemented in <a class="el" href="class_directional___lighting.html#a870c304e9ae43f24ab3ef1737f506419">Directional_Lighting</a>, <a class="el" href="class_point___lighting.html#a7d564550b6d8ba32cf715363ba311144">Point_Lighting</a>, <a class="el" href="class_spot___lighting.html#a3485fcad134e65b63dbc3b9d20e9f343">Spot_Lighting</a>, <a class="el" href="class_prop___view.html#a96f47d28fe7ef4ba387166f4eca8531f">Prop_View</a>, <a class="el" href="class_prop___shadow.html#a9a172e2300a62f27dc89145d847353e0">Prop_Shadow</a>, <a class="el" href="class_graphics___technique.html#a3f55db21df70dd87116a8c8f52ea1ce3">Graphics_Technique</a>, <a class="el" href="class_transform_sync___phys___system.html#a21557e7787b8a54437d6652945b263aa">TransformSync_Phys_System</a>, <a class="el" href="class_player_free_look___system.html#a2da49d1359b6c05d2c7d928a9ed64358">PlayerFreeLook_System</a>, <a class="el" href="class_reflector___lighting.html#a7db360328515ef6fda46b17bc04fc18b">Reflector_Lighting</a>, and <a class="el" href="class_prop___animation.html#aba561bd744c5fb1e7368e0734052f901">Prop_Animation</a>.</p>
 
 </div>
 </div>

@@ -33,17 +33,19 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Render any and all of the game module's overlays to the screen.
+	@param	deltaTime	the amount of time passed since last frame. */
 	void renderOverlays(const float & deltaTime);
 
 
 private:
 	// Private Methods
-	/***/
+	/** Display the start menu. */
 	void showStartMenu();
-	/***/
+	/** Either show or hide the pause menu. 
+	@param	show		whether to show or hide the pause menu. */
 	void showPauseMenu(const bool & show);
-	/***/
+	/** Start the game. */
 	void startGame();
 
 

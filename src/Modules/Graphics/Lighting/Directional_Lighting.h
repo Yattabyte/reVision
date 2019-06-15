@@ -19,7 +19,7 @@
 #define NUM_CASCADES 4
 
 
-/***/
+/** A core lighting technique responsible for all directional lights. */
 class Directional_Lighting : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -141,7 +141,7 @@ public:
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data
-		const glm::vec2 &size = (*m_cameraBuffer)->Dimensions;
+		const auto & size = (*m_cameraBuffer)->Dimensions;
 		const float ar = size.x / size.y;
 		const float tanHalfHFOV = glm::radians((*m_cameraBuffer)->FOV) / 2.0f;
 		const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
@@ -203,9 +203,9 @@ public:
 			m_lightBuffer[index].LightColor = lightComponent->m_color;
 			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
-			lightIndices.push_back(index);
+			lightIndices.push_back((GLuint)index);
 			if (shadowComponent) {
-				shadowIndices.push_back(*shadowComponent->m_shadowIndex);
+				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
 				m_shadowsToUpdate.push_back(std::make_pair(lightComponent, shadowComponent));
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;
@@ -252,14 +252,14 @@ private:
 			const glm::vec3 clear(0.0f);
 			m_shadowFBO.clear(shadow->m_shadowSpot);
 			// Update geometry components
-			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, *light->m_lightIndex, *shadow->m_shadowIndex);
+			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
 			world.updateSystem(m_propShadowSystem, deltaTime);
 			// Render geometry components
 			m_propShadowSystem->applyTechnique(deltaTime);
 			shadow->m_updateTime = m_engine->getTime();
 		}
 
-		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
@@ -304,7 +304,7 @@ private:
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glViewport(0, 0, (*m_cameraBuffer)->Dimensions.x, (*m_cameraBuffer)->Dimensions.y);
+		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 
 		glDepthMask(GL_TRUE);
 		glEnable(GL_DEPTH_TEST);

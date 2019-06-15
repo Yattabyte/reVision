@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -80,8 +80,20 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad836b29ec5857c68c6d0423f297232b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa445f3eac6a0b31a799ddaef0ebec83"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#afa445f3eac6a0b31a799ddaef0ebec83">RH_Volume</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
 <tr class="separator:afa445f3eac6a0b31a799ddaef0ebec83"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9e70a3496591286764ba71ac05192bef"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a9e70a3496591286764ba71ac05192bef">updateVolume</a> (const <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp;cameraBuffer)</td></tr>
-<tr class="separator:a9e70a3496591286764ba71ac05192bef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0939deb0bd583ada224c1839507fa725"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a0939deb0bd583ada224c1839507fa725">updateVolume</a> (const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;cameraBuffer)</td></tr>
+<tr class="separator:a0939deb0bd583ada224c1839507fa725"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25d3843cb765a4353d89ca704dde273a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a25d3843cb765a4353d89ca704dde273a">resize</a> (const float &amp;resolution=16.0f)</td></tr>
+<tr class="separator:a25d3843cb765a4353d89ca704dde273a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb3ed7e8f29380136a549db6a49a14c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#aeb3ed7e8f29380136a549db6a49a14c4">clear</a> ()</td></tr>
+<tr class="separator:aeb3ed7e8f29380136a549db6a49a14c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a665e59697be3542ebc090a4704b843a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a665e59697be3542ebc090a4704b843a3">writePrimary</a> ()</td></tr>
+<tr class="separator:a665e59697be3542ebc090a4704b843a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38a18d4ab7b090747feb4012cb5b4496"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a38a18d4ab7b090747feb4012cb5b4496">readPrimary</a> (const GLuint &amp;binding=0)</td></tr>
+<tr class="separator:a38a18d4ab7b090747feb4012cb5b4496"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa3e2c0177e655e8eb793b7c54eeb8db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#afa3e2c0177e655e8eb793b7c54eeb8db">writeSecondary</a> ()</td></tr>
+<tr class="separator:afa3e2c0177e655e8eb793b7c54eeb8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a79fddac07aaad0639639e02a37bae3b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a79fddac07aaad0639639e02a37bae3b0">readSecondary</a> (const GLuint &amp;binding=0)</td></tr>
+<tr class="separator:a79fddac07aaad0639639e02a37bae3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -94,12 +106,6 @@ glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_max</b> = glm:
 <tr class="memitem:abfe7bb065b52c86a07ce70c5317da0f0"><td class="memItemLeft" align="right" valign="top"><a id="abfe7bb065b52c86a07ce70c5317da0f0"></a>
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_center</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:abfe7bb065b52c86a07ce70c5317da0f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03b49b2e1a4ade62788dc407531eade3"><td class="memItemLeft" align="right" valign="top"><a id="a03b49b2e1a4ade62788dc407531eade3"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_nearPlane</b> = -CameraBuffer::BufferStructure::CAMERA_NEAR_PLANE</td></tr>
-<tr class="separator:a03b49b2e1a4ade62788dc407531eade3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a43e54e54cc09f07ff401f692af76d50d"><td class="memItemLeft" align="right" valign="top"><a id="a43e54e54cc09f07ff401f692af76d50d"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_farPlane</b> = 1000.0f</td></tr>
-<tr class="separator:a43e54e54cc09f07ff401f692af76d50d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab3ec78c7757f623ea402027fc8c69746"><td class="memItemLeft" align="right" valign="top"><a id="ab3ec78c7757f623ea402027fc8c69746"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>m_resolution</b> = 16.0F</td></tr>
 <tr class="separator:ab3ec78c7757f623ea402027fc8c69746"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,13 +149,108 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct a radiance hint volume. </p>
+<p>Construct a radiance hint volume. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9e70a3496591286764ba71ac05192bef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9e70a3496591286764ba71ac05192bef">&#9670;&nbsp;</a></span>updateVolume()</h2>
+<a id="aeb3ed7e8f29380136a549db6a49a14c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb3ed7e8f29380136a549db6a49a14c4">&#9670;&nbsp;</a></span>clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Clear the data out of this framebuffer's textures. </p>
+
+</div>
+</div>
+<a id="a38a18d4ab7b090747feb4012cb5b4496"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38a18d4ab7b090747feb4012cb5b4496">&#9670;&nbsp;</a></span>readPrimary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::readPrimary </td>
+          <td>(</td>
+          <td class="paramtype">const GLuint &amp;&#160;</td>
+          <td class="paramname"><em>binding</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Read from the first bounce framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">binding</td><td>the reading index to bind to. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a79fddac07aaad0639639e02a37bae3b0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79fddac07aaad0639639e02a37bae3b0">&#9670;&nbsp;</a></span>readSecondary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::readSecondary </td>
+          <td>(</td>
+          <td class="paramtype">const GLuint &amp;&#160;</td>
+          <td class="paramname"><em>binding</em> = <code>0</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Read from the second bounce framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">binding</td><td>the reading index to bind to. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a25d3843cb765a4353d89ca704dde273a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a25d3843cb765a4353d89ca704dde273a">&#9670;&nbsp;</a></span>resize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::resize </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>resolution</em> = <code>16.0f</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Resize this volume's 3D texture. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">resolution</td><td>the new size to use. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a0939deb0bd583ada224c1839507fa725"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0939deb0bd583ada224c1839507fa725">&#9670;&nbsp;</a></span>updateVolume()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,7 +258,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         <tr>
           <td class="memname">void RH_Volume::updateVolume </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &amp;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>cameraBuffer</em></td><td>)</td>
           <td></td>
         </tr>
@@ -169,6 +270,42 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a665e59697be3542ebc090a4704b843a3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665e59697be3542ebc090a4704b843a3">&#9670;&nbsp;</a></span>writePrimary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::writePrimary </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Write to the first bounce framebuffer. </p>
+
+</div>
+</div>
+<a id="afa3e2c0177e655e8eb793b7c54eeb8db"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa3e2c0177e655e8eb793b7c54eeb8db">&#9670;&nbsp;</a></span>writeSecondary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void RH_Volume::writeSecondary </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Write to the second bounce framebuffer. </p>
 
 </div>
 </div>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.2.9</span>
+   &#160;<span id="projectnumber">3.5.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -77,16 +77,21 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a26fb63ffed8fe679b1cf39f6def374b3"><td class="memItemLeft" align="right" valign="top"><a id="a26fb63ffed8fe679b1cf39f6def374b3"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Actions</b> { <b>RELEASE</b> = 0, 
-<b>PRESS</b> = 1, 
-<b>MOVE</b> = 2
+<tr class="memitem:a589eecf77f07030e992fdc2c185f1909"><td class="memItemLeft" align="right" valign="top"><a id="a589eecf77f07030e992fdc2c185f1909"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Action</b> { <b>RELEASE</b>, 
+<b>PRESS</b>, 
+<b>MOVE</b>
  }</td></tr>
-<tr class="separator:a26fb63ffed8fe679b1cf39f6def374b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a589eecf77f07030e992fdc2c185f1909"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af097d971f2e1b8a1c52fe1ff82ceb19b"><td class="memItemLeft" align="right" valign="top"><a id="af097d971f2e1b8a1c52fe1ff82ceb19b"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Key</b> : int { <b>LEFT</b> = 0, 
+<b>RIGHT</b>, 
+<b>MIDDLE</b>
+ }</td></tr>
+<tr class="separator:af097d971f2e1b8a1c52fe1ff82ceb19b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a34bb08597abeca9fc47929491fffd227"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mouse_event.html#a34bb08597abeca9fc47929491fffd227">~MouseEvent</a> ()=default</td></tr>
-<tr class="separator:a34bb08597abeca9fc47929491fffd227"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27e843f59636f5b547f7d70ec6e8f7f0"><td class="memItemLeft" align="right" valign="top">enum Key int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mouse_event.html#a27e843f59636f5b547f7d70ec6e8f7f0">~MouseEvent</a> ()=default</td></tr>
+<tr class="separator:a27e843f59636f5b547f7d70ec6e8f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae021377cccef54ef81670186ec01f3ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mouse_event.html#ae021377cccef54ef81670186ec01f3ba">MouseEvent</a> ()=default</td></tr>
 <tr class="separator:ae021377cccef54ef81670186ec01f3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -111,8 +116,8 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>m_mods</b> = 0</td></t
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Holds mouse interaction information. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a34bb08597abeca9fc47929491fffd227"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a34bb08597abeca9fc47929491fffd227">&#9670;&nbsp;</a></span>~MouseEvent()</h2>
+<a id="a27e843f59636f5b547f7d70ec6e8f7f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27e843f59636f5b547f7d70ec6e8f7f0">&#9670;&nbsp;</a></span>~MouseEvent()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -121,7 +126,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>m_mods</b> = 0</td></t
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">MouseEvent::~MouseEvent </td>
+          <td class="memname">enum Key int MouseEvent::~MouseEvent </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -133,7 +138,7 @@ int&#160;</td><td class="memItemRight" valign="bottom"><b>m_mods</b> = 0</td></t
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Destroy the mouse event. </p>
+<p>The name of all keys supported, and an appropriate key code for each of them. Destroy the mouse event. </p>
 
 </div>
 </div>

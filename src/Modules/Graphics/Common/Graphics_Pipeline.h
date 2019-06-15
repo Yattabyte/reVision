@@ -8,16 +8,14 @@
 
 class Engine;
 
-/***/
+/** Represents a series of graphics rendering techniques to apply serially. */
 class Graphics_Pipeline {
 public:
 	// Public (de)Constructors
-	/** Virtual Destructor. */
-	inline virtual ~Graphics_Pipeline() = default;
-	/** Constructor. */
-	inline Graphics_Pipeline() = default;
-	/***/
-	Graphics_Pipeline(Engine * engine, const std::vector<Graphics_Technique*> techniques);
+	/** Destroy this rendering pipeline. */
+	inline ~Graphics_Pipeline() = default;
+	/** Construct a PBR rendering pipeline. */
+	Graphics_Pipeline(Engine * engine);
 
 
 	// Public Interface

@@ -4,7 +4,6 @@
 #define MAX_KERNEL_SIZE 128
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/VisualFX.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -23,11 +22,12 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline SSAO(Engine * engine, VisualFX * visualFX)
-		: m_engine(engine), m_visualFX(visualFX) {
+	inline SSAO(Engine * engine)
+		: m_engine(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
+		m_shaderGB_A = Shared_Shader(m_engine, "Effects\\Gaussian Blur Alpha");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
 		// Asset-Finished Callbacks
@@ -93,7 +93,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyTechnique(const float & deltaTime) override {
-		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_shaderCopyAO->existsYet() && m_shaderGB_A->existsYet())
 			return;
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
@@ -103,18 +103,44 @@ public:
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		size_t aoSpot = 0;
+			
+		// Gaussian blur the lines we got from the SSAO pass
+		if (m_blurStrength > 0) {
+			// Clear the second attachment
+			GLfloat clearRed = 0.0f;
+			glClearTexImage(m_gfxFBOS->getTexID("SSAO", 1), 0, GL_RED, GL_FLOAT, &clearRed);
 
-		// Gaussian blur the result
-		m_visualFX->applyGaussianBlur_Alpha(m_gfxFBOS->getTexID("SSAO", 0), m_gfxFBOS->getTexID("SSAO", 1), m_gfxFBOS->getTexID("SSAO", 2), (*m_cameraBuffer)->Dimensions, m_blurStrength);
+			// Read from desired texture, blur into this frame buffer
+			bool horizontal = false;
+			glBindTextureUnit(0, m_gfxFBOS->getTexID("SSAO", 0));
+			glBindTextureUnit(1, m_gfxFBOS->getTexID("SSAO", 1));
+			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+			m_shaderGB_A->bind();
+			m_shaderGB_A->setUniform(0, horizontal);
+			m_shaderGB_A->setUniform(1, (*m_cameraBuffer)->Dimensions);
+			glBindVertexArray(m_shapeQuad->m_vaoID);
+			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
-		// Write result back to AO channel
+			// Blur remainder of the times
+			for (int i = 0; i < m_blurStrength; i++) {
+				horizontal = !horizontal;
+				glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
+				m_shaderGB_A->setUniform(0, horizontal);
+				glDrawArraysIndirect(GL_TRIANGLES, 0);
+			}
+			aoSpot = horizontal ? 1ull : 0ull;
+		}		
+
+		// Overlay SSAO on top of AO channel of Geometry Buffer
 		glEnable(GL_BLEND);
 		glBlendFuncSeparate(GL_ONE, GL_ONE, GL_DST_ALPHA, GL_ZERO);
 		m_shaderCopyAO->bind();
 		m_gfxFBOS->bindForWriting("GEOMETRY");
 		glDrawBuffer(GL_COLOR_ATTACHMENT2);
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("SSAO", 0));
+		glBindTextureUnit(0, m_gfxFBOS->getTexID("SSAO", aoSpot));
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glDrawBuffers(3, drawBuffers);
@@ -125,8 +151,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	VisualFX * m_visualFX = nullptr;
-	Shared_Shader m_shader, m_shaderCopyAO;
+	Shared_Shader m_shader, m_shaderCopyAO, m_shaderGB_A;
 	Shared_Primitive m_shapeQuad;
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;

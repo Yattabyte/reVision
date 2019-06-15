@@ -68,45 +68,49 @@ public:
 	@param	func				the callback function to be called. */
 	void addCallback(const int & interactionEventID, const std::function<void()> & func);
 	/** Sets this elements' position.
-	@param	position				the new position to use. */
+	@param	position			the new position to use. */
 	void setPosition(const glm::vec2 & position);
 	/** Gets this elements' position.
 	@return	this elements' position. */
 	glm::vec2 getPosition() const;
 	/** Sets this elements' scale.
-	@param	scale					the new scale to use. */
+	@param	scale				the new scale to use. */
 	void setScale(const glm::vec2 & scale);
 	/** Gets this elements' scale.
 	@return	this elements' scale. */
 	glm::vec2 getScale() const;
 	/** Sets this elements' maximum scale.
-	@param	scale					the new maximum scale to use. */
+	@param	scale				the new maximum scale to use. */
 	void setMaxScale(const glm::vec2 & scale);
 	/** Gets this elements' maximum scale.
 	@return	this elements' maximum scale. */
 	glm::vec2 getMaxScale() const;
-	/***/
+	/** Set the max width of this element.
+	@param	width				the maximum width to use. */
 	void setMaxWidth(const float & width);
-	/***/
+	/** Set the max height of this element. 
+	@param	height				the maximum height to use. */
 	void setMaxHeight(const float & height);
 	/** Sets this elements' minimum scale.
-	@param	scale					the new minimum scale to use. */
+	@param	scale				the new minimum scale to use. */
 	void setMinScale(const glm::vec2 & scale);
 	/** Gets this elements' minimum scale.
 	@return	this elements' minimum scale. */
 	glm::vec2 getMinScale() const;
-	/***/
+	/** Set the minimum width of this element.
+	@param	width				the minimum width to use. */
 	void setMinWidth(const float & width);
-	/***/
+	/** Set the minimum height of this element.
+	@param	width				the minimum height to use. */
 	void setMinHeight(const float & height);
 	/** Set this element as visible or not.
-	@param	visible					whether or not this element should be visible. */
+	@param	visible				whether or not this element should be visible. */
 	void setVisible(const bool & visible);
 	/** Gets this elements' visibility.
 	@return	if this element is visible. */
 	bool getVisible() const;
 	/** Set this element as enabled or not.
-	@param	visible					whether or not this element should be enabled. */
+	@param	visible				whether or not this element should be enabled. */
 	void setEnabled(const bool & enabled);
 	/** Get the enabled state of this element.
 	@return	if this element is enabled. */
@@ -114,27 +118,27 @@ public:
 	/** Set this element as hovered, enacting its callback. */
 	void setHovered();
 	/** Retrieve this element's hovered state.
-	@return							true if this element is hovered, false otherwise. */
+	@return						true if this element is hovered, false otherwise. */
 	bool getHovered() const;
 	/** Set this element as pressed, enacting its callback. */
 	void setPressed();
 	/** Retrieve this element's pressed state.
-	@return							true if this element is pressed, false otherwise. */
+	@return						true if this element is pressed, false otherwise. */
 	bool getPressed() const;
 	/** Set this element as released, enacting its callback. */
 	void setReleased();
 	/** Retrieve this element's released state.
-	@return							true if this element is released, false otherwise. */
+	@return						true if this element is released, false otherwise. */
 	bool getReleased() const;
 	/** Set this element as clicked, enacting its callback. */
 	void setClicked();
 	/** Retrieve this element's clicked state.
-	@return							true if this element is clicked, false otherwise. */
+	@return						true if this element is clicked, false otherwise. */
 	bool getClicked() const;
 	/** Reset this element, releasing, unpressing, unhovering this element and all its children. */
 	void clearFocus();
 	/** Get whether or not the mouse is within this element. 
-	@return			true if the mouse is within this element. */
+	@return						true if the mouse is within this element. */
 	bool mouseWithin(const MouseEvent & mouseEvent) const;
 	/** Returns whether or not a point is within the bbox specified. */
 	static bool withinBBox(const glm::vec2 & box_p1, const glm::vec2 & box_p2, const glm::vec2 & point);

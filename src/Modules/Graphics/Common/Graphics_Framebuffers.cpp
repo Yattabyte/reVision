@@ -20,7 +20,7 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
 	createFBO("LIGHTING", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
-	createFBO("SSAO", { { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT }, { GL_RG8, GL_RED, GL_FLOAT } });
+	createFBO("SSAO", { { GL_R8, GL_RED, GL_FLOAT }, { GL_R8, GL_RED, GL_FLOAT } });
 	createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
 	createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
 	createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
@@ -84,7 +84,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 			m_engine->getManager_Messages().error("Graphics Framebuffer texture is incomplete.");*/
 		textures.push_back({ texID, internalFormat, format, type, attachment });
 	}
-	glNamedFramebufferDrawBuffers(fboID, drawBuffers.size(), &drawBuffers[0]);
+	glNamedFramebufferDrawBuffers(fboID, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
 	/*if (glCheckNamedFramebufferStatus(fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		m_engine->getManager_Messages().error("Graphics Framebuffer has encountered an error.");*/
 	m_fbos[name] = { fboID, mipmapped, textures };
