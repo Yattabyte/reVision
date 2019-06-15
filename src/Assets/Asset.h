@@ -35,7 +35,7 @@ public:
 	@param	filename	the file name to set this asset to. */
 	void setFileName(const std::string & filename);	
 	/** Attaches a callback method to be triggered when the asset finishes loading.
-	@param	alive		a shared pointer indicating whether the caller is alive or not.
+	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	callback	the method to be triggered. */
 	void addCallback(const std::shared_ptr<bool> & alive, const AssetFinalizedCallback & callback);
 	/** Returns whether or not this asset has completed finalizing.

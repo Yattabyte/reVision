@@ -46,8 +46,9 @@ public:
 	/** Unload the current world. */
 	void unloadWorld();
 	/** Registers a notification function to be called when the world state changes.
+	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier	function to be called on state change. */
-	void addLevelListener(const std::function<void(const WorldState&)> & func);
+	void addLevelListener(const std::shared_ptr<bool> & alive, const std::function<void(const WorldState&)> & func);
 	/** Construct an entity from the array of components and IDS*/
 	EntityHandle makeEntity(BaseECSComponent ** components, const uint32_t * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.
@@ -184,7 +185,7 @@ private:
 	MappedChar<std::vector<std::function<void(BaseECSComponent*)>>> m_constructionNotifyees;
 	Shared_Level m_level;
 	WorldState m_state = unloaded;
-	std::vector<std::function<void(const WorldState&)>> m_test;
+	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

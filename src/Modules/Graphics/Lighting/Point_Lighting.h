@@ -25,6 +25,8 @@ public:
 	inline ~Point_Lighting() {
 		// Update indicator
 		m_aliveIndicator = false;
+
+		// Remove component-type notifiers
 		auto & world = m_engine->getModule_World();
 		world.removeNotifyOnComponentType("LightPoint_Component", m_notifyLight);
 		world.removeNotifyOnComponentType("LightShadow_Component", m_notifyShadow);
@@ -103,7 +105,7 @@ public:
 		});
 
 		// World-Changed Callback
-		world.addLevelListener([&](const World_Module::WorldState & state) {
+		world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded) {
 				clear();
 				m_outOfDate = false;

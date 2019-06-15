@@ -38,7 +38,8 @@ private:
 	btCollisionDispatcher * m_dispatcher = nullptr;
 	btSequentialImpulseConstraintSolver * m_solver = nullptr;
 	btDiscreteDynamicsWorld * m_world = nullptr;
-	ECSSystemList m_physicsSystems;
+	ECSSystemList m_physicsSystems; 
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PHYSICS_MODULE_H

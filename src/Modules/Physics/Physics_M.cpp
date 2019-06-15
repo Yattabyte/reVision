@@ -8,12 +8,18 @@
 
 Physics_Module::~Physics_Module()
 {
+	// Delete Bullet Physics simulation
 	delete m_broadphase;
 	delete m_collisionConfiguration;
 	delete m_dispatcher;
 	delete m_solver;
 	delete m_world;
+
+	// Remove support for this component type
 	m_engine->getModule_World().removeComponentType("Collider_Component");
+
+	// Update indicator
+	m_aliveIndicator = false;
 }
 
 void Physics_Module::initialize(Engine * engine)
@@ -43,7 +49,7 @@ void Physics_Module::initialize(Engine * engine)
 	});
 
 	// World-Changed Callback
-	world.addLevelListener([&](const World_Module::WorldState & state) {
+	world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 		if (state == World_Module::unloaded)
 			m_enabled = false;
 		else if (state == World_Module::finishLoading || state == World_Module::updated)

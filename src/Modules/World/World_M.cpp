@@ -83,9 +83,9 @@ void World_Module::unloadWorld()
 	notifyListeners(unloaded);
 }
 
-void World_Module::addLevelListener(const std::function<void(const WorldState&)> & func)
+void World_Module::addLevelListener(const std::shared_ptr<bool> & alive, const std::function<void(const WorldState&)> & func)
 {
-	m_test.push_back(func);
+	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
 EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const uint32_t * componentIDs, const size_t & numComponents)
@@ -205,8 +205,10 @@ void World_Module::processLevel()
 
 void World_Module::notifyListeners(const WorldState & state)
 {
-	for each (const auto & func in m_test)
-		func(state);
+	// Get all callback functions, and call them if their owners are still alive
+	for (const auto & [alive, func] : m_notifyees)
+		if (alive && *(alive.get()) == true)
+			func(state);
 	m_state = state;
 }
 

@@ -25,6 +25,9 @@ public:
 		auto & world = m_engine->getModule_World();
 		world.removeNotifyOnComponentType("Prop_Component", m_notifyProp);
 		world.removeNotifyOnComponentType("Skeleton_Component", m_notifySkeleton);
+
+		// Update indicator
+		m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Prop_View(Engine * engine)
@@ -59,7 +62,7 @@ public:
 		});
 
 		// World-Changed Callback
-		world.addLevelListener([&](const World_Module::WorldState & state) {
+		world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
 				clear();
 		});
@@ -208,6 +211,7 @@ private:
 	GLsizei m_propCount = 0;
 	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
 	int m_notifyProp = -1, m_notifySkeleton = -1;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Core Prop Data
 	/** OpenGL buffer for props. */

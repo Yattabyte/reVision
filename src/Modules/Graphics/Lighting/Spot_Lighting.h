@@ -101,7 +101,7 @@ public:
 		});
 
 		// World-Changed Callback
-		world.addLevelListener([&](const World_Module::WorldState & state) {
+		world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded) {
 				clear();
 				m_outOfDate = false;

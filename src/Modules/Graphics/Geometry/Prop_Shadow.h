@@ -24,7 +24,10 @@ public:
 
 	// Public (de)Constructors
 	/** Destructor. */
-	inline ~Prop_Shadow() = default;
+	inline ~Prop_Shadow() {
+		// Update indicator
+		m_aliveIndicator = false;
+	}
 	/** Constructor. */
 	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
 		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
@@ -41,7 +44,7 @@ public:
 			m_engine->getManager_Messages().error("Invalid ECS System: Prop_Shadow");
 		
 		// World-Changed Callback
-		m_engine->getModule_World().addLevelListener([&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
 				clear();
 		});
@@ -169,6 +172,7 @@ private:
 	const GLuint * m_modelsVAO = nullptr;
 	GLsizei m_propCount = 0;
 	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PROP_SHADOW_H
