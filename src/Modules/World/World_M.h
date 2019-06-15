@@ -125,7 +125,8 @@ private:
 	// Private Methods
 	/** Process the level asset, generating components and entities. */
 	void processLevel();
-	/***/
+	/** Notify all world-listeners of a state change. 
+	@param	state				the new state to notify listeners of. */
 	void notifyListeners(const WorldState & state);
 	/** Convert an entity handle to the specific raw type. 
 	@param	handle				the entity handle to process.

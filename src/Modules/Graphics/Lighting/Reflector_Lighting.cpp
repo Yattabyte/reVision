@@ -321,8 +321,8 @@ std::vector<Reflector_Component*> Reflector_Lighting::PQtoVector(PriorityList<fl
 
 void Reflector_Lighting::clear() 
 {
-	const size_t lightSize = 0;
-	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+	const size_t reflectorSize = 0;
+	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &reflectorSize); // update primCount (2nd param)
 	m_reflectorsToUpdate.clear();
 	m_reflectorBuffer.clear();
 }

@@ -94,7 +94,7 @@ public:
 			*m_indexPointers[x] -= 1;
 		delete index;
 	}
-	/***/
+	/** Functionally clears the buffer, but doesn't zero the underlying data. Retains capacity. */
 	inline void clear() {
 		for (auto * pointer : m_indexPointers)
 			delete pointer;

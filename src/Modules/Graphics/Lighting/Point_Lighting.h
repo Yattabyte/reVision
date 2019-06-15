@@ -278,7 +278,7 @@ private:
 
 		return outList;
 	}
-	/***/
+	/** Clear out the lights and shadows queued up for rendering. */
 	void clear() {
 		const size_t lightSize = 0;
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)

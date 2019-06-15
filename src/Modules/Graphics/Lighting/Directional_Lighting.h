@@ -318,7 +318,7 @@ private:
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_BLEND);
 	}
-	/***/
+	/** Clear out the lights and shadows queued up for rendering. */
 	void clear() {
 		const size_t lightSize = 0, shadowSize = 0;
 		const GLuint bounceInstanceCount = GLuint(shadowSize * m_bounceSize);

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.5.0</span>
+   &#160;<span id="projectnumber">3.6.2</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -108,8 +108,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae63f2109b599674813f35bad45422c6f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ae63f2109b599674813f35bad45422c6f">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, AssetFinalizedCallback &amp;&amp;callback)</td></tr>
-<tr class="separator:ae63f2109b599674813f35bad45422c6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -214,8 +214,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae63f2109b599674813f35bad45422c6f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae63f2109b599674813f35bad45422c6f">&#9670;&nbsp;</a></span>addCallback()</h2>
+<a id="a4c0cb6447d8dbff78ec803e5752f3c84"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c0cb6447d8dbff78ec803e5752f3c84">&#9670;&nbsp;</a></span>addCallback()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -229,7 +229,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">AssetFinalizedCallback &amp;&amp;&#160;</td>
+          <td class="paramtype">const AssetFinalizedCallback &amp;&#160;</td>
           <td class="paramname"><em>callback</em>&#160;</td>
         </tr>
         <tr>
@@ -241,8 +241,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
 </div><div class="memdoc">
 <p>Attaches a callback method to be triggered when the asset finishes loading. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">alive</td><td>a shared pointer indicating whether the caller is alive or not </td></tr>
-    <tr><td class="paramname">callback</td><td>the method to be triggered </td></tr>
+    <tr><td class="paramname">alive</td><td>a shared pointer indicating whether the caller is still alive or not. </td></tr>
+    <tr><td class="paramname">callback</td><td>the method to be triggered. </td></tr>
   </table>
   </dd>
 </dl>
@@ -307,7 +307,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Gets the file name of this asset. </p><dl class="section return"><dt>Returns</dt><dd>the file name belonging to this asset </dd></dl>
+<p>Gets the file name of this asset. </p><dl class="section return"><dt>Returns</dt><dd>the file name belonging to this asset. </dd></dl>
 
 </div>
 </div>
@@ -356,7 +356,7 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>AssetManager</b></td
 </div><div class="memdoc">
 <p>Sets the file name of this asset. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>the file name to set this asset to </td></tr>
+    <tr><td class="paramname">filename</td><td>the file name to set this asset to. </td></tr>
   </table>
   </dd>
 </dl>

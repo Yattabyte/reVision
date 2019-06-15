@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.5.0</span>
+   &#160;<span id="projectnumber">3.6.2</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,6 +64,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_world___module-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -82,6 +83,15 @@ Inheritance diagram for World_Module:</div>
   </map>
 </div></div>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:ae2abd0d61db5d995eb7ec51e969d63f1"><td class="memItemLeft" align="right" valign="top"><a id="ae2abd0d61db5d995eb7ec51e969d63f1"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>WorldState</b> { <b>unloaded</b>, 
+<b>startLoading</b>, 
+<b>finishLoading</b>, 
+<b>updated</b>
+ }</td></tr>
+<tr class="separator:ae2abd0d61db5d995eb7ec51e969d63f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a7e7b7b8c95eda74a60c8c5d6ac772780"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a7e7b7b8c95eda74a60c8c5d6ac772780">~World_Module</a> ()</td></tr>
@@ -96,10 +106,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa7e51d83bb98cdebad1279310cd08b55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1436bb60d549f07d32c484063484bbc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a1436bb60d549f07d32c484063484bbc0">unloadWorld</a> ()</td></tr>
 <tr class="separator:a1436bb60d549f07d32c484063484bbc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42f277b5a0784044a3f67132d0b63360"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a42f277b5a0784044a3f67132d0b63360">addLevelListener</a> (bool *notifier)</td></tr>
-<tr class="separator:a42f277b5a0784044a3f67132d0b63360"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83fa58895f6e4aa2be6da1dc4b89fcf3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a83fa58895f6e4aa2be6da1dc4b89fcf3">checkIfLoaded</a> ()</td></tr>
-<tr class="separator:a83fa58895f6e4aa2be6da1dc4b89fcf3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3e69ab6f12a35b50c50c1d63443a5624"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a3e69ab6f12a35b50c50c1d63443a5624">addLevelListener</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const std::function&lt; void(const WorldState &amp;)&gt; &amp;func)</td></tr>
+<tr class="separator:a3e69ab6f12a35b50c50c1d63443a5624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a433200978f75578a131e21f747fdf8ff"><td class="memItemLeft" align="right" valign="top">EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a433200978f75578a131e21f747fdf8ff">makeEntity</a> (<a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> **components, const uint32_t *componentIDS, const size_t &amp;numComponents)</td></tr>
 <tr class="separator:a433200978f75578a131e21f747fdf8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada26ef7f80ff74659dc3c51f2f4cb525"><td class="memTemplParams" colspan="2">template&lt;class... Args&gt; </td></tr>
@@ -272,8 +280,8 @@ template&lt;typename BaseECSComponent &gt; </div>
 
 </div>
 </div>
-<a id="a42f277b5a0784044a3f67132d0b63360"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a42f277b5a0784044a3f67132d0b63360">&#9670;&nbsp;</a></span>addLevelListener()</h2>
+<a id="a3e69ab6f12a35b50c50c1d63443a5624"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3e69ab6f12a35b50c50c1d63443a5624">&#9670;&nbsp;</a></span>addLevelListener()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -281,15 +289,26 @@ template&lt;typename BaseECSComponent &gt; </div>
         <tr>
           <td class="memname">void World_Module::addLevelListener </td>
           <td>(</td>
-          <td class="paramtype">bool *&#160;</td>
-          <td class="paramname"><em>notifier</em></td><td>)</td>
+          <td class="paramtype">const std::shared_ptr&lt; bool &gt; &amp;&#160;</td>
+          <td class="paramname"><em>alive</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::function&lt; void(const WorldState &amp;)&gt; &amp;&#160;</td>
+          <td class="paramname"><em>func</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Registers a notification flag to be updated when level loaded. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Registers a notification function to be called when the world state changes. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">notifier</td><td>flag to be set when level loaded </td></tr>
+    <tr><td class="paramname">alive</td><td>a shared pointer indicating whether the caller is still alive or not. </td></tr>
+    <tr><td class="paramname">notifier</td><td>function to be called on state change. </td></tr>
   </table>
   </dd>
 </dl>
@@ -329,24 +348,6 @@ template&lt;typename BaseECSComponent &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>index to use for removing the notification. </dd></dl>
-
-</div>
-</div>
-<a id="a83fa58895f6e4aa2be6da1dc4b89fcf3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83fa58895f6e4aa2be6da1dc4b89fcf3">&#9670;&nbsp;</a></span>checkIfLoaded()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool World_Module::checkIfLoaded </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Checks whether the level has finished loading. </p><dl class="section return"><dt>Returns</dt><dd>true if level sufficiently loaded, false otherwise. </dd></dl>
 
 </div>
 </div>

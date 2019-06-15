@@ -49,7 +49,7 @@ private:
 	void updateCamera();
 	/** Converts a priority queue into an stl vector.*/
 	static std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest);
-	/***/
+	/** Clear out the reflectors queued up for rendering. */
 	void clear();
 
 

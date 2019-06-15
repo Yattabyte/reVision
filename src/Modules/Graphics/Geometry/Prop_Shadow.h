@@ -154,7 +154,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Clear out the props queued up for rendering. */
 	void clear() {
 		m_propCount = 0;
 	}
