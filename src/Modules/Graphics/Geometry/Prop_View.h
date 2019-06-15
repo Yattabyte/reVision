@@ -32,7 +32,7 @@ public:
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
-		m_shapeCube = Shared_Primitive(engine, "cube");
+		m_shapeCube = Shared_Primitive(m_engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 
 		// Declare component types used
@@ -42,7 +42,7 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: Prop_View");
+			m_engine->getManager_Messages().error("Invalid ECS System: Prop_View");
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -56,6 +56,12 @@ public:
 			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
 			for (int x = 0; x < NUM_MAX_BONES; ++x)
 				m_skeletonBuffer[*component->m_skeleBufferIndex].bones[x] = glm::mat4(1.0f);
+		});
+
+		// World-Changed Callback
+		world.addLevelListener([&](const World_Module::WorldState & state) {
+			if (state == World_Module::unloaded)
+				clear();
 		});
 	}
 
@@ -185,6 +191,15 @@ public:
 
 
 private:
+	// Private Methods
+	/***/
+	void clear() {
+		m_propCount = 0;
+		m_propBuffer.clear();
+		m_skeletonBuffer.clear();
+	}
+
+
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	const GLuint * m_modelsVAO = nullptr;

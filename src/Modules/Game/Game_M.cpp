@@ -95,7 +95,7 @@ void Game_Module::showStartMenu()
 	m_engine->getModule_UI().setFocusMap(std::dynamic_pointer_cast<StartMenu>(m_startMenu)->getFocusMap());
 	m_gameState = in_startMenu;
 
-	// Add code to load background level, unload previous level
+	m_engine->getModule_World().loadWorld("background.map");
 }
 
 void Game_Module::showPauseMenu(const bool & show)

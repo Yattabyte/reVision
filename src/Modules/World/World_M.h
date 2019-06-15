@@ -15,6 +15,15 @@
 /** A module responsible for the world/level. */
 class World_Module : public Engine_Module {
 public:
+	// Public Enumerations
+	const enum WorldState {
+		unloaded,
+		startLoading,
+		finishLoading,
+		updated
+	};
+
+
 	// Public (de)Constructors
 	/** Destroy this world module. */
 	~World_Module();
@@ -36,12 +45,9 @@ public:
 	void loadWorld(const std::string & mapName);
 	/** Unload the current world. */
 	void unloadWorld();
-	/** Registers a notification flag to be updated when level loaded.
-	@param	notifier	flag to be set when level loaded*/
-	void addLevelListener(bool * notifier);
-	/** Checks whether the level has finished loading. 
-	@return				true if level sufficiently loaded, false otherwise. */
-	bool checkIfLoaded();
+	/** Registers a notification function to be called when the world state changes.
+	@param	notifier	function to be called on state change. */
+	void addLevelListener(const std::function<void(const WorldState&)> & func);
 	/** Construct an entity from the array of components and IDS*/
 	EntityHandle makeEntity(BaseECSComponent ** components, const uint32_t * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.
@@ -118,6 +124,8 @@ private:
 	// Private Methods
 	/** Process the level asset, generating components and entities. */
 	void processLevel();
+	/***/
+	void notifyListeners(const WorldState & state);
 	/** Convert an entity handle to the specific raw type. 
 	@param	handle				the entity handle to process.
 	@return						raw handle. */
@@ -175,7 +183,8 @@ private:
 	MappedChar<std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
 	MappedChar<std::vector<std::function<void(BaseECSComponent*)>>> m_constructionNotifyees;
 	Shared_Level m_level;
-	std::vector<bool*> m_notifyees;
+	WorldState m_state = unloaded;
+	std::vector<std::function<void(const WorldState&)>> m_test;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

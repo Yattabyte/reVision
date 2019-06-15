@@ -32,7 +32,8 @@ void Physics_Module::initialize(Engine * engine)
 	m_physicsSystems.addSystem(new TransformSync_Phys_System(engine, m_world));
 
 	// Component Constructors
-	m_engine->getModule_World().addComponentType("Collider_Component", [engine](const ParamList & parameters) {
+	auto & world = m_engine->getModule_World();
+	world.addComponentType("Collider_Component", [engine](const ParamList & parameters) {
 		auto * component = new Collider_Component();
 		component->m_collider = Shared_Collider(engine, CastAny(parameters[0], std::string("")));
 		component->m_mass = btScalar(CastAny(parameters[1], 0));
@@ -40,11 +41,19 @@ void Physics_Module::initialize(Engine * engine)
 		component->m_friction = CastAny(parameters[3], 0.0f);
 		return std::make_pair(component->ID, component);
 	});
+
+	// World-Changed Callback
+	world.addLevelListener([&](const World_Module::WorldState & state) {
+		if (state == World_Module::unloaded)
+			m_enabled = false;
+		else if (state == World_Module::finishLoading || state == World_Module::updated)
+			m_enabled = true;
+	});
 }
 
 void Physics_Module::frameTick(const float & deltaTime)
 {
-	if (m_engine->getModule_World().checkIfLoaded()) {
+	if (m_enabled) {
 		// Only update simulation if engine is READY
 		m_world->stepSimulation(deltaTime);
 		m_engine->getModule_World().updateSystems(m_physicsSystems, deltaTime);

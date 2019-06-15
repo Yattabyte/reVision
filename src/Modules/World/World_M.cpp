@@ -34,56 +34,58 @@ void World_Module::initialize(Engine * engine)
 
 void World_Module::frameTick(const float & deltaTime)
 {
+	auto & assetManager = m_engine->getManager_Assets();
+	auto & modelManager = m_engine->getManager_Models();
+	auto & materialManager = m_engine->getManager_Materials();
+
+	// Firstly, check and see if the following systems are ready
+	if (!assetManager.readyToUse() || !modelManager.readyToUse() || !materialManager.readyToUse())
+		return;
+
+	// Signal that the map has finished loading ONCE
+	if (m_state == startLoading)
+		notifyListeners(finishLoading);
+	else if (m_state == finishLoading) {
+		// Lastly, check and see if we observed any changes
+		if (assetManager.hasChanged() || modelManager.hasChanged() || materialManager.hasChanged())		
+			notifyListeners(updated);
+	}
 }
 
 void World_Module::loadWorld(const std::string & mapName)
 {
 	// Unload any previous map
-	/*if (m_level && m_level->existsYet())
-		m_engine->getModule_UI().purge();*/
+	if (m_level && m_level->existsYet())
+		unloadWorld();
 	m_level = Shared_Level(m_engine, mapName);
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
+	
+	// Signal that a new map is begining to load
+	notifyListeners(startLoading);
 }
 
 void World_Module::unloadWorld()
 {
-	for (std::map<uint32_t, std::vector<uint8_t>>::iterator it = m_components.begin(); it != m_components.end(); ++it) {
+	for (auto it = m_components.begin(); it != m_components.end(); ++it) {
 		size_t typeSize = BaseECSComponent::getTypeSize(it->first);
 		ECSComponentFreeFunction freefn = BaseECSComponent::getTypeFreeFunction(it->first);
 		for (size_t i = 0; i < it->second.size(); i += typeSize)
 			freefn((BaseECSComponent*)&it->second[i]);
+		it->second.clear();
 	}
+	m_components.clear();
 
 	for (size_t i = 0; i < m_entities.size(); ++i)
 		delete m_entities[i];
+	m_entities.clear();
+	
+	// Signal that the last map has unloaded
+	notifyListeners(unloaded);
 }
 
-void World_Module::addLevelListener(bool * notifier)
+void World_Module::addLevelListener(const std::function<void(const WorldState&)> & func)
 {
-	m_notifyees.push_back(notifier);
-	if (m_finishedLoading)
-		*notifier = true;
-}
-
-bool World_Module::checkIfLoaded()
-{
-	auto & assetManager = m_engine->getManager_Assets();
-	auto & modelManager = m_engine->getManager_Models();
-	auto & materialManager = m_engine->getManager_Materials();
-	// Firstly, check and see if the following systems are ready
-	if (assetManager.readyToUse() &&
-		modelManager.readyToUse() &&
-		materialManager.readyToUse()) {
-
-		// Lastly, check and see if we observed any changes
-		if (assetManager.hasChanged() ||
-			modelManager.hasChanged() ||
-			materialManager.hasChanged())
-			for each (bool * flag in m_notifyees)
-				*flag = true;
-		return true;
-	}
-	return false;
+	m_test.push_back(func);
 }
 
 EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const uint32_t * componentIDs, const size_t & numComponents)
@@ -199,6 +201,13 @@ void World_Module::processLevel()
 			ids.clear();
 		}
 	}
+}
+
+void World_Module::notifyListeners(const WorldState & state)
+{
+	for each (const auto & func in m_test)
+		func(state);
+	m_state = state;
 }
 
 void World_Module::deleteComponent(const uint32_t & componentID, const uint32_t & index)

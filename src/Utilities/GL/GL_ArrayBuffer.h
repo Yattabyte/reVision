@@ -94,6 +94,12 @@ public:
 			*m_indexPointers[x] -= 1;
 		delete index;
 	}
+	/***/
+	inline void clear() {
+		for (auto * pointer : m_indexPointers)
+			delete pointer;
+		m_indexPointers.clear();
+	}
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.
 	@return					reference to the element desired. */

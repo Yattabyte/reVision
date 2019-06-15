@@ -29,7 +29,7 @@ public:
 	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
 		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
 		// Asset Loading
-		m_shapeCube = Shared_Primitive(engine, "cube");
+		m_shapeCube = Shared_Primitive(m_engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 
 		// Declare component types used
@@ -38,7 +38,13 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: Prop_Shadow");
+			m_engine->getManager_Messages().error("Invalid ECS System: Prop_Shadow");
+		
+		// World-Changed Callback
+		m_engine->getModule_World().addLevelListener([&](const World_Module::WorldState & state) {
+			if (state == World_Module::unloaded)
+				clear();
+		});
 	}
 
 
@@ -144,6 +150,13 @@ public:
 
 
 private:
+	// Private Methods
+	/***/
+	void clear() {
+		m_propCount = 0;
+	}
+
+
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Prop_View * m_propView = nullptr;

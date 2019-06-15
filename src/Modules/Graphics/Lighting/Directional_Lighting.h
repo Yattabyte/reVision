@@ -96,7 +96,7 @@ public:
 
 		// Error Reporting
 		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: Directional_Lighting");
+			m_engine->getManager_Messages().error("Invalid ECS System: Directional_Lighting");
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -118,6 +118,12 @@ public:
 				m_shadowBuffer[*component->m_shadowIndex].lightVP[x] = glm::mat4(1.0f);
 				m_shadowBuffer[*component->m_shadowIndex].inverseVP[x] = glm::inverse(glm::mat4(1.0f));
 			}
+		});
+
+		// World-Changed Callback
+		world.addLevelListener([&](const World_Module::WorldState & state) {
+			if (state == World_Module::unloaded)
+				clear();
 		});
 	}
 
@@ -311,6 +317,17 @@ private:
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_BLEND);
+	}
+	/***/
+	void clear() {
+		const size_t lightSize = 0, shadowSize = 0;
+		const GLuint bounceInstanceCount = GLuint(shadowSize * m_bounceSize);
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
+		m_shadowCount = (GLint)shadowSize;
+		m_shadowsToUpdate.clear();
+		m_lightBuffer.clear();
+		m_shadowBuffer.clear();
 	}
 
 

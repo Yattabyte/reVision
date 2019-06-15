@@ -32,6 +32,7 @@ public:
 
 private:
 	// Private Attributes
+	bool m_enabled = false;
 	btBroadphaseInterface * m_broadphase = nullptr;
 	btDefaultCollisionConfiguration * m_collisionConfiguration = nullptr;
 	btCollisionDispatcher * m_dispatcher = nullptr;

@@ -82,8 +82,8 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	if (!isValid())
 		m_engine->getManager_Messages().error("Invalid ECS System: Reflector_Lighting");
 
-	auto & world = m_engine->getModule_World();
-	world.addLevelListener(&m_outOfDate);
+	// Add New Component Types
+	auto & world = m_engine->getModule_World();	
 	m_notifyReflector = world.addNotifyOnComponentType("Reflector_Component", [&](BaseECSComponent * c) {
 		auto * component = (Reflector_Component*)c;
 		auto envCount = (int)(m_reflectorBuffer.getLength() * 6);
@@ -101,6 +101,16 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		m_reflectorBuffer[*component->m_reflectorIndex].rotMatrix = glm::mat4(1.0f);
 		m_reflectorBuffer[*component->m_reflectorIndex].BoxCamPos = glm::vec3(0.0f);
 		m_reflectorBuffer[*component->m_reflectorIndex].BoxScale = glm::vec3(1.0f);
+	});
+	
+	// World-Changed Callback
+	world.addLevelListener([&](const World_Module::WorldState & state) {
+		if (state == World_Module::unloaded) {
+			clear();
+			m_outOfDate = false;
+		}
+		else if (state == World_Module::finishLoading || state == World_Module::updated)
+			m_outOfDate = true;
 	});
 }
 
@@ -157,9 +167,6 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 				reflectorComponent->m_Cameradata[x].vMatrix = vMatrices[x];
 			}
 		}
-
-		if (m_outOfDate)
-			reflectorComponent->m_outOfDate = true;
 
 		// Update Buffer Attributes
 		reflectionIndicies.push_back(GLuint(index));
@@ -310,4 +317,12 @@ std::vector<Reflector_Component*> Reflector_Lighting::PQtoVector(PriorityList<fl
 	}
 
 	return outList;
+}
+
+void Reflector_Lighting::clear() 
+{
+	const size_t lightSize = 0;
+	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+	m_reflectorsToUpdate.clear();
+	m_reflectorBuffer.clear();
 }

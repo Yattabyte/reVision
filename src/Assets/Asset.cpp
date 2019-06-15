@@ -15,7 +15,7 @@ void Asset::setFileName(const std::string & fn)
 	m_filename = fn;
 }
 
-void Asset::addCallback(const std::shared_ptr<bool> & alive, AssetFinalizedCallback && callback)
+void Asset::addCallback(const std::shared_ptr<bool> & alive, const AssetFinalizedCallback & callback)
 {
 	if (!existsYet())
 		m_callbacks.emplace_back(std::move(std::make_pair(alive, callback)));
@@ -51,10 +51,10 @@ void Asset::finalize()
 	m_finalized = true;
 
 	// Copy callbacks in case any get added while we're busy
-	AssetManager & assetManager = m_engine->getManager_Assets();
 	const auto copyCallbacks = m_callbacks;
 	m_callbacks.clear();
-	
+
+	AssetManager & assetManager = m_engine->getManager_Assets();
 	for each (const auto qwe in copyCallbacks)
 		assetManager.submitNotifyee(qwe);
 }

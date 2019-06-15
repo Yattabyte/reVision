@@ -40,6 +40,16 @@ public:
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
 		});
+		
+		// World-Changed Callback
+		m_engine->getModule_World().addLevelListener([&](const World_Module::WorldState & state) {
+			if (state == World_Module::unloaded || state == World_Module::finishLoading)
+				m_show = false;
+			else if (state == World_Module::startLoading) 
+				m_show = true;
+			else if (state == World_Module::updated) 
+				m_blendAmt = 1.0f;			
+		});
 	}
 
 
@@ -47,7 +57,12 @@ public:
 	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
-		m_blendAmt += (!m_engine->getModule_World().checkIfLoaded()) ? deltaTime : -deltaTime;
+		if (m_show)
+			m_blendAmt += deltaTime;
+		else
+			m_blendAmt -= deltaTime;
+		if (!m_show && m_blendAmt <= 0.0f)
+			return;
 		m_blendAmt = std::max<float>(0.0f, std::min<float>(1.0f, m_blendAmt));
 		if (m_blendAmt > -0.0001f || m_blendAmt < 1.0001f) {
 			m_time += deltaTime;
@@ -83,7 +98,8 @@ private:
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
 	Shared_Primitive m_shapeQuad;
-	StaticBuffer m_quadIndirectBuffer;
+	StaticBuffer m_quadIndirectBuffer;	
+	bool m_show = false;
 	float m_time = 0.0f, m_blendAmt = 1.0f;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::mat4 m_projMatrix = glm::mat4(1.0f);

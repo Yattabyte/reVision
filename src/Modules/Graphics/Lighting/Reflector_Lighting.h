@@ -41,7 +41,7 @@ public:
 
 private:
 	// Protected Methods
-	/** Render all the geometry for each reflector */
+	/** Render all the geometry for each reflector. */
 	void renderScene(const float & deltaTime);
 	/** Render all the lights */
 	void renderReflectors(const float & deltaTime);
@@ -49,6 +49,8 @@ private:
 	void updateCamera();
 	/** Converts a priority queue into an stl vector.*/
 	static std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest);
+	/***/
+	void clear();
 
 
 	// Private Attributes

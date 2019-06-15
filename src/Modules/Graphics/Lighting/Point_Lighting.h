@@ -82,7 +82,6 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		world.addLevelListener(&m_outOfDate);
 		m_notifyLight = world.addNotifyOnComponentType("LightPoint_Component", [&](BaseECSComponent * c) {
 			auto * component = (LightPoint_Component*)c;
 			component->m_lightIndex = m_lightBuffer.newElement();
@@ -101,6 +100,16 @@ public:
 				m_shadowBuffer[*component->m_shadowIndex].lightPV[x] = glm::mat4(1.0f);
 				m_shadowBuffer[*component->m_shadowIndex].inversePV[x] = glm::mat4(1.0f);
 			}
+		});
+
+		// World-Changed Callback
+		world.addLevelListener([&](const World_Module::WorldState & state) {
+			if (state == World_Module::unloaded) {
+				clear();
+				m_outOfDate = false;
+			}
+			else if (state == World_Module::finishLoading || state == World_Module::updated)
+				m_outOfDate = true;
 		});
 	}
 
@@ -163,8 +172,6 @@ public:
 			m_lightBuffer[index].LightRadius = lightComponent->m_radius;
 			lightIndices.push_back((GLuint)index);
 			if (shadowComponent) {
-				if (m_outOfDate)
-					shadowComponent->m_outOfDate = true;
 				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 			}
@@ -209,8 +216,7 @@ private:
 			shadow->m_updateTime = m_engine->getTime();
 		}
 
-		if (m_outOfDate)
-			m_outOfDate = false;
+		m_outOfDate = false;
 		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 	}
 	/** Render all the lights. */
@@ -270,6 +276,14 @@ private:
 
 		return outList;
 	}
+	/***/
+	void clear() {
+		const size_t lightSize = 0;
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+		m_shadowsToUpdate.clear();
+		m_lightBuffer.clear();
+		m_shadowBuffer.clear();
+	}
 
 
 	// Private Attributes
@@ -282,7 +296,7 @@ private:
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 	DynamicBuffer m_visLights, m_visShadows;
 	std::vector<std::pair<LightPoint_Component*, LightPointShadow_Component*>> m_shadowsToUpdate;
-	bool m_outOfDate = true;
+	bool m_outOfDate = false;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	int m_notifyLight = -1, m_notifyShadow = -1;
 
