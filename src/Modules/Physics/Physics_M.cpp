@@ -44,6 +44,9 @@ void Physics_Module::initialize(Engine * engine)
 
 void Physics_Module::frameTick(const float & deltaTime)
 {
-	m_world->stepSimulation(deltaTime);
-	m_engine->getModule_World().updateSystems(m_physicsSystems, deltaTime);
+	if (m_engine->getModule_World().checkIfLoaded()) {
+		// Only update simulation if engine is READY
+		m_world->stepSimulation(deltaTime);
+		m_engine->getModule_World().updateSystems(m_physicsSystems, deltaTime);
+	}
 }

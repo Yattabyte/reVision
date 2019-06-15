@@ -2,7 +2,7 @@
 #ifndef LOADINGINDICATOR_H
 #define LOADINGINDICATOR_H
 
-#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
+#include "Modules/Game/Overlays/Overlay.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
@@ -11,7 +11,7 @@
 
 
 /** Graphics effect responsible for showing a loading spinner ring while the engine is loading. */
-class LoadingIndicator : public GFX_PP_Effect {
+class LoadingIndicator : public Overlay {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -44,7 +44,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_texture->existsYet())
 			return;
 		m_blendAmt += (!m_engine->getModule_World().checkIfLoaded()) ? deltaTime : -deltaTime;

@@ -15,7 +15,7 @@ public:
 	const enum interact {
 		on_resume_game = last_interact_index,
 		on_options,
-		on_quit,
+		on_end,
 	};
 
 
@@ -38,7 +38,7 @@ public:
 		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { returnFromOptions(); });
 
 		// Add 'Quit' button
-		addButton(engine, "QUIT", [&]() { quit(); });
+		addButton(engine, "END GAME", [&]() { quit(); });
 		
 		// Callbacks
 		addCallback(UI_Element::on_resize, [&]() {
@@ -76,8 +76,7 @@ protected:
 	/** Choose 'quit' from the pause menu. */
 	inline void quit() {
 		m_engine->getModule_UI().clear();
-		m_engine->shutDown();
-		enactCallback(on_quit);
+		enactCallback(on_end);
 	}
 
 

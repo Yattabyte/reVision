@@ -10,8 +10,8 @@
 #include "Managers/SoundManager.h"
 
 // Modules
+#include "Modules/Game/Game_M.h"
 #include "Modules/Graphics/Graphics_M.h"
-#include "Modules/Post Processing/Post_Processing_M.h"
 #include "Modules/Physics/Physics_M.h"
 #include "Modules/UI/UI_M.h"
 #include "Modules/World/World_M.h"
@@ -23,7 +23,6 @@
 #include "Utilities/MappedChar.h"
 
 // Other
-#include "States/EngineState.h"
 #include <string>
 
 
@@ -73,8 +72,6 @@ public:
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
 	void setMouseInputMode(const MouseInputMode & mode);
-	/** Set the engine state, such as main menu, in game, etc. */
-	void setEngineState(EngineState * engineState);
 
 
 	// Public Accessors
@@ -106,10 +103,10 @@ public:
 	SoundManager & getManager_Sounds() { return m_soundManager; }
 
 	// Module Accessors
+	/** Returns this engine's game module. */
+	Game_Module & getModule_Game() { return m_moduleGame; }
 	/** Returns this engine's graphics module. */
 	Graphics_Module & getModule_Graphics() { return m_moduleGraphics; }
-	/** Returns this engine's post-processing module. */
-	Post_Processing_Module & getModule_PostProcess() { return m_modulePProcess; }
 	/** Returns this engine's user-interface module. */
 	UI_Module & getModule_UI() { return m_moduleUI; }
 	/** Returns this engine's physics module. */
@@ -157,13 +154,10 @@ private:
 
 	// Private Modules
 	World_Module m_moduleWorld;
+	Game_Module m_moduleGame;
 	Graphics_Module m_moduleGraphics;
-	Post_Processing_Module m_modulePProcess;
 	UI_Module m_moduleUI;
-	Physics_Module m_modulePhysics;
-	
-	// Private Engine State
-	EngineState * m_engineState = nullptr;
+	Physics_Module m_modulePhysics;	
 };
 
 #endif // ENGINE_H

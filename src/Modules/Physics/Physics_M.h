@@ -27,7 +27,7 @@ public:
 	// Public Methods
 	/** Returns a pointer to the physics-world.
 	@return				the physics world. */
-	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }
+	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }	
 
 
 private:

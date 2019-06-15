@@ -36,7 +36,7 @@ struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
 struct LightPointShadow_Component : public ECSComponent<LightPointShadow_Component> {
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
-	bool m_outOfDate = true;
+	bool m_outOfDate = false;
 	size_t * m_shadowIndex = nullptr;
 };
 
@@ -54,7 +54,7 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component> {
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = 0;
-	bool m_outOfDate = true;
+	bool m_outOfDate = false;
 	size_t * m_shadowIndex = nullptr;
 };
 
@@ -62,7 +62,7 @@ struct LightSpotShadow_Component : public ECSComponent<LightSpotShadow_Component
 struct Reflector_Component : public ECSComponent<Reflector_Component> {
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = 0;
-	bool m_outOfDate = true;
+	bool m_outOfDate = false;
 	CameraBuffer::BufferStructure m_Cameradata[6];
 	size_t * m_reflectorIndex = nullptr;
 };

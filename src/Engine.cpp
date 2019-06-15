@@ -10,9 +10,6 @@
 #include "Utilities/IO/Image_IO.h"
 #include "Utilities/IO/Mesh_IO.h"
 
-// Starting States Used
-#include "States/MainMenuState.h"
-
 
 constexpr int DESIRED_OGL_VER_MAJOR = 4;
 constexpr int DESIRED_OGL_VER_MINOR = 5;
@@ -105,7 +102,7 @@ Engine::Engine() :
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > reVision Engine:\t\t\t*");
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + "\t\t\t*");
-	m_messageManager.statement("*  - Build Date   June 14th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   June 15th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t*");
@@ -185,9 +182,9 @@ Engine::Engine() :
 	m_moduleWorld.initialize(this);
 	m_modelManager.initialize();
 	m_moduleGraphics.initialize(this);
-	m_modulePProcess.initialize(this);
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
+	m_moduleGame.initialize(this);
 
 	const unsigned int maxThreads = std::max(1u, std::thread::hardware_concurrency());
 	for (unsigned int x = 0; x < maxThreads; ++x) {
@@ -197,9 +194,6 @@ Engine::Engine() :
 		workerThread.detach();
 		m_threads.push_back(std::move(std::make_pair(std::move(workerThread), std::move(exitSignal))));
 	}
-
-	// Initialize starting state LAST
-	m_engineState = new MainMenuState(this);
 }
 
 void Engine::tick()
@@ -232,8 +226,11 @@ void Engine::tick()
 	// Update UI module based on action state, manually
 	m_moduleUI.applyActionState(m_actionState);
 	
-	// Call on specialized engine-state-tick-handler
-	m_engineState->handleTick(deltaTime);
+	// Update all modules
+	Engine_Module * modules[5] = { &m_moduleWorld, &m_modulePhysics, &m_moduleGame, &m_moduleGraphics, &m_moduleUI };
+	for each (auto * module in modules)
+		module->frameTick(deltaTime);
+	m_moduleGame.renderOverlays(deltaTime); // This is done last so they can appear over-top
 
 	// Swap buffers and end
 	glfwSwapBuffers(m_renderingContext.window);
@@ -272,18 +269,6 @@ void Engine::setMouseInputMode(const MouseInputMode & mode)
 		glfwSetInputMode(m_renderingContext.window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetCursorPos(m_renderingContext.window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
 		break;
-	}
-}
-
-void Engine::setEngineState(EngineState * engineState)
-{
-	// Check if valid and different
-	if (engineState && engineState != m_engineState) {
-		// If old one existed, delete it
-		if (m_engineState)
-			delete m_engineState;
-		// Make new one current
-		m_engineState = engineState;
 	}
 }
 

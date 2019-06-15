@@ -2,7 +2,7 @@
 #ifndef FRAMETIME_COUNTER_H
 #define FRAMETIME_COUNTER_H
 
-#include "Modules/Post Processing/Effects/GFX_PP_Effect.h"
+#include "Modules/Game/Overlays/Overlay.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
@@ -12,7 +12,7 @@
 
 
 /** A post-processing technique for writing the frame time to the screen. */
-class Frametime_Counter : public GFX_PP_Effect {
+class Frametime_Counter : public Overlay {
 public:
 	// Public (de)Constructors
 	/** Virtual Destructor. */
@@ -39,7 +39,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void applyEffect(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet() || !m_numberTexture->existsYet())
 			return;
 		glEnable(GL_BLEND);
