@@ -25,9 +25,6 @@ public:
 	inline ~Spot_Lighting() {
 		// Update indicator
 		m_aliveIndicator = false;
-		auto & world = m_engine->getModule_World();
-		world.removeNotifyOnComponentType("LightSpot_Component", m_notifyLight);
-		world.removeNotifyOnComponentType("LightSpotShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
 	inline Spot_Lighting(Engine * engine, Prop_View * propView)
@@ -82,11 +79,11 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		m_notifyLight = world.addNotifyOnComponentType("LightSpot_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(LightSpot_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (LightSpot_Component*)c;
 			component->m_lightIndex = m_lightBuffer.newElement();
 		});
-		m_notifyShadow = world.addNotifyOnComponentType("LightSpotShadow_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(LightSpotShadow_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (LightSpotShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 2);
 			component->m_shadowIndex = m_shadowBuffer.newElement();
@@ -295,7 +292,6 @@ private:
 	std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> m_shadowsToUpdate;
 	bool m_outOfDate = false;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	int m_notifyLight = -1, m_notifyShadow = -1;
 
 	// Core Lighting Data
 	/** OpenGL buffer for spot lights. */

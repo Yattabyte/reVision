@@ -103,14 +103,10 @@ public:
 	@param	name				the component class name. */
 	void removeComponentType(const char * name);
 	/** Add a callback method for when a component of the given type is created.
-	@param	name				the component class name. 
-	@param	func				the function to callback when a component of class name is created. 
-	@return						index to use for removing the notification. */
-	int addNotifyOnComponentType(const char * name, const std::function<void(BaseECSComponent *)> & func);
-	/** Remove a notification function from being called back on component creation.
-	@param	name				the component class name.
-	@param	index				index to delete the function from (given when notification category added). */
-	void removeNotifyOnComponentType(const char * name, const int & index);
+	@param	ID					the component class ID. 
+	@param	alive				a shared pointer indicating whether the caller is still alive or not.
+	@param	func				the function to callback when a component of class name is created. */
+	void addNotifyOnComponentType(const uint32_t & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent *)> & func);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -183,7 +179,7 @@ private:
 	std::map<uint32_t, std::vector<uint8_t>> m_components;
 	std::vector<std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t>>>*> m_entities;
 	MappedChar<std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
-	MappedChar<std::vector<std::function<void(BaseECSComponent*)>>> m_constructionNotifyees;
+	std::map<uint32_t, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(BaseECSComponent*)>>>> m_constructionNotifyees;
 	Shared_Level m_level;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;

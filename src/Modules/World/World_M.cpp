@@ -99,6 +99,11 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 			delete newEntity;
 			return NULL_ENTITY_HANDLE;
 		}
+
+		// Notify component construction-observers
+		if (m_constructionNotifyees.find(componentIDs[i]) != m_constructionNotifyees.end())
+			for (const auto[alive, func] : m_constructionNotifyees[componentIDs[i]])
+				func(entityComponents[i]);
 		addComponentInternal(handle, newEntity->second, componentIDs[i], entityComponents[i]);
 	}
 
@@ -131,18 +136,9 @@ void World_Module::removeComponentType(const char * name)
 	m_constructorMap.erase(name);
 }
 
-int World_Module::addNotifyOnComponentType(const char * name, const std::function<void(BaseECSComponent*)>& func)
+void World_Module::addNotifyOnComponentType(const uint32_t & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent*)>& func)
 {
-	const int index = (int)m_constructionNotifyees[name].size();
-	m_constructionNotifyees[name].push_back(func);
-	return index;
-}
-
-void World_Module::removeNotifyOnComponentType(const char * name, const int & index)
-{
-	// Unless we want to generate handles that we must deal with internally, just overwrite the index specified
-	if (index > -1)
-		m_constructionNotifyees[name][index] = [](auto) {};
+	m_constructionNotifyees[ID].push_back(std::make_pair(alive, func));
 }
 
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
@@ -177,18 +173,14 @@ void World_Module::processLevel()
 		for each (auto & lvlEntity in m_level->m_entities) {
 			for each (const auto & lvlComponent in lvlEntity.components) {
 				// Get component type
-				type = lvlComponent.type.c_str();
+				type = lvlComponent.  type.c_str();
 				// Call the appropriate creator if available
 				if (m_constructorMap.find(type)) {
-					auto ret = m_constructorMap[type](lvlComponent.parameters);
-					if (ret.second != nullptr) {
-						components.push_back(ret.second);
-						ids.push_back(ret.first);
+					const auto [ID, component] = m_constructorMap[type](lvlComponent.parameters);
+					if (component != nullptr) {
+						components.push_back(component);
+						ids.push_back(ID);
 					}
-					// Notify component construction-observers
-					if (m_constructionNotifyees.find(type))
-						for each (const auto func in m_constructionNotifyees[type])
-							func(ret.second);
 				}
 			}
 			// Make an entity out of the available components
@@ -206,9 +198,15 @@ void World_Module::processLevel()
 void World_Module::notifyListeners(const WorldState & state)
 {
 	// Get all callback functions, and call them if their owners are still alive
-	for (const auto & [alive, func] : m_notifyees)
+	for (int x = 0; x < (int)m_notifyees.size(); ++x) {
+		const auto &[alive, func] = m_notifyees[x];
 		if (alive && *(alive.get()) == true)
 			func(state);
+		else {
+			m_notifyees.erase(m_notifyees.begin() + x);
+			x--;
+		}
+	}
 	m_state = state;
 }
 

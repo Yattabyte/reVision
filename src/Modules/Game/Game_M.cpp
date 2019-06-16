@@ -63,18 +63,21 @@ void Game_Module::initialize(Engine * engine)
 
 void Game_Module::frameTick(const float & deltaTime)
 {
-	// Handle GLOBAL user input
 	auto & actionState = m_engine->getActionState();
-	if (m_gameState == in_game) {
-		if (m_engine->getMouseInputMode() == Engine::FREE_LOOK) {
-			actionState[ActionState::LOOK_X] = actionState[ActionState::MOUSE_X];
-			actionState[ActionState::LOOK_Y] = actionState[ActionState::MOUSE_Y];
-		}
-	}
 	if (m_gameState == in_pauseMenu || m_gameState == in_game) {
 		// Check if we should show the overlay
 		if (actionState.isAction(ActionState::UI_ESCAPE) == ActionState::PRESS)
 			showPauseMenu(m_gameState == in_game ? true : false);
+
+		// Handle GLOBAL user input
+		if (m_gameState == in_game) {
+			if (m_engine->getMouseInputMode() == Engine::FREE_LOOK) {
+				actionState[ActionState::LOOK_X] = actionState[ActionState::MOUSE_X];
+				actionState[ActionState::LOOK_Y] = actionState[ActionState::MOUSE_Y];
+				actionState[ActionState::FIRE1] = actionState[ActionState::MOUSE_L];
+				actionState[ActionState::FIRE2] = actionState[ActionState::MOUSE_R];
+			}
+		}
 	}
 
 	// Update our own ECS systems

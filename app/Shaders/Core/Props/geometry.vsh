@@ -5,6 +5,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint isStatic;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
@@ -49,7 +50,7 @@ void main()
 	const uint PropIndex 		= propIndexes[gl_DrawID];
 	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
-	if (SkeletonIndex != -1) {	
+	if (SkeletonIndex >= 0) {	
 		BoneTransform 			= skeletonBuffer[SkeletonIndex].bones[BoneIDs[0]] * Weights[0];
 		BoneTransform 	   	   += skeletonBuffer[SkeletonIndex].bones[BoneIDs[1]] * Weights[1];
 		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[2]] * Weights[2];

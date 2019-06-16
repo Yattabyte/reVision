@@ -46,7 +46,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyTechnique(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;
 		// Extract bright regions from lighting buffer
 		m_shaderBloomExtract->bind();

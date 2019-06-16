@@ -13,9 +13,10 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Model m_model;
 	unsigned int m_skin = 0u;
 	float m_radius = 1.0f;
+	bool m_static = true;
 	glm::vec3 m_position = glm::vec3(0.0f);
-	glm::mat4 mMatrix;
-	glm::mat4 bBoxMatrix;
+	glm::mat4 mMatrix = glm::mat4(1.0f);
+	glm::mat4 bBoxMatrix = glm::mat4(1.0f);
 	std::shared_ptr<size_t> m_propBufferIndex = 0ull;
 };
 

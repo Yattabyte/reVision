@@ -52,6 +52,7 @@ public:
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 		glDisable(GL_BLEND);
+		glBindTextureUnit(0, m_gfxFBOS->getTexID("LIGHTING", 0));
 	}
 
 

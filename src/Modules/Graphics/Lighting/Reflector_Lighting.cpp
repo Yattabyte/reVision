@@ -7,8 +7,6 @@ Reflector_Lighting::~Reflector_Lighting()
 {
 	// Update indicator
 	m_aliveIndicator = false;
-	auto & world = m_engine->getModule_World();
-	world.removeNotifyOnComponentType("Reflector_Component", m_notifyReflector);
 }
 
 Reflector_Lighting::Reflector_Lighting(Engine * engine)
@@ -84,7 +82,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 
 	// Add New Component Types
 	auto & world = m_engine->getModule_World();	
-	m_notifyReflector = world.addNotifyOnComponentType("Reflector_Component", [&](BaseECSComponent * c) {
+	world.addNotifyOnComponentType(Reflector_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 		auto * component = (Reflector_Component*)c;
 		auto envCount = (int)(m_reflectorBuffer.getLength() * 6);
 		component->m_reflectorIndex = m_reflectorBuffer.newElement();

@@ -6,6 +6,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint isStatic;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
@@ -71,8 +72,7 @@ void main()
 	const uint PropIndex 		= propIndexes[gl_DrawID];
 	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
-	const bool isStatic 		= SkeletonIndex == -1 ? true : false;
-	if (!isStatic) {	
+	if (SkeletonIndex >= 0) {	
 		BoneTransform 			= skeletonBuffer[SkeletonIndex].bones[boneIDs[0]] * weights[0];
 		BoneTransform 	   	   += skeletonBuffer[SkeletonIndex].bones[boneIDs[1]] * weights[1];
 		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[boneIDs[2]] * weights[2];
@@ -92,5 +92,5 @@ void main()
 	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;	
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
 	gl_Position           		= shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * WorldVertex;	
-	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + (int(isStatic) * 6);	
+	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + int(propBuffer[PropIndex].isStatic * 6);	
 }

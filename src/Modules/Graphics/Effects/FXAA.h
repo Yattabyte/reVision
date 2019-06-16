@@ -40,7 +40,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyTechnique(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;
 
 		// Apply FXAA effect

@@ -5,6 +5,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/TransformComponent.h"
 #include "Modules/Game/ECS/components.h"
+#include "Modules/Graphics/Geometry/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -61,9 +62,25 @@ public:
 				deltaPosition += glm::vec3(-moveAmount, 0, 0);
 			if (actionState.isAction(ActionState::RIGHT))
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
+			if (actionState.isAction(ActionState::FIRE1)) {
+				auto & world = m_engine->getModule_World();
+				Prop_Component prop;
+				prop.m_static = false;
+				prop.m_model = Shared_Model(m_engine, "Test\\ChamferedCube.obj");
+				Transform_Component trans;
+				auto dir = glm::inverse(rotationMatrix) * glm::vec4(0, 0, -1, 1);
+				dir /= dir.w;
+				trans.m_transform = transform;
+				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
+				trans.m_transform.update();
+				BaseECSComponent * components[] = { &prop, &trans };
+				uint32_t types[] = { Prop_Component::ID, Transform_Component::ID };
+				world.makeEntity(components, types, 2ull);
+			}
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
 			transform.m_position += glm::vec3(rotatedPosition / rotatedPosition.w);
+			transform.update();
 
 			// Update the engine pointer
 			(*graphicsModule.getCameraBuffer())->EyePosition = transform.m_position;

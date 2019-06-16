@@ -108,9 +108,9 @@ public:
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
 			if (!propComponent->m_model->existsYet())
 				continue; // Skip if prop isn't ready
-			if (skeletonComponent == nullptr && renderDynamic && !renderStatic)
+			if (renderDynamic && !renderStatic && propComponent->m_static)
 				continue; // Skip if we aren't supporting static props	
-			else if (skeletonComponent && renderStatic && !renderDynamic)
+			else if (renderStatic && !renderDynamic && !propComponent->m_static)
 				continue; // Skip if we aren't supporting dynamic props		
 
 			const auto & offset = propComponent->m_model->m_offset;

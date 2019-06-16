@@ -22,10 +22,6 @@ public:
 	// Public (de)Constructors
 	/** Destructor. */
 	inline ~Prop_View() {
-		auto & world = m_engine->getModule_World();
-		world.removeNotifyOnComponentType("Prop_Component", m_notifyProp);
-		world.removeNotifyOnComponentType("Skeleton_Component", m_notifySkeleton);
-
 		// Update indicator
 		m_aliveIndicator = false;
 	}
@@ -49,12 +45,12 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		m_notifyProp = world.addNotifyOnComponentType("Prop_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(Prop_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Prop_Component*)c;
 			component->m_propBufferIndex = m_propBuffer.newElement();
 			m_propBuffer[*component->m_propBufferIndex].materialID = component->m_skin;
 		});
-		m_notifySkeleton = world.addNotifyOnComponentType("Skeleton_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(Skeleton_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Skeleton_Component*)c;
 			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
 			for (int x = 0; x < NUM_MAX_BONES; ++x)
@@ -146,6 +142,7 @@ public:
 
 			// Sync Animation Attributes
 			if (skeletonComponent) {
+				propComponent->m_static = false;
 				auto & bones = m_skeletonBuffer[*skeletonComponent->m_skeleBufferIndex].bones;
 				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 					bones[i] = skeletonComponent->m_transforms[i];
@@ -153,6 +150,7 @@ public:
 
 			// Sync Prop Attributes
 			m_propBuffer[index].materialID = propComponent->m_skin;
+			m_propBuffer[index].isStatic = propComponent->m_static;
 			m_propBuffer[index].mMatrix = propComponent->mMatrix;
 			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;
 
@@ -210,13 +208,13 @@ private:
 	Shared_Primitive m_shapeCube;
 	GLsizei m_propCount = 0;
 	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
-	int m_notifyProp = -1, m_notifySkeleton = -1;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Core Prop Data
 	/** OpenGL buffer for props. */
 	struct Prop_Buffer {
-		GLuint materialID; glm::vec3 padding1;
+		GLuint materialID; 
+		GLuint isStatic; glm::vec2 padding1;
 		glm::mat4 mMatrix;
 		glm::mat4 bBoxMatrix;
 	};

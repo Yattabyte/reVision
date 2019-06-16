@@ -5,6 +5,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint isStatic;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
@@ -42,8 +43,7 @@ layout (location = 1) uniform int ShadowIndex = 0;
 
 void main()
 {	
-	int shadowOffset = skeletonIndexes[gl_DrawID] == -1 ? 6 : 0;
 	gl_Position = shadowBuffers[ShadowIndex].lightPV[gl_InstanceID] * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex, 1.0);		
-	gl_Layer = shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + shadowOffset;
+	gl_Layer = shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID + int(propBuffer[propIndexes[gl_DrawID]].isStatic * 6);
 	id = gl_DrawID;
 }

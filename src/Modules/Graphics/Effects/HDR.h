@@ -41,7 +41,7 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void applyTechnique(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;
 
 		// Write HDR effect to own framebuffer

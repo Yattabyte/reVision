@@ -63,7 +63,6 @@ private:
 	std::vector<Reflector_Component*> m_reflectorsToUpdate;
 	bool m_outOfDate = true;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	int m_notifyReflector = -1;
 
 	// Reflector POV rendering
 	std::shared_ptr<CameraBuffer> m_reflectorCamera;

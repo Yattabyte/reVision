@@ -27,9 +27,6 @@ public:
 	inline ~Directional_Lighting() {
 		// Update indicator
 		m_aliveIndicator = false;
-		auto & world = m_engine->getModule_World();
-		world.removeNotifyOnComponentType("LightDirectional_Component", m_notifyLight);
-		world.removeNotifyOnComponentType("LightDirectionalShadow_Component", m_notifyShadow);
 	}
 	/** Constructor. */
 	inline Directional_Lighting(Engine * engine, Prop_View * propView)
@@ -100,11 +97,11 @@ public:
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
-		m_notifyLight = world.addNotifyOnComponentType("LightDirectional_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(LightDirectional_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (LightDirectional_Component*)c;
 			component->m_lightIndex = m_lightBuffer.newElement();
 		});
-		m_notifyShadow = world.addNotifyOnComponentType("LightDirectionalShadow_Component", [&](BaseECSComponent * c) {
+		world.addNotifyOnComponentType(LightDirectionalShadow_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (LightDirectionalShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 4);
 			component->m_shadowIndex = m_shadowBuffer.newElement();
@@ -344,7 +341,6 @@ private:
 	Prop_Shadow * m_propShadowSystem = nullptr;
 	std::vector<std::pair<LightDirectional_Component*, LightDirectionalShadow_Component*>> m_shadowsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	int m_notifyLight = -1, m_notifyShadow = -1;
 
 	// Core Lighting Data
 	/** OpenGL buffer for directional lights. */
