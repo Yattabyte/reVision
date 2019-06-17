@@ -64,7 +64,7 @@ public:
 	inline BufferStructure * get() {
 		return &m_localData;
 	}
-	/** Create a fence at for the current point in time.
+	/** Create a fence for the current point in time.
 	@param	frameIndex		which frame of this triple buffer to use (0-2). */
 	inline void lockFrame(const size_t & frameIndex) {
 		if (m_fence[frameIndex])

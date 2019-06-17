@@ -9,6 +9,7 @@
 #include "Utilities/GL/DynamicBuffer.h"
 #include <algorithm>
 #include <string>
+#include "Engine.h"
 
 
 /** UI text label class, affords displaying text on the screen. */
@@ -74,6 +75,7 @@ public:
 		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
 
 		// Render
+		const auto frameIndex = m_engine->getCurrentFrame();
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
 		m_shader->bind();
@@ -84,7 +86,7 @@ public:
 		m_shader->setUniform(4, m_enabled);
 		m_shader->setUniform(5, m_color);
 		m_textureFont->bind(0);
-		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, frameIndex);
 		glBindVertexArray(m_vaoID);
 		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -106,7 +108,7 @@ public:
 		data[0] = count;
 		for (int x = 0; x < (int)count; ++x)
 			data[x + 1] = (int)(m_text[x]) - 32;
-		m_bufferString.write(0, sizeof(int)*(count + 1), data.data());
+		m_bufferString.write_immediate(0, sizeof(int)*(count + 1), data.data());
 		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
 
 		// Notify text changed

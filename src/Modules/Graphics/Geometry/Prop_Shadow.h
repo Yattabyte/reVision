@@ -57,11 +57,12 @@ public:
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
 			return;
 
+		const auto frameIndex = m_engine->getCurrentFrame();
 		m_engine->getManager_Materials().bind();
 		m_propView->getPropBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);
 		m_propView->getSkeletonBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-		m_bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+		m_bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, frameIndex);
 
 		// Draw bounding boxes for each model, filling render buffer on successful rasterization
 		glDisable(GL_BLEND);
@@ -74,8 +75,8 @@ public:
 		m_shaderCull->setUniform(0, m_lightIndex);
 		m_shaderCull->setUniform(1, m_shadowIndex);
 		glBindVertexArray(m_shapeCube->m_vaoID);
-		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER, frameIndex);
+		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, frameIndex);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
@@ -90,11 +91,17 @@ public:
 		m_shaderShadow->setUniform(0, m_lightIndex);
 		m_shaderShadow->setUniform(1, m_shadowIndex);
 		glBindVertexArray(*m_modelsVAO);
-		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER, frameIndex);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
 
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
+
+		// Lock this frame index of the buffers
+		m_bufferPropIndex.lockFrame(frameIndex);
+		m_bufferCulling.lockFrame(frameIndex);
+		m_bufferRender.lockFrame(frameIndex);
+		m_bufferSkeletonIndex.lockFrame(frameIndex);
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
@@ -133,10 +140,15 @@ public:
 
 		// Update camera buffers
 		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
-		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
-		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
+		const auto frameIndex = m_engine->getCurrentFrame();
+		m_bufferPropIndex.waitFrame(frameIndex);
+		m_bufferCulling.waitFrame(frameIndex);
+		m_bufferRender.waitFrame(frameIndex);
+		m_bufferSkeletonIndex.waitFrame(frameIndex);
+		m_bufferPropIndex.write(frameIndex, 0, sizeof(GLuint) * m_propCount, visibleIndices.data());
+		m_bufferCulling.write(frameIndex, 0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
+		m_bufferRender.write(frameIndex, 0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(frameIndex, 0, sizeof(int) * m_propCount, skeletonData.data());
 	}
 
 

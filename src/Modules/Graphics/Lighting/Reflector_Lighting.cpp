@@ -117,12 +117,16 @@ void Reflector_Lighting::applyTechnique(const float & deltaTime)
 	// Exit Early
 	if (!m_enabled || !m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
 		return;
+
 	if (!m_renderingSelf) {
 		m_renderingSelf = true;
 		renderScene(deltaTime);
 		m_renderingSelf = false;
 	}
 	renderReflectors(deltaTime);
+
+	// Lock this frame index of the buffers
+	m_visLights.lockFrame(m_engine->getCurrentFrame());
 }
 
 void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
@@ -173,7 +177,9 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 
 	// Update Draw Buffers
 	const size_t & refSize = reflectionIndicies.size();
-	m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
+	const auto frameIndex = m_engine->getCurrentFrame();
+	m_visLights.waitFrame(frameIndex);
+	m_visLights.write(frameIndex, 0, sizeof(GLuint) *refSize, reflectionIndicies.data());
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
 	m_reflectorsToUpdate = PQtoVector(oldest);
 }
@@ -246,20 +252,21 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 
 void Reflector_Lighting::renderReflectors(const float & deltaTime) 
 {
+	const auto frameIndex = m_engine->getCurrentFrame();
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
 
 	// Draw only into depth-stencil buffer
-	m_shaderStencil->bind();										// Shader (reflector)
-	m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
-	m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
-	glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
-	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
-	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
-	m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
-	glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
+	m_shaderStencil->bind();												// Shader (reflector)
+	m_gfxFBOS->bindForWriting("REFLECTION");								// Ensure writing to reflection FBO
+	m_gfxFBOS->bindForReading("GEOMETRY", 0);								// Read from Geometry FBO
+	glBindTextureUnit(4, m_envmapFBO.m_textureID);							// Reflection map (environment texture)
+	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);	// SSBO visible light indices
+	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);			// Reflection buffer
+	m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);						// Draw call buffer
+	glBindVertexArray(m_shapeCube->m_vaoID);								// Quad VAO
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_STENCIL_BUFFER_BIT);

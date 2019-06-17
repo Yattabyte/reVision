@@ -3,6 +3,13 @@
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 
+/******
+maybe just add all the component constructors here? 
+Reasons:
+	- they are used ONLY for MAP loading, because they take in arguments.
+	- this class is the only thing that does map loading
+******/
+
 
 World_Module::~World_Module()
 {

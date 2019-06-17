@@ -125,6 +125,11 @@ public:
 		renderShadows(deltaTime);
 		// Render direct lights
 		renderLights(deltaTime);
+
+		// Lock this frame index of the buffers
+		const auto frameIndex = m_engine->getCurrentFrame();
+		m_visLights.lockFrame(frameIndex);
+		m_visShadows.lockFrame(frameIndex);
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data	
@@ -178,8 +183,11 @@ public:
 
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size();
-		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
-		m_visShadows.write(0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
+		const auto frameIndex = m_engine->getCurrentFrame();
+		m_visLights.waitFrame(frameIndex);
+		m_visShadows.waitFrame(frameIndex);
+		m_visLights.write(frameIndex, 0, sizeof(GLuint) * lightSize, lightIndices.data());
+		m_visShadows.write(frameIndex, 0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)		
 		m_shadowsToUpdate = PQtoVector(oldest);
 	}
@@ -218,20 +226,21 @@ private:
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
+		const auto frameIndex = m_engine->getCurrentFrame();
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Stencil->bind();									// Shader (point)
-		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);			// Shadow map(linear depth texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
-		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
-		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
-		glBindVertexArray(m_shapeSphere->m_vaoID);					// Quad VAO
+		m_shader_Stencil->bind();											// Shader (point)
+		m_gfxFBOS->bindForWriting("LIGHTING");								// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);							// Read from Geometry FBO
+		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);					// Shadow map(linear depth texture)
+		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);	// SSBO visible light indices
+		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);	// SSBO visible shadow indices
+		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
+		glBindVertexArray(m_shapeSphere->m_vaoID);							// Quad VAO
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);
