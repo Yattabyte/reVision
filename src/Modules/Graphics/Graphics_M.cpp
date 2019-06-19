@@ -138,6 +138,9 @@ void Graphics_Module::initialize(Engine * engine)
 
 void Graphics_Module::frameTick(const float & deltaTime)
 {
+	// Prepare rendering pipeline for a new frame, wait for buffers to free
+	m_pipeline->beginFrame();
+
 	// Clear Frame Buffers
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 	m_graphicsFBOS->clear();
@@ -149,11 +152,14 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_cameraBuffer->bind(2);
 	m_volumeRH->updateVolume(m_cameraBuffer);
 
-	// Apply Graphics Pipeline
+	// Render graphics pipeline using current set of buffers
 	render(deltaTime, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
 
 	// Set lock for 3 frames from now
 	m_cameraBuffer->endWriting();
+
+	// Consolidate and prepare for the next frame, swap to next set of buffers
+	m_pipeline->endFrame();
 }
 
 void Graphics_Module::updateCamera()

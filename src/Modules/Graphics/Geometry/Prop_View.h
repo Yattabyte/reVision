@@ -27,7 +27,7 @@ public:
 	}
 	/** Constructor. */
 	inline Prop_View(Engine * engine)
-		: m_engine(engine) {		
+		: m_engine(engine) {
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
@@ -48,13 +48,10 @@ public:
 		world.addNotifyOnComponentType(Prop_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Prop_Component*)c;
 			component->m_propBufferIndex = m_propBuffer.newElement();
-			m_propBuffer[component->m_propBufferIndex].materialID = component->m_skin;
 		});
 		world.addNotifyOnComponentType(Skeleton_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Skeleton_Component*)c;
 			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
-			for (int x = 0; x < NUM_MAX_BONES; ++x)
-				m_skeletonBuffer[component->m_skeleBufferIndex].bones[x] = glm::mat4(1.0f);
 		});
 
 		// World-Changed Callback
@@ -66,6 +63,22 @@ public:
 
 
 	// Public Interface Implementations
+	inline virtual void beginWriting() override {
+		m_propBuffer.beginWriting();
+		m_skeletonBuffer.beginWriting();
+		m_bufferPropIndex.beginWriting();
+		m_bufferCulling.beginWriting();
+		m_bufferRender.beginWriting();
+		m_bufferSkeletonIndex.beginWriting();
+	}
+	inline virtual void endWriting() override {
+		m_propBuffer.endWriting();
+		m_skeletonBuffer.endWriting();
+		m_bufferPropIndex.endWriting();
+		m_bufferCulling.endWriting();
+		m_bufferRender.endWriting();
+		m_bufferSkeletonIndex.endWriting();
+	}
 	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
@@ -102,12 +115,6 @@ public:
 		glBindVertexArray(*m_modelsVAO);
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
-
-		// Lock these buffers until rendering ends
-		m_bufferPropIndex.endWriting();
-		m_bufferCulling.endWriting();
-		m_bufferRender.endWriting();
-		m_bufferSkeletonIndex.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
@@ -143,7 +150,7 @@ public:
 				propComponent->bBoxMatrix = matFinal;
 				propComponent->m_radius = glm::compMax(propComponent->m_model->m_radius * scale);
 				propComponent->m_position = propComponent->m_model->m_bboxCenter + position;
-				
+
 			}
 
 			// Sync Animation Attributes
@@ -162,12 +169,12 @@ public:
 
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 			visibleIndices.push_back((GLuint)*index);
-			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) { 
+			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) {
 				// Allow
 				cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
 			}
-			else { 
+			else {
 				// Skip occlusion culling		
 				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
 				renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
@@ -177,10 +184,6 @@ public:
 
 		// Update camera buffers
 		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.beginWriting();
-		m_bufferCulling.beginWriting();
-		m_bufferRender.beginWriting();
-		m_bufferSkeletonIndex.beginWriting();
 		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
 		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
 		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
@@ -194,7 +197,7 @@ public:
 	inline auto & getPropBuffer() {
 		return m_propBuffer;
 	}
-	/** Retrieve the skeleton buffer. 
+	/** Retrieve the skeleton buffer.
 	@return		the skeleton buffer. */
 	inline auto & getSkeletonBuffer() {
 		return m_skeletonBuffer;
@@ -223,7 +226,7 @@ private:
 	// Core Prop Data
 	/** OpenGL buffer for props. */
 	struct Prop_Buffer {
-		GLuint materialID; 
+		GLuint materialID;
 		GLuint isStatic; glm::vec2 padding1;
 		glm::mat4 mMatrix;
 		glm::mat4 bBoxMatrix;

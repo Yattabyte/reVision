@@ -2,12 +2,12 @@
 #ifndef STATICMAPPEDBUFFER_H
 #define STATICMAPPEDBUFFER_H
 
-#include "Utilities/GL/glad/glad.h"
+#include "Utilities/GL/Buffer_Interface.h"
 #include <utility>
 
 
 /** Encapsulates an OpenGL buffer that is fixed in size, and mapped to system memory. */
-class StaticMappedBuffer {
+class StaticMappedBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~StaticMappedBuffer() {
@@ -38,27 +38,18 @@ public:
 		}
 		return *this;
 	}
+
+
+	// Public Inteface Implementations
+	inline virtual void bindBuffer(const GLenum & target) const override {
+		glBindBuffer(target, m_bufferID);
+	}
+	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
+		glBindBufferBase(target, index, m_bufferID);
+	}
 		
 
 	// Public Methods
-	/** Bind this buffer.
-	@param	target	the target type of this buffer */
-	inline void bindBuffer(const GLenum & target) const {
-		glBindBuffer(target, m_bufferID);
-	}
-	/** Bind this buffer to a particular binding point for shaders.
-	@param	target	the target type of this buffer
-	@param	index	the binding point index to use */
-	inline void bindBufferBase(const GLenum & target, const GLuint & index) const {
-		glBindBufferBase(target, index, m_bufferID);
-	}
-	/** Cast this buffer's pointer to a type, as to allow modifying its underlying data. 
-	@return			the pointer to this data in memory, cast to the type specified
-	@param	<T>		the type to cast this to */
-	template <typename T>
-	inline T castPointer() {
-		return reinterpret_cast<T>(m_bufferPtr);
-	}
 	/** Write the supplied data to GPU memory
 	@param	offset	byte offset from the beginning
 	@param	size	the size of the data to write
@@ -72,10 +63,6 @@ public:
 	@param	data	the data to write */
 	inline void write_immediate(const GLuint & offset, const GLsizeiptr & size, const void * data) {
 		glNamedBufferSubData(m_bufferID, offset, size, data);
-	}
-	/** Retrieve the mapped buffer pointer. */
-	inline void * getBufferPointer() const {
-		return m_bufferPtr;
 	}
 
 

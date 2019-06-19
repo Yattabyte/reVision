@@ -27,17 +27,11 @@ public:
 
 
 	// Public Interface Implementations
+	virtual void beginWriting() override;
+	virtual void endWriting() override;
 	virtual void applyTechnique(const float & deltaTime) override;
 	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override;
 	
-
-	// Public Methods
-	/** Retrieve the reflector buffer.
-	@return		the reflector buffer. */
-	inline auto & getReflectorBuffer() {
-		return m_reflectorBuffer;
-	}
-
 
 private:
 	// Protected Methods
@@ -64,12 +58,6 @@ private:
 	bool m_outOfDate = true;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
-	// Reflector POV rendering
-	std::shared_ptr<CameraBuffer> m_reflectorCamera;
-	std::shared_ptr<Graphics_Framebuffers> m_reflectorFBOS;
-	std::shared_ptr<RH_Volume> m_reflectorVRH;
-	bool m_renderingSelf = false; // used to avoid calling self infinitely
-
 	// Core Lighting Data
 	/** OpenGL buffer for Parallax reflectors. */
 	struct Reflector_Buffer {
@@ -81,6 +69,13 @@ private:
 	};
 	GL_ArrayBuffer<Reflector_Buffer> m_reflectorBuffer;
 	FBO_Env_Reflector m_envmapFBO;
+
+
+	// Reflector POV rendering
+	std::shared_ptr<CameraBuffer> m_reflectorCamera;
+	std::shared_ptr<Graphics_Framebuffers> m_reflectorFBOS;
+	std::shared_ptr<RH_Volume> m_reflectorVRH;
+	bool m_renderingSelf = false; // used to avoid calling self infinitely
 };
 
 #endif // REFLECTOR_LIGHTING_H

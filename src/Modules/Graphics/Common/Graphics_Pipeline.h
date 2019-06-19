@@ -3,6 +3,7 @@
 #define GRAPHICS_PIPELINE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
+#include <memory>
 #include <vector>
 
 
@@ -18,7 +19,11 @@ public:
 	Graphics_Pipeline(Engine * engine);
 
 
-	// Public Interface
+	// Public Methods
+	/***/
+	void beginFrame();
+	/***/
+	void endFrame();
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. */
 	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume);

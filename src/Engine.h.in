@@ -79,8 +79,6 @@ public:
 	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
 	/** Retrieve the current time. */
 	float getTime() const;
-	/** Returns the frame number (triple buffered, so either 0, 1, 2).*/
-	inline int getCurrentFrame() const { return m_frameCount; }
 	/** Returns this engine's rendering context. */
 	GLFWwindow * getRenderingContext() const;
 	/** Return a list of available resolutions. */
@@ -134,7 +132,6 @@ private:
 	// Private Attributes
 	float m_lastTime = 0;
 	float m_frameAccumulator = 0;
-	int m_frameCount = 0;
 	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;

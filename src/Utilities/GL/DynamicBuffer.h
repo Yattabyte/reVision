@@ -2,21 +2,19 @@
 #ifndef DYNAMICBUFFER_H
 #define DYNAMICBUFFER_H
 
-#include "Utilities/GL/glad/glad.h"
+#include "Utilities/GL/Buffer_Interface.h"
 #include <utility>
 
 
 /** An OpenGL framebuffer encapsulation, which can change in size. */
-class DynamicBuffer {
+class DynamicBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~DynamicBuffer() {
-		if (m_bufferID != 0) {
-			glUnmapNamedBuffer(m_bufferID[0]);
-			glUnmapNamedBuffer(m_bufferID[1]);
-			glUnmapNamedBuffer(m_bufferID[2]);
-			glDeleteBuffers(3, m_bufferID);
-		}
+		glUnmapNamedBuffer(m_bufferID[0]);
+		glUnmapNamedBuffer(m_bufferID[1]);
+		glUnmapNamedBuffer(m_bufferID[2]);
+		glDeleteBuffers(3, m_bufferID);
 	}
 	/** Default. */
 	inline DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)
@@ -49,18 +47,16 @@ public:
 	}
 
 
-	// Public Methods
-	/** Bind this buffer.
-	@param	target		the target type of this buffer.	*/
-	inline void bindBuffer(const GLenum & target) const {
+	// Public Inteface Implementations
+	inline virtual void bindBuffer(const GLenum & target) const override {
 		glBindBuffer(target, m_bufferID[m_writeIndex]);
 	}
-	/** Bind this buffer to a particular binding point for shaders.
-	@param	target		the target type of this buffer.
-	@param	index		the binding point index to use. */
-	inline void bindBufferBase(const GLenum & target, const GLuint & index) const {
+	inline virtual void bindBufferBase(const GLenum & target, const GLuint & index) const override {
 		glBindBufferBase(target, index, m_bufferID[m_writeIndex]);
 	}
+
+	
+	// Public Methods
 	/** Expand this buffer to fit the size provided.
 	@param	size		the size to expand up to (if not already larger) */
 	inline void setMaxSize(const GLsizeiptr & size) {
@@ -96,6 +92,17 @@ public:
 			m_maxCapacity += offset + (size * 2);
 
 			for (int x = 0; x < 3; ++x) {
+				// Wait for this buffer in particular
+				if (m_fence[x] != nullptr)
+					while (1) {
+						GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+						if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
+							glDeleteSync(m_fence[x]);
+							m_fence[x] = nullptr;
+							break;
+						}
+					}
+
 				// Create new buffer
 				GLuint newBuffer = 0;
 				glCreateBuffers(1, &newBuffer);

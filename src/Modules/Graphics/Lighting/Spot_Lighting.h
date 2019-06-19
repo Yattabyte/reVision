@@ -110,6 +110,22 @@ public:
 
 
 	// Public Interface Implementations
+	inline virtual void beginWriting() override {
+		m_lightBuffer.beginWriting();
+		m_shadowBuffer.beginWriting();
+		m_visLights.beginWriting();
+		m_visShadows.beginWriting();
+		m_propShadow_Static->beginWriting();
+		m_propShadow_Dynamic->beginWriting();
+	}
+	inline virtual void endWriting() override {
+		m_lightBuffer.endWriting();
+		m_shadowBuffer.endWriting();
+		m_visLights.endWriting();
+		m_visShadows.endWriting();
+		m_propShadow_Static->endWriting();
+		m_propShadow_Dynamic->endWriting();
+	}
 	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
@@ -123,10 +139,6 @@ public:
 		renderShadows(deltaTime);
 		// Render lights
 		renderLights(deltaTime);
-
-		// Lock these buffers until rendering ends
-		m_visLights.endWriting();
-		m_visShadows.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data	
@@ -169,7 +181,9 @@ public:
 			m_lightBuffer[index].LightCutoff = cosf(glm::radians(lightComponent->m_cutoff));
 			lightIndices.push_back((GLuint)*index);
 			if (shadowComponent) {
-				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
+				const auto & shadowIndex = shadowComponent->m_shadowIndex;
+				shadowIndices.push_back((GLint)*shadowIndex);
+				m_shadowBuffer[shadowIndex].Shadow_Spot = shadowComponent->m_shadowSpot;
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
 			}
 			else
@@ -178,8 +192,6 @@ public:
 
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size();
-		m_visLights.beginWriting();
-		m_visShadows.beginWriting();
 		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
 		m_visShadows.write(0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)

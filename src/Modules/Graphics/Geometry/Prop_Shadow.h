@@ -52,6 +52,18 @@ public:
 
 
 	// Public Interface Implementations
+	inline virtual void beginWriting() override {
+		m_bufferPropIndex.beginWriting();
+		m_bufferCulling.beginWriting();
+		m_bufferRender.beginWriting();
+		m_bufferSkeletonIndex.beginWriting();
+	}
+	inline virtual void endWriting() override {
+		m_bufferPropIndex.endWriting();
+		m_bufferCulling.endWriting();
+		m_bufferRender.endWriting();
+		m_bufferSkeletonIndex.endWriting();
+	}
 	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
@@ -95,12 +107,6 @@ public:
 
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
-
-		// Lock these buffers until rendering ends
-		m_bufferPropIndex.endWriting();
-		m_bufferCulling.endWriting();
-		m_bufferRender.endWriting();
-		m_bufferSkeletonIndex.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
@@ -139,10 +145,6 @@ public:
 
 		// Update camera buffers
 		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.beginWriting();
-		m_bufferCulling.beginWriting();
-		m_bufferRender.beginWriting();
-		m_bufferSkeletonIndex.beginWriting();
 		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
 		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
 		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());

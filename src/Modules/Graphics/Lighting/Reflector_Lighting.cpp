@@ -86,19 +86,12 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		auto * component = (Reflector_Component*)c;
 		auto envCount = (int)(m_reflectorBuffer.getLength() * 6);
 		component->m_reflectorIndex = m_reflectorBuffer.newElement();
-		m_reflectorBuffer[component->m_reflectorIndex].CubeSpot = envCount;
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
 		for (int x = 0; x < 6; ++x) {
 			component->m_Cameradata[x].Dimensions = glm::vec2(m_envmapFBO.m_size);
 			component->m_Cameradata[x].FOV = 90.0f;
 		}
-
-		// Default Values
-		m_reflectorBuffer[component->m_reflectorIndex].mMatrix = glm::mat4(1.0f);
-		m_reflectorBuffer[component->m_reflectorIndex].rotMatrix = glm::mat4(1.0f);
-		m_reflectorBuffer[component->m_reflectorIndex].BoxCamPos = glm::vec3(0.0f);
-		m_reflectorBuffer[component->m_reflectorIndex].BoxScale = glm::vec3(1.0f);
 	});
 	
 	// World-Changed Callback
@@ -110,6 +103,18 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		else if (state == World_Module::finishLoading || state == World_Module::updated)
 			m_outOfDate = true;
 	});
+}
+
+void Reflector_Lighting::beginWriting() 
+{
+	m_reflectorBuffer.beginWriting();
+	m_visLights.beginWriting();
+}
+
+void Reflector_Lighting::endWriting()
+{
+	m_reflectorBuffer.endWriting();
+	m_visLights.endWriting();
 }
 
 void Reflector_Lighting::applyTechnique(const float & deltaTime) 
@@ -124,9 +129,6 @@ void Reflector_Lighting::applyTechnique(const float & deltaTime)
 		m_renderingSelf = false;
 	}
 	renderReflectors(deltaTime);
-
-	// Lock these buffers until rendering ends
-	m_visLights.endWriting();
 }
 
 void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
@@ -170,6 +172,9 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			}
 		}
 
+		// Sync Component Attributes
+		m_reflectorBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
+
 		// Update Buffer Attributes
 		reflectionIndicies.push_back(GLuint(*index));
 		oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
@@ -177,7 +182,6 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 
 	// Update Draw Buffers
 	const size_t & refSize = reflectionIndicies.size();
-	m_visLights.beginWriting();
 	m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
 	m_reflectorsToUpdate = PQtoVector(oldest);

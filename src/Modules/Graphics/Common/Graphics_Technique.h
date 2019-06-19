@@ -36,13 +36,17 @@ public:
 	
 
 	// Public Interface
+	/***/
+	inline virtual void beginWriting() {}
+	/***/
+	inline virtual void endWriting() {}
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. */
-	virtual void applyTechnique(const float & deltaTime) {}
+	inline virtual void applyTechnique(const float & deltaTime) {}
 	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
 	@param	deltaTime		the amount of time which passed since last update
 	@param	components		the components to update. */
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {};
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override{};
 
 
 protected:

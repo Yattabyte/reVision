@@ -1,15 +1,13 @@
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Engine.h"
 
-/* Graphics Effects Used */
+/* Rendering Techniques Used */
 #include "Modules/Graphics/Geometry/Prop_Animation.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
 #include "Modules/Graphics/Lighting/Directional_Lighting.h"
 #include "Modules/Graphics/Lighting/Point_Lighting.h"
 #include "Modules/Graphics/Lighting/Spot_Lighting.h"
 #include "Modules/Graphics/Lighting/Reflector_Lighting.h"
-
-/* Other Effects Used */
 #include "Modules/Graphics/Effects/Skybox.h"
 #include "Modules/Graphics/Effects/Radiance_Hints.h"
 #include "Modules/Graphics/Effects/SSAO.h"
@@ -42,6 +40,18 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
 		new FXAA(m_engine),
 		new To_Screen(m_engine)
 	};
+}
+
+void Graphics_Pipeline::beginFrame()
+{
+	for each (auto * tech in m_techniques)
+		tech->beginWriting();
+}
+
+void Graphics_Pipeline::endFrame()
+{
+	for each (auto * tech in m_techniques)
+		tech->endWriting();
 }
 
 void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume)

@@ -105,16 +105,8 @@ public:
 			auto * component = (LightDirectionalShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 4);
 			component->m_shadowIndex = m_shadowBuffer.newElement();
-			m_shadowBuffer[component->m_shadowIndex].Shadow_Spot = shadowSpot;
 			component->m_shadowSpot = shadowSpot;
 			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 4);
-
-			// Default Values
-			m_shadowBuffer[component->m_shadowIndex].lightV = glm::mat4(1.0f);
-			for (int x = 0; x < NUM_CASCADES; ++x) {
-				m_shadowBuffer[component->m_shadowIndex].lightVP[x] = glm::mat4(1.0f);
-				m_shadowBuffer[component->m_shadowIndex].inverseVP[x] = glm::inverse(glm::mat4(1.0f));
-			}
 		});
 
 		// World-Changed Callback
@@ -126,6 +118,20 @@ public:
 
 
 	// Public Interface Implementations
+	inline virtual void beginWriting() override {
+		m_lightBuffer.beginWriting();
+		m_shadowBuffer.beginWriting();
+		m_visLights.beginWriting();
+		m_visShadows.beginWriting();
+		m_propShadowSystem->beginWriting();
+	}
+	inline virtual void endWriting() override {
+		m_lightBuffer.endWriting();
+		m_shadowBuffer.endWriting();
+		m_visLights.endWriting();
+		m_visShadows.endWriting();
+		m_propShadowSystem->endWriting();
+	}
 	inline virtual void applyTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
@@ -141,10 +147,6 @@ public:
 		renderLights(deltaTime);
 		// Render indirect lights
 		renderBounce(deltaTime);
-
-		// Lock these buffers until rendering ends
-		m_visLights.endWriting();
-		m_visShadows.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data
@@ -212,7 +214,8 @@ public:
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			lightIndices.push_back((GLuint)*index);
 			if (shadowComponent) {
-				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
+				const auto & shadowIndex = shadowComponent->m_shadowIndex;
+				shadowIndices.push_back((GLint)*shadowIndex);
 				m_shadowsToUpdate.push_back(std::make_pair(lightComponent, shadowComponent));
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;
@@ -225,10 +228,11 @@ public:
 					const glm::mat4 pvMatrix = pMatrix * shadowComponent->m_mMatrix;
 					const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
 					const glm::vec4 v2 = CamP * v1;
-					m_shadowBuffer[shadowComponent->m_shadowIndex].lightVP[i] = pvMatrix;
-					m_shadowBuffer[shadowComponent->m_shadowIndex].inverseVP[i] = inverse(pvMatrix);
-					m_shadowBuffer[shadowComponent->m_shadowIndex].CascadeEndClipSpace[i] = v2.z;
+					m_shadowBuffer[shadowIndex].lightVP[i] = pvMatrix;
+					m_shadowBuffer[shadowIndex].inverseVP[i] = inverse(pvMatrix);
+					m_shadowBuffer[shadowIndex].CascadeEndClipSpace[i] = v2.z;
 				}
+				m_shadowBuffer[shadowIndex].Shadow_Spot = shadowComponent->m_shadowSpot;
 			}
 			else
 				shadowIndices.push_back(-1);
@@ -237,8 +241,6 @@ public:
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size(), &shadowSize = shadowIndices.size();
 		const GLuint bounceInstanceCount = GLuint(shadowSize * m_bounceSize);
-		m_visLights.beginWriting();
-		m_visShadows.beginWriting();
 		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
 		m_visShadows.write(0, sizeof(GLuint) * shadowSize, shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
