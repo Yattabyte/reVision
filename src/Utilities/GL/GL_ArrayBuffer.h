@@ -5,6 +5,8 @@
 #include "Utilities/GL/glad/glad.h"
 #include <vector>
 
+using GL_AB_Index = std::shared_ptr<size_t>;
+
 /** A data buffer that resides locally as well as on the GPU. 
 Forms an expandable array of elements type T.
 @param	<T>		the type of element to construct an array of. */
@@ -51,9 +53,9 @@ public:
 	// Public Methods
 	/** Add a new element to this array. 
 	@return					pointer to the index into this array (buffer owns pointer). */
-	inline std::shared_ptr<size_t> newElement() {
+	inline GL_AB_Index newElement() {
 		constexpr auto elementSize = sizeof(T);
-		auto index = std::make_shared<size_t>(m_indexPointers.size());
+		GL_AB_Index index = std::make_shared<size_t>(m_indexPointers.size());
 
 		// See if we must expand this container
 		if (m_indexPointers.size() >= m_capacity) {
@@ -88,7 +90,7 @@ public:
 	}
 	/** Remove an element from this array at the index provided. 
 	@param	index			pointer to the index of the element. */
-	inline void removeElement(const size_t * index) {
+	inline void removeElement(const GL_AB_Index & index) {
 		// Decrement the value for every index pointer PAST the input index
 		for (size_t x = (*index) + 1; x < m_indexPointers.size(); ++x)
 			*m_indexPointers[x] -= 1;
@@ -103,8 +105,8 @@ public:
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.
 	@return					reference to the element desired. */
-	inline T& operator [] (const size_t & index) {
-		return m_ptrContainer[index];
+	inline T& operator [] (const GL_AB_Index & index) {
+		return m_ptrContainer[*index];
 	}
 	/** Retrieve the length of this arrayt (the number of elements in it).
 	@return					the number of elemetns in this array. */
@@ -135,7 +137,7 @@ public:
 private:
 	// Private Attributes
 	GLuint m_bufferID = 0;
-	std::vector<std::shared_ptr<size_t>> m_indexPointers;
+	std::vector<GL_AB_Index> m_indexPointers;
 	size_t m_capacity = 0;
 	T * m_ptrContainer = nullptr;
 };

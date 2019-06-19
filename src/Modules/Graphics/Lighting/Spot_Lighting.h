@@ -87,14 +87,14 @@ public:
 			auto * component = (LightSpotShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 2);
 			component->m_shadowIndex = m_shadowBuffer.newElement();
-			m_shadowBuffer[*component->m_shadowIndex].Shadow_Spot = shadowSpot;
+			m_shadowBuffer[component->m_shadowIndex].Shadow_Spot = shadowSpot;
 			component->m_shadowSpot = shadowSpot;
 			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 2);
 
 			// Default Values
-			m_shadowBuffer[*component->m_shadowIndex].lightV = glm::mat4(1.0f);
-			m_shadowBuffer[*component->m_shadowIndex].lightPV = glm::mat4(1.0f);
-			m_shadowBuffer[*component->m_shadowIndex].inversePV = glm::mat4(1.0f);
+			m_shadowBuffer[component->m_shadowIndex].lightV = glm::mat4(1.0f);
+			m_shadowBuffer[component->m_shadowIndex].lightPV = glm::mat4(1.0f);
+			m_shadowBuffer[component->m_shadowIndex].inversePV = glm::mat4(1.0f);
 		});
 
 		// World-Changed Callback
@@ -124,10 +124,9 @@ public:
 		// Render lights
 		renderLights(deltaTime);
 
-		// Lock this frame index of the buffers
-		const auto frameIndex = m_engine->getCurrentFrame();
-		m_visLights.lockFrame(frameIndex);
-		m_visShadows.lockFrame(frameIndex);
+		// Lock these buffers until rendering ends
+		m_visLights.endWriting();
+		m_visShadows.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data	
@@ -137,7 +136,7 @@ public:
 			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
 			LightSpotShadow_Component * shadowComponent = (LightSpotShadow_Component*)componentParam[1];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
-			const auto & index = *lightComponent->m_lightIndex;
+			const auto & index = lightComponent->m_lightIndex;
 
 			// Sync Transform Attributes
 			if (transformComponent) {
@@ -153,7 +152,7 @@ public:
 				m_lightBuffer[index].mMatrix = trans * matRot * scl;
 
 				if (shadowComponent) {
-					const auto & shadowIndex = *shadowComponent->m_shadowIndex;
+					const auto & shadowIndex = shadowComponent->m_shadowIndex;
 					const glm::mat4 pMatrix = glm::perspective(glm::radians(lightComponent->m_cutoff * 2.0f), 1.0f, 0.01f, lightComponent->m_radius * lightComponent->m_radius);
 					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 					m_shadowBuffer[shadowIndex].lightV = trans;
@@ -168,7 +167,7 @@ public:
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			m_lightBuffer[index].LightRadius = lightComponent->m_radius;
 			m_lightBuffer[index].LightCutoff = cosf(glm::radians(lightComponent->m_cutoff));
-			lightIndices.push_back((GLuint)index);
+			lightIndices.push_back((GLuint)*index);
 			if (shadowComponent) {
 				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
 				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
@@ -179,11 +178,10 @@ public:
 
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size();
-		const auto frameIndex = m_engine->getCurrentFrame();
-		m_visLights.waitFrame(frameIndex);
-		m_visShadows.waitFrame(frameIndex);
-		m_visLights.write(frameIndex, 0, sizeof(GLuint) * lightSize, lightIndices.data());
-		m_visShadows.write(frameIndex, 0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
+		m_visLights.beginWriting();
+		m_visShadows.beginWriting();
+		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
+		m_visShadows.write(0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 		m_shadowsToUpdate = PQtoVector(oldest);
 	}
@@ -222,21 +220,20 @@ private:
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
-		const auto frameIndex = m_engine->getCurrentFrame();
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 
 		// Draw only into depth-stencil buffer
-		m_shader_Stencil->bind();												// Shader (spot)
-		m_gfxFBOS->bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);								// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);						// Shadow map (depth texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);	// SSBO visible light indices
-		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);	// SSBO visible shadow indices
-		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);					// Draw call buffer
-		glBindVertexArray(m_shapeCone->m_vaoID);								// Quad VAO
+		m_shader_Stencil->bind();									// Shader (spot)
+		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
+		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
+		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
+		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		glBindVertexArray(m_shapeCone->m_vaoID);					// Quad VAO
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 		glDisable(GL_CULL_FACE);

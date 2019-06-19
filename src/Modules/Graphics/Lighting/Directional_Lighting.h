@@ -105,15 +105,15 @@ public:
 			auto * component = (LightDirectionalShadow_Component*)c;
 			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 4);
 			component->m_shadowIndex = m_shadowBuffer.newElement();
-			m_shadowBuffer[*component->m_shadowIndex].Shadow_Spot = shadowSpot;
+			m_shadowBuffer[component->m_shadowIndex].Shadow_Spot = shadowSpot;
 			component->m_shadowSpot = shadowSpot;
 			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 4);
 
 			// Default Values
-			m_shadowBuffer[*component->m_shadowIndex].lightV = glm::mat4(1.0f);
+			m_shadowBuffer[component->m_shadowIndex].lightV = glm::mat4(1.0f);
 			for (int x = 0; x < NUM_CASCADES; ++x) {
-				m_shadowBuffer[*component->m_shadowIndex].lightVP[x] = glm::mat4(1.0f);
-				m_shadowBuffer[*component->m_shadowIndex].inverseVP[x] = glm::inverse(glm::mat4(1.0f));
+				m_shadowBuffer[component->m_shadowIndex].lightVP[x] = glm::mat4(1.0f);
+				m_shadowBuffer[component->m_shadowIndex].inverseVP[x] = glm::inverse(glm::mat4(1.0f));
 			}
 		});
 
@@ -142,10 +142,9 @@ public:
 		// Render indirect lights
 		renderBounce(deltaTime);
 
-		// Lock this frame index of the buffers
-		const auto frameIndex = m_engine->getCurrentFrame();
-		m_visLights.lockFrame(frameIndex);
-		m_visShadows.lockFrame(frameIndex);
+		// Lock these buffers until rendering ends
+		m_visLights.endWriting();
+		m_visShadows.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate Light Data
@@ -190,7 +189,7 @@ public:
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
-			const auto & index = *lightComponent->m_lightIndex;
+			const auto & index = lightComponent->m_lightIndex;
 
 			// Sync Transform Attributes
 			if (transformComponent) {
@@ -203,7 +202,7 @@ public:
 					const glm::mat4 sunTransform = matRot;
 					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));				
 					shadowComponent->m_mMatrix = sunModelMatrix;
-					m_shadowBuffer[*shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
+					m_shadowBuffer[shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
 				}
 			}
 
@@ -211,7 +210,7 @@ public:
 			m_lightBuffer[index].LightColor = lightComponent->m_color;
 			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
-			lightIndices.push_back((GLuint)index);
+			lightIndices.push_back((GLuint)*index);
 			if (shadowComponent) {
 				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
 				m_shadowsToUpdate.push_back(std::make_pair(lightComponent, shadowComponent));
@@ -226,9 +225,9 @@ public:
 					const glm::mat4 pvMatrix = pMatrix * shadowComponent->m_mMatrix;
 					const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
 					const glm::vec4 v2 = CamP * v1;
-					m_shadowBuffer[*shadowComponent->m_shadowIndex].lightVP[i] = pvMatrix;
-					m_shadowBuffer[*shadowComponent->m_shadowIndex].inverseVP[i] = inverse(pvMatrix);
-					m_shadowBuffer[*shadowComponent->m_shadowIndex].CascadeEndClipSpace[i] = v2.z;
+					m_shadowBuffer[shadowComponent->m_shadowIndex].lightVP[i] = pvMatrix;
+					m_shadowBuffer[shadowComponent->m_shadowIndex].inverseVP[i] = inverse(pvMatrix);
+					m_shadowBuffer[shadowComponent->m_shadowIndex].CascadeEndClipSpace[i] = v2.z;
 				}
 			}
 			else
@@ -238,11 +237,10 @@ public:
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size(), &shadowSize = shadowIndices.size();
 		const GLuint bounceInstanceCount = GLuint(shadowSize * m_bounceSize);
-		const auto frameIndex = m_engine->getCurrentFrame();
-		m_visLights.waitFrame(frameIndex);
-		m_visShadows.waitFrame(frameIndex);
-		m_visLights.write(frameIndex, 0, sizeof(GLuint) * lightSize, lightIndices.data());
-		m_visShadows.write(frameIndex, 0, sizeof(GLuint) * shadowSize, shadowIndices.data());
+		m_visLights.beginWriting();
+		m_visShadows.beginWriting();
+		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
+		m_visShadows.write(0, sizeof(GLuint) * shadowSize, shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
 		m_shadowCount = (GLint)shadowSize;
@@ -274,27 +272,25 @@ private:
 	}
 	/** Render all the lights. */
 	inline void renderLights(const float & deltaTime) {
-		const auto frameIndex = m_engine->getCurrentFrame();
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 
-		m_shader_Lighting->bind();												// Shader (directional)
-		m_gfxFBOS->bindForWriting("LIGHTING");									// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);								// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);						// Shadow map (depth texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);	// SSBO visible light indices
-		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);	// SSBO visible shadow indices
-		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);					// Draw call buffer
-		glBindVertexArray(m_shapeQuad->m_vaoID);								// Quad VAO
-		glDrawArraysIndirect(GL_TRIANGLES, 0);									// Now draw
+		m_shader_Lighting->bind();									// Shader (directional)
+		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
+		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
+		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
+		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
+		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
+		glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
 
 	}
 	/** Render light bounces. */
 	inline void renderBounce(const float & deltaTime) {
-		const auto frameIndex = m_engine->getCurrentFrame();
 		m_shader_Bounce->setUniform(0, m_shadowCount);
 		m_shader_Bounce->setUniform(1, m_volumeRH->m_max);
 		m_shader_Bounce->setUniform(2, m_volumeRH->m_min);
@@ -313,8 +309,8 @@ private:
 		glBindTextureUnit(1, m_shadowFBO.m_textureIDS[1]);
 		glBindTextureUnit(2, m_shadowFBO.m_textureIDS[2]);
 		glBindTextureUnit(4, m_textureNoise32);
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);		// SSBO visible light indices
-		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);		// SSBO visible shadow indices
+		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));

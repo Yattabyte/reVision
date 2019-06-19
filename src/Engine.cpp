@@ -102,7 +102,7 @@ Engine::Engine() :
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > reVision Engine:\t\t\t*");
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + "\t\t\t*");
-	m_messageManager.statement("*  - Build Date   June 15th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   June 18th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
@@ -235,7 +235,6 @@ void Engine::tick()
 	// Swap buffers and end
 	glfwSwapBuffers(m_renderingContext.window);
 	glfwPollEvents();
-	m_frameCount = (m_frameCount + 1) % 3;
 	///*-----------------------------------------------------END FRAME-----------------------------------------------------*///
 }
 

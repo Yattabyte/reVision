@@ -47,7 +47,7 @@ public:
 		// Bayer matrix
 		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_bayerID);
-		glTextureStorage2D(m_bayerID, 1, GL_R8, 4, 4);
+		glTextureStorage2D(m_bayerID, 1, GL_R16F, 4, 4);
 		glTextureSubImage2D(m_bayerID, 0, 0, 0, 4, 4, GL_RED, GL_UNSIGNED_BYTE, &data);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);

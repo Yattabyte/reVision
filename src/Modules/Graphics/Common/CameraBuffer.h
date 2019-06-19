@@ -64,42 +64,40 @@ public:
 	inline BufferStructure * get() {
 		return &m_localData;
 	}
-	/** Create a fence for the current point in time.
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void lockFrame(const size_t & frameIndex) {
-		if (m_fence[frameIndex])
-			glDeleteSync(m_fence[frameIndex]);
-		m_fence[frameIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	}
-	/** Wait for the current fence to pass, for the current frame index.
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void waitFrame(const size_t & frameIndex) {
-		if (m_fence[frameIndex] != nullptr)
+	/** Wait for the current fence to pass, for the current frame index.*/
+	inline void beginWriting() {
+		if (m_fence[m_writeIndex] != nullptr)
 			while (1) {
-				GLenum waitReturn = glClientWaitSync(m_fence[frameIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
 				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-					glDeleteSync(m_fence[frameIndex]);
-					m_fence[frameIndex] = nullptr;
+					glDeleteSync(m_fence[m_writeIndex]);
+					m_fence[m_writeIndex] = nullptr;
 					return;
 				}
 			}
 	}
-	/** Commit the changes held in the local data, to the GPU, for a given frame index. 
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void pushChanges(const size_t & frameIndex) {
-		reinterpret_cast<BufferStructure*>(m_ptr)[frameIndex] = m_localData;
+	/** Create a fence for the current point in time.*/
+	inline void endWriting() {
+		if (m_fence[m_writeIndex])
+			glDeleteSync(m_fence[m_writeIndex]);
+		m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		m_writeIndex = (m_writeIndex + 1) % 3;
+	}
+	/** Commit the changes held in the local data, to the GPU, for a given frame index. */
+	inline void pushChanges() {
+		reinterpret_cast<BufferStructure*>(m_ptr)[m_writeIndex] = m_localData;
 	}
 	/** Bind the GPU representation of this data, for a given frame index. 
-	@param	targetIndex		the binding point for the buffer in the shader.
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void bind(const GLuint & targetIndex, const size_t & frameIndex) const {
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, targetIndex, m_bufferID, sizeof(BufferStructure) * frameIndex, sizeof(BufferStructure));
+	@param	targetIndex		the binding point for the buffer in the shader. */
+	inline void bind(const GLuint & targetIndex) const {
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, targetIndex, m_bufferID, sizeof(BufferStructure) * m_writeIndex, sizeof(BufferStructure));
 	}
 
 
 private:
 	// Private Attributes
 	BufferStructure m_localData;
+	int m_writeIndex = 0;
 	GLuint m_bufferID = 0;
 	void * m_ptr = nullptr;
 	GLsync m_fence[3] = { nullptr, nullptr, nullptr };

@@ -51,26 +51,15 @@ public:
 
 	// Public Methods
 	/** Bind this buffer.
-	@param	target		the target type of this buffer.
-	@param	frameIndex	which frame of this triple buffer to use (0-2).
-	*/
-	inline void bindBuffer(const GLenum & target, const size_t & frameIndex) const {
-		glBindBuffer(target, m_bufferID[frameIndex]);
+	@param	target		the target type of this buffer.	*/
+	inline void bindBuffer(const GLenum & target) const {
+		glBindBuffer(target, m_bufferID[m_writeIndex]);
 	}
 	/** Bind this buffer to a particular binding point for shaders.
 	@param	target		the target type of this buffer.
-	@param	index		the binding point index to use.	
-	@param	frameIndex	which frame of this triple buffer to use (0-2). */
-	inline void bindBufferBase(const GLenum & target, const GLuint & index, const size_t & frameIndex) const {
-		glBindBufferBase(target, index, m_bufferID[frameIndex]);
-	}
-	/** Cast this buffer's pointer to a type, as to allow modifying its underlying data.
-	@param	frameIndex	which frame of this triple buffer to use (0-2).
-	@return				the pointer to this data in memory, cast to the type specified.
-	@param	<T>			the type to cast this to. */
-	template <typename T>
-	inline T castPointer(const size_t & frameIndex) {
-		return reinterpret_cast<T>(m_bufferPtr[frameIndex]);
+	@param	index		the binding point index to use. */
+	inline void bindBufferBase(const GLenum & target, const GLuint & index) const {
+		glBindBufferBase(target, index, m_bufferID[m_writeIndex]);
 	}
 	/** Expand this buffer to fit the size provided.
 	@param	size		the size to expand up to (if not already larger) */
@@ -78,17 +67,14 @@ public:
 		expandToFit(0, size);
 	}
 	/** Write the supplied data to GPU memory.
-	@param	frameIndex	which frame of this triple buffer to use (0-2).
 	@param	offset		byte offset from the beginning.
 	@param	size		the size of the data to write.
 	@param	data		the data to write. */
-	inline void write(const size_t & frameIndex, const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
+	inline void write(const GLsizeiptr & offset, const GLsizeiptr & size, const void * data) {
 		expandToFit(offset, size);
-
-		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[frameIndex]) + offset, data, size);
+		std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[m_writeIndex]) + offset, data, size);
 	}
 	/** Write the supplied data to GPU memory.
-	@param	frameIndex	which frame of this triple buffer to use (0-2).
 	@param	offset		byte offset from the beginning.
 	@param	size		the size of the data to write.
 	@param	data		the data to write. */
@@ -129,30 +115,30 @@ public:
 			}
 		}
 	}
-	/** Create a fence for the current point in time.
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void lockFrame(const size_t & frameIndex) {
-		if (m_fence[frameIndex])
-			glDeleteSync(m_fence[frameIndex]);
-		m_fence[frameIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-	}
-	/** Wait for the current fence to pass, for the current frame index.
-	@param	frameIndex		which frame of this triple buffer to use (0-2). */
-	inline void waitFrame(const size_t & frameIndex) {
-		if (m_fence[frameIndex] != nullptr)
+	/** Wait for the current fence to pass, for the current frame index. */
+	inline void beginWriting() {
+		if (m_fence[m_writeIndex] != nullptr)
 			while (1) {
-				GLenum waitReturn = glClientWaitSync(m_fence[frameIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
 				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-					glDeleteSync(m_fence[frameIndex]);
-					m_fence[frameIndex] = nullptr;
+					glDeleteSync(m_fence[m_writeIndex]);
+					m_fence[m_writeIndex] = nullptr;
 					return;
 				}
 			}
+	}
+	/** Create a fence for the current point in time. */
+	inline void endWriting() {
+		if (m_fence[m_writeIndex])
+			glDeleteSync(m_fence[m_writeIndex]);
+		m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+		m_writeIndex = (m_writeIndex + 1) % 3;
 	}
 
 
 private:
 	// Private Attributes
+	int m_writeIndex = 0;
 	GLuint m_bufferID[3] = { 0,0,0 };
 	void * m_bufferPtr[3] = { nullptr, nullptr, nullptr };
 	GLsync m_fence[3] = { nullptr, nullptr, nullptr };

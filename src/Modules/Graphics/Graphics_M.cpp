@@ -144,16 +144,16 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_volumeRH->clear();
 
 	// Wait on triple-buffered camera lock, then update camera
-	m_cameraBuffer->waitFrame(m_engine->getCurrentFrame());
-	m_cameraBuffer->pushChanges(m_engine->getCurrentFrame());
-	m_cameraBuffer->bind(2, m_engine->getCurrentFrame());
+	m_cameraBuffer->beginWriting();
+	m_cameraBuffer->pushChanges();
+	m_cameraBuffer->bind(2);
 	m_volumeRH->updateVolume(m_cameraBuffer);
 
 	// Apply Graphics Pipeline
 	render(deltaTime, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
 
 	// Set lock for 3 frames from now
-	m_cameraBuffer->lockFrame(m_engine->getCurrentFrame());
+	m_cameraBuffer->endWriting();
 }
 
 void Graphics_Module::updateCamera()

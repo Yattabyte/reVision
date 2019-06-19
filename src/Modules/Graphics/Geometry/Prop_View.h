@@ -48,13 +48,13 @@ public:
 		world.addNotifyOnComponentType(Prop_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Prop_Component*)c;
 			component->m_propBufferIndex = m_propBuffer.newElement();
-			m_propBuffer[*component->m_propBufferIndex].materialID = component->m_skin;
+			m_propBuffer[component->m_propBufferIndex].materialID = component->m_skin;
 		});
 		world.addNotifyOnComponentType(Skeleton_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
 			auto * component = (Skeleton_Component*)c;
 			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
 			for (int x = 0; x < NUM_MAX_BONES; ++x)
-				m_skeletonBuffer[*component->m_skeleBufferIndex].bones[x] = glm::mat4(1.0f);
+				m_skeletonBuffer[component->m_skeleBufferIndex].bones[x] = glm::mat4(1.0f);
 		});
 
 		// World-Changed Callback
@@ -71,12 +71,11 @@ public:
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
 
-		const auto frameIndex = m_engine->getCurrentFrame();
 		m_engine->getManager_Materials().bind();
 		m_propBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4, frameIndex);
+		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-		m_bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6, frameIndex);
+		m_bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 
 		// Draw bounding boxes for each model, filling render buffer on successful rasterization
 		glDisable(GL_BLEND);
@@ -88,8 +87,8 @@ public:
 		m_shaderCull->bind();
 		m_gfxFBOS->bindForWriting("GEOMETRY");
 		glBindVertexArray(m_shapeCube->m_vaoID);
-		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER, frameIndex);
-		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, frameIndex);
+		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
@@ -101,14 +100,14 @@ public:
 		glCullFace(GL_BACK);
 		m_shaderGeometry->bind();
 		glBindVertexArray(*m_modelsVAO);
-		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER, frameIndex);
+		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
-		
-		// Lock this frame index of the buffers
-		m_bufferPropIndex.lockFrame(frameIndex);
-		m_bufferCulling.lockFrame(frameIndex);
-		m_bufferRender.lockFrame(frameIndex);
-		m_bufferSkeletonIndex.lockFrame(frameIndex);
+
+		// Lock these buffers until rendering ends
+		m_bufferPropIndex.endWriting();
+		m_bufferCulling.endWriting();
+		m_bufferRender.endWriting();
+		m_bufferSkeletonIndex.endWriting();
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		// Accumulate draw parameter information per model
@@ -122,7 +121,7 @@ public:
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
-			const auto & index = *propComponent->m_propBufferIndex;
+			const auto & index = propComponent->m_propBufferIndex;
 			if (!propComponent->m_model->existsYet())	continue;
 
 			// Sync Transform Attributes
@@ -150,7 +149,7 @@ public:
 			// Sync Animation Attributes
 			if (skeletonComponent) {
 				propComponent->m_static = false;
-				auto & bones = m_skeletonBuffer[*skeletonComponent->m_skeleBufferIndex].bones;
+				auto & bones = m_skeletonBuffer[skeletonComponent->m_skeleBufferIndex].bones;
 				for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 					bones[i] = skeletonComponent->m_transforms[i];
 			}
@@ -162,7 +161,7 @@ public:
 			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;
 
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
-			visibleIndices.push_back((GLuint)index);
+			visibleIndices.push_back((GLuint)*index);
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, eyePosition)) { 
 				// Allow
 				cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
@@ -178,15 +177,14 @@ public:
 
 		// Update camera buffers
 		m_propCount = (GLsizei)visibleIndices.size();
-		const auto frameIndex = m_engine->getCurrentFrame();
-		m_bufferPropIndex.waitFrame(frameIndex);
-		m_bufferCulling.waitFrame(frameIndex);
-		m_bufferRender.waitFrame(frameIndex);
-		m_bufferSkeletonIndex.waitFrame(frameIndex);
-		m_bufferPropIndex.write(frameIndex, 0, sizeof(GLuint) * m_propCount, visibleIndices.data());
-		m_bufferCulling.write(frameIndex, 0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
-		m_bufferRender.write(frameIndex, 0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(frameIndex, 0, sizeof(int) * m_propCount, skeletonData.data());
+		m_bufferPropIndex.beginWriting();
+		m_bufferCulling.beginWriting();
+		m_bufferRender.beginWriting();
+		m_bufferSkeletonIndex.beginWriting();
+		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
+		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
+		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
 	}
 
 

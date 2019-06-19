@@ -86,7 +86,7 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		auto * component = (Reflector_Component*)c;
 		auto envCount = (int)(m_reflectorBuffer.getLength() * 6);
 		component->m_reflectorIndex = m_reflectorBuffer.newElement();
-		m_reflectorBuffer[*component->m_reflectorIndex].CubeSpot = envCount;
+		m_reflectorBuffer[component->m_reflectorIndex].CubeSpot = envCount;
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
 		for (int x = 0; x < 6; ++x) {
@@ -95,10 +95,10 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		}
 
 		// Default Values
-		m_reflectorBuffer[*component->m_reflectorIndex].mMatrix = glm::mat4(1.0f);
-		m_reflectorBuffer[*component->m_reflectorIndex].rotMatrix = glm::mat4(1.0f);
-		m_reflectorBuffer[*component->m_reflectorIndex].BoxCamPos = glm::vec3(0.0f);
-		m_reflectorBuffer[*component->m_reflectorIndex].BoxScale = glm::vec3(1.0f);
+		m_reflectorBuffer[component->m_reflectorIndex].mMatrix = glm::mat4(1.0f);
+		m_reflectorBuffer[component->m_reflectorIndex].rotMatrix = glm::mat4(1.0f);
+		m_reflectorBuffer[component->m_reflectorIndex].BoxCamPos = glm::vec3(0.0f);
+		m_reflectorBuffer[component->m_reflectorIndex].BoxScale = glm::vec3(1.0f);
 	});
 	
 	// World-Changed Callback
@@ -125,8 +125,8 @@ void Reflector_Lighting::applyTechnique(const float & deltaTime)
 	}
 	renderReflectors(deltaTime);
 
-	// Lock this frame index of the buffers
-	m_visLights.lockFrame(m_engine->getCurrentFrame());
+	// Lock these buffers until rendering ends
+	m_visLights.endWriting();
 }
 
 void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
@@ -138,7 +138,7 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 	for each (const auto & componentParam in components) {
 		Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
 		Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
-		const auto & index = *reflectorComponent->m_reflectorIndex;
+		const auto & index = reflectorComponent->m_reflectorIndex;
 
 		// Sync Transform Attributes
 		if (transformComponent) {
@@ -171,15 +171,14 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 		}
 
 		// Update Buffer Attributes
-		reflectionIndicies.push_back(GLuint(index));
+		reflectionIndicies.push_back(GLuint(*index));
 		oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
 	}
 
 	// Update Draw Buffers
 	const size_t & refSize = reflectionIndicies.size();
-	const auto frameIndex = m_engine->getCurrentFrame();
-	m_visLights.waitFrame(frameIndex);
-	m_visLights.write(frameIndex, 0, sizeof(GLuint) *refSize, reflectionIndicies.data());
+	m_visLights.beginWriting();
+	m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
 	m_reflectorsToUpdate = PQtoVector(oldest);
 }
@@ -196,10 +195,10 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				m_reflectorVRH->clear();
 
 				// Repurpose camera's tripple buffer, use a different section every time
-				m_reflectorCamera->waitFrame(x % 3);
+				m_reflectorCamera->beginWriting();
 				*(m_reflectorCamera.get())->get() = reflector->m_Cameradata[x];
-				m_reflectorCamera->pushChanges(x % 3);
-				m_reflectorCamera->bind(2, x % 3);
+				m_reflectorCamera->pushChanges();
+				m_reflectorCamera->bind(2);
 				m_reflectorVRH->updateVolume(m_reflectorCamera);
 
 				// Apply Graphics Pipeline
@@ -214,7 +213,7 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				glBindVertexArray(m_shapeQuad->m_vaoID);
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-				m_reflectorCamera->lockFrame(x % 3);
+				m_reflectorCamera->endWriting();
 			}
 
 			// Once cubemap is generated, convolute it
@@ -252,21 +251,20 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 
 void Reflector_Lighting::renderReflectors(const float & deltaTime) 
 {
-	const auto frameIndex = m_engine->getCurrentFrame();
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);
 	glBlendEquation(GL_FUNC_ADD);
 	glBlendFunc(GL_ONE, GL_ONE);
 
 	// Draw only into depth-stencil buffer
-	m_shaderStencil->bind();												// Shader (reflector)
-	m_gfxFBOS->bindForWriting("REFLECTION");								// Ensure writing to reflection FBO
-	m_gfxFBOS->bindForReading("GEOMETRY", 0);								// Read from Geometry FBO
-	glBindTextureUnit(4, m_envmapFBO.m_textureID);							// Reflection map (environment texture)
-	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3, frameIndex);	// SSBO visible light indices
-	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);			// Reflection buffer
-	m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);						// Draw call buffer
-	glBindVertexArray(m_shapeCube->m_vaoID);								// Quad VAO
+	m_shaderStencil->bind();										// Shader (reflector)
+	m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
+	m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+	glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
+	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
+	m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
+	glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
 	glEnable(GL_DEPTH_TEST);
 	glDisable(GL_CULL_FACE);
 	glClear(GL_STENCIL_BUFFER_BIT);
