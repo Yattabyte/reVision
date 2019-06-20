@@ -2,6 +2,7 @@
 #ifndef PROP_SHADOW_H
 #define PROP_SHADOW_H
 
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
@@ -35,14 +36,6 @@ public:
 		m_shapeCube = Shared_Primitive(m_engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 
-		// Declare component types used
-		addComponentType(Prop_Component::ID);
-		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
-
-		// Error Reporting
-		if (!isValid())
-			m_engine->getManager_Messages().error("Invalid ECS System: Prop_Shadow");
-		
 		// World-Changed Callback
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
@@ -52,23 +45,95 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void beginWriting() override {
+	inline virtual void beginFrame(const float & deltaTime) override {
 		m_bufferPropIndex.beginWriting();
 		m_bufferCulling.beginWriting();
 		m_bufferRender.beginWriting();
 		m_bufferSkeletonIndex.beginWriting();
 	}
-	inline virtual void endWriting() override {
+	inline virtual void endFrame(const float & deltaTime) override {
 		m_bufferPropIndex.endWriting();
 		m_bufferCulling.endWriting();
 		m_bufferRender.endWriting();
 		m_bufferSkeletonIndex.endWriting();
 	}
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
 			return;
 
+		// Populate render-lists
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ Prop_Component::ID, Skeleton_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			updateVisibility(deltaTime, components);
+		});
+
+		// Apply occlusion culling and render props
+		renderGeometry(deltaTime);
+	}
+
+
+	// Public Methods
+	/** Set critical information relating to the position and buffer indicies for the next draw-call. 
+	@param	lightPosition		the position of the light.
+	@param	lightIndex			the buffer index for the light source.
+	@param	shadowIndex			the buffer index for the shadow source. */
+	inline void setData(const glm::vec3 & lightPosition, const int & lightIndex, const int & shadowIndex) {
+		m_lightPos = lightPosition;
+		m_lightIndex = lightIndex;
+		m_shadowIndex = shadowIndex;
+	}
+
+
+private:
+	// Private Methods
+	/***/
+	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+		// Accumulate draw parameter information per model
+		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
+		std::vector<GLuint> visibleIndices;
+		std::vector<int> skeletonData;
+		const bool renderStatic = m_flags & RenderStatic;
+		const bool renderDynamic = m_flags & RenderDynamic;
+		for each (const auto & componentParam in components) {
+			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
+			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
+			if (!propComponent->m_model->existsYet())
+				continue; // Skip if prop isn't ready
+			if (renderDynamic && !renderStatic && propComponent->m_static)
+				continue; // Skip if we aren't supporting static props	
+			else if (renderStatic && !renderDynamic && !propComponent->m_static)
+				continue; // Skip if we aren't supporting dynamic props		
+
+			const auto & offset = propComponent->m_model->m_offset;
+			const auto & count = propComponent->m_model->m_count;
+			const auto & index = *propComponent->m_propBufferIndex;
+			visibleIndices.push_back((GLuint)index);
+			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
+			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, m_lightPos)) {
+				// Allow
+				cullingDrawData.push_back(glm::ivec4(36, m_instanceCount, 0, 1));
+				renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
+			}
+			else {
+				// Skip occlusion culling		
+				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
+				renderingDrawData.push_back(glm::ivec4(count, m_instanceCount, offset, 1));
+			}
+			skeletonData.push_back(skeletonComponent ? (GLint)*skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
+		}
+
+		// Update camera buffers
+		m_propCount = (GLsizei)visibleIndices.size();
+		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
+		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
+		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
+	}
+	inline void renderGeometry(const float & deltaTime) {
 		m_engine->getManager_Materials().bind();
 		m_propView->getPropBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -108,66 +173,8 @@ public:
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
 	}
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
-		// Accumulate draw parameter information per model
-		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
-		std::vector<GLuint> visibleIndices;
-		std::vector<int> skeletonData;
-		const bool renderStatic = m_flags & RenderStatic;
-		const bool renderDynamic = m_flags & RenderDynamic;
-		for each (const auto & componentParam in components) {
-			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
-			if (!propComponent->m_model->existsYet())
-				continue; // Skip if prop isn't ready
-			if (renderDynamic && !renderStatic && propComponent->m_static)
-				continue; // Skip if we aren't supporting static props	
-			else if (renderStatic && !renderDynamic && !propComponent->m_static)
-				continue; // Skip if we aren't supporting dynamic props		
-
-			const auto & offset = propComponent->m_model->m_offset;
-			const auto & count = propComponent->m_model->m_count;
-			const auto & index = *propComponent->m_propBufferIndex;
-			visibleIndices.push_back((GLuint)index);
-			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
-			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, m_lightPos)) { 
-				// Allow
-				cullingDrawData.push_back(glm::ivec4(36, m_instanceCount, 0, 1));
-				renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
-			}
-			else { 
-				// Skip occlusion culling		
-				cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
-				renderingDrawData.push_back(glm::ivec4(count, m_instanceCount, offset, 1));
-			}
-			skeletonData.push_back(skeletonComponent ? (GLint)*skeletonComponent->m_skeleBufferIndex : -1); // get skeleton ID if this entity has one
-		}
-
-		// Update camera buffers
-		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
-		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
-		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
-	}
-
-
-	// Public Methods
-	/** Set critical information relating to the position and buffer indicies for the next draw-call. 
-	@param	lightPosition		the position of the light.
-	@param	lightIndex			the buffer index for the light source.
-	@param	shadowIndex			the buffer index for the shadow source. */
-	inline void setData(const glm::vec3 & lightPosition, const int & lightIndex, const int & shadowIndex) {
-		m_lightPos = lightPosition;
-		m_lightIndex = lightIndex;
-		m_shadowIndex = shadowIndex;
-	}
-
-
-private:
-	// Private Methods
 	/** Clear out the props queued up for rendering. */
-	void clear() {
+	inline void clear() {
 		m_propCount = 0;
 	}
 

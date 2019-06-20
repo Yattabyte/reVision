@@ -83,7 +83,7 @@ void Graphics_Module::initialize(Engine * engine)
 	// Rendering Effects & systems
 	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine);
 
-	// Add support for the following list of component types
+	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
 	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
 		auto * component = new Prop_Component();
@@ -139,7 +139,7 @@ void Graphics_Module::initialize(Engine * engine)
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
-	m_pipeline->beginFrame();
+	m_pipeline->beginFrame(deltaTime);
 
 	// Clear Frame Buffers
 	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
@@ -159,7 +159,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_cameraBuffer->endWriting();
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
-	m_pipeline->endFrame();
+	m_pipeline->endFrame(deltaTime);
 }
 
 void Graphics_Module::updateCamera()

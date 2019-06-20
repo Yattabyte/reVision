@@ -2,6 +2,7 @@
 #ifndef DIRECTIONAL_LIGHTING_H
 #define DIRECTIONAL_LIGHTING_H
 
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
@@ -84,16 +85,8 @@ public:
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			m_engine->getManager_Messages().error("Directional_Lighting Shadowmap Framebuffer has encountered an error.");
 
-		// Declare component types used
-		addComponentType(LightDirectional_Component::ID);
-		addComponentType(LightDirectionalShadow_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 		GLuint indData[] = { 0,0,0,0 };
 		m_indirectShape.write(0, sizeof(GLuint) * 4, &indData);
-
-		// Error Reporting
-		if (!isValid())
-			m_engine->getManager_Messages().error("Invalid ECS System: Directional_Lighting");
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -118,37 +111,89 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void beginWriting() override {
+	inline virtual void beginFrame(const float & deltaTime) override {
 		m_lightBuffer.beginWriting();
 		m_shadowBuffer.beginWriting();
 		m_visLights.beginWriting();
 		m_visShadows.beginWriting();
-		m_propShadowSystem->beginWriting();
+		m_propShadowSystem->beginFrame(deltaTime);
+
+		// Synchronize technique related components
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ LightDirectional_Component::ID, LightDirectionalShadow_Component::ID, Transform_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL, BaseECSSystem::FLAG_OPTIONAL },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			syncComponents(deltaTime, components);
+		});
 	}
-	inline virtual void endWriting() override {
+	inline virtual void endFrame(const float & deltaTime) override {
 		m_lightBuffer.endWriting();
 		m_shadowBuffer.endWriting();
 		m_visLights.endWriting();
 		m_visShadows.endWriting();
-		m_propShadowSystem->endWriting();
+		m_propShadowSystem->endFrame(deltaTime);
 	}
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
 			return;
 
-		// Bind buffers common for rendering and shadowing
-		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8); // Light buffer
-		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9); // Shadow buffer
+		// Populate render-lists
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ LightDirectional_Component::ID, LightDirectionalShadow_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			updateVisibility(deltaTime, components);
+		});	
 
 		// Render important shadows
 		renderShadows(deltaTime);
+
 		// Render lights
 		renderLights(deltaTime);
+
 		// Render indirect lights
 		renderBounce(deltaTime);
+	}	
+
+
+private:
+	// Private Methods
+	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {		
+		for each (const auto & componentParam in components) {
+			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
+			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
+			const auto & index = lightComponent->m_lightIndex;
+
+			// Sync Transform Attributes
+			if (transformComponent) {
+				const auto & orientation = transformComponent->m_transform.m_orientation;
+				const auto matRot = glm::mat4_cast(orientation);
+				const glm::mat4 sunTransform = matRot;
+				lightComponent->m_direction = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+
+				if (shadowComponent) {
+					const glm::mat4 sunTransform = matRot;
+					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+					shadowComponent->m_mMatrix = sunModelMatrix;
+					m_shadowBuffer[shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
+				}
+			}
+
+			// Sync Buffer Attributes
+			m_lightBuffer[index].LightColor = lightComponent->m_color;
+			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
+			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
+			if (shadowComponent) {
+				const auto & shadowIndex = shadowComponent->m_shadowIndex;
+				m_shadowBuffer[shadowComponent->m_shadowIndex].Shadow_Spot = shadowComponent->m_shadowSpot;
+			}
+		}
 	}
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
+	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Accumulate Light Data
 		const auto & size = (*m_cameraBuffer)->Dimensions;
 		const float ar = size.x / size.y;
@@ -190,28 +235,8 @@ public:
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			LightDirectionalShadow_Component * shadowComponent = (LightDirectionalShadow_Component*)componentParam[1];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			const auto & index = lightComponent->m_lightIndex;
 
-			// Sync Transform Attributes
-			if (transformComponent) {
-				const auto & orientation = transformComponent->m_transform.m_orientation;
-				const auto matRot = glm::mat4_cast(orientation);
-				const glm::mat4 sunTransform = matRot;
-				lightComponent->m_direction = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-				
-				if (shadowComponent) {
-					const glm::mat4 sunTransform = matRot;
-					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));				
-					shadowComponent->m_mMatrix = sunModelMatrix;
-					m_shadowBuffer[shadowComponent->m_shadowIndex].lightV = sunModelMatrix;
-				}
-			}
-
-			// Update Buffer Attributes
-			m_lightBuffer[index].LightColor = lightComponent->m_color;
-			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
-			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			lightIndices.push_back((GLuint)*index);
 			if (shadowComponent) {
 				const auto & shadowIndex = shadowComponent->m_shadowIndex;
@@ -232,7 +257,6 @@ public:
 					m_shadowBuffer[shadowIndex].inverseVP[i] = inverse(pvMatrix);
 					m_shadowBuffer[shadowIndex].CascadeEndClipSpace[i] = v2.z;
 				}
-				m_shadowBuffer[shadowIndex].Shadow_Spot = shadowComponent->m_shadowSpot;
 			}
 			else
 				shadowIndices.push_back(-1);
@@ -247,28 +271,25 @@ public:
 		m_indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
 		m_shadowCount = (GLint)shadowSize;
 	}
-
-
-private:
-	// Private Methods
 	/** Render all the geometry from each light. */
 	inline void renderShadows(const float & deltaTime) {
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
+		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
 
-		for (const auto[light, shadow] : m_shadowsToUpdate) {
+		for (const auto &[light, shadow] : m_shadowsToUpdate) {
 			const float clearDepth(1.0f);
 			const glm::vec3 clear(0.0f);
 			m_shadowFBO.clear(shadow->m_shadowSpot);
-			// Update geometry components
-			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
-			world.updateSystem(m_propShadowSystem, deltaTime);
 			// Render geometry components
-			m_propShadowSystem->applyTechnique(deltaTime);
+			m_propShadowSystem->setData((*m_cameraBuffer)->EyePosition, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);		
+			m_propShadowSystem->renderTechnique(deltaTime);
 			shadow->m_updateTime = m_engine->getTime();
 		}
+		m_shadowsToUpdate.clear();
 
 		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 	}
@@ -286,6 +307,8 @@ private:
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
+		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 		glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
@@ -313,6 +336,8 @@ private:
 		glBindTextureUnit(4, m_textureNoise32);
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);		// SSBO visible shadow indices
+		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		m_indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
@@ -324,7 +349,7 @@ private:
 		glDisable(GL_BLEND);
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
-	void clear() {
+	inline void clear() {
 		const size_t lightSize = 0, shadowSize = 0;
 		const GLuint bounceInstanceCount = GLuint(shadowSize * m_bounceSize);
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)

@@ -27,14 +27,17 @@ public:
 
 
 	// Public Interface Implementations
-	virtual void beginWriting() override;
-	virtual void endWriting() override;
-	virtual void applyTechnique(const float & deltaTime) override;
-	virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override;
+	virtual void beginFrame(const float & deltaTime) override;
+	virtual void endFrame(const float & deltaTime) override;
+	virtual void renderTechnique(const float & deltaTime) override;	
 	
 
 private:
-	// Protected Methods
+	// Private Methods
+	/***/
+	void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components);
+	/***/
+	void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components);
 	/** Render all the geometry for each reflector. */
 	void renderScene(const float & deltaTime);
 	/** Render all the lights */

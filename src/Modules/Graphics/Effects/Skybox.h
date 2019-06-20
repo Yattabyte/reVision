@@ -70,7 +70,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {

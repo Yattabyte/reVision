@@ -1,3 +1,4 @@
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Lighting/Reflector_Lighting.h"
 #include "Modules/World/ECS/TransformComponent.h"
 #include "Engine.h"
@@ -72,14 +73,6 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
 	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
 
-	// Declare component types used
-	addComponentType(Reflector_Component::ID);
-	addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
-
-	// Error Reporting
-	if (!isValid())
-		m_engine->getManager_Messages().error("Invalid ECS System: Reflector_Lighting");
-
 	// Add New Component Types
 	auto & world = m_engine->getModule_World();	
 	world.addNotifyOnComponentType(Reflector_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
@@ -105,37 +98,54 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	});
 }
 
-void Reflector_Lighting::beginWriting() 
+void Reflector_Lighting::beginFrame(const float & deltaTime)
 {
 	m_reflectorBuffer.beginWriting();
 	m_visLights.beginWriting();
+
+	// Synchronize technique related components
+	m_engine->getModule_World().updateSystem(
+		deltaTime,
+		{ Reflector_Component::ID, Transform_Component::ID },
+		{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
+		[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+		syncComponents(deltaTime, components);
+	});
 }
 
-void Reflector_Lighting::endWriting()
+void Reflector_Lighting::endFrame(const float & deltaTime)
 {
 	m_reflectorBuffer.endWriting();
 	m_visLights.endWriting();
 }
 
-void Reflector_Lighting::applyTechnique(const float & deltaTime) 
+void Reflector_Lighting::renderTechnique(const float & deltaTime) 
 {
 	// Exit Early
 	if (!m_enabled || !m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
 		return;
 
-	if (!m_renderingSelf) {
-		m_renderingSelf = true;
-		renderScene(deltaTime);
-		m_renderingSelf = false;
-	}
+	if (m_engine->getActionState().isAction(ActionState::FIRE2) && !m_outOfDate)
+		m_outOfDate = true;
+
+	// Populate render-lists
+	m_engine->getModule_World().updateSystem(
+		deltaTime,
+		{ Reflector_Component::ID },
+		{ BaseECSSystem::FLAG_REQUIRED },
+		[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+		updateVisibility(deltaTime, components);
+	});
+
+	// Render important environment maps
+	renderScene(deltaTime);
+
+	// Render parallax reflectors
 	renderReflectors(deltaTime);
 }
 
-void Reflector_Lighting::updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
+void Reflector_Lighting::syncComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
 {
-	if (m_renderingSelf) return;
-	// Accumulate Reflector Data		
-	std::vector<GLint> reflectionIndicies;
 	PriorityList<float, Reflector_Component*, std::less<float>> oldest;
 	for each (const auto & componentParam in components) {
 		Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
@@ -172,23 +182,36 @@ void Reflector_Lighting::updateComponents(const float & deltaTime, const std::ve
 			}
 		}
 
-		// Sync Component Attributes
+		// Sync Buffer Attributes
 		m_reflectorBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
-
-		// Update Buffer Attributes
-		reflectionIndicies.push_back(GLuint(*index));
 		oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
+	}
+
+	// Envmaps are updated in rendering pass, determined once a frame
+	m_reflectorsToUpdate = PQtoVector(oldest);
+}
+
+void Reflector_Lighting::updateVisibility(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components)
+{
+	// Accumulate Reflector Data		
+	std::vector<GLint> reflectionIndicies;
+	for each (const auto & componentParam in components) {
+		Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
+
+		reflectionIndicies.push_back(GLuint(*reflectorComponent->m_reflectorIndex));
 	}
 
 	// Update Draw Buffers
 	const size_t & refSize = reflectionIndicies.size();
 	m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
-	m_reflectorsToUpdate = PQtoVector(oldest);
 }
 
 void Reflector_Lighting::renderScene(const float & deltaTime)
 {
+	if (m_renderingSelf)
+		return;
+	m_renderingSelf = true;
 	for each (auto reflector in std::vector<Reflector_Component*>(m_reflectorsToUpdate)) {
 		if (reflector->m_outOfDate || m_outOfDate) {
 			reflector->m_outOfDate = false;
@@ -250,6 +273,7 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 	}
 
 	m_outOfDate = false;
+	m_renderingSelf = false;
 	glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 }
 

@@ -3,13 +3,6 @@
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 
-/******
-maybe just add all the component constructors here? 
-Reasons:
-	- they are used ONLY for MAP loading, because they take in arguments.
-	- this class is the only thing that does map loading
-******/
-
 
 World_Module::~World_Module()
 {
@@ -156,19 +149,14 @@ void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTim
 
 void World_Module::updateSystem(BaseECSSystem * system, const float & deltaTime)
 {
-	const std::vector<uint32_t> & componentTypes = system->getComponentTypes();
-	if (componentTypes.size() == 0u) return;
-	else if (componentTypes.size() == 1u) {
-		const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
-		const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
-		std::vector< std::vector<BaseECSComponent*> > components(mem_array.size() / typeSize);
-		for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
-			components[k].push_back((BaseECSComponent*)&mem_array[j]);
-		if (components.size())
-			system->updateComponents(deltaTime, components);
-	}
-	else
-		updateSystemWithMultipleComponents(system, deltaTime, componentTypes);
+	if (auto components = getRelevantComponents(system->getComponentTypes(), system->getComponentFlags()); components.size() > 0ull)
+		system->updateComponents(deltaTime, components);
+}
+
+void World_Module::updateSystem(const float & deltaTime, const std::vector<uint32_t> & types, const std::vector<uint32_t> & flags, const std::function<void(const float&, const std::vector<std::vector<BaseECSComponent*>>&)>& func)
+{
+	if (auto components = getRelevantComponents(types, flags); components.size() > 0ull)
+		func(deltaTime, components);	
 }
 
 void World_Module::processLevel()
@@ -278,39 +266,49 @@ BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<uint
 	return nullptr;
 }
 
-void World_Module::updateSystemWithMultipleComponents(BaseECSSystem * system, const float & deltaTime, const std::vector<uint32_t>& componentTypes)
+std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(const std::vector<uint32_t>& componentTypes, const std::vector<uint32_t>& componentFlags)
 {
-	std::vector<BaseECSComponent*> componentParam(componentTypes.size());
-	std::vector<std::vector<uint8_t>*> componentArrays(componentTypes.size());
-	const std::vector<uint32_t> & componentFlags = system->getComponentFlags();
-	for (size_t i = 0; i < componentTypes.size(); ++i)
-		componentArrays[i] = &m_components[componentTypes[i]];
+	std::vector< std::vector<BaseECSComponent*> > components;
+	if (componentTypes.size() > 0ull) {
+		if (componentTypes.size() == 1u) {
+			// Super simple procedure for system with 1 component type
+			const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
+			const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
+			components.resize(mem_array.size() / typeSize);
+			for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
+				components[k].push_back((BaseECSComponent*)&mem_array[j]);
+		}
+		else {
+			// More complex procedure for system with > 1 component type
+			std::vector<BaseECSComponent*> componentParam(componentTypes.size());
+			std::vector<std::vector<uint8_t>*> componentArrays(componentTypes.size());
+			for (size_t i = 0; i < componentTypes.size(); ++i)
+				componentArrays[i] = &m_components[componentTypes[i]];
 
-	const size_t minSizeIndex = findLeastCommonComponent(componentTypes, componentFlags);
+			const size_t minSizeIndex = findLeastCommonComponent(componentTypes, componentFlags);
+			const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[minSizeIndex]);
+			const std::vector<uint8_t> & mem_array = *componentArrays[minSizeIndex];
+			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as we component at [i] may be invalid
+			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
+				componentParam[minSizeIndex] = (BaseECSComponent*)&mem_array[i];
+				std::vector<std::pair<uint32_t, uint32_t> > & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
 
-	const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[minSizeIndex]);
-	const std::vector<uint8_t> & array = *componentArrays[minSizeIndex];
-	std::vector< std::vector<BaseECSComponent*> > componentParamList;
-	componentParamList.reserve(array.size() / typeSize);
-	for (size_t i = 0; i < array.size(); i += typeSize) {
-		componentParam[minSizeIndex] = (BaseECSComponent*)&array[i];
-		std::vector<std::pair<uint32_t, uint32_t> > & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
-
-		bool isValid = true;
-		for (size_t j = 0; j < componentTypes.size(); ++j) {
-			if (j == minSizeIndex)
-				continue;
-			componentParam[j] = getComponentInternal(entityComponents, *componentArrays[j], componentTypes[j]);
-			if ((componentParam[j] == nullptr) && (componentFlags[j] & BaseECSSystem::FLAG_REQUIRED)) {
-				isValid = false;
-				break;
+				bool isValid = true;
+				for (size_t j = 0; j < componentTypes.size(); ++j) {
+					if (j == minSizeIndex)
+						continue;
+					componentParam[j] = getComponentInternal(entityComponents, *componentArrays[j], componentTypes[j]);
+					if ((componentParam[j] == nullptr) && (componentFlags[j] & BaseECSSystem::FLAG_REQUIRED)) {
+						isValid = false;
+						break;
+					}
+				}
+				if (isValid)
+					components.push_back(componentParam);
 			}
 		}
-		if (isValid)
-			componentParamList.push_back(componentParam);
 	}
-	if (componentParamList.size())
-		system->updateComponents(deltaTime, componentParamList);
+	return components;
 }
 
 size_t World_Module::findLeastCommonComponent(const std::vector<uint32_t>& componentTypes, const std::vector<uint32_t> & componentFlags)

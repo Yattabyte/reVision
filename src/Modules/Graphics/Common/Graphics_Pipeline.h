@@ -21,9 +21,9 @@ public:
 
 	// Public Methods
 	/***/
-	void beginFrame();
+	void beginFrame(const float & deltaTime);
 	/***/
-	void endFrame();
+	void endFrame(const float & deltaTime);
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. */
 	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume);

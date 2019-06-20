@@ -34,7 +34,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void applyTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
