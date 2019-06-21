@@ -37,22 +37,22 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		m_gfxFBOS->bindForWriting("LIGHTING");
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		m_gfxFBOS->bindForReading("REFLECTION", 5);
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
+		viewport->m_gfxFBOS->bindForReading("REFLECTION", 5);
 		m_brdfMap->bind(6);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 		glDisable(GL_BLEND);
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("LIGHTING", 0));
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("LIGHTING", 0));
 	}
 
 

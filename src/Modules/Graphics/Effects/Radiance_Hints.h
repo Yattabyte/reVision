@@ -52,40 +52,40 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 		
 		// Bind common data
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
-		m_shaderRebounce->setUniform(1, m_volumeRH->m_max);
-		m_shaderRebounce->setUniform(2, m_volumeRH->m_min);
-		m_shaderRebounce->setUniform(4, m_volumeRH->m_resolution);
-		m_shaderRebounce->setUniform(5, m_volumeRH->m_unitSize);
-		m_shaderRecon->setUniform(1, m_volumeRH->m_max);
-		m_shaderRecon->setUniform(2, m_volumeRH->m_min);
-		m_shaderRecon->setUniform(3, m_volumeRH->m_resolution);
+		m_shaderRebounce->setUniform(1, viewport->m_rhVolume->m_max);
+		m_shaderRebounce->setUniform(2, viewport->m_rhVolume->m_min);
+		m_shaderRebounce->setUniform(4, viewport->m_rhVolume->m_resolution);
+		m_shaderRebounce->setUniform(5, viewport->m_rhVolume->m_unitSize);
+		m_shaderRecon->setUniform(1, viewport->m_rhVolume->m_max);
+		m_shaderRecon->setUniform(2, viewport->m_rhVolume->m_min);
+		m_shaderRecon->setUniform(3, viewport->m_rhVolume->m_resolution);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 		// Bounce light a second time
 		m_shaderRebounce->bind();
-		m_volumeRH->readPrimary(0);
-		m_volumeRH->writeSecondary();
-		glViewport(0, 0, (GLsizei)m_volumeRH->m_resolution, (GLsizei)m_volumeRH->m_resolution);
+		viewport->m_rhVolume->readPrimary(0);
+		viewport->m_rhVolume->writeSecondary();
+		glViewport(0, 0, (GLsizei)viewport->m_rhVolume->m_resolution, (GLsizei)viewport->m_rhVolume->m_resolution);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
 
 		// Reconstruct indirect radiance
+		glViewport(0, 0, GLsizei((*viewport->m_cameraBuffer)->Dimensions.x), GLsizei((*viewport->m_cameraBuffer)->Dimensions.y));
 		m_shaderRecon->bind();
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);
-		m_volumeRH->readSecondary(4);
-		m_gfxFBOS->bindForWriting("BOUNCE");
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
+		viewport->m_rhVolume->readSecondary(4);
+		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 
 		// Bind for reading by next effect	
-		glBindTextureUnit(4, m_gfxFBOS->getTexID("BOUNCE", 0));
+		glBindTextureUnit(4, viewport->m_gfxFBOS->getTexID("BOUNCE", 0));
 	}
 
 

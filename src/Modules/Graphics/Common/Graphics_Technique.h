@@ -2,9 +2,8 @@
 #ifndef GRAPHICS_TECHNIQUE_H
 #define GRAPHICS_TECHNIQUE_H
 
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/Viewport.h"
+#include <memory>
 
 
 /** An interface for core graphics effect techniques. */
@@ -37,15 +36,6 @@ public:
 	inline void setEnabled(const bool & state) { 
 		m_enabled = state; 
 	};
-	/** Set the common underlying data that all graphics techniques share.
-	@param	cameraBuffer	the buffer holding camera data.
-	@param	gfxFBOS			the core framebuffers to render into. 
-	@param	rhVolume		the radiance-hints buffer to use for indirect lighting. */
-	inline void setViewingParameters(const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume) {
-		m_cameraBuffer = cameraBuffer;
-		m_gfxFBOS = gfxFBOS;
-		m_volumeRH = rhVolume;
-	}
 	
 
 	// Public Interface
@@ -54,17 +44,15 @@ public:
 	/***/
 	inline virtual void endFrame(const float & deltaTime) {}
 	/** Apply this lighting technique.
-	@param	deltaTime	the amount of time passed since last frame. */
-	inline virtual void renderTechnique(const float & deltaTime) {}
+	@param	deltaTime	the amount of time passed since last frame.
+	@param	viewport	the viewport to render from. */
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {}
 
 
 protected:
 	// Protected Attributes
 	bool m_enabled = true;
 	Technique_Category m_category;
-	std::shared_ptr<CameraBuffer> m_cameraBuffer;
-	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
-	std::shared_ptr<RH_Volume> m_volumeRH;
 };
 
 #endif // GRAPHICS_TECHNIQUE_H

@@ -3,6 +3,7 @@
 #define GRAPHICS_PIPELINE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include <memory>
 #include <vector>
 
@@ -25,8 +26,10 @@ public:
 	/***/
 	void endFrame(const float & deltaTime);
 	/** Apply this lighting technique.
-	@param	deltaTime	the amount of time passed since last frame. */
-	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume, const unsigned int & allowedCategories = Graphics_Technique::ALL );
+	@param	deltaTime	the amount of time passed since last frame. 
+	@param	viewport	the viewport to render into.
+	@param	categories	the allowed technique categories to render. */
+	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & categories = Graphics_Technique::ALL );
 
 
 protected:

@@ -64,6 +64,10 @@ public:
 	inline BufferStructure * get() {
 		return &m_localData;
 	}
+	/***/
+	inline void replace(const BufferStructure & data) {
+		m_localData = data;
+	}
 	/** Wait for the current fence to pass, for the current frame index.*/
 	inline void beginWriting() {
 		if (m_fence[m_writeIndex] != nullptr)

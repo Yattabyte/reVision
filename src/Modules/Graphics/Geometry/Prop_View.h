@@ -89,7 +89,7 @@ public:
 		m_bufferRender.endWriting();
 		m_bufferSkeletonIndex.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
@@ -100,11 +100,11 @@ public:
 			{ Prop_Component::ID, Skeleton_Component::ID },
 			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
 			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components);
+			updateVisibility(deltaTime, components, viewport);
 		});
 
 		// Apply occlusion culling and render props
-		renderGeometry(deltaTime);
+		renderGeometry(deltaTime, viewport);
 	}	
 
 
@@ -127,6 +127,7 @@ public:
 
 private:
 	// Private Methods
+	/***/
 	inline void animateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
@@ -150,6 +151,7 @@ private:
 			}
 		}
 	}
+	/***/
 	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
@@ -195,12 +197,13 @@ private:
 			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;			
 		}
 	}
-	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	/***/
+	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components, const std::shared_ptr<Viewport> & viewport) {
 		// Accumulate draw parameter information per model
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;
-		const glm::vec3 & eyePosition = (*m_cameraBuffer)->EyePosition;
+		const glm::vec3 eyePosition = viewport->get3DPosition();
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
@@ -232,7 +235,7 @@ private:
 		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
 	}
 	/***/
-	inline void renderGeometry(const float & deltaTime) {
+	inline void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		m_engine->getManager_Materials().bind();
 		m_propBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -247,7 +250,7 @@ private:
 		glDepthMask(GL_FALSE);
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		m_shaderCull->bind();
-		m_gfxFBOS->bindForWriting("GEOMETRY");
+		viewport->m_gfxFBOS->bindForWriting("GEOMETRY");
 		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);

@@ -27,21 +27,19 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 		m_envmapSize = std::max(1u, (unsigned int)f);
 		m_envmapFBO.resize(m_envmapSize, m_envmapSize, (GLuint)(m_reflectorBuffer.getLength()) * 6u);
-		(*m_reflectorCamera)->Dimensions = glm::vec2((float)m_envmapSize);
-		updateCamera();
-		m_reflectorFBOS->resize(glm::ivec2(m_envmapSize));
+		m_reflectorViewport->resize(glm::vec2((float)m_envmapSize));
 		m_outOfDate = true;
 	});
 
 	// Camera Setup
-	m_reflectorCamera = std::make_shared<CameraBuffer>();
-	(*m_reflectorCamera)->pMatrix = glm::mat4(1.0f);
-	(*m_reflectorCamera)->vMatrix = glm::mat4(1.0f);
-	(*m_reflectorCamera)->EyePosition = glm::vec3(0.0f);
-	(*m_reflectorCamera)->Dimensions = glm::vec2((float)m_envmapSize);
-	(*m_reflectorCamera)->FarPlane = 100.0f;
-	(*m_reflectorCamera)->FOV = 90.0f;
-	updateCamera();
+	CameraBuffer::BufferStructure cameraData;
+	cameraData.pMatrix = glm::mat4(1.0f);
+	cameraData.vMatrix = glm::mat4(1.0f);
+	cameraData.EyePosition = glm::vec3(0.0f);
+	cameraData.Dimensions = glm::vec2((float)m_envmapSize);
+	cameraData.FarPlane = 100.0f;
+	cameraData.FOV = 90.0f;
+	m_reflectorViewport = std::make_shared<Viewport>(engine, glm::ivec2(0), glm::ivec2((float)m_envmapSize), cameraData);
 
 	// Environment Map
 	m_envmapFBO.resize(m_envmapSize, m_envmapSize, 6);
@@ -67,12 +65,6 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 	if (glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		m_engine->getManager_Messages().error("Reflector_Lighting Environment Map Framebuffer has encountered an error.");
 
-	// Graphics Pipeline Initialization
-	m_reflectorFBOS = std::make_shared<Graphics_Framebuffers>(glm::ivec2(m_envmapSize));
-	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
-	glNamedFramebufferTexture(m_reflectorFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_reflectorFBOS->getTexID("GEOMETRY", 3), 0);
-	m_reflectorVRH = std::make_shared<RH_Volume>(m_engine);
-
 	// Add New Component Types
 	auto & world = m_engine->getModule_World();	
 	world.addNotifyOnComponentType(Reflector_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
@@ -82,8 +74,8 @@ Reflector_Lighting::Reflector_Lighting(Engine * engine)
 		component->m_cubeSpot = envCount;
 		m_envmapFBO.resize(m_envmapFBO.m_size.x, m_envmapFBO.m_size.y, envCount + 6);
 		for (int x = 0; x < 6; ++x) {
-			component->m_Cameradata[x].Dimensions = glm::vec2(m_envmapFBO.m_size);
-			component->m_Cameradata[x].FOV = 90.0f;
+			component->m_cameraData[x].Dimensions = glm::vec2(m_envmapFBO.m_size);
+			component->m_cameraData[x].FOV = 90.0f;
 		}
 	});
 	
@@ -119,7 +111,7 @@ void Reflector_Lighting::endFrame(const float & deltaTime)
 	m_visLights.endWriting();
 }
 
-void Reflector_Lighting::renderTechnique(const float & deltaTime) 
+void Reflector_Lighting::renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport)
 {
 	// Exit Early
 	if (!m_enabled || !m_shapeCube->existsYet() || !m_shapeQuad->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvolute->existsYet())
@@ -138,10 +130,10 @@ void Reflector_Lighting::renderTechnique(const float & deltaTime)
 	});
 
 	// Render important environment maps
-	renderScene(deltaTime);
+	renderScene(deltaTime, viewport);
 
 	// Render parallax reflectors
-	renderReflectors(deltaTime);
+	renderReflectors(deltaTime, viewport);
 }
 
 void Reflector_Lighting::syncComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>>& components) 
@@ -174,11 +166,11 @@ void Reflector_Lighting::syncComponents(const float & deltaTime, const std::vect
 			};
 			const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
 			for (int x = 0; x < 6; ++x) {
-				reflectorComponent->m_Cameradata[x].Dimensions = glm::vec2((float)m_envmapSize);
-				reflectorComponent->m_Cameradata[x].FarPlane = largest;
-				reflectorComponent->m_Cameradata[x].EyePosition = position;
-				reflectorComponent->m_Cameradata[x].pMatrix = pMatrix;
-				reflectorComponent->m_Cameradata[x].vMatrix = vMatrices[x];
+				reflectorComponent->m_cameraData[x].Dimensions = glm::vec2((float)m_envmapSize);
+				reflectorComponent->m_cameraData[x].FarPlane = largest;
+				reflectorComponent->m_cameraData[x].EyePosition = position;
+				reflectorComponent->m_cameraData[x].pMatrix = pMatrix;
+				reflectorComponent->m_cameraData[x].vMatrix = vMatrices[x];
 			}
 		}
 
@@ -207,7 +199,7 @@ void Reflector_Lighting::updateVisibility(const float & deltaTime, const std::ve
 	m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
 }
 
-void Reflector_Lighting::renderScene(const float & deltaTime)
+void Reflector_Lighting::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport)
 {
 	if (m_renderingSelf)
 		return;
@@ -216,32 +208,28 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 		if (reflector->m_outOfDate || m_outOfDate) {
 			reflector->m_outOfDate = false;
 			for (int x = 0; x < 6; ++x) {
-				// Clear Frame Buffers
-				glViewport(0, 0, m_envmapSize, m_envmapSize);
-				m_reflectorFBOS->clear();
-				m_reflectorVRH->clear();
+				// Set view-specific camera data
+				m_reflectorViewport->m_cameraBuffer->beginWriting();
+				m_reflectorViewport->m_cameraBuffer->replace(reflector->m_cameraData[x]);
+				m_reflectorViewport->m_cameraBuffer->pushChanges();
 
-				// Repurpose camera's tripple buffer, use a different section every time
-				m_reflectorCamera->beginWriting();
-				*(m_reflectorCamera.get())->get() = reflector->m_Cameradata[x];
-				m_reflectorCamera->pushChanges();
-				m_reflectorCamera->bind(2);
-				m_reflectorVRH->updateVolume(m_reflectorCamera);
+				// Clear Frame Buffers
+				m_reflectorViewport->clear();
+				m_reflectorViewport->bind();
 
 				// Apply Graphics Pipeline
 				constexpr const unsigned int flags = Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING;
-				m_engine->getModule_Graphics().render(deltaTime, m_reflectorCamera, m_reflectorFBOS, m_reflectorVRH, flags);
+				m_engine->getModule_Graphics().render(deltaTime, m_reflectorViewport, flags);
+				m_reflectorViewport->m_cameraBuffer->endWriting();
 
 				// Copy lighting frame into cube-face
-				m_reflectorFBOS->bindForReading("LIGHTING", 0);
+				m_reflectorViewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
 				m_envmapFBO.bindForWriting();
 				m_shaderCopy->bind();
 				m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
 				m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glBindVertexArray(m_shapeQuad->m_vaoID);
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-				m_reflectorCamera->endWriting();
 			}
 
 			// Once cubemap is generated, convolute it
@@ -275,10 +263,10 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 
 	m_outOfDate = false;
 	m_renderingSelf = false;
-	glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
+	glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 }
 
-void Reflector_Lighting::renderReflectors(const float & deltaTime) 
+void Reflector_Lighting::renderReflectors(const float & deltaTime, const std::shared_ptr<Viewport> & viewport)
 {
 	glEnable(GL_STENCIL_TEST);
 	glEnable(GL_BLEND);
@@ -287,8 +275,8 @@ void Reflector_Lighting::renderReflectors(const float & deltaTime)
 
 	// Draw only into depth-stencil buffer
 	m_shaderStencil->bind();										// Shader (reflector)
-	m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
-	m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+	viewport->m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
+	viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
 	glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
 	m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 	m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
@@ -318,15 +306,6 @@ void Reflector_Lighting::renderReflectors(const float & deltaTime)
 	glCullFace(GL_BACK);
 	glBlendFunc(GL_ONE, GL_ZERO);
 	glDisable(GL_STENCIL_TEST);
-}
-
-void Reflector_Lighting::updateCamera()
-{
-	// Update Perspective Matrix
-	const float ar = std::max(1.0f, (*m_reflectorCamera)->Dimensions.x) / std::max(1.0f, (*m_reflectorCamera)->Dimensions.y);
-	const float horizontalRad = glm::radians((*m_reflectorCamera)->FOV);
-	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	(*m_reflectorCamera)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::ConstNearPlane, (*m_reflectorCamera)->FarPlane);
 }
 
 std::vector<Reflector_Component*> Reflector_Lighting::PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest) 

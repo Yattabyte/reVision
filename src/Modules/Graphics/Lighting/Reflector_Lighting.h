@@ -3,6 +3,7 @@
 #define REFLECTOR_LIGHTING_H
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Env_Reflector.h"
 #include "Assets/Shader.h"
@@ -29,7 +30,7 @@ public:
 	// Public Interface Implementations
 	virtual void beginFrame(const float & deltaTime) override;
 	virtual void endFrame(const float & deltaTime) override;
-	virtual void renderTechnique(const float & deltaTime) override;	
+	virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override;
 	
 
 private:
@@ -38,12 +39,14 @@ private:
 	void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components);
 	/***/
 	void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components);
-	/** Render all the geometry for each reflector. */
-	void renderScene(const float & deltaTime);
-	/** Render all the lights */
-	void renderReflectors(const float & deltaTime);
-	/** Update the reflector effects' camera. */
-	void updateCamera();
+	/** Render all the geometry for each reflector.
+	@param	deltaTime	the amount of time passed since last frame.
+	@param	viewport	the viewport to render from. */
+	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport);
+	/** Render all the lights 
+	@param	deltaTime	the amount of time passed since last frame.
+	@param	viewport	the viewport to render from. */
+	void renderReflectors(const float & deltaTime, const std::shared_ptr<Viewport> & viewport);
 	/** Converts a priority queue into an stl vector.*/
 	static std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest);
 	/** Clear out the reflectors queued up for rendering. */
@@ -75,9 +78,7 @@ private:
 
 
 	// Reflector POV rendering
-	std::shared_ptr<CameraBuffer> m_reflectorCamera;
-	std::shared_ptr<Graphics_Framebuffers> m_reflectorFBOS;
-	std::shared_ptr<RH_Volume> m_reflectorVRH;
+	std::shared_ptr<Viewport> m_reflectorViewport;
 	bool m_renderingSelf = false; // used to avoid calling self infinitely
 };
 

@@ -57,7 +57,7 @@ public:
 		m_bufferRender.endWriting();
 		m_bufferSkeletonIndex.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
 			return;
@@ -133,6 +133,7 @@ private:
 		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
 		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
 	}
+	/***/
 	inline void renderGeometry(const float & deltaTime) {
 		m_engine->getManager_Materials().bind();
 		m_propView->getPropBuffer().bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);

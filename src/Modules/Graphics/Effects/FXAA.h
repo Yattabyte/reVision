@@ -39,19 +39,19 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderFXAA->existsYet())
 			return;
 
 		// Apply FXAA effect
-		m_gfxFBOS->bindForWriting("FXAA");
+		viewport->m_gfxFBOS->bindForWriting("FXAA");
 		m_shaderFXAA->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Bind for reading by next effect	
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("FXAA", 0));
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("FXAA", 0));
 	}
 	
 

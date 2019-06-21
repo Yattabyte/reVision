@@ -39,46 +39,34 @@ void Graphics_Module::initialize(Engine * engine)
 	auto & preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize = glm::ivec2(f, m_renderSize.y);
-		(*m_cameraBuffer)->Dimensions = glm::vec2(m_renderSize);
-		updateCamera();
-		m_graphicsFBOS->resize(m_renderSize);
+		m_renderSize = glm::ivec2(f, m_renderSize.y);		
+		m_viewport->resize(m_renderSize);
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
-		(*m_cameraBuffer)->Dimensions = glm::vec2(m_renderSize);
-		updateCamera();
-		m_graphicsFBOS->resize(m_renderSize);
+		m_viewport->resize(m_renderSize);
 	});
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
 	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
-		(*m_cameraBuffer)->FarPlane = f;
-		updateCamera();
+		m_viewport->setDrawDistance(f);
 	});
 	float fov = 90.0f;
 	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
 	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
-		(*m_cameraBuffer)->FOV = f;
-		updateCamera();
+		m_viewport->setFOV(f);
 	});
 
 	// Camera Setup
-	m_cameraBuffer = std::make_shared<CameraBuffer>();
-	(*m_cameraBuffer)->pMatrix = glm::mat4(1.0f);
-	(*m_cameraBuffer)->vMatrix = glm::mat4(1.0f);
-	(*m_cameraBuffer)->EyePosition = glm::vec3(0.0f);
-	(*m_cameraBuffer)->Dimensions = glm::vec2(m_renderSize);
-	(*m_cameraBuffer)->FarPlane = farPlane;
-	(*m_cameraBuffer)->FOV = fov;
-	updateCamera();
-
-	// Initialization
-	m_graphicsFBOS = std::make_shared<Graphics_Framebuffers>(m_renderSize);
-	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
-	glNamedFramebufferTexture(m_graphicsFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_graphicsFBOS->getTexID("GEOMETRY", 3), 0);	
-	m_volumeRH = std::make_shared<RH_Volume>(m_engine);
+	CameraBuffer::BufferStructure cameraData;
+	cameraData.pMatrix = glm::mat4(1.0f);
+	cameraData.vMatrix = glm::mat4(1.0f);
+	cameraData.EyePosition = glm::vec3(0.0f);
+	cameraData.Dimensions = glm::vec2(m_renderSize);
+	cameraData.FarPlane = farPlane;
+	cameraData.FOV = fov;
+	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
 
 	// Rendering Effects & systems
 	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine);
@@ -140,43 +128,22 @@ void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
 	m_pipeline->beginFrame(deltaTime);
+	m_viewport->m_cameraBuffer->beginWriting();
+	m_viewport->m_cameraBuffer->pushChanges();
 
 	// Clear Frame Buffers
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	m_graphicsFBOS->clear();
-	m_volumeRH->clear();
-
-	// Wait on triple-buffered camera lock, then update camera
-	m_cameraBuffer->beginWriting();
-	m_cameraBuffer->pushChanges();
-	m_cameraBuffer->bind(2);
-	m_volumeRH->updateVolume(m_cameraBuffer);
+	m_viewport->clear();
+	m_viewport->bind();	
 
 	// Render graphics pipeline using current set of buffers
-	render(deltaTime, m_cameraBuffer, m_graphicsFBOS, m_volumeRH);
-
-	// Set lock for 3 frames from now
-	m_cameraBuffer->endWriting();
+	render(deltaTime, m_viewport);
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->endFrame(deltaTime);
+	m_viewport->m_cameraBuffer->endWriting();
 }
 
-void Graphics_Module::updateCamera()
+void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
 {
-	// Update Perspective Matrix
-	const float ar = std::max(1.0f, (*m_cameraBuffer)->Dimensions.x) / std::max(1.0f, (*m_cameraBuffer)->Dimensions.y);
-	const float horizontalRad = glm::radians((*m_cameraBuffer)->FOV);
-	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	(*m_cameraBuffer)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::BufferStructure::ConstNearPlane, (*m_cameraBuffer)->FarPlane);
-}
-
-std::shared_ptr<CameraBuffer> Graphics_Module::getCameraBuffer() const
-{
-	return m_cameraBuffer;
-}
-
-void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, const unsigned int & allowedCategories)
-{
-	m_pipeline->render(deltaTime, cameraBuffer, gfxFBOS, volumeRH, allowedCategories);
+	m_pipeline->render(deltaTime, viewport, allowedCategories);
 }

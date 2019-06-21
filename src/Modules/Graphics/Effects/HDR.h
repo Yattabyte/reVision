@@ -40,12 +40,12 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderHDR->existsYet())
 			return;
 
 		// Write HDR effect to own framebuffer
-		m_gfxFBOS->bindForWriting("HDR");
+		viewport->m_gfxFBOS->bindForWriting("HDR");
 		m_shaderHDR->bind();
 		m_shaderHDR->setUniform(0, 1.0f);
 		m_shaderHDR->setUniform(1, m_gamma);
@@ -55,7 +55,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);	
 		
 		// Bind for reading by next effect	
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("HDR", 0));
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("HDR", 0));
 	}
 
 

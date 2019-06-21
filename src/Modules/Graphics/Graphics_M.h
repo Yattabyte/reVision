@@ -5,9 +5,7 @@
 #include "Modules/Engine_Module.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
-#include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Common/Viewport.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 
@@ -32,37 +30,23 @@ public:
 
 
 	// Public Methods	
-	/** Update the data for the specified camera. */
-	void updateCamera();
-	/** Returns the active camera's data buffer.
-	@return					the active camera's data buffer. */
-	std::shared_ptr<CameraBuffer> getCameraBuffer() const;
 	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
 	@param	deltaTime		the amount of time since last frame.
-	@param	cameraBuffer	the camera buffer to use in rendering.
-	@param	gfxFBOS			the framebuffers to render into.
-	@param	rhVolume		the volume fbo to render into for indirect lighting.
+	@param	viewport		the view port to render into.
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, const unsigned int & categories = Graphics_Technique::ALL);
-	/** Returns the lighting buffer's FBO ID. 
-	@return					the lighting buffer FBO ID. */
-	inline GLuint getLightingFBOID() const {
-		return m_graphicsFBOS->getFboID("LIGHTING");
-	};
-	/** Returns the lighting buffer's texture ID.
-	@return					the lighting buffer texture ID. */
-	inline GLuint getLightingTexID() const {
-		return m_graphicsFBOS->getTexID("LIGHTING", 0);
-	};
+	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories = Graphics_Technique::ALL);
+	/** Returns a shared pointer to the primary viewport.
+	@return					the primary viewport. */
+	inline std::shared_ptr<Viewport> getPrimaryViewport() const {
+		return m_viewport;
+	}
 
 	
 private:
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
 	std::unique_ptr<Graphics_Pipeline>		m_pipeline;
-	std::shared_ptr<Graphics_Framebuffers>	m_graphicsFBOS;
-	std::shared_ptr<CameraBuffer>			m_cameraBuffer;
-	std::shared_ptr<RH_Volume>				m_volumeRH;
+	std::shared_ptr<Viewport>				m_viewport;
 	std::shared_ptr<bool>					m_aliveIndicator = std::make_shared<bool>(true);
 };
 

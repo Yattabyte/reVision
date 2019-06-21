@@ -100,7 +100,7 @@ struct Reflector_Component : public ECSComponent<Reflector_Component> {
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = 0;
 	bool m_outOfDate = false;
-	CameraBuffer::BufferStructure m_Cameradata[6];
+	CameraBuffer::BufferStructure m_cameraData[6];
 	GL_AB_Index m_reflectorIndex = nullptr;
 };
 

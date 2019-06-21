@@ -83,8 +83,9 @@ public:
 			transform.update();
 
 			// Update the engine pointer
-			(*graphicsModule.getCameraBuffer())->EyePosition = transform.m_position;
-			(*graphicsModule.getCameraBuffer())->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);	
+			auto viewport = graphicsModule.getPrimaryViewport();
+			viewport->set3DPosition(transform.m_position);
+			viewport->setViewMatrix(glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position));
 		}
 	};
 

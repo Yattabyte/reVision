@@ -128,7 +128,7 @@ public:
 		m_propShadow_Static->endFrame(deltaTime);
 		m_propShadow_Dynamic->endFrame(deltaTime);
 	}
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
@@ -143,10 +143,10 @@ public:
 		});
 
 		// Render important shadows
-		renderShadows(deltaTime);
+		renderShadows(deltaTime, viewport);
 
 		// Render lights
-		renderLights(deltaTime);
+		renderLights(deltaTime, viewport);
 	}	
 
 
@@ -221,8 +221,10 @@ private:
 		m_visShadows.write(0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 	}
-	/** Render all the geometry from each light. */
-	inline void renderShadows(const float & deltaTime) {
+	/** Render all the geometry from each light.
+	@param	deltaTime	the amount of time passed since last frame.
+	@param	viewport	the viewport to render from. */
+	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
@@ -235,23 +237,25 @@ private:
 				m_shadowFBO.clear(shadow->m_shadowSpot + 1);
 				// Render components
 				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
-				m_propShadow_Static->renderTechnique(deltaTime);
+				m_propShadow_Static->renderTechnique(deltaTime, viewport);
 				shadow->m_outOfDate = false;
 			}
 			// Update dynamic shadows
 			m_shadowFBO.clear(shadow->m_shadowSpot);
 			// Render components
 			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
-			m_propShadow_Dynamic->renderTechnique(deltaTime);
+			m_propShadow_Dynamic->renderTechnique(deltaTime, viewport);
 			shadow->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
 
 		m_outOfDate = false;
-		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
+		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 	}
-	/** Render all the lights. */
-	inline void renderLights(const float & deltaTime) {
+	/** Render all the lights.
+	@param	deltaTime	the amount of time passed since last frame.
+	@param	viewport	the viewport to render from. */
+	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		glEnable(GL_STENCIL_TEST);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
@@ -259,8 +263,8 @@ private:
 
 		// Draw only into depth-stencil buffer
 		m_shader_Stencil->bind();									// Shader (spot)
-		m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
-		m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices

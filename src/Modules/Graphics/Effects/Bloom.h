@@ -45,13 +45,13 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderBloomExtract->existsYet() || !m_shaderCopy->existsYet() || !m_shaderGB->existsYet())
 			return;
 		// Extract bright regions from lighting buffer
 		m_shaderBloomExtract->bind();
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("LIGHTING", 0));
-		m_gfxFBOS->bindForWriting("BLOOM");
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("LIGHTING", 0));
+		viewport->m_gfxFBOS->bindForWriting("BLOOM");
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
@@ -61,12 +61,12 @@ public:
 		if (m_bloomStrength > 0) {
 			// Read from desired texture, blur into this frame buffer
 			bool horizontal = false;
-			glBindTextureUnit(0, m_gfxFBOS->getTexID("BLOOM", 0));
-			glBindTextureUnit(1, m_gfxFBOS->getTexID("BLOOM", 1));
+			glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("BLOOM", 0));
+			glBindTextureUnit(1, viewport->m_gfxFBOS->getTexID("BLOOM", 1));
 			glDrawBuffer(GL_COLOR_ATTACHMENT0 + horizontal);
 			m_shaderGB->bind();
 			m_shaderGB->setUniform(0, horizontal);
-			m_shaderGB->setUniform(1, (*m_cameraBuffer)->Dimensions);
+			m_shaderGB->setUniform(1, glm::vec2(viewport->m_dimensions));
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
@@ -84,22 +84,22 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
-		m_gfxFBOS->bindForWriting("LIGHTING");
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("BLOOM", bloomSpot));
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("BLOOM", bloomSpot));
 		m_shaderCopy->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_BLEND);
-		glBindTextureUnit(0, m_gfxFBOS->getTexID("LIGHTING", 0));
+		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("LIGHTING", 0));
 	}
 
 
 private:
 	// Private Methods
 	/** Change the strength of the bloom effect.
-	@param	strength		the new strength of the bloom effect */
-	inline void setBloomStrength(const int &strength) {
+	@param	strength		the new strength of the bloom effect. */
+	inline void setBloomStrength(const int & strength) {
 		m_bloomStrength = strength;
 	}
 

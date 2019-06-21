@@ -34,9 +34,10 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
+
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);

@@ -70,11 +70,11 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
-			convoluteSky();
+			convoluteSky(viewport);
 			m_skyOutOfDate = false;
 		}
 		glDisable(GL_BLEND);
@@ -89,13 +89,13 @@ public:
 		glEnable(GL_STENCIL_TEST);
 		glStencilFunc(GL_EQUAL, 0, 0xFF);
 		m_shaderSkyReflect->bind();
-		m_gfxFBOS->bindForWriting("REFLECTION");
+		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glDisable(GL_STENCIL_TEST);
 
 		// Render skybox to lighting buffer
 		m_shaderSky->bind();
-		m_gfxFBOS->bindForWriting("LIGHTING");
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glEnable(GL_BLEND);
@@ -106,8 +106,9 @@ public:
 
 private:
 	// Private Methods
-	/** Convolute the skybox cubemap, generating blurred mips (for rougher materials). */
-	inline void convoluteSky() {
+	/** Convolute the skybox cubemap, generating blurred mips (for rougher materials).
+	@param	viewport	the viewport to render from. */
+	inline void convoluteSky(const std::shared_ptr<Viewport> & viewport) {
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
@@ -136,7 +137,7 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
-		glViewport(0, 0, GLsizei((*m_cameraBuffer)->Dimensions.x), GLsizei((*m_cameraBuffer)->Dimensions.y));
+		glViewport(0, 0, GLsizei((*viewport->m_cameraBuffer)->Dimensions.x), GLsizei((*viewport->m_cameraBuffer)->Dimensions.y));
 		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
