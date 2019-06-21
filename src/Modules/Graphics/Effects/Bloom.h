@@ -22,7 +22,7 @@ public:
 	}
 	/** Constructor. */
 	inline Bloom(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderBloomExtract = Shared_Shader(m_engine, "Effects\\Bloom Extraction");
 		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");

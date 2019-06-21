@@ -28,8 +28,8 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
 		new Point_Lighting(m_engine, propView),
 		new Spot_Lighting(m_engine, propView),
 		new Reflector_Lighting(m_engine),
-		new Skybox(m_engine),
 		new Radiance_Hints(m_engine),
+		new Skybox(m_engine),
 		new SSAO(m_engine),
 		new SSR(m_engine),
 		new Join_Reflections(m_engine),
@@ -52,13 +52,15 @@ void Graphics_Pipeline::endFrame(const float & deltaTime)
 		tech->endFrame(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume)
+void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume, const unsigned int & allowedCategories)
 {
 	auto & world = m_engine->getModule_World();
 	for each (auto * tech in m_techniques) {
-		// Provide rendering variables
-		tech->setViewingParameters(cameraBuffer, gfxFBOS, rhVolume);
-		// Render Technique
-		tech->renderTechnique(deltaTime);
+		if (allowedCategories & tech->getCategory()) {
+			// Provide rendering variables
+			tech->setViewingParameters(cameraBuffer, gfxFBOS, rhVolume);
+			// Render Technique
+			tech->renderTechnique(deltaTime);
+		}
 	}
 }

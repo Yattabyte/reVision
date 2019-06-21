@@ -24,7 +24,7 @@ public:
 	}
 	/** Constructor. */
 	inline Radiance_Hints(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
 		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");

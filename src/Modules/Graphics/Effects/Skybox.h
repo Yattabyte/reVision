@@ -21,7 +21,7 @@ public:
 	}
 	/** Constructor. */
 	inline Skybox(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");

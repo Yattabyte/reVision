@@ -22,7 +22,7 @@ public:
 	}
 	/** Constructor. */
 	inline Join_Reflections(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Shared_Texture(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);

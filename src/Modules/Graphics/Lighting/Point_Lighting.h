@@ -29,7 +29,7 @@ public:
 	}
 	/** Constructor. */
 	inline Point_Lighting(Engine * engine, Prop_View * propView)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Point\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");

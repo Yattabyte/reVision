@@ -41,8 +41,9 @@ public:
 	@param	deltaTime		the amount of time since last frame.
 	@param	cameraBuffer	the camera buffer to use in rendering.
 	@param	gfxFBOS			the framebuffers to render into.
-	@param	rhVolume		the volume fbo to render into for indirect lighting. */
-	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH);
+	@param	rhVolume		the volume fbo to render into for indirect lighting.
+	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
+	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, const unsigned int & categories = Graphics_Technique::ALL);
 	/** Returns the lighting buffer's FBO ID. 
 	@return					the lighting buffer FBO ID. */
 	inline GLuint getLightingFBOID() const {

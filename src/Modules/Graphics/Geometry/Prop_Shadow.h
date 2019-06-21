@@ -31,7 +31,7 @@ public:
 	}
 	/** Constructor. */
 	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
-		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
+		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView), Graphics_Technique(GEOMETRY) {
 		// Asset Loading
 		m_shapeCube = Shared_Primitive(m_engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();

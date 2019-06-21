@@ -20,7 +20,7 @@ public:
 	}
 	/** Constructor. */
 	inline To_Screen(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");

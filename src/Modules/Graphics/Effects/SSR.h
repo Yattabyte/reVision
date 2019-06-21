@@ -25,7 +25,7 @@ public:
 	}
 	/** Constructor. */
 	inline SSR(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");

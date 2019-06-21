@@ -31,7 +31,7 @@ public:
 	}
 	/** Constructor. */
 	inline Directional_Lighting(Engine * engine, Prop_View * propView)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
 		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");

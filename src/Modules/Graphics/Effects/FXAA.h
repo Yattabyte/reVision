@@ -20,7 +20,7 @@ public:
 	}
 	/** Constructor. */
 	inline FXAA(Engine * engine) 
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderFXAA = Shared_Shader(m_engine, "Effects\\FXAA");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");

@@ -26,7 +26,7 @@ public:
 	void endFrame(const float & deltaTime);
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. */
-	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume);
+	void render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & rhVolume, const unsigned int & allowedCategories = Graphics_Technique::ALL );
 
 
 protected:

@@ -11,7 +11,7 @@ Reflector_Lighting::~Reflector_Lighting()
 }
 
 Reflector_Lighting::Reflector_Lighting(Engine * engine)
-	: m_engine(engine)
+	: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING)
 {
 	// Asset Loading
 	m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
@@ -229,7 +229,8 @@ void Reflector_Lighting::renderScene(const float & deltaTime)
 				m_reflectorVRH->updateVolume(m_reflectorCamera);
 
 				// Apply Graphics Pipeline
-				m_engine->getModule_Graphics().render(deltaTime, m_reflectorCamera, m_reflectorFBOS, m_reflectorVRH);
+				constexpr const unsigned int flags = Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING;
+				m_engine->getModule_Graphics().render(deltaTime, m_reflectorCamera, m_reflectorFBOS, m_reflectorVRH, flags);
 
 				// Copy lighting frame into cube-face
 				m_reflectorFBOS->bindForReading("LIGHTING", 0);

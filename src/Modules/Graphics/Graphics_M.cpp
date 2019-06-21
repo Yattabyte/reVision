@@ -176,7 +176,7 @@ std::shared_ptr<CameraBuffer> Graphics_Module::getCameraBuffer() const
 	return m_cameraBuffer;
 }
 
-void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH)
+void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<CameraBuffer> & cameraBuffer, const std::shared_ptr<Graphics_Framebuffers> & gfxFBOS, const std::shared_ptr<RH_Volume> & volumeRH, const unsigned int & allowedCategories)
 {
-	m_pipeline->render(deltaTime, cameraBuffer, gfxFBOS, volumeRH);
+	m_pipeline->render(deltaTime, cameraBuffer, gfxFBOS, volumeRH, allowedCategories);
 }

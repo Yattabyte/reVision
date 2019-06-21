@@ -28,7 +28,7 @@ public:
 	}
 	/** Constructor. */
 	inline Prop_View(Engine * engine)
-		: m_engine(engine) {
+		: m_engine(engine), Graphics_Technique(GEOMETRY) {
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
