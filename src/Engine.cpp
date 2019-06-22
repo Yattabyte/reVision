@@ -101,8 +101,8 @@ Engine::Engine() :
 	// Output engine boiler-plate
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > reVision Engine:\t\t\t*");
-	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + "\t\t*");
-	m_messageManager.statement("*  - Build Date   June 21st, 2019\t*");
+	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + "\t\t\t*");
+	m_messageManager.statement("*  - Build Date   June 22nd, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");

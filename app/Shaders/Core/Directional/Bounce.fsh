@@ -156,23 +156,27 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 }
 
 void main()
-{			
-	// Get current RH's world pos
-	vec3 bbox_max 				= BBox_Max.xyz;
-	vec3 bbox_min 				= BBox_Min.xyz;
-	vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
-    vec3 extents 				= (bbox_max - bbox_min).xyz; 
-	vec3 RHCellSize				= extents / (resolution);
-    vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
-	vec4 ViewPos 				= CamVMatrix * vec4(RHCenter, 1);
-	
-	// RH -> light space, get sampling disk center
-	int index 					= 0;
-	for (; index < NUM_CASCADES; ++index) 
-		if (-ViewPos.z <= CascadeEndClipSpace[index]) 
-			break;		
-	vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
-	
-	// Perform light bounce operation
-	BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+{	
+	if (Shadow_Spot >= 0) {
+		// Get current RH's world pos
+		vec3 bbox_max 				= BBox_Max.xyz;
+		vec3 bbox_min 				= BBox_Min.xyz;
+		vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
+		vec3 extents 				= (bbox_max - bbox_min).xyz; 
+		vec3 RHCellSize				= extents / (resolution);
+		vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
+		vec4 ViewPos 				= CamVMatrix * vec4(RHCenter, 1);
+		
+		// RH -> light space, get sampling disk center
+		int index 					= 0;
+		for (; index < NUM_CASCADES; ++index) 
+			if (-ViewPos.z <= CascadeEndClipSpace[index]) 
+				break;		
+		vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
+		
+		// Perform light bounce operation
+		BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+	}
+	else
+		discard;
 }

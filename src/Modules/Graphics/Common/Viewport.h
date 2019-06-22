@@ -5,6 +5,8 @@
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/MappedChar.h"
 #include "glm/glm.hpp"
 #include <memory>
 
@@ -56,6 +58,7 @@ public:
 	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	std::shared_ptr<RH_Volume> m_rhVolume;
+	MappedChar<std::pair<DynamicBuffer, GLsizei>> m_visBuffers;
 };
 
 #endif // VIEWPORT_H

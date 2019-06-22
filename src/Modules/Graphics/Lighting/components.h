@@ -13,34 +13,17 @@
 
 /** A directional light component, emulating the appearance of sun lighting. */
 struct LightDirectional_Component : public ECSComponent<LightDirectional_Component> {
+	// Light Properties
 	glm::vec3 m_color = glm::vec3(1.0f);
 	glm::vec3 m_direction = glm::vec3(0, -1, 0);
 	float m_intensity = 1.0f;
-	GL_AB_Index m_lightIndex = nullptr;
-
-	/** OpenGL buffer for directional lights. */
-	struct Directional_Buffer {
-		glm::vec3 LightColor; float padding1;
-		glm::vec3 LightDirection; float padding2;
-		float LightIntensity; glm::vec3 padding3;
-	};
-};
-
-/** A directional light shadow component, formatted for 4 parallel split cascaded shadow maps. */
-struct LightDirectionalShadow_Component : public ECSComponent<LightDirectionalShadow_Component> {
-	float m_updateTime = 0.0f;
-	int m_shadowSpot = 0;
 	glm::mat4 m_mMatrix = glm::mat4(1.0f);
-	GL_AB_Index m_shadowIndex = nullptr;
 
-	/** OpenGL buffer for directional light shadows. */
-	struct Directional_Shadow_Buffer {
-		glm::mat4 lightV = glm::mat4(1.0f);
-		glm::mat4 lightVP[NUM_CASCADES];
-		glm::mat4 inverseVP[NUM_CASCADES];
-		float CascadeEndClipSpace[NUM_CASCADES];
-		int Shadow_Spot = 0; glm::vec3 padding1;
-	};
+	// Shadow Properties
+	bool m_hasShadow = false;
+	float m_updateTime = 0.0f;
+	int m_shadowSpot = -1;
+	GL_AB_Index m_lightIndex = nullptr;
 };
 
 /** A point light component, emulating a light bulb like appearance. */

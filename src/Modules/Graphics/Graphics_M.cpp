@@ -17,7 +17,6 @@ Graphics_Module::~Graphics_Module()
 	world.removeComponentType("Prop_Component");
 	world.removeComponentType("Skeleton_Component");
 	world.removeComponentType("LightDirectional_Component");
-	world.removeComponentType("LightDirectionalShadow_Component");
 	world.removeComponentType("LightPoint_Component");
 	world.removeComponentType("LightPointShadow_Component");
 	world.removeComponentType("LightSpot_Component");
@@ -75,31 +74,28 @@ void Graphics_Module::initialize(Engine * engine)
 	auto & world = m_engine->getModule_World();
 	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
 		auto * component = new Prop_Component();
-		component->m_model = Shared_Model(engine, CastAny(parameters[0], std::string("")));
-		component->m_skin = CastAny(parameters[1], 0u);
+		component->m_model = Shared_Model(engine, CastAny(parameters, 0, std::string("")));
+		component->m_skin = CastAny(parameters, 1, 0u);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("Skeleton_Component", [engine](const ParamList & parameters) {
 		auto * component = new Skeleton_Component();
-		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + CastAny(parameters[0], std::string("")));
-		component->m_animation = CastAny(parameters[1], 0);
+		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + CastAny(parameters, 0, std::string("")));
+		component->m_animation = CastAny(parameters, 1, 0);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
 		auto * component = new LightDirectional_Component();
-		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
-		component->m_intensity = CastAny(parameters[1], 1.0f);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightDirectionalShadow_Component", [](const ParamList & parameters) {
-		auto * component = new LightDirectionalShadow_Component();		
+		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters, 1, 1.0f);
+		component->m_hasShadow = CastAny(parameters, 2, false);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
 		auto * component = new LightPoint_Component();
-		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
-		component->m_intensity = CastAny(parameters[1], 1.0f);
-		component->m_radius = CastAny(parameters[2], 1.0f);
+		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters, 1, 1.0f);
+		component->m_radius = CastAny(parameters, 2, 1.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightPointShadow_Component", [](const ParamList & parameters) {
@@ -108,10 +104,10 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
 		auto * component = new LightSpot_Component();
-		component->m_color = CastAny(parameters[0], glm::vec3(1.0f));
-		component->m_intensity = CastAny(parameters[1], 1.0f);
-		component->m_radius = CastAny(parameters[2], 1.0f);
-		component->m_cutoff = CastAny(parameters[3], 45.0f);
+		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters, 1, 1.0f);
+		component->m_radius = CastAny(parameters, 2, 1.0f);
+		component->m_cutoff = CastAny(parameters, 3, 45.0f);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpotShadow_Component", [](const ParamList & parameters) {

@@ -23,9 +23,7 @@ entity
 		vec3 "0.75,0.75,0.9"
 		float "8"
 	}
-	LightDirectionalShadow_Component
-	{		
-	}
+
 }
 entity
 {

@@ -9,11 +9,14 @@ struct PropAttributes {
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
-struct Shadow_Struct {
+struct Light_Struct {
 	mat4 lightV;	
 	mat4 LightVP[NUM_CASCADES];
 	mat4 InverseLightVP[NUM_CASCADES];	
 	float CascadeEndClipSpace[NUM_CASCADES];
+	vec4 LightColor;
+	vec4 LightDirection;
+	float LightIntensity;
 	int Shadow_Spot;
 };
 
@@ -23,19 +26,18 @@ layout (std430, binding = 3) readonly buffer Prop_Buffer {
 layout (std430, binding = 4) readonly buffer Visibility_Buffer {
 	uint propIndexes[];
 };
-layout (std430, binding = 9) readonly buffer Shadow_Buffer {
-	Shadow_Struct shadowBuffers[];
+layout (std430, binding = 8) readonly buffer Light_Buffer {
+	Light_Struct lightBuffers[];
 };
 layout (location = 0) in vec3 vertex;
 layout (location = 0) flat out int id;
 
 layout (location = 0) uniform int LightIndex = 0;
-layout (location = 1) uniform int ShadowIndex = 0;
 
 void main()
 {	
-	gl_Position = shadowBuffers[ShadowIndex].LightVP[gl_InstanceID] * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
-	gl_Layer = shadowBuffers[ShadowIndex].Shadow_Spot + gl_InstanceID;
+	gl_Position = lightBuffers[LightIndex].LightVP[gl_InstanceID] * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
+	gl_Layer = lightBuffers[LightIndex].Shadow_Spot + gl_InstanceID;
 	id = gl_DrawID;
 }
 

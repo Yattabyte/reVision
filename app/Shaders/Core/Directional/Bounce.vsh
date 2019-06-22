@@ -3,11 +3,14 @@
 #extension GL_ARB_shader_viewport_layer_array : enable
 #define NUM_CASCADES 4
 
-struct Shadow_Struct {
+struct Light_Struct {
 	mat4 lightV;	
 	mat4 LightVP[NUM_CASCADES];
 	mat4 InverseLightVP[NUM_CASCADES];	
 	float CascadeEndClipSpace[NUM_CASCADES];
+	vec4 LightColor;
+	vec4 LightDirection;
+	float LightIntensity;
 	int Shadow_Spot;
 };
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
@@ -16,13 +19,12 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 	vec3 EyePosition;
 	vec2 CameraDimensions;
 };
-layout (std430, binding = 4) readonly buffer Shadow_Index_Buffer {
-	int shadowIndexes[];
+layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+	int lightIndexes[];
 };
-layout (std430, binding = 9) readonly buffer Shadow_Buffer {
-	Shadow_Struct shadowBuffers[];
+layout (std430, binding = 8) readonly buffer Light_Buffer {
+	Light_Struct lightBuffers[];
 };
-
 layout (location = 0) uniform int LightCount = 0;
 layout (location = 0) in vec3 vertex;
 
@@ -37,12 +39,12 @@ void main()
 	// Draw order arranged like: (layer 0)[light 0, light 1, light 2], (layer 1)[light 0, light 1, light 2], etc
     gl_Position = vec4(vertex, 1);
     gl_Layer = gl_InstanceID / LightCount;
-	const int shadowIndex = shadowIndexes[gl_InstanceID % LightCount];
+	const int lightIndex = lightIndexes[gl_InstanceID % LightCount];
 	CamVMatrix = vMatrix;
 	CamPVMatrix = pMatrix * vMatrix;
 	for (uint x = 0; x < NUM_CASCADES; ++x) {
-		LightVP[x] = shadowBuffers[shadowIndex].LightVP[x];
-		CascadeEndClipSpace[x] = shadowBuffers[shadowIndex].CascadeEndClipSpace[x];
+		LightVP[x] = lightBuffers[lightIndex].LightVP[x];
+		CascadeEndClipSpace[x] = lightBuffers[lightIndex].CascadeEndClipSpace[x];
 	}
-	Shadow_Spot = shadowBuffers[shadowIndex].Shadow_Spot;
+	Shadow_Spot = lightBuffers[lightIndex].Shadow_Spot;
 }

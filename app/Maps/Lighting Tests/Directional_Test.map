@@ -22,9 +22,7 @@ entity
 	{		
 		vec3 "0.75,0.75,0.9"
 		float "4"
-	}
-	LightDirectionalShadow_Component
-	{		
+		bool "true"
 	}
 }
 entity
@@ -39,10 +37,9 @@ entity
 	{		
 		vec3 "1,0,0"
 		float "4"
+		bool "true"
 	}
-	LightDirectionalShadow_Component
-	{		
-	}
+
 }
 entity
 {
@@ -56,10 +53,9 @@ entity
 	{		
 		vec3 "0,0,1"
 		float "4"
+		bool "true"
 	}
-	LightDirectionalShadow_Component
-	{		
-	}
+
 }
 entity
 {

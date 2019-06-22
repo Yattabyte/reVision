@@ -83,6 +83,10 @@ private:
 	@param	in	the string to convert
 	@return		a quat */
 	static glm::quat getType_Quat(std::string & in);
+	/** Parse a given line between parantheses and convert it to a boolean.
+	@param	in	the string to convert
+	@return		a boolean */
+	static bool getType_Bool(std::string & in);
 };
 
 #endif // LEVEL_IO_H

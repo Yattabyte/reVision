@@ -41,10 +41,10 @@ void Physics_Module::initialize(Engine * engine)
 	auto & world = m_engine->getModule_World();
 	world.addComponentType("Collider_Component", [engine](const ParamList & parameters) {
 		auto * component = new Collider_Component();
-		component->m_collider = Shared_Collider(engine, CastAny(parameters[0], std::string("")));
-		component->m_mass = btScalar(CastAny(parameters[1], 0));
-		component->m_restitution = CastAny(parameters[2], 0.0f);
-		component->m_friction = CastAny(parameters[3], 0.0f);
+		component->m_collider = Shared_Collider(engine, CastAny(parameters, 0, std::string("")));
+		component->m_mass = btScalar(CastAny(parameters, 1, 0));
+		component->m_restitution = CastAny(parameters, 2, 0.0f);
+		component->m_friction = CastAny(parameters, 3, 0.0f);
 		return std::make_pair(component->ID, component);
 	});
 

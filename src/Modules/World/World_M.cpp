@@ -19,9 +19,9 @@ void World_Module::initialize(Engine * engine)
 
 	// Add New Component Type
 	addComponentType("Transform_Component", [](const ParamList & parameters) {
-		const auto position = CastAny(parameters[0], glm::vec3(0.0f));
-		const auto orientation = CastAny(parameters[1], glm::quat(1, 0, 0, 0));
-		const auto scale = CastAny(parameters[2], glm::vec3(1.0f));
+		const auto position = CastAny(parameters, 0, glm::vec3(0.0f));
+		const auto orientation = CastAny(parameters, 1, glm::quat(1, 0, 0, 0));
+		const auto scale = CastAny(parameters, 2, glm::vec3(1.0f));
 
 		auto * component = new Transform_Component();
 		component->m_transform.m_position = position;
@@ -168,7 +168,7 @@ void World_Module::processLevel()
 		for each (auto & lvlEntity in m_level->m_entities) {
 			for each (const auto & lvlComponent in lvlEntity.components) {
 				// Get component type
-				type = lvlComponent.  type.c_str();
+				type = lvlComponent.type.c_str();
 				// Call the appropriate creator if available
 				if (m_constructorMap.find(type)) {
 					const auto [ID, component] = m_constructorMap[type](lvlComponent.parameters);

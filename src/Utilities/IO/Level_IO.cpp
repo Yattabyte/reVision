@@ -1,5 +1,6 @@
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
+#include <sstream>
 
 
 bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, std::vector<LevelStruct_Entity> & entities)
@@ -104,6 +105,8 @@ LevelStruct_Component Level_IO::parse_component(std::ifstream & file_stream)
 					parameter = getType_Vec4(line);
 				else if (find(line, "quat"))
 					parameter = getType_Quat(line);
+				else if (find(line, "bool"))
+					parameter = getType_Bool(line);
 				if (parameter.has_value())
 					component.parameters.push_back(parameter);
 			}
@@ -204,4 +207,13 @@ glm::quat Level_IO::getType_Quat(std::string & in) {
 	std::string number4(vec4string.substr(indices[2] + 1, (vec4string.size() - 1) - indices[2]));
 
 	return glm::quat(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
+}
+
+bool Level_IO::getType_Bool(std::string & in)
+{
+	bool b;
+	std::istringstream("1") >> b;
+	if (!b)
+		std::istringstream("true") >> b;
+	return b;
 }

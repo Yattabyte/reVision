@@ -19,15 +19,14 @@ layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in float HasShadow;
-layout (location = 2) flat in vec3 LightColorInt;
-layout (location = 3) flat in vec3 LightDirection;
-layout (location = 4) flat in int Shadow_Spot;
-layout (location = 5) flat in vec4 CascadeEndClipSpace;
-layout (location = 6) flat in mat4 LightVP[NUM_CASCADES];
-layout (location = 22) flat in mat4 CamPInverse;
-layout (location = 26) flat in mat4 CamVInverse;
-layout (location = 30) flat in vec3 CamEyePosition;
+layout (location = 1) flat in vec3 LightColorInt;
+layout (location = 2) flat in vec3 LightDirection;
+layout (location = 3) flat in int Shadow_Spot;
+layout (location = 4) flat in vec4 CascadeEndClipSpace;
+layout (location = 5) flat in mat4 LightVP[NUM_CASCADES];
+layout (location = 21) flat in mat4 CamPInverse;
+layout (location = 25) flat in mat4 CamVInverse;
+layout (location = 29) flat in vec3 CamEyePosition;
 
 layout (location = 0) out vec3 LightingColor;
 
@@ -42,7 +41,7 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 #define FactorAmt 1.0 / 9
 float CalcShadowFactor(in int Index, in vec4 LightSpacePos, in float bias)                                                  
 {     
-	if (HasShadow > 0.5f) {	
+	if (Shadow_Spot >= 0) {	
 		// Bring fragment coordinates from world space into light space, then into texture spaces
 		const vec3 ProjCoords 				= LightSpacePos.xyz / LightSpacePos.w;                                  
 		const vec2 UVCoords 				= 0.5f * ProjCoords.xy + 0.5f;                                    
