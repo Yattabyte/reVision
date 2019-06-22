@@ -58,7 +58,6 @@ public:
 	std::shared_ptr<CameraBuffer> m_cameraBuffer;
 	std::shared_ptr<Graphics_Framebuffers> m_gfxFBOS;
 	std::shared_ptr<RH_Volume> m_rhVolume;
-	MappedChar<std::pair<DynamicBuffer, GLsizei>> m_visBuffers;
 };
 
 #endif // VIEWPORT_H

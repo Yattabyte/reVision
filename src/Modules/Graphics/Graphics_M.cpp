@@ -119,9 +119,8 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_viewport->m_cameraBuffer->beginWriting();
 	m_viewport->m_cameraBuffer->pushChanges();
 
-	// Clear Frame Buffers
-	m_viewport->clear();
-	m_viewport->bind();	
+	// Update persistent pipeline state
+	m_pipeline->update(deltaTime);
 
 	// Render graphics pipeline using current set of buffers
 	render(deltaTime, m_viewport);
@@ -133,5 +132,8 @@ void Graphics_Module::frameTick(const float & deltaTime)
 
 void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
 {
+	viewport->clear();
+	viewport->bind();
+
 	m_pipeline->render(deltaTime, viewport, allowedCategories);
 }

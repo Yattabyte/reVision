@@ -2,7 +2,6 @@
 #ifndef SPOT_LIGHTING_H
 #define SPOT_LIGHTING_H
 
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Spot.h"
@@ -30,6 +29,9 @@ public:
 	/** Constructor. */
 	inline Spot_Lighting(Engine * engine, Prop_View * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Spot\\Stencil");
@@ -73,8 +75,7 @@ public:
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
 		world.addNotifyOnComponentType(LightSpot_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * component = (LightSpot_Component*)c;
-			component->m_lightIndex = m_lightBuffer.newElement();
+			((LightSpot_Component*)c)->m_lightIndex = m_lightBuffer.newElement();
 		});
 
 		// World-Changed Callback
@@ -93,50 +94,12 @@ public:
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_lightBuffer.beginWriting();
 		m_visLights.beginWriting();
-		m_propShadow_Static->beginFrame(deltaTime);
-		m_propShadow_Dynamic->beginFrame(deltaTime);
-
-		// Synchronize technique related components
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ LightSpot_Component::ID, Transform_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			syncComponents(deltaTime, components);
-		});
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_lightBuffer.endWriting();
 		m_visLights.endWriting();
-		m_propShadow_Static->endFrame(deltaTime);
-		m_propShadow_Dynamic->endFrame(deltaTime);
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
-		// Exit Early
-		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
-			return;
-
-		// Populate render-lists
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ LightSpot_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components);
-		});
-
-		// Render important shadows
-		renderShadows(deltaTime, viewport);
-
-		// Render lights
-		renderLights(deltaTime, viewport);
-	}	
-
-
-private:
-	// Private Methods
-	/***/
-	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {		
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		PriorityList<float, LightSpot_Component*, std::less<float>> oldest;
 		for each (const auto & componentParam in components) {
 			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
@@ -188,7 +151,7 @@ private:
 				m_shadowCount--;
 			}
 			if (lightComponent->m_hasShadow)
-				oldest.insert(lightComponent->m_updateTime, lightComponent);			
+				oldest.insert(lightComponent->m_updateTime, lightComponent);
 
 			// Sync Buffer Attributes
 			m_lightBuffer[index].LightColor = lightComponent->m_color;
@@ -202,6 +165,35 @@ private:
 		// Shadows are updated in rendering pass, determined once a frame
 		m_shadowsToUpdate = PQtoVector(oldest);
 	}
+	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Exit Early
+		if (!m_enabled || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
+			return;
+
+		// Render important shadows
+		updateShadows(deltaTime);
+	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+		// Exit Early
+		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
+			return;
+
+		// Populate render-lists
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ LightSpot_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			updateVisibility(deltaTime, components);
+		});
+
+		// Render lights
+		renderLights(deltaTime, viewport);
+	}	
+
+
+private:
+	// Private Methods
 	/***/
 	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Accumulate Light Data	
@@ -221,9 +213,8 @@ private:
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 	}
 	/** Render all the geometry from each light.
-	@param	deltaTime	the amount of time passed since last frame.
-	@param	viewport	the viewport to render from. */
-	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
+	@param	deltaTime	the amount of time passed since last frame. */
+	inline void updateShadows(const float & deltaTime) {
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
@@ -235,20 +226,19 @@ private:
 				m_shadowFBO.clear(light->m_shadowSpot + 1);
 				// Render components
 				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, 0);
-				m_propShadow_Static->renderTechnique(deltaTime, viewport);
+				m_propShadow_Static->renderShadows(deltaTime);
 				light->m_outOfDate = false;
 			}
 			// Update dynamic shadows
 			m_shadowFBO.clear(light->m_shadowSpot);
 			// Render components
 			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, 0);
-			m_propShadow_Dynamic->renderTechnique(deltaTime, viewport);
+			m_propShadow_Dynamic->renderShadows(deltaTime);
 			light->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
 
 		m_outOfDate = false;
-		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 	}
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
@@ -328,10 +318,13 @@ private:
 	GLuint m_updateQuality = 1u;
 	glm::ivec2 m_shadowSize = glm::ivec2(256);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
-	DynamicBuffer m_visLights;
 	std::vector<LightSpot_Component*> m_shadowsToUpdate;
 	bool m_outOfDate = false;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+
+	// Visibility
+	GLint m_visibleShadows = 0;
+	DynamicBuffer m_visLights;
 
 	// Core Lighting Data
 	/** OpenGL buffer for spot lights. */
@@ -350,7 +343,6 @@ private:
 	};
 	size_t m_shadowCount = 0ull;
 	std::vector<int> m_unusedShadows;
-	GLint m_visibleShadows = 0;
 	GL_ArrayBuffer<Spot_Buffer> m_lightBuffer;
 	FBO_Shadow_Spot m_shadowFBO;
 };

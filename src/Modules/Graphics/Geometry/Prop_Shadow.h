@@ -13,7 +13,7 @@
 
 
 /** A reusable secondary technique for rendering props into shadow maps. */
-class Prop_Shadow : public Graphics_Technique {
+class Prop_Shadow {
 public:
 	// Public Enumerations
 	const enum RenderType_Flags {
@@ -31,7 +31,7 @@ public:
 	}
 	/** Constructor. */
 	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
-		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView), Graphics_Technique(GEOMETRY) {
+		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
 		// Asset Loading
 		m_shapeCube = Shared_Primitive(m_engine, "cube");
 		m_modelsVAO = &m_engine->getManager_Models().getVAO();
@@ -45,24 +45,16 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void beginFrame(const float & deltaTime) override {
+	inline void renderShadows(const float & deltaTime) {
+		// Exit Early
+		if (!m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
+			return;
+
+		// Populate render-lists
 		m_bufferPropIndex.beginWriting();
 		m_bufferCulling.beginWriting();
 		m_bufferRender.beginWriting();
 		m_bufferSkeletonIndex.beginWriting();
-	}
-	inline virtual void endFrame(const float & deltaTime) override {
-		m_bufferPropIndex.endWriting();
-		m_bufferCulling.endWriting();
-		m_bufferRender.endWriting();
-		m_bufferSkeletonIndex.endWriting();
-	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
-		// Exit Early
-		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderShadow->existsYet())
-			return;
-
-		// Populate render-lists
 		m_engine->getModule_World().updateSystem(
 			deltaTime,
 			{ Prop_Component::ID, Skeleton_Component::ID },
@@ -73,6 +65,10 @@ public:
 
 		// Apply occlusion culling and render props
 		renderGeometry(deltaTime);
+		m_bufferPropIndex.endWriting();
+		m_bufferCulling.endWriting();
+		m_bufferRender.endWriting();
+		m_bufferSkeletonIndex.endWriting();
 	}
 
 
@@ -127,11 +123,11 @@ private:
 		}
 
 		// Update camera buffers
-		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
-		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
-		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
+		m_visProps = (GLsizei)visibleIndices.size();
+		m_bufferPropIndex.write(0, sizeof(GLuint) * m_visProps, visibleIndices.data());
+		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_visProps, cullingDrawData.data());
+		m_bufferRender.write(0, sizeof(glm::ivec4) * m_visProps, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(0, sizeof(int) * m_visProps, skeletonData.data());
 	}
 	/***/
 	inline void renderGeometry(const float & deltaTime) {
@@ -154,7 +150,7 @@ private:
 		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visProps, 0);
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
 
@@ -169,14 +165,14 @@ private:
 		m_shaderShadow->setUniform(1, m_shadowIndex);
 		glBindVertexArray(*m_modelsVAO);
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visProps, 0);
 
 		glFrontFace(GL_CCW);
 		glCullFace(GL_BACK);
 	}
 	/** Clear out the props queued up for rendering. */
 	inline void clear() {
-		m_propCount = 0;
+		m_visProps = 0;
 	}
 
 
@@ -190,7 +186,7 @@ private:
 	Shared_Shader m_shaderCull, m_shaderShadow;
 	Shared_Primitive m_shapeCube;
 	const GLuint * m_modelsVAO = nullptr;
-	GLsizei m_propCount = 0;
+	GLsizei m_visProps = 0;
 	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

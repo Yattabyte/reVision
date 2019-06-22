@@ -68,10 +68,13 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 
 /** A parallax reflector component, 360 view of a scene. */
 struct Reflector_Component : public ECSComponent<Reflector_Component> {
-	float m_updateTime = 0.0f;
-	int m_cubeSpot = 0;
-	bool m_outOfDate = false;
+	// Reflector Properties
 	CameraBuffer::BufferStructure m_cameraData[6];
+	bool m_outOfDate = false;
+	float m_updateTime = 0.0f;
+	int m_cubeSpot = -1;
+
+	// System Identifier
 	GL_AB_Index m_reflectorIndex = nullptr;
 };
 

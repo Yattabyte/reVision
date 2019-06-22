@@ -2,7 +2,6 @@
 #ifndef DIRECTIONAL_LIGHTING_H
 #define DIRECTIONAL_LIGHTING_H
 
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
@@ -32,6 +31,9 @@ public:
 	/** Constructor. */
 	inline Directional_Lighting(Engine * engine, Prop_View * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
 		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");
@@ -91,8 +93,7 @@ public:
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
 		world.addNotifyOnComponentType(LightDirectional_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * component = (LightDirectional_Component*)c;
-			component->m_lightIndex = m_lightBuffer.newElement();		
+			((LightDirectional_Component*)c)->m_lightIndex = m_lightBuffer.newElement();
 		});
 
 		// World-Changed Callback
@@ -107,51 +108,13 @@ public:
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_lightBuffer.beginWriting();
 		m_visLights.beginWriting();
-		m_propShadowSystem->beginFrame(deltaTime);
-
-		// Synchronize technique related components
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ LightDirectional_Component::ID, Transform_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			syncComponents(deltaTime, components);
-		});
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_lightBuffer.endWriting();
 		m_visLights.endWriting();
-		m_propShadowSystem->endFrame(deltaTime);
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
-		// Exit Early
-		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
-			return;
-
-		// Populate render-lists
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ LightDirectional_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components, viewport);
-		});	
-
-		// Render important shadows
-		renderShadows(deltaTime, viewport);
-
-		// Render lights
-		renderLights(deltaTime, viewport);
-
-		// Render indirect lights
-		renderBounce(deltaTime, viewport);
-	}	
-
-
-private:
-	// Private Methods
 	/***/
-	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {		
+	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
@@ -201,6 +164,33 @@ private:
 			m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 		}
 	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+		// Exit Early
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
+			return;
+
+		// Populate render-lists
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ LightDirectional_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			updateVisibility(deltaTime, components, viewport);
+		});
+
+		// Render important shadows
+		renderShadows(deltaTime, viewport);
+
+		// Render lights
+		renderLights(deltaTime, viewport);
+
+		// Render indirect lights
+		renderBounce(deltaTime, viewport);
+	}
+
+
+private:
+	// Private Methods	
 	/***/
 	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components, const std::shared_ptr<Viewport> & viewport) {
 		// Accumulate Light Data
@@ -291,7 +281,7 @@ private:
 			m_shadowFBO.clear(light->m_shadowSpot);
 			// Render geometry components
 			m_propShadowSystem->setData(viewport->get3DPosition(), (int)*light->m_lightIndex, 0);		
-			m_propShadowSystem->renderTechnique(deltaTime, viewport);
+			m_propShadowSystem->renderShadows(deltaTime);
 			light->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
@@ -373,10 +363,13 @@ private:
 	glm::ivec2 m_shadowSize = glm::ivec2(1024);
 	GLuint m_bounceSize = 16u, m_updateQuality = 1u;
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4), m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
-	DynamicBuffer m_visLights;
 	Prop_Shadow * m_propShadowSystem = nullptr;
 	std::vector<LightDirectional_Component*> m_shadowsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+
+	// Visibility
+	GLint m_visibleShadows = 0;
+	DynamicBuffer m_visLights;
 
 	// Core Lighting Data
 	/** OpenGL buffer for directional lights. */
@@ -392,7 +385,6 @@ private:
 	};
 	size_t m_shadowCount = 0ull;
 	std::vector<int> m_unusedShadows;
-	GLint m_visibleShadows = 0;
 	GL_ArrayBuffer<Directional_Buffer> m_lightBuffer;
 	FBO_Shadow_Directional m_shadowFBO;
 };

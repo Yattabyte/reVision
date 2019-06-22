@@ -2,6 +2,7 @@
 #include "Engine.h"
 
 /* Rendering Techniques Used */
+#include "Modules/Graphics/Geometry/Skeletal_Animation.h"
 #include "Modules/Graphics/Geometry/Prop_View.h"
 #include "Modules/Graphics/Lighting/Directional_Lighting.h"
 #include "Modules/Graphics/Lighting/Point_Lighting.h"
@@ -22,22 +23,32 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
 	: m_engine(engine)
 {
 	auto propView = new Prop_View(m_engine);
-	m_techniques = {
-		propView,
-		new Directional_Lighting(m_engine, propView),
-		new Point_Lighting(m_engine, propView),
-		new Spot_Lighting(m_engine, propView),
-		new Reflector_Lighting(m_engine),
-		new Radiance_Hints(m_engine),
-		new Skybox(m_engine),
-		new SSAO(m_engine),
-		new SSR(m_engine),
-		new Join_Reflections(m_engine),
-		new Bloom(m_engine),
-		new HDR(m_engine),
-		new FXAA(m_engine),
-		new To_Screen(m_engine)
+	auto directionalLighting = new Directional_Lighting(m_engine, propView);
+	auto pointLighting = new Point_Lighting(m_engine, propView);
+	auto spotLighting = new Spot_Lighting(m_engine, propView);
+	auto reflectorLighting = new Reflector_Lighting(m_engine);
+	auto radianceHints = new Radiance_Hints(m_engine);
+	auto skybox= new Skybox(m_engine);
+	auto ssao = new SSAO(m_engine);
+	auto ssr = new SSR(m_engine);
+	auto joinReflections = new Join_Reflections(m_engine);
+	auto bloom = new Bloom(m_engine);
+	auto hdr = new HDR(m_engine);
+	auto fxaa = new FXAA(m_engine);
+	auto toScreen = new To_Screen(m_engine);	
+
+	m_techniques = { 
+		propView, directionalLighting,	pointLighting, spotLighting,
+		reflectorLighting, radianceHints, skybox, ssao, ssr,
+		joinReflections, bloom, hdr, fxaa, toScreen
 	};
+
+	m_systems = ECSSystemList({
+		new Skeletal_Animation(engine),
+		propView, directionalLighting,	pointLighting, spotLighting,
+		reflectorLighting, radianceHints, skybox, ssao, ssr,
+		joinReflections, bloom, hdr, fxaa, toScreen
+	});
 }
 
 void Graphics_Pipeline::beginFrame(const float & deltaTime)
@@ -50,6 +61,13 @@ void Graphics_Pipeline::endFrame(const float & deltaTime)
 {
 	for each (auto * tech in m_techniques)
 		tech->endFrame(deltaTime);
+}
+
+void Graphics_Pipeline::update(const float & deltaTime)
+{
+	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+	for each (auto * tech in m_techniques)
+		tech->updateTechnique(deltaTime);	
 }
 
 void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)

@@ -69,6 +69,13 @@ private:
 /** An ordered list of systems to be updated. */
 class ECSSystemList {
 public:
+	// Public (de)Constructors
+	inline ~ECSSystemList() = default;
+	inline explicit ECSSystemList() = default;
+	inline ECSSystemList(const std::vector<BaseECSSystem*> & systems) 
+		: m_systems(systems) {}
+
+
 	// Public Methods
 	/** Adds a system to the list.
 	@param	system	the system to add. */
@@ -102,7 +109,7 @@ public:
 
 private:
 	// Private attributes
-	std::vector<BaseECSSystem *> m_systems;
+	std::vector<BaseECSSystem*> m_systems;
 };
 
 #endif // ECSSYSTEM_H

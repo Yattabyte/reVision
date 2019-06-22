@@ -2,7 +2,6 @@
 #ifndef PROP_VIEW_H
 #define PROP_VIEW_H
 
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/World/ECS/TransformComponent.h"
@@ -29,6 +28,10 @@ public:
 	/** Constructor. */
 	inline Prop_View(Engine * engine)
 		: m_engine(engine), Graphics_Technique(GEOMETRY) {
+		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
+		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
@@ -38,12 +41,10 @@ public:
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
 		world.addNotifyOnComponentType(Prop_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * component = (Prop_Component*)c;
-			component->m_propBufferIndex = m_propBuffer.newElement();
+			((Prop_Component*)c)->m_propBufferIndex = m_propBuffer.newElement();
 		});
 		world.addNotifyOnComponentType(Skeleton_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * component = (Skeleton_Component*)c;
-			component->m_skeleBufferIndex = m_skeletonBuffer.newElement();
+			((Skeleton_Component*)c)->m_skeleBufferIndex = m_skeletonBuffer.newElement();
 		});
 
 		// World-Changed Callback
@@ -62,24 +63,6 @@ public:
 		m_bufferCulling.beginWriting();
 		m_bufferRender.beginWriting();
 		m_bufferSkeletonIndex.beginWriting();
-
-		// Apply skeletal animation
-		auto & world = m_engine->getModule_World();
-		world.updateSystem(
-			deltaTime,
-			{ Skeleton_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			animateComponents(deltaTime, components);
-		});
-		// Synchronize technique related components
-		world.updateSystem(
-			deltaTime,
-			{ Prop_Component::ID, Skeleton_Component::ID, Transform_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			syncComponents(deltaTime, components);
-		});
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_propBuffer.endWriting();
@@ -89,70 +72,7 @@ public:
 		m_bufferRender.endWriting();
 		m_bufferSkeletonIndex.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
-		// Exit Early
-		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
-			return;
-
-		// Populate render-lists
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ Prop_Component::ID, Skeleton_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components, viewport);
-		});
-
-		// Apply occlusion culling and render props
-		renderGeometry(deltaTime, viewport);
-	}	
-
-
-	// Public Methods
-	/** Retrieve the prop buffer.
-	@return		the prop buffer. */
-	inline auto & getPropBuffer() {
-		return m_propBuffer;
-	}
-	/** Retrieve the skeleton buffer.
-	@return		the skeleton buffer. */
-	inline auto & getSkeletonBuffer() {
-		return m_skeletonBuffer;
-	}
-	/***/
-	template <typename T> inline static T valueMix(const T &t1, const T &t2, const float &f) { return glm::mix(t1, t2, f); }
-	/***/
-	template <> inline static glm::quat valueMix(const glm::quat &t1, const glm::quat &t2, const float &f) { return glm::slerp(t1, t2, f); }
-
-
-private:
-	// Private Methods
-	/***/
-	inline void animateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-		for each (const auto & componentParam in components) {
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
-			if (!skeletonComponent->m_mesh->existsYet())
-				return;
-
-			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_mesh->m_geometry.boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_mesh->m_geometry.animations.size())
-				return;
-			else {
-				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
-				if (skeletonComponent->m_playAnim)
-					skeletonComponent->m_animTime += deltaTime;
-				const float TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0.00
-					? (float)(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond)
-					: 25.0f;
-				const float TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const float AnimationTime = fmodf(TimeInTicks, float(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration));
-				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
-
-				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
-			}
-		}
-	}
-	/***/
-	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[1];
@@ -194,9 +114,43 @@ private:
 			m_propBuffer[index].materialID = propComponent->m_skin;
 			m_propBuffer[index].isStatic = propComponent->m_static;
 			m_propBuffer[index].mMatrix = propComponent->mMatrix;
-			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;			
+			m_propBuffer[index].bBoxMatrix = propComponent->bBoxMatrix;
 		}
 	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+		// Exit Early
+		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
+			return;
+
+		// Populate render-lists
+		m_engine->getModule_World().updateSystem(
+			deltaTime,
+			{ Prop_Component::ID, Skeleton_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
+			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+			updateVisibility(deltaTime, components, viewport);
+		});
+
+		// Apply occlusion culling and render props
+		renderGeometry(deltaTime, viewport);
+	}	
+
+
+	// Public Methods
+	/** Retrieve the prop buffer.
+	@return		the prop buffer. */
+	inline auto & getPropBuffer() {
+		return m_propBuffer;
+	}
+	/** Retrieve the skeleton buffer.
+	@return		the skeleton buffer. */
+	inline auto & getSkeletonBuffer() {
+		return m_skeletonBuffer;
+	}
+
+
+private:
+	// Private Methods
 	/***/
 	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components, const std::shared_ptr<Viewport> & viewport) {
 		// Accumulate draw parameter information per model
@@ -228,11 +182,11 @@ private:
 		}
 
 		// Update camera buffers
-		m_propCount = (GLsizei)visibleIndices.size();
-		m_bufferPropIndex.write(0, sizeof(GLuint) * m_propCount, visibleIndices.data());
-		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_propCount, cullingDrawData.data());
-		m_bufferRender.write(0, sizeof(glm::ivec4) * m_propCount, renderingDrawData.data());
-		m_bufferSkeletonIndex.write(0, sizeof(int) * m_propCount, skeletonData.data());
+		m_visProps = (GLsizei)visibleIndices.size();
+		m_bufferPropIndex.write(0, sizeof(GLuint) * m_visProps, visibleIndices.data());
+		m_bufferCulling.write(0, sizeof(glm::ivec4) * m_visProps, cullingDrawData.data());
+		m_bufferRender.write(0, sizeof(glm::ivec4) * m_visProps, renderingDrawData.data());
+		m_bufferSkeletonIndex.write(0, sizeof(int) * m_visProps, skeletonData.data());
 	}
 	/***/
 	inline void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
@@ -254,7 +208,7 @@ private:
 		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visProps, 0);
 		glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 		glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
 
@@ -266,104 +220,27 @@ private:
 		m_shaderGeometry->bind();
 		glBindVertexArray(*m_modelsVAO);
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_propCount, 0);
+		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visProps, 0);
 	}
 	/** Clear out the props queued up for rendering. */
 	inline void clear() {
-		m_propCount = 0;
+		m_visProps = 0;
 		m_propBuffer.clear();
 		m_skeletonBuffer.clear();
 	}
 
 
-protected:
-	// Protected Methods
-	/** Search for a node in the animation system matching the name specified.
-	@param	pAnimation		the animation system to search through.
-	@param	NodeName		the name of the node to find.
-	@return					pointer to the node matching the name specified if found, nullptr otherwise. */
-	inline static constexpr auto FindNodeAnim = [](const Animation & pAnimation, const std::string & NodeName) -> const Node_Animation* {
-		for (unsigned int i = 0; i < pAnimation.numChannels; i++) {
-			const Node_Animation * pNodeAnim = pAnimation.channels[i];
-			if (pNodeAnim->nodeName == NodeName)
-				return pNodeAnim;
-		}
-		return nullptr;
-	};
-	/** Search for a keyframe appropriate for the current animation time.
-	@param	AnimationTime	the current time in the animation.
-	@param	count			the number of key frames.
-	@param	keyVector		array of key frames.
-	@return					an appropriate keyframe, 0 otherwise. */
-	inline static constexpr auto FindKey = [](const float & AnimationTime, const size_t & count, const auto & keyVector) -> const size_t {
-		for (size_t i = 0; i < count; i++)
-			if (AnimationTime < (float)(keyVector[i + 1]).time)
-				return i;
-		return size_t(0);
-	};
-	/** Interpolate between this keyframe, and the next one, based on the animation time.
-	@param	AnimationTime	the current time in the animation.
-	@param	keyVector		array of key frames.
-	@return					a new keyframe value. */
-	inline static constexpr auto InterpolateKeys = [](const float &AnimationTime, const auto & keyVector) {
-		const size_t & keyCount = keyVector.size();
-		assert(keyCount > 0);
-		const auto & Result = keyVector[0].value;
-		if (keyCount > 1) { // Ensure we have 2 values to interpolate between
-			const size_t Index = Prop_View::FindKey(AnimationTime, keyCount - 1, keyVector);
-			const size_t NextIndex = (Index + 1) > keyCount ? 0 : (Index + 1);
-			const auto & Key = keyVector[Index];
-			const auto & NextKey = keyVector[NextIndex];
-			const float DeltaTime = (float)(NextKey.time - Key.time);
-			const float Factor = glm::clamp((AnimationTime - (float)Key.time) / DeltaTime, 0.0f, 1.0f);
-			return Prop_View::valueMix(Key.value, NextKey.value, Factor);
-		}
-		return Result;
-	};
-	/** Process animation nodes from a scene, updating a series of transformation matrix representing the bones in the skeleton.
-	@param	transforms		matrix vector representing bones in the skeleton.
-	@param	AnimationTime	the current time in the animation.
-	@param	animation_ID	id for the current animation to proccess.
-	@param	parentNode		parent node in the node hierarchy.
-	@param	model			the model to process the animations from.
-	@param	ParentTransform	parent transform in the node hierarchy. */
-	inline static void ReadNodeHeirarchy(std::vector<glm::mat4> & transforms, const float & AnimationTime, const int & animation_ID, const Node * parentNode, const Shared_Mesh & model, const glm::mat4 & ParentTransform) {
-		const std::string & NodeName = parentNode->name;
-		const Animation & pAnimation = model->m_geometry.animations[animation_ID];
-		const Node_Animation * pNodeAnim = FindNodeAnim(pAnimation, NodeName);
-		glm::mat4 NodeTransformation = parentNode->transformation;
-
-		// Interpolate scaling, rotation, and translation.
-		// Generate their matrices and apply their transformations.
-		if (pNodeAnim) {
-			const glm::vec3 Scaling = InterpolateKeys(AnimationTime, pNodeAnim->scalingKeys);
-			const glm::quat Rotation = InterpolateKeys(AnimationTime, pNodeAnim->rotationKeys);
-			const glm::vec3 Translation = InterpolateKeys(AnimationTime, pNodeAnim->positionKeys);
-
-			NodeTransformation = glm::translate(glm::mat4(1.0f), Translation) * glm::mat4_cast(Rotation) * glm::scale(glm::mat4(1.0f), Scaling);
-		}
-
-		const glm::mat4 GlobalTransformation = ParentTransform * NodeTransformation;
-		const glm::mat4 GlobalInverseTransform = glm::inverse(model->m_geometry.rootNode->transformation);
-		const std::map<std::string, size_t> &BoneMap = model->m_geometry.boneMap;
-		if (BoneMap.find(NodeName) != BoneMap.end()) {
-			size_t BoneIndex = BoneMap.at(NodeName);
-			transforms.at(BoneIndex) = GlobalInverseTransform * GlobalTransformation * model->m_geometry.boneTransforms.at(BoneIndex);
-		}
-
-		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
-			ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, parentNode->children[i], model, GlobalTransformation);
-	}
-
-
+private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	const GLuint * m_modelsVAO = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry;
 	Shared_Primitive m_shapeCube;
-	GLsizei m_propCount = 0;
-	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+
+	// Visiblity
+	GLsizei m_visProps = 0;
+	DynamicBuffer m_bufferPropIndex, m_bufferCulling, m_bufferRender, m_bufferSkeletonIndex;
 
 	// Core Prop Data
 	/** OpenGL buffer for props. */

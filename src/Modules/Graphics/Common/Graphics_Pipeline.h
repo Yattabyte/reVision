@@ -4,6 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include <memory>
 #include <vector>
 
@@ -25,6 +26,8 @@ public:
 	void beginFrame(const float & deltaTime);
 	/***/
 	void endFrame(const float & deltaTime);
+	/***/
+	void update(const float & deltaTime);
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame. 
 	@param	viewport	the viewport to render into.
@@ -35,6 +38,7 @@ public:
 protected:
 	// Protected Attributes
 	Engine * m_engine = nullptr;
+	ECSSystemList m_systems;
 	std::vector<Graphics_Technique*> m_techniques;
 };
 
