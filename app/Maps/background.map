@@ -18,10 +18,14 @@ entity
 		quat "0.854,-0.146,0.354,-0.354"
 		vec3 "1,1,1"
 	}
+	LightColor_Component
+	{		
+		vec3 "0.75,0.75,0.9"
+		float "7"
+	}
 	LightDirectional_Component
 	{		
-		vec3 "1,1,1"
-		float "10"
+		bool "true"
 	}
 
 }

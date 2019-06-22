@@ -32,6 +32,7 @@ public:
 	inline Directional_Lighting(Engine * engine, Prop_View * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
+		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 
 		// Asset Loading
@@ -116,23 +117,26 @@ public:
 	/***/
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
-			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
+			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];	
+			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[1];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			const auto & index = lightComponent->m_lightIndex;
+
+			// Sync Color Attributes
+			if (colorComponent) {
+				m_lightBuffer[index].LightColor = colorComponent->m_color;
+				m_lightBuffer[index].LightIntensity = colorComponent->m_intensity;
+			}
 
 			// Sync Transform Attributes
 			if (transformComponent) {
 				const auto & orientation = transformComponent->m_transform.m_orientation;
 				const auto matRot = glm::mat4_cast(orientation);
 				const glm::mat4 sunTransform = matRot;
-				lightComponent->m_direction = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
+				m_lightBuffer[index].LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 
-				if (lightComponent->m_hasShadow) {
-					const glm::mat4 sunTransform = matRot;
-					const glm::mat4 sunModelMatrix = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
-					lightComponent->m_mMatrix = sunModelMatrix;
-					m_lightBuffer[index].lightV = sunModelMatrix;
-				}
+				if (lightComponent->m_hasShadow)
+					m_lightBuffer[index].lightV = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 			}
 
 			// Shadowmap logic
@@ -156,11 +160,6 @@ public:
 				lightComponent->m_shadowSpot = -1;
 				m_shadowCount--;
 			}
-
-			// Sync Buffer Attributes
-			m_lightBuffer[index].LightColor = lightComponent->m_color;
-			m_lightBuffer[index].LightDirection = lightComponent->m_direction;
-			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 		}
 	}
@@ -172,8 +171,8 @@ public:
 		// Populate render-lists
 		m_engine->getModule_World().updateSystem(
 			deltaTime,
-			{ LightDirectional_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED },
+			{ LightDirectional_Component::ID, Transform_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_REQUIRED },
 			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 			updateVisibility(deltaTime, components, viewport);
 		});
@@ -234,21 +233,22 @@ private:
 		m_visibleShadows = 0;
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 			const auto & index = lightComponent->m_lightIndex;
-
+			const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 			lightIndices.push_back((GLuint)*index);
 			if (lightComponent->m_hasShadow) {				
 				m_visibleShadows++;
 				m_shadowsToUpdate.push_back(lightComponent);
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;
-					const glm::vec3 frustumpos = glm::vec3(lightComponent->m_mMatrix * CamInv * glm::vec4(middle[i], 1.0f));
+					const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[i], 1.0f));
 					const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
 					const glm::vec3 newMin = -aabb[i] + clampedPos;
 					const glm::vec3 newMax = aabb[i] + clampedPos;
 					const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 					const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
-					const glm::mat4 pvMatrix = pMatrix * lightComponent->m_mMatrix;
+					const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
 					const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
 					const glm::vec4 v2 = CamP * v1;
 					m_lightBuffer[index].lightVP[i] = pvMatrix;
@@ -378,9 +378,9 @@ private:
 		glm::mat4 lightVP[NUM_CASCADES];
 		glm::mat4 inverseVP[NUM_CASCADES];
 		float CascadeEndClipSpace[NUM_CASCADES];
-		glm::vec3 LightColor; float padding1;
-		glm::vec3 LightDirection; float padding2;
-		float LightIntensity;
+		glm::vec3 LightColor = glm::vec3(1.0f); float padding1;
+		glm::vec3 LightDirection = glm::vec3(0,-1,0); float padding2;
+		float LightIntensity = 1.0f;
 		int Shadow_Spot = -1; glm::vec2 padding3;
 	};
 	size_t m_shadowCount = 0ull;

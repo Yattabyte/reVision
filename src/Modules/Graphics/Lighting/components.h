@@ -10,15 +10,24 @@
 
 #define NUM_CASCADES 4
 
+/***/
+struct LightColor_Component : public ECSComponent<LightColor_Component> {
+	glm::vec3 m_color = glm::vec3(1.0f);
+	float m_intensity = 1.0f;
+};
+
+/***/
+struct LightRadius_Component : public ECSComponent<LightRadius_Component> {
+	float m_radius = 1.0f;
+};
+
+/***/
+struct LightCutoff_Component : public ECSComponent<LightCutoff_Component> {
+	float m_cutoff = 45.0f;
+};
 
 /** A directional light component, like a sun. */
 struct LightDirectional_Component : public ECSComponent<LightDirectional_Component> {
-	// Light Properties
-	glm::vec3 m_color = glm::vec3(1.0f);
-	glm::vec3 m_direction = glm::vec3(0, -1, 0);
-	float m_intensity = 1.0f;
-	glm::mat4 m_mMatrix = glm::mat4(1.0f);
-
 	// Shadow Properties
 	bool m_hasShadow = false;
 	float m_updateTime = 0.0f;
@@ -44,7 +53,6 @@ struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
 
 	// System Identifier
 	GL_AB_Index m_lightIndex = nullptr;
-
 };
 
 /** A spot light component, like a flash light. */

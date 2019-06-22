@@ -130,11 +130,16 @@ public:
 			*m_indexPointers[x] -= 1;
 		*index = 0;
 	}
-	/** Functionally clears the buffer, but doesn't zero the underlying data. Retains capacity. */
+	/** Clears the buffer data, but retains capacity. */
 	inline void clear() {
 		for (auto pointer : m_indexPointers)
 			*pointer = 0ull;
 		m_indexPointers.clear();
+
+		const T t = T();
+		for (int n = 0; n < 3; ++n)
+			for (int x = 0; x < m_capacity; ++x)
+				m_bufferPtr[n][x] = t;
 	}
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.

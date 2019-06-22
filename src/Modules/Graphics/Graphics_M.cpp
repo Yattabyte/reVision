@@ -16,6 +16,9 @@ Graphics_Module::~Graphics_Module()
 	auto & world = m_engine->getModule_World();
 	world.removeComponentType("Prop_Component");
 	world.removeComponentType("Skeleton_Component");
+	world.removeComponentType("LightColor_Component");
+	world.removeComponentType("LightRadius_Component");
+	world.removeComponentType("LightCutoff_Component");
 	world.removeComponentType("LightDirectional_Component");
 	world.removeComponentType("LightPoint_Component");
 	world.removeComponentType("LightSpot_Component");
@@ -82,11 +85,25 @@ void Graphics_Module::initialize(Engine * engine)
 		component->m_animation = CastAny(parameters, 1, 0);
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
-		auto * component = new LightDirectional_Component();
+	world.addComponentType("LightColor_Component", [](const ParamList & parameters) {
+		auto * component = new LightColor_Component();
 		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
 		component->m_intensity = CastAny(parameters, 1, 1.0f);
-		component->m_hasShadow = CastAny(parameters, 2, false);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightRadius_Component", [](const ParamList & parameters) {
+		auto * component = new LightRadius_Component();
+		component->m_radius = CastAny(parameters, 0, 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightCutoff_Component", [](const ParamList & parameters) {
+		auto * component = new LightCutoff_Component();
+		component->m_cutoff = CastAny(parameters, 0, 45.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
+		auto * component = new LightDirectional_Component();
+		component->m_hasShadow = CastAny(parameters, 0, false);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
