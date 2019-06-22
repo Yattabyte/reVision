@@ -23,9 +23,7 @@ entity
 		vec3 "0,0,10"
 		float "1"
 		float "5.5"
-	}
-	LightPointShadow_Component
-	{
+		bool "true"
 	}
 }
 entity
@@ -40,10 +38,8 @@ entity
 	{
 		vec3 "10,0,10"
 		float "1"
-		float "5.5"
-	}
-	LightPointShadow_Component
-	{
+		float "5.5""
+		bool "true"
 	}
 }
 entity
@@ -58,10 +54,8 @@ entity
 	{
 		vec3 "10,10,0"
 		float "1"
-		float "5.5"
-	}
-	LightPointShadow_Component
-	{
+		float "5.5""
+		bool "true"
 	}
 }
 entity

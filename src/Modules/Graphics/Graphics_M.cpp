@@ -18,7 +18,6 @@ Graphics_Module::~Graphics_Module()
 	world.removeComponentType("Skeleton_Component");
 	world.removeComponentType("LightDirectional_Component");
 	world.removeComponentType("LightPoint_Component");
-	world.removeComponentType("LightPointShadow_Component");
 	world.removeComponentType("LightSpot_Component");
 	world.removeComponentType("LightSpotShadow_Component");
 	world.removeComponentType("Reflector_Component");
@@ -96,10 +95,7 @@ void Graphics_Module::initialize(Engine * engine)
 		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
 		component->m_intensity = CastAny(parameters, 1, 1.0f);
 		component->m_radius = CastAny(parameters, 2, 1.0f);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightPointShadow_Component", [](const ParamList & parameters) {
-		auto * component = new LightPointShadow_Component();
+		component->m_hasShadow = CastAny(parameters, 3, false);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {

@@ -25,7 +25,6 @@ layout (location = 10) flat in vec3 LightColorInt;
 layout (location = 11) flat in vec3 LightPosition;
 layout (location = 12) flat in float LightRadius2;
 layout (location = 13) flat in int ShadowSpotFinal;
-layout (location = 14) flat in float HasShadow;
 
 layout (location = 0) out vec3 LightingColor; 
 
@@ -46,7 +45,7 @@ const vec3 sampleOffsetDirections[20] = vec3[] (
 #define FactorAmt 1.0 / 20
 float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float bias)                                                  
 {		
-	if (HasShadow > 0.5f) {	
+	if (ShadowSpotFinal >= 0) {	
 		const float FragmentDepth 	= (length(LightDirection) / LightRadius2) - EPSILON - bias;
 		const float diskRadius 		= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
 		

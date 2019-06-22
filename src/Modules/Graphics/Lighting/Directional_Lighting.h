@@ -239,6 +239,7 @@ private:
 
 			lightIndices.push_back((GLuint)*index);
 			if (lightComponent->m_hasShadow) {				
+				m_visibleShadows++;
 				m_shadowsToUpdate.push_back(lightComponent);
 				for (int i = 0; i < NUM_CASCADES; i++) {
 					const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_shadowSize.x;

@@ -39,9 +39,6 @@ entity
 		float "7"
 		float "5.5"
 	}
-	LightPointShadow_Component
-	{
-	}
 }
 entity
 {

@@ -4,11 +4,15 @@
 layout(location = 0) in vec3 vertex;
 
 struct Light_Struct {
+	mat4 lightV; 
+	mat4 lightPV[6];
+	mat4 inversePV[6];
 	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;
 	float LightIntensity;
 	float LightRadius;
+	int Shadow_Spot;
 };
 layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
 	mat4 pMatrix;
