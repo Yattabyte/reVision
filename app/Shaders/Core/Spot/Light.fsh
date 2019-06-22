@@ -28,7 +28,6 @@ layout (location = 13) flat in float LightRadius2;
 layout (location = 14) flat in float LightCutoff;
 layout (location = 15) flat in int Shadow_Spot;
 layout (location = 16) flat in mat4 ShadowPV;
-layout (location = 20) flat in float HasShadow;
 
 layout (location = 0) out vec3 LightingColor;       
 
@@ -48,7 +47,7 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 #define FactorAmt 1.0 / 9
 float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance)                                                  
 {           
-	if (HasShadow > 0.5f) {	                                                                       
+	if (Shadow_Spot >= 0) {	                                                                       
 		// Bring fragment coordinates from world space into light space, then into texture spaces
 		const vec3 ProjCoords 		= LightSpacePos.xyz / LightSpacePos.w;                                  
 		const vec2 UVCoords 		= 0.5f * ProjCoords.xy + 0.5f;                                                        

@@ -46,7 +46,7 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) {
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, 4);
+			m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 4);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 		});
@@ -175,15 +175,23 @@ private:
 			// Shadowmap logic
 			if (lightComponent->m_hasShadow && lightComponent->m_shadowSpot == -1) {
 				// Assign shadowmap spot
-				int shadowSpot = (int)(m_shadowCount) * 4;
+				int shadowSpot;
+				if (m_unusedShadows.size()) {
+					// Reclaim a disused shadow map index
+					shadowSpot = m_unusedShadows.back();
+					m_unusedShadows.pop_back();
+				}
+				else
+					shadowSpot = (int)(m_shadowCount) * 4;
 				lightComponent->m_shadowSpot = shadowSpot;
-				m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 4);
 				m_shadowCount++;
+				m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 4);
 			}
 			else if (!lightComponent->m_hasShadow && lightComponent->m_shadowSpot >= 0) {
+				// Save the old shadow index
+				m_unusedShadows.push_back(lightComponent->m_shadowSpot);
 				lightComponent->m_shadowSpot = -1;
 				m_shadowCount--;
-				m_shadowFBO.resize(m_shadowFBO.m_size, m_shadowCount * 4);
 			}
 
 			// Sync Buffer Attributes
@@ -233,6 +241,7 @@ private:
 		const glm::mat4 CamP = viewport->getPerspectiveMatrix();
 		std::vector<GLint> lightIndices;
 		m_shadowsToUpdate.clear();
+		m_visibleShadows = 0;
 		for each (const auto & componentParam in components) {
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[0];
 			const auto & index = lightComponent->m_lightIndex;
@@ -382,6 +391,7 @@ private:
 		int Shadow_Spot = -1; glm::vec2 padding3;
 	};
 	size_t m_shadowCount = 0ull;
+	std::vector<int> m_unusedShadows;
 	GLint m_visibleShadows = 0;
 	GL_ArrayBuffer<Directional_Buffer> m_lightBuffer;
 	FBO_Shadow_Directional m_shadowFBO;

@@ -14,6 +14,9 @@ struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
 struct Light_Struct {
+	mat4 lightV;
+	mat4 lightPV;
+	mat4 InverseLightPV;	
 	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;
@@ -21,11 +24,6 @@ struct Light_Struct {
 	float LightIntensity;
 	float LightRadius;
 	float LightCutoff;
-};
-struct Shadow_Struct {	
-	mat4 lightV;
-	mat4 lightPV;
-	mat4 InverseLightPV;	
 	int Shadow_Spot;	
 };
 
@@ -44,9 +42,6 @@ layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
-layout (std430, binding = 9) readonly buffer Shadow_Buffer {
-	Shadow_Struct shadowBuffers[];
-};
 
 layout (location = 0) in vec3 vertex;
 layout (location = 1) in vec3 normal;
@@ -58,7 +53,6 @@ layout (location = 6) in ivec4 boneIDs;
 layout (location = 7) in vec4 weights;
 
 layout (location = 0) uniform int LightIndex = 0;
-layout (location = 1) uniform int ShadowIndex = 0;
 
 layout (location = 0) out mat3 WorldTBN;
 layout (location = 4) out vec2 TexCoord0;
@@ -86,6 +80,6 @@ void main()
 	TexCoord0             		= textureCoordinate;		
 	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= shadowBuffers[ShadowIndex].lightPV * WorldVertex;		
-	gl_Layer 					= shadowBuffers[ShadowIndex].Shadow_Spot + int(propBuffer[PropIndex].isStatic);
+	gl_Position           		= lightBuffers[LightIndex].lightPV * WorldVertex;		
+	gl_Layer 					= lightBuffers[LightIndex].Shadow_Spot + int(propBuffer[PropIndex].isStatic);
 }

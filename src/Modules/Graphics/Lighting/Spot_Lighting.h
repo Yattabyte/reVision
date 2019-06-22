@@ -45,7 +45,7 @@ public:
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_SPOT, m_aliveIndicator, [&](const float &f) {
 			m_outOfDate = true;
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, (unsigned int)(m_shadowBuffer.getLength()) * 2u);
+			m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 2);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 		});
@@ -76,19 +76,6 @@ public:
 			auto * component = (LightSpot_Component*)c;
 			component->m_lightIndex = m_lightBuffer.newElement();
 		});
-		world.addNotifyOnComponentType(LightSpotShadow_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * component = (LightSpotShadow_Component*)c;
-			auto shadowSpot = (int)(m_shadowBuffer.getLength() * 2);
-			component->m_shadowIndex = m_shadowBuffer.newElement();
-			m_shadowBuffer[component->m_shadowIndex].Shadow_Spot = shadowSpot;
-			component->m_shadowSpot = shadowSpot;
-			m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 2);
-
-			// Default Values
-			m_shadowBuffer[component->m_shadowIndex].lightV = glm::mat4(1.0f);
-			m_shadowBuffer[component->m_shadowIndex].lightPV = glm::mat4(1.0f);
-			m_shadowBuffer[component->m_shadowIndex].inversePV = glm::mat4(1.0f);
-		});
 
 		// World-Changed Callback
 		world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
@@ -105,26 +92,22 @@ public:
 	// Public Interface Implementations
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_lightBuffer.beginWriting();
-		m_shadowBuffer.beginWriting();
 		m_visLights.beginWriting();
-		m_visShadows.beginWriting();
 		m_propShadow_Static->beginFrame(deltaTime);
 		m_propShadow_Dynamic->beginFrame(deltaTime);
 
 		// Synchronize technique related components
 		m_engine->getModule_World().updateSystem(
 			deltaTime,
-			{ LightSpot_Component::ID, LightSpotShadow_Component::ID, Transform_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL, BaseECSSystem::FLAG_OPTIONAL },
+			{ LightSpot_Component::ID, Transform_Component::ID },
+			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
 			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 			syncComponents(deltaTime, components);
 		});
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_lightBuffer.endWriting();
-		m_shadowBuffer.endWriting();
 		m_visLights.endWriting();
-		m_visShadows.endWriting();
 		m_propShadow_Static->endFrame(deltaTime);
 		m_propShadow_Dynamic->endFrame(deltaTime);
 	}
@@ -136,7 +119,7 @@ public:
 		// Populate render-lists
 		m_engine->getModule_World().updateSystem(
 			deltaTime,
-			{ LightSpot_Component::ID, LightSpotShadow_Component::ID },
+			{ LightSpot_Component::ID },
 			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
 			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 			updateVisibility(deltaTime, components);
@@ -154,11 +137,10 @@ private:
 	// Private Methods
 	/***/
 	inline void syncComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {		
-		PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::less<float>> oldest;
+		PriorityList<float, LightSpot_Component*, std::less<float>> oldest;
 		for each (const auto & componentParam in components) {
 			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
-			LightSpotShadow_Component * shadowComponent = (LightSpotShadow_Component*)componentParam[1];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 			const auto & index = lightComponent->m_lightIndex;
 
 			// Sync Transform Attributes
@@ -174,16 +156,39 @@ private:
 				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(lightComponent->m_radius * lightComponent->m_radius)*1.1f);
 				m_lightBuffer[index].mMatrix = trans * matRot * scl;
 
-				if (shadowComponent) {
-					const auto & shadowIndex = shadowComponent->m_shadowIndex;
+				if (lightComponent->m_hasShadow) {
 					const glm::mat4 pMatrix = glm::perspective(glm::radians(lightComponent->m_cutoff * 2.0f), 1.0f, 0.01f, lightComponent->m_radius * lightComponent->m_radius);
 					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-					m_shadowBuffer[shadowIndex].lightV = trans;
+					m_lightBuffer[index].lightV = trans;
 					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
-					m_shadowBuffer[shadowIndex].lightPV = pv;
-					m_shadowBuffer[shadowIndex].inversePV = glm::inverse(pv);
+					m_lightBuffer[index].lightPV = pv;
+					m_lightBuffer[index].inversePV = glm::inverse(pv);
 				}
 			}
+
+			// Shadowmap logic
+			if (lightComponent->m_hasShadow && lightComponent->m_shadowSpot == -1) {
+				// Assign shadowmap spot
+				int shadowSpot;
+				if (m_unusedShadows.size()) {
+					// Reclaim a disused shadow map index
+					shadowSpot = m_unusedShadows.back();
+					m_unusedShadows.pop_back();
+				}
+				else
+					shadowSpot = (int)(m_shadowCount) * 2;
+				lightComponent->m_shadowSpot = shadowSpot;
+				m_shadowCount++;
+				m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 2);
+			}
+			else if (!lightComponent->m_hasShadow && lightComponent->m_shadowSpot >= 0) {
+				// Save the old shadow index
+				m_unusedShadows.push_back(lightComponent->m_shadowSpot);
+				lightComponent->m_shadowSpot = -1;
+				m_shadowCount--;
+			}
+			if (lightComponent->m_hasShadow)
+				oldest.insert(lightComponent->m_updateTime, lightComponent);			
 
 			// Sync Buffer Attributes
 			m_lightBuffer[index].LightColor = lightComponent->m_color;
@@ -191,10 +196,7 @@ private:
 			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
 			m_lightBuffer[index].LightRadius = lightComponent->m_radius;
 			m_lightBuffer[index].LightCutoff = cosf(glm::radians(lightComponent->m_cutoff));
-			if (shadowComponent) {
-				m_shadowBuffer[shadowComponent->m_shadowIndex].Shadow_Spot = shadowComponent->m_shadowSpot;
-				oldest.insert(shadowComponent->m_updateTime, std::make_pair(lightComponent, shadowComponent));
-			}
+			m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 		}
 
 		// Shadows are updated in rendering pass, determined once a frame
@@ -204,21 +206,18 @@ private:
 	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Accumulate Light Data	
 		std::vector<GLint> lightIndices, shadowIndices;
+		m_visibleShadows = 0;
 		for each (const auto & componentParam in components) {
 			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
-			LightSpotShadow_Component * shadowComponent = (LightSpotShadow_Component*)componentParam[1];
 			
 			lightIndices.push_back((GLuint)* lightComponent->m_lightIndex);
-			if (shadowComponent)
-				shadowIndices.push_back((GLint)*shadowComponent->m_shadowIndex);
-			else
-				shadowIndices.push_back(-1);
+			if (lightComponent->m_hasShadow)
+				m_visibleShadows++;
 		}
 
 		// Update Draw Buffers
 		const size_t & lightSize = lightIndices.size();
 		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
-		m_visShadows.write(0, sizeof(GLuint) * shadowIndices.size(), shadowIndices.data());
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
 	}
 	/** Render all the geometry from each light.
@@ -228,24 +227,23 @@ private:
 		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		m_shadowFBO.bindForWriting();
 
-		for (const auto &[light, shadow] : m_shadowsToUpdate) {
+		for (auto * light : m_shadowsToUpdate) {
 			// Update static shadows
-			if (shadow->m_outOfDate || m_outOfDate) {
-				m_shadowFBO.clear(shadow->m_shadowSpot + 1);
+			if (light->m_outOfDate || m_outOfDate) {
+				m_shadowFBO.clear(light->m_shadowSpot + 1);
 				// Render components
-				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
+				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, 0);
 				m_propShadow_Static->renderTechnique(deltaTime, viewport);
-				shadow->m_outOfDate = false;
+				light->m_outOfDate = false;
 			}
 			// Update dynamic shadows
-			m_shadowFBO.clear(shadow->m_shadowSpot);
+			m_shadowFBO.clear(light->m_shadowSpot);
 			// Render components
-			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, (int)*shadow->m_shadowIndex);
+			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, 0);
 			m_propShadow_Dynamic->renderTechnique(deltaTime, viewport);
-			shadow->m_updateTime = m_engine->getTime();
+			light->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
 
@@ -263,13 +261,11 @@ private:
 
 		// Draw only into depth-stencil buffer
 		m_shader_Stencil->bind();									// Shader (spot)
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");						// Ensure writing to lighting FBO
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);					// Read from Geometry FBO
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
 		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
 		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
-		m_visShadows.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible shadow indices
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_shadowBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 9);
 		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 		glBindVertexArray(m_shapeCone->m_vaoID);					// Quad VAO
 		glDepthMask(GL_FALSE);
@@ -294,16 +290,16 @@ private:
 		glDisable(GL_STENCIL_TEST);
 	}
 	/** Converts a priority queue into an stl vector.*/
-	inline std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> PQtoVector(PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::less<float>> oldest) const {
-		PriorityList<float, std::pair<LightSpot_Component*, LightSpotShadow_Component*>, std::greater<float>> m_closest(m_updateQuality / 2);
-		std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> outList;
+	inline std::vector<LightSpot_Component*> PQtoVector(PriorityList<float, LightSpot_Component*, std::less<float>> oldest) const {
+		PriorityList<float, LightSpot_Component*, std::greater<float>> m_closest(m_updateQuality / 2);
+		std::vector<LightSpot_Component*> outList;
 		outList.reserve(m_updateQuality);
 
 		for each (const auto &element in oldest.toList()) {
 			if (outList.size() < (m_updateQuality / 2))
 				outList.push_back(element);
 			else
-				m_closest.insert(element.second->m_updateTime, element);
+				m_closest.insert(element->m_updateTime, element);
 		}
 
 		for each (const auto &element in m_closest.toList()) {
@@ -318,9 +314,9 @@ private:
 	inline void clear() {
 		const size_t lightSize = 0;
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+		m_visibleShadows = 0;
 		m_shadowsToUpdate.clear();
 		m_lightBuffer.clear();
-		m_shadowBuffer.clear();
 	}
 
 
@@ -332,31 +328,30 @@ private:
 	GLuint m_updateQuality = 1u;
 	glm::ivec2 m_shadowSize = glm::ivec2(256);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
-	DynamicBuffer m_visLights, m_visShadows;
-	std::vector<std::pair<LightSpot_Component*, LightSpotShadow_Component*>> m_shadowsToUpdate;
+	DynamicBuffer m_visLights;
+	std::vector<LightSpot_Component*> m_shadowsToUpdate;
 	bool m_outOfDate = false;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Core Lighting Data
 	/** OpenGL buffer for spot lights. */
 	struct Spot_Buffer {
+		glm::mat4 lightV;
+		glm::mat4 lightPV;
+		glm::mat4 inversePV;
 		glm::mat4 mMatrix;
 		glm::vec3 LightColor; float padding1;
 		glm::vec3 LightPosition; float padding2;
 		glm::vec3 LightDirection; float padding3;
 		float LightIntensity;
 		float LightRadius;
-		float LightCutoff; float padding4;
+		float LightCutoff; 
+		int Shadow_Spot;
 	};
-	/** OpenGL buffer for spot light shadows. */
-	struct Spot_Shadow_Buffer {
-		glm::mat4 lightV;
-		glm::mat4 lightPV;
-		glm::mat4 inversePV;
-		int Shadow_Spot; glm::vec3 padding1;
-	};
+	size_t m_shadowCount = 0ull;
+	std::vector<int> m_unusedShadows;
+	GLint m_visibleShadows = 0;
 	GL_ArrayBuffer<Spot_Buffer> m_lightBuffer;
-	GL_ArrayBuffer<Spot_Shadow_Buffer> m_shadowBuffer;
 	FBO_Shadow_Spot m_shadowFBO;
 };
 

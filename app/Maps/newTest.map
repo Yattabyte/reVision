@@ -40,9 +40,6 @@ entity
 		float "5"
 		float "35"
 	}
-	LightSpotShadow_Component
-	{
-	}
 }
 entity
 {
@@ -58,9 +55,6 @@ entity
 		float "5"
 		float "5"
 		float "35"
-	}
-	LightSpotShadow_Component
-	{
 	}
 }
 entity

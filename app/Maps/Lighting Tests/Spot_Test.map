@@ -24,9 +24,7 @@ entity
 		float "5"
 		float "15"
 		float "35"
-	}
-	LightSpotShadow_Component
-	{
+		bool "true"
 	}
 }
 entity
@@ -43,9 +41,7 @@ entity
 		float "5"
 		float "10"
 		float "35"
-	}
-	LightSpotShadow_Component
-	{
+		bool "true"
 	}
 }
 entity
@@ -62,9 +58,7 @@ entity
 		float "10"
 		float "15"
 		float "35"
-	}
-	LightSpotShadow_Component
-	{
+		bool "true"
 	}
 }
 entity

@@ -12,10 +12,17 @@ struct PropAttributes {
 struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
-struct Shadow_Struct {	
+struct Light_Struct {
 	mat4 lightV;
 	mat4 lightPV;
 	mat4 InverseLightPV;	
+	mat4 mMatrix;
+	vec4 LightColor;
+	vec4 LightPosition;
+	vec4 LightVector;
+	float LightIntensity;
+	float LightRadius;
+	float LightCutoff;
 	int Shadow_Spot;	
 };
 
@@ -31,20 +38,19 @@ layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
 layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
 	int skeletonIndexes[];
 };
-layout (std430, binding = 9) readonly buffer Shadow_Buffer {
-	Shadow_Struct shadowBuffers[];
+layout (std430, binding = 8) readonly buffer Light_Buffer {
+	Light_Struct lightBuffers[];
 };
 	
 layout (location = 0) in vec3 vertex;
 layout (location = 0) flat out int id;
 
 layout (location = 0) uniform int LightIndex = 0;
-layout (location = 1) uniform int ShadowIndex = 0;
 
 void main()
 {	
-	gl_Position = shadowBuffers[ShadowIndex].lightPV * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
-	gl_Layer = shadowBuffers[ShadowIndex].Shadow_Spot + int(propBuffer[propIndexes[gl_DrawID]].isStatic);
+	gl_Position = lightBuffers[LightIndex].lightPV * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);		
+	gl_Layer = lightBuffers[LightIndex].Shadow_Spot + int(propBuffer[propIndexes[gl_DrawID]].isStatic);
 	id = gl_DrawID;
 }
 

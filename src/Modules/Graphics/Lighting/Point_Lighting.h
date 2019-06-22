@@ -45,7 +45,7 @@ public:
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) {
 			m_outOfDate = true;
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, (unsigned int)(m_shadowCount) * 12u);
+			m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 12);
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
 				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 		});
@@ -170,15 +170,24 @@ private:
 
 			// Shadowmap logic
 			if (lightComponent->m_hasShadow && lightComponent->m_shadowSpot == -1) {
-				auto shadowSpot = (int)(m_shadowCount) * 12;
+				// Assign shadowmap spot
+				int shadowSpot;
+				if (m_unusedShadows.size()) {
+					// Reclaim a disused shadow map index
+					shadowSpot = m_unusedShadows.back();
+					m_unusedShadows.pop_back();
+				}
+				else
+					shadowSpot = (int)(m_shadowCount) * 12;
 				lightComponent->m_shadowSpot = shadowSpot;
-				m_shadowFBO.resize(m_shadowFBO.m_size, shadowSpot + 12);
 				m_shadowCount++;
+				m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 12);
 			}
 			else if (!lightComponent->m_hasShadow && lightComponent->m_shadowSpot >= 0) {
+				// Save the old shadow index
+				m_unusedShadows.push_back(lightComponent->m_shadowSpot);
 				lightComponent->m_shadowSpot = -1;
 				m_shadowCount--;
-				m_shadowFBO.resize(m_shadowFBO.m_size, m_shadowCount * 12);
 			}
 			if (lightComponent->m_hasShadow) 
 				oldest.insert(lightComponent->m_updateTime, lightComponent);			
@@ -198,6 +207,7 @@ private:
 	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
 		// Accumulate Light Data	
 		std::vector<GLint> lightIndices;
+		m_visibleShadows = 0;
 		for each (const auto & componentParam in components) {
 			LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[0];
 
@@ -314,7 +324,7 @@ private:
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeSphere;
-	Prop_Shadow * m_propShadow_Static = nullptr, *m_propShadow_Dynamic = nullptr;
+	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;
 	GLuint m_updateQuality = 1u;
 	glm::ivec2 m_shadowSize = glm::ivec2(512);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
@@ -337,6 +347,7 @@ private:
 		int Shadow_Spot; float padding3;
 	};
 	size_t m_shadowCount = 0ull;
+	std::vector<int> m_unusedShadows;
 	GLint m_visibleShadows = 0;
 	GL_ArrayBuffer<Point_Buffer> m_lightBuffer;
 	FBO_Shadow_Point m_shadowFBO;
