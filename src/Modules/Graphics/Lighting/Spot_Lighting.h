@@ -30,6 +30,9 @@ public:
 	inline Spot_Lighting(Engine * engine, Prop_View * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
+		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
+		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
+		addComponentType(LightCutoff_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 
 		// Asset Loading
@@ -103,8 +106,31 @@ public:
 		PriorityList<float, LightSpot_Component*, std::less<float>> oldest;
 		for each (const auto & componentParam in components) {
 			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
+			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[1];
+			LightRadius_Component * radiusComponent = (LightRadius_Component*)componentParam[2];
+			LightCutoff_Component * cutoffComponent = (LightCutoff_Component*)componentParam[3];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[4];
 			const auto & index = lightComponent->m_lightIndex;
+
+			// Sync Color Attributes
+			if (colorComponent) {
+				m_lightBuffer[index].LightColor = colorComponent->m_color;
+				m_lightBuffer[index].LightIntensity = colorComponent->m_intensity;
+			}
+
+			// Sync Radius Attributes
+			float radiusSquared = 1.0f;
+			if (radiusComponent) {
+				m_lightBuffer[index].LightRadius = radiusComponent->m_radius;
+				radiusSquared = radiusComponent->m_radius * radiusComponent->m_radius;
+			}
+
+			// Sync Cutoff Attributes
+			float cutoff = 90.0f;
+			if (cutoffComponent) {
+				m_lightBuffer[index].LightCutoff = cosf(glm::radians(cutoffComponent->m_cutoff));
+				cutoff = cutoffComponent->m_cutoff;
+			}
 
 			// Sync Transform Attributes
 			if (transformComponent) {
@@ -116,11 +142,11 @@ public:
 				dir /= dir.w;
 				m_lightBuffer[index].LightDirection = glm::normalize(glm::vec3(dir));
 				const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(lightComponent->m_radius * lightComponent->m_radius)*1.1f);
+				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared)*1.1f);
 				m_lightBuffer[index].mMatrix = trans * matRot * scl;
 
 				if (lightComponent->m_hasShadow) {
-					const glm::mat4 pMatrix = glm::perspective(glm::radians(lightComponent->m_cutoff * 2.0f), 1.0f, 0.01f, lightComponent->m_radius * lightComponent->m_radius);
+					const glm::mat4 pMatrix = glm::perspective(glm::radians(cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
 					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 					m_lightBuffer[index].lightV = trans;
 					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
@@ -154,11 +180,7 @@ public:
 				oldest.insert(lightComponent->m_updateTime, lightComponent);
 
 			// Sync Buffer Attributes
-			m_lightBuffer[index].LightColor = lightComponent->m_color;
 			m_lightBuffer[index].LightPosition = lightComponent->m_position;
-			m_lightBuffer[index].LightIntensity = lightComponent->m_intensity;
-			m_lightBuffer[index].LightRadius = lightComponent->m_radius;
-			m_lightBuffer[index].LightCutoff = cosf(glm::radians(lightComponent->m_cutoff));
 			m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 		}
 
@@ -215,29 +237,26 @@ private:
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float & deltaTime) {
-		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		m_shadowFBO.bindForWriting();
-
 		for (auto * light : m_shadowsToUpdate) {
 			// Update static shadows
 			if (light->m_outOfDate || m_outOfDate) {
 				m_shadowFBO.clear(light->m_shadowSpot + 1);
 				// Render components
-				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex, 0);
+				m_propShadow_Static->setData(light->m_position, (int)*light->m_lightIndex);
 				m_propShadow_Static->renderShadows(deltaTime);
 				light->m_outOfDate = false;
 			}
 			// Update dynamic shadows
 			m_shadowFBO.clear(light->m_shadowSpot);
 			// Render components
-			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex, 0);
+			m_propShadow_Dynamic->setData(light->m_position, (int)*light->m_lightIndex);
 			m_propShadow_Dynamic->renderShadows(deltaTime);
 			light->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
-
 		m_outOfDate = false;
 	}
 	/** Render all the lights.

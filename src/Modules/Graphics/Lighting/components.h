@@ -39,17 +39,12 @@ struct LightDirectional_Component : public ECSComponent<LightDirectional_Compone
 
 /** A point light component, like a light bulb. */
 struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
-	// Light Properties
-	glm::vec3 m_color = glm::vec3(1.0f);
-	float m_intensity = 1.0f;
-	float m_radius = 1.0f;
-	glm::vec3 m_position = glm::vec3(0.0f);
-
 	// Shadow Properties
 	bool m_hasShadow = false;
 	bool m_outOfDate = false;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = -1;
+	glm::vec3 m_position = glm::vec3(0.0f);
 
 	// System Identifier
 	GL_AB_Index m_lightIndex = nullptr;
@@ -57,18 +52,12 @@ struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
 
 /** A spot light component, like a flash light. */
 struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
-	// Light Properties
-	glm::vec3 m_color = glm::vec3(1.0f);
-	float m_intensity = 1.0f;
-	float m_radius = 1.0f;
-	float m_cutoff = 45.0f;
-	glm::vec3 m_position = glm::vec3(0.0f);
-
 	// Shadow Properties
 	bool m_hasShadow = false;
 	bool m_outOfDate = false;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = -1;
+	glm::vec3 m_position = glm::vec3(0.0f);
 
 	// System Identifier
 	GL_AB_Index m_lightIndex = nullptr;

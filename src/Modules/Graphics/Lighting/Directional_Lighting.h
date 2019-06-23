@@ -269,23 +269,20 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		auto & world = m_engine->getModule_World();
 		glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		m_shader_Shadow->bind();
 		m_shadowFBO.bindForWriting();
-
 		for (auto * light : m_shadowsToUpdate) {
 			const float clearDepth(1.0f);
 			const glm::vec3 clear(0.0f);
 			m_shadowFBO.clear(light->m_shadowSpot);
 			// Render geometry components
-			m_propShadowSystem->setData(viewport->get3DPosition(), (int)*light->m_lightIndex, 0);		
+			m_propShadowSystem->setData(viewport->get3DPosition(), (int)*light->m_lightIndex);		
 			m_propShadowSystem->renderShadows(deltaTime);
 			light->m_updateTime = m_engine->getTime();
 		}
 		m_shadowsToUpdate.clear();
-
 		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 	}
 	/** Render all the lights.

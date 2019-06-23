@@ -75,19 +75,17 @@ public:
 	// Public Methods
 	/** Set critical information relating to the position and buffer indicies for the next draw-call. 
 	@param	lightPosition		the position of the light.
-	@param	lightIndex			the buffer index for the light source.
-	@param	shadowIndex			the buffer index for the shadow source. */
-	inline void setData(const glm::vec3 & lightPosition, const int & lightIndex, const int & shadowIndex) {
+	@param	lightIndex			the buffer index for the light source. */
+	inline void setData(const glm::vec3 & lightPosition, const int & lightIndex) {
 		m_lightPos = lightPosition;
 		m_lightIndex = lightIndex;
-		m_shadowIndex = shadowIndex;
 	}
 
 
 private:
 	// Private Methods
 	/***/
-	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
+	inline void updateVisibility(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) {
 		// Accumulate draw parameter information per model
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;
@@ -146,7 +144,6 @@ private:
 		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 		m_shaderCull->bind();
 		m_shaderCull->setUniform(0, m_lightIndex);
-		m_shaderCull->setUniform(1, m_shadowIndex);
 		glBindVertexArray(m_shapeCube->m_vaoID);
 		m_bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		m_bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
@@ -162,7 +159,6 @@ private:
 		glFrontFace(GL_CW);
 		m_shaderShadow->bind();
 		m_shaderShadow->setUniform(0, m_lightIndex);
-		m_shaderShadow->setUniform(1, m_shadowIndex);
 		glBindVertexArray(*m_modelsVAO);
 		m_bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visProps, 0);
@@ -180,7 +176,7 @@ private:
 	Engine * m_engine = nullptr;
 	Prop_View * m_propView = nullptr;
 	glm::vec3 m_lightPos = glm::vec3(0);
-	int m_lightIndex = 0, m_shadowIndex = 0;
+	int m_lightIndex = 0;
 	unsigned int m_instanceCount = 0;
 	unsigned int m_flags = 0;
 	Shared_Shader m_shaderCull, m_shaderShadow;
