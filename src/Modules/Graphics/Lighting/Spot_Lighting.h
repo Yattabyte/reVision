@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Shadow_Spot.h"
 #include "Modules/Graphics/Geometry/Prop_Shadow.h"
-#include "Modules/World/ECS/TransformComponent.h"
+#include "Modules/World/ECS/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -29,11 +29,13 @@ public:
 	/** Constructor. */
 	inline Spot_Lighting(Engine * engine, Prop_View * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightCutoff_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");
@@ -67,11 +69,11 @@ public:
 		// Geometry rendering pipeline
 		m_propShadow_Static = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderStatic, m_shader_Culling, m_shader_Shadow, propView);
 		m_propShadow_Dynamic = new Prop_Shadow(m_engine, 1, Prop_Shadow::RenderDynamic, m_shader_Culling, m_shader_Shadow, propView);
-		
+
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			m_engine->getManager_Messages().error("Spot_Lighting Shadowmap Framebuffer has encountered an error.");
-		
+
 		GLuint data[] = { 0,0,0,0 };
 		m_indirectShape.write(0, sizeof(GLuint) * 4, &data);
 
@@ -104,85 +106,102 @@ public:
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		PriorityList<float, LightSpot_Component*, std::less<float>> oldest;
+		std::vector<GLint> lightIndices;
 		for each (const auto & componentParam in components) {
-			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
-			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[1];
-			LightRadius_Component * radiusComponent = (LightRadius_Component*)componentParam[2];
-			LightCutoff_Component * cutoffComponent = (LightCutoff_Component*)componentParam[3];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[4];
+			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
+			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[1];
+			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[2];
+			LightRadius_Component * radiusComponent = (LightRadius_Component*)componentParam[3];
+			LightCutoff_Component * cutoffComponent = (LightCutoff_Component*)componentParam[4];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[5];
+			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[6];
 			const auto & index = lightComponent->m_lightIndex;
 
-			// Sync Color Attributes
-			if (colorComponent) {
-				m_lightBuffer[index].LightColor = colorComponent->m_color;
-				m_lightBuffer[index].LightIntensity = colorComponent->m_intensity;
-			}
+			// Synchronize the component if it is visible
+			if (renderableComponent->m_visible) {
+				lightIndices.push_back((GLuint)* lightComponent->m_lightIndex);
 
-			// Sync Radius Attributes
-			float radiusSquared = 1.0f;
-			if (radiusComponent) {
-				m_lightBuffer[index].LightRadius = radiusComponent->m_radius;
-				radiusSquared = radiusComponent->m_radius * radiusComponent->m_radius;
-			}
+				// Sync Color Attributes
+				if (colorComponent) {
+					m_lightBuffer[index].LightColor = colorComponent->m_color;
+					m_lightBuffer[index].LightIntensity = colorComponent->m_intensity;
+				}
 
-			// Sync Cutoff Attributes
-			float cutoff = 90.0f;
-			if (cutoffComponent) {
-				m_lightBuffer[index].LightCutoff = cosf(glm::radians(cutoffComponent->m_cutoff));
-				cutoff = cutoffComponent->m_cutoff;
-			}
+				// Sync Radius Attributes
+				float radiusSquared = 1.0f;
+				if (radiusComponent) {
+					m_lightBuffer[index].LightRadius = radiusComponent->m_radius;
+					radiusSquared = radiusComponent->m_radius * radiusComponent->m_radius;
+				}
+				if (bsphereComponent)
+					bsphereComponent->m_radius = radiusSquared;
 
-			// Sync Transform Attributes
-			if (transformComponent) {
-				const auto & position = transformComponent->m_transform.m_position;
-				const auto & orientation = transformComponent->m_transform.m_orientation;
-				const auto matRot = glm::mat4_cast(orientation);
-				lightComponent->m_position = position;
-				auto dir = matRot * glm::vec4(0, 0, -1, 1);
-				dir /= dir.w;
-				m_lightBuffer[index].LightDirection = glm::normalize(glm::vec3(dir));
-				const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-				const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared)*1.1f);
-				m_lightBuffer[index].mMatrix = trans * matRot * scl;
+				// Sync Cutoff Attributes
+				float cutoff = 90.0f;
+				if (cutoffComponent) {
+					m_lightBuffer[index].LightCutoff = cosf(glm::radians(cutoffComponent->m_cutoff));
+					cutoff = cutoffComponent->m_cutoff;
+				}
 
-				if (lightComponent->m_hasShadow) {
-					const glm::mat4 pMatrix = glm::perspective(glm::radians(cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
+				// Sync Transform Attributes
+				if (transformComponent) {
+					const auto & position = transformComponent->m_transform.m_position;
+					const auto & orientation = transformComponent->m_transform.m_orientation;
+					const auto matRot = glm::mat4_cast(orientation);
+					lightComponent->m_position = position;
+					auto dir = matRot * glm::vec4(0, 0, -1, 1);
+					dir /= dir.w;
+					m_lightBuffer[index].LightDirection = glm::normalize(glm::vec3(dir));
 					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
-					m_lightBuffer[index].lightV = trans;
-					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
-					m_lightBuffer[index].lightPV = pv;
-					m_lightBuffer[index].inversePV = glm::inverse(pv);
+					const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared)*1.1f);
+					m_lightBuffer[index].mMatrix = trans * matRot * scl;
+
+					if (lightComponent->m_hasShadow) {
+						const glm::mat4 pMatrix = glm::perspective(glm::radians(cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
+						const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
+						m_lightBuffer[index].lightV = trans;
+						const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
+						m_lightBuffer[index].lightPV = pv;
+						m_lightBuffer[index].inversePV = glm::inverse(pv);
+					}
 				}
+
+				// Shadowmap logic
+				if (lightComponent->m_hasShadow && lightComponent->m_shadowSpot == -1) {
+					// Assign shadowmap spot
+					int shadowSpot;
+					if (m_unusedShadows.size()) {
+						// Reclaim a disused shadow map index
+						shadowSpot = m_unusedShadows.back();
+						m_unusedShadows.pop_back();
+					}
+					else
+						shadowSpot = (int)(m_shadowCount) * 2;
+					lightComponent->m_shadowSpot = shadowSpot;
+					m_shadowCount++;
+					m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 2);
+				}
+				else if (!lightComponent->m_hasShadow && lightComponent->m_shadowSpot >= 0) {
+					// Save the old shadow index
+					m_unusedShadows.push_back(lightComponent->m_shadowSpot);
+					lightComponent->m_shadowSpot = -1;
+					m_shadowCount--;
+				}
+
+				// Sync Buffer Attributes
+				m_lightBuffer[index].LightPosition = lightComponent->m_position;
+				m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 			}
 
-			// Shadowmap logic
-			if (lightComponent->m_hasShadow && lightComponent->m_shadowSpot == -1) {
-				// Assign shadowmap spot
-				int shadowSpot;
-				if (m_unusedShadows.size()) {
-					// Reclaim a disused shadow map index
-					shadowSpot = m_unusedShadows.back();
-					m_unusedShadows.pop_back();
-				}
-				else
-					shadowSpot = (int)(m_shadowCount) * 2;
-				lightComponent->m_shadowSpot = shadowSpot;
-				m_shadowCount++;
-				m_shadowFBO.resize(m_shadowSize, (m_shadowCount + m_unusedShadows.size()) * 2);
-			}
-			else if (!lightComponent->m_hasShadow && lightComponent->m_shadowSpot >= 0) {
-				// Save the old shadow index
-				m_unusedShadows.push_back(lightComponent->m_shadowSpot);
-				lightComponent->m_shadowSpot = -1;
-				m_shadowCount--;
-			}
+			// Find oldest shadows always (may see shadow but not light source)
 			if (lightComponent->m_hasShadow)
 				oldest.insert(lightComponent->m_updateTime, lightComponent);
-
-			// Sync Buffer Attributes
-			m_lightBuffer[index].LightPosition = lightComponent->m_position;
-			m_lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 		}
+
+		// Update Draw Buffers
+		m_visLightCount = lightIndices.size();
+		m_visLights.write(0, sizeof(GLuint) * m_visLightCount, lightIndices.data());
+		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &m_visLightCount); // update primCount (2nd param)
 
 		// Shadows are updated in rendering pass, determined once a frame
 		m_shadowsToUpdate = PQtoVector(oldest);
@@ -200,40 +219,13 @@ public:
 		if (!m_enabled || !m_shapeCone->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet())
 			return;
 
-		// Populate render-lists
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ LightSpot_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED, BaseECSSystem::FLAG_OPTIONAL },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components);
-		});
-
 		// Render lights
 		renderLights(deltaTime, viewport);
-	}	
+	}
 
 
 private:
 	// Private Methods
-	/***/
-	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-		// Accumulate Light Data	
-		std::vector<GLint> lightIndices, shadowIndices;
-		m_visibleShadows = 0;
-		for each (const auto & componentParam in components) {
-			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[0];
-			
-			lightIndices.push_back((GLuint)* lightComponent->m_lightIndex);
-			if (lightComponent->m_hasShadow)
-				m_visibleShadows++;
-		}
-
-		// Update Draw Buffers
-		const size_t & lightSize = lightIndices.size();
-		m_visLights.write(0, sizeof(GLuint) * lightSize, lightIndices.data());
-		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
-	}
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float & deltaTime) {
@@ -263,40 +255,42 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		glEnable(GL_STENCIL_TEST);
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
+		if (m_visLightCount) {
+			glEnable(GL_STENCIL_TEST);
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_ONE, GL_ONE);
 
-		// Draw only into depth-stencil buffer
-		m_shader_Stencil->bind();									// Shader (spot)
-		viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
-		glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
-		m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
-		glBindVertexArray(m_shapeCone->m_vaoID);					// Quad VAO
-		glDepthMask(GL_FALSE);
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glClear(GL_STENCIL_BUFFER_BIT);
-		glStencilFunc(GL_ALWAYS, 0, 0);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+			// Draw only into depth-stencil buffer
+			m_shader_Stencil->bind();									// Shader (spot)
+			viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
+			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
+			glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
+			m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+			m_lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+			m_indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+			glBindVertexArray(m_shapeCone->m_vaoID);					// Quad VAO
+			glDepthMask(GL_FALSE);
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			glClear(GL_STENCIL_BUFFER_BIT);
+			glStencilFunc(GL_ALWAYS, 0, 0);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		// Now draw into color buffers
-		m_shader_Lighting->bind();
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glCullFace(GL_FRONT);
-		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+			// Now draw into color buffers
+			m_shader_Lighting->bind();
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glCullFace(GL_FRONT);
+			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glCullFace(GL_BACK);
-		glDepthMask(GL_TRUE);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_BLEND);
-		glDisable(GL_STENCIL_TEST);
+			glCullFace(GL_BACK);
+			glDepthMask(GL_TRUE);
+			glBlendFunc(GL_ONE, GL_ZERO);
+			glDisable(GL_BLEND);
+			glDisable(GL_STENCIL_TEST);
+		}
 	}
 	/** Converts a priority queue into an stl vector.*/
 	inline std::vector<LightSpot_Component*> PQtoVector(PriorityList<float, LightSpot_Component*, std::less<float>> oldest) const {
@@ -323,17 +317,16 @@ private:
 	inline void clear() {
 		const size_t lightSize = 0;
 		m_indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
-		m_visibleShadows = 0;
 		m_shadowsToUpdate.clear();
 		m_lightBuffer.clear();
 	}
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr; 
+	Engine * m_engine = nullptr;
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeCone;
-	Prop_Shadow * m_propShadow_Static = nullptr, * m_propShadow_Dynamic = nullptr;
+	Prop_Shadow * m_propShadow_Static = nullptr, *m_propShadow_Dynamic = nullptr;
 	GLuint m_updateQuality = 1u;
 	glm::ivec2 m_shadowSize = glm::ivec2(256);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
@@ -342,7 +335,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Visibility
-	GLint m_visibleShadows = 0;
+	size_t m_visLightCount = 0ull;
 	DynamicBuffer m_visLights;
 
 	// Core Lighting Data
@@ -357,7 +350,7 @@ private:
 		glm::vec3 LightDirection; float padding3;
 		float LightIntensity;
 		float LightRadius;
-		float LightCutoff; 
+		float LightCutoff;
 		int Shadow_Spot;
 	};
 	size_t m_shadowCount = 0ull;

@@ -3,7 +3,7 @@
 #define PLAYERFREELOOK_S_H 
 
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/World/ECS/TransformComponent.h"
+#include "Modules/World/ECS/components.h"
 #include "Modules/Game/ECS/components.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Engine.h"

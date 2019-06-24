@@ -5,7 +5,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
-#include "Modules/Graphics/Geometry/Prop_View.h"
+#include "Modules/Graphics/Geometry/Prop_Renderer.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"

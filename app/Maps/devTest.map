@@ -12,6 +12,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	CameraFollower_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,0,0"
@@ -31,6 +37,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "10,10,0"
@@ -45,6 +54,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,10,-10"
@@ -59,6 +71,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,0,0"
@@ -73,6 +88,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-10,-10,0"
@@ -87,6 +105,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,-10,10"
@@ -101,6 +122,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,10,0"

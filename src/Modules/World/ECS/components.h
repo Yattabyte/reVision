@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TRANSFORM_COMPONENT_H
-#define TRANSFORM_COMPONENT_H
+#ifndef WORLD_COMPONENTS_H
+#define WORLD_COMPONENTS_H
 
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Utilities/Transform.h"
@@ -10,4 +10,8 @@ struct Transform_Component : public ECSComponent<Transform_Component> {
 	Transform m_transform;
 };
 
-#endif // TRANSFORM_COMPONENT_H
+struct Bounding_Component : public ECSComponent<Bounding_Component> {
+
+};
+
+#endif // WORLD_COMPONENTS_H

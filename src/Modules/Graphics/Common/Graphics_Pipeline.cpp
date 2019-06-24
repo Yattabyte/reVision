@@ -2,8 +2,7 @@
 #include "Engine.h"
 
 /* Rendering Techniques Used */
-#include "Modules/Graphics/Geometry/Skeletal_Animation.h"
-#include "Modules/Graphics/Geometry/Prop_View.h"
+#include "Modules/Graphics/Geometry/Prop_Renderer.h"
 #include "Modules/Graphics/Lighting/Directional_Lighting.h"
 #include "Modules/Graphics/Lighting/Point_Lighting.h"
 #include "Modules/Graphics/Lighting/Spot_Lighting.h"
@@ -28,27 +27,26 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
 	auto spotLighting = new Spot_Lighting(m_engine, propView);
 	auto reflectorLighting = new Reflector_Lighting(m_engine);
 	auto radianceHints = new Radiance_Hints(m_engine);
-	auto skybox= new Skybox(m_engine);
+	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
 	auto ssr = new SSR(m_engine);
 	auto joinReflections = new Join_Reflections(m_engine);
 	auto bloom = new Bloom(m_engine);
 	auto hdr = new HDR(m_engine);
 	auto fxaa = new FXAA(m_engine);
-	auto toScreen = new To_Screen(m_engine);	
+	auto toScreen = new To_Screen(m_engine);
 
-	m_techniques = { 
+	// Join all techniques into a single list
+	m_techniques = {
 		propView, directionalLighting,	pointLighting, spotLighting,
 		reflectorLighting, radianceHints, skybox, ssao, ssr,
 		joinReflections, bloom, hdr, fxaa, toScreen
 	};
 
-	m_systems = ECSSystemList({
-		new Skeletal_Animation(engine),
-		propView, directionalLighting,	pointLighting, spotLighting,
-		reflectorLighting, radianceHints, skybox, ssao, ssr,
-		joinReflections, bloom, hdr, fxaa, toScreen
-	});
+	// Each graphics technique is also an "ECS System"
+	auto & gfx = m_engine->getModule_Graphics();
+	for each (const auto & tech in m_techniques) 
+		gfx.addPerViewportSystem(tech);	
 }
 
 void Graphics_Pipeline::beginFrame(const float & deltaTime)
@@ -65,16 +63,14 @@ void Graphics_Pipeline::endFrame(const float & deltaTime)
 
 void Graphics_Pipeline::update(const float & deltaTime)
 {
-	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 	for each (auto * tech in m_techniques)
-		tech->updateTechnique(deltaTime);	
+		tech->updateTechnique(deltaTime);
 }
 
 void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
 {
-	auto & world = m_engine->getModule_World();
 	for each (auto * tech in m_techniques) {
 		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport);		
+			tech->renderTechnique(deltaTime, viewport);
 	}
 }

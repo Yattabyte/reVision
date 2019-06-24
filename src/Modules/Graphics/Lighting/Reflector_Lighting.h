@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/FBO_Env_Reflector.h"
-#include "Modules/World/ECS/TransformComponent.h"
+#include "Modules/World/ECS/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -31,6 +31,7 @@ public:
 	/** Constructor. */
 	inline Reflector_Lighting(Engine * engine)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 
@@ -116,55 +117,69 @@ public:
 	}
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		PriorityList<float, Reflector_Component*, std::less<float>> oldest;
+		std::vector<GLint> reflectionIndicies;
 		for each (const auto & componentParam in components) {
-			Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
+			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
+			Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			const auto & index = reflectorComponent->m_reflectorIndex;
 
-			// Sync Transform Attributes
-			if (transformComponent) {
-				const auto & position = transformComponent->m_transform.m_position;
-				const auto & orientation = transformComponent->m_transform.m_orientation;
-				const auto & scale = transformComponent->m_transform.m_scale;
-				const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
-				const auto matRot = glm::mat4_cast(orientation);
-				const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
-				m_reflectorBuffer[index].mMatrix = modelMatrix;
-				m_reflectorBuffer[index].rotMatrix = glm::inverse(matRot);
-				m_reflectorBuffer[index].BoxCamPos = position;
-				m_reflectorBuffer[index].BoxScale = scale;
-				const glm::mat4 vMatrices[6] = {
-					glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
-					glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
-					glm::lookAt(position, position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
-					glm::lookAt(position, position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
-					glm::lookAt(position, position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
-					glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
-				};
-				const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
-				for (int x = 0; x < 6; ++x) {
-					reflectorComponent->m_cameraData[x].Dimensions = glm::vec2((float)m_envmapSize);
-					reflectorComponent->m_cameraData[x].FOV = 90.0f;
-					reflectorComponent->m_cameraData[x].FarPlane = largest;
-					reflectorComponent->m_cameraData[x].EyePosition = position;
-					reflectorComponent->m_cameraData[x].pMatrix = pMatrix;
-					reflectorComponent->m_cameraData[x].vMatrix = vMatrices[x];
+			// Synchronize the component if it is visible
+			if (renderableComponent->m_visible) {
+				reflectionIndicies.push_back(GLuint(*reflectorComponent->m_reflectorIndex));
+
+				// Sync Transform Attributes
+				if (transformComponent) {
+					const auto & position = transformComponent->m_transform.m_position;
+					const auto & orientation = transformComponent->m_transform.m_orientation;
+					const auto & scale = transformComponent->m_transform.m_scale;
+					const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
+					const auto matRot = glm::mat4_cast(orientation);
+					const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
+					m_reflectorBuffer[index].mMatrix = modelMatrix;
+					m_reflectorBuffer[index].rotMatrix = glm::inverse(matRot);
+					m_reflectorBuffer[index].BoxCamPos = position;
+					m_reflectorBuffer[index].BoxScale = scale;
+					const glm::mat4 vMatrices[6] = {
+						glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
+						glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
+						glm::lookAt(position, position + glm::vec3(0, 1, 0), glm::vec3(0, 0, 1)),
+						glm::lookAt(position, position + glm::vec3(0, -1, 0), glm::vec3(0, 0, -1)),
+						glm::lookAt(position, position + glm::vec3(0, 0, 1), glm::vec3(0, -1, 0)),
+						glm::lookAt(position, position + glm::vec3(0, 0, -1), glm::vec3(0, -1, 0))
+					};
+					const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, largest);
+					for (int x = 0; x < 6; ++x) {
+						reflectorComponent->m_cameraData[x].Dimensions = glm::vec2((float)m_envmapSize);
+						reflectorComponent->m_cameraData[x].FOV = 90.0f;
+						reflectorComponent->m_cameraData[x].FarPlane = largest;
+						reflectorComponent->m_cameraData[x].EyePosition = position;
+						reflectorComponent->m_cameraData[x].pMatrix = pMatrix;
+						reflectorComponent->m_cameraData[x].vMatrix = vMatrices[x];
+					}
 				}
-			}
 
-			// Envmap logic
-			if (reflectorComponent->m_cubeSpot == -1) {
-				// Assign envmap spot
-				int envSpot = (int)(m_envmapCount) * 6;
-				reflectorComponent->m_cubeSpot = envSpot;
-				m_envmapCount++;
-				m_envmapFBO.resize(m_envmapSize, m_envmapSize, m_envmapCount * 6);			
-			}
+				// Envmap logic
+				if (reflectorComponent->m_cubeSpot == -1) {
+					// Assign envmap spot
+					int envSpot = (int)(m_envmapCount) * 6;
+					reflectorComponent->m_cubeSpot = envSpot;
+					m_envmapCount++;
+					m_envmapFBO.resize(m_envmapSize, m_envmapSize, m_envmapCount * 6);
+				}
 
-			// Sync Buffer Attributes
-			m_reflectorBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
+				// Sync Buffer Attributes
+				m_reflectorBuffer[index].CubeSpot = reflectorComponent->m_cubeSpot;
+			}
+			
+			// Find oldest envmaps always (may see shadow but not light source)
 			oldest.insert(reflectorComponent->m_updateTime, reflectorComponent);
 		}
+
+		// Update Draw Buffers
+		m_visLightCount = reflectionIndicies.size();
+		m_visLights.write(0, sizeof(GLuint) *m_visLightCount, reflectionIndicies.data());
+		m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &m_visLightCount); // update primCount (2nd param)
 
 		// Envmaps are updated in rendering pass, determined once a frame
 		m_reflectorsToUpdate = PQtoVector(oldest);
@@ -185,15 +200,6 @@ public:
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderLighting->existsYet() || !m_shaderStencil->existsYet())
 			return;
 
-		// Populate render-lists
-		m_engine->getModule_World().updateSystem(
-			deltaTime,
-			{ Reflector_Component::ID },
-			{ BaseECSSystem::FLAG_REQUIRED },
-			[&](const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-			updateVisibility(deltaTime, components);
-		});
-
 		// Render parallax reflectors
 		renderReflectors(deltaTime, viewport);
 	}
@@ -201,21 +207,6 @@ public:
 
 private:
 	// Private Methods
-	/***/
-	inline void updateVisibility(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {
-		// Accumulate Reflector Data		
-		std::vector<GLint> reflectionIndicies;
-		for each (const auto & componentParam in components) {
-			Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[0];
-
-			reflectionIndicies.push_back(GLuint(*reflectorComponent->m_reflectorIndex));
-		}
-
-		// Update Draw Buffers
-		const size_t & refSize = reflectionIndicies.size();
-		m_visLights.write(0, sizeof(GLuint) *refSize, reflectionIndicies.data());
-		m_indirectCube.write(sizeof(GLuint), sizeof(GLuint), &refSize); // update primCount (2nd param)
-	}
 	/** Render all the geometry for each reflector.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
@@ -283,44 +274,46 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderReflectors(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		glEnable(GL_STENCIL_TEST);
-		glEnable(GL_BLEND);
-		glBlendEquation(GL_FUNC_ADD);
-		glBlendFunc(GL_ONE, GL_ONE);
+		if (m_visLightCount) {
+			glEnable(GL_STENCIL_TEST);
+			glEnable(GL_BLEND);
+			glBlendEquation(GL_FUNC_ADD);
+			glBlendFunc(GL_ONE, GL_ONE);
 
-		// Draw only into depth-stencil buffer
-		m_shaderStencil->bind();										// Shader (reflector)
-		viewport->m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
-		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
-		glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
-		m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
-		m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
-		m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
-		glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_CULL_FACE);
-		glClear(GL_STENCIL_BUFFER_BIT);
-		glStencilFunc(GL_ALWAYS, 0, 0);
-		glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
-		glDepthMask(GL_FALSE);
-		glFrontFace(GL_CW);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glFrontFace(GL_CCW);
+			// Draw only into depth-stencil buffer
+			m_shaderStencil->bind();										// Shader (reflector)
+			viewport->m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
+			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+			glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
+			m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+			m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer
+			m_indirectCube.bindBuffer(GL_DRAW_INDIRECT_BUFFER);				// Draw call buffer
+			glBindVertexArray(m_shapeCube->m_vaoID);						// Quad VAO
+			glEnable(GL_DEPTH_TEST);
+			glDisable(GL_CULL_FACE);
+			glClear(GL_STENCIL_BUFFER_BIT);
+			glStencilFunc(GL_ALWAYS, 0, 0);
+			glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
+			glDepthMask(GL_FALSE);
+			glFrontFace(GL_CW);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			glFrontFace(GL_CCW);
 
-		// Now draw into color buffers
-		m_shaderLighting->bind();
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_CULL_FACE);
-		glDisable(GL_BLEND);
-		glCullFace(GL_FRONT);
-		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+			// Now draw into color buffers
+			m_shaderLighting->bind();
+			glDisable(GL_DEPTH_TEST);
+			glEnable(GL_CULL_FACE);
+			glDisable(GL_BLEND);
+			glCullFace(GL_FRONT);
+			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+			glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glDepthMask(GL_TRUE);
-		glCullFace(GL_BACK);
-		glBlendFunc(GL_ONE, GL_ZERO);
-		glDisable(GL_STENCIL_TEST);
+			glDepthMask(GL_TRUE);
+			glCullFace(GL_BACK);
+			glBlendFunc(GL_ONE, GL_ZERO);
+			glDisable(GL_STENCIL_TEST);
+		}
 	}
 	/** Converts a priority queue into an stl vector.*/
 	inline static std::vector<Reflector_Component*> PQtoVector(PriorityList<float, Reflector_Component*, std::less<float>> oldest) {
@@ -363,6 +356,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Visibility
+	size_t m_visLightCount = 0ull;
 	DynamicBuffer m_visLights;
 
 	// Core Lighting Data

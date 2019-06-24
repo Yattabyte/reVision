@@ -6,6 +6,8 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/Graphics/Logical/CameraFollower_System.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 
@@ -29,7 +31,9 @@ public:
 	virtual void frameTick(const float & deltaTime) override;
 
 
-	// Public Methods	
+	// Public Methods
+	/***/
+	void addPerViewportSystem(BaseECSSystem * system);
 	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.
@@ -45,6 +49,9 @@ public:
 private:
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
+	FrustumCull_System						m_frustumCuller;
+	CameraFollower_System					m_cameraFollower;
+	ECSSystemList							m_systems;
 	std::unique_ptr<Graphics_Pipeline>		m_pipeline;
 	std::shared_ptr<Viewport>				m_viewport;
 	std::shared_ptr<bool>					m_aliveIndicator = std::make_shared<bool>(true);

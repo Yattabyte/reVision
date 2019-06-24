@@ -12,6 +12,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	CameraFollower_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,0,0"
@@ -30,6 +36,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,15,0"
@@ -52,6 +64,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,20,20"
@@ -78,6 +96,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,15,0"
@@ -90,6 +111,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "44,15,0"
@@ -102,6 +126,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,15,-41"
@@ -114,6 +141,9 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,-7.5,10"
@@ -128,6 +158,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-22,-10,0"
@@ -142,6 +178,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "22,-10,0"
@@ -156,6 +198,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,0,-20"
@@ -170,6 +218,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-18,0,-10"
@@ -184,6 +238,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,0,10"
@@ -198,6 +258,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "45,5,0"
@@ -212,6 +278,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-45,5,0"
@@ -226,6 +298,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "45,5,15"
@@ -240,6 +318,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "60,-5,15"
@@ -254,6 +338,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "18,0,10"
@@ -273,6 +363,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "18,0,-10"
@@ -292,6 +388,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-18,0,10"
@@ -311,6 +413,12 @@ entity
 }
 entity
 {
+	Renderable_Component
+	{
+	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "-18,0,-10"

@@ -2,6 +2,7 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 #include "Modules/World/World_M.h"
 #include "Engine.h"
 #include <memory>
@@ -14,6 +15,9 @@ Graphics_Module::~Graphics_Module()
 
 	// Remove support for the following list of component types
 	auto & world = m_engine->getModule_World();
+	world.removeComponentType("Renderable_Component");
+	world.removeComponentType("CameraFollower_Component");
+	world.removeComponentType("BoundingSphere_Component");
 	world.removeComponentType("Prop_Component");
 	world.removeComponentType("Skeleton_Component");
 	world.removeComponentType("LightColor_Component");
@@ -69,10 +73,25 @@ void Graphics_Module::initialize(Engine * engine)
 	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
 
 	// Rendering Effects & systems
+	addPerViewportSystem(&m_frustumCuller);
+	addPerViewportSystem(&m_cameraFollower);
+	addPerViewportSystem(new Skeletal_Animation(engine));
 	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
+	world.addComponentType("Renderable_Component", [engine](const ParamList & parameters) {
+		auto * component = new Renderable_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("CameraFollower_Component", [engine](const ParamList & parameters) {
+		auto * component = new CameraFollower_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("BoundingSphere_Component", [engine](const ParamList & parameters) {
+		auto * component = new BoundingSphere_Component();
+		return std::make_pair(component->ID, component);
+	});
 	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
 		auto * component = new Prop_Component();
 		component->m_model = Shared_Model(engine, CastAny(parameters, 0, std::string("")));
@@ -129,9 +148,6 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_viewport->m_cameraBuffer->beginWriting();
 	m_viewport->m_cameraBuffer->pushChanges();
 
-	// Update persistent pipeline state
-	m_pipeline->update(deltaTime);
-
 	// Render graphics pipeline using current set of buffers
 	render(deltaTime, m_viewport);
 
@@ -140,10 +156,23 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_viewport->m_cameraBuffer->endWriting();
 }
 
+void Graphics_Module::addPerViewportSystem(BaseECSSystem * system)
+{
+	m_systems.addSystem(system);
+}
+
 void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
 {
+	// Update all the once-per-viewport systems we're given first
+	m_frustumCuller.setViewport(viewport);
+	m_cameraFollower.setViewport(viewport);
+	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+	m_pipeline->update(deltaTime);
+
+	// Prepare viewport for rendering
 	viewport->clear();
 	viewport->bind();
 
+	// Render
 	m_pipeline->render(deltaTime, viewport, allowedCategories);
 }

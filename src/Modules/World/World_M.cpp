@@ -1,5 +1,5 @@
 #include "Modules/World/World_M.h"
-#include "Modules/World/ECS/TransformComponent.h"
+#include "Modules/World/ECS/components.h"
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 

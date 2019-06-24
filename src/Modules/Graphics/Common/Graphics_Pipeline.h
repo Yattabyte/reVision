@@ -4,8 +4,6 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/World/ECS/ecsSystem.h"
-#include <memory>
 #include <vector>
 
 
@@ -38,7 +36,6 @@ public:
 protected:
 	// Protected Attributes
 	Engine * m_engine = nullptr;
-	ECSSystemList m_systems;
 	std::vector<Graphics_Technique*> m_techniques;
 };
 
