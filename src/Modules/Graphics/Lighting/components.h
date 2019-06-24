@@ -67,7 +67,7 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 struct Reflector_Component : public ECSComponent<Reflector_Component> {
 	// Reflector Properties
 	CameraBuffer::BufferStructure m_cameraData[6];
-	bool m_outOfDate = false;
+	bool m_sceneOutOfDate = false;
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 

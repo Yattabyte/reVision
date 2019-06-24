@@ -25,7 +25,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliary
 	auto directionalLighting = new Directional_Technique(m_engine, propView, auxilliarySystems);
 	auto pointLighting = new Point_Technique(m_engine, propView, auxilliarySystems);
 	auto spotLighting = new Spot_Technique(m_engine, propView, auxilliarySystems);
-	auto reflectorLighting = new Reflector_Technique(m_engine);
+	auto reflectorLighting = new Reflector_Technique(m_engine, auxilliarySystems);
 	auto radianceHints = new Radiance_Hints(m_engine);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
@@ -42,10 +42,6 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliary
 		reflectorLighting, radianceHints, skybox, ssao, ssr,
 		joinReflections, bloom, hdr, fxaa, toScreen
 	};
-
-	// Each graphics technique is also an "ECS System"
-	for each (const auto & tech in m_techniques) 
-		auxilliarySystems.addSystem(tech);
 }
 
 void Graphics_Pipeline::beginFrame(const float & deltaTime)

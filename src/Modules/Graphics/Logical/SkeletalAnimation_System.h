@@ -2,19 +2,19 @@
 #ifndef SKELETONANIMATION_S_H
 #define SKELETONANIMATION_S_H 
 
-#include "Modules/Graphics/Common/Graphics_Technique.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Engine.h"
 
 
 /** A system responsible for animating props with skeleton components. */
-class Skeletal_Animation : public Graphics_Technique {
+class Skeletal_Animation : public BaseECSSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation() = default;
 	/** Construct a skeletal animation system. */
-	inline Skeletal_Animation(Engine * engine) : Graphics_Technique(GEOMETRY) {
+	inline Skeletal_Animation(Engine * engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::ID);
 

@@ -120,6 +120,6 @@ void Game_Module::showPauseMenu(const bool & show)
 void Game_Module::startGame()
 {
 	m_gameState = in_game;
-	m_engine->getModule_World().loadWorld("Lighting Tests//Directional_Test.map");
+	m_engine->getModule_World().loadWorld("A.map");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }

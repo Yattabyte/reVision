@@ -4,6 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include <vector>
 
 

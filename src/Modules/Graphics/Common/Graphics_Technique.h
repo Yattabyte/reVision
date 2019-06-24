@@ -2,13 +2,12 @@
 #ifndef GRAPHICS_TECHNIQUE_H
 #define GRAPHICS_TECHNIQUE_H
 
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include <memory>
 
 
 /** An interface for core graphics effect techniques. */
-class Graphics_Technique : public BaseECSSystem {
+class Graphics_Technique {
 public:
 	// Public Enumerations
 	const enum Technique_Category : unsigned int {
@@ -44,10 +43,6 @@ public:
 	inline virtual void beginFrame(const float & deltaTime) {}
 	/***/
 	inline virtual void endFrame(const float & deltaTime) {}
-	/** Tick this system by deltaTime, passing in all the components matching this system's requirements.
-	@param	deltaTime		the amount of time which passed since last update
-	@param	components		the components to update. */
-	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) {};
 	/***/
 	inline virtual void updateTechnique(const float & deltaTime) {}
 	/** Apply this lighting technique.
