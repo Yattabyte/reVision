@@ -74,16 +74,18 @@ void main()
 	if (NdotL <= 0.f && abs(NdotV) <= 0.f)	discard; // Discard if light will be zero anyway
 	
 	// Shadow
-	const float cosAngle					= saturate(1.0f - NdotL);
-	const float bias 						= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
-	const vec4 scaledNormalOffset			= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
-	int index 								= 0;
-	for (; index < NUM_CASCADES; ++index) 
-		if (-data.View_Pos.z <= CascadeEndClipSpace[index]) 
-			break;			
-	const vec3 LightPseudoPos				= CamEyePosition + (LightDirection.xyz);
-	const float ShadowFactor 				= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);	
-	if (ShadowFactor <= EPSILON)			discard; // Discard if completely in shadow
+	float ShadowFactor						= 1.0f;
+	if (Shadow_Spot >= 0) {	
+		const float cosAngle				= saturate(1.0f - NdotL);
+		const float bias 					= clamp(0.005f * tan(acos(NdotL)), 0.0f, 0.005f);
+		const vec4 scaledNormalOffset		= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
+		int index 							= 0;
+		for (; index < NUM_CASCADES; ++index) 
+			if (-data.View_Pos.z <= CascadeEndClipSpace[index]) 
+				break;			
+		ShadowFactor 						= CalcShadowFactor(index, LightVP[index] * (data.World_Pos + scaledNormalOffset), bias);	
+		if (ShadowFactor <= EPSILON)		discard; // Discard if completely in shadow
+	}
 		
 	// Direct Light	
 	vec3 Fs;

@@ -208,11 +208,11 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeSphere;
 	Prop_Shadow * m_propShadow_Static = nullptr, *m_propShadow_Dynamic = nullptr;
 	glm::ivec2 m_shadowSize = glm::ivec2(512);
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	size_t m_shadowCount = 0ull;
 	FBO_Shadow_Point m_shadowFBO;
 

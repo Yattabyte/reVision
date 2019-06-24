@@ -24,10 +24,13 @@ entity
 		quat "0.0828278884,-0.373612523,0.901980519,0.199964225"
 		vec3 "1,1,1"
 	}
-	LightDirectional_Component
+	LightColor_Component
 	{		
 		vec3 "0.75,0.75,0.9"
 		float "4"
+	}
+	LightDirectional_Component
+	{
 		bool "true"
 	}
 }
@@ -45,13 +48,15 @@ entity
 		quat "-0.771,-0.496,-0.219,0.335"
 		vec3 "1,1,1"
 	}
-	LightDirectional_Component
+	LightColor_Component
 	{		
 		vec3 "1,0,0"
 		float "4"
+	}
+	LightDirectional_Component
+	{
 		bool "true"
 	}
-
 }
 entity
 {
@@ -67,13 +72,15 @@ entity
 		quat "-0.845,0.243,0.370,0.300"
 		vec3 "1,1,1"
 	}
-	LightDirectional_Component
+	LightColor_Component
 	{		
 		vec3 "0,0,1"
 		float "4"
+	}
+	LightDirectional_Component
+	{
 		bool "true"
 	}
-
 }
 entity
 {
