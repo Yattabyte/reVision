@@ -23,7 +23,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliary
 {
 	auto propView = new Prop_Technique(m_engine, auxilliarySystems);
 	auto directionalLighting = new Directional_Technique(m_engine, propView);
-	auto pointLighting = new Point_Technique(m_engine, propView);
+	auto pointLighting = new Point_Technique(m_engine, propView, auxilliarySystems);
 	auto spotLighting = new Spot_Technique(m_engine, propView, auxilliarySystems);
 	auto reflectorLighting = new Reflector_Technique(m_engine);
 	auto radianceHints = new Radiance_Hints(m_engine);

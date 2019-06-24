@@ -104,7 +104,7 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "80,20,0"
+		vec3 "80,20,-40"
 		quat "0,0,-0.707,-0.707"
 		vec3 "1,1,1"
 	}	
@@ -133,7 +133,7 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "90,20,0"
+		vec3 "90,20,-40"
 		quat "0,0,-0.707,-0.707"
 		vec3 "1,1,1"
 	}	
@@ -162,7 +162,7 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "100,20,0"
+		vec3 "100,20,-40"
 		quat "0,0,-0.707,-0.707"
 		vec3 "1,1,1"
 	}	
@@ -191,7 +191,7 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "110,20,0"
+		vec3 "110,20,-40"
 		quat "0,0,-0.707,-0.707"
 		vec3 "1,1,1"
 	}	
@@ -221,7 +221,7 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "120,20,0"
+		vec3 "120,20,-40"
 		quat "0,0,-0.707,-0.707"
 		vec3 "1,1,1"
 	}	
@@ -250,7 +250,174 @@ entity
 	}
 	Transform_Component
 	{
-		vec3 "100,15,0"
+		vec3 "100,15,-40"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}	
+	Prop_Component
+	{
+		string "Test\AnimationTest.fbx"
+		uint "0"
+	}
+	Skeleton_Component
+	{
+		string "Test\AnimationTest.fbx"
+		int "0"
+	}	
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "80,20,40"
+		quat "0,0,-0.707,-0.707"
+		vec3 "1,1,1"
+	}	
+	LightColor_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightRadius_Component
+	{		
+		float "15"
+	}
+	LightCutoff_Component
+	{		
+		float "35"
+	}
+	LightSpot_Component
+	{
+		bool "true"
+	}
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "90,20,40"
+		quat "0,0,-0.707,-0.707"
+		vec3 "1,1,1"
+	}	
+	LightColor_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightRadius_Component
+	{		
+		float "15"
+	}
+	LightCutoff_Component
+	{		
+		float "35"
+	}
+	LightSpot_Component
+	{
+		bool "true"
+	}
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "100,20,40"
+		quat "0,0,-0.707,-0.707"
+		vec3 "1,1,1"
+	}	
+	LightColor_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightRadius_Component
+	{		
+		float "15"
+	}
+	LightCutoff_Component
+	{		
+		float "35"
+	}
+	LightSpot_Component
+	{
+		bool "true"
+	}
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "110,20,40"
+		quat "0,0,-0.707,-0.707"
+		vec3 "1,1,1"
+	}	
+	LightColor_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightRadius_Component
+	{		
+		float "15"
+	}
+	LightCutoff_Component
+	{		
+		float "35"
+	}
+	LightSpot_Component
+	{
+		bool "true"
+	}
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "120,20,40"
+		quat "0,0,-0.707,-0.707"
+		vec3 "1,1,1"
+	}	
+	LightColor_Component
+	{		
+		vec3 "1,1,1"
+		float "10"
+	}
+	LightRadius_Component
+	{		
+		float "15"
+	}
+	LightCutoff_Component
+	{		
+		float "35"
+	}
+	LightSpot_Component
+	{
+		bool "true"
+	}
+}
+entity
+{
+	Renderable_Component
+	{
+	}
+	Transform_Component
+	{
+		vec3 "100,15,40"
 		quat "1,0,0,0"
 		vec3 "1,1,1"
 	}	

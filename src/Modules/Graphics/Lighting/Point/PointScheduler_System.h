@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SPOTSCHEDULER_SYSTEM_H
-#define SPOTSCHEDULER_SYSTEM_H
+#ifndef POINTSCHEDULER_SYSTEM_H
+#define POINTSCHEDULER_SYSTEM_H
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Lighting/components.h"
@@ -9,19 +9,19 @@
 
 
 /***/
-class SpotScheduler_System : public BaseECSSystem {
+class PointScheduler_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
 	/***/
-	inline ~SpotScheduler_System() {
+	inline ~PointScheduler_System() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/***/
-	inline SpotScheduler_System(Engine * engine, const std::shared_ptr<std::vector<LightSpot_Component*>> & shadowsToUpdate)
+	inline PointScheduler_System(Engine * engine, const std::shared_ptr<std::vector<LightPoint_Component*>> & shadowsToUpdate)
 		: m_shadowsToUpdate(shadowsToUpdate) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
-		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
+		addComponentType(LightPoint_Component::ID, FLAG_REQUIRED);
 
 		auto & preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
@@ -32,11 +32,11 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		m_shadowsToUpdate->clear();
-		std::vector<std::pair<float, LightSpot_Component*>> oldest(m_maxShadowsCasters, { 0, nullptr });
+		std::vector<std::pair<float, LightPoint_Component*>> oldest(m_maxShadowsCasters, { 0, nullptr });
 		int maxElement = -1;
 		for each (const auto & componentParam in components) {
 			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-			LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[1];
+			LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[1];
 
 			if (renderableComponent->m_visible && lightComponent->m_hasShadow) {
 				// Try to find the oldest components
@@ -68,8 +68,8 @@ public:
 private:
 	// Private Attributes
 	GLuint m_maxShadowsCasters = 1u;
-	std::shared_ptr<std::vector<LightSpot_Component*>> m_shadowsToUpdate;
+	std::shared_ptr<std::vector<LightPoint_Component*>> m_shadowsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
-#endif // SPOTSCHEDULER_SYSTEM_H
+#endif // POINTSCHEDULER_SYSTEM_H

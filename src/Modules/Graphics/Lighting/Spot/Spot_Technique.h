@@ -13,8 +13,6 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
-#include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Engine.h"
 #include <vector>
 
@@ -75,7 +73,6 @@ public:
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			m_engine->getManager_Messages().error("Spot_Technique Shadowmap Framebuffer has encountered an error.");
-
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -192,6 +189,7 @@ private:
 			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
+			glClear(GL_STENCIL_BUFFER_BIT);
 			glCullFace(GL_BACK);
 			glDepthMask(GL_TRUE);
 			glBlendFunc(GL_ONE, GL_ZERO);
@@ -217,6 +215,7 @@ private:
 	glm::ivec2 m_shadowSize = glm::ivec2(256);
 	size_t m_shadowCount = 0ull;
 	FBO_Shadow_Spot m_shadowFBO;
+
 
 	// Shared Attributes
 	std::shared_ptr<Spot_Buffers> m_buffers;

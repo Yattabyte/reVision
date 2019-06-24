@@ -285,8 +285,8 @@ private:
 
 			// Draw only into depth-stencil buffer
 			m_shaderStencil->bind();										// Shader (reflector)
-			viewport->m_gfxFBOS->bindForWriting("REFLECTION");						// Ensure writing to reflection FBO
-			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);						// Read from Geometry FBO
+			viewport->m_gfxFBOS->bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
+			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
 			glBindTextureUnit(4, m_envmapFBO.m_textureID);					// Reflection map (environment texture)
 			m_visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 			m_reflectorBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer

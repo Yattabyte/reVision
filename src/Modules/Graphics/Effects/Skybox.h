@@ -23,7 +23,7 @@ public:
 	inline Skybox(Engine * engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
-		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
+		m_cubemapSky = Shared_Cubemap(engine, "night\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
 		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");

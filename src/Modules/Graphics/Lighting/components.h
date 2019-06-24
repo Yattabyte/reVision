@@ -41,7 +41,7 @@ struct LightDirectional_Component : public ECSComponent<LightDirectional_Compone
 struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
 	// Shadow Properties
 	bool m_hasShadow = false;
-	bool m_outOfDate = false;
+	bool m_staticOutOfDate = false;
 	float m_updateTime = 0.0f;
 	int m_shadowSpot = -1;
 	glm::vec3 m_position = glm::vec3(0.0f);
