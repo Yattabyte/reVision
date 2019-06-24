@@ -1,11 +1,11 @@
 #pragma once
-#ifndef REFLECTOR_LIGHTING_H
-#define REFLECTOR_LIGHTING_H
+#ifndef REFLECTOR_TECHNIQUE_H
+#define REFLECTOR_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/FBO_Env_Reflector.h"
+#include "Modules/Graphics/Lighting/Reflector/FBO_Env_Reflector.h"
 #include "Modules/World/ECS/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -20,16 +20,16 @@
 class Engine;
 
 /** A core lighting technique responsible for all parallax reflectors. */
-class Reflector_Lighting : public Graphics_Technique {
+class Reflector_Technique : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
-	inline ~Reflector_Lighting() {
+	inline ~Reflector_Technique() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Lighting(Engine * engine)
+	inline Reflector_Technique(Engine * engine)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
@@ -86,7 +86,7 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_envmapFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getManager_Messages().error("Reflector_Lighting Environment Map Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("Reflector_Technique Environment Map Framebuffer has encountered an error.");
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -211,64 +211,67 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void updateReflectors(const float & deltaTime) {
-		if (m_renderingSelf)
-			return;
-		m_renderingSelf = true;
-		for each (auto reflector in std::vector<Reflector_Component*>(m_reflectorsToUpdate)) {
-			if (reflector->m_outOfDate || m_outOfDate) {
-				reflector->m_outOfDate = false;
-				for (int x = 0; x < 6; ++x) {
-					// Set view-specific camera data
-					m_reflectorViewport->m_cameraBuffer->beginWriting();
-					m_reflectorViewport->m_cameraBuffer->replace(reflector->m_cameraData[x]);
-					m_reflectorViewport->m_cameraBuffer->pushChanges();
+		if (m_reflectorsToUpdate.size()) {
+			if (m_renderingSelf)
+				return;
+			m_renderingSelf = true;
+			// Copy the list of reflectors, because nested rendering may change the vector!
+			for (auto * reflector : std::vector<Reflector_Component*>(m_reflectorsToUpdate)) {
+				if (reflector->m_outOfDate || m_outOfDate) {
+					reflector->m_outOfDate = false;
+					for (int x = 0; x < 6; ++x) {
+						// Set view-specific camera data
+						m_reflectorViewport->m_cameraBuffer->beginWriting();
+						m_reflectorViewport->m_cameraBuffer->replace(reflector->m_cameraData[x]);
+						m_reflectorViewport->m_cameraBuffer->pushChanges();
 
-					// Render Graphics Pipeline
-					constexpr const unsigned int flags = Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING;
-					m_engine->getModule_Graphics().render(deltaTime, m_reflectorViewport, flags);
-					m_reflectorViewport->m_cameraBuffer->endWriting();
+						// Render Graphics Pipeline
+						constexpr const unsigned int flags = Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING;
+						m_engine->getModule_Graphics().render(deltaTime, m_reflectorViewport, flags);
+						m_reflectorViewport->m_cameraBuffer->endWriting();
 
-					// Copy lighting frame into cube-face
-					m_reflectorViewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
-					m_envmapFBO.bindForWriting();
-					m_shaderCopy->bind();
-					m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
-					m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-					glBindVertexArray(m_shapeQuad->m_vaoID);
-					glDrawArraysIndirect(GL_TRIANGLES, 0);
+						// Copy lighting frame into cube-face
+						m_reflectorViewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
+						m_envmapFBO.bindForWriting();
+						m_shaderCopy->bind();
+						m_shaderCopy->setUniform(0, x + reflector->m_cubeSpot);
+						m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+						glBindVertexArray(m_shapeQuad->m_vaoID);
+						glDrawArraysIndirect(GL_TRIANGLES, 0);
+					}
+
+					// Once cubemap is generated, convolute it
+					m_shaderConvolute->bind();
+					m_shaderConvolute->setUniform(0, reflector->m_cubeSpot);
+					m_envmapFBO.bindForReading();
+					m_indirectQuad6Faces.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+					for (unsigned int r = 1; r < 6; ++r) {
+						// Ensure we are writing to MIP level r
+						const unsigned int write_size = (unsigned int)std::max(1.0f, (floor(m_envmapSize / pow(2.0f, (float)r))));
+						glViewport(0, 0, write_size, write_size);
+						m_shaderConvolute->setUniform(1, (float)r / 5.0f);
+						glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);
+
+						// Ensure we are reading from MIP level r - 1
+						glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, r - 1);
+						glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, r - 1);
+
+						// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
+						glDrawArraysIndirect(GL_TRIANGLES, 0);
+					}
+
+					// Reset texture, so it can be used for other component reflections
+					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, 0);
+					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, 5);
+					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, 0);
+					reflector->m_updateTime = m_engine->getTime();
+					Shader::Release();
 				}
-
-				// Once cubemap is generated, convolute it
-				m_shaderConvolute->bind();
-				m_shaderConvolute->setUniform(0, reflector->m_cubeSpot);
-				m_envmapFBO.bindForReading();
-				m_indirectQuad6Faces.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-				for (unsigned int r = 1; r < 6; ++r) {
-					// Ensure we are writing to MIP level r
-					const unsigned int write_size = (unsigned int)std::max(1.0f, (floor(m_envmapSize / pow(2.0f, (float)r))));
-					glViewport(0, 0, write_size, write_size);
-					m_shaderConvolute->setUniform(1, (float)r / 5.0f);
-					glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, r);
-
-					// Ensure we are reading from MIP level r - 1
-					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, r - 1);
-					glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, r - 1);
-
-					// Convolute the 6 faces for this roughness level (RENDERS 6 TIMES)
-					glDrawArraysIndirect(GL_TRIANGLES, 0);
-				}
-
-				// Reset texture, so it can be used for other component reflections
-				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_BASE_LEVEL, 0);
-				glTextureParameteri(m_envmapFBO.m_textureID, GL_TEXTURE_MAX_LEVEL, 5);
-				glNamedFramebufferTexture(m_envmapFBO.m_fboID, GL_COLOR_ATTACHMENT0, m_envmapFBO.m_textureID, 0);
-				reflector->m_updateTime = m_engine->getTime();
-				Shader::Release();
 			}
-		}
 
-		m_outOfDate = false;
-		m_renderingSelf = false;
+			m_outOfDate = false;
+			m_renderingSelf = false;
+		}
 	}
 	/** Render all the lights 
 	@param	deltaTime	the amount of time passed since last frame.
@@ -377,4 +380,4 @@ private:
 	bool m_renderingSelf = false; // used to avoid calling self infinitely
 };
 
-#endif // REFLECTOR_LIGHTING_H
+#endif // REFLECTOR_TECHNIQUE_H

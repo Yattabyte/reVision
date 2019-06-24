@@ -2,11 +2,11 @@
 #include "Engine.h"
 
 /* Rendering Techniques Used */
-#include "Modules/Graphics/Geometry/Prop_Renderer.h"
-#include "Modules/Graphics/Lighting/Directional_Lighting.h"
-#include "Modules/Graphics/Lighting/Point_Lighting.h"
-#include "Modules/Graphics/Lighting/Spot_Lighting.h"
-#include "Modules/Graphics/Lighting/Reflector_Lighting.h"
+#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
+#include "Modules/Graphics/Lighting/Directional/Directional_Technique.h"
+#include "Modules/Graphics/Lighting/Point/Point_Technique.h"
+#include "Modules/Graphics/Lighting/Spot/Spot_Technique.h"
+#include "Modules/Graphics/Lighting/Reflector/Reflector_Technique.h"
 #include "Modules/Graphics/Effects/Skybox.h"
 #include "Modules/Graphics/Effects/Radiance_Hints.h"
 #include "Modules/Graphics/Effects/SSAO.h"
@@ -18,14 +18,14 @@
 #include "Modules/Graphics/Effects/To_Screen.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
+Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
-	auto propView = new Prop_View(m_engine);
-	auto directionalLighting = new Directional_Lighting(m_engine, propView);
-	auto pointLighting = new Point_Lighting(m_engine, propView);
-	auto spotLighting = new Spot_Lighting(m_engine, propView);
-	auto reflectorLighting = new Reflector_Lighting(m_engine);
+	auto propView = new Prop_Technique(m_engine, auxilliarySystems);
+	auto directionalLighting = new Directional_Technique(m_engine, propView);
+	auto pointLighting = new Point_Technique(m_engine, propView);
+	auto spotLighting = new Spot_Technique(m_engine, propView);
+	auto reflectorLighting = new Reflector_Technique(m_engine);
 	auto radianceHints = new Radiance_Hints(m_engine);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
@@ -44,9 +44,8 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine)
 	};
 
 	// Each graphics technique is also an "ECS System"
-	auto & gfx = m_engine->getModule_Graphics();
 	for each (const auto & tech in m_techniques) 
-		gfx.addPerViewportSystem(tech);	
+		auxilliarySystems.addSystem(tech);
 }
 
 void Graphics_Pipeline::beginFrame(const float & deltaTime)

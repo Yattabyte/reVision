@@ -5,7 +5,6 @@
 #include "Assets/Asset.h"
 #include "Utilities/GL/glad/glad.h"
 #include "Utilities/IO/Mesh_IO.h"
-#include "assimp/scene.h"
 #include "glm/glm.hpp"
 #include "glm/geometric.hpp"
 #include <map>

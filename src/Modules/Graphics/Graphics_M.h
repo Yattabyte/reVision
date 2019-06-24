@@ -32,8 +32,6 @@ public:
 
 
 	// Public Methods
-	/***/
-	void addPerViewportSystem(BaseECSSystem * system);
 	/** Render using our graphics pipeline, from the camera buffer specified into the framebuffers and volume specified.
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.

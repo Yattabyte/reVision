@@ -5,7 +5,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
-#include "Modules/Graphics/Geometry/Prop_Renderer.h"
+#include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Engine.h"
@@ -30,7 +30,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_View * propView)
+	inline Prop_Shadow(Engine * engine, const unsigned int & instanceCount, const unsigned int & flags, const Shared_Shader & shaderCull, const Shared_Shader & shaderShadow, Prop_Technique * propView)
 		: m_engine(engine), m_instanceCount(instanceCount), m_flags(flags), m_shaderCull(shaderCull), m_shaderShadow(shaderShadow), m_propView(propView) {
 		// Asset Loading
 		m_shapeCube = Shared_Primitive(m_engine, "cube");
@@ -104,7 +104,7 @@ private:
 
 			const auto & offset = propComponent->m_model->m_offset;
 			const auto & count = propComponent->m_model->m_count;
-			const auto & index = *propComponent->m_propBufferIndex;
+			const auto & index = *propComponent->m_modelBufferIndex;
 			visibleIndices.push_back((GLuint)index);
 			// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 			if ((count >= 100) && propComponent->m_radius < glm::distance(propComponent->m_position, m_lightPos)) {
@@ -174,7 +174,7 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	Prop_View * m_propView = nullptr;
+	Prop_Technique * m_propView = nullptr;
 	glm::vec3 m_lightPos = glm::vec3(0);
 	int m_lightIndex = 0;
 	unsigned int m_instanceCount = 0;

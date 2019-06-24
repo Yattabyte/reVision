@@ -4,7 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Common/components.h"
+#include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include <memory>
 

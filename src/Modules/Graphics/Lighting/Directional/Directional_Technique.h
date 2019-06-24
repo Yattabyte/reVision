@@ -1,12 +1,12 @@
 #pragma once
-#ifndef DIRECTIONAL_LIGHTING_H
-#define DIRECTIONAL_LIGHTING_H
+#ifndef DIRECTIONAL_TECHNIQUE_H
+#define DIRECTIONAL_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Common/components.h"
+#include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/FBO_Shadow_Directional.h"
-#include "Modules/Graphics/Geometry/Prop_Shadow.h"
+#include "Modules/Graphics/Lighting/Directional/FBO_Shadow_Directional.h"
+#include "Modules/Graphics/Geometry/Prop/Prop_Shadow.h"
 #include "Modules/World/ECS/components.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
@@ -21,16 +21,16 @@
 
 
 /** A core lighting technique responsible for all directional lights. */
-class Directional_Lighting : public Graphics_Technique {
+class Directional_Technique : public Graphics_Technique {
 public:
 	// Public (de)Constructors
 	/** Destructor. */
-	inline ~Directional_Lighting() {
+	inline ~Directional_Technique() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Lighting(Engine * engine, Prop_View * propView)
+	inline Directional_Technique(Engine * engine, Prop_Technique * propView)
 		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
@@ -89,7 +89,7 @@ public:
 
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getManager_Messages().error("Directional_Lighting Shadowmap Framebuffer has encountered an error.");
+			m_engine->getManager_Messages().error("Directional_Technique Shadowmap Framebuffer has encountered an error.");
 
 		GLuint indData[] = { 0,0,0,0 };
 		m_indirectShape.write(0, sizeof(GLuint) * 4, &indData);
@@ -390,4 +390,4 @@ private:
 	FBO_Shadow_Directional m_shadowFBO;
 };
 
-#endif // DIRECTIONAL_LIGHTING_H
+#endif // DIRECTIONAL_TECHNIQUE_H

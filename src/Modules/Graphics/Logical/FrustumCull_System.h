@@ -4,7 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Common/components.h"
+#include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
@@ -35,10 +35,16 @@ public:
 			bool isVisible = true;
 
 			// Our visibility tests will try to EXCLUDE, not INCLUDE
-			// Frustum x Bounding-Sphere Test
 			if (bsphereComponent) {
 				const auto position = transformComponent->m_transform.m_position + bsphereComponent->m_positionOffset;
 				const auto radius = bsphereComponent->m_radius;
+				// Update bsphere with whether or not the camera is within it
+				if (glm::distance(position, m_position) > radius)
+					bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
+				else
+					bsphereComponent->m_cameraCollision = BoundingSphere_Component::INSIDE;
+				
+				// Frustum x Bounding-Sphere Test
 				for (int i = 0; i < 6; ++i)	{
 					if (m_planes[i].x * position.x + m_planes[i].y * position.y + m_planes[i].z * position.z + m_planes[i].w <= -radius) {
 						isVisible = false;
@@ -63,9 +69,10 @@ public:
 			plane[2] /= magnitude;
 			plane[3] /= magnitude;
 		};
+		m_position = viewport->get3DPosition();
 		const auto pMatrix = glm::value_ptr(viewport->getPerspectiveMatrix());
 		const auto vMatrix = glm::value_ptr(viewport->getViewMatrix());
-		float   clip[16]; //clipping planes
+		float clip[16]; //clipping planes
 
 		clip[0] = vMatrix[0] * pMatrix[0] + vMatrix[1] * pMatrix[4] + vMatrix[2] * pMatrix[8] + vMatrix[3] * pMatrix[12];
 		clip[1] = vMatrix[0] * pMatrix[1] + vMatrix[1] * pMatrix[5] + vMatrix[2] * pMatrix[9] + vMatrix[3] * pMatrix[13];
@@ -127,7 +134,8 @@ public:
 
 private:
 	// Private Attributes
-	glm::vec4 m_planes[6];
+	glm::vec3 m_position = glm::vec3(0);
+	glm::vec4 m_planes[6] = { glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0) };
 };
 
 #endif // FRUSTUMCULL_SYSTEM_H

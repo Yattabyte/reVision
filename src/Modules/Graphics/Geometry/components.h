@@ -16,7 +16,7 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 	float m_radius = 1.0f;
 	bool m_static = true;
 	glm::vec3 m_position = glm::vec3(0.0f);
-	GL_AB_Index m_propBufferIndex = 0ull;
+	GL_AB_Index m_modelBufferIndex = 0ull;
 };
 
 /** A skeleton component is used in combination with prop components to allow for skeletal animation.

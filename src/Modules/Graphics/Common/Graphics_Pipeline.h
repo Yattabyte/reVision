@@ -15,8 +15,10 @@ public:
 	// Public (de)Constructors
 	/** Destroy this rendering pipeline. */
 	inline ~Graphics_Pipeline() = default;
-	/** Construct a PBR rendering pipeline. */
-	Graphics_Pipeline(Engine * engine);
+	/** Construct a PBR rendering pipeline. 
+	@param	engine		the engine to use.
+	@param	auxSystems	container to add extra render-related ecs systems to. */
+	Graphics_Pipeline(Engine * engine, ECSSystemList & auxSystems);
 
 
 	// Public Methods

@@ -72,11 +72,11 @@ void Graphics_Module::initialize(Engine * engine)
 	cameraData.FOV = fov;
 	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
 
-	// Rendering Effects & systems
-	addPerViewportSystem(&m_frustumCuller);
-	addPerViewportSystem(&m_cameraFollower);
-	addPerViewportSystem(new Skeletal_Animation(engine));
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine);
+	// Rendering Effects & systems	
+	m_systems.addSystem(&m_frustumCuller);
+	m_systems.addSystem(&m_cameraFollower);
+	m_systems.addSystem(new Skeletal_Animation(engine));
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
@@ -154,11 +154,6 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->endFrame(deltaTime);
 	m_viewport->m_cameraBuffer->endWriting();
-}
-
-void Graphics_Module::addPerViewportSystem(BaseECSSystem * system)
-{
-	m_systems.addSystem(system);
 }
 
 void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)

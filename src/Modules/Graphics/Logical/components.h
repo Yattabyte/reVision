@@ -21,6 +21,9 @@ struct CameraFollower_Component : public ECSComponent<CameraFollower_Component> 
 struct BoundingSphere_Component : public ECSComponent<BoundingSphere_Component> {
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
+	enum CameraCollision {
+		OUTSIDE, INSIDE
+	} m_cameraCollision;
 };
 
 #endif // GRAPHICS_COMPONENTS_H
