@@ -45,8 +45,8 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_updateQuality);
-		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
+		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
+		preferences.addCallback(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxShadowsCasters = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, m_shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) {
 			m_outOfDate = true;
@@ -288,18 +288,18 @@ private:
 	}
 	/** Converts a priority queue into an stl vector.*/
 	inline std::vector<LightPoint_Component*> PQtoVector(PriorityList<float, LightPoint_Component*, std::less<float>> oldest) const {
-		PriorityList<float, LightPoint_Component*, std::greater<float>> m_closest(m_updateQuality / 2);
+		PriorityList<float, LightPoint_Component*, std::greater<float>> m_closest(m_maxShadowsCasters / 2);
 		std::vector<LightPoint_Component*> outList;
-		outList.reserve(m_updateQuality);
+		outList.reserve(m_maxShadowsCasters);
 		for each (const auto &element in oldest.toList()) {
-			if (outList.size() < (m_updateQuality / 2))
+			if (outList.size() < (m_maxShadowsCasters / 2))
 				outList.push_back(element);
 			else
 				m_closest.insert(element->m_updateTime, element);
 		}
 
 		for each (const auto &element in m_closest.toList()) {
-			if (outList.size() >= m_updateQuality)
+			if (outList.size() >= m_maxShadowsCasters)
 				break;
 			outList.push_back(element);
 		}
@@ -320,7 +320,7 @@ private:
 	Shared_Shader m_shader_Lighting, m_shader_Stencil, m_shader_Shadow, m_shader_Culling;
 	Shared_Primitive m_shapeSphere;
 	Prop_Shadow * m_propShadow_Static = nullptr, *m_propShadow_Dynamic = nullptr;
-	GLuint m_updateQuality = 1u;
+	GLuint m_maxShadowsCasters = 1u;
 	glm::ivec2 m_shadowSize = glm::ivec2(512);
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4);
 	std::vector<LightPoint_Component*> m_shadowsToUpdate;

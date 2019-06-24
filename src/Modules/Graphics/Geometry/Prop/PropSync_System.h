@@ -27,8 +27,8 @@ struct Prop_Buffers {
 	struct Skeleton_Buffer {
 		glm::mat4 bones[NUM_MAX_BONES];
 	};
-	GL_ArrayBuffer<Model_Buffer> m_modelBuffer;
-	GL_ArrayBuffer<Skeleton_Buffer> m_skeletonBuffer;
+	GL_ArrayBuffer<Model_Buffer> modelBuffer;
+	GL_ArrayBuffer<Skeleton_Buffer> skeletonBuffer;
 };
 
 /***/
@@ -45,7 +45,6 @@ public:
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
-
 	}
 
 
@@ -68,7 +67,7 @@ public:
 					const auto & orientation = transformComponent->m_transform.m_orientation;
 					const auto & scale = transformComponent->m_transform.m_scale;
 					const auto matRot = glm::mat4_cast(orientation);
-					m_buffers->m_modelBuffer[index].mMatrix = transformComponent->m_transform.m_modelMatrix;
+					m_buffers->modelBuffer[index].mMatrix = transformComponent->m_transform.m_modelMatrix;
 
 					// Update bounding sphere
 					const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * scale) + position;
@@ -78,7 +77,7 @@ public:
 					glm::mat4 matTrans = glm::translate(glm::mat4(1.0f), bboxCenter);
 					glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
 					glm::mat4 matFinal = (matTrans * matRot * matScale);
-					m_buffers->m_modelBuffer[index].bBoxMatrix = matFinal;
+					m_buffers->modelBuffer[index].bBoxMatrix = matFinal;
 					radius = glm::compMax(propComponent->m_model->m_radius * scale);
 					propComponent->m_radius = radius;
 					propComponent->m_position = propComponent->m_model->m_bboxCenter + position;
@@ -91,14 +90,14 @@ public:
 				// Sync Animation Attributes
 				if (skeletonComponent) {
 					propComponent->m_static = false;
-					auto & bones = m_buffers->m_skeletonBuffer[skeletonComponent->m_skeleBufferIndex].bones;
+					auto & bones = m_buffers->skeletonBuffer[skeletonComponent->m_skeleBufferIndex].bones;
 					for (size_t i = 0, total = std::min(skeletonComponent->m_transforms.size(), size_t(NUM_MAX_BONES)); i < total; ++i)
 						bones[i] = skeletonComponent->m_transforms[i];
 				}
 
 				// Sync Prop Attributes
-				m_buffers->m_modelBuffer[index].materialID = propComponent->m_skin;
-				m_buffers->m_modelBuffer[index].isStatic = propComponent->m_static;
+				m_buffers->modelBuffer[index].materialID = propComponent->m_skin;
+				m_buffers->modelBuffer[index].isStatic = propComponent->m_static;
 			}
 		}
 	}

@@ -47,8 +47,8 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_QUALITY, m_updateQuality);
-		preferences.addCallback(PreferenceState::C_SHADOW_QUALITY, m_aliveIndicator, [&](const float &f) { m_updateQuality = (unsigned int)f; });
+		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
+		preferences.addCallback(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxShadowsCasters = (unsigned int)f; });
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) {
 			m_shadowSize = glm::ivec2(std::max(1, (int)f));
@@ -361,7 +361,7 @@ private:
 	Shared_Primitive m_shapeQuad;
 	GLuint m_textureNoise32 = 0;
 	glm::ivec2 m_shadowSize = glm::ivec2(1024);
-	GLuint m_bounceSize = 16u, m_updateQuality = 1u;
+	GLuint m_bounceSize = 16u, m_maxShadowsCasters = 1u;
 	StaticBuffer m_indirectShape = StaticBuffer(sizeof(GLuint) * 4), m_indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
 	Prop_Shadow * m_propShadowSystem = nullptr;
 	std::vector<LightDirectional_Component*> m_shadowsToUpdate;

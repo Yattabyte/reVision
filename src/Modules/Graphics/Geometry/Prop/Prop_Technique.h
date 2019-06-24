@@ -41,10 +41,10 @@ public:
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
 		world.addNotifyOnComponentType(Prop_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			((Prop_Component*)c)->m_modelBufferIndex = m_buffers->m_modelBuffer.newElement();
+			((Prop_Component*)c)->m_modelBufferIndex = m_buffers->modelBuffer.newElement();
 		});
 		world.addNotifyOnComponentType(Skeleton_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			((Skeleton_Component*)c)->m_skeleBufferIndex = m_buffers->m_skeletonBuffer.newElement();
+			((Skeleton_Component*)c)->m_skeleBufferIndex = m_buffers->skeletonBuffer.newElement();
 		});
 
 		// World-Changed Callback
@@ -57,16 +57,16 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void beginFrame(const float & deltaTime) override {
-		m_buffers->m_modelBuffer.beginWriting();
-		m_buffers->m_skeletonBuffer.beginWriting();
+		m_buffers->modelBuffer.beginWriting();
+		m_buffers->skeletonBuffer.beginWriting();
 		m_visibility->bufferPropIndex.beginWriting();
 		m_visibility->bufferCulling.beginWriting();
 		m_visibility->bufferRender.beginWriting();
 		m_visibility->bufferSkeletonIndex.beginWriting();
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
-		m_buffers->m_modelBuffer.endWriting();
-		m_buffers->m_skeletonBuffer.endWriting();
+		m_buffers->modelBuffer.endWriting();
+		m_buffers->skeletonBuffer.endWriting();
 		m_visibility->bufferPropIndex.endWriting();
 		m_visibility->bufferCulling.endWriting();
 		m_visibility->bufferRender.endWriting();
@@ -86,12 +86,12 @@ public:
 	/** Retrieve the prop buffer.
 	@return		the prop buffer. */
 	inline auto & getPropBuffer() {
-		return m_buffers->m_modelBuffer;
+		return m_buffers->modelBuffer;
 	}
 	/** Retrieve the skeleton buffer.
 	@return		the skeleton buffer. */
 	inline auto & getSkeletonBuffer() {
-		return m_buffers->m_skeletonBuffer;
+		return m_buffers->skeletonBuffer;
 	}
 
 
@@ -101,9 +101,9 @@ private:
 	inline void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
 		if (m_visibility->visProps) {
 			m_engine->getManager_Materials().bind();
-			m_buffers->m_modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_buffers->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 			m_visibility->bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-			m_buffers->m_skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
+			m_buffers->skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
 			m_visibility->bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 
 			// Draw bounding boxes for each model, filling render buffer on successful rasterization
@@ -136,8 +136,8 @@ private:
 	/** Clear out the props queued up for rendering. */
 	inline void clear() {
 		m_visibility->visProps = 0;
-		m_buffers->m_modelBuffer.clear();
-		m_buffers->m_skeletonBuffer.clear();
+		m_buffers->modelBuffer.clear();
+		m_buffers->skeletonBuffer.clear();
 	}
 
 
