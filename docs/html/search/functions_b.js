@@ -10,6 +10,5 @@ var searchData=
   ['loaddocument',['loadDocument',['../struct_shader_obj.html#aa62f9833ecc8f237265a3af2c279a85a',1,'ShaderObj']]],
   ['loadfile',['loadFile',['../class_input_binding.html#aaf9497eaa8f90a8f5cda11c81ee05d31',1,'InputBinding::loadFile()'],['../class_preference_state.html#a1a2f0bdcbc100669a64d1f42087ef438',1,'PreferenceState::loadFile()']]],
   ['loadingindicator',['LoadingIndicator',['../class_loading_indicator.html#a4d7dd2d18044c912ed12dd2cbbf8636c',1,'LoadingIndicator']]],
-  ['loadworld',['loadWorld',['../class_world___module.html#aa7e51d83bb98cdebad1279310cd08b55',1,'World_Module']]],
-  ['lockframe',['lockFrame',['../class_camera_buffer.html#a38fe758b2a604a15718b2894d44de3cc',1,'CameraBuffer']]]
+  ['loadworld',['loadWorld',['../class_world___module.html#aa7e51d83bb98cdebad1279310cd08b55',1,'World_Module']]]
 ];

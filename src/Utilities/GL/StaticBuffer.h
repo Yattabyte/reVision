@@ -18,9 +18,15 @@ public:
 	/** Default Constructor. */
 	inline StaticBuffer() = default;
 	/** Explicit Instantion. */
-	inline StaticBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT) {
+	inline StaticBuffer(const GLsizeiptr & size, const void * data = 0, const GLbitfield & storageFlags = GL_DYNAMIC_STORAGE_BIT)
+		: m_size(size), m_storageFlags(storageFlags) {
 		glCreateBuffers(1, &m_bufferID);
 		glNamedBufferStorage(m_bufferID, size, data, storageFlags);
+	}
+	/** Explicit Instantion. */
+	inline StaticBuffer(const StaticBuffer & other)
+		: StaticBuffer(other.m_size, 0, other.m_storageFlags) {
+		glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
 	}
 	/** Explicit Instantion. */
 	inline StaticBuffer(StaticBuffer && other) : m_bufferID(0) {
@@ -58,6 +64,8 @@ public:
 private:
 	// Private Attributes
 	GLuint m_bufferID = 0;
+	size_t m_size = 0ull;
+	GLbitfield m_storageFlags = GL_DYNAMIC_STORAGE_BIT;
 };
 
 #endif // STATICBUFFER_H

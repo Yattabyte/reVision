@@ -72,7 +72,7 @@ public:
 	inline void beginWriting() {
 		if (m_fence[m_writeIndex] != nullptr)
 			while (1) {
-				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
 					glDeleteSync(m_fence[m_writeIndex]);
 					m_fence[m_writeIndex] = nullptr;

@@ -18,8 +18,9 @@ public:
 	inline ~Graphics_Pipeline() = default;
 	/** Construct a PBR rendering pipeline. 
 	@param	engine		the engine to use.
+	@param	viewports	all the viewports active in the scene. 
 	@param	auxSystems	container to add extra render-related ecs systems to. */
-	Graphics_Pipeline(Engine * engine, ECSSystemList & auxSystems);
+	Graphics_Pipeline(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, ECSSystemList & auxSystems);
 
 
 	// Public Methods

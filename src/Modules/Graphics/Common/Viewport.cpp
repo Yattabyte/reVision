@@ -27,16 +27,20 @@ Viewport::Viewport(Engine * engine, const glm::ivec2 & screenPosition, const glm
 
 void Viewport::resize(const glm::ivec2 & size)
 {
-	m_dimensions = size;
-	(*m_cameraBuffer)->Dimensions = size;
-	m_gfxFBOS->resize(size);
-	genPerspectiveMatrix();
+	if (m_dimensions != size) {
+		m_dimensions = size;
+		(*m_cameraBuffer)->Dimensions = size;
+		m_gfxFBOS->resize(size);
+		genPerspectiveMatrix();
+	}
 }
 
 void Viewport::setDrawDistance(const float & drawDistance)
 {
-	(*m_cameraBuffer)->FarPlane = drawDistance;
-	genPerspectiveMatrix();
+	if ((*m_cameraBuffer)->FarPlane != drawDistance) {
+		(*m_cameraBuffer)->FarPlane = drawDistance;
+		genPerspectiveMatrix();
+	}
 }
 
 float Viewport::getDrawDistance() const
@@ -46,8 +50,10 @@ float Viewport::getDrawDistance() const
 
 void Viewport::setFOV(const float & fov)
 {
-	(*m_cameraBuffer)->FOV = fov;
-	genPerspectiveMatrix();
+	if ((*m_cameraBuffer)->FOV != fov) {
+		(*m_cameraBuffer)->FOV = fov;
+		genPerspectiveMatrix();
+	}
 }
 
 float Viewport::getFOV() const

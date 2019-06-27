@@ -17,7 +17,8 @@ public:
 	/***/
 	inline ~FrustumCull_System() = default;
 	/***/
-	inline FrustumCull_System() {
+	inline FrustumCull_System(const std::shared_ptr<std::vector<Viewport*>> & viewports)
+		: m_viewports(viewports) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
@@ -30,38 +31,68 @@ public:
 			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[2];
-			
-			// Err on the side of caution and say its visible
-			bool isVisible = true;
 
-			// Our visibility tests will try to EXCLUDE, not INCLUDE
-			if (bsphereComponent) {
-				const auto position = transformComponent->m_transform.m_position + bsphereComponent->m_positionOffset;
-				const auto radius = bsphereComponent->m_radius;
-				// Update bsphere with whether or not the camera is within it
-				if (glm::distance(position, m_position) > radius)
-					bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
-				else
-					bsphereComponent->m_cameraCollision = BoundingSphere_Component::INSIDE;
-				
-				// Frustum x Bounding-Sphere Test
-				for (int i = 0; i < 6; ++i)	{
-					if (m_planes[i].x * position.x + m_planes[i].y * position.y + m_planes[i].z * position.z + m_planes[i].w <= -radius) {
-						isVisible = false;
-						break;
+			// Ensure renderable component visibility and viewports are linked
+			renderableComponent->m_visible.resize(m_viewports->size());
+
+			// Update the visibility status for each viewport this entity is visible in
+			bool visibleAtAll = false;
+			for (int x = 0; x < m_viewports->size(); ++x) {
+				auto * viewport = m_viewports->at(x);
+
+				// Err on the side of caution and say its visible by default
+				// Our visibility tests will try to EXCLUDE, not INCLUDE
+				bool isVisible = true;
+				auto camPosition = viewport->get3DPosition();
+				auto objPosition = transformComponent->m_transform.m_position;
+				if (bsphereComponent)
+					objPosition += bsphereComponent->m_positionOffset;
+
+				// If FOV is 360, it can see everything
+				if (viewport->getFOV() < 359.9f) {
+					// Frustum x Bounding-Sphere Test
+					if (bsphereComponent) {
+						glm::vec4 planes[6];
+						ViewportToPlanes(viewport, planes);
+						const auto radius = bsphereComponent->m_radius;
+						// Update bsphere with whether or not the camera is within it
+						if (glm::distance(camPosition, objPosition) > radius)
+							bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
+						else
+							bsphereComponent->m_cameraCollision = BoundingSphere_Component::INSIDE;
+
+						for (int i = 0; i < 6; ++i) {
+							if (planes[i].x * objPosition.x + planes[i].y * objPosition.y + planes[i].z * objPosition.z + planes[i].w <= -radius) {
+								isVisible = false;
+								break;
+							}
+						}
 					}
 				}
+				else {
+					// See if it falls outside our far plane
+					// Consider the shape of the object
+					if (bsphereComponent)
+						objPosition -= bsphereComponent->m_radius;
+					if (glm::distance(camPosition, objPosition) > viewport->getDrawDistance())
+						isVisible = false;
+				}
+
+				if (isVisible)
+					visibleAtAll = true;
+
+				// Set visibility
+				renderableComponent->m_visible[x] = isVisible;
 			}
 
-			// Set visibility
-			renderableComponent->m_visible = isVisible;
+			renderableComponent->m_visibleAtAll = visibleAtAll;
 		}
 	}
 
 
 	// Public Methods
 	/***/
-	void setViewport(const std::shared_ptr<Viewport> & viewport) {
+	static void ViewportToPlanes(const Viewport * viewport, glm::vec4(&planes)[6]) {
 		constexpr static auto normalizePlane = [](glm::vec4 &plane) {
 			float magnitude = (float)sqrtf(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
 			plane[0] /= magnitude;
@@ -69,7 +100,6 @@ public:
 			plane[2] /= magnitude;
 			plane[3] /= magnitude;
 		};
-		m_position = viewport->get3DPosition();
 		const auto pMatrix = glm::value_ptr(viewport->getPerspectiveMatrix());
 		const auto vMatrix = glm::value_ptr(viewport->getViewMatrix());
 		float clip[16]; //clipping planes
@@ -94,48 +124,47 @@ public:
 		clip[14] = vMatrix[12] * pMatrix[2] + vMatrix[13] * pMatrix[6] + vMatrix[14] * pMatrix[10] + vMatrix[15] * pMatrix[14];
 		clip[15] = vMatrix[12] * pMatrix[3] + vMatrix[13] * pMatrix[7] + vMatrix[14] * pMatrix[11] + vMatrix[15] * pMatrix[15];
 
-		m_planes[0][0] = clip[3] - clip[0];
-		m_planes[0][1] = clip[7] - clip[4];
-		m_planes[0][2] = clip[11] - clip[8];
-		m_planes[0][3] = clip[15] - clip[12];
-		normalizePlane(m_planes[0]);
+		planes[0][0] = clip[3] - clip[0];
+		planes[0][1] = clip[7] - clip[4];
+		planes[0][2] = clip[11] - clip[8];
+		planes[0][3] = clip[15] - clip[12];
+		normalizePlane(planes[0]);
 
-		m_planes[1][0] = clip[3] + clip[0];
-		m_planes[1][1] = clip[7] + clip[4];
-		m_planes[1][2] = clip[11] + clip[8];
-		m_planes[1][3] = clip[15] + clip[12];
-		normalizePlane(m_planes[1]);
+		planes[1][0] = clip[3] + clip[0];
+		planes[1][1] = clip[7] + clip[4];
+		planes[1][2] = clip[11] + clip[8];
+		planes[1][3] = clip[15] + clip[12];
+		normalizePlane(planes[1]);
 
-		m_planes[2][0] = clip[3] + clip[1];
-		m_planes[2][1] = clip[7] + clip[5];
-		m_planes[2][2] = clip[11] + clip[9];
-		m_planes[2][3] = clip[15] + clip[13];
-		normalizePlane(m_planes[2]);
+		planes[2][0] = clip[3] + clip[1];
+		planes[2][1] = clip[7] + clip[5];
+		planes[2][2] = clip[11] + clip[9];
+		planes[2][3] = clip[15] + clip[13];
+		normalizePlane(planes[2]);
 
-		m_planes[3][0] = clip[3] - clip[1];
-		m_planes[3][1] = clip[7] - clip[5];
-		m_planes[3][2] = clip[11] - clip[9];
-		m_planes[3][3] = clip[15] - clip[13];
-		normalizePlane(m_planes[3]);
+		planes[3][0] = clip[3] - clip[1];
+		planes[3][1] = clip[7] - clip[5];
+		planes[3][2] = clip[11] - clip[9];
+		planes[3][3] = clip[15] - clip[13];
+		normalizePlane(planes[3]);
 
-		m_planes[4][0] = clip[3] - clip[2];
-		m_planes[4][1] = clip[7] - clip[6];
-		m_planes[4][2] = clip[11] - clip[10];
-		m_planes[4][3] = clip[15] - clip[14];
-		normalizePlane(m_planes[4]);
+		planes[4][0] = clip[3] - clip[2];
+		planes[4][1] = clip[7] - clip[6];
+		planes[4][2] = clip[11] - clip[10];
+		planes[4][3] = clip[15] - clip[14];
+		normalizePlane(planes[4]);
 
-		m_planes[5][0] = clip[3] + clip[2];
-		m_planes[5][1] = clip[7] + clip[6];
-		m_planes[5][2] = clip[11] + clip[10];
-		m_planes[5][3] = clip[15] + clip[14];
-		normalizePlane(m_planes[5]);
+		planes[5][0] = clip[3] + clip[2];
+		planes[5][1] = clip[7] + clip[6];
+		planes[5][2] = clip[11] + clip[10];
+		planes[5][3] = clip[15] + clip[14];
+		normalizePlane(planes[5]);
 	}
 
 
 private:
 	// Private Attributes
-	glm::vec3 m_position = glm::vec3(0);
-	glm::vec4 m_planes[6] = { glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0), glm::vec4(0) };
+	std::shared_ptr<std::vector<Viewport*>> m_viewports;
 };
 
 #endif // FRUSTUMCULL_SYSTEM_H

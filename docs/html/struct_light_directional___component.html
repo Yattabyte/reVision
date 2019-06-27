@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -85,18 +85,18 @@ Inheritance diagram for LightDirectional_Component:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a8c68a018d99c8325036d6e4f11ee0d3c"><td class="memItemLeft" align="right" valign="top"><a id="a8c68a018d99c8325036d6e4f11ee0d3c"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_color</b> = glm::vec3(1.0f)</td></tr>
-<tr class="separator:a8c68a018d99c8325036d6e4f11ee0d3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a37b16c30ecd5e4fd44a445508bd820b3"><td class="memItemLeft" align="right" valign="top"><a id="a37b16c30ecd5e4fd44a445508bd820b3"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_direction</b> = glm::vec3(0, -1, 0)</td></tr>
-<tr class="separator:a37b16c30ecd5e4fd44a445508bd820b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b6644b581d14c7c6d80adeecad5d2ba"><td class="memItemLeft" align="right" valign="top"><a id="a4b6644b581d14c7c6d80adeecad5d2ba"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_intensity</b> = 1.0f</td></tr>
-<tr class="separator:a4b6644b581d14c7c6d80adeecad5d2ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3392d84d9cab7659b88c4fc5d94dad35"><td class="memItemLeft" align="right" valign="top"><a id="a3392d84d9cab7659b88c4fc5d94dad35"></a>
-size_t *&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightIndex</b> = nullptr</td></tr>
-<tr class="separator:a3392d84d9cab7659b88c4fc5d94dad35"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66e358cd882b811f6aaa81bbd987a89f"><td class="memItemLeft" align="right" valign="top"><a id="a66e358cd882b811f6aaa81bbd987a89f"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_hasShadow</b> = false</td></tr>
+<tr class="separator:a66e358cd882b811f6aaa81bbd987a89f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33a511609e0c923c37ff35d2b6ef4bc8"><td class="memItemLeft" align="right" valign="top"><a id="a33a511609e0c923c37ff35d2b6ef4bc8"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTime</b> = 0.0f</td></tr>
+<tr class="separator:a33a511609e0c923c37ff35d2b6ef4bc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99df258987567cd9ec4a82487ff3498b"><td class="memItemLeft" align="right" valign="top"><a id="a99df258987567cd9ec4a82487ff3498b"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowSpot</b> = -1</td></tr>
+<tr class="separator:a99df258987567cd9ec4a82487ff3498b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1195adcf24eb47728806a2bf3805f18e"><td class="memItemLeft" align="right" valign="top"><a id="a1195adcf24eb47728806a2bf3805f18e"></a>
+GL_AB_Index&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightIndex</b> = nullptr</td></tr>
+<tr class="separator:a1195adcf24eb47728806a2bf3805f18e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -135,7 +135,7 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</
 <tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A directional light component, emulating the appearance of sun lighting. </p>
+<div class="textblock"><p>A directional light component, like a sun. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
 </ul>

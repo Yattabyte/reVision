@@ -18,14 +18,14 @@
 #include "Modules/Graphics/Effects/To_Screen.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, ECSSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
-	auto propView = new Prop_Technique(m_engine, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(m_engine, propView, auxilliarySystems);
-	auto pointLighting = new Point_Technique(m_engine, propView, auxilliarySystems);
-	auto spotLighting = new Spot_Technique(m_engine, propView, auxilliarySystems);
-	auto reflectorLighting = new Reflector_Technique(m_engine, auxilliarySystems);
+	auto propView = new Prop_Technique(m_engine, viewports, auxilliarySystems);
+	auto directionalLighting = new Directional_Technique(m_engine, viewports, propView, auxilliarySystems);
+	auto pointLighting = new Point_Technique(m_engine, viewports, propView, auxilliarySystems);
+	auto spotLighting = new Spot_Technique(m_engine, viewports, propView, auxilliarySystems);
+	auto reflectorLighting = new Reflector_Technique(m_engine, viewports, auxilliarySystems);
 	auto radianceHints = new Radiance_Hints(m_engine);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
@@ -38,9 +38,14 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, ECSSystemList & auxilliary
 
 	// Join all techniques into a single list
 	m_techniques = {
-		propView, directionalLighting,	pointLighting, spotLighting,
-		reflectorLighting, radianceHints, skybox, ssao, ssr,
-		joinReflections, bloom, hdr, fxaa, toScreen
+		// Geometry Techniques
+		propView, 
+
+		// Lighting Techniques
+		directionalLighting, pointLighting, spotLighting, reflectorLighting, 
+		
+		// Secondary Lighting, effects, etc...
+		radianceHints, skybox, ssao, ssr, joinReflections, bloom, hdr, fxaa, toScreen
 	};
 }
 

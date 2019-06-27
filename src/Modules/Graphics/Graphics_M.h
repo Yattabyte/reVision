@@ -6,7 +6,6 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Logical/FrustumCull_System.h"
 #include "Modules/Graphics/Logical/CameraFollower_System.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
@@ -18,16 +17,14 @@ class Graphics_Module : public Engine_Module {
 public:
 	// Public (de)Constructors
 	/** Destroy this graphics rendering module. */
-	~Graphics_Module();
+	inline ~Graphics_Module() = default;
 	/** Construct a graphics rendering module. */
 	inline Graphics_Module() = default;
 
 
 	// Public Interface Implementation
-	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
-	/** Render a single frame.
-	@param	deltaTime	the amount of time passed since last frame */
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 
@@ -39,7 +36,7 @@ public:
 	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories = Graphics_Technique::ALL);
 	/** Returns a shared pointer to the primary viewport.
 	@return					the primary viewport. */
-	inline std::shared_ptr<Viewport> getPrimaryViewport() const {
+	inline std::shared_ptr<Viewport> getClientViewport() const {
 		return m_viewport;
 	}
 
@@ -47,7 +44,6 @@ public:
 private:
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
-	FrustumCull_System						m_frustumCuller;
 	CameraFollower_System					m_cameraFollower;
 	ECSSystemList							m_systems;
 	std::unique_ptr<Graphics_Pipeline>		m_pipeline;

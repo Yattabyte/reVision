@@ -1,6 +1,7 @@
 #include "Modules/Game/Game_M.h"
 #include "Modules/Game/ECS/components.h"
-#include "Modules/Game/ECS/PlayerFreeLook_S.h"
+#include "Modules/Game/ECS/PlayerSpawner_System.h"
+#include "Modules/Game/ECS/PlayerFreeLook_System.h"
 #include "Modules/Game/Overlays/LoadingIndicator.h"
 #include "Modules/Game/Overlays/Frametime_Counter.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
@@ -8,24 +9,21 @@
 #include "Engine.h"
 
 
-Game_Module::~Game_Module()
-{
-	// Remove support for the following list of component types
-	auto & world = m_engine->getModule_World();
-	world.removeComponentType("Player3D_Component");
-	world.removeComponentType("MenuCamera_Component");
-}
-
 void Game_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
+	m_ecsSystems.addSystem(new PlayerSpawn_System(m_engine));
 	m_ecsSystems.addSystem(new PlayerFreeLook_System(m_engine));
 
 	// Add support for the following list of component types
 	auto & world = m_engine->getModule_World();
+	world.addComponentType("PlayerSpawn_Component", [](const ParamList & parameters) {
+		auto * component = new PlayerSpawn_Component();
+		return std::make_pair(component->ID, component);
+	});
 	world.addComponentType("Player3D_Component", [](const ParamList & parameters) {
 		auto * component = new Player3D_Component();
 		return std::make_pair(component->ID, component);
@@ -59,6 +57,17 @@ void Game_Module::initialize(Engine * engine)
 	});
 
 	showStartMenu();
+}
+
+void Game_Module::deinitialize()
+{
+	m_engine->getManager_Messages().statement("Closing Module: Game...");
+
+	// Remove support for the following list of component types
+	auto & world = m_engine->getModule_World();
+	world.removeComponentType("PlayerSpawn_Component");
+	world.removeComponentType("Player3D_Component");
+	world.removeComponentType("MenuCamera_Component");
 }
 
 void Game_Module::frameTick(const float & deltaTime)

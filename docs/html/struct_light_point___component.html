@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -85,21 +85,24 @@ Inheritance diagram for LightPoint_Component:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:ab71a94769bfa64e95adc34151492974c"><td class="memItemLeft" align="right" valign="top"><a id="ab71a94769bfa64e95adc34151492974c"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_color</b> = glm::vec3(1.0f)</td></tr>
-<tr class="separator:ab71a94769bfa64e95adc34151492974c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaada666af779c2de3a122bb91b74d326"><td class="memItemLeft" align="right" valign="top"><a id="aaada666af779c2de3a122bb91b74d326"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_intensity</b> = 1.0f</td></tr>
-<tr class="separator:aaada666af779c2de3a122bb91b74d326"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa69f6b7de0f40730e8196bb77929cc9"><td class="memItemLeft" align="right" valign="top"><a id="afa69f6b7de0f40730e8196bb77929cc9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>m_radius</b> = 1.0f</td></tr>
-<tr class="separator:afa69f6b7de0f40730e8196bb77929cc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af97d1c95179c0239daa85a1e190d4b22"><td class="memItemLeft" align="right" valign="top"><a id="af97d1c95179c0239daa85a1e190d4b22"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_hasShadow</b> = false</td></tr>
+<tr class="separator:af97d1c95179c0239daa85a1e190d4b22"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa46148d7e0a6e1a063cc606abefe279b"><td class="memItemLeft" align="right" valign="top"><a id="aa46148d7e0a6e1a063cc606abefe279b"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_staticOutOfDate</b> = false</td></tr>
+<tr class="separator:aa46148d7e0a6e1a063cc606abefe279b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa916fb6eadeab6be171d26c35f9f744"><td class="memItemLeft" align="right" valign="top"><a id="aaa916fb6eadeab6be171d26c35f9f744"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>m_updateTime</b> = 0.0f</td></tr>
+<tr class="separator:aaa916fb6eadeab6be171d26c35f9f744"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2d5540461192891f7bd0ef98c5d5c08"><td class="memItemLeft" align="right" valign="top"><a id="ae2d5540461192891f7bd0ef98c5d5c08"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_shadowSpot</b> = -1</td></tr>
+<tr class="separator:ae2d5540461192891f7bd0ef98c5d5c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fa0149cb673ac9cabc2a1a0fe274236"><td class="memItemLeft" align="right" valign="top"><a id="a0fa0149cb673ac9cabc2a1a0fe274236"></a>
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:a0fa0149cb673ac9cabc2a1a0fe274236"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2f0b5badc59a85e621ba4bb91c9d95e"><td class="memItemLeft" align="right" valign="top"><a id="ac2f0b5badc59a85e621ba4bb91c9d95e"></a>
-size_t *&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightIndex</b> = nullptr</td></tr>
-<tr class="separator:ac2f0b5badc59a85e621ba4bb91c9d95e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f3cf30745d0449c4dba82fe1a920754"><td class="memItemLeft" align="right" valign="top"><a id="a8f3cf30745d0449c4dba82fe1a920754"></a>
+GL_AB_Index&#160;</td><td class="memItemRight" valign="bottom"><b>m_lightIndex</b> = nullptr</td></tr>
+<tr class="separator:a8f3cf30745d0449c4dba82fe1a920754"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -138,7 +141,7 @@ static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</
 <tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A point light component, emulating a light bulb like appearance. </p>
+<div class="textblock"><p>A point light component, like a light bulb. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
 </ul>

@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['findkey',['FindKey',['../class_prop___animation.html#a9769bc290f7f7d361c03aa82dc6c4a3b',1,'Prop_Animation']]],
-  ['findnodeanim',['FindNodeAnim',['../class_prop___animation.html#a0ecfe4a983d7aafe54d344cacf36c26c',1,'Prop_Animation']]]
+  ['findkey',['FindKey',['../class_skeletal___animation.html#a5cb40cdaa55ee2000bca56bf47778ea5',1,'Skeletal_Animation']]],
+  ['findnodeanim',['FindNodeAnim',['../class_skeletal___animation.html#a172045c3b9cfbe7db797d21a99f3e864',1,'Skeletal_Animation']]]
 ];

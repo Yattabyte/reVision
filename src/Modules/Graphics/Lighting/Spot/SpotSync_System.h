@@ -66,7 +66,7 @@ public:
 				lightComponent->m_staticOutOfDate = true;			
 
 			// Synchronize the component if it is visible
-			if (renderableComponent->m_visible) {
+			if (renderableComponent->m_visibleAtAll) {
 				// Sync Color Attributes
 				if (colorComponent) {
 					m_buffers->lightBuffer[index].LightColor = colorComponent->m_color;

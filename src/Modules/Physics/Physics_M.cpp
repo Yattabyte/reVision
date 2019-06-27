@@ -6,22 +6,6 @@
 #include "Modules/Physics/ECS/TransformSync_S.h"
 
 
-Physics_Module::~Physics_Module()
-{
-	// Delete Bullet Physics simulation
-	delete m_broadphase;
-	delete m_collisionConfiguration;
-	delete m_dispatcher;
-	delete m_solver;
-	delete m_world;
-
-	// Remove support for this component type
-	m_engine->getModule_World().removeComponentType("Collider_Component");
-
-	// Update indicator
-	m_aliveIndicator = false;
-}
-
 void Physics_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
@@ -55,6 +39,24 @@ void Physics_Module::initialize(Engine * engine)
 		else if (state == World_Module::finishLoading || state == World_Module::updated)
 			m_enabled = true;
 	});
+}
+
+void Physics_Module::deinitialize()
+{
+	// Update indicator
+	m_engine->getManager_Messages().statement("Closing Module: Physics...");
+	m_aliveIndicator = false;
+
+	// Delete Bullet Physics simulation
+	delete m_broadphase;
+	delete m_collisionConfiguration;
+	delete m_dispatcher;
+	delete m_solver;
+	delete m_world;
+
+	// Remove support for this component type
+	m_engine->getModule_World().removeComponentType("Collider_Component");
+	
 }
 
 void Physics_Module::frameTick(const float & deltaTime)

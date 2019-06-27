@@ -22,8 +22,9 @@ public:
 	inline UI_Module() = default;
 
 
-	// Public Interface Implementation
+	// Public Interface Implementations
 	virtual void initialize(Engine * engine) override;
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 

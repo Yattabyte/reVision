@@ -6,7 +6,7 @@ entity
 		quat "1,0,0,0"
 		vec3 "1,1,1"
 	}
-	Player3D_Component
+	PlayerSpawn_Component
 	{
 	}
 }
@@ -108,6 +108,9 @@ entity
 	Reflector_Component
 	{
 	}
+	Viewport_Component
+	{
+	}
 }
 entity
 {
@@ -123,6 +126,9 @@ entity
 	Reflector_Component
 	{
 	}
+	Viewport_Component
+	{
+	}
 }
 entity
 {
@@ -136,6 +142,9 @@ entity
 		vec3 "20.5,20.5,20.5"
 	}
 	Reflector_Component
+	{
+	}
+	Viewport_Component
 	{
 	}
 }

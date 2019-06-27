@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -94,12 +94,14 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7e7b7b8c95eda74a60c8c5d6ac772780"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a7e7b7b8c95eda74a60c8c5d6ac772780">~World_Module</a> ()</td></tr>
-<tr class="separator:a7e7b7b8c95eda74a60c8c5d6ac772780"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aede3b35fe1d68e1ad81184ff2e95b92c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#aede3b35fe1d68e1ad81184ff2e95b92c">~World_Module</a> ()=default</td></tr>
+<tr class="separator:aede3b35fe1d68e1ad81184ff2e95b92c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a144b45e5d7823ba440931154a75aac84"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a144b45e5d7823ba440931154a75aac84">World_Module</a> ()=default</td></tr>
 <tr class="separator:a144b45e5d7823ba440931154a75aac84"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8d0d6531180ddb4d9f0f96aa17449f5e"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a8d0d6531180ddb4d9f0f96aa17449f5e">initialize</a> (<a class="el" href="class_engine.html">Engine</a> *engine) override</td></tr>
 <tr class="separator:a8d0d6531180ddb4d9f0f96aa17449f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aec1b8c9b944eee7cf0bfb6c0f82e3a49"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#aec1b8c9b944eee7cf0bfb6c0f82e3a49">deinitialize</a> () override</td></tr>
+<tr class="separator:aec1b8c9b944eee7cf0bfb6c0f82e3a49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8ed6e76d28e1195094d21fad5f49370"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#aa8ed6e76d28e1195094d21fad5f49370">frameTick</a> (const float &amp;deltaTime) override</td></tr>
 <tr class="separator:aa8ed6e76d28e1195094d21fad5f49370"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa7e51d83bb98cdebad1279310cd08b55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#aa7e51d83bb98cdebad1279310cd08b55">loadWorld</a> (const std::string &amp;mapName)</td></tr>
@@ -131,14 +133,15 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a02181357483e79f0c8527d83596ef6df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1721bc72dd8295fc695eeffcf7f6b08"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#af1721bc72dd8295fc695eeffcf7f6b08">removeComponentType</a> (const char *name)</td></tr>
 <tr class="separator:af1721bc72dd8295fc695eeffcf7f6b08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2af135b49ad3884ce5310620fc01d80"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#af2af135b49ad3884ce5310620fc01d80">addNotifyOnComponentType</a> (const char *name, const std::function&lt; void(<a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> *)&gt; &amp;func)</td></tr>
-<tr class="separator:af2af135b49ad3884ce5310620fc01d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11c19dcd687b4f6744758f900c6d3b70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a11c19dcd687b4f6744758f900c6d3b70">removeNotifyOnComponentType</a> (const char *name, const int &amp;index)</td></tr>
-<tr class="separator:a11c19dcd687b4f6744758f900c6d3b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a699fd5caa4ce8d89c6aaa8aa2531f8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a8a699fd5caa4ce8d89c6aaa8aa2531f8">addNotifyOnComponentType</a> (const uint32_t &amp;ID, const std::shared_ptr&lt; bool &gt; &amp;alive, const std::function&lt; void(<a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> *)&gt; &amp;func)</td></tr>
+<tr class="separator:a8a699fd5caa4ce8d89c6aaa8aa2531f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a865aea41120a49939776e51c7dadfeec"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a865aea41120a49939776e51c7dadfeec">updateSystems</a> (<a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;systems, const float &amp;deltaTime)</td></tr>
 <tr class="separator:a865aea41120a49939776e51c7dadfeec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fe806be3a21eadedf6c94cc71c72367"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a0fe806be3a21eadedf6c94cc71c72367">updateSystem</a> (<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *system, const float &amp;deltaTime)</td></tr>
 <tr class="separator:a0fe806be3a21eadedf6c94cc71c72367"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa32457a8c30670370fa87e16a401f08d"><td class="memItemLeft" align="right" valign="top"><a id="aa32457a8c30670370fa87e16a401f08d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>updateSystem</b> (const float &amp;deltaTime, const std::vector&lt; uint32_t &gt; &amp;types, const std::vector&lt; uint32_t &gt; &amp;flags, const std::function&lt; void(const float &amp;, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;)&gt; &amp;func)</td></tr>
+<tr class="separator:aa32457a8c30670370fa87e16a401f08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_engine___module"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_engine___module')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_engine___module.html">Engine_Module</a></td></tr>
 <tr class="memitem:ab2bc3cf4b727ceff475c0442d2be3426 inherit pub_methods_class_engine___module"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a> ()=default</td></tr>
 <tr class="separator:ab2bc3cf4b727ceff475c0442d2be3426 inherit pub_methods_class_engine___module"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -155,11 +158,14 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A module responsible for the world/level. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a7e7b7b8c95eda74a60c8c5d6ac772780"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7e7b7b8c95eda74a60c8c5d6ac772780">&#9670;&nbsp;</a></span>~World_Module()</h2>
+<a id="aede3b35fe1d68e1ad81184ff2e95b92c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aede3b35fe1d68e1ad81184ff2e95b92c">&#9670;&nbsp;</a></span>~World_Module()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">World_Module::~World_Module </td>
@@ -168,6 +174,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Destroy this world module. </p>
 
@@ -315,17 +326,23 @@ template&lt;typename BaseECSComponent &gt; </div>
 
 </div>
 </div>
-<a id="af2af135b49ad3884ce5310620fc01d80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af2af135b49ad3884ce5310620fc01d80">&#9670;&nbsp;</a></span>addNotifyOnComponentType()</h2>
+<a id="a8a699fd5caa4ce8d89c6aaa8aa2531f8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a699fd5caa4ce8d89c6aaa8aa2531f8">&#9670;&nbsp;</a></span>addNotifyOnComponentType()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int World_Module::addNotifyOnComponentType </td>
+          <td class="memname">void World_Module::addNotifyOnComponentType </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
+          <td class="paramtype">const uint32_t &amp;&#160;</td>
+          <td class="paramname"><em>ID</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; bool &gt; &amp;&#160;</td>
+          <td class="paramname"><em>alive</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -342,12 +359,40 @@ template&lt;typename BaseECSComponent &gt; </div>
 </div><div class="memdoc">
 <p>Add a callback method for when a component of the given type is created. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name</td><td>the component class name. </td></tr>
+    <tr><td class="paramname">ID</td><td>the component class ID. </td></tr>
+    <tr><td class="paramname">alive</td><td>a shared pointer indicating whether the caller is still alive or not. </td></tr>
     <tr><td class="paramname">func</td><td>the function to callback when a component of class name is created. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>index to use for removing the notification. </dd></dl>
+
+</div>
+</div>
+<a id="aec1b8c9b944eee7cf0bfb6c0f82e3a49"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aec1b8c9b944eee7cf0bfb6c0f82e3a49">&#9670;&nbsp;</a></span>deinitialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void World_Module::deinitialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Deinitialize the module. </p>
+
+<p>Reimplemented from <a class="el" href="class_engine___module.html#a6a769a426bbc46a673252c3d29d96a22">Engine_Module</a>.</p>
 
 </div>
 </div>
@@ -364,7 +409,7 @@ template&lt;typename BaseECSComponent &gt; </div>
           <td class="memname">void World_Module::frameTick </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
-          <td class="paramname"><em>deltaTime</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -374,9 +419,9 @@ template&lt;typename BaseECSComponent &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Tick the world by a frame. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Tick the ui by a frame. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame </td></tr>
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>
   </dd>
 </dl>
@@ -656,41 +701,6 @@ template&lt;typename BaseECSComponent &gt; </div>
 <p>Remove an entity. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">handle</td><td>the entity to remove. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a11c19dcd687b4f6744758f900c6d3b70"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11c19dcd687b4f6744758f900c6d3b70">&#9670;&nbsp;</a></span>removeNotifyOnComponentType()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void World_Module::removeNotifyOnComponentType </td>
-          <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const int &amp;&#160;</td>
-          <td class="paramname"><em>index</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Remove a notification function from being called back on component creation. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">name</td><td>the component class name. </td></tr>
-    <tr><td class="paramname">index</td><td>index to delete the function from (given when notification category added). </td></tr>
   </table>
   </dd>
 </dl>

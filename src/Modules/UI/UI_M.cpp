@@ -32,6 +32,13 @@ void UI_Module::initialize(Engine * engine)
 	calcOthoProj(m_renderSize, m_projectionBuffer);	
 }
 
+void UI_Module::deinitialize()
+{
+	// Update indicator
+	m_engine->getManager_Messages().statement("Closing Module: User Interface...");
+	m_aliveIndicator = false;
+}
+
 void UI_Module::frameTick(const float & deltaTime)
 {
 	// Copy the list of callbacks, execute a copy of them

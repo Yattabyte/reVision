@@ -59,7 +59,7 @@ public:
 			const auto & index = propComponent->m_modelBufferIndex;
 
 			// Synchronize the component if it is visible
-			if (renderableComponent->m_visible && propComponent->m_model->existsYet()) {
+			if (renderableComponent->m_visibleAtAll && propComponent->m_model->existsYet()) {
 				// Sync Transform Attributes
 				float radius = 1.0f;
 				if (transformComponent) {

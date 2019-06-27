@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -96,8 +96,8 @@ $(function() {
 <li>~Cubemap()
 : <a class="el" href="class_cubemap.html#ae3bc64477e52699a7f9754be9b29bd3e">Cubemap</a>
 </li>
-<li>~Directional_Lighting()
-: <a class="el" href="class_directional___lighting.html#a3b5df32ef14f4910ef154daf1b56ae37">Directional_Lighting</a>
+<li>~Directional_Technique()
+: <a class="el" href="class_directional___technique.html#a5d6c5fae0900e72a6adaf48a24b0b824">Directional_Technique</a>
 </li>
 <li>~Engine()
 : <a class="el" href="class_engine.html#a8ef7030a089ecb30bbfcb9e43094717a">Engine</a>
@@ -115,7 +115,7 @@ $(function() {
 : <a class="el" href="class_f_x_a_a.html#a50c5ccce179c13493e132a22be09ca1a">FXAA</a>
 </li>
 <li>~Game_Module()
-: <a class="el" href="class_game___module.html#ad432f4b9721f19d8ac56535e906f425d">Game_Module</a>
+: <a class="el" href="class_game___module.html#a7abff1da7b42b1f6160a954cac95d62c">Game_Module</a>
 </li>
 <li>~GL_ArrayBuffer()
 : <a class="el" href="class_g_l___array_buffer.html#a0af5b3b3f76540d742ada9a4fd125dfb">GL_ArrayBuffer&lt; T &gt;</a>
@@ -124,7 +124,7 @@ $(function() {
 : <a class="el" href="class_graphics___framebuffers.html#ac78a3f6159403b63c17a4c23919c45a8">Graphics_Framebuffers</a>
 </li>
 <li>~Graphics_Module()
-: <a class="el" href="class_graphics___module.html#ac6fbd62777d2844d1c69b5818ed2198a">Graphics_Module</a>
+: <a class="el" href="class_graphics___module.html#ad0845378a3d7a2182620a96d1201282b">Graphics_Module</a>
 </li>
 <li>~Graphics_Pipeline()
 : <a class="el" href="class_graphics___pipeline.html#af233e54ccf51d57c59d5e17a5565a7e0">Graphics_Pipeline</a>
@@ -216,8 +216,11 @@ $(function() {
 <li>~PlayerFreeLook_System()
 : <a class="el" href="class_player_free_look___system.html#ae972353a4308e6595d9b334b12f82646">PlayerFreeLook_System</a>
 </li>
-<li>~Point_Lighting()
-: <a class="el" href="class_point___lighting.html#a3ac00c9b589bf7945bc5dfb2c43d0c5e">Point_Lighting</a>
+<li>~PlayerSpawn_System()
+: <a class="el" href="class_player_spawn___system.html#acbe27670e5194b31617d7704437728f5">PlayerSpawn_System</a>
+</li>
+<li>~Point_Technique()
+: <a class="el" href="class_point___technique.html#ae9cc87d7948ee8c1fbea55c0749ce4f2">Point_Technique</a>
 </li>
 <li>~PreferenceState()
 : <a class="el" href="class_preference_state.html#a3b2152ea174d3a71eff845e53a6bd591">PreferenceState</a>
@@ -228,20 +231,17 @@ $(function() {
 <li>~PriorityList()
 : <a class="el" href="class_priority_list.html#a2d8a9ec5ce8003b9dae137b2bfc89b06">PriorityList&lt; T_key, T_elmt, T_compare &gt;</a>
 </li>
-<li>~Prop_Animation()
-: <a class="el" href="class_prop___animation.html#a46a3b8b8d13e81c037f068c8775e18bd">Prop_Animation</a>
-</li>
 <li>~Prop_Shadow()
 : <a class="el" href="class_prop___shadow.html#a9f5df8990286a268d3a9c2063e288ff5">Prop_Shadow</a>
 </li>
-<li>~Prop_View()
-: <a class="el" href="class_prop___view.html#a865629207c725cd195f4b7120d4f9c4c">Prop_View</a>
+<li>~Prop_Technique()
+: <a class="el" href="class_prop___technique.html#a8a20be27aa7aaa34f8a9b0b09c385352">Prop_Technique</a>
 </li>
 <li>~Radiance_Hints()
 : <a class="el" href="class_radiance___hints.html#ab3f1dfee63f6880c117cad4c191fa650">Radiance_Hints</a>
 </li>
-<li>~Reflector_Lighting()
-: <a class="el" href="class_reflector___lighting.html#a2613a7f4f5662bfea5d45918d89d9e39">Reflector_Lighting</a>
+<li>~Reflector_Technique()
+: <a class="el" href="class_reflector___technique.html#acbc1d61ca5dfc2ef44ab8c13df4f2b59">Reflector_Technique</a>
 </li>
 <li>~RH_Volume()
 : <a class="el" href="class_r_h___volume.html#ad836b29ec5857c68c6d0423f297232b7">RH_Volume</a>
@@ -267,6 +267,9 @@ $(function() {
 <li>~SideList()
 : <a class="el" href="class_side_list.html#ac1bfccda1b67e761ce16a73bddaa1bf2">SideList</a>
 </li>
+<li>~Skeletal_Animation()
+: <a class="el" href="class_skeletal___animation.html#a3b3bd015b839d59fe502a7181a3cecac">Skeletal_Animation</a>
+</li>
 <li>~Skybox()
 : <a class="el" href="class_skybox.html#a62ad4c6b4b1965a0a6d8536a50d4c090">Skybox</a>
 </li>
@@ -279,8 +282,8 @@ $(function() {
 <li>~SoundManager()
 : <a class="el" href="class_sound_manager.html#ad5dbf8eab22db48ff8f3db51b02f8938">SoundManager</a>
 </li>
-<li>~Spot_Lighting()
-: <a class="el" href="class_spot___lighting.html#abf3ec14694ad437d4182797a03f15ac4">Spot_Lighting</a>
+<li>~Spot_Technique()
+: <a class="el" href="class_spot___technique.html#ad3a52ae5f59605022722adc0221a8955">Spot_Technique</a>
 </li>
 <li>~SSAO()
 : <a class="el" href="class_s_s_a_o.html#ae8af2c9d25c1ec399d851b3c2da219c7">SSAO</a>
@@ -316,7 +319,7 @@ $(function() {
 : <a class="el" href="class_u_i___module.html#a5ba37a57586af178fd844bd126b5b642">UI_Module</a>
 </li>
 <li>~World_Module()
-: <a class="el" href="class_world___module.html#a7e7b7b8c95eda74a60c8c5d6ac772780">World_Module</a>
+: <a class="el" href="class_world___module.html#aede3b35fe1d68e1ad81184ff2e95b92c">World_Module</a>
 </li>
 </ul>
 </div><!-- contents -->

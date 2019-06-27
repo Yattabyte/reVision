@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,14 +70,17 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_static_buffer.html">StaticBuffer</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a41d00685ab9012e08df0678e7a8fc57c">bindBuffer</a>(const GLenum &amp;target) const</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_static_buffer.html#ac386de80fb6975bcf0f374025bf78e1d">bindBufferBase</a>(const GLenum &amp;target, const GLuint &amp;index) const</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a358320b60ca5fbf8048dc251c983fc50">operator=</a>(StaticBuffer &amp;&amp;other)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_static_buffer.html#a0a676b3a71e8c63510bf900dd12d5916">StaticBuffer</a>()=default</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#ad8641ea76f788e87ea40084cd1ac8c26">StaticBuffer</a>(const GLsizeiptr &amp;size, const void *data=0, const GLbitfield &amp;storageFlags=GL_DYNAMIC_STORAGE_BIT)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">bindBuffer</a>(const GLenum &amp;target) const override</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">bindBufferBase</a>(const GLenum &amp;target, const GLuint &amp;index) const override</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Buffer_Interface</b>()=default (defined in <a class="el" href="class_buffer___interface.html">Buffer_Interface</a>)</td><td class="entry"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_static_buffer.html#a358320b60ca5fbf8048dc251c983fc50">operator=</a>(StaticBuffer &amp;&amp;other)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a0a676b3a71e8c63510bf900dd12d5916">StaticBuffer</a>()=default</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_static_buffer.html#ad8641ea76f788e87ea40084cd1ac8c26">StaticBuffer</a>(const GLsizeiptr &amp;size, const void *data=0, const GLbitfield &amp;storageFlags=GL_DYNAMIC_STORAGE_BIT)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a4583df9254b76f03aeae804d1b973775">StaticBuffer</a>(const StaticBuffer &amp;other)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr><td class="entry"><a class="el" href="class_static_buffer.html#aa072f408963b7b79fb68f25cc1088308">StaticBuffer</a>(StaticBuffer &amp;&amp;other)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_static_buffer.html#a12efa14b85af3b29a59f58022983b3e9">write</a>(const GLsizeiptr &amp;offset, const GLsizeiptr &amp;size, const void *data)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>~StaticBuffer</b>() (defined in <a class="el" href="class_static_buffer.html">StaticBuffer</a>)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>~Buffer_Interface</b>()=default (defined in <a class="el" href="class_buffer___interface.html">Buffer_Interface</a>)</td><td class="entry"><a class="el" href="class_buffer___interface.html">Buffer_Interface</a></td><td class="entry"><span class="mlabel">virtual</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>~StaticBuffer</b>() (defined in <a class="el" href="class_static_buffer.html">StaticBuffer</a>)</td><td class="entry"><a class="el" href="class_static_buffer.html">StaticBuffer</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -27,15 +27,13 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Point_Technique(Engine * engine, Prop_Technique * propView, ECSSystemList & auxilliarySystems)
-		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Point_Technique(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, Prop_Technique * propView, ECSSystemList & auxilliarySystems)
+		: m_engine(engine), m_viewports(viewports), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_visibility = std::make_shared<Point_Visibility>();
-		m_shadowsToUpdate = std::make_shared<std::vector<LightPoint_Component*>>();
+		m_shadowsToUpdate = std::make_shared<std::vector<std::pair<float, LightPoint_Component*>>>();
 		m_buffers = std::make_shared<Point_Buffers>();
-		GLuint data[] = { 0,0,0,0 };
-		m_visibility->indirectShape.write(0, sizeof(GLuint) * 4, &data);
-		auxilliarySystems.addSystem(new PointVisibility_System(m_visibility));
+		auxilliarySystems.addSystem(new PointVisibility_System(m_visibility, viewports));
 		auxilliarySystems.addSystem(new PointScheduler_System(m_engine, m_shadowsToUpdate));
 		auxilliarySystems.addSystem(new PointSync_System(m_buffers));
 
@@ -61,8 +59,7 @@ public:
 
 		// Asset-Finished Callbacks
 		m_shapeSphere->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint data = { (GLuint)m_shapeSphere->getSize() };
-			m_visibility->indirectShape.write(0, sizeof(GLuint), &data); // count, primCount, first, reserved
+			m_visibility->shapeVertexCount = m_shapeSphere->getSize();
 		});
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_shadowSize.x); });
 
@@ -102,11 +99,11 @@ public:
 	// Public Interface Implementations
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_buffers->lightBuffer.beginWriting();
-		m_visibility->visLights.beginWriting();
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_buffers->lightBuffer.endWriting();
-		m_visibility->visLights.endWriting();
+		for (auto & viewInfo : m_visibility->viewInfo)
+			viewInfo.visLights.endWriting();
 	}
 	inline virtual void updateTechnique(const float & deltaTime) override {
 		// Exit Early
@@ -121,8 +118,19 @@ public:
 		if (!m_enabled || !m_shapeSphere->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Stencil->existsYet())
 			return;
 
-		// Render direct lights
-		renderLights(deltaTime, viewport);
+		size_t visibilityIndex = 0;
+		bool found = false;
+		for (size_t x = 0; x < m_viewports->size(); ++x)
+			if (m_viewports->at(x) == viewport.get()) {
+				visibilityIndex = x;
+				found = true;
+				break;
+			}
+
+		if (found) {
+			// Render direct lights
+			renderLights(deltaTime, viewport, visibilityIndex);
+		}
 	}
 
 
@@ -135,7 +143,7 @@ private:
 			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 			m_shadowFBO.bindForWriting();
-			for (auto * light : (*m_shadowsToUpdate)) {
+			for (auto &[time, light] : (*m_shadowsToUpdate)) {
 				// Update static shadows
 				if (light->m_staticOutOfDate) {
 					m_shadowFBO.clear(light->m_shadowSpot + 6);
@@ -158,8 +166,8 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_visibility->visLightCount) {
+	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
+		if (m_visibility->viewInfo[visibilityIndex].visLightCount) {
 			glEnable(GL_STENCIL_TEST);
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
@@ -170,9 +178,9 @@ private:
 			viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
 			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
 			glBindTextureUnit(4, m_shadowFBO.m_textureIDS[0]);			// Shadow map(linear depth texture)
-			m_visibility->visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+			m_visibility->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_visibility->indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+			m_visibility->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 			glBindVertexArray(m_shapeSphere->m_vaoID);					// Quad VAO
 			glDepthMask(GL_FALSE);
 			glEnable(GL_DEPTH_TEST);
@@ -199,8 +207,7 @@ private:
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
-		const size_t lightSize = 0;
-		m_visibility->indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
+		m_visibility->viewInfo.clear();
 		m_shadowsToUpdate->clear();
 		m_buffers->lightBuffer.clear();
 	}
@@ -220,7 +227,8 @@ private:
 	// Shared Attributes
 	std::shared_ptr<Point_Buffers> m_buffers;
 	std::shared_ptr<Point_Visibility> m_visibility;
-	std::shared_ptr<std::vector<LightPoint_Component*>> m_shadowsToUpdate;
+	std::shared_ptr<std::vector<Viewport*>> m_viewports;
+	std::shared_ptr<std::vector<std::pair<float, LightPoint_Component*>>> m_shadowsToUpdate;
 };
 
 #endif // POINT_TECHNIQUE_H

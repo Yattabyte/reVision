@@ -18,7 +18,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/***/
-	inline PointScheduler_System(Engine * engine, const std::shared_ptr<std::vector<LightPoint_Component*>> & shadowsToUpdate)
+	inline PointScheduler_System(Engine * engine, const std::shared_ptr<std::vector<std::pair<float, LightPoint_Component*>>> & shadowsToUpdate)
 		: m_shadowsToUpdate(shadowsToUpdate) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightPoint_Component::ID, FLAG_REQUIRED);
@@ -31,44 +31,41 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		m_shadowsToUpdate->clear();
-		std::vector<std::pair<float, LightPoint_Component*>> oldest(m_maxShadowsCasters, { 0, nullptr });
-		int maxElement = -1;
+		// Maintain list of shadows, update with oldest within range
+		// Technique will clear list when ready
 		for each (const auto & componentParam in components) {
 			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 			LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[1];
 
-			if (renderableComponent->m_visible && lightComponent->m_hasShadow) {
+			if (renderableComponent->m_visibleAtAll && lightComponent->m_hasShadow) {
+				bool didAnything = false;
 				// Try to find the oldest components
-				int x = 0;
-				for (auto &[oldTime, oldLight] : oldest) {
+				for (int x = 0; x < m_shadowsToUpdate->size(); ++x) {
+					auto &[oldTime, oldLight] = m_shadowsToUpdate->at(x);
 					if (!oldLight || (oldLight && lightComponent->m_updateTime < oldTime)) {
 						// Shuffle next elements down
-						for (int y = m_maxShadowsCasters - 1; y > x; --y)
-							oldest[y] = oldest[y - 1];						
+						for (int y = m_shadowsToUpdate->size() - 1; y > x; --y)
+							m_shadowsToUpdate->at(y) = m_shadowsToUpdate->at(y - 1);
 						oldLight = lightComponent;
 						oldTime = lightComponent->m_updateTime;
-						maxElement = x > maxElement ? x : maxElement;
+						didAnything = true;
 						break;
 					}
-					++x;
 				}
+				if (!didAnything && m_shadowsToUpdate->size() < m_maxShadowsCasters)
+					m_shadowsToUpdate->push_back({ lightComponent->m_updateTime, lightComponent });
 			}
 		}
 
-		if (maxElement != -1)
-			oldest.resize(maxElement + 1);
-
-		for each (const auto & element in oldest)
-			if (element.second)
-				m_shadowsToUpdate->push_back(element.second);
+		if (m_shadowsToUpdate->size() > m_maxShadowsCasters)
+			m_shadowsToUpdate->resize(m_maxShadowsCasters);
 	}
 
 
 private:
 	// Private Attributes
 	GLuint m_maxShadowsCasters = 1u;
-	std::shared_ptr<std::vector<LightPoint_Component*>> m_shadowsToUpdate;
+	std::shared_ptr<std::vector<std::pair<float, LightPoint_Component*>>> m_shadowsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

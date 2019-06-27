@@ -24,12 +24,12 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Technique(Engine * engine, ECSSystemList & auxilliarySystems)
-		: m_engine(engine), Graphics_Technique(GEOMETRY) {
+	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, ECSSystemList & auxilliarySystems)
+		: m_engine(engine), m_viewports(viewports), Graphics_Technique(GEOMETRY) {
 		// Auxilliary Systems
 		m_visibility = std::make_shared<Prop_Visibility>();
 		m_buffers = std::make_shared<Prop_Buffers>();
-		auxilliarySystems.addSystem(new PropVisibility_System(m_visibility));
+		auxilliarySystems.addSystem(new PropVisibility_System(m_visibility, viewports));
 		auxilliarySystems.addSystem(new PropSync_System(m_buffers));
 
 		// Asset Loading
@@ -59,27 +59,36 @@ public:
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_buffers->modelBuffer.beginWriting();
 		m_buffers->skeletonBuffer.beginWriting();
-		m_visibility->bufferPropIndex.beginWriting();
-		m_visibility->bufferCulling.beginWriting();
-		m_visibility->bufferRender.beginWriting();
-		m_visibility->bufferSkeletonIndex.beginWriting();
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_buffers->modelBuffer.endWriting();
 		m_buffers->skeletonBuffer.endWriting();
-		m_visibility->bufferPropIndex.endWriting();
-		m_visibility->bufferCulling.endWriting();
-		m_visibility->bufferRender.endWriting();
-		m_visibility->bufferSkeletonIndex.endWriting();
+		for (auto & viewInfo : m_visibility->viewInfo) {
+			viewInfo.bufferPropIndex.endWriting();
+			viewInfo.bufferCulling.endWriting();
+			viewInfo.bufferRender.endWriting();
+			viewInfo.bufferSkeletonIndex.endWriting();
+		}
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeCube->existsYet() || !m_shaderCull->existsYet() || !m_shaderGeometry->existsYet())
 			return;
 
-		// Apply occlusion culling and render props
-		renderGeometry(deltaTime, viewport);
-	}	
+		size_t visibilityIndex = 0;
+		bool found = false;
+		for (size_t x = 0; x < m_viewports->size(); ++x)
+			if (m_viewports->at(x) == viewport.get()) {
+				visibilityIndex = x;
+				found = true;
+				break;
+			}
+
+		if (found) {
+			// Apply occlusion culling and render props
+			renderGeometry(deltaTime, viewport, visibilityIndex);
+		}
+	}
 
 
 	// Public Methods
@@ -98,13 +107,13 @@ public:
 private:
 	// Private Methods
 	/***/
-	inline void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_visibility->visProps) {
+	inline void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
+		if (m_visibility->viewInfo[visibilityIndex].visProps) {
 			m_engine->getManager_Materials().bind();
 			m_buffers->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-			m_visibility->bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+			m_visibility->viewInfo[visibilityIndex].bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 			m_buffers->skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-			m_visibility->bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+			m_visibility->viewInfo[visibilityIndex].bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 
 			// Draw bounding boxes for each model, filling render buffer on successful rasterization
 			glDisable(GL_BLEND);
@@ -116,9 +125,9 @@ private:
 			m_shaderCull->bind();
 			viewport->m_gfxFBOS->bindForWriting("GEOMETRY");
 			glBindVertexArray(m_shapeCube->m_vaoID);
-			m_visibility->bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			m_visibility->bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visibility->visProps, 0);
+			m_visibility->viewInfo[visibilityIndex].bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_visibility->viewInfo[visibilityIndex].bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visibility->viewInfo[visibilityIndex].visProps, 0);
 			glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 			glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
 
@@ -129,13 +138,13 @@ private:
 			glCullFace(GL_BACK);
 			m_shaderGeometry->bind();
 			glBindVertexArray(*m_modelsVAO);
-			m_visibility->bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visibility->visProps, 0);
+			m_visibility->viewInfo[visibilityIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_visibility->viewInfo[visibilityIndex].visProps, 0);
 		}
 	}
 	/** Clear out the props queued up for rendering. */
 	inline void clear() {
-		m_visibility->visProps = 0;
+		m_visibility->viewInfo.clear();
 		m_buffers->modelBuffer.clear();
 		m_buffers->skeletonBuffer.clear();
 	}
@@ -150,8 +159,9 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
 	// Shared Attributes
-	std::shared_ptr<Prop_Visibility> m_visibility;
 	std::shared_ptr<Prop_Buffers> m_buffers;
+	std::shared_ptr<Prop_Visibility> m_visibility;
+	std::shared_ptr<std::vector<Viewport*>> m_viewports;
 };
 
 #endif // PROP_TECHNIQUE_H

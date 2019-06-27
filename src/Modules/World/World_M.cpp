@@ -4,14 +4,6 @@
 #include "Engine.h"
 
 
-World_Module::~World_Module()
-{
-	// Update indicator
-	m_aliveIndicator = false;
-	unloadWorld();
-	removeComponentType("Transform_Component");
-}
-
 void World_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
@@ -30,6 +22,15 @@ void World_Module::initialize(Engine * engine)
 		component->m_transform.update();
 		return std::make_pair(component->ID, component);
 	});
+}
+
+void World_Module::deinitialize()
+{
+	// Update indicator
+	m_engine->getManager_Messages().statement("Closing Module: World...");
+	m_aliveIndicator = false;
+	unloadWorld();
+	removeComponentType("Transform_Component");
 }
 
 void World_Module::frameTick(const float & deltaTime)

@@ -9,12 +9,18 @@
 
 /***/
 struct Renderable_Component : public ECSComponent<Renderable_Component> {
-	bool m_visible = false;
+	std::vector<int> m_visible = {};
+	bool m_visibleAtAll = false;
 };
 
 /***/
 struct CameraFollower_Component : public ECSComponent<CameraFollower_Component> {
 	std::shared_ptr<Viewport> m_viewport;
+};
+
+/***/
+struct Viewport_Component : public ECSComponent<Viewport_Component> {
+	std::shared_ptr<Viewport> m_camera;
 };
 
 /***/

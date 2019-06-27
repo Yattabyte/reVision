@@ -12,6 +12,6 @@ var searchData=
   ['initshaders',['initShaders',['../class_shader.html#aec1fae704248957a15505ddebd069285',1,'Shader::initShaders()'],['../class_shader___geometry.html#a241266c29058f2666bbe1b09b4a0e367',1,'Shader_Geometry::initShaders()']]],
   ['inputbinding',['InputBinding',['../class_input_binding.html',1,'InputBinding'],['../class_input_binding.html#ab6a2311d2725bfb2b9c4c02ebd2564f6',1,'InputBinding::InputBinding()']]],
   ['insert',['insert',['../class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb',1,'MappedChar::insert()'],['../class_priority_list.html#ab8db7301ff52a01f2d44ef4aa03abf85',1,'PriorityList::insert()']]],
-  ['interpolatekeys',['InterpolateKeys',['../class_prop___animation.html#a4692480d3bfba0a7fe9dec92f275c42c',1,'Prop_Animation']]],
+  ['interpolatekeys',['InterpolateKeys',['../class_skeletal___animation.html#a8560b61402e00c4dd2097e056545bcca',1,'Skeletal_Animation']]],
   ['isvalid',['isValid',['../class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845',1,'BaseECSSystem']]]
 ];

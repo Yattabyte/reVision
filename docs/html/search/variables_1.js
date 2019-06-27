@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['interpolatekeys',['InterpolateKeys',['../class_prop___animation.html#a4692480d3bfba0a7fe9dec92f275c42c',1,'Prop_Animation']]]
+  ['interpolatekeys',['InterpolateKeys',['../class_skeletal___animation.html#a8560b61402e00c4dd2097e056545bcca',1,'Skeletal_Animation']]]
 ];

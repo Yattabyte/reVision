@@ -12,15 +12,13 @@
 class Physics_Module : public Engine_Module {
 public:
 	// Public (de)Constructors
-	~Physics_Module();
+	inline ~Physics_Module() = default;
 	inline Physics_Module() = default;
 
 
-	// Public Interface Implementation
-	/** Initialize the module. */
+	// Public Interface Implementations
 	virtual void initialize(Engine * engine) override;
-	/** Updates the physics simulation by a single frame
-	@param	deltaTime	the amount of time passed since last frame */
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 

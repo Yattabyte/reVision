@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -95,14 +95,17 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a30242353cf04c08a82106d7d1f4d563e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a41d34511874fdb89a935780fc03cca0f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_camera_buffer_1_1_buffer_structure.html">BufferStructure</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a41d34511874fdb89a935780fc03cca0f">get</a> ()</td></tr>
 <tr class="separator:a41d34511874fdb89a935780fc03cca0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a38fe758b2a604a15718b2894d44de3cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a38fe758b2a604a15718b2894d44de3cc">lockFrame</a> (const size_t &amp;frameIndex)</td></tr>
-<tr class="separator:a38fe758b2a604a15718b2894d44de3cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0e6e9e073004dcd8c0970027de2b794"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#af0e6e9e073004dcd8c0970027de2b794">waitFrame</a> (const size_t &amp;frameIndex)</td></tr>
-<tr class="separator:af0e6e9e073004dcd8c0970027de2b794"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f22d4c56613b1a03afba9da877c2453"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a3f22d4c56613b1a03afba9da877c2453">pushChanges</a> (const size_t &amp;frameIndex)</td></tr>
-<tr class="separator:a3f22d4c56613b1a03afba9da877c2453"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae867f650a85902b6ae96ce8eb87d006f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#ae867f650a85902b6ae96ce8eb87d006f">bind</a> (const GLuint &amp;targetIndex, const size_t &amp;frameIndex) const</td></tr>
-<tr class="separator:ae867f650a85902b6ae96ce8eb87d006f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa7a39b97a17dedd783dbb5877de6ed1a"><td class="memItemLeft" align="right" valign="top"><a id="aa7a39b97a17dedd783dbb5877de6ed1a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>replace</b> (const <a class="el" href="struct_camera_buffer_1_1_buffer_structure.html">BufferStructure</a> &amp;data)</td></tr>
+<tr class="separator:aa7a39b97a17dedd783dbb5877de6ed1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14a5b0eebd5fe5501226d6d390ee50cc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a14a5b0eebd5fe5501226d6d390ee50cc">beginWriting</a> ()</td></tr>
+<tr class="separator:a14a5b0eebd5fe5501226d6d390ee50cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aef5b95babbf5d4de4ea20fc053ad24dd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#aef5b95babbf5d4de4ea20fc053ad24dd">endWriting</a> ()</td></tr>
+<tr class="separator:aef5b95babbf5d4de4ea20fc053ad24dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ea807a68b38dd2d33513c61b28c1856"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a8ea807a68b38dd2d33513c61b28c1856">pushChanges</a> ()</td></tr>
+<tr class="separator:a8ea807a68b38dd2d33513c61b28c1856"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c148dd0818a35f1f62f572670c5a903"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera_buffer.html#a6c148dd0818a35f1f62f572670c5a903">bind</a> (const GLuint &amp;targetIndex) const</td></tr>
+<tr class="separator:a6c148dd0818a35f1f62f572670c5a903"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Contains the data for a single point of view, and is mapped to the GPU using a triple buffer. </p>
@@ -160,8 +163,34 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae867f650a85902b6ae96ce8eb87d006f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae867f650a85902b6ae96ce8eb87d006f">&#9670;&nbsp;</a></span>bind()</h2>
+<a id="a14a5b0eebd5fe5501226d6d390ee50cc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a14a5b0eebd5fe5501226d6d390ee50cc">&#9670;&nbsp;</a></span>beginWriting()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CameraBuffer::beginWriting </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Wait for the current fence to pass, for the current frame index. </p>
+
+</div>
+</div>
+<a id="a6c148dd0818a35f1f62f572670c5a903"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6c148dd0818a35f1f62f572670c5a903">&#9670;&nbsp;</a></span>bind()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -173,18 +202,8 @@ Public Member Functions</h2></td></tr>
           <td class="memname">void CameraBuffer::bind </td>
           <td>(</td>
           <td class="paramtype">const GLuint &amp;&#160;</td>
-          <td class="paramname"><em>targetIndex</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const size_t &amp;&#160;</td>
-          <td class="paramname"><em>frameIndex</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
+          <td class="paramname"><em>targetIndex</em></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
   </td>
@@ -196,10 +215,35 @@ Public Member Functions</h2></td></tr>
 <p>Bind the GPU representation of this data, for a given frame index. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">targetIndex</td><td>the binding point for the buffer in the shader. </td></tr>
-    <tr><td class="paramname">frameIndex</td><td>which frame of this triple buffer to use (0-2). </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aef5b95babbf5d4de4ea20fc053ad24dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aef5b95babbf5d4de4ea20fc053ad24dd">&#9670;&nbsp;</a></span>endWriting()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void CameraBuffer::endWriting </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create a fence for the current point in time. </p>
 
 </div>
 </div>
@@ -252,38 +296,6 @@ Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Retrieve a pointer to the underlying data structure. </p>
-
-</div>
-</div>
-<a id="a38fe758b2a604a15718b2894d44de3cc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a38fe758b2a604a15718b2894d44de3cc">&#9670;&nbsp;</a></span>lockFrame()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CameraBuffer::lockFrame </td>
-          <td>(</td>
-          <td class="paramtype">const size_t &amp;&#160;</td>
-          <td class="paramname"><em>frameIndex</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Create a fence at for the current point in time. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">frameIndex</td><td>which frame of this triple buffer to use (0-2). </td></tr>
-  </table>
-  </dd>
-</dl>
 
 </div>
 </div>
@@ -366,8 +378,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a3f22d4c56613b1a03afba9da877c2453"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3f22d4c56613b1a03afba9da877c2453">&#9670;&nbsp;</a></span>pushChanges()</h2>
+<a id="a8ea807a68b38dd2d33513c61b28c1856"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ea807a68b38dd2d33513c61b28c1856">&#9670;&nbsp;</a></span>pushChanges()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -378,8 +390,7 @@ Public Member Functions</h2></td></tr>
         <tr>
           <td class="memname">void CameraBuffer::pushChanges </td>
           <td>(</td>
-          <td class="paramtype">const size_t &amp;&#160;</td>
-          <td class="paramname"><em>frameIndex</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -389,44 +400,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Commit the changes held in the local data, to the GPU, for a given frame index. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">frameIndex</td><td>which frame of this triple buffer to use (0-2). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af0e6e9e073004dcd8c0970027de2b794"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0e6e9e073004dcd8c0970027de2b794">&#9670;&nbsp;</a></span>waitFrame()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void CameraBuffer::waitFrame </td>
-          <td>(</td>
-          <td class="paramtype">const size_t &amp;&#160;</td>
-          <td class="paramname"><em>frameIndex</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Wait for the current fence to pass, for the current frame index. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">frameIndex</td><td>which frame of this triple buffer to use (0-2). </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Commit the changes held in the local data, to the GPU, for a given frame index. </p>
 
 </div>
 </div>

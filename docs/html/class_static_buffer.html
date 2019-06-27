@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,6 +72,15 @@ $(function() {
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_static_buffer_8h_source.html">StaticBuffer.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for StaticBuffer:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_static_buffer.png" usemap="#StaticBuffer_map" alt=""/>
+  <map id="StaticBuffer_map" name="StaticBuffer_map">
+<area href="class_buffer___interface.html" alt="Buffer_Interface" shape="rect" coords="0,0,104,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -79,14 +88,16 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0a676b3a71e8c63510bf900dd12d5916"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8641ea76f788e87ea40084cd1ac8c26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#ad8641ea76f788e87ea40084cd1ac8c26">StaticBuffer</a> (const GLsizeiptr &amp;size, const void *data=0, const GLbitfield &amp;storageFlags=GL_DYNAMIC_STORAGE_BIT)</td></tr>
 <tr class="separator:ad8641ea76f788e87ea40084cd1ac8c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4583df9254b76f03aeae804d1b973775"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a4583df9254b76f03aeae804d1b973775">StaticBuffer</a> (const <a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;other)</td></tr>
+<tr class="separator:a4583df9254b76f03aeae804d1b973775"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa072f408963b7b79fb68f25cc1088308"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#aa072f408963b7b79fb68f25cc1088308">StaticBuffer</a> (<a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&amp;other)</td></tr>
 <tr class="separator:aa072f408963b7b79fb68f25cc1088308"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a358320b60ca5fbf8048dc251c983fc50"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a358320b60ca5fbf8048dc251c983fc50">operator=</a> (<a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&amp;other)</td></tr>
 <tr class="separator:a358320b60ca5fbf8048dc251c983fc50"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41d00685ab9012e08df0678e7a8fc57c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a41d00685ab9012e08df0678e7a8fc57c">bindBuffer</a> (const GLenum &amp;target) const</td></tr>
-<tr class="separator:a41d00685ab9012e08df0678e7a8fc57c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac386de80fb6975bcf0f374025bf78e1d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#ac386de80fb6975bcf0f374025bf78e1d">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const</td></tr>
-<tr class="separator:ac386de80fb6975bcf0f374025bf78e1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4814aad463d66be9a365a0a90198db0d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">bindBuffer</a> (const GLenum &amp;target) const override</td></tr>
+<tr class="separator:a4814aad463d66be9a365a0a90198db0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11feee2244e5f9ab0c2422ac69ff5d5d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override</td></tr>
+<tr class="separator:a11feee2244e5f9ab0c2422ac69ff5d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12efa14b85af3b29a59f58022983b3e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a12efa14b85af3b29a59f58022983b3e9">write</a> (const GLsizeiptr &amp;offset, const GLsizeiptr &amp;size, const void *data)</td></tr>
 <tr class="separator:a12efa14b85af3b29a59f58022983b3e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
@@ -94,7 +105,7 @@ Public Member Functions</h2></td></tr>
 <div class="textblock"><p>Encapsulates an OpenGL buffer that is fixed in size. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0a676b3a71e8c63510bf900dd12d5916"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0a676b3a71e8c63510bf900dd12d5916">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[1/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a676b3a71e8c63510bf900dd12d5916">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -120,7 +131,7 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <a id="ad8641ea76f788e87ea40084cd1ac8c26"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad8641ea76f788e87ea40084cd1ac8c26">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[2/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8641ea76f788e87ea40084cd1ac8c26">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -162,8 +173,35 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a4583df9254b76f03aeae804d1b973775"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4583df9254b76f03aeae804d1b973775">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">StaticBuffer::StaticBuffer </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&#160;</td>
+          <td class="paramname"><em>other</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Explicit Instantion. </p>
+
+</div>
+</div>
 <a id="aa072f408963b7b79fb68f25cc1088308"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa072f408963b7b79fb68f25cc1088308">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[3/3]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa072f408963b7b79fb68f25cc1088308">&#9670;&nbsp;</a></span>StaticBuffer() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,8 +228,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a41d00685ab9012e08df0678e7a8fc57c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41d00685ab9012e08df0678e7a8fc57c">&#9670;&nbsp;</a></span>bindBuffer()</h2>
+<a id="a4814aad463d66be9a365a0a90198db0d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4814aad463d66be9a365a0a90198db0d">&#9670;&nbsp;</a></span>bindBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -200,7 +238,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void StaticBuffer::bindBuffer </td>
+          <td class="memname">virtual void StaticBuffer::bindBuffer </td>
           <td>(</td>
           <td class="paramtype">const GLenum &amp;&#160;</td>
           <td class="paramname"><em>target</em></td><td>)</td>
@@ -209,21 +247,23 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">target</td><td>the target type of this buffer </td></tr>
+    <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
   </table>
   </dd>
 </dl>
 
+<p>Implements <a class="el" href="class_buffer___interface.html#a6809378e3531666363bd5de16f3a9c05">Buffer_Interface</a>.</p>
+
 </div>
 </div>
-<a id="ac386de80fb6975bcf0f374025bf78e1d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac386de80fb6975bcf0f374025bf78e1d">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
+<a id="a11feee2244e5f9ab0c2422ac69ff5d5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11feee2244e5f9ab0c2422ac69ff5d5d">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -232,7 +272,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void StaticBuffer::bindBufferBase </td>
+          <td class="memname">virtual void StaticBuffer::bindBufferBase </td>
           <td>(</td>
           <td class="paramtype">const GLenum &amp;&#160;</td>
           <td class="paramname"><em>target</em>, </td>
@@ -251,17 +291,19 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to a particular binding point for shaders. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Bind this buffer to a particular binding point, such as for shaders to read. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">target</td><td>the target type of this buffer </td></tr>
-    <tr><td class="paramname">index</td><td>the binding point index to use </td></tr>
+    <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
+    <tr><td class="paramname">index</td><td>the binding point index to use. </td></tr>
   </table>
   </dd>
 </dl>
+
+<p>Implements <a class="el" href="class_buffer___interface.html#aca8d4908daa0a15a01d879ae8997c825">Buffer_Interface</a>.</p>
 
 </div>
 </div>

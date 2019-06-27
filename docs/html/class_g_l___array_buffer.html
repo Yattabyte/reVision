@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,6 +72,15 @@ $(function() {
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="_g_l___array_buffer_8h_source.html">GL_ArrayBuffer.h</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for GL_ArrayBuffer&lt; T &gt;:</div>
+<div class="dyncontent">
+ <div class="center">
+  <img src="class_g_l___array_buffer.png" usemap="#GL_5FArrayBuffer_3C_20T_20_3E_map" alt=""/>
+  <map id="GL_5FArrayBuffer_3C_20T_20_3E_map" name="GL_5FArrayBuffer_3C_20T_20_3E_map">
+<area href="class_buffer___interface.html" alt="Buffer_Interface" shape="rect" coords="0,0,134,24"/>
+  </map>
+</div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -81,22 +90,24 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4028d191b791ed09b24dbbe51603bb3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a896b0aba3916151ded9a01e9d09f7a4f">operator=</a> (<a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&amp;o) noexcept</td></tr>
 <tr class="separator:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcc94576f411c03cb8781348eeb5ff44"><td class="memItemLeft" align="right" valign="top">size_t *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#abcc94576f411c03cb8781348eeb5ff44">newElement</a> ()</td></tr>
-<tr class="separator:abcc94576f411c03cb8781348eeb5ff44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79764a80f53cae4ef1d883ccb369370e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a79764a80f53cae4ef1d883ccb369370e">removeElement</a> (const size_t *index)</td></tr>
-<tr class="separator:a79764a80f53cae4ef1d883ccb369370e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a964c4a77312d6d03affdd943090f20d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">bindBuffer</a> (const GLenum &amp;target) const override</td></tr>
+<tr class="separator:a964c4a77312d6d03affdd943090f20d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override</td></tr>
+<tr class="separator:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b5cb85796908adc896298324d8228b3"><td class="memItemLeft" align="right" valign="top">GL_AB_Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a1b5cb85796908adc896298324d8228b3">newElement</a> ()</td></tr>
+<tr class="separator:a1b5cb85796908adc896298324d8228b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a84195ed6917b8dcbe8df5c277c9e8e4d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a84195ed6917b8dcbe8df5c277c9e8e4d">removeElement</a> (const GL_AB_Index &amp;index)</td></tr>
+<tr class="separator:a84195ed6917b8dcbe8df5c277c9e8e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adb6db74146d95af81a447ecd1a6aca37"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#adb6db74146d95af81a447ecd1a6aca37">clear</a> ()</td></tr>
 <tr class="separator:adb6db74146d95af81a447ecd1a6aca37"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a7cd333ed069a1eeca93e33f8d7619e"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a2a7cd333ed069a1eeca93e33f8d7619e">operator []</a> (const size_t &amp;index)</td></tr>
-<tr class="separator:a2a7cd333ed069a1eeca93e33f8d7619e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a0d687a3703ffacf600cdda6e4d1b09"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a5a0d687a3703ffacf600cdda6e4d1b09">operator []</a> (const GL_AB_Index &amp;index)</td></tr>
+<tr class="separator:a5a0d687a3703ffacf600cdda6e4d1b09"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cd626d222e7db86425cf2156325fbf7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a3cd626d222e7db86425cf2156325fbf7">getLength</a> () const</td></tr>
 <tr class="separator:a3cd626d222e7db86425cf2156325fbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5b4f022e752da1beae4020b3166797d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#ae5b4f022e752da1beae4020b3166797d">bindBuffer</a> (const GLenum &amp;target) const</td></tr>
-<tr class="separator:ae5b4f022e752da1beae4020b3166797d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4caa6b36264f4f2fa9af5d8823e226d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a4caa6b36264f4f2fa9af5d8823e226d3">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const</td></tr>
-<tr class="separator:a4caa6b36264f4f2fa9af5d8823e226d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb2b59681f64ff75951af99471604029"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#aeb2b59681f64ff75951af99471604029">bindBufferBaseRange</a> (const GLenum &amp;target, const GLuint &amp;index, const GLintptr &amp;offset, const GLsizeiptr &amp;size) const</td></tr>
-<tr class="separator:aeb2b59681f64ff75951af99471604029"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90cf032afabf3c41d769b09f09efba60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a90cf032afabf3c41d769b09f09efba60">beginWriting</a> ()</td></tr>
+<tr class="separator:a90cf032afabf3c41d769b09f09efba60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf4b138aa2381d2a1e85f3627836bafd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#abf4b138aa2381d2a1e85f3627836bafd">endWriting</a> ()</td></tr>
+<tr class="separator:abf4b138aa2381d2a1e85f3627836bafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
@@ -172,8 +183,8 @@ template&lt;typename T&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ae5b4f022e752da1beae4020b3166797d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5b4f022e752da1beae4020b3166797d">&#9670;&nbsp;</a></span>bindBuffer()</h2>
+<a id="a90cf032afabf3c41d769b09f09efba60"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90cf032afabf3c41d769b09f09efba60">&#9670;&nbsp;</a></span>beginWriting()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -184,11 +195,10 @@ template&lt;typename T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::bindBuffer </td>
+          <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::beginWriting </td>
           <td>(</td>
-          <td class="paramtype">const GLenum &amp;&#160;</td>
-          <td class="paramname"><em>target</em></td><td>)</td>
-          <td> const</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
         </tr>
       </table>
   </td>
@@ -197,17 +207,12 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">target</td><td>the target type of this buffer </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Wait for the current fence to pass, for the current frame index. </p>
 
 </div>
 </div>
-<a id="a4caa6b36264f4f2fa9af5d8823e226d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4caa6b36264f4f2fa9af5d8823e226d3">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
+<a id="a964c4a77312d6d03affdd943090f20d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a964c4a77312d6d03affdd943090f20d0">&#9670;&nbsp;</a></span>bindBuffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,7 +223,43 @@ template&lt;typename T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::bindBufferBase </td>
+          <td class="memname">virtual void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::bindBuffer </td>
+          <td>(</td>
+          <td class="paramtype">const GLenum &amp;&#160;</td>
+          <td class="paramname"><em>target</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implements <a class="el" href="class_buffer___interface.html#a6809378e3531666363bd5de16f3a9c05">Buffer_Interface</a>.</p>
+
+</div>
+</div>
+<a id="a7f2f17aa9e56d6757290707f7c3fd237"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7f2f17aa9e56d6757290707f7c3fd237">&#9670;&nbsp;</a></span>bindBufferBase()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::bindBufferBase </td>
           <td>(</td>
           <td class="paramtype">const GLenum &amp;&#160;</td>
           <td class="paramname"><em>target</em>, </td>
@@ -237,76 +278,19 @@ template&lt;typename T&gt; </div>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to a particular binding point for shaders. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Bind this buffer to a particular binding point, such as for shaders to read. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">target</td><td>the target type of this buffer </td></tr>
-    <tr><td class="paramname">index</td><td>the binding point index to use </td></tr>
+    <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
+    <tr><td class="paramname">index</td><td>the binding point index to use. </td></tr>
   </table>
   </dd>
 </dl>
 
-</div>
-</div>
-<a id="aeb2b59681f64ff75951af99471604029"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb2b59681f64ff75951af99471604029">&#9670;&nbsp;</a></span>bindBufferBaseRange()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::bindBufferBaseRange </td>
-          <td>(</td>
-          <td class="paramtype">const GLenum &amp;&#160;</td>
-          <td class="paramname"><em>target</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLuint &amp;&#160;</td>
-          <td class="paramname"><em>index</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLintptr &amp;&#160;</td>
-          <td class="paramname"><em>offset</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const GLsizeiptr &amp;&#160;</td>
-          <td class="paramname"><em>size</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Bind this buffer to a particular binding point for shaders, within a given range. </p><dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">target</td><td>the target type of this buffer </td></tr>
-    <tr><td class="paramname">index</td><td>the binding point index to use </td></tr>
-    <tr><td class="paramname">offset</td><td>the offset to start the binding at </td></tr>
-    <tr><td class="paramname">size</td><td>the size of the buffer to bind </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Implements <a class="el" href="class_buffer___interface.html#aca8d4908daa0a15a01d879ae8997c825">Buffer_Interface</a>.</p>
 
 </div>
 </div>
@@ -334,7 +318,35 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Functionally clears the buffer, but doesn't zero the underlying data. Retains capacity. </p>
+<p>Clears the buffer data, but retains capacity. </p>
+
+</div>
+</div>
+<a id="abf4b138aa2381d2a1e85f3627836bafd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abf4b138aa2381d2a1e85f3627836bafd">&#9670;&nbsp;</a></span>endWriting()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::endWriting </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Create a fence for the current point in time. </p>
 
 </div>
 </div>
@@ -366,8 +378,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="abcc94576f411c03cb8781348eeb5ff44"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcc94576f411c03cb8781348eeb5ff44">&#9670;&nbsp;</a></span>newElement()</h2>
+<a id="a1b5cb85796908adc896298324d8228b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1b5cb85796908adc896298324d8228b3">&#9670;&nbsp;</a></span>newElement()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -378,7 +390,7 @@ template&lt;typename T&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t* <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::newElement </td>
+          <td class="memname">GL_AB_Index <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::newElement </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -394,8 +406,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a2a7cd333ed069a1eeca93e33f8d7619e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2a7cd333ed069a1eeca93e33f8d7619e">&#9670;&nbsp;</a></span>operator []()</h2>
+<a id="a5a0d687a3703ffacf600cdda6e4d1b09"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a0d687a3703ffacf600cdda6e4d1b09">&#9670;&nbsp;</a></span>operator []()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -408,7 +420,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="memname">T&amp; <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::operator [] </td>
           <td>(</td>
-          <td class="paramtype">const size_t &amp;&#160;</td>
+          <td class="paramtype">const GL_AB_Index &amp;&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>
           <td></td>
         </tr>
@@ -463,8 +475,8 @@ template&lt;typename T&gt; </div>
 
 </div>
 </div>
-<a id="a79764a80f53cae4ef1d883ccb369370e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79764a80f53cae4ef1d883ccb369370e">&#9670;&nbsp;</a></span>removeElement()</h2>
+<a id="a84195ed6917b8dcbe8df5c277c9e8e4d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a84195ed6917b8dcbe8df5c277c9e8e4d">&#9670;&nbsp;</a></span>removeElement()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -477,7 +489,7 @@ template&lt;typename T&gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a>&lt; T &gt;::removeElement </td>
           <td>(</td>
-          <td class="paramtype">const size_t *&#160;</td>
+          <td class="paramtype">const GL_AB_Index &amp;&#160;</td>
           <td class="paramname"><em>index</em></td><td>)</td>
           <td></td>
         </tr>

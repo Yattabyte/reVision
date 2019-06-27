@@ -2,32 +2,15 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Logical/ViewingPerspective_System.h"
+#include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/Graphics/Logical/CameraFollower_System.h"
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 #include "Modules/World/World_M.h"
 #include "Engine.h"
 #include <memory>
 #include <random>
 
-Graphics_Module::~Graphics_Module()
-{
-	// Update indicator
-	m_aliveIndicator = false;
-
-	// Remove support for the following list of component types
-	auto & world = m_engine->getModule_World();
-	world.removeComponentType("Renderable_Component");
-	world.removeComponentType("CameraFollower_Component");
-	world.removeComponentType("BoundingSphere_Component");
-	world.removeComponentType("Prop_Component");
-	world.removeComponentType("Skeleton_Component");
-	world.removeComponentType("LightColor_Component");
-	world.removeComponentType("LightRadius_Component");
-	world.removeComponentType("LightCutoff_Component");
-	world.removeComponentType("LightDirectional_Component");
-	world.removeComponentType("LightPoint_Component");
-	world.removeComponentType("LightSpot_Component");
-	world.removeComponentType("Reflector_Component");
-}
 
 void Graphics_Module::initialize(Engine * engine)
 {
@@ -72,11 +55,13 @@ void Graphics_Module::initialize(Engine * engine)
 	cameraData.FOV = fov;
 	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
 
-	// Rendering Effects & systems	
-	m_systems.addSystem(&m_frustumCuller);
+	// Rendering Effects & systems
+	auto sceneViewports = std::make_shared<std::vector<Viewport*>>();
+	m_systems.addSystem(new ViewingPerspective_System(sceneViewports));
+	m_systems.addSystem(new FrustumCull_System(sceneViewports));
 	m_systems.addSystem(&m_cameraFollower);
 	m_systems.addSystem(new Skeletal_Animation(engine));
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_systems);
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, sceneViewports, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
@@ -86,6 +71,11 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("CameraFollower_Component", [engine](const ParamList & parameters) {
 		auto * component = new CameraFollower_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Viewport_Component", [&, engine](const ParamList & parameters) {
+		auto * component = new Viewport_Component();
+		component->m_camera = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("BoundingSphere_Component", [engine](const ParamList & parameters) {
@@ -141,6 +131,30 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 }
 
+void Graphics_Module::deinitialize()
+{
+	m_engine->getManager_Messages().statement("Closing Module: Graphics...");
+
+	// Update indicator
+	m_aliveIndicator = false;
+
+	// Remove support for the following list of component types
+	auto & world = m_engine->getModule_World();
+	world.removeComponentType("Renderable_Component");
+	world.removeComponentType("CameraFollower_Component");
+	world.removeComponentType("Viewport_Component");
+	world.removeComponentType("BoundingSphere_Component");
+	world.removeComponentType("Prop_Component");
+	world.removeComponentType("Skeleton_Component");
+	world.removeComponentType("LightColor_Component");
+	world.removeComponentType("LightRadius_Component");
+	world.removeComponentType("LightCutoff_Component");
+	world.removeComponentType("LightDirectional_Component");
+	world.removeComponentType("LightPoint_Component");
+	world.removeComponentType("LightSpot_Component");
+	world.removeComponentType("Reflector_Component");
+}
+
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
@@ -148,7 +162,13 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_viewport->m_cameraBuffer->beginWriting();
 	m_viewport->m_cameraBuffer->pushChanges();
 
-	// Render graphics pipeline using current set of buffers
+	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
+	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+
+	// Update pipeline techniques ONCE per frame, not per render call!
+	m_pipeline->update(deltaTime);
+
+	// Render the scene from the user's perspective
 	render(deltaTime, m_viewport);
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
@@ -158,15 +178,12 @@ void Graphics_Module::frameTick(const float & deltaTime)
 
 void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
 {
-	// Update all the once-per-viewport systems we're given first
-	m_frustumCuller.setViewport(viewport);
-	m_cameraFollower.setViewport(viewport);
-	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
-	m_pipeline->update(deltaTime);
-
 	// Prepare viewport for rendering
 	viewport->clear();
 	viewport->bind();
+	m_cameraFollower.setViewport(viewport);
+
+	// Update v
 
 	// Render
 	m_pipeline->render(deltaTime, viewport, allowedCategories);

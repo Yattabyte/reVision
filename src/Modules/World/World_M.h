@@ -26,16 +26,14 @@ public:
 
 	// Public (de)Constructors
 	/** Destroy this world module. */
-	~World_Module();
+	inline ~World_Module() = default;
 	/** Construct a world module. */
 	inline World_Module() = default;
 
 
-	// Public Interface Implementation
-	/** Initialize the module. */
+	// Public Interface Implementations
 	virtual void initialize(Engine * engine) override;
-	/** Tick the world by a frame.
-	@param	deltaTime	the amount of time passed since last frame */
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 

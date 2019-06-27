@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -78,10 +78,19 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:af233e54ccf51d57c59d5e17a5565a7e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#af233e54ccf51d57c59d5e17a5565a7e0">~Graphics_Pipeline</a> ()=default</td></tr>
 <tr class="separator:af233e54ccf51d57c59d5e17a5565a7e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a58e170809b92e19800adde46a8b4f6db"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a58e170809b92e19800adde46a8b4f6db">Graphics_Pipeline</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
-<tr class="separator:a58e170809b92e19800adde46a8b4f6db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00f31b5ce175f3aabd923909bcf7c906"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a00f31b5ce175f3aabd923909bcf7c906">render</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;cameraBuffer, const std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt; &amp;gfxFBOS, const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;rhVolume)</td></tr>
-<tr class="separator:a00f31b5ce175f3aabd923909bcf7c906"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a10040ba4d3a95e95b9c4d3c17b36e779"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#a10040ba4d3a95e95b9c4d3c17b36e779">Graphics_Pipeline</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;viewports, <a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;auxSystems)</td></tr>
+<tr class="separator:a10040ba4d3a95e95b9c4d3c17b36e779"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a263a0313a3b857ec5575bbbd84dee99d"><td class="memItemLeft" align="right" valign="top"><a id="a263a0313a3b857ec5575bbbd84dee99d"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>beginFrame</b> (const float &amp;deltaTime)</td></tr>
+<tr class="separator:a263a0313a3b857ec5575bbbd84dee99d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5035041f1531faa37672f77b9f96b670"><td class="memItemLeft" align="right" valign="top"><a id="a5035041f1531faa37672f77b9f96b670"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>endFrame</b> (const float &amp;deltaTime)</td></tr>
+<tr class="separator:a5035041f1531faa37672f77b9f96b670"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c5339a975acdded60475ec6f177fd6a"><td class="memItemLeft" align="right" valign="top"><a id="a2c5339a975acdded60475ec6f177fd6a"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>update</b> (const float &amp;deltaTime)</td></tr>
+<tr class="separator:a2c5339a975acdded60475ec6f177fd6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab41180d3cc948a4f06dd07cf9982d550"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___pipeline.html#ab41180d3cc948a4f06dd07cf9982d550">render</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const unsigned int &amp;categories=Graphics_Technique::ALL)</td></tr>
+<tr class="separator:ab41180d3cc948a4f06dd07cf9982d550"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
@@ -121,8 +130,8 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 
 </div>
 </div>
-<a id="a58e170809b92e19800adde46a8b4f6db"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a58e170809b92e19800adde46a8b4f6db">&#9670;&nbsp;</a></span>Graphics_Pipeline()</h2>
+<a id="a10040ba4d3a95e95b9c4d3c17b36e779"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a10040ba4d3a95e95b9c4d3c17b36e779">&#9670;&nbsp;</a></span>Graphics_Pipeline()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -131,18 +140,41 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
           <td class="memname">Graphics_Pipeline::Graphics_Pipeline </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
-          <td class="paramname"><em>engine</em></td><td>)</td>
+          <td class="paramname"><em>engine</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>viewports</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_e_c_s_system_list.html">ECSSystemList</a> &amp;&#160;</td>
+          <td class="paramname"><em>auxSystems</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct a PBR rendering pipeline. </p>
+<p>Construct a PBR rendering pipeline. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">viewports</td><td>all the viewports active in the scene. </td></tr>
+    <tr><td class="paramname">auxSystems</td><td>container to add extra render-related ecs systems to. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a00f31b5ce175f3aabd923909bcf7c906"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a00f31b5ce175f3aabd923909bcf7c906">&#9670;&nbsp;</a></span>render()</h2>
+<a id="ab41180d3cc948a4f06dd07cf9982d550"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab41180d3cc948a4f06dd07cf9982d550">&#9670;&nbsp;</a></span>render()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -156,20 +188,14 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>cameraBuffer</em>, </td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>viewport</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>gfxFBOS</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;&#160;</td>
-          <td class="paramname"><em>rhVolume</em>&#160;</td>
+          <td class="paramtype">const unsigned int &amp;&#160;</td>
+          <td class="paramname"><em>categories</em> = <code>Graphics_Technique::ALL</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -181,6 +207,8 @@ std::vector&lt; <a class="el" href="class_graphics___technique.html">Graphics_Te
 <p>Apply this lighting technique. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+    <tr><td class="paramname">viewport</td><td>the viewport to render into. </td></tr>
+    <tr><td class="paramname">categories</td><td>the allowed technique categories to render. </td></tr>
   </table>
   </dd>
 </dl>

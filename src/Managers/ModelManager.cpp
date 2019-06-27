@@ -77,7 +77,7 @@ void ModelManager::expandToFit(const size_t & arraySize)
 			// Wait for data fence to be passed
 			GLenum state = GL_UNSIGNALED;
 			while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
-				state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+				state = glClientWaitSync(m_fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
 			glDeleteSync(m_fence);
 			m_fence = nullptr;
 		}

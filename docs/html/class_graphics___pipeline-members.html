@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,11 +70,14 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_graphics___pipeline.html#a58e170809b92e19800adde46a8b4f6db">Graphics_Pipeline</a>(Engine *engine)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>beginFrame</b>(const float &amp;deltaTime) (defined in <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>endFrame</b>(const float &amp;deltaTime) (defined in <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_graphics___pipeline.html#a10040ba4d3a95e95b9c4d3c17b36e779">Graphics_Pipeline</a>(Engine *engine, const std::shared_ptr&lt; std::vector&lt; Viewport * &gt;&gt; &amp;viewports, ECSSystemList &amp;auxSystems)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_techniques</b> (defined in <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_graphics___pipeline.html#a00f31b5ce175f3aabd923909bcf7c906">render</a>(const float &amp;deltaTime, const std::shared_ptr&lt; CameraBuffer &gt; &amp;cameraBuffer, const std::shared_ptr&lt; Graphics_Framebuffers &gt; &amp;gfxFBOS, const std::shared_ptr&lt; RH_Volume &gt; &amp;rhVolume)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_graphics___pipeline.html#af233e54ccf51d57c59d5e17a5565a7e0">~Graphics_Pipeline</a>()=default</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_graphics___pipeline.html#ab41180d3cc948a4f06dd07cf9982d550">render</a>(const float &amp;deltaTime, const std::shared_ptr&lt; Viewport &gt; &amp;viewport, const unsigned int &amp;categories=Graphics_Technique::ALL)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>update</b>(const float &amp;deltaTime) (defined in <a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a>)</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_graphics___pipeline.html#af233e54ccf51d57c59d5e17a5565a7e0">~Graphics_Pipeline</a>()=default</td><td class="entry"><a class="el" href="class_graphics___pipeline.html">Graphics_Pipeline</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

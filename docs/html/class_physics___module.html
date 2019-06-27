@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -86,6 +86,8 @@ Inheritance diagram for Physics_Module:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a94718be4539c9364c17cd3d3c7ddcabf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_physics___module.html#a94718be4539c9364c17cd3d3c7ddcabf">initialize</a> (<a class="el" href="class_engine.html">Engine</a> *engine) override</td></tr>
 <tr class="separator:a94718be4539c9364c17cd3d3c7ddcabf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e54d56ebf8a65774e4acbc9868ad40b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_physics___module.html#a6e54d56ebf8a65774e4acbc9868ad40b">deinitialize</a> () override</td></tr>
+<tr class="separator:a6e54d56ebf8a65774e4acbc9868ad40b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aab9efd32c684dcaaa948a8a42495a5f1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_physics___module.html#aab9efd32c684dcaaa948a8a42495a5f1">frameTick</a> (const float &amp;deltaTime) override</td></tr>
 <tr class="separator:aab9efd32c684dcaaa948a8a42495a5f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d622c6fd80255bc8228a3685ed7709c"><td class="memItemLeft" align="right" valign="top">btDiscreteDynamicsWorld *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_physics___module.html#a9d622c6fd80255bc8228a3685ed7709c">getWorld</a> ()</td></tr>
@@ -106,6 +108,34 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A module responsible for physics. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a6e54d56ebf8a65774e4acbc9868ad40b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6e54d56ebf8a65774e4acbc9868ad40b">&#9670;&nbsp;</a></span>deinitialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Physics_Module::deinitialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Deinitialize the module. </p>
+
+<p>Reimplemented from <a class="el" href="class_engine___module.html#a6a769a426bbc46a673252c3d29d96a22">Engine_Module</a>.</p>
+
+</div>
+</div>
 <a id="aab9efd32c684dcaaa948a8a42495a5f1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aab9efd32c684dcaaa948a8a42495a5f1">&#9670;&nbsp;</a></span>frameTick()</h2>
 
@@ -119,7 +149,7 @@ Additional Inherited Members</h2></td></tr>
           <td class="memname">void Physics_Module::frameTick </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
-          <td class="paramname"><em>deltaTime</em></td><td>)</td>
+          <td class="paramname"></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -129,9 +159,9 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Updates the physics simulation by a single frame </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Tick the ui by a frame. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame </td></tr>
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>
   </dd>
 </dl>

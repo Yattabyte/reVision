@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.6.2</span>
+   &#160;<span id="projectnumber">3.8.6</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -93,12 +93,14 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad432f4b9721f19d8ac56535e906f425d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#ad432f4b9721f19d8ac56535e906f425d">~Game_Module</a> ()</td></tr>
-<tr class="separator:ad432f4b9721f19d8ac56535e906f425d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7abff1da7b42b1f6160a954cac95d62c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#a7abff1da7b42b1f6160a954cac95d62c">~Game_Module</a> ()=default</td></tr>
+<tr class="separator:a7abff1da7b42b1f6160a954cac95d62c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afaa9fe1619dc2e5a4d1c05b7ce007b54"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#afaa9fe1619dc2e5a4d1c05b7ce007b54">Game_Module</a> ()=default</td></tr>
 <tr class="separator:afaa9fe1619dc2e5a4d1c05b7ce007b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa418343e08154a473a8170c0b74c77a9"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#aa418343e08154a473a8170c0b74c77a9">initialize</a> (<a class="el" href="class_engine.html">Engine</a> *engine) override</td></tr>
 <tr class="separator:aa418343e08154a473a8170c0b74c77a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc1c0346950b8a4d1bdc7480f788ca4f"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#abc1c0346950b8a4d1bdc7480f788ca4f">deinitialize</a> () override</td></tr>
+<tr class="separator:abc1c0346950b8a4d1bdc7480f788ca4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc46a5554b0e333f0f24ca881f60ef70"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#adc46a5554b0e333f0f24ca881f60ef70">frameTick</a> (const float &amp;deltaTime) override</td></tr>
 <tr class="separator:adc46a5554b0e333f0f24ca881f60ef70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aba83c7c0081309460ca423bbe506f325"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_game___module.html#aba83c7c0081309460ca423bbe506f325">renderOverlays</a> (const float &amp;deltaTime)</td></tr>
@@ -119,11 +121,14 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A module responsible for Game Logic. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ad432f4b9721f19d8ac56535e906f425d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad432f4b9721f19d8ac56535e906f425d">&#9670;&nbsp;</a></span>~Game_Module()</h2>
+<a id="a7abff1da7b42b1f6160a954cac95d62c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7abff1da7b42b1f6160a954cac95d62c">&#9670;&nbsp;</a></span>~Game_Module()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">Game_Module::~Game_Module </td>
@@ -132,6 +137,11 @@ Additional Inherited Members</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 <p>Destroy this game module. </p>
 
@@ -164,6 +174,34 @@ Additional Inherited Members</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="abc1c0346950b8a4d1bdc7480f788ca4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abc1c0346950b8a4d1bdc7480f788ca4f">&#9670;&nbsp;</a></span>deinitialize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Game_Module::deinitialize </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Deinitialize the module. </p>
+
+<p>Reimplemented from <a class="el" href="class_engine___module.html#a6a769a426bbc46a673252c3d29d96a22">Engine_Module</a>.</p>
+
+</div>
+</div>
 <a id="adc46a5554b0e333f0f24ca881f60ef70"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adc46a5554b0e333f0f24ca881f60ef70">&#9670;&nbsp;</a></span>frameTick()</h2>
 

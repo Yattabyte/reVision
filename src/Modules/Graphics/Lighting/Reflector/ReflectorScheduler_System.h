@@ -18,10 +18,11 @@ public:
 		m_aliveIndicator = false;
 	}
 	/***/
-	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<std::vector<Reflector_Component*>> & reflectorsToUpdate)
+	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<std::vector<std::tuple<float, Reflector_Component*, Viewport_Component*>> > & reflectorsToUpdate)
 		: m_reflectorsToUpdate(reflectorsToUpdate) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
+		addComponentType(Viewport_Component::ID, FLAG_REQUIRED);
 
 		auto & preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
@@ -31,44 +32,43 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		m_reflectorsToUpdate->clear();
-		std::vector<std::pair<float, Reflector_Component*>> oldest(m_maxShadowsCasters, { 0, nullptr });
-		int maxElement = -1;
+		// Maintain list of reflectors, update with oldest within range
+		// Technique will clear list when ready
 		for each (const auto & componentParam in components) {
 			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 			Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
-
-			if (renderableComponent->m_visible) {
+			Viewport_Component * viewportComponent = (Viewport_Component*)componentParam[2];
+			
+			if (renderableComponent->m_visibleAtAll && reflectorComponent->m_sceneOutOfDate) {
+				bool didAnything = false;
 				// Try to find the oldest components
-				int x = 0;
-				for (auto &[oldTime, oldLight] : oldest) {
+				for (int x = 0; x < m_reflectorsToUpdate->size(); ++x) {
+					auto &[oldTime, oldLight, oldView] = m_reflectorsToUpdate->at(x);
 					if (!oldLight || (oldLight && reflectorComponent->m_updateTime < oldTime)) {
 						// Shuffle next elements down
-						for (int y = m_maxShadowsCasters - 1; y > x; --y)
-							oldest[y] = oldest[y - 1];
+						for (int y = m_reflectorsToUpdate->size() - 1; y > x; --y)
+							m_reflectorsToUpdate->at(y) = m_reflectorsToUpdate->at(y - 1);
 						oldLight = reflectorComponent;
 						oldTime = reflectorComponent->m_updateTime;
-						maxElement = x > maxElement ? x : maxElement;
+						oldView = viewportComponent;
+						didAnything = true;
 						break;
 					}
-					++x;
 				}
+				if (!didAnything && m_reflectorsToUpdate->size() < m_maxShadowsCasters)
+					m_reflectorsToUpdate->push_back({ reflectorComponent->m_updateTime, reflectorComponent, viewportComponent });
 			}
 		}
 
-		if (maxElement != -1)
-			oldest.resize(maxElement + 1);
-
-		for each (const auto & element in oldest)
-			if (element.second)
-				m_reflectorsToUpdate->push_back(element.second);
+		if (m_reflectorsToUpdate->size() > m_maxShadowsCasters)
+			m_reflectorsToUpdate->resize(m_maxShadowsCasters);
 	}
 
 
 private:
 	// Private Attributes
 	GLuint m_maxShadowsCasters = 1u;
-	std::shared_ptr<std::vector<Reflector_Component*>> m_reflectorsToUpdate;
+	std::shared_ptr<std::vector<std::tuple<float, Reflector_Component*, Viewport_Component*>>> m_reflectorsToUpdate;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

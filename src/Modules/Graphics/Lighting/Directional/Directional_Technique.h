@@ -30,14 +30,12 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, Prop_Technique * propView, ECSSystemList & auxilliarySystems)
-		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, Prop_Technique * propView, ECSSystemList & auxilliarySystems)
+		: m_engine(engine), m_viewports(viewports), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_visibility = std::make_shared<Directional_Visibility>();
 		m_buffers = std::make_shared<Directional_Buffers>();
-		GLuint data[] = { 0,0,0,0 };
-		m_visibility->indirectShape.write(0, sizeof(GLuint) * 4, &data);
-		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_engine, m_visibility));
+		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_engine, m_visibility, viewports));
 		auxilliarySystems.addSystem(new DirectionalSync_System(m_buffers));
 
 		// Asset Loading
@@ -63,10 +61,7 @@ public:
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			// count, primCount, first, reserved
-			const GLuint data[4] = { (GLuint)m_shapeQuad->getSize(), 0, 0, 0 };
-			m_visibility->indirectShape.write(0, sizeof(GLuint) * 4, &data);
-			m_visibility->indirectBounce.write(0, sizeof(GLuint) * 4, &data);
+			m_visibility->shapeVertexCount = m_shapeQuad->getSize();
 		});
 		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
 
@@ -80,7 +75,7 @@ public:
 		for (int x = 0, total = (32 * 32 * 32); x < total; ++x)
 			texData[x] = glm::vec3(randomFloats(generator), randomFloats(generator), randomFloats(generator));
 		glCreateTextures(GL_TEXTURE_3D, 1, &m_textureNoise32);
-		glTextureImage3DEXT(m_textureNoise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &data);
+		glTextureImage3DEXT(m_textureNoise32, GL_TEXTURE_3D, 0, GL_RGB16F, 32, 32, 32, 0, GL_RGB, GL_FLOAT, &texData);
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_WRAP_R, GL_MIRRORED_REPEAT);
@@ -90,9 +85,6 @@ public:
 		// Error Reporting
 		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 			m_engine->getManager_Messages().error("Directional_Technique Shadowmap Framebuffer has encountered an error.");
-
-		GLuint indData[] = { 0,0,0,0 };
-		m_visibility->indirectShape.write(0, sizeof(GLuint) * 4, &indData);
 
 		// Add New Component Types
 		auto & world = m_engine->getModule_World();
@@ -118,25 +110,36 @@ public:
 	// Public Interface Implementations
 	inline virtual void beginFrame(const float & deltaTime) override {
 		m_buffers->lightBuffer.beginWriting();
-		m_visibility->visLights.beginWriting();
 	}
 	inline virtual void endFrame(const float & deltaTime) override {
 		m_buffers->lightBuffer.endWriting();
-		m_visibility->visLights.endWriting();
+		for (auto & viewInfo : m_visibility->viewInfo)
+			viewInfo.visLights.endWriting();
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
 		// Exit Early
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
 			return;
 
-		// Render important shadows
-		renderShadows(deltaTime, viewport);
+		size_t visibilityIndex = 0;
+		bool found = false;
+		for (size_t x = 0; x < m_viewports->size(); ++x)
+			if (m_viewports->at(x) == viewport.get()) {
+				visibilityIndex = x;
+				found = true;
+				break;
+			}
+		
+		if (found) {
+			// Render important shadows
+			renderShadows(deltaTime, viewport, visibilityIndex);
 
-		// Render lights
-		renderLights(deltaTime, viewport);
+			// Render lights
+			renderLights(deltaTime, viewport, visibilityIndex);
 
-		// Render indirect lights
-		renderBounce(deltaTime, viewport);
+			// Render indirect lights
+			renderBounce(deltaTime, viewport, visibilityIndex);
+		}
 	}
 
 
@@ -145,13 +148,13 @@ private:
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_visibility->shadowsToUpdate.size()) {
+	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
+		if (m_visibility->viewInfo[visibilityIndex].shadowsToUpdate.size()) {
 			glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
 			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			m_shader_Shadow->bind();
 			m_shadowFBO.bindForWriting();
-			for (auto * light : m_visibility->shadowsToUpdate) {
+			for (auto * light : m_visibility->viewInfo[visibilityIndex].shadowsToUpdate) {
 				const float clearDepth(1.0f);
 				const glm::vec3 clear(0.0f);
 				m_shadowFBO.clear(light->m_shadowSpot);
@@ -160,15 +163,15 @@ private:
 				m_propShadowSystem->renderShadows(deltaTime);
 				light->m_updateTime = m_engine->getTime();
 			}
-			m_visibility->shadowsToUpdate.clear();
+			m_visibility->viewInfo[visibilityIndex].shadowsToUpdate.clear();
 			glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		}
 	}
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_visibility->visLightCount) {
+	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
+		if (m_visibility->viewInfo[visibilityIndex].visLightCount) {
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_ONE, GL_ONE);
@@ -179,9 +182,9 @@ private:
 			viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
 			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
 			glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
-			m_visibility->visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+			m_visibility->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_visibility->indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+			m_visibility->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 			glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 			glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
 		}
@@ -190,9 +193,9 @@ private:
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from.*/
-	inline void renderBounce(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_visibility->visShadowCount) {
-			m_shader_Bounce->setUniform(0, (GLint)m_visibility->visShadowCount);
+	inline void renderBounce(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
+		if (m_visibility->viewInfo[visibilityIndex].visShadowCount) {
+			m_shader_Bounce->setUniform(0, (GLint)(m_visibility->viewInfo[visibilityIndex].visShadowCount));
 			m_shader_Bounce->setUniform(1, viewport->m_rhVolume->m_max);
 			m_shader_Bounce->setUniform(2, viewport->m_rhVolume->m_min);
 			m_shader_Bounce->setUniform(4, viewport->m_rhVolume->m_resolution);
@@ -210,9 +213,9 @@ private:
 			glBindTextureUnit(1, m_shadowFBO.m_textureIDS[1]);
 			glBindTextureUnit(2, m_shadowFBO.m_textureIDS[2]);
 			glBindTextureUnit(4, m_textureNoise32);
-			m_visibility->visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+			m_visibility->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
 			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_visibility->indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_visibility->viewInfo[visibilityIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 			glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 
@@ -225,12 +228,7 @@ private:
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
-		const size_t lightSize = 0;
-		const GLuint bounceInstanceCount = GLuint(0);
-		m_visibility->indirectShape.write(sizeof(GLuint), sizeof(GLuint), &lightSize); // update primCount (2nd param)
-		m_visibility->indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
-		m_visibility->visShadowCount = 0;
-		m_visibility->shadowsToUpdate.clear();
+		m_visibility->viewInfo.clear();
 		m_buffers->lightBuffer.clear();
 	}
 
@@ -249,6 +247,7 @@ private:
 	// Shared Attributes
 	std::shared_ptr<Directional_Buffers> m_buffers;
 	std::shared_ptr<Directional_Visibility> m_visibility;
+	std::shared_ptr<std::vector<Viewport*>> m_viewports;
 };
 
 #endif // DIRECTIONAL_TECHNIQUE_H

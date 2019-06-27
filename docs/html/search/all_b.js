@@ -7,18 +7,17 @@ var searchData=
   ['level_5fio',['Level_IO',['../class_level___i_o.html',1,'']]],
   ['levelstruct_5fcomponent',['LevelStruct_Component',['../struct_level_struct___component.html',1,'']]],
   ['levelstruct_5fentity',['LevelStruct_Entity',['../struct_level_struct___entity.html',1,'']]],
+  ['lightcolor_5fcomponent',['LightColor_Component',['../struct_light_color___component.html',1,'']]],
+  ['lightcutoff_5fcomponent',['LightCutoff_Component',['../struct_light_cutoff___component.html',1,'']]],
   ['lightdirectional_5fcomponent',['LightDirectional_Component',['../struct_light_directional___component.html',1,'']]],
-  ['lightdirectionalshadow_5fcomponent',['LightDirectionalShadow_Component',['../struct_light_directional_shadow___component.html',1,'']]],
   ['lightpoint_5fcomponent',['LightPoint_Component',['../struct_light_point___component.html',1,'']]],
-  ['lightpointshadow_5fcomponent',['LightPointShadow_Component',['../struct_light_point_shadow___component.html',1,'']]],
+  ['lightradius_5fcomponent',['LightRadius_Component',['../struct_light_radius___component.html',1,'']]],
   ['lightspot_5fcomponent',['LightSpot_Component',['../struct_light_spot___component.html',1,'']]],
-  ['lightspotshadow_5fcomponent',['LightSpotShadow_Component',['../struct_light_spot_shadow___component.html',1,'']]],
   ['list',['List',['../class_list.html',1,'List'],['../class_list.html#a04a6181df945e6c193ae72564838f32d',1,'List::List()']]],
   ['load_5fpixel_5fdata',['Load_Pixel_Data',['../class_image___i_o.html#a2792d5354dfdfc468c44e4e224a22eda',1,'Image_IO']]],
   ['loadcachedbinary',['loadCachedBinary',['../class_shader.html#a200584b9b97008fc9c7e1f41b59cb7a6',1,'Shader']]],
   ['loaddocument',['loadDocument',['../struct_shader_obj.html#aa62f9833ecc8f237265a3af2c279a85a',1,'ShaderObj']]],
   ['loadfile',['loadFile',['../class_input_binding.html#aaf9497eaa8f90a8f5cda11c81ee05d31',1,'InputBinding::loadFile()'],['../class_preference_state.html#a1a2f0bdcbc100669a64d1f42087ef438',1,'PreferenceState::loadFile()']]],
   ['loadingindicator',['LoadingIndicator',['../class_loading_indicator.html',1,'LoadingIndicator'],['../class_loading_indicator.html#a4d7dd2d18044c912ed12dd2cbbf8636c',1,'LoadingIndicator::LoadingIndicator()']]],
-  ['loadworld',['loadWorld',['../class_world___module.html#aa7e51d83bb98cdebad1279310cd08b55',1,'World_Module']]],
-  ['lockframe',['lockFrame',['../class_camera_buffer.html#a38fe758b2a604a15718b2894d44de3cc',1,'CameraBuffer']]]
+  ['loadworld',['loadWorld',['../class_world___module.html#aa7e51d83bb98cdebad1279310cd08b55',1,'World_Module']]]
 ];

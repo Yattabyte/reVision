@@ -55,7 +55,7 @@ public:
 			const auto & index = lightComponent->m_lightIndex;
 			
 			// Synchronize the component if it is visible
-			if (renderableComponent->m_visible) {
+			if (renderableComponent->m_visibleAtAll) {
 				// Sync Camera Attributes
 				if (camFollowComponent) {
 					const auto size = glm::vec2(camFollowComponent->m_viewport->m_dimensions);

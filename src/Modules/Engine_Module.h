@@ -18,6 +18,8 @@ public:
 	// Public Interface Declarations
 	/** Initialize the module. */
 	inline virtual void initialize(Engine * engine) { m_engine = engine; };
+	/** Deinitialize the module. */
+	virtual void deinitialize() {}
 	/** Tick the ui by a frame.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline virtual void frameTick(const float &) {}

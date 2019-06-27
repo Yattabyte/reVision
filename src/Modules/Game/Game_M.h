@@ -22,13 +22,14 @@ public:
 
 	// Public (de)Constructors
 	/** Destroy this game module. */
-	~Game_Module();
+	inline ~Game_Module() = default;
 	/** Construct a game module. */
 	inline Game_Module() = default;
 
 
 	// Public Interface Implementation
 	virtual void initialize(Engine * engine) override;
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 
