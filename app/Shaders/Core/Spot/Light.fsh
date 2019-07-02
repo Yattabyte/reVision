@@ -55,13 +55,10 @@ float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance)
 		const float diskRadius 		= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
 			
 		float Factor = 0.0f, depth;
-		const int Shadowspot1 = Shadow_Spot;
-		const int Shadowspot2 = Shadow_Spot+1;
-		vec3 FinalCoord1, FinalCoord2;
+		vec3 FinalCoord;
 		for (uint x = 0; x < 9; ++x) { 
-			FinalCoord1 			= vec3(UVCoords + sampleOffsetDirections[x] * diskRadius, Shadowspot1);			
-			FinalCoord2 			= vec3(FinalCoord1.xy, Shadowspot2);
-			depth 					= min(texture(ShadowMap, FinalCoord1).r, texture(ShadowMap, FinalCoord2).r);
+			FinalCoord 				= vec3(UVCoords + sampleOffsetDirections[x] * diskRadius, Shadow_Spot);	
+			depth 					= texture(ShadowMap, FinalCoord).r;
 			Factor 			   		+= (depth >= FragmentDepth) ? FactorAmt : 0.0;
 		}		
 		return 						Factor;

@@ -2,9 +2,9 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Logical/ViewingPerspective_System.h"
+#include "Modules/Graphics/Logical/CameraPerspective_System.h"
+#include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
-#include "Modules/Graphics/Logical/CameraFollower_System.h"
 #include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 #include "Modules/World/World_M.h"
 #include "Engine.h"
@@ -17,6 +17,16 @@ void Graphics_Module::initialize(Engine * engine)
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
 
+	// Asset Loading
+	m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
+	m_shapeQuad = Shared_Primitive(m_engine, "quad");	
+	
+	// Asset-Finished Callbacks
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
+	});
+
 	// GL settings
 	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
 	glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
@@ -28,24 +38,33 @@ void Graphics_Module::initialize(Engine * engine)
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);		
 		m_viewport->resize(m_renderSize);
+		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
 		m_viewport->resize(m_renderSize);
+		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
 	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
-		m_viewport->setDrawDistance(f);
+		if ((*m_clientCamera)->FarPlane != f) {
+			(*m_clientCamera)->FarPlane = f;
+			genPerspectiveMatrix();
+		}
 	});
 	float fov = 90.0f;
 	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
 	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
-		m_viewport->setFOV(f);
+		if ((*m_clientCamera)->FOV != f) {
+			(*m_clientCamera)->FOV = f;
+			genPerspectiveMatrix();
+		}
 	});
 
 	// Camera Setup
+	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize);
 	CameraBuffer::BufferStructure cameraData;
 	cameraData.pMatrix = glm::mat4(1.0f);
 	cameraData.vMatrix = glm::mat4(1.0f);
@@ -53,15 +72,17 @@ void Graphics_Module::initialize(Engine * engine)
 	cameraData.Dimensions = glm::vec2(m_renderSize);
 	cameraData.FarPlane = farPlane;
 	cameraData.FOV = fov;
-	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
+	m_clientCamera = std::make_shared<CameraBuffer>();
+	m_clientCamera->replace(cameraData);
+	genPerspectiveMatrix();
 
 	// Rendering Effects & systems
-	auto sceneViewports = std::make_shared<std::vector<Viewport*>>();
-	m_systems.addSystem(new ViewingPerspective_System(sceneViewports));
+	auto sceneViewports = std::make_shared<std::vector<std::shared_ptr<CameraBuffer>>>();
+	m_systems.addSystem(new CameraPerspective_System(sceneViewports));
+	m_systems.addSystem(new CameraArrayPerspective_System(sceneViewports));
 	m_systems.addSystem(new FrustumCull_System(sceneViewports));
-	m_systems.addSystem(&m_cameraFollower);
 	m_systems.addSystem(new Skeletal_Animation(engine));
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, sceneViewports, m_systems);
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, sceneViewports, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
@@ -69,13 +90,13 @@ void Graphics_Module::initialize(Engine * engine)
 		auto * component = new Renderable_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("CameraFollower_Component", [engine](const ParamList & parameters) {
-		auto * component = new CameraFollower_Component();
+	world.addComponentType("Camera_Component", [&, engine](const ParamList & parameters) {
+		auto * component = new Camera_Component();
+		component->m_camera = std::make_shared<CameraBuffer>();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("Viewport_Component", [&, engine](const ParamList & parameters) {
-		auto * component = new Viewport_Component();
-		component->m_camera = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize, cameraData);
+	world.addComponentType("CameraArray_Component", [&, engine](const ParamList & parameters) {
+		auto * component = new CameraArray_Component();
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("BoundingSphere_Component", [engine](const ParamList & parameters) {
@@ -121,7 +142,7 @@ void Graphics_Module::initialize(Engine * engine)
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
-		auto * component = new LightSpot_Component();	
+		auto * component = new LightSpot_Component();
 		component->m_hasShadow = CastAny(parameters, 0, false);
 		return std::make_pair(component->ID, component);
 	});
@@ -141,8 +162,8 @@ void Graphics_Module::deinitialize()
 	// Remove support for the following list of component types
 	auto & world = m_engine->getModule_World();
 	world.removeComponentType("Renderable_Component");
-	world.removeComponentType("CameraFollower_Component");
-	world.removeComponentType("Viewport_Component");
+	world.removeComponentType("Camera_Component");
+	world.removeComponentType("CameraArray_Component");
 	world.removeComponentType("BoundingSphere_Component");
 	world.removeComponentType("Prop_Component");
 	world.removeComponentType("Skeleton_Component");
@@ -158,9 +179,8 @@ void Graphics_Module::deinitialize()
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
-	m_pipeline->beginFrame(deltaTime);
-	m_viewport->m_cameraBuffer->beginWriting();
-	m_viewport->m_cameraBuffer->pushChanges();
+	m_clientCamera->beginWriting();
+	m_clientCamera->pushChanges();
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
 	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
@@ -168,23 +188,51 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	// Update pipeline techniques ONCE per frame, not per render call!
 	m_pipeline->update(deltaTime);
 
-	// Render the scene from the user's perspective
-	render(deltaTime, m_viewport);
+	// Render the scene from the user's perspective to the screen
+	renderScene(deltaTime, m_viewport, m_clientCamera);
+	copyToScreen();
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
-	m_pipeline->endFrame(deltaTime);
-	m_viewport->m_cameraBuffer->endWriting();
+	m_pipeline->prepareForNextFrame(deltaTime);
+	m_clientCamera->endWriting();
 }
 
-void Graphics_Module::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories)
+void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories)
 {
-	// Prepare viewport for rendering
+	// Prepare viewport and camera for rendering
 	viewport->clear();
-	viewport->bind();
-	m_cameraFollower.setViewport(viewport);
-
-	// Update v
+	viewport->bind(camera);
+	camera->bind(2);
 
 	// Render
-	m_pipeline->render(deltaTime, viewport, allowedCategories);
+	m_pipeline->render(deltaTime, viewport, camera, allowedCategories);
+}
+
+void Graphics_Module::renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor)
+{
+	// Prepare camera for rendering
+	camera->bind(2);
+
+	// Render
+	m_pipeline->shadow(deltaTime, camera, layer, finalColor);
+}
+
+void Graphics_Module::genPerspectiveMatrix() 
+{
+	// Update Perspective Matrix
+	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);
+	const float horizontalRad = glm::radians((*m_clientCamera)->FOV);
+	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
+	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::ConstNearPlane, (*m_clientCamera)->FarPlane);
+}
+
+void Graphics_Module::copyToScreen()
+{
+	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		m_shader->bind();
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 }

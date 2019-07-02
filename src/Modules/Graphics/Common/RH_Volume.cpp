@@ -50,7 +50,7 @@ void RH_Volume::updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer)
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
 	const float tanHalfHFOV = glm::radians((*cameraBuffer)->FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { (*cameraBuffer)->ConstNearPlane, ((*cameraBuffer)->FarPlane * 0.25f) };
+	const float frustumSlice[2] = { (*cameraBuffer)->NearPlane, ((*cameraBuffer)->FarPlane * 0.25f) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,

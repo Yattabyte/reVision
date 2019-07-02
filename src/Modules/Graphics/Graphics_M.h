@@ -6,9 +6,11 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Logical/CameraFollower_System.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
+#include "Assets/Shader.h"
+#include "Assets/Primitive.h"
+#include "Utilities/GL/StaticBuffer.h"
 
 
 /** A module responsible for rendering.
@@ -33,21 +35,33 @@ public:
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const unsigned int & allowedCategories = Graphics_Technique::ALL);
-	/** Returns a shared pointer to the primary viewport.
-	@return					the primary viewport. */
-	inline std::shared_ptr<Viewport> getClientViewport() const {
-		return m_viewport;
+	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
+	/***/
+	void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor);
+	/***/
+	void genPerspectiveMatrix();
+	/** Returns a shared pointer to the primary camera.
+	@return					the primary camera. */
+	inline std::shared_ptr<CameraBuffer> getClientCamera() const {
+		return m_clientCamera;
 	}
 
 	
 private:
+	// Private Methods
+	/***/
+	void copyToScreen();
+
+
 	// Private Attributes
 	glm::ivec2								m_renderSize = glm::ivec2(1);
-	CameraFollower_System					m_cameraFollower;
 	ECSSystemList							m_systems;
 	std::unique_ptr<Graphics_Pipeline>		m_pipeline;
 	std::shared_ptr<Viewport>				m_viewport;
+	std::shared_ptr<CameraBuffer>			m_clientCamera;
+	Shared_Shader							m_shader;
+	Shared_Primitive						m_shapeQuad;
+	StaticBuffer							m_quadIndirectBuffer;
 	std::shared_ptr<bool>					m_aliveIndicator = std::make_shared<bool>(true);
 };
 

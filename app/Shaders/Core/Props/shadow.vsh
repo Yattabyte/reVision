@@ -1,4 +1,4 @@
-/* Point light - geometry shadowing shader. */
+/* Prop - Geometry shadowing shader. */
 #version 460
 #extension GL_ARB_shader_viewport_layer_array : enable
 #define MAX_BONES 100
@@ -13,19 +13,15 @@ struct PropAttributes {
 struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
-struct Light_Struct {
-	mat4 lightV; 
-	mat4 lightPV[6];
-	mat4 inversePV[6];
-	mat4 mMatrix;
-	vec4 LightColor;
-	vec4 LightPosition;
-	float LightIntensity;
-	float LightRadius;
-	int Shadow_Spot;
+layout (std430, binding = 2) buffer Camera_Buffer {		
+	mat4 pMatrix;
+	mat4 vMatrix;
+	vec3 EyePosition;
+	vec2 CameraDimensions;
+	float NearPlane;
+	float FarPlane;
+	float FOV;
 };
-
-
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
@@ -38,9 +34,6 @@ layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
 layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
 	int skeletonIndexes[];
 };
-layout (std430, binding = 8) readonly buffer Light_Buffer {
-	Light_Struct lightBuffers[];
-};
 
 layout (location = 0) in vec3 vertex;
 layout (location = 1) in vec3 normal;
@@ -51,15 +44,13 @@ layout (location = 5) in uint matID;
 layout (location = 6) in ivec4 boneIDs;
 layout (location = 7) in vec4 weights;
 
-layout (location = 0) uniform int LightIndex = 0;
+layout (location = 0) uniform int layer = 0;
 
 layout (location = 0) out vec3 WorldPos;
-layout (location = 1) out vec3 LightPos;
-layout (location = 2) out float FarPlane;
-layout (location = 3) out mat3 WorldTBN;
-layout (location = 7) out vec2 TexCoord0;
-layout (location = 8) flat out vec3 ColorModifier;
-layout (location = 9) flat out uint MaterialOffset;
+layout (location = 1) out mat3 WorldTBN;
+layout (location = 5) out vec2 TexCoord0;
+layout (location = 6) flat out uint MaterialOffset;
+
 
 void main()
 {	
@@ -79,12 +70,9 @@ void main()
 	const vec3 WorldTangent		= normalize(matTrans3 * normalize(tangent));		
 	const vec3 WorldBitangent 	= normalize(matTrans3 * normalize(bitangent));
 	WorldPos					= WorldVertex.xyz / WorldVertex.w;
-	LightPos					= lightBuffers[LightIndex].LightPosition.xyz;
-	FarPlane					= lightBuffers[LightIndex].LightRadius * lightBuffers[LightIndex].LightRadius;
-	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);	
-	TexCoord0             		= textureCoordinate;		
-	ColorModifier 				= lightBuffers[LightIndex].LightColor.xyz * lightBuffers[LightIndex].LightIntensity;	
+	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);
+	TexCoord0             		= textureCoordinate;	
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= lightBuffers[LightIndex].lightPV[gl_InstanceID] * WorldVertex;	
-	gl_Layer 					= lightBuffers[LightIndex].Shadow_Spot + gl_InstanceID + int(propBuffer[PropIndex].isStatic * 6);	
+	gl_Position           		= pMatrix * vMatrix * WorldVertex;
+	gl_Layer 					= layer;
 }

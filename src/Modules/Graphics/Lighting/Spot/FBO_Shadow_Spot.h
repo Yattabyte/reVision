@@ -10,6 +10,7 @@ struct FBO_Shadow_Spot {
 	// Attributes
 	GLuint m_fboID = 0, m_textureIDS[3] = { 0,0,0 };
 	glm::ivec2 m_size = glm::ivec2(1);
+	GLuint m_layerFaces = 1;
 
 
 	// (de)Constructors
@@ -40,10 +41,18 @@ struct FBO_Shadow_Spot {
 		glNamedFramebufferDrawBuffers(m_fboID, 2, drawBuffers);
 	}
 	inline void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
-		m_size = size;
-		glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+		if (m_size.x != size.x || m_size.y != size.y || m_layerFaces != layerFaces) {
+			m_size = size;
+			m_layerFaces = layerFaces;
+			const float clearDepth(1.0f);
+			const glm::vec3 clear(0.0f);
+			glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_textureIDS[1], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, layerFaces, 0, GL_RGB, GL_FLOAT, NULL);
+			glTextureImage3DEXT(m_textureIDS[2], GL_TEXTURE_2D_ARRAY, 0, GL_DEPTH_COMPONENT, m_size.x, m_size.y, layerFaces, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+			glClearTexImage(m_textureIDS[0], 0, GL_RGB, GL_FLOAT, &clear);
+			glClearTexImage(m_textureIDS[1], 0, GL_RGB, GL_FLOAT, &clear);
+			glClearTexImage(m_textureIDS[2], 0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
+		}
 	}
 	inline void clear(const GLint & zOffset) {
 		const float clearDepth(1.0f);

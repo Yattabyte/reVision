@@ -3,21 +3,17 @@
 #define DIRECTIONAL_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/Directional/FBO_Shadow_Directional.h"
+#include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalVisibility_System.h"
+#include "Modules/Graphics/Lighting/Directional/DirectionalScheduler_System.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalSync_System.h"
-#include "Modules/Graphics/Geometry/Prop/Prop_Shadow.h"
 #include "Modules/World/ECS/components.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Engine.h"
 #include <random>
-#include <vector>
-
-#define NUM_CASCADES 4
 
 
 /** A core lighting technique responsible for all directional lights. */
@@ -30,43 +26,35 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, const std::shared_ptr<std::vector<Viewport*>> & viewports, Prop_Technique * propView, ECSSystemList & auxilliarySystems)
-		: m_engine(engine), m_viewports(viewports), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
-		m_visibility = std::make_shared<Directional_Visibility>();
-		m_buffers = std::make_shared<Directional_Buffers>();
-		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_engine, m_visibility, viewports));
-		auxilliarySystems.addSystem(new DirectionalSync_System(m_buffers));
+		m_frameData = std::make_shared<DirectionalData>();
+		m_frameData->clientCamera = clientCamera;
+		auxilliarySystems.addSystem(new DirectionalScheduler_System(m_engine, m_frameData));
+		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_engine, m_frameData, cameras));
+		auxilliarySystems.addSystem(new DirectionalSync_System(m_frameData, cameras));
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
-		m_shader_Shadow = Shared_Shader(m_engine, "Core\\Directional\\Shadow");
-		m_shader_Culling = Shared_Shader(m_engine, "Core\\Directional\\Culling");
 		m_shader_Bounce = Shared_Shader(m_engine, "Core\\Directional\\Bounce");
 		m_shapeQuad = Shared_Primitive(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_shadowSize.x);
+		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_frameData->shadowSize.x);
 		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, m_aliveIndicator, [&](const float &f) {
-			m_shadowSize = glm::ivec2(std::max(1, (int)f));
-			m_shadowFBO.resize(m_shadowSize, m_shadowCount * 4);
-			m_buffers->shadowSize = f;
+			m_frameData->shadowSize = glm::ivec2(std::max(1, (int)f));
 			if (m_shader_Lighting && m_shader_Lighting->existsYet())
-				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
+				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_frameData->shadowSize.x); });
 		});
-		m_shadowSize = glm::ivec2(std::max(1, m_shadowSize.x));
-		m_shadowFBO.resize(m_shadowSize, 4);
-		m_buffers->shadowSize = m_shadowSize.x;
+		m_frameData->shadowSize = glm::ivec2(std::max(1, m_frameData->shadowSize.x));
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			m_visibility->shapeVertexCount = m_shapeQuad->getSize();
+			m_frameData->shapeVertexCount = m_shapeQuad->getSize();
 		});
-		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / m_shadowSize.x); });
-
-		// Geometry rendering pipeline
-		m_propShadowSystem = new Prop_Shadow(engine, 4, Prop_Shadow::RenderAll, m_shader_Culling, m_shader_Shadow, propView);
+		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_frameData->shadowSize.x); });
 
 		// Noise Texture
 		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
@@ -82,25 +70,8 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
-		// Error Reporting
-		if (glCheckNamedFramebufferStatus(m_shadowFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			m_engine->getManager_Messages().error("Directional_Technique Shadowmap Framebuffer has encountered an error.");
-
-		// Add New Component Types
-		auto & world = m_engine->getModule_World();
-		world.addNotifyOnComponentType(LightDirectional_Component::ID, m_aliveIndicator, [&](BaseECSComponent * c) {
-			auto * lightComponent = (LightDirectional_Component*)c;
-			lightComponent->m_lightIndex = m_buffers->lightBuffer.newElement();
-
-			// Assign shadowmap spot
-			int shadowSpot = (int)(m_shadowCount) * 4;
-			lightComponent->m_shadowSpot = shadowSpot;
-			m_shadowCount++;
-			m_shadowFBO.resize(m_shadowSize, m_shadowCount * 4);
-		});
-
-		// World-Changed Callback
-		world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		// Clear state on world-unloaded
+		 m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
 				clear();
 		});
@@ -108,37 +79,35 @@ public:
 
 
 	// Public Interface Implementations
-	inline virtual void beginFrame(const float & deltaTime) override {
-		m_buffers->lightBuffer.beginWriting();
-	}
-	inline virtual void endFrame(const float & deltaTime) override {
-		m_buffers->lightBuffer.endWriting();
-		for (auto & viewInfo : m_visibility->viewInfo)
+	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+		m_frameData->lightBuffer.endWriting();
+		for (auto & viewInfo : m_frameData->viewInfo)
 			viewInfo.visLights.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
-		// Exit Early
-		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader_Lighting->existsYet() || !m_shader_Shadow->existsYet() || !m_shader_Culling->existsYet() || !m_shader_Bounce->existsYet())
-			return;
-
-		size_t visibilityIndex = 0;
-		bool found = false;
-		for (size_t x = 0; x < m_viewports->size(); ++x)
-			if (m_viewports->at(x) == viewport.get()) {
-				visibilityIndex = x;
-				found = true;
-				break;
-			}
-		
-		if (found) {
+	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Render important shadows
+		if (m_enabled)	
 			// Render important shadows
-			renderShadows(deltaTime, viewport, visibilityIndex);
+			updateShadows(deltaTime);
+	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+		// Exit Early
+		if (m_enabled && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet() && m_shader_Bounce->existsYet()) {
+			size_t visibilityIndex = 0;
+			bool found = false;
+			for (size_t x = 0; x < m_cameras->size(); ++x)
+				if (m_cameras->at(x).get() == camera.get()) {
+					visibilityIndex = x;
+					found = true;
+					break;
+				}
+			if (found) {
+				// Render lights
+				renderLights(deltaTime, viewport, visibilityIndex);
 
-			// Render lights
-			renderLights(deltaTime, viewport, visibilityIndex);
-
-			// Render indirect lights
-			renderBounce(deltaTime, viewport, visibilityIndex);
+				// Render indirect lights
+				renderBounce(deltaTime, viewport, visibilityIndex);
+			}
 		}
 	}
 
@@ -148,30 +117,36 @@ private:
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderShadows(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
-		if (m_visibility->viewInfo[visibilityIndex].shadowsToUpdate.size()) {
-			glViewport(0, 0, m_shadowSize.x, m_shadowSize.y);
-			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_shader_Shadow->bind();
-			m_shadowFBO.bindForWriting();
-			for (auto * light : m_visibility->viewInfo[visibilityIndex].shadowsToUpdate) {
-				const float clearDepth(1.0f);
-				const glm::vec3 clear(0.0f);
-				m_shadowFBO.clear(light->m_shadowSpot);
-				// Render geometry components
-				m_propShadowSystem->setData(viewport->get3DPosition(), (int)*light->m_lightIndex);
-				m_propShadowSystem->renderShadows(deltaTime);
-				light->m_updateTime = m_engine->getTime();
+	inline void updateShadows(const float & deltaTime) {
+		if (m_frameData->viewInfo.size() && m_frameData->shadowsToUpdate.size()) {
+			glViewport(0, 0, m_frameData->shadowSize.x, m_frameData->shadowSize.y);
+			m_frameData->shadowFBO.bindForWriting();
+			for (auto &[time, light, cameras] : m_frameData->shadowsToUpdate) {
+				if (cameras.size() == 4) {
+					m_frameData->shadowFBO.clear(light->m_shadowSpot);
+					// Render all 4 splits
+					for (int x = 0; x < 4; ++x) {
+						// Prepare Camera
+						cameras[x]->beginWriting();
+						cameras[x]->pushChanges();
+
+						// Update shadows
+						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], light->m_shadowSpot + x, glm::vec3(1.0f));
+
+						// End Camera
+						cameras[x]->endWriting();
+					}
+				}
+				light->m_updateTime += deltaTime;
 			}
-			m_visibility->viewInfo[visibilityIndex].shadowsToUpdate.clear();
-			glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
+			m_frameData->shadowsToUpdate.clear();
 		}
 	}
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
-		if (m_visibility->viewInfo[visibilityIndex].visLightCount) {
+		if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visLightCount) {
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_ONE, GL_ONE);
@@ -181,10 +156,10 @@ private:
 			m_shader_Lighting->bind();									// Shader (directional)
 			viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
 			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
-			glBindTextureUnit(4, m_shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
-			m_visibility->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
-			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_visibility->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+			glBindTextureUnit(4, m_frameData->shadowFBO.m_textureIDS[2]);			// Shadow map (depth texture)
+			m_frameData->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
+			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+			m_frameData->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 			glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 			glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
 		}
@@ -194,8 +169,8 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from.*/
 	inline void renderBounce(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
-		if (m_visibility->viewInfo[visibilityIndex].visShadowCount) {
-			m_shader_Bounce->setUniform(0, (GLint)(m_visibility->viewInfo[visibilityIndex].visShadowCount));
+		if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
+			m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo[visibilityIndex].visShadowCount));
 			m_shader_Bounce->setUniform(1, viewport->m_rhVolume->m_max);
 			m_shader_Bounce->setUniform(2, viewport->m_rhVolume->m_min);
 			m_shader_Bounce->setUniform(4, viewport->m_rhVolume->m_resolution);
@@ -209,13 +184,13 @@ private:
 			m_shader_Bounce->bind();
 			viewport->m_rhVolume->writePrimary();
 			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0); // depth -> 3		
-			glBindTextureUnit(0, m_shadowFBO.m_textureIDS[0]);
-			glBindTextureUnit(1, m_shadowFBO.m_textureIDS[1]);
-			glBindTextureUnit(2, m_shadowFBO.m_textureIDS[2]);
+			glBindTextureUnit(0, m_frameData->shadowFBO.m_textureIDS[0]);
+			glBindTextureUnit(1, m_frameData->shadowFBO.m_textureIDS[1]);
+			glBindTextureUnit(2, m_frameData->shadowFBO.m_textureIDS[2]);
 			glBindTextureUnit(4, m_textureNoise32);
-			m_visibility->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
-			m_buffers->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_visibility->viewInfo[visibilityIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_frameData->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		// SSBO visible light indices
+			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+			m_frameData->viewInfo[visibilityIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 			glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 
@@ -228,26 +203,22 @@ private:
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
-		m_visibility->viewInfo.clear();
-		m_buffers->lightBuffer.clear();
+		m_frameData->viewInfo.clear();
+		m_frameData->shadowsToUpdate.clear();
+		m_frameData->lightBuffer.clear();
 	}
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	Shared_Shader m_shader_Lighting, m_shader_Shadow, m_shader_Culling, m_shader_Bounce;
+	Shared_Shader m_shader_Lighting, m_shader_Bounce;
 	Shared_Primitive m_shapeQuad;
-	Prop_Shadow * m_propShadowSystem = nullptr;
 	GLuint m_textureNoise32 = 0;
-	glm::ivec2 m_shadowSize = glm::ivec2(1024);
-	size_t m_shadowCount = 0ull;
-	FBO_Shadow_Directional m_shadowFBO;;
 
 	// Shared Attributes
-	std::shared_ptr<Directional_Buffers> m_buffers;
-	std::shared_ptr<Directional_Visibility> m_visibility;
-	std::shared_ptr<std::vector<Viewport*>> m_viewports;
+	std::shared_ptr<DirectionalData> m_frameData;
+	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
 };
 
 #endif // DIRECTIONAL_TECHNIQUE_H

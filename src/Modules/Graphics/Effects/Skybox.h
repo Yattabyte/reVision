@@ -70,7 +70,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 		if (m_skyOutOfDate ) {
@@ -137,7 +137,7 @@ private:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_BASE_LEVEL, 0);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_MAX_LEVEL, 5);
 		glNamedFramebufferTexture(m_cubeFBO, GL_COLOR_ATTACHMENT0, m_cubemapMipped, 0);
-		glViewport(0, 0, GLsizei((*viewport->m_cameraBuffer)->Dimensions.x), GLsizei((*viewport->m_cameraBuffer)->Dimensions.y));
+		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		Shader::Release();
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}

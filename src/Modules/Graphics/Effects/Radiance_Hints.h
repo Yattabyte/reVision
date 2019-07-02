@@ -52,7 +52,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderRecon->existsYet() || !m_shaderRebounce->existsYet())
 			return;
 		
@@ -77,7 +77,7 @@ public:
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Reconstruct indirect radiance
-		glViewport(0, 0, GLsizei((*viewport->m_cameraBuffer)->Dimensions.x), GLsizei((*viewport->m_cameraBuffer)->Dimensions.y));
+		glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		m_shaderRecon->bind();
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		viewport->m_rhVolume->readSecondary(4);

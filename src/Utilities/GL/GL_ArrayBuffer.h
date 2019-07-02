@@ -21,9 +21,6 @@ public:
 		glUnmapNamedBuffer(m_bufferID[1]);
 		glUnmapNamedBuffer(m_bufferID[2]);
 		glDeleteBuffers(3, m_bufferID);
-		for (auto pointer : m_indexPointers)
-			*pointer = 0ull;
-		m_indexPointers.clear();
 	}
 	/** Construct a buffer.
 	@param	capacity		the starting capacity (1 or more). */
@@ -37,6 +34,25 @@ public:
 			m_bufferPtr[x] = (T*)glMapNamedBufferRange(m_bufferID[x], 0, bufferSize, flags);
 		}
 	}
+	/** Assignment constructor, for moving 1 buffer to another.
+	@param	o				the other buffer to move to here (invalidating it). */
+	inline GL_ArrayBuffer(GL_ArrayBuffer && o) {
+		m_bufferID[0] = (std::move(o.m_bufferID[0]));
+		m_bufferID[1] = (std::move(o.m_bufferID[1]));
+		m_bufferID[2] = (std::move(o.m_bufferID[2]));
+		m_bufferPtr[0] = (std::move(o.m_bufferPtr[0]));
+		m_bufferPtr[1] = (std::move(o.m_bufferPtr[1]));
+		m_bufferPtr[2] = (std::move(o.m_bufferPtr[2]));
+		m_capacity = std::move(o.m_capacity);
+
+		o.m_bufferID[0] = 0;
+		o.m_bufferID[1] = 0;
+		o.m_bufferID[2] = 0;
+		o.m_bufferPtr[0] = nullptr;
+		o.m_bufferPtr[1] = nullptr;
+		o.m_bufferPtr[2] = nullptr;
+		o.m_capacity = 0;
+	}
 	/** Assignment operator, for moving 1 buffer to another. 
 	@param	o				the other buffer to move to here (invalidating it). */
 	inline GL_ArrayBuffer & operator=(GL_ArrayBuffer && o) noexcept {
@@ -47,7 +63,6 @@ public:
 		m_bufferPtr[1] = (std::move(o.m_bufferPtr[1]));
 		m_bufferPtr[2] = (std::move(o.m_bufferPtr[2]));
 		m_capacity = std::move(o.m_capacity);
-		m_indexPointers = std::move(o.m_indexPointers);
 
 		o.m_bufferID[0] = 0;
 		o.m_bufferID[1] = 0;
@@ -56,7 +71,6 @@ public:
 		o.m_bufferPtr[1] = nullptr;
 		o.m_bufferPtr[2] = nullptr;
 		o.m_capacity = 0;
-		o.m_indexPointers.clear();
 		return *this;
 	}
 
@@ -71,18 +85,71 @@ public:
 
 
 	// Public Methods
-	/** Add a new element to this array. 
-	@return					pointer to the index into this array (buffer owns pointer). */
-	inline GL_AB_Index newElement() {
-		constexpr auto elementSize = sizeof(T);
-		GL_AB_Index index = std::make_shared<size_t>(m_indexPointers.size());
+	///** Add a new element to this array. 
+	//@return					pointer to the index into this array (buffer owns pointer). */
+	//inline GL_AB_Index newElement() {
+	//	constexpr auto elementSize = sizeof(T);
+	//	GL_AB_Index index = std::make_shared<size_t>(m_indexPointers.size());
 
+	//	// See if we must expand this container
+	//	if (m_indexPointers.size() >= m_capacity) {
+	//		const auto oldSize = sizeof(T) * m_capacity;
+
+	//		// Double the previous capacity
+	//		m_capacity *= 2ull;
+	//		const auto newSize = sizeof(T) * m_capacity;
+
+	//		for (int x = 0; x < 3; ++x) {
+	//			// Wait for this buffer in particular
+	//			if (m_fence[x] != nullptr)
+	//				while (1) {
+	//					GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	//					if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
+	//						glDeleteSync(m_fence[x]);
+	//						m_fence[x] = nullptr;
+	//						break;
+	//					}
+	//				}
+
+
+	//			// Create new buffer
+	//			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
+	//			GLuint newBuffer = 0;
+	//			glCreateBuffers(1, &newBuffer);
+	//			glNamedBufferStorage(newBuffer, newSize, 0, GL_DYNAMIC_STORAGE_BIT | flags);
+
+	//			// Copy old buffer
+	//			if (oldSize)
+	//				glCopyNamedBufferSubData(m_bufferID[x], newBuffer, 0, 0, oldSize);
+
+	//			// Delete old buffer
+	//			glUnmapNamedBuffer(m_bufferID[x]);
+	//			glDeleteBuffers(1, &m_bufferID[x]);
+
+	//			// Migrate new buffer
+	//			m_bufferID[x] = newBuffer;
+	//			m_bufferPtr[x] = (T*)glMapNamedBufferRange(m_bufferID[x], 0, newSize, flags);
+	//		}
+	//	}
+
+	//	// Add new index to the list, return it
+	//	m_indexPointers.push_back(index);
+	//	return index;
+	//}
+	///** Remove an element from this array at the index provided. 
+	//@param	index			pointer to the index of the element. */
+	//inline void removeElement(const GL_AB_Index & index) {
+	//	// Decrement the value for every index pointer PAST the input index
+	//	for (size_t x = (*index) + 1; x < m_indexPointers.size(); ++x)
+	//		*m_indexPointers[x] -= 1;
+	//	*index = 0;
+	//}
+	inline void resize(const size_t & size) {
 		// See if we must expand this container
-		if (m_indexPointers.size() >= m_capacity) {
+		if (size > m_capacity) {
 			const auto oldSize = sizeof(T) * m_capacity;
 
-			// Double the previous capacity
-			m_capacity *= 2ull;
+			m_capacity = size;
 			const auto newSize = sizeof(T) * m_capacity;
 
 			for (int x = 0; x < 3; ++x) {
@@ -117,25 +184,9 @@ public:
 				m_bufferPtr[x] = (T*)glMapNamedBufferRange(m_bufferID[x], 0, newSize, flags);
 			}
 		}
-
-		// Add new index to the list, return it
-		m_indexPointers.push_back(index);
-		return index;
-	}
-	/** Remove an element from this array at the index provided. 
-	@param	index			pointer to the index of the element. */
-	inline void removeElement(const GL_AB_Index & index) {
-		// Decrement the value for every index pointer PAST the input index
-		for (size_t x = (*index) + 1; x < m_indexPointers.size(); ++x)
-			*m_indexPointers[x] -= 1;
-		*index = 0;
 	}
 	/** Clears the buffer data, but retains capacity. */
 	inline void clear() {
-		for (auto pointer : m_indexPointers)
-			*pointer = 0ull;
-		m_indexPointers.clear();
-
 		const T t = T();
 		for (int n = 0; n < 3; ++n)
 			for (int x = 0; x < m_capacity; ++x)
@@ -147,10 +198,16 @@ public:
 	inline T& operator [] (const GL_AB_Index & index) {
 		return m_bufferPtr[m_writeIndex][*index];
 	}
-	/** Retrieve the length of this arrayt (the number of elements in it).
+	/** Retrieve a reference to the element contained at the index specified.
+	@param	index			index to the element desired.
+	@return					reference to the element desired. */
+	inline T& operator [] (const int & index) {
+		return m_bufferPtr[m_writeIndex][index];
+	}
+	/** Retrieve the length of this array (the number of elements in it).
 	@return					the number of elemetns in this array. */
 	inline size_t getLength() const {
-		return m_indexPointers.size();
+		return m_capacity;
 	}
 	/** Wait for the current fence to pass, for the current frame index. */
 	inline void beginWriting() {
@@ -179,7 +236,6 @@ private:
 	GLuint m_bufferID[3] = { 0,0,0 };
 	T  * m_bufferPtr[3] = { nullptr, nullptr, nullptr };
 	GLsync m_fence[3] = { nullptr, nullptr, nullptr };
-	std::vector<GL_AB_Index> m_indexPointers;
 	size_t m_capacity = 0;
 };
 

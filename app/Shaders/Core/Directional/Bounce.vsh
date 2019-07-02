@@ -4,9 +4,7 @@
 #define NUM_CASCADES 4
 
 struct Light_Struct {
-	mat4 lightV;	
 	mat4 LightVP[NUM_CASCADES];
-	mat4 InverseLightVP[NUM_CASCADES];	
 	float CascadeEndClipSpace[NUM_CASCADES];
 	vec4 LightColor;
 	vec4 LightDirection;
@@ -18,6 +16,9 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 	mat4 vMatrix;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
+	float NearPlane;
+	float FarPlane;
+	float FOV;
 };
 layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
 	int lightIndexes[];

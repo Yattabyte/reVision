@@ -6,26 +6,9 @@
 #include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/DynamicBuffer.h"
+#include "Modules/Graphics/Lighting/Point/PointData.h"
 #include "Engine.h"
-#include "glm/gtc/type_ptr.hpp"
-#include <memory>
-#include <vector>
 
-
-/***/
-struct Directional_Visibility {
-	struct ViewInfo {
-		// Directional shadows updated PER viewport, because they are CSM from perspective
-		size_t visLightCount = 0ull, visShadowCount = 0ull;
-		DynamicBuffer visLights;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4), indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
-		std::vector<LightDirectional_Component*> shadowsToUpdate;
-	};
-	std::vector<ViewInfo> viewInfo;
-	size_t shapeVertexCount = 0ull;
-};
 
 /***/
 class DirectionalVisibility_System : public BaseECSSystem {
@@ -37,10 +20,11 @@ public:
 		m_aliveIndicator = false;
 	}
 	/***/
-	inline DirectionalVisibility_System(Engine * engine, const std::shared_ptr<Directional_Visibility> & visibility, const std::shared_ptr<std::vector<Viewport*>> & viewports)
-		: m_visibility(visibility), m_viewports(viewports) {
+	inline DirectionalVisibility_System(Engine * engine, const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 		
 		auto & preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
@@ -50,51 +34,44 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Link together the dimensions of view info and viewport vectors
-		auto oldSize = m_visibility->viewInfo.size();
-		m_visibility->viewInfo.resize(m_viewports->size());
-		for (int x = oldSize; x < m_viewports->size(); ++x) {
-			// count, primCount, first, reserved
-			const GLuint data[] = { (GLuint)m_visibility->shapeVertexCount,0,0,0 };
-			m_visibility->viewInfo[x].indirectShape.write(0, sizeof(GLuint) * 4, &data);
-			m_visibility->viewInfo[x].indirectBounce.write(0, sizeof(GLuint) * 4, &data);
-		}
+		// Link together the dimensions of view info and light buffers to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_cameras->size());
 
 		// Compile results PER viewport
-		for (int x = 0; x < m_viewports->size(); ++x) {
-			auto * viewport = m_viewports->at(x);
-			auto & viewInfo = m_visibility->viewInfo[x];
+		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
+			auto & viewInfo = m_frameData->viewInfo[x];
 
 			std::vector<GLint> lightIndices;
-			viewInfo.shadowsToUpdate.clear();
+			int index = 0;
 			for each (const auto & componentParam in components) {
 				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 				LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[1];
+				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
 
 				// Render lights and shadows for all visible directional lights
-				if (renderableComponent->m_visible[x]) {
-					lightIndices.push_back((GLuint)* lightComponent->m_lightIndex);
-					if (lightComponent->m_hasShadow)
-						viewInfo.shadowsToUpdate.push_back(lightComponent);
-				}
+				if (renderableComponent->m_visible[x]) 
+					lightIndices.push_back((GLuint)index);				
+				index++;
 			}
 
 			// Update camera buffers
 			viewInfo.visLights.beginWriting();
 			viewInfo.visLightCount = (GLsizei)lightIndices.size();
-			viewInfo.visShadowCount = (GLsizei)viewInfo.shadowsToUpdate.size();
-			const GLuint bounceInstanceCount = GLuint(viewInfo.visShadowCount * m_bounceSize);
+			viewInfo.visShadowCount = (GLsizei)m_frameData->shadowsToUpdate.size();
 			viewInfo.visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-			viewInfo.indirectShape.write(sizeof(GLuint), sizeof(GLuint), &viewInfo.visLightCount); // update primCount (2nd param)
-			viewInfo.indirectBounce.write(sizeof(GLuint), sizeof(GLuint), &bounceInstanceCount);
+			const GLuint dataShape[] = { (GLuint)m_frameData->shapeVertexCount, (GLuint)viewInfo.visLightCount,0,0 };
+			const GLuint dataBounce[] = { (GLuint)m_frameData->shapeVertexCount, (GLuint)(viewInfo.visShadowCount * m_bounceSize),0,0 };
+			viewInfo.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
+			viewInfo.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
 		}
 	}
+
 
 private:
 	// Private Attributes
 	GLuint m_bounceSize = 16u;
-	std::shared_ptr<Directional_Visibility> m_visibility;
-	std::shared_ptr<std::vector<Viewport*>> m_viewports;
+	std::shared_ptr<DirectionalData> m_frameData;
+	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

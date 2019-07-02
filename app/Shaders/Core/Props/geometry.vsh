@@ -18,6 +18,9 @@ layout (std430, binding = 2) buffer Camera_Buffer {
 	mat4 vMatrix;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
+	float NearPlane;
+	float FarPlane;
+	float FOV;
 };
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];

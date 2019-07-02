@@ -3,6 +3,7 @@
 #define GRAPHICS_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include <memory>
 
 
@@ -40,15 +41,13 @@ public:
 
 	// Public Interface
 	/***/
-	inline virtual void beginFrame(const float & deltaTime) {}
-	/***/
-	inline virtual void endFrame(const float & deltaTime) {}
+	inline virtual void prepareForNextFrame(const float & deltaTime) {}
 	/***/
 	inline virtual void updateTechnique(const float & deltaTime) {}
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) {}
 
 
 protected:

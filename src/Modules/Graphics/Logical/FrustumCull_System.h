@@ -5,7 +5,6 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Logical/components.h"
-#include "Modules/Graphics/Common/Viewport.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
 
@@ -17,8 +16,8 @@ public:
 	/***/
 	inline ~FrustumCull_System() = default;
 	/***/
-	inline FrustumCull_System(const std::shared_ptr<std::vector<Viewport*>> & viewports)
-		: m_viewports(viewports) {
+	inline FrustumCull_System(const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+		: m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
@@ -32,28 +31,28 @@ public:
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[2];
 
-			// Ensure renderable component visibility and viewports are linked
-			renderableComponent->m_visible.resize(m_viewports->size());
+			// Ensure renderable component visibility and cameras are linked
+			renderableComponent->m_visible.resize(m_cameras->size());
 
-			// Update the visibility status for each viewport this entity is visible in
+			// Update the visibility status for each camera this entity is visible in
 			bool visibleAtAll = false;
-			for (int x = 0; x < m_viewports->size(); ++x) {
-				auto * viewport = m_viewports->at(x);
+			for (int x = 0; x < m_cameras->size(); ++x) {
+				auto camera = m_cameras->at(x);
 
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
 				bool isVisible = true;
-				auto camPosition = viewport->get3DPosition();
+				auto camPosition = camera->get()->EyePosition;
 				auto objPosition = transformComponent->m_transform.m_position;
 				if (bsphereComponent)
 					objPosition += bsphereComponent->m_positionOffset;
 
 				// If FOV is 360, it can see everything
-				if (viewport->getFOV() < 359.9f) {
+				if (camera->get()->FOV < 359.9f) {
 					// Frustum x Bounding-Sphere Test
 					if (bsphereComponent) {
 						glm::vec4 planes[6];
-						ViewportToPlanes(viewport, planes);
+						CameraToPlanes(camera, planes);
 						const auto radius = bsphereComponent->m_radius;
 						// Update bsphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
@@ -74,7 +73,7 @@ public:
 					// Consider the shape of the object
 					if (bsphereComponent)
 						objPosition -= bsphereComponent->m_radius;
-					if (glm::distance(camPosition, objPosition) > viewport->getDrawDistance())
+					if (glm::distance(camPosition, objPosition) > camera->get()->FarPlane)
 						isVisible = false;
 				}
 
@@ -92,7 +91,7 @@ public:
 
 	// Public Methods
 	/***/
-	static void ViewportToPlanes(const Viewport * viewport, glm::vec4(&planes)[6]) {
+	static void CameraToPlanes(const std::shared_ptr<CameraBuffer> & camera, glm::vec4(&planes)[6]) {
 		constexpr static auto normalizePlane = [](glm::vec4 &plane) {
 			float magnitude = (float)sqrtf(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
 			plane[0] /= magnitude;
@@ -100,8 +99,8 @@ public:
 			plane[2] /= magnitude;
 			plane[3] /= magnitude;
 		};
-		const auto pMatrix = glm::value_ptr(viewport->getPerspectiveMatrix());
-		const auto vMatrix = glm::value_ptr(viewport->getViewMatrix());
+		const auto pMatrix = glm::value_ptr(camera->get()->pMatrix);
+		const auto vMatrix = glm::value_ptr(camera->get()->vMatrix);
 		float clip[16]; //clipping planes
 
 		clip[0] = vMatrix[0] * pMatrix[0] + vMatrix[1] * pMatrix[4] + vMatrix[2] * pMatrix[8] + vMatrix[3] * pMatrix[12];
@@ -164,7 +163,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<Viewport*>> m_viewports;
+	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
 };
 
 #endif // FRUSTUMCULL_SYSTEM_H

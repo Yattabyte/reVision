@@ -37,7 +37,7 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
 			return;
 		glEnable(GL_BLEND);

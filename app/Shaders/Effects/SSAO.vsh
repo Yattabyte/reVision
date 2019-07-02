@@ -6,6 +6,9 @@ layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {
 	mat4 vMatrix;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
+	float NearPlane;
+	float FarPlane;
+	float FOV;
 };
 
 layout (location = 0) in vec3 vertex;

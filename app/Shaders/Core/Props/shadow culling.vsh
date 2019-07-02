@@ -1,5 +1,6 @@
-/* Prop - Geometry culling shader. */
+/* Prop - Geometry culling shader for shadow maps. */
 #version 460
+#extension GL_ARB_shader_viewport_layer_array : enable
 
 struct PropAttributes {
 	uint materialID;
@@ -25,9 +26,11 @@ layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
 
 layout (location = 0) in vec3 vertex;
 layout (location = 0) flat out int id;
+layout (location = 0) uniform int layer = 0;
 
 void main()
 {	
 	gl_Position = pMatrix * vMatrix * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);
+	gl_Layer = layer;
 	id = gl_DrawID;
 }

@@ -6,26 +6,8 @@
 #include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Utilities/GL/GL_ArrayBuffer.h"
-#include <memory>
+#include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 
-
-/***/
-struct Directional_Buffers {
-	/** OpenGL buffer for directional lights. */
-	struct Directional_Buffer {
-		glm::mat4 lightV = glm::mat4(1.0f);
-		glm::mat4 lightVP[NUM_CASCADES];
-		glm::mat4 inverseVP[NUM_CASCADES];
-		float CascadeEndClipSpace[NUM_CASCADES];
-		glm::vec3 LightColor = glm::vec3(1.0f); float padding1;
-		glm::vec3 LightDirection = glm::vec3(0, -1, 0); float padding2;
-		float LightIntensity = 1.0f;
-		int Shadow_Spot = -1; glm::vec2 padding3;
-	};
-	GL_ArrayBuffer<Directional_Buffer> lightBuffer;
-	float shadowSize = 1.0f;
-};
 
 /***/
 class DirectionalSync_System : public BaseECSSystem {
@@ -34,36 +16,46 @@ public:
 	/***/
 	inline ~DirectionalSync_System() = default;
 	/***/
-	inline DirectionalSync_System(const std::shared_ptr<Directional_Buffers> & buffers)
-		: m_buffers(buffers) {
+	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
+		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
-		addComponentType(CameraFollower_Component::ID, FLAG_OPTIONAL);
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
+		// Link together the dimensions of view info to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_cameras->size());
+
+		// Resize light buffers to match number of entities this frame
+		m_frameData->lightBuffer.resize(components.size());
+		m_frameData->lightBuffer.beginWriting();
+		int index = 0;
 		for each (const auto & componentParam in components) {
 			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 			LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[1];
-			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[2];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[3];
-			CameraFollower_Component * camFollowComponent = (CameraFollower_Component*)componentParam[4];
-			const auto & index = lightComponent->m_lightIndex;
-			
+			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
+			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[3];
+			Transform_Component * transformComponent = (Transform_Component*)componentParam[4];
+
 			// Synchronize the component if it is visible
 			if (renderableComponent->m_visibleAtAll) {
 				// Sync Camera Attributes
-				if (camFollowComponent) {
-					const auto size = glm::vec2(camFollowComponent->m_viewport->m_dimensions);
+				if (cameraComponent) {
+					cameraComponent->m_cameras.resize(NUM_CASCADES);
+					for (int x = 0; x < NUM_CASCADES; ++x)
+						if (!cameraComponent->m_cameras[x])
+							cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
+					const auto size = glm::vec2(m_frameData->clientCamera.get()->get()->Dimensions);
 					const float ar = size.x / size.y;
-					const float tanHalfHFOV = glm::radians(camFollowComponent->m_viewport->getFOV()) / 2.0f;
+					const float tanHalfHFOV = glm::radians(m_frameData->clientCamera.get()->get()->FOV) / 2.0f;
 					const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-					const float near_plane = -CameraBuffer::BufferStructure::ConstNearPlane;
-					const float far_plane = -camFollowComponent->m_viewport->getDrawDistance();
+					const float near_plane = -CameraBuffer::ConstNearPlane;
+					const float far_plane = -m_frameData->clientCamera.get()->get()->FarPlane;
 					float cascadeEnd[NUM_CASCADES + 1];
 					glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
 					constexpr float lambda = 0.75f;
@@ -91,11 +83,11 @@ public:
 						// Use to make a bounding sphere, but then convert into a bounding box
 						aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
 					}
-					const glm::mat4 CamInv = glm::inverse(camFollowComponent->m_viewport->getViewMatrix());
-					const glm::mat4 CamP = camFollowComponent->m_viewport->getPerspectiveMatrix();
-					const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));					
-					for (int i = 0; i < NUM_CASCADES; i++) {
-						const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / m_buffers->shadowSize;
+					const glm::mat4 CamInv = glm::inverse(m_frameData->clientCamera.get()->get()->vMatrix);
+					const glm::mat4 CamP = m_frameData->clientCamera.get()->get()->pMatrix;
+					const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+					for (int i = 0; i < NUM_CASCADES; ++i) {
+						const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_frameData->shadowSize.x;
 						const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[i], 1.0f));
 						const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
 						const glm::vec3 newMin = -aabb[i] + clampedPos;
@@ -105,41 +97,45 @@ public:
 						const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
 						const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
 						const glm::vec4 v2 = CamP * v1;
-						m_buffers->lightBuffer[index].lightVP[i] = pvMatrix;
-						m_buffers->lightBuffer[index].inverseVP[i] = inverse(pvMatrix);
-						m_buffers->lightBuffer[index].CascadeEndClipSpace[i] = v2.z;
-					}					
+						m_frameData->lightBuffer[index].lightVP[i] = pvMatrix;
+						m_frameData->lightBuffer[index].CascadeEndClipSpace[i] = v2.z;
+						cameraComponent->m_cameras[i]->get()->Dimensions = m_frameData->shadowSize;
+						cameraComponent->m_cameras[i]->get()->FOV = 90.0f;
+						cameraComponent->m_cameras[i]->get()->NearPlane = newMin.z;
+						cameraComponent->m_cameras[i]->get()->FarPlane = newMax.z;
+						cameraComponent->m_cameras[i]->get()->EyePosition = clampedPos;
+						cameraComponent->m_cameras[i]->get()->pMatrix = pMatrix;
+						cameraComponent->m_cameras[i]->get()->vMatrix = sunModelMatrix;
+					}
 				}
 
 				// Sync Color Attributes
 				if (colorComponent) {
-					m_buffers->lightBuffer[index].LightColor = colorComponent->m_color;
-					m_buffers->lightBuffer[index].LightIntensity = colorComponent->m_intensity;
+					m_frameData->lightBuffer[index].LightColor = colorComponent->m_color;
+					m_frameData->lightBuffer[index].LightIntensity = colorComponent->m_intensity;
 				}
-				
+
 				// Sync Transform Attributes
 				if (transformComponent) {
 					const auto & orientation = transformComponent->m_transform.m_orientation;
 					const auto matRot = glm::mat4_cast(orientation);
 					const glm::mat4 sunTransform = matRot;
-					m_buffers->lightBuffer[index].LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
-
-					if (lightComponent->m_hasShadow)
-						m_buffers->lightBuffer[index].lightV = glm::inverse(sunTransform * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+					m_frameData->lightBuffer[index].LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));
 				}
 
 				// Sync Buffer Attributes
-				if (lightComponent->m_hasShadow)
-					m_buffers->lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
-				else
-					m_buffers->lightBuffer[index].Shadow_Spot = -1;
+				m_frameData->lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
 			}
+			index++;
 		}
+
 	}
+
 
 private:
 	// Private Attributes
-	std::shared_ptr<Directional_Buffers> m_buffers;
+	std::shared_ptr<DirectionalData> m_frameData;
+	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
 };
 
 #endif // DIRECTIONALSYNC_SYSTEM_H

@@ -4,6 +4,7 @@
 
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/Graphics/Common/Viewport.h"
+#include "Modules/Graphics/Common/CameraBuffer.h"
 #include <memory>
 
 
@@ -14,13 +15,13 @@ struct Renderable_Component : public ECSComponent<Renderable_Component> {
 };
 
 /***/
-struct CameraFollower_Component : public ECSComponent<CameraFollower_Component> {
-	std::shared_ptr<Viewport> m_viewport;
+struct Camera_Component : public ECSComponent<Camera_Component> {
+	std::shared_ptr<CameraBuffer> m_camera;
 };
 
 /***/
-struct Viewport_Component : public ECSComponent<Viewport_Component> {
-	std::shared_ptr<Viewport> m_camera;
+struct CameraArray_Component : public ECSComponent<CameraArray_Component> {
+	std::vector<std::shared_ptr<CameraBuffer>> m_cameras;
 };
 
 /***/

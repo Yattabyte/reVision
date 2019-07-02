@@ -6,6 +6,7 @@
 #include "Modules/World/ECS/components.h"
 #include "Modules/Game/ECS/components.h"
 #include "Modules/Graphics/Geometry/components.h"
+#include "Modules/Graphics/Lighting/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -21,7 +22,7 @@ public:
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Player3D_Component::ID);
-		addComponentType(Viewport_Component::ID);
+		addComponentType(Camera_Component::ID);
 
 		// Error Reporting
 		if (!isValid())
@@ -35,7 +36,7 @@ public:
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
 			Player3D_Component * playerComponent = (Player3D_Component*)componentParam[1];
-			Viewport_Component * viewportComponent = (Viewport_Component*)componentParam[2];
+			Camera_Component * cameraComponent = (Camera_Component*)componentParam[2];
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;
@@ -66,29 +67,38 @@ public:
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
 			if (actionState.isAction(ActionState::FIRE1)) {
 				auto & world = m_engine->getModule_World();
-				Prop_Component prop;
+				/*Prop_Component prop;
 				prop.m_static = false;
-				prop.m_model = Shared_Model(m_engine, "Test\\ChamferedCube.obj");
+				prop.m_model = Shared_Model(m_engine, "Test\\ChamferedCube.obj");*/
+				Renderable_Component renderable;
+				BoundingSphere_Component bsphere;
+				LightColor_Component color;
+				LightRadius_Component radius;
+				LightPoint_Component point;
+				CameraArray_Component camArray;
 				Transform_Component trans;
+
+				point.m_hasShadow = true;
+				radius.m_radius = 5.0f;
+				color.m_color = glm::vec3(5.0f, 2.5, 1);
+				color.m_intensity = 1.0f;
 				auto dir = glm::inverse(rotationMatrix) * glm::vec4(0, 0, -1, 1);
 				dir /= dir.w;
 				trans.m_transform = transform;
 				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
 				trans.m_transform.update();
-				BaseECSComponent * components[] = { &prop, &trans };
-				uint32_t types[] = { Prop_Component::ID, Transform_Component::ID };
-				world.makeEntity(components, types, 2ull);
+				BaseECSComponent * components[] = { &renderable, &bsphere, &color, &radius, &point, &camArray, &trans };
+				uint32_t types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
+				world.makeEntity(components, types, 7ull);
 			}
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
 			transform.m_position += glm::vec3(rotatedPosition / rotatedPosition.w);
 			transform.update();
 
-			// Update the engine pointer
-			auto viewport = graphicsModule.getClientViewport();
-			viewport->set3DPosition(transform.m_position);
-			viewport->setViewMatrix(glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position));
-			viewportComponent->m_camera = viewport;
+			// Update the client's camera
+			cameraComponent->m_camera->get()->EyePosition = transform.m_position;
+			cameraComponent->m_camera->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
 		}
 	};
 
