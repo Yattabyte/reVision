@@ -35,7 +35,7 @@ struct PointData {
 	GL_ArrayBuffer<Point_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	FBO_Shadow_Point shadowFBO;
-	std::vector<std::tuple<float, LightPoint_Component*, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
+	std::vector<std::tuple<float*, int, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
 	glm::ivec2 shadowSize = glm::ivec2(1);
 	size_t shapeVertexCount = 0ull;
 };

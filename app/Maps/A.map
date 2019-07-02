@@ -160,6 +160,9 @@ entity
 	Renderable_Component
 	{
 	}
+	BoundingSphere_Component
+	{
+	}
 	Transform_Component
 	{
 		vec3 "0,-7.5,10"

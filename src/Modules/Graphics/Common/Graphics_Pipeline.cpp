@@ -73,8 +73,8 @@ void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Vi
 			tech->renderTechnique(deltaTime, viewport, camera);	
 }
 
-void Graphics_Pipeline::shadow(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer,  const glm::vec3 & finalColor)
+void Graphics_Pipeline::shadow(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer)
 {
 	for each (auto * tech in m_geometryTechniques) 
-		tech->renderShadows(deltaTime, camera, layer, finalColor);	
+		tech->renderShadows(deltaTime, camera, layer);	
 }

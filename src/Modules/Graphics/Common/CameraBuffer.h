@@ -91,7 +91,7 @@ public:
 	inline void replace(const BufferStructure & data) {
 		m_localData = data;
 	}
-	/** Wait for the current fence to pass, for the current frame index.*/
+	/** Wait for the current fence to pass, for the current frame index. */
 	inline void beginWriting() {
 		if (m_fence[m_writeIndex] != nullptr)
 			while (1) {
@@ -103,7 +103,7 @@ public:
 				}
 			}
 	}
-	/** Create a fence for the current point in time.*/
+	/** Create a fence for the current point in time. */
 	inline void endWriting() {
 		if (m_fence[m_writeIndex])
 			glDeleteSync(m_fence[m_writeIndex]);

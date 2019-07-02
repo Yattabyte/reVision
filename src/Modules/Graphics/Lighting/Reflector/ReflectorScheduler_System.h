@@ -33,7 +33,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Resize shadowmap to fit number of entities this frame
-		m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, components.size() * 6);
+		m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, (unsigned int)(components.size() * 6ull));
 
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
@@ -53,8 +53,8 @@ public:
 					auto &[oldTime, oldLight, oldCameras] = m_frameData->reflectorsToUpdate.at(x);
 					if (!oldLight || (oldLight && reflectorComponent->m_updateTime < oldTime)) {
 						// Shuffle next elements down
-						for (int y = m_frameData->reflectorsToUpdate.size() - 1; y > x; --y)
-							m_frameData->reflectorsToUpdate.at(y) = m_frameData->reflectorsToUpdate.at(y - 1);
+						for (auto y = m_frameData->reflectorsToUpdate.size() - 1ull; y > x; --y)
+							m_frameData->reflectorsToUpdate.at(y) = m_frameData->reflectorsToUpdate.at(y - 1ull);
 						oldLight = reflectorComponent;
 						oldTime = reflectorComponent->m_updateTime;
 						oldCameras = cameraComponent->m_cameras;

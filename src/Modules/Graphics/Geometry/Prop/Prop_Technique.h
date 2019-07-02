@@ -4,6 +4,7 @@
 
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
+#include "Modules/Graphics/Geometry/Prop/PropData.h"
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
 #include "Modules/World/ECS/components.h"
@@ -11,7 +12,6 @@
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Engine.h"
-#include <vector>
 
 
 /** A core rendering technique for rendering props from a given viewing perspective. */
@@ -27,7 +27,6 @@ public:
 	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & viewports, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
-		m_frameData = std::make_shared<PropData>();
 		m_frameData = std::make_shared<PropData>();
 		auxilliarySystems.addSystem(new PropVisibility_System(m_frameData, viewports));
 		auxilliarySystems.addSystem(new PropSync_System(m_frameData));
@@ -72,7 +71,7 @@ public:
 				}
 			if (found) {
 				// Apply occlusion culling and render props
-				if (m_frameData->viewInfo[visibilityIndex].visProps) {
+				if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visProps) {
 					m_engine->getManager_Materials().bind();
 					m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 					m_frameData->viewInfo[visibilityIndex].bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -108,7 +107,7 @@ public:
 			}
 		}
 	}
-	inline virtual void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor) override {
+	inline virtual void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer) override {
 		// Exit Early
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			size_t visibilityIndex = 0;
@@ -121,7 +120,7 @@ public:
 				}
 			if (found) {
 				// Apply occlusion culling and render props
-				if (m_frameData->viewInfo[visibilityIndex].visProps) {
+				if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visProps) {
 					m_engine->getManager_Materials().bind();
 					m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 					m_frameData->viewInfo[visibilityIndex].bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
@@ -137,7 +136,6 @@ public:
 					glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 					m_shaderShadowCull->bind();
 					m_shaderShadowCull->setUniform(0, layer);
-					m_shaderShadowCull->setUniform(1, finalColor);
 					glBindVertexArray(m_shapeCube->m_vaoID);
 					m_frameData->viewInfo[visibilityIndex].bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
@@ -153,7 +151,6 @@ public:
 					glFrontFace(GL_CW);
 					m_shaderShadowGeometry->bind();
 					m_shaderShadowGeometry->setUniform(0, layer);
-					m_shaderShadowGeometry->setUniform(1, finalColor);
 					glBindVertexArray(*m_modelsVAO);
 					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visProps, 0);
@@ -175,13 +172,13 @@ private:
 	}
 
 
-private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	const GLuint * m_modelsVAO = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Primitive m_shapeCube;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+
 
 	// Shared Attributes
 	std::shared_ptr<PropData> m_frameData;

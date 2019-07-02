@@ -2,7 +2,6 @@
 #ifndef FBO_SHADOW_POINT_H
 #define FBO_SHADOW_POINT_H 
 
-#include "Utilities/GL/FBO.h"
 #include "glm/glm.hpp"
 
 
@@ -15,10 +14,12 @@ struct FBO_Shadow_Point {
 
 
 	// (de)Constructors
+	/***/
 	inline ~FBO_Shadow_Point() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(4, m_textureIDS);
 	}
+	/***/
 	inline FBO_Shadow_Point() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 4, m_textureIDS);
@@ -50,6 +51,10 @@ struct FBO_Shadow_Point {
 		GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
 		glNamedFramebufferDrawBuffers(m_fboID, 3, drawBuffers);
 	}
+
+	
+	// Methods
+	/***/
 	inline void resize(const glm::ivec2 & size, const unsigned int & layerFaces) {
 		if (m_size.x != size.x || m_size.y != size.y || m_layerFaces != layerFaces) {
 			m_size = size;
@@ -66,6 +71,7 @@ struct FBO_Shadow_Point {
 			glClearTexImage(m_textureIDS[3], 0, GL_RED, GL_FLOAT, &clear);
 		}
 	}
+	/***/
 	inline void clear(const GLint & zOffset) {
 		const float clearDepth(1.0f);
 		const glm::vec3 clear(0.0f);
@@ -74,6 +80,7 @@ struct FBO_Shadow_Point {
 		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 		glClearTexSubImage(m_textureIDS[3], 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RED, GL_FLOAT, &clear);
 	}
+	/***/
 	inline void bindForWriting() {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}

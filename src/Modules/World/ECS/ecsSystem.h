@@ -105,6 +105,22 @@ public:
 	inline BaseECSSystem * operator[](const size_t & index) {
 		return m_systems[index];
 	}
+	/***/
+	inline std::vector<BaseECSSystem*>::iterator begin() {
+		return m_systems.begin(); 
+	}
+	/***/
+	inline std::vector<BaseECSSystem*>::const_iterator begin() const {
+		return m_systems.cbegin(); 
+	}
+	/***/
+	inline std::vector<BaseECSSystem*>::iterator end() {
+		return m_systems.end(); 
+	}
+	/***/
+	inline std::vector<BaseECSSystem*>::const_iterator end() const {
+		return  m_systems.cend();
+	}
 
 
 private:

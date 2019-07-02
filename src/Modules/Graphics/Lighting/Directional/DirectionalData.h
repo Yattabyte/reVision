@@ -38,7 +38,7 @@ struct DirectionalData {
 	std::vector<ViewInfo> viewInfo;
 	std::shared_ptr<CameraBuffer> clientCamera;
 	FBO_Shadow_Directional shadowFBO;
-	std::vector<std::tuple<float, LightDirectional_Component*, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
+	std::vector<std::tuple<float*, int, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
 	glm::ivec2 shadowSize = glm::ivec2(1);
 	size_t shapeVertexCount = 0ull;
 };

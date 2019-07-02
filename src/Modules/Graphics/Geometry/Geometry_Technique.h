@@ -5,6 +5,7 @@
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 
 
+/***/
 class Geometry_Technique : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -14,14 +15,18 @@ public:
 	inline Geometry_Technique() : Graphics_Technique(GEOMETRY) {}
 
 
-	// Public Interface Declaration
+	// Public Interface Implementation
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+		// Forward to geometry rendering
 		renderGeometry(deltaTime, viewport, camera);
 	}
+
+
+	// Public Interface Declarations
 	/***/
 	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) {}
 	/***/
-	inline virtual void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor) {}
+	inline virtual void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer) {}
 };
 
 #endif // GEOMETRY_TECHNIQUE_H

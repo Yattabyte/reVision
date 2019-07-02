@@ -17,10 +17,6 @@ public:
 	inline Skeletal_Animation(Engine * engine) {
 		// Declare component types used
 		addComponentType(Skeleton_Component::ID);
-
-		// Error Reporting
-		if (!isValid())
-			engine->getManager_Messages().error("Invalid ECS System: Skeletal_Animation");
 	}
 
 

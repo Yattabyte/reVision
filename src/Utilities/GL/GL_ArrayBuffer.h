@@ -6,7 +6,6 @@
 #include <memory>
 #include <vector>
 
-using GL_AB_Index = std::shared_ptr<size_t>;
 
 /** A data buffer that resides locally as well as on the GPU. 
 Forms an expandable array of elements type T.
@@ -85,65 +84,6 @@ public:
 
 
 	// Public Methods
-	///** Add a new element to this array. 
-	//@return					pointer to the index into this array (buffer owns pointer). */
-	//inline GL_AB_Index newElement() {
-	//	constexpr auto elementSize = sizeof(T);
-	//	GL_AB_Index index = std::make_shared<size_t>(m_indexPointers.size());
-
-	//	// See if we must expand this container
-	//	if (m_indexPointers.size() >= m_capacity) {
-	//		const auto oldSize = sizeof(T) * m_capacity;
-
-	//		// Double the previous capacity
-	//		m_capacity *= 2ull;
-	//		const auto newSize = sizeof(T) * m_capacity;
-
-	//		for (int x = 0; x < 3; ++x) {
-	//			// Wait for this buffer in particular
-	//			if (m_fence[x] != nullptr)
-	//				while (1) {
-	//					GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-	//					if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-	//						glDeleteSync(m_fence[x]);
-	//						m_fence[x] = nullptr;
-	//						break;
-	//					}
-	//				}
-
-
-	//			// Create new buffer
-	//			constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
-	//			GLuint newBuffer = 0;
-	//			glCreateBuffers(1, &newBuffer);
-	//			glNamedBufferStorage(newBuffer, newSize, 0, GL_DYNAMIC_STORAGE_BIT | flags);
-
-	//			// Copy old buffer
-	//			if (oldSize)
-	//				glCopyNamedBufferSubData(m_bufferID[x], newBuffer, 0, 0, oldSize);
-
-	//			// Delete old buffer
-	//			glUnmapNamedBuffer(m_bufferID[x]);
-	//			glDeleteBuffers(1, &m_bufferID[x]);
-
-	//			// Migrate new buffer
-	//			m_bufferID[x] = newBuffer;
-	//			m_bufferPtr[x] = (T*)glMapNamedBufferRange(m_bufferID[x], 0, newSize, flags);
-	//		}
-	//	}
-
-	//	// Add new index to the list, return it
-	//	m_indexPointers.push_back(index);
-	//	return index;
-	//}
-	///** Remove an element from this array at the index provided. 
-	//@param	index			pointer to the index of the element. */
-	//inline void removeElement(const GL_AB_Index & index) {
-	//	// Decrement the value for every index pointer PAST the input index
-	//	for (size_t x = (*index) + 1; x < m_indexPointers.size(); ++x)
-	//		*m_indexPointers[x] -= 1;
-	//	*index = 0;
-	//}
 	inline void resize(const size_t & size) {
 		// See if we must expand this container
 		if (size > m_capacity) {
@@ -191,12 +131,6 @@ public:
 		for (int n = 0; n < 3; ++n)
 			for (int x = 0; x < m_capacity; ++x)
 				m_bufferPtr[n][x] = t;
-	}
-	/** Retrieve a reference to the element contained at the index specified.
-	@param	index			index to the element desired.
-	@return					reference to the element desired. */
-	inline T& operator [] (const GL_AB_Index & index) {
-		return m_bufferPtr[m_writeIndex][*index];
 	}
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.

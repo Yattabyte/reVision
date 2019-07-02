@@ -34,6 +34,7 @@ layout (location = 4) flat out mat4 CamPVMatrix;
 layout (location = 8) flat out mat4 LightVP[NUM_CASCADES];
 layout (location = 24) flat out vec4 CascadeEndClipSpace;
 layout (location = 25) flat out int Shadow_Spot;
+layout (location = 26) flat out vec3 ColorModifier;
 
 void main()
 {
@@ -48,4 +49,5 @@ void main()
 		CascadeEndClipSpace[x] = lightBuffers[lightIndex].CascadeEndClipSpace[x];
 	}
 	Shadow_Spot = lightBuffers[lightIndex].Shadow_Spot;
+	ColorModifier = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 }

@@ -12,7 +12,6 @@ layout (std430, binding = 2) buffer Camera_Buffer {
 };
 
 layout (binding = 0) uniform sampler2DArray MaterialMap;
-layout (location = 1) uniform vec3 ColorModifier = vec3(1.0f);
 
 layout (location = 0) in vec3 WorldPos;
 layout (location = 1) in mat3 WorldTBN;
@@ -33,6 +32,6 @@ void main()
 	vec3 WorldNormal			= normalize(WorldTBN * BumpMapNormal);	
 	
 	WorldNormalOut				= WorldNormal;	
-	RadiantFluxOut				= GColor.xyz * ColorModifier;
+	RadiantFluxOut				= GColor.xyz;
 	LinearDistance 				= length(WorldPos - EyePosition) / FarPlane;
 }

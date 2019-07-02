@@ -44,7 +44,7 @@ public:
 			m_elements.erase(m_elements.begin() + index);	
 		return found;
 	}
-	/** Remove all elements from this focus map.*/
+	/** Remove all elements from this focus map. */
 	inline void clear() {
 		m_elements.clear();
 		m_index = -1;

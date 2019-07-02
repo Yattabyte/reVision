@@ -118,12 +118,12 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void updateShadows(const float & deltaTime) {
-		if (m_frameData->viewInfo.size() && m_frameData->shadowsToUpdate.size()) {
+		if (m_frameData->shadowsToUpdate.size()) {
 			glViewport(0, 0, m_frameData->shadowSize.x, m_frameData->shadowSize.y);
 			m_frameData->shadowFBO.bindForWriting();
-			for (auto &[time, light, cameras] : m_frameData->shadowsToUpdate) {
+			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
 				if (cameras.size() == 4) {
-					m_frameData->shadowFBO.clear(light->m_shadowSpot);
+					m_frameData->shadowFBO.clear(shadowSpot);
 					// Render all 4 splits
 					for (int x = 0; x < 4; ++x) {
 						// Prepare Camera
@@ -131,13 +131,13 @@ private:
 						cameras[x]->pushChanges();
 
 						// Update shadows
-						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], light->m_shadowSpot + x, glm::vec3(1.0f));
+						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], shadowSpot + x);
 
 						// End Camera
 						cameras[x]->endWriting();
 					}
 				}
-				light->m_updateTime += deltaTime;
+				*time += deltaTime;
 			}
 			m_frameData->shadowsToUpdate.clear();
 		}
@@ -167,7 +167,7 @@ private:
 	}
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
-	@param	viewport	the viewport to render from.*/
+	@param	viewport	the viewport to render from. */
 	inline void renderBounce(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
 		if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
 			m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo[visibilityIndex].visShadowCount));
@@ -215,6 +215,7 @@ private:
 	Shared_Shader m_shader_Lighting, m_shader_Bounce;
 	Shared_Primitive m_shapeQuad;
 	GLuint m_textureNoise32 = 0;
+
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;

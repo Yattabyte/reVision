@@ -37,7 +37,7 @@ public:
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
 	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
 	/***/
-	void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor);
+	void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer);
 	/***/
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.

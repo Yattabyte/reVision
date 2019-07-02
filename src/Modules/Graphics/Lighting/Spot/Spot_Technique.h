@@ -98,19 +98,19 @@ private:
 		if (m_frameData->shadowsToUpdate.size()) {
 			glViewport(0, 0, m_frameData->shadowSize.x, m_frameData->shadowSize.y);
 			m_frameData->shadowFBO.bindForWriting();
-			for (auto &[time, light, camera] : (m_frameData->shadowsToUpdate)) {
-				m_frameData->shadowFBO.clear(light->m_shadowSpot);
+			for (auto &[time, shadowSpot, camera] : m_frameData->shadowsToUpdate) {
+				m_frameData->shadowFBO.clear(shadowSpot);
 
 				// Prepare Camera
 				camera->beginWriting();
 				camera->pushChanges();
 
 				// Update shadows
-				m_engine->getModule_Graphics().renderShadows(deltaTime, camera, light->m_shadowSpot, glm::vec3(1.0f));
+				m_engine->getModule_Graphics().renderShadows(deltaTime, camera, shadowSpot);
 
 				// End Camera
 				camera->endWriting();
-				light->m_updateTime += deltaTime;
+				*time += deltaTime;
 			}
 			m_frameData->shadowsToUpdate.clear();
 		}

@@ -15,6 +15,7 @@ layout (location = 4) flat in mat4 CamPVMatrix;
 layout (location = 8) flat in mat4 LightVP[NUM_CASCADES];
 layout (location = 24) flat in vec4 CascadeEndClipSpace;
 layout (location = 25) flat in int Shadow_Spot;
+layout (location = 26) flat in vec3 ColorModifier;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 
@@ -85,7 +86,7 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 		vec3 uv_array_lookup	= vec3(uv, ShadowSpot);
 		
 		rsmPos					= CalcShadowPos(uv, ShadowSpot, InversePV);
-		rsmColor				= texture(ShadowFlux, uv_array_lookup).rgb; 
+		rsmColor				= texture(ShadowFlux, uv_array_lookup).rgb * ColorModifier; 
 		rsmNormal 				= normalize(texture(ShadowNormal, uv_array_lookup).rgb);		
 		
         // produce a new sampling location in the RH stratum

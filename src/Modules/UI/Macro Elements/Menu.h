@@ -72,7 +72,7 @@ public:
 
 	// Public Methods
 	/** Retrieve this menu's focus map.
-	@return				this menu's focus map.*/
+	@return				this menu's focus map. */
 	inline auto getFocusMap() {
 		return m_focusMap;
 	}

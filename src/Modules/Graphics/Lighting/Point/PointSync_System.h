@@ -98,6 +98,7 @@ public:
 		}
 	}
 
+
 private:
 	// Private Attributes
 	std::shared_ptr<PointData> m_frameData;

@@ -10,6 +10,7 @@
 #include "Engine.h"
 #include <memory>
 #include <random>
+#include <typeinfo>
 
 
 void Graphics_Module::initialize(Engine * engine)
@@ -150,6 +151,12 @@ void Graphics_Module::initialize(Engine * engine)
 		auto * component = new Reflector_Component();
 		return std::make_pair(component->ID, component);
 	});
+
+	// Reprot invalid ecs systems
+	auto & msg = engine->getManager_Messages();
+	for each (const auto & system in m_systems)
+		if (!system->isValid())
+			msg.error("Invalid ECS System: " + std::string(typeid(*system).name()));
 }
 
 void Graphics_Module::deinitialize()
@@ -208,13 +215,13 @@ void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr
 	m_pipeline->render(deltaTime, viewport, camera, allowedCategories);
 }
 
-void Graphics_Module::renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor)
+void Graphics_Module::renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer)
 {
 	// Prepare camera for rendering
 	camera->bind(2);
 
 	// Render
-	m_pipeline->shadow(deltaTime, camera, layer, finalColor);
+	m_pipeline->shadow(deltaTime, camera, layer);
 }
 
 void Graphics_Module::genPerspectiveMatrix() 

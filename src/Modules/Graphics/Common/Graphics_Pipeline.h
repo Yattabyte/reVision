@@ -36,7 +36,7 @@ public:
 	@param	categories	the allowed technique categories to render. */
 	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & categories = Graphics_Technique::ALL);
 	/***/
-	void shadow(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer, const glm::vec3 & finalColor);
+	void shadow(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer);
 
 
 protected:

@@ -178,7 +178,7 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderReflectors(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
-		if (m_frameData->viewInfo[visibilityIndex].visLightCount) {
+		if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visLightCount) {
 			glEnable(GL_STENCIL_TEST);
 			glEnable(GL_BLEND);
 			glBlendEquation(GL_FUNC_ADD);
@@ -234,6 +234,7 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticBuffer m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
+
 
 	// Shared Attributes
 	std::shared_ptr<ReflectorData> m_frameData;

@@ -8,6 +8,7 @@
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 
+
 /***/
 class PropSync_System : public BaseECSSystem {
 public:
@@ -84,6 +85,7 @@ public:
 			index++;
 		}
 	}
+
 
 private:
 	// Private Attributes

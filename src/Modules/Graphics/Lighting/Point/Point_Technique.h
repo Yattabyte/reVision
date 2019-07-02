@@ -93,14 +93,14 @@ public:
 private:
 	// Private Methods	
 	/** Render all the geometry from each light.
-	@param	deltaTime	the amount of time passed since last frame.*/
+	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float & deltaTime) {
 		if (m_frameData->shadowsToUpdate.size()) {
 			glViewport(0, 0, m_frameData->shadowSize.x, m_frameData->shadowSize.y);
 			m_frameData->shadowFBO.bindForWriting();
-			for (auto &[time, light, cameras] : (m_frameData->shadowsToUpdate)) {
+			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
 				if (cameras.size() == 6) {
-					m_frameData->shadowFBO.clear(light->m_shadowSpot);
+					m_frameData->shadowFBO.clear(shadowSpot);
 					// Render all six sides
 					for (int x = 0; x < 6; ++x) {
 						// Prepare Camera
@@ -108,13 +108,13 @@ private:
 						cameras[x]->pushChanges();
 
 						// Update shadows
-						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], light->m_shadowSpot + x , glm::vec3(1.0f));
+						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], shadowSpot + x);
 
 						// End Camera
 						cameras[x]->endWriting();
 					}
 				}
-				light->m_updateTime += deltaTime;
+				*time += deltaTime;
 			}
 			m_frameData->shadowsToUpdate.clear();
 		}
