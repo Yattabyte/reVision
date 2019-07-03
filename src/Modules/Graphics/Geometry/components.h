@@ -12,6 +12,7 @@
 /** A static, animation-less prop component. */
 struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Model m_model;
+	size_t m_offset = 0ull, m_count = 0ull;
 	unsigned int m_skin = 0u;
 	float m_radius = 1.0f;
 	bool m_static = true;

@@ -43,8 +43,8 @@ public:
 				Prop_Component * propComponent = (Prop_Component*)componentParam[1];
 				Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[2];
 				BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[3];
-				const auto & offset = propComponent->m_model->m_offset;
-				const auto & count = propComponent->m_model->m_count;
+				const auto & offset = propComponent->m_offset;
+				const auto & count = propComponent->m_count;
 
 				if (renderableComponent->m_visible[x]) {
 					const auto & isStatic = propComponent->m_static;

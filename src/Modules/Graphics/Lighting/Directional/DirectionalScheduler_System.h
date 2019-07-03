@@ -19,7 +19,7 @@ public:
 	}
 	/***/
 	inline DirectionalScheduler_System(Engine * engine, const std::shared_ptr<DirectionalData> & frameData)
-		: m_frameData(frameData) {
+		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
@@ -35,6 +35,9 @@ public:
 		// Resize shadowmap to fit number of entities this frame
 		m_frameData->shadowFBO.resize(m_frameData->shadowSize, (unsigned int)(components.size() * 4ull));
 
+		if (m_engine->getActionState().isAction(ActionState::FIRE2))
+			m_sceneOutOfDate = true;
+
 		// Maintain list of shadows, update with oldest within range
 		// Technique will clear list when ready
 		int index = 0;
@@ -47,7 +50,7 @@ public:
 			lightComponent->m_shadowSpot = index * 4;
 
 
-			if (renderableComponent->m_visibleAtAll && lightComponent->m_hasShadow) {
+			if (renderableComponent->m_visibleAtAll && lightComponent->m_hasShadow && m_sceneOutOfDate) {
 				bool didAnything = false;
 				// Try to find the oldest components
 				for (int x = 0; x < m_frameData->shadowsToUpdate.size(); ++x) {
@@ -63,20 +66,25 @@ public:
 						break;
 					}
 				}
-				if (!didAnything && m_frameData->shadowsToUpdate.size() < m_maxShadowsCasters)
+				if (!didAnything && m_frameData->shadowsToUpdate.size() < m_maxShadowsCasters) {
 					m_frameData->shadowsToUpdate.push_back({ &lightComponent->m_updateTime, lightComponent->m_shadowSpot, cameraComponent->m_cameras });
+					lightComponent->m_outOfDate = true;
+				}
 			}
 			index++;
 		}
 
 		if (m_frameData->shadowsToUpdate.size() > m_maxShadowsCasters)
 			m_frameData->shadowsToUpdate.resize(m_maxShadowsCasters);
+		m_sceneOutOfDate = false;
 	}
 
 
 private:
 	// Private Attributes
+	Engine * m_engine = nullptr;
 	GLuint m_maxShadowsCasters = 1u;
+	bool m_sceneOutOfDate = true;
 	std::shared_ptr<DirectionalData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

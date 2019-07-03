@@ -5,6 +5,7 @@
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
+#include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
 #include "Modules/World/ECS/components.h"
@@ -28,6 +29,7 @@ public:
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PropData>();
+		auxilliarySystems.addSystem(new PropUpload_System(engine, m_frameData));
 		auxilliarySystems.addSystem(new PropVisibility_System(m_frameData, viewports));
 		auxilliarySystems.addSystem(new PropSync_System(m_frameData));
 
@@ -37,7 +39,6 @@ public:
 		m_shaderShadowCull = Shared_Shader(m_engine, "Core\\Props\\shadow culling");
 		m_shaderShadowGeometry = Shared_Shader(m_engine, "Core\\Props\\shadow");
 		m_shapeCube = Shared_Primitive(m_engine, "cube");
-		m_modelsVAO = &m_engine->getManager_Models().getVAO();
 		
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
@@ -100,7 +101,7 @@ public:
 					glEnable(GL_CULL_FACE);
 					glCullFace(GL_BACK);
 					m_shaderGeometry->bind();
-					glBindVertexArray(*m_modelsVAO);
+					glBindVertexArray(m_frameData->m_geometryVAOID);
 					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visProps, 0);
 				}
@@ -151,7 +152,7 @@ public:
 					glFrontFace(GL_CW);
 					m_shaderShadowGeometry->bind();
 					m_shaderShadowGeometry->setUniform(0, layer);
-					glBindVertexArray(*m_modelsVAO);
+					glBindVertexArray(m_frameData->m_geometryVAOID);
 					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visProps, 0);
 					glFrontFace(GL_CCW);
@@ -174,7 +175,6 @@ private:
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	const GLuint * m_modelsVAO = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Primitive m_shapeCube;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

@@ -7,6 +7,7 @@
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
+#include "Utilities/IO/Mesh_IO.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
 #include "glm/gtx/component_wise.hpp"
@@ -38,6 +39,7 @@ struct PropData {
 	GL_ArrayBuffer<Model_Buffer> modelBuffer;
 	GL_ArrayBuffer<Skeleton_Buffer> skeletonBuffer;
 	std::vector<ViewInfo> viewInfo;
+	GLuint m_geometryVAOID = 0;
 };
 
 #endif PROPDATA_H

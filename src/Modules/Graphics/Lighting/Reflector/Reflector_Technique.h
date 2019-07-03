@@ -89,8 +89,8 @@ public:
 		// Exit Early
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet()) {
 
-			if (m_engine->getActionState().isAction(ActionState::FIRE2))
-				m_frameData->envmapOutOfDate = true;
+			//if (m_engine->getActionState().isAction(ActionState::FIRE2))
+			//	m_frameData->envmapOutOfDate = true;
 
 			// Render important environment maps
 			updateReflectors(deltaTime);

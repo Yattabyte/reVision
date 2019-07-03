@@ -4,7 +4,6 @@
 
 #include "Assets/Mesh.h"
 #include "Assets/Material.h"
-#include "Managers/ModelManager.h"
 #include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/geometric.hpp"
@@ -14,7 +13,6 @@
 
 
 class Engine;
-class ModelManager;
 class Model;
 
 /** Responsible for the creation, containing, and sharing of assets. */
@@ -36,19 +34,17 @@ class Model : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Model. */
-	~Model();
+	inline ~Model() = default;
 	/** Construct the Model. */
-	Model(Engine * engine, const std::string & filename, ModelManager & modelManager);
+	Model(Engine * engine, const std::string & filename);
 
 
 	// Public Attributes
 	Shared_Mesh				m_mesh;
 	Shared_Material			m_materialArray;
 	GeometryInfo			m_data;
-	size_t					m_offset = 0, m_count = 0;
 	glm::vec3				m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
 	float					m_radius = 0.0f;
-	ModelManager		*	m_modelManager = nullptr;
 
 
 private:

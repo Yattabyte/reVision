@@ -28,7 +28,7 @@ public:
 		// Wait on all 3 fences before deleting
 		for (int x = 0; x < 3; ++x)
 			while (m_fence[x] != nullptr) {
-				GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
 				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
 					glDeleteSync(m_fence[x]);
 					m_fence[x] = nullptr;
@@ -95,7 +95,7 @@ public:
 	inline void beginWriting() {
 		if (m_fence[m_writeIndex] != nullptr)
 			while (1) {
-				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				GLenum waitReturn = glClientWaitSync(m_fence[m_writeIndex], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
 				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
 					glDeleteSync(m_fence[m_writeIndex]);
 					m_fence[m_writeIndex] = nullptr;

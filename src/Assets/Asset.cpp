@@ -41,7 +41,7 @@ bool Asset::existsYet() const
 			return false;		
 		// Delete fence so we can skip these 2 branches next time
 		glDeleteSync(m_fence);
-		m_fence = 0;
+		m_fence = nullptr;
 	}
 	return true;	
 }

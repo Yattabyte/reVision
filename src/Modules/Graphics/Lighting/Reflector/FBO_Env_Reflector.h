@@ -10,6 +10,7 @@ struct FBO_Env_Reflector {
 	// Attributes
 	GLuint m_fboID = 0, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
+	int m_depth = 1;
 
 
 	// (de)Constructors
@@ -40,10 +41,12 @@ struct FBO_Env_Reflector {
 	// Methods
 	/***/
 	inline void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) {
-		m_size = glm::ivec2(width, height);
-		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
-			glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
+		if (m_size.x != width || m_size.y != height || m_depth != depth) {
+			m_size = glm::ivec2(width, height);
+			for (int x = 0; x < 6; ++x) {
+				const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
+				glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);
+			}
 		}
 	}
 	/***/

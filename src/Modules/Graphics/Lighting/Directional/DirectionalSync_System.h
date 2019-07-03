@@ -50,62 +50,70 @@ public:
 					for (int x = 0; x < NUM_CASCADES; ++x)
 						if (!cameraComponent->m_cameras[x])
 							cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
-					const auto size = glm::vec2(m_frameData->clientCamera.get()->get()->Dimensions);
-					const float ar = size.x / size.y;
-					const float tanHalfHFOV = glm::radians(m_frameData->clientCamera.get()->get()->FOV) / 2.0f;
-					const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-					const float near_plane = -CameraBuffer::ConstNearPlane;
-					const float far_plane = -m_frameData->clientCamera.get()->get()->FarPlane;
-					float cascadeEnd[NUM_CASCADES + 1];
-					glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
-					constexpr float lambda = 0.75f;
-					cascadeEnd[0] = near_plane;
-					for (int x = 1; x < NUM_CASCADES + 1; ++x) {
-						const float xDivM = float(x) / float(NUM_CASCADES);
-						const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
-						const float cUni = near_plane + (far_plane - near_plane) * xDivM;
-						cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;
-					}
-					for (int i = 0; i < NUM_CASCADES; i++) {
-						float points[4] = {
-							cascadeEnd[i] * tanHalfHFOV,
-							cascadeEnd[i + 1] * tanHalfHFOV,
-							cascadeEnd[i] * tanHalfVFOV,
-							cascadeEnd[i + 1] * tanHalfVFOV
-						};
-						float maxCoord = std::max(abs(cascadeEnd[i]), abs(cascadeEnd[i + 1]));
-						for (int x = 0; x < 4; ++x)
-							maxCoord = std::max(maxCoord, abs(points[x]));
-						// Find the middle of current view frustum chunk
-						middle[i] = glm::vec3(0, 0, ((cascadeEnd[i + 1] - cascadeEnd[i]) / 2.0f) + cascadeEnd[i]);
+					if (lightComponent->m_outOfDate) {
+						const auto size = glm::vec2(m_frameData->clientCamera.get()->get()->Dimensions);
+						const float ar = size.x / size.y;
+						const float tanHalfHFOV = glm::radians(m_frameData->clientCamera.get()->get()->FOV) / 2.0f;
+						const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
+						const float near_plane = -CameraBuffer::ConstNearPlane;
+						const float far_plane = -m_frameData->clientCamera.get()->get()->FarPlane;
+						float cascadeEnd[NUM_CASCADES + 1];
+						glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
+						constexpr float lambda = 0.75f;
+						cascadeEnd[0] = near_plane;
+						for (int x = 1; x < NUM_CASCADES + 1; ++x) {
+							const float xDivM = float(x) / float(NUM_CASCADES);
+							const float cLog = near_plane * powf((far_plane / near_plane), xDivM);
+							const float cUni = near_plane + (far_plane - near_plane) * xDivM;
+							cascadeEnd[x] = (lambda * cLog) + (1.0f - lambda) * cUni;
+						}
+						for (int i = 0; i < NUM_CASCADES; i++) {
+							float points[4] = {
+								cascadeEnd[i] * tanHalfHFOV,
+								cascadeEnd[i + 1] * tanHalfHFOV,
+								cascadeEnd[i] * tanHalfVFOV,
+								cascadeEnd[i + 1] * tanHalfVFOV
+							};
+							float maxCoord = std::max(abs(cascadeEnd[i]), abs(cascadeEnd[i + 1]));
+							for (int x = 0; x < 4; ++x)
+								maxCoord = std::max(maxCoord, abs(points[x]));
+							// Find the middle of current view frustum chunk
+							middle[i] = glm::vec3(0, 0, ((cascadeEnd[i + 1] - cascadeEnd[i]) / 2.0f) + cascadeEnd[i]);
 
-						// Measure distance from middle to the furthest point of frustum slice
-						// Use to make a bounding sphere, but then convert into a bounding box
-						aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
+							// Measure distance from middle to the furthest point of frustum slice
+							// Use to make a bounding sphere, but then convert into a bounding box
+							aabb[i] = glm::vec3(glm::distance(glm::vec3(maxCoord), middle[i]));
+						}
+						const glm::mat4 CamInv = glm::inverse(m_frameData->clientCamera.get()->get()->vMatrix);
+						const glm::mat4 CamP = m_frameData->clientCamera.get()->get()->pMatrix;
+						const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+						for (int i = 0; i < NUM_CASCADES; ++i) {
+							const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_frameData->shadowSize.x;
+							const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[i], 1.0f));
+							const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
+							const glm::vec3 newMin = -aabb[i] + clampedPos;
+							const glm::vec3 newMax = aabb[i] + clampedPos;
+							const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
+							const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
+							const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
+							const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
+							const glm::vec4 v2 = CamP * v1;
+							lightComponent->m_pvMatrices[i] = pvMatrix;
+							lightComponent->m_cascadeEnds[i] = v2.z;
+
+							cameraComponent->m_cameras[i]->get()->Dimensions = m_frameData->shadowSize;
+							cameraComponent->m_cameras[i]->get()->FOV = 90.0f;
+							cameraComponent->m_cameras[i]->get()->NearPlane = newMin.z;
+							cameraComponent->m_cameras[i]->get()->FarPlane = newMax.z;
+							cameraComponent->m_cameras[i]->get()->EyePosition = clampedPos;
+							cameraComponent->m_cameras[i]->get()->pMatrix = pMatrix;
+							cameraComponent->m_cameras[i]->get()->vMatrix = sunModelMatrix;
+						}
+						lightComponent->m_outOfDate = false;
 					}
-					const glm::mat4 CamInv = glm::inverse(m_frameData->clientCamera.get()->get()->vMatrix);
-					const glm::mat4 CamP = m_frameData->clientCamera.get()->get()->pMatrix;
-					const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
-					for (int i = 0; i < NUM_CASCADES; ++i) {
-						const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / (float)m_frameData->shadowSize.x;
-						const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[i], 1.0f));
-						const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
-						const glm::vec3 newMin = -aabb[i] + clampedPos;
-						const glm::vec3 newMax = aabb[i] + clampedPos;
-						const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
-						const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
-						const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
-						const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
-						const glm::vec4 v2 = CamP * v1;
-						m_frameData->lightBuffer[index].lightVP[i] = pvMatrix;
-						m_frameData->lightBuffer[index].CascadeEndClipSpace[i] = v2.z;
-						cameraComponent->m_cameras[i]->get()->Dimensions = m_frameData->shadowSize;
-						cameraComponent->m_cameras[i]->get()->FOV = 90.0f;
-						cameraComponent->m_cameras[i]->get()->NearPlane = newMin.z;
-						cameraComponent->m_cameras[i]->get()->FarPlane = newMax.z;
-						cameraComponent->m_cameras[i]->get()->EyePosition = clampedPos;
-						cameraComponent->m_cameras[i]->get()->pMatrix = pMatrix;
-						cameraComponent->m_cameras[i]->get()->vMatrix = sunModelMatrix;
+					for (int x = 0; x < NUM_CASCADES; ++x) {
+						m_frameData->lightBuffer[index].lightVP[x] = lightComponent->m_pvMatrices[x];
+						m_frameData->lightBuffer[index].CascadeEndClipSpace[x] = lightComponent->m_cascadeEnds[x];
 					}
 				}
 

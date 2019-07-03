@@ -43,6 +43,7 @@ public:
 
 			std::vector<GLint> lightIndices;
 			int index = 0;
+			int shadowCount = 0;
 			for each (const auto & componentParam in components) {
 				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 				LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[1];
@@ -50,14 +51,17 @@ public:
 
 				// Render lights and shadows for all visible directional lights
 				if (renderableComponent->m_visible[x]) 
-					lightIndices.push_back((GLuint)index);				
+					lightIndices.push_back((GLuint)index);			
+
+				if (renderableComponent->m_visibleAtAll && lightComponent->m_hasShadow)
+					shadowCount++;
 				index++;
 			}
 
 			// Update camera buffers
 			viewInfo.visLights.beginWriting();
 			viewInfo.visLightCount = (GLsizei)lightIndices.size();
-			viewInfo.visShadowCount = (GLsizei)m_frameData->shadowsToUpdate.size();
+			viewInfo.visShadowCount = (GLsizei)shadowCount;
 			viewInfo.visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
 			const GLuint dataShape[] = { (GLuint)m_frameData->shapeVertexCount, (GLuint)viewInfo.visLightCount,0,0 };
 			const GLuint dataBounce[] = { (GLuint)m_frameData->shapeVertexCount, (GLuint)(viewInfo.visShadowCount * m_bounceSize),0,0 };

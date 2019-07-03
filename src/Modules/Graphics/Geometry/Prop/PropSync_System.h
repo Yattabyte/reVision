@@ -7,6 +7,7 @@
 #include "Modules/Graphics/Logical/components.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
+#include "Utilities/GL/glad/glad.h"
 
 
 /***/

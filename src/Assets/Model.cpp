@@ -10,18 +10,12 @@ Shared_Model::Shared_Model(Engine * engine, const std::string & filename, const 
 		engine->getManager_Assets().shareAsset(
 			typeid(Model).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Model>(engine, filename, engine->getManager_Models()); },
+			[engine, filename]() { return std::make_shared<Model>(engine, filename); },
 			threaded
 		));
 }
 
-Model::~Model()
-{
-	if (existsYet())
-		m_modelManager->unregisterGeometry(m_data, m_offset, m_count);
-}
-
-Model::Model(Engine * engine, const std::string & filename, ModelManager & modelManager) : Asset(engine, filename), m_modelManager(&modelManager) {}
+Model::Model(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
 void Model::initialize()
 {
@@ -53,11 +47,7 @@ void Model::initialize()
 	// Calculate the mesh's min, max, center, and radius
 	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
 	
-	// Register geometry
-	m_modelManager->registerGeometry(m_data, m_offset, m_count);
-
 	// Finalize
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize();
 }
 
