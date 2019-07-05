@@ -24,8 +24,9 @@ public:
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
+		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
-		
+
 		auto & preferences = engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
 		preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceSize = (GLuint)f; });
@@ -47,13 +48,14 @@ public:
 			for each (const auto & componentParam in components) {
 				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
 				LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[1];
-				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
+				Shadow_Component * shadowComponent = (Shadow_Component*)componentParam[2];
+				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[3];
 
 				// Render lights and shadows for all visible directional lights
-				if (renderableComponent->m_visible[x]) 
-					lightIndices.push_back((GLuint)index);			
+				if (renderableComponent->m_visible[x])
+					lightIndices.push_back((GLuint)index);
 
-				if (renderableComponent->m_visibleAtAll && lightComponent->m_hasShadow)
+				if (renderableComponent->m_visibleAtAll)
 					shadowCount++;
 				index++;
 			}

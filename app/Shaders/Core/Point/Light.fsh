@@ -9,11 +9,27 @@
 #define saturate(value) clamp(value, 0.0f, 1.0f)
 layout (early_fragment_tests) in;
 
+struct Light_Struct {
+	mat4 shadowVP[6];
+	mat4 mMatrix;
+	vec4 LightColor;
+	vec4 LightPosition;
+	float LightIntensity;
+	float LightRadius;
+	int Shadow_Spot;
+};
+layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+	int lightIndexes[];
+};
+layout (std430, binding = 8) readonly buffer Light_Buffer {
+	Light_Struct lightBuffers[];
+};
+
 layout (binding = 0) uniform sampler2D ColorMap;
 layout (binding = 1) uniform sampler2D ViewNormalMap;
 layout (binding = 2) uniform sampler2D SpecularMap;
 layout (binding = 3) uniform sampler2D DepthMap;
-layout (binding = 4) uniform samplerCubeArray ShadowMap;
+layout (binding = 4) uniform sampler2DArray ShadowMap;
 
 layout (location = 0) uniform float ShadowSize_Recip;
 
@@ -25,36 +41,74 @@ layout (location = 10) flat in vec3 LightColorInt;
 layout (location = 11) flat in vec3 LightPosition;
 layout (location = 12) flat in float LightRadius2;
 layout (location = 13) flat in int ShadowSpotFinal;
+layout (location = 14) flat in int lightIndex;
 
 layout (location = 0) out vec3 LightingColor; 
 
 // Use PBR lighting methods
 #package "lighting_pbr"
 
+
+const vec3 sampleOffsetDirections[20] = vec3[] (
+	vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
+	vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
+	vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
+	vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
+	vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
+);
+	
 vec2 CalcTexCoord()
 {
     return			 				gl_FragCoord.xy / CamDimensions;
 }
-const vec3 sampleOffsetDirections[20] = vec3[] (
-		vec3( 1,  1,  1), vec3( 1, -1,  1), vec3(-1, -1,  1), vec3(-1,  1,  1), 
-		vec3( 1,  1, -1), vec3( 1, -1, -1), vec3(-1, -1, -1), vec3(-1,  1, -1),
-		vec3( 1,  1,  0), vec3( 1, -1,  0), vec3(-1, -1,  0), vec3(-1,  1,  0),
-		vec3( 1,  0,  1), vec3(-1,  0,  1), vec3( 1,  0, -1), vec3(-1,  0, -1),
-		vec3( 0,  1,  1), vec3( 0, -1,  1), vec3( 0, -1, -1), vec3( 0,  1, -1)
-	);
-#define FactorAmt 1.0 / 20
-float CalcShadowFactor(in vec3 LightDirection, in float ViewDistance, in float bias)                                                  
+
+vec3 sampleCube(vec3 v, out int face)
+{
+	vec3 vAbs = abs(v);
+	float ma;
+	vec2 uv;
+	float faceIndex;
+	if(vAbs.z >= vAbs.x && vAbs.z >= vAbs.y)
+	{
+		faceIndex = v.z < 0.0 ? 5.0 : 4.0;
+		ma = 0.5 / vAbs.z;
+		uv = vec2(v.z < 0.0 ? -v.x : v.x, -v.y);
+	}
+	else if(vAbs.y >= vAbs.x)
+	{
+		faceIndex = v.y < 0.0 ? 3.0 : 2.0;
+		ma = 0.5 / vAbs.y;
+		uv = vec2(v.x, v.y < 0.0 ? -v.z : v.z);
+	}
+	else
+	{
+		faceIndex = v.x < 0.0 ? 1.0 : 0.0;
+		ma = 0.5 / vAbs.x;
+		uv = vec2(v.x < 0.0 ? v.z : -v.z, -v.y);
+	}
+	face = int(faceIndex);
+	return vec3(uv * ma + 0.5, faceIndex);
+}
+
+float CalcShadowFactor(in vec3 LightDirection, in vec4 WorldPos, in float ViewDistance, in float bias)                                                  
 {		
-	if (ShadowSpotFinal >= 0) {	
-		const float FragmentDepth 	= (length(LightDirection) / LightRadius2) - EPSILON - bias;
-		const float diskRadius 		= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
+	if (ShadowSpotFinal >= 0) {
+		const float FactorAmt = 1.0f / 20.0f;
+		float fragDepths[6];
+		for (int x = 0; x < 6; ++x) {
+			const vec4 lightSpacePos = lightBuffers[lightIndex].shadowVP[x] * WorldPos;
+			const vec3 ProjCoords = lightSpacePos.xyz / lightSpacePos.w;    
+			fragDepths[x] = (0.5f * ProjCoords.z + 0.5f) - EPSILON;
+		}
+		const float diskRadius 		= (1.0f + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2.0f);
 		
 		float Factor = 0.0f, depth;
-		vec4 FinalCoord;
+		vec3 FinalCoord;
+		int faceIndex;
 		for (uint x = 0; x < 20; ++x) {	
-			FinalCoord				= vec4(LightDirection + sampleOffsetDirections[x] * diskRadius, ShadowSpotFinal);			
-			depth 					= texture(ShadowMap, FinalCoord).r;
-			Factor 			   	 	+= (depth >= FragmentDepth ) ? FactorAmt : 0.0;	
+			FinalCoord				= vec3(LightDirection + sampleOffsetDirections[x] * diskRadius);			
+			depth 					= texture(ShadowMap, sampleCube(FinalCoord, faceIndex) + vec3(0,0,ShadowSpotFinal)).r;
+			Factor 			   	 	+= (depth >= fragDepths[faceIndex] ) ? FactorAmt : 0.0;	
 		}
 		return 						Factor;
 	}
@@ -86,8 +140,8 @@ void main(void)
 	// Shadow
 	const float cosAngle			= saturate(1.0f - NdotL);
 	const float bias 				= clamp(0.05f * tan(acos(NdotL)), 0.0f, 0.05f);
-	const vec3 scaledNormalOffset	= data.World_Normal * (cosAngle * ShadowSize_Recip);
-	const float ShadowFactor 		= CalcShadowFactor(-(LightDirection + scaledNormalOffset), ViewDistance, bias);
+	const vec4 scaledNormalOffset	= vec4(data.World_Normal * (cosAngle * ShadowSize_Recip), 0);
+	const float ShadowFactor 		= CalcShadowFactor(-LightDirection, data.World_Pos + scaledNormalOffset, ViewDistance, bias);
 	if (ShadowFactor <= EPSILON) 	discard; // Discard if completely in shadow
 	
 	// Direct Light	

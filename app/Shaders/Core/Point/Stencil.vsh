@@ -4,6 +4,7 @@
 layout(location = 0) in vec3 vertex;
 
 struct Light_Struct {
+	mat4 shadowVP[6];
 	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;

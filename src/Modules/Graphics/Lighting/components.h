@@ -10,6 +10,13 @@
 
 #define NUM_CASCADES 4
 
+/***/
+struct Shadow_Component : public ECSComponent<Shadow_Component> {
+	// Shadow Properties
+	bool m_outOfDate = true;
+	float m_updateTime = 0.0f;
+	int m_shadowSpot = -1;
+};
 
 /***/
 struct LightColor_Component : public ECSComponent<LightColor_Component> {
@@ -29,29 +36,16 @@ struct LightCutoff_Component : public ECSComponent<LightCutoff_Component> {
 
 /** A directional light component, like a sun. */
 struct LightDirectional_Component : public ECSComponent<LightDirectional_Component> {
-	// Shadow Properties
-	bool m_outOfDate = true;
-	bool m_hasShadow = false;
-	float m_updateTime = 0.0f;
-	int m_shadowSpot = -1;
 	glm::mat4 m_pvMatrices[NUM_CASCADES] = { glm::mat4(1.0f),glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f) };
 	float m_cascadeEnds[NUM_CASCADES] = { 1.0f, 1.0f, 1.0f, 1.0f };
 };
 
 /** A point light component, like a light bulb. */
 struct LightPoint_Component : public ECSComponent<LightPoint_Component> {
-	// Shadow Properties
-	bool m_hasShadow = false;
-	float m_updateTime = 0.0f;
-	int m_shadowSpot = -1;
 };
 
 /** A spot light component, like a flash light. */
 struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
-	// Shadow Properties
-	bool m_hasShadow = false;
-	float m_updateTime = 0.0f;
-	int m_shadowSpot = -1;
 };
 
 /** A parallax reflector component, 360 view of a scene. */

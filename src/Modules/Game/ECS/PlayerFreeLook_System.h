@@ -75,10 +75,10 @@ public:
 				LightColor_Component color;
 				LightRadius_Component radius;
 				LightPoint_Component point;
+				Shadow_Component shadow;
 				CameraArray_Component camArray;
 				Transform_Component trans;
 
-				point.m_hasShadow = true;
 				radius.m_radius = 5.0f;
 				color.m_color = glm::vec3(5.0f, 2.5, 1);
 				color.m_intensity = 1.0f;
@@ -87,8 +87,8 @@ public:
 				trans.m_transform = transform;
 				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
 				trans.m_transform.update();
-				BaseECSComponent * components[] = { &renderable, &bsphere, &color, &radius, &point, &camArray, &trans };
-				uint32_t types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
+				BaseECSComponent * components[] = { &renderable, &bsphere, &color, &radius, &point, &shadow, &camArray, &trans };
+				uint32_t types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, Shadow_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
 				world.makeEntity(components, types, 7ull);
 			}
 			// Make the translation amount be relative to the camera's orientation

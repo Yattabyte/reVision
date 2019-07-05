@@ -37,7 +37,9 @@ public:
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
 	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
 	/***/
-	void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer);
+	void cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> & perspectives);	
+	/***/
+	void renderShadows(const float & deltaTime);
 	/***/
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.
@@ -54,15 +56,16 @@ private:
 
 
 	// Private Attributes
-	glm::ivec2								m_renderSize = glm::ivec2(1);
-	ECSSystemList							m_systems;
-	std::unique_ptr<Graphics_Pipeline>		m_pipeline;
-	std::shared_ptr<Viewport>				m_viewport;
-	std::shared_ptr<CameraBuffer>			m_clientCamera;
-	Shared_Shader							m_shader;
-	Shared_Primitive						m_shapeQuad;
-	StaticBuffer							m_quadIndirectBuffer;
-	std::shared_ptr<bool>					m_aliveIndicator = std::make_shared<bool>(true);
+	glm::ivec2									m_renderSize = glm::ivec2(1);
+	ECSSystemList								m_systems;
+	std::unique_ptr<Graphics_Pipeline>			m_pipeline;
+	std::shared_ptr<Viewport>					m_viewport;
+	std::shared_ptr<CameraBuffer>				m_clientCamera;
+	Shared_Shader								m_shader;
+	Shared_Primitive							m_shapeQuad;
+	StaticBuffer								m_quadIndirectBuffer;
+	std::shared_ptr<bool>						m_aliveIndicator = std::make_shared<bool>(true);
+	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>>	m_sceneCameras;
 };
 
 #endif // GRAPHICS_MODULE_H

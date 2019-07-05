@@ -24,7 +24,6 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		m_cameras->clear();
 		for each (const auto & componentParam in components) {
 			Camera_Component * cameraComponent = (Camera_Component*)componentParam[0];
 			m_cameras->push_back(cameraComponent->m_camera);

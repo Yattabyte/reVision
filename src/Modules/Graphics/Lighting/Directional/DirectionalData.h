@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/Directional/FBO_Shadow_Directional.h"
+#include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
@@ -37,9 +37,7 @@ struct DirectionalData {
 	GL_ArrayBuffer<Directional_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	std::shared_ptr<CameraBuffer> clientCamera;
-	FBO_Shadow_Directional shadowFBO;
-	std::vector<std::tuple<float*, int, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
-	glm::ivec2 shadowSize = glm::ivec2(1);
+	std::shared_ptr<ShadowData> shadowData;
 	size_t shapeVertexCount = 0ull;
 };
 

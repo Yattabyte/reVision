@@ -1,17 +1,5 @@
 entity
 {
-	Transform_Component
-	{
-		vec3 "0,10,30"
-		quat "0.906,-0.075,-0.375,0.180"
-		vec3 "1,1,1"
-	}
-	MenuCamera_Component
-	{
-	}
-}
-entity
-{
 	Renderable_Component
 	{
 	}
@@ -32,6 +20,9 @@ entity
 	LightDirectional_Component
 	{		
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 
 }

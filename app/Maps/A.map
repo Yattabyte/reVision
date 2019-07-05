@@ -14,7 +14,6 @@ entity
 {
 	Renderable_Component
 	{
-		bool "true"
 	}
 	Transform_Component
 	{
@@ -30,6 +29,9 @@ entity
 	LightDirectional_Component
 	{		
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	CameraArray_Component
 	{
@@ -61,6 +63,9 @@ entity
 	LightPoint_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	CameraArray_Component
 	{
@@ -96,6 +101,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{

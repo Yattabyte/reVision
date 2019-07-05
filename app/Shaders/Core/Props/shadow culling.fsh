@@ -9,7 +9,7 @@ struct Draw_Struct {
 };
 
 layout (early_fragment_tests) in;
-layout (std430, binding = 7) writeonly coherent buffer Output_DrawBuffer {
+layout (std430, binding = 8) writeonly coherent buffer Output_DrawBuffer {
 	Draw_Struct o_buffers[];
 };
 

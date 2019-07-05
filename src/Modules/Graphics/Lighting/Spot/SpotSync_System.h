@@ -24,6 +24,7 @@ public:
 		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightCutoff_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Shadow_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Camera_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 	}
@@ -42,8 +43,9 @@ public:
 			LightRadius_Component * radiusComponent = (LightRadius_Component*)componentParam[3];
 			LightCutoff_Component * cutoffComponent = (LightCutoff_Component*)componentParam[4];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[5];
-			Camera_Component * cameraComponent = (Camera_Component*)componentParam[6];
-			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[7];
+			Shadow_Component * shadowComponent = (Shadow_Component*)componentParam[6];
+			Camera_Component * cameraComponent = (Camera_Component*)componentParam[7];
+			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[8];
 
 
 			// Synchronize the component if it is visible
@@ -87,7 +89,7 @@ public:
 					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
 					m_frameData->lightBuffer[index].lightPV = pv;
 					if (cameraComponent) {
-						cameraComponent->m_camera->get()->Dimensions = m_frameData->shadowSize;
+						cameraComponent->m_camera->get()->Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
 						cameraComponent->m_camera->get()->FarPlane = radiusSquared;
 						cameraComponent->m_camera->get()->EyePosition = position;
 						cameraComponent->m_camera->get()->FOV = cutoff * 2.0f;
@@ -97,7 +99,7 @@ public:
 				}
 
 				// Sync Buffer Attributes
-				m_frameData->lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
+				m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;
 			}
 			index++;
 		}

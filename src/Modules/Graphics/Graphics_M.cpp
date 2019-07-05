@@ -78,12 +78,12 @@ void Graphics_Module::initialize(Engine * engine)
 	genPerspectiveMatrix();
 
 	// Rendering Effects & systems
-	auto sceneViewports = std::make_shared<std::vector<std::shared_ptr<CameraBuffer>>>();
-	m_systems.addSystem(new CameraPerspective_System(sceneViewports));
-	m_systems.addSystem(new CameraArrayPerspective_System(sceneViewports));
-	m_systems.addSystem(new FrustumCull_System(sceneViewports));
+	m_sceneCameras = std::make_shared<std::vector<std::shared_ptr<CameraBuffer>>>();
+	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
+	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
+	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
 	m_systems.addSystem(new Skeletal_Animation(engine));
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, sceneViewports, m_systems);
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
@@ -134,17 +134,18 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
 		auto * component = new LightDirectional_Component();
-		component->m_hasShadow = CastAny(parameters, 0, false);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
 		auto * component = new LightPoint_Component();
-		component->m_hasShadow = CastAny(parameters, 0, false);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
 		auto * component = new LightSpot_Component();
-		component->m_hasShadow = CastAny(parameters, 0, false);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Shadow_Component", [](const ParamList & parameters) {
+		auto * component = new Shadow_Component();
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("Reflector_Component", [](const ParamList & parameters) {
@@ -180,6 +181,7 @@ void Graphics_Module::deinitialize()
 	world.removeComponentType("LightDirectional_Component");
 	world.removeComponentType("LightPoint_Component");
 	world.removeComponentType("LightSpot_Component");
+	world.removeComponentType("Shadow_Component");
 	world.removeComponentType("Reflector_Component");
 }
 
@@ -188,6 +190,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
 	m_clientCamera->beginWriting();
 	m_clientCamera->pushChanges();
+	m_sceneCameras->clear();
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
 	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
@@ -215,13 +218,16 @@ void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr
 	m_pipeline->render(deltaTime, viewport, camera, allowedCategories);
 }
 
-void Graphics_Module::renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer)
+void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>>& perspectives)
 {
-	// Prepare camera for rendering
-	camera->bind(2);
+	// Apply frustum culling or other techniques
+	m_pipeline->cullShadows(deltaTime, perspectives);
+}
 
-	// Render
-	m_pipeline->shadow(deltaTime, camera, layer);
+void Graphics_Module::renderShadows(const float & deltaTime)
+{
+	// Render remaining shadows
+	m_pipeline->renderShadows(deltaTime);
 }
 
 void Graphics_Module::genPerspectiveMatrix() 

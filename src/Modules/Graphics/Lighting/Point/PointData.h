@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/Point/FBO_Shadow_Point.h"
+#include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
@@ -18,6 +18,7 @@
 struct PointData {
 	/** OpenGL buffer for point lights. */
 	struct Point_Buffer {
+		glm::mat4 shadowVP[6];
 		glm::mat4 mMatrix;
 		glm::vec3 LightColor; float padding1;
 		glm::vec3 LightPosition; float padding2;
@@ -34,10 +35,8 @@ struct PointData {
 
 	GL_ArrayBuffer<Point_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
-	FBO_Shadow_Point shadowFBO;
-	std::vector<std::tuple<float*, int, std::vector<std::shared_ptr<CameraBuffer>>>> shadowsToUpdate;
-	glm::ivec2 shadowSize = glm::ivec2(1);
 	size_t shapeVertexCount = 0ull;
+	std::shared_ptr<ShadowData> shadowData;
 };
 
 #endif POINTDATA_H

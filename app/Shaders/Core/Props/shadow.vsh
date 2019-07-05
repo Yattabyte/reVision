@@ -4,6 +4,12 @@
 #define MAX_BONES 100
 #define TEXTURES_PER_MATERIAL 3
 
+struct CamAttributes {
+	float farPlane;
+	int layer;
+	vec3 eyePosition;
+	mat4 pvMatrix;		
+};
 struct PropAttributes {
 	uint materialID;
 	uint isStatic;
@@ -13,25 +19,22 @@ struct PropAttributes {
 struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
-layout (std430, binding = 2) buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
+layout (std430, binding = 2) readonly buffer Cam_Buffer {
+	CamAttributes camBuffer[];
 };
 layout (std430, binding = 3) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
-layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
+layout (std430, binding = 4) readonly buffer Cam_Index_Buffer {
+	uint camIndexes[];
+};
+layout (std430, binding = 5) readonly buffer Prop_Index_Buffer {
 	uint propIndexes[];
 };
-layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
+layout (std430, binding = 6) readonly buffer Skeleton_Buffer {
 	BonesStruct skeletonBuffer[];
 };
-layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
+layout (std430, binding = 7) readonly buffer Skeleton_Index_Buffer {
 	int skeletonIndexes[];
 };
 
@@ -50,10 +53,13 @@ layout (location = 0) out vec3 WorldPos;
 layout (location = 1) out mat3 WorldTBN;
 layout (location = 5) out vec2 TexCoord0;
 layout (location = 6) flat out uint MaterialOffset;
+layout (location = 7) flat out vec3 EyePosition;
+layout (location = 8) flat out float FarPlane;
 
 
 void main()
 {	
+	const uint CamIndex 		= camIndexes[gl_DrawID];
 	const uint PropIndex 		= propIndexes[gl_DrawID];
 	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
@@ -73,6 +79,8 @@ void main()
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);
 	TexCoord0             		= textureCoordinate;	
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= pMatrix * vMatrix * WorldVertex;
-	gl_Layer 					= layer;
+	gl_Position           		= camBuffer[CamIndex].pvMatrix * WorldVertex;
+	gl_Layer 					= camBuffer[CamIndex].layer;
+	EyePosition					= camBuffer[CamIndex].eyePosition;
+	FarPlane					= camBuffer[CamIndex].farPlane;
 }

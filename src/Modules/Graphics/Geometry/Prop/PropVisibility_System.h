@@ -33,10 +33,10 @@ public:
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];
-
-			std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
-			std::vector<GLuint> visibleIndices;
-			std::vector<int> skeletonData;
+			viewInfo.cullingDrawData.clear();
+			viewInfo.renderingDrawData.clear();
+			viewInfo.visibleIndices.clear();
+			viewInfo.skeletonData.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
 				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
@@ -48,19 +48,19 @@ public:
 
 				if (renderableComponent->m_visible[x]) {
 					const auto & isStatic = propComponent->m_static;
-					visibleIndices.push_back((GLuint)index);
+					viewInfo.visibleIndices.push_back((GLuint)index);
 					
-					skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
+					viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
 					// Flag for occlusion culling if mesh complexity is high enough and if viewer is NOT within BSphere
 					if ((count >= 100) && bsphereComponent && bsphereComponent->m_cameraCollision == BoundingSphere_Component::OUTSIDE) {
 						// Allow occlusion culling	
-						cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
-						renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
+						viewInfo.cullingDrawData.push_back(glm::ivec4(36, 1, 0, 1));
+						viewInfo.renderingDrawData.push_back(glm::ivec4(count, 0, offset, 1));
 					}
 					else {
 						// Skip occlusion culling		
-						cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
-						renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
+						viewInfo.cullingDrawData.push_back(glm::ivec4(36, 0, 0, 1));
+						viewInfo.renderingDrawData.push_back(glm::ivec4(count, 1, offset, 1));
 					}
 				}
 				index++;
@@ -71,11 +71,11 @@ public:
 			viewInfo.bufferCulling.beginWriting();
 			viewInfo.bufferRender.beginWriting();
 			viewInfo.bufferSkeletonIndex.beginWriting();
-			viewInfo.visProps = (GLsizei)visibleIndices.size();
-			viewInfo.bufferPropIndex.write(0, sizeof(GLuint) * visibleIndices.size(), visibleIndices.data());
-			viewInfo.bufferCulling.write(0, sizeof(glm::ivec4) * cullingDrawData.size(), cullingDrawData.data());
-			viewInfo.bufferRender.write(0, sizeof(glm::ivec4) * renderingDrawData.size(), renderingDrawData.data());
-			viewInfo.bufferSkeletonIndex.write(0, sizeof(int) * skeletonData.size(), skeletonData.data());			
+			viewInfo.visProps = (GLsizei)viewInfo.visibleIndices.size();
+			viewInfo.bufferPropIndex.write(0, sizeof(GLuint) * viewInfo.visibleIndices.size(), viewInfo.visibleIndices.data());
+			viewInfo.bufferCulling.write(0, sizeof(glm::ivec4) * viewInfo.cullingDrawData.size(), viewInfo.cullingDrawData.data());
+			viewInfo.bufferRender.write(0, sizeof(glm::ivec4) * viewInfo.renderingDrawData.size(), viewInfo.renderingDrawData.data());
+			viewInfo.bufferSkeletonIndex.write(0, sizeof(int) * 	viewInfo.skeletonData.size(), viewInfo.skeletonData.data());
 		}
 	}
 

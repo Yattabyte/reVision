@@ -3,6 +3,7 @@
 
 /* Rendering Techniques Used */
 #include "Modules/Graphics/Geometry/Prop/Prop_Technique.h"
+#include "Modules/Graphics/Lighting/Shadow/Shadow_Technique.h"
 #include "Modules/Graphics/Lighting/Directional/Directional_Technique.h"
 #include "Modules/Graphics/Lighting/Point/Point_Technique.h"
 #include "Modules/Graphics/Lighting/Spot/Spot_Technique.h"
@@ -21,9 +22,10 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Came
 	: m_engine(engine)
 {
 	auto propView = new Prop_Technique(m_engine, cameras, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(m_engine, clientCamera, cameras, auxilliarySystems);
-	auto pointLighting = new Point_Technique(m_engine, cameras, auxilliarySystems);
-	auto spotLighting = new Spot_Technique(m_engine, cameras, auxilliarySystems);
+	auto shadowing = new Shadow_Technique(m_engine, auxilliarySystems);
+	auto directionalLighting = new Directional_Technique(m_engine, shadowing->getShadowData(), clientCamera, cameras, auxilliarySystems);
+	auto pointLighting = new Point_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
+	auto spotLighting = new Spot_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
 	auto reflectorLighting = new Reflector_Technique(m_engine, cameras, auxilliarySystems);
 	auto radianceHints = new Radiance_Hints(m_engine);
 	auto skybox = new Skybox(m_engine);
@@ -38,7 +40,7 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Came
 		propView
 	};
 	m_lightingTechniques = {
-		directionalLighting, pointLighting, spotLighting, reflectorLighting
+		shadowing, directionalLighting, pointLighting, spotLighting, reflectorLighting
 	};
 	m_effectTechniques = {
 		radianceHints, skybox, ssao, ssr, joinReflections, bloom, hdr, fxaa
@@ -73,8 +75,14 @@ void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Vi
 			tech->renderTechnique(deltaTime, viewport, camera);	
 }
 
-void Graphics_Pipeline::shadow(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer)
+void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>>& perspectives)
 {
-	for each (auto * tech in m_geometryTechniques) 
-		tech->renderShadows(deltaTime, camera, layer);	
+	for each (auto * tech in m_geometryTechniques)
+		tech->cullShadows(deltaTime, perspectives);
+}
+
+void Graphics_Pipeline::renderShadows(const float & deltaTime)
+{
+	for each (auto * tech in m_geometryTechniques)
+		tech->renderShadows(deltaTime);
 }

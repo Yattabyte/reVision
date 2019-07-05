@@ -4,7 +4,6 @@
 
 // Managers
 #include "Managers/AssetManager.h"
-#include "Managers/ModelManager.h"
 #include "Managers/MaterialManager.h"
 #include "Managers/MessageManager.h"
 #include "Managers/SoundManager.h"
@@ -91,8 +90,6 @@ public:
 	// Manager Accessors
 	/** Returns this engine's asset manager. */
 	AssetManager & getManager_Assets() { return m_assetManager; }
-	/** Returns this engine's model manager. */
-	ModelManager & getManager_Models() { return m_modelManager; }
 	/** Returns this engine's material manager. */
 	MaterialManager & getManager_Materials() { return m_materialManager; }
 	/** Returns this engine's message manager. */
@@ -143,7 +140,6 @@ private:
 	PreferenceState	m_preferenceState;
 	Rendering_Context m_renderingContext;
 	MaterialManager m_materialManager;
-	ModelManager m_modelManager;
 	ActionState	m_actionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;

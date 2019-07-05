@@ -41,6 +41,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -75,6 +78,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{
@@ -111,6 +117,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -145,6 +154,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{
@@ -181,6 +193,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -215,6 +230,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{
@@ -251,6 +269,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -286,6 +307,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{
@@ -347,6 +371,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -381,6 +408,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{
@@ -417,6 +447,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -452,6 +485,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	Camera_Component
 	{
 	}
@@ -486,6 +522,9 @@ entity
 	LightSpot_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	Camera_Component
 	{

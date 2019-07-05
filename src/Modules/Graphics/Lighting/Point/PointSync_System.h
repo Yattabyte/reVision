@@ -23,6 +23,7 @@ public:
 		addComponentType(LightColor_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Shadow_Component::ID, FLAG_OPTIONAL);
 		addComponentType(CameraArray_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 	}
@@ -40,8 +41,9 @@ public:
 			LightColor_Component * colorComponent = (LightColor_Component*)componentParam[2];
 			LightRadius_Component * radiusComponent = (LightRadius_Component*)componentParam[3];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[4];
-			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[5];
-			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[6];
+			Shadow_Component * shadowComponent = (Shadow_Component*)componentParam[5];
+			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[6];
+			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[7];
 
 			// Synchronize the component if it is visible
 			if (renderableComponent->m_visibleAtAll) {
@@ -81,18 +83,19 @@ public:
 						for (int x = 0; x < 6; ++x) {
 							if (!cameraComponent->m_cameras[x])
 								cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
-							cameraComponent->m_cameras[x]->get()->Dimensions = m_frameData->shadowSize;
+							cameraComponent->m_cameras[x]->get()->Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
 							cameraComponent->m_cameras[x]->get()->FOV = 90.0f;
 							cameraComponent->m_cameras[x]->get()->FarPlane = radiusSquared;
 							cameraComponent->m_cameras[x]->get()->EyePosition = position;
 							cameraComponent->m_cameras[x]->get()->pMatrix = pMatrix;
 							cameraComponent->m_cameras[x]->get()->vMatrix = vMatrices[x];
+							m_frameData->lightBuffer[index].shadowVP[x] = pMatrix * vMatrices[x];
 						}
 					}
 				}
 
 				// Sync Buffer Attributes
-				m_frameData->lightBuffer[index].Shadow_Spot = lightComponent->m_shadowSpot;
+				m_frameData->lightBuffer[index].Shadow_Spot = shadowComponent ? shadowComponent->m_shadowSpot : -1;
 			}
 			index++;
 		}

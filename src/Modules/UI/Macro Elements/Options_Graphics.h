@@ -39,7 +39,7 @@ public:
 
 		// Shadow Size Option
 		float shadowSize = 1024, shadowQuality = 4;
-		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, shadowSize);
+		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE, shadowSize);
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, shadowQuality);
 		auto element_shadow_list = std::make_shared<SideList>(engine);
 		element_shadow_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
@@ -123,9 +123,7 @@ protected:
 	/** Set the shadow size.
 	@param	index	the shadow size index to use. */
 	inline void setShadowSize(const size_t & index) {
-		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_DIRECTIONAL, std::min(m_shadowSizes[index] * 2, 2048.0f));
-		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_POINT, m_shadowSizes[index]);
-		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE_SPOT, m_shadowSizes[index]);
+		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE, m_shadowSizes[index]);
 		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_shadowQualities[index]);
 	}
 	/** Set the reflection size.

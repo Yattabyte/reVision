@@ -26,7 +26,9 @@ public:
 	/***/
 	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) {}
 	/***/
-	inline virtual void renderShadows(const float & deltaTime, const std::shared_ptr<CameraBuffer> & camera, const int & layer) {}
+	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> & perspectives) {}
+	/***/
+	inline virtual void renderShadows(const float & deltaTime) {}	
 };
 
 #endif // GEOMETRY_TECHNIQUE_H

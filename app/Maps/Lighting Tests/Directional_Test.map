@@ -30,6 +30,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	CameraArray_Component
 	{
 	}
@@ -54,6 +57,9 @@ entity
 	{
 		bool "true"
 	}
+	Shadow_Component
+	{
+	}
 	CameraArray_Component
 	{
 	}
@@ -77,6 +83,9 @@ entity
 	LightDirectional_Component
 	{
 		bool "true"
+	}
+	Shadow_Component
+	{
 	}
 	CameraArray_Component
 	{

@@ -6,10 +6,7 @@
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 #include "Modules/Graphics/Lighting/Point/PointVisibility_System.h"
-#include "Modules/Graphics/Lighting/Point/PointScheduler_System.h"
 #include "Modules/Graphics/Lighting/Point/PointSync_System.h"
-#include "Modules/World/ECS/components.h"
-#include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Engine.h"
@@ -25,11 +22,11 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Point_Technique(Engine * engine, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Point_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PointData>();
-		auxilliarySystems.addSystem(new PointScheduler_System(m_engine, m_frameData));
+		m_frameData->shadowData = shadowData;
 		auxilliarySystems.addSystem(new PointVisibility_System(m_frameData, cameras));
 		auxilliarySystems.addSystem(new PointSync_System(m_frameData));
 
@@ -38,21 +35,10 @@ public:
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");
 		m_shapeSphere = Shared_Primitive(m_engine, "sphere");
 
-		// Preferences
-		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_SIZE_POINT, m_frameData->shadowSize.x);
-		preferences.addCallback(PreferenceState::C_SHADOW_SIZE_POINT, m_aliveIndicator, [&](const float &f) {
-			m_frameData->shadowSize = glm::ivec2(std::max(1, (int)f));
-			if (m_shader_Lighting && m_shader_Lighting->existsYet())
-				m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_frameData->shadowSize.x); });
-		});
-		m_frameData->shadowSize = glm::ivec2(std::max(1, m_frameData->shadowSize.x));
-
 		// Asset-Finished Callbacks
 		m_shapeSphere->addCallback(m_aliveIndicator, [&]() mutable {
 			m_frameData->shapeVertexCount = m_shapeSphere->getSize();
 		});
-		m_shader_Lighting->addCallback(m_aliveIndicator, [&](void) { m_shader_Lighting->setUniform(0, 1.0f / (float)m_frameData->shadowSize.x); });
 
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
@@ -67,11 +53,6 @@ public:
 		m_frameData->lightBuffer.endWriting();
 		for (auto & viewInfo : m_frameData->viewInfo)
 			viewInfo.visLights.endWriting();
-	}
-	inline virtual void updateTechnique(const float & deltaTime) override {
-		// Render important shadows
-		if (m_enabled)
-			updateShadows(deltaTime);
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
 		// Render direct lights	
@@ -91,34 +72,6 @@ public:
 
 
 private:
-	// Private Methods	
-	/** Render all the geometry from each light.
-	@param	deltaTime	the amount of time passed since last frame. */
-	inline void updateShadows(const float & deltaTime) {
-		if (m_frameData->shadowsToUpdate.size()) {
-			glViewport(0, 0, m_frameData->shadowSize.x, m_frameData->shadowSize.y);
-			m_frameData->shadowFBO.bindForWriting();
-			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
-				if (cameras.size() == 6) {
-					m_frameData->shadowFBO.clear(shadowSpot);
-					// Render all six sides
-					for (int x = 0; x < 6; ++x) {
-						// Prepare Camera
-						cameras[x]->beginWriting();
-						cameras[x]->pushChanges();
-
-						// Update shadows
-						m_engine->getModule_Graphics().renderShadows(deltaTime, cameras[x], shadowSpot + x);
-
-						// End Camera
-						cameras[x]->endWriting();
-					}
-				}
-				*time += deltaTime;
-			}
-			m_frameData->shadowsToUpdate.clear();
-		}
-	}
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
@@ -133,11 +86,11 @@ private:
 			m_shader_Stencil->bind();																		// Shader (point)
 			viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
 			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
-			glBindTextureUnit(4, m_frameData->shadowFBO.m_textureIDS[3]);									// Shadow map(linear depth texture)
+			glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);									// Shadow map(linear depth texture)
 			m_frameData->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
 			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 			m_frameData->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
-			glBindVertexArray(m_shapeSphere->m_vaoID);	
+			glBindVertexArray(m_shapeSphere->m_vaoID);
 			glDepthMask(GL_FALSE);
 			glEnable(GL_DEPTH_TEST);
 			glDisable(GL_CULL_FACE);
@@ -147,6 +100,7 @@ private:
 
 			// Now draw into color buffers
 			m_shader_Lighting->bind();
+			m_shader_Lighting->setUniform(0, m_frameData->shadowData->shadowSizeRCP);
 			glDisable(GL_DEPTH_TEST);
 			glEnable(GL_CULL_FACE);
 			glCullFace(GL_FRONT);
@@ -164,7 +118,6 @@ private:
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
-		m_frameData->shadowsToUpdate.clear();
 		m_frameData->lightBuffer.clear();
 	}
 

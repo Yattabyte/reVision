@@ -44,15 +44,15 @@ const vec2 sampleOffsetDirections[9] = vec2[] (
 	vec2(0,  -1), vec2(0,  0), vec2(0,  1),
 	vec2(1,  -1), vec2(1,  0), vec2(1,  1)
 );
-#define FactorAmt 1.0 / 9
 float CalcShadowFactor(in vec4 LightSpacePos, in float ViewDistance)                                                  
 {           
 	if (Shadow_Spot >= 0) {	                                                                       
 		// Bring fragment coordinates from world space into light space, then into texture spaces
+		const float FactorAmt 		= 1.0f / 9.0f;
 		const vec3 ProjCoords 		= LightSpacePos.xyz / LightSpacePos.w;                                  
 		const vec2 UVCoords 		= 0.5f * ProjCoords.xy + 0.5f;                                                        
 		const float FragmentDepth 	= (0.5f * ProjCoords.z + 0.5f) - EPSILON; 		
-		const float diskRadius 		= (1.0 + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2);
+		const float diskRadius 		= (1.0f + (ViewDistance / LightRadius2)) * (ShadowSize_Recip * 2.0f);
 			
 		float Factor = 0.0f, depth;
 		vec3 FinalCoord;

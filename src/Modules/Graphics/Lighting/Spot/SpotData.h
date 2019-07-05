@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Graphics/Lighting/Spot/FBO_Shadow_Spot.h"
+#include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
@@ -37,10 +37,8 @@ struct SpotData {
 
 	GL_ArrayBuffer<Spot_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
-	FBO_Shadow_Spot shadowFBO;
-	std::vector<std::tuple<float*, int, std::shared_ptr<CameraBuffer>>> shadowsToUpdate;
-	glm::ivec2 shadowSize = glm::ivec2(1);
 	size_t shapeVertexCount = 0ull;
+	std::shared_ptr<ShadowData> shadowData;
 };
 
 #endif SPOTDATA_H

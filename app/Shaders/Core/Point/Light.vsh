@@ -4,6 +4,7 @@
 layout(location = 0) in vec3 vertex;
 
 struct Light_Struct {
+	mat4 shadowVP[6];
 	mat4 mMatrix;
 	vec4 LightColor;
 	vec4 LightPosition;
@@ -35,6 +36,7 @@ layout (location = 10) flat out vec3 LightColorInt;
 layout (location = 11) flat out vec3 LightPosition;
 layout (location = 12) flat out float LightRadius2;
 layout (location = 13) flat out int ShadowSpotFinal;
+layout (location = 14) flat out int lightIndex;
 
 void main()
 {		
@@ -42,10 +44,10 @@ void main()
 	CamVInverse = inverse(vMatrix);
 	CamEyePosition = EyePosition;
 	CamDimensions = CameraDimensions;
-	const int lightIndex = lightIndexes[gl_InstanceID];
+	lightIndex = lightIndexes[gl_InstanceID];
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 	LightPosition = lightBuffers[lightIndex].LightPosition.xyz;
 	LightRadius2 = lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius;	
-	ShadowSpotFinal = lightBuffers[lightIndex].Shadow_Spot/6;	
+	ShadowSpotFinal = lightBuffers[lightIndex].Shadow_Spot;	
 	gl_Position = pMatrix * vMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
 }
