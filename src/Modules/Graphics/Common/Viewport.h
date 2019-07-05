@@ -27,7 +27,7 @@ public:
 	/***/
 	void resize(const glm::ivec2 & size);
 	/***/
-	void bind(const std::shared_ptr<CameraBuffer> & camera);
+	void bind(const CameraBuffer::CamStruct & camera);
 	/***/
 	void clear();
 

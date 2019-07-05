@@ -81,14 +81,13 @@ public:
 					if (cameraComponent) {
 						cameraComponent->m_cameras.resize(6);
 						for (int x = 0; x < 6; ++x) {
-							if (!cameraComponent->m_cameras[x])
-								cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
-							cameraComponent->m_cameras[x]->get()->Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
-							cameraComponent->m_cameras[x]->get()->FOV = 90.0f;
-							cameraComponent->m_cameras[x]->get()->FarPlane = radiusSquared;
-							cameraComponent->m_cameras[x]->get()->EyePosition = position;
-							cameraComponent->m_cameras[x]->get()->pMatrix = pMatrix;
-							cameraComponent->m_cameras[x]->get()->vMatrix = vMatrices[x];
+							auto & cam = cameraComponent->m_cameras[x];
+							cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+							cam.FOV = 90.0f;
+							cam.FarPlane = radiusSquared;
+							cam.EyePosition = position;
+							cam.pMatrix = pMatrix;
+							cam.vMatrix = vMatrices[x];
 							m_frameData->lightBuffer[index].shadowVP[x] = pMatrix * vMatrices[x];
 						}
 					}

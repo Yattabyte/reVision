@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~CameraArrayPerspective_System() = default;
 	/***/
-	inline CameraArrayPerspective_System(const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline CameraArrayPerspective_System(const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_cameras(cameras) {
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 	}
@@ -27,15 +27,15 @@ public:
 		for each (const auto & componentParam in components) {
 			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[0];
 			if (cameraComponent->m_cameras.size())
-				for (const auto & camera : cameraComponent->m_cameras)
-					m_cameras->push_back(camera);
+				for (auto & camera : cameraComponent->m_cameras)
+					m_cameras->push_back(&camera);
 		}
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // CAMERAARRAYPERSPECTIVE_SYSTEM_H

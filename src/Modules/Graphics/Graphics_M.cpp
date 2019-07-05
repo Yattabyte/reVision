@@ -66,7 +66,7 @@ void Graphics_Module::initialize(Engine * engine)
 
 	// Camera Setup
 	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize);
-	CameraBuffer::BufferStructure cameraData;
+	CameraBuffer::CamStruct cameraData;
 	cameraData.pMatrix = glm::mat4(1.0f);
 	cameraData.vMatrix = glm::mat4(1.0f);
 	cameraData.EyePosition = glm::vec3(0.0f);
@@ -78,7 +78,7 @@ void Graphics_Module::initialize(Engine * engine)
 	genPerspectiveMatrix();
 
 	// Rendering Effects & systems
-	m_sceneCameras = std::make_shared<std::vector<std::shared_ptr<CameraBuffer>>>();
+	m_sceneCameras = std::make_shared<std::vector<CameraBuffer::CamStruct*>>();
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
@@ -93,7 +93,6 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("Camera_Component", [&, engine](const ParamList & parameters) {
 		auto * component = new Camera_Component();
-		component->m_camera = std::make_shared<CameraBuffer>();
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("CameraArray_Component", [&, engine](const ParamList & parameters) {
@@ -191,6 +190,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_clientCamera->beginWriting();
 	m_clientCamera->pushChanges();
 	m_sceneCameras->clear();
+	m_sceneCameras->push_back(m_clientCamera->get());
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
 	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
@@ -199,7 +199,8 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_pipeline->update(deltaTime);
 
 	// Render the scene from the user's perspective to the screen
-	renderScene(deltaTime, m_viewport, m_clientCamera);
+	m_clientCamera->bind(2);
+	renderScene(deltaTime, m_viewport, m_clientCamera->get());
 	copyToScreen();
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
@@ -207,18 +208,17 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_clientCamera->endWriting();
 }
 
-void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories)
+void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories)
 {
 	// Prepare viewport and camera for rendering
 	viewport->clear();
-	viewport->bind(camera);
-	camera->bind(2);
+	viewport->bind(*camera);
 
 	// Render
 	m_pipeline->render(deltaTime, viewport, camera, allowedCategories);
 }
 
-void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>>& perspectives)
+void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>>& perspectives)
 {
 	// Apply frustum culling or other techniques
 	m_pipeline->cullShadows(deltaTime, perspectives);

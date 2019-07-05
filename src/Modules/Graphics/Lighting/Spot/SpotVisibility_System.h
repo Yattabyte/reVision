@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~SpotVisibility_System() = default;
 	/***/
-	inline SpotVisibility_System(const std::shared_ptr<SpotData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline SpotVisibility_System(const std::shared_ptr<SpotData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
@@ -58,7 +58,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<SpotData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // SPOTVISIBILITY_SYSTEM_H

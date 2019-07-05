@@ -25,7 +25,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();
@@ -59,7 +59,7 @@ public:
 		glTextureParameteri(m_textureNoise32, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 
 		// Clear state on world-unloaded
-		 m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
 				clear();
 		});
@@ -72,13 +72,13 @@ public:
 		for (auto & viewInfo : m_frameData->viewInfo)
 			viewInfo.visLights.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
 		// Exit Early
 		if (m_enabled && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet() && m_shader_Bounce->existsYet()) {
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x).get() == camera.get()) {
+				if (m_cameras->at(x) == camera) {
 					visibilityIndex = x;
 					found = true;
 					break;
@@ -137,7 +137,7 @@ private:
 			glViewport(0, 0, (GLsizei)viewport->m_rhVolume->m_resolution, (GLsizei)viewport->m_rhVolume->m_resolution);
 			m_shader_Bounce->bind();
 			viewport->m_rhVolume->writePrimary();
-			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);	
+			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 			glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
 			glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
 			glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
@@ -172,7 +172,7 @@ private:
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // DIRECTIONAL_TECHNIQUE_H

@@ -47,11 +47,12 @@ public:
 			shadowComponent->m_shadowSpot = cameraCount;
 
 			// Aggregate camera information
-			std::vector<std::shared_ptr<CameraBuffer>> cameras;
+			std::vector<CameraBuffer::CamStruct*> cameras;
 			if (camSingle)
-				cameras.push_back(camSingle->m_camera);
-			else if (camArrays)
-				cameras = camArrays->m_cameras;
+				cameras.push_back(&(camSingle->m_camera));
+			else if (camArrays) 
+				for (int x = 0; x < camArrays->m_cameras.size(); ++x)
+					cameras.push_back(&(camArrays->m_cameras[x]));			
 			cameraCount += cameras.size();
 
 			if (renderableComponent->m_visibleAtAll && cameras.size()) {

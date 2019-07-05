@@ -32,8 +32,6 @@ struct PropData {
 	};
 	/***/
 	struct ViewInfo {
-		GLsizei visProps = 0;
-		DynamicBuffer bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;
 		std::vector<int> skeletonData;

@@ -22,7 +22,6 @@ public:
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
 		addComponentType(Player3D_Component::ID);
-		addComponentType(Camera_Component::ID);
 
 		// Error Reporting
 		if (!isValid())
@@ -36,7 +35,6 @@ public:
 		for each (const auto & componentParam in components) {
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[0];
 			Player3D_Component * playerComponent = (Player3D_Component*)componentParam[1];
-			Camera_Component * cameraComponent = (Camera_Component*)componentParam[2];
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;
@@ -97,8 +95,9 @@ public:
 			transform.update();
 
 			// Update the client's camera
-			cameraComponent->m_camera->get()->EyePosition = transform.m_position;
-			cameraComponent->m_camera->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
+			auto & cam = graphicsModule.getClientCamera();
+			cam->get()->EyePosition = transform.m_position;
+			cam->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
 		}
 	};
 

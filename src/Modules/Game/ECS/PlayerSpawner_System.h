@@ -41,14 +41,12 @@ public:
 				auto & world = m_engine->getModule_World();
 				Player3D_Component player;
 				Transform_Component trans;
-				Camera_Component camera;
 
 				trans.m_transform = transform;
-				camera.m_camera = graphicsModule.getClientCamera();
 
-				BaseECSComponent * components[] = { &player, &trans, &camera };
-				uint32_t types[] = { Player3D_Component::ID, Transform_Component::ID, Camera_Component::ID };
-				world.makeEntity(components, types, 3ull);
+				BaseECSComponent * components[] = { &player, &trans };
+				uint32_t types[] = { Player3D_Component::ID, Transform_Component::ID };
+				world.makeEntity(components, types, 2ull);
 				m_playerCount++;
 			}
 		}

@@ -21,7 +21,7 @@ public:
 	@param	engine		the engine to use.
 	@param	cameras		all the cameras active in the scene.
 	@param	auxSystems	container to add extra render-related ecs systems to. */
-	Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxSystems);
+	Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxSystems);
 
 
 	// Public Methods
@@ -34,9 +34,9 @@ public:
 	@param	viewport	the viewport to render into.
 	@param	camera		the camera to render with.
 	@param	categories	the allowed technique categories to render. */
-	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & categories = Graphics_Technique::ALL);
+	void render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & categories = Graphics_Technique::ALL);
 	/***/
-	void cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> & perspectives);
+	void cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>> & perspectives);
 	/***/
 	void renderShadows(const float & deltaTime);
 

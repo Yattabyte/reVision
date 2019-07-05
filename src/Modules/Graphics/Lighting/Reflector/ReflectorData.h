@@ -34,7 +34,7 @@ struct ReflectorData {
 	GL_ArrayBuffer<Reflector_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	FBO_Env_Reflector envmapFBO;
-	std::vector<std::tuple<float, Reflector_Component*, std::vector<std::shared_ptr<CameraBuffer>>>> reflectorsToUpdate;
+	std::vector<std::tuple<float, Reflector_Component*, std::vector<CameraBuffer::CamStruct*>>> reflectorsToUpdate;
 	bool envmapOutOfDate = false;
 	glm::ivec2 envmapSize = glm::ivec2(1);
 	size_t shapeVertexCount = 0ull;

@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~DirectionalSync_System() = default;
 	/***/
-	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
@@ -49,9 +49,6 @@ public:
 				// Sync Camera Attributes
 				if (cameraComponent) {
 					cameraComponent->m_cameras.resize(NUM_CASCADES);
-					for (int x = 0; x < NUM_CASCADES; ++x)
-						if (!cameraComponent->m_cameras[x])
-							cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
 					if (shadowComponent->m_outOfDate) {
 						const auto size = glm::vec2(m_frameData->clientCamera.get()->get()->Dimensions);
 						const float ar = size.x / size.y;
@@ -102,14 +99,14 @@ public:
 							const glm::vec4 v2 = CamP * v1;
 							lightComponent->m_pvMatrices[i] = pvMatrix;
 							lightComponent->m_cascadeEnds[i] = v2.z;
-
-							cameraComponent->m_cameras[i]->get()->Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
-							cameraComponent->m_cameras[i]->get()->FOV = 90.0f;
-							cameraComponent->m_cameras[i]->get()->NearPlane = newMin.z;
-							cameraComponent->m_cameras[i]->get()->FarPlane = newMax.z;
-							cameraComponent->m_cameras[i]->get()->EyePosition = clampedPos;
-							cameraComponent->m_cameras[i]->get()->pMatrix = pMatrix;
-							cameraComponent->m_cameras[i]->get()->vMatrix = sunModelMatrix;
+							auto & cam = cameraComponent->m_cameras[i];
+							cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+							cam.FOV = 90.0f;
+							cam.NearPlane = newMin.z;
+							cam.FarPlane = newMax.z;
+							cam.EyePosition = clampedPos;
+							cam.pMatrix = pMatrix;
+							cam.vMatrix = sunModelMatrix;
 						}
 						shadowComponent->m_outOfDate = false;
 					}
@@ -144,7 +141,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // DIRECTIONALSYNC_SYSTEM_H

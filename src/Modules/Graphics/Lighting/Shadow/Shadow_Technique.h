@@ -10,6 +10,7 @@
 #include "Assets/Primitive.h"
 #include "Engine.h"
 
+
 /***/
 class Shadow_Technique : public Graphics_Technique {
 public:
@@ -68,7 +69,7 @@ private:
 			m_frameData->shadowFBO.bindForWriting();
 
 			// Accumulate Perspective Data
-			std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> perspectives;
+			std::vector<std::pair<CameraBuffer::CamStruct*, int>> perspectives;
 			perspectives.reserve(m_frameData->shadowsToUpdate.size());
 			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
 				m_frameData->shadowFBO.clear(shadowSpot, cameras.size());

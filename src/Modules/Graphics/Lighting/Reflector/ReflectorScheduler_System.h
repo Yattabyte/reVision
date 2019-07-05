@@ -57,13 +57,19 @@ public:
 							m_frameData->reflectorsToUpdate.at(y) = m_frameData->reflectorsToUpdate.at(y - 1ull);
 						oldLight = reflectorComponent;
 						oldTime = reflectorComponent->m_updateTime;
-						oldCameras = cameraComponent->m_cameras;
+						oldCameras.clear();
+						for (int x = 0; x < cameraComponent->m_cameras.size(); ++x)
+							oldCameras.push_back(&(cameraComponent->m_cameras[x]));
 						didAnything = true;
 						break;
 					}
 				}
-				if (!didAnything && m_frameData->reflectorsToUpdate.size() < m_maxShadowsCasters)
-					m_frameData->reflectorsToUpdate.push_back({ reflectorComponent->m_updateTime, reflectorComponent, cameraComponent->m_cameras });
+				if (!didAnything && m_frameData->reflectorsToUpdate.size() < m_maxShadowsCasters) {
+					std::vector<CameraBuffer::CamStruct*> cams(cameraComponent->m_cameras.size());
+					for (int x = 0; x < cameraComponent->m_cameras.size(); ++x)
+						cams[x] = (&(cameraComponent->m_cameras[x]));
+					m_frameData->reflectorsToUpdate.push_back({ reflectorComponent->m_updateTime, reflectorComponent, cams });
+				}
 			}
 			index++;
 		}

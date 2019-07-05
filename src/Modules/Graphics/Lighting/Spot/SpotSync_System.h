@@ -89,12 +89,13 @@ public:
 					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
 					m_frameData->lightBuffer[index].lightPV = pv;
 					if (cameraComponent) {
-						cameraComponent->m_camera->get()->Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
-						cameraComponent->m_camera->get()->FarPlane = radiusSquared;
-						cameraComponent->m_camera->get()->EyePosition = position;
-						cameraComponent->m_camera->get()->FOV = cutoff * 2.0f;
-						cameraComponent->m_camera->get()->vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
-						cameraComponent->m_camera->get()->pMatrix = pMatrix;
+						auto & cam = cameraComponent->m_camera;
+						cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+						cam.FarPlane = radiusSquared;
+						cam.EyePosition = position;
+						cam.FOV = cutoff * 2.0f;
+						cam.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
+						cam.pMatrix = pMatrix;
 					}
 				}
 

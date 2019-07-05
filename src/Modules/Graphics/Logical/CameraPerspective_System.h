@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~CameraPerspective_System() = default;
 	/***/
-	inline CameraPerspective_System(const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline CameraPerspective_System(const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_cameras(cameras) {
 		addComponentType(Camera_Component::ID, FLAG_REQUIRED);
 	}
@@ -26,14 +26,14 @@ public:
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
 			Camera_Component * cameraComponent = (Camera_Component*)componentParam[0];
-			m_cameras->push_back(cameraComponent->m_camera);
+			m_cameras->push_back(&(cameraComponent->m_camera));
 		}
 	}
 
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // CAMERAPERSPECTIVE_SYSTEM_H

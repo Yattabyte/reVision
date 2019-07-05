@@ -18,7 +18,7 @@
 #include "Modules/Graphics/Effects/FXAA.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
 	auto propView = new Prop_Technique(m_engine, cameras, auxilliarySystems);
@@ -68,14 +68,14 @@ void Graphics_Pipeline::update(const float & deltaTime)
 		tech->updateTechnique(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories)
+void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories)
 {
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
 			tech->renderTechnique(deltaTime, viewport, camera);	
 }
 
-void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>>& perspectives)
+void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>>& perspectives)
 {
 	for each (auto * tech in m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);

@@ -22,7 +22,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Spot_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Spot_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<SpotData>();
@@ -54,13 +54,13 @@ public:
 		for (auto & viewInfo : m_frameData->viewInfo)
 			viewInfo.visLights.endWriting();
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
 		// Render direct lights	
 		if (m_enabled && m_shapeCone->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x).get() == camera.get()) {
+				if (m_cameras->at(x) == camera) {
 					visibilityIndex = x;
 					found = true;
 					break;
@@ -132,7 +132,7 @@ private:
 
 	// Shared Attributes
 	std::shared_ptr<SpotData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // SPOT_TECHNIQUE_H

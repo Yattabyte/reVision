@@ -64,14 +64,13 @@ public:
 				};
 				cameraComponent->m_cameras.resize(6);
 				for (int x = 0; x < 6; ++x) {
-					if (!cameraComponent->m_cameras[x])
-						cameraComponent->m_cameras[x] = std::make_shared<CameraBuffer>();
-					cameraComponent->m_cameras[x]->get()->Dimensions = m_frameData->envmapSize;
-					cameraComponent->m_cameras[x]->get()->FOV = 90.0f;
-					cameraComponent->m_cameras[x]->get()->FarPlane = largest;
-					cameraComponent->m_cameras[x]->get()->EyePosition = position;
-					cameraComponent->m_cameras[x]->get()->pMatrix = pMatrix;
-					cameraComponent->m_cameras[x]->get()->vMatrix = vMatrices[x];
+					auto & cam = cameraComponent->m_cameras[x];
+					cam.Dimensions = m_frameData->envmapSize;
+					cam.FOV = 90.0f;
+					cam.FarPlane = largest;
+					cam.EyePosition = position;
+					cam.pMatrix = pMatrix;
+					cam.vMatrix = vMatrices[x];
 				}
 
 				// Sync Buffer Attributes

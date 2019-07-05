@@ -20,7 +20,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/***/
-	inline DirectionalVisibility_System(Engine * engine, const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline DirectionalVisibility_System(Engine * engine, const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
@@ -77,7 +77,7 @@ private:
 	// Private Attributes
 	GLuint m_bounceSize = 16u;
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

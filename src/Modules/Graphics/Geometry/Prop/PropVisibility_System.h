@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~PropVisibility_System() = default;
 	/***/
-	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
@@ -65,17 +65,6 @@ public:
 				}
 				index++;
 			}
-
-			// Update camera buffers
-			viewInfo.bufferPropIndex.beginWriting();
-			viewInfo.bufferCulling.beginWriting();
-			viewInfo.bufferRender.beginWriting();
-			viewInfo.bufferSkeletonIndex.beginWriting();
-			viewInfo.visProps = (GLsizei)viewInfo.visibleIndices.size();
-			viewInfo.bufferPropIndex.write(0, sizeof(GLuint) * viewInfo.visibleIndices.size(), viewInfo.visibleIndices.data());
-			viewInfo.bufferCulling.write(0, sizeof(glm::ivec4) * viewInfo.cullingDrawData.size(), viewInfo.cullingDrawData.data());
-			viewInfo.bufferRender.write(0, sizeof(glm::ivec4) * viewInfo.renderingDrawData.size(), viewInfo.renderingDrawData.data());
-			viewInfo.bufferSkeletonIndex.write(0, sizeof(int) * 	viewInfo.skeletonData.size(), viewInfo.skeletonData.data());
 		}
 	}
 
@@ -83,7 +72,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // PROPVISIBILITY_SYSTEM_H

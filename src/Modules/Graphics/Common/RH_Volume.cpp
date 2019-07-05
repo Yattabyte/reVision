@@ -43,14 +43,14 @@ RH_Volume::RH_Volume(Engine * engine)
 	}
 }
 
-void RH_Volume::updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer)
+void RH_Volume::updateVolume(const CameraBuffer::CamStruct & camera)
 {
-	const glm::mat4 InverseView = glm::inverse((*cameraBuffer)->vMatrix);
-	const auto & ViewDimensions = (*cameraBuffer)->Dimensions;
+	const glm::mat4 InverseView = glm::inverse(camera.vMatrix);
+	const auto & ViewDimensions = camera.Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
-	const float tanHalfHFOV = glm::radians((*cameraBuffer)->FOV) / 2.0f;
+	const float tanHalfHFOV = glm::radians(camera.FOV) / 2.0f;
 	const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / AspectRatio);
-	const float frustumSlice[2] = { (*cameraBuffer)->NearPlane, ((*cameraBuffer)->FarPlane * 0.25f) };
+	const float frustumSlice[2] = { camera.NearPlane, (camera.FarPlane * 0.25f) };
 	const float frustumPoints[4] = {
 		frustumSlice[0] * tanHalfHFOV,
 		frustumSlice[1] * tanHalfHFOV,

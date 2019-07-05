@@ -16,12 +16,12 @@ struct Renderable_Component : public ECSComponent<Renderable_Component> {
 
 /***/
 struct Camera_Component : public ECSComponent<Camera_Component> {
-	std::shared_ptr<CameraBuffer> m_camera;
+	CameraBuffer::CamStruct m_camera;
 };
 
 /***/
 struct CameraArray_Component : public ECSComponent<CameraArray_Component> {
-	std::vector<std::shared_ptr<CameraBuffer>> m_cameras;
+	std::vector<CameraBuffer::CamStruct> m_cameras;
 };
 
 /***/

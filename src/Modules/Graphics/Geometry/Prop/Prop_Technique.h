@@ -25,7 +25,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & viewports, ECSSystemList & auxilliarySystems)
+	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & viewports, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PropData>();
@@ -52,33 +52,51 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->modelBuffer.endWriting();
 		m_frameData->skeletonBuffer.endWriting();
-		for (auto & viewInfo : m_frameData->viewInfo) {
-			viewInfo.bufferPropIndex.endWriting();
-			viewInfo.bufferCulling.endWriting();
-			viewInfo.bufferRender.endWriting();
-			viewInfo.bufferSkeletonIndex.endWriting();			
+		for (auto & drawBuffer : m_drawBuffers) {
+			drawBuffer.bufferCam.endWriting();
+			drawBuffer.bufferCamIndex.endWriting();
+			drawBuffer.bufferPropIndex.endWriting();
+			drawBuffer.bufferCulling.endWriting();
+			drawBuffer.bufferRender.endWriting();
+			drawBuffer.bufferSkeletonIndex.endWriting();
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
 		// Exit Early
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x).get() == camera.get()) {
+				if (m_cameras->at(x) == camera) {
 					visibilityIndex = x;
 					found = true;
 					break;
 				}
 			if (found) {
+				if (m_drawIndex >= m_drawBuffers.size())
+					m_drawBuffers.resize(m_drawIndex + 1);
+				auto & drawBuffer = m_drawBuffers[m_drawIndex];
+				auto &propIndexBuffer = drawBuffer.bufferPropIndex;
+				auto &propCullingBuffer = drawBuffer.bufferCulling;
+				auto &propRenderBuffer = drawBuffer.bufferRender;
+				auto &propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
+				propIndexBuffer.beginWriting();
+				propCullingBuffer.beginWriting();
+				propRenderBuffer.beginWriting();
+				propSkeletonBuffer.beginWriting();
 				// Apply occlusion culling and render props
-				if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visProps) {
+				if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visibleIndices.size()) {
+					propIndexBuffer.write(0, sizeof(GLuint) *m_frameData->viewInfo[visibilityIndex].visibleIndices.size(), m_frameData->viewInfo[visibilityIndex].visibleIndices.data());
+					propCullingBuffer.write(0, sizeof(glm::ivec4) * m_frameData->viewInfo[visibilityIndex].cullingDrawData.size(), m_frameData->viewInfo[visibilityIndex].cullingDrawData.data());
+					propRenderBuffer.write(0, sizeof(glm::ivec4) * m_frameData->viewInfo[visibilityIndex].renderingDrawData.size(), m_frameData->viewInfo[visibilityIndex].renderingDrawData.data());
+					propSkeletonBuffer.write(0, sizeof(int) * m_frameData->viewInfo[visibilityIndex].skeletonData.size(), m_frameData->viewInfo[visibilityIndex].skeletonData.data());
+
 					m_engine->getManager_Materials().bind();
 					m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-					m_frameData->viewInfo[visibilityIndex].bufferPropIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+					propIndexBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 					m_frameData->skeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
-					m_frameData->viewInfo[visibilityIndex].bufferSkeletonIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
+					propSkeletonBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 6);
 
 					// Draw bounding boxes for each model, filling render buffer on successful rasterization
 					glDisable(GL_BLEND);
@@ -90,9 +108,9 @@ public:
 					m_shaderCull->bind();
 					viewport->m_gfxFBOS->bindForWriting("GEOMETRY");
 					glBindVertexArray(m_shapeCube->m_vaoID);
-					m_frameData->viewInfo[visibilityIndex].bufferCulling.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
-					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visProps, 0);
+					propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+					propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 7);
+					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visibleIndices.size(), 0);
 					glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 					glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 7, 0);
 
@@ -103,13 +121,14 @@ public:
 					glCullFace(GL_BACK);
 					m_shaderGeometry->bind();
 					glBindVertexArray(m_frameData->m_geometryVAOID);
-					m_frameData->viewInfo[visibilityIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visProps, 0);
+					propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+					glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_frameData->viewInfo[visibilityIndex].visibleIndices.size(), 0);
+					m_drawIndex++;
 				}
 			}
 		}
 	}
-	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> & perspectives) override {
+	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>> & perspectives) override {
 		// Exit Early
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			auto & drawBuffer = m_drawBuffers[m_drawIndex];
@@ -136,13 +155,13 @@ public:
 				size_t visibilityIndex = 0;
 				bool found = false;
 				for (size_t x = 0; x < m_cameras->size(); ++x)
-					if (m_cameras->at(x).get() == camera.get()) {
+					if (m_cameras->at(x) == camera) {
 						visibilityIndex = x;
 						found = true;
 						break;
 					}
 				if (found) {
-					camData.push_back(DrawBuffers::CamAttributes{ camera->get()->FarPlane, layer, glm::vec2(1.0f),camera->get()->EyePosition, 0.0f, camera->get()->pMatrix * camera->get()->vMatrix });
+					camData.push_back(DrawBuffers::CamAttributes{ camera->FarPlane, layer, glm::vec2(1.0f),camera->EyePosition, 0.0f, camera->pMatrix * camera->vMatrix });
 					const std::vector<GLuint> tempIndices(m_frameData->viewInfo[visibilityIndex].visibleIndices.size(), camIndex);
 					camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 					visibleIndices.insert(visibleIndices.end(), m_frameData->viewInfo[visibilityIndex].visibleIndices.begin(), m_frameData->viewInfo[visibilityIndex].visibleIndices.end());
@@ -193,7 +212,6 @@ public:
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {					
 			if (m_count) {
 				// Draw geometry using the populated render buffer
-				auto & drawBuffer = m_drawBuffers[m_drawIndex];
 				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 				glDepthMask(GL_TRUE);
 				glEnable(GL_CULL_FACE);
@@ -201,20 +219,13 @@ public:
 				glFrontFace(GL_CW);
 				m_shaderShadowGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
-				drawBuffer.bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+				m_drawBuffers[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_count, 0);
 				glFrontFace(GL_CCW);
 				glCullFace(GL_BACK);
-
-				drawBuffer.bufferCam.endWriting();
-				drawBuffer.bufferCamIndex.endWriting();
-				drawBuffer.bufferPropIndex.endWriting();
-				drawBuffer.bufferCulling.endWriting();
-				drawBuffer.bufferRender.endWriting();
-				drawBuffer.bufferSkeletonIndex.endWriting();
+				m_drawIndex++;
 			}
 		}	
-		m_drawIndex++;
 	}
 
 
@@ -247,12 +258,12 @@ private:
 	// One set for the client camera, one for shadows, one for reflectors
 	int m_drawIndex = 0;
 	size_t m_count = 0ull;
-	DrawBuffers m_drawBuffers[3];
+	std::vector<DrawBuffers> m_drawBuffers;
 
 
 	// Shared Attributes
 	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // PROP_TECHNIQUE_H

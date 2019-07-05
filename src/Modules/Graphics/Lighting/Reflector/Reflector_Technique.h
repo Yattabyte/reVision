@@ -25,7 +25,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
@@ -96,13 +96,13 @@ public:
 			updateReflectors(deltaTime);
 		}
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
 		// Exit Early
 		if (m_enabled && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x).get() == camera.get()) {
+				if (m_cameras->at(x) == camera) {
 					visibilityIndex = x;
 					found = true;
 					break;
@@ -120,16 +120,23 @@ private:
 	@param	viewport	the viewport to render from. */
 	inline void updateReflectors(const float & deltaTime) {
 		if (m_frameData->reflectorsToUpdate.size()) {
+			m_viewCameras.resize(m_frameData->reflectorsToUpdate.size() * 6);
+			for (auto & camera : m_viewCameras)
+				if (!camera)
+					camera = std::make_shared<CameraBuffer>();
+			int index = 0;
 			for (auto &[time, reflector, cameras] : m_frameData->reflectorsToUpdate) {
 				for (int x = 0; x < 6; ++x) {
 					// Set view-specific camera data
-					cameras[x]->beginWriting();
-					cameras[x]->pushChanges();
+					m_viewCameras[index]->beginWriting();
+					m_viewCameras[index]->replace(*cameras[x]);
+					m_viewCameras[index]->pushChanges();
 
 					// Render Graphics Pipeline
+					m_viewCameras[index]->bind(2);
 					constexpr const unsigned int flags = Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING;
 					m_engine->getModule_Graphics().renderScene(deltaTime, m_viewport, cameras[x], flags);
-					cameras[x]->endWriting();
+					m_viewCameras[index]->endWriting();
 
 					// Copy lighting frame into cube-face
 					m_viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
@@ -168,6 +175,7 @@ private:
 				reflector->m_updateTime = m_engine->getTime();
 				Shader::Release();
 				reflector->m_sceneOutOfDate = false;
+				index++;
 			}
 
 			m_frameData->reflectorsToUpdate.clear();
@@ -234,11 +242,12 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticBuffer m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuad6Faces = StaticBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
+	std::vector<std::shared_ptr<CameraBuffer>> m_viewCameras;
 
 
 	// Shared Attributes
 	std::shared_ptr<ReflectorData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // REFLECTOR_TECHNIQUE_H

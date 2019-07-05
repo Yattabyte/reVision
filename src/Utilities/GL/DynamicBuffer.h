@@ -152,10 +152,10 @@ public:
 	}
 	/** Create a fence for the current point in time. */
 	inline void endWriting() {
-		if (m_fence[m_writeIndex])
-			glDeleteSync(m_fence[m_writeIndex]);
-		m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		m_writeIndex = (m_writeIndex + 1) % 3;
+		if (!m_fence[m_writeIndex]) {
+			m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			m_writeIndex = (m_writeIndex + 1) % 3;
+		}
 	}
 
 

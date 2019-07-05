@@ -22,7 +22,7 @@ public:
 	// Public Methods
 	/** Update the volume's attributes based on the input camera.
 	@param	cameraBuffer	the camera to use the frustum of. */
-	void updateVolume(const std::shared_ptr<CameraBuffer> & cameraBuffer);
+	void updateVolume(const CameraBuffer::CamStruct & cameraBuffer);
 	/** Resize this volume's 3D texture.
 	@param	resolution		the new size to use. */
 	void resize(const float & resolution = 16.0f);

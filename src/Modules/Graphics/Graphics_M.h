@@ -35,9 +35,9 @@ public:
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::shared_ptr<CameraBuffer> & camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
+	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
 	/***/
-	void cullShadows(const float & deltaTime, const std::vector<std::pair<std::shared_ptr<CameraBuffer>, int>> & perspectives);	
+	void cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>> & perspectives);	
 	/***/
 	void renderShadows(const float & deltaTime);
 	/***/
@@ -65,7 +65,7 @@ private:
 	Shared_Primitive							m_shapeQuad;
 	StaticBuffer								m_quadIndirectBuffer;
 	std::shared_ptr<bool>						m_aliveIndicator = std::make_shared<bool>(true);
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>>	m_sceneCameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>>	m_sceneCameras;
 };
 
 #endif // GRAPHICS_MODULE_H

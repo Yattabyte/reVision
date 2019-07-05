@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~ReflectorVisibility_System() = default;
 	/***/
-	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility, const std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> & cameras)
+	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
 		: m_frameData(visibility), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
@@ -62,7 +62,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<ReflectorData> m_frameData;
-	std::shared_ptr<std::vector<std::shared_ptr<CameraBuffer>>> m_cameras;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // REFLECTORVISIBILITY_SYSTEM_H

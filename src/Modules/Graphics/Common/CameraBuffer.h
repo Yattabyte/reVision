@@ -11,7 +11,7 @@ class CameraBuffer {
 public:
 	// Public Structs
 	constexpr static float ConstNearPlane = 0.5f;
-	struct BufferStructure {
+	struct CamStruct {
 		glm::mat4 pMatrix;
 		glm::mat4 vMatrix;
 		glm::vec3 EyePosition; float padding1;
@@ -46,8 +46,8 @@ public:
 		constexpr GLbitfield flags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT;
 		glCreateBuffers(3, m_bufferID);
 		for (int x = 0; x < 3; ++x) {
-			glNamedBufferStorage(m_bufferID[x], sizeof(BufferStructure), 0, GL_DYNAMIC_STORAGE_BIT | flags);
-			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, sizeof(BufferStructure), flags);
+			glNamedBufferStorage(m_bufferID[x], sizeof(CamStruct), 0, GL_DYNAMIC_STORAGE_BIT | flags);
+			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, sizeof(CamStruct), flags);
 		}
 	}
 	/** Move from another camera buffer. */
@@ -72,23 +72,23 @@ public:
 
 	// Public Methods
 	/** Retrieve a const pointer to the underlying data structure. */
-	inline const BufferStructure * operator-> () const {
+	inline const CamStruct * operator-> () const {
 		return &m_localData;
 	}
 	/** Retrieve a pointer to the underlying data structure. */
-	inline BufferStructure * operator-> () {
+	inline CamStruct * operator-> () {
 		return &m_localData;
 	}
 	/** Retrieve a const pointer to the underlying data structure. */
-	inline const BufferStructure * get() const {
+	inline const CamStruct * get() const {
 		return &m_localData;
 	}
 	/** Retrieve a pointer to the underlying data structure. */
-	inline BufferStructure * get() {
+	inline CamStruct * get() {
 		return &m_localData;
 	}
 	/***/
-	inline void replace(const BufferStructure & data) {
+	inline void replace(const CamStruct & data) {
 		m_localData = data;
 	}
 	/** Wait for the current fence to pass, for the current frame index. */
@@ -105,25 +105,25 @@ public:
 	}
 	/** Create a fence for the current point in time. */
 	inline void endWriting() {
-		if (m_fence[m_writeIndex])
-			glDeleteSync(m_fence[m_writeIndex]);
-		m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-		m_writeIndex = (m_writeIndex + 1) % 3;
+		if (!m_fence[m_writeIndex]) {
+			m_fence[m_writeIndex] = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			m_writeIndex = (m_writeIndex + 1) % 3;
+		}
 	}
 	/** Commit the changes held in the local data, to the GPU, for a given frame index. */
 	inline void pushChanges() {
-		*(BufferStructure*)(m_bufferPtr[m_writeIndex]) = m_localData;
+		*(CamStruct*)(m_bufferPtr[m_writeIndex]) = m_localData;
 	}
 	/** Bind the GPU representation of this data, for a given frame index.
 	@param	targetIndex		the binding point for the buffer in the shader. */
 	inline void bind(const GLuint & targetIndex) const {
-		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, targetIndex, m_bufferID[m_writeIndex], 0, sizeof(BufferStructure));
+		glBindBufferRange(GL_SHADER_STORAGE_BUFFER, targetIndex, m_bufferID[m_writeIndex], 0, sizeof(CamStruct));
 	}
 
 
 private:
 	// Private Attributes
-	BufferStructure m_localData;
+	CamStruct m_localData;
 	int m_writeIndex = 0;
 	GLuint m_bufferID[3] = { 0,0,0 };
 	void * m_bufferPtr[3] = { nullptr, nullptr, nullptr };

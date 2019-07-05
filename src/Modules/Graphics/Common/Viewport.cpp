@@ -30,7 +30,7 @@ void Viewport::resize(const glm::ivec2 & size)
 	}
 }
 
-void Viewport::bind(const std::shared_ptr<CameraBuffer> & camera)
+void Viewport::bind(const CameraBuffer::CamStruct & camera)
 {
 	glViewport(m_screenPosition.x, m_screenPosition.y, m_dimensions.x, m_dimensions.y);
 	m_rhVolume->updateVolume(camera);
