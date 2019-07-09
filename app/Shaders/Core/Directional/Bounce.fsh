@@ -10,7 +10,7 @@ layout (location = 4) uniform float resolution = 16.0f;
 layout (location = 5) uniform float spread = 0.05f;
 layout (location = 6) uniform float R_wcs = 0.0f;
 
-layout (location = 0) flat in mat4 CamVMatrix;
+layout (location = 0) flat in mat4 vMatrix;
 layout (location = 4) flat in mat4 CamPVMatrix;
 layout (location = 8) flat in mat4 LightVP[NUM_CASCADES];
 layout (location = 24) flat in vec4 CascadeEndClipSpace;
@@ -166,7 +166,7 @@ void main()
 		vec3 extents 				= (bbox_max - bbox_min).xyz; 
 		vec3 RHCellSize				= extents / (resolution);
 		vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
-		vec4 ViewPos 				= CamVMatrix * vec4(RHCenter, 1);
+		vec4 ViewPos 				= vMatrix * vec4(RHCenter, 1);
 		
 		// RH -> light space, get sampling disk center
 		int index 					= 0;

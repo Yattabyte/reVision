@@ -23,15 +23,16 @@ layout (binding = 5) uniform sampler2DArray SSRMap;
 layout (binding = 6) uniform sampler2DArray LightMap;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in mat4 CamPInverse;
-layout (location = 5) flat in mat4 CamVInverse;
-layout (location = 9) flat in vec3 CamEyePosition;
-layout (location = 10) flat in vec2 CamDimensions;
+layout (location = 1) flat in mat4 pMatrixInverse;
+layout (location = 5) flat in mat4 vMatrixInverse;
+layout (location = 9) flat in vec2 CameraDimensions;
+layout (location = 10) flat in vec3 EyePosition;
 
 layout (location = 0) out vec4 LightingColor;
 
 // Use PBR lighting methods
 #package "lighting_pbr"
+
 
 // based on phong distribution model
 float specularPowerToConeAngle(in float specularPower)
@@ -87,7 +88,7 @@ vec3 AcquireSpecular(in vec3 SSPos, in float Roughness, in vec2 ReflectionUV, in
     const float maxMipLevel     = numMips - 1.0f;
     const float gloss			= 1.0F - Roughness;
     float glossMult             = gloss;
-	const float maxDimension	= max(CamDimensions.x, CamDimensions.y);
+	const float maxDimension	= max(CameraDimensions.x, CameraDimensions.y);
 	float oppositeLength, incircleSize, mipChannel;
 	vec2 samplePos;
 	vec4 newColor;
@@ -148,8 +149,8 @@ void main(void)
 	
 	// Variables
 	const vec3 SSPos	 				= vec3(TexCoord, data.View_Depth);	
-    const vec3 WorldNormal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
-	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - CamEyePosition);
+    const vec3 WorldNormal 				= normalize((vMatrixInverse * vec4(data.View_Normal, 0))).xyz;
+	const vec3 CameraVector 			= normalize(data.World_Pos.xyz - EyePosition);
 	const vec3 ReflectionVector 		= reflect(CameraVector, WorldNormal);
 	float Alpha 						= 1.0f;
 	const vec3 Reflection				= AcquireSpecular(SSPos, data.Roughness, ReflectionUVS.xy, Alpha);
@@ -164,7 +165,7 @@ void main(void)
 	const vec2 UVSamplingAttenuation 	= smoothstep(0.05, 0.1, ReflectionUVS.xy) * (vec2(1.0f) - smoothstep(0.95, 1.0, ReflectionUVS.xy));	
 	const float Atten_UV				= UVSamplingAttenuation.x * UVSamplingAttenuation.y;
 	// Attenuate back-faces
-	const float Atten_BackFace			= smoothstep(-0.17, 0.0, dot(normalize((CamVInverse * vec4(texture(ViewNormalMap, vec3(ReflectionUVS.xy, gl_Layer)).rgb, 0))).xyz, -ReflectionVector));	
+	const float Atten_BackFace			= smoothstep(-0.17, 0.0, dot(normalize((vMatrixInverse * vec4(texture(ViewNormalMap, vec3(ReflectionUVS.xy, gl_Layer)).rgb, 0))).xyz, -ReflectionVector));	
 	// Attenuate near edge of screen
     const vec2 boundary					= abs(ReflectionUVS.xy - vec2(0.5f, 0.5f)) * 2.0f;
     const float fadeDiffRcp				= 1.0f / (fadeEnd - fadeStart);

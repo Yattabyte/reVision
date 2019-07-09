@@ -106,7 +106,9 @@ public:
 							cam.FarPlane = newMax.z;
 							cam.EyePosition = clampedPos;
 							cam.pMatrix = pMatrix;
+							cam.pMatrixInverse = glm::inverse(pMatrix);
 							cam.vMatrix = sunModelMatrix;
+							cam.vMatrixInverse = glm::inverse(sunModelMatrix);
 						}
 						shadowComponent->m_outOfDate = false;
 					}

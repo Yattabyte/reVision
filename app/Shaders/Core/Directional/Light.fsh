@@ -19,19 +19,20 @@ layout (binding = 4) uniform sampler2DArray ShadowMap;
 layout (location = 0) uniform float ShadowSize_Recip;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in vec3 LightColorInt;
-layout (location = 2) flat in vec3 LightDirection;
-layout (location = 3) flat in int Shadow_Spot;
-layout (location = 4) flat in vec4 CascadeEndClipSpace;
-layout (location = 5) flat in mat4 LightVP[NUM_CASCADES];
-layout (location = 21) flat in mat4 CamPInverse;
-layout (location = 25) flat in mat4 CamVInverse;
-layout (location = 29) flat in vec3 CamEyePosition;
+layout (location = 1) flat in mat4 pMatrixInverse;
+layout (location = 5) flat in mat4 vMatrixInverse;
+layout (location = 9) flat in vec3 EyePosition;
+layout (location = 10) flat in vec3 LightColorInt;
+layout (location = 11) flat in vec3 LightDirection;
+layout (location = 12) flat in int Shadow_Spot;
+layout (location = 13) flat in vec4 CascadeEndClipSpace;
+layout (location = 14) flat in mat4 LightVP[NUM_CASCADES];
 
 layout (location = 0) out vec3 LightingColor;
 
 // Use PBR lighting methods
 #package "lighting_pbr"
+
 
 const vec2 sampleOffsetDirections[9] = vec2[] (
 	vec2(-1,  -1), vec2(-1,  0), vec2(-1,  1), 
@@ -66,7 +67,7 @@ void main()
 	GetFragmentData(TexCoord, data);	
    	if (data.View_Depth >= 1.0f)			discard; // Discard background fragments
 	
-	const vec3 ViewDirection				= normalize(CamEyePosition - data.World_Pos.xyz);
+	const vec3 ViewDirection				= normalize(EyePosition - data.World_Pos.xyz);
 	const float NdotV 						= dot(data.World_Normal, ViewDirection);
 	const float NdotL 		 				= dot(normalize(-LightDirection.xyz), data.World_Normal);
 	const float NdotL_Clamped				= max(NdotL, 0.0);

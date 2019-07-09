@@ -86,6 +86,7 @@ public:
 					m_frameData->lightBuffer[index].mMatrix = trans * matRot * scl;
 
 					const glm::mat4 pMatrix = glm::perspective(glm::radians(cutoff * 2.0f), 1.0f, 0.01f, radiusSquared);
+					const glm::mat4 pMatrixInverse = glm::inverse(pMatrix);
 					const auto pv = pMatrix * glm::inverse(trans * glm::mat4_cast(orientation));
 					m_frameData->lightBuffer[index].lightPV = pv;
 					if (cameraComponent) {
@@ -94,8 +95,10 @@ public:
 						cam.FarPlane = radiusSquared;
 						cam.EyePosition = position;
 						cam.FOV = cutoff * 2.0f;
-						cam.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
 						cam.pMatrix = pMatrix;
+						cam.pMatrixInverse = pMatrixInverse;
+						cam.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
+						cam.vMatrixInverse = (trans * glm::mat4_cast(orientation)); // yes, this is correct
 					}
 				}
 

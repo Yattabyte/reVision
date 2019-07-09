@@ -45,7 +45,7 @@ RH_Volume::RH_Volume(Engine * engine)
 
 void RH_Volume::updateVolume(const CameraBuffer::CamStruct & camera)
 {
-	const glm::mat4 InverseView = glm::inverse(camera.vMatrix);
+	const glm::mat4 InverseView = camera.vMatrixInverse;
 	const auto & ViewDimensions = camera.Dimensions;
 	const float AspectRatio = ViewDimensions.x / ViewDimensions.y;
 	const float tanHalfHFOV = glm::radians(camera.FOV) / 2.0f;

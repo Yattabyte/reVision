@@ -6,24 +6,22 @@
 layout (location = 0) in vec3 vertex;
 
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out mat4 CamPMatrix;
-layout (location = 5) flat out mat4 CamVMatrix;
-layout (location = 9) flat out mat4 CamPInverse;
-layout (location = 13) flat out mat4 CamVInverse;
-layout (location = 17) flat out vec3 CamEyePosition;
-layout (location = 18) flat out vec2 CamDimensions;
+layout (location = 1) flat out mat4 pvMatrix;
+layout (location = 5) flat out mat4 pMatrixInverse;
+layout (location = 9) flat out mat4 vMatrixInverse;
+layout (location = 13) flat out vec2 CameraDimensions;
+layout (location = 14) flat out vec3 EyePosition;
 
 
 void main(void)
 {	
 	const int CamIndex = camIndexes[gl_InstanceID].x;
-	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;	
-	CamPMatrix = camBuffer[CamIndex].pMatrix;
-	CamVMatrix = camBuffer[CamIndex].vMatrix;
-	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
-	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
-	CamEyePosition = camBuffer[CamIndex].EyePosition;
-	CamDimensions = camBuffer[CamIndex].CameraDimensions;
+	pvMatrix = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix;
+	pMatrixInverse = camBuffer[CamIndex].pMatrixInverse;
+	vMatrixInverse = camBuffer[CamIndex].vMatrixInverse;
+	CameraDimensions = camBuffer[CamIndex].CameraDimensions;
+	EyePosition = camBuffer[CamIndex].EyePosition;
+	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	gl_Position = vec4(vertex.xyz, 1);
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }

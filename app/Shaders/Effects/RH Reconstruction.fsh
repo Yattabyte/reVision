@@ -21,13 +21,14 @@ layout (location = 3) uniform float resolution = 16.0f;
 layout (location = 4) uniform float factor = 1.0f;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in mat4 CamPInverse;
-layout (location = 5) flat in mat4 CamVInverse;
+layout (location = 1) flat in mat4 pMatrixInverse;
+layout (location = 5) flat in mat4 vMatrixInverse;
 
 layout (location = 0) out vec3 LightingColor;
 
 // Use PBR lighting methods
 #package "lighting_pbr"
+
 
 vec3 Fresnel_Schlick_Roughness(in vec3 f0, in float AdotB, in float roughness)
 {

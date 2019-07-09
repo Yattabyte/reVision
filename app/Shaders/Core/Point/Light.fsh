@@ -33,15 +33,15 @@ layout (binding = 4) uniform sampler2DArray ShadowMap;
 
 layout (location = 0) uniform float ShadowSize_Recip;
 
-layout (location = 0) flat in mat4 CamPInverse;
-layout (location = 4) flat in mat4 CamVInverse;
-layout (location = 8) flat in vec3 CamEyePosition;
-layout (location = 9) flat in vec2 CamDimensions;
+layout (location = 0) flat in mat4 pMatrixInverse;
+layout (location = 4) flat in mat4 vMatrixInverse;
+layout (location = 8) flat in vec3 EyePosition;
+layout (location = 9) flat in vec2 CameraDimensions;
 layout (location = 10) flat in vec3 LightColorInt;
-layout (location = 11) flat in vec3 LightPosition;
-layout (location = 12) flat in float LightRadius2;
-layout (location = 13) flat in int ShadowSpotFinal;
-layout (location = 14) flat in int lightIndex;
+layout (location = 12) flat in vec3 LightPosition;
+layout (location = 13) flat in float LightRadius2;
+layout (location = 14) flat in int ShadowSpotFinal;
+layout (location = 15) flat in int lightIndex;
 
 layout (location = 0) out vec3 LightingColor; 
 
@@ -59,7 +59,7 @@ const vec3 sampleOffsetDirections[20] = vec3[] (
 	
 vec2 CalcTexCoord()
 {
-    return			 				gl_FragCoord.xy / CamDimensions;
+    return			 				gl_FragCoord.xy / CameraDimensions;
 }
 
 vec3 sampleCube(vec3 v, out int face)
@@ -119,7 +119,7 @@ void main(void)
 	GetFragmentData(CalcTexCoord(), data);
     if (data.View_Depth >= 1.0f) 	discard; // Discard background fragments	
 	const vec3 LightDirection 		= (LightPosition.xyz - data.World_Pos.xyz);
-	const vec3 DeltaView 			= CamEyePosition - data.World_Pos.xyz;  
+	const vec3 DeltaView 			= EyePosition - data.World_Pos.xyz;  
 	const float ViewDistance 		= length(DeltaView);
 	const vec3 ViewDirection		= DeltaView / ViewDistance;
 	const float NdotV 				= dot(data.World_Normal, ViewDirection);

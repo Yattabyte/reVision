@@ -23,26 +23,26 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
 
-layout (location = 0) flat out mat4 CamPInverse;
-layout (location = 4) flat out mat4 CamVInverse;
-layout (location = 8) flat out vec3 CamEyePosition;
-layout (location = 9) flat out vec2 CamDimensions;
+layout (location = 0) flat out mat4 pMatrixInverse;
+layout (location = 4) flat out mat4 vMatrixInverse;
+layout (location = 8) flat out vec2 CameraDimensions;
+layout (location = 9) flat out vec3 EyePosition;
 layout (location = 10) flat out vec3 LightColorInt;
-layout (location = 11) flat out vec3 LightPosition;
-layout (location = 12) flat out vec3 LightVector;
-layout (location = 13) flat out float LightRadius2;
-layout (location = 14) flat out float LightCutoff;
-layout (location = 15) flat out int Shadow_Spot;
-layout (location = 16) flat out mat4 ShadowPV;
+layout (location = 12) flat out vec3 LightPosition;
+layout (location = 13) flat out vec3 LightVector;
+layout (location = 14) flat out float LightRadius2;
+layout (location = 15) flat out float LightCutoff;
+layout (location = 16) flat out int Shadow_Spot;
+layout (location = 17) flat out mat4 ShadowPV;
 
 
 void main()
 {		
 	const int CamIndex = camIndexes[gl_InstanceID].x;
-	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
-	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
-	CamEyePosition = camBuffer[CamIndex].EyePosition;
-	CamDimensions = camBuffer[CamIndex].CameraDimensions;	
+	pMatrixInverse = camBuffer[CamIndex].pMatrixInverse;
+	vMatrixInverse = camBuffer[CamIndex].vMatrixInverse;
+	CameraDimensions = camBuffer[CamIndex].CameraDimensions;
+	EyePosition = camBuffer[CamIndex].EyePosition;
 	const int lightIndex = lightIndexes[gl_InstanceID];
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 	LightPosition = lightBuffers[lightIndex].LightPosition.xyz;

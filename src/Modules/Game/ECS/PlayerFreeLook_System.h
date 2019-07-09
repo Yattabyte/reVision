@@ -98,6 +98,7 @@ public:
 			auto & cam = graphicsModule.getClientCamera();
 			cam->get()->EyePosition = transform.m_position;
 			cam->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
+			cam->get()->vMatrixInverse = glm::inverse(cam->get()->vMatrix);
 		}
 	};
 

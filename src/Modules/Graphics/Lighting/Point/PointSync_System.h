@@ -70,6 +70,7 @@ public:
 					const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared *1.1f));
 					m_frameData->lightBuffer[index].mMatrix = (trans)* scl;
 					const glm::mat4 pMatrix = glm::perspective(glm::radians(90.0f), 1.0f, 0.01f, radiusSquared);					
+					const glm::mat4 pMatrixInverse = glm::inverse(pMatrix);
 					const glm::mat4 vMatrices[6] = {
 						glm::lookAt(position, position + glm::vec3(1, 0, 0), glm::vec3(0, -1, 0)),
 						glm::lookAt(position, position + glm::vec3(-1, 0, 0), glm::vec3(0, -1, 0)),
@@ -87,7 +88,9 @@ public:
 							cam.FarPlane = radiusSquared;
 							cam.EyePosition = position;
 							cam.pMatrix = pMatrix;
+							cam.pMatrixInverse = pMatrixInverse;
 							cam.vMatrix = vMatrices[x];
+							cam.vMatrixInverse = glm::inverse(vMatrices[x]);
 							m_frameData->lightBuffer[index].shadowVP[x] = pMatrix * vMatrices[x];
 						}
 					}

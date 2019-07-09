@@ -21,7 +21,7 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 layout (location = 0) uniform int LightCount = 0;
 layout (location = 0) in vec3 vertex;
 
-layout (location = 0) flat out mat4 CamVMatrix;
+layout (location = 0) flat out mat4 vMatrix;
 layout (location = 4) flat out mat4 CamPVMatrix;
 layout (location = 8) flat out mat4 LightVP[NUM_CASCADES];
 layout (location = 24) flat out vec4 CascadeEndClipSpace;
@@ -36,7 +36,7 @@ void main()
     gl_Position = vec4(vertex, 1);
     gl_Layer = gl_InstanceID / LightCount;
 	const int lightIndex = lightIndexes[gl_InstanceID % LightCount];
-	CamVMatrix = camBuffer[CamIndex].vMatrix;
+	vMatrix = camBuffer[CamIndex].vMatrix;
 	CamPVMatrix = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix;
 	for (uint x = 0; x < NUM_CASCADES; ++x) {
 		LightVP[x] = lightBuffers[lightIndex].LightVP[x];

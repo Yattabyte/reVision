@@ -7,6 +7,7 @@
 #pragma optionNV(unroll all)
 layout (early_fragment_tests) in;
 #define M_PI 3.14159f
+#package "CameraBuffer"
 
 layout (binding = 0) uniform sampler2DArray ColorMap;
 layout (binding = 1) uniform sampler2DArray ViewNormalMap;
@@ -14,14 +15,14 @@ layout (binding = 2) uniform sampler2DArray SpecularMap;
 layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 4) uniform samplerCubeArray ReflectionMap;
 
-layout (location = 0) flat in mat4 mMatrix;
-layout (location = 4) flat in mat4 rotMatrix;
-layout (location = 8) flat in vec4 BoxCamPos;
-layout (location = 9) flat in vec4 BoxScale;
-layout (location = 10) flat in int CubeSpot;
-layout (location = 11) flat in mat4 CamPInverse;
-layout (location = 15) flat in mat4 CamVInverse;
-layout (location = 19) flat in vec2 CamDimensions;
+layout (location = 0) flat in mat4 pMatrixInverse;
+layout (location = 4) flat in mat4 vMatrixInverse;
+layout (location = 8) flat in vec2 CameraDimensions;
+layout (location = 9) flat in mat4 boxMatrix;
+layout (location = 13) flat in mat4 rotMatrix;
+layout (location = 17) flat in vec4 BoxCamPos;
+layout (location = 18) flat in vec4 BoxScale;
+layout (location = 19) flat in int CubeSpot;
 
 layout (location = 0) out vec3 ReflectionColor;
 
@@ -36,6 +37,7 @@ struct ViewData {
 	float View_Depth;
 	float View_AO;
 };
+
 
 void GetFragmentData(in vec2 TexCoord, out ViewData data)
 {
@@ -52,16 +54,16 @@ void GetFragmentData(in vec2 TexCoord, out ViewData data)
 	data.View_AO					= Texture3.a;
 	data.View_Depth					= Texture4.r;
 	
-	data.View_Pos					= CamPInverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
-    data.World_Pos 					= CamVInverse * data.View_Pos;
+	data.View_Pos					= pMatrixInverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
+    data.World_Pos 					= vMatrixInverse * data.View_Pos;
 	data.View_Pos 					= data.View_Pos / data.View_Pos.w;
 	data.World_Pos 					= data.World_Pos / data.World_Pos.w;
-    data.World_Normal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
+    data.World_Normal 				= normalize((vMatrixInverse * vec4(data.View_Normal, 0))).xyz;
 }
 
 vec2 CalcTexCoord()
 {
-    return			 				gl_FragCoord.xy / CamDimensions;
+    return			 				gl_FragCoord.xy / CameraDimensions;
 }
 
 vec3 ParallaxCorrectCubemap(in vec3 ReflectDir, in mat4 bboxMat, in vec3 bboxPos, in vec3 WorldPos)
@@ -84,10 +86,10 @@ vec3 ParallaxCorrectCubemap(in vec3 ReflectDir, in mat4 bboxMat, in vec3 bboxPos
 vec3 CalculateReflections(in vec3 WorldPos, in vec3 ViewPos, in vec3 ViewNormal, in float Roughness)
 {		
 	vec3 ReflectDir					= reflect(ViewPos, ViewNormal);
-		 ReflectDir 				= normalize(CamVInverse * vec4(ReflectDir, 0)).xyz;
+		 ReflectDir 				= normalize(vMatrixInverse * vec4(ReflectDir, 0)).xyz;
 	vec3 CorrectedDir				= ParallaxCorrectCubemap
 									(	ReflectDir, 
-										mMatrix,
+										boxMatrix,
 										BoxCamPos.xyz, 
 										WorldPos.xyz	);	
 	return							textureLod(ReflectionMap, vec4(CorrectedDir, CubeSpot), Roughness * 5.0f).xyz;		

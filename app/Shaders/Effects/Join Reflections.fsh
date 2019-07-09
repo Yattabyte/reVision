@@ -10,13 +10,14 @@ layout (binding = 5) uniform sampler2DArray IndirectSpecularTexture;
 layout (binding = 6) uniform sampler2D EnvironmentBRDF;
 
 layout (location = 0) in vec2 TexCoord;
-layout (location = 1) flat in mat4 CamPInverse;
-layout (location = 5) flat in mat4 CamVInverse;
-layout (location = 9) flat in vec3 CamEyePosition;
+layout (location = 1) flat in mat4 pMatrixInverse;
+layout (location = 5) flat in mat4 vMatrixInverse;
+layout (location = 9) flat in vec3 EyePosition;
 
 layout (location = 0) out vec3 LightingTexture;
 
-#package "lighting_pbr" // Use PBR lighting methods
+// Use PBR lighting methods
+#package "lighting_pbr" 
 
 
 vec3 Fresnel_Schlick_Roughness(vec3 f0, float AdotB, float roughness)
@@ -34,7 +35,7 @@ void main()
 	ViewData data;
 	GetFragmentData(TexCoord, data);		
 	if (data.View_Depth < 1.0f) {	
-		const vec3 View_Direction		= normalize(CamEyePosition - data.World_Pos.xyz);		
+		const vec3 View_Direction		= normalize(EyePosition - data.World_Pos.xyz);		
 		const float NdotV				= max(dot(data.World_Normal, View_Direction), 0.0);		
 		const vec3 F0					= mix(vec3(0.03f), data.Albedo, data.Metalness);
 		const vec3 Fs					= Fresnel_Schlick_Roughness(F0, NdotV, data.Roughness);

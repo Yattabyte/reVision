@@ -22,20 +22,23 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 };
 
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out vec3 LightColorInt;
-layout (location = 2) flat out vec3 LightDirection;
-layout (location = 3) flat out int Shadow_Spot;
-layout (location = 4) flat out vec4 CascadeEndClipSpace;
-layout (location = 5) flat out mat4 LightVP[NUM_CASCADES];
-layout (location = 21) flat out mat4 CamPInverse;
-layout (location = 25) flat out mat4 CamVInverse;
-layout (location = 29) flat out vec3 CamEyePosition;
+layout (location = 1) flat out mat4 pMatrixInverse;
+layout (location = 5) flat out mat4 vMatrixInverse;
+layout (location = 9) flat out vec3 EyePosition;
+layout (location = 10) flat out vec3 LightColorInt;
+layout (location = 11) flat out vec3 LightDirection;
+layout (location = 12) flat out int Shadow_Spot;
+layout (location = 13) flat out vec4 CascadeEndClipSpace;
+layout (location = 14) flat out mat4 LightVP[NUM_CASCADES];
 
 
 void main()
 {	
 	const int CamIndex = camIndexes[gl_InstanceID].x;
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
+	pMatrixInverse = camBuffer[CamIndex].pMatrixInverse;
+	vMatrixInverse = camBuffer[CamIndex].vMatrixInverse;
+	EyePosition = camBuffer[CamIndex].EyePosition;
 	const int lightIndex = lightIndexes[gl_InstanceID];
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 	LightDirection = lightBuffers[lightIndex].LightDirection.xyz;
@@ -44,9 +47,6 @@ void main()
 		CascadeEndClipSpace[x] = lightBuffers[lightIndex].CascadeEndClipSpace[x];
 		LightVP[x] = lightBuffers[lightIndex].LightVP[x];
 	}
-	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
-	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
-	CamEyePosition = camBuffer[CamIndex].EyePosition;
 	gl_Position = vec4(vertex, 1);
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }

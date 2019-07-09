@@ -13,7 +13,9 @@ public:
 	constexpr static float ConstNearPlane = 0.5f;
 	struct CamStruct {
 		glm::mat4 pMatrix;
+		glm::mat4 pMatrixInverse;
 		glm::mat4 vMatrix;
+		glm::mat4 vMatrixInverse;
 		glm::vec3 EyePosition; float padding1;
 		glm::vec2 Dimensions; 
 		float NearPlane = ConstNearPlane;

@@ -12,11 +12,11 @@ void main()
 {	
 	const int CamIndex = camIndexes[gl_InstanceID].x;
 	vec4 posClip = vec4(vertex.xy, 1, 1);
-	mat4 InvRotVMatrix = inverse(camBuffer[CamIndex].vMatrix);
+	mat4 InvRotVMatrix = camBuffer[CamIndex].vMatrixInverse;
 	InvRotVMatrix[3][0] = 0;
 	InvRotVMatrix[3][1] = 0;
 	InvRotVMatrix[3][2] = 0;
-	vec4 vv =  InvRotVMatrix * inverse(camBuffer[CamIndex].pMatrix) * posClip;
+	vec4 vv =  InvRotVMatrix * camBuffer[CamIndex].pMatrixInverse * posClip;
 	vecView = (vv.xyz / vv.w);
 	vecView.y = -vecView.y;
 	gl_Position = vec4(vertex.xy, 1, 1);	
