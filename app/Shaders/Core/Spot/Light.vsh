@@ -51,7 +51,7 @@ void main()
 	LightCutoff = lightBuffers[lightIndex].LightCutoff;
 	Shadow_Spot = lightBuffers[lightIndex].Shadow_Spot;
 	ShadowPV = lightBuffers[lightIndex].lightPV;
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vertex;
+	gl_Position = camBuffer[CamIndex].pvMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vertex;
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }
 

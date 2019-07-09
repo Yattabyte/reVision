@@ -71,6 +71,7 @@ void Graphics_Module::initialize(Engine * engine)
 	cameraData.pMatrixInverse = glm::mat4(1.0f);
 	cameraData.vMatrix = glm::mat4(1.0f);
 	cameraData.vMatrixInverse = glm::mat4(1.0f);
+	cameraData.pvMatrix = glm::mat4(1.0f);
 	cameraData.EyePosition = glm::vec3(0.0f);
 	cameraData.Dimensions = glm::vec2(m_renderSize);
 	cameraData.FarPlane = farPlane;
@@ -264,6 +265,7 @@ void Graphics_Module::genPerspectiveMatrix()
 	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
 	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::ConstNearPlane, (*m_clientCamera)->FarPlane);
 	(*m_clientCamera)->pMatrixInverse = glm::inverse((*m_clientCamera)->pMatrix);
+	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;
 }
 
 void Graphics_Module::copyToScreen()

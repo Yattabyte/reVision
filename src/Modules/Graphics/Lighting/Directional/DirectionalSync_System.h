@@ -109,6 +109,7 @@ public:
 							cam.pMatrixInverse = glm::inverse(pMatrix);
 							cam.vMatrix = sunModelMatrix;
 							cam.vMatrixInverse = glm::inverse(sunModelMatrix);
+							cam.pvMatrix = pMatrix * sunModelMatrix;
 						}
 						shadowComponent->m_outOfDate = false;
 					}

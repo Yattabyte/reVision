@@ -91,6 +91,7 @@ public:
 							cam.pMatrixInverse = pMatrixInverse;
 							cam.vMatrix = vMatrices[x];
 							cam.vMatrixInverse = glm::inverse(vMatrices[x]);
+							cam.pvMatrix = pMatrix * vMatrices[x];
 							m_frameData->lightBuffer[index].shadowVP[x] = pMatrix * vMatrices[x];
 						}
 					}

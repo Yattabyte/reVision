@@ -23,7 +23,7 @@ layout (location = 0) flat out int id;
 void main()
 {	
 	const int CamIndex = camIndexes[gl_DrawID].x;
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);
+	gl_Position = camBuffer[CamIndex].pvMatrix * propBuffer[propIndexes[gl_DrawID]].bBoxMatrix * vec4(vertex,1.0);
 	gl_Layer = camIndexes[gl_DrawID].y;
 	id = gl_DrawID;
 }

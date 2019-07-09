@@ -64,6 +64,6 @@ void main()
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);
 	TexCoord0             		= textureCoordinate;	
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * WorldVertex;
+	gl_Position           		= camBuffer[CamIndex].pvMatrix * WorldVertex;
 	gl_Layer 					= camIndexes[gl_DrawID].y;
 }

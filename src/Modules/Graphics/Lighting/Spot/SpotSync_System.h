@@ -99,6 +99,7 @@ public:
 						cam.pMatrixInverse = pMatrixInverse;
 						cam.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
 						cam.vMatrixInverse = (trans * glm::mat4_cast(orientation)); // yes, this is correct
+						cam.pvMatrix = pMatrix * cam.vMatrix;
 					}
 				}
 

@@ -37,7 +37,7 @@ void main()
     gl_Layer = gl_InstanceID / LightCount;
 	const int lightIndex = lightIndexes[gl_InstanceID % LightCount];
 	vMatrix = camBuffer[CamIndex].vMatrix;
-	CamPVMatrix = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix;
+	CamPVMatrix = camBuffer[CamIndex].pvMatrix;
 	for (uint x = 0; x < NUM_CASCADES; ++x) {
 		LightVP[x] = lightBuffers[lightIndex].LightVP[x];
 		CascadeEndClipSpace[x] = lightBuffers[lightIndex].CascadeEndClipSpace[x];

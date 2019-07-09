@@ -23,7 +23,7 @@ layout (std430, binding = 8) readonly buffer Reflection_Buffer {
 void main(void)
 {	
 	const int CamIndex = camIndexes[gl_InstanceID].x;
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * reflectorBuffers[reflectionIndexes[gl_InstanceID]].mMatrix * vec4(vertex, 1);	
+	gl_Position = camBuffer[CamIndex].pvMatrix * reflectorBuffers[reflectionIndexes[gl_InstanceID]].mMatrix * vec4(vertex, 1);	
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }
 

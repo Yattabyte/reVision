@@ -3,6 +3,7 @@ struct CamAttributes {
 	mat4 pMatrixInverse;
 	mat4 vMatrix;
 	mat4 vMatrixInverse;
+	mat4 pvMatrix;
 	vec3 EyePosition;
 	vec2 CameraDimensions;
 	float NearPlane;

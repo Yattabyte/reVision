@@ -25,7 +25,7 @@ layout (std430, binding = 8) readonly buffer Light_Buffer {
 void main()
 {		
 	const int CamIndex = camIndexes[gl_InstanceID].x;
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vec4(vertex, 1.0); 
+	gl_Position = camBuffer[CamIndex].pvMatrix * lightBuffers[lightIndexes[gl_InstanceID]].mMatrix * vec4(vertex, 1.0); 
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }
 

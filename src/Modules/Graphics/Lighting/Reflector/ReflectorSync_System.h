@@ -70,6 +70,7 @@ public:
 					cam.pMatrixInverse = pMatrixInverse;
 					cam.vMatrix = vMatrices[x];
 					cam.vMatrixInverse = glm::inverse(vMatrices[x]);
+					cam.pvMatrix = pMatrix * vMatrices[x];
 				}
 
 				// Sync Buffer Attributes

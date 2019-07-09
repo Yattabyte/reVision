@@ -43,6 +43,6 @@ void main(void)
 	BoxCamPos = reflectorBuffers[ReflectorIndex].BoxCamPos;
 	BoxScale = reflectorBuffers[ReflectorIndex].BoxScale;
 	CubeSpot = reflectorBuffers[ReflectorIndex].CubeSpot / 6;
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
+	gl_Position = camBuffer[CamIndex].pvMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }

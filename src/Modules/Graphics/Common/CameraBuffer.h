@@ -16,6 +16,7 @@ public:
 		glm::mat4 pMatrixInverse;
 		glm::mat4 vMatrix;
 		glm::mat4 vMatrixInverse;
+		glm::mat4 pvMatrix;
 		glm::vec3 EyePosition; float padding1;
 		glm::vec2 Dimensions; 
 		float NearPlane = ConstNearPlane;

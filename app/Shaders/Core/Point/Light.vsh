@@ -44,6 +44,6 @@ void main()
 	LightPosition = lightBuffers[lightIndex].LightPosition.xyz;
 	LightRadius2 = lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius;	
 	ShadowSpotFinal = lightBuffers[lightIndex].Shadow_Spot;	
-	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
+	gl_Position = camBuffer[CamIndex].pvMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
 	gl_Layer = camIndexes[gl_InstanceID].y;
 }
