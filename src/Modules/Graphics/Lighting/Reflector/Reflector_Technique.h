@@ -12,6 +12,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
 
@@ -29,9 +30,6 @@ public:
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
-		GLuint data[] = { 0,0,0,0 };
-		m_indirectQuad.write(0, sizeof(GLuint) * 4, &data);
-		m_indirectQuadConvolute.write(0, sizeof(GLuint) * 4, &data);
 		auxilliarySystems.addSystem(new ReflectorScheduler_System(m_engine, m_frameData));
 		auxilliarySystems.addSystem(new ReflectorVisibility_System(m_frameData, cameras));
 		auxilliarySystems.addSystem(new ReflectorSync_System(m_frameData));
@@ -58,9 +56,10 @@ public:
 
 		// Asset-Finished Callbacks		
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_indirectQuad.write(0, sizeof(GLuint) * 4, quadData);
-			m_indirectQuadConvolute.write(0, sizeof(GLuint) * 4, quadData);
+			// count, primCount, first, reserved
+			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
+			m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+			m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 		});
 
 		// Clear state on world-unloaded
@@ -78,8 +77,12 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawBuffers)
+		for (auto & drawBuffer : m_drawBuffers) {
 			drawBuffer.visLights.endWriting();
+			drawBuffer.indirectShape.endWriting();
+		}
+		m_indirectQuad.endWriting();
+		m_indirectQuadConvolute.endWriting();
 		m_drawIndex = 0;
 	}
 	inline virtual void updateTechnique(const float & deltaTime) override {
@@ -103,6 +106,7 @@ public:
 			auto &lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
 			lightBufferIndex.beginWriting();
+			drawBuffer.indirectShape.beginWriting();
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices;
@@ -112,9 +116,6 @@ public:
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
 			}
-			GLuint instanceCount = perspectives.size(), convoluteCount = perspectives.size();
-			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
-			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 
 			if (lightIndices.size()) {
 				// Write accumulated data
@@ -144,6 +145,9 @@ private:
 				if (!camera)
 					camera = std::make_shared<CameraBuffer>();
 
+			m_indirectQuad.beginWriting();
+			m_indirectQuadConvolute.beginWriting();
+
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
 			perspectives.reserve(m_frameData->reflectorsToUpdate.size());
@@ -163,6 +167,10 @@ private:
 				}
 				time += deltaTime;
 			}
+
+			GLuint instanceCount = perspectives.size(), convoluteCount = perspectives.size();
+			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 
 			// Update all reflectors at once
 			glViewport(0,0, m_frameData->envmapSize.x, m_frameData->envmapSize.y);
@@ -254,13 +262,13 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Primitive m_shapeCube, m_shapeQuad;
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
-	StaticBuffer m_indirectQuad = StaticBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticBuffer(sizeof(GLuint) * 4);
+	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
 	std::vector<std::shared_ptr<CameraBuffer>> m_viewCameras;
 	struct DrawBuffers {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4);
+		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawBuffers> m_drawBuffers;

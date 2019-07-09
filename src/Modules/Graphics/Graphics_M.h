@@ -12,7 +12,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
 
 
@@ -67,7 +67,7 @@ private:
 	std::shared_ptr<RH_Volume>					m_rhVolume;
 	Shared_Shader								m_shader;
 	Shared_Primitive							m_shapeQuad;
-	StaticBuffer								m_quadIndirectBuffer;
+	StaticTripleBuffer							m_quadIndirectBuffer;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
 	std::shared_ptr<GL_ArrayBuffer<CameraBuffer::CamStruct>> m_cameraBuffer;

@@ -11,6 +11,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 #include <random>
 
@@ -69,8 +70,11 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawBuffers)
+		for (auto & drawBuffer : m_drawBuffers) {
 			drawBuffer.visLights.endWriting();
+			drawBuffer.indirectShape.endWriting();
+			drawBuffer.indirectBounce.endWriting();
+		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -83,6 +87,8 @@ public:
 			auto &lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
 			lightBufferIndex.beginWriting();
+			drawBuffer.indirectShape.beginWriting();
+			drawBuffer.indirectBounce.beginWriting();
 
 			// Accumulate all visibility info for the cameras passed in
 			std::vector<glm::ivec2> camIndices; 
@@ -194,7 +200,7 @@ private:
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
 		int shadowCount = 0;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4), indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
+		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4), indirectBounce = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawBuffers> m_drawBuffers;

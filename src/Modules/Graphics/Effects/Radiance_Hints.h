@@ -10,7 +10,7 @@
 #include "Assets/Texture.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
 
@@ -38,7 +38,7 @@ public:
 			m_bounceSize = (GLuint)f; 
 			if (m_shapeQuad && m_shapeQuad->existsYet()) {
 				const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
-				m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+				m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 			}
 		});
 
@@ -46,7 +46,7 @@ public:
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			// count, primCount, first, reserved
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 		});
 
 	}
@@ -56,6 +56,7 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		for (auto & camIndexBuffer : m_camIndexes)
 			camIndexBuffer.endWriting();
+		m_quadIndirectBuffer.endWriting();
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -67,6 +68,7 @@ public:
 			m_camIndexes.resize(m_drawIndex + 1);
 		auto &camBufferIndex = m_camIndexes[m_drawIndex];
 		camBufferIndex.beginWriting();
+		m_quadIndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;	
 		for (auto &[camIndex, layer] : perspectives) {
 			const std::vector<glm::ivec2> tempIndices(m_bounceSize, { camIndex, layer });
@@ -114,7 +116,7 @@ private:
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
 	Shared_Primitive m_shapeQuad;
-	StaticBuffer m_quadIndirectBuffer;
+	StaticTripleBuffer m_quadIndirectBuffer;
 	GLuint m_bounceSize = 16;
 	std::vector<DynamicBuffer> m_camIndexes;
 	int	m_drawIndex = 0;

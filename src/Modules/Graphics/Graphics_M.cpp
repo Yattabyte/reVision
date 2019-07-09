@@ -25,7 +25,7 @@ void Graphics_Module::initialize(Engine * engine)
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
+		m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
 	});
 
 	// GL settings
@@ -190,6 +190,7 @@ void Graphics_Module::deinitialize()
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
+	m_quadIndirectBuffer.beginWriting();
 	m_cameraBuffer->beginWriting();
 	m_clientCamera->beginWriting();
 	m_clientCamera->pushChanges();
@@ -226,6 +227,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	m_pipeline->prepareForNextFrame(deltaTime);
 	m_clientCamera->endWriting();
 	m_cameraBuffer->endWriting();
+	m_quadIndirectBuffer.endWriting();
 }
 
 void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)

@@ -7,7 +7,7 @@
 #include "Assets/Cubemap.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
 
@@ -45,9 +45,9 @@ public:
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
-			m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
+			m_quad6IndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
 		});
 		m_cubemapSky->addCallback(m_aliveIndicator, [&](void) mutable {
 			m_skyOutOfDate = true;
@@ -74,6 +74,8 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		for (auto & camIndexBuffer : m_camIndexes)
 			camIndexBuffer.endWriting();
+		m_quadIndirectBuffer.endWriting();
+		m_quad6IndirectBuffer.endWriting();
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -90,6 +92,8 @@ public:
 			m_camIndexes.resize(m_drawIndex + 1);
 		auto &camBufferIndex = m_camIndexes[m_drawIndex];
 		camBufferIndex.beginWriting();
+		m_quadIndirectBuffer.beginWriting();
+		m_quad6IndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives) 
 			camIndices.push_back({ camIndex, layer });
@@ -171,7 +175,7 @@ private:
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
 	Shared_Primitive m_shapeQuad;
-	StaticBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
+	StaticTripleBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_skySize = glm::ivec2(1);
 	std::vector<DynamicBuffer> m_camIndexes;

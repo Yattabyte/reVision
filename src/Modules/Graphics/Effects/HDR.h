@@ -6,7 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
 
@@ -34,7 +34,7 @@ public:
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
 		});
 	}
 
@@ -43,6 +43,7 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		for (auto & camIndexBuffer : m_camIndexes)
 			camIndexBuffer.endWriting();
+		m_quadIndirectBuffer.endWriting();
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -54,6 +55,7 @@ public:
 			m_camIndexes.resize(m_drawIndex + 1);
 		auto &camBufferIndex = m_camIndexes[m_drawIndex];
 		camBufferIndex.beginWriting();
+		m_quadIndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
@@ -82,7 +84,7 @@ private:
 	float m_gamma = 1.0f;
 	Shared_Shader m_shaderHDR;
 	Shared_Primitive m_shapeQuad;
-	StaticBuffer m_quadIndirectBuffer;
+	StaticTripleBuffer m_quadIndirectBuffer;
 	std::vector<DynamicBuffer> m_camIndexes;
 	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
