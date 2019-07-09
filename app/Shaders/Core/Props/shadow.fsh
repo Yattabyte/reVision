@@ -3,16 +3,12 @@
 
 layout (binding = 0) uniform sampler2DArray MaterialMap;
 
-layout (location = 0) in vec3 WorldPos;
-layout (location = 1) in mat3 WorldTBN;
-layout (location = 5) in vec2 TexCoord0;
-layout (location = 6) flat in uint MaterialOffset;
-layout (location = 7) flat in vec3 EyePosition;
-layout (location = 8) flat in float FarPlane;
+layout (location = 0) in mat3 WorldTBN;
+layout (location = 4) in vec2 TexCoord0;
+layout (location = 5) flat in uint MaterialOffset;
 
 layout (location = 0) out vec3 WorldNormalOut; 
 layout (location = 1) out vec3 RadiantFluxOut; 
-layout (location = 2) out float LinearDistance; 
 
 
 void main()									
@@ -25,5 +21,4 @@ void main()
 	
 	WorldNormalOut				= WorldNormal;	
 	RadiantFluxOut				= GColor.xyz;
-	LinearDistance 				= length(WorldPos - EyePosition) / FarPlane;
 }

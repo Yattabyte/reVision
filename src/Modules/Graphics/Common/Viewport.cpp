@@ -4,40 +4,30 @@
 #include <algorithm>
 
 
-Viewport::~Viewport()
-{
-}
-
-Viewport::Viewport(Engine * engine, const glm::ivec2 & screenPosition, const glm::ivec2 & dimensions)
+Viewport::Viewport(const glm::ivec2 & screenPosition, const glm::ivec2 & dimensions)
 	: m_screenPosition(screenPosition), m_dimensions(dimensions)
 {
-	// Initialize Camera
-
 	// Initialize FBO's
 	m_gfxFBOS = std::make_shared<Graphics_Framebuffers>(dimensions);
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("LIGHTING"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
 	glNamedFramebufferTexture(m_gfxFBOS->getFboID("REFLECTION"), GL_DEPTH_STENCIL_ATTACHMENT, m_gfxFBOS->getTexID("GEOMETRY", 3), 0);
-
-	// Initialize radiance hints volume
-	m_rhVolume = std::make_shared<RH_Volume>(engine);
 }
 
-void Viewport::resize(const glm::ivec2 & size)
+void Viewport::resize(const glm::ivec2 & size, const int & layerFaces)
 {
-	if (m_dimensions != size) {
+	if (m_dimensions != size || m_layerFaces != layerFaces) {
 		m_dimensions = size;
-		m_gfxFBOS->resize(size);
+		m_layerFaces = layerFaces;
+		m_gfxFBOS->resize(size, layerFaces);
 	}
 }
 
 void Viewport::bind(const CameraBuffer::CamStruct & camera)
 {
 	glViewport(m_screenPosition.x, m_screenPosition.y, m_dimensions.x, m_dimensions.y);
-	m_rhVolume->updateVolume(camera);
 }
 
 void Viewport::clear()
 {
 	m_gfxFBOS->clear();
-	m_rhVolume->clear();
 }

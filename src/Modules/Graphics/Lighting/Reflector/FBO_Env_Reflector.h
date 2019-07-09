@@ -8,7 +8,7 @@
 /** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
 struct FBO_Env_Reflector {
 	// Attributes
-	GLuint m_fboID = 0, m_textureID = 0;
+	GLuint m_fboID[6] = { 0,0,0,0,0,0 }, m_textureID = 0;
 	glm::ivec2 m_size = glm::ivec2(1);
 	int m_depth = 1;
 
@@ -16,12 +16,11 @@ struct FBO_Env_Reflector {
 	// (de)Constructors
 	/***/
 	inline ~FBO_Env_Reflector() {
-		glDeleteFramebuffers(1, &m_fboID);
+		glDeleteFramebuffers(6, m_fboID);
 		glDeleteTextures(1, &m_textureID);
 	}
 	/***/
 	inline FBO_Env_Reflector() {
-		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP_ARRAY, 1, &m_textureID);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 		glTextureParameteri(m_textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -33,8 +32,11 @@ struct FBO_Env_Reflector {
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_textureID, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 		resize(512, 512, 6);
-		glNamedFramebufferTexture(m_fboID, GL_COLOR_ATTACHMENT0, m_textureID, 0);
-		glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
+		glCreateFramebuffers(6, m_fboID);
+		for (int x = 0; x < 6; ++x) {
+			glNamedFramebufferTexture(m_fboID[x], GL_COLOR_ATTACHMENT0, m_textureID, x);
+			glNamedFramebufferDrawBuffer(m_fboID[x], GL_COLOR_ATTACHMENT0);
+		}
 	}
 
 
@@ -52,7 +54,8 @@ struct FBO_Env_Reflector {
 	/***/
 	inline void clear() {
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
+		for (int x = 0; x < 6; ++x) 
+			glClearNamedFramebufferfv(m_fboID[x], GL_COLOR, 0, clearColor);
 	}
 	/***/
 	inline void clear(const GLint & zOffset) {
@@ -60,16 +63,12 @@ struct FBO_Env_Reflector {
 		glClearTexSubImage(m_textureID, 0, 0, 0, zOffset, m_size.x, m_size.y, 6, GL_RGB, GL_FLOAT, &clear);
 	}
 	/***/
-	inline void bindForWriting() {
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
+	inline void bindForWriting(const int & index) {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID[index]);
 	}
 	/***/
 	inline void bindForReading(const GLuint & binding = 0) {
 		glBindTextureUnit(binding, m_textureID);
-	}
-	/***/
-	inline void attachTexture(const GLuint & textureObj, const GLenum & attachPoint, const GLuint & level = 0) {
-		glNamedFramebufferTexture(m_fboID, attachPoint, textureObj, level);
 	}
 };
 

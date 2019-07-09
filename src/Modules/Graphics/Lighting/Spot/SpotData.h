@@ -30,14 +30,11 @@ struct SpotData {
 	};
 	/***/
 	struct ViewInfo {
-		size_t visLightCount = 0ull;
-		DynamicBuffer visLights;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4);
+		std::vector<GLint> lightIndices;
 	};
 
 	GL_ArrayBuffer<Spot_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
-	size_t shapeVertexCount = 0ull;
 	std::shared_ptr<ShadowData> shadowData;
 };
 

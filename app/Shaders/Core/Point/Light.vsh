@@ -1,5 +1,7 @@
 /* Point light - lighting shader. */
 #version 460
+#extension GL_ARB_shader_viewport_layer_array : enable
+#package "CameraBuffer"
 
 layout(location = 0) in vec3 vertex;
 
@@ -12,16 +14,7 @@ struct Light_Struct {
 	float LightRadius;
 	int Shadow_Spot;
 };
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-};
-layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+layout (std430, binding = 4) readonly buffer Light_Index_Buffer {
 	int lightIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Light_Buffer {
@@ -38,16 +31,19 @@ layout (location = 12) flat out float LightRadius2;
 layout (location = 13) flat out int ShadowSpotFinal;
 layout (location = 14) flat out int lightIndex;
 
+
 void main()
 {		
-	CamPInverse = inverse(pMatrix);
-	CamVInverse = inverse(vMatrix);
-	CamEyePosition = EyePosition;
-	CamDimensions = CameraDimensions;
+	const int CamIndex = camIndexes[gl_InstanceID].x;
+	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
+	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
+	CamEyePosition = camBuffer[CamIndex].EyePosition;
+	CamDimensions = camBuffer[CamIndex].CameraDimensions;
 	lightIndex = lightIndexes[gl_InstanceID];
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
 	LightPosition = lightBuffers[lightIndex].LightPosition.xyz;
 	LightRadius2 = lightBuffers[lightIndex].LightRadius * lightBuffers[lightIndex].LightRadius;	
 	ShadowSpotFinal = lightBuffers[lightIndex].Shadow_Spot;	
-	gl_Position = pMatrix * vMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
+	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * lightBuffers[lightIndex].mMatrix * vec4(vertex, 1.0); 
+	gl_Layer = camIndexes[gl_InstanceID].y;
 }

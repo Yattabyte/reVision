@@ -31,26 +31,18 @@ public:
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];
-
-			std::vector<GLint> lightIndices;
+			
+			viewInfo.lightIndices.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
 				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-				LightSpot_Component * lightComponent = (LightSpot_Component*)componentParam[1];
+				LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[1];
 
 				// Synchronize the component if it is visible
 				if (renderableComponent->m_visible[x])
-					lightIndices.push_back((GLuint)index);
+					viewInfo.lightIndices.push_back((GLuint)index);
 				index++;
 			}
-
-			// Update camera buffers
-			viewInfo.visLights.beginWriting();
-			viewInfo.visLightCount = (GLsizei)lightIndices.size();
-			viewInfo.visLights.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
-			// count, primCount, first, reserved
-			const GLuint data[] = { (GLuint)m_frameData->shapeVertexCount, (GLuint)viewInfo.visLightCount,0,0 };
-			viewInfo.indirectShape.write(0, sizeof(GLuint) * 4, &data);
 		}
 	}
 

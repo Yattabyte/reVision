@@ -38,13 +38,13 @@ void Graphics_Module::initialize(Engine * engine)
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(f, m_renderSize.y);		
-		m_viewport->resize(m_renderSize);
+		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
-		m_viewport->resize(m_renderSize);
+		m_viewport->resize(m_renderSize, 1);
 		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
 	float farPlane = 1000.0f;
@@ -65,7 +65,7 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 
 	// Camera Setup
-	m_viewport = std::make_shared<Viewport>(engine, glm::ivec2(0), m_renderSize);
+	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize);
 	CameraBuffer::CamStruct cameraData;
 	cameraData.pMatrix = glm::mat4(1.0f);
 	cameraData.vMatrix = glm::mat4(1.0f);
@@ -76,14 +76,17 @@ void Graphics_Module::initialize(Engine * engine)
 	m_clientCamera = std::make_shared<CameraBuffer>();
 	m_clientCamera->replace(cameraData);
 	genPerspectiveMatrix();
+	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Rendering Effects & systems
 	m_sceneCameras = std::make_shared<std::vector<CameraBuffer::CamStruct*>>();
+	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<CameraBuffer::CamStruct>>();
+	auto sharedCameraCounter = std::make_shared<int>(0);
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
 	m_systems.addSystem(new Skeletal_Animation(engine));
-	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_systems);
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
@@ -187,46 +190,65 @@ void Graphics_Module::deinitialize()
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
+	m_cameraBuffer->beginWriting();
 	m_clientCamera->beginWriting();
 	m_clientCamera->pushChanges();
 	m_sceneCameras->clear();
 	m_sceneCameras->push_back(m_clientCamera->get());
+	m_rhVolume->clear();
+	m_rhVolume->updateVolume(*m_clientCamera->get());
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
 	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+	m_cameraBuffer->resize(m_sceneCameras->size());
+	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
+		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x];
 
 	// Update pipeline techniques ONCE per frame, not per render call!
 	m_pipeline->update(deltaTime);
 
 	// Render the scene from the user's perspective to the screen
-	m_clientCamera->bind(2);
-	renderScene(deltaTime, m_viewport, m_clientCamera->get());
-	copyToScreen();
+	size_t visibilityIndex = 0;
+	bool found = false;
+	for (size_t x = 0; x < m_sceneCameras->size(); ++x)
+		if (m_sceneCameras->at(x) == m_clientCamera->get()) {
+			visibilityIndex = x;
+			found = true;
+			break;
+		}
+	if (found) {
+		m_viewport->bind(*m_clientCamera->get());
+		renderScene(deltaTime, m_viewport, { {visibilityIndex, 0} });
+		copyToScreen();
+	}
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->prepareForNextFrame(deltaTime);
 	m_clientCamera->endWriting();
+	m_cameraBuffer->endWriting();
 }
 
-void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories)
+void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)
 {
 	// Prepare viewport and camera for rendering
 	viewport->clear();
-	viewport->bind(*camera);
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 
 	// Render
-	m_pipeline->render(deltaTime, viewport, camera, allowedCategories);
+	m_pipeline->render(deltaTime, viewport, perspectives, allowedCategories);
 }
 
-void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>>& perspectives)
+void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
 	// Apply frustum culling or other techniques
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_pipeline->cullShadows(deltaTime, perspectives);
 }
 
 void Graphics_Module::renderShadows(const float & deltaTime)
 {
 	// Render remaining shadows
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 	m_pipeline->renderShadows(deltaTime);
 }
 

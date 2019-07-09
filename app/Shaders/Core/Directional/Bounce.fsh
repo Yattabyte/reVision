@@ -25,7 +25,7 @@ layout (location = 3) out vec4 GI_Out4;
 layout (binding = 0) uniform sampler2DArray ShadowNormal; 	// RSM normals
 layout (binding = 1) uniform sampler2DArray ShadowFlux;  	// RSM vpl flux
 layout (binding = 2) uniform sampler2DArray ShadowPos;		// RSM position
-layout (binding = 3) uniform sampler2D CameraDepth;		  	// Camera depth buffer
+layout (binding = 3) uniform sampler2DArray CameraDepth;  	// Camera depth buffer
 layout (binding = 4) uniform sampler3D Noise;       		// A pre-computed 3D noise texture (32X32X32). Value range (r,g,b): [0,1] 
 // #define DEPTH_OCCL    // if defined, depth-based RSM sample occlusion is enabled.
 
@@ -115,7 +115,7 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 		// samples should also be hidden from view. If the RH point is visible to the camera, the 
 		// same should hold for the visibility samples in order not to attenuate the light.
 		Qcss = PointWCS2CSS(samplePos); 
-		float rh_visibility = Qcss.z < (2.0 * texture(CameraDepth, 0.5 * Qcss.xy + vec2(0.5)).r -1.0) * 1.1 ? 1.0 : -1.0; 
+		float rh_visibility = Qcss.z < (2.0 * texture(CameraDepth, vec3(0.5 * Qcss.xy + vec2(0.5), gl_Layer)).r -1.0) * 1.1 ? 1.0 : -1.0; 
 
 		// Estimate attenuation along line of sight
 		for (int j = 1; j < vis_samples; ++j) { 

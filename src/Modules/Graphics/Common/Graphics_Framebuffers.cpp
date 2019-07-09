@@ -48,7 +48,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 	for each (const auto & texture in textureFormats) {
 		const auto[internalFormat, format, type] = texture;
 		GLuint texID(0);
-		glCreateTextures(GL_TEXTURE_2D, 1, &texID);
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &texID);
 		glTextureParameteri(texID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(texID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		if (mipmapped) {
@@ -60,13 +60,13 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 			glTextureParameteri(texID, GL_TEXTURE_MAX_LEVEL, 5);
 			for (int x = 0; x < 6; ++x) {
 				const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-				glTextureImage2DEXT(texID, GL_TEXTURE_2D, x, internalFormat, size.x, size.y, 0, format, type, NULL);
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, size.x, size.y, m_layerFaces, 0, format, type, NULL);
 			}
 		}
 		else {
 			glTextureParameteri(texID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 			glTextureParameteri(texID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-			glTextureImage2DEXT(texID, GL_TEXTURE_2D, 0, internalFormat, m_renderSize.x, m_renderSize.y, 0, format, type, NULL);
+			glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
 		}
 		GLenum attachment;
 		if (format == GL_DEPTH_STENCIL)
@@ -80,13 +80,9 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 			drawBuffers.push_back(attachment);
 		}
 		glNamedFramebufferTexture(fboID, attachment, texID, 0);
-		/*if (!glIsTexture(texID))
-			m_engine->getManager_Messages().error("Graphics Framebuffer texture is incomplete.");*/
 		textures.push_back({ texID, internalFormat, format, type, attachment });
 	}
 	glNamedFramebufferDrawBuffers(fboID, (GLsizei)drawBuffers.size(), &drawBuffers[0]);
-	/*if (glCheckNamedFramebufferStatus(fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		m_engine->getManager_Messages().error("Graphics Framebuffer has encountered an error.");*/
 	m_fbos[name] = { fboID, mipmapped, textures };
 }
 
@@ -123,9 +119,10 @@ void Graphics_Framebuffers::clear()
 	}
 }
 
-void Graphics_Framebuffers::resize(const glm::ivec2 & newSize)
+void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layerFaces)
 {
 	m_renderSize = newSize;
+	m_layerFaces = layerFaces;
 	for (const auto[name, fboData] : m_fbos) {
 		const auto[fboID, mipmapped, texdata] = fboData;
 		int counter(0);
@@ -133,11 +130,11 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize)
 			if (mipmapped) {
 				for (int x = 0; x < 6; ++x) {
 					const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-					glTextureImage2DEXT(texID, GL_TEXTURE_2D, x, internalFormat, mippedSize.x, mippedSize.y, 0, format, type, NULL);
+					glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, x, internalFormat, mippedSize.x, mippedSize.y, m_layerFaces, 0, format, type, NULL);
 				}
 			}
 			else
-				glTextureImage2DEXT(texID, GL_TEXTURE_2D, 0, internalFormat, m_renderSize.x, m_renderSize.y, 0, format, type, NULL);
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
 			GLenum attachment;
 			if (format == GL_DEPTH_STENCIL)
 				attachment = GL_DEPTH_STENCIL_ATTACHMENT;

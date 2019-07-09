@@ -14,10 +14,10 @@ struct ViewData {
 
 void GetFragmentData(in vec2 TexCoord, out ViewData data)
 {
-	const vec4 Texture1				= texture(ColorMap, TexCoord);
-	const vec4 Texture2				= texture(ViewNormalMap, TexCoord);
-	const vec4 Texture3				= texture(SpecularMap, TexCoord);
-	const vec4 Texture4				= texture(DepthMap, TexCoord);
+	const vec4 Texture1				= texture(ColorMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture2				= texture(ViewNormalMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture3				= texture(SpecularMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture4				= texture(DepthMap, vec3(TexCoord, gl_Layer));
 	
 	data.Albedo 					= Texture1.rgb;
 	data.View_Normal				= Texture2.rgb;

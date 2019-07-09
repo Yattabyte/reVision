@@ -14,10 +14,10 @@ const uint maxBinarySteps = 6u;
 const float maxDistance = -1000.0f;
 
 // The screen texture
-layout (binding = 0) uniform sampler2D ColorMap;
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D SpecularMap;
-layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 0) uniform sampler2DArray ColorMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 2) uniform sampler2DArray SpecularMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 6) uniform sampler2D BayerMatrix;
 
 layout (location = 0) in vec2 TexCoord;
@@ -41,8 +41,8 @@ struct ViewData {
 
 void GetFragmentData(in vec2 TexCoord, out ViewData data)
 {
-	const vec4 Texture2				= texture(ViewNormalMap, TexCoord);
-	const vec4 Texture4				= texture(DepthMap, TexCoord);
+	const vec4 Texture2				= texture(ViewNormalMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture4				= texture(DepthMap, vec3(TexCoord, gl_Layer));
 	
 	data.View_Normal				= Texture2.rgb;
 	data.View_Depth					= Texture4.r;
@@ -62,7 +62,7 @@ vec3 RayMarch(vec3 SSReflectionVector, vec3 SSPos)
 	for (uint x = 0; x < maxSteps ; ++x) {	
 		prevRaySample = raySample;
         raySample = (x * rayStep) * SSReflectionVector + SSPos + DitherOffset;
-		depthValue = texture(DepthMap, raySample.xy).r;
+		depthValue = texture(DepthMap, vec3(raySample.xy, gl_Layer)).r;
 		
 		if (raySample.z > depthValue) {
 			minRaySample = prevRaySample;
@@ -70,7 +70,7 @@ vec3 RayMarch(vec3 SSReflectionVector, vec3 SSPos)
 			midRaySample;
 			for (uint y = 0; y < maxBinarySteps; ++y)	{
 				midRaySample = mix(minRaySample, maxRaySample, 0.5f);
-				depthValue = texture(DepthMap, midRaySample.xy).r;
+				depthValue = texture(DepthMap, vec3(midRaySample.xy, gl_Layer)).r;
 				
 				if (midRaySample.z > depthValue)
 					maxRaySample = midRaySample;

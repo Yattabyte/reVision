@@ -37,10 +37,6 @@ public:
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
 			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[3];
 
-			// Relay when shadows need to be rebuilt
-			if (m_frameData->envmapOutOfDate)
-				reflectorComponent->m_sceneOutOfDate = true;
-
 			// Synchronize the component if it is visible
 			if (renderableComponent->m_visibleAtAll) {
 				const auto & position = transformComponent->m_transform.m_position;

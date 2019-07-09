@@ -125,13 +125,6 @@ public:
 			}
 		}
 	}
-	/** Clears the buffer data, but retains capacity. */
-	inline void clear() {
-		const T t = T();
-		for (int n = 0; n < 3; ++n)
-			for (int x = 0; x < m_capacity; ++x)
-				m_bufferPtr[n][x] = t;
-	}
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.
 	@return					reference to the element desired. */

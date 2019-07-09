@@ -1,15 +1,7 @@
 /* Screen space reflection shader - part 1 - UV Lookup Creation. */
 #version 460
-
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-};
+#extension GL_ARB_shader_viewport_layer_array : enable
+#package "CameraBuffer"
 
 layout (location = 0) in vec3 vertex;
 
@@ -21,15 +13,17 @@ layout (location = 13) flat out mat4 CamVInverse;
 layout (location = 17) flat out vec3 CamEyePosition;
 layout (location = 18) flat out vec2 CamDimensions;
 
+
 void main(void)
 {	
+	const int CamIndex = camIndexes[gl_InstanceID].x;
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;	
-	CamPMatrix = pMatrix;
-	CamVMatrix = vMatrix;
-	CamPInverse = inverse(pMatrix);
-	CamVInverse = inverse(vMatrix);
-	CamEyePosition = EyePosition;
-	CamDimensions = CameraDimensions;
+	CamPMatrix = camBuffer[CamIndex].pMatrix;
+	CamVMatrix = camBuffer[CamIndex].vMatrix;
+	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
+	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
+	CamEyePosition = camBuffer[CamIndex].EyePosition;
+	CamDimensions = camBuffer[CamIndex].CameraDimensions;
 	gl_Position = vec4(vertex.xyz, 1);
+	gl_Layer = camIndexes[gl_InstanceID].y;
 }
-

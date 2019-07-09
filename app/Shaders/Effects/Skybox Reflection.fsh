@@ -1,10 +1,10 @@
 /* Calculates skybox reflections. */
 #version 460
 
-layout (binding = 0) uniform sampler2D ColorMap;
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D SpecularMap;
-layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 0) uniform sampler2DArray ColorMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 2) uniform sampler2DArray SpecularMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 4) uniform samplerCube SkyMap;
 
 layout (location = 0) in vec2 TexCoord;

@@ -35,11 +35,6 @@ public:
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");
 		m_shapeSphere = Shared_Primitive(m_engine, "sphere");
 
-		// Asset-Finished Callbacks
-		m_shapeSphere->addCallback(m_aliveIndicator, [&]() mutable {
-			m_frameData->shapeVertexCount = m_shapeSphere->getSize();
-		});
-
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
@@ -51,22 +46,42 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & viewInfo : m_frameData->viewInfo)
-			viewInfo.visLights.endWriting();
+		for (auto & drawBuffer : m_drawBuffers)
+			drawBuffer.visLights.endWriting();
+		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Render direct lights	
-		if (m_enabled && m_shapeSphere->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
-			size_t visibilityIndex = 0;
-			bool found = false;
-			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x) == camera) {
-					visibilityIndex = x;
-					found = true;
-					break;
-				}
-			if (found)
-				renderLights(deltaTime, viewport, visibilityIndex);
+		if (m_enabled && m_frameData->viewInfo.size() && m_shapeSphere->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
+			if (m_drawIndex >= m_drawBuffers.size())
+				m_drawBuffers.resize(m_drawIndex + 1);
+			auto & drawBuffer = m_drawBuffers[m_drawIndex];
+			auto &camBufferIndex = drawBuffer.bufferCamIndex;
+			auto &lightBufferIndex = drawBuffer.visLights;
+			camBufferIndex.beginWriting();
+			lightBufferIndex.beginWriting();
+
+			// Accumulate all visibility info for the cameras passed in
+			std::vector<glm::ivec2> camIndices;
+			std::vector<GLint> lightIndices;
+			for (auto &[camIndex, layer] : perspectives) {
+				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
+				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
+				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
+			}
+
+			if (lightIndices.size()) {
+				// Write accumulated data
+				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
+				lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
+				const GLuint dataShape[] = { (GLuint)m_shapeSphere->getSize(), (GLuint)lightIndices.size(), 0,0 };
+				drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
+
+				// Render lights
+				renderLights(deltaTime, viewport);
+
+				m_drawIndex++;
+			}
 		}
 	}
 
@@ -75,50 +90,48 @@ private:
 	/** Render all the lights.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const size_t & visibilityIndex) {
-		if (m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visLightCount) {
-			glEnable(GL_STENCIL_TEST);
-			glEnable(GL_BLEND);
-			glBlendEquation(GL_FUNC_ADD);
-			glBlendFunc(GL_ONE, GL_ONE);
+	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {		
+		glEnable(GL_STENCIL_TEST);
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ONE);
 
-			// Draw only into depth-stencil buffer
-			m_shader_Stencil->bind();																		// Shader (point)
-			viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
-			viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
-			glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);									// Shadow map(linear depth texture)
-			m_frameData->viewInfo[visibilityIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	// SSBO visible light indices
-			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_frameData->viewInfo[visibilityIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
-			glBindVertexArray(m_shapeSphere->m_vaoID);
-			glDepthMask(GL_FALSE);
-			glEnable(GL_DEPTH_TEST);
-			glDisable(GL_CULL_FACE);
-			glClear(GL_STENCIL_BUFFER_BIT);
-			glStencilFunc(GL_ALWAYS, 0, 0);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		// Draw only into depth-stencil buffer
+		m_shader_Stencil->bind();																		// Shader (point)
+		viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
+		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);									// Shadow map(linear depth texture)
+		m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_drawBuffers[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
+		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_drawBuffers[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		glBindVertexArray(m_shapeSphere->m_vaoID);
+		glDepthMask(GL_FALSE);
+		glEnable(GL_DEPTH_TEST);
+		glDisable(GL_CULL_FACE);
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glStencilFunc(GL_ALWAYS, 0, 0);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			// Now draw into color buffers
-			m_shader_Lighting->bind();
-			m_shader_Lighting->setUniform(0, m_frameData->shadowData->shadowSizeRCP);
-			glDisable(GL_DEPTH_TEST);
-			glEnable(GL_CULL_FACE);
-			glCullFace(GL_FRONT);
-			glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+		// Now draw into color buffers
+		m_shader_Lighting->bind();
+		m_shader_Lighting->setUniform(0, m_frameData->shadowData->shadowSizeRCP);
+		glDisable(GL_DEPTH_TEST);
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_FRONT);
+		glStencilFunc(GL_NOTEQUAL, 0, 0xFF);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			glClear(GL_STENCIL_BUFFER_BIT);
-			glCullFace(GL_BACK);
-			glDepthMask(GL_TRUE);
-			glBlendFunc(GL_ONE, GL_ZERO);
-			glDisable(GL_BLEND);
-			glDisable(GL_STENCIL_TEST);
-		}
+		glClear(GL_STENCIL_BUFFER_BIT);
+		glCullFace(GL_BACK);
+		glDepthMask(GL_TRUE);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		glDisable(GL_BLEND);
+		glDisable(GL_STENCIL_TEST);
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
-		m_frameData->lightBuffer.clear();
 	}
 
 
@@ -127,6 +140,13 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
 	Shared_Primitive m_shapeSphere;
+	struct DrawBuffers {
+		DynamicBuffer bufferCamIndex;
+		DynamicBuffer visLights;
+		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4);
+	};
+	int m_drawIndex = 0;
+	std::vector<DrawBuffers> m_drawBuffers;
 
 
 	// Shared Attributes

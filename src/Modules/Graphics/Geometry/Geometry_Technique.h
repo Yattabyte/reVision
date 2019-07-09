@@ -16,17 +16,17 @@ public:
 
 
 	// Public Interface Implementation
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Forward to geometry rendering
-		renderGeometry(deltaTime, viewport, camera);
+		renderGeometry(deltaTime, viewport, perspectives);
 	}
 
 
 	// Public Interface Declarations
 	/***/
-	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) {}
+	inline virtual void renderGeometry(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) {}
 	/***/
-	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>> & perspectives) {}
+	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives) {}
 	/***/
 	inline virtual void renderShadows(const float & deltaTime) {}	
 };

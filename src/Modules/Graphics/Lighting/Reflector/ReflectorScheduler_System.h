@@ -34,6 +34,7 @@ public:
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		// Resize shadowmap to fit number of entities this frame
 		m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, (unsigned int)(components.size() * 6ull));
+		m_frameData->reflectorCount = components.size();
 
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
@@ -46,7 +47,7 @@ public:
 			// Set appropriate shadow spot
 			reflectorComponent->m_cubeSpot = index * 6;
 			
-			if (renderableComponent->m_visibleAtAll && reflectorComponent->m_sceneOutOfDate) {
+			if (renderableComponent->m_visibleAtAll/* && reflectorComponent->m_sceneOutOfDate*/) {
 				bool didAnything = false;
 				// Try to find the oldest components
 				for (int x = 0; x < m_frameData->reflectorsToUpdate.size(); ++x) {

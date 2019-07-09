@@ -5,12 +5,15 @@
 #include "Modules/Engine_Module.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
+#include "Modules/Graphics/Common/RH_Volume.h"
 #include "Modules/Graphics/Common/Viewport.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/GL_ArrayBuffer.h"
 
 
 /** A module responsible for rendering.
@@ -35,9 +38,9 @@ public:
 	@param	deltaTime		the amount of time since last frame.
 	@param	viewport		the view port to render into.
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
-	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories = Graphics_Technique::ALL);
+	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories = Graphics_Technique::ALL);
 	/***/
-	void cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>> & perspectives);	
+	void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives);	
 	/***/
 	void renderShadows(const float & deltaTime);
 	/***/
@@ -61,11 +64,13 @@ private:
 	std::unique_ptr<Graphics_Pipeline>			m_pipeline;
 	std::shared_ptr<Viewport>					m_viewport;
 	std::shared_ptr<CameraBuffer>				m_clientCamera;
+	std::shared_ptr<RH_Volume>					m_rhVolume;
 	Shared_Shader								m_shader;
 	Shared_Primitive							m_shapeQuad;
 	StaticBuffer								m_quadIndirectBuffer;
-	std::shared_ptr<bool>						m_aliveIndicator = std::make_shared<bool>(true);
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>>	m_sceneCameras;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
+	std::shared_ptr<GL_ArrayBuffer<CameraBuffer::CamStruct>> m_cameraBuffer;
 };
 
 #endif // GRAPHICS_MODULE_H

@@ -47,7 +47,7 @@ public:
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) {}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) {}
 
 
 protected:

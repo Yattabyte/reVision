@@ -8,10 +8,10 @@
 layout (early_fragment_tests) in;
 #define M_PI 3.14159f
 
-layout (binding = 0) uniform sampler2D ColorMap;
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D SpecularMap;
-layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 0) uniform sampler2DArray ColorMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 2) uniform sampler2DArray SpecularMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 4) uniform samplerCubeArray ReflectionMap;
 
 layout (location = 0) flat in mat4 mMatrix;
@@ -39,10 +39,10 @@ struct ViewData {
 
 void GetFragmentData(in vec2 TexCoord, out ViewData data)
 {
-	const vec4 Texture1				= texture(ColorMap, TexCoord);
-	const vec4 Texture2				= texture(ViewNormalMap, TexCoord);
-	const vec4 Texture3				= texture(SpecularMap, TexCoord);
-	const vec4 Texture4				= texture(DepthMap, TexCoord);
+	const vec4 Texture1				= texture(ColorMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture2				= texture(ViewNormalMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture3				= texture(SpecularMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture4				= texture(DepthMap, vec3(TexCoord, gl_Layer));
 	
 	data.Albedo 					= Texture1.rgb;
 	data.View_Normal				= Texture2.rgb;

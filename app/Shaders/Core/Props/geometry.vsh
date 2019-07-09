@@ -2,6 +2,8 @@
 #version 460
 #define MAX_BONES 100
 #define TEXTURES_PER_MATERIAL 3
+#extension GL_ARB_shader_viewport_layer_array : enable
+#package "CameraBuffer"
 
 struct PropAttributes {
 	uint materialID;
@@ -12,26 +14,16 @@ struct PropAttributes {
 struct BonesStruct {
 	mat4 bones[MAX_BONES];
 };
-
-layout (std430, binding = 2) buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-};
-layout (std430, binding = 3) readonly buffer Prop_Buffer {
+layout (std430, binding = 4) readonly buffer Prop_Buffer {
 	PropAttributes propBuffer[];
 };
-layout (std430, binding = 4) readonly buffer Prop_Index_Buffer {
+layout (std430, binding = 5) readonly buffer Prop_Index_Buffer {
 	uint propIndexes[];
 };
-layout (std430, binding = 5) readonly buffer Skeleton_Buffer {
+layout (std430, binding = 6) readonly buffer Skeleton_Buffer {
 	BonesStruct skeletonBuffer[];
 };
-layout (std430, binding = 6) readonly buffer Skeleton_Index_Buffer {
+layout (std430, binding = 7) readonly buffer Skeleton_Index_Buffer {
 	int skeletonIndexes[];
 };
 
@@ -48,8 +40,10 @@ layout (location = 0) out vec2 TexCoord;
 layout (location = 1) out mat3 ViewTBN;
 layout (location = 5) flat out uint MaterialOffset;
 
+
 void main()
 {	
+	const int CamIndex 			= camIndexes[gl_DrawID].x;
 	const uint PropIndex 		= propIndexes[gl_DrawID];
 	const int SkeletonIndex 	= skeletonIndexes[gl_DrawID];
 	mat4 BoneTransform 			= mat4(1.0);
@@ -60,12 +54,13 @@ void main()
 		BoneTransform          += skeletonBuffer[SkeletonIndex].bones[BoneIDs[3]] * Weights[3];
 	}
 	TexCoord             		= textureCoordinate;
-	const mat4 vmMatrix4		= vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform;
+	const mat4 vmMatrix4		= camBuffer[CamIndex].vMatrix * propBuffer[PropIndex].mMatrix * BoneTransform;
 	const mat3 vmMatrix3		= mat3(vmMatrix4);
 	const vec3 ViewNormal 		= normalize(vmMatrix3 * normalize(normal));
 	const vec3 ViewTangent		= normalize(vmMatrix3 * normalize(tangent));		
 	const vec3 ViewBitangent 	= normalize(vmMatrix3 * normalize(bitangent));
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
 	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
-	gl_Position           		= pMatrix * vmMatrix4 * vec4(vertex,1.0);			
+	gl_Position           		= camBuffer[CamIndex].pMatrix * vmMatrix4 * vec4(vertex,1.0);
+	gl_Layer 					= camIndexes[gl_DrawID].y;			
 }

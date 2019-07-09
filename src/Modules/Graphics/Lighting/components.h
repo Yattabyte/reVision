@@ -51,7 +51,6 @@ struct LightSpot_Component : public ECSComponent<LightSpot_Component> {
 /** A parallax reflector component, 360 view of a scene. */
 struct Reflector_Component : public ECSComponent<Reflector_Component> {
 	// Reflector Properties
-	bool m_sceneOutOfDate = false;
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 };

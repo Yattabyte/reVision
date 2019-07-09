@@ -42,8 +42,9 @@ public:
 	/** Clear all framebuffer textures of their data. */
 	void clear();
 	/** Resize all framebuffer textures.
-	@param	newSize			the new size all framebuffer textures should expand/shrink to. */
-	void resize(const glm::ivec2 & newSize);
+	@param	newSize			the new size all framebuffer textures should expand/shrink to.
+	@param	layerFaces		the number of layers to use. */
+	void resize(const glm::ivec2 & newSize, const int & layerFaces);
 	/** Retrieve the FBO ID for a given framebuffer.
 	@param	name			the name of the framebuffer to retrieve from. */
 	GLuint getFboID(const char * name);
@@ -66,6 +67,7 @@ public:
 		>>
 	>>						m_fbos;
 	glm::ivec2				m_renderSize = glm::ivec2(1);
+	int						m_layerFaces = 1;
 	std::shared_ptr<bool>	m_aliveIndicator = std::make_shared<bool>(true);
 };
 

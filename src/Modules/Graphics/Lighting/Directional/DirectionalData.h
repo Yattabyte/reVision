@@ -29,16 +29,14 @@ struct DirectionalData {
 	};
 	/***/
 	struct ViewInfo {
-		size_t visLightCount = 0ull, visShadowCount = 0ull;
-		DynamicBuffer visLights;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4), indirectBounce = StaticBuffer(sizeof(GLuint) * 4);
+		size_t visShadowCount = 0ull;
+		std::vector<GLint> lightIndices;
 	};
 
 	GL_ArrayBuffer<Directional_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	std::shared_ptr<CameraBuffer> clientCamera;
 	std::shared_ptr<ShadowData> shadowData;
-	size_t shapeVertexCount = 0ull;
 };
 
 #endif DIRECTIONALDATA_H

@@ -1,12 +1,12 @@
 /* Makes a reflection buffer more physically correct. */
 #version 460 
 
-layout (binding = 0) uniform sampler2D ColorMap;
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D SpecularMap;
-layout (binding = 3) uniform sampler2D DepthMap;
-layout (binding = 4) uniform sampler2D IndirectRadianceTexture;
-layout (binding = 5) uniform sampler2D IndirectSpecularTexture;
+layout (binding = 0) uniform sampler2DArray ColorMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 2) uniform sampler2DArray SpecularMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
+layout (binding = 4) uniform sampler2DArray IndirectRadianceTexture;
+layout (binding = 5) uniform sampler2DArray IndirectSpecularTexture;
 layout (binding = 6) uniform sampler2D EnvironmentBRDF;
 
 layout (location = 0) in vec2 TexCoord;
@@ -39,9 +39,9 @@ void main()
 		const vec3 F0					= mix(vec3(0.03f), data.Albedo, data.Metalness);
 		const vec3 Fs					= Fresnel_Schlick_Roughness(F0, NdotV, data.Roughness);
 		const vec2 I_BRDF				= IntegrateBRDF(data.Roughness, data.World_Normal, NdotV);
-		const vec3 I_Diffuse			= texture(IndirectRadianceTexture, TexCoord).rgb * (data.Albedo / M_PI);
+		const vec3 I_Diffuse			= texture(IndirectRadianceTexture, vec3(TexCoord, gl_Layer)).rgb * (data.Albedo / M_PI);
 		const vec3 I_Ratio				= (vec3(1.0f) - Fs) * (1.0f - data.Metalness);
-		const vec3 I_Specular			= texture(IndirectSpecularTexture, TexCoord).rgb * (Fs * I_BRDF.x + I_BRDF.y);
+		const vec3 I_Specular			= texture(IndirectSpecularTexture, vec3(TexCoord, gl_Layer)).rgb * (Fs * I_BRDF.x + I_BRDF.y);
 		LightingTexture 				= (I_Ratio * I_Diffuse + I_Specular) * data.View_AO;
 	}
 }

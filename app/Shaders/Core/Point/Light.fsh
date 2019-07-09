@@ -18,17 +18,17 @@ struct Light_Struct {
 	float LightRadius;
 	int Shadow_Spot;
 };
-layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+layout (std430, binding = 4) readonly buffer Light_Index_Buffer {
 	int lightIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Light_Buffer {
 	Light_Struct lightBuffers[];
 };
 
-layout (binding = 0) uniform sampler2D ColorMap;
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 2) uniform sampler2D SpecularMap;
-layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 0) uniform sampler2DArray ColorMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 2) uniform sampler2DArray SpecularMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 4) uniform sampler2DArray ShadowMap;
 
 layout (location = 0) uniform float ShadowSize_Recip;
@@ -68,20 +68,17 @@ vec3 sampleCube(vec3 v, out int face)
 	float ma;
 	vec2 uv;
 	float faceIndex;
-	if(vAbs.z >= vAbs.x && vAbs.z >= vAbs.y)
-	{
+	if(vAbs.z >= vAbs.x && vAbs.z >= vAbs.y) {
 		faceIndex = v.z < 0.0 ? 5.0 : 4.0;
 		ma = 0.5 / vAbs.z;
 		uv = vec2(v.z < 0.0 ? -v.x : v.x, -v.y);
 	}
-	else if(vAbs.y >= vAbs.x)
-	{
+	else if(vAbs.y >= vAbs.x) {
 		faceIndex = v.y < 0.0 ? 3.0 : 2.0;
 		ma = 0.5 / vAbs.y;
 		uv = vec2(v.x, v.y < 0.0 ? -v.z : v.z);
 	}
-	else
-	{
+	else {
 		faceIndex = v.x < 0.0 ? 1.0 : 0.0;
 		ma = 0.5 / vAbs.x;
 		uv = vec2(v.x < 0.0 ? v.z : -v.z, -v.y);

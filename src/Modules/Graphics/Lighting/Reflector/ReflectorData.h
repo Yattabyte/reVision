@@ -26,9 +26,7 @@ struct ReflectorData {
 	};
 	/***/
 	struct ViewInfo {
-		size_t visLightCount = 0ull;
-		DynamicBuffer visLights;
-		StaticBuffer indirectShape = StaticBuffer(sizeof(GLuint) * 4);
+		std::vector<GLint> lightIndices;
 	};
 
 	GL_ArrayBuffer<Reflector_Buffer> lightBuffer;
@@ -37,7 +35,7 @@ struct ReflectorData {
 	std::vector<std::tuple<float, Reflector_Component*, std::vector<CameraBuffer::CamStruct*>>> reflectorsToUpdate;
 	bool envmapOutOfDate = false;
 	glm::ivec2 envmapSize = glm::ivec2(1);
-	size_t shapeVertexCount = 0ull;
+	size_t reflectorCount = 0ull;
 };
 
 #endif REFLECTORDATA_H

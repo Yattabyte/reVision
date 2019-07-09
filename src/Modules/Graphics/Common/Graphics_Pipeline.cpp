@@ -18,16 +18,16 @@
 #include "Modules/Graphics/Effects/FXAA.h"
 
 
-Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
+Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
 	auto propView = new Prop_Technique(m_engine, cameras, auxilliarySystems);
-	auto shadowing = new Shadow_Technique(m_engine, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(m_engine, shadowing->getShadowData(), clientCamera, cameras, auxilliarySystems);
+	auto shadowing = new Shadow_Technique(m_engine, cameras, auxilliarySystems);
+	auto directionalLighting = new Directional_Technique(m_engine, shadowing->getShadowData(), rhVolume, clientCamera, cameras, auxilliarySystems);
 	auto pointLighting = new Point_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
 	auto spotLighting = new Spot_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
 	auto reflectorLighting = new Reflector_Technique(m_engine, cameras, auxilliarySystems);
-	auto radianceHints = new Radiance_Hints(m_engine);
+	auto radianceHints = new Radiance_Hints(m_engine, rhVolume);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
 	auto ssr = new SSR(m_engine);
@@ -68,14 +68,14 @@ void Graphics_Pipeline::update(const float & deltaTime)
 		tech->updateTechnique(deltaTime);
 }
 
-void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera, const unsigned int & allowedCategories)
+void Graphics_Pipeline::render(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories)
 {
 	for each (auto * tech in m_allTechniques)
 		if (allowedCategories & tech->getCategory())
-			tech->renderTechnique(deltaTime, viewport, camera);	
+			tech->renderTechnique(deltaTime, viewport, perspectives);	
 }
 
-void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<CameraBuffer::CamStruct*, int>>& perspectives)
+void Graphics_Pipeline::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
 {
 	for each (auto * tech in m_geometryTechniques)
 		tech->cullShadows(deltaTime, perspectives);

@@ -6,6 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Cubemap.h"
 #include "Assets/Primitive.h"
+#include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
 
@@ -44,9 +45,9 @@ public:
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
+			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData);
 			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
-			m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data, 0);
+			m_quad6IndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
 		});
 		m_cubemapSky->addCallback(m_aliveIndicator, [&](void) mutable {
 			m_skyOutOfDate = true;
@@ -70,13 +71,33 @@ public:
 
 
 	// Public Interface Implementations.
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const CameraBuffer::CamStruct * camera) override {
+	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+		for (auto & camIndexBuffer : m_camIndexes)
+			camIndexBuffer.endWriting();
+		m_drawIndex = 0;
+	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
+
 		if (m_skyOutOfDate ) {
 			convoluteSky(viewport);
 			m_skyOutOfDate = false;
 		}
+
+		// Prepare camera index
+		if (m_drawIndex >= m_camIndexes.size())
+			m_camIndexes.resize(m_drawIndex + 1);
+		auto &camBufferIndex = m_camIndexes[m_drawIndex];
+		camBufferIndex.beginWriting();
+		std::vector<glm::ivec2> camIndices;
+		for (auto &[camIndex, layer] : perspectives) 
+			camIndices.push_back({ camIndex, layer });
+		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
+		GLuint instanceCount = perspectives.size();
+		m_quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
@@ -101,6 +122,7 @@ public:
 		glEnable(GL_BLEND);
 		glDepthMask(GL_TRUE);
 		glDisable(GL_DEPTH_TEST);
+		m_drawIndex++;
 	}
 
 
@@ -152,6 +174,8 @@ private:
 	StaticBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_skySize = glm::ivec2(1);
+	std::vector<DynamicBuffer> m_camIndexes;
+	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

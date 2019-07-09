@@ -2,8 +2,8 @@
 #version 460 
 #pragma optionNV (unroll all)
 
-layout (binding = 1) uniform sampler2D ViewNormalMap;
-layout (binding = 3) uniform sampler2D DepthMap;
+layout (binding = 1) uniform sampler2DArray ViewNormalMap;
+layout (binding = 3) uniform sampler2DArray DepthMap;
 layout (binding = 6) uniform sampler2D NoiseMap;
 
 layout (location = 0) uniform float SSAORadius = 1.0f;
@@ -36,7 +36,7 @@ vec3 Convert2ViewSpace(vec3 rawPosition)
 vec3 CalcPositionFromDepth(vec2 TexCoord)
 {
 	// Get the depth of the pixel at the tex coordinates
-    const vec3 rawPosition 			= vec3(TexCoord, texture(DepthMap, TexCoord).x);
+    const vec3 rawPosition 			= vec3(TexCoord, texture(DepthMap, vec3(TexCoord, gl_Layer)).x);
 	
 	// Convert from (0, 1) range to (-1, 1)
 	const vec4 ScreenSpacePosition	= vec4(rawPosition, 1) * 2.0f - 1.0f;
@@ -50,10 +50,10 @@ vec3 CalcPositionFromDepth(vec2 TexCoord)
 
 void main()
 {		
-	const float Depth 			= texture(DepthMap, TexCoord).x;
+	const float Depth 			= texture(DepthMap, vec3(TexCoord, gl_Layer)).x;
 	if (Depth >= 1.0f) 			discard; // Exit Early
 	const vec3 ViewPos 			= Convert2ViewSpace(vec3(TexCoord, Depth));
-	const vec3 ViewNormal 		= texture(ViewNormalMap, TexCoord).xyz;
+	const vec3 ViewNormal 		= texture(ViewNormalMap, vec3(TexCoord, gl_Layer)).xyz;
 	const vec3 RandomVec 		= texture(NoiseMap, TexCoord * (CamDimensions / 4.0f)).xyz;  		
 	const vec3 ViewTangent 		= normalize(RandomVec - ViewNormal * dot(RandomVec, ViewNormal));
 	const vec3 ViewBitangent 	= cross(ViewNormal, ViewTangent);

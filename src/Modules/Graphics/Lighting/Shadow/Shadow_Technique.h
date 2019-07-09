@@ -21,8 +21,8 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine * engine, ECSSystemList & auxilliarySystems)
-		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
+	inline Shadow_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
+		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		m_frameData = std::make_shared<ShadowData>();
 		auxilliarySystems.addSystem(new ShadowScheduler_System(m_engine, m_frameData));
 
@@ -69,12 +69,25 @@ private:
 			m_frameData->shadowFBO.bindForWriting();
 
 			// Accumulate Perspective Data
-			std::vector<std::pair<CameraBuffer::CamStruct*, int>> perspectives;
+			std::vector<std::pair<int, int>> perspectives;
 			perspectives.reserve(m_frameData->shadowsToUpdate.size());
 			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
-				m_frameData->shadowFBO.clear(shadowSpot, cameras.size());
-				for (int x = 0; x < cameras.size(); ++x)
-					perspectives.push_back({ cameras[x], shadowSpot + x });				
+				// FOR SOME REASON THE LINE BELOW STILL EXISTED, SO I COMMENTED IT OUT
+				// WHY WHERE WE CLEARING THE SHADOW FBO BEFORE OCCLUSION CULLING???
+				//m_frameData->shadowFBO.clear(shadowSpot, cameras.size());
+				for (int x = 0; x < cameras.size(); ++x) {
+					// Accumulate all visibility info for the cameras passed in
+					int visibilityIndex = 0;
+					bool found = false;
+					for (int y = 0; y < m_sceneCameras->size(); ++y)
+						if (m_sceneCameras->at(y) == cameras[x]) {
+							visibilityIndex = y;
+							found = true;
+							break;
+						}
+					if (found)
+						perspectives.push_back({ visibilityIndex, shadowSpot + x });										
+				}
 				*time += deltaTime;
 			}
 			
@@ -97,6 +110,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	std::shared_ptr<ShadowData> m_frameData;
+	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

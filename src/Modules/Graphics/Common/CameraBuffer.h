@@ -19,6 +19,7 @@ public:
 		float NearPlane = ConstNearPlane;
 		float FarPlane;
 		float FOV;
+		glm::vec3 padding2;
 	};
 
 

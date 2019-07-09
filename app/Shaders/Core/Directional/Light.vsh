@@ -1,6 +1,8 @@
 /* Directional light - lighting shader. */
 #version 460
 #define NUM_CASCADES 4
+#extension GL_ARB_shader_viewport_layer_array : enable
+#package "CameraBuffer"
 
 layout (location = 0) in vec3 vertex;
 
@@ -12,16 +14,7 @@ struct Light_Struct {
 	float LightIntensity;
 	int Shadow_Spot;
 };
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {		
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-};
-layout (std430, binding = 3) readonly buffer Light_Index_Buffer {
+layout (std430, binding = 4) readonly buffer Light_Index_Buffer {
 	int lightIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Light_Buffer {
@@ -38,8 +31,10 @@ layout (location = 21) flat out mat4 CamPInverse;
 layout (location = 25) flat out mat4 CamVInverse;
 layout (location = 29) flat out vec3 CamEyePosition;
 
+
 void main()
 {	
+	const int CamIndex = camIndexes[gl_InstanceID].x;
 	TexCoord = (vertex.xy + vec2(1.0)) / 2.0;
 	const int lightIndex = lightIndexes[gl_InstanceID];
 	LightColorInt = lightBuffers[lightIndex].LightColor.xyz * lightBuffers[lightIndex].LightIntensity;
@@ -49,8 +44,9 @@ void main()
 		CascadeEndClipSpace[x] = lightBuffers[lightIndex].CascadeEndClipSpace[x];
 		LightVP[x] = lightBuffers[lightIndex].LightVP[x];
 	}
-	CamPInverse = inverse(pMatrix);
-	CamVInverse = inverse(vMatrix);
-	CamEyePosition = EyePosition;
+	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
+	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
+	CamEyePosition = camBuffer[CamIndex].EyePosition;
 	gl_Position = vec4(vertex, 1);
+	gl_Layer = camIndexes[gl_InstanceID].y;
 }

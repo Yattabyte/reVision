@@ -1,6 +1,8 @@
 /* Reflector - lighting shader. */
 #version 460
 #extension GL_ARB_shader_draw_parameters : enable
+#extension GL_ARB_shader_viewport_layer_array : enable
+#package "CameraBuffer"
 
 layout (location = 0) in vec3 vertex;
 
@@ -11,16 +13,7 @@ struct Reflection_Struct {
 	vec4 BoxScale;
 	int CubeSpot;
 };
-layout (std430, binding = 2) readonly coherent buffer Camera_Buffer {	
-	mat4 pMatrix;
-	mat4 vMatrix;
-	vec3 EyePosition;
-	vec2 CameraDimensions;
-	float NearPlane;
-	float FarPlane;
-	float FOV;
-};
-layout (std430, binding = 3) readonly buffer Reflection_Index_Buffer {
+layout (std430, binding = 4) readonly buffer Reflection_Index_Buffer {
 	uint reflectionIndexes[];
 };
 layout (std430, binding = 8) readonly buffer Reflection_Buffer {
@@ -36,16 +29,19 @@ layout (location = 11) flat out mat4 CamPInverse;
 layout (location = 15) flat out mat4 CamVInverse;
 layout (location = 19) flat out vec2 CamDimensions;
 
+
 void main(void)
 {	
+	const int CamIndex = camIndexes[gl_InstanceID].x;
 	const uint ReflectorIndex = reflectionIndexes[gl_InstanceID];
 	mMatrix = reflectorBuffers[ReflectorIndex].mMatrix;
 	rotMatrix = reflectorBuffers[ReflectorIndex].rotMatrix;
 	BoxCamPos = reflectorBuffers[ReflectorIndex].BoxCamPos;
 	BoxScale = reflectorBuffers[ReflectorIndex].BoxScale;
 	CubeSpot = reflectorBuffers[ReflectorIndex].CubeSpot / 6;
-	CamPInverse = inverse(pMatrix);
-	CamVInverse = inverse(vMatrix);
-	CamDimensions = CameraDimensions;
-	gl_Position = pMatrix * vMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
+	CamPInverse = inverse(camBuffer[CamIndex].pMatrix);
+	CamVInverse = inverse(camBuffer[CamIndex].vMatrix);
+	CamDimensions = camBuffer[CamIndex].CameraDimensions;
+	gl_Position = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix * reflectorBuffers[ReflectorIndex].mMatrix * vec4(vertex, 1);	
+	gl_Layer = camIndexes[gl_InstanceID].y;
 }

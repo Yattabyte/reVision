@@ -61,7 +61,7 @@ public:
 		data[5] = { -1, -1, 0 };
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_DYNAMIC_STORAGE_BIT);
+		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad);
 
 		// Configure THIS element
 		setText(text);
