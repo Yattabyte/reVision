@@ -28,7 +28,7 @@ public:
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PointData>();
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.addSystem(new PointVisibility_System(m_frameData, cameras));
+		auxilliarySystems.addSystem(new PointVisibility_System(m_frameData));
 		auxilliarySystems.addSystem(new PointSync_System(m_frameData));
 
 		// Asset Loading
@@ -52,6 +52,10 @@ public:
 			drawBuffer.indirectShape.endWriting();
 		}
 		m_drawIndex = 0;
+	}
+	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Link together the dimensions of view info to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_cameras->size());
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Render direct lights	
@@ -136,6 +140,8 @@ private:
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
+		m_drawBuffers.clear();
+		m_drawIndex = 0;
 	}
 
 

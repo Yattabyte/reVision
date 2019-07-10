@@ -31,7 +31,7 @@ public:
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
 		auxilliarySystems.addSystem(new ReflectorScheduler_System(m_engine, m_frameData));
-		auxilliarySystems.addSystem(new ReflectorVisibility_System(m_frameData, cameras));
+		auxilliarySystems.addSystem(new ReflectorVisibility_System(m_frameData));
 		auxilliarySystems.addSystem(new ReflectorSync_System(m_frameData));
 
 		// Asset Loading
@@ -86,6 +86,9 @@ public:
 		m_drawIndex = 0;
 	}
 	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Link together the dimensions of view info to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_sceneCameras->size());
+
 		// Exit Early
 		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet()) {
 			m_viewport->resize(m_frameData->envmapSize, m_frameData->reflectorCount * 6);
@@ -254,6 +257,8 @@ private:
 	inline void clear() {
 		m_frameData->viewInfo.clear();
 		m_frameData->reflectorsToUpdate.clear();
+		m_drawBuffers.clear();
+		m_drawIndex = 0;
 	}
 
 

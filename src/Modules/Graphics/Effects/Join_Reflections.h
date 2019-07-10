@@ -45,8 +45,8 @@ public:
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shader->existsYet())
-
 			return;
+
 		// Prepare camera index
 		if (m_drawIndex >= m_camIndexes.size())
 			m_camIndexes.resize(m_drawIndex + 1);

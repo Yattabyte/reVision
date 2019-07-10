@@ -7,7 +7,6 @@
 
 struct PropAttributes {
 	uint materialID;
-	uint isStatic;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };

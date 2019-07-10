@@ -16,8 +16,8 @@ public:
 	/***/
 	inline ~PointVisibility_System() = default;
 	/***/
-	inline PointVisibility_System(const std::shared_ptr<PointData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
-		: m_frameData(frameData), m_cameras(cameras) {
+	inline PointVisibility_System(const std::shared_ptr<PointData> & frameData)
+		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightPoint_Component::ID, FLAG_REQUIRED);
 	}
@@ -25,9 +25,6 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Link together the dimensions of view info and viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());		
-		
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];
@@ -50,7 +47,6 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<PointData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // POINTVISIBILITY_SYSTEM_H

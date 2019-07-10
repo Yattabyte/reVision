@@ -16,8 +16,8 @@ public:
 	/***/
 	inline ~ReflectorVisibility_System() = default;
 	/***/
-	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
-		: m_frameData(visibility), m_cameras(cameras) {
+	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility)
+		: m_frameData(visibility) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
@@ -27,9 +27,6 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Link together the dimensions of view info and viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
-
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];
@@ -54,7 +51,6 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<ReflectorData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // REFLECTORVISIBILITY_SYSTEM_H

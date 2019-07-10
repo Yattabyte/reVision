@@ -15,7 +15,7 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 	size_t m_offset = 0ull, m_count = 0ull;
 	unsigned int m_skin = 0u;
 	float m_radius = 1.0f;
-	bool m_static = true;
+	GLsync m_uploadFence = nullptr;
 	glm::vec3 m_position = glm::vec3(0.0f);
 };
 

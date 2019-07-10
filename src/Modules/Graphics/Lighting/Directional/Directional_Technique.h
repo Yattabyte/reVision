@@ -32,8 +32,8 @@ public:
 		m_frameData = std::make_shared<DirectionalData>();
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_frameData, cameras));
-		auxilliarySystems.addSystem(new DirectionalSync_System(m_frameData, cameras));
+		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_frameData));
+		auxilliarySystems.addSystem(new DirectionalSync_System(m_frameData));
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
@@ -82,8 +82,12 @@ public:
 		m_bounceIndex = 0;
 	}
 	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Link together the dimensions of view info to that of the viewport vectors
+		m_frameData->viewInfo.resize(m_cameras->size());
+
 		// Render important shadows
 		if (m_enabled && m_frameData->viewInfo.size() && m_shader_Bounce->existsYet()) {
+			// Find client camera
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
@@ -92,9 +96,11 @@ public:
 					found = true;
 					break;
 				}
-			if (found) {
+			if (found && visibilityIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
+				// Light bounce using client camera
 				if (m_bounceIndex >= m_bounceBuffers.size())
 					m_bounceBuffers.resize(m_bounceIndex + 1);
+
 				auto & bounceBuffer = m_bounceBuffers[m_bounceIndex];
 				auto &camBufferIndex = bounceBuffer.bufferCamIndex;
 				auto &lightBufferIndex = bounceBuffer.visLights;
@@ -165,6 +171,7 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderLights(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
+		// Prepare rendering state
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -186,40 +193,41 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void renderBounce(const float & deltaTime, const int & viewingIndex) {
-		if (m_frameData->viewInfo.size() && viewingIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo.at(viewingIndex).visShadowCount) {
-			m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo.at(viewingIndex).visShadowCount));
-			m_shader_Bounce->setUniform(1, m_rhVolume->m_max);
-			m_shader_Bounce->setUniform(2, m_rhVolume->m_min);
-			m_shader_Bounce->setUniform(4, m_rhVolume->m_resolution);
-			m_shader_Bounce->setUniform(6, m_rhVolume->m_unitSize);
+		// Prepare rendering state
+		glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo.at(viewingIndex).visShadowCount));
+		m_shader_Bounce->setUniform(1, m_rhVolume->m_max);
+		m_shader_Bounce->setUniform(2, m_rhVolume->m_min);
+		m_shader_Bounce->setUniform(4, m_rhVolume->m_resolution);
+		m_shader_Bounce->setUniform(6, m_rhVolume->m_unitSize);
 
-			// Prepare rendering state
-			glBlendEquationSeparatei(0, GL_MIN, GL_MIN);
-			glBindVertexArray(m_shapeQuad->m_vaoID);
+		glViewport(0, 0, (GLsizei)m_rhVolume->m_resolution, (GLsizei)m_rhVolume->m_resolution);
+		m_shader_Bounce->bind();
+		m_rhVolume->writePrimary();
+		glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
+		glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
+		glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
+		glBindTextureUnit(4, m_textureNoise32);
+		m_bounceBuffers[m_bounceIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_bounceBuffers[m_bounceIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		m_bounceBuffers[m_bounceIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			glViewport(0, 0, (GLsizei)m_rhVolume->m_resolution, (GLsizei)m_rhVolume->m_resolution);
-			m_shader_Bounce->bind();
-			m_rhVolume->writePrimary();
-			glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
-			glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
-			glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
-			glBindTextureUnit(4, m_textureNoise32);
-			m_bounceBuffers[m_bounceIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-			m_bounceBuffers[m_bounceIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
-			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_bounceBuffers[m_bounceIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-
-			glDepthMask(GL_TRUE);
-			glEnable(GL_DEPTH_TEST);
-			glBlendEquation(GL_FUNC_ADD);
-			glBlendFunc(GL_ONE, GL_ZERO);
-			glDisable(GL_BLEND);
-		}
+		glDepthMask(GL_TRUE);
+		glEnable(GL_DEPTH_TEST);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_ONE, GL_ZERO);
+		glDisable(GL_BLEND);
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
+		m_drawBuffers.clear();
+		m_bounceBuffers.clear();
+		m_drawIndex = 0;
+		m_bounceIndex = 0;
 	}
 
 

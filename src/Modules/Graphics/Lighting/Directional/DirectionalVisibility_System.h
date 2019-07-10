@@ -16,8 +16,8 @@ public:
 	/***/
 	inline ~DirectionalVisibility_System() = default;
 	/***/
-	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
-		: m_frameData(frameData), m_cameras(cameras) {
+	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData> & frameData)
+		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
 		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
@@ -27,9 +27,6 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Link together the dimensions of view info and light buffers to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
-
 		// Compile results PER viewport
 		for (int x = 0; x < m_frameData->viewInfo.size(); ++x) {
 			auto & viewInfo = m_frameData->viewInfo[x];
@@ -58,7 +55,6 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // DIRECTIONALVISIBILITY_SYSTEM_H

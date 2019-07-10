@@ -16,8 +16,8 @@ public:
 	/***/
 	inline ~DirectionalSync_System() = default;
 	/***/
-	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
-		: m_frameData(frameData), m_cameras(cameras) {
+	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData)
+		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
 		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
@@ -29,9 +29,6 @@ public:
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Link together the dimensions of view info to that of the viewport vectors
-		m_frameData->viewInfo.resize(m_cameras->size());
-
 		// Resize light buffers to match number of entities this frame
 		m_frameData->lightBuffer.resize(components.size());
 		m_frameData->lightBuffer.beginWriting();
@@ -144,7 +141,6 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
 };
 
 #endif // DIRECTIONALSYNC_SYSTEM_H

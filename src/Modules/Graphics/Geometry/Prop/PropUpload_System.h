@@ -83,6 +83,12 @@ public:
 				if (m_fence)
 					glDeleteSync(m_fence);
 				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+				propComponent->m_uploadFence = m_fence;
+			}
+			else if (propComponent->m_uploadFence) {
+				const auto state = glClientWaitSync(propComponent->m_uploadFence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+				if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED)
+					propComponent->m_uploadFence = nullptr; // don't delete the fence, we copied this system's fence
 			}
 		}
 	}	

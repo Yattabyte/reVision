@@ -21,8 +21,7 @@
 struct PropData {
 	/** OpenGL buffer for models. */
 	struct Model_Buffer {
-		GLuint materialID;
-		GLuint isStatic; glm::vec2 padding1;
+		GLuint materialID; glm::vec3 padding1;
 		glm::mat4 mMatrix;
 		glm::mat4 bBoxMatrix;
 	};
