@@ -73,9 +73,54 @@ public:
 		for (auto & drawBuffer : m_drawBuffers) {
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
-			drawBuffer.indirectBounce.endWriting();
+		}
+		for (auto & bounceBuffer : m_bounceBuffers) {
+			bounceBuffer.visLights.endWriting();
+			bounceBuffer.indirectBounce.endWriting();
 		}
 		m_drawIndex = 0;
+		m_bounceIndex = 0;
+	}
+	inline virtual void updateTechnique(const float & deltaTime) override {
+		// Render important shadows
+		if (m_enabled && m_frameData->viewInfo.size() && m_shader_Bounce->existsYet()) {
+			size_t visibilityIndex = 0;
+			bool found = false;
+			for (size_t x = 0; x < m_cameras->size(); ++x)
+				if (m_cameras->at(x) == m_frameData->clientCamera->get()) {
+					visibilityIndex = x;
+					found = true;
+					break;
+				}
+			if (found) {
+				if (m_bounceIndex >= m_bounceBuffers.size())
+					m_bounceBuffers.resize(m_bounceIndex + 1);
+				auto & bounceBuffer = m_bounceBuffers[m_bounceIndex];
+				auto &camBufferIndex = bounceBuffer.bufferCamIndex;
+				auto &lightBufferIndex = bounceBuffer.visLights;
+				camBufferIndex.beginWriting();
+				lightBufferIndex.beginWriting();
+				bounceBuffer.indirectBounce.beginWriting();
+
+				// Accumulate all visibility info for the cameras passed in
+				std::vector<glm::ivec2> camIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.size(), { visibilityIndex, 0 });
+				std::vector<GLint> lightIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.begin(), m_frameData->viewInfo[visibilityIndex].lightIndices.end());
+				int shadowCount = m_frameData->viewInfo[visibilityIndex].visShadowCount;
+
+				if (lightIndices.size()) {
+					// Write accumulated data
+					camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
+					lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
+					const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize),0,0 };
+					bounceBuffer.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
+
+					// Update light bounce
+					renderBounce(deltaTime, visibilityIndex);
+
+					m_bounceIndex++;
+				}
+			}
+		}
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early
@@ -88,17 +133,14 @@ public:
 			camBufferIndex.beginWriting();
 			lightBufferIndex.beginWriting();
 			drawBuffer.indirectShape.beginWriting();
-			drawBuffer.indirectBounce.beginWriting();
 
 			// Accumulate all visibility info for the cameras passed in
-			std::vector<glm::ivec2> camIndices; 
+			std::vector<glm::ivec2> camIndices;
 			std::vector<GLint> lightIndices;
-			int shadowCount = 0;
 			for (auto &[camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].lightIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				lightIndices.insert(lightIndices.end(), m_frameData->viewInfo[camIndex].lightIndices.begin(), m_frameData->viewInfo[camIndex].lightIndices.end());
-				shadowCount += m_frameData->viewInfo[camIndex].visShadowCount;
 			}
 
 			if (lightIndices.size()) {
@@ -106,16 +148,10 @@ public:
 				camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 				lightBufferIndex.write(0, sizeof(GLuint) * lightIndices.size(), lightIndices.data());
 				const GLuint dataShape[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)lightIndices.size(), 0,0 };
-				const GLuint dataBounce[] = { (GLuint)m_shapeQuad->getSize(), (GLuint)(shadowCount * m_bounceSize),0,0 };
 				drawBuffer.indirectShape.write(0, sizeof(GLuint) * 4, &dataShape);
-				drawBuffer.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
-				drawBuffer.shadowCount = shadowCount;
 
 				// Render lights
 				renderLights(deltaTime, viewport);
-
-				// Render indirect lights
-				renderBounce(deltaTime, viewport);
 
 				m_drawIndex++;
 			}
@@ -139,7 +175,7 @@ private:
 		viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
 		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);			// Shadow map (depth texture)
-		m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	
+		m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_drawBuffers[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		m_drawBuffers[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
@@ -149,9 +185,9 @@ private:
 	/** Render light bounces.
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
-	inline void renderBounce(const float & deltaTime, const std::shared_ptr<Viewport> & viewport) {
-		if (m_drawBuffers.size() > m_drawIndex && m_drawBuffers[m_drawIndex].shadowCount) {
-			m_shader_Bounce->setUniform(0, (GLint)(m_drawBuffers[m_drawIndex].shadowCount));
+	inline void renderBounce(const float & deltaTime, const int & viewingIndex) {
+		if (m_frameData->viewInfo.size() && viewingIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo.at(viewingIndex).visShadowCount) {
+			m_shader_Bounce->setUniform(0, (GLint)(m_frameData->viewInfo.at(viewingIndex).visShadowCount));
 			m_shader_Bounce->setUniform(1, m_rhVolume->m_max);
 			m_shader_Bounce->setUniform(2, m_rhVolume->m_min);
 			m_shader_Bounce->setUniform(4, m_rhVolume->m_resolution);
@@ -167,12 +203,11 @@ private:
 			glBindTextureUnit(0, m_frameData->shadowData->shadowFBO.m_texNormal);
 			glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
 			glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
-			glBindTextureUnit(3, viewport->m_gfxFBOS->getTexID("GEOMETRY", 3));
 			glBindTextureUnit(4, m_textureNoise32);
-			m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-			m_drawBuffers[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+			m_bounceBuffers[m_bounceIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+			m_bounceBuffers[m_bounceIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 			m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			m_drawBuffers[m_drawIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_bounceBuffers[m_bounceIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 			glDepthMask(GL_TRUE);
@@ -180,7 +215,6 @@ private:
 			glBlendEquation(GL_FUNC_ADD);
 			glBlendFunc(GL_ONE, GL_ZERO);
 			glDisable(GL_BLEND);
-			glViewport(0, 0, GLsizei(viewport->m_dimensions.x), GLsizei(viewport->m_dimensions.y));
 		}
 	}
 	/** Clear out the lights and shadows queued up for rendering. */
@@ -199,12 +233,17 @@ private:
 	struct DrawBuffers {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
-		int shadowCount = 0;
-		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4), indirectBounce = StaticTripleBuffer(sizeof(GLuint) * 4);
+		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
 	std::vector<DrawBuffers> m_drawBuffers;
-
+	struct BounceBuffers {
+		DynamicBuffer bufferCamIndex;
+		DynamicBuffer visLights;
+		StaticTripleBuffer indirectBounce = StaticTripleBuffer(sizeof(GLuint) * 4);
+	};
+	int m_bounceIndex = 0;
+	std::vector<BounceBuffers> m_bounceBuffers;
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;

@@ -38,7 +38,9 @@ public:
 			m_bounceSize = (GLuint)f; 
 			if (m_shapeQuad && m_shapeQuad->existsYet()) {
 				const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
+				const GLuint quadDataRecon[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
 				m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+				m_quadIndirectBufferRecon = StaticTripleBuffer(sizeof(GLuint) * 4, quadDataRecon);
 			}
 		});
 
@@ -46,7 +48,9 @@ public:
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 			// count, primCount, first, reserved
 			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), m_bounceSize, 0, 0 };
+			const GLuint quadDataRecon[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 };
 			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+			m_quadIndirectBufferRecon = StaticTripleBuffer(sizeof(GLuint) * 4, quadDataRecon);
 		});
 
 	}
@@ -54,9 +58,12 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto & camIndexBuffer : m_camIndexes)
-			camIndexBuffer.endWriting();
+		for (auto &[camBufferRebounce, camBufferRecon] : m_camIndexes) {
+			camBufferRebounce.endWriting();
+			camBufferRecon.endWriting();
+		}
 		m_quadIndirectBuffer.endWriting();
+		m_quadIndirectBufferRecon.endWriting();
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -66,18 +73,23 @@ public:
 		// Prepare camera index
 		if (m_drawIndex >= m_camIndexes.size())
 			m_camIndexes.resize(m_drawIndex + 1);
-		auto &camBufferIndex = m_camIndexes[m_drawIndex];
-		camBufferIndex.beginWriting();
+		auto &[camBufferRebounce, camBufferRecon] = m_camIndexes[m_drawIndex];
+		camBufferRebounce.beginWriting();
+		camBufferRecon.beginWriting();
 		m_quadIndirectBuffer.beginWriting();
-		std::vector<glm::ivec2> camIndices;	
+		m_quadIndirectBufferRecon.beginWriting();
+		std::vector<glm::ivec2> camIndiciesRebounce, camIndiciesRecon;	
 		for (auto &[camIndex, layer] : perspectives) {
 			const std::vector<glm::ivec2> tempIndices(m_bounceSize, { camIndex, layer });
-			camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
+			camIndiciesRebounce.insert(camIndiciesRebounce.end(), tempIndices.begin(), tempIndices.end());
+			camIndiciesRecon.push_back({ camIndex, layer });
 		}
-		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-		GLuint bounceCount = perspectives.size() * m_bounceSize;
+		camBufferRebounce.write(0, sizeof(glm::ivec2) * camIndiciesRebounce.size(), camIndiciesRebounce.data());
+		camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
+		GLuint bounceCount = m_bounceSize;
+		GLuint reconCount = perspectives.size();
 		m_quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &bounceCount);
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_quadIndirectBufferRecon.write(sizeof(GLuint), sizeof(GLuint), &reconCount);
 		
 		// Bind common data
 		glDisable(GL_DEPTH_TEST);
@@ -90,13 +102,14 @@ public:
 		m_shaderRecon->setUniform(2, m_rhVolume->m_min);
 		m_shaderRecon->setUniform(3, m_rhVolume->m_resolution);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 		// Bounce light a second time
 		m_shaderRebounce->bind();
 		m_rhVolume->readPrimary(0);
 		m_rhVolume->writeSecondary();
 		glViewport(0, 0, (GLsizei)m_rhVolume->m_resolution, (GLsizei)m_rhVolume->m_resolution);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		camBufferRebounce.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Reconstruct indirect radiance
@@ -105,6 +118,8 @@ public:
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		m_rhVolume->readSecondary(4);
 		viewport->m_gfxFBOS->bindForWriting("BOUNCE");
+		m_quadIndirectBufferRecon.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		camBufferRecon.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);		
 		m_drawIndex++;
 	}
@@ -116,9 +131,9 @@ private:
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
 	Shared_Primitive m_shapeQuad;
-	StaticTripleBuffer m_quadIndirectBuffer;
+	StaticTripleBuffer m_quadIndirectBuffer, m_quadIndirectBufferRecon;
 	GLuint m_bounceSize = 16;
-	std::vector<DynamicBuffer> m_camIndexes;
+	std::vector<std::pair<DynamicBuffer, DynamicBuffer>> m_camIndexes;
 	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

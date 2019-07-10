@@ -4,6 +4,8 @@
 
 layout (location = 0) in vec3 vertex;
 
+layout (location = 3) uniform float resolution = 16.0f;
+
 layout (location = 0) out vec2 TexCoord;
 layout (location = 1) flat out mat4 pMatrixInverse;
 layout (location = 5) flat out mat4 vMatrixInverse;
