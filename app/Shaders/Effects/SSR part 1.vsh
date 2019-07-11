@@ -6,7 +6,7 @@
 layout (location = 0) in vec3 vertex;
 
 layout (location = 0) out vec2 TexCoord;
-layout (location = 1) flat out mat4 pvMatrix;
+layout (location = 1) flat out mat4 pMatrix;
 layout (location = 5) flat out mat4 pMatrixInverse;
 layout (location = 9) flat out mat4 vMatrixInverse;
 layout (location = 13) flat out vec2 CameraDimensions;
@@ -16,7 +16,7 @@ layout (location = 14) flat out vec3 EyePosition;
 void main(void)
 {	
 	const int CamIndex = camIndexes[gl_InstanceID].x;
-	pvMatrix = camBuffer[CamIndex].pMatrix * camBuffer[CamIndex].vMatrix;
+	pMatrix = camBuffer[CamIndex].pMatrix;
 	pMatrixInverse = camBuffer[CamIndex].pMatrixInverse;
 	vMatrixInverse = camBuffer[CamIndex].vMatrixInverse;
 	CameraDimensions = camBuffer[CamIndex].CameraDimensions;

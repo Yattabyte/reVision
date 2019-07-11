@@ -21,8 +21,8 @@ Graphics_Framebuffers::Graphics_Framebuffers(const glm::ivec2 & size)
 	createFBO("REFLECTION", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("BOUNCE", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("SSAO", { { GL_R8, GL_RED, GL_FLOAT }, { GL_R8, GL_RED, GL_FLOAT } });
-	createFBO("SSR", { { GL_RGB8, GL_RGB, GL_FLOAT } });
-	createFBO("SSR_MIP", { { GL_RGB8, GL_RGB, GL_FLOAT } }, true);
+	createFBO("SSR", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
+	createFBO("SSR_MIP", { { GL_RGB16F, GL_RGB, GL_FLOAT } }, true);
 	createFBO("BLOOM", { { GL_RGB16F, GL_RGB, GL_FLOAT }, { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("HDR", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
 	createFBO("FXAA", { { GL_RGB16F, GL_RGB, GL_FLOAT } });
