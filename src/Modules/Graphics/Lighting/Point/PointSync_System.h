@@ -81,6 +81,7 @@ public:
 					};
 					if (cameraComponent) {
 						cameraComponent->m_cameras.resize(6);
+						cameraComponent->m_updateTimes.resize(6);
 						for (int x = 0; x < 6; ++x) {
 							auto & cam = cameraComponent->m_cameras[x];
 							cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);

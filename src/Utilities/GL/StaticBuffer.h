@@ -11,9 +11,8 @@ class StaticBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~StaticBuffer() {
-		if (m_bufferID != 0) {
-			glDeleteBuffers(1, &m_bufferID);
-		}
+		if (m_bufferID != 0)
+			glDeleteBuffers(1, &m_bufferID);		
 	}
 	/** Default Constructor. */
 	inline StaticBuffer() = default;

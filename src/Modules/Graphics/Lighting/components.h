@@ -13,8 +13,6 @@
 /***/
 struct Shadow_Component : public ECSComponent<Shadow_Component> {
 	// Shadow Properties
-	bool m_outOfDate = true;
-	float m_updateTime = 0.0f;
 	int m_shadowSpot = -1;
 };
 

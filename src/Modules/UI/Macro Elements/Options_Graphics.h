@@ -38,13 +38,11 @@ public:
 		addOption(engine, element_material_list, 1.0f, "Texture Quality:", "Adjusts the resolution of in-game geometry textures.", SideList::on_index_changed, [&, element_material_list]() { setTextureResolution(element_material_list->getIndex()); });
 
 		// Shadow Size Option
-		float shadowSize = 1024, shadowQuality = 4;
+		float shadowSize = 1024;
 		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_SIZE, shadowSize);
-		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, shadowQuality);
 		auto element_shadow_list = std::make_shared<SideList>(engine);
 		element_shadow_list->setStrings({ "Low",	"Medium",	"High",		"Very High",	"Ultra" });
 		m_shadowSizes = { 128.0f,	256.0f,		512.0f,		1024.0f,		2048.0f };
-		m_shadowQualities = { 1,		2,			3,			4,				5 };
 		counter = 0;
 		index = 0;
 		for each (const auto & size in m_shadowSizes) {
@@ -124,7 +122,6 @@ protected:
 	@param	index	the shadow size index to use. */
 	inline void setShadowSize(const size_t & index) {
 		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_SIZE, m_shadowSizes[index]);
-		m_engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_shadowQualities[index]);
 	}
 	/** Set the reflection size.
 	@param	index	the reflection size index to use. */
@@ -159,7 +156,7 @@ protected:
 
 
 	// Protected Attributes
-	std::vector<float> m_materialSizes, m_shadowSizes, m_shadowQualities, m_reflectionSizes, m_bounceQuality;
+	std::vector<float> m_materialSizes, m_shadowSizes, m_reflectionSizes, m_bounceQuality;
 };
 
 #endif // OPTIONS_GRAPICS_H

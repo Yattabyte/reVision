@@ -63,6 +63,7 @@ private:
 	/** Render all the geometry from each light.
 	@param	deltaTime	the amount of time passed since last frame. */
 	inline void updateShadows(const float & deltaTime) {
+		auto clientTime = m_engine->getTime();
 		if (m_frameData->shadowsToUpdate.size()) {
 			// Prepare Viewport
 			glViewport(0, 0, m_frameData->shadowSize, m_frameData->shadowSize);
@@ -71,30 +72,26 @@ private:
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
 			perspectives.reserve(m_frameData->shadowsToUpdate.size());
-			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate) {
-				// FOR SOME REASON THE LINE BELOW STILL EXISTED, SO I COMMENTED IT OUT
-				// WHY WHERE WE CLEARING THE SHADOW FBO BEFORE OCCLUSION CULLING???
-				//m_frameData->shadowFBO.clear(shadowSpot, cameras.size());
-				for (int x = 0; x < cameras.size(); ++x) {
-					// Accumulate all visibility info for the cameras passed in
-					int visibilityIndex = 0;
-					bool found = false;
-					for (int y = 0; y < m_sceneCameras->size(); ++y)
-						if (m_sceneCameras->at(y) == cameras[x]) {
-							visibilityIndex = y;
-							found = true;
-							break;
-						}
-					if (found)
-						perspectives.push_back({ visibilityIndex, shadowSpot + x });										
-				}
-				*time += deltaTime;
+			for (auto &[importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate) {
+				int visibilityIndex = 0;
+				bool found = false;
+				for (int y = 0; y < m_sceneCameras->size(); ++y)
+					if (m_sceneCameras->at(y) == camera) {
+						visibilityIndex = y;
+						found = true;
+						break;
+					}
+				if (found)
+					perspectives.push_back({ visibilityIndex, shadowSpot});
+				
+				*time = clientTime;
+				camera->enabled = false;
 			}
 			
 			// Perform shadow culling
 			m_engine->getModule_Graphics().cullShadows(deltaTime, perspectives);
-			for (auto &[time, shadowSpot, cameras] : m_frameData->shadowsToUpdate)
-				m_frameData->shadowFBO.clear(shadowSpot, cameras.size());
+			for (auto &[importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
+				m_frameData->shadowFBO.clear(shadowSpot, 1);
 
 			// Render remaining shadows with populated buffers
 			m_engine->getModule_Graphics().renderShadows(deltaTime);

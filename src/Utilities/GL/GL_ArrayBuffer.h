@@ -16,6 +16,9 @@ public:
 	// Public (de)Constructors
 	/** Destroy this buffer. */
 	inline ~GL_ArrayBuffer() {
+		for (int x = 0; x < 3; ++x)
+			if (m_fence[x] != nullptr)
+				glDeleteSync(m_fence[x]);
 		glUnmapNamedBuffer(m_bufferID[0]);
 		glUnmapNamedBuffer(m_bufferID[1]);
 		glUnmapNamedBuffer(m_bufferID[2]);

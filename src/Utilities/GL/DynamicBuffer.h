@@ -11,17 +11,9 @@ class DynamicBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~DynamicBuffer() {
-		// Wait on all 3 fences before deleting
 		for (int x = 0; x < 3; ++x)
-			while (m_fence[x] != nullptr) {
-				GLenum waitReturn = glClientWaitSync(m_fence[x], GL_SYNC_FLUSH_COMMANDS_BIT, 1);
-				if (waitReturn == GL_SIGNALED || waitReturn == GL_ALREADY_SIGNALED || waitReturn == GL_CONDITION_SATISFIED) {
-					glDeleteSync(m_fence[x]);
-					m_fence[x] = nullptr;
-					break;
-				}
-			}
-
+			if (m_fence[x] != nullptr)
+				glDeleteSync(m_fence[x]);
 		glUnmapNamedBuffer(m_bufferID[0]);
 		glUnmapNamedBuffer(m_bufferID[1]);
 		glUnmapNamedBuffer(m_bufferID[2]);

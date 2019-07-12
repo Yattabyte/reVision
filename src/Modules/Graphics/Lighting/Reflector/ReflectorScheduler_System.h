@@ -25,6 +25,7 @@ public:
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 
 		auto & preferences = engine->getPreferenceState();
+		m_maxShadowsCasters = 1u;
 		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
 		preferences.addCallback(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxShadowsCasters = (unsigned int)f; });
 	}

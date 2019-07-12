@@ -17,7 +17,7 @@
 /***/
 struct ShadowData {
 	ShadowMap shadowFBO;
-	std::vector<std::tuple<float*, int, std::vector<CameraBuffer::CamStruct*>>> shadowsToUpdate;
+	std::vector<std::tuple<float, float*, int, CameraBuffer::CamStruct*>> shadowsToUpdate;
 	float shadowSize = 1.0f, shadowSizeRCP = 1.0f;
 };
 
