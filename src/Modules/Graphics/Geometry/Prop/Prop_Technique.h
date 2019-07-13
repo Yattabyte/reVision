@@ -25,7 +25,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & viewports, ECSSystemList & auxilliarySystems)
+	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & viewports, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PropData>();
@@ -245,7 +245,7 @@ private:
 
 	// Shared Attributes
 	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>> m_cameras;
 };
 
 #endif // PROP_TECHNIQUE_H

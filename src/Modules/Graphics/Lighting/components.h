@@ -2,7 +2,7 @@
 #ifndef GRAPHICS_LIGHTING_COMPONENTS_H
 #define GRAPHICS_LIGHTING_COMPONENTS_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
 #include "glm/glm.hpp"

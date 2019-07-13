@@ -26,7 +26,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<RH_Volume> & rhVolume, const std::shared_ptr<CameraBuffer> & clientCamera, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Directional_Technique(Engine * engine, const std::shared_ptr<ShadowData> & shadowData, const std::shared_ptr<RH_Volume> & rhVolume, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_rhVolume(rhVolume), m_cameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<DirectionalData>();
@@ -91,7 +91,7 @@ public:
 			size_t visibilityIndex = 0;
 			bool found = false;
 			for (size_t x = 0; x < m_cameras->size(); ++x)
-				if (m_cameras->at(x) == m_frameData->clientCamera->get()) {
+				if (m_cameras->at(x) == m_frameData->clientCamera.get()) {
 					visibilityIndex = x;
 					found = true;
 					break;
@@ -256,7 +256,7 @@ private:
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;
 	std::shared_ptr<RH_Volume> m_rhVolume;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>> m_cameras;
 };
 
 #endif // DIRECTIONAL_TECHNIQUE_H

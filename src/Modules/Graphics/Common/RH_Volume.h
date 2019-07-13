@@ -2,7 +2,7 @@
 #define RH_VOLUME_H
 #define RH_TEXTURE_COUNT 4
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include <memory>
 
 
@@ -22,7 +22,7 @@ public:
 	// Public Methods
 	/** Update the volume's attributes based on the input camera.
 	@param	cameraBuffer	the camera to use the frustum of. */
-	void updateVolume(const CameraBuffer::CamStruct & cameraBuffer);
+	void updateVolume(const Camera * camera);
 	/** Resize this volume's 3D texture.
 	@param	resolution		the new size to use. */
 	void resize(const float & resolution = 16.0f);

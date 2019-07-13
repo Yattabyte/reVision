@@ -111,7 +111,7 @@ Engine::Engine() :
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   July 11th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   July 13th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");

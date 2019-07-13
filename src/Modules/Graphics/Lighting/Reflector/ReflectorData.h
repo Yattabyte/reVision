@@ -2,7 +2,7 @@
 #ifndef REFLECTORDATA_H
 #define REFLECTORDATA_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Reflector/FBO_Env_Reflector.h"
 #include "Utilities/GL/DynamicBuffer.h"
@@ -32,7 +32,7 @@ struct ReflectorData {
 	GL_ArrayBuffer<Reflector_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
 	FBO_Env_Reflector envmapFBO;
-	std::vector<std::tuple<float, Reflector_Component*, std::vector<CameraBuffer::CamStruct*>>> reflectorsToUpdate;
+	std::vector<std::tuple<float, Reflector_Component*, std::vector<Camera*>>> reflectorsToUpdate;
 	bool envmapOutOfDate = false;
 	glm::ivec2 envmapSize = glm::ivec2(1);
 	size_t reflectorCount = 0ull;

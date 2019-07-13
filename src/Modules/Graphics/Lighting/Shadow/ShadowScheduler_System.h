@@ -51,8 +51,8 @@ public:
 				CameraArray_Component * camArrays = (CameraArray_Component*)componentParam[3];
 
 				if (renderableComponent->m_visibleAtAll) {
-					auto tryToAddShadow = [&shadows, &maxShadows, &clientPosition, &clientFarPlane, &clientTime](const int & shadowSpot, CameraBuffer::CamStruct * cb, float * updateTime) {
-						const float linDist = glm::distance(clientPosition, cb->EyePosition) / clientFarPlane;
+					auto tryToAddShadow = [&shadows, &maxShadows, &clientPosition, &clientFarPlane, &clientTime](const int & shadowSpot, Camera * cb, float * updateTime) {
+						const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
 						const float importance_distance = 1.0f - (linDist * linDist);
 
 						const float linTime = (clientTime - *updateTime) / 5.0f;
@@ -64,6 +64,8 @@ public:
 						for (int x = 0; x < shadows.size(); ++x) {
 							auto &[oldImportance, oldTime, oldShadowSpot, oldCamera] = shadows[x];
 							if ((oldShadowSpot != -1 && importance > oldImportance)) {
+								// Expand container by one
+								shadows.resize(shadows.size() + 1);
 								// Shuffle next elements down
 								for (auto y = shadows.size() - 1ull; y > x; --y)
 									shadows[y] = shadows[y - 1ull];
@@ -84,14 +86,14 @@ public:
 					shadowComponent->m_shadowSpot = cameraCount;
 
 					if (camSingle) {
-						camSingle->m_camera.enabled = false;
+						camSingle->m_camera.setEnabled(false);
 						tryToAddShadow(shadowComponent->m_shadowSpot, &(camSingle->m_camera), &camSingle->m_updateTime);
 						cameraCount++;
 					}
 					else if (camArrays) {
 						camArrays->m_updateTimes.resize(camArrays->m_cameras.size());
 						for (int x = 0; x < camArrays->m_cameras.size(); ++x) {
-							camArrays->m_cameras[x].enabled = false;
+							camArrays->m_cameras[x].setEnabled(false);
 							tryToAddShadow(shadowComponent->m_shadowSpot + x, &(camArrays->m_cameras[x]), &camArrays->m_updateTimes[x]);
 						}
 						cameraCount += camArrays->m_cameras.size();
@@ -101,7 +103,7 @@ public:
 
 			// Enable cameras in final set
 			for (auto &[importance, time, shadowSpot, camera] : m_frameData->shadowsToUpdate)
-				camera->enabled = true;
+				camera->setEnabled(true);
 
 			// Resize shadowmap to fit number of entities this frame
 			m_frameData->shadowFBO.resize(glm::ivec2(m_frameData->shadowSize), (unsigned int)(cameraCount));

@@ -67,7 +67,7 @@ public:
 					}
 				}
 				if (!didAnything && m_frameData->reflectorsToUpdate.size() < m_maxShadowsCasters) {
-					std::vector<CameraBuffer::CamStruct*> cams(cameraComponent->m_cameras.size());
+					std::vector<Camera*> cams(cameraComponent->m_cameras.size());
 					for (int x = 0; x < cameraComponent->m_cameras.size(); ++x)
 						cams[x] = (&(cameraComponent->m_cameras[x]));
 					m_frameData->reflectorsToUpdate.push_back({ reflectorComponent->m_updateTime, reflectorComponent, cams });

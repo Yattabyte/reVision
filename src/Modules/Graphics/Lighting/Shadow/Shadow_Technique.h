@@ -21,7 +21,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Shadow_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Shadow_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		m_frameData = std::make_shared<ShadowData>();
 		auxilliarySystems.addSystem(new ShadowScheduler_System(m_engine, m_frameData));
@@ -85,7 +85,7 @@ private:
 					perspectives.push_back({ visibilityIndex, shadowSpot});
 				
 				*time = clientTime;
-				camera->enabled = false;
+				camera->setEnabled(false);
 			}
 			
 			// Perform shadow culling
@@ -107,7 +107,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	std::shared_ptr<ShadowData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
+	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -2,7 +2,7 @@
 #ifndef PROPDATA_H
 #define PROPDATA_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Geometry/components.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"

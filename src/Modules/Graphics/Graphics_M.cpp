@@ -66,24 +66,17 @@ void Graphics_Module::initialize(Engine * engine)
 
 	// Camera Setup
 	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize);
-	CameraBuffer::CamStruct cameraData;
-	cameraData.pMatrix = glm::mat4(1.0f);
-	cameraData.pMatrixInverse = glm::mat4(1.0f);
-	cameraData.vMatrix = glm::mat4(1.0f);
-	cameraData.vMatrixInverse = glm::mat4(1.0f);
-	cameraData.pvMatrix = glm::mat4(1.0f);
-	cameraData.EyePosition = glm::vec3(0.0f);
-	cameraData.Dimensions = glm::vec2(m_renderSize);
-	cameraData.FarPlane = farPlane;
-	cameraData.FOV = fov;
-	m_clientCamera = std::make_shared<CameraBuffer>();
-	m_clientCamera->replace(cameraData);
+	m_clientCamera = std::make_shared<Camera>();
+	m_clientCamera->setEnabled(true);
+	m_clientCamera->get()->Dimensions = glm::vec2(m_renderSize);
+	m_clientCamera->get()->FarPlane = farPlane;
+	m_clientCamera->get()->FOV = fov;
 	genPerspectiveMatrix();
 	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
 	// Rendering Effects & systems
-	m_sceneCameras = std::make_shared<std::vector<CameraBuffer::CamStruct*>>();
-	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<CameraBuffer::CamStruct>>();
+	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
+	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
 	auto sharedCameraCounter = std::make_shared<int>(0);
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
@@ -193,20 +186,19 @@ void Graphics_Module::deinitialize()
 void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
+	m_clientCamera->updateFrustum();
 	m_quadIndirectBuffer.beginWriting();
 	m_cameraBuffer->beginWriting();
-	m_clientCamera->beginWriting();
-	m_clientCamera->pushChanges();
 	m_sceneCameras->clear();
-	m_sceneCameras->push_back(m_clientCamera->get());
+	m_sceneCameras->push_back(m_clientCamera.get());
 	m_rhVolume->clear();
-	m_rhVolume->updateVolume(*m_clientCamera->get());
+	m_rhVolume->updateVolume(m_clientCamera.get());
 
 	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
 	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 	m_cameraBuffer->resize(m_sceneCameras->size());
 	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
-		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x];
+		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();
 
 	// Update pipeline techniques ONCE per frame, not per render call!
 	m_pipeline->update(deltaTime);
@@ -215,20 +207,19 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	size_t visibilityIndex = 0;
 	bool found = false;
 	for (size_t x = 0; x < m_sceneCameras->size(); ++x)
-		if (m_sceneCameras->at(x) == m_clientCamera->get()) {
+		if (m_sceneCameras->at(x) == m_clientCamera.get()) {
 			visibilityIndex = x;
 			found = true;
 			break;
 		}
 	if (found) {
-		m_viewport->bind(*m_clientCamera->get());
+		m_viewport->bind();
 		renderScene(deltaTime, m_viewport, { {visibilityIndex, 0} });
 		copyToScreen();
 	}
 
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->prepareForNextFrame(deltaTime);
-	m_clientCamera->endWriting();
 	m_cameraBuffer->endWriting();
 	m_quadIndirectBuffer.endWriting();
 }
@@ -263,7 +254,7 @@ void Graphics_Module::genPerspectiveMatrix()
 	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);
 	const float horizontalRad = glm::radians((*m_clientCamera)->FOV);
 	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, CameraBuffer::ConstNearPlane, (*m_clientCamera)->FarPlane);
+	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, Camera::ConstNearPlane, (*m_clientCamera)->FarPlane);
 	(*m_clientCamera)->pMatrixInverse = glm::inverse((*m_clientCamera)->pMatrix);
 	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;
 }

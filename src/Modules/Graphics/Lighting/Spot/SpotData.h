@@ -2,7 +2,7 @@
 #ifndef SPOTDATA_H
 #define SPOTDATA_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"

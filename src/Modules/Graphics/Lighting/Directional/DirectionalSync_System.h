@@ -51,7 +51,7 @@ public:
 						const float ar = size.x / size.y;
 						const float tanHalfHFOV = glm::radians(m_frameData->clientCamera.get()->get()->FOV) / 2.0f;
 						const float tanHalfVFOV = atanf(tanf(tanHalfHFOV) / ar);
-						const float near_plane = -CameraBuffer::ConstNearPlane;
+						const float near_plane = -Camera::ConstNearPlane;
 						const float far_plane = -m_frameData->clientCamera.get()->get()->FarPlane;
 						float cascadeEnd[NUM_CASCADES + 1];
 						glm::vec3 middle[NUM_CASCADES], aabb[NUM_CASCADES];
@@ -86,6 +86,7 @@ public:
 						const glm::mat4 sunInverse = glm::inverse(sunModelMatrix);
 						for (int i = 0; i < NUM_CASCADES; ++i) {
 							auto & cam = cameraComponent->m_cameras[i];
+							auto & camData = *cam.get();
 							const glm::vec3 volumeUnitSize = (aabb[i] - -aabb[i]) / m_frameData->shadowData->shadowSize;
 							const glm::vec3 frustumpos = glm::vec3(sunModelMatrix * CamInv * glm::vec4(middle[i], 1.0f));
 							const glm::vec3 clampedPos = glm::floor((frustumpos + (volumeUnitSize / 2.0f)) / volumeUnitSize) * volumeUnitSize;
@@ -94,23 +95,24 @@ public:
 							const float l = newMin.x, r = newMax.x, b = newMax.y, t = newMin.y, n = -newMin.z, f = -newMax.z;
 							const glm::mat4 pMatrix = glm::ortho(l, r, b, t, n, f);
 							const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
-							const glm::vec4 v1 = glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
-							const glm::vec4 v2 = CamP * v1;
-							cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
-							cam.FOV = 90.0f;
-							cam.NearPlane = newMin.z;
-							cam.FarPlane = newMax.z;
-							cam.EyePosition = m_frameData->clientCamera.get()->get()->EyePosition;
-							if (i > 0)
-								cam.EyePosition += lightComponent->m_cascadeEnds[i - 1];
-							cam.pMatrix = pMatrix;
-							cam.pMatrixInverse = glm::inverse(pMatrix);
-							cam.vMatrix = sunModelMatrix;
-							cam.vMatrixInverse = sunInverse;
-							cam.pvMatrix = pMatrix * sunModelMatrix;
-							if (cam.enabled) {
+							const glm::vec4 v_near = CamP * glm::vec4(0, 0, cascadeEnd[i], 1.0f);
+							const glm::vec4 v_far = CamP * glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
+							camData.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+							camData.FOV = 90.0f;
+							camData.NearPlane = v_near.z;
+							camData.FarPlane = v_far.z;
+							auto pos = CamInv * glm::vec4(0, 0, -v_far.z / 2.0f, 1.0f);
+							pos /= pos.w;
+							camData.EyePosition = glm::vec3(pos);
+							camData.pMatrix = pMatrix;
+							camData.pMatrixInverse = glm::inverse(pMatrix);
+							camData.vMatrix = sunModelMatrix;
+							camData.vMatrixInverse = sunInverse;
+							camData.pvMatrix = pMatrix * sunModelMatrix;
+							cam.updateFrustum();
+							if (cam.getEnabled()) {
 								lightComponent->m_pvMatrices[i] = pvMatrix;
-								lightComponent->m_cascadeEnds[i] = v2.z;
+								lightComponent->m_cascadeEnds[i] = v_far.z;
 							}
 						}					
 					for (int x = 0; x < NUM_CASCADES; ++x) {

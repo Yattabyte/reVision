@@ -84,6 +84,22 @@ public:
 		}
 		element_bounce_list->setIndex(index);
 		addOption(engine, element_bounce_list, 1.0f, "Light Bounce Quality:", "Adjusts the resolution of the real-time GI simulation.", SideList::on_index_changed, [&, element_bounce_list]() { setBounceQuality(element_bounce_list->getIndex()); });
+		
+		// Shadow Count Option
+		float maxShadowCasters = 6.0f;
+		engine->getPreferenceState().getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, maxShadowCasters);
+		auto maxShadow_slider = std::make_shared<Slider>(engine, maxShadowCasters, glm::vec2(1.0f, 100.0f));
+		addOption(engine, maxShadow_slider, 0.75f, "Max Concurrent Shadows:", "Set the maximum number of shadows updated per frame.", Slider::on_value_change, [&, maxShadow_slider, engine]() {
+			engine->getPreferenceState().setValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, maxShadow_slider->getValue());
+		});
+
+		// Envmap Count Option
+		float maxReflectionCasters = 6.0f;
+		engine->getPreferenceState().getOrSetValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, maxReflectionCasters);
+		auto maxReflection_slider = std::make_shared<Slider>(engine, maxReflectionCasters, glm::vec2(1.0f, 100.0f));
+		addOption(engine, maxReflection_slider, 0.75f, "Max Concurrent Reflections:", "Set the maximum number of reflections updated per frame.", Slider::on_value_change, [&, maxReflection_slider, engine]() {
+			engine->getPreferenceState().setValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, maxReflection_slider->getValue());
+		});
 
 		// Bloom Option
 		bool element_bloom_state = true;

@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~PropVisibility_System() = default;
 	/***/
-	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
+	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
@@ -71,7 +71,7 @@ public:
 private:
 	// Private Attributes
 	std::shared_ptr<PropData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>> m_cameras;
 };
 
 #endif // PROPVISIBILITY_SYSTEM_H

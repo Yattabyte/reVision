@@ -91,15 +91,17 @@ public:
 					m_frameData->lightBuffer[index].lightPV = pv;
 					if (cameraComponent) {
 						auto & cam = cameraComponent->m_camera;
-						cam.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
-						cam.FarPlane = radiusSquared;
-						cam.EyePosition = position;
-						cam.FOV = cutoff * 2.0f;
-						cam.pMatrix = pMatrix;
-						cam.pMatrixInverse = pMatrixInverse;
-						cam.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
-						cam.vMatrixInverse = (trans * glm::mat4_cast(orientation)); // yes, this is correct
-						cam.pvMatrix = pMatrix * cam.vMatrix;
+						auto & camData = *cam.get();
+						camData.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+						camData.FarPlane = radiusSquared;
+						camData.EyePosition = position;
+						camData.FOV = cutoff * 2.0f;
+						camData.pMatrix = pMatrix;
+						camData.pMatrixInverse = pMatrixInverse;
+						camData.vMatrix = glm::inverse(trans * glm::mat4_cast(orientation));
+						camData.vMatrixInverse = (trans * glm::mat4_cast(orientation)); // yes, this is correct
+						camData.pvMatrix = pMatrix * camData.vMatrix;
+						cam.updateFrustum();
 					}
 				}
 

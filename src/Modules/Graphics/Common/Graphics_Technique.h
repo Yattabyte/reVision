@@ -3,7 +3,7 @@
 #define GRAPHICS_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include <memory>
 
 

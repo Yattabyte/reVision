@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"

@@ -2,7 +2,7 @@
 #ifndef SHADOWDATA_H
 #define SHADOWDATA_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowMap.h"
 #include "Utilities/GL/DynamicBuffer.h"
@@ -17,7 +17,7 @@
 /***/
 struct ShadowData {
 	ShadowMap shadowFBO;
-	std::vector<std::tuple<float, float*, int, CameraBuffer::CamStruct*>> shadowsToUpdate;
+	std::vector<std::tuple<float, float*, int, Camera*>> shadowsToUpdate;
 	float shadowSize = 1.0f, shadowSizeRCP = 1.0f;
 };
 

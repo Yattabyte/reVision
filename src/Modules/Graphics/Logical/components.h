@@ -4,7 +4,7 @@
 
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/Graphics/Common/Viewport.h"
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include <memory>
 
 
@@ -16,13 +16,13 @@ struct Renderable_Component : public ECSComponent<Renderable_Component> {
 
 /***/
 struct Camera_Component : public ECSComponent<Camera_Component> {
-	CameraBuffer::CamStruct m_camera;
+	Camera m_camera;
 	float m_updateTime = 0.0f;
 };
 
 /***/
 struct CameraArray_Component : public ECSComponent<CameraArray_Component> {
-	std::vector<CameraBuffer::CamStruct> m_cameras;
+	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 };
 

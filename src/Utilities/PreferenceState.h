@@ -43,11 +43,13 @@ public:
 
 		// Graphics Options
 		C_MATERIAL_SIZE,
-		C_ENVMAP_SIZE,
 		C_RH_BOUNCE_SIZE,
 
 		C_SHADOW_SIZE,
 		C_SHADOW_MAX_PER_FRAME,
+
+		C_ENVMAP_SIZE,
+		C_ENVMAP_MAX_PER_FRAME,
 
 		C_BLOOM,
 		C_BLOOM_STRENGTH,
@@ -79,11 +81,13 @@ public:
 
 			// Graphics Options
 			"C_MATERIAL_SIZE",
-			"C_ENVMAP_SIZE",
 			"C_RH_BOUNCE_SIZE",
 
 			"C_SHADOW_SIZE",
 			"C_SHADOW_MAX_PER_FRAME",
+
+			"C_ENVMAP_SIZE",
+			"C_ENVMAP_MAX_PER_FRAME",
 
 			"C_BLOOM",
 			"C_BLOOM_STRENGTH",

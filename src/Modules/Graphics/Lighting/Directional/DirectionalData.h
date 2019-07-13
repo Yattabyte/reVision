@@ -2,7 +2,7 @@
 #ifndef DIRECTIONALDATA_H
 #define DIRECTIONALDATA_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
+#include "Modules/Graphics/Common/Camera.h"
 #include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
@@ -35,7 +35,7 @@ struct DirectionalData {
 
 	GL_ArrayBuffer<Directional_Buffer> lightBuffer;
 	std::vector<ViewInfo> viewInfo;
-	std::shared_ptr<CameraBuffer> clientCamera;
+	std::shared_ptr<Camera> clientCamera;
 	std::shared_ptr<ShadowData> shadowData;
 };
 

@@ -22,7 +22,7 @@ void Viewport::resize(const glm::ivec2 & size, const int & layerFaces)
 	}
 }
 
-void Viewport::bind(const CameraBuffer::CamStruct & camera)
+void Viewport::bind()
 {
 	glViewport(m_screenPosition.x, m_screenPosition.y, m_dimensions.x, m_dimensions.y);
 }

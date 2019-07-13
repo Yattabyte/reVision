@@ -16,7 +16,7 @@ public:
 	/***/
 	inline ~FrustumCull_System() = default;
 	/***/
-	inline FrustumCull_System(const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras)
+	inline FrustumCull_System(const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
@@ -42,13 +42,13 @@ public:
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
 				bool isVisible = true;
-				const auto & camPosition = camera->EyePosition;
+				const auto & camPosition = camera->get()->EyePosition;
 				auto objPosition = transformComponent->m_transform.m_position;
 				if (bsphereComponent)
 					objPosition += bsphereComponent->m_positionOffset;
 
 				// If FOV is 360, it can see everything
-				if (camera->FOV < 359.9f) {
+				if (camera->get()->FOV < 359.9f) {
 					// Frustum x Bounding-Sphere Test
 					if (bsphereComponent) {
 						glm::vec4 planes[6];
@@ -73,7 +73,7 @@ public:
 					// Consider the shape of the object
 					if (bsphereComponent)
 						objPosition -= bsphereComponent->m_radius;
-					if (glm::distance(camPosition, objPosition) > camera->FarPlane)
+					if (glm::distance(camPosition, objPosition) > camera->get()->FarPlane)
 						isVisible = false;
 				}
 
@@ -91,7 +91,7 @@ public:
 
 	// Public Methods
 	/***/
-	static void CameraToPlanes(const CameraBuffer::CamStruct * camera, glm::vec4(&planes)[6]) {
+	static void CameraToPlanes(const Camera * camera, glm::vec4(&planes)[6]) {
 		constexpr static auto normalizePlane = [](glm::vec4 &plane) {
 			float magnitude = (float)sqrtf(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
 			plane[0] /= magnitude;
@@ -99,8 +99,8 @@ public:
 			plane[2] /= magnitude;
 			plane[3] /= magnitude;
 		};
-		const auto pMatrix = glm::value_ptr(camera->pMatrix);
-		const auto vMatrix = glm::value_ptr(camera->vMatrix);
+		const auto pMatrix = glm::value_ptr(camera->get()->pMatrix);
+		const auto vMatrix = glm::value_ptr(camera->get()->vMatrix);
 		float clip[16]; //clipping planes
 
 		clip[0] = vMatrix[0] * pMatrix[0] + vMatrix[1] * pMatrix[4] + vMatrix[2] * pMatrix[8] + vMatrix[3] * pMatrix[12];
@@ -163,7 +163,7 @@ public:
 
 private:
 	// Private Attributes
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_cameras;
+	std::shared_ptr<std::vector<Camera*>> m_cameras;
 };
 
 #endif // FRUSTUMCULL_SYSTEM_H

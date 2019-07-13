@@ -2,7 +2,6 @@
 #ifndef VIEWPORT_H
 #define VIEWPORT_H
 
-#include "Modules/Graphics/Common/CameraBuffer.h"
 #include "Modules/Graphics/Common/Graphics_Framebuffers.h"
 #include "glm/glm.hpp"
 #include <memory>
@@ -22,7 +21,7 @@ public:
 	/***/
 	void resize(const glm::ivec2 & size, const int & layerFaces);
 	/***/
-	void bind(const CameraBuffer::CamStruct & camera);
+	void bind();
 	/***/
 	void clear();
 

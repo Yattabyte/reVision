@@ -63,15 +63,17 @@ public:
 				cameraComponent->m_updateTimes.resize(6);
 				for (int x = 0; x < 6; ++x) {
 					auto & cam = cameraComponent->m_cameras[x];
-					cam.Dimensions = m_frameData->envmapSize;
-					cam.FOV = 90.0f;
-					cam.FarPlane = largest;
-					cam.EyePosition = position;
-					cam.pMatrix = pMatrix;
-					cam.pMatrixInverse = pMatrixInverse;
-					cam.vMatrix = vMatrices[x];
-					cam.vMatrixInverse = glm::inverse(vMatrices[x]);
-					cam.pvMatrix = pMatrix * vMatrices[x];
+					auto & camData = *cam.get();
+					camData.Dimensions = m_frameData->envmapSize;
+					camData.FOV = 90.0f;
+					camData.FarPlane = largest;
+					camData.EyePosition = position;
+					camData.pMatrix = pMatrix;
+					camData.pMatrixInverse = pMatrixInverse;
+					camData.vMatrix = vMatrices[x];
+					camData.vMatrixInverse = glm::inverse(vMatrices[x]);
+					camData.pvMatrix = pMatrix * vMatrices[x];
+					cam.updateFrustum();
 				}
 
 				// Sync Buffer Attributes

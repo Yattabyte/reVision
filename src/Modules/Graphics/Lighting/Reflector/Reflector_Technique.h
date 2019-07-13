@@ -26,7 +26,7 @@ public:
 		m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> & cameras, ECSSystemList & auxilliarySystems)
+	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
@@ -146,7 +146,7 @@ private:
 			m_viewCameras.resize(m_frameData->reflectorsToUpdate.size() * 6);
 			for (auto & camera : m_viewCameras)
 				if (!camera)
-					camera = std::make_shared<CameraBuffer>();
+					camera = std::make_shared<Camera>();
 
 			m_indirectQuad.beginWriting();
 			m_indirectQuadConvolute.beginWriting();
@@ -269,7 +269,7 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
-	std::vector<std::shared_ptr<CameraBuffer>> m_viewCameras;
+	std::vector<std::shared_ptr<Camera>> m_viewCameras;
 	struct DrawBuffers {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
@@ -281,7 +281,7 @@ private:
 
 	// Shared Attributes
 	std::shared_ptr<ReflectorData> m_frameData;
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
+	std::shared_ptr<std::vector<Camera*>> m_sceneCameras;
 };
 
 #endif // REFLECTOR_TECHNIQUE_H

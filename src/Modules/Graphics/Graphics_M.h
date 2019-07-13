@@ -47,7 +47,7 @@ public:
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.
 	@return					the primary camera. */
-	inline std::shared_ptr<CameraBuffer> getClientCamera() const {
+	inline std::shared_ptr<Camera> getClientCamera() const {
 		return m_clientCamera;
 	}
 
@@ -59,18 +59,18 @@ private:
 
 
 	// Private Attributes
-	glm::ivec2									m_renderSize = glm::ivec2(1);
-	ECSSystemList								m_systems;
-	std::unique_ptr<Graphics_Pipeline>			m_pipeline;
-	std::shared_ptr<Viewport>					m_viewport;
-	std::shared_ptr<CameraBuffer>				m_clientCamera;
-	std::shared_ptr<RH_Volume>					m_rhVolume;
-	Shared_Shader								m_shader;
-	Shared_Primitive							m_shapeQuad;
-	StaticTripleBuffer							m_quadIndirectBuffer;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	std::shared_ptr<std::vector<CameraBuffer::CamStruct*>> m_sceneCameras;
-	std::shared_ptr<GL_ArrayBuffer<CameraBuffer::CamStruct>> m_cameraBuffer;
+	glm::ivec2										m_renderSize = glm::ivec2(1);
+	ECSSystemList									m_systems;
+	std::unique_ptr<Graphics_Pipeline>				m_pipeline;
+	std::shared_ptr<Viewport>						m_viewport;
+	std::shared_ptr<Camera>							m_clientCamera;
+	std::shared_ptr<RH_Volume>						m_rhVolume;
+	Shared_Shader									m_shader;
+	Shared_Primitive								m_shapeQuad;
+	StaticTripleBuffer								m_quadIndirectBuffer;
+	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
+	std::shared_ptr<std::vector<Camera*>>			m_sceneCameras;
+	std::shared_ptr<GL_ArrayBuffer<Camera::GPUData>> m_cameraBuffer;
 };
 
 #endif // GRAPHICS_MODULE_H
