@@ -213,7 +213,6 @@ void Graphics_Module::frameTick(const float & deltaTime)
 			break;
 		}
 	if (found) {
-		m_viewport->bind();
 		renderScene(deltaTime, m_viewport, { {visibilityIndex, 0} });
 		copyToScreen();
 	}
@@ -227,6 +226,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)
 {
 	// Prepare viewport and camera for rendering
+	viewport->bind();
 	viewport->clear();
 	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
 

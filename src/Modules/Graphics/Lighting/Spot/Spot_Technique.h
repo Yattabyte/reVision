@@ -48,6 +48,7 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
 		for (auto & drawBuffer : m_drawBuffers) {
+			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}

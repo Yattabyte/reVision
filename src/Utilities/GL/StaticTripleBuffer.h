@@ -11,10 +11,6 @@ class StaticTripleBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~StaticTripleBuffer() {
-		// Wait on all 3 fences before deleting
-		for (int x = 0; x < 3; ++x)
-			if (m_fence[x] != nullptr)
-				glDeleteSync(m_fence[x]);
 		glUnmapNamedBuffer(m_bufferID[0]);
 		glUnmapNamedBuffer(m_bufferID[1]);
 		glUnmapNamedBuffer(m_bufferID[2]);
@@ -29,6 +25,8 @@ public:
 		for (int x = 0; x < 3; ++x) {
 			glNamedBufferStorage(m_bufferID[x], m_size, data, storageFlags | m_mapFlags);
 			m_bufferPtr[x] = glMapNamedBufferRange(m_bufferID[x], 0, m_size, m_mapFlags);
+			if (data)
+				std::memcpy(reinterpret_cast<unsigned char*>(m_bufferPtr[x]), data, size);
 		}
 	}
 	/** Explicit Instantion. */

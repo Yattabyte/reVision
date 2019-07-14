@@ -5,7 +5,7 @@
 #include "glm/glm.hpp"
 
 
-/** A framebuffer, formatted for storing point light shadows (naive cubemap implementation). */
+/***/
 struct FBO_Env_Reflector {
 	// Attributes
 	GLuint m_fboID[6] = { 0,0,0,0,0,0 }, m_textureID = 0;
@@ -45,6 +45,7 @@ struct FBO_Env_Reflector {
 	inline void resize(const GLuint & width = 1, const GLuint & height = 1, const GLuint & depth = 1) {
 		if (m_size.x != width || m_size.y != height || m_depth != depth) {
 			m_size = glm::ivec2(width, height);
+			m_depth = depth;
 			for (int x = 0; x < 6; ++x) {
 				const glm::ivec2 size(glm::floor(glm::vec2(m_size) / glm::vec2(powf(2.0f, (float)x))));
 				glTextureImage3DEXT(m_textureID, GL_TEXTURE_CUBE_MAP_ARRAY, x, GL_RGB16F, size.x, size.y, depth, 0, GL_RGB, GL_FLOAT, NULL);

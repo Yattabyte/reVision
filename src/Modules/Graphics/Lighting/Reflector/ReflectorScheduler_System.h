@@ -19,71 +19,92 @@ public:
 	}
 	/***/
 	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<ReflectorData> & frameData)
-		: m_frameData(frameData) {
+		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 
 		auto & preferences = engine->getPreferenceState();
-		m_maxShadowsCasters = 1u;
-		preferences.getOrSetValue(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_maxShadowsCasters);
-		preferences.addCallback(PreferenceState::C_SHADOW_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxShadowsCasters = (unsigned int)f; });
+		m_maxReflectionCasters = 1u;
+		preferences.getOrSetValue(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_maxReflectionCasters);
+		preferences.addCallback(PreferenceState::C_ENVMAP_MAX_PER_FRAME, m_aliveIndicator, [&](const float &f) { m_maxReflectionCasters = (unsigned int)f; });
 	}
 
 
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
-		// Resize shadowmap to fit number of entities this frame
-		m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, (unsigned int)(components.size() * 6ull));
-		m_frameData->reflectorCount = components.size();
-
 		// Maintain list of reflectors, update with oldest within range
 		// Technique will clear list when ready
-		int index = 0;
-		for each (const auto & componentParam in components) {
-			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-			Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
-			CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
+		auto & reflectors = m_frameData->reflectorsToUpdate;
+		auto & maxReflectors = m_maxReflectionCasters;
+		auto clientPosition = m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
+		auto clientFarPlane = m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane;
+		const auto clientTime = m_engine->getTime();
+		if (int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData->reflectorsToUpdate.size()) {
+			int cameraCount = 0;
+			for each (const auto & componentParam in components) {
+				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
+				Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
+				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
 
-			// Set appropriate shadow spot
-			reflectorComponent->m_cubeSpot = index * 6;
-			
-			if (renderableComponent->m_visibleAtAll/* && reflectorComponent->m_sceneOutOfDate*/) {
-				bool didAnything = false;
-				// Try to find the oldest components
-				for (int x = 0; x < m_frameData->reflectorsToUpdate.size(); ++x) {
-					auto &[oldTime, oldLight, oldCameras] = m_frameData->reflectorsToUpdate.at(x);
-					if (!oldLight || (oldLight && reflectorComponent->m_updateTime < oldTime)) {
-						// Shuffle next elements down
-						for (auto y = m_frameData->reflectorsToUpdate.size() - 1ull; y > x; --y)
-							m_frameData->reflectorsToUpdate.at(y) = m_frameData->reflectorsToUpdate.at(y - 1ull);
-						oldLight = reflectorComponent;
-						oldTime = reflectorComponent->m_updateTime;
-						oldCameras.clear();
-						for (int x = 0; x < cameraComponent->m_cameras.size(); ++x)
-							oldCameras.push_back(&(cameraComponent->m_cameras[x]));
-						didAnything = true;
-						break;
+				if (renderableComponent->m_visibleAtAll) {
+					auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int & reflectorSpot, Camera * cb, float * updateTime) {
+						const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
+						const float importance_distance = 1.0f - (linDist * linDist);
+
+						const float linTime = (clientTime - *updateTime) / 5.0f;
+						const float importance_time = linTime * linTime;
+
+						const float importance = importance_distance + importance_time * (1.0f - importance_distance);
+						bool didAnything = false;
+						// Try to find the oldest components
+						for (int x = 0; x < reflectors.size(); ++x) {
+							auto &[oldImportance, oldTime, oldReflectorSpot, oldCamera] = reflectors[x];
+							if ((oldReflectorSpot != -1 && importance > oldImportance)) {
+								// Expand container by one
+								reflectors.resize(reflectors.size() + 1);
+								// Shuffle next elements down
+								for (auto y = reflectors.size() - 1ull; y > x; --y)
+									reflectors[y] = reflectors[y - 1ull];
+								oldImportance = importance;
+								oldTime = updateTime;
+								oldReflectorSpot = reflectorSpot;
+								oldCamera = cb;
+								didAnything = true;
+								break;
+							}
+						}
+						if (!didAnything && reflectors.size() < maxReflectors)
+							reflectors.push_back({ importance, updateTime, reflectorSpot, cb });
+						if (reflectors.size() > maxReflectors)
+							reflectors.resize(maxReflectors);
+					};
+					// Set appropriate reflector spot
+					reflectorComponent->m_cubeSpot = cameraCount;
+					cameraComponent->m_updateTimes.resize(cameraComponent->m_cameras.size());
+					for (int x = 0; x < cameraComponent->m_cameras.size(); ++x) {
+						cameraComponent->m_cameras[x].setEnabled(false);
+						tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
 					}
-				}
-				if (!didAnything && m_frameData->reflectorsToUpdate.size() < m_maxShadowsCasters) {
-					std::vector<Camera*> cams(cameraComponent->m_cameras.size());
-					for (int x = 0; x < cameraComponent->m_cameras.size(); ++x)
-						cams[x] = (&(cameraComponent->m_cameras[x]));
-					m_frameData->reflectorsToUpdate.push_back({ reflectorComponent->m_updateTime, reflectorComponent, cams });
+					cameraCount += cameraComponent->m_cameras.size();
 				}
 			}
-			index++;
-		}
 
-		if (m_frameData->reflectorsToUpdate.size() > m_maxShadowsCasters)
-			m_frameData->reflectorsToUpdate.resize(m_maxShadowsCasters);
+			// Enable cameras in final set
+			for (auto &[importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate)
+				camera->setEnabled(true);
+
+			// Resize reflectormap to fit number of entities this frame
+			m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, (unsigned int)(cameraCount));
+			m_frameData->reflectorLayers = cameraCount;
+		}			
 	}
 
 
 private:
 	// Private Attributes
-	GLuint m_maxShadowsCasters = 1u;
+	Engine * m_engine = nullptr;
+	GLuint m_maxReflectionCasters = 1u;
 	std::shared_ptr<ReflectorData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

@@ -47,8 +47,7 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
 		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 			m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
-			m_frameData->envmapOutOfDate = true;
-			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), m_frameData->reflectorCount * 6);
+			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), m_frameData->reflectorLayers);
 		});
 		// Environment Map
 		m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData->envmapSize.x));
@@ -64,12 +63,8 @@ public:
 
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
-			if (state == World_Module::unloaded) {
-				clear();
-				m_frameData->envmapOutOfDate = false;
-			}
-			else if (state == World_Module::finishLoading || state == World_Module::updated)
-				m_frameData->envmapOutOfDate = true;
+			if (state == World_Module::unloaded) 
+				clear();			
 		});
 	}
 
@@ -78,6 +73,7 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
 		for (auto & drawBuffer : m_drawBuffers) {
+			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}
@@ -90,14 +86,8 @@ public:
 		m_frameData->viewInfo.resize(m_sceneCameras->size());
 
 		// Exit Early
-		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet()) {
-			m_viewport->resize(m_frameData->envmapSize, m_frameData->reflectorCount * 6);
-			//if (m_engine->getActionState().isAction(ActionState::FIRE2))
-			//	m_frameData->envmapOutOfDate = true;
-
-			// Render important environment maps
-			updateReflectors(deltaTime);
-		}
+		if (m_enabled && m_shapeQuad->existsYet() && m_shaderCopy->existsYet() && m_shaderConvolute->existsYet())
+			updateReflectors(deltaTime);		
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early
@@ -142,41 +132,35 @@ private:
 	@param	deltaTime	the amount of time passed since last frame.
 	@param	viewport	the viewport to render from. */
 	inline void updateReflectors(const float & deltaTime) {
+		auto clientTime = m_engine->getTime();
 		if (m_frameData->reflectorsToUpdate.size()) {
-			m_viewCameras.resize(m_frameData->reflectorsToUpdate.size() * 6);
-			for (auto & camera : m_viewCameras)
-				if (!camera)
-					camera = std::make_shared<Camera>();
-
+			m_viewport->resize(m_frameData->envmapSize, m_frameData->reflectorLayers);
 			m_indirectQuad.beginWriting();
 			m_indirectQuadConvolute.beginWriting();
 
 			// Accumulate Perspective Data
 			std::vector<std::pair<int, int>> perspectives;
 			perspectives.reserve(m_frameData->reflectorsToUpdate.size());
-			for (auto &[time, reflector, cameras] : m_frameData->reflectorsToUpdate) {
-				for (int x = 0; x < cameras.size(); ++x) {
-					// Accumulate all visibility info for the cameras passed in
-					int visibilityIndex = 0;
-					bool found = false;
-					for (int y = 0; y < m_sceneCameras->size(); ++y)
-						if (m_sceneCameras->at(y) == cameras[x]) {
-							visibilityIndex = y;
-							found = true;
-							break;
-						}
-					if (found)
-						perspectives.push_back({ visibilityIndex, reflector->m_cubeSpot + x });
-				}
-				time += deltaTime;
+			for (auto &[importance, time, reflectorSpot, camera] : m_frameData->reflectorsToUpdate) {
+				// Accumulate all visibility info for the cameras passed in
+				int visibilityIndex = 0;
+				bool found = false;
+				for (int y = 0; y < m_sceneCameras->size(); ++y)
+					if (m_sceneCameras->at(y) == camera) {
+						visibilityIndex = y;
+						found = true;
+						break;
+					}
+				if (found) 
+					perspectives.push_back({ visibilityIndex, reflectorSpot });				
+				*time = clientTime;
+				camera->setEnabled(false);
 			}
-
-			GLuint instanceCount = perspectives.size(), convoluteCount = perspectives.size();
+			GLuint instanceCount = perspectives.size(), convoluteCount = m_frameData->reflectorLayers;
 			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 
 			// Update all reflectors at once
-			glViewport(0,0, m_frameData->envmapSize.x, m_frameData->envmapSize.y);
 			m_engine->getModule_Graphics().renderScene(deltaTime, m_viewport, perspectives, Graphics_Technique::GEOMETRY | Graphics_Technique::PRIMARY_LIGHTING | Graphics_Technique::SECONDARY_LIGHTING);
 
 			// Copy all lighting results into cube faces, generating cubemaps
@@ -190,9 +174,10 @@ private:
 			glBindVertexArray(m_shapeQuad->m_vaoID);
 			glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-			// Convolute completed cubemaps
+			// Convolute all completed cubemaps, not just what was done this frame
 			m_shaderConvolute->bind();
 			m_indirectQuadConvolute.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			m_frameData->envmapFBO.bindForReading(0);
 			for (unsigned int r = 1; r < 6; ++r) {
 				// Ensure we are writing to MIP level r
 				const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_frameData->envmapSize.x / pow(2.0f, (float)r))));
@@ -204,8 +189,7 @@ private:
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
 			}
 
-			m_frameData->reflectorsToUpdate.clear();
-			m_frameData->envmapOutOfDate = false;
+			m_frameData->reflectorsToUpdate.clear();			
 		}
 	}
 	/** Render all the lights
@@ -269,7 +253,6 @@ private:
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;
-	std::vector<std::shared_ptr<Camera>> m_viewCameras;
 	struct DrawBuffers {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
