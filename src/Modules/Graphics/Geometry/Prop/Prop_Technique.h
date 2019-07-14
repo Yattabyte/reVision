@@ -129,6 +129,7 @@ public:
 				glDepthMask(GL_TRUE);
 				glEnable(GL_CULL_FACE);
 				glCullFace(GL_BACK);
+				viewport->m_gfxFBOS->clearDepthStencil();
 				m_shaderGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);

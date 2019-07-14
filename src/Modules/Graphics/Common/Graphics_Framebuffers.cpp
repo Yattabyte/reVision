@@ -5,8 +5,8 @@
 Graphics_Framebuffers::~Graphics_Framebuffers()
 {
 	// Destroy OpenGL objects
-	for (const auto[name, fboData] : m_fbos) {
-		const auto[fboID, mipmapped, texdata] = fboData;
+	for (auto&[name, fboData] : m_fbos) {
+		auto&[fboID, mipmapped, texdata] = fboData;
 		glDeleteFramebuffers(1, &fboID);
 		for (const auto[texID, internalFormat, format, type, attachment] : texdata)
 			glDeleteTextures(1, &texID);
@@ -46,7 +46,7 @@ void Graphics_Framebuffers::createFBO(const char * name, const std::vector<std::
 	// Create all the textures
 	int counter(0);
 	for each (const auto & texture in textureFormats) {
-		const auto[internalFormat, format, type] = texture;
+		const auto&[internalFormat, format, type] = texture;
 		GLuint texID(0);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &texID);
 		glTextureParameteri(texID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
@@ -100,21 +100,30 @@ void Graphics_Framebuffers::bindForReading(const char * name, const GLuint & bin
 
 void Graphics_Framebuffers::clear()
 {
-	GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	GLfloat clearDepth = 1.0f;
-	GLint clearStencil = 0;
-	for (const auto[name, fboData] : m_fbos) {
-		const auto[fboID, mipmapped, texdata] = fboData;
+	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	for (auto&[name, fboData] : m_fbos) {
+		auto&[fboID, mipmapped, texdata] = fboData;
 		int counter(0);
 		for (const auto[texID, internalFormat, format, type, attachment] : texdata) {
-			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT)
-				glClearNamedFramebufferfi(fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
-			else if (attachment == GL_DEPTH_ATTACHMENT)
-				glClearNamedFramebufferfv(fboID, GL_DEPTH, 0, &clearDepth);
-			else if (attachment == GL_STENCIL_ATTACHMENT)
-				glClearNamedFramebufferfv(fboID, GL_STENCIL, 0, &clearDepth);
-			else
+			if (attachment != GL_DEPTH_STENCIL_ATTACHMENT && attachment != GL_DEPTH_ATTACHMENT && attachment != GL_STENCIL_ATTACHMENT)
 				glClearNamedFramebufferfv(fboID, GL_COLOR, counter++, clearColor);
+		}
+	}
+}
+
+void Graphics_Framebuffers::clearDepthStencil()
+{
+	constexpr GLfloat clearDepth = 1.0f;
+	constexpr GLint clearStencil = 0.0f;
+	for (auto&[name, fboData] : m_fbos) {
+		auto&[fboID, mipmapped, texdata] = fboData;
+		for (auto&[texID, internalFormat, format, type, attachment] : texdata) {
+			if (attachment == GL_DEPTH_STENCIL_ATTACHMENT) 
+				glClearNamedFramebufferfi(fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
+			else if (attachment == GL_DEPTH_ATTACHMENT) 
+				glClearNamedFramebufferfv(fboID, GL_DEPTH, 0, &clearDepth);
+			else if (attachment == GL_STENCIL_ATTACHMENT) 
+				glClearNamedFramebufferiv(fboID, GL_STENCIL, 0, &clearStencil);
 		}
 	}
 }
@@ -123,8 +132,8 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layer
 {
 	m_renderSize = newSize;
 	m_layerFaces = layerFaces;
-	for (const auto[name, fboData] : m_fbos) {
-		const auto[fboID, mipmapped, texdata] = fboData;
+	for (auto&[name, fboData] : m_fbos) {
+		auto&[fboID, mipmapped, texdata] = fboData;
 		int counter(0);
 		for (const auto[texID, internalFormat, format, type, attachment] : texdata) {
 			if (mipmapped) {

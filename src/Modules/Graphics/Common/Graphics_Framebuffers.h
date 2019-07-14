@@ -41,6 +41,8 @@ public:
 	void bindForReading(const char * name, const GLuint & binding = 0);
 	/** Clear all framebuffer textures of their data. */
 	void clear();
+	/***/
+	void clearDepthStencil();
 	/** Resize all framebuffer textures.
 	@param	newSize			the new size all framebuffer textures should expand/shrink to.
 	@param	layerFaces		the number of layers to use. */
