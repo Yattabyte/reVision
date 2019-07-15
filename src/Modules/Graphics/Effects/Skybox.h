@@ -22,9 +22,9 @@ public:
 	}
 	/** Constructor. */
 	inline Skybox(Engine * engine)
-		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
+		: m_engine(engine), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Asset Loading
-		m_cubemapSky = Shared_Cubemap(engine, "night\\");
+		m_cubemapSky = Shared_Cubemap(engine, "sky\\");
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
 		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");
@@ -42,13 +42,6 @@ public:
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 		glTextureParameteri(m_cubemapMipped, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 
-		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
-			const GLuint quad6Data[4] = { (GLuint)m_shapeQuad->getSize(), 6, 0, 0 };
-			m_quad6IndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
-		});
 		m_cubemapSky->addCallback(m_aliveIndicator, [&](void) mutable {
 			m_skyOutOfDate = true;
 			m_skySize = m_cubemapSky->m_images[0]->m_size;
@@ -72,59 +65,55 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto & camIndexBuffer : m_camIndexes)
+		for (auto &[camIndexBuffer, quadIndirectBuffer, quad6IndirectBuffer] : m_drawData) {
 			camIndexBuffer.endWriting();
-		m_quadIndirectBuffer.endWriting();
-		m_quad6IndirectBuffer.endWriting();
+			quadIndirectBuffer.endWriting();
+			quad6IndirectBuffer.endWriting();
+		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderSky->existsYet() || !m_shaderSkyReflect->existsYet() || !m_shaderConvolute->existsYet() || !m_cubemapSky->existsYet())
 			return;
 
-		if (m_skyOutOfDate ) {
+		// Prepare camera index
+		if (m_drawIndex >= m_drawData.size())
+			m_drawData.resize(m_drawIndex + 1);
+		
+		if (m_skyOutOfDate) {
 			convoluteSky(viewport);
 			m_skyOutOfDate = false;
 		}
 
-		// Prepare camera index
-		if (m_drawIndex >= m_camIndexes.size())
-			m_camIndexes.resize(m_drawIndex + 1);
-		auto &camBufferIndex = m_camIndexes[m_drawIndex];
+		auto &[camBufferIndex, quadIndirectBuffer, quad6IndirectBuffer] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
-		m_quadIndirectBuffer.beginWriting();
-		m_quad6IndirectBuffer.beginWriting();
+		quadIndirectBuffer.beginWriting();
+		quad6IndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
-		for (auto &[camIndex, layer] : perspectives) 
+		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		GLuint instanceCount = perspectives.size();
-		m_quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		glDisable(GL_BLEND);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glBindTextureUnit(4, m_cubemapMipped);
 
 		// Render skybox to reflection buffer
-		// Uses the stencil buffer, last thing to write to it should be the reflector pass
-		glEnable(GL_STENCIL_TEST);
-		glStencilFunc(GL_EQUAL, 0, 0xFF);
 		m_shaderSkyReflect->bind();
 		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		glDisable(GL_STENCIL_TEST);
 
 		// Render skybox to lighting buffer
 		m_shaderSky->bind();
 		viewport->m_gfxFBOS->bindForWriting("LIGHTING");
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
-		glEnable(GL_BLEND);
-		glDepthMask(GL_TRUE);
 		glDisable(GL_DEPTH_TEST);
 		m_drawIndex++;
 	}
@@ -143,7 +132,7 @@ private:
 		m_shaderConvolute->setUniform(0, 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
-		m_quad6IndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_drawData[m_drawIndex].quad6IndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
 			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_skySize.x / pow(2.0f, (float)r))));
@@ -175,10 +164,15 @@ private:
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
 	Shared_Primitive m_shapeQuad;
-	StaticTripleBuffer m_quadIndirectBuffer, m_quad6IndirectBuffer;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_skySize = glm::ivec2(1);
-	std::vector<DynamicBuffer> m_camIndexes;
+	struct DrawData {
+		DynamicBuffer camBufferIndex;
+		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
+		constexpr static GLuint quad6Data[4] = { (GLuint)6, 6, 0, 0 };
+		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData), quad6IndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
+	};
+	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

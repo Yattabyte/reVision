@@ -40,10 +40,10 @@ Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Came
 		propView
 	};
 	m_lightingTechniques = {
-		shadowing, directionalLighting, pointLighting, spotLighting, reflectorLighting
+		shadowing, directionalLighting, pointLighting, spotLighting, skybox, reflectorLighting
 	};
 	m_effectTechniques = {
-		radianceHints, skybox, ssao, ssr, joinReflections, bloom, hdr, fxaa
+		radianceHints, ssao, ssr, joinReflections, bloom, hdr, fxaa
 	};
 
 	// Join All

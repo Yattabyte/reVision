@@ -30,12 +30,6 @@ public:
 		m_shaderGB_A = Shared_Shader(m_engine, "Effects\\Gaussian Blur Alpha");
 		m_shapeQuad = Shared_Primitive(m_engine, "quad");
 
-		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
-		});
-
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
 		preferences.getOrSetValue(PreferenceState::C_SSAO, m_enabled);
@@ -93,9 +87,10 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto & camIndexBuffer : m_camIndexes)
+		for (auto &[camIndexBuffer, quadIndirectBuffer] : m_drawData) {
 			camIndexBuffer.endWriting();
-		m_quadIndirectBuffer.endWriting();
+			quadIndirectBuffer.endWriting();
+		}
 		m_drawIndex = 0;
 	}
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
@@ -103,17 +98,17 @@ public:
 			return;
 
 		// Prepare camera index
-		if (m_drawIndex >= m_camIndexes.size())
-			m_camIndexes.resize(m_drawIndex + 1);
-		auto &camBufferIndex = m_camIndexes[m_drawIndex];
+		if (m_drawIndex >= m_drawData.size())
+			m_drawData.resize(m_drawIndex + 1);
+		auto &[camBufferIndex, quadIndirectBuffer] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
-		m_quadIndirectBuffer.beginWriting();
+		quadIndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		GLuint instanceCount = perspectives.size();
-		m_quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		glDisable(GL_DEPTH_TEST);
@@ -123,7 +118,7 @@ public:
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		size_t aoSpot = 0;
@@ -143,7 +138,7 @@ public:
 			m_shaderGB_A->setUniform(0, horizontal);
 			m_shaderGB_A->setUniform(1, glm::vec2(viewport->m_dimensions));
 			glBindVertexArray(m_shapeQuad->m_vaoID);
-			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+			quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 			// Blur remainder of the times
 			for (int i = 0; i < m_blurStrength; i++) {
@@ -178,8 +173,12 @@ private:
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;
 	GLuint m_noiseID = 0;
-	StaticTripleBuffer m_quadIndirectBuffer;
-	std::vector<DynamicBuffer> m_camIndexes;
+	struct DrawData {
+		DynamicBuffer camBufferIndex;
+		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
+		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+	};
+	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

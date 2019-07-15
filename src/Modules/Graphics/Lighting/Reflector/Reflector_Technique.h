@@ -231,11 +231,11 @@ private:
 		glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
+		glClear(GL_STENCIL_BUFFER_BIT);
 		glDepthMask(GL_TRUE);
 		glCullFace(GL_BACK);
 		glBlendFunc(GL_ONE, GL_ZERO);
 		glDisable(GL_STENCIL_TEST);
-
 	}
 	/** Clear out the reflectors queued up for rendering. */
 	inline void clear() {
