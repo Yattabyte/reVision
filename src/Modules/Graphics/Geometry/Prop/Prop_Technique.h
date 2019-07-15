@@ -52,7 +52,7 @@ public:
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->modelBuffer.endWriting();
 		m_frameData->skeletonBuffer.endWriting();
-		for (auto & drawBuffer : m_drawBuffers) {
+		for (auto & drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.bufferPropIndex.endWriting();
 			drawBuffer.bufferCulling.endWriting();
@@ -64,9 +64,9 @@ public:
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
-			if (m_drawIndex >= m_drawBuffers.size())
-				m_drawBuffers.resize(m_drawIndex + 1);
-			auto & drawBuffer = m_drawBuffers[m_drawIndex];
+			if (m_drawIndex >= m_drawData.size())
+				m_drawData.resize(m_drawIndex + 1);
+			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &propIndexBuffer = drawBuffer.bufferPropIndex;
 			auto &propCullingBuffer = drawBuffer.bufferCulling;
@@ -141,9 +141,9 @@ public:
 	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
-			if (m_drawIndex >= m_drawBuffers.size())
-				m_drawBuffers.resize(m_drawIndex + 1);
-			auto & drawBuffer = m_drawBuffers[m_drawIndex];
+			if (m_drawIndex >= m_drawData.size())
+				m_drawData.resize(m_drawIndex + 1);
+			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &propIndexBuffer = drawBuffer.bufferPropIndex;
 			auto &propCullingBuffer = drawBuffer.bufferCulling;
@@ -213,7 +213,7 @@ public:
 				glFrontFace(GL_CW);
 				m_shaderShadowGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
-				m_drawBuffers[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+				m_drawData[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_count, 0);
 				glFrontFace(GL_CCW);
 				glCullFace(GL_BACK);
@@ -236,12 +236,12 @@ private:
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Primitive m_shapeCube;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	struct DrawBuffers {
+	struct DrawData {
 		DynamicBuffer bufferCamIndex, bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;
 	};
 	int m_drawIndex = 0;
 	size_t m_count = 0ull;
-	std::vector<DrawBuffers> m_drawBuffers;
+	std::vector<DrawData> m_drawData;
 
 
 	// Shared Attributes

@@ -70,12 +70,12 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawBuffers) {
+		for (auto & drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
 		}
-		for (auto & bounceBuffer : m_bounceBuffers) {
+		for (auto & bounceBuffer : m_drawBounceData) {
 			bounceBuffer.bufferCamIndex.endWriting();
 			bounceBuffer.visLights.endWriting();
 			bounceBuffer.indirectBounce.endWriting();
@@ -100,10 +100,10 @@ public:
 				}
 			if (found && visibilityIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
 				// Light bounce using client camera
-				if (m_bounceIndex >= m_bounceBuffers.size())
-					m_bounceBuffers.resize(m_bounceIndex + 1);
+				if (m_bounceIndex >= m_drawBounceData.size())
+					m_drawBounceData.resize(m_bounceIndex + 1);
 
-				auto & bounceBuffer = m_bounceBuffers[m_bounceIndex];
+				auto & bounceBuffer = m_drawBounceData[m_bounceIndex];
 				auto &camBufferIndex = bounceBuffer.bufferCamIndex;
 				auto &lightBufferIndex = bounceBuffer.visLights;
 				camBufferIndex.beginWriting();
@@ -133,9 +133,9 @@ public:
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet()) {
-			if (m_drawIndex >= m_drawBuffers.size())
-				m_drawBuffers.resize(m_drawIndex + 1);
-			auto & drawBuffer = m_drawBuffers[m_drawIndex];
+			if (m_drawIndex >= m_drawData.size())
+				m_drawData.resize(m_drawIndex + 1);
+			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
@@ -184,10 +184,10 @@ private:
 		viewport->m_gfxFBOS->bindForWriting("LIGHTING");			// Ensure writing to lighting FBO
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);			// Read from Geometry FBO
 		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);			// Shadow map (depth texture)
-		m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_drawBuffers[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
+		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_drawBuffers[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 		glBindVertexArray(m_shapeQuad->m_vaoID);					// Quad VAO
 		glDrawArraysIndirect(GL_TRIANGLES, 0);						// Now draw
 	}
@@ -211,10 +211,10 @@ private:
 		glBindTextureUnit(1, m_frameData->shadowData->shadowFBO.m_texColor);
 		glBindTextureUnit(2, m_frameData->shadowData->shadowFBO.m_texDepth);
 		glBindTextureUnit(4, m_textureNoise32);
-		m_bounceBuffers[m_bounceIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
-		m_bounceBuffers[m_bounceIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
+		m_drawBounceData[m_bounceIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		m_drawBounceData[m_bounceIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_bounceBuffers[m_bounceIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_drawBounceData[m_bounceIndex].indirectBounce.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		glDepthMask(GL_TRUE);
@@ -226,8 +226,8 @@ private:
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
-		m_drawBuffers.clear();
-		m_bounceBuffers.clear();
+		m_drawData.clear();
+		m_drawBounceData.clear();
 		m_drawIndex = 0;
 		m_bounceIndex = 0;
 	}
@@ -240,20 +240,20 @@ private:
 	Shared_Primitive m_shapeQuad;
 	GLuint m_textureNoise32 = 0;
 	GLuint m_bounceSize = 16u;
-	struct DrawBuffers {
+	struct DrawData {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
 		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
-	std::vector<DrawBuffers> m_drawBuffers;
-	struct BounceBuffers {
+	std::vector<DrawData> m_drawData;
+	struct DrawBounceData {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
 		StaticTripleBuffer indirectBounce = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_bounceIndex = 0;
-	std::vector<BounceBuffers> m_bounceBuffers;
+	std::vector<DrawBounceData> m_drawBounceData;
 
 	// Shared Attributes
 	std::shared_ptr<DirectionalData> m_frameData;

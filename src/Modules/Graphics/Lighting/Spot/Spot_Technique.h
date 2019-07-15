@@ -47,7 +47,7 @@ public:
 	// Public Interface Implementations
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
 		m_frameData->lightBuffer.endWriting();
-		for (auto & drawBuffer : m_drawBuffers) {
+		for (auto & drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.visLights.endWriting();
 			drawBuffer.indirectShape.endWriting();
@@ -61,9 +61,9 @@ public:
 	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Render direct lights	
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCone->existsYet() && m_shader_Lighting->existsYet() && m_shader_Stencil->existsYet()) {
-			if (m_drawIndex >= m_drawBuffers.size())
-				m_drawBuffers.resize(m_drawIndex + 1);
-			auto & drawBuffer = m_drawBuffers[m_drawIndex];
+			if (m_drawIndex >= m_drawData.size())
+				m_drawData.resize(m_drawIndex + 1);
+			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &lightBufferIndex = drawBuffer.visLights;
 			camBufferIndex.beginWriting();
@@ -111,10 +111,10 @@ private:
 		viewport->m_gfxFBOS->bindForWriting("LIGHTING");												// Ensure writing to lighting FBO
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);												// Read from Geometry FBO
 		glBindTextureUnit(4, m_frameData->shadowData->shadowFBO.m_texDepth);							// Shadow map (depth texture)		
-		m_drawBuffers[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	
-		m_drawBuffers[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
+		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);	
+		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-		m_drawBuffers[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
+		m_drawData[m_drawIndex].indirectShape.bindBuffer(GL_DRAW_INDIRECT_BUFFER);		// Draw call buffer
 		glBindVertexArray(m_shapeCone->m_vaoID);
 		glDepthMask(GL_FALSE);
 		glEnable(GL_DEPTH_TEST);
@@ -142,7 +142,7 @@ private:
 	/** Clear out the lights and shadows queued up for rendering. */
 	inline void clear() {
 		m_frameData->viewInfo.clear();
-		m_drawBuffers.clear();
+		m_drawData.clear();
 		m_drawIndex = 0;
 	}
 
@@ -152,13 +152,13 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
 	Shared_Primitive m_shapeCone;
-	struct DrawBuffers {
+	struct DrawData {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;
 		StaticTripleBuffer indirectShape = StaticTripleBuffer(sizeof(GLuint) * 4);
 	};
 	int m_drawIndex = 0;
-	std::vector<DrawBuffers> m_drawBuffers;
+	std::vector<DrawData> m_drawData;
 
 
 	// Shared Attributes
