@@ -101,7 +101,6 @@ public:
 				propSkeletonBuffer.write(0, sizeof(int) * skeletonData.size(), skeletonData.data());
 
 				// Apply occlusion culling and render props
-				m_engine->getManager_Materials().bind();
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 				propIndexBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
@@ -132,6 +131,7 @@ public:
 				viewport->m_gfxFBOS->clearDepthStencil();
 				m_shaderGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
+				glBindTextureUnit(0, m_frameData->m_materialArrayID);
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, visibleIndices.size(), 0);
 				m_drawIndex++;
@@ -176,7 +176,6 @@ public:
 				propSkeletonBuffer.write(0, sizeof(int) * skeletonData.size(), skeletonData.data());
 
 				// Apply occlusion culling and render props
-				m_engine->getManager_Materials().bind();
 				camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 				m_frameData->modelBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);
 				propIndexBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 5);
@@ -213,6 +212,7 @@ public:
 				glFrontFace(GL_CW);
 				m_shaderShadowGeometry->bind();
 				glBindVertexArray(m_frameData->m_geometryVAOID);
+				glBindTextureUnit(0, m_frameData->m_materialArrayID);
 				m_drawData[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_count, 0);
 				glFrontFace(GL_CCW);

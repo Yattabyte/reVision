@@ -7,6 +7,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint skinID;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
@@ -62,7 +63,7 @@ void main()
 	const vec3 WorldBitangent 	= normalize(matTrans3 * normalize(bitangent));
 	WorldTBN					= mat3(WorldTangent, WorldBitangent, WorldNormal);
 	TexCoord0             		= textureCoordinate;	
-	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
+	MaterialOffset				= matID + propBuffer[PropIndex].materialID + (propBuffer[PropIndex].skinID * TEXTURES_PER_MATERIAL);
 	gl_Position           		= camBuffer[CamIndex].pvMatrix * WorldVertex;
 	gl_Layer 					= camIndexes[gl_DrawID].y;
 }

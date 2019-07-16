@@ -12,10 +12,11 @@
 /** A static, animation-less prop component. */
 struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Model m_model;
+	bool m_uploadModel = false, m_uploadMaterial = false;
 	size_t m_offset = 0ull, m_count = 0ull;
+	GLuint m_materialID = 0u;
 	unsigned int m_skin = 0u;
 	float m_radius = 1.0f;
-	GLsync m_uploadFence = nullptr;
 	glm::vec3 m_position = glm::vec3(0.0f);
 };
 

@@ -5,6 +5,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint skinID;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };

@@ -5,7 +5,6 @@
 #define MAX_DIGITAL_IMAGES 3
 
 #include "Assets/Image.h"
-#include "Managers/MaterialManager.h"
 #include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include <vector>
@@ -45,7 +44,7 @@ public:
 	/** Destroy the Material. */
 	~Material();
 	/** Construct the Material. */
-	Material(Engine * engine, const std::string & filename, const std::vector<std::string> & textures, MaterialManager & materialManager);
+	Material(Engine * engine, const std::string & filename, const std::vector<std::string> & textures);
 	
 
 	// Public Methods
@@ -57,9 +56,6 @@ public:
 	
 	
 	// Public Attributes
-	GLuint m_pboID = 0;
-	GLuint m_glArrayID = 0;
-	GLuint m_matSpot = 0;
 	GLubyte * m_materialData = nullptr;
 	glm::ivec2 m_size = glm::ivec2(1);
 	std::vector<std::string> m_textures;

@@ -79,7 +79,8 @@ public:
 				}
 
 				// Sync Prop Attributes
-				m_frameData->modelBuffer[index].materialID = propComponent->m_skin;
+				m_frameData->modelBuffer[index].materialID = propComponent->m_materialID;
+				m_frameData->modelBuffer[index].skinID = propComponent->m_skin;
 			}
 			index++;
 		}

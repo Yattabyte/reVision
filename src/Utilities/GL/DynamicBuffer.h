@@ -11,13 +11,14 @@ class DynamicBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~DynamicBuffer() {
-		for (int x = 0; x < 3; ++x)
+		for (int x = 0; x < 3; ++x) {
 			if (m_fence[x] != nullptr)
 				glDeleteSync(m_fence[x]);
-		glUnmapNamedBuffer(m_bufferID[0]);
-		glUnmapNamedBuffer(m_bufferID[1]);
-		glUnmapNamedBuffer(m_bufferID[2]);
-		glDeleteBuffers(3, m_bufferID);
+			if (m_bufferID[x]) {
+				glUnmapNamedBuffer(m_bufferID[x]);
+				glDeleteBuffers(1, &m_bufferID[x]);
+			}
+		}
 	}
 	/** Default. */
 	inline DynamicBuffer(const GLsizeiptr & capacity = 256, const void * data = 0, const GLbitfield & mapFlags = GL_MAP_WRITE_BIT | GL_MAP_PERSISTENT_BIT | GL_MAP_COHERENT_BIT)

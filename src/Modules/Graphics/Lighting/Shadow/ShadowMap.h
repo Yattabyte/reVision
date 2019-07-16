@@ -44,8 +44,8 @@ public:
 	/***/
 	inline void resize(const glm::ivec2 & size, const int & layerFaces) {
 		if (m_size.x != size.x || m_size.y != size.y || m_layerFaces != layerFaces) {
-			m_size = size;
-			m_layerFaces = layerFaces;
+			m_size = glm::max(glm::ivec2(1), size);
+			m_layerFaces = std::max<int>(1, layerFaces);
 			constexpr float clearDepth(1.0f);
 			constexpr glm::vec3 clear(0.0f);
 			glTextureImage3DEXT(m_textureIDS[0], GL_TEXTURE_2D_ARRAY, 0, GL_RGB8, m_size.x, m_size.y, m_layerFaces, 0, GL_RGB, GL_FLOAT, NULL);

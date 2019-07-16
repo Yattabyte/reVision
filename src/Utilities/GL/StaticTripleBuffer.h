@@ -11,13 +11,14 @@ class StaticTripleBuffer : public Buffer_Interface {
 public:
 	// Public (de)Constructors
 	inline ~StaticTripleBuffer() {
-		for (int x = 0; x < 3; ++x)
+		for (int x = 0; x < 3; ++x) {
 			if (m_fence[x] != nullptr)
 				glDeleteSync(m_fence[x]);
-		glUnmapNamedBuffer(m_bufferID[0]);
-		glUnmapNamedBuffer(m_bufferID[1]);
-		glUnmapNamedBuffer(m_bufferID[2]);
-		glDeleteBuffers(3, m_bufferID);
+			if (m_bufferID[x]) {
+				glUnmapNamedBuffer(m_bufferID[x]);
+				glDeleteBuffers(1, &m_bufferID[x]);
+			}
+		}
 	}
 	/** Default Constructor. */
 	inline StaticTripleBuffer() = default;

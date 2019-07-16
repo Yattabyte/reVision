@@ -7,6 +7,7 @@
 
 struct PropAttributes {
 	uint materialID;
+	uint skinID;
 	mat4 mMatrix;
 	mat4 bBoxMatrix;
 };
@@ -59,7 +60,7 @@ void main()
 	const vec3 ViewTangent		= normalize(vmMatrix3 * normalize(tangent));		
 	const vec3 ViewBitangent 	= normalize(vmMatrix3 * normalize(bitangent));
 	ViewTBN						= mat3(ViewTangent, ViewBitangent, ViewNormal);		
-	MaterialOffset				= matID + (propBuffer[PropIndex].materialID * TEXTURES_PER_MATERIAL);
+	MaterialOffset				= matID + propBuffer[PropIndex].materialID + (propBuffer[PropIndex].skinID * TEXTURES_PER_MATERIAL);
 	gl_Position           		= camBuffer[CamIndex].pMatrix * vmMatrix4 * vec4(vertex,1.0);
 	gl_Layer 					= camIndexes[gl_DrawID].y;			
 }

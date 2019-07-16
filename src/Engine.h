@@ -4,7 +4,6 @@
 
 // Managers
 #include "Managers/AssetManager.h"
-#include "Managers/MaterialManager.h"
 #include "Managers/MessageManager.h"
 #include "Managers/SoundManager.h"
 
@@ -24,20 +23,9 @@
 // Other
 #include <string>
 
-
-constexpr char ENGINE_VERSION[] = "3.9.14";
-
+constexpr char ENGINE_VERSION[] = "3.9.15";
 struct GLFWwindow;
-class Engine;
-struct Rendering_Context {
-	~Rendering_Context();
-	Rendering_Context(Engine * engine);
-	GLFWwindow * window = NULL;
-};
-struct Auxilliary_Context {
-	Auxilliary_Context(const Rendering_Context & other);
-	GLFWwindow * window = NULL;
-};
+
 
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
@@ -57,12 +45,23 @@ public:
 	Engine();
 
 
+private:
+	// Private Initialization Methods
+	/***/
+	void initWindow();
+	/***/
+	void initThreads();
+	/***/
+	void printBoilerPlate();
+
+
+public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread. 
 	@param	exitObject	object signaling when to close the thread */
-	void tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context);
+	void tickThreaded(std::future<void> exitObject, GLFWwindow * const window);
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down. */
 	bool shouldClose();
@@ -78,8 +77,6 @@ public:
 	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
 	/** Retrieve the current time. */
 	float getTime() const;
-	/** Returns this engine's rendering context. */
-	GLFWwindow * getRenderingContext() const;
 	/** Return a list of available resolutions. */
 	std::vector<glm::ivec3> getResolutions() const;
 	/** Returns this engine's action state. */
@@ -90,8 +87,6 @@ public:
 	// Manager Accessors
 	/** Returns this engine's asset manager. */
 	AssetManager & getManager_Assets() { return m_assetManager; }
-	/** Returns this engine's material manager. */
-	MaterialManager & getManager_Materials() { return m_materialManager; }
 	/** Returns this engine's message manager. */
 	MessageManager & getManager_Messages() { return m_messageManager; }
 	/** Returns this engine's sound manager. */
@@ -132,14 +127,13 @@ private:
 	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
-	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
+	GLFWwindow * m_window = NULL;
+	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_preferenceState;
-	Rendering_Context m_renderingContext;
-	MaterialManager m_materialManager;
 	ActionState	m_actionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;

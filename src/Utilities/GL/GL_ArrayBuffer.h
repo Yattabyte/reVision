@@ -16,13 +16,14 @@ public:
 	// Public (de)Constructors
 	/** Destroy this buffer. */
 	inline ~GL_ArrayBuffer() {
-		for (int x = 0; x < 3; ++x)
+		for (int x = 0; x < 3; ++x) {
 			if (m_fence[x] != nullptr)
 				glDeleteSync(m_fence[x]);
-		glUnmapNamedBuffer(m_bufferID[0]);
-		glUnmapNamedBuffer(m_bufferID[1]);
-		glUnmapNamedBuffer(m_bufferID[2]);
-		glDeleteBuffers(3, m_bufferID);
+			if (m_bufferID[x]) {
+				glUnmapNamedBuffer(m_bufferID[x]);
+				glDeleteBuffers(1, &m_bufferID[x]);
+			}
+		}
 	}
 	/** Construct a buffer.
 	@param	capacity		the starting capacity (1 or more). */

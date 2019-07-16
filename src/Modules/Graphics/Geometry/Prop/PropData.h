@@ -21,7 +21,8 @@
 struct PropData {
 	/** OpenGL buffer for models. */
 	struct Model_Buffer {
-		GLuint materialID; glm::vec3 padding1;
+		GLuint materialID;
+		GLuint skinID; glm::vec2 padding1;
 		glm::mat4 mMatrix;
 		glm::mat4 bBoxMatrix;
 	};
@@ -39,7 +40,7 @@ struct PropData {
 	GL_ArrayBuffer<Model_Buffer> modelBuffer;
 	GL_ArrayBuffer<Skeleton_Buffer> skeletonBuffer;
 	std::vector<ViewInfo> viewInfo;
-	GLuint m_geometryVAOID = 0;
+	GLuint m_geometryVAOID = 0u, m_materialArrayID = 0u;
 };
 
 #endif PROPDATA_H

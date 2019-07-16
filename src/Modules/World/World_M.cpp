@@ -36,10 +36,9 @@ void World_Module::deinitialize()
 void World_Module::frameTick(const float & deltaTime)
 {
 	auto & assetManager = m_engine->getManager_Assets();
-	auto & materialManager = m_engine->getManager_Materials();
 
 	// Firstly, check and see if the following systems are ready
-	if (!assetManager.readyToUse() || !materialManager.readyToUse())
+	if (!assetManager.readyToUse())
 		return;
 
 	// Signal that the map has finished loading ONCE
@@ -47,7 +46,7 @@ void World_Module::frameTick(const float & deltaTime)
 		notifyListeners(finishLoading);
 	else if (m_state == finishLoading) {
 		// Lastly, check and see if we observed any changes
-		if (assetManager.hasChanged() || materialManager.hasChanged())		
+		if (assetManager.hasChanged())		
 			notifyListeners(updated);
 	}
 }

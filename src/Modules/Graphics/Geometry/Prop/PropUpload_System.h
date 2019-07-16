@@ -28,7 +28,7 @@ public:
 
 		// Create VBO's
 		glCreateBuffers(1, &m_vboID);
-		glNamedBufferStorage(m_vboID, 0, 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(m_vboID, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 		// Create VAO
 		glCreateVertexArrays(1, &m_vaoID);
 		// Enable 7 attribute locations which all source data from binding point 0
@@ -51,6 +51,24 @@ public:
 		// Share VAO for rendering purposes
 		frameData->m_geometryVAOID = m_vaoID;
 
+		// Preference Values
+		m_engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, m_materialSize);
+
+		// Size-dependent variable set up
+		m_maxMips = GLsizei(floor(log2f(float(m_materialSize)) + 1.0f));
+		glGetIntegerv(GL_MAX_SPARSE_ARRAY_TEXTURE_LAYERS, &m_maxTextureLayers);
+
+		// Initialize the material array
+		glCreateTextures(GL_TEXTURE_2D_ARRAY, 1, &m_matID);
+		glTextureParameterf(m_matID, GL_TEXTURE_MAX_ANISOTROPY_EXT, 16.0f);
+		glTextureParameteri(m_matID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTextureParameteri(m_matID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		glTextureParameteri(m_matID, GL_TEXTURE_SPARSE_ARB, GL_TRUE);
+		glTextureStorage3D(m_matID, m_maxMips, GL_RGBA16F, m_materialSize, m_materialSize, m_maxTextureLayers);
+
+		// Share material array for rendering purposes
+		frameData->m_materialArrayID = m_matID;
+
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 			if (state == World_Module::unloaded)
@@ -65,37 +83,52 @@ public:
 			Prop_Component * propComponent = (Prop_Component*)componentParam[0];
 			auto & offset = propComponent->m_offset;
 			auto & count = propComponent->m_count;
+			auto & materialID = propComponent->m_materialID;
 			auto & model = propComponent->m_model;
 			auto & data = model->m_data;
 
-			if (offset == 0ull && count == 0ull && model->existsYet()) {
-				// Prop hasn't been uploaded yet
-				const size_t arraySize = data.m_vertices.size();
-				// Check if we can fit the desired data
-				tryToExpand(arraySize);
-
-				offset = m_currentSize;
-				count = arraySize;
-				// No need to check fence, since we are writing to a NEW range
-				glNamedBufferSubData(m_vboID, m_currentSize * sizeof(SingleVertex), arraySize * sizeof(SingleVertex), &data.m_vertices[0]);
-
-				m_currentSize += arraySize;
-				if (m_fence)
-					glDeleteSync(m_fence);
-				m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
-				propComponent->m_uploadFence = m_fence;
+			// Try to upload model data
+			if (!propComponent->m_uploadModel && model->existsYet()) {
+				tryInsertModel(propComponent->m_model);				
+				offset = m_modelMap[propComponent->m_model].first;
+				count = m_modelMap[propComponent->m_model].second;
+				propComponent->m_uploadModel = true;
 			}
-			else if (propComponent->m_uploadFence) {
-				const auto state = glClientWaitSync(propComponent->m_uploadFence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
-				if (state == GL_SIGNALED || state == GL_ALREADY_SIGNALED || state == GL_CONDITION_SATISFIED)
-					propComponent->m_uploadFence = nullptr; // don't delete the fence, we copied this system's fence
-			}
+
+			// Try to upload material data
+			if (!propComponent->m_uploadMaterial && model->existsYet() && model->m_materialArray->existsYet()) {
+				// Get spot in the material array
+				tryInsertMaterial(propComponent->m_model->m_materialArray);
+				materialID = m_materialMap[propComponent->m_model->m_materialArray];
+
+				// Prepare fence
+				propComponent->m_uploadMaterial = true;
+			}			
 		}
 	}	
 
 
 private:
 	// Private Methods
+	inline void tryInsertModel(const Shared_Model & model) {
+		if (m_modelMap.find(model) == m_modelMap.end()) {
+			// Prop hasn't been uploaded yet
+			const size_t arraySize = model->m_data.m_vertices.size() * sizeof(SingleVertex);
+			// Check if we can fit the desired data
+			waitOnFence();
+			tryToExpand(arraySize);
+			auto offset = m_currentSize / sizeof(SingleVertex);
+			auto count = arraySize / sizeof(SingleVertex);
+
+			// Upload vertex data
+			glNamedBufferSubData(m_vboID, m_currentSize, arraySize, &model->m_data.m_vertices[0]);
+			m_currentSize += arraySize;
+
+			// Prepare fence
+			m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+			m_modelMap[model] = {offset, count};
+		}
+	}
 	/***/
 	inline void waitOnFence() {
 		if (m_fence) {
@@ -110,18 +143,16 @@ private:
 	/***/
 	inline void tryToExpand(const size_t & arraySize) {
 		if (m_currentSize + arraySize > m_maxCapacity) {
-			waitOnFence();
-
 			// Create new set of VBO's large enough to fit old data + desired data
 			m_maxCapacity += arraySize * 2;
 
 			// Create the new VBO's
 			GLuint newVBOID = 0;
 			glCreateBuffers(1, &newVBOID);
-			glNamedBufferStorage(newVBOID, m_maxCapacity * sizeof(SingleVertex), 0, GL_DYNAMIC_STORAGE_BIT);
+			glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
 
 			// Copy old VBO's
-			glCopyNamedBufferSubData(m_vboID, newVBOID, 0, 0, m_currentSize * sizeof(SingleVertex));
+			glCopyNamedBufferSubData(m_vboID, newVBOID, 0, 0, m_currentSize);
 
 			// Delete the old VBO's
 			glDeleteBuffers(1, &m_vboID);
@@ -134,27 +165,63 @@ private:
 		}
 	}
 	/***/
+	inline void tryInsertMaterial(const Shared_Material & material) {
+		if (m_materialMap.find(material) == m_materialMap.end()) {
+			// Get spot in the material array
+			const auto imageCount = (GLsizei)((material->m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES);
+			auto materialID = (GLuint)m_matCount;
+			m_matCount += imageCount;
+			if (m_matCount >= m_maxTextureLayers)
+				m_engine->getManager_Messages().error("Out of room for more materials!");
+
+			// Upload material data
+			GLuint pboID = 0;
+			glCreateBuffers(1, &pboID);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
+			glNamedBufferStorage(pboID, m_materialSize * m_materialSize * imageCount * 4, material->m_materialData, GL_DYNAMIC_STORAGE_BIT);
+			for (int x = 0; x < m_maxMips; ++x) {
+				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
+				glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);
+			}
+			glTextureSubImage3D(m_matID, 0, 0, 0, materialID, m_materialSize, m_materialSize, imageCount, GL_RGBA, GL_UNSIGNED_BYTE, (void *)0);
+			glGenerateTextureMipmap(m_matID);
+			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, 0);
+			glDeleteBuffers(1, &pboID);
+			m_materialMap[material] = materialID;
+		}
+	}
+	/***/
 	inline void clear() {
 		// Reset size, and half the capacity
 		m_currentSize = 0ull;
 		m_maxCapacity /= 2ull;
+		m_modelMap.clear();
 
 		// Replace old vbo
 		waitOnFence();
 		GLuint newVBOID = 0;
 		glCreateBuffers(1, &newVBOID);
-		glNamedBufferStorage(newVBOID, m_maxCapacity * sizeof(SingleVertex), 0, GL_DYNAMIC_STORAGE_BIT);
+		glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
 		glDeleteBuffers(1, &m_vboID);
 		m_vboID = newVBOID;
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(SingleVertex));
+
+		// Reset materials
+		m_matCount = 0;
+		m_materialMap.clear();
 	}
+	/***/
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	GLuint m_vaoID = 0, m_vboID = 0;
-	size_t m_currentSize = 0ull, m_maxCapacity = 0ull;
+	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
+	size_t m_currentSize = 0ull, m_maxCapacity = 0ull, m_matCount = 0ull;
+	GLsizei m_materialSize = 512u;
+	GLint m_maxTextureLayers = 6, m_maxMips = 1;
 	GLsync m_fence = nullptr;
+	std::map<Shared_Model, std::pair<GLuint, GLuint>> m_modelMap;
+	std::map<Shared_Material, GLuint> m_materialMap;
 	std::shared_ptr<PropData> m_frameData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

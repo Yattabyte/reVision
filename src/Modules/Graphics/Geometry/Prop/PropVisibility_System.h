@@ -46,7 +46,7 @@ public:
 				const auto & offset = propComponent->m_offset;
 				const auto & count = propComponent->m_count;
 
-				if (renderableComponent->m_visible[x] && count && propComponent->m_uploadFence == nullptr) {
+				if (renderableComponent->m_visible[x] && count && propComponent->m_uploadModel && propComponent->m_uploadMaterial) {
 					viewInfo.visibleIndices.push_back((GLuint)index);
 					
 					viewInfo.skeletonData.push_back(skeletonComponent ? index : -1); // get skeleton ID if this entity has one
