@@ -12,20 +12,22 @@
 class Engine;
 class Shader;
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of a Shader asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Shader : public std::shared_ptr<Shader> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Shader() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	engine			the engine being used.
+	@param	filename		the filename to use.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	explicit Shared_Shader(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
+/** A single shader object, like a fragment shader or a vertex shader, not a whole shader program. */
 struct ShaderObj {
 	// (de)Constructors
 	/** Destroy the shader object. */
@@ -36,17 +38,17 @@ struct ShaderObj {
 
 	// Functions
 	/** Retrieve a shader parameter by the name specified.
-	@param		pname			the program parameter name
+	@param		pname			the program parameter name.
 	@return						the parameter value matching the name specified. */
 	GLint getShaderiv(const GLenum & pname) const;
 	/** Load a shader document from the file path specified.
-	@param		engine			the active engine to use
-	@param		filePath		the relative path to the file to read
+	@param		engine			the active engine to use.
+	@param		filePath		the relative path to the file to read.
 	@return						true on success, false otherwise. */
 	bool loadDocument(Engine * engine, const std::string & filePath);
 	/** Create an OpenGL shader object from this class, using the document string loaded.
-	@param		engine			the active engine to use
-	@param		filename		the shader file name (for reporting purposes)
+	@param		engine			the active engine to use.
+	@param		filename		the shader file name (for reporting purposes).
 	@return						true on success, false otherwise. */
 	bool createGLShader(Engine * engine, const std::string & filename);
 
@@ -57,14 +59,19 @@ struct ShaderObj {
 	GLenum m_type = GL_VERTEX_SHADER;
 };
 
-/** An encapsulation of a vertex/fragment OpenGL shader program.
-Also provides support for explicitly setting uniform values for a given attribute location. */
+/** An entire OpenGL vertex/fragment shader program.
+An encapsulation of an opengl vertex & fragment shader program. 
+Responsible for loading the files associated with this program from disk, and forming the program.
+Also provides support for explicitly setting uniform values for a given attribute location. 
+Supports binary representation. */
 class Shader : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Shader. */
 	~Shader();
-	/** Construct the Shader. */
+	/** Construct the Shader.
+	@param	engine				the engine to use.
+	@param	filename			the asset file name (relative to engine directory). */
 	Shader(Engine * engine, const std::string & filename);
 
 
@@ -134,22 +141,22 @@ public:
 protected:
 	// Protected Methods
 	/** Retrieve a program parameter by the name specified.
-	@param		pname			the program parameter name
+	@param		pname			the program parameter name.
 	@return						the parameter value matching the name specified. */
 	const GLint getProgramiv(const GLenum & pname) const;
 	/** Retrieve an error log corresponding to this shader program.
 	@return						an error log for this shader program. */
 	const std::vector<GLchar> getErrorLog() const;
 	/** Attempt to load a shader program from a cached binary file.
-	@param		relativePath	the relative path of the binary file
+	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	const bool loadCachedBinary(const std::string & relativePath);
 	/** Attempt to save a shader program to a cached binary file.
-	@param		relativePath	the relative path of the binary file
+	@param		relativePath	the relative path of the binary file.
 	@return						true on success, false otherwise. */
 	const bool saveCachedBinary(const std::string & relativePath);
 	/** Attempt to load a shader program from separate shader files.
-	@param		relativePath	the relative path of the shader files
+	@param		relativePath	the relative path of the shader files.
 	@return						true on success, false otherwise. */
 	virtual bool initShaders(const std::string & relativePath);
 	/** Use to validate this shader program after linking.

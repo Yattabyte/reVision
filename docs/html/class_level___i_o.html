@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,15 +71,20 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A static helper class used for reading/writing level files.  
+ <a href="class_level___i_o.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_level___i_o_8h_source.html">Level_IO.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a7734e052bb7a52ef28de5defe82795c8"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_level___i_o.html#a7734e052bb7a52ef28de5defe82795c8">Import_Level</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;relativePath, std::vector&lt; <a class="el" href="struct_level_struct___entity.html">LevelStruct_Entity</a> &gt; &amp;entities)</td></tr>
+<tr class="memdesc:a7734e052bb7a52ef28de5defe82795c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Import a level from disk.  <a href="#a7734e052bb7a52ef28de5defe82795c8">More...</a><br /></td></tr>
 <tr class="separator:a7734e052bb7a52ef28de5defe82795c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A static helper class used for reading/writing level files. Supports only our own level format so far. </p>
+<div class="textblock"><p>A static helper class used for reading/writing level files. </p>
+<p>Supports only our own level format so far. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a7734e052bb7a52ef28de5defe82795c8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7734e052bb7a52ef28de5defe82795c8">&#9670;&nbsp;</a></span>Import_Level()</h2>
@@ -120,7 +125,9 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Import a level from disk. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Import a level from disk. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>the engine to import to </td></tr>
     <tr><td class="paramname">relativePath</td><td>the path to the file </td></tr>

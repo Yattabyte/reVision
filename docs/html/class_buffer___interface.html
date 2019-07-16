@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An interface for opengl buffers.  
+ <a href="class_buffer___interface.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_buffer___interface_8h_source.html">Buffer_Interface.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Buffer_Interface:</div>
@@ -78,8 +81,8 @@ Inheritance diagram for Buffer_Interface:</div>
  <div class="center">
   <img src="class_buffer___interface.png" usemap="#Buffer_5FInterface_map" alt=""/>
   <map id="Buffer_5FInterface_map" name="Buffer_5FInterface_map">
-<area href="class_dynamic_buffer.html" alt="DynamicBuffer" shape="rect" coords="333,56,656,80"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; T &gt;" shape="rect" coords="333,112,656,136"/>
+<area href="class_dynamic_buffer.html" title="An OpenGL framebuffer encapsulation, which can change in size." alt="DynamicBuffer" shape="rect" coords="333,56,656,80"/>
+<area href="class_g_l___array_buffer.html" title="A data buffer that resides locally as well as on the GPU." alt="GL_ArrayBuffer&lt; T &gt;" shape="rect" coords="333,112,656,136"/>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Camera::GPUData &gt;" shape="rect" coords="333,168,656,192"/>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;" shape="rect" coords="333,224,656,248"/>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;" shape="rect" coords="333,280,656,304"/>
@@ -87,20 +90,24 @@ Inheritance diagram for Buffer_Interface:</div>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;" shape="rect" coords="333,392,656,416"/>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;" shape="rect" coords="333,448,656,472"/>
 <area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;" shape="rect" coords="333,504,656,528"/>
-<area href="class_static_buffer.html" alt="StaticBuffer" shape="rect" coords="333,560,656,584"/>
-<area href="class_static_triple_buffer.html" alt="StaticTripleBuffer" shape="rect" coords="333,616,656,640"/>
+<area href="class_static_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticBuffer" shape="rect" coords="333,560,656,584"/>
+<area href="class_static_triple_buffer.html" title="Encapsulates an OpenGL buffer that is fixed in size." alt="StaticTripleBuffer" shape="rect" coords="333,616,656,640"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">~Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this buffer.  <a href="#a79bb5d606d3dd10c219a48bff8bf19d1">More...</a><br /></td></tr>
 <tr class="separator:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:ab834dee66f3f9cee83a60d6c1387fb03"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer.  <a href="#ab834dee66f3f9cee83a60d6c1387fb03">More...</a><br /></td></tr>
 <tr class="separator:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6809378e3531666363bd5de16f3a9c05"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a6809378e3531666363bd5de16f3a9c05">bindBuffer</a> (const GLenum &amp;target) const =0</td></tr>
+<tr class="memdesc:a6809378e3531666363bd5de16f3a9c05"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a6809378e3531666363bd5de16f3a9c05">More...</a><br /></td></tr>
 <tr class="separator:a6809378e3531666363bd5de16f3a9c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8d4908daa0a15a01d879ae8997c825"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#aca8d4908daa0a15a01d879ae8997c825">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const =0</td></tr>
+<tr class="memdesc:aca8d4908daa0a15a01d879ae8997c825"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#aca8d4908daa0a15a01d879ae8997c825">More...</a><br /></td></tr>
 <tr class="separator:aca8d4908daa0a15a01d879ae8997c825"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -128,6 +135,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this buffer. </p>
 
 </div>
@@ -154,6 +162,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct a buffer. </p>
 
 </div>
@@ -182,7 +191,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to the target specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
   </table>
@@ -226,7 +237,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to a particular binding point, such as for shaders to read. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to a particular binding point, such as for shaders to read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
     <tr><td class="paramname">index</td><td>the binding point index to use. </td></tr>

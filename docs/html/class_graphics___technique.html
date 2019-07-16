@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An interface for core graphics effect techniques.  
+ <a href="class_graphics___technique.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_graphics___technique_8h_source.html">Graphics_Technique.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Graphics_Technique:</div>
@@ -80,20 +83,20 @@ Inheritance diagram for Graphics_Technique:</div>
  <div class="center">
   <img src="class_graphics___technique.png" usemap="#Graphics_5FTechnique_map" alt=""/>
   <map id="Graphics_5FTechnique_map" name="Graphics_5FTechnique_map">
-<area href="class_bloom.html" alt="Bloom" shape="rect" coords="148,56,286,80"/>
-<area href="class_directional___technique.html" alt="Directional_Technique" shape="rect" coords="148,112,286,136"/>
-<area href="class_f_x_a_a.html" alt="FXAA" shape="rect" coords="148,168,286,192"/>
-<area href="class_geometry___technique.html" alt="Geometry_Technique" shape="rect" coords="148,224,286,248"/>
-<area href="class_h_d_r.html" alt="HDR" shape="rect" coords="148,280,286,304"/>
-<area href="class_join___reflections.html" alt="Join_Reflections" shape="rect" coords="148,336,286,360"/>
-<area href="class_point___technique.html" alt="Point_Technique" shape="rect" coords="148,392,286,416"/>
-<area href="class_radiance___hints.html" alt="Radiance_Hints" shape="rect" coords="148,448,286,472"/>
-<area href="class_reflector___technique.html" alt="Reflector_Technique" shape="rect" coords="148,504,286,528"/>
-<area href="class_shadow___technique.html" alt="Shadow_Technique" shape="rect" coords="148,560,286,584"/>
-<area href="class_skybox.html" alt="Skybox" shape="rect" coords="148,616,286,640"/>
-<area href="class_spot___technique.html" alt="Spot_Technique" shape="rect" coords="148,672,286,696"/>
-<area href="class_s_s_a_o.html" alt="SSAO" shape="rect" coords="148,728,286,752"/>
-<area href="class_s_s_r.html" alt="SSR" shape="rect" coords="148,784,286,808"/>
+<area href="class_bloom.html" title="A post-processing technique for generating bloom from a lighting buffer." alt="Bloom" shape="rect" coords="148,56,286,80"/>
+<area href="class_directional___technique.html" title="A core lighting technique responsible for all directional lights." alt="Directional_Technique" shape="rect" coords="148,112,286,136"/>
+<area href="class_f_x_a_a.html" title="A post-processing technique for applying fxaa to the currently bound 2D image." alt="FXAA" shape="rect" coords="148,168,286,192"/>
+<area href="class_geometry___technique.html" title="A rendering technique category responsible for displaying and shadowing geometry." alt="Geometry_Technique" shape="rect" coords="148,224,286,248"/>
+<area href="class_h_d_r.html" title="A post-processing technique for tone-mapping and gamma correcting the final lighting product." alt="HDR" shape="rect" coords="148,280,286,304"/>
+<area href="class_join___reflections.html" title="A core-rendering technique for writing the final scene reflections back into the lighting." alt="Join_Reflections" shape="rect" coords="148,336,286,360"/>
+<area href="class_point___technique.html" title="A core lighting technique responsible for all point lights." alt="Point_Technique" shape="rect" coords="148,392,286,416"/>
+<area href="class_radiance___hints.html" title="A core-rendering technique for approximating indirect diffuse lighting (irradiant light,..." alt="Radiance_Hints" shape="rect" coords="148,448,286,472"/>
+<area href="class_reflector___technique.html" title="A core lighting technique responsible for all parallax reflectors." alt="Reflector_Technique" shape="rect" coords="148,504,286,528"/>
+<area href="class_shadow___technique.html" title="A rendering technique responsible for rendering/updating shadow casters in the scene." alt="Shadow_Technique" shape="rect" coords="148,560,286,584"/>
+<area href="class_skybox.html" title="A core-rendering technique for writing the frame time to the screen." alt="Skybox" shape="rect" coords="148,616,286,640"/>
+<area href="class_spot___technique.html" title="A core lighting technique responsible for all spot lights." alt="Spot_Technique" shape="rect" coords="148,672,286,696"/>
+<area href="class_s_s_a_o.html" title="A core-rendering technique for deriving an ambient occlusion factor from the viewport itself." alt="SSAO" shape="rect" coords="148,728,286,752"/>
+<area href="class_s_s_r.html" title="A core-rendering technique for deriving extra reflection information from the viewport itself." alt="SSR" shape="rect" coords="148,784,286,808"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -113,18 +116,25 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:acbe7a9cb38c785b8694d465aad11aeac"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">~Graphics_Technique</a> ()=default</td></tr>
+<tr class="memdesc:acbe7a9cb38c785b8694d465aad11aeac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="#acbe7a9cb38c785b8694d465aad11aeac">More...</a><br /></td></tr>
 <tr class="separator:acbe7a9cb38c785b8694d465aad11aeac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac74545c0d7ca89d0878887c6d9933d43"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">Graphics_Technique</a> (const Technique_Category &amp;category)</td></tr>
+<tr class="memdesc:ac74545c0d7ca89d0878887c6d9933d43"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ac74545c0d7ca89d0878887c6d9933d43">More...</a><br /></td></tr>
 <tr class="separator:ac74545c0d7ca89d0878887c6d9933d43"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="memItemLeft" align="right" valign="top">Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">getCategory</a> () const</td></tr>
+<tr class="memdesc:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="#a7670af2bb3e088ea5062ee6305ff9ea6">More...</a><br /></td></tr>
 <tr class="separator:a7670af2bb3e088ea5062ee6305ff9ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">setEnabled</a> (const bool &amp;state)</td></tr>
+<tr class="memdesc:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="#a914bb9fbfe740c951ea8252f5f6bc7c7">More...</a><br /></td></tr>
 <tr class="separator:a914bb9fbfe740c951ea8252f5f6bc7c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7a67fee4b16dee6bb7ba0fcfc3031556">prepareForNextFrame</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="#a7a67fee4b16dee6bb7ba0fcfc3031556">More...</a><br /></td></tr>
 <tr class="separator:a7a67fee4b16dee6bb7ba0fcfc3031556"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6c08424a73c39ad59fb99413dac8475b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a6c08424a73c39ad59fb99413dac8475b">updateTechnique</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:a6c08424a73c39ad59fb99413dac8475b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-passes and or update any data needed before rendering this frame.  <a href="#a6c08424a73c39ad59fb99413dac8475b">More...</a><br /></td></tr>
 <tr class="separator:a6c08424a73c39ad59fb99413dac8475b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">renderTechnique</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives)</td></tr>
+<tr class="memdesc:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#a1bd6331a66784d6cddbe0f9b6bd91624">More...</a><br /></td></tr>
 <tr class="separator:a1bd6331a66784d6cddbe0f9b6bd91624"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
@@ -161,6 +171,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Virtual Destructor. </p>
 
 </div>
@@ -188,6 +199,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Constructor. </p>
 
 </div>
@@ -215,6 +227,7 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Retrieve the category this technique belongs to. </p>
 
 </div>
@@ -242,7 +255,9 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Prepare this technique for the next frame, swapping any of its buffers. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Prepare this technique for the next frame, swapping any of its buffers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>
@@ -292,7 +307,9 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Apply this lighting technique. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Apply this lighting technique. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
     <tr><td class="paramname">viewport</td><td>the viewport to render from. </td></tr>
@@ -327,7 +344,9 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Turn this technique on or off. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Turn this technique on or off. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">state</td><td>whether this technique should be on or off. </td></tr>
   </table>
@@ -359,7 +378,9 @@ Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_categ
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Perform any pre-passes and or update any data needed before rendering this frame. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Perform any pre-passes and or update any data needed before rendering this frame. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>

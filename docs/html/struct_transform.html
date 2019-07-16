@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,17 +72,24 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A 3D transformation object.  
+ <a href="struct_transform.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_transform_8h_source.html">Transform.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a144ce8dcafd13ca66acb5a1636cfc297"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a144ce8dcafd13ca66acb5a1636cfc297">Transform</a> ()=default</td></tr>
+<tr class="memdesc:a144ce8dcafd13ca66acb5a1636cfc297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <a href="#a144ce8dcafd13ca66acb5a1636cfc297">More...</a><br /></td></tr>
 <tr class="separator:a144ce8dcafd13ca66acb5a1636cfc297"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a49122aef1b00d592a17f0cfe1f7aeee9">Transform</a> (const glm::vec3 &amp;position, const glm::quat &amp;orientation, const glm::vec3 &amp;scale)</td></tr>
+<tr class="memdesc:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a transformation object with any of the supplied parameters.  <a href="#a49122aef1b00d592a17f0cfe1f7aeee9">More...</a><br /></td></tr>
 <tr class="separator:a49122aef1b00d592a17f0cfe1f7aeee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab90c10801017b3d6ba82214e06749211"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#ab90c10801017b3d6ba82214e06749211">Transform</a> (const glm::quat &amp;orientation)</td></tr>
+<tr class="memdesc:ab90c10801017b3d6ba82214e06749211"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs a transformation object with only orientation.  <a href="#ab90c10801017b3d6ba82214e06749211">More...</a><br /></td></tr>
 <tr class="separator:ab90c10801017b3d6ba82214e06749211"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a377194ad810fc2e6d05e3008eb8c7655"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_transform.html#a377194ad810fc2e6d05e3008eb8c7655">update</a> ()</td></tr>
+<tr class="memdesc:a377194ad810fc2e6d05e3008eb8c7655"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculates the transformation matrix (and inverse) using this transformations current data.  <a href="#a377194ad810fc2e6d05e3008eb8c7655">More...</a><br /></td></tr>
 <tr class="separator:a377194ad810fc2e6d05e3008eb8c7655"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5171e6bc2bfbe6f779957b276f28da8"><td class="memItemLeft" align="right" valign="top"><a id="ab5171e6bc2bfbe6f779957b276f28da8"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>operator==</b> (const <a class="el" href="struct_transform.html">Transform</a> &amp;other)</td></tr>
@@ -110,7 +117,8 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
 <tr class="separator:a12c92ef7b5faec81823b911115e9b7a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A 3D transformation object. Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. </p>
+<div class="textblock"><p>A 3D transformation object. </p>
+<p>Takes in position, orientation, and scaling attributes, and calculates a transformation matrix. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a144ce8dcafd13ca66acb5a1636cfc297"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a144ce8dcafd13ca66acb5a1636cfc297">&#9670;&nbsp;</a></span>Transform() <span class="overload">[1/3]</span></h2>
@@ -134,6 +142,7 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Default Constructor. </p>
 
 </div>
@@ -177,7 +186,9 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructs a transformation object with any of the supplied parameters. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Constructs a transformation object with any of the supplied parameters. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">position</td><td>the desired position </td></tr>
     <tr><td class="paramname">orientation</td><td>the desired orientation </td></tr>
@@ -211,7 +222,9 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Constructs a transformation object with only orientation. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Constructs a transformation object with only orientation. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">orientation</td><td>the desired orientation </td></tr>
   </table>
@@ -243,6 +256,7 @@ glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_inverseModelMa
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Recalculates the transformation matrix (and inverse) using this transformations current data. </p>
 
 </div>

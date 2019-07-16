@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A cubemap texture object.  
+ <a href="class_cubemap.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_cubemap_8h_source.html">Cubemap.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cubemap:</div>
@@ -80,28 +83,36 @@ Inheritance diagram for Cubemap:</div>
  <div class="center">
   <img src="class_cubemap.png" usemap="#Cubemap_map" alt=""/>
   <map id="Cubemap_map" name="Cubemap_map">
-<area href="class_asset.html" title="Represents some form of data to be loaded from disk, such as shaders, models, levels,..." alt="Asset" shape="rect" coords="0,0,65,24"/>
+<area href="class_asset.html" title="An abstract base-class for assets." alt="Asset" shape="rect" coords="0,0,65,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae3bc64477e52699a7f9754be9b29bd3e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cubemap.html#ae3bc64477e52699a7f9754be9b29bd3e">~Cubemap</a> ()</td></tr>
+<tr class="memdesc:ae3bc64477e52699a7f9754be9b29bd3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="class_cubemap.html" title="A cubemap texture object.">Cubemap</a>.  <a href="#ae3bc64477e52699a7f9754be9b29bd3e">More...</a><br /></td></tr>
 <tr class="separator:ae3bc64477e52699a7f9754be9b29bd3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac5f5a29fbd110195ac9dc6e720f0b9e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cubemap.html#ac5f5a29fbd110195ac9dc6e720f0b9e1">Cubemap</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:ac5f5a29fbd110195ac9dc6e720f0b9e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="class_cubemap.html" title="A cubemap texture object.">Cubemap</a>.  <a href="#ac5f5a29fbd110195ac9dc6e720f0b9e1">More...</a><br /></td></tr>
 <tr class="separator:ac5f5a29fbd110195ac9dc6e720f0b9e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae28247dd395f8615c9852d339ed07a96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_cubemap.html#ae28247dd395f8615c9852d339ed07a96">bind</a> (const unsigned int &amp;texture_unit)</td></tr>
+<tr class="memdesc:ae28247dd395f8615c9852d339ed07a96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Makes this texture active at a specific texture unit.  <a href="#ae28247dd395f8615c9852d339ed07a96">More...</a><br /></td></tr>
 <tr class="separator:ae28247dd395f8615c9852d339ed07a96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
 <tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
+<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -126,8 +137,10 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Shared_Cubemap</b></
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
 <tr class="separator:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a> ()</td></tr>
+<tr class="memdesc:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declares this asset ready-to-use.  <a href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">More...</a><br /></td></tr>
 <tr class="separator:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:a0329cd6e471217c694abfc632e6c1bbd inherit pro_attribs_class_asset"><td class="memItemLeft" align="right" valign="top"><a id="a0329cd6e471217c694abfc632e6c1bbd"></a>
@@ -147,7 +160,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 <tr class="separator:a9d426de8f210c27c208fa5c099f37498 inherit pro_attribs_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Represents an OpenGL cubemap texture object. </p>
+<div class="textblock"><p>A cubemap texture object. </p>
+<p>Wraps an OpenGL texture object for cubemaps, dealing with the file fetching and uploading for all 6 images. </p><dl class="section note"><dt>Note</dt><dd>owns 6 <a class="el" href="class_shared___image.html" title="Shared version of an Image asset.">Shared_Image</a> objects. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae3bc64477e52699a7f9754be9b29bd3e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae3bc64477e52699a7f9754be9b29bd3e">&#9670;&nbsp;</a></span>~Cubemap()</h2>
@@ -163,7 +177,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Destroy the <a class="el" href="class_cubemap.html">Cubemap</a>. </p>
+
+<p>Destroy the <a class="el" href="class_cubemap.html" title="A cubemap texture object.">Cubemap</a>. </p>
 
 </div>
 </div>
@@ -192,7 +207,15 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct the <a class="el" href="class_cubemap.html">Cubemap</a>. </p>
+
+<p>Construct the <a class="el" href="class_cubemap.html" title="A cubemap texture object.">Cubemap</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the asset file name (relative to engine directory). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -212,9 +235,11 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Makes this texture active at a specific texture unit. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Makes this texture active at a specific texture unit. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">texture_unit</td><td>the desired texture unit to make this texture active at </td></tr>
+    <tr><td class="paramname">texture_unit</td><td>the desired texture unit to make this texture active at. </td></tr>
   </table>
   </dd>
 </dl>

@@ -9,7 +9,8 @@
 class Engine;
 class Collider;
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of a Collider asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Collider : public std::shared_ptr<Collider> {
 public:
 	// Public (de)Constructors
@@ -23,13 +24,17 @@ public:
 	explicit Shared_Collider(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-/** A 3D mesh tuned for use in physics simulations instead of rendering. */
+/** A collision shape asset used in physics.
+Represents a 3D mesh asset tuned for use in physics simulations instead of rendering. 
+@note	uses Bullet library. */
 class Collider : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Collider. */
 	inline ~Collider() = default;
-	/** Construct the Collider. */
+	/** Construct the Collider.
+	@param	engine		the engine to use.
+	@param	filename	the asset file name (relative to engine directory). */
 	Collider(Engine * engine, const std::string & filename);
 	
 	

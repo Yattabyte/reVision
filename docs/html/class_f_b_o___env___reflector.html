@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,23 +71,33 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Framebuffer containing texture data for all environment maps.  
+ <a href="class_f_b_o___env___reflector.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_f_b_o___env___reflector_8h_source.html">FBO_Env_Reflector.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a74ab573609fec5ae3e62309684dbce36"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#a74ab573609fec5ae3e62309684dbce36">~FBO_Env_Reflector</a> ()</td></tr>
+<tr class="memdesc:a74ab573609fec5ae3e62309684dbce36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this framebuffer.  <a href="#a74ab573609fec5ae3e62309684dbce36">More...</a><br /></td></tr>
 <tr class="separator:a74ab573609fec5ae3e62309684dbce36"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4452d047d106ab9a5d349ef8341a3a5f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#a4452d047d106ab9a5d349ef8341a3a5f">FBO_Env_Reflector</a> ()</td></tr>
+<tr class="memdesc:a4452d047d106ab9a5d349ef8341a3a5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct this framebuffer.  <a href="#a4452d047d106ab9a5d349ef8341a3a5f">More...</a><br /></td></tr>
 <tr class="separator:a4452d047d106ab9a5d349ef8341a3a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c63d3dd72671d5694eb6d4fca9e4a92"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#a5c63d3dd72671d5694eb6d4fca9e4a92">resize</a> (const glm::ivec2 newSize, const GLuint &amp;depth)</td></tr>
+<tr class="memdesc:a5c63d3dd72671d5694eb6d4fca9e4a92"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of this framebuffer.  <a href="#a5c63d3dd72671d5694eb6d4fca9e4a92">More...</a><br /></td></tr>
 <tr class="separator:a5c63d3dd72671d5694eb6d4fca9e4a92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab44689f599dcfb702745a993488b13d3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#ab44689f599dcfb702745a993488b13d3">clear</a> ()</td></tr>
+<tr class="memdesc:ab44689f599dcfb702745a993488b13d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the data out of the entire framebuffer.  <a href="#ab44689f599dcfb702745a993488b13d3">More...</a><br /></td></tr>
 <tr class="separator:ab44689f599dcfb702745a993488b13d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a086de3c0c0de57f8cad8320c30365c8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#a086de3c0c0de57f8cad8320c30365c8a">clear</a> (const GLint &amp;zOffset)</td></tr>
+<tr class="memdesc:a086de3c0c0de57f8cad8320c30365c8a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the data out of a specific layer in the framebuffer.  <a href="#a086de3c0c0de57f8cad8320c30365c8a">More...</a><br /></td></tr>
 <tr class="separator:a086de3c0c0de57f8cad8320c30365c8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7af91d0bd207085f5a3d5becffa324ad"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#a7af91d0bd207085f5a3d5becffa324ad">bindForWriting</a> (const int &amp;index)</td></tr>
+<tr class="memdesc:a7af91d0bd207085f5a3d5becffa324ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this framebuffer for writting, at the specific mipmap index.  <a href="#a7af91d0bd207085f5a3d5becffa324ad">More...</a><br /></td></tr>
 <tr class="separator:a7af91d0bd207085f5a3d5becffa324ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac700255d201f65531eb5fba4ff65b73b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_f_b_o___env___reflector.html#ac700255d201f65531eb5fba4ff65b73b">bindForReading</a> (const GLuint &amp;binding=0)</td></tr>
+<tr class="memdesc:ac700255d201f65531eb5fba4ff65b73b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this framebuffer for reading, with the binding offset specified.  <a href="#ac700255d201f65531eb5fba4ff65b73b">More...</a><br /></td></tr>
 <tr class="separator:ac700255d201f65531eb5fba4ff65b73b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -115,6 +125,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this framebuffer. </p>
 
 </div>
@@ -141,6 +152,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct this framebuffer. </p>
 
 </div>
@@ -169,7 +181,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this framebuffer for reading, with the binding offset specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this framebuffer for reading, with the binding offset specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">binding</td><td>the texture binding point. </td></tr>
   </table>
@@ -201,6 +215,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Bind this framebuffer for writting, at the specific mipmap index. </p>
 
 </div>
@@ -227,6 +242,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Clear the data out of the entire framebuffer. </p>
 
 </div>
@@ -254,7 +270,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Clear the data out of a specific layer in the framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Clear the data out of a specific layer in the framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">zOffset</td><td>the layer to clear out of. </td></tr>
   </table>
@@ -296,7 +314,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the size of this framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the size of this framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newSize</td><td>the new size to use. </td></tr>
     <tr><td class="paramname">depth</td><td>the new depth to use. </td></tr>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,6 +72,9 @@ $(function() {
 <div class="title">KeyboardEvent Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Holds keyboard interaction information.  
+ <a href="class_keyboard_event.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_keyboard_event_8h_source.html">KeyboardEvent.h</a>&gt;</code></p>
 <table class="memberdecls">
@@ -239,23 +242,31 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad49f7d5ed6aaad1a6f9c4c8ee70cd8a4"><td class="memItemLeft" align="right" valign="top">enum Key unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#ad49f7d5ed6aaad1a6f9c4c8ee70cd8a4">~KeyboardEvent</a> ()=default</td></tr>
+<tr class="memdesc:ad49f7d5ed6aaad1a6f9c4c8ee70cd8a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of all keys supported, and an appropriate key code for each of them.  <a href="#ad49f7d5ed6aaad1a6f9c4c8ee70cd8a4">More...</a><br /></td></tr>
 <tr class="separator:ad49f7d5ed6aaad1a6f9c4c8ee70cd8a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a97f350656161d6cc7a56739e195d232e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#a97f350656161d6cc7a56739e195d232e">KeyboardEvent</a> ()=default</td></tr>
+<tr class="memdesc:a97f350656161d6cc7a56739e195d232e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a keyboard event.  <a href="#a97f350656161d6cc7a56739e195d232e">More...</a><br /></td></tr>
 <tr class="separator:a97f350656161d6cc7a56739e195d232e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af6988ccd8fef97e5d155da07508cf13a"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#af6988ccd8fef97e5d155da07508cf13a">getChar</a> () const</td></tr>
+<tr class="memdesc:af6988ccd8fef97e5d155da07508cf13a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the keycode for the current key pressed.  <a href="#af6988ccd8fef97e5d155da07508cf13a">More...</a><br /></td></tr>
 <tr class="separator:af6988ccd8fef97e5d155da07508cf13a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee51a823772c304e05419b127a93ccc5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#aee51a823772c304e05419b127a93ccc5">setChar</a> (const unsigned int &amp;currentChar)</td></tr>
+<tr class="memdesc:aee51a823772c304e05419b127a93ccc5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a keycode as the current key being pressed.  <a href="#aee51a823772c304e05419b127a93ccc5">More...</a><br /></td></tr>
 <tr class="separator:aee51a823772c304e05419b127a93ccc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc2d10fb5ecc3d6efed6a8ad16a84ad2"><td class="memItemLeft" align="right" valign="top">KeyboardEvent::Action&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#abc2d10fb5ecc3d6efed6a8ad16a84ad2">getState</a> (const Key &amp;key) const</td></tr>
+<tr class="memdesc:abc2d10fb5ecc3d6efed6a8ad16a84ad2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the key action state for a given key type.  <a href="#abc2d10fb5ecc3d6efed6a8ad16a84ad2">More...</a><br /></td></tr>
 <tr class="separator:abc2d10fb5ecc3d6efed6a8ad16a84ad2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad7facf17f78067cb87a5e6069e8a126"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#aad7facf17f78067cb87a5e6069e8a126">setState</a> (const Key &amp;key, const KeyboardEvent::Action &amp;action)</td></tr>
+<tr class="memdesc:aad7facf17f78067cb87a5e6069e8a126"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the action state for a given key.  <a href="#aad7facf17f78067cb87a5e6069e8a126">More...</a><br /></td></tr>
 <tr class="separator:aad7facf17f78067cb87a5e6069e8a126"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
 Protected Attributes</h2></td></tr>
 <tr class="memitem:ad09b4444699f0dd26423fe1918fb9aa4"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#ad09b4444699f0dd26423fe1918fb9aa4">m_currentChar</a> = 0</td></tr>
+<tr class="memdesc:ad09b4444699f0dd26423fe1918fb9aa4"><td class="mdescLeft">&#160;</td><td class="mdescRight">The key being pressed in a char stream.  <a href="#ad09b4444699f0dd26423fe1918fb9aa4">More...</a><br /></td></tr>
 <tr class="separator:ad09b4444699f0dd26423fe1918fb9aa4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc86394651cfa37ef0c89fe40e13b602"><td class="memItemLeft" align="right" valign="top">std::map&lt; unsigned int, KeyboardEvent::Action &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_keyboard_event.html#abc86394651cfa37ef0c89fe40e13b602">m_keyStates</a></td></tr>
+<tr class="memdesc:abc86394651cfa37ef0c89fe40e13b602"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map of key states over time, e.g.  <a href="#abc86394651cfa37ef0c89fe40e13b602">More...</a><br /></td></tr>
 <tr class="separator:abc86394651cfa37ef0c89fe40e13b602"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -283,7 +294,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The name of all keys supported, and an appropriate key code for each of them. Destroy the keyboard event. </p>
+
+<p>The name of all keys supported, and an appropriate key code for each of them. </p>
+<p>Destroy the keyboard event. </p>
 
 </div>
 </div>
@@ -309,6 +322,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct a keyboard event. </p>
 
 </div>
@@ -336,7 +350,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the keycode for the current key pressed. </p><dl class="section return"><dt>Returns</dt><dd>the current key pressed. </dd></dl>
+
+<p>Retrieve the keycode for the current key pressed. </p>
+<dl class="section return"><dt>Returns</dt><dd>the current key pressed. </dd></dl>
 
 </div>
 </div>
@@ -363,7 +379,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the key action state for a given key type. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve the key action state for a given key type. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key to check the state of. </td></tr>
   </table>
@@ -396,7 +414,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set a keycode as the current key being pressed. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set a keycode as the current key being pressed. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">currentChar</td><td>the key to set as pressed. </td></tr>
   </table>
@@ -438,7 +458,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the action state for a given key. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the action state for a given key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key to set the state for. </td></tr>
     <tr><td class="paramname">action</td><td>the state to set for the given key. </td></tr>
@@ -468,6 +490,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>The key being pressed in a char stream. </p>
 
 </div>
@@ -491,7 +514,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Map of key states over time, e.g. history if one is pressed or released. </p>
+
+<p>Map of key states over time, e.g. </p>
+<p>history if one is pressed or released. </p>
 
 </div>
 </div>

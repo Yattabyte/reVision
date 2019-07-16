@@ -1,5 +1,17 @@
 entity
 {
+	Transform_Component
+	{
+		vec3 "0,10,30"
+		quat "1,0,0,0"
+		vec3 "1,1,1"
+	}
+	PlayerSpawn_Component
+	{
+	}
+}
+entity
+{
 	Renderable_Component
 	{
 	}

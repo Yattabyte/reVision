@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,19 +72,27 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Framebuffer containing shadow data for all light maps.  
+ <a href="class_shadow_map.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_shadow_map_8h_source.html">ShadowMap.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aade01d2dc3620a7015016ecd3aa3cab3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow_map.html#aade01d2dc3620a7015016ecd3aa3cab3">~ShadowMap</a> ()</td></tr>
+<tr class="memdesc:aade01d2dc3620a7015016ecd3aa3cab3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this framebuffer.  <a href="#aade01d2dc3620a7015016ecd3aa3cab3">More...</a><br /></td></tr>
 <tr class="separator:aade01d2dc3620a7015016ecd3aa3cab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6fd44eb98770e85a2fafc27437169b1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow_map.html#ab6fd44eb98770e85a2fafc27437169b1">ShadowMap</a> ()</td></tr>
+<tr class="memdesc:ab6fd44eb98770e85a2fafc27437169b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct this framebuffer.  <a href="#ab6fd44eb98770e85a2fafc27437169b1">More...</a><br /></td></tr>
 <tr class="separator:ab6fd44eb98770e85a2fafc27437169b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21cc61f33a40628129d0aeb9982a7b55"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow_map.html#a21cc61f33a40628129d0aeb9982a7b55">resize</a> (const glm::ivec2 &amp;newSize, const int &amp;layerFaces)</td></tr>
+<tr class="memdesc:a21cc61f33a40628129d0aeb9982a7b55"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the size of this framebuffer.  <a href="#a21cc61f33a40628129d0aeb9982a7b55">More...</a><br /></td></tr>
 <tr class="separator:a21cc61f33a40628129d0aeb9982a7b55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a7423a33da6a7a4a6581c6d727ad751"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow_map.html#a6a7423a33da6a7a4a6581c6d727ad751">clear</a> (const GLint &amp;zOffset, const GLsizei &amp;amount)</td></tr>
+<tr class="memdesc:a6a7423a33da6a7a4a6581c6d727ad751"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the data out of a specific layer in the framebuffer.  <a href="#a6a7423a33da6a7a4a6581c6d727ad751">More...</a><br /></td></tr>
 <tr class="separator:a6a7423a33da6a7a4a6581c6d727ad751"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ace06c3153c0ab023d0b8260a74651dbb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shadow_map.html#ace06c3153c0ab023d0b8260a74651dbb">bindForWriting</a> ()</td></tr>
+<tr class="memdesc:ace06c3153c0ab023d0b8260a74651dbb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this framebuffer for writting.  <a href="#ace06c3153c0ab023d0b8260a74651dbb">More...</a><br /></td></tr>
 <tr class="separator:ace06c3153c0ab023d0b8260a74651dbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -124,6 +132,7 @@ const GLuint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_texDe
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this framebuffer. </p>
 
 </div>
@@ -150,6 +159,7 @@ const GLuint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_texDe
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct this framebuffer. </p>
 
 </div>
@@ -177,6 +187,7 @@ const GLuint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_texDe
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Bind this framebuffer for writting. </p>
 
 </div>
@@ -214,7 +225,9 @@ const GLuint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_texDe
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Clear the data out of a specific layer in the framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Clear the data out of a specific layer in the framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">zOffset</td><td>the layer to clear out of. </td></tr>
     <tr><td class="paramname">amount</td><td>the number of layers to clear. </td></tr>
@@ -257,7 +270,9 @@ const GLuint &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>m_texDe
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the size of this framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the size of this framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newSize</td><td>the new size to use. </td></tr>
     <tr><td class="paramname">depth</td><td>the new depth to use. </td></tr>

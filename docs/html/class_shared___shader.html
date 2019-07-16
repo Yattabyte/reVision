@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Shared version of a <a class="el" href="class_shader.html" title="An entire OpenGL vertex/fragment shader program.">Shader</a> asset.  
+ <a href="class_shared___shader.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_shader_8h_source.html">Shader.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Shared_Shader:</div>
@@ -82,12 +85,15 @@ Inheritance diagram for Shared_Shader:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afba5f2e142eed592b03a9bc23ea51e50"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader.html#afba5f2e142eed592b03a9bc23ea51e50">Shared_Shader</a> ()=default</td></tr>
+<tr class="memdesc:afba5f2e142eed592b03a9bc23ea51e50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#afba5f2e142eed592b03a9bc23ea51e50">More...</a><br /></td></tr>
 <tr class="separator:afba5f2e142eed592b03a9bc23ea51e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2c5bed59ef109ddb87e3be4cef8c820f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader.html#a2c5bed59ef109ddb87e3be4cef8c820f">Shared_Shader</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a2c5bed59ef109ddb87e3be4cef8c820f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a2c5bed59ef109ddb87e3be4cef8c820f">More...</a><br /></td></tr>
 <tr class="separator:a2c5bed59ef109ddb87e3be4cef8c820f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Responsible for the creation, containing, and sharing of assets. </p>
+<div class="textblock"><p>Shared version of a <a class="el" href="class_shader.html" title="An entire OpenGL vertex/fragment shader program.">Shader</a> asset. </p>
+<p>Responsible for the creation, containing, and sharing of assets. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afba5f2e142eed592b03a9bc23ea51e50"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afba5f2e142eed592b03a9bc23ea51e50">&#9670;&nbsp;</a></span>Shared_Shader() <span class="overload">[1/2]</span></h2>
@@ -111,6 +117,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Constructs an empty asset. </p>
 
 </div>
@@ -154,15 +161,17 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Begins the creation process for this asset. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Begins the creation process for this asset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used </td></tr>
-    <tr><td class="paramname">filename</td><td>the filename to use </td></tr>
-    <tr><td class="paramname">threaded</td><td>create in a separate thread </td></tr>
+    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
+    <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the desired asset </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the desired asset. </dd></dl>
 
 </div>
 </div>

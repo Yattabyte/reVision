@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,49 +72,68 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A std::map that uses a constant char array as the keys, and stores values of type &lt;T&gt;.  
+ <a href="class_mapped_char.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_mapped_char_8h_source.html">MappedChar.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aeca94bc574b750401cc639ef35c18ccb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#aeca94bc574b750401cc639ef35c18ccb">~MappedChar</a> ()=default</td></tr>
+<tr class="memdesc:aeca94bc574b750401cc639ef35c18ccb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the map.  <a href="#aeca94bc574b750401cc639ef35c18ccb">More...</a><br /></td></tr>
 <tr class="separator:aeca94bc574b750401cc639ef35c18ccb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d792d91ba7c6cc0d1fab2d8a0128676"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a7d792d91ba7c6cc0d1fab2d8a0128676">MappedChar</a> ()=default</td></tr>
+<tr class="memdesc:a7d792d91ba7c6cc0d1fab2d8a0128676"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the map.  <a href="#a7d792d91ba7c6cc0d1fab2d8a0128676">More...</a><br /></td></tr>
 <tr class="separator:a7d792d91ba7c6cc0d1fab2d8a0128676"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb">insert</a> (const char *key)</td></tr>
-<tr class="memdesc:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">will auto-generate a new zero-initialized &lt;T&gt; to associate with the key.  <a href="#a3b53fb85c72ef6649e10d0e2f76167eb">More...</a><br /></td></tr>
+<tr class="memdesc:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new key into the map.  <a href="#a3b53fb85c72ef6649e10d0e2f76167eb">More...</a><br /></td></tr>
 <tr class="separator:a3b53fb85c72ef6649e10d0e2f76167eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ada37faecf34afdbcd7f1782b66279090"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ada37faecf34afdbcd7f1782b66279090">erase</a> (const char *key)</td></tr>
+<tr class="memdesc:ada37faecf34afdbcd7f1782b66279090"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove the element found in the map matching the key specified.  <a href="#ada37faecf34afdbcd7f1782b66279090">More...</a><br /></td></tr>
 <tr class="separator:ada37faecf34afdbcd7f1782b66279090"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5456229226d91c6fa12e776a70dc17c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ad5456229226d91c6fa12e776a70dc17c">clear</a> ()</td></tr>
+<tr class="memdesc:ad5456229226d91c6fa12e776a70dc17c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the map of all entries.  <a href="#ad5456229226d91c6fa12e776a70dc17c">More...</a><br /></td></tr>
 <tr class="separator:ad5456229226d91c6fa12e776a70dc17c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a856541185073008515bd02d88db2bbc1"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a856541185073008515bd02d88db2bbc1">size</a> () const</td></tr>
+<tr class="memdesc:a856541185073008515bd02d88db2bbc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of entries into the map.  <a href="#a856541185073008515bd02d88db2bbc1">More...</a><br /></td></tr>
 <tr class="separator:a856541185073008515bd02d88db2bbc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3629492c795c6308e2155fae18c6b724"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a3629492c795c6308e2155fae18c6b724">at</a> (const char *key)</td></tr>
+<tr class="memdesc:a3629492c795c6308e2155fae18c6b724"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="#a3629492c795c6308e2155fae18c6b724">More...</a><br /></td></tr>
 <tr class="separator:a3629492c795c6308e2155fae18c6b724"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a55fbf8b551ceaaae71e678762d1db8"><td class="memItemLeft" align="right" valign="top">const T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a7a55fbf8b551ceaaae71e678762d1db8">at</a> (const char *key) const</td></tr>
+<tr class="memdesc:a7a55fbf8b551ceaaae71e678762d1db8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="#a7a55fbf8b551ceaaae71e678762d1db8">More...</a><br /></td></tr>
 <tr class="separator:a7a55fbf8b551ceaaae71e678762d1db8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf81bd6f9f12042f9e3b7befd35aa5a9"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#acf81bd6f9f12042f9e3b7befd35aa5a9">operator[]</a> (const char *key)</td></tr>
+<tr class="memdesc:acf81bd6f9f12042f9e3b7befd35aa5a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="#acf81bd6f9f12042f9e3b7befd35aa5a9">More...</a><br /></td></tr>
 <tr class="separator:acf81bd6f9f12042f9e3b7befd35aa5a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affb0756a48f43bc281620430dce4990d"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#affb0756a48f43bc281620430dce4990d">begin</a> ()</td></tr>
+<tr class="memdesc:affb0756a48f43bc281620430dce4990d"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning iterator.  <a href="#affb0756a48f43bc281620430dce4990d">More...</a><br /></td></tr>
 <tr class="separator:affb0756a48f43bc281620430dce4990d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e6aa08a89e153bf90fd3fd4d12f5f12"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a6e6aa08a89e153bf90fd3fd4d12f5f12">begin</a> () const</td></tr>
+<tr class="memdesc:a6e6aa08a89e153bf90fd3fd4d12f5f12"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning constant iterator.  <a href="#a6e6aa08a89e153bf90fd3fd4d12f5f12">More...</a><br /></td></tr>
 <tr class="separator:a6e6aa08a89e153bf90fd3fd4d12f5f12"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9236055d0cb83a144f716ab5d0cc9dd"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd">end</a> ()</td></tr>
+<tr class="memdesc:af9236055d0cb83a144f716ab5d0cc9dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending iterator.  <a href="#af9236055d0cb83a144f716ab5d0cc9dd">More...</a><br /></td></tr>
 <tr class="separator:af9236055d0cb83a144f716ab5d0cc9dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18dcc3e785cb5563d5688cf9ea21634e"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a18dcc3e785cb5563d5688cf9ea21634e">end</a> () const</td></tr>
+<tr class="memdesc:a18dcc3e785cb5563d5688cf9ea21634e"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending constant iterator.  <a href="#a18dcc3e785cb5563d5688cf9ea21634e">More...</a><br /></td></tr>
 <tr class="separator:a18dcc3e785cb5563d5688cf9ea21634e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98fb9129ecba80ca80c0790cc9267df3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a98fb9129ecba80ca80c0790cc9267df3">find</a> (const char *key) const</td></tr>
+<tr class="memdesc:a98fb9129ecba80ca80c0790cc9267df3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given key exists in the map.  <a href="#a98fb9129ecba80ca80c0790cc9267df3">More...</a><br /></td></tr>
 <tr class="separator:a98fb9129ecba80ca80c0790cc9267df3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cabf6c5d547ca2a24a92299c3aad851"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a9cabf6c5d547ca2a24a92299c3aad851">find_I</a> (const char *key)</td></tr>
+<tr class="memdesc:a9cabf6c5d547ca2a24a92299c3aad851"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves an iterator of the element associated with the key given.  <a href="#a9cabf6c5d547ca2a24a92299c3aad851">More...</a><br /></td></tr>
 <tr class="separator:a9cabf6c5d547ca2a24a92299c3aad851"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e307d7c95959ad22cb26824ed900ee1"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a2e307d7c95959ad22cb26824ed900ee1">find_I</a> (const char *key) const</td></tr>
+<tr class="memdesc:a2e307d7c95959ad22cb26824ed900ee1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a constant iterator of the element associated with the key given.  <a href="#a2e307d7c95959ad22cb26824ed900ee1">More...</a><br /></td></tr>
 <tr class="separator:a2e307d7c95959ad22cb26824ed900ee1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class MappedChar&lt; T &gt;</h3>
 
-<p>A std::map that uses a constant char array as the keys, and stores values of type &lt;T&gt;.<br />
+<p>A std::map that uses a constant char array as the keys, and stores values of type &lt;T&gt;. </p>
+<p><br />
 Uses the adapter pattern to hide some of the complexity and reduce the amount of redundant code written. Also provides easier insertion, lookup, and boolean find operations. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">&lt;T&gt;</td><td>any type to store. </td></tr>
@@ -146,6 +165,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy the map. </p>
 
 </div>
@@ -174,6 +194,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct the map. </p>
 
 </div>
@@ -204,7 +225,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the element associated with the given key. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve the element associated with the given key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key associated with the element to retrieve </td></tr>
   </table>
@@ -239,7 +262,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the element associated with the given key. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve the element associated with the given key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key associated with the element to retrieve </td></tr>
   </table>
@@ -273,7 +298,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The beginning iterator. </p><dl class="section return"><dt>Returns</dt><dd>the beginning iterator </dd></dl>
+
+<p>The beginning iterator. </p>
+<dl class="section return"><dt>Returns</dt><dd>the beginning iterator </dd></dl>
 
 </div>
 </div>
@@ -301,7 +328,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The beginning constant iterator. </p><dl class="section return"><dt>Returns</dt><dd>the beginning constant iterator </dd></dl>
+
+<p>The beginning constant iterator. </p>
+<dl class="section return"><dt>Returns</dt><dd>the beginning constant iterator </dd></dl>
 
 </div>
 </div>
@@ -329,6 +358,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Clears the map of all entries. </p>
 
 </div>
@@ -357,7 +387,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The ending iterator. </p><dl class="section return"><dt>Returns</dt><dd>the ending iterator </dd></dl>
+
+<p>The ending iterator. </p>
+<dl class="section return"><dt>Returns</dt><dd>the ending iterator </dd></dl>
 
 </div>
 </div>
@@ -385,7 +417,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>The ending constant iterator. </p><dl class="section return"><dt>Returns</dt><dd>the ending constant iterator </dd></dl>
+
+<p>The ending constant iterator. </p>
+<dl class="section return"><dt>Returns</dt><dd>the ending constant iterator </dd></dl>
 
 </div>
 </div>
@@ -414,7 +448,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Remove the element found in the map matching the key specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Remove the element found in the map matching the key specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key to erase from the map. </td></tr>
   </table>
@@ -448,7 +484,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if the given key exists in the map. </p><dl class="section return"><dt>Returns</dt><dd>true if the key exists, false otherwise </dd></dl>
+
+<p>Check if the given key exists in the map. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the key exists, false otherwise </dd></dl>
 
 </div>
 </div>
@@ -477,7 +515,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieves an iterator of the element associated with the key given. </p><dl class="section return"><dt>Returns</dt><dd>the iterator to the element desired, or the terminating iterator ('<a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd">end()</a>') if not found </dd></dl>
+
+<p>Retrieves an iterator of the element associated with the key given. </p>
+<dl class="section return"><dt>Returns</dt><dd>the iterator to the element desired, or the terminating iterator ('<a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd" title="The ending iterator.">end()</a>') if not found </dd></dl>
 
 </div>
 </div>
@@ -506,7 +546,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieves a constant iterator of the element associated with the key given. </p><dl class="section return"><dt>Returns</dt><dd>the constant iterator to the element desired, or the terminating constant iterator ('<a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd">end()</a>') if not found </dd></dl>
+
+<p>Retrieves a constant iterator of the element associated with the key given. </p>
+<dl class="section return"><dt>Returns</dt><dd>the constant iterator to the element desired, or the terminating constant iterator ('<a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd" title="The ending iterator.">end()</a>') if not found </dd></dl>
 
 </div>
 </div>
@@ -536,8 +578,8 @@ template&lt;typename T&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>will auto-generate a new zero-initialized &lt;T&gt; to associate with the key. </p>
-<p>Insert a new key into the map. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Insert a new key into the map. </p>
+<p>will auto-generate a new zero-initialized &lt;T&gt; to associate with the key. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the new key to insert into the map </td></tr>
   </table>
@@ -571,7 +613,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the element associated with the given key. </p><dl class="section note"><dt>Note</dt><dd>will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized &lt;T&gt;.\nIf this is undesired, used .<a class="el" href="class_mapped_char.html#a3629492c795c6308e2155fae18c6b724">at()</a> </dd></dl>
+
+<p>Retrieve the element associated with the given key. </p>
+<dl class="section note"><dt>Note</dt><dd>will insert the key into the map if they lookup fails, guaranteed to return a zero-initialized &lt;T&gt;.\nIf this is undesired, used .<a class="el" href="class_mapped_char.html#a3629492c795c6308e2155fae18c6b724" title="Retrieve the element associated with the given key.">at()</a> </dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">key</td><td>the key associated with the element to retrieve </td></tr>
@@ -606,7 +650,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the number of entries into the map. </p><dl class="section return"><dt>Returns</dt><dd>the size of the map. </dd></dl>
+
+<p>Retrieve the number of entries into the map. </p>
+<dl class="section return"><dt>Returns</dt><dd>the size of the map. </dd></dl>
 
 </div>
 </div>

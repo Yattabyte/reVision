@@ -15,28 +15,32 @@
 class Engine;
 class Mesh;
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of a Mesh asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Mesh : public std::shared_ptr<Mesh> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
 	inline Shared_Mesh() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	engine			the engine being used.
+	@param	filename		the filename to use.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	explicit Shared_Mesh(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
 
-/** A 3D geometric mesh. */
+/** A data set representing a 3D mesh.
+This asset contains raw unformatted geometric data. */
 class Mesh : public Asset {
 public:
 	// Public (de)Constructors
 	/** Destroy the Mesh. */
 	~Mesh() = default;
-	/** Construct the Mesh. */
+	/** Construct the Mesh.
+	@param	engine		the engine to use.
+	@param	filename	the asset file name (relative to engine directory). */
 	Mesh(Engine * engine, const std::string & filename);
 
 

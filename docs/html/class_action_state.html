@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A container class that holds the action state for the engine, such as forward/back/left/right and amount.  
+ <a href="class_action_state.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_action_state_8h_source.html">ActionState.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ActionState:</div>
@@ -88,6 +91,7 @@ Public Types</h2></td></tr>
 <b>PRESS</b>, 
 <b>REPEAT</b>
  }</td></tr>
+<tr class="memdesc:a46682c5dc6dfc21581d7386c4e9acde1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for whether the action key was pressed, released, or repeating.  <a href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">More...</a><br /></td></tr>
 <tr class="separator:a46682c5dc6dfc21581d7386c4e9acde1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ACTION_ENUM</a> { <br />
 &#160;&#160;<b>MOUSE_X</b>, 
@@ -119,13 +123,16 @@ Public Types</h2></td></tr>
 <b>ACTION_COUNT</b>
 <br />
  }</td></tr>
+<tr class="memdesc:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for indexing into actions.  <a href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">More...</a><br /></td></tr>
 <tr class="separator:a6d2c8adb9708f62dadab88a8ba464c4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac8affb0a9580259e61a82827afa54248"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#ac8affb0a9580259e61a82827afa54248">~ActionState</a> ()=default</td></tr>
+<tr class="memdesc:ac8affb0a9580259e61a82827afa54248"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the action state.  <a href="#ac8affb0a9580259e61a82827afa54248">More...</a><br /></td></tr>
 <tr class="separator:ac8affb0a9580259e61a82827afa54248"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a064d9a224a78f6388ccc104601483a7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#a064d9a224a78f6388ccc104601483a7a">ActionState</a> ()</td></tr>
+<tr class="memdesc:a064d9a224a78f6388ccc104601483a7a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the action state.  <a href="#a064d9a224a78f6388ccc104601483a7a">More...</a><br /></td></tr>
 <tr class="separator:a064d9a224a78f6388ccc104601483a7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa79f24a5fd998546c1da20f27c9f2001"><td class="memItemLeft" align="right" valign="top"><a id="aa79f24a5fd998546c1da20f27c9f2001"></a>
 <a class="el" href="class_action_state.html#a46682c5dc6dfc21581d7386c4e9acde1">ActionState::STATE</a>&#160;</td><td class="memItemRight" valign="bottom"><b>isAction</b> (const <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88a8ba464c4a">ActionState::ACTION_ENUM</a> &amp;actionEnum)</td></tr>
@@ -137,6 +144,7 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_action_state.html#ae6f1c5b9dbe8fc25388f905641013d2f">Action_Strings</a> ()</td></tr>
+<tr class="memdesc:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a static list of all input-actions.  <a href="#ae6f1c5b9dbe8fc25388f905641013d2f">More...</a><br /></td></tr>
 <tr class="separator:ae6f1c5b9dbe8fc25388f905641013d2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
@@ -159,6 +167,7 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Enumeration for indexing into actions. </p>
 
 </div>
@@ -174,6 +183,7 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Enumeration for whether the action key was pressed, released, or repeating. </p>
 
 </div>
@@ -201,6 +211,7 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy the action state. </p>
 
 </div>
@@ -227,6 +238,7 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct the action state. </p>
 
 </div>
@@ -254,7 +266,9 @@ std::map&lt; <a class="el" href="class_action_state.html#a6d2c8adb9708f62dadab88
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve a static list of all input-actions. </p><dl class="section return"><dt>Returns</dt><dd>std::vector of action names as strings </dd></dl>
+
+<p>Retrieve a static list of all input-actions. </p>
+<dl class="section return"><dt>Returns</dt><dd>std::vector of action names as strings </dd></dl>
 
 </div>
 </div>

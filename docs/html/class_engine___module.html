@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,6 +72,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An interface for engine modules to implement.  
+ <a href="class_engine___module.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_engine___module_8h_source.html">Engine_Module.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Engine_Module:</div>
@@ -79,25 +82,30 @@ Inheritance diagram for Engine_Module:</div>
  <div class="center">
   <img src="class_engine___module.png" usemap="#Engine_5FModule_map" alt=""/>
   <map id="Engine_5FModule_map" name="Engine_5FModule_map">
-<area href="class_game___module.html" alt="Game_Module" shape="rect" coords="0,56,112,80"/>
-<area href="class_graphics___module.html" alt="Graphics_Module" shape="rect" coords="122,56,234,80"/>
-<area href="class_physics___module.html" alt="Physics_Module" shape="rect" coords="244,56,356,80"/>
-<area href="class_u_i___module.html" alt="UI_Module" shape="rect" coords="366,56,478,80"/>
-<area href="class_world___module.html" alt="World_Module" shape="rect" coords="488,56,600,80"/>
+<area href="class_game___module.html" title="A module responsible for Game Logic." alt="Game_Module" shape="rect" coords="0,56,112,80"/>
+<area href="class_graphics___module.html" title="A module responsible for rendering." alt="Graphics_Module" shape="rect" coords="122,56,234,80"/>
+<area href="class_physics___module.html" title="A module responsible for physics." alt="Physics_Module" shape="rect" coords="244,56,356,80"/>
+<area href="class_u_i___module.html" title="A module responsible for the overall user interface." alt="UI_Module" shape="rect" coords="366,56,478,80"/>
+<area href="class_world___module.html" title="A module responsible for the world/level." alt="World_Module" shape="rect" coords="488,56,600,80"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab2bc3cf4b727ceff475c0442d2be3426"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a> ()=default</td></tr>
+<tr class="memdesc:ab2bc3cf4b727ceff475c0442d2be3426"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this engine module.  <a href="#ab2bc3cf4b727ceff475c0442d2be3426">More...</a><br /></td></tr>
 <tr class="separator:ab2bc3cf4b727ceff475c0442d2be3426"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab31ce873a9023ad9515caeb2d6376530"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#ab31ce873a9023ad9515caeb2d6376530">Engine_Module</a> ()=default</td></tr>
+<tr class="memdesc:ab31ce873a9023ad9515caeb2d6376530"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct an engine module.  <a href="#ab31ce873a9023ad9515caeb2d6376530">More...</a><br /></td></tr>
 <tr class="separator:ab31ce873a9023ad9515caeb2d6376530"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9d7ffa22315c33441457297ad950b88b"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#a9d7ffa22315c33441457297ad950b88b">initialize</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
+<tr class="memdesc:a9d7ffa22315c33441457297ad950b88b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initialize the module.  <a href="#a9d7ffa22315c33441457297ad950b88b">More...</a><br /></td></tr>
 <tr class="separator:a9d7ffa22315c33441457297ad950b88b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6a769a426bbc46a673252c3d29d96a22"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#a6a769a426bbc46a673252c3d29d96a22">deinitialize</a> ()</td></tr>
+<tr class="memdesc:a6a769a426bbc46a673252c3d29d96a22"><td class="mdescLeft">&#160;</td><td class="mdescRight">Deinitialize the module.  <a href="#a6a769a426bbc46a673252c3d29d96a22">More...</a><br /></td></tr>
 <tr class="separator:a6a769a426bbc46a673252c3d29d96a22"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af92bc533b06a8c5df12f663ab37030d3"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#af92bc533b06a8c5df12f663ab37030d3">frameTick</a> (const float &amp;)</td></tr>
+<tr class="memdesc:af92bc533b06a8c5df12f663ab37030d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick the ui by a frame.  <a href="#af92bc533b06a8c5df12f663ab37030d3">More...</a><br /></td></tr>
 <tr class="separator:af92bc533b06a8c5df12f663ab37030d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
@@ -131,6 +139,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this engine module. </p>
 
 </div>
@@ -157,6 +166,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct an engine module. </p>
 
 </div>
@@ -184,6 +194,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Deinitialize the module. </p>
 
 <p>Reimplemented in <a class="el" href="class_world___module.html#aec1b8c9b944eee7cf0bfb6c0f82e3a49">World_Module</a>, <a class="el" href="class_game___module.html#abc1c0346950b8a4d1bdc7480f788ca4f">Game_Module</a>, <a class="el" href="class_graphics___module.html#a875544c90e66a0dc2d8b6361de984675">Graphics_Module</a>, <a class="el" href="class_u_i___module.html#a7bdad141214f515201ca82d67f336bf0">UI_Module</a>, and <a class="el" href="class_physics___module.html#a6e54d56ebf8a65774e4acbc9868ad40b">Physics_Module</a>.</p>
@@ -213,7 +224,9 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Tick the ui by a frame. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Tick the ui by a frame. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>
@@ -247,6 +260,7 @@ Protected Attributes</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Initialize the module. </p>
 
 <p>Reimplemented in <a class="el" href="class_world___module.html#a8d0d6531180ddb4d9f0f96aa17449f5e">World_Module</a>, <a class="el" href="class_game___module.html#aa418343e08154a473a8170c0b74c77a9">Game_Module</a>, <a class="el" href="class_graphics___module.html#a6630e8852923ea501371df61ad5318aa">Graphics_Module</a>, <a class="el" href="class_u_i___module.html#a9a872f7bfd2281fca03725e97ffac732">UI_Module</a>, and <a class="el" href="class_physics___module.html#a94718be4539c9364c17cd3d3c7ddcabf">Physics_Module</a>.</p>

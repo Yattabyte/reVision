@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A data buffer that resides locally as well as on the GPU.  
+ <a href="class_g_l___array_buffer.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_g_l___array_buffer_8h_source.html">GL_ArrayBuffer.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for GL_ArrayBuffer&lt; T &gt;:</div>
@@ -78,46 +81,59 @@ Inheritance diagram for GL_ArrayBuffer&lt; T &gt;:</div>
  <div class="center">
   <img src="class_g_l___array_buffer.png" usemap="#GL_5FArrayBuffer_3C_20T_20_3E_map" alt=""/>
   <map id="GL_5FArrayBuffer_3C_20T_20_3E_map" name="GL_5FArrayBuffer_3C_20T_20_3E_map">
-<area href="class_buffer___interface.html" alt="Buffer_Interface" shape="rect" coords="0,0,134,24"/>
+<area href="class_buffer___interface.html" title="An interface for opengl buffers." alt="Buffer_Interface" shape="rect" coords="0,0,134,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0af5b3b3f76540d742ada9a4fd125dfb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a0af5b3b3f76540d742ada9a4fd125dfb">~GL_ArrayBuffer</a> ()</td></tr>
+<tr class="memdesc:a0af5b3b3f76540d742ada9a4fd125dfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this buffer.  <a href="#a0af5b3b3f76540d742ada9a4fd125dfb">More...</a><br /></td></tr>
 <tr class="separator:a0af5b3b3f76540d742ada9a4fd125dfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4028d191b791ed09b24dbbe51603bb3b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a4028d191b791ed09b24dbbe51603bb3b">GL_ArrayBuffer</a> (const size_t &amp;capacity=1)</td></tr>
+<tr class="memdesc:a4028d191b791ed09b24dbbe51603bb3b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer.  <a href="#a4028d191b791ed09b24dbbe51603bb3b">More...</a><br /></td></tr>
 <tr class="separator:a4028d191b791ed09b24dbbe51603bb3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34bc1111322aa73150b90a1a14c073fa"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a34bc1111322aa73150b90a1a14c073fa">GL_ArrayBuffer</a> (<a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&amp;o)</td></tr>
+<tr class="memdesc:a34bc1111322aa73150b90a1a14c073fa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment constructor, for moving 1 buffer to another.  <a href="#a34bc1111322aa73150b90a1a14c073fa">More...</a><br /></td></tr>
 <tr class="separator:a34bc1111322aa73150b90a1a14c073fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a896b0aba3916151ded9a01e9d09f7a4f">operator=</a> (<a class="el" href="class_g_l___array_buffer.html">GL_ArrayBuffer</a> &amp;&amp;o) noexcept</td></tr>
+<tr class="memdesc:a896b0aba3916151ded9a01e9d09f7a4f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignment operator, for moving 1 buffer to another.  <a href="#a896b0aba3916151ded9a01e9d09f7a4f">More...</a><br /></td></tr>
 <tr class="separator:a896b0aba3916151ded9a01e9d09f7a4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a964c4a77312d6d03affdd943090f20d0"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">bindBuffer</a> (const GLenum &amp;target) const override</td></tr>
+<tr class="memdesc:a964c4a77312d6d03affdd943090f20d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a964c4a77312d6d03affdd943090f20d0">More...</a><br /></td></tr>
 <tr class="separator:a964c4a77312d6d03affdd943090f20d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override</td></tr>
+<tr class="memdesc:a7f2f17aa9e56d6757290707f7c3fd237"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#a7f2f17aa9e56d6757290707f7c3fd237">More...</a><br /></td></tr>
 <tr class="separator:a7f2f17aa9e56d6757290707f7c3fd237"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a03e5e7d54098cee221cc2dc4e6108267"><td class="memItemLeft" align="right" valign="top"><a id="a03e5e7d54098cee221cc2dc4e6108267"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> (const size_t &amp;size)</td></tr>
 <tr class="separator:a03e5e7d54098cee221cc2dc4e6108267"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a7cd333ed069a1eeca93e33f8d7619e"><td class="memItemLeft" align="right" valign="top">T &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a2a7cd333ed069a1eeca93e33f8d7619e">operator []</a> (const size_t &amp;index)</td></tr>
+<tr class="memdesc:a2a7cd333ed069a1eeca93e33f8d7619e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a reference to the element contained at the index specified.  <a href="#a2a7cd333ed069a1eeca93e33f8d7619e">More...</a><br /></td></tr>
 <tr class="separator:a2a7cd333ed069a1eeca93e33f8d7619e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3cd626d222e7db86425cf2156325fbf7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a3cd626d222e7db86425cf2156325fbf7">getLength</a> () const</td></tr>
+<tr class="memdesc:a3cd626d222e7db86425cf2156325fbf7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the length of this array (the number of elements in it).  <a href="#a3cd626d222e7db86425cf2156325fbf7">More...</a><br /></td></tr>
 <tr class="separator:a3cd626d222e7db86425cf2156325fbf7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a90cf032afabf3c41d769b09f09efba60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#a90cf032afabf3c41d769b09f09efba60">beginWriting</a> ()</td></tr>
+<tr class="memdesc:a90cf032afabf3c41d769b09f09efba60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Wait for the current fence to pass, for the current frame index.  <a href="#a90cf032afabf3c41d769b09f09efba60">More...</a><br /></td></tr>
 <tr class="separator:a90cf032afabf3c41d769b09f09efba60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abf4b138aa2381d2a1e85f3627836bafd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_l___array_buffer.html#abf4b138aa2381d2a1e85f3627836bafd">endWriting</a> ()</td></tr>
+<tr class="memdesc:abf4b138aa2381d2a1e85f3627836bafd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a fence for the current point in time.  <a href="#abf4b138aa2381d2a1e85f3627836bafd">More...</a><br /></td></tr>
 <tr class="separator:abf4b138aa2381d2a1e85f3627836bafd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_buffer___interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_buffer___interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_buffer___interface.html">Buffer_Interface</a></td></tr>
 <tr class="memitem:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">~Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this buffer.  <a href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">More...</a><br /></td></tr>
 <tr class="separator:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer.  <a href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">More...</a><br /></td></tr>
 <tr class="separator:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class GL_ArrayBuffer&lt; T &gt;</h3>
 
-<p>A data buffer that resides locally as well as on the GPU. Forms an expandable array of elements type T. </p><dl class="params"><dt>Parameters</dt><dd>
+<p>A data buffer that resides locally as well as on the GPU. </p>
+<p>Forms an expandable array of elements type T. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">&lt;T&gt;</td><td>the type of element to construct an array of. </td></tr>
   </table>
@@ -148,6 +164,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this buffer. </p>
 
 </div>
@@ -177,7 +194,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Construct a buffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Construct a buffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">capacity</td><td>the starting capacity (1 or more). </td></tr>
   </table>
@@ -211,7 +230,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Assignment constructor, for moving 1 buffer to another. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Assignment constructor, for moving 1 buffer to another. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">o</td><td>the other buffer to move to here (invalidating it). </td></tr>
   </table>
@@ -245,6 +266,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Wait for the current fence to pass, for the current frame index. </p>
 
 </div>
@@ -274,7 +296,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to the target specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
   </table>
@@ -320,7 +344,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to a particular binding point, such as for shaders to read. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to a particular binding point, such as for shaders to read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
     <tr><td class="paramname">index</td><td>the binding point index to use. </td></tr>
@@ -356,6 +382,7 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Create a fence for the current point in time. </p>
 
 </div>
@@ -384,7 +411,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the length of this array (the number of elements in it). </p><dl class="section return"><dt>Returns</dt><dd>the number of elemetns in this array. </dd></dl>
+
+<p>Retrieve the length of this array (the number of elements in it). </p>
+<dl class="section return"><dt>Returns</dt><dd>the number of elemetns in this array. </dd></dl>
 
 </div>
 </div>
@@ -413,7 +442,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve a reference to the element contained at the index specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve a reference to the element contained at the index specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">index</td><td>index to the element desired. </td></tr>
   </table>
@@ -448,7 +479,9 @@ template&lt;typename T&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Assignment operator, for moving 1 buffer to another. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Assignment operator, for moving 1 buffer to another. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">o</td><td>the other buffer to move to here (invalidating it). </td></tr>
   </table>

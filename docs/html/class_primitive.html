@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A basic untextued 3D model used in visual processing.  
+ <a href="class_primitive.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_primitive_8h_source.html">Primitive.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Primitive:</div>
@@ -80,28 +83,36 @@ Inheritance diagram for Primitive:</div>
  <div class="center">
   <img src="class_primitive.png" usemap="#Primitive_map" alt=""/>
   <map id="Primitive_map" name="Primitive_map">
-<area href="class_asset.html" title="Represents some form of data to be loaded from disk, such as shaders, models, levels,..." alt="Asset" shape="rect" coords="0,0,60,24"/>
+<area href="class_asset.html" title="An abstract base-class for assets." alt="Asset" shape="rect" coords="0,0,60,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad128050320901807bfe5fc20b4331db6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_primitive.html#ad128050320901807bfe5fc20b4331db6">~Primitive</a> ()</td></tr>
+<tr class="memdesc:ad128050320901807bfe5fc20b4331db6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="class_primitive.html" title="A basic untextued 3D model used in visual processing.">Primitive</a>.  <a href="#ad128050320901807bfe5fc20b4331db6">More...</a><br /></td></tr>
 <tr class="separator:ad128050320901807bfe5fc20b4331db6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a86e9bdc8edb68177954404c84d256f18"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_primitive.html#a86e9bdc8edb68177954404c84d256f18">Primitive</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a86e9bdc8edb68177954404c84d256f18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="class_primitive.html" title="A basic untextued 3D model used in visual processing.">Primitive</a>.  <a href="#a86e9bdc8edb68177954404c84d256f18">More...</a><br /></td></tr>
 <tr class="separator:a86e9bdc8edb68177954404c84d256f18"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a712c17d867a548fc00bff3585f44087d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_primitive.html#a712c17d867a548fc00bff3585f44087d">getSize</a> () const</td></tr>
+<tr class="memdesc:a712c17d867a548fc00bff3585f44087d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the vertex-count of this object.  <a href="#a712c17d867a548fc00bff3585f44087d">More...</a><br /></td></tr>
 <tr class="separator:a712c17d867a548fc00bff3585f44087d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
 <tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
+<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -129,8 +140,10 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Shared_Primitive</b>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
 <tr class="separator:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a> ()</td></tr>
+<tr class="memdesc:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declares this asset ready-to-use.  <a href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">More...</a><br /></td></tr>
 <tr class="separator:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:a0329cd6e471217c694abfc632e6c1bbd inherit pro_attribs_class_asset"><td class="memItemLeft" align="right" valign="top"><a id="a0329cd6e471217c694abfc632e6c1bbd"></a>
@@ -150,7 +163,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 <tr class="separator:a9d426de8f210c27c208fa5c099f37498 inherit pro_attribs_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. </p>
+<div class="textblock"><p>A basic untextued 3D model used in visual processing. </p>
+<p>Represents a more basic 3D model with a material, and wraps an OpenGL vertex array &amp; buffer object. Typically used to load quads/spheres for fire &amp; forget events. </p><dl class="section note"><dt>Note</dt><dd>owns 1 <a class="el" href="class_shared___mesh.html" title="Shared version of a Mesh asset.">Shared_Mesh</a> object. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad128050320901807bfe5fc20b4331db6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad128050320901807bfe5fc20b4331db6">&#9670;&nbsp;</a></span>~Primitive()</h2>
@@ -166,7 +180,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Destroy the <a class="el" href="class_primitive.html">Primitive</a>. </p>
+
+<p>Destroy the <a class="el" href="class_primitive.html" title="A basic untextued 3D model used in visual processing.">Primitive</a>. </p>
 
 </div>
 </div>
@@ -195,7 +210,15 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct the <a class="el" href="class_primitive.html">Primitive</a>. </p>
+
+<p>Construct the <a class="el" href="class_primitive.html" title="A basic untextued 3D model used in visual processing.">Primitive</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the asset file name (relative to engine directory). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -214,7 +237,9 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Returns the vertex-count of this object. </p><dl class="section return"><dt>Returns</dt><dd>vertex-count of this object </dd></dl>
+
+<p>Returns the vertex-count of this object. </p>
+<dl class="section return"><dt>Returns</dt><dd>vertex-count of this object. </dd></dl>
 
 </div>
 </div>

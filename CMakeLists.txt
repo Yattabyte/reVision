@@ -2,7 +2,7 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
-project(reVision VERSION 3.9.16 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.0.0 DESCRIPTION "Video game engine project.")
 
 # Get dependency directory locations from the user
 set(ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
@@ -78,6 +78,7 @@ if (DOXYGEN_FOUND)
 		set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs/)
 		set(DOXYGEN_MARKDOWN_SUPPORT YES)
 		set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
+		set(DOXYGEN_JAVADOC_AUTOBRIEF YES)
 		set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ${PROJECT_SOURCE_DIR}/README.md)
 		doxygen_add_docs(Documentation ${PROJECT_SOURCE_DIR} COMMENT "Generate docs")
 	endif (GENERATE_DOCS)

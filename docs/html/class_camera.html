@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Contains the data for a single point of view.  
+ <a href="class_camera.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_camera_8h_source.html">Camera.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
@@ -84,24 +87,34 @@ Classes</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:adcb96efefa7af58e3ee6534b15d4979b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#adcb96efefa7af58e3ee6534b15d4979b">~Camera</a> ()=default</td></tr>
+<tr class="memdesc:adcb96efefa7af58e3ee6534b15d4979b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the camera buffer.  <a href="#adcb96efefa7af58e3ee6534b15d4979b">More...</a><br /></td></tr>
 <tr class="separator:adcb96efefa7af58e3ee6534b15d4979b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae23af4d7cab430c77d537621cdd16b3f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ae23af4d7cab430c77d537621cdd16b3f">Camera</a> ()=default</td></tr>
+<tr class="memdesc:ae23af4d7cab430c77d537621cdd16b3f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a camera buffer.  <a href="#ae23af4d7cab430c77d537621cdd16b3f">More...</a><br /></td></tr>
 <tr class="separator:ae23af4d7cab430c77d537621cdd16b3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ddc6f18cbd74851fee8c3b51021bdff"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a1ddc6f18cbd74851fee8c3b51021bdff">setEnabled</a> (const bool &amp;enabled)</td></tr>
+<tr class="memdesc:a1ddc6f18cbd74851fee8c3b51021bdff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the enabled state for this camera.  <a href="#a1ddc6f18cbd74851fee8c3b51021bdff">More...</a><br /></td></tr>
 <tr class="separator:a1ddc6f18cbd74851fee8c3b51021bdff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac4f998f864510dd07cbc60a570e249d4"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ac4f998f864510dd07cbc60a570e249d4">getEnabled</a> () const</td></tr>
+<tr class="memdesc:ac4f998f864510dd07cbc60a570e249d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve if this camera is enabled or not.  <a href="#ac4f998f864510dd07cbc60a570e249d4">More...</a><br /></td></tr>
 <tr class="separator:ac4f998f864510dd07cbc60a570e249d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab1becd5185b89017022c32ca617b4689"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ab1becd5185b89017022c32ca617b4689">updateFrustum</a> ()</td></tr>
+<tr class="memdesc:ab1becd5185b89017022c32ca617b4689"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recalculate frustum data for this camera.  <a href="#ab1becd5185b89017022c32ca617b4689">More...</a><br /></td></tr>
 <tr class="separator:ab1becd5185b89017022c32ca617b4689"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3200f8e064b4fa66a3da8702cc5e25a"><td class="memItemLeft" align="right" valign="top">glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#aa3200f8e064b4fa66a3da8702cc5e25a">getFrustumCenter</a> () const</td></tr>
+<tr class="memdesc:aa3200f8e064b4fa66a3da8702cc5e25a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the center of this camera's frustum.  <a href="#aa3200f8e064b4fa66a3da8702cc5e25a">More...</a><br /></td></tr>
 <tr class="separator:aa3200f8e064b4fa66a3da8702cc5e25a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a8b757bcd3ac79e28c9ec7c32f1fb6f"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_camera_1_1_g_p_u_data.html">GPUData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a4a8b757bcd3ac79e28c9ec7c32f1fb6f">operator-&gt;</a> () const</td></tr>
+<tr class="memdesc:a4a8b757bcd3ac79e28c9ec7c32f1fb6f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a const pointer to the underlying data structure.  <a href="#a4a8b757bcd3ac79e28c9ec7c32f1fb6f">More...</a><br /></td></tr>
 <tr class="separator:a4a8b757bcd3ac79e28c9ec7c32f1fb6f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56b12f3fcd42caf7da3a3b5ced2bef41"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_camera_1_1_g_p_u_data.html">GPUData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a56b12f3fcd42caf7da3a3b5ced2bef41">operator-&gt;</a> ()</td></tr>
+<tr class="memdesc:a56b12f3fcd42caf7da3a3b5ced2bef41"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a pointer to the underlying data structure.  <a href="#a56b12f3fcd42caf7da3a3b5ced2bef41">More...</a><br /></td></tr>
 <tr class="separator:a56b12f3fcd42caf7da3a3b5ced2bef41"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7e5a09d1e0b69b79b26ef42350957247"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="struct_camera_1_1_g_p_u_data.html">GPUData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#a7e5a09d1e0b69b79b26ef42350957247">get</a> () const</td></tr>
+<tr class="memdesc:a7e5a09d1e0b69b79b26ef42350957247"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a const pointer to the underlying data structure.  <a href="#a7e5a09d1e0b69b79b26ef42350957247">More...</a><br /></td></tr>
 <tr class="separator:a7e5a09d1e0b69b79b26ef42350957247"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad792dce2a7d141eccd20eff37549c2a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="struct_camera_1_1_g_p_u_data.html">GPUData</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_camera.html#ad792dce2a7d141eccd20eff37549c2a8">get</a> ()</td></tr>
+<tr class="memdesc:ad792dce2a7d141eccd20eff37549c2a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a pointer to the underlying data structure.  <a href="#ad792dce2a7d141eccd20eff37549c2a8">More...</a><br /></td></tr>
 <tr class="separator:ad792dce2a7d141eccd20eff37549c2a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -144,6 +157,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy the camera buffer. </p>
 
 </div>
@@ -170,6 +184,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct a camera buffer. </p>
 
 </div>
@@ -197,6 +212,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Retrieve a const pointer to the underlying data structure. </p>
 
 </div>
@@ -223,6 +239,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Retrieve a pointer to the underlying data structure. </p>
 
 </div>
@@ -249,7 +266,9 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve if this camera is enabled or not. </p><dl class="section return"><dt>Returns</dt><dd>true if enabled, false otherwise. </dd></dl>
+
+<p>Retrieve if this camera is enabled or not. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if enabled, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -275,7 +294,9 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve the center of this camera's frustum. </p><dl class="section return"><dt>Returns</dt><dd>the center of this frustum. </dd></dl>
+
+<p>Retrieve the center of this camera's frustum. </p>
+<dl class="section return"><dt>Returns</dt><dd>the center of this frustum. </dd></dl>
 
 </div>
 </div>
@@ -301,6 +322,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Retrieve a const pointer to the underlying data structure. </p>
 
 </div>
@@ -327,6 +349,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Retrieve a pointer to the underlying data structure. </p>
 
 </div>
@@ -354,7 +377,9 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the enabled state for this camera. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the enabled state for this camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">enabled</td><td>whether this camera should be enabled or not. </td></tr>
   </table>
@@ -385,6 +410,7 @@ static constexpr float&#160;</td><td class="memItemRight" valign="bottom"><b>Con
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Recalculate frustum data for this camera. </p>
 
 </div>

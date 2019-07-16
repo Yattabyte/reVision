@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,24 +72,34 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>API for playing sound assets in the engine.  
+ <a href="class_sound_manager.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_sound_manager_8h_source.html">SoundManager.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad5dbf8eab22db48ff8f3db51b02f8938"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#ad5dbf8eab22db48ff8f3db51b02f8938">~SoundManager</a> ()</td></tr>
+<tr class="memdesc:ad5dbf8eab22db48ff8f3db51b02f8938"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the sound manager.  <a href="#ad5dbf8eab22db48ff8f3db51b02f8938">More...</a><br /></td></tr>
 <tr class="separator:ad5dbf8eab22db48ff8f3db51b02f8938"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abcc1fbf3488be5788a42c9a4fe56df35"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#abcc1fbf3488be5788a42c9a4fe56df35">SoundManager</a> ()</td></tr>
+<tr class="memitem:abcc1fbf3488be5788a42c9a4fe56df35"><td class="memItemLeft" align="right" valign="top"><a id="abcc1fbf3488be5788a42c9a4fe56df35"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#abcc1fbf3488be5788a42c9a4fe56df35">SoundManager</a> ()</td></tr>
+<tr class="memdesc:abcc1fbf3488be5788a42c9a4fe56df35"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the sound manager. <br /></td></tr>
 <tr class="separator:abcc1fbf3488be5788a42c9a4fe56df35"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad7da7a2a9b715c83db06914bd040414b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#ad7da7a2a9b715c83db06914bd040414b">playSound</a> (const <a class="el" href="class_shared___sound.html">Shared_Sound</a> &amp;sharedSound, const float &amp;volume=-1.0f, const float &amp;speed=1.0f) const</td></tr>
+<tr class="memdesc:ad7da7a2a9b715c83db06914bd040414b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Play a sound wave file.  <a href="#ad7da7a2a9b715c83db06914bd040414b">More...</a><br /></td></tr>
 <tr class="separator:ad7da7a2a9b715c83db06914bd040414b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac94b148b2d6cb579382256ab53600727"><td class="memItemLeft" align="right" valign="top">unsigned int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#ac94b148b2d6cb579382256ab53600727">playWavBackground</a> (const <a class="el" href="class_shared___sound.html">Shared_Sound</a> &amp;sharedSound, const float &amp;volume=1.0f, const bool &amp;loop=false, const double &amp;loopPoint=0.0) const</td></tr>
+<tr class="memdesc:ac94b148b2d6cb579382256ab53600727"><td class="mdescLeft">&#160;</td><td class="mdescRight">Play a sound wave file as background audio.  <a href="#ac94b148b2d6cb579382256ab53600727">More...</a><br /></td></tr>
 <tr class="separator:ac94b148b2d6cb579382256ab53600727"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a88e168b4cb928158e8371cdd6b6ef332"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a88e168b4cb928158e8371cdd6b6ef332">stopWav</a> (const unsigned int &amp;handle) const</td></tr>
+<tr class="memdesc:a88e168b4cb928158e8371cdd6b6ef332"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops a playing track from playing.  <a href="#a88e168b4cb928158e8371cdd6b6ef332">More...</a><br /></td></tr>
 <tr class="separator:a88e168b4cb928158e8371cdd6b6ef332"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a9ba478f748ca2eeaafc1953d0c03f849"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound_manager.html#a9ba478f748ca2eeaafc1953d0c03f849">GetVersion</a> ()</td></tr>
+<tr class="memdesc:a9ba478f748ca2eeaafc1953d0c03f849"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current version of the sound engine used.  <a href="#a9ba478f748ca2eeaafc1953d0c03f849">More...</a><br /></td></tr>
 <tr class="separator:a9ba478f748ca2eeaafc1953d0c03f849"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -109,25 +119,8 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Destroy the sound manager. </p>
-
-</div>
-</div>
-<a id="abcc1fbf3488be5788a42c9a4fe56df35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abcc1fbf3488be5788a42c9a4fe56df35">&#9670;&nbsp;</a></span>SoundManager()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">SoundManager::SoundManager </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Construct the sound manager </p>
 
 </div>
 </div>
@@ -154,7 +147,9 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the current version of the sound engine used. </p><dl class="section return"><dt>Returns</dt><dd>numeric version number. </dd></dl>
+
+<p>Get the current version of the sound engine used. </p>
+<dl class="section return"><dt>Returns</dt><dd>numeric version number. </dd></dl>
 
 </div>
 </div>
@@ -189,7 +184,9 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Play a sound wave file. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Play a sound wave file. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sharedSound</td><td>the sound file. </td></tr>
     <tr><td class="paramname">volume</td><td>the volume. (default == -1 means == use default). </td></tr>
@@ -238,7 +235,9 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Play a sound wave file as background audio. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Play a sound wave file as background audio. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">sharedSound</td><td>the sound file. </td></tr>
     <tr><td class="paramname">volume</td><td>the volume. (default == -1 means == use default). </td></tr>
@@ -266,7 +265,9 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Stops a playing track from playing. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Stops a playing track from playing. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">handle</td><td>the handle to the playing track. </td></tr>
   </table>

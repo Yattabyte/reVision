@@ -2,7 +2,7 @@ var searchData=
 [
   ['text_5fio',['Text_IO',['../class_text___i_o.html',1,'']]],
   ['textinput',['TextInput',['../class_text_input.html',1,'TextInput'],['../class_text_input.html#a21326df5211a513fbf6b93bba20c6a16',1,'TextInput::TextInput()']]],
-  ['texture',['Texture',['../class_texture.html',1,'Texture'],['../class_texture.html#a85ef5d991947ad2395ab884b6227ba02',1,'Texture::Texture(Engine *engine, const std::string &amp;filename)'],['../class_texture.html#a8fab0bff1b25956767859b90faaacd4a',1,'Texture::Texture(Engine *engine, const std::string &amp;filename, const GLuint &amp;t, const bool &amp;m, const bool &amp;a)']]],
+  ['texture',['Texture',['../class_texture.html',1,'Texture'],['../class_texture.html#a85ef5d991947ad2395ab884b6227ba02',1,'Texture::Texture(Engine *engine, const std::string &amp;filename)'],['../class_texture.html#ac907e83e87792da80c962c15cac9f967',1,'Texture::Texture(Engine *engine, const std::string &amp;filename, const GLuint &amp;type, const bool &amp;mipmap, const bool &amp;anis)']]],
   ['tick',['tick',['../class_engine.html#a862870af01354ec1327bae82074e836f',1,'Engine']]],
   ['tickthreaded',['tickThreaded',['../class_engine.html#ab6a8bc268e2fc517e859cae1f149927c',1,'Engine']]],
   ['toggle',['Toggle',['../class_toggle.html',1,'Toggle'],['../class_toggle.html#ad87af5e92249ab5a19e75225fb8cea4e',1,'Toggle::Toggle()']]],

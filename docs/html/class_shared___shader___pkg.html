@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Shared version of a <a class="el" href="class_shader___pkg.html" title="An accessory asset for loading shader code chunks.">Shader_Pkg</a> asset.  
+ <a href="class_shared___shader___pkg.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_shader___pkg_8h_source.html">Shader_Pkg.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Shared_Shader_Pkg:</div>
@@ -82,12 +85,15 @@ Inheritance diagram for Shared_Shader_Pkg:</div>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aff303b17a34b26593276d1f8de42261e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader___pkg.html#aff303b17a34b26593276d1f8de42261e">Shared_Shader_Pkg</a> ()=default</td></tr>
+<tr class="memdesc:aff303b17a34b26593276d1f8de42261e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#aff303b17a34b26593276d1f8de42261e">More...</a><br /></td></tr>
 <tr class="separator:aff303b17a34b26593276d1f8de42261e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a397a2b1e96da43943220d98edae73027"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___shader___pkg.html#a397a2b1e96da43943220d98edae73027">Shared_Shader_Pkg</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:a397a2b1e96da43943220d98edae73027"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#a397a2b1e96da43943220d98edae73027">More...</a><br /></td></tr>
 <tr class="separator:a397a2b1e96da43943220d98edae73027"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Responsible for the creation, containing, and sharing of assets. </p>
+<div class="textblock"><p>Shared version of a <a class="el" href="class_shader___pkg.html" title="An accessory asset for loading shader code chunks.">Shader_Pkg</a> asset. </p>
+<p>Responsible for the creation, containing, and sharing of assets. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="aff303b17a34b26593276d1f8de42261e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#aff303b17a34b26593276d1f8de42261e">&#9670;&nbsp;</a></span>Shared_Shader_Pkg() <span class="overload">[1/2]</span></h2>
@@ -111,6 +117,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Constructs an empty asset. </p>
 
 </div>
@@ -154,15 +161,17 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Begins the creation process for this asset. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Begins the creation process for this asset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used </td></tr>
-    <tr><td class="paramname">filename</td><td>the filename to use </td></tr>
-    <tr><td class="paramname">threaded</td><td>create in a separate thread </td></tr>
+    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
+    <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the desired asset </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the desired asset. </dd></dl>
 
 </div>
 </div>

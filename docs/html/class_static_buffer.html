@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Encapsulates an OpenGL buffer that is fixed in size.  
+ <a href="class_static_buffer.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_static_buffer_8h_source.html">StaticBuffer.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for StaticBuffer:</div>
@@ -78,32 +81,42 @@ Inheritance diagram for StaticBuffer:</div>
  <div class="center">
   <img src="class_static_buffer.png" usemap="#StaticBuffer_map" alt=""/>
   <map id="StaticBuffer_map" name="StaticBuffer_map">
-<area href="class_buffer___interface.html" alt="Buffer_Interface" shape="rect" coords="0,0,104,24"/>
+<area href="class_buffer___interface.html" title="An interface for opengl buffers." alt="Buffer_Interface" shape="rect" coords="0,0,104,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0a676b3a71e8c63510bf900dd12d5916"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a0a676b3a71e8c63510bf900dd12d5916">StaticBuffer</a> ()=default</td></tr>
+<tr class="memdesc:a0a676b3a71e8c63510bf900dd12d5916"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Constructor.  <a href="#a0a676b3a71e8c63510bf900dd12d5916">More...</a><br /></td></tr>
 <tr class="separator:a0a676b3a71e8c63510bf900dd12d5916"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad8641ea76f788e87ea40084cd1ac8c26"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#ad8641ea76f788e87ea40084cd1ac8c26">StaticBuffer</a> (const GLsizeiptr &amp;size, const void *data=0, const GLbitfield &amp;storageFlags=GL_DYNAMIC_STORAGE_BIT)</td></tr>
+<tr class="memdesc:ad8641ea76f788e87ea40084cd1ac8c26"><td class="mdescLeft">&#160;</td><td class="mdescRight">Explicit Instantion.  <a href="#ad8641ea76f788e87ea40084cd1ac8c26">More...</a><br /></td></tr>
 <tr class="separator:ad8641ea76f788e87ea40084cd1ac8c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4583df9254b76f03aeae804d1b973775"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a4583df9254b76f03aeae804d1b973775">StaticBuffer</a> (const <a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;other)</td></tr>
+<tr class="memdesc:a4583df9254b76f03aeae804d1b973775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Explicit Instantion.  <a href="#a4583df9254b76f03aeae804d1b973775">More...</a><br /></td></tr>
 <tr class="separator:a4583df9254b76f03aeae804d1b973775"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa072f408963b7b79fb68f25cc1088308"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#aa072f408963b7b79fb68f25cc1088308">StaticBuffer</a> (<a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&amp;other)</td></tr>
+<tr class="memdesc:aa072f408963b7b79fb68f25cc1088308"><td class="mdescLeft">&#160;</td><td class="mdescRight">Explicit Instantion.  <a href="#aa072f408963b7b79fb68f25cc1088308">More...</a><br /></td></tr>
 <tr class="separator:aa072f408963b7b79fb68f25cc1088308"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a358320b60ca5fbf8048dc251c983fc50"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a358320b60ca5fbf8048dc251c983fc50">operator=</a> (<a class="el" href="class_static_buffer.html">StaticBuffer</a> &amp;&amp;other)</td></tr>
+<tr class="memdesc:a358320b60ca5fbf8048dc251c983fc50"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move gl object from 1 instance to another.  <a href="#a358320b60ca5fbf8048dc251c983fc50">More...</a><br /></td></tr>
 <tr class="separator:a358320b60ca5fbf8048dc251c983fc50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4814aad463d66be9a365a0a90198db0d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">bindBuffer</a> (const GLenum &amp;target) const override</td></tr>
+<tr class="memdesc:a4814aad463d66be9a365a0a90198db0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to the target specified.  <a href="#a4814aad463d66be9a365a0a90198db0d">More...</a><br /></td></tr>
 <tr class="separator:a4814aad463d66be9a365a0a90198db0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a11feee2244e5f9ab0c2422ac69ff5d5d"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const override</td></tr>
+<tr class="memdesc:a11feee2244e5f9ab0c2422ac69ff5d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Bind this buffer to a particular binding point, such as for shaders to read.  <a href="#a11feee2244e5f9ab0c2422ac69ff5d5d">More...</a><br /></td></tr>
 <tr class="separator:a11feee2244e5f9ab0c2422ac69ff5d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12efa14b85af3b29a59f58022983b3e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_static_buffer.html#a12efa14b85af3b29a59f58022983b3e9">write</a> (const GLsizeiptr &amp;offset, const GLsizeiptr &amp;size, const void *data)</td></tr>
+<tr class="memdesc:a12efa14b85af3b29a59f58022983b3e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write the supplied data to GPU memory.  <a href="#a12efa14b85af3b29a59f58022983b3e9">More...</a><br /></td></tr>
 <tr class="separator:a12efa14b85af3b29a59f58022983b3e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_buffer___interface"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_buffer___interface')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_buffer___interface.html">Buffer_Interface</a></td></tr>
 <tr class="memitem:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">~Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this buffer.  <a href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">More...</a><br /></td></tr>
 <tr class="separator:a79bb5d606d3dd10c219a48bff8bf19d1 inherit pub_methods_class_buffer___interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">Buffer_Interface</a> ()=default</td></tr>
+<tr class="memdesc:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a buffer.  <a href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">More...</a><br /></td></tr>
 <tr class="separator:ab834dee66f3f9cee83a60d6c1387fb03 inherit pub_methods_class_buffer___interface"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -131,6 +144,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Default Constructor. </p>
 
 </div>
@@ -174,6 +188,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Explicit Instantion. </p>
 
 </div>
@@ -201,6 +216,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Explicit Instantion. </p>
 
 </div>
@@ -228,6 +244,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Explicit Instantion. </p>
 
 </div>
@@ -256,7 +273,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to the target specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to the target specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
   </table>
@@ -300,7 +319,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Bind this buffer to a particular binding point, such as for shaders to read. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Bind this buffer to a particular binding point, such as for shaders to read. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">target</td><td>the target type of this buffer. </td></tr>
     <tr><td class="paramname">index</td><td>the binding point index to use. </td></tr>
@@ -335,6 +356,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Move gl object from 1 instance to another. </p>
 
 </div>
@@ -378,7 +400,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Write the supplied data to GPU memory </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Write the supplied data to GPU memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">offset</td><td>byte offset from the beginning </td></tr>
     <tr><td class="paramname">size</td><td>the size of the data to write </td></tr>

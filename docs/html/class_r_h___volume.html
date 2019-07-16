@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -72,27 +72,39 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Represents a data-structure containing radiance-hints volume data.  
+ <a href="class_r_h___volume.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_r_h___volume_8h_source.html">RH_Volume.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad836b29ec5857c68c6d0423f297232b7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#ad836b29ec5857c68c6d0423f297232b7">~RH_Volume</a> ()</td></tr>
+<tr class="memdesc:ad836b29ec5857c68c6d0423f297232b7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the radiance hint volume.  <a href="#ad836b29ec5857c68c6d0423f297232b7">More...</a><br /></td></tr>
 <tr class="separator:ad836b29ec5857c68c6d0423f297232b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa445f3eac6a0b31a799ddaef0ebec83"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#afa445f3eac6a0b31a799ddaef0ebec83">RH_Volume</a> (<a class="el" href="class_engine.html">Engine</a> *engine)</td></tr>
+<tr class="memdesc:afa445f3eac6a0b31a799ddaef0ebec83"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a radiance hint volume.  <a href="#afa445f3eac6a0b31a799ddaef0ebec83">More...</a><br /></td></tr>
 <tr class="separator:afa445f3eac6a0b31a799ddaef0ebec83"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac327eaafb5a35caf6a344fe580cae37f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#ac327eaafb5a35caf6a344fe580cae37f">updateVolume</a> (const <a class="el" href="class_camera.html">Camera</a> *camera)</td></tr>
+<tr class="memdesc:ac327eaafb5a35caf6a344fe580cae37f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Update the volume's attributes based on the input camera.  <a href="#ac327eaafb5a35caf6a344fe580cae37f">More...</a><br /></td></tr>
 <tr class="separator:ac327eaafb5a35caf6a344fe580cae37f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25d3843cb765a4353d89ca704dde273a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a25d3843cb765a4353d89ca704dde273a">resize</a> (const float &amp;resolution=16.0f)</td></tr>
+<tr class="memdesc:a25d3843cb765a4353d89ca704dde273a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resize this volume's 3D texture.  <a href="#a25d3843cb765a4353d89ca704dde273a">More...</a><br /></td></tr>
 <tr class="separator:a25d3843cb765a4353d89ca704dde273a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb3ed7e8f29380136a549db6a49a14c4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#aeb3ed7e8f29380136a549db6a49a14c4">clear</a> ()</td></tr>
+<tr class="memdesc:aeb3ed7e8f29380136a549db6a49a14c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clear the data out of this framebuffer's textures.  <a href="#aeb3ed7e8f29380136a549db6a49a14c4">More...</a><br /></td></tr>
 <tr class="separator:aeb3ed7e8f29380136a549db6a49a14c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a665e59697be3542ebc090a4704b843a3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a665e59697be3542ebc090a4704b843a3">writePrimary</a> ()</td></tr>
+<tr class="memdesc:a665e59697be3542ebc090a4704b843a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write to the first bounce framebuffer.  <a href="#a665e59697be3542ebc090a4704b843a3">More...</a><br /></td></tr>
 <tr class="separator:a665e59697be3542ebc090a4704b843a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38a18d4ab7b090747feb4012cb5b4496"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a38a18d4ab7b090747feb4012cb5b4496">readPrimary</a> (const GLuint &amp;binding=0)</td></tr>
+<tr class="memdesc:a38a18d4ab7b090747feb4012cb5b4496"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from the first bounce framebuffer.  <a href="#a38a18d4ab7b090747feb4012cb5b4496">More...</a><br /></td></tr>
 <tr class="separator:a38a18d4ab7b090747feb4012cb5b4496"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa3e2c0177e655e8eb793b7c54eeb8db"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#afa3e2c0177e655e8eb793b7c54eeb8db">writeSecondary</a> ()</td></tr>
+<tr class="memdesc:afa3e2c0177e655e8eb793b7c54eeb8db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write to the second bounce framebuffer.  <a href="#afa3e2c0177e655e8eb793b7c54eeb8db">More...</a><br /></td></tr>
 <tr class="separator:afa3e2c0177e655e8eb793b7c54eeb8db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a79fddac07aaad0639639e02a37bae3b0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_r_h___volume.html#a79fddac07aaad0639639e02a37bae3b0">readSecondary</a> (const GLuint &amp;binding=0)</td></tr>
+<tr class="memdesc:a79fddac07aaad0639639e02a37bae3b0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Read from the second bounce framebuffer.  <a href="#a79fddac07aaad0639639e02a37bae3b0">More...</a><br /></td></tr>
 <tr class="separator:a79fddac07aaad0639639e02a37bae3b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -130,6 +142,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Destroy the radiance hint volume. </p>
 
 </div>
@@ -149,7 +162,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct a radiance hint volume. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Construct a radiance hint volume. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
   </table>
@@ -173,6 +188,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Clear the data out of this framebuffer's textures. </p>
 
 </div>
@@ -192,7 +208,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Read from the first bounce framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read from the first bounce framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">binding</td><td>the reading index to bind to. </td></tr>
   </table>
@@ -216,7 +234,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Read from the second bounce framebuffer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Read from the second bounce framebuffer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">binding</td><td>the reading index to bind to. </td></tr>
   </table>
@@ -240,7 +260,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Resize this volume's 3D texture. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Resize this volume's 3D texture. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">resolution</td><td>the new size to use. </td></tr>
   </table>
@@ -264,7 +286,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Update the volume's attributes based on the input camera. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Update the volume's attributes based on the input camera. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">cameraBuffer</td><td>the camera to use the frustum of. </td></tr>
   </table>
@@ -287,6 +311,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Write to the first bounce framebuffer. </p>
 
 </div>
@@ -305,6 +330,7 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_unitSize</b> = 0.0
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Write to the second bounce framebuffer. </p>
 
 </div>

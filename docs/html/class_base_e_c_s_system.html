@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An interface for ECS Systems.  
+ <a href="class_base_e_c_s_system.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="ecs_system_8h_source.html">ecsSystem.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for BaseECSSystem:</div>
@@ -80,26 +83,26 @@ Inheritance diagram for BaseECSSystem:</div>
  <div class="center">
   <img src="class_base_e_c_s_system.png" usemap="#BaseECSSystem_map" alt=""/>
   <map id="BaseECSSystem_map" name="BaseECSSystem_map">
-<area href="class_camera_array_perspective___system.html" alt="CameraArrayPerspective_System" shape="rect" coords="213,56,416,80"/>
-<area href="class_camera_perspective___system.html" alt="CameraPerspective_System" shape="rect" coords="213,112,416,136"/>
-<area href="class_directional_sync___system.html" alt="DirectionalSync_System" shape="rect" coords="213,168,416,192"/>
-<area href="class_directional_visibility___system.html" alt="DirectionalVisibility_System" shape="rect" coords="213,224,416,248"/>
-<area href="class_frustum_cull___system.html" alt="FrustumCull_System" shape="rect" coords="213,280,416,304"/>
-<area href="class_player_free_look___system.html" alt="PlayerFreeLook_System" shape="rect" coords="213,336,416,360"/>
-<area href="class_player_spawn___system.html" alt="PlayerSpawn_System" shape="rect" coords="213,392,416,416"/>
-<area href="class_point_sync___system.html" alt="PointSync_System" shape="rect" coords="213,448,416,472"/>
-<area href="class_point_visibility___system.html" alt="PointVisibility_System" shape="rect" coords="213,504,416,528"/>
-<area href="class_prop_sync___system.html" alt="PropSync_System" shape="rect" coords="213,560,416,584"/>
-<area href="class_prop_upload___system.html" alt="PropUpload_System" shape="rect" coords="213,616,416,640"/>
-<area href="class_prop_visibility___system.html" alt="PropVisibility_System" shape="rect" coords="213,672,416,696"/>
-<area href="class_reflector_scheduler___system.html" alt="ReflectorScheduler_System" shape="rect" coords="213,728,416,752"/>
-<area href="class_reflector_sync___system.html" alt="ReflectorSync_System" shape="rect" coords="213,784,416,808"/>
-<area href="class_reflector_visibility___system.html" alt="ReflectorVisibility_System" shape="rect" coords="213,840,416,864"/>
-<area href="class_shadow_scheduler___system.html" alt="ShadowScheduler_System" shape="rect" coords="213,896,416,920"/>
-<area href="class_skeletal___animation.html" alt="Skeletal_Animation" shape="rect" coords="213,952,416,976"/>
-<area href="class_spot_sync___system.html" alt="SpotSync_System" shape="rect" coords="213,1008,416,1032"/>
-<area href="class_spot_visibility___system.html" alt="SpotVisibility_System" shape="rect" coords="213,1064,416,1088"/>
-<area href="class_transform_sync___phys___system.html" alt="TransformSync_Phys_System" shape="rect" coords="213,1120,416,1144"/>
+<area href="class_camera_array_perspective___system.html" title="An ECS system responsible for updating a shared pointer with a list of all active cameras in the scen..." alt="CameraArrayPerspective_System" shape="rect" coords="213,56,416,80"/>
+<area href="class_camera_perspective___system.html" title="An ECS system responsible for updating a shared pointer with a list of all active cameras in the scen..." alt="CameraPerspective_System" shape="rect" coords="213,112,416,136"/>
+<area href="class_directional_sync___system.html" title="An ECS system responsible for syncronizing directional lighting components and sending data to the GP..." alt="DirectionalSync_System" shape="rect" coords="213,168,416,192"/>
+<area href="class_directional_visibility___system.html" title="An ECS system responsible for populating render lists PER active perspective in a given frame,..." alt="DirectionalVisibility_System" shape="rect" coords="213,224,416,248"/>
+<area href="class_frustum_cull___system.html" title="An ECS system responsible for frustum culling all renderable components with a bounding sphere and a ..." alt="FrustumCull_System" shape="rect" coords="213,280,416,304"/>
+<area href="class_player_free_look___system.html" title="A system responsible for updating player components based on keyboard/mouse." alt="PlayerFreeLook_System" shape="rect" coords="213,336,416,360"/>
+<area href="class_player_spawn___system.html" title="A system responsible for spawning players at a specific spawn point." alt="PlayerSpawn_System" shape="rect" coords="213,392,416,416"/>
+<area href="class_point_sync___system.html" title="An ECS system responsible for syncronizing point lighting components and sending data to the GPU." alt="PointSync_System" shape="rect" coords="213,448,416,472"/>
+<area href="class_point_visibility___system.html" title="An ECS system responsible for populating render lists PER active perspective in a given frame,..." alt="PointVisibility_System" shape="rect" coords="213,504,416,528"/>
+<area href="class_prop_sync___system.html" title="An ECS system responsible for syncronizing prop components and sending data to the GPU." alt="PropSync_System" shape="rect" coords="213,560,416,584"/>
+<area href="class_prop_upload___system.html" title="An ECS system responsible for uploading prop data to the GPU, such as geometrical data and material t..." alt="PropUpload_System" shape="rect" coords="213,616,416,640"/>
+<area href="class_prop_visibility___system.html" title="An ECS system responsible for populating render lists PER active perspective in a given frame,..." alt="PropVisibility_System" shape="rect" coords="213,672,416,696"/>
+<area href="class_reflector_scheduler___system.html" title="An ECS system responsible for scheduling when reflector related entities should be updated." alt="ReflectorScheduler_System" shape="rect" coords="213,728,416,752"/>
+<area href="class_reflector_sync___system.html" title="An ECS system responsible for syncronizing reflector components and sending data to the GPU." alt="ReflectorSync_System" shape="rect" coords="213,784,416,808"/>
+<area href="class_reflector_visibility___system.html" title="An ECS system responsible for populating render lists PER active perspective in a given frame,..." alt="ReflectorVisibility_System" shape="rect" coords="213,840,416,864"/>
+<area href="class_shadow_scheduler___system.html" title="An ECS system responsible for scheduling when light &amp; shadow related entities should be updated." alt="ShadowScheduler_System" shape="rect" coords="213,896,416,920"/>
+<area href="class_skeletal___animation.html" title="A system responsible for animating props with skeleton components." alt="Skeletal_Animation" shape="rect" coords="213,952,416,976"/>
+<area href="class_spot_sync___system.html" title="An ECS system responsible for syncronizing spot lighting components and sending data to the GPU." alt="SpotSync_System" shape="rect" coords="213,1008,416,1032"/>
+<area href="class_spot_visibility___system.html" title="An ECS system responsible for populating render lists PER active perspective in a given frame,..." alt="SpotVisibility_System" shape="rect" coords="213,1064,416,1088"/>
+<area href="class_transform_sync___phys___system.html" title="A system responsible for updating physics components that share a common transformation." alt="TransformSync_Phys_System" shape="rect" coords="213,1120,416,1144"/>
   </map>
 </div></div>
 <table class="memberdecls">
@@ -113,17 +116,22 @@ Public Types</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a58fe4e77db995162c381813a5e4c3b82"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a58fe4e77db995162c381813a5e4c3b82">getComponentTypes</a> ()</td></tr>
+<tr class="memdesc:a58fe4e77db995162c381813a5e4c3b82"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component types supported by this system.  <a href="#a58fe4e77db995162c381813a5e4c3b82">More...</a><br /></td></tr>
 <tr class="separator:a58fe4e77db995162c381813a5e4c3b82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a847e096bb6d393441ec6692400e39d5d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a847e096bb6d393441ec6692400e39d5d">getComponentFlags</a> ()</td></tr>
+<tr class="memdesc:a847e096bb6d393441ec6692400e39d5d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component flags requested by this system.  <a href="#a847e096bb6d393441ec6692400e39d5d">More...</a><br /></td></tr>
 <tr class="separator:a847e096bb6d393441ec6692400e39d5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a119213270722fb067888a799a17d5845"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">isValid</a> () const</td></tr>
+<tr class="memdesc:a119213270722fb067888a799a17d5845"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this system is valid (has at least 1 non-optional component type)  <a href="#a119213270722fb067888a799a17d5845">More...</a><br /></td></tr>
 <tr class="separator:a119213270722fb067888a799a17d5845"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4acdd4d378f0793eebfc7b5feae249cf"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt; &gt; &amp;components)=0</td></tr>
+<tr class="memdesc:a4acdd4d378f0793eebfc7b5feae249cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick this system by deltaTime, passing in all the components matching this system's requirements.  <a href="#a4acdd4d378f0793eebfc7b5feae249cf">More...</a><br /></td></tr>
 <tr class="separator:a4acdd4d378f0793eebfc7b5feae249cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
+<tr class="memdesc:a809945fff37d5d5737db89d831aae3e6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a component type to be used by this system.  <a href="#a809945fff37d5d5737db89d831aae3e6">More...</a><br /></td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -162,7 +170,9 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Add a component type to be used by this system. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Add a component type to be used by this system. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">componentType</td><td>the type of component to use </td></tr>
     <tr><td class="paramname">componentFlag</td><td>flag indicating required/optional </td></tr>
@@ -194,7 +204,9 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns the component flags requested by this system. </p><dl class="section return"><dt>Returns</dt><dd>the component flags requested by this system. </dd></dl>
+
+<p>Returns the component flags requested by this system. </p>
+<dl class="section return"><dt>Returns</dt><dd>the component flags requested by this system. </dd></dl>
 
 </div>
 </div>
@@ -220,7 +232,9 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns the component types supported by this system. </p><dl class="section return"><dt>Returns</dt><dd>the component types supported by this system. </dd></dl>
+
+<p>Returns the component types supported by this system. </p>
+<dl class="section return"><dt>Returns</dt><dd>the component types supported by this system. </dd></dl>
 
 </div>
 </div>
@@ -246,7 +260,9 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Returns whether or not this system is valid (has at least 1 non-optional component type) </p><dl class="section return"><dt>Returns</dt><dd>true if the system is valid, false otherwise. </dd></dl>
+
+<p>Returns whether or not this system is valid (has at least 1 non-optional component type) </p>
+<dl class="section return"><dt>Returns</dt><dd>true if the system is valid, false otherwise. </dd></dl>
 
 </div>
 </div>
@@ -283,7 +299,9 @@ Protected Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Tick this system by deltaTime, passing in all the components matching this system's requirements. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Tick this system by deltaTime, passing in all the components matching this system's requirements. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time which passed since last update </td></tr>
     <tr><td class="paramname">components</td><td>the components to update. </td></tr>
@@ -291,7 +309,7 @@ Protected Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_transform_sync___phys___system.html#a21557e7787b8a54437d6652945b263aa">TransformSync_Phys_System</a>, <a class="el" href="class_player_free_look___system.html#a2da49d1359b6c05d2c7d928a9ed64358">PlayerFreeLook_System</a>, <a class="el" href="class_player_spawn___system.html#af53859e49ab238629290bd50ab7c69d4">PlayerSpawn_System</a>, and <a class="el" href="class_skeletal___animation.html#a20693ba3f6a4d4aab6965db886d434d6">Skeletal_Animation</a>.</p>
+<p>Implemented in <a class="el" href="class_player_spawn___system.html#af53859e49ab238629290bd50ab7c69d4">PlayerSpawn_System</a>, <a class="el" href="class_transform_sync___phys___system.html#a21557e7787b8a54437d6652945b263aa">TransformSync_Phys_System</a>, <a class="el" href="class_player_free_look___system.html#a2da49d1359b6c05d2c7d928a9ed64358">PlayerFreeLook_System</a>, and <a class="el" href="class_skeletal___animation.html#a20693ba3f6a4d4aab6965db886d434d6">Skeletal_Animation</a>.</p>
 
 </div>
 </div>

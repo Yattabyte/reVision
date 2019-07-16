@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An ECS system responsible for populating render lists PER active perspective in a given frame, for all point light related entities.  
+ <a href="class_point_visibility___system.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_point_visibility___system_8h_source.html">PointVisibility_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for PointVisibility_System:</div>
@@ -78,27 +81,33 @@ Inheritance diagram for PointVisibility_System:</div>
  <div class="center">
   <img src="class_point_visibility___system.png" usemap="#PointVisibility_5FSystem_map" alt=""/>
   <map id="PointVisibility_5FSystem_map" name="PointVisibility_5FSystem_map">
-<area href="class_base_e_c_s_system.html" alt="BaseECSSystem" shape="rect" coords="0,0,134,24"/>
+<area href="class_base_e_c_s_system.html" title="An interface for ECS Systems." alt="BaseECSSystem" shape="rect" coords="0,0,134,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad532d6efdfafdf2264a2b35dfbfead2f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_point_visibility___system.html#ad532d6efdfafdf2264a2b35dfbfead2f">~PointVisibility_System</a> ()=default</td></tr>
+<tr class="memdesc:ad532d6efdfafdf2264a2b35dfbfead2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this system.  <a href="#ad532d6efdfafdf2264a2b35dfbfead2f">More...</a><br /></td></tr>
 <tr class="separator:ad532d6efdfafdf2264a2b35dfbfead2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ef62e6c58042c6c0b2bc1aba7437813"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_point_visibility___system.html#a1ef62e6c58042c6c0b2bc1aba7437813">PointVisibility_System</a> (const std::shared_ptr&lt; <a class="el" href="struct_point_data.html">PointData</a> &gt; &amp;frameData)</td></tr>
+<tr class="memdesc:a1ef62e6c58042c6c0b2bc1aba7437813"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct this system.  <a href="#a1ef62e6c58042c6c0b2bc1aba7437813">More...</a><br /></td></tr>
 <tr class="separator:a1ef62e6c58042c6c0b2bc1aba7437813"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa4cc25270b0a61060425717c9276db39"><td class="memItemLeft" align="right" valign="top"><a id="aa4cc25270b0a61060425717c9276db39"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:aa4cc25270b0a61060425717c9276db39"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
 <tr class="memitem:a58fe4e77db995162c381813a5e4c3b82 inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a58fe4e77db995162c381813a5e4c3b82">getComponentTypes</a> ()</td></tr>
+<tr class="memdesc:a58fe4e77db995162c381813a5e4c3b82 inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component types supported by this system.  <a href="class_base_e_c_s_system.html#a58fe4e77db995162c381813a5e4c3b82">More...</a><br /></td></tr>
 <tr class="separator:a58fe4e77db995162c381813a5e4c3b82 inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a847e096bb6d393441ec6692400e39d5d inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; uint32_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a847e096bb6d393441ec6692400e39d5d">getComponentFlags</a> ()</td></tr>
+<tr class="memdesc:a847e096bb6d393441ec6692400e39d5d inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the component flags requested by this system.  <a href="class_base_e_c_s_system.html#a847e096bb6d393441ec6692400e39d5d">More...</a><br /></td></tr>
 <tr class="separator:a847e096bb6d393441ec6692400e39d5d inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">isValid</a> () const</td></tr>
+<tr class="memdesc:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this system is valid (has at least 1 non-optional component type)  <a href="class_base_e_c_s_system.html#a119213270722fb067888a799a17d5845">More...</a><br /></td></tr>
 <tr class="separator:a119213270722fb067888a799a17d5845 inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt; &gt; &amp;components)=0</td></tr>
+<tr class="memdesc:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tick this system by deltaTime, passing in all the components matching this system's requirements.  <a href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">More...</a><br /></td></tr>
 <tr class="separator:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
@@ -110,6 +119,7 @@ Additional Inherited Members</h2></td></tr>
 <tr class="separator:a2d64b0f24d1159e1f633f079ef3c0181 inherit pub_types_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
+<tr class="memdesc:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a component type to be used by this system.  <a href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">More...</a><br /></td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -137,6 +147,7 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this system. </p>
 
 </div>
@@ -164,7 +175,9 @@ Additional Inherited Members</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Construct this system. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">frameData</td><td>shared pointer of common data that changes frame-to-frame. </td></tr>
   </table>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,33 +71,47 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>This class contains a list of UI elements, where one specific one is focused on.  
+ <a href="class_focus_map.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_focus_map_8h_source.html">FocusMap.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a7b00605a84b39b1a96dde07fe76943ea"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a7b00605a84b39b1a96dde07fe76943ea">~FocusMap</a> ()=default</td></tr>
+<tr class="memdesc:a7b00605a84b39b1a96dde07fe76943ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy this focus map.  <a href="#a7b00605a84b39b1a96dde07fe76943ea">More...</a><br /></td></tr>
 <tr class="separator:a7b00605a84b39b1a96dde07fe76943ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a25e5846a3166fe4ebbb4a9ffd61dec64"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a25e5846a3166fe4ebbb4a9ffd61dec64">FocusMap</a> ()=default</td></tr>
+<tr class="memdesc:a25e5846a3166fe4ebbb4a9ffd61dec64"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a focus map.  <a href="#a25e5846a3166fe4ebbb4a9ffd61dec64">More...</a><br /></td></tr>
 <tr class="separator:a25e5846a3166fe4ebbb4a9ffd61dec64"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adee6fdf724f05899c7ed7b679236281b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#adee6fdf724f05899c7ed7b679236281b">addElement</a> (const std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt; &amp;element)</td></tr>
+<tr class="memdesc:adee6fdf724f05899c7ed7b679236281b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add an element to this focus map, setting it in focus.  <a href="#adee6fdf724f05899c7ed7b679236281b">More...</a><br /></td></tr>
 <tr class="separator:adee6fdf724f05899c7ed7b679236281b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0">removeElement</a> (const std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt; &amp;element)</td></tr>
+<tr class="memdesc:a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove an element from this focus map, comparing its underlying pointer.  <a href="#a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0">More...</a><br /></td></tr>
 <tr class="separator:a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a125bc4e9b201e4abb6d3df3f7dc9f7e9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a125bc4e9b201e4abb6d3df3f7dc9f7e9">clear</a> ()</td></tr>
+<tr class="memdesc:a125bc4e9b201e4abb6d3df3f7dc9f7e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove all elements from this focus map.  <a href="#a125bc4e9b201e4abb6d3df3f7dc9f7e9">More...</a><br /></td></tr>
 <tr class="separator:a125bc4e9b201e4abb6d3df3f7dc9f7e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad756457e419197f4f5ec1e8157513400"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#ad756457e419197f4f5ec1e8157513400">focusIndex</a> (const int &amp;newIndex)</td></tr>
+<tr class="memdesc:ad756457e419197f4f5ec1e8157513400"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the focus onto a specific index, if it is able to be focused on.  <a href="#ad756457e419197f4f5ec1e8157513400">More...</a><br /></td></tr>
 <tr class="separator:ad756457e419197f4f5ec1e8157513400"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafd77fee15884245d9163c120a4d8c30"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#aafd77fee15884245d9163c120a4d8c30">focusElement</a> (const std::shared_ptr&lt; <a class="el" href="class_u_i___element.html">UI_Element</a> &gt; &amp;element)</td></tr>
+<tr class="memdesc:aafd77fee15884245d9163c120a4d8c30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the focus onto a specific element, if it is able to be focused on, if it's pointer can be found.  <a href="#aafd77fee15884245d9163c120a4d8c30">More...</a><br /></td></tr>
 <tr class="separator:aafd77fee15884245d9163c120a4d8c30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9c82d42a9450c55db9bb595d3958ef8d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a9c82d42a9450c55db9bb595d3958ef8d">applyActionState</a> (<a class="el" href="class_action_state.html">ActionState</a> &amp;actionState)</td></tr>
+<tr class="memdesc:a9c82d42a9450c55db9bb595d3958ef8d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply user input to the focus map, forwarding it to the focused element and perhaps changing the focus as well.  <a href="#a9c82d42a9450c55db9bb595d3958ef8d">More...</a><br /></td></tr>
 <tr class="separator:a9c82d42a9450c55db9bb595d3958ef8d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a2279f6cda20970e2bf6d9d01f162fd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a2a2279f6cda20970e2bf6d9d01f162fd">back</a> ()</td></tr>
+<tr class="memdesc:a2a2279f6cda20970e2bf6d9d01f162fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the focus back by 1.  <a href="#a2a2279f6cda20970e2bf6d9d01f162fd">More...</a><br /></td></tr>
 <tr class="separator:a2a2279f6cda20970e2bf6d9d01f162fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a70644f85aba145a09e8f09e07f761f60"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_focus_map.html#a70644f85aba145a09e8f09e07f761f60">forward</a> ()</td></tr>
+<tr class="memdesc:a70644f85aba145a09e8f09e07f761f60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Move the focus ahead by 1.  <a href="#a70644f85aba145a09e8f09e07f761f60">More...</a><br /></td></tr>
 <tr class="separator:a70644f85aba145a09e8f09e07f761f60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>This class contains a list of UI elements, where one specific one is focused on. Focus can be changed manually, or by user input directly. Goal is to decouple basic UI elements from changing focus, and have more complex ones use <a class="el" href="class_focus_map.html">FocusMap</a> to standardize movement between them. </p>
+<div class="textblock"><p>This class contains a list of UI elements, where one specific one is focused on. </p>
+<p>Focus can be changed manually, or by user input directly. Goal is to decouple basic UI elements from changing focus, and have more complex ones use <a class="el" href="class_focus_map.html" title="This class contains a list of UI elements, where one specific one is focused on.">FocusMap</a> to standardize movement between them. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7b00605a84b39b1a96dde07fe76943ea"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7b00605a84b39b1a96dde07fe76943ea">&#9670;&nbsp;</a></span>~FocusMap()</h2>
@@ -121,6 +135,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy this focus map. </p>
 
 </div>
@@ -147,6 +162,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Construct a focus map. </p>
 
 </div>
@@ -175,7 +191,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Add an element to this focus map, setting it in focus. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Add an element to this focus map, setting it in focus. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">element</td><td>the new element to add to the map. </td></tr>
   </table>
@@ -207,7 +225,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Apply user input to the focus map, forwarding it to the focused element and perhaps changing the focus as well. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Apply user input to the focus map, forwarding it to the focused element and perhaps changing the focus as well. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">actionState</td><td>the action state to apply. </td></tr>
   </table>
@@ -238,6 +258,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Move the focus back by 1. </p>
 
 </div>
@@ -264,6 +285,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Remove all elements from this focus map. </p>
 
 </div>
@@ -291,7 +313,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the focus onto a specific element, if it is able to be focused on, if it's pointer can be found. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the focus onto a specific element, if it is able to be focused on, if it's pointer can be found. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">element</td><td>the element to attempt to focus on. </td></tr>
   </table>
@@ -324,7 +348,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Set the focus onto a specific index, if it is able to be focused on. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Set the focus onto a specific index, if it is able to be focused on. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newIndex</td><td>the index to attempt to focus on. </td></tr>
   </table>
@@ -355,6 +381,7 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Move the focus ahead by 1. </p>
 
 </div>
@@ -382,7 +409,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Remove an element from this focus map, comparing its underlying pointer. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Remove an element from this focus map, comparing its underlying pointer. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">element</td><td>the element to remove from the map. </td></tr>
   </table>

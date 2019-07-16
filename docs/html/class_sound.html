@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.9.16</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A sound byte object.  
+ <a href="class_sound.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_sound_8h_source.html">Sound.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Sound:</div>
@@ -81,26 +84,33 @@ Inheritance diagram for Sound:</div>
  <div class="center">
   <img src="class_sound.png" usemap="#Sound_map" alt=""/>
   <map id="Sound_map" name="Sound_map">
-<area href="class_asset.html" title="Represents some form of data to be loaded from disk, such as shaders, models, levels,..." alt="Asset" shape="rect" coords="0,0,48,24"/>
+<area href="class_asset.html" title="An abstract base-class for assets." alt="Asset" shape="rect" coords="0,0,48,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0907389078bf740be2a5763366ad3376"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound.html#a0907389078bf740be2a5763366ad3376">~Sound</a> ()</td></tr>
+<tr class="memdesc:a0907389078bf740be2a5763366ad3376"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="class_sound.html" title="A sound byte object.">Sound</a>.  <a href="#a0907389078bf740be2a5763366ad3376">More...</a><br /></td></tr>
 <tr class="separator:a0907389078bf740be2a5763366ad3376"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73334075d277fd677a9af7411c2165c4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound.html#a73334075d277fd677a9af7411c2165c4">Sound</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a73334075d277fd677a9af7411c2165c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="class_sound.html" title="A sound byte object.">Sound</a>.  <a href="#a73334075d277fd677a9af7411c2165c4">More...</a><br /></td></tr>
 <tr class="separator:a73334075d277fd677a9af7411c2165c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
 <tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
+<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -112,11 +122,14 @@ SoundObj *&#160;</td><td class="memItemRight" valign="bottom"><b>m_soundObj</b><
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:a11ed2377b609b19eb25d81163e57a100"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_sound.html#a11ed2377b609b19eb25d81163e57a100">initialize</a> () override</td></tr>
+<tr class="memdesc:a11ed2377b609b19eb25d81163e57a100"><td class="mdescLeft">&#160;</td><td class="mdescRight">Initializes the asset.  <a href="#a11ed2377b609b19eb25d81163e57a100">More...</a><br /></td></tr>
 <tr class="separator:a11ed2377b609b19eb25d81163e57a100"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
 <tr class="separator:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a> ()</td></tr>
+<tr class="memdesc:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declares this asset ready-to-use.  <a href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">More...</a><br /></td></tr>
 <tr class="separator:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="friends"></a>
@@ -145,7 +158,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 <tr class="separator:a9d426de8f210c27c208fa5c099f37498 inherit pro_attribs_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A <a class="el" href="class_sound.html">Sound</a> object. </p>
+<div class="textblock"><p>A sound byte object. </p>
+<p>Represents a sound file loaded from disk. </p><dl class="section note"><dt>Note</dt><dd>requires the SoLoud library to use. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0907389078bf740be2a5763366ad3376"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0907389078bf740be2a5763366ad3376">&#9670;&nbsp;</a></span>~Sound()</h2>
@@ -161,7 +175,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Destroy the <a class="el" href="class_sound.html">Sound</a>. </p>
+
+<p>Destroy the <a class="el" href="class_sound.html" title="A sound byte object.">Sound</a>. </p>
 
 </div>
 </div>
@@ -190,7 +205,15 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct the <a class="el" href="class_sound.html">Sound</a>. </p>
+
+<p>Construct the <a class="el" href="class_sound.html" title="A sound byte object.">Sound</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the asset file name (relative to engine directory). </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -217,6 +240,7 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Initializes the asset. </p>
 
 <p>Implements <a class="el" href="class_asset.html#a2efad8f8dead90422e43509425bb4bae">Asset</a>.</p>

@@ -1,16 +1,18 @@
 # reVision
 
-This project is a WIP game engine, with the primary focus being on real-time 3D rendering.
-The engine supports OpenGL 4.5 + GLSL 460, deferred rendering, and a PBR workflow (materials and shaders).
+This is a work-in-progress game engine, with the bulk of its focus on asset loading and real-time 3D rendering.  
+The engine runs using an OpenGL 4.5 + GLSL 460 deferred renderer equipped for a PBR material workflow.  
+The engine also uses an ECS architecture.
 
 ## Getting Started
 
-The branch "active" is updated frequently and contains the most recent builds, but may be unstable.
-The most stable versions can be found under the branch "master".
+The branch labeled "active" is updated frequently and contains the most recent builds, but may be unstable.  
+The most stable versions can be found under the branch labeled "master".  
+Binaries can be found under the "Releases" section, and is updated every time I complete a major version.  
 
-The project is designed with CMake in mind, so clone the desired branch and run CMake to generate the project solution.
+The project has been designed with CMake in mind, as it depends on several external libraries to compile.
 
-Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460.
+Note: the engine requires a graphics card capable of supporting OpenGL 4.5 and GLSL 460 to run.
 
 ### Required Libraries
 
@@ -22,8 +24,29 @@ This project requires the following (free) libraries:
 * [GLFW - Windowing](http://www.glfw.org/)
 * [GLM - Mathematics](https://glm.g-truc.net/0.9.9/index.html)
 
+## Versioning
 
-### Installation
+The engine version goes as such:  
+``(Major #).(Minor #).(Patch #).``  
+For example, Version: 1.2.3, where the major version is 1, minor version is 2, and the patch version is 3.  
+The major version increments following the completetion of a major milestone, plus changes are pushed into the master branch and a new version is released.  
+The minor version increments when a large planned feature is implemented or a category of related changes have been completed.  
+The patch version increments when a patch, hotfix, or small feature has been implemented.  
+
+I try to commit every time the version changes, including the new version in the summary.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+
+## Acknowledgments
+
+Thanks to everyone who has helped me over the years!
+
+Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
+
+
+## Installation
 
 Step 1: Download [CMake](https://cmake.org/)
 
@@ -46,22 +69,3 @@ Step 3: Building the project
 The project comes as a single solution for the engine, and a separate solution for generating the optional Doxygen documentation.
 To avoid duplicating the engine assets for multiple builds (debug, release, x32/x64, etc) they are kept within the 'app' folder. If the executable doesn't have it set already, change it to start in the app folder.
 ```
-
-## Versioning
-
-We version our project in the following format: (Major #).(Minor #).(Patch #). For example, Version: 1.2.3, where the major version is 1, minor version is 2, and the patch version is 3.  
-The major version number increases when all planned changes and features have been implemented, and is followed with a pull into the master branch + a release on github.  
-The minor version number increases when a single planned feature is implemented or a small collection of related changes have been completed.  
-The patch version number increases when a patch, hotfix, or small miscellaneous changes have been implemented.  
-
-I try to commit every time the version changes, including the new version in the summary.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
-
-## Acknowledgments
-
-Thanks to everyone who has helped me over the years!
-
-Special thanks to all the helpful members of the former [Facepunch programming subforum](https://forum.facepunch.com/f/) as well as those who moved on to [Knockout](https://knockout.chat/), the helpful community on the Stack Exchange, [OGLDev](http://ogldev.atspace.co.uk/index.html), [Learn OpenGL](https://learnopengl.com), and the many other people who run their own tutorial series and programming blogs.
