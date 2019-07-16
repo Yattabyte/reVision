@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,8 @@ $(function() {
 <div class="title">SpotVisibility_System Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_spot_visibility___system_8h_source.html">SpotVisibility_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for SpotVisibility_System:</div>
 <div class="dyncontent">
@@ -82,9 +84,10 @@ Inheritance diagram for SpotVisibility_System:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa7798d2ab9a2ecb29bc08cdd8f6ea0e1"><td class="memItemLeft" align="right" valign="top"><a id="aa7798d2ab9a2ecb29bc08cdd8f6ea0e1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SpotVisibility_System</b> (const std::shared_ptr&lt; <a class="el" href="struct_spot___visibility.html">Spot_Visibility</a> &gt; &amp;visibility, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;viewports)</td></tr>
-<tr class="separator:aa7798d2ab9a2ecb29bc08cdd8f6ea0e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb6a1ab50cea42bbf1f4a985d5141a94"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spot_visibility___system.html#afb6a1ab50cea42bbf1f4a985d5141a94">~SpotVisibility_System</a> ()=default</td></tr>
+<tr class="separator:afb6a1ab50cea42bbf1f4a985d5141a94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a337c20f24458a2ac4d2d139f126dde92"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spot_visibility___system.html#a337c20f24458a2ac4d2d139f126dde92">SpotVisibility_System</a> (const std::shared_ptr&lt; <a class="el" href="struct_spot_data.html">SpotData</a> &gt; &amp;frameData)</td></tr>
+<tr class="separator:a337c20f24458a2ac4d2d139f126dde92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a38d49c45e1e3624ee749bfc99c2f3743"><td class="memItemLeft" align="right" valign="top"><a id="a38d49c45e1e3624ee749bfc99c2f3743"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:a38d49c45e1e3624ee749bfc99c2f3743"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,6 +112,67 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An ECS system responsible for populating render lists PER active perspective in a given frame, for all spot light related entities. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="afb6a1ab50cea42bbf1f4a985d5141a94"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb6a1ab50cea42bbf1f4a985d5141a94">&#9670;&nbsp;</a></span>~SpotVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpotVisibility_System::~SpotVisibility_System </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this system. </p>
+
+</div>
+</div>
+<a id="a337c20f24458a2ac4d2d139f126dde92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a337c20f24458a2ac4d2d139f126dde92">&#9670;&nbsp;</a></span>SpotVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpotVisibility_System::SpotVisibility_System </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_spot_data.html">SpotData</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>frameData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameData</td><td>shared pointer of common data that changes frame-to-frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/Spot/<a class="el" href="_spot_visibility___system_8h_source.html">SpotVisibility_System.h</a></li>
 </ul>

@@ -10,13 +10,14 @@
 #include "Utilities/GL/glad/glad.h"
 
 
-/***/
+/** An ECS system responsible for syncronizing prop components and sending data to the GPU. */
 class PropSync_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~PropSync_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PropSync_System(const std::shared_ptr<PropData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);

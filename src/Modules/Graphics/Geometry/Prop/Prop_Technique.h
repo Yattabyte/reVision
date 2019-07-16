@@ -119,7 +119,7 @@ public:
 				glBindVertexArray(m_shapeCube->m_vaoID);
 				propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, visibleIndices.size(), 0);
+				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
 				glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 
@@ -133,7 +133,7 @@ public:
 				glBindVertexArray(m_frameData->m_geometryVAOID);
 				glBindTextureUnit(0, m_frameData->m_materialArrayID);
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, visibleIndices.size(), 0);
+				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
 				m_drawIndex++;
 			}			
 		}
@@ -193,7 +193,7 @@ public:
 				glBindVertexArray(m_shapeCube->m_vaoID);
 				propCullingBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				propRenderBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, visibleIndices.size(), 0);
+				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
 				glMemoryBarrier(GL_COMMAND_BARRIER_BIT);
 				glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 8, 0);
 				m_count = visibleIndices.size();
@@ -214,7 +214,7 @@ public:
 				glBindVertexArray(m_frameData->m_geometryVAOID);
 				glBindTextureUnit(0, m_frameData->m_materialArrayID);
 				m_drawData[m_drawIndex].bufferRender.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, m_count, 0);
+				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)m_count, 0);
 				glFrontFace(GL_CCW);
 				glCullFace(GL_BACK);
 				m_drawIndex++;

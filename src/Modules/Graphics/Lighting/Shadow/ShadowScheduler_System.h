@@ -9,16 +9,18 @@
 #include "Engine.h"
 
 
-/***/
+/** An ECS system responsible for scheduling when light & shadow related entities should be updated. */
 class ShadowScheduler_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~ShadowScheduler_System() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	/***/
+	/** Construct this system.
+	@param	engine		the engine to use.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ShadowScheduler_System(Engine * engine, const std::shared_ptr<ShadowData> & frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
@@ -96,7 +98,7 @@ public:
 							camArrays->m_cameras[x].setEnabled(false);
 							tryToAddShadow(shadowComponent->m_shadowSpot + x, &(camArrays->m_cameras[x]), &camArrays->m_updateTimes[x]);
 						}
-						cameraCount += camArrays->m_cameras.size();
+						cameraCount += (int)camArrays->m_cameras.size();
 					}
 				}
 			}
@@ -106,7 +108,7 @@ public:
 				camera->setEnabled(true);
 
 			// Resize shadowmap to fit number of entities this frame
-			m_frameData->shadowFBO.resize(glm::ivec2(m_frameData->shadowSize), (unsigned int)(cameraCount));
+			m_frameData->shadowFBO.resize(glm::ivec2((int)m_frameData->shadowSize), (unsigned int)(cameraCount));
 		}
 	}
 

@@ -85,9 +85,9 @@ public:
 				trans.m_transform = transform;
 				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
 				trans.m_transform.update();
-				BaseECSComponent * components[] = { &renderable, &bsphere, &color, &radius, &point, &shadow, &camArray, &trans };
+				BaseECSComponent * entityComponents[] = { &renderable, &bsphere, &color, &radius, &point, &shadow, &camArray, &trans };
 				uint32_t types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, Shadow_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
-				world.makeEntity(components, types, 7ull);
+				world.makeEntity(entityComponents, types, 7ull);
 			}
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
@@ -95,7 +95,7 @@ public:
 			transform.update();
 
 			// Update the client's camera
-			auto & cam = graphicsModule.getClientCamera();
+			auto cam = graphicsModule.getClientCamera();
 			cam->get()->EyePosition = transform.m_position;
 			cam->get()->vMatrix = glm::toMat4(transform.m_orientation) * glm::translate(glm::mat4(1.0f), -transform.m_position);
 			cam->get()->vMatrixInverse = glm::inverse(cam->get()->vMatrix);

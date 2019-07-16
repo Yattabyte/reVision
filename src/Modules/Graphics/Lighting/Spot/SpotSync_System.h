@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 
 
-/***/
+/** An ECS system responsible for syncronizing spot lighting components and sending data to the GPU. */
 class SpotSync_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~SpotSync_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline SpotSync_System(const std::shared_ptr<SpotData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
@@ -92,7 +93,7 @@ public:
 					if (cameraComponent) {
 						auto & cam = cameraComponent->m_camera;
 						auto & camData = *cam.get();
-						camData.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+						camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
 						camData.FarPlane = radiusSquared;
 						camData.EyePosition = position;
 						camData.FOV = cutoff * 2.0f;

@@ -81,24 +81,24 @@ void Graphics_Module::initialize(Engine * engine)
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
-	m_systems.addSystem(new Skeletal_Animation(engine));
+	m_systems.addSystem(new Skeletal_Animation());
 	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
 	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
-	world.addComponentType("Renderable_Component", [engine](const ParamList & parameters) {
+	world.addComponentType("Renderable_Component", [engine](const ParamList &) {
 		auto * component = new Renderable_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("Camera_Component", [&, engine](const ParamList & parameters) {
+	world.addComponentType("Camera_Component", [&, engine](const ParamList &) {
 		auto * component = new Camera_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("CameraArray_Component", [&, engine](const ParamList & parameters) {
+	world.addComponentType("CameraArray_Component", [&, engine](const ParamList &) {
 		auto * component = new CameraArray_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("BoundingSphere_Component", [engine](const ParamList & parameters) {
+	world.addComponentType("BoundingSphere_Component", [engine](const ParamList &) {
 		auto * component = new BoundingSphere_Component();
 		return std::make_pair(component->ID, component);
 	});
@@ -130,23 +130,23 @@ void Graphics_Module::initialize(Engine * engine)
 		component->m_cutoff = CastAny(parameters, 0, 45.0f);
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("LightDirectional_Component", [](const ParamList & parameters) {
+	world.addComponentType("LightDirectional_Component", [](const ParamList &) {
 		auto * component = new LightDirectional_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("LightPoint_Component", [](const ParamList & parameters) {
+	world.addComponentType("LightPoint_Component", [](const ParamList &) {
 		auto * component = new LightPoint_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("LightSpot_Component", [](const ParamList & parameters) {
+	world.addComponentType("LightSpot_Component", [](const ParamList &) {
 		auto * component = new LightSpot_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("Shadow_Component", [](const ParamList & parameters) {
+	world.addComponentType("Shadow_Component", [](const ParamList &) {
 		auto * component = new Shadow_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("Reflector_Component", [](const ParamList & parameters) {
+	world.addComponentType("Reflector_Component", [](const ParamList &) {
 		auto * component = new Reflector_Component();
 		return std::make_pair(component->ID, component);
 	});
@@ -213,7 +213,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 			break;
 		}
 	if (found) {
-		renderScene(deltaTime, m_viewport, { {visibilityIndex, 0} });
+		renderScene(deltaTime, m_viewport, { {(int)visibilityIndex, 0} });
 		copyToScreen();
 	}
 

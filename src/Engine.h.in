@@ -47,11 +47,11 @@ public:
 
 private:
 	// Private Initialization Methods
-	/***/
+	/** Initialize the window for this application. */
 	void initWindow();
-	/***/
+	/** Initialize the auxilliary processing threads. */
 	void initThreads();
-	/***/
+	/** Print the engine boiler-plate text to the message manager. */
 	void printBoilerPlate();
 
 

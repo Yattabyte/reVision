@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,32 +70,94 @@ $(function() {
 <div class="title">Buffer_Interface Class Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_buffer___interface_8h_source.html">Buffer_Interface.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Buffer_Interface:</div>
 <div class="dyncontent">
  <div class="center">
   <img src="class_buffer___interface.png" usemap="#Buffer_5FInterface_map" alt=""/>
   <map id="Buffer_5FInterface_map" name="Buffer_5FInterface_map">
-<area href="class_dynamic_buffer.html" alt="DynamicBuffer" shape="rect" coords="355,56,700,80"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; T &gt;" shape="rect" coords="355,112,700,136"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Directional_Buffers::Directional_Buffer &gt;" shape="rect" coords="355,168,700,192"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Point_Buffers::Point_Buffer &gt;" shape="rect" coords="355,224,700,248"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Prop_Buffers::Model_Buffer &gt;" shape="rect" coords="355,280,700,304"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Prop_Buffers::Skeleton_Buffer &gt;" shape="rect" coords="355,336,700,360"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Reflector_Buffers::Reflector_Buffer &gt;" shape="rect" coords="355,392,700,416"/>
-<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Spot_Buffers::Spot_Buffer &gt;" shape="rect" coords="355,448,700,472"/>
-<area href="class_static_buffer.html" alt="StaticBuffer" shape="rect" coords="355,504,700,528"/>
-<area href="class_static_mapped_buffer.html" alt="StaticMappedBuffer" shape="rect" coords="355,560,700,584"/>
+<area href="class_dynamic_buffer.html" alt="DynamicBuffer" shape="rect" coords="333,56,656,80"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; T &gt;" shape="rect" coords="333,112,656,136"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; Camera::GPUData &gt;" shape="rect" coords="333,168,656,192"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;" shape="rect" coords="333,224,656,248"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;" shape="rect" coords="333,280,656,304"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;" shape="rect" coords="333,336,656,360"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;" shape="rect" coords="333,392,656,416"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;" shape="rect" coords="333,448,656,472"/>
+<area href="class_g_l___array_buffer.html" alt="GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;" shape="rect" coords="333,504,656,528"/>
+<area href="class_static_buffer.html" alt="StaticBuffer" shape="rect" coords="333,560,656,584"/>
+<area href="class_static_triple_buffer.html" alt="StaticTripleBuffer" shape="rect" coords="333,616,656,640"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a79bb5d606d3dd10c219a48bff8bf19d1">~Buffer_Interface</a> ()=default</td></tr>
+<tr class="separator:a79bb5d606d3dd10c219a48bff8bf19d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#ab834dee66f3f9cee83a60d6c1387fb03">Buffer_Interface</a> ()=default</td></tr>
+<tr class="separator:ab834dee66f3f9cee83a60d6c1387fb03"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6809378e3531666363bd5de16f3a9c05"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#a6809378e3531666363bd5de16f3a9c05">bindBuffer</a> (const GLenum &amp;target) const =0</td></tr>
 <tr class="separator:a6809378e3531666363bd5de16f3a9c05"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8d4908daa0a15a01d879ae8997c825"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_buffer___interface.html#aca8d4908daa0a15a01d879ae8997c825">bindBufferBase</a> (const GLenum &amp;target, const GLuint &amp;index) const =0</td></tr>
 <tr class="separator:aca8d4908daa0a15a01d879ae8997c825"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An interface for opengl buffers. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a79bb5d606d3dd10c219a48bff8bf19d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a79bb5d606d3dd10c219a48bff8bf19d1">&#9670;&nbsp;</a></span>~Buffer_Interface()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual Buffer_Interface::~Buffer_Interface </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">virtual</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this buffer. </p>
+
+</div>
+</div>
+<a id="ab834dee66f3f9cee83a60d6c1387fb03"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab834dee66f3f9cee83a60d6c1387fb03">&#9670;&nbsp;</a></span>Buffer_Interface()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Buffer_Interface::Buffer_Interface </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct a buffer. </p>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a6809378e3531666363bd5de16f3a9c05"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a6809378e3531666363bd5de16f3a9c05">&#9670;&nbsp;</a></span>bindBuffer()</h2>
@@ -127,7 +189,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_dynamic_buffer.html#acfb5ba643c0af6e195d297009a6da3af">DynamicBuffer</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Directional_Buffers::Directional_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Point_Buffers::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Prop_Buffers::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Reflector_Buffers::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Prop_Buffers::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Spot_Buffers::Spot_Buffer &gt;</a>, <a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">StaticBuffer</a>, and <a class="el" href="class_static_mapped_buffer.html#a9d6b2bb4c691045a0a97e31ee6dd55a5">StaticMappedBuffer</a>.</p>
+<p>Implemented in <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a964c4a77312d6d03affdd943090f20d0">GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;</a>, <a class="el" href="class_static_triple_buffer.html#ad24b054ca77b974f2218a804477f2ae1">StaticTripleBuffer</a>, <a class="el" href="class_dynamic_buffer.html#acfb5ba643c0af6e195d297009a6da3af">DynamicBuffer</a>, and <a class="el" href="class_static_buffer.html#a4814aad463d66be9a365a0a90198db0d">StaticBuffer</a>.</p>
 
 </div>
 </div>
@@ -172,7 +234,7 @@ Public Member Functions</h2></td></tr>
   </dd>
 </dl>
 
-<p>Implemented in <a class="el" href="class_dynamic_buffer.html#a76bfa975dddba9c1e348f5f5c93ab88b">DynamicBuffer</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Directional_Buffers::Directional_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Point_Buffers::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Prop_Buffers::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Reflector_Buffers::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Prop_Buffers::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Spot_Buffers::Spot_Buffer &gt;</a>, <a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">StaticBuffer</a>, and <a class="el" href="class_static_mapped_buffer.html#a982c08e9fb308f228cf5350ede8ed0a9">StaticMappedBuffer</a>.</p>
+<p>Implemented in <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; T &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PointData::Point_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; SpotData::Spot_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PropData::Model_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; Camera::GPUData &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; ReflectorData::Reflector_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; PropData::Skeleton_Buffer &gt;</a>, <a class="el" href="class_g_l___array_buffer.html#a7f2f17aa9e56d6757290707f7c3fd237">GL_ArrayBuffer&lt; DirectionalData::Directional_Buffer &gt;</a>, <a class="el" href="class_static_triple_buffer.html#a6de3547174883283ee7b62b085bd30e4">StaticTripleBuffer</a>, <a class="el" href="class_dynamic_buffer.html#a76bfa975dddba9c1e348f5f5c93ab88b">DynamicBuffer</a>, and <a class="el" href="class_static_buffer.html#a11feee2244e5f9ab0c2422ac69ff5d5d">StaticBuffer</a>.</p>
 
 </div>
 </div>

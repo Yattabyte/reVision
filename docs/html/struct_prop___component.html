@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,8 +70,6 @@ $(function() {
 <div class="title">Prop_Component Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="_graphics_2_geometry_2components_8h_source.html">components.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Prop_Component:</div>
 <div class="dyncontent">
@@ -88,21 +86,30 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:a512ebc1ed4b7ddd9e1608c8208055124"><td class="memItemLeft" align="right" valign="top"><a id="a512ebc1ed4b7ddd9e1608c8208055124"></a>
 <a class="el" href="class_shared___model.html">Shared_Model</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_model</b></td></tr>
 <tr class="separator:a512ebc1ed4b7ddd9e1608c8208055124"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabf09c0b9c2afe1a2e9612950ef3d37a"><td class="memItemLeft" align="right" valign="top"><a id="aabf09c0b9c2afe1a2e9612950ef3d37a"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_uploadModel</b> = false</td></tr>
+<tr class="separator:aabf09c0b9c2afe1a2e9612950ef3d37a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29a18d7e7182cc5fd9e80c6d9f083b9c"><td class="memItemLeft" align="right" valign="top"><a id="a29a18d7e7182cc5fd9e80c6d9f083b9c"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_uploadMaterial</b> = false</td></tr>
+<tr class="separator:a29a18d7e7182cc5fd9e80c6d9f083b9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abc1d2168c2daeb0076ce2357c2297f20"><td class="memItemLeft" align="right" valign="top"><a id="abc1d2168c2daeb0076ce2357c2297f20"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_offset</b> = 0ull</td></tr>
+<tr class="separator:abc1d2168c2daeb0076ce2357c2297f20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1709fa47475db89fce317473d28c5d66"><td class="memItemLeft" align="right" valign="top"><a id="a1709fa47475db89fce317473d28c5d66"></a>
+size_t&#160;</td><td class="memItemRight" valign="bottom"><b>m_count</b> = 0ull</td></tr>
+<tr class="separator:a1709fa47475db89fce317473d28c5d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a719dd7ee4fb4652a8627cb9e486eece6"><td class="memItemLeft" align="right" valign="top"><a id="a719dd7ee4fb4652a8627cb9e486eece6"></a>
+GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_materialID</b> = 0u</td></tr>
+<tr class="separator:a719dd7ee4fb4652a8627cb9e486eece6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1037157f62f222255027c9c8d0080ea6"><td class="memItemLeft" align="right" valign="top"><a id="a1037157f62f222255027c9c8d0080ea6"></a>
 unsigned int&#160;</td><td class="memItemRight" valign="bottom"><b>m_skin</b> = 0u</td></tr>
 <tr class="separator:a1037157f62f222255027c9c8d0080ea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7174e20c1df52022ab6715a697be7a09"><td class="memItemLeft" align="right" valign="top"><a id="a7174e20c1df52022ab6715a697be7a09"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>m_radius</b> = 1.0f</td></tr>
 <tr class="separator:a7174e20c1df52022ab6715a697be7a09"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2cad4c480b0cba22b857932d26794ce"><td class="memItemLeft" align="right" valign="top"><a id="ab2cad4c480b0cba22b857932d26794ce"></a>
-bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_static</b> = true</td></tr>
-<tr class="separator:ab2cad4c480b0cba22b857932d26794ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afadcfa2b97b18606b6d0a28b75a2fb56"><td class="memItemLeft" align="right" valign="top"><a id="afadcfa2b97b18606b6d0a28b75a2fb56"></a>
 glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>m_position</b> = glm::vec3(0.0f)</td></tr>
 <tr class="separator:afadcfa2b97b18606b6d0a28b75a2fb56"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65a07e56112577d5e315ac8fc622a6d0"><td class="memItemLeft" align="right" valign="top"><a id="a65a07e56112577d5e315ac8fc622a6d0"></a>
-GL_AB_Index&#160;</td><td class="memItemRight" valign="bottom"><b>m_modelBufferIndex</b> = 0ull</td></tr>
-<tr class="separator:a65a07e56112577d5e315ac8fc622a6d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -140,9 +147,7 @@ static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ID</
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</b></td></tr>
 <tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A static, animation-less prop component. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/Modules/Graphics/Geometry/<a class="el" href="_graphics_2_geometry_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->

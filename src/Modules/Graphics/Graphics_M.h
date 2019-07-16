@@ -39,11 +39,14 @@ public:
 	@param	viewport		the view port to render into.
 	@param	categories		the technique categories to allow for rendering, defaults to ALL. */
 	void renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives, const unsigned int & allowedCategories = Graphics_Technique::ALL);
-	/***/
+	/** Use geometry techniques to cull shadows.
+	@param	deltaTime		the amount of time passed since last frame.
+	@param	perspectives	the camera and layer indicies to render. */
 	void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives);	
-	/***/
+	/** Use geometry techniques to render shadows.
+	@param	deltaTime		the amount of time passed since last frame. */
 	void renderShadows(const float & deltaTime);
-	/***/
+	/** Generates a perspective matrix for the client camera. */
 	void genPerspectiveMatrix();
 	/** Returns a shared pointer to the primary camera.
 	@return					the primary camera. */
@@ -54,7 +57,7 @@ public:
 	
 private:
 	// Private Methods
-	/***/
+	/** Copy the client camera's final color buffer to the screen. */
 	void copyToScreen();
 
 

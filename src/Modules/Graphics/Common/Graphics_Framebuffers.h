@@ -39,9 +39,9 @@ public:
 	@param	name			the name of the framebuffer to bind. 
 	@param	binding			the reading index which the framebuffer should bind to. */
 	void bindForReading(const char * name, const GLuint & binding = 0);
-	/** Clear all framebuffer textures of their data. */
+	/** Clear all framebuffer color attachments of their data. */
 	void clear();
-	/***/
+	/** Clear all framebufferr depth/stencil attachments of their data. */
 	void clearDepthStencil();
 	/** Resize all framebuffer textures.
 	@param	newSize			the new size all framebuffer textures should expand/shrink to.

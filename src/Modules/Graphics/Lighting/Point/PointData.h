@@ -14,9 +14,9 @@
 #include <vector>
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for point light rendering. */
 struct PointData {
-	/** OpenGL buffer for point lights. */
+	/** OpenGL buffer struct for point lights. */
 	struct Point_Buffer {
 		glm::mat4 shadowVP[6];
 		glm::mat4 mMatrix;
@@ -26,7 +26,7 @@ struct PointData {
 		float LightRadius;
 		int Shadow_Spot; float padding3;
 	};
-	/***/
+	/** Struct collating per-perspective data. */
 	struct ViewInfo {
 		std::vector<GLint> lightIndices;
 	};

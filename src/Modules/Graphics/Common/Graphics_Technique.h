@@ -28,7 +28,7 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Retrieve the category this technique belongs to. */
 	inline Technique_Category getCategory() const {
 		return m_category; 
 	}
@@ -40,9 +40,11 @@ public:
 	
 
 	// Public Interface
-	/***/
+	/** Prepare this technique for the next frame, swapping any of its buffers.
+	@param	deltaTime	the amount of time passed since last frame. */
 	inline virtual void prepareForNextFrame(const float & deltaTime) {}
-	/***/
+	/** Perform any pre-passes and or update any data needed before rendering this frame.
+	@param	deltaTime	the amount of time passed since last frame. */
 	inline virtual void updateTechnique(const float & deltaTime) {}
 	/** Apply this lighting technique.
 	@param	deltaTime	the amount of time passed since last frame.

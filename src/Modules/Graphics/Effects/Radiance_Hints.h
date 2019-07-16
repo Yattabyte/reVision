@@ -70,8 +70,8 @@ public:
 		}
 		camBufferRebounce.write(0, sizeof(glm::ivec2) * camIndiciesRebounce.size(), camIndiciesRebounce.data());
 		camBufferRecon.write(0, sizeof(glm::ivec2) * camIndiciesRecon.size(), camIndiciesRecon.data());
-		GLuint bounceCount = m_bounceSize;
-		GLuint reconCount = perspectives.size();
+		const auto bounceCount = m_bounceSize;
+		const auto reconCount = (GLuint)perspectives.size();
 		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &bounceCount);
 		quadIndirectBufferRecon.write(sizeof(GLuint), sizeof(GLuint), &reconCount);
 		

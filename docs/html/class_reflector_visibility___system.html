@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,8 @@ $(function() {
 <div class="title">ReflectorVisibility_System Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_reflector_visibility___system_8h_source.html">ReflectorVisibility_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for ReflectorVisibility_System:</div>
 <div class="dyncontent">
@@ -82,9 +84,10 @@ Inheritance diagram for ReflectorVisibility_System:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4b80c91234dc6da54ea05544a112f534"><td class="memItemLeft" align="right" valign="top"><a id="a4b80c91234dc6da54ea05544a112f534"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ReflectorVisibility_System</b> (const std::shared_ptr&lt; <a class="el" href="struct_reflector___visibility.html">Reflector_Visibility</a> &gt; &amp;visibility, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;viewports)</td></tr>
-<tr class="separator:a4b80c91234dc6da54ea05544a112f534"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfc53830cb7974b5e601c2f990410607"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_reflector_visibility___system.html#abfc53830cb7974b5e601c2f990410607">~ReflectorVisibility_System</a> ()=default</td></tr>
+<tr class="separator:abfc53830cb7974b5e601c2f990410607"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad00f7e6942aa710d70bb7596940a4e32"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_reflector_visibility___system.html#ad00f7e6942aa710d70bb7596940a4e32">ReflectorVisibility_System</a> (const std::shared_ptr&lt; <a class="el" href="struct_reflector_data.html">ReflectorData</a> &gt; &amp;visibility)</td></tr>
+<tr class="separator:ad00f7e6942aa710d70bb7596940a4e32"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb02a34d59682629a599bc8e9f248e50"><td class="memItemLeft" align="right" valign="top"><a id="aeb02a34d59682629a599bc8e9f248e50"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:aeb02a34d59682629a599bc8e9f248e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,6 +112,67 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An ECS system responsible for populating render lists PER active perspective in a given frame, for all reflector related entities. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="abfc53830cb7974b5e601c2f990410607"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfc53830cb7974b5e601c2f990410607">&#9670;&nbsp;</a></span>~ReflectorVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ReflectorVisibility_System::~ReflectorVisibility_System </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this system. </p>
+
+</div>
+</div>
+<a id="ad00f7e6942aa710d70bb7596940a4e32"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad00f7e6942aa710d70bb7596940a4e32">&#9670;&nbsp;</a></span>ReflectorVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">ReflectorVisibility_System::ReflectorVisibility_System </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_reflector_data.html">ReflectorData</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>visibility</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameData</td><td>shared pointer of common data that changes frame-to-frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/Reflector/<a class="el" href="_reflector_visibility___system_8h_source.html">ReflectorVisibility_System.h</a></li>
 </ul>

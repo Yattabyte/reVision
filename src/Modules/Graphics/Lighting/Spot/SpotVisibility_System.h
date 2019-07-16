@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Lighting/Spot/SpotData.h"
 
 
-/***/
+/** An ECS system responsible for populating render lists PER active perspective in a given frame, for all spot light related entities. */
 class SpotVisibility_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~SpotVisibility_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline SpotVisibility_System(const std::shared_ptr<SpotData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);

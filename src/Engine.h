@@ -23,7 +23,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "3.9.15";
+constexpr char ENGINE_VERSION[] = "3.9.16";
 struct GLFWwindow;
 
 
@@ -47,11 +47,11 @@ public:
 
 private:
 	// Private Initialization Methods
-	/***/
+	/** Initialize the window for this application. */
 	void initWindow();
-	/***/
+	/** Initialize the auxilliary processing threads. */
 	void initThreads();
-	/***/
+	/** Print the engine boiler-plate text to the message manager. */
 	void printBoilerPlate();
 
 

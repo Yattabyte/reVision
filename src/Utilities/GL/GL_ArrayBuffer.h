@@ -132,7 +132,7 @@ public:
 	/** Retrieve a reference to the element contained at the index specified.
 	@param	index			index to the element desired.
 	@return					reference to the element desired. */
-	inline T& operator [] (const int & index) {
+	inline T& operator [] (const size_t & index) {
 		return m_bufferPtr[m_writeIndex][index];
 	}
 	/** Retrieve the length of this array (the number of elements in it).

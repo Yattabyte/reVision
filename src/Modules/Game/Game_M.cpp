@@ -20,15 +20,15 @@ void Game_Module::initialize(Engine * engine)
 
 	// Add support for the following list of component types
 	auto & world = m_engine->getModule_World();
-	world.addComponentType("PlayerSpawn_Component", [](const ParamList & parameters) {
+	world.addComponentType("PlayerSpawn_Component", [](const ParamList &) {
 		auto * component = new PlayerSpawn_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("Player3D_Component", [](const ParamList & parameters) {
+	world.addComponentType("Player3D_Component", [](const ParamList &) {
 		auto * component = new Player3D_Component();
 		return std::make_pair(component->ID, component);
 	});
-	world.addComponentType("MenuCamera_Component", [](const ParamList & parameters) {
+	world.addComponentType("MenuCamera_Component", [](const ParamList &) {
 		auto * component = new Player3D_Component();
 		return std::make_pair(component->ID, component);
 	});

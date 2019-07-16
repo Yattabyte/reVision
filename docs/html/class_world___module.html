@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -139,8 +139,7 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a865aea41120a49939776e51c7dadfeec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0fe806be3a21eadedf6c94cc71c72367"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#a0fe806be3a21eadedf6c94cc71c72367">updateSystem</a> (<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *system, const float &amp;deltaTime)</td></tr>
 <tr class="separator:a0fe806be3a21eadedf6c94cc71c72367"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa32457a8c30670370fa87e16a401f08d"><td class="memItemLeft" align="right" valign="top"><a id="aa32457a8c30670370fa87e16a401f08d"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>updateSystem</b> (const float &amp;deltaTime, const std::vector&lt; uint32_t &gt; &amp;types, const std::vector&lt; uint32_t &gt; &amp;flags, const std::function&lt; void(const float &amp;, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;)&gt; &amp;func)</td></tr>
+<tr class="memitem:aa32457a8c30670370fa87e16a401f08d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_world___module.html#aa32457a8c30670370fa87e16a401f08d">updateSystem</a> (const float &amp;deltaTime, const std::vector&lt; uint32_t &gt; &amp;types, const std::vector&lt; uint32_t &gt; &amp;flags, const std::function&lt; void(const float &amp;, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;)&gt; &amp;func)</td></tr>
 <tr class="separator:aa32457a8c30670370fa87e16a401f08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_engine___module"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_engine___module')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_engine___module.html">Engine_Module</a></td></tr>
 <tr class="memitem:ab2bc3cf4b727ceff475c0442d2be3426 inherit pub_methods_class_engine___module"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine___module.html#ab2bc3cf4b727ceff475c0442d2be3426">~Engine_Module</a> ()=default</td></tr>
@@ -726,7 +725,7 @@ template&lt;typename BaseECSComponent &gt; </div>
 </div>
 </div>
 <a id="a0fe806be3a21eadedf6c94cc71c72367"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0fe806be3a21eadedf6c94cc71c72367">&#9670;&nbsp;</a></span>updateSystem()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a0fe806be3a21eadedf6c94cc71c72367">&#9670;&nbsp;</a></span>updateSystem() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -754,6 +753,49 @@ template&lt;typename BaseECSComponent &gt; </div>
   <table class="params">
     <tr><td class="paramname">system</td><td>the system to update. </td></tr>
     <tr><td class="paramname">deltaTime</td><td>the delta time. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa32457a8c30670370fa87e16a401f08d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa32457a8c30670370fa87e16a401f08d">&#9670;&nbsp;</a></span>updateSystem() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void World_Module::updateSystem </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>types</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; uint32_t &gt; &amp;&#160;</td>
+          <td class="paramname"><em>flags</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Update the components of a single system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the delta time. </td></tr>
+    <tr><td class="paramname">types</td><td>list of component types to retrieve. </td></tr>
+    <tr><td class="paramname">flags</td><td>list of flags, designating a component as required or optional. </td></tr>
+    <tr><td class="paramname">func</td><td>lambda function serving as a system. </td></tr>
   </table>
   </dd>
 </dl>

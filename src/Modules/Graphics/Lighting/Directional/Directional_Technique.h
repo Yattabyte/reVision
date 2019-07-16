@@ -113,7 +113,7 @@ public:
 				// Accumulate all visibility info for the cameras passed in
 				std::vector<glm::ivec2> camIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.size(), { visibilityIndex, 0 });
 				std::vector<GLint> lightIndices(m_frameData->viewInfo[visibilityIndex].lightIndices.begin(), m_frameData->viewInfo[visibilityIndex].lightIndices.end());
-				int shadowCount = m_frameData->viewInfo[visibilityIndex].visShadowCount;
+				const auto shadowCount = m_frameData->viewInfo[visibilityIndex].visShadowCount;
 
 				if (lightIndices.size()) {
 					// Write accumulated data
@@ -123,7 +123,7 @@ public:
 					bounceBuffer.indirectBounce.write(0, sizeof(GLuint) * 4, &dataBounce);
 
 					// Update light bounce
-					renderBounce(deltaTime, visibilityIndex);
+					renderBounce(deltaTime, (int)visibilityIndex);
 
 					m_bounceIndex++;
 				}

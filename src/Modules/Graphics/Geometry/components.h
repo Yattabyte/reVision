@@ -9,7 +9,6 @@
 #include "glm/glm.hpp"
 
 
-/** A static, animation-less prop component. */
 struct Prop_Component : public ECSComponent<Prop_Component> {
 	Shared_Model m_model;
 	bool m_uploadModel = false, m_uploadMaterial = false;
@@ -20,8 +19,6 @@ struct Prop_Component : public ECSComponent<Prop_Component> {
 	glm::vec3 m_position = glm::vec3(0.0f);
 };
 
-/** A skeleton component is used in combination with prop components to allow for skeletal animation.
-@note		is useless by itself. */
 struct Skeleton_Component : public ECSComponent<Skeleton_Component> {
 	Shared_Mesh m_mesh;
 	int m_animation = -1;

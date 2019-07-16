@@ -11,7 +11,7 @@
 #include "Engine.h"
 
 
-/***/
+/** A rendering technique responsible for rendering/updating shadow casters in the scene. */
 class Shadow_Technique : public Graphics_Technique {
 public:
 	// Public (de)Constructors
@@ -66,7 +66,7 @@ private:
 		auto clientTime = m_engine->getTime();
 		if (m_frameData->shadowsToUpdate.size()) {
 			// Prepare Viewport
-			glViewport(0, 0, m_frameData->shadowSize, m_frameData->shadowSize);
+			glViewport(0, 0, (GLsizei)m_frameData->shadowSize, (GLsizei)m_frameData->shadowSize);
 			m_frameData->shadowFBO.bindForWriting();
 
 			// Accumulate Perspective Data

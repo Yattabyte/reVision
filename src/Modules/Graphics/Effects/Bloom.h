@@ -61,7 +61,7 @@ public:
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-		GLuint instanceCount = perspectives.size();
+		const auto instanceCount = (GLuint)perspectives.size();
 		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 

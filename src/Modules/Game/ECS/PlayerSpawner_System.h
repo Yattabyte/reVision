@@ -44,9 +44,9 @@ public:
 
 				trans.m_transform = transform;
 
-				BaseECSComponent * components[] = { &player, &trans };
+				BaseECSComponent * entityComponents[] = { &player, &trans };
 				uint32_t types[] = { Player3D_Component::ID, Transform_Component::ID };
-				world.makeEntity(components, types, 2ull);
+				world.makeEntity(entityComponents, types, 2ull);
 				m_playerCount++;
 			}
 		}

@@ -8,16 +8,18 @@
 #include "Engine.h"
 
 
-/***/
+/** An ECS system responsible for scheduling when reflector related entities should be updated. */
 class ReflectorScheduler_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~ReflectorScheduler_System() {
 		// Update indicator
 		m_aliveIndicator = false;
 	}
-	/***/
+	/** Construct this system.
+	@param	engine		the engine to use.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<ReflectorData> & frameData)
 		: m_engine(engine), m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
@@ -86,7 +88,7 @@ public:
 						cameraComponent->m_cameras[x].setEnabled(false);
 						tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
 					}
-					cameraCount += cameraComponent->m_cameras.size();
+					cameraCount += (int)cameraComponent->m_cameras.size();
 				}
 			}
 
@@ -95,7 +97,7 @@ public:
 				camera->setEnabled(true);
 
 			// Resize reflectormap to fit number of entities this frame
-			m_frameData->envmapFBO.resize(m_frameData->envmapSize.x, m_frameData->envmapSize.y, (unsigned int)(cameraCount));
+			m_frameData->envmapFBO.resize(m_frameData->envmapSize, (unsigned int)(cameraCount));
 			m_frameData->reflectorLayers = cameraCount;
 		}			
 	}

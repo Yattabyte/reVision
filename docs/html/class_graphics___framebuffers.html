@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -88,8 +88,10 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aea33bac669e5e3ac7474ee834cde486c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a345b0aef83dbe082dd03bc7f6e41abae"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#a345b0aef83dbe082dd03bc7f6e41abae">clear</a> ()</td></tr>
 <tr class="separator:a345b0aef83dbe082dd03bc7f6e41abae"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52d6b9ae9d81c07ed9c87e1bfe0d6e88"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#a52d6b9ae9d81c07ed9c87e1bfe0d6e88">resize</a> (const glm::ivec2 &amp;newSize)</td></tr>
-<tr class="separator:a52d6b9ae9d81c07ed9c87e1bfe0d6e88"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad08fed7b365e8ac1a40af0c1e36fc832"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#ad08fed7b365e8ac1a40af0c1e36fc832">clearDepthStencil</a> ()</td></tr>
+<tr class="separator:ad08fed7b365e8ac1a40af0c1e36fc832"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a403de523534d180b1c79f3b8a9d73352"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#a403de523534d180b1c79f3b8a9d73352">resize</a> (const glm::ivec2 &amp;newSize, const int &amp;layerFaces)</td></tr>
+<tr class="separator:a403de523534d180b1c79f3b8a9d73352"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e69af760ef712f30215639a34510bb0"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#a5e69af760ef712f30215639a34510bb0">getFboID</a> (const char *name)</td></tr>
 <tr class="separator:a5e69af760ef712f30215639a34510bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2cb73ef0d80982fdd14fbec1966ff51"><td class="memItemLeft" align="right" valign="top">GLuint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___framebuffers.html#af2cb73ef0d80982fdd14fbec1966ff51">getTexID</a> (const char *name, const size_t &amp;index)</td></tr>
@@ -103,6 +105,9 @@ Public Attributes</h2></td></tr>
 <tr class="memitem:ac2012d202b50d32c92c1d4a9707bb578"><td class="memItemLeft" align="right" valign="top"><a id="ac2012d202b50d32c92c1d4a9707bb578"></a>
 glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_renderSize</b> = glm::ivec2(1)</td></tr>
 <tr class="separator:ac2012d202b50d32c92c1d4a9707bb578"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85f350f20514c2a31298ffed16ffef0b"><td class="memItemLeft" align="right" valign="top"><a id="a85f350f20514c2a31298ffed16ffef0b"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_layerFaces</b> = 1</td></tr>
+<tr class="separator:a85f350f20514c2a31298ffed16ffef0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb3f6d8551ec42516b9e6baecc4331b6"><td class="memItemLeft" align="right" valign="top"><a id="abb3f6d8551ec42516b9e6baecc4331b6"></a>
 std::shared_ptr&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_aliveIndicator</b> = std::make_shared&lt;bool&gt;(true)</td></tr>
 <tr class="separator:abb3f6d8551ec42516b9e6baecc4331b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -226,7 +231,25 @@ std::shared_ptr&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Clear all framebuffer textures of their data. </p>
+<p>Clear all framebuffer color attachments of their data. </p>
+
+</div>
+</div>
+<a id="ad08fed7b365e8ac1a40af0c1e36fc832"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad08fed7b365e8ac1a40af0c1e36fc832">&#9670;&nbsp;</a></span>clearDepthStencil()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Graphics_Framebuffers::clearDepthStencil </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Clear all framebufferr depth/stencil attachments of their data. </p>
 
 </div>
 </div>
@@ -331,8 +354,8 @@ std::shared_ptr&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"
 
 </div>
 </div>
-<a id="a52d6b9ae9d81c07ed9c87e1bfe0d6e88"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52d6b9ae9d81c07ed9c87e1bfe0d6e88">&#9670;&nbsp;</a></span>resize()</h2>
+<a id="a403de523534d180b1c79f3b8a9d73352"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a403de523534d180b1c79f3b8a9d73352">&#9670;&nbsp;</a></span>resize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -341,14 +364,25 @@ std::shared_ptr&lt; bool &gt;&#160;</td><td class="memItemRight" valign="bottom"
           <td class="memname">void Graphics_Framebuffers::resize </td>
           <td>(</td>
           <td class="paramtype">const glm::ivec2 &amp;&#160;</td>
-          <td class="paramname"><em>newSize</em></td><td>)</td>
+          <td class="paramname"><em>newSize</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>layerFaces</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <p>Resize all framebuffer textures. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">newSize</td><td>the new size all framebuffer textures should expand/shrink to. </td></tr>
+    <tr><td class="paramname">layerFaces</td><td>the number of layers to use. </td></tr>
   </table>
   </dd>
 </dl>

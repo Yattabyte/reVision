@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 
 
-/***/
+/** An ECS system responsible for populating render lists PER active perspective in a given frame, for all point light related entities. */
 class PointVisibility_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~PointVisibility_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PointVisibility_System(const std::shared_ptr<PointData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);

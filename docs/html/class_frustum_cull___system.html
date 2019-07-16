@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -65,12 +65,13 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_frustum_cull___system-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">FrustumCull_System Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_frustum_cull___system_8h_source.html">FrustumCull_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for FrustumCull_System:</div>
 <div class="dyncontent">
@@ -83,9 +84,10 @@ Inheritance diagram for FrustumCull_System:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad5d0baac94c079f2d6fad52421cc40d7"><td class="memItemLeft" align="right" valign="top"><a id="ad5d0baac94c079f2d6fad52421cc40d7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>FrustumCull_System</b> (const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;viewports)</td></tr>
-<tr class="separator:ad5d0baac94c079f2d6fad52421cc40d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9b23c68dddfe98e68b7f84df6e842ce1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_frustum_cull___system.html#a9b23c68dddfe98e68b7f84df6e842ce1">~FrustumCull_System</a> ()=default</td></tr>
+<tr class="separator:a9b23c68dddfe98e68b7f84df6e842ce1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4bbe8949d867f01c0f34f8cdc6b24634"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_frustum_cull___system.html#a4bbe8949d867f01c0f34f8cdc6b24634">FrustumCull_System</a> (const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;cameras)</td></tr>
+<tr class="separator:a4bbe8949d867f01c0f34f8cdc6b24634"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca8547e12e21852a7c6159615d66bb3c"><td class="memItemLeft" align="right" valign="top"><a id="aca8547e12e21852a7c6159615d66bb3c"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:aca8547e12e21852a7c6159615d66bb3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -99,12 +101,6 @@ virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateCompone
 <tr class="memitem:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a4acdd4d378f0793eebfc7b5feae249cf">updateComponents</a> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt; &gt; &amp;components)=0</td></tr>
 <tr class="separator:a4acdd4d378f0793eebfc7b5feae249cf inherit pub_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:aab7a33da8dd5e2a286676dd277860336"><td class="memItemLeft" align="right" valign="top"><a id="aab7a33da8dd5e2a286676dd277860336"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>ViewportToPlanes</b> (const <a class="el" href="struct_viewport.html">Viewport</a> *viewport, glm::vec4(&amp;planes)[6])</td></tr>
-<tr class="separator:aab7a33da8dd5e2a286676dd277860336"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_types_class_base_e_c_s_system"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_base_e_c_s_system')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a></td></tr>
@@ -116,6 +112,67 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An ECS system responsible for frustum culling all renderable components with a bounding sphere and a position. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a9b23c68dddfe98e68b7f84df6e842ce1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9b23c68dddfe98e68b7f84df6e842ce1">&#9670;&nbsp;</a></span>~FrustumCull_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FrustumCull_System::~FrustumCull_System </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this system. </p>
+
+</div>
+</div>
+<a id="a4bbe8949d867f01c0f34f8cdc6b24634"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4bbe8949d867f01c0f34f8cdc6b24634">&#9670;&nbsp;</a></span>FrustumCull_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">FrustumCull_System::FrustumCull_System </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; std::vector&lt; <a class="el" href="class_camera.html">Camera</a> * &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>cameras</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cameras</td><td>list of all the active cameras in the scene, updated per frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/Graphics/Logical/<a class="el" href="_frustum_cull___system_8h_source.html">FrustumCull_System.h</a></li>
 </ul>

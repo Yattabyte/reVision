@@ -14,7 +14,7 @@
 #include <vector>
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for shadow rendering. */
 struct ShadowData {
 	ShadowMap shadowFBO;
 	std::vector<std::tuple<float, float*, int, Camera*>> shadowsToUpdate;

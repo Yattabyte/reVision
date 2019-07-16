@@ -66,7 +66,7 @@ void Material::initialize()
 	float materialSize = 512.0f;
 	m_engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
 	m_images.resize(textureCount);
-	m_size = glm::ivec2(materialSize);
+	m_size = glm::ivec2((int)materialSize);
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Fill_Policy::Checkered,
 		Fill_Policy::Solid,

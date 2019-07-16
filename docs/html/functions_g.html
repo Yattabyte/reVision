@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -69,11 +69,14 @@ $(function() {
 <li>Game_Module()
 : <a class="el" href="class_game___module.html#afaa9fe1619dc2e5a4d1c05b7ce007b54">Game_Module</a>
 </li>
-<li>generateID()
-: <a class="el" href="class_material_manager.html#abc7822a03521389588c722bef02ac0d1">MaterialManager</a>
+<li>genPerspectiveMatrix()
+: <a class="el" href="class_graphics___module.html#a301cf292d1a0e7095840e7dee65def5f">Graphics_Module</a>
+</li>
+<li>Geometry_Technique()
+: <a class="el" href="class_geometry___technique.html#aaa544637d9420c7a5da0e4ad8ce20109">Geometry_Technique</a>
 </li>
 <li>get()
-: <a class="el" href="class_camera_buffer.html#a41d34511874fdb89a935780fc03cca0f">CameraBuffer</a>
+: <a class="el" href="class_camera.html#a7e5a09d1e0b69b79b26ef42350957247">Camera</a>
 </li>
 <li>Get_Current_Dir()
 : <a class="el" href="class_engine.html#a7336cc5d876f9511ff372f2b18fdb534">Engine</a>
@@ -104,14 +107,17 @@ $(function() {
 : <a class="el" href="class_border.html#ab9206cf86d041510969dc8a372d3e9a8">Border</a>
 , <a class="el" href="class_list.html#a9ce7c0aff35966e29217c5f774ef508d">List</a>
 </li>
+<li>getCategory()
+: <a class="el" href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">Graphics_Technique</a>
+</li>
 <li>getChar()
 : <a class="el" href="class_keyboard_event.html#af6988ccd8fef97e5d155da07508cf13a">KeyboardEvent</a>
 </li>
 <li>getClicked()
 : <a class="el" href="class_u_i___element.html#aa9f98ad569c314ccde99bdbd312c1c56">UI_Element</a>
 </li>
-<li>getClientViewport()
-: <a class="el" href="class_graphics___module.html#a5e44e3d9d2698bf7b6d3a7acf35cf338">Graphics_Module</a>
+<li>getClientCamera()
+: <a class="el" href="class_graphics___module.html#a1203469c2051e531aeafc323594d6879">Graphics_Module</a>
 </li>
 <li>getColor()
 : <a class="el" href="class_label.html#aeb142bdf46ea15756741a44c0a2616f6">Label</a>
@@ -131,7 +137,8 @@ $(function() {
 : <a class="el" href="class_u_i___element.html#a78168388089dc3c530bccbaca523a03d">UI_Element</a>
 </li>
 <li>getEnabled()
-: <a class="el" href="class_u_i___element.html#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">UI_Element</a>
+: <a class="el" href="class_camera.html#ac4f998f864510dd07cbc60a570e249d4">Camera</a>
+, <a class="el" href="class_u_i___element.html#a4ad4d1d4ff44dbffbd41c4f9ddb4d049">UI_Element</a>
 </li>
 <li>getErrorLog()
 : <a class="el" href="class_shader.html#a61d7dd6fde7e03d63313fd24dc3027ad">Shader</a>
@@ -146,6 +153,9 @@ $(function() {
 : <a class="el" href="class_list.html#a445b521da0d2b18c862e7748b1187d66">List</a>
 , <a class="el" href="class_menu.html#a023491d9f90fdb5f27647136e3e386f4">Menu</a>
 , <a class="el" href="class_u_i___module.html#af32e194fe855c2ad121dd17f98f4b931">UI_Module</a>
+</li>
+<li>getFrustumCenter()
+: <a class="el" href="class_camera.html#aa3200f8e064b4fa66a3da8702cc5e25a">Camera</a>
 </li>
 <li>getHovered()
 : <a class="el" href="class_u_i___element.html#aa5acac8165850ba74eb7cfc54638b955">UI_Element</a>
@@ -165,14 +175,8 @@ $(function() {
 <li>getManager_Assets()
 : <a class="el" href="class_engine.html#ae63c610667d58f693d9aeadfaa12b5de">Engine</a>
 </li>
-<li>getManager_Materials()
-: <a class="el" href="class_engine.html#a081bdc29fd70c1be30137106f4bb8af8">Engine</a>
-</li>
 <li>getManager_Messages()
 : <a class="el" href="class_engine.html#a07fb517385f84afb4658f6cd17b5cb0b">Engine</a>
-</li>
-<li>getManager_Models()
-: <a class="el" href="class_engine.html#abbca86d426d68112d1d419862cb223ef">Engine</a>
 </li>
 <li>getManager_Sounds()
 : <a class="el" href="class_engine.html#a7dc308182bb00da2565385136209e943">Engine</a>
@@ -181,9 +185,6 @@ $(function() {
 : <a class="el" href="class_layout___horizontal.html#a29244455e433d05f8472fe85d5c6d78c">Layout_Horizontal</a>
 , <a class="el" href="class_layout___vertical.html#a7693d823a64d827fe49625d49f4fbdad">Layout_Vertical</a>
 , <a class="el" href="class_list.html#a112672dbe1f0c17545119182f613585a">List</a>
-</li>
-<li>getMaterialSize()
-: <a class="el" href="class_material_manager.html#a710fb2fc9a28e1eac29f07a2edee885f">MaterialManager</a>
 </li>
 <li>getMaxScale()
 : <a class="el" href="class_u_i___element.html#ae8b2a424c6abe3869be9b568c85429ae">UI_Element</a>
@@ -227,14 +228,8 @@ $(function() {
 <li>getProgramiv()
 : <a class="el" href="class_shader.html#a36b0b757707a5cc1428cdaec5e2449f7">Shader</a>
 </li>
-<li>getPropBuffer()
-: <a class="el" href="class_prop___technique.html#a8b526f2d22b2160bd69f82ab40c3e52e">Prop_Technique</a>
-</li>
 <li>getReleased()
 : <a class="el" href="class_u_i___element.html#a2f7e80da7f7e485b6498e8a11feadec7">UI_Element</a>
-</li>
-<li>getRenderingContext()
-: <a class="el" href="class_engine.html#afda3fac79affefe8f7384bb580c3082d">Engine</a>
 </li>
 <li>getResolutions()
 : <a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">Engine</a>
@@ -250,9 +245,6 @@ $(function() {
 </li>
 <li>getSize()
 : <a class="el" href="class_primitive.html#a712c17d867a548fc00bff3585f44087d">Primitive</a>
-</li>
-<li>getSkeletonBuffer()
-: <a class="el" href="class_prop___technique.html#ace886eb552f83d7c6323a573b1fb3610">Prop_Technique</a>
 </li>
 <li>getSpacing()
 : <a class="el" href="class_layout___horizontal.html#ad71a9bd0d7971c907b4a9720789a45ca">Layout_Horizontal</a>
@@ -288,9 +280,6 @@ $(function() {
 : <a class="el" href="class_config.html#add78e6e048fc3abef33d1af424122d8b">Config</a>
 , <a class="el" href="class_slider.html#a9f5c36c34d9421a610366115d8adfee5">Slider</a>
 </li>
-<li>getVAO()
-: <a class="el" href="class_model_manager.html#a1af806b641a180f3833371a393741101">ModelManager</a>
-</li>
 <li>GetVersion()
 : <a class="el" href="class_sound_manager.html#a9ba478f748ca2eeaafc1953d0c03f849">SoundManager</a>
 </li>
@@ -301,7 +290,7 @@ $(function() {
 : <a class="el" href="class_physics___module.html#a9d622c6fd80255bc8228a3685ed7709c">Physics_Module</a>
 </li>
 <li>GL_ArrayBuffer()
-: <a class="el" href="class_g_l___array_buffer.html#a4028d191b791ed09b24dbbe51603bb3b">GL_ArrayBuffer&lt; T &gt;</a>
+: <a class="el" href="class_g_l___array_buffer.html#a34bc1111322aa73150b90a1a14c073fa">GL_ArrayBuffer&lt; T &gt;</a>
 </li>
 <li>goToOptions()
 : <a class="el" href="class_pause_menu.html#af79deeb9ff4aad986bdbe5ad2bc42199">PauseMenu</a>
@@ -317,7 +306,7 @@ $(function() {
 : <a class="el" href="class_graphics___module.html#a40ad88192229b9ae4d70699438b36bba">Graphics_Module</a>
 </li>
 <li>Graphics_Pipeline()
-: <a class="el" href="class_graphics___pipeline.html#a10040ba4d3a95e95b9c4d3c17b36e779">Graphics_Pipeline</a>
+: <a class="el" href="class_graphics___pipeline.html#a0ca82c7e85b6a0cf9a8146230a384901">Graphics_Pipeline</a>
 </li>
 <li>Graphics_Technique()
 : <a class="el" href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">Graphics_Technique</a>

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -89,8 +89,8 @@ Inheritance diagram for Material:</div>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2c19452d71f54075df8f5405b03129f4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a2c19452d71f54075df8f5405b03129f4">~Material</a> ()</td></tr>
 <tr class="separator:a2c19452d71f54075df8f5405b03129f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21068881d3e9180ffe79fb381db51351"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a21068881d3e9180ffe79fb381db51351">Material</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures, <a class="el" href="class_material_manager.html">MaterialManager</a> &amp;materialManager)</td></tr>
-<tr class="separator:a21068881d3e9180ffe79fb381db51351"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0a46cb087a1fc1c103b2d2f729099e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#ac0a46cb087a1fc1c103b2d2f729099e3">Material</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures)</td></tr>
+<tr class="separator:ac0a46cb087a1fc1c103b2d2f729099e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -111,15 +111,6 @@ Static Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1ae091a29eb395f730e808d3ad1623d8"><td class="memItemLeft" align="right" valign="top"><a id="a1ae091a29eb395f730e808d3ad1623d8"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_pboID</b> = 0</td></tr>
-<tr class="separator:a1ae091a29eb395f730e808d3ad1623d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb23354fa387c79e6436f239aa0f8cda"><td class="memItemLeft" align="right" valign="top"><a id="afb23354fa387c79e6436f239aa0f8cda"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_glArrayID</b> = 0</td></tr>
-<tr class="separator:afb23354fa387c79e6436f239aa0f8cda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c65697f7fdaa3514106f920c333cdcd"><td class="memItemLeft" align="right" valign="top"><a id="a4c65697f7fdaa3514106f920c333cdcd"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_matSpot</b> = 0</td></tr>
-<tr class="separator:a4c65697f7fdaa3514106f920c333cdcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d0a6f453a1493062263abcc2943e7ab"><td class="memItemLeft" align="right" valign="top"><a id="a1d0a6f453a1493062263abcc2943e7ab"></a>
 GLubyte *&#160;</td><td class="memItemRight" valign="bottom"><b>m_materialData</b> = nullptr</td></tr>
 <tr class="separator:a1d0a6f453a1493062263abcc2943e7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -196,8 +187,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 
 </div>
 </div>
-<a id="a21068881d3e9180ffe79fb381db51351"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21068881d3e9180ffe79fb381db51351">&#9670;&nbsp;</a></span>Material()</h2>
+<a id="ac0a46cb087a1fc1c103b2d2f729099e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0a46cb087a1fc1c103b2d2f729099e3">&#9670;&nbsp;</a></span>Material()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,13 +209,7 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>textures</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_material_manager.html">MaterialManager</a> &amp;&#160;</td>
-          <td class="paramname"><em>materialManager</em>&#160;</td>
+          <td class="paramname"><em>textures</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

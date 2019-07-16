@@ -16,9 +16,9 @@
 #define NUM_CASCADES 4
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for directional light rendering. */
 struct DirectionalData {
-	/** OpenGL buffer for directional lights. */
+	/** OpenGL buffer struct for directional lights. */
 	struct Directional_Buffer {
 		glm::mat4 lightVP[NUM_CASCADES];
 		float CascadeEndClipSpace[NUM_CASCADES];
@@ -27,7 +27,7 @@ struct DirectionalData {
 		float LightIntensity = 1.0f;
 		int Shadow_Spot = -1; glm::vec2 padding3;
 	};
-	/***/
+	/** Struct collating per-perspective data. */
 	struct ViewInfo {
 		size_t visShadowCount = 0ull;
 		std::vector<GLint> lightIndices;

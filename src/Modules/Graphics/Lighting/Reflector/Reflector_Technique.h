@@ -47,7 +47,7 @@ public:
 		preferences.getOrSetValue(PreferenceState::C_ENVMAP_SIZE, m_frameData->envmapSize.x);
 		preferences.addCallback(PreferenceState::C_ENVMAP_SIZE, m_aliveIndicator, [&](const float &f) {
 			m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)f));
-			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), m_frameData->reflectorLayers);
+			m_viewport->resize(glm::ivec2(m_frameData->envmapSize), (int)m_frameData->reflectorLayers);
 		});
 		// Environment Map
 		m_frameData->envmapSize = glm::ivec2(std::max(1u, (unsigned int)m_frameData->envmapSize.x));
@@ -134,7 +134,7 @@ private:
 	inline void updateReflectors(const float & deltaTime) {
 		auto clientTime = m_engine->getTime();
 		if (m_frameData->reflectorsToUpdate.size()) {
-			m_viewport->resize(m_frameData->envmapSize, m_frameData->reflectorLayers);
+			m_viewport->resize(m_frameData->envmapSize, (int)m_frameData->reflectorLayers);
 			m_indirectQuad.beginWriting();
 			m_indirectQuadConvolute.beginWriting();
 
@@ -156,7 +156,7 @@ private:
 				*time = clientTime;
 				camera->setEnabled(false);
 			}
-			GLuint instanceCount = perspectives.size(), convoluteCount = m_frameData->reflectorLayers;
+			const auto instanceCount = (GLuint)perspectives.size(), convoluteCount = (GLuint)m_frameData->reflectorLayers;
 			m_indirectQuad.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
 			m_indirectQuadConvolute.write(sizeof(GLuint), sizeof(GLuint), &convoluteCount);
 
@@ -205,7 +205,7 @@ private:
 		m_shaderStencil->bind();										// Shader (reflector)
 		viewport->m_gfxFBOS->bindForWriting("REFLECTION");				// Ensure writing to reflection FBO
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);				// Read from Geometry FBO
-		glBindTextureUnit(4, m_frameData->envmapFBO.m_textureID);					// Reflection map (environment texture)
+		m_frameData->envmapFBO.bindForReading(4);						// Reflection map (environment texture)
 		m_drawData[m_drawIndex].bufferCamIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 		m_drawData[m_drawIndex].visLights.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 4);	// SSBO visible light indices
 		m_frameData->lightBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);	// Reflection buffer

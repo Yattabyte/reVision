@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,8 @@ $(function() {
 <div class="title">DirectionalVisibility_System Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_directional_visibility___system_8h_source.html">DirectionalVisibility_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for DirectionalVisibility_System:</div>
 <div class="dyncontent">
@@ -82,9 +84,10 @@ Inheritance diagram for DirectionalVisibility_System:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4e260692be907678b7475b8114199453"><td class="memItemLeft" align="right" valign="top"><a id="a4e260692be907678b7475b8114199453"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DirectionalVisibility_System</b> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; <a class="el" href="struct_directional___visibility.html">Directional_Visibility</a> &gt; &amp;visibility, const std::shared_ptr&lt; std::vector&lt; <a class="el" href="struct_viewport.html">Viewport</a> * &gt;&gt; &amp;viewports)</td></tr>
-<tr class="separator:a4e260692be907678b7475b8114199453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a22690ba92db962719d3d17d1a7088a56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_visibility___system.html#a22690ba92db962719d3d17d1a7088a56">~DirectionalVisibility_System</a> ()=default</td></tr>
+<tr class="separator:a22690ba92db962719d3d17d1a7088a56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a101d42e4a73363c4b7c8fb2900740d7d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_directional_visibility___system.html#a101d42e4a73363c4b7c8fb2900740d7d">DirectionalVisibility_System</a> (const std::shared_ptr&lt; <a class="el" href="struct_directional_data.html">DirectionalData</a> &gt; &amp;frameData)</td></tr>
+<tr class="separator:a101d42e4a73363c4b7c8fb2900740d7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8b561da6cfe636af060e37df2f0dea6"><td class="memItemLeft" align="right" valign="top"><a id="ae8b561da6cfe636af060e37df2f0dea6"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:ae8b561da6cfe636af060e37df2f0dea6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,6 +112,67 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An ECS system responsible for populating render lists PER active perspective in a given frame, for all directional light related entities. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a22690ba92db962719d3d17d1a7088a56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a22690ba92db962719d3d17d1a7088a56">&#9670;&nbsp;</a></span>~DirectionalVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DirectionalVisibility_System::~DirectionalVisibility_System </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this system. </p>
+
+</div>
+</div>
+<a id="a101d42e4a73363c4b7c8fb2900740d7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a101d42e4a73363c4b7c8fb2900740d7d">&#9670;&nbsp;</a></span>DirectionalVisibility_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">DirectionalVisibility_System::DirectionalVisibility_System </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_directional_data.html">DirectionalData</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>frameData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameData</td><td>shared pointer of common data that changes frame-to-frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/Directional/<a class="el" href="_directional_visibility___system_8h_source.html">DirectionalVisibility_System.h</a></li>
 </ul>

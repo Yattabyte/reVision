@@ -34,15 +34,17 @@ public:
 
 
 	// Public Methods
-	/***/
-	inline void setEnabled(const bool & b) {
-		m_enabled = b;
+	/** Set the enabled state for this camera.
+	@param	enabled		whether this camera should be enabled or not. */
+	inline void setEnabled(const bool & enabled) {
+		m_enabled = enabled;
 	}
-	/***/ 
+	/** Retrieve if this camera is enabled or not.
+	@return				true if enabled, false otherwise. */ 
 	inline bool getEnabled() const {
 		return m_enabled;
 	}
-	/***/
+	/** Recalculate frustum data for this camera. */
 	inline void updateFrustum() {
 		constexpr static auto normalizePlane = [](glm::vec4 &plane) {
 			float magnitude = (float)sqrtf(plane[0] * plane[0] + plane[1] * plane[1] + plane[2] * plane[2]);
@@ -115,7 +117,8 @@ public:
 		posB /= posB.w;
 		m_frustumCenter = glm::vec3(posB) + m_localData.EyePosition;
 	}
-	/***/
+	/** Retrieve the center of this camera's frustum.
+	@return				the center of this frustum. */
 	inline glm::vec3 getFrustumCenter() const {
 		return m_frustumCenter;
 	}
@@ -139,13 +142,13 @@ public:
 
 	// Public Attributes
 	glm::vec3 m_frustumCenter = glm::vec3(0);
+	glm::vec4 m_planes[6];
 
 
 private:
 	// Private Attributes
 	bool m_enabled = false;
 	GPUData m_localData;
-	glm::vec4 m_planes[6];
 };
 
 #endif // CAMERA_H

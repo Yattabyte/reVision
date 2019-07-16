@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 
 
-/***/
+/** An ECS system responsible for populating render lists PER active perspective in a given frame, for all prop related entities. */
 class PropVisibility_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~PropVisibility_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PropVisibility_System(const std::shared_ptr<PropData> & frameData, const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_frameData(frameData), m_cameras(cameras) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);

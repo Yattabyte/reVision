@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,8 @@ $(function() {
 <div class="title">SpotSync_System Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_spot_sync___system_8h_source.html">SpotSync_System.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for SpotSync_System:</div>
 <div class="dyncontent">
@@ -82,9 +84,10 @@ Inheritance diagram for SpotSync_System:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa77cdc2cae1a881ef6738fe2e8912875"><td class="memItemLeft" align="right" valign="top"><a id="aa77cdc2cae1a881ef6738fe2e8912875"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SpotSync_System</b> (const std::shared_ptr&lt; <a class="el" href="struct_spot___buffers.html">Spot_Buffers</a> &gt; &amp;buffers)</td></tr>
-<tr class="separator:aa77cdc2cae1a881ef6738fe2e8912875"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed36407090062d1099bf6936fa1ecae6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spot_sync___system.html#aed36407090062d1099bf6936fa1ecae6">~SpotSync_System</a> ()=default</td></tr>
+<tr class="separator:aed36407090062d1099bf6936fa1ecae6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c9dbe21ff1f0be0c69d30eb448d9ff9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_spot_sync___system.html#a5c9dbe21ff1f0be0c69d30eb448d9ff9">SpotSync_System</a> (const std::shared_ptr&lt; <a class="el" href="struct_spot_data.html">SpotData</a> &gt; &amp;frameData)</td></tr>
+<tr class="separator:a5c9dbe21ff1f0be0c69d30eb448d9ff9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af7d9107c82515b2cb4c514945f087b95"><td class="memItemLeft" align="right" valign="top"><a id="af7d9107c82515b2cb4c514945f087b95"></a>
 virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>updateComponents</b> (const float &amp;deltaTime, const std::vector&lt; std::vector&lt; <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a> * &gt;&gt; &amp;components) override</td></tr>
 <tr class="separator:af7d9107c82515b2cb4c514945f087b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -109,6 +112,67 @@ Additional Inherited Members</h2></td></tr>
 <tr class="memitem:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_base_e_c_s_system.html#a809945fff37d5d5737db89d831aae3e6">addComponentType</a> (const uint32_t &amp;componentType, const uint32_t &amp;componentFlag=FLAG_REQUIRED)</td></tr>
 <tr class="separator:a809945fff37d5d5737db89d831aae3e6 inherit pro_methods_class_base_e_c_s_system"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>An ECS system responsible for syncronizing spot lighting components and sending data to the GPU. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="aed36407090062d1099bf6936fa1ecae6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed36407090062d1099bf6936fa1ecae6">&#9670;&nbsp;</a></span>~SpotSync_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpotSync_System::~SpotSync_System </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this system. </p>
+
+</div>
+</div>
+<a id="a5c9dbe21ff1f0be0c69d30eb448d9ff9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c9dbe21ff1f0be0c69d30eb448d9ff9">&#9670;&nbsp;</a></span>SpotSync_System()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">SpotSync_System::SpotSync_System </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_spot_data.html">SpotData</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>frameData</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Construct this system. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">frameData</td><td>shared pointer of common data that changes frame-to-frame. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/Graphics/Lighting/Spot/<a class="el" href="_spot_sync___system_8h_source.html">SpotSync_System.h</a></li>
 </ul>

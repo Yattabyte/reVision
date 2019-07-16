@@ -6,16 +6,16 @@
 #include "glm/glm.hpp"
 
 
-/***/
+/** Framebuffer containing shadow data for all light maps. */
 class ShadowMap {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this framebuffer. */
 	inline ~ShadowMap() {
 		glDeleteFramebuffers(1, &m_fboID);
 		glDeleteTextures(3, m_textureIDS);
 	}
-	/***/
+	/** Construct this framebuffer. */
 	inline ShadowMap() {
 		glCreateFramebuffers(1, &m_fboID);
 		glCreateTextures(GL_TEXTURE_2D_ARRAY, 3, m_textureIDS);
@@ -41,10 +41,12 @@ public:
 
 
 	// Public Methods
-	/***/
-	inline void resize(const glm::ivec2 & size, const int & layerFaces) {
-		if (m_size.x != size.x || m_size.y != size.y || m_layerFaces != layerFaces) {
-			m_size = glm::max(glm::ivec2(1), size);
+	/** Set the size of this framebuffer.
+	@param	newSize		the new size to use.
+	@param	depth		the new depth to use. */
+	inline void resize(const glm::ivec2 & newSize, const int & layerFaces) {
+		if (m_size != newSize || m_layerFaces != layerFaces) {
+			m_size = glm::max(glm::ivec2(1), newSize);
 			m_layerFaces = std::max<int>(1, layerFaces);
 			constexpr float clearDepth(1.0f);
 			constexpr glm::vec3 clear(0.0f);
@@ -55,8 +57,10 @@ public:
 			glClearTexImage(m_textureIDS[1], 0, GL_RGB, GL_FLOAT, &clear);
 			glClearTexImage(m_textureIDS[2], 0, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 		}
-	}
-	/***/
+	}	
+	/** Clear the data out of a specific layer in the framebuffer.
+	@param	zOffset		the layer to clear out of. 
+	@param	amount		the number of layers to clear. */
 	inline void clear(const GLint & zOffset, const GLsizei & amount) {
 		constexpr float clearDepth(1.0f);
 		constexpr glm::vec3 clear(0.0f);
@@ -64,7 +68,7 @@ public:
 		glClearTexSubImage(m_textureIDS[1], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_RGB, GL_FLOAT, &clear);
 		glClearTexSubImage(m_textureIDS[2], 0, 0, 0, zOffset, m_size.x, m_size.y, amount, GL_DEPTH_COMPONENT, GL_FLOAT, &clearDepth);
 	}
-	/***/
+	/** Bind this framebuffer for writting. */
 	inline void bindForWriting() {
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 	}

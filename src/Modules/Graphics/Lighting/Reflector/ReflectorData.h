@@ -14,9 +14,9 @@
 #include <vector>
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for reflector rendering. */
 struct ReflectorData {
-	/** OpenGL buffer for reflector lights. */
+	/** OpenGL buffer struct for reflector lights. */
 	struct Reflector_Buffer {
 		glm::mat4 mMatrix;
 		glm::mat4 rotMatrix;
@@ -24,7 +24,7 @@ struct ReflectorData {
 		glm::vec3 BoxScale; float padding2;
 		int CubeSpot; glm::vec3 padding3;
 	};
-	/***/
+	/** Struct collating per-perspective data. */
 	struct ViewInfo {
 		std::vector<GLint> lightIndices;
 	};

@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,50 +71,20 @@ $(function() {
 <div class="title">Viewport Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="_viewport_8h_source.html">Viewport.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a7478b10ef3140b22faf342df4e6e41f1"><td class="memItemLeft" align="right" valign="top"><a id="a7478b10ef3140b22faf342df4e6e41f1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>Viewport</b> (<a class="el" href="class_engine.html">Engine</a> *engine, const glm::ivec2 &amp;screenPosition, const glm::ivec2 &amp;dimensions, const <a class="el" href="struct_camera_buffer_1_1_buffer_structure.html">CameraBuffer::BufferStructure</a> &amp;cameraData=<a class="el" href="struct_camera_buffer_1_1_buffer_structure.html">CameraBuffer::BufferStructure</a>())</td></tr>
-<tr class="separator:a7478b10ef3140b22faf342df4e6e41f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff4503a4d712fa3e4e5f6392c02bde6b"><td class="memItemLeft" align="right" valign="top"><a id="aff4503a4d712fa3e4e5f6392c02bde6b"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>resize</b> (const glm::ivec2 &amp;size)</td></tr>
-<tr class="separator:aff4503a4d712fa3e4e5f6392c02bde6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d7650e45cab4ca34607d8947287d8a8"><td class="memItemLeft" align="right" valign="top"><a id="a4d7650e45cab4ca34607d8947287d8a8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setDrawDistance</b> (const float &amp;drawDistance)</td></tr>
-<tr class="separator:a4d7650e45cab4ca34607d8947287d8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac21c765891b228716a897eb3983dbadd"><td class="memItemLeft" align="right" valign="top"><a id="ac21c765891b228716a897eb3983dbadd"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>getDrawDistance</b> () const</td></tr>
-<tr class="separator:ac21c765891b228716a897eb3983dbadd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc81d3f33739588b082d6108e30f0c26"><td class="memItemLeft" align="right" valign="top"><a id="afc81d3f33739588b082d6108e30f0c26"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setFOV</b> (const float &amp;fov)</td></tr>
-<tr class="separator:afc81d3f33739588b082d6108e30f0c26"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a691e9a417f6f8d5f653d3303d4050dc9"><td class="memItemLeft" align="right" valign="top"><a id="a691e9a417f6f8d5f653d3303d4050dc9"></a>
-float&#160;</td><td class="memItemRight" valign="bottom"><b>getFOV</b> () const</td></tr>
-<tr class="separator:a691e9a417f6f8d5f653d3303d4050dc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86aaee8c93313df4a13d8338bfbf0ceb"><td class="memItemLeft" align="right" valign="top"><a id="a86aaee8c93313df4a13d8338bfbf0ceb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>set3DPosition</b> (const glm::vec3 &amp;position)</td></tr>
-<tr class="separator:a86aaee8c93313df4a13d8338bfbf0ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afe16d61c50dbfbca32ba0d9efdd2d39f"><td class="memItemLeft" align="right" valign="top"><a id="afe16d61c50dbfbca32ba0d9efdd2d39f"></a>
-glm::vec3&#160;</td><td class="memItemRight" valign="bottom"><b>get3DPosition</b> () const</td></tr>
-<tr class="separator:afe16d61c50dbfbca32ba0d9efdd2d39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af04172f4040d431e8b047b21e0de6257"><td class="memItemLeft" align="right" valign="top"><a id="af04172f4040d431e8b047b21e0de6257"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setViewMatrix</b> (const glm::mat4 &amp;vMatrix)</td></tr>
-<tr class="separator:af04172f4040d431e8b047b21e0de6257"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ef9fb8439c025eecbce288ff2f2cc91"><td class="memItemLeft" align="right" valign="top"><a id="a5ef9fb8439c025eecbce288ff2f2cc91"></a>
-glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>getViewMatrix</b> () const</td></tr>
-<tr class="separator:a5ef9fb8439c025eecbce288ff2f2cc91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3e1a0c67256f198ea5c695912ecba61"><td class="memItemLeft" align="right" valign="top"><a id="ac3e1a0c67256f198ea5c695912ecba61"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>genPerspectiveMatrix</b> ()</td></tr>
-<tr class="separator:ac3e1a0c67256f198ea5c695912ecba61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8cb1adea407a536470a085264cecd245"><td class="memItemLeft" align="right" valign="top"><a id="a8cb1adea407a536470a085264cecd245"></a>
-glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>getPerspectiveMatrix</b> () const</td></tr>
-<tr class="separator:a8cb1adea407a536470a085264cecd245"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a12162aaeb083628b4d1acaed9e69fcbb"><td class="memItemLeft" align="right" valign="top"><a id="a12162aaeb083628b4d1acaed9e69fcbb"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>bind</b> ()</td></tr>
+<tr class="memitem:a90d7e3b443886cacec33d470315c2b9e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_viewport.html#a90d7e3b443886cacec33d470315c2b9e">~Viewport</a> ()=default</td></tr>
+<tr class="separator:a90d7e3b443886cacec33d470315c2b9e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c13861d347c3b9548adad2fbe5c3316"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_viewport.html#a5c13861d347c3b9548adad2fbe5c3316">Viewport</a> (const glm::ivec2 &amp;screenPosition, const glm::ivec2 &amp;dimensions)</td></tr>
+<tr class="separator:a5c13861d347c3b9548adad2fbe5c3316"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1437d1ac6550ecc3502ffa494036a930"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_viewport.html#a1437d1ac6550ecc3502ffa494036a930">resize</a> (const glm::ivec2 &amp;size, const int &amp;layerFaces)</td></tr>
+<tr class="separator:a1437d1ac6550ecc3502ffa494036a930"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a12162aaeb083628b4d1acaed9e69fcbb"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_viewport.html#a12162aaeb083628b4d1acaed9e69fcbb">bind</a> ()</td></tr>
 <tr class="separator:a12162aaeb083628b4d1acaed9e69fcbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6ad8d105fe3d8dae1e9ef34ba9ed98e0"><td class="memItemLeft" align="right" valign="top"><a id="a6ad8d105fe3d8dae1e9ef34ba9ed98e0"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>clear</b> ()</td></tr>
+<tr class="memitem:a6ad8d105fe3d8dae1e9ef34ba9ed98e0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_viewport.html#a6ad8d105fe3d8dae1e9ef34ba9ed98e0">clear</a> ()</td></tr>
 <tr class="separator:a6ad8d105fe3d8dae1e9ef34ba9ed98e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -125,16 +95,149 @@ glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_screenPositio
 <tr class="memitem:a748caa7dee4a6d75098a7fa2930ea269"><td class="memItemLeft" align="right" valign="top"><a id="a748caa7dee4a6d75098a7fa2930ea269"></a>
 glm::ivec2&#160;</td><td class="memItemRight" valign="bottom"><b>m_dimensions</b> = glm::vec2(1)</td></tr>
 <tr class="separator:a748caa7dee4a6d75098a7fa2930ea269"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2a127406975354e59c50c68703970181"><td class="memItemLeft" align="right" valign="top"><a id="a2a127406975354e59c50c68703970181"></a>
-std::shared_ptr&lt; <a class="el" href="class_camera_buffer.html">CameraBuffer</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_cameraBuffer</b></td></tr>
-<tr class="separator:a2a127406975354e59c50c68703970181"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab491e091534288fe3e1dc7ce067a7c5a"><td class="memItemLeft" align="right" valign="top"><a id="ab491e091534288fe3e1dc7ce067a7c5a"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_layerFaces</b> = 1</td></tr>
+<tr class="separator:ab491e091534288fe3e1dc7ce067a7c5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2abaa5cac7b0172ee7850f8b750954b2"><td class="memItemLeft" align="right" valign="top"><a id="a2abaa5cac7b0172ee7850f8b750954b2"></a>
 std::shared_ptr&lt; <a class="el" href="class_graphics___framebuffers.html">Graphics_Framebuffers</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_gfxFBOS</b></td></tr>
 <tr class="separator:a2abaa5cac7b0172ee7850f8b750954b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a628ea26dd3adc8e02820b3d95c1ea389"><td class="memItemLeft" align="right" valign="top"><a id="a628ea26dd3adc8e02820b3d95c1ea389"></a>
-std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_rhVolume</b></td></tr>
-<tr class="separator:a628ea26dd3adc8e02820b3d95c1ea389"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Representation of the data backing a unique viewing perspective. Not a camera, but the buffers one would render into and with. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a90d7e3b443886cacec33d470315c2b9e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90d7e3b443886cacec33d470315c2b9e">&#9670;&nbsp;</a></span>~Viewport()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Viewport::~Viewport </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Destroy this viewport. </p>
+
+</div>
+</div>
+<a id="a5c13861d347c3b9548adad2fbe5c3316"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c13861d347c3b9548adad2fbe5c3316">&#9670;&nbsp;</a></span>Viewport()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">Viewport::Viewport </td>
+          <td>(</td>
+          <td class="paramtype">const glm::ivec2 &amp;&#160;</td>
+          <td class="paramname"><em>screenPosition</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const glm::ivec2 &amp;&#160;</td>
+          <td class="paramname"><em>dimensions</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Construct a viewport, given an offset and size. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">screenPosition</td><td>the offset relative to the bottom left of the screen. </td></tr>
+    <tr><td class="paramname">dimensions</td><td>the size of the viewport. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a12162aaeb083628b4d1acaed9e69fcbb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a12162aaeb083628b4d1acaed9e69fcbb">&#9670;&nbsp;</a></span>bind()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Viewport::bind </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Bind this viewport. </p>
+
+</div>
+</div>
+<a id="a6ad8d105fe3d8dae1e9ef34ba9ed98e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6ad8d105fe3d8dae1e9ef34ba9ed98e0">&#9670;&nbsp;</a></span>clear()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Viewport::clear </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Clear the data held by this viewport, such as it's framebuffers. </p>
+
+</div>
+</div>
+<a id="a1437d1ac6550ecc3502ffa494036a930"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1437d1ac6550ecc3502ffa494036a930">&#9670;&nbsp;</a></span>resize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Viewport::resize </td>
+          <td>(</td>
+          <td class="paramtype">const glm::ivec2 &amp;&#160;</td>
+          <td class="paramname"><em>size</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int &amp;&#160;</td>
+          <td class="paramname"><em>layerFaces</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Change the size of this viewport. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">size</td><td>the new size to use. </td></tr>
+    <tr><td class="paramname">layerFaces</td><td>the number of layer faces to use. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this struct was generated from the following files:<ul>
 <li>src/Modules/Graphics/Common/<a class="el" href="_viewport_8h_source.html">Viewport.h</a></li>
 <li>src/Modules/Graphics/Common/Viewport.cpp</li>

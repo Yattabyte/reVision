@@ -17,20 +17,20 @@
 #define NUM_MAX_BONES 100
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for prop rendering. */
 struct PropData {
-	/** OpenGL buffer for models. */
+	/** OpenGL buffer struct for models. */
 	struct Model_Buffer {
 		GLuint materialID;
 		GLuint skinID; glm::vec2 padding1;
 		glm::mat4 mMatrix;
 		glm::mat4 bBoxMatrix;
 	};
-	/** OpenGL buffer for skeletons. */
+	/** OpenGL buffer struct for skeletons. */
 	struct Skeleton_Buffer {
 		glm::mat4 bones[NUM_MAX_BONES];
 	};
-	/***/
+	/** Struct collating per-perspective data. */
 	struct ViewInfo {
 		std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 		std::vector<GLuint> visibleIndices;

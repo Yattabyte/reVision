@@ -105,19 +105,23 @@ public:
 	inline BaseECSSystem * operator[](const size_t & index) {
 		return m_systems[index];
 	}
-	/***/
+	/** Retrieve an iterator to the beginning of this system list.
+	@return			 an iterator to the beginning of this system list. */
 	inline std::vector<BaseECSSystem*>::iterator begin() {
 		return m_systems.begin(); 
 	}
-	/***/
+	/** Retrieve a const iterator to the beginning of this system list.
+	@return			a const iterator to the beginning of this system list. */
 	inline std::vector<BaseECSSystem*>::const_iterator begin() const {
 		return m_systems.cbegin(); 
 	}
-	/***/
+	/** Retrieve an iterator to the end of this system list.
+	@return			an iterator to the end of this system list. */
 	inline std::vector<BaseECSSystem*>::iterator end() {
 		return m_systems.end(); 
 	}
-	/***/
+	/** Retrieve a const iterator to the end of this system list. 
+	@return			a const iterator to the end of this system list. */
 	inline std::vector<BaseECSSystem*>::const_iterator end() const {
 		return  m_systems.cend();
 	}

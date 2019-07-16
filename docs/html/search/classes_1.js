@@ -7,6 +7,5 @@ var searchData=
   ['bounding_5fcomponent',['Bounding_Component',['../struct_bounding___component.html',1,'']]],
   ['boundingsphere_5fcomponent',['BoundingSphere_Component',['../struct_bounding_sphere___component.html',1,'']]],
   ['buffer_5finterface',['Buffer_Interface',['../class_buffer___interface.html',1,'']]],
-  ['bufferstructure',['BufferStructure',['../struct_camera_buffer_1_1_buffer_structure.html',1,'CameraBuffer']]],
   ['button',['Button',['../class_button.html',1,'']]]
 ];

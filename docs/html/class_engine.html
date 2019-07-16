@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -90,8 +90,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a862870af01354ec1327bae82074e836f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a862870af01354ec1327bae82074e836f">tick</a> ()</td></tr>
 <tr class="separator:a862870af01354ec1327bae82074e836f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88e41e7d7bdbabe2b20ea4c92f1a8f79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a88e41e7d7bdbabe2b20ea4c92f1a8f79">tickThreaded</a> (std::future&lt; void &gt; exitObject, const <a class="el" href="struct_auxilliary___context.html">Auxilliary_Context</a> &amp;&amp;context)</td></tr>
-<tr class="separator:a88e41e7d7bdbabe2b20ea4c92f1a8f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6a8bc268e2fc517e859cae1f149927c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab6a8bc268e2fc517e859cae1f149927c">tickThreaded</a> (std::future&lt; void &gt; exitObject, GLFWwindow *const window)</td></tr>
+<tr class="separator:ab6a8bc268e2fc517e859cae1f149927c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a000f99ef9755f3415ee4fb101019e373"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a000f99ef9755f3415ee4fb101019e373">shouldClose</a> ()</td></tr>
 <tr class="separator:a000f99ef9755f3415ee4fb101019e373"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4493849a14880965dc52e33a3c4b39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a> ()</td></tr>
@@ -102,8 +102,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2190e510b436458765eeacca511d5fc1"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2190e510b436458765eeacca511d5fc1">getTime</a> () const</td></tr>
 <tr class="separator:a2190e510b436458765eeacca511d5fc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afda3fac79affefe8f7384bb580c3082d"><td class="memItemLeft" align="right" valign="top">GLFWwindow *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afda3fac79affefe8f7384bb580c3082d">getRenderingContext</a> () const</td></tr>
-<tr class="separator:afda3fac79affefe8f7384bb580c3082d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48f724b864a6a5251791af8b4cf0d55e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::ivec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">getResolutions</a> () const</td></tr>
 <tr class="separator:a48f724b864a6a5251791af8b4cf0d55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2064c3142815e4396db1e016f474b8ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html">ActionState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2064c3142815e4396db1e016f474b8ff">getActionState</a> ()</td></tr>
@@ -112,10 +110,6 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:aa86a65ad825186658bd35cc7dca0b42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae63c610667d58f693d9aeadfaa12b5de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_asset_manager.html">AssetManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ae63c610667d58f693d9aeadfaa12b5de">getManager_Assets</a> ()</td></tr>
 <tr class="separator:ae63c610667d58f693d9aeadfaa12b5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbca86d426d68112d1d419862cb223ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_model_manager.html">ModelManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#abbca86d426d68112d1d419862cb223ef">getManager_Models</a> ()</td></tr>
-<tr class="separator:abbca86d426d68112d1d419862cb223ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a081bdc29fd70c1be30137106f4bb8af8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_material_manager.html">MaterialManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a081bdc29fd70c1be30137106f4bb8af8">getManager_Materials</a> ()</td></tr>
-<tr class="separator:a081bdc29fd70c1be30137106f4bb8af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_message_manager.html">MessageManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a07fb517385f84afb4658f6cd17b5cb0b">getManager_Messages</a> ()</td></tr>
 <tr class="separator:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dc308182bb00da2565385136209e943"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_sound_manager.html">SoundManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a7dc308182bb00da2565385136209e943">getManager_Sounds</a> ()</td></tr>
@@ -305,32 +299,6 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a081bdc29fd70c1be30137106f4bb8af8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a081bdc29fd70c1be30137106f4bb8af8">&#9670;&nbsp;</a></span>getManager_Materials()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_material_manager.html">MaterialManager</a>&amp; Engine::getManager_Materials </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's material manager. </p>
-
-</div>
-</div>
 <a id="a07fb517385f84afb4658f6cd17b5cb0b"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a07fb517385f84afb4658f6cd17b5cb0b">&#9670;&nbsp;</a></span>getManager_Messages()</h2>
 
@@ -354,32 +322,6 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 <p>Returns this engine's message manager. </p>
-
-</div>
-</div>
-<a id="abbca86d426d68112d1d419862cb223ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbca86d426d68112d1d419862cb223ef">&#9670;&nbsp;</a></span>getManager_Models()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_model_manager.html">ModelManager</a>&amp; Engine::getManager_Models </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's model manager. </p>
 
 </div>
 </div>
@@ -591,24 +533,6 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="afda3fac79affefe8f7384bb580c3082d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afda3fac79affefe8f7384bb580c3082d">&#9670;&nbsp;</a></span>getRenderingContext()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">GLFWwindow * Engine::getRenderingContext </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Returns this engine's rendering context. </p>
-
-</div>
-</div>
 <a id="a48f724b864a6a5251791af8b4cf0d55e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a48f724b864a6a5251791af8b4cf0d55e">&#9670;&nbsp;</a></span>getResolutions()</h2>
 
@@ -725,8 +649,8 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a88e41e7d7bdbabe2b20ea4c92f1a8f79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88e41e7d7bdbabe2b20ea4c92f1a8f79">&#9670;&nbsp;</a></span>tickThreaded()</h2>
+<a id="ab6a8bc268e2fc517e859cae1f149927c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6a8bc268e2fc517e859cae1f149927c">&#9670;&nbsp;</a></span>tickThreaded()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -740,8 +664,8 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="struct_auxilliary___context.html">Auxilliary_Context</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>context</em>&#160;</td>
+          <td class="paramtype">GLFWwindow *const&#160;</td>
+          <td class="paramname"><em>window</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

@@ -5,13 +5,13 @@
 #include "Utilities/GL/glad/glad.h"
 
 
-/***/
+/** An interface for opengl buffers. */
 class Buffer_Interface {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this buffer. */
 	virtual ~Buffer_Interface() = default;
-	/***/
+	/** Construct a buffer. */
 	Buffer_Interface() = default;
 
 

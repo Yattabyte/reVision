@@ -120,7 +120,7 @@ void UI_Module::applyChar(const unsigned int & character)
 	m_keyboardEvent.setChar(0);
 }
 
-void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
+void UI_Module::applyKey(const int & key, const int &, const int & action, const int &)
 {
 	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
 	if (m_rootElement.size())

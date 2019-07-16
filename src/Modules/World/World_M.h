@@ -113,7 +113,11 @@ public:
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
 	void updateSystem(BaseECSSystem * system, const float & deltaTime);
-	/***/
+	/** Update the components of a single system.
+	@param	deltaTime			the delta time. 
+	@param	types				list of component types to retrieve.
+	@param	flags				list of flags, designating a component as required or optional. 
+	@param	func				lambda function serving as a system. */
 	void updateSystem(const float & deltaTime, const std::vector<uint32_t> & types, const std::vector<uint32_t> & flags, const std::function<void(const float &, const std::vector<std::vector<BaseECSComponent*>>&)> &func);
 
 
@@ -163,7 +167,9 @@ private:
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
 	BaseECSComponent * getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>>& entityComponents, std::vector<uint8_t> & array, const uint32_t & componentID);
-	/***/
+	/** Retrieve the components relevant to an ecs system.
+	@param	componentTypes		list of component types to retrieve.
+	@param	componentFlags		list of flags, designating a component as required or optional. */
 	std::vector<std::vector<BaseECSComponent*>> getRelevantComponents(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
 	/** Find the least common component.
 	@param	componentTypes		the component types.

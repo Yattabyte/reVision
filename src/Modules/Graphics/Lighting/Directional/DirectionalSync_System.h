@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 
 
-/***/
+/** An ECS system responsible for syncronizing directional lighting components and sending data to the GPU. */
 class DirectionalSync_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~DirectionalSync_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline DirectionalSync_System(const std::shared_ptr<DirectionalData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
@@ -97,7 +98,7 @@ public:
 							const glm::mat4 pvMatrix = pMatrix * sunModelMatrix;
 							const glm::vec4 v_near = CamP * glm::vec4(0, 0, cascadeEnd[i], 1.0f);
 							const glm::vec4 v_far = CamP * glm::vec4(0, 0, cascadeEnd[i + 1], 1.0f);
-							camData.Dimensions = glm::ivec2(m_frameData->shadowData->shadowSize);
+							camData.Dimensions = glm::ivec2((int)m_frameData->shadowData->shadowSize);
 							camData.FOV = 90.0f;
 							camData.NearPlane = v_near.z;
 							camData.FarPlane = v_far.z;

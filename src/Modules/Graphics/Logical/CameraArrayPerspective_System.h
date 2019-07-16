@@ -9,13 +9,14 @@
 #include <memory>
 
 
-/***/
+/** An ECS system responsible for updating a shared pointer with a list of all active cameras in the scene. */
 class CameraArrayPerspective_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~CameraArrayPerspective_System() = default;
-	/***/
+	/** Construct this system.
+	@param	cameras		shared list of scene cameras. */
 	inline CameraArrayPerspective_System(const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_cameras(cameras) {
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);

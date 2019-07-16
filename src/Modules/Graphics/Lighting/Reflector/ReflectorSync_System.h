@@ -9,13 +9,14 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 
 
-/***/
+/** An ECS system responsible for syncronizing reflector components and sending data to the GPU. */
 class ReflectorSync_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~ReflectorSync_System() = default;
-	/***/
+	/** Construct this system.
+	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorSync_System(const std::shared_ptr<ReflectorData> & frameData)
 		: m_frameData(frameData) {
 		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);

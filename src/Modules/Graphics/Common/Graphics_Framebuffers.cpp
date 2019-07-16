@@ -114,7 +114,7 @@ void Graphics_Framebuffers::clear()
 void Graphics_Framebuffers::clearDepthStencil()
 {
 	constexpr GLfloat clearDepth = 1.0f;
-	constexpr GLint clearStencil = 0.0f;
+	constexpr GLint clearStencil = 0;
 	for (auto&[name, fboData] : m_fbos) {
 		auto&[fboID, mipmapped, texdata] = fboData;
 		for (auto&[texID, internalFormat, format, type, attachment] : texdata) {
@@ -134,7 +134,6 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layer
 	m_layerFaces = layerFaces;
 	for (auto&[name, fboData] : m_fbos) {
 		auto&[fboID, mipmapped, texdata] = fboData;
-		int counter(0);
 		for (const auto[texID, internalFormat, format, type, attachment] : texdata) {
 			if (mipmapped) {
 				for (int x = 0; x < 6; ++x) {
@@ -143,16 +142,7 @@ void Graphics_Framebuffers::resize(const glm::ivec2 & newSize, const int & layer
 				}
 			}
 			else
-				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);
-			GLenum attachment;
-			if (format == GL_DEPTH_STENCIL)
-				attachment = GL_DEPTH_STENCIL_ATTACHMENT;
-			else if (format == GL_DEPTH)
-				attachment = GL_DEPTH_ATTACHMENT;
-			else if (format == GL_STENCIL)
-				attachment = GL_STENCIL_ATTACHMENT;
-			else 
-				attachment = GL_COLOR_ATTACHMENT0 + counter++;			
+				glTextureImage3DEXT(texID, GL_TEXTURE_2D_ARRAY, 0, internalFormat, m_renderSize.x, m_renderSize.y, m_layerFaces, 0, format, type, NULL);			
 			glNamedFramebufferTexture(fboID, attachment, texID, 0);
 		}
 	}

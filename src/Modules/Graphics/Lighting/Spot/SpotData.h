@@ -14,9 +14,9 @@
 #include <vector>
 
 
-/***/
+/** Structure to contain data that changes frame-to-frame, for spot light rendering. */
 struct SpotData {
-	/** OpenGL buffer for spot lights. */
+	/** OpenGL buffer struct for spot lights. */
 	struct Spot_Buffer {
 		glm::mat4 lightPV;
 		glm::mat4 mMatrix;
@@ -28,7 +28,7 @@ struct SpotData {
 		float LightCutoff;
 		int Shadow_Spot;
 	};
-	/***/
+	/** Struct collating per-perspective data. */
 	struct ViewInfo {
 		std::vector<GLint> lightIndices;
 	};

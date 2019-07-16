@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.8.6</span>
+   &#160;<span id="projectnumber">3.9.16</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -67,7 +67,7 @@ $(function() {
 
 <h3><a id="index_r"></a>- r -</h3><ul>
 <li>Radiance_Hints()
-: <a class="el" href="class_radiance___hints.html#ac56c4143e85d5f2d108d43b4e9e9fdf3">Radiance_Hints</a>
+: <a class="el" href="class_radiance___hints.html#a1fa029bd271e707a4ad55a225bf1c741">Radiance_Hints</a>
 </li>
 <li>ReadNodeHeirarchy()
 : <a class="el" href="class_skeletal___animation.html#a1c13be3b908034c5e1224367bb5f14cc">Skeletal_Animation</a>
@@ -80,14 +80,18 @@ $(function() {
 </li>
 <li>readyToUse()
 : <a class="el" href="class_asset_manager.html#ad72d1ad886de2d65a31692396d6edcb7">AssetManager</a>
-, <a class="el" href="class_material_manager.html#a1a77d9e1af791dcf945568c27e80d25d">MaterialManager</a>
-, <a class="el" href="class_model_manager.html#a869beaea37e7c19c69ca174e22cbea96">ModelManager</a>
 </li>
 <li>Reflector_Technique()
-: <a class="el" href="class_reflector___technique.html#af9dda8efaa3b548a14cfc18dac9726db">Reflector_Technique</a>
+: <a class="el" href="class_reflector___technique.html#a6acd5d622067edd360f5aca81609a40f">Reflector_Technique</a>
 </li>
-<li>registerGeometry()
-: <a class="el" href="class_model_manager.html#a1fb88217bd6f1269e8876dc73359aecd">ModelManager</a>
+<li>ReflectorScheduler_System()
+: <a class="el" href="class_reflector_scheduler___system.html#ac409b500a2b6d42b938667d7781b01f5">ReflectorScheduler_System</a>
+</li>
+<li>ReflectorSync_System()
+: <a class="el" href="class_reflector_sync___system.html#a13b0c275d886bf93dc4462dfc8a1e5c9">ReflectorSync_System</a>
+</li>
+<li>ReflectorVisibility_System()
+: <a class="el" href="class_reflector_visibility___system.html#ad00f7e6942aa710d70bb7596940a4e32">ReflectorVisibility_System</a>
 </li>
 <li>Release()
 : <a class="el" href="class_shader.html#ab54c6fe63a0961380132be979f00a791">Shader</a>
@@ -100,7 +104,6 @@ $(function() {
 </li>
 <li>removeElement()
 : <a class="el" href="class_focus_map.html#a7a29e5ecaae8a9a5ce2dc46d7a5b5dd0">FocusMap</a>
-, <a class="el" href="class_g_l___array_buffer.html#a84195ed6917b8dcbe8df5c277c9e8e4d">GL_ArrayBuffer&lt; T &gt;</a>
 </li>
 <li>removeEntity()
 : <a class="el" href="class_world___module.html#a1f6cc7f61eaf81f59e664612afd9c3ca">World_Module</a>
@@ -109,8 +112,7 @@ $(function() {
 : <a class="el" href="class_e_c_s_system_list.html#a190f3f5ac1d9956ff765d7360f346690">ECSSystemList</a>
 </li>
 <li>render()
-: <a class="el" href="class_graphics___module.html#a03741341d8cf93764dc3e143b49f2461">Graphics_Module</a>
-, <a class="el" href="class_graphics___pipeline.html#ab41180d3cc948a4f06dd07cf9982d550">Graphics_Pipeline</a>
+: <a class="el" href="class_graphics___pipeline.html#affcf66be36d94a5a4762baf9a1f6c368">Graphics_Pipeline</a>
 </li>
 <li>renderElement()
 : <a class="el" href="class_border.html#a1012d9be22b6450d1dbcb667bad4c856">Border</a>
@@ -127,34 +129,47 @@ $(function() {
 , <a class="el" href="class_u_i___decorator.html#ac250390fd91d486490b5cb6fb95467d4">UI_Decorator</a>
 , <a class="el" href="class_u_i___element.html#ab8c5cdf65dea54b91e64ad2bcbeff491">UI_Element</a>
 </li>
+<li>renderGeometry()
+: <a class="el" href="class_geometry___technique.html#a2c1abcabcbc075e431a18f47c9dce2d6">Geometry_Technique</a>
+</li>
 <li>renderOverlays()
 : <a class="el" href="class_game___module.html#aba83c7c0081309460ca423bbe506f325">Game_Module</a>
 </li>
+<li>renderScene()
+: <a class="el" href="class_graphics___module.html#a9772da50b8a6de297b5ff9673330f9a3">Graphics_Module</a>
+</li>
+<li>renderShadows()
+: <a class="el" href="class_geometry___technique.html#ac842c87a7cdccf74a0a54480f9cfb4ab">Geometry_Technique</a>
+, <a class="el" href="class_graphics___module.html#a34541a9d268a28ab99056140e77f1359">Graphics_Module</a>
+, <a class="el" href="class_graphics___pipeline.html#afbdca0dfff9079f8796d3c4d2d7f6fdc">Graphics_Pipeline</a>
+, <a class="el" href="class_prop___technique.html#ac4dee313d56a361395b461f8c80f06ab">Prop_Technique</a>
+</li>
 <li>renderTechnique()
-: <a class="el" href="class_bloom.html#a4cd8e27b08b7e67f41c0eee7ab57c1e0">Bloom</a>
-, <a class="el" href="class_directional___technique.html#adf5312f7b0325f4933b3d6299d18b4b1">Directional_Technique</a>
-, <a class="el" href="class_f_x_a_a.html#acc11eb6e817acce4bb93e8410a8f56ee">FXAA</a>
-, <a class="el" href="class_graphics___technique.html#ac948988308197a5bf0f0a31bf9f80661">Graphics_Technique</a>
-, <a class="el" href="class_h_d_r.html#aae00790dba67dba6edc2d23941cf7c25">HDR</a>
-, <a class="el" href="class_join___reflections.html#a618b16d34bac2da0ce41456f5afd77b8">Join_Reflections</a>
-, <a class="el" href="class_point___technique.html#ae422ff26cbfddc9c8335b67abe1cf681">Point_Technique</a>
-, <a class="el" href="class_prop___technique.html#a4bb4d5d739856512f37186218fe3cf7e">Prop_Technique</a>
-, <a class="el" href="class_radiance___hints.html#ac2c2dcca273eebaa4fdb7251745b25f2">Radiance_Hints</a>
-, <a class="el" href="class_reflector___technique.html#a05e4462bb4fcb55f6be7d5dd5a60a1a5">Reflector_Technique</a>
-, <a class="el" href="class_skybox.html#a004b0ccffa623a0a7907ed31e41ec899">Skybox</a>
-, <a class="el" href="class_spot___technique.html#a96d46d9a158dd80e88ee0de68873e70b">Spot_Technique</a>
-, <a class="el" href="class_s_s_a_o.html#ab2d090d961dba660443074d7e3c17e15">SSAO</a>
-, <a class="el" href="class_s_s_r.html#a6acb8eb2db08fc9d805f390e68476dab">SSR</a>
-, <a class="el" href="class_to___screen.html#a89e8254f591392393779774df398fa41">To_Screen</a>
+: <a class="el" href="class_bloom.html#acf1340584a7128c183fc4ca04c08d333">Bloom</a>
+, <a class="el" href="class_directional___technique.html#af78f684247fa5abeb12c7d6f6e60dad9">Directional_Technique</a>
+, <a class="el" href="class_f_x_a_a.html#aa573cc811b36a3401ea36842522e0c5a">FXAA</a>
+, <a class="el" href="class_geometry___technique.html#aad324bbac411834483c825b41b82110e">Geometry_Technique</a>
+, <a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">Graphics_Technique</a>
+, <a class="el" href="class_h_d_r.html#a71b99c5f2258ea5b49f40a4cfe8ed8f5">HDR</a>
+, <a class="el" href="class_join___reflections.html#add1a110a37e2900352a0eeb94f96e29d">Join_Reflections</a>
+, <a class="el" href="class_point___technique.html#a91ab51c565aa7919b81ef8dd3321bc01">Point_Technique</a>
+, <a class="el" href="class_prop___technique.html#acfddc6d57525b6f378f5127ef23da1d0">Prop_Technique</a>
+, <a class="el" href="class_radiance___hints.html#a37be339eb3182dcb1ea88caebd0c22dd">Radiance_Hints</a>
+, <a class="el" href="class_reflector___technique.html#a8a6a3a543aaaf85389930debdf0d97a7">Reflector_Technique</a>
+, <a class="el" href="class_skybox.html#ad0d94f774eb33abb7ead4d85de8b1f63">Skybox</a>
+, <a class="el" href="class_spot___technique.html#a5d7d30aa052b11c29297e37248eaa2bf">Spot_Technique</a>
+, <a class="el" href="class_s_s_a_o.html#a4ff15e2e189dd98b0c4084c09736fb8b">SSAO</a>
+, <a class="el" href="class_s_s_r.html#a707598c7d7541b827b9558725303e2b2">SSR</a>
 </li>
 <li>rentImporter()
 : <a class="el" href="struct_importer___pool.html#a3e6ac5a23d47bdb660aca26b6ad76447">Importer_Pool</a>
 </li>
 <li>resize()
-: <a class="el" href="struct_f_b_o___base.html#aa59f576e060fa484fce7cb4f62f1f91d">FBO_Base</a>
-, <a class="el" href="struct_f_b_o___env___reflector.html#ab83bf961570d65a4eacd1e86b303272f">FBO_Env_Reflector</a>
-, <a class="el" href="class_graphics___framebuffers.html#a52d6b9ae9d81c07ed9c87e1bfe0d6e88">Graphics_Framebuffers</a>
+: <a class="el" href="class_f_b_o___env___reflector.html#a5c63d3dd72671d5694eb6d4fca9e4a92">FBO_Env_Reflector</a>
+, <a class="el" href="class_graphics___framebuffers.html#a403de523534d180b1c79f3b8a9d73352">Graphics_Framebuffers</a>
 , <a class="el" href="class_r_h___volume.html#a25d3843cb765a4353d89ca704dde273a">RH_Volume</a>
+, <a class="el" href="class_shadow_map.html#a21cc61f33a40628129d0aeb9982a7b55">ShadowMap</a>
+, <a class="el" href="struct_viewport.html#a1437d1ac6550ecc3502ffa494036a930">Viewport</a>
 </li>
 <li>Resize_Image()
 : <a class="el" href="class_image___i_o.html#a602f4f587351f8463e5c57269a8ca98a">Image_IO</a>
