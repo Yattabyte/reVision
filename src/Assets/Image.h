@@ -3,7 +3,7 @@
 #define	IMAGE_H
 
 #include "Assets/Asset.h"
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include <any>
 #include <optional>
@@ -22,27 +22,35 @@ const enum Resize_Policy : GLenum {
 	Linear,
 };
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of an Image asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Image : public std::shared_ptr<Image> {
 public:
-	Shared_Image() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Image() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	specificSize	an optional size to force the image to
-	@param	category		the category of image, if available
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	engine			the engine being used.
+	@param	filename		the filename to use.
+	@param	specificSize	an optional size to force the image to.
+	@param	category		the category of image, if available.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	explicit Shared_Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const bool & threaded = true, const GLenum & policyFill = Fill_Policy::Checkered, const GLenum & policyResize = Resize_Policy::Linear);
 };
 
-/** Holds image data, and nothing more. */
-class Image : public Asset
-{
+/** Contains image data and related attributes.
+Resonsible for fetching and processing an image from disk and optionally resizing it. */
+class Image : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Image. */
 	~Image();
-	/** Construct the Image. */
+	/** Construct the Image. 
+	@param	engine			the engine to use.
+	@param	filename		the asset file name (relative to engine directory). 
+	@param	specificSize	an optional size to force the image to.
+	@param	category		the category of image, if available. */
 	Image(Engine * engine, const std::string & filename, const std::optional<glm::ivec2> & specificSize, const GLenum & policyFill, const GLenum & policyResize);
 
 
@@ -58,15 +66,15 @@ public:
 private:
 	// Private Methods
 	/** Fill the image with the desired colors, in accordance with the fill policy.
-	@param	primaryColor	the primary color to use
-	@param	secondaryColor	the secondary color to use */
+	@param	primaryColor	the primary color to use.
+	@param	secondaryColor	the secondary color to use. */
 	void fill(const glm::uvec4 primaryColor = glm::uvec4(128, 128, 255, 255), const glm::uvec4 secondaryColor = glm::uvec4(0, 0, 0, 255));
 	/** Resize the image.
 	@param	newSize			the new size to use. */
 	void resize(const glm::ivec2 newSize);
 
 
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

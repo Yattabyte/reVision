@@ -26,12 +26,12 @@ private:
 
 
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Default destructor. */
-	~PriorityList() = default;
+	inline ~PriorityList() = default;
 	/** Construct a priority list, optionally reserve a given capacity.
 	@param	capacity	the amount to reserve */
-	PriorityList(const unsigned int & capacity = 16) {
+	inline PriorityList(const unsigned int & capacity = 16) {
 		m_list.reserve(capacity);
 	}
 

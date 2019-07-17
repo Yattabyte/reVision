@@ -5,23 +5,28 @@
 #include "assimp/scene.h"
 #include "assimp/version.h"
 #include <atomic>
+#include <algorithm>
+#include <string>
+#include <cctype>
 
 
 constexpr size_t MAX_IMPORTERS = 4;
 struct Importer_Pool {
 	Assimp::Importer* pool[MAX_IMPORTERS];
-	std::atomic_size_t available = MAX_IMPORTERS;
+	size_t available = MAX_IMPORTERS;
+	std::mutex poolMutex;
 
 	Importer_Pool() {
-		std::generate(pool, pool + MAX_IMPORTERS, [](){return new Assimp::Importer(); });
+		std::generate(pool, pool + MAX_IMPORTERS, []() {return new Assimp::Importer(); });
 	}
 
-	/** Borrow a single importer. 
+	/** Borrow a single importer.
 	@return		returns a single importer*/
 	Assimp::Importer * rentImporter() {
 		// Check if any of our importers are free to be used
-		if (available) 
-			return pool[--available];		
+		std::unique_lock<std::mutex> readGuard(poolMutex);
+		if (available)
+			return pool[--available];
 		// Otherwise create a new one
 		else
 			return new Assimp::Importer();
@@ -29,10 +34,11 @@ struct Importer_Pool {
 
 	void returnImporter(Assimp::Importer * returnedImporter) {
 		// Check if we have enough importers, free extra
+		std::unique_lock<std::mutex> readGuard(poolMutex);
 		if (available >= 4)
 			delete returnedImporter;
-		else 
-			pool[available++] = returnedImporter;		
+		else
+			pool[available++] = returnedImporter;
 	}
 };
 
@@ -40,7 +46,7 @@ static Importer_Pool importer_pool;
 
 /** Convert an aiMatrix to glm::mat4.
 @param	d	the aiMatrix to convert from
-@return		the glm::mat4 converted to */ 
+@return		the glm::mat4 converted to */
 inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 {
 	return glm::mat4(d.a1, d.b1, d.c1, d.d1,
@@ -49,12 +55,12 @@ inline glm::mat4 aiMatrix_to_Mat4x4(const aiMatrix4x4 &d)
 		d.a4, d.b4, d.c4, d.d4);
 }
 
-inline Node * copy_node(const aiNode * oldNode) 
+inline Node * copy_node(const aiNode * oldNode)
 {
 	Node * newNode = new Node(std::string(oldNode->mName.data), aiMatrix_to_Mat4x4(oldNode->mTransformation));
 	// Copy Children
 	newNode->children.resize(oldNode->mNumChildren);
-	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c) 
+	for (unsigned int c = 0; c < oldNode->mNumChildren; ++c)
 		newNode->children[c] = copy_node(oldNode->mChildren[c]);
 	return newNode;
 }
@@ -70,7 +76,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	// Get Importer Resource
 	Assimp::Importer * importer = importer_pool.rentImporter();
 	const aiScene* scene = importer->ReadFile(
-		Engine::Get_Current_Dir() + relativePath, 
+		Engine::Get_Current_Dir() + relativePath,
 		aiProcess_LimitBoneWeights |
 		aiProcess_Triangulate |
 		aiProcess_CalcTangentSpace /*|
@@ -90,7 +96,7 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	// Import geometry
 	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh * mesh = scene->mMeshes[a];
-		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u) * 3u;
+		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u);
 		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 			const aiFace & face = mesh->mFaces[x];
 			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
@@ -111,11 +117,9 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 
 				data_container.materialIndices.push_back(meshMaterialOffset);
 			}
-
 		}
 	}
-	
-	// Import animations
+
 	// Copy Animations
 	data_container.animations.resize(scene->mNumAnimations);
 	for (int a = 0, total = scene->mNumAnimations; a < total; ++a) {
@@ -182,78 +186,70 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 		}
 	}
 
+	// Copy Texture Paths
+	if (scene->mNumMaterials > 1u)
+		for (unsigned int x = 1; x < scene->mNumMaterials; ++x) {
+			constexpr static auto getMaterial = [](const aiScene * scene, const unsigned int & materialIndex) -> Material_Strings {
+				constexpr static auto getTexture = [](const aiMaterial * sceneMaterial, const aiTextureType & textureType, std::string & texturePath) {
+					aiString path;
+					for (unsigned int x = 0; x < sceneMaterial->GetTextureCount(textureType); ++x) {
+						if (sceneMaterial->GetTexture(textureType, x, &path) == AI_SUCCESS) {
+							texturePath = path.C_Str();
+							return;
+						}
+					}
+				};
+				//std::string albedo = "albedo.png", normal = "normal.png", metalness = "metalness.png", roughness = "roughness.png", height = "height.png", ao = "ao.png";
+				std::string albedo, normal, metalness, roughness, height, ao;
+				if (materialIndex >= 0) {
+					const auto * sceneMaterial = scene->mMaterials[materialIndex];
+					getTexture(sceneMaterial, aiTextureType_DIFFUSE, albedo);
+					getTexture(sceneMaterial, aiTextureType_NORMALS, normal);
+					getTexture(sceneMaterial, aiTextureType_SPECULAR, metalness);
+					getTexture(sceneMaterial, aiTextureType_SHININESS, roughness);
+					getTexture(sceneMaterial, aiTextureType_HEIGHT, height);
+					getTexture(sceneMaterial, aiTextureType_AMBIENT, ao);
 
-	// Import Materials
-	if (scene->mNumMaterials > 1)
-		for (int x = 1, total = scene->mNumMaterials; x < total; ++x) {
-			auto * sceneMaterial = scene->mMaterials[x];
-			// Get the aiStrings for all the textures for a material
-			aiString	albedo, normal, metalness, roughness, height, ao;
-			aiReturn	albedo_exists = sceneMaterial->GetTexture(aiTextureType_DIFFUSE, 0, &albedo),
-				normal_exists = sceneMaterial->GetTexture(aiTextureType_NORMALS, 0, &normal),
-				metalness_exists = sceneMaterial->GetTexture(aiTextureType_SPECULAR, 0, &metalness),
-				roughness_exists = sceneMaterial->GetTexture(aiTextureType_SHININESS, 0, &roughness),
-				height_exists = sceneMaterial->GetTexture(aiTextureType_HEIGHT, 0, &height),
-				ao_exists = sceneMaterial->GetTexture(aiTextureType_AMBIENT, 0, &ao);
-
-			// Assuming the diffuse element exists, generate some fallback texture elements
-			std::string templateTexture, extension = ".png";
-			if (albedo_exists == AI_SUCCESS) {
-				std::string minusD = albedo.C_Str();
-				size_t exspot = minusD.find_last_of(".");
-				extension = minusD.substr(exspot, minusD.length());
-				size_t diffuseStart = minusD.find("diff");
-				if (diffuseStart != std::string::npos)
-					minusD = minusD.substr(0, diffuseStart);
-				else
-					minusD = minusD.substr(0, exspot) + "_";
-				templateTexture = minusD;
-			}
-
-			// Importer might not distinguish between height and normal maps
-			if (normal_exists != AI_SUCCESS && height_exists == AI_SUCCESS) {
-				std::string norm_string(height.C_Str());
-				const size_t norm_spot = norm_string.find_last_of("norm");
-				if (norm_spot != std::string::npos) {
-					// Normal map confirmed to be in height map spot, move it over
-					normal = height;
-					normal_exists = AI_SUCCESS;
-					height_exists = AI_FAILURE;
+					constexpr static auto findStringIC = [](const std::string & strHaystack, const std::string & strNeedle) {
+						auto it = std::search(
+							strHaystack.begin(), strHaystack.end(),
+							strNeedle.begin(), strNeedle.end(),
+							[](char ch1, char ch2) { return std::toupper(ch1) == std::toupper(ch2); }
+						);
+						return (it != strHaystack.end());
+					};
+					if (normal.empty() && findStringIC(height, "normal")) {
+						auto temp = normal;
+						normal = height;
+						height = temp;
+					}
 				}
-			}
+				return Material_Strings(albedo, normal, metalness, roughness, height, ao);
+			};
 
-			data_container.materials.push_back(Material_Strings(
-				(albedo_exists == AI_SUCCESS ? albedo.C_Str() : "albedo.png"),
-				(normal_exists == AI_SUCCESS ? normal.C_Str() : templateTexture + "normal" + extension),
-				(metalness_exists == AI_SUCCESS ? metalness.C_Str() : templateTexture + "metalness" + extension),
-				(roughness_exists == AI_SUCCESS ? roughness.C_Str() : templateTexture + "roughness" + extension),
-				(height_exists == AI_SUCCESS ? height.C_Str() : templateTexture + "height" + extension),
-				(ao_exists == AI_SUCCESS ? ao.C_Str() : templateTexture + "ao" + extension)
-			));
+			// Import Mesh Material
+			data_container.materials.push_back(getMaterial(scene, x));
 		}
-	else {
-		data_container.materials.push_back(Material_Strings(
-			 "albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"
-		));
-	}
-
+	else
+		//data_container.materials.push_back(Material_Strings("albedo.png", "normal.png", "metalness.png", "roughness.png", "height.png", "ao.png"));
+		data_container.materials.push_back(Material_Strings("","","","","",""));
 
 	// Free Importer Resource
 	importer_pool.returnImporter(importer);
 	return true;
 }
 
-const std::string Mesh_IO::Get_Version()
+std::string Mesh_IO::Get_Version()
 {
 	return std::to_string(aiGetVersionMajor()) + "." + std::to_string(aiGetVersionMinor()) + "." + std::to_string(aiGetVersionRevision());
 }
 
-VertexBoneData::VertexBoneData() 
+VertexBoneData::VertexBoneData()
 {
 	Reset();
 }
 
-VertexBoneData::VertexBoneData(const VertexBoneData & vbd) 
+VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
 {
 	Reset();
 	for (size_t i = 0; i < 4; ++i) {
@@ -262,13 +258,13 @@ VertexBoneData::VertexBoneData(const VertexBoneData & vbd)
 	}
 }
 
-inline void VertexBoneData::Reset() 
+inline void VertexBoneData::Reset()
 {
 	memset(IDs, 0, sizeof(IDs));
 	memset(Weights, 0, sizeof(Weights));
 }
 
-inline void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight) 
+inline void VertexBoneData::AddBoneData(const int & BoneID, const float & Weight)
 {
 	for (size_t i = 0; i < 4; ++i)
 		if (Weights[i] == 0.0) {

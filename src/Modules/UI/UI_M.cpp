@@ -1,13 +1,15 @@
 #include "Modules/UI/UI_M.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
-#include "Modules/UI/Macro Elements/OptionsMenu.h"
 #include "Engine.h"
 
 
 void UI_Module::initialize(Engine * engine)
 {
+	Engine_Module::initialize(engine);
+	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
+
 	// Preferences
-	auto & preferences = engine->getPreferenceState();
+	auto & preferences = m_engine->getPreferenceState();
 	constexpr static auto calcOthoProj = [](const glm::ivec2 & renderSize, StaticBuffer & projectionBuffer) {
 		const glm::mat4 proj = glm::ortho<float>(0.0f, (float)renderSize.x, 0.0f, (float)renderSize.y, -1.0f, 1.0f);
 		projectionBuffer.write(0, sizeof(glm::mat4), &proj[0][0]);
@@ -18,58 +20,86 @@ void UI_Module::initialize(Engine * engine)
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.x = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
-		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
+		for each (auto element in m_rootElement)
+			element->setScale(m_renderSize);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = (int)f;
 		calcOthoProj(m_renderSize, m_projectionBuffer);
-		m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
-		m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
+		for each (auto element in m_rootElement)
+			element->setScale(m_renderSize);
 	});
-	calcOthoProj(m_renderSize, m_projectionBuffer);
+	calcOthoProj(m_renderSize, m_projectionBuffer);	
+}
 
-	// Create main menu
-	m_startMenu = std::make_shared<StartMenu>(engine);
-	m_startMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
-	m_startMenu->addCallback(StartMenu::on_start, [&, engine]() { engine->getModule_Game().startGame(); m_startMenu->setVisible(false); });
-	m_startMenu->addCallback(StartMenu::on_options, [&, engine]() { m_optionsMenu->setVisible(true); m_startMenu->setVisible(false); });
-	m_startMenu->addCallback(StartMenu::on_quit, [engine]() {engine->shutDown(); });
-
-	// Create options menu
-	m_optionsMenu = std::make_shared<OptionsMenu>(engine);
-	m_optionsMenu->setPosition(glm::vec2(m_renderSize) / 2.0f);
-	m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { m_startMenu->setVisible(true); m_optionsMenu->setVisible(false); });
-	m_optionsMenu->setVisible(false);
-	m_uiElements = { m_startMenu, m_optionsMenu };
+void UI_Module::deinitialize()
+{
+	// Update indicator
+	m_engine->getManager_Messages().statement("Closing Module: User Interface...");
+	m_aliveIndicator = false;
 }
 
 void UI_Module::frameTick(const float & deltaTime)
 {
-	glEnable(GL_BLEND);
-	glBlendEquation(GL_FUNC_ADD);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glDisable(GL_DEPTH_TEST);
-	glEnable(GL_SCISSOR_TEST);
-	glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
-	glScissor(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
-	
-	m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
-	for each (auto & element in m_uiElements)
-		element->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
+	// Copy the list of callbacks, execute a copy of them
+	// We use a copy because any callback may alter the list, 
+	auto copy = m_callbacks;
+	m_callbacks.clear();
+	for each (const auto & func in copy)
+		func();
 
-	glDisable(GL_SCISSOR_TEST);
-	glDisable(GL_BLEND);
-	Shader::Release();
+	if (m_rootElement.size() && m_rootElement.back()) {
+		glEnable(GL_BLEND);
+		glBlendEquation(GL_FUNC_ADD);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		glDisable(GL_DEPTH_TEST);
+		glViewport(0, 0, (GLsizei)m_renderSize.x, (GLsizei)m_renderSize.y);
+
+		m_projectionBuffer.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+		m_rootElement.back()->renderElement(deltaTime, glm::vec2(0.0f), m_renderSize);
+
+		glDisable(GL_BLEND);
+		Shader::Release();
+	}
+}
+
+void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
+{
+	m_rootElement.push_back(rootElement);
+	if (rootElement)
+		rootElement->setScale(m_renderSize);
+}
+
+void UI_Module::popRootElement()
+{
+	if (m_rootElement.size() > 1)
+		m_rootElement.pop_back();
+}
+
+void UI_Module::setFocusMap(const std::shared_ptr<FocusMap> & focusMap)
+{
+	m_focusMap = focusMap;
+}
+
+std::shared_ptr<FocusMap> UI_Module::getFocusMap() const
+{
+	return m_focusMap;
+}
+
+void UI_Module::clear()
+{
+	m_rootElement.clear();
+	m_focusMap.reset();
 }
 
 void UI_Module::applyCursorPos(const double & xPos, const double & yPos)
 {
 	m_mouseEvent.m_xPos = xPos;
 	m_mouseEvent.m_yPos = m_renderSize.y - yPos;
+	m_mouseEvent.m_action = MouseEvent::MOVE;
 
-	for each (auto & element in m_uiElements)
-		element->mouseAction(m_mouseEvent);			
+	if (m_rootElement.size())
+		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
 void UI_Module::applyCursorButton(const int & button, const int & action, const int & mods)
@@ -77,24 +107,33 @@ void UI_Module::applyCursorButton(const int & button, const int & action, const 
 	m_mouseEvent.m_button = button;
 	m_mouseEvent.m_action = action;
 	m_mouseEvent.m_mods = mods;
-	for each (auto & element in m_uiElements)
-		if (element->mouseAction(m_mouseEvent))
-			break;
+
+	if (m_rootElement.size())
+		m_rootElement.back()->mouseAction(m_mouseEvent);
 }
 
 void UI_Module::applyChar(const unsigned int & character)
 {
-	for each (auto & element in m_uiElements)
-		element->keyChar(character);
+	m_keyboardEvent.setChar(character);
+	if (m_rootElement.size())
+		m_rootElement.back()->keyboardAction(m_keyboardEvent);
+	m_keyboardEvent.setChar(0);
 }
 
-void UI_Module::applyKey(const int & key, const int & scancode, const int & action, const int & mods)
+void UI_Module::applyKey(const int & key, const int &, const int & action, const int &)
 {
-	for each (auto & element in m_uiElements)
-		element->keyboardAction(key, scancode, action, mods);
+	m_keyboardEvent.setState(KeyboardEvent::Key((unsigned int)key), KeyboardEvent::Action(action));
+	if (m_rootElement.size())
+		m_rootElement.back()->keyboardAction(m_keyboardEvent);
 }
 
-bool UI_Module::isCursorActive() const
+void UI_Module::applyActionState(ActionState & actionState)
 {
-	return true;
+	if (m_focusMap)
+		m_focusMap->applyActionState(actionState);
+}
+
+void UI_Module::pushCallback(const std::function<void()> & callback)
+{
+	m_callbacks.push_back(callback);
 }

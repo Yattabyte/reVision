@@ -6,26 +6,30 @@
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include <algorithm>
 #include <string>
 
 
-/** UI Text input element. */
-class TextInput : public UI_Element
-{
+/** UI element which displays an editable text box. */
+class TextInput : public UI_Element {
 public:
-	// Interaction enums
-	enum interact {
+	// Public Interaction Enums
+	const enum interact {
 		on_text_change = UI_Element::last_interact_index
 	};
 
 
-	// (de)Constructors
-	~TextInput() {
+	// Public (de)Constructors
+	/** Destroy the text input. */
+	inline ~TextInput() {
 		// Delete geometry
 		glDeleteBuffers(2, m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	TextInput(Engine * engine) {
+	/** Construct a text input.
+	@param	engine		the engine to use. */
+	inline TextInput(Engine * engine)
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\TextInput");
 
@@ -34,6 +38,12 @@ public:
 		m_label->setAlignment(Label::align_left);
 		m_label->setColor(glm::vec3(0.0f));
 		addElement(m_label);
+
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			m_label->setScale(getScale());
+			updateGeometry();
+		});
 
 		// Generate vertex array
 		glCreateVertexArrays(1, &m_vaoID);
@@ -54,12 +64,100 @@ public:
 	}
 
 
-	// Interface Implementation
-	virtual void setScale(const glm::vec2 & scale) override {
-		m_label->setScale(scale);
-		UI_Element::setScale(scale);
+	// Public Interface Implementation
+	inline virtual void mouseAction(const MouseEvent & mouseEvent) override {
+		UI_Element::mouseAction(mouseEvent);
+		if (getVisible() && getEnabled() && mouseWithin(mouseEvent)) {
+			if (m_clicked) {
+				// If already editing, move caret to mouse position
+				if (m_edit) {
+					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
+					setCaret((int)std::roundf(float(mx) / 10.0f));
+				}
+				m_edit = true;
+				m_clicked = false;
+				return;
+			}
+		}
+		else 
+			m_edit = false;		
 	}
-	virtual void update() override {
+	inline virtual void keyboardAction(const KeyboardEvent & keyboardEvent) override {
+		if (m_edit) {
+			// Check for a text stream
+			if (auto character = keyboardEvent.getChar()) {
+				setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
+				setCaret(m_caretIndex + 1);
+				enactCallback(on_text_change);
+			}
+			// Otherwise, check keyboard states
+			else {
+				if (keyboardEvent.getState(KeyboardEvent::ENTER) || keyboardEvent.getState(KeyboardEvent::ESCAPE))
+					m_edit = false;
+				else if (keyboardEvent.getState(KeyboardEvent::BACKSPACE)) {
+					if (m_caretIndex > 0) {
+						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
+						setCaret(m_caretIndex - 1);
+						enactCallback(on_text_change);
+					}
+				}
+				else if (keyboardEvent.getState(KeyboardEvent::DEL)) {
+					if (m_caretIndex + 1 <= m_text.size()) {
+						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
+						enactCallback(on_text_change);
+					}
+				}
+				else if (keyboardEvent.getState(KeyboardEvent::LEFT))
+					setCaret(m_caretIndex - 1);
+				else if (keyboardEvent.getState(KeyboardEvent::RIGHT))
+					setCaret(m_caretIndex + 1);
+			}
+		}
+	}
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
+		const glm::vec2 newPosition = position + m_position;
+		const glm::vec2 newScale = glm::min(m_scale, scale);
+		
+		// Render (background)
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, m_enabled);
+		m_shader->setUniform(2, m_edit);
+		m_shader->setUniform(3, m_blinkTime += deltaTime);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+
+		// Render Children (text)
+		UI_Element::renderElement(deltaTime, position, scale);
+	}
+
+
+	// Public Methods
+	/** Set the text to display in this field.
+	@param		string		the new text to display. */
+	inline void setText(const std::string & text) {
+		m_text = text;
+		m_label->setText(text);
+	}
+	/** Get the text displayed in this field.
+	@return					the text displayed in this field. */
+	inline std::string getText() const {
+		return m_text;
+	}
+
+
+protected:
+	// Protected Methods
+	/** Set the caret position in this text box. */
+	inline void setCaret(const int & index) {
+		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
+		updateGeometry();
+	}
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
 		constexpr auto num_data = 4 * 3;
 		std::vector<glm::vec3> data(num_data);
 		std::vector<int> objIndices(num_data);
@@ -84,114 +182,6 @@ public:
 
 		glNamedBufferSubData(m_vboID[0], 0, num_data * sizeof(glm::vec3), &data[0]);
 		glNamedBufferSubData(m_vboID[1], 0, num_data * sizeof(int), &objIndices[0]);
-
-		UI_Element::update();
-	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) {
-		if (!getVisible() || !getEnabled()) return false;
-		if (mouseWithin(mouseEvent)) {			
-			if (!m_pressed && mouseEvent.m_action == MouseEvent::PRESS) {
-				m_pressed = true;
-				enactCallback(on_mouse_press);
-				return true;
-			}
-			else if (m_pressed && mouseEvent.m_action == MouseEvent::RELEASE) {
-				m_pressed = false;
-				// If already editing, move caret to mouse position
-				if (m_edit) {
-					const int mx = int(float(mouseEvent.m_xPos) - m_position.x + m_scale.x);
-					setCaret((int)std::roundf(float(mx) / 10.0f));
-				}
-				m_edit = true;
-				return true;
-			}
-		}
-		m_edit = false;
-		return UI_Element::mouseAction(mouseEvent);;
-	}				
-	virtual void keyChar(const unsigned int & character) override {
-		if (m_edit) {
-			setText(m_text.substr(0, m_caretIndex) + char(character) + m_text.substr(m_caretIndex, m_text.size()));
-			setCaret(m_caretIndex + 1);
-			enactCallback(on_text_change);
-		}
-	}
-	virtual void keyboardAction(const int & key, const int & scancode, const int & action, const int & mods) override {
-		if (m_edit) {
-			if (key == GLFW_KEY_ENTER || key == GLFW_KEY_ESCAPE)
-				m_edit = false;
-			if (action == GLFW_PRESS) {
-				if (key == GLFW_KEY_BACKSPACE) {
-					if (m_caretIndex > 0) {
-						setText(m_text.substr(0, m_caretIndex - 1) + m_text.substr(m_caretIndex, m_text.size()));
-						setCaret(m_caretIndex - 1);
-						enactCallback(on_text_change);
-					}
-				}
-				else if (key == GLFW_KEY_DELETE) {
-					if (m_caretIndex + 1 <= m_text.size()) {
-						setText(m_text.substr(0, m_caretIndex) + m_text.substr(m_caretIndex + 1, m_text.size()));
-						enactCallback(on_text_change);
-					}
-				}
-				else if (key == GLFW_KEY_LEFT)
-					setCaret(m_caretIndex - 1);
-				else if (key == GLFW_KEY_RIGHT)
-					setCaret(m_caretIndex + 1);
-			}
-		}
-	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		m_blinkTime += deltaTime;
-		if (!getVisible()) return;
-		const glm::vec2 newPosition = position + m_position;
-		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			// Render Background
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, m_enabled);
-			m_shader->setUniform(2, m_edit);
-			m_shader->setUniform(3, m_blinkTime);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
-		// Render Text
-		UI_Element::renderElement(deltaTime, position, newScale);
-	}
-
-
-	// Public Methods
-	/** Set the text to display in this field.
-	@param		string		the new text to display. */
-	void setText(const std::string & text) {
-		m_text = text;
-		m_label->setText(text);
-		update();
-	}
-	/** Get the text displayed in this field.
-	@return					the text displayed in this field. */
-	std::string getText() const {
-		return m_text;
-	}
-	/** Set this field's alignment.
-	@param	text			the alignment (left, center, right). */
-	void setAlignment(const Label::Alignment & alignment) {
-		m_label->setAlignment(alignment);
-	}
-	/** Retrieve this field's alignment.
-	@return					the alignment. */
-	Label::Alignment getAlignment() const {
-		return m_label->getAlignment();
-	}
-
-
-protected:
-	// Protected Methods
-	void setCaret(const int & index) {
-		m_caretIndex = std::clamp<int>(index, 0, (int)m_text.size());
-		update();
 	}
 
 
@@ -200,10 +190,6 @@ protected:
 	std::string m_text;
 	bool m_edit = false;
 	int m_caretIndex = 0;
-
-
-private:
-	// Private Attributes
 	GLuint
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };
@@ -212,4 +198,4 @@ private:
 	StaticBuffer m_indirect;
 };
 
-#endif // UI_DROPLIST_H
+#endif // UI_TEXTINPUT_H

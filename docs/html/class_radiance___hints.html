@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,12 +64,16 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="class_radiance___hints-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Radiance_Hints Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc)  
+ <a href="class_radiance___hints.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="_radiance___hints_8h_source.html">Radiance_Hints.h</a>&gt;</code></p>
 <div class="dynheader">
@@ -78,32 +82,61 @@ Inheritance diagram for Radiance_Hints:</div>
  <div class="center">
   <img src="class_radiance___hints.png" usemap="#Radiance_5FHints_map" alt=""/>
   <map id="Radiance_5FHints_map" name="Radiance_5FHints_map">
-<area href="class_g_f_x___core___effect.html" alt="GFX_Core_Effect" shape="rect" coords="0,0,113,24"/>
+<area href="class_graphics___technique.html" title="An interface for core graphics effect techniques." alt="Graphics_Technique" shape="rect" coords="0,0,128,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ab3f1dfee63f6880c117cad4c191fa650"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#ab3f1dfee63f6880c117cad4c191fa650">~Radiance_Hints</a> ()</td></tr>
+<tr class="memdesc:ab3f1dfee63f6880c117cad4c191fa650"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="#ab3f1dfee63f6880c117cad4c191fa650">More...</a><br /></td></tr>
 <tr class="separator:ab3f1dfee63f6880c117cad4c191fa650"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8dec1fcf2d2be00f3435953a1c0ad78f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#a8dec1fcf2d2be00f3435953a1c0ad78f">Radiance_Hints</a> (<a class="el" href="class_engine.html">Engine</a> *engine, <a class="el" href="struct_f_b_o___base.html">FBO_Base</a> *geometryFBO, <a class="el" href="struct_f_b_o___base.html">FBO_Base</a> *bounceFBO, std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; volumeRH)</td></tr>
-<tr class="separator:a8dec1fcf2d2be00f3435953a1c0ad78f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a24e02a9d17ab91bbc02c8adadec4ebed"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#a24e02a9d17ab91bbc02c8adadec4ebed">applyEffect</a> (const float &amp;deltaTime) override</td></tr>
-<tr class="separator:a24e02a9d17ab91bbc02c8adadec4ebed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="inherit_header pub_methods_class_g_f_x___core___effect"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_g_f_x___core___effect')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_g_f_x___core___effect.html">GFX_Core_Effect</a></td></tr>
-<tr class="memitem:ac08815eb5239f49efd83a55e7c6dc992 inherit pub_methods_class_g_f_x___core___effect"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___core___effect.html#ac08815eb5239f49efd83a55e7c6dc992">~GFX_Core_Effect</a> ()=default</td></tr>
-<tr class="separator:ac08815eb5239f49efd83a55e7c6dc992 inherit pub_methods_class_g_f_x___core___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aee465d19b234e976af64476750448834 inherit pub_methods_class_g_f_x___core___effect"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___core___effect.html#aee465d19b234e976af64476750448834">GFX_Core_Effect</a> ()=default</td></tr>
-<tr class="separator:aee465d19b234e976af64476750448834 inherit pub_methods_class_g_f_x___core___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba8ef6cb2a888c6f6c147112b2b9042c inherit pub_methods_class_g_f_x___core___effect"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_g_f_x___core___effect.html#aba8ef6cb2a888c6f6c147112b2b9042c">isEnabled</a> () const</td></tr>
-<tr class="separator:aba8ef6cb2a888c6f6c147112b2b9042c inherit pub_methods_class_g_f_x___core___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fa029bd271e707a4ad55a225bf1c741"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#a1fa029bd271e707a4ad55a225bf1c741">Radiance_Hints</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;rhVolume)</td></tr>
+<tr class="memdesc:a1fa029bd271e707a4ad55a225bf1c741"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a1fa029bd271e707a4ad55a225bf1c741">More...</a><br /></td></tr>
+<tr class="separator:a1fa029bd271e707a4ad55a225bf1c741"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab640761cc6ecfc26d2f5d62f51683d36"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#ab640761cc6ecfc26d2f5d62f51683d36">prepareForNextFrame</a> (const float &amp;deltaTime) override</td></tr>
+<tr class="memdesc:ab640761cc6ecfc26d2f5d62f51683d36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prepare this technique for the next frame, swapping any of its buffers.  <a href="#ab640761cc6ecfc26d2f5d62f51683d36">More...</a><br /></td></tr>
+<tr class="separator:ab640761cc6ecfc26d2f5d62f51683d36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37be339eb3182dcb1ea88caebd0c22dd"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_radiance___hints.html#a37be339eb3182dcb1ea88caebd0c22dd">renderTechnique</a> (const float &amp;deltaTime, const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;viewport, const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;perspectives) override</td></tr>
+<tr class="memdesc:a37be339eb3182dcb1ea88caebd0c22dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Apply this lighting technique.  <a href="#a37be339eb3182dcb1ea88caebd0c22dd">More...</a><br /></td></tr>
+<tr class="separator:a37be339eb3182dcb1ea88caebd0c22dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pub_methods_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
+<tr class="memitem:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">~Graphics_Technique</a> ()=default</td></tr>
+<tr class="memdesc:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual Destructor.  <a href="class_graphics___technique.html#acbe7a9cb38c785b8694d465aad11aeac">More...</a><br /></td></tr>
+<tr class="separator:acbe7a9cb38c785b8694d465aad11aeac inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">Graphics_Technique</a> (const Technique_Category &amp;category)</td></tr>
+<tr class="memdesc:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="class_graphics___technique.html#ac74545c0d7ca89d0878887c6d9933d43">More...</a><br /></td></tr>
+<tr class="separator:ac74545c0d7ca89d0878887c6d9933d43 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">getCategory</a> () const</td></tr>
+<tr class="memdesc:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the category this technique belongs to.  <a href="class_graphics___technique.html#a7670af2bb3e088ea5062ee6305ff9ea6">More...</a><br /></td></tr>
+<tr class="separator:a7670af2bb3e088ea5062ee6305ff9ea6 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">setEnabled</a> (const bool &amp;state)</td></tr>
+<tr class="memdesc:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Turn this technique on or off.  <a href="class_graphics___technique.html#a914bb9fbfe740c951ea8252f5f6bc7c7">More...</a><br /></td></tr>
+<tr class="separator:a914bb9fbfe740c951ea8252f5f6bc7c7 inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c08424a73c39ad59fb99413dac8475b inherit pub_methods_class_graphics___technique"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_graphics___technique.html#a6c08424a73c39ad59fb99413dac8475b">updateTechnique</a> (const float &amp;deltaTime)</td></tr>
+<tr class="memdesc:a6c08424a73c39ad59fb99413dac8475b inherit pub_methods_class_graphics___technique"><td class="mdescLeft">&#160;</td><td class="mdescRight">Perform any pre-passes and or update any data needed before rendering this frame.  <a href="class_graphics___technique.html#a6c08424a73c39ad59fb99413dac8475b">More...</a><br /></td></tr>
+<tr class="separator:a6c08424a73c39ad59fb99413dac8475b inherit pub_methods_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
-<tr class="inherit_header pro_attribs_class_g_f_x___core___effect"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_g_f_x___core___effect')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_g_f_x___core___effect.html">GFX_Core_Effect</a></td></tr>
-<tr class="memitem:a09115b69d74ff8cef04f0e1cdc1c6582 inherit pro_attribs_class_g_f_x___core___effect"><td class="memItemLeft" align="right" valign="top"><a id="a09115b69d74ff8cef04f0e1cdc1c6582"></a>
+<tr class="inherit_header pub_types_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pub_types_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Public Types inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
+<tr class="memitem:ac5ce80e4590b73e75c5e3dc6c2624cc0 inherit pub_types_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="ac5ce80e4590b73e75c5e3dc6c2624cc0"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Technique_Category</b> : unsigned int { <br />
+&#160;&#160;<b>GEOMETRY</b> = 0b0000'0001, 
+<b>PRIMARY_LIGHTING</b> = 0b0000'0010, 
+<b>SECONDARY_LIGHTING</b> = 0b0000'0100, 
+<b>POST_PROCESSING</b> = 0b0000'1000, 
+<br />
+&#160;&#160;<b>ALL</b> = 0b1111'1111
+<br />
+ }</td></tr>
+<tr class="separator:ac5ce80e4590b73e75c5e3dc6c2624cc0 inherit pub_types_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="inherit_header pro_attribs_class_graphics___technique"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_graphics___technique')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_graphics___technique.html">Graphics_Technique</a></td></tr>
+<tr class="memitem:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a91a3066c3cc1125e327f511cc51eeb30"></a>
 bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true</td></tr>
-<tr class="separator:a09115b69d74ff8cef04f0e1cdc1c6582 inherit pro_attribs_class_g_f_x___core___effect"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a91a3066c3cc1125e327f511cc51eeb30 inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2720145fc863e3838ce9686e5a1479b8 inherit pro_attribs_class_graphics___technique"><td class="memItemLeft" align="right" valign="top"><a id="a2720145fc863e3838ce9686e5a1479b8"></a>
+Technique_Category&#160;</td><td class="memItemRight" valign="bottom"><b>m_category</b></td></tr>
+<tr class="separator:a2720145fc863e3838ce9686e5a1479b8 inherit pro_attribs_class_graphics___technique"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A core-rendering technique for approximating indirect diffuse lighting (irradiant light, global illumination, etc) </p>
@@ -130,12 +163,13 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Virtual Destructor. </p>
 
 </div>
 </div>
-<a id="a8dec1fcf2d2be00f3435953a1c0ad78f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8dec1fcf2d2be00f3435953a1c0ad78f">&#9670;&nbsp;</a></span>Radiance_Hints()</h2>
+<a id="a1fa029bd271e707a4ad55a225bf1c741"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fa029bd271e707a4ad55a225bf1c741">&#9670;&nbsp;</a></span>Radiance_Hints()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -152,20 +186,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="struct_f_b_o___base.html">FBO_Base</a> *&#160;</td>
-          <td class="paramname"><em>geometryFBO</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="struct_f_b_o___base.html">FBO_Base</a> *&#160;</td>
-          <td class="paramname"><em>bounceFBO</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt;&#160;</td>
-          <td class="paramname"><em>volumeRH</em>&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="class_r_h___volume.html">RH_Volume</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>rhVolume</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -179,13 +201,14 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Constructor. </p>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a24e02a9d17ab91bbc02c8adadec4ebed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a24e02a9d17ab91bbc02c8adadec4ebed">&#9670;&nbsp;</a></span>applyEffect()</h2>
+<a id="ab640761cc6ecfc26d2f5d62f51683d36"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab640761cc6ecfc26d2f5d62f51683d36">&#9670;&nbsp;</a></span>prepareForNextFrame()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,7 +217,7 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual void Radiance_Hints::applyEffect </td>
+          <td class="memname">virtual void Radiance_Hints::prepareForNextFrame </td>
           <td>(</td>
           <td class="paramtype">const float &amp;&#160;</td>
           <td class="paramname"><em>deltaTime</em></td><td>)</td>
@@ -207,14 +230,69 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>m_enabled</b> = true<
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Apply this lighting technique. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Prepare this technique for the next frame, swapping any of its buffers. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
   </table>
   </dd>
 </dl>
 
-<p>Implements <a class="el" href="class_g_f_x___core___effect.html#ad2408dc610c0f7266feaeb0e2197a736">GFX_Core_Effect</a>.</p>
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a7a67fee4b16dee6bb7ba0fcfc3031556">Graphics_Technique</a>.</p>
+
+</div>
+</div>
+<a id="a37be339eb3182dcb1ea88caebd0c22dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37be339eb3182dcb1ea88caebd0c22dd">&#9670;&nbsp;</a></span>renderTechnique()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual void Radiance_Hints::renderTechnique </td>
+          <td>(</td>
+          <td class="paramtype">const float &amp;&#160;</td>
+          <td class="paramname"><em>deltaTime</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="struct_viewport.html">Viewport</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>viewport</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; std::pair&lt; int, int &gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>perspectives</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">override</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Apply this lighting technique. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deltaTime</td><td>the amount of time passed since last frame. </td></tr>
+    <tr><td class="paramname">viewport</td><td>the viewport to render from. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Reimplemented from <a class="el" href="class_graphics___technique.html#a1bd6331a66784d6cddbe0f9b6bd91624">Graphics_Technique</a>.</p>
 
 </div>
 </div>

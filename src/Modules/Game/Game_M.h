@@ -3,41 +3,58 @@
 #define GAME_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/Game/Common_Definitions.h"
-#include "Modules/Game/Systems/Interface.h"
-#include "Utilities/ECS/ecsSystem.h"
-#include "Utilities/GL/VectorBuffer.h"
+#include "Modules/Game/Overlays/Overlay.h"
+#include "Modules/World/ECS/ecsSystem.h"
+#include "Modules/UI/Basic Elements/UI_Element.h"
+#include <memory>
 
 
-/** A module responsible for the game. */
+/** A module responsible for Game Logic. */
 class Game_Module : public Engine_Module {
 public:
-	// (de)Constructors
-	~Game_Module() = default;
-	Game_Module() = default;
+	// Public Enumerations
+	enum Game_State {
+		in_startMenu,
+		in_pauseMenu,
+		in_game
+	};
+
+
+	// Public (de)Constructors
+	/** Destroy this game module. */
+	inline ~Game_Module() = default;
+	/** Construct a game module. */
+	inline Game_Module() = default;
 
 
 	// Public Interface Implementation
-	/** Initialize the module. */
 	virtual void initialize(Engine * engine) override;
-	/** Increments the game simulation by a single tick.
-	@param		deltaTime		the delta time. */
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 
 	// Public Methods
-	void startGame();
+	/** Render any and all of the game module's overlays to the screen.
+	@param	deltaTime	the amount of time passed since last frame. */
+	void renderOverlays(const float & deltaTime);
 
 
 private:
+	// Private Methods
+	/** Display the start menu. */
+	void showStartMenu();
+	/** Either show or hide the pause menu. 
+	@param	show		whether to show or hide the pause menu. */
+	void showPauseMenu(const bool & show);
+	/** Start the game. */
+	void startGame();
+
+
 	// Private Attributes
-	bool m_readyToStart = false, m_userReady = false;
-	float m_timeAccumulator = 0.0f;
-	std::vector<Game_System_Interface*> m_gameplaySystems;
-	ECSSystemList m_systemList;
-	BaseECSSystem * m_renderingSystem;
-	VectorBuffer<GameBuffer> m_boardBuffer;
-	std::vector<VB_Element<GameBuffer>*> m_players;
+	Game_State m_gameState = in_startMenu;
+	ECSSystemList m_ecsSystems;
+	std::shared_ptr<UI_Element> m_startMenu, m_pauseMenu;
+	std::shared_ptr<Overlay> m_loadingRing, m_frameTime;
 };
 
 #endif // GAME_MODULE_H

@@ -17,13 +17,13 @@ class PreferenceState {
 public:
 	// (de)Constructors
 	/** Destroy the preference state. */
-	~PreferenceState() {
+	inline ~PreferenceState() {
 		save();
 	}
 	/** Construct the preference state.
 	@param	engine		the engine
 	@param	filename	an optional relative path to the preference file to load. Defaults to "preferences.cfg" */
-	PreferenceState(Engine * engine, const std::string & filename = "preferences") : m_engine(engine) {
+	inline PreferenceState(Engine * engine, const std::string & filename = "preferences") : m_engine(engine) {
 		loadFile(filename);
 	}
 	
@@ -43,13 +43,13 @@ public:
 
 		// Graphics Options
 		C_MATERIAL_SIZE,
-		C_ENVMAP_SIZE,
 		C_RH_BOUNCE_SIZE,
 
-		C_SHADOW_SIZE_DIRECTIONAL,
-		C_SHADOW_SIZE_POINT,
-		C_SHADOW_SIZE_SPOT,
-		C_SHADOW_QUALITY,
+		C_SHADOW_SIZE,
+		C_SHADOW_MAX_PER_FRAME,
+
+		C_ENVMAP_SIZE,
+		C_ENVMAP_MAX_PER_FRAME,
 
 		C_BLOOM,
 		C_BLOOM_STRENGTH,
@@ -81,13 +81,13 @@ public:
 
 			// Graphics Options
 			"C_MATERIAL_SIZE",
-			"C_ENVMAP_SIZE",
 			"C_RH_BOUNCE_SIZE",
 
-			"C_SHADOW_SIZE_DIRECTIONAL",
-			"C_SHADOW_SIZE_POINT",
-			"C_SHADOW_SIZE_SPOT",
-			"C_SHADOW_QUALITY",
+			"C_SHADOW_SIZE",
+			"C_SHADOW_MAX_PER_FRAME",
+
+			"C_ENVMAP_SIZE",
+			"C_ENVMAP_MAX_PER_FRAME",
 
 			"C_BLOOM",
 			"C_BLOOM_STRENGTH",
@@ -124,7 +124,7 @@ public:
 			const float value = m_preferences->getValue(targetKey);
 
 			// Only modify if the value exists
-			if (value != UNDEFINED_CVAL)
+			if (!std::isnan(value))
 				container = (T)value;
 			else
 				m_preferences->setValue(targetKey, (float)container);

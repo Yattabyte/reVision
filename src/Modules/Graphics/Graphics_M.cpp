@@ -1,53 +1,32 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Geometry/components.h"
+#include "Modules/Graphics/Lighting/components.h"
+#include "Modules/Graphics/Logical/CameraPerspective_System.h"
+#include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
+#include "Modules/Graphics/Logical/FrustumCull_System.h"
+#include "Modules/Graphics/Logical/SkeletalAnimation_System.h"
 #include "Modules/World/World_M.h"
 #include "Engine.h"
 #include <memory>
 #include <random>
+#include <typeinfo>
 
-/* Component Types Used */
-#include "Modules/Graphics/Components/Prop_C.h"
-#include "Modules/Graphics/Components/Skeleton_C.h"
-#include "Modules/Graphics/Components/LightDirectional_C.h"
-#include "Modules/Graphics/Components/LightPoint_C.h"
-#include "Modules/Graphics/Components/LightSpot_C.h"
-#include "Modules/Graphics/Components/Reflector_C.h"
-#include "Modules/Graphics/Components/Skeleton_C.h"
-#include "Modules/Graphics/Components/Camera_C.h"
-
-/* System Types Used */
-#include "Modules/Graphics/Systems/TransformSync_S.h"
-#include "Modules/Graphics/Systems/SkeletonAnimation_S.h"
-#include "Modules/Graphics/Systems/PropRendering_S.h"
-#include "Modules/Graphics/Systems/LightDirectional_S.h"
-#include "Modules/Graphics/Systems/LightSpot_S.h"
-#include "Modules/Graphics/Systems/LightPoint_S.h"
-#include "Modules/Graphics/Systems/Reflector_S.h"
-
-/* Post Processing Techniques Used */
-#include "Modules/Graphics/Effects/PropRendering_FX.h"
-#include "Modules/Graphics/Effects/LightDirectional_FX.h"
-#include "Modules/Graphics/Effects/LightPoint_FX.h"
-#include "Modules/Graphics/Effects/LightSpot_FX.h"
-#include "Modules/Graphics/Effects/Reflector_FX.h"
-#include "Modules/Graphics/Effects/Skybox.h"
-#include "Modules/Graphics/Effects/SSAO.h"
-#include "Modules/Graphics/Effects/Radiance_Hints.h"
-#include "Modules/Graphics/Effects/Join_Reflections.h"
-#include "Modules/Graphics/Effects/SSR.h"
-
-
-Graphics_Module::~Graphics_Module()
-{
-	// Update indicator
-	m_aliveIndicator = false;
-}
 
 void Graphics_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
-	m_ecs = &m_engine->getECS();
 	m_engine->getManager_Messages().statement("Loading Module: Graphics...");
+
+	// Asset Loading
+	m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
+	m_shapeQuad = Shared_Primitive(m_engine, "quad");	
+	
+	// Asset-Finished Callbacks
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
+		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
+		m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
+	});
 
 	// GL settings
 	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
@@ -58,181 +37,235 @@ void Graphics_Module::initialize(Engine * engine)
 	auto & preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize = glm::ivec2(f, m_renderSize.y);
-		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_defaultCamera->data->Dimensions = m_renderSize;
-		updateCamera(m_defaultCamera->data);
+		m_renderSize = glm::ivec2(f, m_renderSize.y);		
+		m_viewport->resize(m_renderSize, 1);
+		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize = glm::ivec2(m_renderSize.x, f);
-		m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-		m_defaultCamera->data->Dimensions = m_renderSize;
-		updateCamera(m_defaultCamera->data);
+		m_viewport->resize(m_renderSize, 1);
+		(*m_clientCamera)->Dimensions = m_renderSize;
 	});
-	GLuint m_bounceSize = 16;
-	preferences.getOrSetValue(PreferenceState::C_RH_BOUNCE_SIZE, m_bounceSize);
-	preferences.addCallback(PreferenceState::C_RH_BOUNCE_SIZE, m_aliveIndicator, [&](const float &f) { m_bounceFBO.resize((GLuint)f); });
-	m_bounceFBO.resize(m_bounceSize);
 	float farPlane = 1000.0f;
 	preferences.getOrSetValue(PreferenceState::C_DRAW_DISTANCE, farPlane);
 	preferences.addCallback(PreferenceState::C_DRAW_DISTANCE, m_aliveIndicator, [&](const float &f) {
-		m_defaultCamera->data->FarPlane = f;
-		updateCamera(m_defaultCamera->data);
+		if ((*m_clientCamera)->FarPlane != f) {
+			(*m_clientCamera)->FarPlane = f;
+			genPerspectiveMatrix();
+		}
 	});
 	float fov = 90.0f;
 	preferences.getOrSetValue(PreferenceState::C_FOV, fov);
 	preferences.addCallback(PreferenceState::C_FOV, m_aliveIndicator, [&](const float &f) {
-		m_defaultCamera->data->FOV = f;
-		updateCamera(m_defaultCamera->data);
+		if ((*m_clientCamera)->FOV != f) {
+			(*m_clientCamera)->FOV = f;
+			genPerspectiveMatrix();
+		}
 	});
 
 	// Camera Setup
-	m_cameraIndexBuffer = StaticBuffer(sizeof(GLuint));
-	m_defaultCamera = m_cameraBuffer.newElement();
-	m_defaultCamera->data->pMatrix = glm::mat4(1.0f);
-	m_defaultCamera->data->pMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
-	m_defaultCamera->data->vMatrix = glm::mat4(1.0f);
-	m_defaultCamera->data->vMatrix_Inverse = glm::inverse(glm::mat4(1.0f));
-	m_defaultCamera->data->EyePosition = glm::vec3(0.0f);
-	m_defaultCamera->data->Dimensions = m_renderSize;
-	m_defaultCamera->data->FarPlane = farPlane;
-	m_defaultCamera->data->FOV = fov;
-	updateCamera(m_defaultCamera->data);
-	setActiveCamera(m_defaultCamera->index);
+	m_viewport = std::make_shared<Viewport>(glm::ivec2(0), m_renderSize);
+	m_clientCamera = std::make_shared<Camera>();
+	m_clientCamera->setEnabled(true);
+	m_clientCamera->get()->Dimensions = glm::vec2(m_renderSize);
+	m_clientCamera->get()->FarPlane = farPlane;
+	m_clientCamera->get()->FOV = fov;
+	genPerspectiveMatrix();
+	m_rhVolume = std::make_shared<RH_Volume>(engine);
 
-	// Asset Loading
-	m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
-	m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
+	// Rendering Effects & systems
+	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
+	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
+	auto sharedCameraCounter = std::make_shared<int>(0);
+	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
+	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
+	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
+	m_systems.addSystem(new Skeletal_Animation());
+	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
-	// Error Reporting
-	auto & msgMgr = m_engine->getManager_Messages();
-	if (glCheckNamedFramebufferStatus(m_geometryFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Geometry Framebuffer has encountered an error.");
-	if (glCheckNamedFramebufferStatus(m_lightingFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Lighting Framebuffer has encountered an error.");
-	if (glCheckNamedFramebufferStatus(m_reflectionFBO.m_fboID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		msgMgr.error("Reflection Framebuffer has encountered an error.");
-
-	m_visualFX.initialize(m_engine);
-	m_geometryFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_lightingFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_reflectionFBO.resize(m_renderSize.x, m_renderSize.y);
-	m_lightingFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
-	m_reflectionFBO.attachTexture(m_geometryFBO.m_textureIDS[3], GL_DEPTH_STENCIL_ATTACHMENT);
-	GLint size = sizeof(Camera_Buffer), offsetAlignment = 0;
-	glGetIntegerv(GL_SHADER_STORAGE_BUFFER_OFFSET_ALIGNMENT, &offsetAlignment);
-	m_cameraBuffer.setOffsetAlignment(size % offsetAlignment);
-	m_volumeRH = std::shared_ptr<RH_Volume>(new RH_Volume(m_engine));
-
-	// Graphics-related Component Updating
-	auto * propRendering = new PropRendering_System(m_engine);
-	auto * lightDirectional = new LightDirectional_System(m_engine);
-	auto * lightPoint = new LightPoint_System();
-	auto * lightSpot = new LightSpot_System();
-	auto * reflector = new Reflector_System();
-	m_renderingSystems.addSystem(new TransformSync_Gfx_System());
-	m_renderingSystems.addSystem(new SkeletonAnimation_System());
-	m_renderingSystems.addSystem(propRendering);
-	m_renderingSystems.addSystem(lightDirectional);
-	m_renderingSystems.addSystem(lightPoint);
-	m_renderingSystems.addSystem(lightSpot);
-	m_renderingSystems.addSystem(reflector);
-
-	// Rendering Pipeline
-	auto * propRenderingEffect = new PropRendering_Effect(m_engine, &m_geometryFBO, &propRendering->m_renderState, m_shaderCull, m_shaderGeometry);
-	auto * lightDirectionalEffect = new LightDirectional_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &m_bounceFBO, &propRenderingEffect->m_propBuffer, &propRenderingEffect->m_skeletonBuffer, &lightDirectional->m_renderState, m_volumeRH);
-	auto * lightPointEffect = new LightPoint_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &propRenderingEffect->m_propBuffer, &propRenderingEffect->m_skeletonBuffer, &lightPoint->m_renderState);
-	auto * lightSpotEffect = new LightSpot_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &propRenderingEffect->m_propBuffer, &propRenderingEffect->m_skeletonBuffer, &lightSpot->m_renderState);
-	auto * reflectorEffect = new Reflector_Effect(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO, &reflector->m_renderState);
-	m_fxTechs.push_back(propRenderingEffect);
-	m_fxTechs.push_back(lightDirectionalEffect);
-	m_fxTechs.push_back(lightPointEffect);
-	m_fxTechs.push_back(lightSpotEffect);
-	m_fxTechs.push_back(reflectorEffect);
-	m_fxTechs.push_back(new Skybox(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Radiance_Hints(m_engine, &m_geometryFBO, &m_bounceFBO, m_volumeRH));
-	m_fxTechs.push_back(new SSAO(m_engine, &m_geometryFBO, &m_visualFX));
-	m_fxTechs.push_back(new SSR(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	m_fxTechs.push_back(new Join_Reflections(m_engine, &m_geometryFBO, &m_lightingFBO, &m_reflectionFBO));
-	
-
+	// Add map support for the following list of component types
 	auto & world = m_engine->getModule_World();
-	world.addLevelListener(&lightPoint->m_renderState.m_outOfDate);
-	world.addLevelListener(&lightSpot->m_renderState.m_outOfDate);
-	world.addLevelListener(&reflector->m_renderState.m_outOfDate);
-	   
-	// Component Constructors
-	m_engine->registerECSConstructor("Prop_Component", new Prop_Constructor(m_engine, &propRenderingEffect->m_propBuffer));
-	m_engine->registerECSConstructor("Skeleton_Component", new Skeleton_Constructor(m_engine, &propRenderingEffect->m_skeletonBuffer));
-	m_engine->registerECSConstructor("LightDirectional_Component", new LightDirectional_Constructor(&lightDirectionalEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightDirectionalShadow_Component", new LightDirectionalShadow_Constructor(&lightDirectionalEffect->m_shadowBuffer, &lightDirectionalEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("LightPoint_Component", new LightPoint_Constructor(&lightPointEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightPointShadow_Component", new LightPointShadow_Constructor(&lightPointEffect->m_shadowBuffer, &lightPointEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("LightSpot_Component", new LightSpot_Constructor(&lightSpotEffect->m_lightBuffer));
-	m_engine->registerECSConstructor("LightSpotShadow_Component", new LightSpotShadow_Constructor(&lightSpotEffect->m_shadowBuffer, &lightSpotEffect->m_shadowFBO));
-	m_engine->registerECSConstructor("Reflector_Component", new Reflector_Constructor(&m_cameraBuffer, &reflectorEffect->m_reflectorBuffer, &reflectorEffect->m_envmapFBO));
+	world.addComponentType("Renderable_Component", [engine](const ParamList &) {
+		auto * component = new Renderable_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Camera_Component", [&, engine](const ParamList &) {
+		auto * component = new Camera_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("CameraArray_Component", [&, engine](const ParamList &) {
+		auto * component = new CameraArray_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("BoundingSphere_Component", [engine](const ParamList &) {
+		auto * component = new BoundingSphere_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
+		auto * component = new Prop_Component();
+		component->m_model = Shared_Model(engine, CastAny(parameters, 0, std::string("")));
+		component->m_skin = CastAny(parameters, 1, 0u);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Skeleton_Component", [engine](const ParamList & parameters) {
+		auto * component = new Skeleton_Component();
+		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + CastAny(parameters, 0, std::string("")));
+		component->m_animation = CastAny(parameters, 1, 0);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightColor_Component", [](const ParamList & parameters) {
+		auto * component = new LightColor_Component();
+		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
+		component->m_intensity = CastAny(parameters, 1, 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightRadius_Component", [](const ParamList & parameters) {
+		auto * component = new LightRadius_Component();
+		component->m_radius = CastAny(parameters, 0, 1.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightCutoff_Component", [](const ParamList & parameters) {
+		auto * component = new LightCutoff_Component();
+		component->m_cutoff = CastAny(parameters, 0, 45.0f);
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightDirectional_Component", [](const ParamList &) {
+		auto * component = new LightDirectional_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightPoint_Component", [](const ParamList &) {
+		auto * component = new LightPoint_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("LightSpot_Component", [](const ParamList &) {
+		auto * component = new LightSpot_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Shadow_Component", [](const ParamList &) {
+		auto * component = new Shadow_Component();
+		return std::make_pair(component->ID, component);
+	});
+	world.addComponentType("Reflector_Component", [](const ParamList &) {
+		auto * component = new Reflector_Component();
+		return std::make_pair(component->ID, component);
+	});
+
+	// Reprot invalid ecs systems
+	auto & msg = engine->getManager_Messages();
+	for each (const auto & system in m_systems)
+		if (!system->isValid())
+			msg.error("Invalid ECS System: " + std::string(typeid(*system).name()));
+}
+
+void Graphics_Module::deinitialize()
+{
+	m_engine->getManager_Messages().statement("Closing Module: Graphics...");
+
+	// Update indicator
+	m_aliveIndicator = false;
+
+	// Remove support for the following list of component types
+	auto & world = m_engine->getModule_World();
+	world.removeComponentType("Renderable_Component");
+	world.removeComponentType("Camera_Component");
+	world.removeComponentType("CameraArray_Component");
+	world.removeComponentType("BoundingSphere_Component");
+	world.removeComponentType("Prop_Component");
+	world.removeComponentType("Skeleton_Component");
+	world.removeComponentType("LightColor_Component");
+	world.removeComponentType("LightRadius_Component");
+	world.removeComponentType("LightCutoff_Component");
+	world.removeComponentType("LightDirectional_Component");
+	world.removeComponentType("LightPoint_Component");
+	world.removeComponentType("LightSpot_Component");
+	world.removeComponentType("Shadow_Component");
+	world.removeComponentType("Reflector_Component");
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)
 {
-	// Update rendering pipeline
-	static GLsync fence = nullptr;
-	if (fence) {
-		GLenum state = GL_UNSIGNALED;
-		while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
-			state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 0);
+	// Prepare rendering pipeline for a new frame, wait for buffers to free
+	m_clientCamera->updateFrustum();
+	m_quadIndirectBuffer.beginWriting();
+	m_cameraBuffer->beginWriting();
+	m_sceneCameras->clear();
+	m_sceneCameras->push_back(m_clientCamera.get());
+	m_rhVolume->clear();
+	m_rhVolume->updateVolume(m_clientCamera.get());
+
+	// All ECS Systems updated once per frame, updating components pertaining to all viewing perspectives
+	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+	m_cameraBuffer->resize(m_sceneCameras->size());
+	for (size_t x = 0ull; x < m_sceneCameras->size(); ++x)
+		(*m_cameraBuffer)[x] = *(*m_sceneCameras)[x]->get();
+
+	// Update pipeline techniques ONCE per frame, not per render call!
+	m_pipeline->update(deltaTime);
+
+	// Render the scene from the user's perspective to the screen
+	size_t visibilityIndex = 0;
+	bool found = false;
+	for (size_t x = 0; x < m_sceneCameras->size(); ++x)
+		if (m_sceneCameras->at(x) == m_clientCamera.get()) {
+			visibilityIndex = x;
+			found = true;
+			break;
+		}
+	if (found) {
+		renderScene(deltaTime, m_viewport, { {(int)visibilityIndex, 0} });
+		copyToScreen();
 	}
 
-	glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	m_geometryFBO.clear();
-	m_lightingFBO.clear();
-	m_reflectionFBO.clear();
-	m_bounceFBO.clear();
-	m_engine->getManager_Materials().bind();
-	m_cameraIndexBuffer.bindBufferBase(GL_UNIFORM_BUFFER, 1);	
-	m_volumeRH->updateVolume(*getActiveCameraBuffer());
-	m_ecs->updateSystems(m_renderingSystems, deltaTime);
-
-	// Rendering
-	for each (auto *tech in m_fxTechs)
-		if (tech->isEnabled())
-			tech->applyEffect(deltaTime);
-
-	if (fence)
-		glDeleteSync(fence);
-	fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
+	// Consolidate and prepare for the next frame, swap to next set of buffers
+	m_pipeline->prepareForNextFrame(deltaTime);
+	m_cameraBuffer->endWriting();
+	m_quadIndirectBuffer.endWriting();
 }
 
-void Graphics_Module::updateCamera(Camera_Buffer * camera)
+void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)
+{
+	// Prepare viewport and camera for rendering
+	viewport->bind();
+	viewport->clear();
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+
+	// Render
+	m_pipeline->render(deltaTime, viewport, perspectives, allowedCategories);
+}
+
+void Graphics_Module::cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>>& perspectives)
+{
+	// Apply frustum culling or other techniques
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_pipeline->cullShadows(deltaTime, perspectives);
+}
+
+void Graphics_Module::renderShadows(const float & deltaTime)
+{
+	// Render remaining shadows
+	m_cameraBuffer->bindBufferBase(GL_SHADER_STORAGE_BUFFER, 2);
+	m_pipeline->renderShadows(deltaTime);
+}
+
+void Graphics_Module::genPerspectiveMatrix() 
 {
 	// Update Perspective Matrix
-	float ar = std::max(1.0f, camera->Dimensions.x) / std::max(1.0f, camera->Dimensions.y);
-	float horizontalRad = glm::radians(camera->FOV);
-	float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
-	camera->pMatrix = glm::perspective(verticalRad, ar, CAMERA_NEAR_PLANE, camera->FarPlane);
-	camera->pMatrix_Inverse = glm::inverse(camera->pMatrix);
-	camera->vMatrix_Inverse = glm::inverse(camera->vMatrix);
+	const float ar = std::max(1.0f, (*m_clientCamera)->Dimensions.x) / std::max(1.0f, (*m_clientCamera)->Dimensions.y);
+	const float horizontalRad = glm::radians((*m_clientCamera)->FOV);
+	const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f) / ar);
+	(*m_clientCamera)->pMatrix = glm::perspective(verticalRad, ar, Camera::ConstNearPlane, (*m_clientCamera)->FarPlane);
+	(*m_clientCamera)->pMatrixInverse = glm::inverse((*m_clientCamera)->pMatrix);
+	(*m_clientCamera)->pvMatrix = (*m_clientCamera)->pMatrix * (*m_clientCamera)->vMatrix;
 }
 
-void Graphics_Module::setActiveCamera(const GLuint & newCameraID)
+void Graphics_Module::copyToScreen()
 {
-	m_activeCamera = newCameraID;
-	m_cameraIndexBuffer.write(0, sizeof(GLuint), &newCameraID);
-	const GLint offsetAlignment = m_cameraBuffer.getOffsetAlignment();
-	m_cameraBuffer.bindBufferBaseRange(GL_SHADER_STORAGE_BUFFER, 2, (sizeof(Camera_Buffer) + offsetAlignment) * newCameraID, sizeof(Camera_Buffer) + offsetAlignment);
-}
-
-const GLuint Graphics_Module::getActiveCamera() const
-{
-	return m_activeCamera;
-}
-
-VB_Element<Camera_Buffer>* Graphics_Module::getActiveCameraBuffer()
-{
-	return m_cameraBuffer.getElement(getActiveCamera());
+	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
+		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+		m_shader->bind();
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+	}
 }

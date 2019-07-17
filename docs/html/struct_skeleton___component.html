@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,8 +70,6 @@ $(function() {
 <div class="title">Skeleton_Component Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="_skeleton___c_8h_source.html">Skeleton_C.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Skeleton_Component:</div>
 <div class="dyncontent">
@@ -79,12 +77,15 @@ Inheritance diagram for Skeleton_Component:</div>
   <img src="struct_skeleton___component.png" usemap="#Skeleton_5FComponent_map" alt=""/>
   <map id="Skeleton_5FComponent_map" name="Skeleton_5FComponent_map">
 <area href="struct_e_c_s_component.html" alt="ECSComponent&lt; Skeleton_Component &gt;" shape="rect" coords="0,56,242,80"/>
-<area href="struct_base_e_c_s_component.html" alt="BaseECSComponent" shape="rect" coords="0,0,242,24"/>
+<area href="struct_base_e_c_s_component.html" title="A base type component." alt="BaseECSComponent" shape="rect" coords="0,0,242,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
+<tr class="memitem:a0fc88e89cb67e8309ba0c4354753a43e"><td class="memItemLeft" align="right" valign="top"><a id="a0fc88e89cb67e8309ba0c4354753a43e"></a>
+<a class="el" href="class_shared___mesh.html">Shared_Mesh</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_mesh</b></td></tr>
+<tr class="separator:a0fc88e89cb67e8309ba0c4354753a43e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6cc7ada76b59f4b57b65bcc93ffcbbc9"><td class="memItemLeft" align="right" valign="top"><a id="a6cc7ada76b59f4b57b65bcc93ffcbbc9"></a>
 int&#160;</td><td class="memItemRight" valign="bottom"><b>m_animation</b> = -1</td></tr>
 <tr class="separator:a6cc7ada76b59f4b57b65bcc93ffcbbc9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -97,15 +98,9 @@ float&#160;</td><td class="memItemRight" valign="bottom"><b>m_animTime</b> = 0</
 <tr class="memitem:a01e95f658ebdd8015596ea0340e0441d"><td class="memItemLeft" align="right" valign="top"><a id="a01e95f658ebdd8015596ea0340e0441d"></a>
 float&#160;</td><td class="memItemRight" valign="bottom"><b>m_animStart</b> = 0</td></tr>
 <tr class="separator:a01e95f658ebdd8015596ea0340e0441d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0fc88e89cb67e8309ba0c4354753a43e"><td class="memItemLeft" align="right" valign="top"><a id="a0fc88e89cb67e8309ba0c4354753a43e"></a>
-<a class="el" href="class_shared___mesh.html">Shared_Mesh</a>&#160;</td><td class="memItemRight" valign="bottom"><b>m_mesh</b></td></tr>
-<tr class="separator:a0fc88e89cb67e8309ba0c4354753a43e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf55ac151d9736a32fb706c8f1749ade"><td class="memItemLeft" align="right" valign="top"><a id="acf55ac151d9736a32fb706c8f1749ade"></a>
 std::vector&lt; glm::mat4 &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>m_transforms</b></td></tr>
 <tr class="separator:acf55ac151d9736a32fb706c8f1749ade"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a415984b101451ed8db3a7979ce661d66"><td class="memItemLeft" align="right" valign="top"><a id="a415984b101451ed8db3a7979ce661d66"></a>
-<a class="el" href="struct_v_b___element.html">VB_Element</a>&lt; <a class="el" href="struct_skeleton___buffer.html">Skeleton_Buffer</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b> = nullptr</td></tr>
-<tr class="separator:a415984b101451ed8db3a7979ce661d66"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -143,10 +138,8 @@ static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ID</
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</b></td></tr>
 <tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A skeleton component is used in combination with prop components to allow for skeletal animation. </p><dl class="section note"><dt>Note</dt><dd>is useless by itself. </dd></dl>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/Components/<a class="el" href="_skeleton___c_8h_source.html">Skeleton_C.h</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Modules/Graphics/Geometry/<a class="el" href="_graphics_2_geometry_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

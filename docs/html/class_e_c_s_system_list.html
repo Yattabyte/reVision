@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,18 +71,40 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>An ordered list of systems to be updated.  
+ <a href="class_e_c_s_system_list.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="ecs_system_8h_source.html">ecsSystem.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a88ac8d2a329dab2193bc58dbd373d7ed"><td class="memItemLeft" align="right" valign="top"><a id="a88ac8d2a329dab2193bc58dbd373d7ed"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ECSSystemList</b> (const std::vector&lt; <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> * &gt; &amp;systems)</td></tr>
+<tr class="separator:a88ac8d2a329dab2193bc58dbd373d7ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a66f8be3b577028195c33a0caa677341e"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#a66f8be3b577028195c33a0caa677341e">addSystem</a> (<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *system)</td></tr>
+<tr class="memdesc:a66f8be3b577028195c33a0caa677341e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Adds a system to the list.  <a href="#a66f8be3b577028195c33a0caa677341e">More...</a><br /></td></tr>
 <tr class="separator:a66f8be3b577028195c33a0caa677341e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a190f3f5ac1d9956ff765d7360f346690"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#a190f3f5ac1d9956ff765d7360f346690">removeSystem</a> (<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *system)</td></tr>
+<tr class="memdesc:a190f3f5ac1d9956ff765d7360f346690"><td class="mdescLeft">&#160;</td><td class="mdescRight">Removes a system from the list.  <a href="#a190f3f5ac1d9956ff765d7360f346690">More...</a><br /></td></tr>
 <tr class="separator:a190f3f5ac1d9956ff765d7360f346690"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a623ab9cc752f2f7ea13554c347cd6391"><td class="memItemLeft" align="right" valign="top">const size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#a623ab9cc752f2f7ea13554c347cd6391">size</a> () const</td></tr>
+<tr class="memdesc:a623ab9cc752f2f7ea13554c347cd6391"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of systems in the list.  <a href="#a623ab9cc752f2f7ea13554c347cd6391">More...</a><br /></td></tr>
 <tr class="separator:a623ab9cc752f2f7ea13554c347cd6391"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6462f68e61cc1ef126bb693f597dd60"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#aa6462f68e61cc1ef126bb693f597dd60">operator[]</a> (const size_t &amp;index)</td></tr>
+<tr class="memdesc:aa6462f68e61cc1ef126bb693f597dd60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a specific system at a given index.  <a href="#aa6462f68e61cc1ef126bb693f597dd60">More...</a><br /></td></tr>
 <tr class="separator:aa6462f68e61cc1ef126bb693f597dd60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba3e57d85d7333072a6daa24895f260e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> * &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#aba3e57d85d7333072a6daa24895f260e">begin</a> ()</td></tr>
+<tr class="memdesc:aba3e57d85d7333072a6daa24895f260e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve an iterator to the beginning of this system list.  <a href="#aba3e57d85d7333072a6daa24895f260e">More...</a><br /></td></tr>
+<tr class="separator:aba3e57d85d7333072a6daa24895f260e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac98032282bd852d64c9a6bdcc6d0de1"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#aac98032282bd852d64c9a6bdcc6d0de1">begin</a> () const</td></tr>
+<tr class="memdesc:aac98032282bd852d64c9a6bdcc6d0de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a const iterator to the beginning of this system list.  <a href="#aac98032282bd852d64c9a6bdcc6d0de1">More...</a><br /></td></tr>
+<tr class="separator:aac98032282bd852d64c9a6bdcc6d0de1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05d0024344a4b24a3ec68fb01b739103"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> * &gt;::iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#a05d0024344a4b24a3ec68fb01b739103">end</a> ()</td></tr>
+<tr class="memdesc:a05d0024344a4b24a3ec68fb01b739103"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve an iterator to the end of this system list.  <a href="#a05d0024344a4b24a3ec68fb01b739103">More...</a><br /></td></tr>
+<tr class="separator:a05d0024344a4b24a3ec68fb01b739103"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a96f932cdf9679001c331ce722423905a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; <a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a> * &gt;::const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_e_c_s_system_list.html#a96f932cdf9679001c331ce722423905a">end</a> () const</td></tr>
+<tr class="memdesc:a96f932cdf9679001c331ce722423905a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a const iterator to the end of this system list.  <a href="#a96f932cdf9679001c331ce722423905a">More...</a><br /></td></tr>
+<tr class="separator:a96f932cdf9679001c331ce722423905a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>An ordered list of systems to be updated. </p>
@@ -110,12 +132,126 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Adds a system to the list. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Adds a system to the list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">system</td><td>the system to add. </td></tr>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="aba3e57d85d7333072a6daa24895f260e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba3e57d85d7333072a6daa24895f260e">&#9670;&nbsp;</a></span>begin() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a>*&gt;::iterator ECSSystemList::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve an iterator to the beginning of this system list. </p>
+<dl class="section return"><dt>Returns</dt><dd>an iterator to the beginning of this system list. </dd></dl>
+
+</div>
+</div>
+<a id="aac98032282bd852d64c9a6bdcc6d0de1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aac98032282bd852d64c9a6bdcc6d0de1">&#9670;&nbsp;</a></span>begin() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a>*&gt;::const_iterator ECSSystemList::begin </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve a const iterator to the beginning of this system list. </p>
+<dl class="section return"><dt>Returns</dt><dd>a const iterator to the beginning of this system list. </dd></dl>
+
+</div>
+</div>
+<a id="a05d0024344a4b24a3ec68fb01b739103"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a05d0024344a4b24a3ec68fb01b739103">&#9670;&nbsp;</a></span>end() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a>*&gt;::iterator ECSSystemList::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve an iterator to the end of this system list. </p>
+<dl class="section return"><dt>Returns</dt><dd>an iterator to the end of this system list. </dd></dl>
+
+</div>
+</div>
+<a id="a96f932cdf9679001c331ce722423905a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a96f932cdf9679001c331ce722423905a">&#9670;&nbsp;</a></span>end() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;<a class="el" href="class_base_e_c_s_system.html">BaseECSSystem</a>*&gt;::const_iterator ECSSystemList::end </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Retrieve a const iterator to the end of this system list. </p>
+<dl class="section return"><dt>Returns</dt><dd>a const iterator to the end of this system list. </dd></dl>
 
 </div>
 </div>
@@ -142,7 +278,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieve a specific system at a given index. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve a specific system at a given index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">index</td><td>the index to fetch the system from. </td></tr>
   </table>
@@ -174,7 +312,9 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Removes a system from the list. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Removes a system from the list. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">system</td><td>the system to remove. </td></tr>
   </table>
@@ -205,12 +345,14 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Get the number of systems in the list. </p><dl class="section return"><dt>Returns</dt><dd>the size of the list. </dd></dl>
+
+<p>Get the number of systems in the list. </p>
+<dl class="section return"><dt>Returns</dt><dd>the size of the list. </dd></dl>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>src/Utilities/ECS/<a class="el" href="ecs_system_8h_source.html">ecsSystem.h</a></li>
+<li>src/Modules/World/ECS/<a class="el" href="ecs_system_8h_source.html">ecsSystem.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

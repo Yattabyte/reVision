@@ -104,6 +104,8 @@ LevelStruct_Component Level_IO::parse_component(std::ifstream & file_stream)
 					parameter = getType_Vec4(line);
 				else if (find(line, "quat"))
 					parameter = getType_Quat(line);
+				else if (find(line, "bool"))
+					parameter = getType_Bool(line);
 				if (parameter.has_value())
 					component.parameters.push_back(parameter);
 			}
@@ -112,7 +114,7 @@ LevelStruct_Component Level_IO::parse_component(std::ifstream & file_stream)
 	return component;
 }
 
-std::string const Level_IO::get_between_quotes(std::string & s)
+std::string Level_IO::get_between_quotes(std::string & s)
 {
 	std::string output = s;
 	size_t spot1 = s.find_first_of("\"");
@@ -128,31 +130,31 @@ std::string const Level_IO::get_between_quotes(std::string & s)
 	return output;
 }
 
-bool const Level_IO::find(const std::string & s1, const std::string & s2) {
+bool Level_IO::find(const std::string & s1, const std::string & s2) {
 	return (s1.find(s2) != std::string::npos);
 }
 
-std::string const Level_IO::getType_String(std::string & in) {
+std::string Level_IO::getType_String(std::string & in) {
 	return get_between_quotes(in);
 }
 
-unsigned int const Level_IO::getType_UInt(std::string & in) {
+unsigned int Level_IO::getType_UInt(std::string & in) {
 	return (unsigned int)std::stoi(get_between_quotes(in));
 }
 
-int const Level_IO::getType_Int(std::string & in) {
+int Level_IO::getType_Int(std::string & in) {
 	return std::stoi(get_between_quotes(in));
 }
 
-double const Level_IO::getType_Double(std::string & in) {
+double Level_IO::getType_Double(std::string & in) {
 	return std::stod(get_between_quotes(in));
 }
 
-float const Level_IO::getType_Float(std::string & in) {
+float Level_IO::getType_Float(std::string & in) {
 	return std::stof(get_between_quotes(in));
 }
 
-glm::vec2 const Level_IO::getType_Vec2(std::string & in) {
+glm::vec2 Level_IO::getType_Vec2(std::string & in) {
 	std::string vec2string = getType_String(in);
 	size_t indices[1];
 	indices[0] = vec2string.find(',');
@@ -163,7 +165,7 @@ glm::vec2 const Level_IO::getType_Vec2(std::string & in) {
 	return glm::vec2(std::stof(number1), std::stof(number2));
 }
 
-glm::vec3 const Level_IO::getType_Vec3(std::string & in) {
+glm::vec3 Level_IO::getType_Vec3(std::string & in) {
 	std::string vec3string = getType_String(in);
 	size_t indices[2];
 	indices[0] = vec3string.find(',');
@@ -176,7 +178,7 @@ glm::vec3 const Level_IO::getType_Vec3(std::string & in) {
 	return glm::vec3(std::stof(number1), std::stof(number2), std::stof(number3));
 }
 
-glm::vec4 const Level_IO::getType_Vec4(std::string & in) {
+glm::vec4 Level_IO::getType_Vec4(std::string & in) {
 	std::string vec4string = getType_String(in);
 	size_t indices[3];
 	indices[0] = vec4string.find(',');
@@ -191,7 +193,7 @@ glm::vec4 const Level_IO::getType_Vec4(std::string & in) {
 	return glm::vec4(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
 }
 
-glm::quat const Level_IO::getType_Quat(std::string & in) {
+glm::quat Level_IO::getType_Quat(std::string & in) {
 	std::string vec4string = getType_String(in);
 	size_t indices[3];
 	indices[0] = vec4string.find(',');
@@ -204,4 +206,11 @@ glm::quat const Level_IO::getType_Quat(std::string & in) {
 	std::string number4(vec4string.substr(indices[2] + 1, (vec4string.size() - 1) - indices[2]));
 
 	return glm::quat(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
+}
+
+bool Level_IO::getType_Bool(std::string & in)
+{
+	if (in.find("1") != std::string::npos || in.find("true") != std::string::npos)
+		return true;
+	return false;
 }

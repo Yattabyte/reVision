@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A map for configuration name-value pairs.  
+ <a href="class_config.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_config_8h_source.html">Config.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Config:</div>
@@ -80,32 +83,42 @@ Inheritance diagram for Config:</div>
  <div class="center">
   <img src="class_config.png" usemap="#Config_map" alt=""/>
   <map id="Config_map" name="Config_map">
-<area href="class_asset.html" title="Represents some form of data to be loaded from disk, such as shaders, models, levels,..." alt="Asset" shape="rect" coords="0,0,49,24"/>
+<area href="class_asset.html" title="An abstract base-class for assets." alt="Asset" shape="rect" coords="0,0,49,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:afd1b8e9a2f731db838bb5856670e314c"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#afd1b8e9a2f731db838bb5856670e314c">~Config</a> ()=default</td></tr>
+<tr class="memdesc:afd1b8e9a2f731db838bb5856670e314c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="class_config.html" title="A map for configuration name-value pairs.">Config</a>.  <a href="#afd1b8e9a2f731db838bb5856670e314c">More...</a><br /></td></tr>
 <tr class="separator:afd1b8e9a2f731db838bb5856670e314c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aac5e2e16cd746998c53d2baaacea54b4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#aac5e2e16cd746998c53d2baaacea54b4">Config</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;strings)</td></tr>
+<tr class="memdesc:aac5e2e16cd746998c53d2baaacea54b4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the config with a particular set of variable names.  <a href="#aac5e2e16cd746998c53d2baaacea54b4">More...</a><br /></td></tr>
 <tr class="separator:aac5e2e16cd746998c53d2baaacea54b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6554e71f50ad2011ba15bbe1eb4878de"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a6554e71f50ad2011ba15bbe1eb4878de">setValue</a> (const unsigned int &amp;cfg_key, const float &amp;cfg_value)</td></tr>
+<tr class="memdesc:a6554e71f50ad2011ba15bbe1eb4878de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assigns the specified value to the specified key.  <a href="#a6554e71f50ad2011ba15bbe1eb4878de">More...</a><br /></td></tr>
 <tr class="separator:a6554e71f50ad2011ba15bbe1eb4878de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a55b0b2f05a191bb0d1384a0f2839d658"><td class="memItemLeft" align="right" valign="top">const float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a55b0b2f05a191bb0d1384a0f2839d658">getValue</a> (const unsigned int &amp;cfg_key) const</td></tr>
-<tr class="separator:a55b0b2f05a191bb0d1384a0f2839d658"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:add78e6e048fc3abef33d1af424122d8b"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#add78e6e048fc3abef33d1af424122d8b">getValue</a> (const unsigned int &amp;cfg_key) const</td></tr>
+<tr class="memdesc:add78e6e048fc3abef33d1af424122d8b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the value assigned to the supplied key.  <a href="#add78e6e048fc3abef33d1af424122d8b">More...</a><br /></td></tr>
+<tr class="separator:add78e6e048fc3abef33d1af424122d8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a64000eb3f2292cba44278cec34fc076d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_config.html#a64000eb3f2292cba44278cec34fc076d">saveConfig</a> ()</td></tr>
+<tr class="memdesc:a64000eb3f2292cba44278cec34fc076d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Writes the configuration file back to disk within the \<a class="el" href="class_config.html" title="A map for configuration name-value pairs.">Config</a>\ folder.  <a href="#a64000eb3f2292cba44278cec34fc076d">More...</a><br /></td></tr>
 <tr class="separator:a64000eb3f2292cba44278cec34fc076d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae63f2109b599674813f35bad45422c6f inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ae63f2109b599674813f35bad45422c6f">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, AssetFinalizedCallback &amp;&amp;callback)</td></tr>
-<tr class="separator:ae63f2109b599674813f35bad45422c6f inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
+<tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
+<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
@@ -127,8 +140,10 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Shared_Config</b></t
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
 <tr class="separator:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a> ()</td></tr>
+<tr class="memdesc:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declares this asset ready-to-use.  <a href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">More...</a><br /></td></tr>
 <tr class="separator:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:a0329cd6e471217c694abfc632e6c1bbd inherit pro_attribs_class_asset"><td class="memItemLeft" align="right" valign="top"><a id="a0329cd6e471217c694abfc632e6c1bbd"></a>
@@ -148,7 +163,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 <tr class="separator:a9d426de8f210c27c208fa5c099f37498 inherit pro_attribs_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A registry for configuration name-value pairs. </p>
+<div class="textblock"><p>A map for configuration name-value pairs. </p>
+<p>Represents a series of values coresponding to strings, like user prefences or binds. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="afd1b8e9a2f731db838bb5856670e314c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#afd1b8e9a2f731db838bb5856670e314c">&#9670;&nbsp;</a></span>~Config()</h2>
@@ -168,11 +184,12 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Destroy the <a class="el" href="class_config.html">Config</a>. </p>
+
+<p>Destroy the <a class="el" href="class_config.html" title="A map for configuration name-value pairs.">Config</a>. </p>
 
 </div>
 </div>
@@ -207,19 +224,28 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Construct the config with a particular set of variable names. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the asset file name (relative to engine directory). </td></tr>
+    <tr><td class="paramname">strings</td><td>the configuration strings to use. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a55b0b2f05a191bb0d1384a0f2839d658"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a55b0b2f05a191bb0d1384a0f2839d658">&#9670;&nbsp;</a></span>getValue()</h2>
+<a id="add78e6e048fc3abef33d1af424122d8b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#add78e6e048fc3abef33d1af424122d8b">&#9670;&nbsp;</a></span>getValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const float Config::getValue </td>
+          <td class="memname">float Config::getValue </td>
           <td>(</td>
           <td class="paramtype">const unsigned int &amp;&#160;</td>
           <td class="paramname"><em>cfg_key</em></td><td>)</td>
@@ -227,13 +253,15 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Retrieves the value assigned to the supplied key. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieves the value assigned to the supplied key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cfg_key</td><td>the key in which to fetch the value from </td></tr>
+    <tr><td class="paramname">cfg_key</td><td>the key in which to fetch the value from. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the value assigned to supplied key (UNDEFINED_CVAL if the supplied key doesn't exist) </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the value assigned to supplied key (NaN if the supplied key doesn't exist). </dd></dl>
 
 </div>
 </div>
@@ -251,7 +279,8 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Writes the configuration file back to disk within the \<a class="el" href="class_config.html">Config</a>\ folder. </p>
+
+<p>Writes the configuration file back to disk within the \<a class="el" href="class_config.html" title="A map for configuration name-value pairs.">Config</a>\ folder. </p>
 
 </div>
 </div>
@@ -280,10 +309,12 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Assigns the specified value to the specified key. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Assigns the specified value to the specified key. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cfg_key</td><td>the key to apply this new value to </td></tr>
-    <tr><td class="paramname">cfg_value</td><td>the new value to give to this key </td></tr>
+    <tr><td class="paramname">cfg_key</td><td>the key to apply this new value to. </td></tr>
+    <tr><td class="paramname">cfg_value</td><td>the new value to give to this key. </td></tr>
   </table>
   </dd>
 </dl>

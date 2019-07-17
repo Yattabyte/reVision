@@ -3,7 +3,7 @@
 #define	Mesh_IO_H
 #define NUM_BONES_PER_VEREX 4
 
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include "glm/gtc/quaternion.hpp"
@@ -17,7 +17,7 @@ class Engine;
 struct VertexBoneData {
 	int IDs[NUM_BONES_PER_VEREX];
 	float Weights[NUM_BONES_PER_VEREX];
-	~VertexBoneData() = default;
+	inline ~VertexBoneData() = default;
 	VertexBoneData();
 	VertexBoneData(const VertexBoneData & vbd);
 	void Reset();
@@ -25,35 +25,35 @@ struct VertexBoneData {
 };
 struct Material_Strings {
 	std::string albedo = "", normal = "", metalness = "", roughness = "", height = "", ao = "";
-	Material_Strings(const std::string & al = "albedo" , const std::string & n = "normal", const std::string & m = "metalness", const std::string & r = "roughness", const std::string & h = "height", const std::string & a = "ao")
+	inline Material_Strings(const std::string & al = "albedo" , const std::string & n = "normal", const std::string & m = "metalness", const std::string & r = "roughness", const std::string & h = "height", const std::string & a = "ao")
 		: albedo(al), normal(n), metalness(m), roughness(r), height(h), ao(a) {}
 };
 template<typename T>
 struct Animation_Time_Key {
-	double time;
+	double time = 0;
 	T value;
-	Animation_Time_Key() : time(0) {};
-	Animation_Time_Key(const double & t, const T & v) : time(t), value(v) {};
+	inline Animation_Time_Key() : time(0) {};
+	inline Animation_Time_Key(const double & t, const T & v) : time(t), value(v) {};
 };
 struct Node_Animation {
-	std::string nodeName;
+	std::string nodeName = "";
 	std::vector<Animation_Time_Key<glm::vec3>> scalingKeys;
 	std::vector<Animation_Time_Key<glm::quat>> rotationKeys;
 	std::vector<Animation_Time_Key<glm::vec3>> positionKeys;
-	Node_Animation(const std::string & name = "") : nodeName(name) {}
+	inline Node_Animation(const std::string & name = "") : nodeName(name) {}
 };
 struct Node {
-	std::string name;
-	glm::mat4 transformation;
+	std::string name = "";
+	glm::mat4 transformation = glm::mat4(1);
 	std::vector<Node*> children;
-	Node(const std::string & n, const glm::mat4 & t) : name(n), transformation(t) {}
+	inline Node(const std::string & n, const glm::mat4 & t) : name(n), transformation(t) {}
 };
 struct Animation {
-	unsigned int numChannels;
-	double ticksPerSecond;
-	double duration;
+	unsigned int numChannels = 0;
+	double ticksPerSecond = 0.0;
+	double duration = 0.0;
 	std::vector<Node_Animation*> channels;
-	Animation(const unsigned int & nC = 0, const double & tick = 0, const double & dur = 0)
+	inline Animation(const unsigned int & nC = 0, const double & tick = 0, const double & dur = 0)
 		: numChannels(nC), ticksPerSecond(tick), duration(dur) {}
 };
 struct Mesh_Geometry {
@@ -81,7 +81,7 @@ struct SingleVertex {
 	glm::vec3 tangent;
 	glm::vec3 bitangent;
 	glm::vec2 uv;
-	GLuint matID;
+	GLuint matID = 0;
 	glm::ivec4 boneIDs;
 	glm::vec4 weights;
 };
@@ -100,8 +100,8 @@ public:
 	@return					true on successfull import, false otherwise (error reported to engine) */
 	static bool Import_Model(Engine * engine, const std::string & relativePath, Mesh_Geometry & importedData);
 	/** Get the plugin version.
-	@return the plugin version */
-	static const std::string Get_Version();
+	@return					the plugin version */
+	static std::string Get_Version();
 };
 
 #endif // Mesh_IO_H

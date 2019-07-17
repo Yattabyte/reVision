@@ -14,10 +14,10 @@ struct ViewData {
 
 void GetFragmentData(in vec2 TexCoord, out ViewData data)
 {
-	const vec4 Texture1				= texture(ColorMap, TexCoord);
-	const vec4 Texture2				= texture(ViewNormalMap, TexCoord);
-	const vec4 Texture3				= texture(SpecularMap, TexCoord);
-	const vec4 Texture4				= texture(DepthMap, TexCoord);
+	const vec4 Texture1				= texture(ColorMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture2				= texture(ViewNormalMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture3				= texture(SpecularMap, vec3(TexCoord, gl_Layer));
+	const vec4 Texture4				= texture(DepthMap, vec3(TexCoord, gl_Layer));
 	
 	data.Albedo 					= Texture1.rgb;
 	data.View_Normal				= Texture2.rgb;
@@ -27,11 +27,11 @@ void GetFragmentData(in vec2 TexCoord, out ViewData data)
 	data.View_AO					= Texture3.a;
 	data.View_Depth					= Texture4.r;
 	
-	data.View_Pos					= CamPInverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
-    data.World_Pos 					= CamVInverse * data.View_Pos;
+	data.View_Pos					= pMatrixInverse * vec4(vec3(TexCoord, data.View_Depth) * 2.0f - 1.0f, 1.0f);
+    data.World_Pos 					= vMatrixInverse * data.View_Pos;
 	data.View_Pos 					= data.View_Pos / data.View_Pos.w;
 	data.World_Pos 					= data.World_Pos / data.World_Pos.w;
-    data.World_Normal 				= normalize((CamVInverse * vec4(data.View_Normal, 0))).xyz;
+    data.World_Normal 				= normalize((vMatrixInverse * vec4(data.View_Normal, 0))).xyz;
 }
 
 // Calculates the Normalized Distribution Function term of the BRDF specular lighting equation

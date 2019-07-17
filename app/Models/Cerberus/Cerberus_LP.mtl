@@ -1,4 +1,4 @@
-# Blender MTL File: 'None'
+# Blender MTL File: 'Cerberus_LP'
 # Material Count: 1
 
 newmtl Material
@@ -15,4 +15,3 @@ map_Bump Cerberus_N.tga
 map_Ks Cerberus_M.tga
 map_Ns Cerberus_R.tga
 map_Ka Cerberus_AO.tga
- 

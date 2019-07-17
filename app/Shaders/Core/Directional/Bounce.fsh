@@ -10,11 +10,12 @@ layout (location = 4) uniform float resolution = 16.0f;
 layout (location = 5) uniform float spread = 0.05f;
 layout (location = 6) uniform float R_wcs = 0.0f;
 
-layout (location = 0) flat in mat4 CamVMatrix;
+layout (location = 0) flat in mat4 vMatrix;
 layout (location = 4) flat in mat4 CamPVMatrix;
 layout (location = 8) flat in mat4 LightVP[NUM_CASCADES];
 layout (location = 24) flat in vec4 CascadeEndClipSpace;
 layout (location = 25) flat in int Shadow_Spot;
+layout (location = 26) flat in vec3 ColorModifier;
 
 layout (location = 0) out vec4 GI_Out1; 
 layout (location = 1) out vec4 GI_Out2; 
@@ -24,7 +25,7 @@ layout (location = 3) out vec4 GI_Out4;
 layout (binding = 0) uniform sampler2DArray ShadowNormal; 	// RSM normals
 layout (binding = 1) uniform sampler2DArray ShadowFlux;  	// RSM vpl flux
 layout (binding = 2) uniform sampler2DArray ShadowPos;		// RSM position
-layout (binding = 3) uniform sampler2D CameraDepth;		  	// Camera depth buffer
+layout (binding = 3) uniform sampler2DArray CameraDepth;  	// Camera depth buffer
 layout (binding = 4) uniform sampler3D Noise;       		// A pre-computed 3D noise texture (32X32X32). Value range (r,g,b): [0,1] 
 // #define DEPTH_OCCL    // if defined, depth-based RSM sample occlusion is enabled.
 
@@ -85,7 +86,7 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 		vec3 uv_array_lookup	= vec3(uv, ShadowSpot);
 		
 		rsmPos					= CalcShadowPos(uv, ShadowSpot, InversePV);
-		rsmColor				= texture(ShadowFlux, uv_array_lookup).rgb; 
+		rsmColor				= texture(ShadowFlux, uv_array_lookup).rgb * ColorModifier; 
 		rsmNormal 				= normalize(texture(ShadowNormal, uv_array_lookup).rgb);		
 		
         // produce a new sampling location in the RH stratum
@@ -114,7 +115,7 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 		// samples should also be hidden from view. If the RH point is visible to the camera, the 
 		// same should hold for the visibility samples in order not to attenuate the light.
 		Qcss = PointWCS2CSS(samplePos); 
-		float rh_visibility = Qcss.z < (2.0 * texture(CameraDepth, 0.5 * Qcss.xy + vec2(0.5)).r -1.0) * 1.1 ? 1.0 : -1.0; 
+		float rh_visibility = Qcss.z < (2.0 * texture(CameraDepth, vec3(0.5 * Qcss.xy + vec2(0.5), gl_Layer)).r -1.0) * 1.1 ? 1.0 : -1.0; 
 
 		// Estimate attenuation along line of sight
 		for (int j = 1; j < vis_samples; ++j) { 
@@ -156,23 +157,27 @@ void BounceFromShadow(in vec3 extents, in vec3 RHCellSize, in vec3 RHCenter, in 
 }
 
 void main()
-{			
-	// Get current RH's world pos
-	vec3 bbox_max 				= BBox_Max.xyz;
-	vec3 bbox_min 				= BBox_Min.xyz;
-	vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
-    vec3 extents 				= (bbox_max - bbox_min).xyz; 
-	vec3 RHCellSize				= extents / (resolution);
-    vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
-	vec4 ViewPos 				= CamVMatrix * vec4(RHCenter, 1);
-	
-	// RH -> light space, get sampling disk center
-	int index 					= 0;
-	for (; index < NUM_CASCADES; ++index) 
-		if (-ViewPos.z <= CascadeEndClipSpace[index]) 
-			break;		
-	vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
-	
-	// Perform light bounce operation
-	BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+{	
+	if (Shadow_Spot >= 0) {
+		// Get current RH's world pos
+		vec3 bbox_max 				= BBox_Max.xyz;
+		vec3 bbox_min 				= BBox_Min.xyz;
+		vec3 pos					= vec3(gl_FragCoord.x, gl_FragCoord.y, gl_Layer);
+		vec3 extents 				= (bbox_max - bbox_min).xyz; 
+		vec3 RHCellSize				= extents / (resolution);
+		vec3 RHCenter 				= bbox_min + pos * RHCellSize; 	
+		vec4 ViewPos 				= vMatrix * vec4(RHCenter, 1);
+		
+		// RH -> light space, get sampling disk center
+		int index 					= 0;
+		for (; index < NUM_CASCADES; ++index) 
+			if (-ViewPos.z <= CascadeEndClipSpace[index]) 
+				break;		
+		vec2 RHUV					= ShadowProjection(LightVP[index] * vec4(RHCenter, 1)); 
+		
+		// Perform light bounce operation
+		BounceFromShadow(extents, RHCellSize, RHCenter, RHUV, inverse(LightVP[index]), Shadow_Spot + index, ShadowPos, ShadowNormal, ShadowFlux);
+	}
+	else
+		discard;
 }

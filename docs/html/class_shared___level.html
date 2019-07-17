@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,6 +71,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Shared version of a <a class="el" href="class_level.html" title="Contains serialized level data information.">Level</a> asset.  
+ <a href="class_shared___level.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_level_8h_source.html">Level.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Shared_Level:</div>
@@ -81,14 +84,46 @@ Inheritance diagram for Shared_Level:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a3594019209dda2269d509c9935e1c58d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___level.html#a3594019209dda2269d509c9935e1c58d">Shared_Level</a> ()=default</td></tr>
+<tr class="memdesc:a3594019209dda2269d509c9935e1c58d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructs an empty asset.  <a href="#a3594019209dda2269d509c9935e1c58d">More...</a><br /></td></tr>
+<tr class="separator:a3594019209dda2269d509c9935e1c58d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad63587ca62fd5f572b593d8c236593af"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_shared___level.html#ad63587ca62fd5f572b593d8c236593af">Shared_Level</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const bool &amp;threaded=true)</td></tr>
+<tr class="memdesc:ad63587ca62fd5f572b593d8c236593af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Begins the creation process for this asset.  <a href="#ad63587ca62fd5f572b593d8c236593af">More...</a><br /></td></tr>
 <tr class="separator:ad63587ca62fd5f572b593d8c236593af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Responsible for the creation, containing, and sharing of assets. </p>
+<div class="textblock"><p>Shared version of a <a class="el" href="class_level.html" title="Contains serialized level data information.">Level</a> asset. </p>
+<p>Responsible for the creation, containing, and sharing of assets. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a3594019209dda2269d509c9935e1c58d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3594019209dda2269d509c9935e1c58d">&#9670;&nbsp;</a></span>Shared_Level() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">Shared_Level::Shared_Level </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructs an empty asset. </p>
+
+</div>
+</div>
 <a id="ad63587ca62fd5f572b593d8c236593af"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad63587ca62fd5f572b593d8c236593af">&#9670;&nbsp;</a></span>Shared_Level()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ad63587ca62fd5f572b593d8c236593af">&#9670;&nbsp;</a></span>Shared_Level() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -126,15 +161,17 @@ Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Begins the creation process for this asset. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Begins the creation process for this asset. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the engine being used </td></tr>
-    <tr><td class="paramname">filename</td><td>the filename to use </td></tr>
-    <tr><td class="paramname">threaded</td><td>create in a separate thread </td></tr>
+    <tr><td class="paramname">engine</td><td>the engine being used. </td></tr>
+    <tr><td class="paramname">filename</td><td>the filename to use. </td></tr>
+    <tr><td class="paramname">threaded</td><td>create in a separate thread. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the desired asset </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the desired asset. </dd></dl>
 
 </div>
 </div>

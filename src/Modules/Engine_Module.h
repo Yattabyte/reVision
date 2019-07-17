@@ -8,17 +8,21 @@ class Engine;
 /** An interface for engine modules to implement. */
 class Engine_Module {
 public:
-	// (de)Constructors
-	~Engine_Module() = default;
-	Engine_Module() = default;
+	// Public (de)Constructors
+	/** Destroy this engine module. */
+	inline ~Engine_Module() = default;
+	/** Construct an engine module. */
+	inline Engine_Module() = default;
 
-
+	
+	// Public Interface Declarations
 	/** Initialize the module. */
-	inline virtual void initialize(Engine * engine) {
-		m_engine = engine;
-	};
-	inline virtual void frameTick(const float & deltaTime) {
-	};
+	inline virtual void initialize(Engine * engine) { m_engine = engine; };
+	/** Deinitialize the module. */
+	virtual void deinitialize() {}
+	/** Tick the ui by a frame.
+	@param	deltaTime	the amount of time passed since last frame. */
+	inline virtual void frameTick(const float &) {}
 
 
 protected:

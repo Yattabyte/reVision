@@ -7,28 +7,38 @@
 #include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/DynamicBuffer.h"
+#include <algorithm>
 #include <string>
+#include "Engine.h"
 
 
 /** UI text label class, affords displaying text on the screen. */
-class Label : public UI_Element
-{
+class Label : public UI_Element {
 public:
-	// Alignment enums
-	enum Alignment : int {
+	// Public Interaction Enums
+	const enum interact {
+		on_textChanged = UI_Element::last_interact_index
+	};
+	// Public Alignment Enums
+	const enum Alignment {
 		align_left = -1,
 		align_center = 0,
 		align_right = 1
 	};
 
 
-	// (de)Constructors
-	~Label() {
+	// Public (de)Constructors
+	/** Destroy the label. */
+	inline ~Label() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Label(Engine * engine, const std::string & text = "Label") {
+	/** Construct a label, giving it the desired text. 
+	@param	engine		the engine.
+	@param	text		the label text. */
+	inline Label(Engine * engine, const std::string & text = "Label")
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Label");
 		m_textureFont = Shared_Texture(engine, "font.tga", GL_TEXTURE_2D, true, true);
@@ -42,102 +52,101 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		std::vector<glm::vec3> m_data(num_data);
-		m_data[0] = { -1, -1, 0 };
-		m_data[1] = { 1, -1, 0 };
-		m_data[2] = { 1,  1, 0 };
-		m_data[3] = { 1,  1, 0 };
-		m_data[4] = { -1,  1, 0 };
-		m_data[5] = { -1, -1, 0 };
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
+		std::vector<glm::vec3> data(num_data);
+		data[0] = { -1, -1, 0 };
+		data[1] = { 1, -1, 0 };
+		data[2] = { 1,  1, 0 };
+		data[3] = { 1,  1, 0 };
+		data[4] = { -1,  1, 0 };
+		data[5] = { -1, -1, 0 };
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_DYNAMIC_STORAGE_BIT);
+		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad);
 
+		// Configure THIS element
 		setText(text);
 		setTextScale(m_textScale);
 	}
 
 
-	// Interface Implementation
-	virtual void update() override {
-		// Write letters to a buffer
-		const GLuint count = (GLuint)m_text.size();
-		std::vector<int> data(count + 1);
-		data[0] = count;
-		for (int x = 0; x < (int)count; ++x)
-			data[x + 1] = (int)(m_text[x]) - 32;
-		m_bufferString.write(0, sizeof(int)*(count + 1), data.data());
-		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
+	// Public Interface Implementation
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet() || !m_textureFont->existsYet()) return;
 
-		UI_Element::update();
-	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet() && m_textureFont->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, newScale);
-			m_shader->setUniform(2, m_textScale);
-			m_shader->setUniform(3, (int)m_textAlignment);
-			m_shader->setUniform(4, m_enabled);
-			m_shader->setUniform(5, m_color);
-			m_textureFont->bind(0);
-			m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
-		UI_Element::renderElement(deltaTime, position, newScale);
-	}
-	virtual bool mouseAction(const MouseEvent & mouseEvent) override {
-		return false;
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, newScale);
+		m_shader->setUniform(2, std::clamp<float>((getScale().x / getText().size()) * 2.0f, 5.0f, m_textScale));
+		m_shader->setUniform(3, (int)m_textAlignment);
+		m_shader->setUniform(4, m_enabled);
+		m_shader->setUniform(5, m_color);
+		m_textureFont->bind(0);
+		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
 	// Public Methods
 	/** Set this label element's text. 
 	@param	text	the text to use. */
-	void setText(const std::string & text) {
+	inline void setText(const std::string & text) {
 		m_text = text;
-		update();
+
+		// Write letters to a buffer
+		const GLuint count = (GLuint)m_text.size();
+		std::vector<int> data(count + 1);
+		data[0] = count;
+		for (int x = 0; x < (int)count; ++x)
+			data[x + 1] = (int)(m_text[x]) - 32;
+		m_bufferString.write_immediate(0, sizeof(int)*(count + 1), data.data());
+		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
+
+		// Notify text changed
+		enactCallback(on_textChanged);
 	}
 	/** Retrieve this label's text. 
 	@return	the text this label uses. */
-	std::string getText() const {
+	inline std::string getText() const {
 		return m_text;
 	}
 	/** Set this label element's text scaling factor.
 	@param	text	the new scaling factor to use. */
-	void setTextScale(const float & textScale) {
+	inline void setTextScale(const float & textScale) {
 		m_textScale = textScale;
 		m_maxScale.y = textScale;
-		update();
 	}
 	/** Retrieve this label's text scaling factor.
 	@return	the text scaling factor. */
-	float getTextScale() const {
+	inline float getTextScale() const {
 		return m_textScale;
 	}
 	/** Set this label's color.
 	@param	text	the new color to render with. */
-	void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec3 & color) {
 		m_color = color;
 	}
 	/** Retrieve this label's color.
 	@return	the color used by this element. */
-	glm::vec3 getColor() const {
+	inline glm::vec3 getColor() const {
 		return m_color;
 	}
 	/** Set this label element's alignment.
 	@param	text	the alignment (left, center, right). */
-	void setAlignment(const Alignment & alignment) {
+	inline void setAlignment(const Alignment & alignment) {
 		m_textAlignment = alignment;
 	}
 	/** Retrieve this label's alignment.
 	@return	the alignment. */
-	Alignment getAlignment() const {
+	inline Alignment getAlignment() const {
 		return m_textAlignment;
 	}
 
@@ -148,17 +157,11 @@ protected:
 	float m_textScale = 10.0f;
 	glm::vec3 m_color = glm::vec3(1.0f);
 	Alignment m_textAlignment = align_left;
-
-
-private:
-	// Private Attributes
-	GLuint 
-		m_vaoID = 0, 
-		m_vboID = 0;
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;
 	StaticBuffer m_indirect;
 	DynamicBuffer m_bufferString;
 };
 
-#endif // UI_PANEL_H
+#endif // UI_LABEL_H

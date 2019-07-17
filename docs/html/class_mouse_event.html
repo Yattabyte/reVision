@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -65,6 +65,7 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="class_mouse_event-members.html">List of all members</a>  </div>
   <div class="headertitle">
@@ -72,15 +73,32 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Holds mouse interaction information.  
+ <a href="class_mouse_event.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a26fb63ffed8fe679b1cf39f6def374b3"><td class="memItemLeft" align="right" valign="top"><a id="a26fb63ffed8fe679b1cf39f6def374b3"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Actions</b> { <b>RELEASE</b> = 0, 
-<b>PRESS</b> = 1, 
-<b>MOVE</b> = 2
+<tr class="memitem:a589eecf77f07030e992fdc2c185f1909"><td class="memItemLeft" align="right" valign="top"><a id="a589eecf77f07030e992fdc2c185f1909"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Action</b> { <b>RELEASE</b>, 
+<b>PRESS</b>, 
+<b>MOVE</b>
  }</td></tr>
-<tr class="separator:a26fb63ffed8fe679b1cf39f6def374b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a589eecf77f07030e992fdc2c185f1909"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af097d971f2e1b8a1c52fe1ff82ceb19b"><td class="memItemLeft" align="right" valign="top"><a id="af097d971f2e1b8a1c52fe1ff82ceb19b"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>Key</b> : int { <b>LEFT</b> = 0, 
+<b>RIGHT</b>, 
+<b>MIDDLE</b>
+ }</td></tr>
+<tr class="separator:af097d971f2e1b8a1c52fe1ff82ceb19b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a27e843f59636f5b547f7d70ec6e8f7f0"><td class="memItemLeft" align="right" valign="top">enum Key int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mouse_event.html#a27e843f59636f5b547f7d70ec6e8f7f0">~MouseEvent</a> ()=default</td></tr>
+<tr class="memdesc:a27e843f59636f5b547f7d70ec6e8f7f0"><td class="mdescLeft">&#160;</td><td class="mdescRight">The name of all keys supported, and an appropriate key code for each of them.  <a href="#a27e843f59636f5b547f7d70ec6e8f7f0">More...</a><br /></td></tr>
+<tr class="separator:a27e843f59636f5b547f7d70ec6e8f7f0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae021377cccef54ef81670186ec01f3ba"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mouse_event.html#ae021377cccef54ef81670186ec01f3ba">MouseEvent</a> ()=default</td></tr>
+<tr class="memdesc:ae021377cccef54ef81670186ec01f3ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a mouse event.  <a href="#ae021377cccef54ef81670186ec01f3ba">More...</a><br /></td></tr>
+<tr class="separator:ae021377cccef54ef81670186ec01f3ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -91,18 +109,74 @@ double&#160;</td><td class="memItemRight" valign="bottom"><b>m_xPos</b> = 0.0</t
 double&#160;</td><td class="memItemRight" valign="bottom"><b>m_yPos</b> = 0.0</td></tr>
 <tr class="separator:acd0993a90c8cd796c70d87a5094267b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1088ac1bb6add30aad2816d3addad8b7"><td class="memItemLeft" align="right" valign="top"><a id="a1088ac1bb6add30aad2816d3addad8b7"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>m_button</b></td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_button</b> = 0</td></tr>
 <tr class="separator:a1088ac1bb6add30aad2816d3addad8b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a523a39425c8f0af4f24857936ebf76f9"><td class="memItemLeft" align="right" valign="top"><a id="a523a39425c8f0af4f24857936ebf76f9"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>m_action</b></td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_action</b> = 0</td></tr>
 <tr class="separator:a523a39425c8f0af4f24857936ebf76f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ea25b923a512a59e7b307a2ac290eb4"><td class="memItemLeft" align="right" valign="top"><a id="a2ea25b923a512a59e7b307a2ac290eb4"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>m_mods</b></td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><b>m_mods</b> = 0</td></tr>
 <tr class="separator:a2ea25b923a512a59e7b307a2ac290eb4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Holds mouse interaction information. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a27e843f59636f5b547f7d70ec6e8f7f0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27e843f59636f5b547f7d70ec6e8f7f0">&#9670;&nbsp;</a></span>~MouseEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum Key int MouseEvent::~MouseEvent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>The name of all keys supported, and an appropriate key code for each of them. </p>
+<p>Destroy the mouse event. </p>
+
+</div>
+</div>
+<a id="ae021377cccef54ef81670186ec01f3ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae021377cccef54ef81670186ec01f3ba">&#9670;&nbsp;</a></span>MouseEvent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">MouseEvent::MouseEvent </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Construct a mouse event. </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Modules/UI/<a class="el" href="_mouse_event_8h_source.html">MouseEvent.h</a></li>
 </ul>
 </div><!-- contents -->

@@ -81,11 +81,11 @@ void Config::setValue(const unsigned int & cfg_key, const float & cfg_value)
 	m_configuration[cfg_key] = cfg_value;
 }
 
-const float Config::getValue(const unsigned int & cfg_key) const
+float Config::getValue(const unsigned int & cfg_key) const
 {
 	if (cfg_key >= 0 && m_configuration.find(cfg_key) != m_configuration.end())
 		return m_configuration.at(cfg_key);
-	return UNDEFINED_CVAL;
+	return std::nanf("");
 }
 
 void Config::saveConfig()

@@ -3,7 +3,7 @@
 #define	PRIMITIVE_H
 
 #include "Assets/Mesh.h"
-#include "GL/glad/glad.h"
+#include "Utilities/GL/glad/glad.h"
 #include "glm/glm.hpp"
 #include <vector>
 
@@ -12,31 +12,39 @@ class Engine;
 class Primitive;
 struct Single_Primitive_Vertex;
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of a Primitive asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Primitive : public std::shared_ptr<Primitive> {
 public:
-	Shared_Primitive() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Primitive() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	engine			the engine being used.
+	@param	filename		the filename to use.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	explicit Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-/** A basic geometric shape to be used in basic visual processing, such as a quad or a sphere. */
-class Primitive : public Asset
-{
+/** A basic untextued 3D model used in visual processing.
+Represents a more basic 3D model with a material, and wraps an OpenGL vertex array & buffer object.
+Typically used to load quads/spheres for fire & forget events.
+@note	owns 1 Shared_Mesh object. */
+class Primitive : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Primitive. */
 	~Primitive();
-	/** Construct the Primitive. */
+	/** Construct the Primitive.
+	@param	engine		the engine to use.
+	@param	filename	the asset file name (relative to engine directory). */
 	Primitive(Engine * engine, const std::string & filename);
 
 
 	// Public Methods
 	/** Returns the vertex-count of this object. 
-	@return					vertex-count of this object */
+	@return					vertex-count of this object. */
 	size_t getSize() const;
 	
 	
@@ -47,18 +55,12 @@ public:
 
 
 private:
-	// Private Methods
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 
 	// Private Attributes
 	friend class Shared_Primitive;
-};
-
-struct Single_Primitive_Vertex {
-	glm::vec3 vertex;
-	glm::vec2 uv;
 };
 
 #endif // PRIMITIVE_H

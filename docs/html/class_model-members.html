@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,7 +70,7 @@ $(function() {
 
 <p>This is the complete list of members for <a class="el" href="class_model.html">Model</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#ae63f2109b599674813f35bad45422c6f">addCallback</a>(const std::shared_ptr&lt; bool &gt; &amp;alive, AssetFinalizedCallback &amp;&amp;callback)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a>(const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a>(Engine *engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
   <tr class="even"><td class="entry"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a>() const</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
   <tr><td class="entry"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a>()</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
@@ -79,22 +79,19 @@ $(function() {
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_bboxMax</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0"><td class="entry"><b>m_bboxMin</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
   <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_callbacks</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_count</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_data</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_fence</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">mutable</span><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_filename</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_finalized</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_materialArray</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_mesh</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_modelManager</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_offset</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_radius</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_model.html#a43c92b867f4b3fbdac88455dae7266fe">Model</a>(Engine *engine, const std::string &amp;filename, ModelManager &amp;modelManager)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
-  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>Shared_Model</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
-  <tr><td class="entry"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="class_model.html#ad6ebd2062a0b823db841a0b88baac4c0">~Model</a>()</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_data</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_engine</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_fence</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">mutable</span><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_filename</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_finalized</b> (defined in <a class="el" href="class_asset.html">Asset</a>)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">protected</span></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_materialArray</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>m_mesh</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0" class="even"><td class="entry"><b>m_radius</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr><td class="entry"><a class="el" href="class_model.html#afc07764a7cec2a8afd12645ac322430a">Model</a>(Engine *engine, const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a>(const std::string &amp;filename)</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"></td></tr>
+  <tr bgcolor="#f0f0f0"><td class="entry"><b>Shared_Model</b> (defined in <a class="el" href="class_model.html">Model</a>)</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"><span class="mlabel">friend</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a>()=default</td><td class="entry"><a class="el" href="class_asset.html">Asset</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr><td class="entry"><a class="el" href="class_model.html#a3f337d47921169f4d430f416e6df095a">~Model</a>()=default</td><td class="entry"><a class="el" href="class_model.html">Model</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
 </table></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

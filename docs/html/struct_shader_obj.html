@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,18 +71,29 @@ $(function() {
 <div class="title">ShaderObj Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>A single shader object, like a fragment shader or a vertex shader, not a whole shader program.  
+ <a href="struct_shader_obj.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="_shader_8h_source.html">Shader.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a665dd753966d0b15368c271d0a1139d0"><td class="memItemLeft" align="right" valign="top"><a id="a665dd753966d0b15368c271d0a1139d0"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ShaderObj</b> (const GLenum &amp;type)</td></tr>
+<tr class="memitem:af007ceb4f394b4102f39791d99758ba8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#af007ceb4f394b4102f39791d99758ba8">~ShaderObj</a> ()</td></tr>
+<tr class="memdesc:af007ceb4f394b4102f39791d99758ba8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the shader object.  <a href="#af007ceb4f394b4102f39791d99758ba8">More...</a><br /></td></tr>
+<tr class="separator:af007ceb4f394b4102f39791d99758ba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a665dd753966d0b15368c271d0a1139d0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#a665dd753966d0b15368c271d0a1139d0">ShaderObj</a> (const GLenum &amp;type)</td></tr>
+<tr class="memdesc:a665dd753966d0b15368c271d0a1139d0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct a shader object.  <a href="#a665dd753966d0b15368c271d0a1139d0">More...</a><br /></td></tr>
 <tr class="separator:a665dd753966d0b15368c271d0a1139d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca49fff0a1fd90dc1083af2fd3b786ac"><td class="memItemLeft" align="right" valign="top">const GLint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#aca49fff0a1fd90dc1083af2fd3b786ac">getShaderiv</a> (const GLenum &amp;pname) const</td></tr>
-<tr class="separator:aca49fff0a1fd90dc1083af2fd3b786ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86ca1419262afb017a36aea4d23f0a61"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#a86ca1419262afb017a36aea4d23f0a61">loadDocument</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filePath)</td></tr>
-<tr class="separator:a86ca1419262afb017a36aea4d23f0a61"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac021c1f7702e6f7d7714fbe8c05d379b"><td class="memItemLeft" align="right" valign="top">const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#ac021c1f7702e6f7d7714fbe8c05d379b">createGLShader</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
-<tr class="separator:ac021c1f7702e6f7d7714fbe8c05d379b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a490e2a1ddffb965a05e823cb71f5c7"><td class="memItemLeft" align="right" valign="top">GLint&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#a5a490e2a1ddffb965a05e823cb71f5c7">getShaderiv</a> (const GLenum &amp;pname) const</td></tr>
+<tr class="memdesc:a5a490e2a1ddffb965a05e823cb71f5c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve a shader parameter by the name specified.  <a href="#a5a490e2a1ddffb965a05e823cb71f5c7">More...</a><br /></td></tr>
+<tr class="separator:a5a490e2a1ddffb965a05e823cb71f5c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa62f9833ecc8f237265a3af2c279a85a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#aa62f9833ecc8f237265a3af2c279a85a">loadDocument</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filePath)</td></tr>
+<tr class="memdesc:aa62f9833ecc8f237265a3af2c279a85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Load a shader document from the file path specified.  <a href="#aa62f9833ecc8f237265a3af2c279a85a">More...</a><br /></td></tr>
+<tr class="separator:aa62f9833ecc8f237265a3af2c279a85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8c6f521217f418dda7fdfc91e327511"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_shader_obj.html#ac8c6f521217f418dda7fdfc91e327511">createGLShader</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:ac8c6f521217f418dda7fdfc91e327511"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an OpenGL shader object from this class, using the document string loaded.  <a href="#ac8c6f521217f418dda7fdfc91e327511">More...</a><br /></td></tr>
+<tr class="separator:ac8c6f521217f418dda7fdfc91e327511"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -96,15 +107,57 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><b>m_shaderText</
 GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VERTEX_SHADER</td></tr>
 <tr class="separator:abb4bb7f7c2366d95dbf3fd4a8c023827"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a id="ac021c1f7702e6f7d7714fbe8c05d379b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac021c1f7702e6f7d7714fbe8c05d379b">&#9670;&nbsp;</a></span>createGLShader()</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A single shader object, like a fragment shader or a vertex shader, not a whole shader program. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="af007ceb4f394b4102f39791d99758ba8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af007ceb4f394b4102f39791d99758ba8">&#9670;&nbsp;</a></span>~ShaderObj()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const bool ShaderObj::createGLShader </td>
+          <td class="memname">ShaderObj::~ShaderObj </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Destroy the shader object. </p>
+
+</div>
+</div>
+<a id="a665dd753966d0b15368c271d0a1139d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a665dd753966d0b15368c271d0a1139d0">&#9670;&nbsp;</a></span>ShaderObj()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">ShaderObj::ShaderObj </td>
+          <td>(</td>
+          <td class="paramtype">const GLenum &amp;&#160;</td>
+          <td class="paramname"><em>type</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Construct a shader object. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="ac8c6f521217f418dda7fdfc91e327511"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8c6f521217f418dda7fdfc91e327511">&#9670;&nbsp;</a></span>createGLShader()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool ShaderObj::createGLShader </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
@@ -122,10 +175,12 @@ GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VER
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Create an OpenGL shader object from this class, using the document string loaded. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Create an OpenGL shader object from this class, using the document string loaded. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the active engine to use </td></tr>
-    <tr><td class="paramname">filename</td><td>the shader file name (for reporting purposes) </td></tr>
+    <tr><td class="paramname">engine</td><td>the active engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the shader file name (for reporting purposes). </td></tr>
   </table>
   </dd>
 </dl>
@@ -133,14 +188,14 @@ GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VER
 
 </div>
 </div>
-<a id="aca49fff0a1fd90dc1083af2fd3b786ac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca49fff0a1fd90dc1083af2fd3b786ac">&#9670;&nbsp;</a></span>getShaderiv()</h2>
+<a id="a5a490e2a1ddffb965a05e823cb71f5c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5a490e2a1ddffb965a05e823cb71f5c7">&#9670;&nbsp;</a></span>getShaderiv()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const GLint ShaderObj::getShaderiv </td>
+          <td class="memname">GLint ShaderObj::getShaderiv </td>
           <td>(</td>
           <td class="paramtype">const GLenum &amp;&#160;</td>
           <td class="paramname"><em>pname</em></td><td>)</td>
@@ -148,9 +203,11 @@ GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VER
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Retrieve a shader parameter by the name specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve a shader parameter by the name specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">pname</td><td>the program parameter name </td></tr>
+    <tr><td class="paramname">pname</td><td>the program parameter name. </td></tr>
   </table>
   </dd>
 </dl>
@@ -158,14 +215,14 @@ GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VER
 
 </div>
 </div>
-<a id="a86ca1419262afb017a36aea4d23f0a61"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86ca1419262afb017a36aea4d23f0a61">&#9670;&nbsp;</a></span>loadDocument()</h2>
+<a id="aa62f9833ecc8f237265a3af2c279a85a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa62f9833ecc8f237265a3af2c279a85a">&#9670;&nbsp;</a></span>loadDocument()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">const bool ShaderObj::loadDocument </td>
+          <td class="memname">bool ShaderObj::loadDocument </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="class_engine.html">Engine</a> *&#160;</td>
           <td class="paramname"><em>engine</em>, </td>
@@ -183,10 +240,12 @@ GLenum&#160;</td><td class="memItemRight" valign="bottom"><b>m_type</b> = GL_VER
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Load a shader document from the file path specified. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Load a shader document from the file path specified. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">engine</td><td>the active engine to use </td></tr>
-    <tr><td class="paramname">filePath</td><td>the relative path to the file to read </td></tr>
+    <tr><td class="paramname">engine</td><td>the active engine to use. </td></tr>
+    <tr><td class="paramname">filePath</td><td>the relative path to the file to read. </td></tr>
   </table>
   </dd>
 </dl>

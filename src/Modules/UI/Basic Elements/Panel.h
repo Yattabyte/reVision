@@ -3,21 +3,24 @@
 #define UI_PANEL_H
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Assets/Primitive.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/StaticBuffer.h"
 
 
-/** UI panel class, affords containing other elements only. */
-class Panel : public UI_Element
-{
+/** UI panel class, affords containing other elements, and rendering a fixed color. */
+class Panel : public UI_Element {
 public:
-	~Panel() {
+	// Public (de)Constructors
+	/** Destroy the panel. */
+	inline ~Panel() {
 		// Delete geometry
 		glDeleteBuffers(1, &m_vboID);
 		glDeleteVertexArrays(1, &m_vaoID);
 	}
-	Panel(Engine * engine) {
+	/** Construct a panel.
+	@param	engine		the engine to use. */
+	inline Panel(Engine * engine)
+		: UI_Element(engine) {
 		// Asset Loading
 		m_shader = Shared_Shader(engine, "UI\\Panel");
 
@@ -33,67 +36,68 @@ public:
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
 		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+
+		// Add Callbacks
+		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
 	}
 	
 
-	// Interface Implementation
-	virtual void update() override {
-		constexpr auto num_data = 2 * 3;
-		std::vector<glm::vec3> m_data(num_data);
-
-		// Center
-		m_data[0] = { -1, -1, 0 };
-		m_data[1] = { 1, -1, 0 };
-		m_data[2] = { 1,  1, 0 };
-		m_data[3] = { 1,  1, 0 };
-		m_data[4] = { -1,  1, 0 };
-		m_data[5] = { -1, -1, 0 };
-		for (int x = 0; x < 6; ++x)
-			m_data[x] *= glm::vec3(m_scale, 0.0f);
-
-		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &m_data[0]);
-
-		UI_Element::update();
-	}
-	virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
-		if (!getVisible()) return;
+	// Public Interface Implementation
+	inline virtual void renderElement(const float & deltaTime, const glm::vec2 & position, const glm::vec2 & scale) override {
+		// Exit Early
+		if (!getVisible() || !m_shader->existsYet()) return;
+		
+		// Render
 		const glm::vec2 newPosition = position + m_position;
 		const glm::vec2 newScale = glm::min(m_scale, scale);
-		if (m_shader->existsYet()) {
-			m_shader->bind();
-			m_shader->setUniform(0, newPosition);
-			m_shader->setUniform(1, m_color);
-			glBindVertexArray(m_vaoID);
-			m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
-		}
-		UI_Element::renderElement(deltaTime, position, newScale);
+		m_shader->bind();
+		m_shader->setUniform(0, newPosition);
+		m_shader->setUniform(1, m_color);
+		glBindVertexArray(m_vaoID);
+		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		
+		// Render Children
+		UI_Element::renderElement(deltaTime, position, scale);
 	}
 
 
 	// Public Methods
 	/** Set this panel's color.
 	@param	text	the new color to render with. */
-	void setColor(const glm::vec3 & color) {
+	inline void setColor(const glm::vec4 & color) {
 		m_color = color;
 	}
 	/** Retrieve this panel's color.
 	@return	the color used by this element. */
-	glm::vec3 getColor() const {
+	inline glm::vec4 getColor() const {
 		return m_color;
 	}
 
 
 protected:
+	// Protected Methods
+	/** Update the data dependant on the scale of this element. */
+	inline void updateGeometry() {
+		constexpr auto num_data = 2 * 3;
+		std::vector<glm::vec3> data(num_data);
+
+		// Center
+		data[0] = { -1, -1, 0 };
+		data[1] = { 1, -1, 0 };
+		data[2] = { 1,  1, 0 };
+		data[3] = { 1,  1, 0 };
+		data[4] = { -1,  1, 0 };
+		data[5] = { -1, -1, 0 };
+		for (int x = 0; x < 6; ++x)
+			data[x] *= glm::vec3(m_scale, 0.0f);
+		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
+	}
+
+
 	// Protected Attributes
-	glm::vec3 m_color = glm::vec3(0.2f);
-
-
-private:
-	// Private Attributes
-	GLuint 
-		m_vaoID = 0, 
-		m_vboID = 0;
+	glm::vec4 m_color = glm::vec4(0.2f);
+	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirect;
 };

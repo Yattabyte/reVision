@@ -2,7 +2,7 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
-project(reVision VERSION 3.0 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.0.0 DESCRIPTION "Video game engine project.")
 
 # Get dependency directory locations from the user
 set(ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
@@ -16,20 +16,20 @@ set(PROJECT_BIN ${CMAKE_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 
 # Include directories of dependencies for entire project
-include_directories ( 	
+include_directories( 	
 	${CORE_DIR} 
 	${ASSIMP_DIR}/include/
 	${BULLET_DIR}/src/			
 	${FREEIMAGE_DIR}/Source/
 	${GLFW_DIR}/include/
 	${GLM_DIR} 
-	${SOLOUD_DIR}/include 
+	${SOLOUD_DIR}/include/
 )
 
 # Add external dependencies						
-link_libraries 	(	
-	debug		${ASSIMP_DIR}/lib/Debug/assimp-vc140-mt.lib
-	optimized	${ASSIMP_DIR}/lib/Release/assimp-vc140-mt.lib
+link_libraries(	
+	debug		${ASSIMP_DIR}/lib/Debug/assimp.lib
+	optimized	${ASSIMP_DIR}/lib/Release/assimp.lib
 	debug		${ASSIMP_DIR}/lib/Debug/IrrXML.lib
 	optimized	${ASSIMP_DIR}/lib/Release/IrrXML.lib
 	debug		${ASSIMP_DIR}/lib/Debug/zlibstaticd.lib
@@ -78,6 +78,7 @@ if (DOXYGEN_FOUND)
 		set(DOXYGEN_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/docs/)
 		set(DOXYGEN_MARKDOWN_SUPPORT YES)
 		set(DOXYGEN_BUILTIN_STL_SUPPORT YES)
+		set(DOXYGEN_JAVADOC_AUTOBRIEF YES)
 		set(DOXYGEN_USE_MDFILE_AS_MAINPAGE ${PROJECT_SOURCE_DIR}/README.md)
 		doxygen_add_docs(Documentation ${PROJECT_SOURCE_DIR} COMMENT "Generate docs")
 	endif (GENERATE_DOCS)

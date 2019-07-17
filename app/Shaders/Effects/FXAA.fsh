@@ -2,7 +2,7 @@
 #version 460
 
 out vec3 FXAAColor;
-layout (binding = 0) uniform sampler2D Screen;
+layout (binding = 0) uniform sampler2DArray Screen;
 /*
 layout (location = ) uniform float FXAA_SPAN_MAX		= 10.0;
 layout (location = ) uniform float FXAA_REDUCE_MIN 		= 1.0 / 128.0;
@@ -14,14 +14,19 @@ layout (location = 2) uniform float FXAA_REDUCE_MUL		= 1.0 / 7.0;
 layout (location = 0) in vec2 TexOffset;
 layout (location = 1) in vec2 TexCoord;
 
+vec4 screenLookup(vec2 coords)
+{
+	return texture(Screen, vec3(coords, gl_Layer));
+}
+
 void main()
 {			
 	vec3 luma 				= vec3(0.299, 0.587, 0.114);
-	float lumaTL 			= dot(luma, texture( Screen, TexCoord + (vec2(-1.0, -1.0) * TexOffset) ).xyz);
-	float lumaTR 			= dot(luma, texture( Screen, TexCoord + (vec2(1.0, -1.0) * TexOffset) ).xyz);
-	float lumaBL 			= dot(luma, texture( Screen, TexCoord + (vec2(-1.0, 1.0) * TexOffset) ).xyz);
-	float lumaBR 			= dot(luma, texture( Screen, TexCoord + (vec2(1.0, 1.0) * TexOffset) ).xyz);
-	float lumaM 			= dot(luma, texture( Screen, TexCoord ).xyz);
+	float lumaTL 			= dot(luma, screenLookup(TexCoord + (vec2(-1.0, -1.0) * TexOffset) ).xyz);
+	float lumaTR 			= dot(luma, screenLookup(TexCoord + (vec2(1.0, -1.0) * TexOffset) ).xyz);
+	float lumaBL 			= dot(luma, screenLookup(TexCoord + (vec2(-1.0, 1.0) * TexOffset) ).xyz);
+	float lumaBR 			= dot(luma, screenLookup(TexCoord + (vec2(1.0, 1.0) * TexOffset) ).xyz);
+	float lumaM 			= dot(luma, screenLookup(TexCoord).xyz);
 	
 	// Blurring Direction
 	vec2 dir; // Invert y not x???
@@ -40,12 +45,12 @@ void main()
 								) * TexOffset;
 	// Blur
 	vec3 result1 			= (1.0 / 2.0) * (
-												texture( Screen, TexCoord + (dir * vec2(1.0/3.0 - 0.5)) ).xyz +
-												texture( Screen, TexCoord + (dir * vec2(2.0/3.0 - 0.5)) ).xyz 
+												screenLookup(TexCoord + (dir * vec2(1.0/3.0 - 0.5)) ).xyz +
+												screenLookup(TexCoord + (dir * vec2(2.0/3.0 - 0.5)) ).xyz 
 											);								
 	vec3 result2 			= result1 * (1.0 / 2.0) + (1.0 / 4.0) * (
-												texture( Screen, TexCoord + (dir * vec2(0.0/3.0 - 0.5)) ).xyz +
-												texture( Screen, TexCoord + (dir * vec2(3.0/3.0 - 0.5)) ).xyz 
+												screenLookup(TexCoord + (dir * vec2(0.0/3.0 - 0.5)) ).xyz +
+												screenLookup(TexCoord + (dir * vec2(3.0/3.0 - 0.5)) ).xyz 
 											);
 											
 	// if result2 is sampled too far away, (1/4th) use luma1 (1/6th, tighter)

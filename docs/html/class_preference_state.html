@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -73,6 +73,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A container class that holds the preference state for the engine, such as window size and graphics options.  
+ <a href="class_preference_state.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_preference_state_8h_source.html">PreferenceState.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
@@ -89,44 +92,51 @@ Public Types</h2></td></tr>
 <b>C_FOV</b>, 
 <br />
 &#160;&#160;<b>C_MATERIAL_SIZE</b>, 
-<b>C_ENVMAP_SIZE</b>, 
 <b>C_RH_BOUNCE_SIZE</b>, 
-<b>C_SHADOW_SIZE_DIRECTIONAL</b>, 
+<b>C_SHADOW_SIZE</b>, 
+<b>C_SHADOW_MAX_PER_FRAME</b>, 
 <br />
-&#160;&#160;<b>C_SHADOW_SIZE_POINT</b>, 
-<b>C_SHADOW_SIZE_SPOT</b>, 
-<b>C_SHADOW_QUALITY</b>, 
+&#160;&#160;<b>C_ENVMAP_SIZE</b>, 
+<b>C_ENVMAP_MAX_PER_FRAME</b>, 
 <b>C_BLOOM</b>, 
+<b>C_BLOOM_STRENGTH</b>, 
 <br />
-&#160;&#160;<b>C_BLOOM_STRENGTH</b>, 
-<b>C_SSAO</b>, 
+&#160;&#160;<b>C_SSAO</b>, 
 <b>C_SSAO_BLUR_STRENGTH</b>, 
 <b>C_SSAO_RADIUS</b>, 
+<b>C_SSAO_QUALITY</b>, 
 <br />
-&#160;&#160;<b>C_SSAO_QUALITY</b>, 
-<b>C_SSR</b>, 
+&#160;&#160;<b>C_SSR</b>, 
 <b>C_FXAA</b>
 <br />
  }</td></tr>
+<tr class="memdesc:accefc690c344ef9c76a4af526ed6a3bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Enumeration for indexing into preferences.  <a href="class_preference_state.html#accefc690c344ef9c76a4af526ed6a3bb">More...</a><br /></td></tr>
 <tr class="separator:accefc690c344ef9c76a4af526ed6a3bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3b2152ea174d3a71eff845e53a6bd591"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preference_state.html#a3b2152ea174d3a71eff845e53a6bd591">~PreferenceState</a> ()</td></tr>
+<tr class="memdesc:a3b2152ea174d3a71eff845e53a6bd591"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the preference state.  <a href="#a3b2152ea174d3a71eff845e53a6bd591">More...</a><br /></td></tr>
 <tr class="separator:a3b2152ea174d3a71eff845e53a6bd591"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5879796d6c9e5ae18d2903a8514af73"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preference_state.html#aa5879796d6c9e5ae18d2903a8514af73">PreferenceState</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename=&quot;preferences&quot;)</td></tr>
+<tr class="memdesc:aa5879796d6c9e5ae18d2903a8514af73"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the preference state.  <a href="#aa5879796d6c9e5ae18d2903a8514af73">More...</a><br /></td></tr>
 <tr class="separator:aa5879796d6c9e5ae18d2903a8514af73"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1a2f0bdcbc100669a64d1f42087ef438"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preference_state.html#a1a2f0bdcbc100669a64d1f42087ef438">loadFile</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:a1a2f0bdcbc100669a64d1f42087ef438"><td class="mdescLeft">&#160;</td><td class="mdescRight">Loads a preference file from disk.  <a href="#a1a2f0bdcbc100669a64d1f42087ef438">More...</a><br /></td></tr>
 <tr class="separator:a1a2f0bdcbc100669a64d1f42087ef438"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab4467bd44ed585f63fa32e322835530a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preference_state.html#ab4467bd44ed585f63fa32e322835530a">save</a> ()</td></tr>
+<tr class="memdesc:ab4467bd44ed585f63fa32e322835530a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Saves the preference file to disk, using the same filename as when loaded.  <a href="#ab4467bd44ed585f63fa32e322835530a">More...</a><br /></td></tr>
 <tr class="separator:ab4467bd44ed585f63fa32e322835530a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abecc80422f79a05a5913dfdd7878af0d"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:abecc80422f79a05a5913dfdd7878af0d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_preference_state.html#abecc80422f79a05a5913dfdd7878af0d">getOrSetValue</a> (const <a class="el" href="class_preference_state.html#accefc690c344ef9c76a4af526ed6a3bb">Preference</a> &amp;targetKey, T &amp;container)</td></tr>
+<tr class="memdesc:abecc80422f79a05a5913dfdd7878af0d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tries to update the container with the value associated with the target key.  <a href="#abecc80422f79a05a5913dfdd7878af0d">More...</a><br /></td></tr>
 <tr class="separator:abecc80422f79a05a5913dfdd7878af0d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a258f68d537a6a3e81f16a07d7c523ad5"><td class="memTemplParams" colspan="2">template&lt;typename T &gt; </td></tr>
 <tr class="memitem:a258f68d537a6a3e81f16a07d7c523ad5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="class_preference_state.html#a258f68d537a6a3e81f16a07d7c523ad5">setValue</a> (const <a class="el" href="class_preference_state.html#accefc690c344ef9c76a4af526ed6a3bb">Preference</a> &amp;targetKey, const T &amp;targetValue)</td></tr>
+<tr class="memdesc:a258f68d537a6a3e81f16a07d7c523ad5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets a value for a preference with the given ID.  <a href="#a258f68d537a6a3e81f16a07d7c523ad5">More...</a><br /></td></tr>
 <tr class="separator:a258f68d537a6a3e81f16a07d7c523ad5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf697100162574a72759301ada7f8576"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_preference_state.html#aaf697100162574a72759301ada7f8576">addCallback</a> (const <a class="el" href="class_preference_state.html#accefc690c344ef9c76a4af526ed6a3bb">Preference</a> &amp;targetKey, const std::shared_ptr&lt; bool &gt; &amp;alive, const std::function&lt; void(float)&gt; &amp;callback)</td></tr>
+<tr class="memdesc:aaf697100162574a72759301ada7f8576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the supplied preference updates.  <a href="#aaf697100162574a72759301ada7f8576">More...</a><br /></td></tr>
 <tr class="separator:aaf697100162574a72759301ada7f8576"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
@@ -149,6 +159,7 @@ static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valig
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Enumeration for indexing into preferences. </p>
 
 </div>
@@ -176,6 +187,7 @@ static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valig
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy the preference state. </p>
 
 </div>
@@ -213,7 +225,9 @@ static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valig
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Construct the preference state. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Construct the preference state. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">engine</td><td>the engine </td></tr>
     <tr><td class="paramname">filename</td><td>an optional relative path to the preference file to load. Defaults to "preferences.cfg" </td></tr>
@@ -263,7 +277,9 @@ static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valig
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Attaches a callback method to be triggered when the supplied preference updates. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Attaches a callback method to be triggered when the supplied preference updates. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">targetKey</td><td>the preference-ID to which this callback will be attached </td></tr>
     <tr><td class="paramname">alive</td><td>the </td></tr>
@@ -309,7 +325,9 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Tries to update the container with the value associated with the target key. If key doesn't exist, creates the key-value pair from the value given. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Tries to update the container with the value associated with the target key. </p>
+<p>If key doesn't exist, creates the key-value pair from the value given. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">targetKey</td><td>the preference key to look up </td></tr>
     <tr><td class="paramname">container</td><td>the object to update </td></tr>
@@ -342,7 +360,9 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Loads a preference file from disk. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Loads a preference file from disk. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filename</td><td>the relative path to the preference file to load </td></tr>
   </table>
@@ -373,6 +393,7 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Saves the preference file to disk, using the same filename as when loaded. </p>
 
 </div>
@@ -412,7 +433,9 @@ template&lt;typename T &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Sets a value for a preference with the given ID. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Sets a value for a preference with the given ID. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">targetKey</td><td>the preference key to set the value to </td></tr>
     <tr><td class="paramname">targetValue</td><td>the value to tie to the key supplied </td></tr>

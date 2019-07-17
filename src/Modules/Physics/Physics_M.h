@@ -3,7 +3,7 @@
 #define PHYSICS_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Utilities/ECS/ecsSystem.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
 
@@ -11,33 +11,33 @@
 /** A module responsible for physics. */
 class Physics_Module : public Engine_Module {
 public:
-	// (de)Constructors
-	~Physics_Module();
-	Physics_Module() = default;
+	// Public (de)Constructors
+	inline ~Physics_Module() = default;
+	inline Physics_Module() = default;
 
 
-	// Public Interface Implementation
-	/** Initialize the module. */
+	// Public Interface Implementations
 	virtual void initialize(Engine * engine) override;
-	/** Updates the physics simulation by a single frame
-	@param	deltaTime	the amount of time passed since last frame */
+	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
 
 	// Public Methods
 	/** Returns a pointer to the physics-world.
 	@return				the physics world. */
-	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }
+	inline btDiscreteDynamicsWorld * getWorld() { return m_world; }	
 
 
 private:
 	// Private Attributes
+	bool m_enabled = false;
 	btBroadphaseInterface * m_broadphase = nullptr;
 	btDefaultCollisionConfiguration * m_collisionConfiguration = nullptr;
 	btCollisionDispatcher * m_dispatcher = nullptr;
 	btSequentialImpulseConstraintSolver * m_solver = nullptr;
 	btDiscreteDynamicsWorld * m_world = nullptr;
-	ECSSystemList m_physicsSystems;
+	ECSSystemList m_physicsSystems; 
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PHYSICS_MODULE_H

@@ -2,60 +2,89 @@
 #ifndef STARTMENU_H
 #define STARTMENU_H
 
-#include "Modules/UI/Basic Elements/UI_Element.h"
-#include "Modules/UI/Basic Elements/Button.h"
-#include "Modules/UI/Basic Elements/Layout_Vertical.h"
-#include "Modules/UI/Basic Elements/Panel.h"
+#include "Modules/UI/Macro Elements/Menu.h"
+#include "Modules/UI/Macro Elements/OptionsMenu.h"
+#include "Modules/UI/FocusMap.h"
 #include "Engine.h"
 
 
 /** A UI element serving as a start menu. */
-class StartMenu : public Panel
-{
+class StartMenu : public Menu {
 public:
-	// UI interaction enums
-	enum interact {
-		on_start = last_interact_index,
+	// Public Interaction Enums
+	const enum interact {
+		on_start_game = last_interact_index,
 		on_options,
-		on_controls,
 		on_quit,
 	};
 
-	// (de)Constructors
-	~StartMenu() = default;
-	StartMenu(Engine * engine) : Panel(engine) {
-		auto mainLayout = std::make_shared<Layout_Vertical>(engine);
-		setScale(glm::vec2(125, 200));
-		mainLayout->setScale(glm::vec2(125, 200));
-		mainLayout->setSpacing(10.0f);
-		addElement(mainLayout);
 
+	// Public (de)Constructors
+	/** Destroy the start menu. */
+	inline ~StartMenu() = default;
+	/** Construct a start menu. 
+	@param	engine		the engine to use. */
+	inline StartMenu(Engine * engine)
+		: Menu(engine) {
 		// Title
-		auto title = std::make_shared<Label>(engine, "Main Menu");
-		title->setTextScale(20.0f);
-		mainLayout->addElement(title);
+		m_title->setText("MAIN MENU");
 
-		// Add 'Start' button
-		auto startButton = std::make_shared<Button>(engine, "Start");
-		startButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_start); });
-		mainLayout->addElement(startButton);
-			
+		// Add 'Start Game' button
+		addButton(engine, "START GAME", [&]() { startGame(); });
+
 		// Add 'Options' button
-		auto optionsButton = std::make_shared<Button>(engine, "Options");
-		optionsButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_options); });
-		mainLayout->addElement(optionsButton);
-
-		// Add 'Controls' button
-		auto controlsButton = std::make_shared<Button>(engine, "Controls (disabled)");
-		controlsButton->setEnabled(false);
-		controlsButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_controls); });
-		mainLayout->addElement(controlsButton);
+		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
+		addButton(engine, "  OPTIONS >", [&]() { goToOptions(); });
+		m_optionsMenu->addCallback(OptionsMenu::on_back, [&]() { returnFromOptions(); });
 
 		// Add 'Quit' button
-		auto quitButton = std::make_shared<Button>(engine, "Quit");
-		quitButton->addCallback(UI_Element::on_mouse_release, [&]() { enactCallback(on_quit); });
-		mainLayout->addElement(quitButton);
+		addButton(engine, "QUIT", [&]() { quit(); });
+
+		// Callbacks
+		addCallback(UI_Element::on_resize, [&]() {
+			const auto scale = getScale();
+			m_optionsMenu->setScale(scale);
+		});
+		
+		// Populate Focus Map
+		m_focusMap = std::make_shared<FocusMap>();
+		m_focusMap->addElement(m_layout);
+		m_focusMap->focusElement(m_layout);
+		m_engine->getModule_UI().setFocusMap(getFocusMap());
 	}
+
+
+protected:
+	// Protected Methods
+	/** Choose 'start game' from the main menu. */
+	inline void startGame() {
+		m_engine->getModule_UI().clear();
+		enactCallback(on_start_game);
+	}
+	/** Choose 'options' from the main menu. */
+	inline void goToOptions() {
+		// Transfer appearance and control to options menu
+		auto & ui = m_engine->getModule_UI();
+		ui.pushRootElement(m_optionsMenu);
+		ui.setFocusMap(m_optionsMenu->getFocusMap());
+		m_layout->setSelectionIndex(-1);
+		enactCallback(on_options);
+	}
+	/** Chosen when control is returned from the options menu. */
+	inline void returnFromOptions() {
+		// Transfer control back to this menu
+		m_engine->getModule_UI().setFocusMap(getFocusMap());
+	}
+	/** Choose 'quit' from the main menu. */
+	inline void quit() {
+		m_engine->getModule_UI().clear();
+		m_engine->shutDown();
+		enactCallback(on_quit);
+	}
+
+
+	// Protected Attributes
+	std::shared_ptr<OptionsMenu> m_optionsMenu;
 };
 
 #endif // STARTMENU_H

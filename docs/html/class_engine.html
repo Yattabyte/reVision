@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -64,6 +64,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="class_engine-members.html">List of all members</a>  </div>
@@ -72,67 +73,112 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>The main game engine object.  
+ <a href="class_engine.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_engine_8h_source.html">Engine.h</a>&gt;</code></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a6439c90b0682b279c4be4763d90881f3"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> { <b>NORMAL</b>, 
+<b>FREE_LOOK</b>
+ }</td></tr>
+<tr class="memdesc:a6439c90b0682b279c4be4763d90881f3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Different mouse input modes.  <a href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">More...</a><br /></td></tr>
+<tr class="separator:a6439c90b0682b279c4be4763d90881f3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8ef7030a089ecb30bbfcb9e43094717a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a8ef7030a089ecb30bbfcb9e43094717a">~Engine</a> ()</td></tr>
+<tr class="memdesc:a8ef7030a089ecb30bbfcb9e43094717a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroys the engine.  <a href="#a8ef7030a089ecb30bbfcb9e43094717a">More...</a><br /></td></tr>
 <tr class="separator:a8ef7030a089ecb30bbfcb9e43094717a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a8c98683b0a3aa28d8ab72a8bcd0d52f2">Engine</a> ()</td></tr>
+<tr class="memdesc:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero-initialize the engine.  <a href="#a8c98683b0a3aa28d8ab72a8bcd0d52f2">More...</a><br /></td></tr>
 <tr class="separator:a8c98683b0a3aa28d8ab72a8bcd0d52f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a862870af01354ec1327bae82074e836f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a862870af01354ec1327bae82074e836f">tick</a> ()</td></tr>
+<tr class="memdesc:a862870af01354ec1327bae82074e836f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks the engine's overall simulation by a frame from the main thread.  <a href="#a862870af01354ec1327bae82074e836f">More...</a><br /></td></tr>
 <tr class="separator:a862870af01354ec1327bae82074e836f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88e41e7d7bdbabe2b20ea4c92f1a8f79"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a88e41e7d7bdbabe2b20ea4c92f1a8f79">tickThreaded</a> (std::future&lt; void &gt; exitObject, const <a class="el" href="struct_auxilliary___context.html">Auxilliary_Context</a> &amp;&amp;context)</td></tr>
-<tr class="separator:a88e41e7d7bdbabe2b20ea4c92f1a8f79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6a8bc268e2fc517e859cae1f149927c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab6a8bc268e2fc517e859cae1f149927c">tickThreaded</a> (std::future&lt; void &gt; exitObject, GLFWwindow *const window)</td></tr>
+<tr class="memdesc:ab6a8bc268e2fc517e859cae1f149927c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ticks the engine's overall simulation by a frame from a secondary thread.  <a href="#ab6a8bc268e2fc517e859cae1f149927c">More...</a><br /></td></tr>
+<tr class="separator:ab6a8bc268e2fc517e859cae1f149927c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a000f99ef9755f3415ee4fb101019e373"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a000f99ef9755f3415ee4fb101019e373">shouldClose</a> ()</td></tr>
+<tr class="memdesc:a000f99ef9755f3415ee4fb101019e373"><td class="mdescLeft">&#160;</td><td class="mdescRight">Checks if the engine wants to shut down.  <a href="#a000f99ef9755f3415ee4fb101019e373">More...</a><br /></td></tr>
 <tr class="separator:a000f99ef9755f3415ee4fb101019e373"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4493849a14880965dc52e33a3c4b39"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aeb4493849a14880965dc52e33a3c4b39">shutDown</a> ()</td></tr>
+<tr class="memdesc:aeb4493849a14880965dc52e33a3c4b39"><td class="mdescLeft">&#160;</td><td class="mdescRight">Tells the engine to shut down.  <a href="#aeb4493849a14880965dc52e33a3c4b39">More...</a><br /></td></tr>
 <tr class="separator:aeb4493849a14880965dc52e33a3c4b39"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50e351531bf11737dc02de026ca7743d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a50e351531bf11737dc02de026ca7743d">registerECSConstructor</a> (const char *name, <a class="el" href="struct_base_e_c_s_component_constructor.html">BaseECSComponentConstructor</a> *constructor)</td></tr>
-<tr class="separator:a50e351531bf11737dc02de026ca7743d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afda3fac79affefe8f7384bb580c3082d"><td class="memItemLeft" align="right" valign="top">GLFWwindow *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afda3fac79affefe8f7384bb580c3082d">getRenderingContext</a> () const</td></tr>
-<tr class="separator:afda3fac79affefe8f7384bb580c3082d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afae0634f43fd9a0d07248112c0c7ed5e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afae0634f43fd9a0d07248112c0c7ed5e">setMouseInputMode</a> (const <a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> &amp;mode)</td></tr>
+<tr class="memdesc:afae0634f43fd9a0d07248112c0c7ed5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the input mode for the mouse, useful for changing between 2D and 3D views.  <a href="#afae0634f43fd9a0d07248112c0c7ed5e">More...</a><br /></td></tr>
+<tr class="separator:afae0634f43fd9a0d07248112c0c7ed5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a4e788df8dd3c989a7e26896cbfc5a50e">getMouseInputMode</a> () const</td></tr>
+<tr class="memdesc:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the mouse input mode, such as free-look or normal cursor.  <a href="#a4e788df8dd3c989a7e26896cbfc5a50e">More...</a><br /></td></tr>
+<tr class="separator:a4e788df8dd3c989a7e26896cbfc5a50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2190e510b436458765eeacca511d5fc1"><td class="memItemLeft" align="right" valign="top">float&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2190e510b436458765eeacca511d5fc1">getTime</a> () const</td></tr>
+<tr class="memdesc:a2190e510b436458765eeacca511d5fc1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the current time.  <a href="#a2190e510b436458765eeacca511d5fc1">More...</a><br /></td></tr>
+<tr class="separator:a2190e510b436458765eeacca511d5fc1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48f724b864a6a5251791af8b4cf0d55e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; glm::ivec3 &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a48f724b864a6a5251791af8b4cf0d55e">getResolutions</a> () const</td></tr>
+<tr class="memdesc:a48f724b864a6a5251791af8b4cf0d55e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Return a list of available resolutions.  <a href="#a48f724b864a6a5251791af8b4cf0d55e">More...</a><br /></td></tr>
 <tr class="separator:a48f724b864a6a5251791af8b4cf0d55e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab995b1f645592a2f7517e527f19ae0cf"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_e_c_s.html">ECS</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ab995b1f645592a2f7517e527f19ae0cf">getECS</a> ()</td></tr>
-<tr class="separator:ab995b1f645592a2f7517e527f19ae0cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2064c3142815e4396db1e016f474b8ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_action_state.html">ActionState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a2064c3142815e4396db1e016f474b8ff">getActionState</a> ()</td></tr>
+<tr class="memdesc:a2064c3142815e4396db1e016f474b8ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's action state.  <a href="#a2064c3142815e4396db1e016f474b8ff">More...</a><br /></td></tr>
 <tr class="separator:a2064c3142815e4396db1e016f474b8ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa86a65ad825186658bd35cc7dca0b42c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_preference_state.html">PreferenceState</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aa86a65ad825186658bd35cc7dca0b42c">getPreferenceState</a> ()</td></tr>
+<tr class="memdesc:aa86a65ad825186658bd35cc7dca0b42c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's preference state.  <a href="#aa86a65ad825186658bd35cc7dca0b42c">More...</a><br /></td></tr>
 <tr class="separator:aa86a65ad825186658bd35cc7dca0b42c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae63c610667d58f693d9aeadfaa12b5de"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_asset_manager.html">AssetManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ae63c610667d58f693d9aeadfaa12b5de">getManager_Assets</a> ()</td></tr>
+<tr class="memdesc:ae63c610667d58f693d9aeadfaa12b5de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's asset manager.  <a href="#ae63c610667d58f693d9aeadfaa12b5de">More...</a><br /></td></tr>
 <tr class="separator:ae63c610667d58f693d9aeadfaa12b5de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abbca86d426d68112d1d419862cb223ef"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_model_manager.html">ModelManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#abbca86d426d68112d1d419862cb223ef">getManager_Models</a> ()</td></tr>
-<tr class="separator:abbca86d426d68112d1d419862cb223ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a081bdc29fd70c1be30137106f4bb8af8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_material_manager.html">MaterialManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a081bdc29fd70c1be30137106f4bb8af8">getManager_Materials</a> ()</td></tr>
-<tr class="separator:a081bdc29fd70c1be30137106f4bb8af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_message_manager.html">MessageManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a07fb517385f84afb4658f6cd17b5cb0b">getManager_Messages</a> ()</td></tr>
+<tr class="memdesc:a07fb517385f84afb4658f6cd17b5cb0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's message manager.  <a href="#a07fb517385f84afb4658f6cd17b5cb0b">More...</a><br /></td></tr>
 <tr class="separator:a07fb517385f84afb4658f6cd17b5cb0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7dc308182bb00da2565385136209e943"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_sound_manager.html">SoundManager</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a7dc308182bb00da2565385136209e943">getManager_Sounds</a> ()</td></tr>
+<tr class="memdesc:a7dc308182bb00da2565385136209e943"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's sound manager.  <a href="#a7dc308182bb00da2565385136209e943">More...</a><br /></td></tr>
 <tr class="separator:a7dc308182bb00da2565385136209e943"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a694a658470ae930c618a8324114f417b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_game___module.html">Game_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a694a658470ae930c618a8324114f417b">getModule_Game</a> ()</td></tr>
+<tr class="memdesc:a694a658470ae930c618a8324114f417b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's game module.  <a href="#a694a658470ae930c618a8324114f417b">More...</a><br /></td></tr>
+<tr class="separator:a694a658470ae930c618a8324114f417b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_graphics___module.html">Graphics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a1cf11b0e504f06b7387b466aa8b2c6f8">getModule_Graphics</a> ()</td></tr>
+<tr class="memdesc:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's graphics module.  <a href="#a1cf11b0e504f06b7387b466aa8b2c6f8">More...</a><br /></td></tr>
 <tr class="separator:a1cf11b0e504f06b7387b466aa8b2c6f8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5bcf86b8cdde4652ccf8a6648611bf9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_post___processing___module.html">Post_Processing_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ae5bcf86b8cdde4652ccf8a6648611bf9">getModule_PostProcess</a> ()</td></tr>
-<tr class="separator:ae5bcf86b8cdde4652ccf8a6648611bf9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6aeff8eef39d12373e832ef910adc39f"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_u_i___module.html">UI_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a6aeff8eef39d12373e832ef910adc39f">getModule_UI</a> ()</td></tr>
+<tr class="memdesc:a6aeff8eef39d12373e832ef910adc39f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's user-interface module.  <a href="#a6aeff8eef39d12373e832ef910adc39f">More...</a><br /></td></tr>
 <tr class="separator:a6aeff8eef39d12373e832ef910adc39f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd0ade806ea02ed6880287539f8bfd60"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_physics___module.html">Physics_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#afd0ade806ea02ed6880287539f8bfd60">getModule_Physics</a> ()</td></tr>
+<tr class="memdesc:afd0ade806ea02ed6880287539f8bfd60"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's physics module.  <a href="#afd0ade806ea02ed6880287539f8bfd60">More...</a><br /></td></tr>
 <tr class="separator:afd0ade806ea02ed6880287539f8bfd60"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa8de342ede7271b767a8efed1798c88a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_world___module.html">World_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#aa8de342ede7271b767a8efed1798c88a">getModule_World</a> ()</td></tr>
+<tr class="memdesc:aa8de342ede7271b767a8efed1798c88a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns this engine's world module.  <a href="#aa8de342ede7271b767a8efed1798c88a">More...</a><br /></td></tr>
 <tr class="separator:aa8de342ede7271b767a8efed1798c88a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a694a658470ae930c618a8324114f417b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="class_game___module.html">Game_Module</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a694a658470ae930c618a8324114f417b">getModule_Game</a> ()</td></tr>
-<tr class="separator:a694a658470ae930c618a8324114f417b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a7336cc5d876f9511ff372f2b18fdb534"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#a7336cc5d876f9511ff372f2b18fdb534">Get_Current_Dir</a> ()</td></tr>
+<tr class="memdesc:a7336cc5d876f9511ff372f2b18fdb534"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the application's running directory.  <a href="#a7336cc5d876f9511ff372f2b18fdb534">More...</a><br /></td></tr>
 <tr class="separator:a7336cc5d876f9511ff372f2b18fdb534"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad25ed1753eed289a7f7d2c60ddeddc3e"><td class="memItemLeft" align="right" valign="top">static bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_engine.html#ad25ed1753eed289a7f7d2c60ddeddc3e">File_Exists</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:ad25ed1753eed289a7f7d2c60ddeddc3e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if a given file exists, relative to the application directory.  <a href="#ad25ed1753eed289a7f7d2c60ddeddc3e">More...</a><br /></td></tr>
 <tr class="separator:ad25ed1753eed289a7f7d2c60ddeddc3e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>The main game engine object. Encapsulates the entire engine state. </p>
-</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<div class="textblock"><p>The main game engine object. </p>
+<p>Encapsulates the entire engine state. </p>
+</div><h2 class="groupheader">Member Enumeration Documentation</h2>
+<a id="a6439c90b0682b279c4be4763d90881f3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6439c90b0682b279c4be4763d90881f3">&#9670;&nbsp;</a></span>MouseInputMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">Engine::MouseInputMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Different mouse input modes. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8ef7030a089ecb30bbfcb9e43094717a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8ef7030a089ecb30bbfcb9e43094717a">&#9670;&nbsp;</a></span>~Engine()</h2>
 
@@ -147,6 +193,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Destroys the engine. </p>
 
 </div>
@@ -165,6 +212,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Zero-initialize the engine. </p>
 
 </div>
@@ -193,7 +241,9 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Check if a given file exists, relative to the application directory. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Check if a given file exists, relative to the application directory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">name</td><td>the full file path </td></tr>
   </table>
@@ -225,7 +275,9 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Retrieves the application's running directory. </p><dl class="section return"><dt>Returns</dt><dd>std::string of the absolute directory that this executable ran from </dd></dl>
+
+<p>Retrieves the application's running directory. </p>
+<dl class="section return"><dt>Returns</dt><dd>std::string of the absolute directory that this executable ran from </dd></dl>
 
 </div>
 </div>
@@ -251,33 +303,8 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's action state. </p>
-
-</div>
-</div>
-<a id="ab995b1f645592a2f7517e527f19ae0cf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab995b1f645592a2f7517e527f19ae0cf">&#9670;&nbsp;</a></span>getECS()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_e_c_s.html">ECS</a>&amp; Engine::getECS </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's entity component system. </p>
 
 </div>
 </div>
@@ -303,33 +330,8 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's asset manager. </p>
-
-</div>
-</div>
-<a id="a081bdc29fd70c1be30137106f4bb8af8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a081bdc29fd70c1be30137106f4bb8af8">&#9670;&nbsp;</a></span>getManager_Materials()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_material_manager.html">MaterialManager</a>&amp; Engine::getManager_Materials </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's material manager. </p>
 
 </div>
 </div>
@@ -355,33 +357,8 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's message manager. </p>
-
-</div>
-</div>
-<a id="abbca86d426d68112d1d419862cb223ef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abbca86d426d68112d1d419862cb223ef">&#9670;&nbsp;</a></span>getManager_Models()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_model_manager.html">ModelManager</a>&amp; Engine::getManager_Models </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's model manager. </p>
 
 </div>
 </div>
@@ -407,6 +384,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's sound manager. </p>
 
 </div>
@@ -433,6 +411,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's game module. </p>
 
 </div>
@@ -459,6 +438,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's graphics module. </p>
 
 </div>
@@ -485,33 +465,8 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's physics module. </p>
-
-</div>
-</div>
-<a id="ae5bcf86b8cdde4652ccf8a6648611bf9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae5bcf86b8cdde4652ccf8a6648611bf9">&#9670;&nbsp;</a></span>getModule_PostProcess()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_post___processing___module.html">Post_Processing_Module</a>&amp; Engine::getModule_PostProcess </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Returns this engine's post-processing module. </p>
 
 </div>
 </div>
@@ -537,6 +492,7 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's user-interface module. </p>
 
 </div>
@@ -563,7 +519,35 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's world module. </p>
+
+</div>
+</div>
+<a id="a4e788df8dd3c989a7e26896cbfc5a50e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e788df8dd3c989a7e26896cbfc5a50e">&#9670;&nbsp;</a></span>getMouseInputMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> Engine::getMouseInputMode </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Set the mouse input mode, such as free-look or normal cursor. </p>
 
 </div>
 </div>
@@ -589,25 +573,8 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Returns this engine's preference state. </p>
-
-</div>
-</div>
-<a id="afda3fac79affefe8f7384bb580c3082d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afda3fac79affefe8f7384bb580c3082d">&#9670;&nbsp;</a></span>getRenderingContext()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">GLFWwindow * Engine::getRenderingContext </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Returns this engine's rendering context. </p>
 
 </div>
 </div>
@@ -625,39 +592,50 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Return a list of available resolutions. </p>
 
 </div>
 </div>
-<a id="a50e351531bf11737dc02de026ca7743d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50e351531bf11737dc02de026ca7743d">&#9670;&nbsp;</a></span>registerECSConstructor()</h2>
+<a id="a2190e510b436458765eeacca511d5fc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2190e510b436458765eeacca511d5fc1">&#9670;&nbsp;</a></span>getTime()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void Engine::registerECSConstructor </td>
+          <td class="memname">float Engine::getTime </td>
           <td>(</td>
-          <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>name</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="struct_base_e_c_s_component_constructor.html">BaseECSComponentConstructor</a> *&#160;</td>
-          <td class="paramname"><em>constructor</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Adds a component constructor to the ecs construction map. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Retrieve the current time. </p>
+
+</div>
+</div>
+<a id="afae0634f43fd9a0d07248112c0c7ed5e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afae0634f43fd9a0d07248112c0c7ed5e">&#9670;&nbsp;</a></span>setMouseInputMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void Engine::setMouseInputMode </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="class_engine.html#a6439c90b0682b279c4be4763d90881f3">MouseInputMode</a> &amp;&#160;</td>
+          <td class="paramname"><em>mode</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set the input mode for the mouse, useful for changing between 2D and 3D views. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name</td><td>the component name type. </td></tr>
-    <tr><td class="paramname">constructor</td><td>the component constructor object. </td></tr>
+    <tr><td class="paramname">mode</td><td>the new mouse input mode to use. </td></tr>
   </table>
   </dd>
 </dl>
@@ -678,7 +656,9 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Checks if the engine wants to shut down. </p><dl class="section return"><dt>Returns</dt><dd>true if engine should shut down. </dd></dl>
+
+<p>Checks if the engine wants to shut down. </p>
+<dl class="section return"><dt>Returns</dt><dd>true if engine should shut down. </dd></dl>
 
 </div>
 </div>
@@ -696,6 +676,7 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Tells the engine to shut down. </p>
 
 </div>
@@ -714,12 +695,15 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
 <p>Ticks the engine's overall simulation by a frame from the main thread. </p>
+<p><em>-------------------------------------------------&mdash;BEGIN FRAME-------------------------------------------------&mdash;</em>///</p>
+<p><em>--------------------------------------------------&mdash;END FRAME--------------------------------------------------&mdash;</em>/// </p>
 
 </div>
 </div>
-<a id="a88e41e7d7bdbabe2b20ea4c92f1a8f79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a88e41e7d7bdbabe2b20ea4c92f1a8f79">&#9670;&nbsp;</a></span>tickThreaded()</h2>
+<a id="ab6a8bc268e2fc517e859cae1f149927c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6a8bc268e2fc517e859cae1f149927c">&#9670;&nbsp;</a></span>tickThreaded()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -733,8 +717,8 @@ Static Public Member Functions</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const <a class="el" href="struct_auxilliary___context.html">Auxilliary_Context</a> &amp;&amp;&#160;</td>
-          <td class="paramname"><em>context</em>&#160;</td>
+          <td class="paramtype">GLFWwindow *const&#160;</td>
+          <td class="paramname"><em>window</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -743,7 +727,9 @@ Static Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Ticks the engine's overall simulation by a frame from a secondary thread. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Ticks the engine's overall simulation by a frame from a secondary thread. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">exitObject</td><td>object signaling when to close the thread </td></tr>
   </table>

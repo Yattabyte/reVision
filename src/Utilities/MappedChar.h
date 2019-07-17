@@ -24,11 +24,11 @@ private:
 
 
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Destroy the map. */
-	~MappedChar() = default;
+	inline ~MappedChar() = default;
 	/** Construct the map. */
-	MappedChar() = default;
+	inline MappedChar() = default;
 
 
 	// Public Methods
@@ -37,6 +37,13 @@ public:
 	@param	key		the new key to insert into the map */	
 	inline void insert(const char * key) {
 		m_map.insert(std::pair<const char *, T>(key, T())); 
+	}
+	/** Remove the element found in the map matching the key specified. 
+	@param	key		the key to erase from the map. */
+	inline void erase(const char * key) {
+		auto spot = m_map.find(key);
+		if (spot != m_map.end())	
+			m_map.erase(spot);		
 	}
 	/** Clears the map of all entries. */
 	inline void	clear() { 
@@ -111,8 +118,8 @@ Extends the MappedChar class, but exists to shorten 'MappedChar<std::vector<T>> 
 template <typename T>
 class VectorMap : public MappedChar<std::vector<T>> {
 public:
-	~VectorMap() = default;
-	VectorMap() = default;
+	inline ~VectorMap() = default;
+	inline VectorMap() = default;
 };
 
 #endif // MAPPEDCHAR_H

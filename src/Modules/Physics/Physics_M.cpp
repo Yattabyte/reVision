@@ -2,18 +2,9 @@
 #include "Engine.h"
 
 /* Component Types Used */
-#include "Modules/Physics/Components/Collider_C.h"
-#include "Modules/Physics/Systems/TransformSync_S.h"
+#include "Modules/Physics/ECS/components.h"
+#include "Modules/Physics/ECS/TransformSync_S.h"
 
-
-Physics_Module::~Physics_Module()
-{
-	delete m_broadphase;
-	delete m_collisionConfiguration;
-	delete m_dispatcher;
-	delete m_solver;
-	delete m_world;
-}
 
 void Physics_Module::initialize(Engine * engine)
 {
@@ -28,14 +19,51 @@ void Physics_Module::initialize(Engine * engine)
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.addSystem(new TransformSync_Phys_System(m_world));
+	m_physicsSystems.addSystem(new TransformSync_Phys_System(engine, m_world));
 
 	// Component Constructors
-	m_engine->registerECSConstructor("Collider_Component", new Collider_Constructor(m_engine));
+	auto & world = m_engine->getModule_World();
+	world.addComponentType("Collider_Component", [engine](const ParamList & parameters) {
+		auto * component = new Collider_Component();
+		component->m_collider = Shared_Collider(engine, CastAny(parameters, 0, std::string("")));
+		component->m_mass = btScalar(CastAny(parameters, 1, 0));
+		component->m_restitution = CastAny(parameters, 2, 0.0f);
+		component->m_friction = CastAny(parameters, 3, 0.0f);
+		return std::make_pair(component->ID, component);
+	});
+
+	// World-Changed Callback
+	world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		if (state == World_Module::unloaded)
+			m_enabled = false;
+		else if (state == World_Module::finishLoading || state == World_Module::updated)
+			m_enabled = true;
+	});
+}
+
+void Physics_Module::deinitialize()
+{
+	// Update indicator
+	m_engine->getManager_Messages().statement("Closing Module: Physics...");
+	m_aliveIndicator = false;
+
+	// Delete Bullet Physics simulation
+	delete m_broadphase;
+	delete m_collisionConfiguration;
+	delete m_dispatcher;
+	delete m_solver;
+	delete m_world;
+
+	// Remove support for this component type
+	m_engine->getModule_World().removeComponentType("Collider_Component");
+	
 }
 
 void Physics_Module::frameTick(const float & deltaTime)
 {
-	m_world->stepSimulation(deltaTime);
-	m_engine->getECS().updateSystems(m_physicsSystems, deltaTime);
+	if (m_enabled) {
+		// Only update simulation if engine is READY
+		m_world->stepSimulation(deltaTime);
+		m_engine->getModule_World().updateSystems(m_physicsSystems, deltaTime);
+	}
 }

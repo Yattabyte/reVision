@@ -1,4 +1,4 @@
-# Blender MTL File: 'ref_test.blend'
+# Blender MTL File: 'chest'
 # Material Count: 1
 
 newmtl Material
@@ -15,3 +15,4 @@ map_Bump chest_normal.png
 map_Ks chest_metalness.png
 map_Ns chest_roughness.png
 map_Ka chest_ao.png
+	

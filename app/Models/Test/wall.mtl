@@ -12,8 +12,9 @@ d 1.000000
 illum 2
 map_Kd wall_diffuse_a.png
 map_Bump wall_normal_a.tga
-map_Ns  wall_roughness_a.tga
+map_Ns wall_roughness_a.tga
 map_Ks wall_metalness_a.tga
+map_Ka wall_ao.png
 
 newmtl White
 Ns 96.078431
@@ -26,8 +27,9 @@ d 1.000000
 illum 2
 map_Kd wall_diffuse_b.png
 map_Bump wall_normal_b.tga
-map_Ns  wall_roughness_b.png 
+map_Ns wall_roughness_b.png 
 map_Ks wall_metalness_b.tga
+map_Ka wall_ao.png
 
 newmtl Mirror
 Ns 96.078431
@@ -40,6 +42,7 @@ d 1.000000
 illum 2
 map_Kd wall_diffuse_c.png
 map_Bump wall_normal_c.png
-map_Ns  wall_roughness_c.png 
+map_Ns wall_roughness_c.png 
 map_Ks wall_metalness_c.png
+map_Ka wall_ao.png
 

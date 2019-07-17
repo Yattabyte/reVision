@@ -13,22 +13,18 @@ Shared_Material::Shared_Material(Engine * engine, const std::string & filename, 
 		engine->getManager_Assets().shareAsset(
 			typeid(Material).name(),
 			filename,
-			[engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures, engine->getManager_Materials()); },
+			[engine, filename, textures]() { return std::make_shared<Material>(engine, filename, textures); },
 			threaded
 		));
 }
 
 Material::~Material()
 {
-	if (existsYet()) {
-		glDeleteBuffers(1, &m_pboID);
-		glDeleteTextures(1, &m_glArrayID);
-	}
 	if (m_materialData)
 		delete m_materialData;
 }
 
-Material::Material(Engine * engine, const std::string & filename, const std::vector<std::string> &tx, MaterialManager & materialManager) 
+Material::Material(Engine * engine, const std::string & filename, const std::vector<std::string> &tx) 
 	: Asset(engine, filename), m_textures(tx)
 {
 	// We need to reserve a region of gpu memory for all the textures
@@ -54,14 +50,10 @@ Material::Material(Engine * engine, const std::string & filename, const std::vec
 				m_textures[x] = modelDirectory + textures[x];
 		}
 	}
-
-	m_matSpot = materialManager.generateID(m_textures.size());
 }
 
 void Material::initialize()
 {
-	auto & materialManager = m_engine->getManager_Materials();
-
 	// Some definitions for later
 	const size_t remainder = m_textures.size() % size_t(6u);
 	const size_t textureCount = remainder 
@@ -71,8 +63,10 @@ void Material::initialize()
 	m_textures.resize(textureCount);
 
 	// Load all images	
+	float materialSize = 512.0f;
+	m_engine->getPreferenceState().getOrSetValue(PreferenceState::C_MATERIAL_SIZE, materialSize);
 	m_images.resize(textureCount);
-	m_size = glm::ivec2(m_engine->getManager_Materials().getMaterialSize());
+	m_size = glm::ivec2((int)materialSize);
 	constexpr GLenum fillPolicies[MAX_PHYSICAL_IMAGES] = {
 		Fill_Policy::Checkered,
 		Fill_Policy::Solid,
@@ -100,11 +94,8 @@ void Material::initialize()
 			m_materialData[arrayIndex + 3] = m_images[tx + 5]->m_pixelData[x]; // AO
 		}
 	}
-	
-	materialManager.writeMaterials(m_matSpot, m_materialData, (GLsizei)((m_textures.size() / MAX_PHYSICAL_IMAGES) * MAX_DIGITAL_IMAGES));
 
 	// Finalize
-	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 	Asset::finalize();
 }
 

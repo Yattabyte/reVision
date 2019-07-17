@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -74,6 +74,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A collection of textures which together form 1 or more PBR surfaces.  
+ <a href="class_material.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_material_8h_source.html">Material.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Material:</div>
@@ -81,45 +84,43 @@ Inheritance diagram for Material:</div>
  <div class="center">
   <img src="class_material.png" usemap="#Material_map" alt=""/>
   <map id="Material_map" name="Material_map">
-<area href="class_asset.html" title="Represents some form of data to be loaded from disk, such as shaders, models, levels,..." alt="Asset" shape="rect" coords="0,0,58,24"/>
+<area href="class_asset.html" title="An abstract base-class for assets." alt="Asset" shape="rect" coords="0,0,58,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a2c19452d71f54075df8f5405b03129f4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a2c19452d71f54075df8f5405b03129f4">~Material</a> ()</td></tr>
+<tr class="memdesc:a2c19452d71f54075df8f5405b03129f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the <a class="el" href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces.">Material</a>.  <a href="#a2c19452d71f54075df8f5405b03129f4">More...</a><br /></td></tr>
 <tr class="separator:a2c19452d71f54075df8f5405b03129f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a21068881d3e9180ffe79fb381db51351"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a21068881d3e9180ffe79fb381db51351">Material</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures, <a class="el" href="class_material_manager.html">MaterialManager</a> &amp;materialManager)</td></tr>
-<tr class="separator:a21068881d3e9180ffe79fb381db51351"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0a46cb087a1fc1c103b2d2f729099e3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#ac0a46cb087a1fc1c103b2d2f729099e3">Material</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename, const std::vector&lt; std::string &gt; &amp;textures)</td></tr>
+<tr class="memdesc:ac0a46cb087a1fc1c103b2d2f729099e3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the <a class="el" href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces.">Material</a>.  <a href="#ac0a46cb087a1fc1c103b2d2f729099e3">More...</a><br /></td></tr>
+<tr class="separator:ac0a46cb087a1fc1c103b2d2f729099e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">~Asset</a> ()=default</td></tr>
+<tr class="memdesc:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the asset only when all references are destroyed.  <a href="class_asset.html#affea7a67e3a2b71c57992a5a46e6ea50">More...</a><br /></td></tr>
 <tr class="separator:affea7a67e3a2b71c57992a5a46e6ea50 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">getFileName</a> () const</td></tr>
+<tr class="memdesc:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Gets the file name of this asset.  <a href="class_asset.html#a693cba605321f0a0e82ada91cde7da12">More...</a><br /></td></tr>
 <tr class="separator:a693cba605321f0a0e82ada91cde7da12 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">setFileName</a> (const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sets the file name of this asset.  <a href="class_asset.html#aee909b00b122db46fd6eb2bb2d09faee">More...</a><br /></td></tr>
 <tr class="separator:aee909b00b122db46fd6eb2bb2d09faee inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae63f2109b599674813f35bad45422c6f inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#ae63f2109b599674813f35bad45422c6f">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, AssetFinalizedCallback &amp;&amp;callback)</td></tr>
-<tr class="separator:ae63f2109b599674813f35bad45422c6f inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">addCallback</a> (const std::shared_ptr&lt; bool &gt; &amp;alive, const AssetFinalizedCallback &amp;callback)</td></tr>
+<tr class="memdesc:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attaches a callback method to be triggered when the asset finishes loading.  <a href="class_asset.html#a4c0cb6447d8dbff78ec803e5752f3c84">More...</a><br /></td></tr>
+<tr class="separator:a4c0cb6447d8dbff78ec803e5752f3c84 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">existsYet</a> () const</td></tr>
+<tr class="memdesc:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns whether or not this asset has completed finalizing.  <a href="class_asset.html#a5d491e481d7d9920ea5caea1f58b09d0">More...</a><br /></td></tr>
 <tr class="separator:a5d491e481d7d9920ea5caea1f58b09d0 inherit pub_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a50b939faaec9f620aab37a8811cddb72"><td class="memItemLeft" align="right" valign="top">static std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_material.html#a50b939faaec9f620aab37a8811cddb72">Get_Material_Textures</a> (const std::string &amp;filename)</td></tr>
-<tr class="memdesc:a50b939faaec9f620aab37a8811cddb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Updates the appropriate supplied @std::string's with a path to the appropriate file.  <a href="#a50b939faaec9f620aab37a8811cddb72">More...</a><br /></td></tr>
+<tr class="memdesc:a50b939faaec9f620aab37a8811cddb72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Reading from a .mat file, retrieves the individual file names assigned to this material.  <a href="#a50b939faaec9f620aab37a8811cddb72">More...</a><br /></td></tr>
 <tr class="separator:a50b939faaec9f620aab37a8811cddb72"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a1ae091a29eb395f730e808d3ad1623d8"><td class="memItemLeft" align="right" valign="top"><a id="a1ae091a29eb395f730e808d3ad1623d8"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_pboID</b> = 0</td></tr>
-<tr class="separator:a1ae091a29eb395f730e808d3ad1623d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afb23354fa387c79e6436f239aa0f8cda"><td class="memItemLeft" align="right" valign="top"><a id="afb23354fa387c79e6436f239aa0f8cda"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_glArrayID</b> = 0</td></tr>
-<tr class="separator:afb23354fa387c79e6436f239aa0f8cda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4c65697f7fdaa3514106f920c333cdcd"><td class="memItemLeft" align="right" valign="top"><a id="a4c65697f7fdaa3514106f920c333cdcd"></a>
-GLuint&#160;</td><td class="memItemRight" valign="bottom"><b>m_matSpot</b> = 0</td></tr>
-<tr class="separator:a4c65697f7fdaa3514106f920c333cdcd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d0a6f453a1493062263abcc2943e7ab"><td class="memItemLeft" align="right" valign="top"><a id="a1d0a6f453a1493062263abcc2943e7ab"></a>
 GLubyte *&#160;</td><td class="memItemRight" valign="bottom"><b>m_materialData</b> = nullptr</td></tr>
 <tr class="separator:a1d0a6f453a1493062263abcc2943e7ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -143,8 +144,10 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Shared_Material</b><
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pro_methods_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_methods_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Member Functions inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">Asset</a> (<a class="el" href="class_engine.html">Engine</a> *engine, const std::string &amp;filename)</td></tr>
+<tr class="memdesc:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create asset that uses the specified file-path.  <a href="class_asset.html#aa8dea2fe33a5fd68d13333589695b77d">More...</a><br /></td></tr>
 <tr class="separator:aa8dea2fe33a5fd68d13333589695b77d inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">finalize</a> ()</td></tr>
+<tr class="memdesc:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declares this asset ready-to-use.  <a href="class_asset.html#a5e1908711e1f42dbcb88d9a1617877bf">More...</a><br /></td></tr>
 <tr class="separator:a5e1908711e1f42dbcb88d9a1617877bf inherit pro_methods_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pro_attribs_class_asset"><td colspan="2" onclick="javascript:toggleInherit('pro_attribs_class_asset')"><img src="closed.png" alt="-"/>&#160;Protected Attributes inherited from <a class="el" href="class_asset.html">Asset</a></td></tr>
 <tr class="memitem:a0329cd6e471217c694abfc632e6c1bbd inherit pro_attribs_class_asset"><td class="memItemLeft" align="right" valign="top"><a id="a0329cd6e471217c694abfc632e6c1bbd"></a>
@@ -164,18 +167,21 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 <tr class="separator:a9d426de8f210c27c208fa5c099f37498 inherit pro_attribs_class_asset"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A collection of texture surfaces that are used together to approximate a real surface.</p><ul>
-<li>Support for:<ul>
+<div class="textblock"><p>A collection of textures which together form 1 or more PBR surfaces. </p>
+<p>A material is a collection of textures that are used to approximate a real surface, such as:</p><ul>
 <li>Albedo</li>
 <li>normal</li>
 <li>metalness</li>
 <li>roughness</li>
 <li>height (WIP)</li>
-<li>occlusion (in conjunction with <a class="el" href="class_s_s_a_o.html">SSAO</a>)</li>
-</ul>
+<li>occlusion <dl class="section note"><dt>Note</dt><dd>supports omission of any or all of the files. </dd>
+<dd>
+expects all textures in a material to be the same dimension, and will forcefully resize them (in memory). </dd>
+<dd>
+can contain multiple sets of these textures, where each set of 6 form 1 skin for an object. </dd>
+<dd>
+owns many <a class="el" href="class_shared___image.html" title="Shared version of an Image asset.">Shared_Image</a> objects. </dd></dl>
 </li>
-<li>Supports omission of any or all of the files</li>
-<li>Expects all textures in a material to be the same dimension, and will forcefully resize them (in memory). </li>
 </ul>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a2c19452d71f54075df8f5405b03129f4"></a>
@@ -192,12 +198,13 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Destroy the <a class="el" href="class_material.html">Material</a>. </p>
+
+<p>Destroy the <a class="el" href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces.">Material</a>. </p>
 
 </div>
 </div>
-<a id="a21068881d3e9180ffe79fb381db51351"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a21068881d3e9180ffe79fb381db51351">&#9670;&nbsp;</a></span>Material()</h2>
+<a id="ac0a46cb087a1fc1c103b2d2f729099e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac0a46cb087a1fc1c103b2d2f729099e3">&#9670;&nbsp;</a></span>Material()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -218,13 +225,7 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::vector&lt; std::string &gt; &amp;&#160;</td>
-          <td class="paramname"><em>textures</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype"><a class="el" href="class_material_manager.html">MaterialManager</a> &amp;&#160;</td>
-          <td class="paramname"><em>materialManager</em>&#160;</td>
+          <td class="paramname"><em>textures</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -233,7 +234,16 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Construct the <a class="el" href="class_material.html">Material</a>. </p>
+
+<p>Construct the <a class="el" href="class_material.html" title="A collection of textures which together form 1 or more PBR surfaces.">Material</a>. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">engine</td><td>the engine to use. </td></tr>
+    <tr><td class="paramname">filename</td><td>the asset file name (relative to engine directory). </td></tr>
+    <tr><td class="paramname">textures</td><td>the textures to use. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -262,14 +272,14 @@ std::vector&lt; std::pair&lt; std::shared_ptr&lt; bool &gt;, std::function&lt; v
 </table>
 </div><div class="memdoc">
 
-<p>Updates the appropriate supplied @std::string's with a path to the appropriate file. </p>
-<p>Reading from a .mat file, retrieves the individual file names assigned to this material </p><dl class="params"><dt>Parameters</dt><dd>
+<p>Reading from a .mat file, retrieves the individual file names assigned to this material. </p>
+<p>Updates the appropriate supplied @std::string's with a path to the appropriate file. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filename</td><td>the absolute file path of the '.mat' file to read from </td></tr>
+    <tr><td class="paramname">filename</td><td>the absolute file path of the '.mat' file to read from. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>the vector storing texture directories </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>the vector storing texture directories. </dd></dl>
 
 </div>
 </div>

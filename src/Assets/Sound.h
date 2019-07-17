@@ -9,25 +9,32 @@ class Engine;
 class Sound;
 class SoundObj;
 
-/** Responsible for the creation, containing, and sharing of assets. */
+/** Shared version of a Sound asset.
+Responsible for the creation, containing, and sharing of assets. */
 class Shared_Sound : public std::shared_ptr<Sound> {
 public:
-	Shared_Sound() = default;
+	// Public (de)Constructors
+	/** Constructs an empty asset. */
+	inline Shared_Sound() = default;
 	/** Begins the creation process for this asset.
-	@param	engine			the engine being used
-	@param	filename		the filename to use
-	@param	threaded		create in a separate thread
-	@return					the desired asset */
+	@param	engine			the engine being used.
+	@param	filename		the filename to use.
+	@param	threaded		create in a separate thread.
+	@return					the desired asset. */
 	explicit Shared_Sound(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-/** A Sound object. */
-class Sound : public Asset
-{
+/** A sound byte object.
+Represents a sound file loaded from disk.
+@note	requires the SoLoud library to use. */
+class Sound : public Asset {
 public:
+	// Public (de)Constructors
 	/** Destroy the Sound. */
 	~Sound();
-	/** Construct the Sound. */
+	/** Construct the Sound.
+	@param	engine			the engine to use.
+	@param	filename		the asset file name (relative to engine directory). */
 	Sound(Engine * engine, const std::string & filename);
 
 
@@ -36,8 +43,7 @@ public:
 
 
 protected:
-	// Private Methods
-	// Interface Implementation
+	// Private Interface Implementation
 	virtual void initialize() override;
 
 

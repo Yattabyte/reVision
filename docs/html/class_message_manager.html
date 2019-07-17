@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -71,23 +71,33 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>Provides some message reporting functionality for the engine.  
+ <a href="class_message_manager.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_message_manager_8h_source.html">MessageManager.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a8bcb13ef746da8a278c3c25df0e531dd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#a8bcb13ef746da8a278c3c25df0e531dd">~MessageManager</a> ()=default</td></tr>
+<tr class="memdesc:a8bcb13ef746da8a278c3c25df0e531dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the message manager.  <a href="#a8bcb13ef746da8a278c3c25df0e531dd">More...</a><br /></td></tr>
 <tr class="separator:a8bcb13ef746da8a278c3c25df0e531dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf6c40bb81e128dde10c58104b059f89"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#adf6c40bb81e128dde10c58104b059f89">MessageManager</a> ()=default</td></tr>
+<tr class="memitem:adf6c40bb81e128dde10c58104b059f89"><td class="memItemLeft" align="right" valign="top"><a id="adf6c40bb81e128dde10c58104b059f89"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#adf6c40bb81e128dde10c58104b059f89">MessageManager</a> ()=default</td></tr>
+<tr class="memdesc:adf6c40bb81e128dde10c58104b059f89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the message manager. <br /></td></tr>
 <tr class="separator:adf6c40bb81e128dde10c58104b059f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abb92a3c167972196d90396dea8967cf0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#abb92a3c167972196d90396dea8967cf0">statement</a> (const std::string &amp;input)</td></tr>
+<tr class="memdesc:abb92a3c167972196d90396dea8967cf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints a general statement into the console.  <a href="#abb92a3c167972196d90396dea8967cf0">More...</a><br /></td></tr>
 <tr class="separator:abb92a3c167972196d90396dea8967cf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68daefb67f63e2b92360bcd6cd6cf407"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#a68daefb67f63e2b92360bcd6cd6cf407">warning</a> (const std::string &amp;input)</td></tr>
+<tr class="memdesc:a68daefb67f63e2b92360bcd6cd6cf407"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints a warning message into the console.  <a href="#a68daefb67f63e2b92360bcd6cd6cf407">More...</a><br /></td></tr>
 <tr class="separator:a68daefb67f63e2b92360bcd6cd6cf407"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a337fe1fd9e832647b567f2d1e719391a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_message_manager.html#a337fe1fd9e832647b567f2d1e719391a">error</a> (const std::string &amp;input)</td></tr>
+<tr class="memdesc:a337fe1fd9e832647b567f2d1e719391a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Prints an error message into the console.  <a href="#a337fe1fd9e832647b567f2d1e719391a">More...</a><br /></td></tr>
 <tr class="separator:a337fe1fd9e832647b567f2d1e719391a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Provides some message reporting functionality for the engine. Holds a log of text in case they need to be accessed by any external UI </p>
+<div class="textblock"><p>Provides some message reporting functionality for the engine. </p>
+<p>Holds a log of text in case they need to be accessed by any external UI </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a8bcb13ef746da8a278c3c25df0e531dd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8bcb13ef746da8a278c3c25df0e531dd">&#9670;&nbsp;</a></span>~MessageManager()</h2>
@@ -107,37 +117,12 @@ Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
+
 <p>Destroy the message manager. </p>
-
-</div>
-</div>
-<a id="adf6c40bb81e128dde10c58104b059f89"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf6c40bb81e128dde10c58104b059f89">&#9670;&nbsp;</a></span>MessageManager()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">MessageManager::MessageManager </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">default</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Construct the message manager </p>
 
 </div>
 </div>
@@ -157,7 +142,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Prints an error message into the console. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Prints an error message into the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input</td><td>the error message to be displayed. </td></tr>
   </table>
@@ -181,7 +168,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Prints a general statement into the console. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Prints a general statement into the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input</td><td>std::string message to print </td></tr>
   </table>
@@ -205,7 +194,9 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Prints a warning message into the console. </p><dl class="params"><dt>Parameters</dt><dd>
+
+<p>Prints a warning message into the console. </p>
+<dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">input</td><td>std::string message to print </td></tr>
   </table>

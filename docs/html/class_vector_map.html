@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,6 +70,9 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
+<p>A std::map that uses a constant char array as the keys, and stores vectors of type &lt;T&gt;.  
+ <a href="class_vector_map.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="_mapped_char_8h_source.html">MappedChar.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for VectorMap&lt; T &gt;:</div>
@@ -85,43 +88,61 @@ Inheritance diagram for VectorMap&lt; T &gt;:</div>
 Additional Inherited Members</h2></td></tr>
 <tr class="inherit_header pub_methods_class_mapped_char"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_class_mapped_char')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="class_mapped_char.html">MappedChar&lt; std::vector&lt; T &gt; &gt;</a></td></tr>
 <tr class="memitem:aeca94bc574b750401cc639ef35c18ccb inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#aeca94bc574b750401cc639ef35c18ccb">~MappedChar</a> ()=default</td></tr>
+<tr class="memdesc:aeca94bc574b750401cc639ef35c18ccb inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Destroy the map.  <a href="class_mapped_char.html#aeca94bc574b750401cc639ef35c18ccb">More...</a><br /></td></tr>
 <tr class="separator:aeca94bc574b750401cc639ef35c18ccb inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d792d91ba7c6cc0d1fab2d8a0128676 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a7d792d91ba7c6cc0d1fab2d8a0128676">MappedChar</a> ()=default</td></tr>
+<tr class="memdesc:a7d792d91ba7c6cc0d1fab2d8a0128676 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Construct the map.  <a href="class_mapped_char.html#a7d792d91ba7c6cc0d1fab2d8a0128676">More...</a><br /></td></tr>
 <tr class="separator:a7d792d91ba7c6cc0d1fab2d8a0128676 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b53fb85c72ef6649e10d0e2f76167eb inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb">insert</a> (const char *key)</td></tr>
-<tr class="memdesc:a3b53fb85c72ef6649e10d0e2f76167eb inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">will auto-generate a new zero-initialized &lt;T&gt; to associate with the key.  <a href="class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb">More...</a><br /></td></tr>
+<tr class="memdesc:a3b53fb85c72ef6649e10d0e2f76167eb inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Insert a new key into the map.  <a href="class_mapped_char.html#a3b53fb85c72ef6649e10d0e2f76167eb">More...</a><br /></td></tr>
 <tr class="separator:a3b53fb85c72ef6649e10d0e2f76167eb inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada37faecf34afdbcd7f1782b66279090 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ada37faecf34afdbcd7f1782b66279090">erase</a> (const char *key)</td></tr>
+<tr class="memdesc:ada37faecf34afdbcd7f1782b66279090 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove the element found in the map matching the key specified.  <a href="class_mapped_char.html#ada37faecf34afdbcd7f1782b66279090">More...</a><br /></td></tr>
+<tr class="separator:ada37faecf34afdbcd7f1782b66279090 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad5456229226d91c6fa12e776a70dc17c inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#ad5456229226d91c6fa12e776a70dc17c">clear</a> ()</td></tr>
+<tr class="memdesc:ad5456229226d91c6fa12e776a70dc17c inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Clears the map of all entries.  <a href="class_mapped_char.html#ad5456229226d91c6fa12e776a70dc17c">More...</a><br /></td></tr>
 <tr class="separator:ad5456229226d91c6fa12e776a70dc17c inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a856541185073008515bd02d88db2bbc1 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a856541185073008515bd02d88db2bbc1">size</a> () const</td></tr>
+<tr class="memdesc:a856541185073008515bd02d88db2bbc1 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the number of entries into the map.  <a href="class_mapped_char.html#a856541185073008515bd02d88db2bbc1">More...</a><br /></td></tr>
 <tr class="separator:a856541185073008515bd02d88db2bbc1 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3629492c795c6308e2155fae18c6b724 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a3629492c795c6308e2155fae18c6b724">at</a> (const char *key)</td></tr>
+<tr class="memdesc:a3629492c795c6308e2155fae18c6b724 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="class_mapped_char.html#a3629492c795c6308e2155fae18c6b724">More...</a><br /></td></tr>
 <tr class="separator:a3629492c795c6308e2155fae18c6b724 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7a55fbf8b551ceaaae71e678762d1db8 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a7a55fbf8b551ceaaae71e678762d1db8">at</a> (const char *key) const</td></tr>
+<tr class="memdesc:a7a55fbf8b551ceaaae71e678762d1db8 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="class_mapped_char.html#a7a55fbf8b551ceaaae71e678762d1db8">More...</a><br /></td></tr>
 <tr class="separator:a7a55fbf8b551ceaaae71e678762d1db8 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acf81bd6f9f12042f9e3b7befd35aa5a9 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#acf81bd6f9f12042f9e3b7befd35aa5a9">operator[]</a> (const char *key)</td></tr>
+<tr class="memdesc:acf81bd6f9f12042f9e3b7befd35aa5a9 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the element associated with the given key.  <a href="class_mapped_char.html#acf81bd6f9f12042f9e3b7befd35aa5a9">More...</a><br /></td></tr>
 <tr class="separator:acf81bd6f9f12042f9e3b7befd35aa5a9 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:affb0756a48f43bc281620430dce4990d inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#affb0756a48f43bc281620430dce4990d">begin</a> ()</td></tr>
+<tr class="memdesc:affb0756a48f43bc281620430dce4990d inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning iterator.  <a href="class_mapped_char.html#affb0756a48f43bc281620430dce4990d">More...</a><br /></td></tr>
 <tr class="separator:affb0756a48f43bc281620430dce4990d inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6e6aa08a89e153bf90fd3fd4d12f5f12 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a6e6aa08a89e153bf90fd3fd4d12f5f12">begin</a> () const</td></tr>
+<tr class="memdesc:a6e6aa08a89e153bf90fd3fd4d12f5f12 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning constant iterator.  <a href="class_mapped_char.html#a6e6aa08a89e153bf90fd3fd4d12f5f12">More...</a><br /></td></tr>
 <tr class="separator:a6e6aa08a89e153bf90fd3fd4d12f5f12 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af9236055d0cb83a144f716ab5d0cc9dd inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd">end</a> ()</td></tr>
+<tr class="memdesc:af9236055d0cb83a144f716ab5d0cc9dd inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending iterator.  <a href="class_mapped_char.html#af9236055d0cb83a144f716ab5d0cc9dd">More...</a><br /></td></tr>
 <tr class="separator:af9236055d0cb83a144f716ab5d0cc9dd inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18dcc3e785cb5563d5688cf9ea21634e inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a18dcc3e785cb5563d5688cf9ea21634e">end</a> () const</td></tr>
+<tr class="memdesc:a18dcc3e785cb5563d5688cf9ea21634e inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending constant iterator.  <a href="class_mapped_char.html#a18dcc3e785cb5563d5688cf9ea21634e">More...</a><br /></td></tr>
 <tr class="separator:a18dcc3e785cb5563d5688cf9ea21634e inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a98fb9129ecba80ca80c0790cc9267df3 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a98fb9129ecba80ca80c0790cc9267df3">find</a> (const char *key) const</td></tr>
+<tr class="memdesc:a98fb9129ecba80ca80c0790cc9267df3 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the given key exists in the map.  <a href="class_mapped_char.html#a98fb9129ecba80ca80c0790cc9267df3">More...</a><br /></td></tr>
 <tr class="separator:a98fb9129ecba80ca80c0790cc9267df3 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9cabf6c5d547ca2a24a92299c3aad851 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a9cabf6c5d547ca2a24a92299c3aad851">find_I</a> (const char *key)</td></tr>
+<tr class="memdesc:a9cabf6c5d547ca2a24a92299c3aad851 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves an iterator of the element associated with the key given.  <a href="class_mapped_char.html#a9cabf6c5d547ca2a24a92299c3aad851">More...</a><br /></td></tr>
 <tr class="separator:a9cabf6c5d547ca2a24a92299c3aad851 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e307d7c95959ad22cb26824ed900ee1 inherit pub_methods_class_mapped_char"><td class="memItemLeft" align="right" valign="top">const_iterator&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_mapped_char.html#a2e307d7c95959ad22cb26824ed900ee1">find_I</a> (const char *key) const</td></tr>
+<tr class="memdesc:a2e307d7c95959ad22cb26824ed900ee1 inherit pub_methods_class_mapped_char"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a constant iterator of the element associated with the key given.  <a href="class_mapped_char.html#a2e307d7c95959ad22cb26824ed900ee1">More...</a><br /></td></tr>
 <tr class="separator:a2e307d7c95959ad22cb26824ed900ee1 inherit pub_methods_class_mapped_char"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;typename T&gt;<br />
 class VectorMap&lt; T &gt;</h3>
 
-<p>A std::map that uses a constant char array as the keys, and stores vectors of type &lt;T&gt;.<br />
-Extends the <a class="el" href="class_mapped_char.html">MappedChar</a> class, but exists to shorten '<a class="el" href="class_mapped_char.html">MappedChar</a>&lt;std::vector&lt;T&gt;&gt; myMap' down to 'VectorMap&lt;T&gt; myMap'. </p>
+<p>A std::map that uses a constant char array as the keys, and stores vectors of type &lt;T&gt;. </p>
+<p><br />
+Extends the <a class="el" href="class_mapped_char.html" title="A std::map that uses a constant char array as the keys, and stores values of type &lt;T&gt;.">MappedChar</a> class, but exists to shorten '<a class="el" href="class_mapped_char.html" title="A std::map that uses a constant char array as the keys, and stores values of type &lt;T&gt;.">MappedChar</a>&lt;std::vector&lt;T&gt;&gt; myMap' down to 'VectorMap&lt;T&gt; myMap'. </p>
 </div><hr/>The documentation for this class was generated from the following file:<ul>
 <li>src/Utilities/<a class="el" href="_mapped_char_8h_source.html">MappedChar.h</a></li>
 </ul>

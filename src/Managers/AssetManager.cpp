@@ -7,6 +7,8 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 	std::shared_lock<std::shared_mutex> asset_read_guard(m_Mutex_Assets);
 	for each (const Shared_Asset asset in m_AssetMap[assetType])
 		if (asset->getFileName() == filename) {
+			asset_read_guard.unlock();
+			asset_read_guard.release();
 			// Check if we need to wait for initialization
 			if (!threaded)
 				// Stay here until asset finalizes
@@ -18,20 +20,20 @@ Shared_Asset AssetManager::shareAsset(const char * assetType, const std::string 
 	asset_read_guard.release();
 
 	// Create the asset
-	const auto & asset = constructor();
 	std::unique_lock<std::shared_mutex> asset_write_guard(m_Mutex_Assets);
+	const auto & asset = constructor();
 	m_AssetMap[assetType].push_back(asset);
 	asset_write_guard.unlock();
 	asset_write_guard.release();
 
 	// Initialize now or later, depending if we are threading this order or not
-	const auto & function = std::bind(&Asset::initialize, asset);
+	const auto & initFunction = std::bind(&Asset::initialize, asset);
 	if (threaded) {
 		std::unique_lock<std::shared_mutex> worker_write_guard(m_Mutex_Workorders);
-		m_Workorders.push_back(std::move(function));
+		m_Workorders.push_back(std::move(initFunction));
 	}
 	else
-		function();
+		initFunction();
 	return asset;
 }
 
@@ -71,13 +73,24 @@ void AssetManager::notifyObservers()
 			pair.second();
 }
 
-const bool AssetManager::readyToUse()
-{
-	std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
-	return !bool(m_Workorders.size() + m_Workorders.size());
+bool AssetManager::readyToUse()
+{	
+	{
+		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Workorders);
+		if (m_Workorders.size())
+			return false;
+	}
+	{
+		std::shared_lock<std::shared_mutex> readGuard(m_Mutex_Assets);
+		for each (const auto & assetCategory in m_AssetMap)
+			for each (const auto & asset in assetCategory.second)
+				if (!asset->existsYet())
+					return false;
+	}
+	return true;
 }
 
-const bool AssetManager::hasChanged()
+bool AssetManager::hasChanged()
 {
 	// Changes every time assets finalize, when this manager notifies the assets' observers.
 	std::shared_lock<std::shared_mutex> readGuard(m_mutexNofications);

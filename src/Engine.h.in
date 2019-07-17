@@ -2,73 +2,83 @@
 #ifndef ENGINE_H
 #define ENGINE_H
 
-#include "Utilities/ECS/ecs.h"
+// Managers
 #include "Managers/AssetManager.h"
-#include "Managers/ModelManager.h"
-#include "Managers/MaterialManager.h"
 #include "Managers/MessageManager.h"
 #include "Managers/SoundManager.h"
+
+// Modules
+#include "Modules/Game/Game_M.h"
 #include "Modules/Graphics/Graphics_M.h"
-#include "Modules/Post Processing/Post_Processing_M.h"
 #include "Modules/Physics/Physics_M.h"
 #include "Modules/UI/UI_M.h"
 #include "Modules/World/World_M.h"
-#include "Modules/Game/Game_M.h"
+
+// Utilities
 #include "Utilities/ActionState.h"
 #include "Utilities/InputBinding.h"
 #include "Utilities/PreferenceState.h"
 #include "Utilities/MappedChar.h"
+
+// Other
 #include <string>
 
-
 constexpr char ENGINE_VERSION[] = "@PROJECT_VERSION@";
-
 struct GLFWwindow;
-class Engine;
-struct Rendering_Context {
-	~Rendering_Context();
-	Rendering_Context(Engine * engine);
-	GLFWwindow * window = NULL;
-};
-struct Auxilliary_Context {
-	Auxilliary_Context(const Rendering_Context & other);
-	GLFWwindow * window = NULL;
-};
+
 
 /** The main game engine object. Encapsulates the entire engine state. */
 class Engine {
 public:
-	// Constructors
+	// Public Enumerations
+	/** Different mouse input modes. */
+	enum MouseInputMode {
+		NORMAL,
+		FREE_LOOK
+	};
+
+
+	// Public (de)Constructors
 	/** Destroys the engine. */
 	~Engine();
 	/** Zero-initialize the engine. */
 	Engine();
 
 
+private:
+	// Private Initialization Methods
+	/** Initialize the window for this application. */
+	void initWindow();
+	/** Initialize the auxilliary processing threads. */
+	void initThreads();
+	/** Print the engine boiler-plate text to the message manager. */
+	void printBoilerPlate();
+
+
+public:
 	// Public Methods
 	/** Ticks the engine's overall simulation by a frame from the main thread. */
 	void tick();
 	/** Ticks the engine's overall simulation by a frame from a secondary thread. 
 	@param	exitObject	object signaling when to close the thread */
-	void tickThreaded(std::future<void> exitObject, const Auxilliary_Context && context);
+	void tickThreaded(std::future<void> exitObject, GLFWwindow * const window);
 	/** Checks if the engine wants to shut down.
 	@return	true if engine should shut down. */
 	bool shouldClose();
 	/** Tells the engine to shut down. */
 	void shutDown();
-	/** Adds a component constructor to the ecs construction map.
-	@param	name				the component name type.
-	@param	constructor			the component constructor object. */
-	void registerECSConstructor(const char * name, BaseECSComponentConstructor * constructor);
+	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
+	@param	mode		the new mouse input mode to use. */
+	void setMouseInputMode(const MouseInputMode & mode);
 
 
 	// Public Accessors
-	/** Returns this engine's rendering context. */
-	GLFWwindow * getRenderingContext() const;
+	/** Set the mouse input mode, such as free-look or normal cursor. */
+	inline MouseInputMode getMouseInputMode() const { return m_mouseInputMode; };
+	/** Retrieve the current time. */
+	float getTime() const;
 	/** Return a list of available resolutions. */
 	std::vector<glm::ivec3> getResolutions() const;
-	/** Returns this engine's entity component system. */
-	ECS & getECS() { return m_ecs; }
 	/** Returns this engine's action state. */
 	ActionState & getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
@@ -77,28 +87,22 @@ public:
 	// Manager Accessors
 	/** Returns this engine's asset manager. */
 	AssetManager & getManager_Assets() { return m_assetManager; }
-	/** Returns this engine's model manager. */
-	ModelManager & getManager_Models() { return m_modelManager; }
-	/** Returns this engine's material manager. */
-	MaterialManager & getManager_Materials() { return m_materialManager; }
 	/** Returns this engine's message manager. */
 	MessageManager & getManager_Messages() { return m_messageManager; }
 	/** Returns this engine's sound manager. */
 	SoundManager & getManager_Sounds() { return m_soundManager; }
 
 	// Module Accessors
+	/** Returns this engine's game module. */
+	Game_Module & getModule_Game() { return m_moduleGame; }
 	/** Returns this engine's graphics module. */
 	Graphics_Module & getModule_Graphics() { return m_moduleGraphics; }
-	/** Returns this engine's post-processing module. */
-	Post_Processing_Module & getModule_PostProcess() { return m_modulePProcess; }
 	/** Returns this engine's user-interface module. */
 	UI_Module & getModule_UI() { return m_moduleUI; }
 	/** Returns this engine's physics module. */
 	Physics_Module & getModule_Physics() { return m_modulePhysics; }
 	/** Returns this engine's world module. */
 	World_Module & getModule_World() { return m_moduleWorld; }
-	/** Returns this engine's game module. */
-	Game_Module & getModule_Game() { return m_moduleGame; }
 
 
 	// Static Methods
@@ -113,8 +117,6 @@ public:
 	
 private:
 	// Private Methods
-	/** Updates the action state belonging to this engine, iterating through the keybinds and checking if they are active. */
-	void updateInput();
 	/** Updates the window attributes. */
 	void configureWindow();
 
@@ -122,32 +124,27 @@ private:
 	// Private Attributes
 	float m_lastTime = 0;
 	float m_frameAccumulator = 0;
-	int m_frameCount = 0;
 	float m_refreshRate = 120.0f;
 	float m_useFullscreen = 1.0f;
 	float m_vsync = 1.0f;
 	glm::ivec2 m_windowSize = glm::ivec2(1);
+	GLFWwindow * m_window = NULL;
+	MouseInputMode m_mouseInputMode = MouseInputMode::NORMAL;
 	SoundManager m_soundManager;
 	AssetManager m_assetManager;
 	MessageManager m_messageManager;
 	PreferenceState	m_preferenceState;
-	Rendering_Context m_renderingContext;
-	MaterialManager m_materialManager;
-	ModelManager m_modelManager;
-	ECS	m_ecs;
 	ActionState	m_actionState;
 	InputBinding m_inputBindings;
 	std::vector<std::pair<std::thread, std::promise<void>>> m_threads;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 
-
 	// Private Modules
-	Graphics_Module m_moduleGraphics;
-	Post_Processing_Module m_modulePProcess;
-	UI_Module m_moduleUI;
-	Physics_Module m_modulePhysics;
 	World_Module m_moduleWorld;
 	Game_Module m_moduleGame;
+	Graphics_Module m_moduleGraphics;
+	UI_Module m_moduleUI;
+	Physics_Module m_modulePhysics;	
 };
 
 #endif // ENGINE_H

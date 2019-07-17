@@ -22,7 +22,7 @@
  <tr style="height: 56px;">
   <td id="projectalign" style="padding-left: 0.5em;">
    <div id="projectname">reVision
-   &#160;<span id="projectnumber">3.0</span>
+   &#160;<span id="projectnumber">4.0.0</span>
    </div>
    <div id="projectbrief">Video game engine project.</div>
   </td>
@@ -70,8 +70,6 @@ $(function() {
 <div class="title">LightDirectional_Component Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-
-<p><code>#include &lt;<a class="el" href="_light_directional___c_8h_source.html">LightDirectional_C.h</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for LightDirectional_Component:</div>
 <div class="dyncontent">
@@ -79,15 +77,18 @@ Inheritance diagram for LightDirectional_Component:</div>
   <img src="struct_light_directional___component.png" usemap="#LightDirectional_5FComponent_map" alt=""/>
   <map id="LightDirectional_5FComponent_map" name="LightDirectional_5FComponent_map">
 <area href="struct_e_c_s_component.html" alt="ECSComponent&lt; LightDirectional_Component &gt;" shape="rect" coords="0,56,282,80"/>
-<area href="struct_base_e_c_s_component.html" alt="BaseECSComponent" shape="rect" coords="0,0,282,24"/>
+<area href="struct_base_e_c_s_component.html" title="A base type component." alt="BaseECSComponent" shape="rect" coords="0,0,282,24"/>
   </map>
 </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a2dd5927fec43b6a014a1844bbc4e6d80"><td class="memItemLeft" align="right" valign="top"><a id="a2dd5927fec43b6a014a1844bbc4e6d80"></a>
-<a class="el" href="struct_v_b___element.html">VB_Element</a>&lt; <a class="el" href="struct_light_directional___buffer.html">LightDirectional_Buffer</a> &gt; *&#160;</td><td class="memItemRight" valign="bottom"><b>m_data</b> = nullptr</td></tr>
-<tr class="separator:a2dd5927fec43b6a014a1844bbc4e6d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adceecc3ce5828b42c610a6d827f5c96e"><td class="memItemLeft" align="right" valign="top"><a id="adceecc3ce5828b42c610a6d827f5c96e"></a>
+glm::mat4&#160;</td><td class="memItemRight" valign="bottom"><b>m_pvMatrices</b> [NUM_CASCADES] = { glm::mat4(1.0f),glm::mat4(1.0f), glm::mat4(1.0f), glm::mat4(1.0f) }</td></tr>
+<tr class="separator:adceecc3ce5828b42c610a6d827f5c96e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac0e1b32ae74d390fc1a2bf0076f6e824"><td class="memItemLeft" align="right" valign="top"><a id="ac0e1b32ae74d390fc1a2bf0076f6e824"></a>
+float&#160;</td><td class="memItemRight" valign="bottom"><b>m_cascadeEnds</b> [NUM_CASCADES] = { 1.0f, 1.0f, 1.0f, 1.0f }</td></tr>
+<tr class="separator:ac0e1b32ae74d390fc1a2bf0076f6e824"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_attribs_struct_base_e_c_s_component"><td colspan="2" onclick="javascript:toggleInherit('pub_attribs_struct_base_e_c_s_component')"><img src="closed.png" alt="-"/>&#160;Public Attributes inherited from <a class="el" href="struct_base_e_c_s_component.html">BaseECSComponent</a></td></tr>
 <tr class="memitem:adcaf0c71c06aa94e59cadc1afcd4032a inherit pub_attribs_struct_base_e_c_s_component"><td class="memItemLeft" align="right" valign="top"><a id="adcaf0c71c06aa94e59cadc1afcd4032a"></a>
 EntityHandle&#160;</td><td class="memItemRight" valign="bottom"><b>entity</b> = NULL_ENTITY_HANDLE</td></tr>
@@ -125,10 +126,8 @@ static const uint32_t&#160;</td><td class="memItemRight" valign="bottom"><b>ID</
 static const size_t&#160;</td><td class="memItemRight" valign="bottom"><b>SIZE</b></td></tr>
 <tr class="separator:a906cf75f60c45e9612d582d3b7fbaa17 inherit pub_static_attribs_struct_e_c_s_component"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A directional light component, emulating the appearance of sun lighting. </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
-<li>src/Modules/Graphics/Components/<a class="el" href="_light_directional___c_8h_source.html">LightDirectional_C.h</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>src/Modules/Graphics/Lighting/<a class="el" href="_graphics_2_lighting_2components_8h_source.html">components.h</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

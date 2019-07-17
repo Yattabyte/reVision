@@ -2,32 +2,30 @@
 #ifndef SSR_H
 #define SSR_H
 
-#include "Modules/Graphics/Effects/GFX_Core_Effect.h"
+#include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
 #include "Assets/Texture.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/FBO.h"
+#include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
 
 /** A core-rendering technique for deriving extra reflection information from the viewport itself. */
-class SSR : public GFX_Core_Effect {
+class SSR : public Graphics_Technique {
 public:
-	// (de)Constructors
+	// Public (de)Constructors
 	/** Virtual Destructor. */
-	~SSR() {
+	inline ~SSR() {
 		// Update indicator
 		m_aliveIndicator = false;
 
 		// Destroy OpenGL objects
-		glDeleteFramebuffers(1, &m_fboMipsID);
-		glDeleteTextures(1, &m_textureMipsID);
 		glDeleteTextures(1, &m_bayerID);
 	}
 	/** Constructor. */
-	SSR(Engine * engine, FBO_Base * geometryFBO, FBO_Base * lightingFBO, FBO_Base * reflectionFBO)
-	: m_engine(engine), m_geometryFBO(geometryFBO), m_lightingFBO(lightingFBO), m_reflectionFBO(reflectionFBO) {
+	inline SSR(Engine * engine)
+		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
 		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
@@ -37,51 +35,13 @@ public:
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-		preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(f, m_renderSize.y)); });
-		preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-		preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {resize(glm::ivec2(m_renderSize.x, f)); });
 		preferences.getOrSetValue(PreferenceState::C_SSR, m_enabled);
 		preferences.addCallback(PreferenceState::C_SSR, m_aliveIndicator, [&](const float &f) { m_enabled = (bool)f; });
-
-		// Asset-Finished Callbacks
-		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, 0);
-		});
-
-		// GL loading
-		glCreateFramebuffers(1, &m_fboMipsID);
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureMipsID);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MIN_LOD, 0);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LOD, 5);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_BASE_LEVEL, 0);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LEVEL, 5);
-		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, size.x, size.y, 0, GL_RGB, GL_FLOAT, NULL);
-		}
-		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
-		glNamedFramebufferDrawBuffer(m_fboMipsID, GL_COLOR_ATTACHMENT0);
-
-		glCreateFramebuffers(1, &m_fboSSRID);
-		glCreateTextures(GL_TEXTURE_2D, 1, &m_textureSSRID);
-		glTextureImage2DEXT(m_textureSSRID, GL_TEXTURE_2D, 0, GL_RGB8, m_renderSize.x, m_renderSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		glTextureParameteri(m_textureSSRID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textureSSRID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTextureParameteri(m_textureSSRID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTextureParameteri(m_textureSSRID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glNamedFramebufferTexture(m_fboSSRID, GL_COLOR_ATTACHMENT0, m_textureSSRID, 0);
-		glNamedFramebufferDrawBuffer(m_fboSSRID, GL_COLOR_ATTACHMENT0);
 
 		// Bayer matrix
 		GLubyte data[16] = { 0,8,2,10,12,4,14,6,3,11,1,9,15,7,13,5 };
 		glCreateTextures(GL_TEXTURE_2D, 1, &m_bayerID);
-		glTextureStorage2D(m_bayerID, 1, GL_R8, 4, 4);
+		glTextureStorage2D(m_bayerID, 1, GL_R16F, 4, 4);
 		glTextureSubImage2D(m_bayerID, 0, 0, 0, 4, 4, GL_RED, GL_UNSIGNED_BYTE, &data);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_S, GL_REPEAT);
 		glTextureParameteri(m_bayerID, GL_TEXTURE_WRAP_T, GL_REPEAT);
@@ -90,31 +50,45 @@ public:
 
 		// Error Reporting
 		auto & msgMgr = m_engine->getManager_Messages();
-		if (glCheckNamedFramebufferStatus(m_fboMipsID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			msgMgr.error("SSR Mipmap Framebuffer has encountered an error.");
-		if (!glIsTexture(m_textureMipsID))
-			msgMgr.error("SSR Mipmap Texture is incomplete.");
-		if (glCheckNamedFramebufferStatus(m_fboSSRID, GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			msgMgr.error("SSR Framebuffer has encountered an error.");
-		if (!glIsTexture(m_textureSSRID))
-			msgMgr.error("SSR Texture is incomplete.");
 		if (!glIsTexture(m_bayerID))
 			msgMgr.error("SSR Bayer Matrix Texture is incomplete.");
 	}
 
 
-	// Interface Implementations.
-	inline virtual void applyEffect(const float & deltaTime) override {
-		if (!m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
+	// Public Interface Implementations.
+	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+		for (auto &[camIndexBuffer, quadIndirectBuffer] : m_drawData) {
+			camIndexBuffer.endWriting();
+			quadIndirectBuffer.endWriting();
+		}
+		m_drawIndex = 0;
+	}
+	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+		if (!m_enabled || !m_shapeQuad->existsYet() || !m_shaderCopy->existsYet() || !m_shaderConvMips->existsYet() || !m_shaderSSR1->existsYet() || !m_shaderSSR2->existsYet())
 			return;
-		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
-		updateMIPChain();
+		// Prepare camera index
+		if (m_drawIndex >= m_drawData.size())
+			m_drawData.resize(m_drawIndex + 1);
+		auto &[camBufferIndex, quadIndirectBuffer] = m_drawData[m_drawIndex];
+		camBufferIndex.beginWriting();
+		quadIndirectBuffer.beginWriting();
+		std::vector<glm::ivec2> camIndices;
+		for (auto &[camIndex, layer] : perspectives)
+			camIndices.push_back({ camIndex, layer });
+		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
+		const auto instanceCount = (GLuint)perspectives.size();
+		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+
+		glBindVertexArray(m_shapeQuad->m_vaoID);
+		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+
+		updateMIPChain(viewport);
 
 		glDisable(GL_BLEND);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboSSRID);
-		m_geometryFBO->bindForReading();
+		viewport->m_gfxFBOS->bindForWriting("SSR");
+		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		m_shaderSSR1->bind();
 		glBindTextureUnit(6, m_bayerID);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -122,45 +96,51 @@ public:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		m_reflectionFBO->bindForWriting();
-		glBindTextureUnit(5, m_textureSSRID);
-		glBindTextureUnit(6, m_textureMipsID);
+		viewport->m_gfxFBOS->bindForWriting("REFLECTION");
+		glBindTextureUnit(5, viewport->m_gfxFBOS->getTexID("SSR", 0));
+		glBindTextureUnit(6, viewport->m_gfxFBOS->getTexID("SSR_MIP", 0));
 		m_shaderSSR2->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 		glBlendFunc(GL_ONE, GL_ONE);
 		glDisable(GL_BLEND);
+		m_drawIndex++;
 	}
 
 
 private:
 	// Private Methods
-	/** Convolute the lighting buffer into each of its mip levels. */
-	inline void updateMIPChain() {
+	/** Convolute the lighting buffer into each of its mip levels.
+	@param	viewport	the viewport to render from. */
+	inline void updateMIPChain(const std::shared_ptr<Viewport> & viewport) {
+		const auto mipFboID = viewport->m_gfxFBOS->getFboID("SSR_MIP");
+		const auto mipTexID = viewport->m_gfxFBOS->getTexID("SSR_MIP", 0);
+		const auto dimensions = glm::vec2(viewport->m_dimensions);
+
 		glDisable(GL_DEPTH_TEST);
 		glDisable(GL_BLEND);
 
 		// Copy lighting texture to one with a MIP chain
 		m_shaderCopy->bind();
-		m_lightingFBO->bindForReading();
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboMipsID);
+		viewport->m_gfxFBOS->bindForReading("LIGHTING", 0);
+		viewport->m_gfxFBOS->bindForWriting("SSR_MIP");
 		GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		glClearNamedFramebufferfv(m_fboMipsID, GL_COLOR, 0, clearColor);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+		glClearNamedFramebufferfv(mipFboID, GL_COLOR, 0, clearColor);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Blur MIP chain, reading from 1 MIP level and writing into next
 		m_shaderConvMips->bind();
-		glBindTextureUnit(0, m_textureMipsID);
+		glBindTextureUnit(0, mipTexID);
 		for (int horizontal = 0; horizontal < 2; ++horizontal) {
 			m_shaderConvMips->setUniform(0, horizontal);
-			glm::ivec2 read_size = m_renderSize;
+			glm::ivec2 read_size = viewport->m_dimensions;
 			for (int x = 1; x < 6; ++x) {
 				// Ensure we are reading from MIP level x - 1
 				m_shaderConvMips->setUniform(1, read_size);
-				glTextureParameteri(m_textureMipsID, GL_TEXTURE_BASE_LEVEL, x - 1);
-				glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LEVEL, x - 1);
+				glTextureParameteri(mipTexID, GL_TEXTURE_BASE_LEVEL, x - 1);
+				glTextureParameteri(mipTexID, GL_TEXTURE_MAX_LEVEL, x - 1);
 				// Ensure we are writing to MIP level x
-				glm::ivec2 write_size(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-				glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, x);
+				const glm::ivec2 write_size = glm::ivec2(floor(dimensions.x / pow(2, x)), floor(dimensions.y / pow(2, x)));
+				glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, x);
 
 				glViewport(0, 0, std::max(1, write_size.x), std::max(1, write_size.y));
 				glDrawArraysIndirect(GL_TRIANGLES, 0);
@@ -173,33 +153,25 @@ private:
 		}
 
 		// Restore to default
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_BASE_LEVEL, 0);
-		glTextureParameteri(m_textureMipsID, GL_TEXTURE_MAX_LEVEL, 5);
-		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
-		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
-	}
-	/** Resize the frame buffer.
-	@param	size	the new size of the frame buffer */
-	inline void resize(const glm::ivec2 & size) {
-		m_renderSize = size;
-		for (int x = 0; x < 6; ++x) {
-			const glm::ivec2 mippedSize(floor(m_renderSize.x / pow(2, x)), floor(m_renderSize.y / pow(2, x)));
-			glTextureImage2DEXT(m_textureMipsID, GL_TEXTURE_2D, x, GL_RGB8, mippedSize.x, mippedSize.y, 0, GL_RGB, GL_FLOAT, NULL);
-		}
-		glNamedFramebufferTexture(m_fboMipsID, GL_COLOR_ATTACHMENT0, m_textureMipsID, 0);
+		glTextureParameteri(mipTexID, GL_TEXTURE_BASE_LEVEL, 0);
+		glTextureParameteri(mipTexID, GL_TEXTURE_MAX_LEVEL, 5);
+		glNamedFramebufferTexture(mipFboID, GL_COLOR_ATTACHMENT0, mipTexID, 0);
+		glViewport(0, 0, (GLsizei)dimensions.x, (GLsizei)dimensions.y);
 	}
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	FBO_Base * m_geometryFBO = nullptr, * m_lightingFBO = nullptr, * m_reflectionFBO = nullptr;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
 	Shared_Primitive m_shapeQuad;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	GLuint m_fboMipsID = 0, m_textureMipsID = 0;
-	GLuint m_fboSSRID = 0, m_textureSSRID = 0;
 	GLuint m_bayerID = 0;
-	StaticBuffer m_quadIndirectBuffer;
+	struct DrawData {
+		DynamicBuffer camBufferIndex;
+		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
+		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+	};
+	std::vector<DrawData> m_drawData;
+	int	m_drawIndex = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

@@ -2,6 +2,7 @@
 #include "Assets/Shader_Pkg.h"
 #include "Utilities/IO/Text_IO.h"
 #include "Engine.h"
+#include <filesystem>
 #include <fstream>
 
 
@@ -9,6 +10,7 @@ constexpr char* EXT_SHADER_VERTEX = ".vsh";
 constexpr char* EXT_SHADER_FRAGMENT = ".fsh";
 constexpr char* EXT_SHADER_BINARY = ".shader";
 constexpr char* DIRECTORY_SHADER = "\\Shaders\\";
+constexpr char* DIRECTORY_SHADER_CACHE = "\\cache\\shaders\\";
 
 struct ShaderHeader { 
 	GLenum format; 
@@ -34,36 +36,13 @@ Shader::~Shader()
 
 Shader::Shader(Engine * engine, const std::string & filename) : Asset(engine, filename) {}
 
-void Shader::initializeDefault()
-{
-	// Create hard-coded alternative
-	const std::string filename = getFileName();
-
-	// Create Vertex Shader
-	m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
-	m_vertexShader.createGLShader(m_engine, filename);
-	glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
-
-	// Create Fragment Shader
-	m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
-	m_fragmentShader.createGLShader(m_engine, filename);
-	glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
-
-	glLinkProgram(m_glProgramID);
-	glValidateProgram(m_glProgramID);
-
-	// Detach the shaders now that the program is complete
-	glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
-	glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
-}
-
 void Shader::initialize()
 {
 	// Attempt to load cache, otherwise load manually
 	m_glProgramID = glCreateProgram();
 
 #ifdef NDEBUG
-	if (!loadCachedBinary(DIRECTORY_SHADER + getFileName()))
+	if (!loadCachedBinary(DIRECTORY_SHADER_CACHE + getFileName()))
 #endif
 	{
 		// Create Vertex and Fragment shaders
@@ -73,14 +52,33 @@ void Shader::initialize()
 			success = validateProgram();
 #ifdef NDEBUG
 			if (success)
-				saveCachedBinary(DIRECTORY_SHADER + getFileName());
+				saveCachedBinary(DIRECTORY_SHADER_CACHE + getFileName());
 #endif
 		}
 		// If we ever failed, initialize default shader
 		if (!success) {
 			const std::vector<GLchar> infoLog = getErrorLog();
 			m_engine->getManager_Messages().error("Shader \"" + m_filename + "\" failed to initialize. Reason: " + std::string(infoLog.data(), infoLog.size()));
-			initializeDefault();
+			
+			// Create hard-coded alternative
+			const std::string filename = getFileName();
+
+			// Create Vertex Shader
+			m_vertexShader.m_shaderText = "#version 430\n\nlayout(location = 0) in vec3 vertex;\n\nvoid main()\n{\n\tgl_Position = vec4(vertex, 1.0);\n}";
+			m_vertexShader.createGLShader(m_engine, filename);
+			glAttachShader(m_glProgramID, m_vertexShader.m_shaderID);
+
+			// Create Fragment Shader
+			m_fragmentShader.m_shaderText = "#version 430\n\nlayout (location = 0) out vec4 fragColor;\n\nvoid main()\n{\n\tfragColor = vec4(1.0f);\n}";
+			m_fragmentShader.createGLShader(m_engine, filename);
+			glAttachShader(m_glProgramID, m_fragmentShader.m_shaderID);
+
+			glLinkProgram(m_glProgramID);
+			glValidateProgram(m_glProgramID);
+
+			// Detach the shaders now that the program is complete
+			glDetachShader(m_glProgramID, m_vertexShader.m_shaderID);
+			glDetachShader(m_glProgramID, m_fragmentShader.m_shaderID);
 		}
 	}
 
@@ -149,7 +147,9 @@ const bool Shader::saveCachedBinary(const std::string & relativePath)
 	std::vector<char> binary(header.length);
 	glGetProgramBinary(m_glProgramID, header.length, NULL, &header.format, binary.data());
 
-	std::ofstream file((Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY).c_str(), std::ios::binary);
+	const auto fullPath = Engine::Get_Current_Dir() + relativePath + EXT_SHADER_BINARY;
+	std::filesystem::create_directories(std::filesystem::path(fullPath).parent_path());
+	std::ofstream file(fullPath, std::ios::binary);
 	if (file.is_open()) {
 		file.write(reinterpret_cast<char*>(&header), sizeof(ShaderHeader));
 		file.write(binary.data(), header.length);
@@ -160,7 +160,7 @@ const bool Shader::saveCachedBinary(const std::string & relativePath)
 	return false;
 }
 
-const bool Shader::initShaders(const std::string & relativePath) 
+bool Shader::initShaders(const std::string & relativePath) 
 {
 	const std::string filename = getFileName();
 
@@ -199,14 +199,14 @@ ShaderObj::~ShaderObj() { glDeleteShader(m_shaderID); }
 
 ShaderObj::ShaderObj(const GLenum & type) : m_type(type) {}
 
-const GLint ShaderObj::getShaderiv(const GLenum & pname) const
+GLint ShaderObj::getShaderiv(const GLenum & pname) const
 {
 	GLint param;
 	glGetShaderiv(m_shaderID, pname, &param);
 	return param;
 }
 
-const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
+bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath) 
 {
 	// Exit early if document not found or no text is found in the document
 	if (!Text_IO::Import_Text(engine, filePath, m_shaderText) || m_shaderText == "")
@@ -233,7 +233,7 @@ const bool ShaderObj::loadDocument(Engine * engine, const std::string & filePath
 	return true;
 }
 
-const bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
+bool ShaderObj::createGLShader(Engine * engine, const std::string & filename) 
 {
 	// Create shader object
 	const char * source = m_shaderText.c_str();
