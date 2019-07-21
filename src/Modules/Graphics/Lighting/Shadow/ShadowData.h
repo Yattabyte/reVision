@@ -3,7 +3,7 @@
 #define SHADOWDATA_H
 
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/Graphics/Lighting/components.h"
+#include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowMap.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"

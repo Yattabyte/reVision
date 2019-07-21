@@ -3,7 +3,6 @@
 #define DIRECTIONALDATA_H
 
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"

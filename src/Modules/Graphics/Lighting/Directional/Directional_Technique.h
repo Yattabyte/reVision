@@ -3,11 +3,9 @@
 #define DIRECTIONAL_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalData.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalVisibility_System.h"
 #include "Modules/Graphics/Lighting/Directional/DirectionalSync_System.h"
-#include "Modules/World/ECS/components.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"

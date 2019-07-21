@@ -3,12 +3,10 @@
 #define REFLECTOR_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Pipeline.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorVisibility_System.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorScheduler_System.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
-#include "Modules/World/ECS/components.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"

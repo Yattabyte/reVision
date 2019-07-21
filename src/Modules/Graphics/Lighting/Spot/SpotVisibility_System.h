@@ -4,8 +4,6 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Logical/components.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Spot/SpotData.h"
 
 

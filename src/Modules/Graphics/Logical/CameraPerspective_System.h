@@ -4,7 +4,6 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Logical/components.h"
 #include "glm/gtc/type_ptr.hpp"
 #include <memory>
 

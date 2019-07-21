@@ -1,5 +1,5 @@
 #include "Modules/Game/Game_M.h"
-#include "Modules/Game/ECS/components.h"
+#include "Modules/World/ECS/components.h"
 #include "Modules/Game/ECS/PlayerSpawner_System.h"
 #include "Modules/Game/ECS/PlayerFreeLook_System.h"
 #include "Modules/Game/Overlays/LoadingIndicator.h"

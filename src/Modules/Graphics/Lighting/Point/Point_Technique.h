@@ -3,7 +3,6 @@
 #define POINT_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Point/PointData.h"
 #include "Modules/Graphics/Lighting/Point/PointVisibility_System.h"
 #include "Modules/Graphics/Lighting/Point/PointSync_System.h"

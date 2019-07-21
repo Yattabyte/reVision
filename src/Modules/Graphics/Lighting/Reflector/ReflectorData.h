@@ -3,7 +3,6 @@
 #define REFLECTORDATA_H
 
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Reflector/FBO_Env_Reflector.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"

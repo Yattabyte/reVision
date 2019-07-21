@@ -3,7 +3,6 @@
 #define SPOT_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Spot/SpotData.h"
 #include "Modules/Graphics/Lighting/Spot/SpotVisibility_System.h"
 #include "Modules/Graphics/Lighting/Spot/SpotSync_System.h"

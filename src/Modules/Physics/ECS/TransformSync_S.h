@@ -5,8 +5,6 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Lighting/components.h"
-#include "Modules/Physics/ECS/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 #include "glm/gtx/component_wise.hpp"

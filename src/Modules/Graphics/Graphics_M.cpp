@@ -1,7 +1,6 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/Graphics/Geometry/components.h"
-#include "Modules/Graphics/Lighting/components.h"
+#include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
 #include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"

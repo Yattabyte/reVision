@@ -42,8 +42,10 @@ void World_Module::frameTick(const float & deltaTime)
 		return;
 
 	// Signal that the map has finished loading ONCE
-	if (m_state == startLoading)
+	if (m_state == startLoading) {
 		notifyListeners(finishLoading);
+		saveWorld("qwe");
+	}
 	else if (m_state == finishLoading) {
 		// Lastly, check and see if we observed any changes
 		if (assetManager.hasChanged())		
@@ -61,6 +63,17 @@ void World_Module::loadWorld(const std::string & mapName)
 	
 	// Signal that a new map is begining to load
 	notifyListeners(startLoading);
+}
+
+void World_Module::saveWorld(const std::string & mapName)
+{
+	for each (const auto & entity in m_entities) {
+		const auto & handle = (EntityHandle)entity;
+		for (const auto &[componentID, createFunc] : entity->second) {
+			BaseECSComponent * component = getComponentInternal(handleToEntity(entity), m_components[componentID], componentID);
+			component->save();
+		}
+	}
 }
 
 void World_Module::unloadWorld()
@@ -87,9 +100,9 @@ void World_Module::addLevelListener(const std::shared_ptr<bool> & alive, const s
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const uint32_t * componentIDs, const size_t & numComponents)
+EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const int * componentIDs, const size_t & numComponents)
 {
-	std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* newEntity = new std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >();
+	auto * newEntity = new std::pair<int, std::vector<std::pair<int, int> > >();
 	EntityHandle handle = (EntityHandle)newEntity;
 	for (size_t i = 0; i < numComponents; ++i) {
 		// Check if componentID is actually valid
@@ -106,26 +119,26 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 		addComponentInternal(handle, newEntity->second, componentIDs[i], entityComponents[i]);
 	}
 
-	newEntity->first = (uint32_t)m_entities.size();
+	newEntity->first = (int)m_entities.size();
 	m_entities.push_back(newEntity);
 	return handle;
 }
 
 void World_Module::removeEntity(const EntityHandle & handle)
 {
-	std::vector<std::pair<uint32_t, uint32_t>> & entity = handleToEntity(handle);
+	std::vector<std::pair<int, int>> & entity = handleToEntity(handle);
 	for (size_t i = 0; i < entity.size(); ++i)
 		deleteComponent(entity[i].first, entity[i].second);
 
-	const uint32_t destIndex = handleToEntityIndex(handle);
-	const uint32_t srcIndex = (uint32_t)m_entities.size() - 1u;
+	const int destIndex = handleToEntityIndex(handle);
+	const int srcIndex = (int)m_entities.size() - 1u;
 	delete m_entities[destIndex];
 	m_entities[destIndex] = m_entities[srcIndex];
 	m_entities[destIndex]->first = destIndex;
 	m_entities.pop_back();
 }
 
-void World_Module::addComponentType(const char * name, const std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)> & func)
+void World_Module::addComponentType(const char * name, const std::function<std::pair<int,BaseECSComponent*>(const ParamList &)> & func)
 {
 	m_constructorMap[name] = func;
 }
@@ -135,7 +148,7 @@ void World_Module::removeComponentType(const char * name)
 	m_constructorMap.erase(name);
 }
 
-void World_Module::addNotifyOnComponentType(const uint32_t & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent*)>& func)
+void World_Module::addNotifyOnComponentType(const int & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent*)>& func)
 {
 	m_constructionNotifyees[ID].push_back(std::make_pair(alive, func));
 }
@@ -152,7 +165,7 @@ void World_Module::updateSystem(BaseECSSystem * system, const float & deltaTime)
 		system->updateComponents(deltaTime, components);
 }
 
-void World_Module::updateSystem(const float & deltaTime, const std::vector<uint32_t> & types, const std::vector<uint32_t> & flags, const std::function<void(const float&, const std::vector<std::vector<BaseECSComponent*>>&)>& func)
+void World_Module::updateSystem(const float & deltaTime, const std::vector<int> & types, const std::vector<int> & flags, const std::function<void(const float&, const std::vector<std::vector<BaseECSComponent*>>&)>& func)
 {
 	if (auto components = getRelevantComponents(types, flags); components.size() > 0ull)
 		func(deltaTime, components);	
@@ -162,7 +175,7 @@ void World_Module::processLevel()
 {
 	if (m_level->existsYet()) {
 		std::vector<BaseECSComponent*> components; // holds each entity's components
-		std::vector<unsigned int> ids; // holds each entity's component id's
+		std::vector<int> ids; // holds each entity's component id's
 		const char * type;
 		for each (auto & lvlEntity in m_level->m_entities) {
 			for each (const auto & lvlComponent in lvlEntity.components) {
@@ -204,7 +217,7 @@ void World_Module::notifyListeners(const WorldState & state)
 	m_state = state;
 }
 
-void World_Module::deleteComponent(const uint32_t & componentID, const uint32_t & index)
+void World_Module::deleteComponent(const int & componentID, const int & index)
 {
 	std::vector<uint8_t> mem_array = m_components[componentID];
 	ECSComponentFreeFunction freefn = BaseECSComponent::getTypeFreeFunction(componentID);
@@ -215,16 +228,16 @@ void World_Module::deleteComponent(const uint32_t & componentID, const uint32_t 
 	BaseECSComponent * destComponent = (BaseECSComponent*)&mem_array[index];
 	freefn(destComponent);
 
-	if (index == (uint32_t)srcIndex) {
+	if (index == (int)srcIndex) {
 		mem_array.resize(srcIndex);
 		return;
 	}
 	std::memcpy(destComponent, srcComponent, typeSize);
 
 	// Update references
-	std::vector<std::pair<uint32_t, uint32_t>> & srcComponents = handleToEntity(srcComponent->entity);
+	std::vector<std::pair<int, int>> & srcComponents = handleToEntity(srcComponent->entity);
 	for (size_t i = 0; i < srcComponents.size(); ++i) {
-		if (componentID == srcComponents[i].first && (uint32_t)srcIndex == srcComponents[i].second) {
+		if (componentID == srcComponents[i].first && (int)srcIndex == srcComponents[i].second) {
 			srcComponents[i].second = index;
 			break;
 		}
@@ -232,18 +245,18 @@ void World_Module::deleteComponent(const uint32_t & componentID, const uint32_t 
 	mem_array.resize(srcIndex);
 }
 
-void World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<uint32_t, uint32_t>>& entity, const uint32_t & componentID, BaseECSComponent * component)
+void World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>>& entity, const int & componentID, BaseECSComponent * component)
 {
 	ECSComponentCreateFunction createfn = BaseECSComponent::getTypeCreateFunction(componentID);
-	std::pair<uint32_t, uint32_t> newPair;
+	std::pair<int, int> newPair;
 	newPair.first = componentID;
 	newPair.second = createfn(m_components[componentID], handle, component);
 	entity.push_back(newPair);
 }
 
-bool World_Module::removeComponentInternal(EntityHandle handle, const uint32_t & componentID)
+bool World_Module::removeComponentInternal(EntityHandle handle, const int & componentID)
 {
-	std::vector<std::pair<uint32_t, uint32_t>> & entityComponents = handleToEntity(handle);
+	std::vector<std::pair<int, int>> & entityComponents = handleToEntity(handle);
 	for (size_t i = 0; i < entityComponents.size(); ++i) {
 		if (componentID == entityComponents[i].first) {
 			deleteComponent(entityComponents[i].first, entityComponents[i].second);
@@ -257,7 +270,7 @@ bool World_Module::removeComponentInternal(EntityHandle handle, const uint32_t &
 	return false;
 }
 
-BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>> & entityComponents, std::vector<uint8_t> & mem_array, const uint32_t & componentID)
+BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<int, int>> & entityComponents, std::vector<uint8_t> & mem_array, const int & componentID)
 {
 	for (size_t i = 0; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
@@ -265,7 +278,7 @@ BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<uint
 	return nullptr;
 }
 
-std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(const std::vector<uint32_t>& componentTypes, const std::vector<uint32_t>& componentFlags)
+std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags)
 {
 	std::vector< std::vector<BaseECSComponent*> > components;
 	if (componentTypes.size() > 0ull) {
@@ -290,7 +303,7 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as we component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
 				componentParam[minSizeIndex] = (BaseECSComponent*)&mem_array[i];
-				std::vector<std::pair<uint32_t, uint32_t> > & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
+				std::vector<std::pair<int, int> > & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
 
 				bool isValid = true;
 				for (size_t j = 0; j < componentTypes.size(); ++j) {
@@ -310,7 +323,7 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 	return components;
 }
 
-size_t World_Module::findLeastCommonComponent(const std::vector<uint32_t>& componentTypes, const std::vector<uint32_t> & componentFlags)
+size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int> & componentFlags)
 {
 	size_t minSize = (size_t)-1;
 	size_t minIndex = (size_t)-1;

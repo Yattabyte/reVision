@@ -5,8 +5,6 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Game/ECS/components.h"
-#include "Modules/Graphics/Logical/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -54,7 +52,7 @@ public:
 				trans.m_transform = transform;
 
 				BaseECSComponent * entityComponents[] = { &player, &trans };
-				uint32_t types[] = { Player3D_Component::ID, Transform_Component::ID };
+				int types[] = { Player3D_Component::ID, Transform_Component::ID };
 				world.makeEntity(entityComponents, types, 2ull);
 				m_playerCount++;
 			}

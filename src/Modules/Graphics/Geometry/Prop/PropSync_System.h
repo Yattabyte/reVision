@@ -4,10 +4,9 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Graphics/Logical/components.h"
-#include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 #include "Utilities/GL/glad/glad.h"
+#include "glm/gtx/component_wise.hpp"
 
 
 /** An ECS system responsible for syncronizing prop components and sending data to the GPU. */

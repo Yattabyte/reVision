@@ -3,14 +3,12 @@
 #define PROPDATA_H
 
 #include "Modules/Graphics/Common/Camera.h"
-#include "Modules/Graphics/Geometry/components.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "glm/glm.hpp"
 #include "glm/gtc/type_ptr.hpp"
-#include "glm/gtx/component_wise.hpp"
 #include <memory>
 #include <vector>
 

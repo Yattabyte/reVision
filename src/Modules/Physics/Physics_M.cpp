@@ -2,7 +2,7 @@
 #include "Engine.h"
 
 /* Component Types Used */
-#include "Modules/Physics/ECS/components.h"
+#include "Modules/World/ECS/components.h"
 #include "Modules/Physics/ECS/TransformSync_S.h"
 
 

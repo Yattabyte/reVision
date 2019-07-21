@@ -4,9 +4,6 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Modules/Game/ECS/components.h"
-#include "Modules/Graphics/Geometry/components.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -86,7 +83,7 @@ public:
 				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
 				trans.m_transform.update();
 				BaseECSComponent * entityComponents[] = { &renderable, &bsphere, &color, &radius, &point, &shadow, &camArray, &trans };
-				uint32_t types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, Shadow_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
+				int types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, Shadow_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
 				world.makeEntity(entityComponents, types, 7ull);
 			}
 			// Make the translation amount be relative to the camera's orientation

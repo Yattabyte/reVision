@@ -3,7 +3,6 @@
 #define SHADOW_TECHNIQUE_H
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
-#include "Modules/Graphics/Lighting/components.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowScheduler_System.h"
 #include "Assets/Shader.h"

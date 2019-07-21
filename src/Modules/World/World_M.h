@@ -41,6 +41,8 @@ public:
 	/** Loads the world, specified by the map name.
 	@param	mapName		the name of the map to load. */
 	void loadWorld(const std::string & mapName);
+	/***/
+	void saveWorld(const std::string & mapName);
 	/** Unload the current world. */
 	void unloadWorld();
 	/** Registers a notification function to be called when the world state changes.
@@ -48,14 +50,14 @@ public:
 	@param	notifier	function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool> & alive, const std::function<void(const WorldState&)> & func);
 	/** Construct an entity from the array of components and IDS*/
-	EntityHandle makeEntity(BaseECSComponent ** components, const uint32_t * componentIDS, const size_t & numComponents);
+	EntityHandle makeEntity(BaseECSComponent ** components, const int * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.
 	@note Variadic
 	@param	args	all components to use for this entity. */
 	template <class...Args>
 	inline EntityHandle makeEntity(Args&...args) {
 		BaseECSComponent * components[] = { &args... };
-		const uint32_t componentIDS[] = { Args::ID... };
+		const int componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Construct an entity from the array of component pointers.
@@ -64,7 +66,7 @@ public:
 	template <class...Args>
 	inline EntityHandle makeEntity(Args*...args) {
 		BaseECSComponent * components[] = { args... };
-		const uint32_t componentIDS[] = { Args::ID... };
+		const int componentIDS[] = { Args::ID... };
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Remove an entity.
@@ -96,7 +98,7 @@ public:
 	/** Add support for a specific component type at level-creation-time.
 	@param	name				the component class name.
 	@param	func				the component creation function. */
-	void addComponentType(const char * name, const std::function<std::pair<uint32_t, BaseECSComponent*>(const ParamList &)> & func);
+	void addComponentType(const char * name, const std::function<std::pair<int, BaseECSComponent*>(const ParamList &)> & func);
 	/** Remove support for a specific component type at level-creation-time. 
 	@param	name				the component class name. */
 	void removeComponentType(const char * name);
@@ -104,7 +106,7 @@ public:
 	@param	ID					the component class ID. 
 	@param	alive				a shared pointer indicating whether the caller is still alive or not.
 	@param	func				the function to callback when a component of class name is created. */
-	void addNotifyOnComponentType(const uint32_t & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent *)> & func);
+	void addNotifyOnComponentType(const int & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent *)> & func);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -118,7 +120,7 @@ public:
 	@param	types				list of component types to retrieve.
 	@param	flags				list of flags, designating a component as required or optional. 
 	@param	func				lambda function serving as a system. */
-	void updateSystem(const float & deltaTime, const std::vector<uint32_t> & types, const std::vector<uint32_t> & flags, const std::function<void(const float &, const std::vector<std::vector<BaseECSComponent*>>&)> &func);
+	void updateSystem(const float & deltaTime, const std::vector<int> & types, const std::vector<int> & flags, const std::function<void(const float &, const std::vector<std::vector<BaseECSComponent*>>&)> &func);
 
 
 private:
@@ -131,58 +133,58 @@ private:
 	/** Convert an entity handle to the specific raw type. 
 	@param	handle				the entity handle to process.
 	@return						raw handle. */
-	inline std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >* handleToRawType(const EntityHandle & handle) {
-		return (std::pair< uint32_t, std::vector<std::pair<uint32_t, uint32_t> > >*)handle;
+	inline std::pair< int, std::vector<std::pair<int, int> > >* handleToRawType(const EntityHandle & handle) {
+		return (std::pair< int, std::vector<std::pair<int, int> > >*)handle;
 	}
 	/** Convert an entity handle to its raw index. 
 	@param	handle				the entity handle to process.
 	@return						raw entity index. */
-	inline uint32_t handleToEntityIndex(const EntityHandle & handle) {
+	inline int handleToEntityIndex(const EntityHandle & handle) {
 		return handleToRawType(handle)->first;
 	}
 	/** Convert an entity handle to its raw data.
 	@param	handle				the entity handle to process.
 	@return						raw entity data. */
-	inline std::vector<std::pair<uint32_t, uint32_t> >& handleToEntity(const EntityHandle & handle) {
+	inline std::vector<std::pair<int, int> >& handleToEntity(const EntityHandle & handle) {
 		return handleToRawType(handle)->second;
 	}
 	/** Delete a component matching the category ID supplied, at the given index. 
 	@param	componentID			the component class/category ID.
 	@param	index				the component index to delete. */
-	void deleteComponent(const uint32_t & componentID, const uint32_t & index);
+	void deleteComponent(const int & componentID, const int & index);
 	/** Adds a component to the entity specified.
 	@param	handle				the entity handle, to add the component to.
 	@param	entity				the specific entity data array.
 	@param	componentID			the class ID of the component.
 	@param	component			the specific component to add to the entity. */
-	void addComponentInternal(EntityHandle handle, std::vector<std::pair<uint32_t, uint32_t>> & entity, const uint32_t & componentID, BaseECSComponent * component);
+	void addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>> & entity, const int & componentID, BaseECSComponent * component);
 	/** Remove a component from the entity specified.
 	@param	handle				the entity handle, to remove the component from.
 	@param	componentID			the class ID of the component. 
 	@return						true on remove success, false otherwise. */
-	bool removeComponentInternal(EntityHandle handle, const uint32_t & componentID);
+	bool removeComponentInternal(EntityHandle handle, const int & componentID);
 	/** Retrieve the component from an entity matching the class specified.
 	@param	entityComponents	the array of entity component IDS.
 	@param	array				the array of component data.
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
-	BaseECSComponent * getComponentInternal(std::vector<std::pair<uint32_t, uint32_t>>& entityComponents, std::vector<uint8_t> & array, const uint32_t & componentID);
+	BaseECSComponent * getComponentInternal(std::vector<std::pair<int, int>>& entityComponents, std::vector<uint8_t> & array, const int & componentID);
 	/** Retrieve the components relevant to an ecs system.
 	@param	componentTypes		list of component types to retrieve.
 	@param	componentFlags		list of flags, designating a component as required or optional. */
-	std::vector<std::vector<BaseECSComponent*>> getRelevantComponents(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
+	std::vector<std::vector<BaseECSComponent*>> getRelevantComponents(const std::vector<int> & componentTypes, const std::vector<int> & componentFlags);
 	/** Find the least common component.
 	@param	componentTypes		the component types.
 	@param	componentFlags		the component flags. */
-	size_t findLeastCommonComponent(const std::vector<uint32_t> & componentTypes, const std::vector<uint32_t> & componentFlags);
+	size_t findLeastCommonComponent(const std::vector<int> & componentTypes, const std::vector<int> & componentFlags);
 
 
 	// Private Attributes
 	bool m_finishedLoading = false;
-	std::map<uint32_t, std::vector<uint8_t>> m_components;
-	std::vector<std::pair<uint32_t, std::vector<std::pair<uint32_t, uint32_t>>>*> m_entities;
-	MappedChar<std::function<std::pair<uint32_t,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
-	std::map<uint32_t, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(BaseECSComponent*)>>>> m_constructionNotifyees;
+	std::map<int, std::vector<uint8_t>> m_components;
+	std::vector<std::pair<int, std::vector<std::pair<int, int>>>*> m_entities;
+	MappedChar<std::function<std::pair<int,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
+	std::map<int, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(BaseECSComponent*)>>>> m_constructionNotifyees;
 	Shared_Level m_level;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;

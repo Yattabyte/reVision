@@ -4,13 +4,14 @@
 
 #include <any>
 #include <limits>
+#include <map>
 #include <tuple>
 #include <vector>
 
 
 struct BaseECSComponent;
 using EntityHandle = void*;
-using ECSComponentCreateFunction = const uint32_t(*)(std::vector<uint8_t>& memory, const EntityHandle & entity, BaseECSComponent * comp);
+using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, const EntityHandle & entity, BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 using ParamList = std::vector<std::any>;
 #define NULL_ENTITY_HANDLE nullptr
@@ -18,14 +19,20 @@ using ParamList = std::vector<std::any>;
 /** A base type component. */
 struct BaseECSComponent {
 public:
-	// Public Methods
-	static const uint32_t registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size);
-	inline static ECSComponentCreateFunction getTypeCreateFunction(const uint32_t & id) { return std::get<0>((*componentTypes)[id]); }
-	inline static ECSComponentFreeFunction getTypeFreeFunction(const uint32_t & id) { return std::get<1>((*componentTypes)[id]); }
-	inline static size_t getTypeSize(const uint32_t & id) { return std::get<2>((*componentTypes)[id]); }
-	inline static const bool isTypeValid(const uint32_t & id) { return id < componentTypes->size(); }
+	// Virtual Destructor
+	virtual ~BaseECSComponent() = default;
 
-	
+
+	// Public Methods
+	static const int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size, const char * string);
+	inline static ECSComponentCreateFunction getTypeCreateFunction(const int & id) { return std::get<0>((*componentTypes)[id]); }
+	inline static ECSComponentFreeFunction getTypeFreeFunction(const int & id) { return std::get<1>((*componentTypes)[id]); }
+	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
+	inline static const bool isTypeValid(const int & id) { return id < componentTypes->size(); }
+	virtual std::vector<char> save() = 0;
+	virtual void load(const std::vector<char> & data) = 0;
+
+
 	// Public Attributes
 	EntityHandle entity = NULL_ENTITY_HANDLE;
 
@@ -33,45 +40,69 @@ public:
 private:
 	// Private Attributes
 	static std::vector<std::tuple<ECSComponentCreateFunction, ECSComponentFreeFunction, size_t> > * componentTypes;
+	struct compare_string { bool operator()(const char * a, const char * b) const { return strcmp(a, b) < 0; } };
+	static std::map<const char *, int, compare_string> * componentIDMap;
 };
 
 /** A specialized, specific type of component.
 @param	T	the type of this component */
-template <typename T>
+template <typename T, const char * chars>
 struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentCreateFunction CREATE_FUNCTION;
 	static const ECSComponentFreeFunction FREE_FUNCTION;
-	static const uint32_t ID;
+	static const int ID;
 	static const size_t SIZE;
+	inline std::vector<char> save() override {
+		// First retrieve the name of this component
+		const auto stringifiedName = std::string(chars);
+		std::vector<char> output(sizeof(unsigned int) + (stringifiedName.size() * sizeof(char)));
+		const auto nameCount = (int)stringifiedName.size();
+		std::memcpy(&output[0], &nameCount, sizeof(unsigned int));
+		std::memcpy(&output[sizeof(unsigned int)], stringifiedName.data(), stringifiedName.size());
+
+		const auto data = static_cast<T*>(this)->serialize();
+		output.insert(output.end(), data.begin(), data.end());
+		return output;
+	}
+	virtual std::vector<char> serialize() {
+		std::vector<char> data(sizeof(T));
+		std::memcpy(&data[0], static_cast<T*>(this), sizeof(T));
+		return data;
+	}
+	inline virtual void load(const std::vector<char> & data) override {
+		static_cast<T*>(this)->deserialize(data);
+	}
+	virtual void deserialize(const std::vector<char> & data) {
+		std::memcpy(static_cast<T*>(this), &data[0], data.size());
+	}
 };
 
 template <typename Component>
-inline const uint32_t ECSComponentCreate(std::vector<uint8_t> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
+inline const int ECSComponentCreate(std::vector<uint8_t> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
 	const size_t index = memory.size();
-	memory.resize(index+Component::SIZE);
-	Component * component = new(&memory[index])Component(*(Component*)comp);
-	component->entity = entity;
-	return (uint32_t)index;
+	memory.resize(index + Component::SIZE);
+	(new(&memory[index])Component(*(Component*)comp))->entity = entity;
+	return (int)index;
 }
 
 template <typename Component>
 inline void ECSComponentFree(BaseECSComponent * comp) {
-	Component * component = (Component*)comp;
-	component->~Component();
+	((Component*)comp)->~Component();
 }
 
-template <typename T>
-const uint32_t ECSComponent<T>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T)));
+template <typename T, const char * chars>
+const int ECSComponent<T, chars>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T), chars));
 
-template <typename T>
-const size_t ECSComponent<T>::SIZE(sizeof(T));
+template <typename T, const char * chars>
+const size_t ECSComponent<T, chars>::SIZE(sizeof(T));
 
-template <typename T>
-const ECSComponentCreateFunction ECSComponent<T>::CREATE_FUNCTION(ECSComponentCreate<T>);
+template <typename T, const char * chars>
+const ECSComponentCreateFunction ECSComponent<T, chars>::CREATE_FUNCTION(ECSComponentCreate<T>);
 
-template <typename T>
-const ECSComponentFreeFunction ECSComponent<T>::FREE_FUNCTION(ECSComponentFree<T>);
+template <typename T, const char * chars>
+const ECSComponentFreeFunction ECSComponent<T, chars>::FREE_FUNCTION(ECSComponentFree<T>);
 
+/**@todo delete*/
 template <typename T>
 inline static T CastAny(const ParamList & parameters, const int & index, const T & fallback) {
 	if (index < parameters.size()) {

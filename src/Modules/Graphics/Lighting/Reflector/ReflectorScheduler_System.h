@@ -3,7 +3,7 @@
 #define REFLECTORSCHEDULER_SYSTEM_H
 
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/Graphics/Lighting/components.h"
+#include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Lighting/Reflector/ReflectorData.h"
 #include "Engine.h"
 

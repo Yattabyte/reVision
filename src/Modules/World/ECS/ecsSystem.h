@@ -24,12 +24,12 @@ public:
 	// Public Methods
 	/** Returns the component types supported by this system.
 	@return		the component types supported by this system. */
-	inline const std::vector<uint32_t> & getComponentTypes() { 
+	inline const std::vector<int> & getComponentTypes() { 
 		return componentTypes; 
 	};
 	/** Returns the component flags requested by this system.
 	@return		the component flags requested by this system. */
-	inline const std::vector<uint32_t> & getComponentFlags() {
+	inline const std::vector<int> & getComponentFlags() {
 		return componentFlags; 
 	};
 	/** Returns whether or not this system is valid (has at least 1 non-optional component type)
@@ -54,7 +54,7 @@ protected:
 	/** Add a component type to be used by this system. 
 	@param	componentType	the type of component to use
 	@param	componentFlag	flag indicating required/optional */
-	inline void addComponentType(const uint32_t & componentType, const uint32_t & componentFlag = FLAG_REQUIRED) {
+	inline void addComponentType(const int & componentType, const int & componentFlag = FLAG_REQUIRED) {
 		componentTypes.push_back(componentType);
 		componentFlags.push_back(componentFlag);
 	}
@@ -62,8 +62,8 @@ protected:
 	
 private:
 	//private attributes
-	std::vector<uint32_t> componentTypes;
-	std::vector<uint32_t> componentFlags;
+	std::vector<int> componentTypes;
+	std::vector<int> componentFlags;
 };
 
 /** An ordered list of systems to be updated. */

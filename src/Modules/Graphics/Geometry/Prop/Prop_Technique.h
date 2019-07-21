@@ -3,12 +3,10 @@
 #define PROP_TECHNIQUE_H
 
 #include "Modules/Graphics/Geometry/Geometry_Technique.h"
-#include "Modules/Graphics/Geometry/components.h"
 #include "Modules/Graphics/Geometry/Prop/PropData.h"
 #include "Modules/Graphics/Geometry/Prop/PropUpload_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropVisibility_System.h"
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
-#include "Modules/World/ECS/components.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
 #include "Assets/Primitive.h"
