@@ -103,13 +103,15 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
 		auto * component = new Prop_Component();
-		component->m_model = Shared_Model(engine, CastAny(parameters, 0, std::string("")));
+		component->m_modelName = CastAny(parameters, 0, std::string(""));
+		component->m_model = Shared_Model(engine, component->m_modelName);
 		component->m_skin = CastAny(parameters, 1, 0u);
 		return std::make_pair(component->ID, component);
 	});
 	world.addComponentType("Skeleton_Component", [engine](const ParamList & parameters) {
 		auto * component = new Skeleton_Component();
-		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + CastAny(parameters, 0, std::string("")));
+		component->m_modelName = CastAny(parameters, 0, std::string(""));
+		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + component->m_modelName);
 		component->m_animation = CastAny(parameters, 1, 0);
 		return std::make_pair(component->ID, component);
 	});

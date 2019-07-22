@@ -33,11 +33,14 @@ struct Player3D_Component : public ECSComponent<Player3D_Component, player3DName
 
 constexpr static const char renderableName[] = "Renderable_Component";
 struct Renderable_Component : public ECSComponent<Renderable_Component, renderableName> {
-	std::vector<int> m_visible = {};
+	std::vector<int> m_visible;
 	bool m_visibleAtAll = false;
 
 	inline virtual std::vector<char> serialize() override {
 		return {};
+	}
+	inline virtual void deserialize(char * data) override {
+		m_visible = std::vector<int>();
 	}
 };
 
@@ -46,10 +49,13 @@ struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
-	inline virtual std::vector<char> serialize() override {		
+	inline virtual std::vector<char> serialize() override {
 		std::vector<char> data(sizeof(Camera));
 		std::memcpy(&data[0], &m_camera, sizeof(Camera));
 		return data;
+	}
+	inline virtual void deserialize(char * data) override {
+		std::memcpy(&m_camera, &data[0], sizeof(Camera));
 	}
 };
 
@@ -61,6 +67,10 @@ struct CameraArray_Component : public ECSComponent<CameraArray_Component, camera
 	inline virtual std::vector<char> serialize() override {
 		/**@todo copy out cameras*/
 		return {};
+	}
+	inline virtual void deserialize(char * data) override {
+		m_cameras = std::vector<Camera>();
+		/**@todo copy in cameras*/
 	}
 };
 
@@ -78,7 +88,6 @@ constexpr static const char propName[] = "Prop_Component";
 struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 	// Serialized Attributes
 	std::string m_modelName;
-	GLuint m_materialID = 0u;
 	unsigned int m_skin = 0u;
 	float m_radius = 1.0f;
 	glm::vec3 m_position = glm::vec3(0.0f);
@@ -87,21 +96,20 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 	Shared_Model m_model;
 	bool m_uploadModel = false, m_uploadMaterial = false;
 	size_t m_offset = 0ull, m_count = 0ull;
+	GLuint m_materialID = 0u;
 
 	inline virtual std::vector<char> serialize() override {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
-			sizeof(GLuint) + sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
+			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
 		std::vector<char> data(propSize);
 		void * ptr = &data[0];
 
 		const auto nameCount = (int)m_modelName.size();
-		std::memcpy(ptr, &nameCount, sizeof(unsigned int));
-		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
+		std::memcpy(ptr, &nameCount, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
 		std::memcpy(ptr, m_modelName.data(), m_modelName.size());
 		ptr = static_cast<char*>(ptr) + m_modelName.size();
 
-		std::memcpy(ptr, &m_materialID, sizeof(GLuint));
-		ptr = static_cast<char*>(ptr) + sizeof(GLuint);
 		std::memcpy(ptr, &m_skin, sizeof(unsigned int));
 		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
 		std::memcpy(ptr, &m_radius, sizeof(float));
@@ -110,6 +118,26 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 		ptr = static_cast<char*>(ptr) + sizeof(glm::vec3);
 
 		return data;
+	}
+	inline virtual void deserialize(char * data) override {
+		auto ptr = data;
+
+		int nameCount(0ull);
+		std::memcpy(&nameCount, ptr, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
+		char * modelName = new char[nameCount + 1];
+		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
+		std::memcpy(&modelName[0], ptr, nameCount);
+		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
+		m_modelName = std::string(modelName);
+		delete modelName;
+		
+		std::memcpy(&m_skin, ptr, sizeof(unsigned int));
+		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
+		std::memcpy(&m_radius, ptr, sizeof(float));
+		ptr = static_cast<char*>(ptr) + sizeof(float);
+		std::memcpy(&m_position, ptr, sizeof(glm::vec3));
+		ptr = static_cast<char*>(ptr) + sizeof(glm::vec3);
 	}
 };
 
@@ -124,7 +152,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 	Shared_Mesh m_mesh;
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
-	
+
 	inline virtual std::vector<char> serialize() override {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(int) + sizeof(bool);
@@ -144,6 +172,24 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 
 		return data;
 	}
+	inline virtual void deserialize(char * data) override {
+		auto ptr = data;
+
+		int nameCount(0ull);
+		std::memcpy(&nameCount, ptr, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
+		char * modelName = new char[nameCount + 1];
+		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
+		std::memcpy(&modelName[0], ptr, nameCount);
+		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
+		m_modelName = std::string(modelName);
+		delete modelName;
+
+		std::memcpy(&m_animation, ptr, sizeof(int));
+		ptr = static_cast<char*>(ptr) + sizeof(int);
+		std::memcpy(&m_playAnim, ptr, sizeof(bool));
+		ptr = static_cast<char*>(ptr) + sizeof(bool);
+	}
 };
 
 constexpr static const char shadowName[] = "Shadow_Component";
@@ -152,6 +198,8 @@ struct Shadow_Component : public ECSComponent<Shadow_Component, shadowName> {
 
 	inline virtual std::vector<char> serialize() override {
 		return {};
+	}
+	inline virtual void deserialize(char * data) override {
 	}
 };
 
@@ -200,6 +248,8 @@ struct Reflector_Component : public ECSComponent<Reflector_Component, reflectorN
 	inline virtual std::vector<char> serialize() override {
 		return {};
 	}
+	inline virtual void deserialize(char * data) override {
+	}
 };
 
 constexpr static const char colliderName[] = "Collider_Component";
@@ -216,6 +266,9 @@ struct Collider_Component : public ECSComponent<Collider_Component, colliderName
 	inline virtual std::vector<char> serialize() override {
 		/**@todo*/
 		return {};
+	}
+	inline virtual void deserialize(char * data) override {
+		/**@todo*/
 	}
 };
 

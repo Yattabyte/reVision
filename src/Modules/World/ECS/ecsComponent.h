@@ -24,13 +24,15 @@ public:
 
 
 	// Public Methods
-	static const int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size, const char * string);
+	static int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size, const char * string, BaseECSComponent * templateComponent);
+	static std::tuple<BaseECSComponent *, int, size_t> findTemplate(const char * name);
 	inline static ECSComponentCreateFunction getTypeCreateFunction(const int & id) { return std::get<0>((*componentTypes)[id]); }
 	inline static ECSComponentFreeFunction getTypeFreeFunction(const int & id) { return std::get<1>((*componentTypes)[id]); }
 	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
-	inline static const bool isTypeValid(const int & id) { return id < componentTypes->size(); }
+	inline static bool isTypeValid(const int & id) { return id < componentTypes->size(); }
+	virtual BaseECSComponent * clone() = 0;
 	virtual std::vector<char> save() = 0;
-	virtual void load(const std::vector<char> & data) = 0;
+	virtual void load(char * data) = 0;
 
 
 	// Public Attributes
@@ -41,7 +43,7 @@ private:
 	// Private Attributes
 	static std::vector<std::tuple<ECSComponentCreateFunction, ECSComponentFreeFunction, size_t> > * componentTypes;
 	struct compare_string { bool operator()(const char * a, const char * b) const { return strcmp(a, b) < 0; } };
-	static std::map<const char *, int, compare_string> * componentIDMap;
+	static std::map<const char *, std::tuple<BaseECSComponent *, int, size_t>, compare_string> * templateMap;
 };
 
 /** A specialized, specific type of component.
@@ -52,28 +54,32 @@ struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentFreeFunction FREE_FUNCTION;
 	static const int ID;
 	static const size_t SIZE;
+	inline virtual BaseECSComponent * clone() override {
+		return new T(static_cast<T const &>(*this));
+	}
 	inline std::vector<char> save() override {
 		// First retrieve the name of this component
 		const auto stringifiedName = std::string(chars);
 		std::vector<char> output(sizeof(unsigned int) + (stringifiedName.size() * sizeof(char)));
 		const auto nameCount = (int)stringifiedName.size();
-		std::memcpy(&output[0], &nameCount, sizeof(unsigned int));
-		std::memcpy(&output[sizeof(unsigned int)], stringifiedName.data(), stringifiedName.size());
+		std::memcpy(&output[0], &nameCount, sizeof(int));
+		std::memcpy(&output[sizeof(int)], stringifiedName.data(), stringifiedName.size());
 
 		const auto data = static_cast<T*>(this)->serialize();
 		output.insert(output.end(), data.begin(), data.end());
 		return output;
 	}
-	virtual std::vector<char> serialize() {
+	inline virtual std::vector<char> serialize() {
 		std::vector<char> data(sizeof(T));
 		std::memcpy(&data[0], static_cast<T*>(this), sizeof(T));
 		return data;
 	}
-	inline virtual void load(const std::vector<char> & data) override {
+	inline virtual void load(char * data) override {
 		static_cast<T*>(this)->deserialize(data);
+		entity = NULL_ENTITY_HANDLE;
 	}
-	virtual void deserialize(const std::vector<char> & data) {
-		std::memcpy(static_cast<T*>(this), &data[0], data.size());
+	inline virtual void deserialize(char * data) {
+		(*static_cast<T*>(this)) = (*(T*)(data));
 	}
 };
 
@@ -91,7 +97,7 @@ inline void ECSComponentFree(BaseECSComponent * comp) {
 }
 
 template <typename T, const char * chars>
-const int ECSComponent<T, chars>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T), chars));
+const int ECSComponent<T, chars>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T), chars, new T()));
 
 template <typename T, const char * chars>
 const size_t ECSComponent<T, chars>::SIZE(sizeof(T));

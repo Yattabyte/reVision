@@ -2,6 +2,8 @@
 #include "Modules/World/ECS/components.h"
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
+#include <fstream>
+#include <filesystem>
 
 
 void World_Module::initialize(Engine * engine)
@@ -58,22 +60,118 @@ void World_Module::loadWorld(const std::string & mapName)
 	// Unload any previous map
 	if (m_level && m_level->existsYet())
 		unloadWorld();
-	m_level = Shared_Level(m_engine, mapName);
-	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));	
-	
+
 	// Signal that a new map is begining to load
 	notifyListeners(startLoading);
+	
+	//	m_level = Shared_Level(m_engine, mapName);
+	//	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));
+	
+	if (true == true) {
+		const auto path = std::string(Engine::Get_Current_Dir() + "\\Maps\\a.bmap");
+		std::ifstream mapFile(path, std::ios::binary | std::ios::beg);
+		if (!mapFile.is_open())
+			m_engine->getManager_Messages().error("Cannot read the binary map file from disk!");
+		else {
+			std::vector<char> ecsData(std::filesystem::file_size(path));
+			mapFile.read(ecsData.data(), (std::streamsize)ecsData.size());
+			mapFile.close();
+			
+			// Find all entities
+			size_t dataRead(0ull);
+			while (dataRead < ecsData.size()) {
+				// Find the end of this entity
+				size_t entityDataCount(0ull), entityDataRead(0ull);
+				std::memcpy(&entityDataCount, &ecsData[dataRead], sizeof(size_t));
+				dataRead += sizeof(size_t);
+
+				std::vector<BaseECSComponent*> components; // holds each entity's components
+				std::vector<int> ids; // holds each entity's component id's
+
+				// Find all components between the beginning and end of this entity
+				while (entityDataRead < entityDataCount) {
+					// Find how large the component data is
+					size_t componentDataSize(0ull);
+					std::memcpy(&componentDataSize, &ecsData[dataRead], sizeof(size_t));
+					entityDataRead += sizeof(size_t);
+					dataRead += sizeof(size_t);
+
+					// Retrieve component Data
+					std::vector<char> componentData(componentDataSize);
+					std::memcpy(&componentData[0], &ecsData[dataRead], componentDataSize);
+					entityDataRead += componentDataSize;
+					dataRead += componentDataSize;
+
+					// Read component name from the data
+					size_t componentDataRead(0ull);
+					int nameCount(0);
+					std::memcpy(&nameCount, &componentData[0], sizeof(int));
+					componentDataRead += sizeof(int);
+					char *chars = new char[nameCount + 1];
+					std::fill(&chars[0], &chars[nameCount + 1], '\0');
+					std::memcpy(chars, &componentData[sizeof(int)], nameCount);
+					componentDataRead += sizeof(char) * nameCount;
+					const auto stringifiedName = std::string(chars);
+					delete chars;
+					
+					if (const auto &[templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(stringifiedName.data()); templateComponent != nullptr) {
+						// Clone the template component completely, then fill in the serialized data
+						auto * castedComponent = templateComponent->clone();
+						if (componentDataSize - componentDataRead)
+							castedComponent->load(&componentData[componentDataRead]);
+						castedComponent->entity = NULL_ENTITY_HANDLE;
+
+						components.push_back(castedComponent);
+						ids.push_back(componentID);
+					}
+				}
+
+				// Make an entity out of the available components
+				if (components.size())
+					makeEntity(components.data(), ids.data(), components.size());
+
+				// Delete temporary components
+				for each (auto * component in components)
+					delete component;
+			}
+		}
+	}
 }
 
 void World_Module::saveWorld(const std::string & mapName)
 {
+	if (true == true)
+		return;
+	std::vector<char> ecsData;
 	for each (const auto & entity in m_entities) {
+		// Remember the beginning spot for this entity, we will update this index with the total entity data size
+		const auto entityDataCount_Offset = ecsData.size();
+		ecsData.resize(entityDataCount_Offset + sizeof(size_t));
+		size_t entityDataCount(0ull);
 		const auto & handle = (EntityHandle)entity;
 		for (const auto &[componentID, createFunc] : entity->second) {
-			BaseECSComponent * component = getComponentInternal(handleToEntity(entity), m_components[componentID], componentID);
-			component->save();
+			const auto componentData = getComponentInternal(handleToEntity(entity), m_components[componentID], componentID)->save();
+			const auto componentDataSize = componentData.size();
+			entityDataCount += sizeof(size_t) + componentDataSize;
+
+			// Write component data size + component data to ecs data
+			const auto oldDataSize = ecsData.size();
+			ecsData.resize(oldDataSize + sizeof(size_t) + componentDataSize);
+			std::memcpy(&ecsData[oldDataSize], &componentDataSize, sizeof(size_t));
+			std::memcpy(&ecsData[oldDataSize + sizeof(size_t)], &componentData[0], componentDataSize);
 		}
+
+		// modify entity data count at offset spot to be total data
+		std::memcpy(&ecsData[entityDataCount_Offset], &entityDataCount, sizeof(size_t));
 	}
+
+	// Write ecsData to disk
+	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\a.bmap", std::ios::binary | std::ios::out);
+	if (!mapFile.is_open())
+		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
+	else
+		mapFile.write(ecsData.data(), (std::streamsize)ecsData.size());
+	mapFile.close();
 }
 
 void World_Module::unloadWorld()
