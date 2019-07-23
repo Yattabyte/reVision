@@ -32,7 +32,7 @@ public:
 	inline static bool isTypeValid(const int & id) { return id < componentTypes->size(); }
 	virtual BaseECSComponent * clone() = 0;
 	virtual std::vector<char> save() = 0;
-	virtual void load(char * data) = 0;
+	virtual void load(const std::vector<char> & data) = 0;
 
 
 	// Public Attributes
@@ -74,12 +74,12 @@ struct ECSComponent : public BaseECSComponent {
 		std::memcpy(&data[0], static_cast<T*>(this), sizeof(T));
 		return data;
 	}
-	inline virtual void load(char * data) override {
+	inline virtual void load(const std::vector<char> & data) override {
 		static_cast<T*>(this)->deserialize(data);
 		entity = NULL_ENTITY_HANDLE;
 	}
-	inline virtual void deserialize(char * data) {
-		(*static_cast<T*>(this)) = (*(T*)(data));
+	inline virtual void deserialize(const std::vector<char> & data) {
+		(*static_cast<T*>(this)) = (*(T*)(&data[0]));
 	}
 };
 

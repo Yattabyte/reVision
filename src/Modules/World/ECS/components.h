@@ -39,8 +39,7 @@ struct Renderable_Component : public ECSComponent<Renderable_Component, renderab
 	inline virtual std::vector<char> serialize() override {
 		return {};
 	}
-	inline virtual void deserialize(char * data) override {
-		m_visible = std::vector<int>();
+	inline virtual void deserialize(const std::vector<char> & data) override {
 	}
 };
 
@@ -54,8 +53,8 @@ struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
 		std::memcpy(&data[0], &m_camera, sizeof(Camera));
 		return data;
 	}
-	inline virtual void deserialize(char * data) override {
-		std::memcpy(&m_camera, &data[0], sizeof(Camera));
+	inline virtual void deserialize(const std::vector<char> & data) override {
+		std::memcpy(&m_camera, &data[0], data.size());
 	}
 };
 
@@ -68,7 +67,7 @@ struct CameraArray_Component : public ECSComponent<CameraArray_Component, camera
 		/**@todo copy out cameras*/
 		return {};
 	}
-	inline virtual void deserialize(char * data) override {
+	inline virtual void deserialize(const std::vector<char> & data) override {
 		m_cameras = std::vector<Camera>();
 		/**@todo copy in cameras*/
 	}
@@ -119,8 +118,9 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 
 		return data;
 	}
-	inline virtual void deserialize(char * data) override {
-		auto ptr = data;
+	inline virtual void deserialize(const std::vector<char> & data) override {
+		// Want a pointer that I can increment, promise to not change underlying data
+		auto ptr = const_cast<char*>(&data[0]);
 
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
@@ -172,8 +172,9 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 
 		return data;
 	}
-	inline virtual void deserialize(char * data) override {
-		auto ptr = data;
+	inline virtual void deserialize(const std::vector<char> & data) override {
+		// Want a pointer that I can increment, promise to not change underlying data
+		auto ptr = const_cast<char*>(&data[0]);
 
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
@@ -199,7 +200,7 @@ struct Shadow_Component : public ECSComponent<Shadow_Component, shadowName> {
 	inline virtual std::vector<char> serialize() override {
 		return {};
 	}
-	inline virtual void deserialize(char * data) override {
+	inline virtual void deserialize(const std::vector<char> & data) override {
 	}
 };
 
@@ -248,7 +249,7 @@ struct Reflector_Component : public ECSComponent<Reflector_Component, reflectorN
 	inline virtual std::vector<char> serialize() override {
 		return {};
 	}
-	inline virtual void deserialize(char * data) override {
+	inline virtual void deserialize(const std::vector<char> & data) override {
 	}
 };
 
@@ -267,7 +268,7 @@ struct Collider_Component : public ECSComponent<Collider_Component, colliderName
 		/**@todo*/
 		return {};
 	}
-	inline virtual void deserialize(char * data) override {
+	inline virtual void deserialize(const std::vector<char> & data) override {
 		/**@todo*/
 	}
 };

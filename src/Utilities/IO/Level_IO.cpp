@@ -1,5 +1,6 @@
 #include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
+#include <filesystem>
 
 
 bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, std::vector<LevelStruct_Entity> & entities)
@@ -11,8 +12,12 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 	}
 	// Try to load the file stream
 	try {
-		auto stream = std::ifstream(Engine::Get_Current_Dir() + relativePath);
-		entities = parse_level(stream);
+		const auto path = Engine::Get_Current_Dir() + relativePath;
+		auto mapStream = std::ifstream(path, std::ios::binary | std::ios::beg);
+		std::vector<char> ecsData(std::filesystem::file_size(path));
+		mapStream.read(ecsData.data(), (std::streamsize)ecsData.size());
+		mapStream.close();
+		entities = parse_level(ecsData);
 		return true;
 	}
 	// Catch failure state
@@ -22,195 +27,51 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 	}
 }
 
-std::vector<LevelStruct_Entity> Level_IO::parse_level(std::ifstream & file_stream)
+std::vector<LevelStruct_Entity> Level_IO::parse_level(const std::vector<char> & ecsData)
 {
-	std::vector<LevelStruct_Entity> level;
-	int bracketCount = 0;
-	for (std::string line; std::getline(file_stream, line); ) {
-		if (find(line, "{")) {
-			bracketCount++;
-			continue;
+	std::vector<LevelStruct_Entity> entities;
+	// Find all entities
+	size_t dataRead(0ull);
+	while (dataRead < ecsData.size()) {
+		LevelStruct_Entity entity;
+
+		// Find the end of this entity
+		size_t entityDataCount(0ull), entityDataRead(0ull);
+		std::memcpy(&entityDataCount, &ecsData[dataRead], sizeof(size_t));
+		dataRead += sizeof(size_t);
+
+		// Find all components between the beginning and end of this entity
+		while (entityDataRead < entityDataCount) {
+			// Find how large the component data is
+			size_t componentDataSize(0ull);
+			std::memcpy(&componentDataSize, &ecsData[dataRead], sizeof(size_t));
+			entityDataRead += sizeof(size_t);
+			dataRead += sizeof(size_t);
+
+			// Retrieve component Data
+			std::vector<char> componentData(componentDataSize);
+			std::memcpy(&componentData[0], &ecsData[dataRead], componentDataSize);
+			entityDataRead += componentDataSize;
+			dataRead += componentDataSize;
+
+			// Read component name from the data
+			size_t componentDataRead(0ull);
+			int nameCount(0);
+			std::memcpy(&nameCount, &componentData[0], sizeof(int));
+			componentDataRead += sizeof(int);
+			char *chars = new char[nameCount + 1];
+			std::fill(&chars[0], &chars[nameCount + 1], '\0');
+			std::memcpy(chars, &componentData[sizeof(int)], nameCount);
+			componentDataRead += sizeof(char) * nameCount;
+			const auto stringifiedName = std::string(chars);
+			delete chars;
+
+			std::vector<char> serializedComponentData;
+			if (componentDataSize - componentDataRead)
+				serializedComponentData = std::vector<char>(&componentData[componentDataRead], &componentData[componentDataSize]);
+			entity.components.push_back(LevelStruct_Component{ stringifiedName, serializedComponentData });
 		}
-		else if (find(line, "}")) {
-			bracketCount--;
-			if (bracketCount <= 0)
-				break;
-			continue;
-		}
-		else if (find(line, "entity"))
-			level.push_back(parse_entity(file_stream));
+		entities.push_back(entity);
 	}
-	return level;
-}
-
-LevelStruct_Entity Level_IO::parse_entity(std::ifstream & file_stream)
-{
-	LevelStruct_Entity entity;
-	int bracketCount = 0;
-	for (std::string line; std::getline(file_stream, line); ) {
-		if (find(line, "{")) {
-			bracketCount++;
-			continue;
-		}
-		else if (find(line, "}")) {
-			bracketCount--;
-			if (bracketCount <= 0)
-				break;
-			continue;
-		}
-		else if (find(line, "Component")) {
-			auto component = parse_component(file_stream);
-			line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
-			component.type = line;
-			entity.components.push_back(component);
-		}
-	}
-	return entity;
-}
-
-LevelStruct_Component Level_IO::parse_component(std::ifstream & file_stream)
-{
-	LevelStruct_Component component;
-	int bracketCount = 0;
-	for (std::string line; std::getline(file_stream, line); ) {
-		if (line.length() && line != "" && line != " ") {
-			if (find(line, "{")) {
-				bracketCount++;
-				continue;
-			}
-			else if (find(line, "}")) {
-				bracketCount--;
-				if (bracketCount <= 0)
-					break;
-				continue;
-			}
-			else {
-				std::any parameter;
-				if (find(line, "string"))
-					parameter = getType_String(line);
-				else if (find(line, "uint"))
-					parameter = getType_UInt(line);
-				else if (find(line, "int"))
-					parameter = getType_Int(line);
-				else if (find(line, "double"))
-					parameter = getType_Double(line);
-				else if (find(line, "float"))
-					parameter = getType_Float(line);
-				else if (find(line, "vec2"))
-					parameter = getType_Vec2(line);
-				else if (find(line, "vec3"))
-					parameter = getType_Vec3(line);
-				else if (find(line, "vec4"))
-					parameter = getType_Vec4(line);
-				else if (find(line, "quat"))
-					parameter = getType_Quat(line);
-				else if (find(line, "bool"))
-					parameter = getType_Bool(line);
-				if (parameter.has_value())
-					component.parameters.push_back(parameter);
-			}
-		}
-	}
-	return component;
-}
-
-std::string Level_IO::get_between_quotes(std::string & s)
-{
-	std::string output = s;
-	size_t spot1 = s.find_first_of("\"");
-	if (spot1 != std::string::npos) {
-		output = output.substr(spot1 + 1, output.length() - spot1 - 1);
-		size_t spot2 = output.find_first_of("\"");
-		if (spot2 != std::string::npos) {
-			output = output.substr(0, spot2);
-
-			s = s.substr(spot2 + 2, s.length() - spot2 - 1);
-		}
-	}
-	return output;
-}
-
-bool Level_IO::find(const std::string & s1, const std::string & s2) {
-	return (s1.find(s2) != std::string::npos);
-}
-
-std::string Level_IO::getType_String(std::string & in) {
-	return get_between_quotes(in);
-}
-
-unsigned int Level_IO::getType_UInt(std::string & in) {
-	return (unsigned int)std::stoi(get_between_quotes(in));
-}
-
-int Level_IO::getType_Int(std::string & in) {
-	return std::stoi(get_between_quotes(in));
-}
-
-double Level_IO::getType_Double(std::string & in) {
-	return std::stod(get_between_quotes(in));
-}
-
-float Level_IO::getType_Float(std::string & in) {
-	return std::stof(get_between_quotes(in));
-}
-
-glm::vec2 Level_IO::getType_Vec2(std::string & in) {
-	std::string vec2string = getType_String(in);
-	size_t indices[1];
-	indices[0] = vec2string.find(',');
-
-	std::string number1(vec2string.substr(0, indices[0]));
-	std::string number2(vec2string.substr(indices[0] + 1, (vec2string.size() - 1) - indices[0]));
-
-	return glm::vec2(std::stof(number1), std::stof(number2));
-}
-
-glm::vec3 Level_IO::getType_Vec3(std::string & in) {
-	std::string vec3string = getType_String(in);
-	size_t indices[2];
-	indices[0] = vec3string.find(',');
-	indices[1] = vec3string.find(',', indices[0] + 1);
-
-	std::string number1(vec3string.substr(0, indices[0]));
-	std::string number2(vec3string.substr(indices[0] + 1, indices[1] - (indices[0] + 1)));
-	std::string number3(vec3string.substr(indices[1] + 1, (vec3string.size() - 1) - indices[1]));
-
-	return glm::vec3(std::stof(number1), std::stof(number2), std::stof(number3));
-}
-
-glm::vec4 Level_IO::getType_Vec4(std::string & in) {
-	std::string vec4string = getType_String(in);
-	size_t indices[3];
-	indices[0] = vec4string.find(',');
-	indices[1] = vec4string.find(',', indices[0] + 1);
-	indices[2] = vec4string.find(',', indices[1] + 1);
-
-	std::string number1(vec4string.substr(0, indices[0]));
-	std::string number2(vec4string.substr(indices[0] + 1, indices[1] - (indices[0] + 1)));
-	std::string number3(vec4string.substr(indices[1] + 1, indices[2] - (indices[1] + 1)));
-	std::string number4(vec4string.substr(indices[2] + 1, (vec4string.size() - 1) - indices[2]));
-
-	return glm::vec4(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
-}
-
-glm::quat Level_IO::getType_Quat(std::string & in) {
-	std::string vec4string = getType_String(in);
-	size_t indices[3];
-	indices[0] = vec4string.find(',');
-	indices[1] = vec4string.find(',', indices[0] + 1);
-	indices[2] = vec4string.find(',', indices[1] + 1);
-
-	std::string number1(vec4string.substr(0, indices[0]));
-	std::string number2(vec4string.substr(indices[0] + 1, indices[1] - (indices[0] + 1)));
-	std::string number3(vec4string.substr(indices[1] + 1, indices[2] - (indices[1] + 1)));
-	std::string number4(vec4string.substr(indices[2] + 1, (vec4string.size() - 1) - indices[2]));
-
-	return glm::quat(std::stof(number1), std::stof(number2), std::stof(number3), std::stof(number4));
-}
-
-bool Level_IO::getType_Bool(std::string & in)
-{
-	if (in.find("1") != std::string::npos || in.find("true") != std::string::npos)
-		return true;
-	return false;
+	return entities;
 }

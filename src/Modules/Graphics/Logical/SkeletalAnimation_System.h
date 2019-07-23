@@ -1,6 +1,6 @@
 #pragma once
-#ifndef SKELETONANIMATION_S_H
-#define SKELETONANIMATION_S_H 
+#ifndef SKELETALANIMATION_SYSTEM_H
+#define SKELETALANIMATION_SYSTEM_H 
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
@@ -14,9 +14,10 @@ public:
 	/** Destroy the skeletal animation system. */
 	inline ~Skeletal_Animation() = default;
 	/** Construct a skeletal animation system. */
-	inline Skeletal_Animation() {
+	inline Skeletal_Animation(Engine * engine) 
+		: m_engine(engine) {
 		// Declare component types used
-		addComponentType(Skeleton_Component::ID);
+		addComponentType(Skeleton_Component::ID, FLAG_REQUIRED);
 	}
 
 
@@ -24,23 +25,27 @@ public:
 	inline virtual void updateComponents(const float & deltaTime, const std::vector< std::vector<BaseECSComponent*> > & components) override {
 		for each (const auto & componentParam in components) {
 			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[0];
-			if (!skeletonComponent->m_mesh->existsYet())
-				return;
+			
+			// Ensure skeleton has a mesh
+			if (!skeletonComponent->m_mesh)
+				skeletonComponent->m_mesh = Shared_Mesh(m_engine, "\\Models\\" + skeletonComponent->m_modelName);
 
-			if (skeletonComponent->m_animation == -1 || skeletonComponent->m_mesh->m_geometry.boneTransforms.size() == 0 || skeletonComponent->m_animation >= skeletonComponent->m_mesh->m_geometry.animations.size())
-				return;
-			else {
-				skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
-				if (skeletonComponent->m_playAnim)
-					skeletonComponent->m_animTime += deltaTime;
-				const float TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0.00
-					? (float)(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond)
-					: 25.0f;
-				const float TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
-				const float AnimationTime = fmodf(TimeInTicks, float(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration));
-				skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
+			// Animate if the mesh has finished loading
+			if (skeletonComponent->m_mesh->existsYet()) {
+				// Animate if there exists an animation & bones
+				if (skeletonComponent->m_animation != -1 && skeletonComponent->m_mesh->m_geometry.boneTransforms.size() > 0 && skeletonComponent->m_animation < skeletonComponent->m_mesh->m_geometry.animations.size()) {
+					skeletonComponent->m_transforms.resize(skeletonComponent->m_mesh->m_geometry.boneTransforms.size());
+					if (skeletonComponent->m_playAnim)
+						skeletonComponent->m_animTime += deltaTime;
+					const float TicksPerSecond = skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond != 0.00
+						? (float)(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].ticksPerSecond)
+						: 25.0f;
+					const float TimeInTicks = skeletonComponent->m_animTime * TicksPerSecond;
+					const float AnimationTime = fmodf(TimeInTicks, float(skeletonComponent->m_mesh->m_geometry.animations[skeletonComponent->m_animation].duration));
+					skeletonComponent->m_animStart = skeletonComponent->m_animStart == -1 ? (float)TimeInTicks : skeletonComponent->m_animStart;
 
-				ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
+					ReadNodeHeirarchy(skeletonComponent->m_transforms, AnimationTime, skeletonComponent->m_animation, skeletonComponent->m_mesh->m_geometry.rootNode, skeletonComponent->m_mesh, glm::mat4(1.0f));
+				}
 			}
 		}
 	};
@@ -129,6 +134,11 @@ protected:
 		for (unsigned int i = 0; i < parentNode->children.size(); ++i)
 			ReadNodeHeirarchy(transforms, AnimationTime, animation_ID, parentNode->children[i], model, GlobalTransformation);
 	}
+
+
+private:
+	// Private Attributes
+	Engine * m_engine = nullptr;
 };
 
-#endif // SKELETONANIMATION_S_H
+#endif // SKELETALANIMATION_SYSTEM_H

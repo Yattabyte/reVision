@@ -56,7 +56,7 @@ private:
 
 struct LevelStruct_Component {
 	std::string type;
-	std::vector<std::any> parameters;
+	std::vector<char> data;
 };
 struct LevelStruct_Entity {
 	std::vector<LevelStruct_Component> components;

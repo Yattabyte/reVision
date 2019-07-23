@@ -76,37 +76,25 @@ public:
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
 	@param	component			the component being added. */
-	template <typename BaseECSComponent>
-	inline void addComponent(const EntityHandle & entity, BaseECSComponent * component) {
-		addComponentInternal(entity, handleToEntity(entity), BaseECSComponent::ID, component);
+	template <typename T>
+	inline void addComponent(const EntityHandle & entity, T * component) {
+		addComponentInternal(entity, handleToEntity(entity), T::ID, component);
 	}
 	/** Removes a component from an entity.
 	@param	entity				the entity to remove from.
 	@param	<BaseECSComponent>	the category of component being removed.
 	@return						true on successful removal, false otherwise. */
-	template <typename BaseECSComponent>
+	template <typename T>
 	inline bool removeComponent(const EntityHandle & entity) {
-		return removeComponentInternal(entity, BaseECSComponent::ID);
+		return removeComponentInternal(entity, T::ID);
 	}
 	/** Retrieve a component.
 	@param	entity				the entity to retrieve from.
 	@param	<BaseECSComponent>	the category of component being retrieved. */
-	template <typename BaseECSComponent>
-	inline BaseECSComponent * getComponent(const EntityHandle & entity) {
-		return (BaseECSComponent*)getComponentInternal(handleToEntity(entity), m_components[BaseECSComponent::ID], BaseECSComponent::ID);
+	template <typename T>
+	inline T * getComponent(const EntityHandle & entity) {
+		return (T*)getComponentInternal(handleToEntity(entity), m_components[T::ID], T::ID);
 	}
-	/** Add support for a specific component type at level-creation-time.
-	@param	name				the component class name.
-	@param	func				the component creation function. */
-	void addComponentType(const char * name, const std::function<std::pair<int, BaseECSComponent*>(const ParamList &)> & func);
-	/** Remove support for a specific component type at level-creation-time. 
-	@param	name				the component class name. */
-	void removeComponentType(const char * name);
-	/** Add a callback method for when a component of the given type is created.
-	@param	ID					the component class ID. 
-	@param	alive				a shared pointer indicating whether the caller is still alive or not.
-	@param	func				the function to callback when a component of class name is created. */
-	void addNotifyOnComponentType(const int & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent *)> & func);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -183,8 +171,6 @@ private:
 	bool m_finishedLoading = false;
 	std::map<int, std::vector<uint8_t>> m_components;
 	std::vector<std::pair<int, std::vector<std::pair<int, int>>>*> m_entities;
-	MappedChar<std::function<std::pair<int,BaseECSComponent*>(const ParamList &)>> m_constructorMap;
-	std::map<int, std::vector<std::pair<std::shared_ptr<bool>, std::function<void(BaseECSComponent*)>>>> m_constructionNotifyees;
 	Shared_Level m_level;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;

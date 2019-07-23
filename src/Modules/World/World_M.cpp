@@ -10,20 +10,6 @@ void World_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: World...");
-
-	// Add New Component Type
-	addComponentType("Transform_Component", [](const ParamList & parameters) {
-		const auto position = CastAny(parameters, 0, glm::vec3(0.0f));
-		const auto orientation = CastAny(parameters, 1, glm::quat(1, 0, 0, 0));
-		const auto scale = CastAny(parameters, 2, glm::vec3(1.0f));
-
-		auto * component = new Transform_Component();
-		component->m_transform.m_position = position;
-		component->m_transform.m_orientation = orientation;
-		component->m_transform.m_scale = scale;
-		component->m_transform.update();
-		return std::make_pair(component->ID, component);
-	});
 }
 
 void World_Module::deinitialize()
@@ -32,7 +18,6 @@ void World_Module::deinitialize()
 	m_engine->getManager_Messages().statement("Closing Module: World...");
 	m_aliveIndicator = false;
 	unloadWorld();
-	removeComponentType("Transform_Component");
 }
 
 void World_Module::frameTick(const float & deltaTime)
@@ -57,17 +42,15 @@ void World_Module::frameTick(const float & deltaTime)
 
 void World_Module::loadWorld(const std::string & mapName)
 {
-	// Unload any previous map
-	if (m_level && m_level->existsYet())
-		unloadWorld();
+	unloadWorld();
 
 	// Signal that a new map is begining to load
 	notifyListeners(startLoading);
 	
-	//	m_level = Shared_Level(m_engine, mapName);
-	//	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));
+	m_level = Shared_Level(m_engine, mapName);
+	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));
 	
-	if (true == true) {
+	/*if (true == true) {
 		const auto path = std::string(Engine::Get_Current_Dir() + "\\Maps\\a.bmap");
 		std::ifstream mapFile(path, std::ios::binary | std::ios::beg);
 		if (!mapFile.is_open())
@@ -135,7 +118,7 @@ void World_Module::loadWorld(const std::string & mapName)
 					delete component;
 			}
 		}
-	}
+	}*/
 }
 
 void World_Module::saveWorld(const std::string & mapName)
@@ -209,11 +192,6 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 			delete newEntity;
 			return NULL_ENTITY_HANDLE;
 		}
-
-		// Notify component construction-observers
-		if (m_constructionNotifyees.find(componentIDs[i]) != m_constructionNotifyees.end())
-			for (const auto[alive, func] : m_constructionNotifyees[componentIDs[i]])
-				func(entityComponents[i]);
 		addComponentInternal(handle, newEntity->second, componentIDs[i], entityComponents[i]);
 	}
 
@@ -236,21 +214,6 @@ void World_Module::removeEntity(const EntityHandle & handle)
 	m_entities.pop_back();
 }
 
-void World_Module::addComponentType(const char * name, const std::function<std::pair<int,BaseECSComponent*>(const ParamList &)> & func)
-{
-	m_constructorMap[name] = func;
-}
-
-void World_Module::removeComponentType(const char * name)
-{
-	m_constructorMap.erase(name);
-}
-
-void World_Module::addNotifyOnComponentType(const int & ID, const std::shared_ptr<bool> & alive, const std::function<void(BaseECSComponent*)>& func)
-{
-	m_constructionNotifyees[ID].push_back(std::make_pair(alive, func));
-}
-
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
 {
 	for (size_t i = 0; i < systems.size(); ++i)
@@ -271,31 +234,31 @@ void World_Module::updateSystem(const float & deltaTime, const std::vector<int> 
 
 void World_Module::processLevel()
 {
-	if (m_level->existsYet()) {
-		std::vector<BaseECSComponent*> components; // holds each entity's components
-		std::vector<int> ids; // holds each entity's component id's
-		const char * type;
-		for each (auto & lvlEntity in m_level->m_entities) {
-			for each (const auto & lvlComponent in lvlEntity.components) {
-				// Get component type
-				type = lvlComponent.type.c_str();
-				// Call the appropriate creator if available
-				if (m_constructorMap.find(type)) {
-					const auto [ID, component] = m_constructorMap[type](lvlComponent.parameters);
-					if (component != nullptr) {
-						components.push_back(component);
-						ids.push_back(ID);
-					}
+	if (m_level->existsYet()) {	
+		for each (auto & entity in m_level->m_entities) {
+			// Retrieve all of this entity's components
+			std::vector<BaseECSComponent*> components;
+			std::vector<int> ids;
+			for each (auto & component in entity.components) {
+				if (const auto &[templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(component.type.data()); templateComponent != nullptr) {
+					// Clone the template component completely, then fill in the serialized data
+					auto * castedComponent = templateComponent->clone();
+					if (component.data.size())
+						castedComponent->load(component.data);
+					castedComponent->entity = NULL_ENTITY_HANDLE;
+
+					components.push_back(castedComponent);
+					ids.push_back(componentID);
 				}
 			}
+
 			// Make an entity out of the available components
 			if (components.size())
 				makeEntity(components.data(), ids.data(), components.size());
-			// Delete temporary components and reset for next entity
+
+			// Delete temporary components
 			for each (auto * component in components)
 				delete component;
-			components.clear();
-			ids.clear();
 		}
 	}
 }

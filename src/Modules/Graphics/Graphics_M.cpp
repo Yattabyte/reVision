@@ -1,6 +1,5 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
-#include "Modules/World/ECS/components.h"
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
 #include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
@@ -80,79 +79,10 @@ void Graphics_Module::initialize(Engine * engine)
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));
-	m_systems.addSystem(new Skeletal_Animation());
+	m_systems.addSystem(new Skeletal_Animation(m_engine));
 	m_pipeline = std::make_unique<Graphics_Pipeline>(m_engine, m_clientCamera, m_sceneCameras, m_rhVolume, m_systems);
 
-	// Add map support for the following list of component types
-	auto & world = m_engine->getModule_World();
-	world.addComponentType("Renderable_Component", [engine](const ParamList &) {
-		auto * component = new Renderable_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("Camera_Component", [&, engine](const ParamList &) {
-		auto * component = new Camera_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("CameraArray_Component", [&, engine](const ParamList &) {
-		auto * component = new CameraArray_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("BoundingSphere_Component", [engine](const ParamList &) {
-		auto * component = new BoundingSphere_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("Prop_Component", [engine](const ParamList & parameters) {
-		auto * component = new Prop_Component();
-		component->m_modelName = CastAny(parameters, 0, std::string(""));
-		component->m_model = Shared_Model(engine, component->m_modelName);
-		component->m_skin = CastAny(parameters, 1, 0u);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("Skeleton_Component", [engine](const ParamList & parameters) {
-		auto * component = new Skeleton_Component();
-		component->m_modelName = CastAny(parameters, 0, std::string(""));
-		component->m_mesh = Shared_Mesh(engine, "\\Models\\" + component->m_modelName);
-		component->m_animation = CastAny(parameters, 1, 0);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightColor_Component", [](const ParamList & parameters) {
-		auto * component = new LightColor_Component();
-		component->m_color = CastAny(parameters, 0, glm::vec3(1.0f));
-		component->m_intensity = CastAny(parameters, 1, 1.0f);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightRadius_Component", [](const ParamList & parameters) {
-		auto * component = new LightRadius_Component();
-		component->m_radius = CastAny(parameters, 0, 1.0f);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightCutoff_Component", [](const ParamList & parameters) {
-		auto * component = new LightCutoff_Component();
-		component->m_cutoff = CastAny(parameters, 0, 45.0f);
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightDirectional_Component", [](const ParamList &) {
-		auto * component = new LightDirectional_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightPoint_Component", [](const ParamList &) {
-		auto * component = new LightPoint_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("LightSpot_Component", [](const ParamList &) {
-		auto * component = new LightSpot_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("Shadow_Component", [](const ParamList &) {
-		auto * component = new Shadow_Component();
-		return std::make_pair(component->ID, component);
-	});
-	world.addComponentType("Reflector_Component", [](const ParamList &) {
-		auto * component = new Reflector_Component();
-		return std::make_pair(component->ID, component);
-	});
-
-	// Reprot invalid ecs systems
+	// Report invalid ecs systems
 	auto & msg = engine->getManager_Messages();
 	for each (const auto & system in m_systems)
 		if (!system->isValid())
@@ -165,23 +95,6 @@ void Graphics_Module::deinitialize()
 
 	// Update indicator
 	m_aliveIndicator = false;
-
-	// Remove support for the following list of component types
-	auto & world = m_engine->getModule_World();
-	world.removeComponentType("Renderable_Component");
-	world.removeComponentType("Camera_Component");
-	world.removeComponentType("CameraArray_Component");
-	world.removeComponentType("BoundingSphere_Component");
-	world.removeComponentType("Prop_Component");
-	world.removeComponentType("Skeleton_Component");
-	world.removeComponentType("LightColor_Component");
-	world.removeComponentType("LightRadius_Component");
-	world.removeComponentType("LightCutoff_Component");
-	world.removeComponentType("LightDirectional_Component");
-	world.removeComponentType("LightPoint_Component");
-	world.removeComponentType("LightSpot_Component");
-	world.removeComponentType("Shadow_Component");
-	world.removeComponentType("Reflector_Component");
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)

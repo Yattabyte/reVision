@@ -198,7 +198,7 @@ private:
 	inline void clear() {
 		// Reset size, and half the capacity
 		m_currentSize = 0ull;
-		m_maxCapacity /= 2ull;
+		m_maxCapacity = std::max<size_t>(256ull, m_maxCapacity / 2ull);
 		m_modelMap.clear();
 
 		// Replace old vbo
@@ -219,7 +219,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	GLuint m_vaoID = 0, m_vboID = 0, m_matID;
-	size_t m_currentSize = 0ull, m_maxCapacity = 0ull, m_matCount = 0ull;
+	size_t m_currentSize = 0ull, m_maxCapacity = 256ull, m_matCount = 0ull;
 	GLsizei m_materialSize = 512u;
 	GLint m_maxTextureLayers = 6, m_maxMips = 1;
 	GLsync m_fence = nullptr;

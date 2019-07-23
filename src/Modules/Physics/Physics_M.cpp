@@ -1,9 +1,6 @@
 #include "Modules/Physics/Physics_M.h"
-#include "Engine.h"
-
-/* Component Types Used */
-#include "Modules/World/ECS/components.h"
 #include "Modules/Physics/ECS/TransformSync_S.h"
+#include "Engine.h"
 
 
 void Physics_Module::initialize(Engine * engine)
@@ -21,19 +18,8 @@ void Physics_Module::initialize(Engine * engine)
 	// Physics Systems
 	m_physicsSystems.addSystem(new TransformSync_Phys_System(engine, m_world));
 
-	// Component Constructors
-	auto & world = m_engine->getModule_World();
-	world.addComponentType("Collider_Component", [engine](const ParamList & parameters) {
-		auto * component = new Collider_Component();
-		component->m_collider = Shared_Collider(engine, CastAny(parameters, 0, std::string("")));
-		component->m_mass = btScalar(CastAny(parameters, 1, 0));
-		component->m_restitution = CastAny(parameters, 2, 0.0f);
-		component->m_friction = CastAny(parameters, 3, 0.0f);
-		return std::make_pair(component->ID, component);
-	});
-
 	// World-Changed Callback
-	world.addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+	m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
 		if (state == World_Module::unloaded)
 			m_enabled = false;
 		else if (state == World_Module::finishLoading || state == World_Module::updated)
@@ -52,11 +38,7 @@ void Physics_Module::deinitialize()
 	delete m_collisionConfiguration;
 	delete m_dispatcher;
 	delete m_solver;
-	delete m_world;
-
-	// Remove support for this component type
-	m_engine->getModule_World().removeComponentType("Collider_Component");
-	
+	delete m_world;	
 }
 
 void Physics_Module::frameTick(const float & deltaTime)
