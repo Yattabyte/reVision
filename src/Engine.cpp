@@ -23,6 +23,7 @@ Engine::~Engine()
 	m_moduleGraphics.deinitialize();
 	m_moduleUI.deinitialize();
 	m_modulePhysics.deinitialize();
+	m_moduleEditor.deinitialize();
 	m_moduleGame.deinitialize();
 	Image_IO::Deinitialize();
 	glfwDestroyWindow(m_window);
@@ -44,6 +45,7 @@ Engine::Engine() :
 	m_moduleGraphics.initialize(this);
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
+	m_moduleEditor.initialize(this);
 	m_moduleGame.initialize(this);
 
 	initThreads();
@@ -334,7 +336,7 @@ void Engine::tick()
 	m_moduleUI.applyActionState(m_actionState);
 	
 	// Update all modules
-	Engine_Module * modules[5] = { &m_moduleWorld, &m_modulePhysics, &m_moduleGame, &m_moduleGraphics, &m_moduleUI };
+	Engine_Module * modules[] = { &m_moduleWorld, &m_modulePhysics, &m_moduleGame, &m_moduleGraphics, &m_moduleEditor, &m_moduleUI };
 	for each (auto * module in modules)
 		module->frameTick(deltaTime);
 	m_moduleGame.renderOverlays(deltaTime); // This is done last so they can appear over-top

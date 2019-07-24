@@ -14,6 +14,7 @@ public:
 	// Public Interaction Enums
 	const enum interact {
 		on_start_game = last_interact_index,
+		on_level_editor,
 		on_options,
 		on_quit,
 	};
@@ -31,6 +32,9 @@ public:
 
 		// Add 'Start Game' button
 		addButton(engine, "START GAME", [&]() { startGame(); });
+
+		// Add 'Level Editor' button
+		addButton(engine, "LEVEL EDITOR", [&]() { startEditor(); });
 
 		// Add 'Options' button
 		m_optionsMenu = std::make_shared<OptionsMenu>(engine);
@@ -60,6 +64,11 @@ protected:
 	inline void startGame() {
 		m_engine->getModule_UI().clear();
 		enactCallback(on_start_game);
+	}
+	/** Choose 'level editor' from the main menu. */
+	inline void startEditor() {
+		m_engine->getModule_UI().clear();
+		enactCallback(on_level_editor);
 	}
 	/** Choose 'options' from the main menu. */
 	inline void goToOptions() {

@@ -63,6 +63,17 @@ public:
 	inline std::string getText() const {
 		return m_label->getText();
 	}
+	/** Set this label element's text scaling factor.
+	@param	text	the new scaling factor to use. */
+	inline void setTextScale(const float & textScale) {
+		m_label->setTextScale(textScale);
+	}
+
+	/** Retrieve this label's text scaling factor.
+	@return	the text scaling factor. */
+	inline float getTextScale() const {
+		return m_label->getTextScale();
+	}
 	/** Set the bevel radius for this button.
 	@param radius	the new radius to use. */
 	inline void setBevelRadius(const float & radius) {

@@ -9,6 +9,7 @@
 
 // Modules
 #include "Modules/Game/Game_M.h"
+#include "Modules/Editor/Editor_M.h"
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Physics/Physics_M.h"
 #include "Modules/UI/UI_M.h"
@@ -95,6 +96,8 @@ public:
 	// Module Accessors
 	/** Returns this engine's game module. */
 	Game_Module & getModule_Game() { return m_moduleGame; }
+	/** Returns this engine's editor module. */
+	LevelEditor_Module & getModule_LevelEditor() { return m_moduleEditor; }
 	/** Returns this engine's graphics module. */
 	Graphics_Module & getModule_Graphics() { return m_moduleGraphics; }
 	/** Returns this engine's user-interface module. */
@@ -142,6 +145,7 @@ private:
 	// Private Modules
 	World_Module m_moduleWorld;
 	Game_Module m_moduleGame;
+	LevelEditor_Module m_moduleEditor;
 	Graphics_Module m_moduleGraphics;
 	UI_Module m_moduleUI;
 	Physics_Module m_modulePhysics;	

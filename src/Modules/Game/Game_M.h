@@ -16,7 +16,8 @@ public:
 	enum Game_State {
 		in_startMenu,
 		in_pauseMenu,
-		in_game
+		in_game,
+		in_editor
 	};
 
 
@@ -48,6 +49,8 @@ private:
 	void showPauseMenu(const bool & show);
 	/** Start the game. */
 	void startGame();
+	/** Start the editor. */
+	void startEditor();
 
 
 	// Private Attributes

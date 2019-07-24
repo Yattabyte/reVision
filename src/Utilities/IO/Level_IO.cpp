@@ -68,7 +68,7 @@ std::vector<LevelStruct_Entity> Level_IO::parse_level(const std::vector<char> & 
 
 			std::vector<char> serializedComponentData;
 			if (componentDataSize - componentDataRead)
-				serializedComponentData = std::vector<char>(&componentData[componentDataRead], &componentData[componentDataSize]);
+				serializedComponentData = std::vector<char>(componentData.begin() + componentDataRead, componentData.end());
 			entity.components.push_back(LevelStruct_Component{ stringifiedName, serializedComponentData });
 		}
 		entities.push_back(entity);

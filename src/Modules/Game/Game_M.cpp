@@ -27,6 +27,9 @@ void Game_Module::initialize(Engine * engine)
 	startMenu->addCallback(StartMenu::on_start_game, [&]() {
 		startGame();
 	});
+	startMenu->addCallback(StartMenu::on_level_editor, [&]() {
+		startEditor();
+	});
 
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
@@ -109,4 +112,11 @@ void Game_Module::startGame()
 	m_gameState = in_game;
 	m_engine->getModule_World().loadWorld("a.bmap");
 	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
+}
+
+void Game_Module::startEditor()
+{
+	m_gameState = in_editor;
+	m_engine->getModule_World().loadWorld("a.bmap");
+	m_engine->getModule_LevelEditor().start();
 }
