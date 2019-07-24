@@ -71,6 +71,10 @@ public:
 	/** Set the input mode for the mouse, useful for changing between 2D and 3D views.
 	@param	mode		the new mouse input mode to use. */
 	void setMouseInputMode(const MouseInputMode & mode);
+	/** Switch the UI over to the main menu. */
+	void goToMainMenu();
+	/** Switch the UI over to the level editor. */
+	void goToEditor();
 
 
 	// Public Accessors
@@ -84,6 +88,8 @@ public:
 	ActionState & getActionState() { return m_actionState; }
 	/** Returns this engine's preference state. */
 	PreferenceState & getPreferenceState() { return m_preferenceState; }
+	/** Returns this engine's rendering context. */
+	GLFWwindow * getContext() const { return m_window; }
 
 	// Manager Accessors
 	/** Returns this engine's asset manager. */

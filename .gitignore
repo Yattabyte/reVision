@@ -68,3 +68,4 @@ CMakeDoxyfile.in
 PredictedInputCache_Debug_x64.dat
 PredictedInputCache_Release_x64.dat
 Doxyfile.Documentation
+app/imgui.ini

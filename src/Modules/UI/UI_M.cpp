@@ -1,4 +1,7 @@
 #include "Modules/UI/UI_M.h"
+#include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/UI/dear imgui/imgui_impl_glfw.h"
+#include "Modules/UI/dear imgui/imgui_impl_opengl3.h"
 #include "Modules/UI/Macro Elements/StartMenu.h"
 #include "Engine.h"
 
@@ -7,6 +10,20 @@ void UI_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: User Interface...");
+
+	// Initialize ImGUI
+	IMGUI_CHECKVERSION();
+	ImGui::CreateContext();
+	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
+	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+
+	// Setup Dear ImGui style
+	ImGui::StyleColorsDark();
+
+    // Setup Platform/Renderer bindings
+	ImGui_ImplGlfw_InitForOpenGL(engine->getContext(), true);
+	ImGui_ImplOpenGL3_Init("#version 150");
 
 	// Preferences
 	auto & preferences = m_engine->getPreferenceState();
@@ -34,8 +51,14 @@ void UI_Module::initialize(Engine * engine)
 
 void UI_Module::deinitialize()
 {
-	// Update indicator
 	m_engine->getManager_Messages().statement("Closing Module: User Interface...");
+
+	// Cleanup
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+
+	// Update indicator
 	m_aliveIndicator = false;
 }
 
@@ -61,6 +84,21 @@ void UI_Module::frameTick(const float & deltaTime)
 		glDisable(GL_BLEND);
 		Shader::Release();
 	}
+
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	bool show_demo_window = true;
+	ImGui::ShowDemoWindow(&show_demo_window);
+
+	if (m_rootUIElement)
+		m_rootUIElement->render(deltaTime);
+
+	// Rendering
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 void UI_Module::pushRootElement(const std::shared_ptr<UI_Element>& rootElement)
@@ -89,6 +127,7 @@ std::shared_ptr<FocusMap> UI_Module::getFocusMap() const
 void UI_Module::clear()
 {
 	m_rootElement.clear();
+	m_rootUIElement.reset();
 	m_focusMap.reset();
 }
 

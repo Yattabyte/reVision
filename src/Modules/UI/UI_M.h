@@ -12,6 +12,11 @@
 #include <vector>
 
 
+/***/
+struct ImGUI_Element {
+	virtual void render(const float & deltaTime) {};
+};
+
 /** A module responsible for the overall user interface. */
 class UI_Module : public Engine_Module {
 public:
@@ -27,8 +32,16 @@ public:
 	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
+	// Public Methods
+	/***/
+	inline void showEditor(const bool & state) { m_showEditor = state; }
+
 
 	// Public Methods
+	/***/
+	void setRootElement(const std::shared_ptr<ImGUI_Element> & rootElement) {
+		m_rootUIElement = rootElement;
+	}
 	/** Push a new UI element onto a stack to receive input and be rendered. 
 	@param	rootElement			the main element of focus for this UI system. */
 	void pushRootElement(const std::shared_ptr<UI_Element> & rootElement);
@@ -69,6 +82,12 @@ public:
 	
 
 private:
+	// Private Attributes
+	bool m_showEditor = false; 
+	std::shared_ptr<ImGUI_Element> m_rootUIElement;
+
+
+	// Private Attributes
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	StaticBuffer m_projectionBuffer;
@@ -77,6 +96,7 @@ private:
 	std::shared_ptr<FocusMap> m_focusMap;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
+
 };
 
 #endif // UI_MODULE_H

@@ -49,6 +49,7 @@ Engine::Engine() :
 	m_moduleGame.initialize(this);
 
 	initThreads();
+	goToMainMenu();
 }
 
 void Engine::initWindow()
@@ -378,6 +379,16 @@ void Engine::setMouseInputMode(const MouseInputMode & mode)
 		glfwSetCursorPos(m_window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
 		break;
 	}
+}
+
+void Engine::goToMainMenu()
+{
+	m_moduleGame.showStartMenu();
+}
+
+void Engine::goToEditor()
+{
+	m_moduleEditor.showEditor();
 }
 
 float Engine::getTime() const

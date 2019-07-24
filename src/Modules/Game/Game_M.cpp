@@ -42,8 +42,6 @@ void Game_Module::initialize(Engine * engine)
 		showPauseMenu(false);
 		showStartMenu();
 	});
-
-	showStartMenu();
 }
 
 void Game_Module::deinitialize()
@@ -117,6 +115,5 @@ void Game_Module::startGame()
 void Game_Module::startEditor()
 {
 	m_gameState = in_editor;
-	m_engine->getModule_World().loadWorld("a.bmap");
-	m_engine->getModule_LevelEditor().start();
+	m_engine->goToEditor();
 }

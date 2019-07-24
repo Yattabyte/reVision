@@ -29,10 +29,8 @@ void World_Module::frameTick(const float & deltaTime)
 		return;
 
 	// Signal that the map has finished loading ONCE
-	if (m_state == startLoading) {
-		notifyListeners(finishLoading);
-		saveWorld("qwe");
-	}
+	if (m_state == startLoading) 
+		notifyListeners(finishLoading);	
 	else if (m_state == finishLoading) {
 		// Lastly, check and see if we observed any changes
 		if (assetManager.hasChanged())		
@@ -123,8 +121,6 @@ void World_Module::loadWorld(const std::string & mapName)
 
 void World_Module::saveWorld(const std::string & mapName)
 {
-	if (true == true)
-		return;
 	std::vector<char> ecsData;
 	for each (const auto & entity in m_entities) {
 		// Remember the beginning spot for this entity, we will update this index with the total entity data size

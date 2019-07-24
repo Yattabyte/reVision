@@ -133,8 +133,12 @@ public:
 				propRenderBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 				glMultiDrawArraysIndirect(GL_TRIANGLES, 0, (GLsizei)visibleIndices.size(), 0);
 				m_drawIndex++;
-			}			
+			}
+			else
+				viewport->m_gfxFBOS->clearDepthStencil();
 		}
+		else
+			viewport->m_gfxFBOS->clearDepthStencil();
 	}
 	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives) override {
 		// Exit Early

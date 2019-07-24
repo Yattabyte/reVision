@@ -95,11 +95,12 @@ public:
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
 		const auto instanceCount = (GLuint)perspectives.size();
 		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
-		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
+		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
 
 		glDisable(GL_BLEND);
-		glDepthMask(GL_FALSE);
+		glDepthFunc(GL_LEQUAL);
 		glEnable(GL_DEPTH_TEST);
+		glDepthMask(GL_FALSE);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
 		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glBindTextureUnit(4, m_cubemapMipped);

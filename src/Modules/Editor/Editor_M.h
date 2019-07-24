@@ -5,7 +5,7 @@
 #include "Modules/Engine_Module.h"
 #include "Modules/Game/Overlays/Overlay.h"
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Modules/UI/Basic Elements/UI_Element.h"
+#include "Modules/UI/UI_M.h"
 #include <memory>
 
 
@@ -26,15 +26,40 @@ public:
 
 
 	// Public Methods
-	void start();
+	/***/
+	void showEditor();
+	/***/
+	void exit();
+	/***/
+	void newLevel();
+	/***/
+	void openLevel(const std::string & name);
+	/***/
+	void openLevelDialog();
+	/***/
+	void saveLevel(const std::string & name);
+	/***/
+	void saveLevel();
+	/***/
+	void saveLevelDialog();
+	/***/
+	void undo();
+	/***/
+	void redo();
+	/***/
+	void cut();
+	/***/
+	void copy();
+	/***/
+	void paste();
+	/***/
+	void deleteObject();
 
 
 private:
-	// Private Methods
-
-
 	// Private Attributes
-	std::shared_ptr<UI_Element> m_editorInterface;
+	std::string m_currentLevelName = "";
+	std::shared_ptr<ImGUI_Element> m_editorInterface;
 };
 
 #endif // EDITOR_MODULE_H
