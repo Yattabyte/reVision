@@ -3,7 +3,6 @@
 #define EDITOR_INTERFACE_H
 
 #include "Modules/UI/UI_M.h"
-#include "Modules/Editor/UI/TitleBar.h"
 
 
 // Forward Declarations
