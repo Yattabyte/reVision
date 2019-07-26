@@ -14,7 +14,7 @@
 
 /***/
 struct ImGUI_Element {
-	virtual void render(const float & deltaTime) {};
+	virtual void tick(const float & deltaTime) {};
 };
 
 /** A module responsible for the overall user interface. */

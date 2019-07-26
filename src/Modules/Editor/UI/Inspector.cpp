@@ -18,7 +18,7 @@ Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
 	});
 }
 
-void Inspector::render(const float & deltaTime)
+void Inspector::tick(const float & deltaTime)
 {
 	bool t = true;
 	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);

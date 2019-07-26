@@ -15,7 +15,7 @@ void World_Module::initialize(Engine * engine)
 void World_Module::deinitialize()
 {
 	// Update indicator
-	m_engine->getManager_Messages().statement("Closing Module: World...");
+	m_engine->getManager_Messages().statement("Unloading Module: World...");
 	m_aliveIndicator = false;
 	unloadWorld();
 }

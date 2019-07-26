@@ -52,7 +52,7 @@ void UI_Module::initialize(Engine * engine)
 
 void UI_Module::deinitialize()
 {
-	m_engine->getManager_Messages().statement("Closing Module: User Interface...");
+	m_engine->getManager_Messages().statement("Unloading Module: User Interface...");
 
 	// Cleanup
 	ImGui_ImplOpenGL3_Shutdown();
@@ -95,7 +95,7 @@ void UI_Module::frameTick(const float & deltaTime)
 	ImGui::ShowDemoWindow(&show_demo_window);
 
 	if (m_rootUIElement)
-		m_rootUIElement->render(deltaTime);
+		m_rootUIElement->tick(deltaTime);
 
 	// Rendering
 	ImGui::Render();

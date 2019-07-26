@@ -18,7 +18,7 @@ TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 	});
 }
 
-void TitleBar::render(const float & deltaTime)
+void TitleBar::tick(const float & deltaTime)
 {
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {

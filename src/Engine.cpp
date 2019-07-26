@@ -17,17 +17,18 @@ constexpr int DESIRED_OGL_VER_MINOR = 5;
 Engine::~Engine()
 {
 	// Update indicator
-	m_messageManager.statement("Shutting down...");
 	m_aliveIndicator = false;
 	m_moduleWorld.deinitialize();
 	m_moduleGraphics.deinitialize();
 	m_moduleUI.deinitialize();
 	m_modulePhysics.deinitialize();
+	m_moduleStartScreen.deinitialize();
 	m_moduleEditor.deinitialize();
 	m_moduleGame.deinitialize();
 	Image_IO::Deinitialize();
 	glfwDestroyWindow(m_window);
 	glfwTerminate();
+	m_messageManager.statement("Shutting down...");
 }
 
 Engine::Engine() :
@@ -45,6 +46,7 @@ Engine::Engine() :
 	m_moduleGraphics.initialize(this);
 	m_moduleUI.initialize(this);
 	m_modulePhysics.initialize(this);
+	m_moduleStartScreen.initialize(this);
 	m_moduleEditor.initialize(this);
 	m_moduleGame.initialize(this);
 
@@ -335,12 +337,21 @@ void Engine::tick()
 
 	// Update UI module based on action state, manually
 	m_moduleUI.applyActionState(m_actionState);
-	
-	// Update all modules
-	Engine_Module * modules[] = { &m_moduleWorld, &m_modulePhysics, &m_moduleGame, &m_moduleGraphics, &m_moduleEditor, &m_moduleUI };
-	for each (auto * module in modules)
-		module->frameTick(deltaTime);
-	m_moduleGame.renderOverlays(deltaTime); // This is done last so they can appear over-top
+
+	// Tick relevant systems
+	m_modulePhysics.frameTick(deltaTime);
+	m_moduleWorld.frameTick(deltaTime);
+	if (m_engineState == in_startMenu)
+		m_moduleStartScreen.frameTick(deltaTime);
+	else if (m_engineState == in_editor)
+		m_moduleEditor.frameTick(deltaTime);
+	else
+		m_moduleGame.frameTick(deltaTime);
+	m_moduleGraphics.frameTick(deltaTime);
+	m_moduleUI.frameTick(deltaTime);	
+
+	// This is done last so they can appear over-top
+	m_moduleGame.renderOverlays(deltaTime); 
 
 	// Swap buffers and end
 	glfwSwapBuffers(m_window);
@@ -377,17 +388,27 @@ void Engine::setMouseInputMode(const MouseInputMode & mode)
 	case FREE_LOOK:
 		glfwSetInputMode(m_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		glfwSetCursorPos(m_window, m_actionState[ActionState::LOOK_X], m_actionState[ActionState::LOOK_Y]);
+		m_actionState[ActionState::LOOK_X] = m_actionState[ActionState::MOUSE_X];
+		m_actionState[ActionState::LOOK_Y] = m_actionState[ActionState::MOUSE_Y];
 		break;
 	}
 }
 
 void Engine::goToMainMenu()
 {
-	m_moduleGame.showStartMenu();
+	m_engineState = in_startMenu;
+	m_moduleStartScreen.showStartMenu();
+}
+
+void Engine::goToGame()
+{
+	m_engineState = in_game;
+	m_moduleGame.showGame();
 }
 
 void Engine::goToEditor()
 {
+	m_engineState = in_editor;
 	m_moduleEditor.showEditor();
 }
 

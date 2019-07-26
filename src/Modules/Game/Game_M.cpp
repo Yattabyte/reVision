@@ -20,17 +20,7 @@ void Game_Module::initialize(Engine * engine)
 	// Create Overlay Effects
 	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);
 	m_frameTime = std::make_shared<Frametime_Counter>(m_engine);
-
-	// Create Main Menu
-	auto startMenu = std::make_shared<StartMenu>(m_engine);
-	m_startMenu = startMenu;
-	startMenu->addCallback(StartMenu::on_start_game, [&]() {
-		startGame();
-	});
-	startMenu->addCallback(StartMenu::on_level_editor, [&]() {
-		startEditor();
-	});
-
+	
 	// Create Pause Menu
 	auto pauseMenu = std::make_shared<PauseMenu>(m_engine);
 	m_pauseMenu = pauseMenu;
@@ -40,13 +30,13 @@ void Game_Module::initialize(Engine * engine)
 	});
 	pauseMenu->addCallback(PauseMenu::on_end, [&]() {
 		showPauseMenu(false);
-		showStartMenu();
+		m_engine->goToMainMenu();
 	});
 }
 
 void Game_Module::deinitialize()
 {
-	m_engine->getManager_Messages().statement("Closing Module: Game...");
+	m_engine->getManager_Messages().statement("Unloading Module: Game...");
 }
 
 void Game_Module::frameTick(const float & deltaTime)
@@ -78,15 +68,11 @@ void Game_Module::renderOverlays(const float & deltaTime)
 	m_frameTime->applyEffect(deltaTime);
 }
 
-void Game_Module::showStartMenu()
+void Game_Module::showGame()
 {
-	m_engine->setMouseInputMode(Engine::MouseInputMode::NORMAL);
-	m_engine->getModule_UI().clear();
-	m_engine->getModule_UI().pushRootElement(m_startMenu);
-	m_engine->getModule_UI().setFocusMap(std::dynamic_pointer_cast<StartMenu>(m_startMenu)->getFocusMap());
-	m_gameState = in_startMenu;
-
-	m_engine->getModule_World().loadWorld("background.bmap");
+	m_gameState = in_game;
+	m_engine->getModule_World().loadWorld("a.bmap");
+	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
 }
 
 void Game_Module::showPauseMenu(const bool & show)
@@ -103,17 +89,4 @@ void Game_Module::showPauseMenu(const bool & show)
 		m_engine->getModule_UI().clear();
 		m_gameState = in_game;
 	}
-}
-
-void Game_Module::startGame()
-{
-	m_gameState = in_game;
-	m_engine->getModule_World().loadWorld("a.bmap");
-	m_engine->setMouseInputMode(Engine::MouseInputMode::FREE_LOOK);
-}
-
-void Game_Module::startEditor()
-{
-	m_gameState = in_editor;
-	m_engine->goToEditor();
 }

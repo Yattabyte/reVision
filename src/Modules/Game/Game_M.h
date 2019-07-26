@@ -14,10 +14,8 @@ class Game_Module : public Engine_Module {
 public:
 	// Public Enumerations
 	enum Game_State {
-		in_startMenu,
 		in_pauseMenu,
 		in_game,
-		in_editor
 	};
 
 
@@ -38,25 +36,18 @@ public:
 	/** Render any and all of the game module's overlays to the screen.
 	@param	deltaTime	the amount of time passed since last frame. */
 	void renderOverlays(const float & deltaTime);
-	/** Display the start menu. */
-	void showStartMenu();
+	/** Show the game. */
+	void showGame();
 	/** Either show or hide the pause menu.
 	@param	show		whether to show or hide the pause menu. */
 	void showPauseMenu(const bool & show);
 
 
 private:
-	// Private Methods
-	/** Start the game. */
-	void startGame();
-	/** Start the editor. */
-	void startEditor();
-
-
 	// Private Attributes
-	Game_State m_gameState = in_startMenu;
+	Game_State m_gameState = in_game;
 	ECSSystemList m_ecsSystems;
-	std::shared_ptr<UI_Element> m_startMenu, m_pauseMenu;
+	std::shared_ptr<UI_Element> m_pauseMenu;
 	std::shared_ptr<Overlay> m_loadingRing, m_frameTime;
 };
 

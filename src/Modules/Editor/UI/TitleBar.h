@@ -20,7 +20,7 @@ public:
 
 
 	// Public Interface Implementation
-	virtual void render(const float & deltaTime) override;
+	virtual void tick(const float & deltaTime) override;
 
 
 private:

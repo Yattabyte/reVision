@@ -8,6 +8,7 @@
 #include "Managers/SoundManager.h"
 
 // Modules
+#include "Modules/StartScreen/StartScreen_M.h"
 #include "Modules/Game/Game_M.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Graphics/Graphics_M.h"
@@ -24,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.1.1";
+constexpr char ENGINE_VERSION[] = "4.1.2";
 struct GLFWwindow;
 
 
@@ -73,6 +74,8 @@ public:
 	void setMouseInputMode(const MouseInputMode & mode);
 	/** Switch the UI over to the main menu. */
 	void goToMainMenu();
+	/** Switch the UI over to the game. */
+	void goToGame();
 	/** Switch the UI over to the level editor. */
 	void goToEditor();
 
@@ -131,6 +134,11 @@ private:
 
 
 	// Private Attributes
+	enum Engine_State {
+		in_startMenu,
+		in_game,
+		in_editor
+	} m_engineState = in_startMenu;
 	float m_lastTime = 0;
 	float m_frameAccumulator = 0;
 	float m_refreshRate = 120.0f;
@@ -150,6 +158,7 @@ private:
 
 	// Private Modules
 	World_Module m_moduleWorld;
+	StartScreen_Module m_moduleStartScreen;
 	Game_Module m_moduleGame;
 	LevelEditor_Module m_moduleEditor;
 	Graphics_Module m_moduleGraphics;

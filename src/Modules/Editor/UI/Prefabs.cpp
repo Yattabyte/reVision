@@ -18,7 +18,7 @@ Prefabs::Prefabs(Engine * engine, LevelEditor_Module * editor)
 	});
 }
 
-void Prefabs::render(const float & deltaTime)
+void Prefabs::tick(const float & deltaTime)
 {
 	bool t = true;
 	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);

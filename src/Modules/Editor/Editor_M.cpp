@@ -1,5 +1,6 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Editor/UI/Editor_Interface.h"
+#include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 
 
@@ -12,14 +13,11 @@ void LevelEditor_Module::initialize(Engine * engine)
 
 void LevelEditor_Module::deinitialize()
 {
-	m_engine->getManager_Messages().statement("Closing Module: Level Edtior...");	
+	m_engine->getManager_Messages().statement("Unloading Module: Level Edtior...");	
 }
 
 void LevelEditor_Module::frameTick(const float & deltaTime)
-{
-	// Update our own ECS systems
-
-	// Render UI
+{		
 }
 
 void LevelEditor_Module::showEditor()
@@ -28,6 +26,7 @@ void LevelEditor_Module::showEditor()
 	m_engine->getModule_UI().setRootElement(m_editorInterface);
 	openLevel("a.bmap");
 }
+
 void LevelEditor_Module::exit()
 {
 	m_engine->goToMainMenu();
