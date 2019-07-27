@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -24,7 +24,7 @@ public:
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
 		m_shaderFXAA = Shared_Shader(m_engine, "Effects\\FXAA");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -77,7 +77,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shaderFXAA;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
 		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };

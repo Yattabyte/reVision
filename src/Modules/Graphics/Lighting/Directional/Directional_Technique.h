@@ -8,7 +8,7 @@
 #include "Modules/Graphics/Lighting/Directional/DirectionalSync_System.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 #include <random>
@@ -36,7 +36,7 @@ public:
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
 		m_shader_Bounce = Shared_Shader(m_engine, "Core\\Directional\\Bounce");
-		m_shapeQuad = Shared_Primitive(engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Noise Texture
 		std::uniform_real_distribution<float> randomFloats(0.0, 1.0);
@@ -235,7 +235,7 @@ private:
 	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Bounce;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	GLuint m_textureNoise32 = 0;
 	GLuint m_bounceSize = 16u;
 	struct DrawData {

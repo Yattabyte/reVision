@@ -8,7 +8,7 @@
 #include "Modules/Graphics/Common/RH_Volume.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -29,7 +29,7 @@ public:
 		// Asset Loading
 		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
 		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -114,7 +114,7 @@ private:
 	Engine * m_engine = nullptr;
 	std::shared_ptr<RH_Volume> m_rhVolume;
 	Shared_Shader m_shaderRecon, m_shaderRebounce;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bounceSize = 16;
 	struct DrawData {
 		DynamicBuffer camBufferRebounce, camBufferRecon;

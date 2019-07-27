@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
@@ -31,7 +31,7 @@ public:
 		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
 		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
 		m_shaderConvMips = Shared_Shader(m_engine, "Effects\\Gaussian Blur MIP");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -163,7 +163,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shaderSSR1, m_shaderSSR2, m_shaderCopy, m_shaderConvMips;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	GLuint m_bayerID = 0;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;

@@ -1,34 +1,34 @@
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/IO/Mesh_IO.h"
 #include "Engine.h"
 
 
 constexpr char* EXT_PRIMITIVE = ".obj";
-constexpr char* DIRECTORY_PRIMITIVE = "\\Primitives\\";
+constexpr char* DIRECTORY_PRIMITIVE = "\\Models\\";
 
 struct Single_Primitive_Vertex {
 	glm::vec3 vertex;
 	glm::vec2 uv;
 };
 
-Shared_Primitive::Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded)
+Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filename, const bool & threaded)
 {
-	(*(std::shared_ptr<Primitive>*)(this)) = std::dynamic_pointer_cast<Primitive>(
+	(*(std::shared_ptr<Auto_Model>*)(this)) = std::dynamic_pointer_cast<Auto_Model>(
 		engine->getManager_Assets().shareAsset(
-			typeid(Primitive).name(),
+			typeid(Auto_Model).name(),
 			filename,
-			[engine, filename]() { return std::make_shared<Primitive>(engine, filename); },
+			[engine, filename]() { return std::make_shared<Auto_Model>(engine, filename); },
 			threaded
 		));
 }
 
-Primitive::~Primitive()
+Auto_Model::~Auto_Model()
 {
 	if (existsYet())
 		glDeleteBuffers(1, &m_uboID);
 }
 
-Primitive::Primitive(Engine * engine, const std::string & filename) : Asset(engine, filename) 
+Auto_Model::Auto_Model(Engine * engine, const std::string & filename) : Asset(engine, filename) 
 {
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);
@@ -41,7 +41,7 @@ Primitive::Primitive(Engine * engine, const std::string & filename) : Asset(engi
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
-void Primitive::initialize()
+void Auto_Model::initialize()
 {
 	// Forward asset creation
 	m_mesh = Shared_Mesh(m_engine, DIRECTORY_PRIMITIVE + getFileName() + EXT_PRIMITIVE, false);
@@ -62,7 +62,12 @@ void Primitive::initialize()
 	Asset::finalize();
 }
 
-size_t Primitive::getSize() const
+size_t Auto_Model::getSize() const
 {
 	return m_data.size();
+}
+
+void Auto_Model::bind()
+{
+	glBindVertexArray(m_vaoID);
 }

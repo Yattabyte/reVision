@@ -18,7 +18,7 @@ void Graphics_Module::initialize(Engine * engine)
 
 	// Asset Loading
 	m_shader = Shared_Shader(m_engine, "Effects\\Copy Texture");
-	m_shapeQuad = Shared_Primitive(m_engine, "quad");	
+	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");	
 	
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

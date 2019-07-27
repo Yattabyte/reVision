@@ -5,7 +5,7 @@
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Cubemap.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -28,7 +28,7 @@ public:
 		m_shaderSky = Shared_Shader(engine, "Effects\\Skybox");
 		m_shaderSkyReflect = Shared_Shader(engine, "Effects\\Skybox Reflection");
 		m_shaderConvolute = Shared_Shader(engine, "Effects\\Sky_Convolution");
-		m_shapeQuad = Shared_Primitive(engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		glCreateFramebuffers(1, &m_cubeFBO);
 		glCreateTextures(GL_TEXTURE_CUBE_MAP, 1, &m_cubemapMipped);
@@ -164,7 +164,7 @@ private:
 	GLuint m_cubeFBO = 0, m_cubemapMipped = 0;
 	Shared_Cubemap m_cubemapSky;
 	Shared_Shader m_shaderSky, m_shaderSkyReflect, m_shaderConvolute;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	bool m_skyOutOfDate = false;
 	glm::ivec2 m_skySize = glm::ivec2(1);
 	struct DrawData {

@@ -5,7 +5,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -28,7 +28,7 @@ public:
 		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
 		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
 		m_shaderGB_A = Shared_Shader(m_engine, "Effects\\Gaussian Blur Alpha");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -169,7 +169,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shader, m_shaderCopyAO, m_shaderGB_A;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	float m_radius = 1.0f;
 	int m_quality = 1, m_blurStrength = 5;
 	GLuint m_noiseID = 0;

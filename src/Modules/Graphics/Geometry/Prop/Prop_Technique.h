@@ -9,7 +9,7 @@
 #include "Modules/Graphics/Geometry/Prop/PropSync_System.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Engine.h"
 
 
@@ -36,7 +36,7 @@ public:
 		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
 		m_shaderShadowCull = Shared_Shader(m_engine, "Core\\Props\\shadow culling");
 		m_shaderShadowGeometry = Shared_Shader(m_engine, "Core\\Props\\shadow");
-		m_shapeCube = Shared_Primitive(m_engine, "cube");
+		m_shapeCube = Shared_Auto_Model(m_engine, "cube");
 		
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
@@ -236,7 +236,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
-	Shared_Primitive m_shapeCube;
+	Shared_Auto_Model m_shapeCube;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	struct DrawData {
 		DynamicBuffer bufferCamIndex, bufferPropIndex, bufferCulling, bufferRender, bufferSkeletonIndex;

@@ -7,7 +7,7 @@
 #include "Modules/Graphics/Lighting/Point/PointVisibility_System.h"
 #include "Modules/Graphics/Lighting/Point/PointSync_System.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
@@ -33,7 +33,7 @@ public:
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Point\\Light");
 		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");
-		m_shapeSphere = Shared_Primitive(m_engine, "sphere");
+		m_shapeSphere = Shared_Auto_Model(m_engine, "sphere");
 
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
@@ -149,7 +149,7 @@ private:
 	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 	Shared_Shader m_shader_Lighting, m_shader_Stencil;
-	Shared_Primitive m_shapeSphere;
+	Shared_Auto_Model m_shapeSphere;
 	struct DrawData {
 		DynamicBuffer bufferCamIndex;
 		DynamicBuffer visLights;

@@ -5,7 +5,7 @@
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -26,7 +26,7 @@ public:
 		// Asset Loading
 		m_shader = Shared_Shader(m_engine, "Effects\\Join Reflections");
 		m_brdfMap = Shared_Texture(engine, "brdfLUT.png", GL_TEXTURE_2D, false, false);
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 	}
 
 
@@ -78,7 +78,7 @@ private:
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shader;
 	Shared_Texture m_brdfMap;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
 		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };

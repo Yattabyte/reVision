@@ -4,7 +4,7 @@
 
 #include "Modules/Graphics/Common/Graphics_Technique.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
@@ -28,7 +28,7 @@ public:
 		m_shaderBloomExtract = Shared_Shader(m_engine, "Effects\\Bloom Extraction");
 		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
 		m_shaderGB = Shared_Shader(m_engine, "Effects\\Gaussian Blur");
-		m_shapeQuad = Shared_Primitive(engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preference Callbacks
 		auto & preferences = m_engine->getPreferenceState();
@@ -124,7 +124,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shaderBloomExtract, m_shaderCopy, m_shaderGB;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	int m_bloomStrength = 5;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;

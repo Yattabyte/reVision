@@ -8,12 +8,14 @@ void LevelEditor_Module::initialize(Engine * engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: Level Edtior...");
-	m_editorInterface = std::make_shared<Editor_Interface>(engine, this);
+	
+	// UI
+	m_editorInterface = std::make_shared<Editor_Interface>(engine, this);	
 }
 
 void LevelEditor_Module::deinitialize()
 {
-	m_engine->getManager_Messages().statement("Unloading Module: Level Edtior...");	
+	m_engine->getManager_Messages().statement("Unloading Module: Level Edtior...");		
 }
 
 void LevelEditor_Module::frameTick(const float & deltaTime)

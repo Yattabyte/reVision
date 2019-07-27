@@ -4,7 +4,7 @@
 
 #include "Modules/Game/Overlays/Overlay.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
 #include "Utilities/GL/StaticBuffer.h"
 #include "Engine.h"
@@ -25,7 +25,7 @@ public:
 		// Asset Loading
 		m_texture = Shared_Texture(m_engine, "spinner.png", GL_TEXTURE_2D);
 		m_shader = Shared_Shader(m_engine, "Effects\\LoadingIndicator");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -97,7 +97,7 @@ private:
 	Engine * m_engine = nullptr;
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
-	Shared_Primitive m_shapeQuad;
+	Shared_Auto_Model m_shapeQuad;
 	StaticBuffer m_quadIndirectBuffer;	
 	bool m_show = false;
 	float m_time = 0.0f, m_blendAmt = 1.0f;

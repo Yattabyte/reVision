@@ -6,7 +6,7 @@
 #include "Modules/Graphics/Lighting/Shadow/ShadowData.h"
 #include "Modules/Graphics/Lighting/Shadow/ShadowScheduler_System.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Engine.h"
 
 

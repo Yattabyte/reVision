@@ -9,43 +9,45 @@
 
 
 class Engine;
-class Primitive;
+class Auto_Model;
 struct Single_Primitive_Vertex;
 
-/** Shared version of a Primitive asset.
+/** Shared version of an Auto_Model asset.
 Responsible for the creation, containing, and sharing of assets. */
-class Shared_Primitive : public std::shared_ptr<Primitive> {
+class Shared_Auto_Model : public std::shared_ptr<Auto_Model> {
 public:
 	// Public (de)Constructors
 	/** Constructs an empty asset. */
-	inline Shared_Primitive() = default;
+	inline Shared_Auto_Model() = default;
 	/** Begins the creation process for this asset.
 	@param	engine			the engine being used.
 	@param	filename		the filename to use.
 	@param	threaded		create in a separate thread.
 	@return					the desired asset. */
-	explicit Shared_Primitive(Engine * engine, const std::string & filename, const bool & threaded = true);
+	explicit Shared_Auto_Model(Engine * engine, const std::string & filename, const bool & threaded = true);
 };
 
-/** A basic untextued 3D model used in visual processing.
-Represents a more basic 3D model with a material, and wraps an OpenGL vertex array & buffer object.
+/** A basic 3D model used in visual processing.
+Represents a more basic 3D model, such as a sphere or a quad, and wraps an OpenGL vertex array & buffer object.
 Typically used to load quads/spheres for fire & forget events.
 @note	owns 1 Shared_Mesh object. */
-class Primitive : public Asset {
+class Auto_Model : public Asset {
 public:
 	// Public (de)Constructors
-	/** Destroy the Primitive. */
-	~Primitive();
-	/** Construct the Primitive.
+	/** Destroy the Auto_Model. */
+	~Auto_Model();
+	/** Construct the Auto_Model.
 	@param	engine		the engine to use.
 	@param	filename	the asset file name (relative to engine directory). */
-	Primitive(Engine * engine, const std::string & filename);
+	Auto_Model(Engine * engine, const std::string & filename);
 
 
 	// Public Methods
 	/** Returns the vertex-count of this object. 
 	@return					vertex-count of this object. */
 	size_t getSize() const;
+	/***/
+	void bind();
 	
 	
 	// Public Attributes
@@ -60,7 +62,7 @@ private:
 
 
 	// Private Attributes
-	friend class Shared_Primitive;
+	friend class Shared_Auto_Model;
 };
 
 #endif // PRIMITIVE_H

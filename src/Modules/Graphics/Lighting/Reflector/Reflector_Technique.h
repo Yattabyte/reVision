@@ -9,7 +9,7 @@
 #include "Modules/Graphics/Lighting/Reflector/ReflectorSync_System.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Engine.h"
 
@@ -37,8 +37,8 @@ public:
 		m_shaderStencil = Shared_Shader(m_engine, "Core\\Reflector\\Stencil");
 		m_shaderCopy = Shared_Shader(m_engine, "Core\\Reflector\\2D_To_Cubemap");
 		m_shaderConvolute = Shared_Shader(m_engine, "Core\\Reflector\\Cube_Convolution");
-		m_shapeCube = Shared_Primitive(m_engine, "cube");
-		m_shapeQuad = Shared_Primitive(m_engine, "quad");
+		m_shapeCube = Shared_Auto_Model(m_engine, "cube");
+		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -247,7 +247,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
-	Shared_Primitive m_shapeCube, m_shapeQuad;
+	Shared_Auto_Model m_shapeCube, m_shapeQuad;
 	Shared_Shader m_shaderLighting, m_shaderStencil, m_shaderCopy, m_shaderConvolute;
 	StaticTripleBuffer m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4), m_indirectQuadConvolute = StaticTripleBuffer(sizeof(GLuint) * 4);
 	std::shared_ptr<Viewport> m_viewport;

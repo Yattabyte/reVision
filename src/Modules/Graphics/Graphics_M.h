@@ -10,7 +10,7 @@
 #include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/MappedChar.h"
 #include "Assets/Shader.h"
-#include "Assets/Primitive.h"
+#include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticTripleBuffer.h"
 #include "Utilities/GL/GL_ArrayBuffer.h"
@@ -69,7 +69,7 @@ private:
 	std::shared_ptr<Camera>							m_clientCamera;
 	std::shared_ptr<RH_Volume>						m_rhVolume;
 	Shared_Shader									m_shader;
-	Shared_Primitive								m_shapeQuad;
+	Shared_Auto_Model								m_shapeQuad;
 	StaticTripleBuffer								m_quadIndirectBuffer;
 	std::shared_ptr<bool>							m_aliveIndicator = std::make_shared<bool>(true);
 	std::shared_ptr<std::vector<Camera*>>			m_sceneCameras;
