@@ -17,7 +17,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~Frametime_Counter() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Frametime_Counter(Engine * engine)

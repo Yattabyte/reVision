@@ -3,10 +3,9 @@
 #define EDITOR_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/Game/Overlays/Overlay.h"
+#include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
-#include <memory>
 
 
 /** A level editor module. */
@@ -54,12 +53,20 @@ public:
 	void paste();
 	/***/
 	void deleteObject();
+	/***/
+	void bindFBO();
+	/***/
+	void bindTexture(const GLuint & offset = 0);
 
 
 private:
 	// Private Attributes
 	std::string m_currentLevelName = "";
 	std::shared_ptr<ImGUI_Element> m_editorInterface;
+	std::unique_ptr<Selection_Gizmo> m_selectionGizmo;
+	GLuint m_fboID, m_texID, m_depthID;
+	glm::ivec2 m_renderSize = glm::ivec2(1);
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // EDITOR_MODULE_H

@@ -94,7 +94,7 @@ void Graphics_Module::deinitialize()
 	m_engine->getManager_Messages().statement("Unloading Module: Graphics...");
 
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 }
 
 void Graphics_Module::frameTick(const float & deltaTime)

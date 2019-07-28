@@ -31,7 +31,7 @@ void Physics_Module::deinitialize()
 {
 	// Update indicator
 	m_engine->getManager_Messages().statement("Unloading Module: Physics...");
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 
 	// Delete Bullet Physics simulation
 	delete m_broadphase;

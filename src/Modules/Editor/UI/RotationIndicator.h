@@ -6,6 +6,7 @@
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
 #include "Assets/Shader.h"
+#include "Utilities/GL/StaticBuffer.h"
 
 
 // Forward declarations

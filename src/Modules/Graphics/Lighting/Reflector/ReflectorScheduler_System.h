@@ -15,7 +15,7 @@ public:
 	/** Destroy this system. */
 	inline ~ReflectorScheduler_System() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Construct this system.
 	@param	engine		the engine to use.

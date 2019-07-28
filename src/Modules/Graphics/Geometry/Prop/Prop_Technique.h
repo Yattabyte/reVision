@@ -20,7 +20,7 @@ public:
 	/** Destructor. */
 	inline ~Prop_Technique() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & viewports, ECSSystemList & auxilliarySystems)

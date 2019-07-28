@@ -16,7 +16,7 @@ public:
 	/** Destroy this free-look system. */
 	inline ~PlayerSpawn_System() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Construct a free-look system. */
 	inline PlayerSpawn_System(Engine * engine) : m_engine(engine) {

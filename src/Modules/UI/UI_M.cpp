@@ -60,7 +60,7 @@ void UI_Module::deinitialize()
 	ImGui::DestroyContext();
 
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 }
 
 void UI_Module::frameTick(const float & deltaTime)

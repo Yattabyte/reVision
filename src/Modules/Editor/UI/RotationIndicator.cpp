@@ -8,7 +8,7 @@
 RotationIndicator::~RotationIndicator()
 {
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 
 	glDeleteFramebuffers(1, &m_fboID);
 	glDeleteTextures(1, &m_texID);
@@ -76,8 +76,6 @@ void RotationIndicator::tick(const float & deltaTime)
 		glDepthMask(true);
 
 		// Generate matrices
-		const float horizontalRad = glm::radians(90.0f);
-		const float verticalRad = 2.0f * atanf(tanf(horizontalRad / 2.0f));
 		auto pMatrix = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 10.0f);
 		auto camMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		camMatrix[3][0] = 0.0f;
@@ -85,8 +83,7 @@ void RotationIndicator::tick(const float & deltaTime)
 		camMatrix[3][2] = 0.0f;
 		camMatrix[3][3] = 1.0f;
 		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6.0f)) * camMatrix;
-		m_gizmoShader->setUniform(0, pMatrix);
-		m_gizmoShader->setUniform(4, vMatrix);
+		m_gizmoShader->setUniform(0, pMatrix * vMatrix);
 
 		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);

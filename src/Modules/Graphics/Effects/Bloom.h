@@ -19,7 +19,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~Bloom() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Bloom(Engine * engine)

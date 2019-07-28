@@ -17,7 +17,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~LoadingIndicator() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline LoadingIndicator(Engine * engine)

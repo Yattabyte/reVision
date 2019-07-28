@@ -18,7 +18,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~Join_Reflections() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Join_Reflections(Engine * engine)

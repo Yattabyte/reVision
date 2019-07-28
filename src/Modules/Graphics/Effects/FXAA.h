@@ -17,7 +17,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~FXAA() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline FXAA(Engine * engine) 

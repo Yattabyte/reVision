@@ -21,7 +21,7 @@ public:
 	/** Destructor. */
 	inline ~Reflector_Technique() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Reflector_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)

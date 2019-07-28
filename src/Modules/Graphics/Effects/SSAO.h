@@ -19,7 +19,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~SSAO() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline SSAO(Engine * engine)

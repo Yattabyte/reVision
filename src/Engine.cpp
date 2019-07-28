@@ -17,7 +17,7 @@ constexpr int DESIRED_OGL_VER_MINOR = 5;
 Engine::~Engine()
 {
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 	m_moduleWorld.deinitialize();
 	m_moduleGraphics.deinitialize();
 	m_moduleUI.deinitialize();

@@ -17,7 +17,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~HDR() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline HDR(Engine * engine)

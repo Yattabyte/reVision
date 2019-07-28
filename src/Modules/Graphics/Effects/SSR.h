@@ -18,7 +18,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~SSR() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 
 		// Destroy OpenGL objects
 		glDeleteTextures(1, &m_bayerID);

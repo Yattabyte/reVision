@@ -6,7 +6,7 @@
 RH_Volume::~RH_Volume() 
 {
 	// Update indicator
-	m_aliveIndicator = false;
+	*m_aliveIndicator = false;
 	glDeleteFramebuffers(2, m_fboIDS);
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[0]);
 	glDeleteTextures(RH_TEXTURE_COUNT, m_textureIDS[1]);

@@ -18,7 +18,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~Skybox() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Skybox(Engine * engine)

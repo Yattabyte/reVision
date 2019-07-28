@@ -21,7 +21,7 @@ public:
 	/** Virtual Destructor. */
 	inline ~Radiance_Hints() {
 		// Update indicator
-		m_aliveIndicator = false;
+		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
 	inline Radiance_Hints(Engine * engine, const std::shared_ptr<RH_Volume> & rhVolume)
