@@ -89,17 +89,17 @@ public:
 			if (!model) 
 				model = Shared_Model(m_engine, propComponent->m_modelName);			
 			if (!propComponent->m_uploadModel && model->existsYet()) {
-				tryInsertModel(propComponent->m_model);				
-				offset = m_modelMap[propComponent->m_model].first;
-				count = m_modelMap[propComponent->m_model].second;
+				tryInsertModel(model);
+				offset = m_modelMap[model].first;
+				count = m_modelMap[model].second;
 				propComponent->m_uploadModel = true;
 			}
 
 			// Try to upload material data
 			if (!propComponent->m_uploadMaterial && model->existsYet() && model->m_materialArray->existsYet()) {
 				// Get spot in the material array
-				tryInsertMaterial(propComponent->m_model->m_materialArray);
-				materialID = m_materialMap[propComponent->m_model->m_materialArray];
+				tryInsertMaterial(model->m_materialArray);
+				materialID = m_materialMap[model->m_materialArray];
 
 				// Prepare fence
 				propComponent->m_uploadMaterial = true;
@@ -155,9 +155,14 @@ private:
 			glNamedBufferStorage(newVBOID, m_maxCapacity, 0, GL_DYNAMIC_STORAGE_BIT);
 
 			// Copy old VBO's
+			auto fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);
 			glCopyNamedBufferSubData(m_vboID, newVBOID, 0, 0, m_currentSize);
 
 			// Delete the old VBO's
+			GLenum state = GL_UNSIGNALED;
+			while (state != GL_SIGNALED && state != GL_ALREADY_SIGNALED && state != GL_CONDITION_SATISFIED)
+				state = glClientWaitSync(fence, GL_SYNC_FLUSH_COMMANDS_BIT, 1);
+			glDeleteSync(fence);
 			glDeleteBuffers(1, &m_vboID);
 
 			// Overwrite old VBO ID's

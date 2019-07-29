@@ -88,11 +88,11 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 	// Serialized Attributes
 	std::string m_modelName;
 	unsigned int m_skin = 0u;
-	float m_radius = 1.0f;
-	glm::vec3 m_position = glm::vec3(0.0f);
 
 	// Derived Attributes
 	Shared_Model m_model;
+	float m_radius = 1.0f;
+	glm::vec3 m_position = glm::vec3(0.0f);
 	bool m_uploadModel = false, m_uploadMaterial = false;
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
@@ -131,7 +131,7 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
 		m_modelName = std::string(modelName);
 		delete modelName;
-		
+
 		std::memcpy(&m_skin, ptr, sizeof(unsigned int));
 		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
 		std::memcpy(&m_radius, ptr, sizeof(float));

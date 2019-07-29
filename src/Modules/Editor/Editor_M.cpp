@@ -79,6 +79,23 @@ void LevelEditor_Module::frameTick(const float & deltaTime)
 	glDisable(GL_DEPTH_TEST);
 }
 
+void LevelEditor_Module::setGizmoPosition(const glm::vec3 & position)
+{
+	// Update OUR position
+	m_gizmoPosition = position;
+	
+	// Update all gizmos we support
+	m_selectionGizmo->setPosition(position);
+	// m_translateGizmo->setPosition(position);
+	// m_scaleGizmo->setPosition(position);
+	// m_rotateGizmo->setPosition(position);
+}
+
+glm::vec3 LevelEditor_Module::getGizmoPosition() const
+{
+	return m_gizmoPosition;
+}
+
 void LevelEditor_Module::showEditor()
 {
 	m_engine->getModule_UI().clear();

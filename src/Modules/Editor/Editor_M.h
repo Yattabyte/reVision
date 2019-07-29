@@ -57,6 +57,10 @@ public:
 	void bindFBO();
 	/***/
 	void bindTexture(const GLuint & offset = 0);
+	/***/
+	void setGizmoPosition(const glm::vec3 & position);
+	/***/
+	glm::vec3 getGizmoPosition() const;
 
 
 private:
@@ -64,6 +68,7 @@ private:
 	std::string m_currentLevelName = "";
 	std::shared_ptr<ImGUI_Element> m_editorInterface;
 	std::unique_ptr<Selection_Gizmo> m_selectionGizmo;
+	glm::vec3 m_gizmoPosition = glm::vec3(0.0f);
 	GLuint m_fboID, m_texID, m_depthID;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
