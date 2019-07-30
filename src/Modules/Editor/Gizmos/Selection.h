@@ -6,6 +6,7 @@
 #include "Assets/Texture.h"
 #include "Assets/Shader.h"
 #include "Modules/World/ECS/ecsComponent.h"
+#include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/StaticBuffer.h"
 
 
@@ -27,7 +28,7 @@ public:
 	/***/
 	void frameTick(const float & deltaTime);
 	/***/
-	void checkMouseInput();
+	void checkMouseInput(const float & deltaTime);
 	/***/
 	void render(const float & deltaTime);
 	/***/
@@ -37,19 +38,19 @@ public:
 private:
 	// Private Methods
 	/***/
-	EntityHandle rayCastMouse(glm::vec3 & positionOut) const;
+	void rayCastMouse(const float & deltaTime);
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
 	bool m_clicked = false;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
 	glm::vec3 m_position = glm::vec3(0.0f);
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_selIndicator;
 	Shared_Shader m_gizmoShader, m_wireframeShader;
 	StaticBuffer m_indicatorIndirectBuffer;
+	BaseECSSystem * m_pickerSystem;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

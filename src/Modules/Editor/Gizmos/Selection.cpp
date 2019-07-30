@@ -1,4 +1,5 @@
 #include "Modules/Editor/Gizmos/Selection.h"
+#include "Modules/Editor/Systems/MousePicker_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 
@@ -7,6 +8,7 @@ Selection_Gizmo::~Selection_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
+	delete m_pickerSystem;
 }
 
 Selection_Gizmo::Selection_Gizmo(Engine * engine, LevelEditor_Module * editor)
@@ -14,6 +16,9 @@ Selection_Gizmo::Selection_Gizmo(Engine * engine, LevelEditor_Module * editor)
 {
 	// Update indicator
 	*m_aliveIndicator = true;
+
+	// Create mouse picker system
+	m_pickerSystem = new MousePicker_System(engine);
 
 	// Assets
 	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
@@ -25,39 +30,22 @@ Selection_Gizmo::Selection_Gizmo(Engine * engine, LevelEditor_Module * editor)
 	m_selIndicator->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint data[4] = { (GLuint)m_selIndicator->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
-	});
-
-	// Preferences
-	auto & preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.x = (int)f;
-	});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.y = (int)f;
-	});
+	});	
 }
 
 void Selection_Gizmo::frameTick(const float & deltaTime)
 {	
-	checkMouseInput();
+	checkMouseInput(deltaTime);
 	render(deltaTime);
 }
 
-void Selection_Gizmo::checkMouseInput()
+void Selection_Gizmo::checkMouseInput(const float & deltaTime)
 {	
 	// See if the mouse intersects any entities.
 	// In any case move the selection gizmo to where the mouse is.
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseDown(0) && !m_clicked) {
 		m_clicked = true;
-		glm::vec3 newPosition(0);
-		if (auto entity = rayCastMouse(newPosition)) {
-			// Change the selected entity so all UI elements that need this info are updated
-			//m_editor->setSelection(entity);
-		}
-		setPosition(newPosition);
-		m_editor->setGizmoPosition(newPosition);
+		rayCastMouse(deltaTime);
 	}
 	else
 		m_clicked = false;
@@ -104,13 +92,14 @@ void Selection_Gizmo::setPosition(const glm::vec3 & position)
 	m_position = position;
 }
 
-EntityHandle Selection_Gizmo::rayCastMouse(glm::vec3 & positionOut) const
+void Selection_Gizmo::rayCastMouse(const float & deltaTime)
 {
-	const auto & actionState = m_engine->getActionState();
-	const auto & clientCamera = *m_engine->getModule_Graphics().getClientCamera()->get();
-	const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);
-	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
-	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
-	positionOut = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
-	return NULL_ENTITY_HANDLE;
+	m_engine->getModule_World().updateSystem(m_pickerSystem, deltaTime);
+	const auto & [entity, position] = ((MousePicker_System*)m_pickerSystem)->getSelection();
+
+	// Apply position to all tools that need it
+	setPosition(position);
+	m_editor->setGizmoPosition(position);
+
+	// Set selection to all tools that need it
 }

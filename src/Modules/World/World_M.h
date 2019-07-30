@@ -133,7 +133,7 @@ private:
 	/** Convert an entity handle to its raw data.
 	@param	handle				the entity handle to process.
 	@return						raw entity data. */
-	inline std::vector<std::pair<int, int> >& handleToEntity(const EntityHandle & handle) {
+	inline std::vector<std::pair<int, int>> & handleToEntity(const EntityHandle & handle) {
 		return handleToRawType(handle)->second;
 	}
 	/** Delete a component matching the category ID supplied, at the given index. 
