@@ -3,6 +3,7 @@
 #define	TEXT_IO_H
 
 #include "glm/glm.hpp"
+#include <ios>
 #include <string>
 
 

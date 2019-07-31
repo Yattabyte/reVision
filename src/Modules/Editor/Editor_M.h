@@ -61,6 +61,10 @@ public:
 	void setGizmoPosition(const glm::vec3 & position);
 	/***/
 	glm::vec3 getGizmoPosition() const;
+	/***/
+	void setSelection(const std::vector<EntityHandle>& entities);
+	/***/
+	const std::vector<EntityHandle> & getSelection() const;
 
 
 private:
@@ -68,8 +72,7 @@ private:
 	std::string m_currentLevelName = "";
 	std::shared_ptr<ImGUI_Element> m_editorInterface;
 	std::unique_ptr<Selection_Gizmo> m_selectionGizmo;
-	glm::vec3 m_gizmoPosition = glm::vec3(0.0f);
-	GLuint m_fboID, m_texID, m_depthID;
+	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

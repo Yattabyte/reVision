@@ -79,7 +79,7 @@ void Material::initialize()
 		m_images[x] = Shared_Image(m_engine, m_textures[x], m_size, false, fillPolicies[x]);
 	
 	// Merge data into single array
-	const size_t pixelsPerImage = m_size.x * m_size.y * 4;
+	const size_t pixelsPerImage = size_t(m_size.x) * size_t(m_size.y) * 4ull;
 	m_materialData = new GLubyte[(pixelsPerImage) * MAX_DIGITAL_IMAGES * materialCount]();
 	size_t arrayIndex = 0;
 	for (size_t tx = 0; tx < textureCount; tx += MAX_PHYSICAL_IMAGES) {

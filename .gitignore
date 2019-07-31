@@ -62,6 +62,8 @@ CMakeCache.txt
 *.ipch
 *.lnk
 *.shader
+*.iobj
+*.ipdb
 app/nsight_profiler.cfg
 CMakeDoxyfile.tpl.bak
 CMakeDoxyfile.in

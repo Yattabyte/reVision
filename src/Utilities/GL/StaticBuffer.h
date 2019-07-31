@@ -28,11 +28,11 @@ public:
 		glCopyNamedBufferSubData(other.m_bufferID, m_bufferID, 0, 0, other.m_size);
 	}
 	/** Explicit Instantion. */
-	inline StaticBuffer(StaticBuffer && other) : m_bufferID(0) {
+	inline StaticBuffer(StaticBuffer && other) noexcept : m_bufferID(0) {
 		*this = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */
-	inline StaticBuffer & operator=(StaticBuffer && other) {
+	inline StaticBuffer & operator=(StaticBuffer && other) noexcept {
 		if (this != &other) {
 			m_bufferID = other.m_bufferID;
 			other.m_bufferID = 0;

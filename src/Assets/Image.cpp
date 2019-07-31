@@ -45,7 +45,7 @@ void Image::fill(const glm::uvec4 primaryColor, const glm::uvec4 secondaryColor)
 {
 	if (m_size == glm::ivec2(0))
 		m_size = glm::ivec2(256);
-	const size_t pixelCount = m_size.x * m_size.x;
+	const size_t pixelCount = size_t(m_size.x) * size_t(m_size.x);
 	const size_t componentCount = pixelCount * 4;
 	m_pixelData = new GLubyte[componentCount];
 	m_pitch = m_size.x * 4;

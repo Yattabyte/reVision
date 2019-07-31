@@ -153,11 +153,11 @@ protected:
 
 	// Protected Attributes
 	Engine * m_engine = nullptr;
-	glm::vec2 
+	glm::vec2
 		m_position = glm::vec2(0.0f),
-		m_scale = glm::vec2(1.0f), 
-		m_maxScale = glm::vec2(std::nanf(0)), 
-		m_minScale = glm::vec2(std::nanf(0));
+		m_scale = glm::vec2(1.0f),
+		m_maxScale = glm::vec2(std::nanf(char(0))),
+		m_minScale = glm::vec2(std::nanf(char(0)));
 	bool
 		m_visible = true,
 		m_enabled = true,

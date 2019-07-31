@@ -6,6 +6,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "btBulletCollisionCommon.h"
 #include "btBulletDynamicsCommon.h"
+#include <memory>
 
 
 /** A module responsible for physics. */

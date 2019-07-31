@@ -2,7 +2,7 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
-project(reVision VERSION 4.1.6 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.1.7 DESCRIPTION "Video game engine project.")
 
 # Get dependency directory locations from the user
 set(ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")
@@ -18,6 +18,8 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
 # Include directories of dependencies for entire project
 include_directories( 	
 	${CORE_DIR} 
+)
+include_directories( SYSTEM
 	${ASSIMP_DIR}/include/
 	${BULLET_DIR}/src/			
 	${FREEIMAGE_DIR}/Source/
@@ -88,6 +90,6 @@ endif (DOXYGEN_FOUND)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
 # Set Global Properties
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /MP")
-set_property(GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app")
+set_property (GLOBAL PROPERTY VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app")
 set_property (GLOBAL PROPERTY USE_FOLDERS ON)
 set_property (GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER Other)

@@ -80,10 +80,7 @@ void LevelEditor_Module::frameTick(const float & deltaTime)
 }
 
 void LevelEditor_Module::setGizmoPosition(const glm::vec3 & position)
-{
-	// Update OUR position
-	m_gizmoPosition = position;
-	
+{	
 	// Update all gizmos we support
 	m_selectionGizmo->setPosition(position);
 	// m_translateGizmo->setPosition(position);
@@ -93,7 +90,18 @@ void LevelEditor_Module::setGizmoPosition(const glm::vec3 & position)
 
 glm::vec3 LevelEditor_Module::getGizmoPosition() const
 {
-	return m_gizmoPosition;
+	return m_selectionGizmo->getPosition();
+}
+
+void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& entities)
+{
+	/**@todo	check if CTRL held, if so APPEND entitities. */
+	m_selectionGizmo->setSelection(entities);
+}
+
+const std::vector<EntityHandle> & LevelEditor_Module::getSelection() const
+{
+	return m_selectionGizmo->getSelection();
 }
 
 void LevelEditor_Module::showEditor()

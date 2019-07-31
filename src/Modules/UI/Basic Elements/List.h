@@ -115,13 +115,13 @@ public:
 
 			// After, process remaining input for the list
 			if (actionState.isAction(ActionState::UI_UP) == ActionState::PRESS) {
-				setHoverIndex(m_hoverIndex - 1 < 0 ? (int)m_children.size() - 1ull : m_hoverIndex - 1);
+				setHoverIndex(m_hoverIndex - 1 < 0 ? int(m_children.size() - 1ull) : m_hoverIndex - 1);
 
 				if (m_selectionIndex != -1)
 					setSelectionIndex(-1);
 			}
 			else if (actionState.isAction(ActionState::UI_DOWN) == ActionState::PRESS) {
-				setHoverIndex(m_hoverIndex + 1 > m_children.size() - 1ull ? 0 : m_hoverIndex + 1);
+				setHoverIndex(m_hoverIndex + 1 > int(m_children.size() - 1ull) ? 0 : m_hoverIndex + 1);
 
 				if (m_selectionIndex != -1)
 					setSelectionIndex(-1);

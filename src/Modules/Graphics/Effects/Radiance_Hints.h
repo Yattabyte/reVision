@@ -56,7 +56,7 @@ public:
 
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
-			m_drawData.resize(m_drawIndex + 1);
+			m_drawData.resize(size_t(m_drawIndex) + 1ull);
 		auto &[camBufferRebounce, camBufferRecon, quadIndirectBuffer, quadIndirectBufferRecon] = m_drawData[m_drawIndex];
 		camBufferRebounce.beginWriting();
 		camBufferRecon.beginWriting();

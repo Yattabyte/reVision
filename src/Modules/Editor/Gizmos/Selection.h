@@ -8,6 +8,7 @@
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include <vector>
 
 
 // Forward Declarations
@@ -33,6 +34,13 @@ public:
 	void render(const float & deltaTime);
 	/***/
 	void setPosition(const glm::vec3 & position);
+	/***/
+	glm::vec3 getPosition() const;
+	/***/
+	void setSelection(const std::vector<EntityHandle> & entities);
+	/***/
+	const std::vector<EntityHandle> & getSelection() const;
+
 
 
 private:
@@ -46,6 +54,7 @@ private:
 	LevelEditor_Module * m_editor = nullptr;
 	bool m_clicked = false;
 	glm::vec3 m_position = glm::vec3(0.0f);
+	std::vector<EntityHandle> m_selection;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_selIndicator;
 	Shared_Shader m_gizmoShader, m_wireframeShader;

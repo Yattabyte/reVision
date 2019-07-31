@@ -59,12 +59,12 @@ std::vector<LevelStruct_Entity> Level_IO::parse_level(const std::vector<char> & 
 			int nameCount(0);
 			std::memcpy(&nameCount, &componentData[0], sizeof(int));
 			componentDataRead += sizeof(int);
-			char *chars = new char[nameCount + 1];
+			char *chars = new char[size_t(nameCount) + 1ull];
 			std::fill(&chars[0], &chars[nameCount + 1], '\0');
 			std::memcpy(chars, &componentData[sizeof(int)], nameCount);
 			componentDataRead += sizeof(char) * nameCount;
 			const auto stringifiedName = std::string(chars);
-			delete chars;
+			delete[] chars;
 
 			std::vector<char> serializedComponentData;
 			if (componentDataSize - componentDataRead)

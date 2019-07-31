@@ -8,13 +8,12 @@ foreach(source IN LISTS ROOT)
 endforeach()
 configure_file(Engine.h.in Engine.h)
 
-
 ############
 #   EXEC   #
 ############
 set(Module reVision)
 # Create a library using those source files	
-add_executable(${Module} 	${ROOT})	
+add_executable(${Module} ${ROOT})	
 # Set working directory to the project directory
 set_target_properties(${Module} PROPERTIES 
 	RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}
@@ -30,13 +29,13 @@ set_target_properties(${Module} PROPERTIES
 	VS_DEBUGGER_WORKING_DIRECTORY "$(SolutionDir)app"
 	CXX_STANDARD 17
 	CXX_STANDARD_REQUIRED YES
+	COMPILE_FLAGS
+		"/MP /Oi /Ot /GF /Qpar /std:c++latest /GL"
+	COMPILE_FLAGS_DEBUG
+		"/Od /Gy /ZI /JMC"
+	COMPILE_FLAGS_RELEASE
+		"/O2 /Ob2 /GL"
+	LINK_FLAGS 
+		"/LTCG:incremental"
 )
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT reVision)
-
-if (MSVC_VERSION GREATER_EQUAL "1900")
-    include(CheckCXXCompilerFlag)
-    CHECK_CXX_COMPILER_FLAG("/std:c++latest" _cpp_latest_flag_supported)
-    if (_cpp_latest_flag_supported)
-        add_compile_options("/std:c++latest")
-    endif()
-endif()

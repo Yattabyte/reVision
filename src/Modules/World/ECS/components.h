@@ -80,7 +80,7 @@ struct BoundingSphere_Component : public ECSComponent<BoundingSphere_Component, 
 	float m_radius = 1.0f;
 	enum CameraCollision {
 		OUTSIDE, INSIDE
-	} m_cameraCollision;
+	} m_cameraCollision = OUTSIDE;
 };
 
 constexpr static const char propName[] = "Prop_Component";
@@ -125,12 +125,12 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
 		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char * modelName = new char[nameCount + 1];
+		char * modelName = new char[size_t(nameCount) + 1ull];
 		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
 		std::memcpy(&modelName[0], ptr, nameCount);
 		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
 		m_modelName = std::string(modelName);
-		delete modelName;
+		delete[] modelName;
 
 		std::memcpy(&m_skin, ptr, sizeof(unsigned int));
 		ptr = static_cast<char*>(ptr) + sizeof(unsigned int);
@@ -179,12 +179,12 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 		int nameCount(0ull);
 		std::memcpy(&nameCount, ptr, sizeof(int));
 		ptr = static_cast<char*>(ptr) + sizeof(int);
-		char * modelName = new char[nameCount + 1];
+		char * modelName = new char[size_t(nameCount) + 1ull];
 		std::fill(&modelName[0], &modelName[nameCount + 1], '\0');
 		std::memcpy(&modelName[0], ptr, nameCount);
 		ptr = static_cast<char*>(ptr) + (size_t)nameCount;
 		m_modelName = std::string(modelName);
-		delete modelName;
+		delete[] modelName;
 
 		std::memcpy(&m_animation, ptr, sizeof(int));
 		ptr = static_cast<char*>(ptr) + sizeof(int);

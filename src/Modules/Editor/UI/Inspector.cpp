@@ -3,9 +3,12 @@
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 
+// Component Inspectors
+#include "Modules/Editor/Systems/Inspector_Transform_System.h"
+
 
 Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
-	: m_editor(editor)
+	: m_engine(engine), m_editor(editor)
 {
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -16,6 +19,8 @@ Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = (int)f;
 	});
+
+	m_inspectorSystems.addSystem(new Inspector_Transform_System(editor));
 }
 
 void Inspector::tick(const float & deltaTime)
@@ -24,7 +29,10 @@ void Inspector::tick(const float & deltaTime)
 	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
 	ImGui::SetNextWindowPos({ m_renderSize.x - 300.0f, 18.0f }, ImGuiCond_Appearing);
 	if (ImGui::Begin("Inspector", NULL)) {
-		
+		const auto entities = m_editor->getSelection();
+		const auto text = std::string("Entities Selected: (" + std::to_string(entities.size()) + ")");
+		ImGui::Text(text.c_str());
+		m_engine->getModule_World().updateSystems(m_inspectorSystems, deltaTime);
 	}
 	ImGui::End();
 }

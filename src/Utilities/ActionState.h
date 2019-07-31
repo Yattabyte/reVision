@@ -3,6 +3,7 @@
 #define ACTION_STATE_H
 
 #include <map>
+#include <string>
 #include <vector>
 
 

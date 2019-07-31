@@ -103,11 +103,11 @@ public:
 
 		// Write letters to a buffer
 		const GLuint count = (GLuint)m_text.size();
-		std::vector<int> data(count + 1);
-		data[0] = count;
-		for (int x = 0; x < (int)count; ++x)
-			data[x + 1] = (int)(m_text[x]) - 32;
-		m_bufferString.write_immediate(0, sizeof(int)*(count + 1), data.data());
+		std::vector<int> data(size_t(count) + 1ull);
+		data[0] = (int)count;
+		for (size_t x = 0; x < (size_t)count; ++x)
+			data[x + 1ull] = (int)(m_text[x]) - 32;
+		m_bufferString.write_immediate(0, sizeof(int)*(int(count + 1u)), data.data());
 		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
 
 		// Notify text changed

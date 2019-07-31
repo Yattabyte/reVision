@@ -187,7 +187,7 @@ private:
 			GLuint pboID = 0;
 			glCreateBuffers(1, &pboID);
 			glBindBuffer(GL_PIXEL_UNPACK_BUFFER, pboID);
-			glNamedBufferStorage(pboID, m_materialSize * m_materialSize * imageCount * 4, material->m_materialData, GL_DYNAMIC_STORAGE_BIT);
+			glNamedBufferStorage(pboID, size_t(m_materialSize) * size_t(m_materialSize) * size_t(imageCount) * 4ull, material->m_materialData, GL_DYNAMIC_STORAGE_BIT);
 			for (int x = 0; x < m_maxMips; ++x) {
 				const GLsizei mipsize = (GLsizei)std::max(1.0f, (floor(m_materialSize / pow(2.0f, (float)x))));
 				glTexturePageCommitmentEXT(m_matID, x, 0, 0, materialID, mipsize, mipsize, imageCount, GL_TRUE);

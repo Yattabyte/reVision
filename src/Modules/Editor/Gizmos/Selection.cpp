@@ -92,6 +92,21 @@ void Selection_Gizmo::setPosition(const glm::vec3 & position)
 	m_position = position;
 }
 
+glm::vec3 Selection_Gizmo::getPosition() const
+{
+	return m_position;
+}
+
+void Selection_Gizmo::setSelection(const std::vector<EntityHandle> & entities)
+{
+	m_selection = entities;
+}
+
+const std::vector<EntityHandle> & Selection_Gizmo::getSelection() const
+{
+	return m_selection;
+}
+
 void Selection_Gizmo::rayCastMouse(const float & deltaTime)
 {
 	m_engine->getModule_World().updateSystem(m_pickerSystem, deltaTime);
@@ -101,5 +116,6 @@ void Selection_Gizmo::rayCastMouse(const float & deltaTime)
 	setPosition(position);
 	m_editor->setGizmoPosition(position);
 
-	// Set selection to all tools that need it
+	// Set selection to all tools that need it	
+	m_editor->setSelection({ entity });
 }

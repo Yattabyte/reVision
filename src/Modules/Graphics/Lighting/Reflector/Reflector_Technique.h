@@ -91,7 +91,7 @@ public:
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderLighting->existsYet() && m_shaderStencil->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
-				m_drawData.resize(m_drawIndex + 1);
+				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &lightBufferIndex = drawBuffer.visLights;

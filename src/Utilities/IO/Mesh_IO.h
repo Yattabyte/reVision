@@ -30,9 +30,9 @@ struct Material_Strings {
 };
 template<typename T>
 struct Animation_Time_Key {
-	double time = 0;
-	T value;
-	inline Animation_Time_Key() : time(0) {};
+	double time = 0.0;
+	T value = T();
+	inline Animation_Time_Key() {};
 	inline Animation_Time_Key(const double & t, const T & v) : time(t), value(v) {};
 };
 struct Node_Animation {

@@ -120,7 +120,7 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	EntityHandle m_selection;
+	EntityHandle m_selection = NULL_ENTITY_HANDLE;
 	glm::vec3 m_selectionPosition = glm::vec3(0.0f);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

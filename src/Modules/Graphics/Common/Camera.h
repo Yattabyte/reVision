@@ -18,11 +18,11 @@ public:
 		glm::mat4 vMatrix = glm::mat4(1.0f);
 		glm::mat4 vMatrixInverse = glm::mat4(1.0f);
 		glm::mat4 pvMatrix = glm::mat4(1.0f);
-		glm::vec3 EyePosition = glm::vec3(0.0f); float padding1;
+		glm::vec3 EyePosition = glm::vec3(0.0f); float padding1 = 0;
 		glm::vec2 Dimensions = glm::vec2(1.0f);
 		float NearPlane = ConstNearPlane;
 		float FarPlane = 1.0f;
-		float FOV = 90.0f; glm::vec3 padding2;
+		float FOV = 90.0f; glm::vec3 padding2 = glm::vec3(0, 0, 0);
 	};
 
 
@@ -142,7 +142,7 @@ public:
 
 	// Public Attributes
 	glm::vec3 m_frustumCenter = glm::vec3(0);
-	glm::vec4 m_planes[6];
+	glm::vec4 m_planes[6] = { {0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0},{0,0,0,0} };
 
 
 private:

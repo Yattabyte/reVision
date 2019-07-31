@@ -99,7 +99,7 @@ public:
 			if (found && visibilityIndex < m_frameData->viewInfo.size() && m_frameData->viewInfo[visibilityIndex].visShadowCount) {
 				// Light bounce using client camera
 				if (m_bounceIndex >= m_drawBounceData.size())
-					m_drawBounceData.resize(m_bounceIndex + 1);
+					m_drawBounceData.resize(size_t(m_drawIndex) + 1ull);
 
 				auto & bounceBuffer = m_drawBounceData[m_bounceIndex];
 				auto &camBufferIndex = bounceBuffer.bufferCamIndex;
@@ -132,7 +132,7 @@ public:
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeQuad->existsYet() && m_shader_Lighting->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
-				m_drawData.resize(m_drawIndex + 1);
+				m_drawData.resize(size_t(m_drawIndex) + 1ull);
 			auto & drawBuffer = m_drawData[m_drawIndex];
 			auto &camBufferIndex = drawBuffer.bufferCamIndex;
 			auto &lightBufferIndex = drawBuffer.visLights;

@@ -40,11 +40,11 @@ public:
 			glCopyNamedBufferSubData(other.m_bufferID[x], m_bufferID[x], 0, 0, m_size);
 	}
 	/** Explicit Instantion. */
-	inline StaticTripleBuffer(StaticTripleBuffer && other) {
+	inline StaticTripleBuffer(StaticTripleBuffer && other) noexcept {
 		*this = std::move(other);
 	}
 	/** Move gl object from 1 instance to another. */
-	inline StaticTripleBuffer & operator=(StaticTripleBuffer && o) {
+	inline StaticTripleBuffer & operator=(StaticTripleBuffer && o) noexcept {
 		m_bufferID[0] = (std::move(o.m_bufferID[0]));
 		m_bufferID[1] = (std::move(o.m_bufferID[1]));
 		m_bufferID[2] = (std::move(o.m_bufferID[2]));

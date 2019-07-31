@@ -39,7 +39,7 @@ public:
 
 
 	// Public Attributes
-	SoundObj * m_soundObj;
+	SoundObj * m_soundObj = nullptr;
 
 
 protected:

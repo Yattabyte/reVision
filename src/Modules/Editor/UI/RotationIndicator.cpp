@@ -98,7 +98,7 @@ void RotationIndicator::tick(const float & deltaTime)
 	ImGui::SetNextWindowSize({ 128,128 }, ImGuiCond_Appearing);
 	ImGui::SetNextWindowPos({ m_renderSize.x - 128.0f, m_renderSize.y - 128.0f }, ImGuiCond_Appearing);
 	if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
-		ImGui::Image((ImTextureID)m_texID, { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+		ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 	}
 	ImGui::End();
 }
