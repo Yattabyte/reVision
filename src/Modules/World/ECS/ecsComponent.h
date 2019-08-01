@@ -5,6 +5,7 @@
 #include <any>
 #include <limits>
 #include <map>
+#include <string>
 #include <tuple>
 #include <vector>
 
@@ -53,6 +54,7 @@ struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentCreateFunction CREATE_FUNCTION;
 	static const ECSComponentFreeFunction FREE_FUNCTION;
 	static const int ID;
+	static std::string NAME;
 	static const size_t SIZE;
 	inline virtual BaseECSComponent * clone() override {
 		return new T(static_cast<T const &>(*this));
@@ -96,8 +98,11 @@ inline void ECSComponentFree(BaseECSComponent * comp) {
 	((Component*)comp)->~Component();
 }
 
-template <typename T, const char * chars>
+template <typename T, const char* chars>
 const int ECSComponent<T, chars>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T), chars, new T()));
+
+template <typename T, const char* chars>
+std::string ECSComponent<T, chars>::NAME(chars);
 
 template <typename T, const char * chars>
 const size_t ECSComponent<T, chars>::SIZE(sizeof(T));

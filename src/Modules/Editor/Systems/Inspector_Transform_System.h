@@ -14,8 +14,6 @@ class Inspector_Transform_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
 	/***/
-	inline ~Inspector_Transform_System() = default;
-	/***/
 	inline Inspector_Transform_System(LevelEditor_Module* editor)
 		: m_editor(editor) {
 		// Declare component types used
@@ -28,13 +26,13 @@ public:
 		const auto & selectedEntities = m_editor->getSelection();
 		std::vector<Transform_Component*> selectedComponents;
 		for each (const auto & componentParam in components) {
-			auto* transformComponent = (Transform_Component*)componentParam[0];
-			if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), transformComponent->entity) != selectedEntities.cend())
-				selectedComponents.push_back(transformComponent);
+			auto* component = (Transform_Component*)componentParam[0];
+			if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), component->entity) != selectedEntities.cend())
+				selectedComponents.push_back(component);
 		}
 		if (selectedComponents.size()) {
 			static bool open = true;
-			const auto text = "Transform Components: (" + std::to_string(selectedComponents.size()) + ")";
+			const auto text = Transform_Component::NAME + "(" + std::to_string(selectedComponents.size()) + ")";
 			if (ImGui::CollapsingHeader(text.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen)) {
 				auto posInput = selectedComponents[0]->m_transform.m_position;
 				if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
@@ -58,7 +56,6 @@ public:
 					}
 				}
 			}
-			ImGui::EndChild();
 		}
 	}
 

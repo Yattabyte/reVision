@@ -5,6 +5,10 @@
 
 // Component Inspectors
 #include "Modules/Editor/Systems/Inspector_Transform_System.h"
+#include "Modules/Editor/Systems/Inspector_Prop_System.h"
+#include "Modules/Editor/Systems/Inspector_LightColor_System.h"
+#include "Modules/Editor/Systems/Inspector_LightRadius_System.h"
+#include "Modules/Editor/Systems/Inspector_LightCutoff_System.h"
 
 
 Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
@@ -21,6 +25,10 @@ Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
 	});
 
 	m_inspectorSystems.addSystem(new Inspector_Transform_System(editor));
+	m_inspectorSystems.addSystem(new Inspector_Prop_System(editor));
+	m_inspectorSystems.addSystem(new Inspector_LightColor_System(editor));
+	m_inspectorSystems.addSystem(new Inspector_LightRadius_System(editor));
+	m_inspectorSystems.addSystem(new Inspector_LightCutoff_System(editor));
 }
 
 void Inspector::tick(const float & deltaTime)
