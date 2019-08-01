@@ -4,6 +4,7 @@
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
+#include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 
 
@@ -11,10 +12,10 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_elements.push_back(new CameraController(engine, editor));
-	m_elements.push_back(new RotationIndicator(engine, editor));
 	m_elements.push_back(new TitleBar(engine, editor));
 	m_elements.push_back(new Prefabs(engine, editor));
 	m_elements.push_back(new Inspector(engine, editor));
+	m_elements.push_back(new RotationIndicator(engine, editor));
 
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
@@ -24,13 +25,42 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 		const GLuint data[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 		m_indirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
 	});
+
+
+	auto& preferences = engine->getPreferenceState();
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
+	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
+	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
+		m_renderSize.x = (int)f;
+	});
+	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
+		m_renderSize.y = (int)f;
+	});
 }
 
 void Editor_Interface::tick(const float & deltaTime)
 {
+	// Container for left side of the screen
+	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
+	ImGui::SetNextWindowPos({ 0, 18.0f }, ImGuiCond_Appearing);
+	ImGui::Begin("Left Panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
+	ImGui::DockSpace(ImGui::GetID("LeftDock"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::End();
+
+	//ImGui::DockSpace(0, { 300.0f, m_renderSize.y - 18.0f }, 0);
+
+	// Container for right side of the screen
+	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
+	ImGui::SetNextWindowPos({ m_renderSize.x - 300.0f, 18.0f }, ImGuiCond_Appearing);
+	ImGui::Begin("Right Panel", NULL, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus);
+	ImGui::DockSpace(ImGui::GetID("RightDock"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
+	ImGui::End();
+
+	// Process all UI elements
 	for each (auto & element in m_elements)
 		element->tick(deltaTime);
 
+	// Render overlay
 	if (m_shapeQuad->existsYet() && m_shader->existsYet()) {
 		// Set up state
 		m_editor->bindTexture();

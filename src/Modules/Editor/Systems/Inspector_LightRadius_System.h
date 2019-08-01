@@ -31,9 +31,8 @@ public:
 				selectedComponents.push_back(component);
 		}
 		if (selectedComponents.size()) {
-			static bool open = true;
-			const auto text = LightRadius_Component::NAME + "(" + std::to_string(selectedComponents.size()) + ")";
-			if (ImGui::CollapsingHeader(text.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen)) {
+			const auto text = LightRadius_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
+			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 				auto radiusInput = selectedComponents[0]->m_radius;
 				if (ImGui::DragFloat("Radius", &radiusInput))
 					for each (auto & component in selectedComponents)

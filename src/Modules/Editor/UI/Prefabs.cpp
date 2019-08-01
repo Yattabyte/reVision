@@ -6,38 +6,16 @@
 #include "Engine.h"
 
 
-Prefabs::~Prefabs()
-{
-	// Update Indicator
-	*m_aliveIndicator = false;
-}
-
 Prefabs::Prefabs(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
-	// Update Indicator
-	*m_aliveIndicator = true;
-
-	// Preferences
-	auto & preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.x = (int)f;
-	});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.y = (int)f;
-	});
-
 	// Load prefabs
 	populatePrefabs();
 }
 
 void Prefabs::tick(const float & deltaTime)
 {
-	bool t = true;
-	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
-	ImGui::SetNextWindowPos({ 0, 18.0f }, ImGuiCond_Appearing);
+	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Prefabs", NULL)) {
 		// Loop over all prefabs
 		if (ImGui::Button("Fire Hydrant")) {

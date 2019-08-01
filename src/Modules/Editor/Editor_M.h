@@ -65,6 +65,8 @@ public:
 	void setSelection(const std::vector<EntityHandle>& entities);
 	/***/
 	const std::vector<EntityHandle> & getSelection() const;
+	/***/
+	void toggleAddToSelection(const EntityHandle & entity);
 
 
 private:

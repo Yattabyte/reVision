@@ -31,9 +31,8 @@ public:
 				selectedComponents.push_back(component);
 		}
 		if (selectedComponents.size()) {
-			static bool open = true;
-			const auto text = Transform_Component::NAME + "(" + std::to_string(selectedComponents.size()) + ")";
-			if (ImGui::CollapsingHeader(text.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen)) {
+			const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
+			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 				auto posInput = selectedComponents[0]->m_transform.m_position;
 				if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
 					for each (auto & component in selectedComponents) {

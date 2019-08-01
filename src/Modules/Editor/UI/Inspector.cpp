@@ -11,19 +11,9 @@
 #include "Modules/Editor/Systems/Inspector_LightCutoff_System.h"
 
 
-Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
+Inspector::Inspector(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
-	auto & preferences = engine->getPreferenceState();
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
-	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
-	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.x = (int)f;
-	});
-	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
-		m_renderSize.y = (int)f;
-	});
-
 	m_inspectorSystems.addSystem(new Inspector_Transform_System(editor));
 	m_inspectorSystems.addSystem(new Inspector_Prop_System(editor));
 	m_inspectorSystems.addSystem(new Inspector_LightColor_System(editor));
@@ -31,16 +21,101 @@ Inspector::Inspector(Engine * engine, LevelEditor_Module * editor)
 	m_inspectorSystems.addSystem(new Inspector_LightCutoff_System(editor));
 }
 
-void Inspector::tick(const float & deltaTime)
+void Inspector::tick(const float& deltaTime)
 {
-	bool t = true;
-	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
-	ImGui::SetNextWindowPos({ m_renderSize.x - 300.0f, 18.0f }, ImGuiCond_Appearing);
-	if (ImGui::Begin("Inspector", NULL)) {
-		const auto entities = m_editor->getSelection();
-		const auto text = std::string("Entities Selected: (" + std::to_string(entities.size()) + ")");
+	auto& world = m_engine->getModule_World();
+	const auto& selectedEntities = m_editor->getSelection();
+	ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);	
+	if (ImGui::Begin("Scene Inspector", NULL)) {				
+		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
+		ImGui::Separator();
+
+		for each (const auto & entity in world.getEntities()) {
+			ImGui::PushID(entity);
+			ImGui::AlignTextToFramePadding();
+
+
+			ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+			if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), entity) != selectedEntities.cend())
+				node_flags |= ImGuiTreeNodeFlags_Selected;
+
+			if (ImGui::TreeNodeEx("Entity", node_flags, "%s_%u", "Entity", entity)) {
+				const auto& components = world.handleToEntity(entity);
+				for (int x = 0; x < components.size(); ++x) {
+					const auto& component = components[x];
+					ImGui::PushID(&component);
+					ImGui::AlignTextToFramePadding();
+					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(200,0,0));
+					ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor(255, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor(127, 0, 0));
+					const auto buttonPressed = ImGui::Button("-");
+					ImGui::PopStyleColor(3);
+					ImGui::SameLine();
+					ImGui::Text(BaseECSComponent::findName(component.first));
+					ImGui::PopID();
+					if (buttonPressed)
+						world.removeComponent(entity, component.first);					
+				}
+				ImGui::AlignTextToFramePadding();
+				ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor(0, 200, 0));
+				ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor(0, 255, 0));
+				ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor(0, 127, 0));
+				if (ImGui::Button("+")) {
+
+				}
+				ImGui::SameLine();
+				ImGui::Text("New Component");
+				ImGui::PopStyleColor(3);
+				ImGui::TreePop();
+			}
+			// Check if entity is clicked
+			if (ImGui::IsItemClicked())
+				if (ImGui::GetIO().KeyCtrl)
+					m_editor->toggleAddToSelection(entity);
+				else
+					m_editor->setSelection({ entity });
+			ImGui::PopID();
+		}
+
+		ImGui::Separator();
+		ImGui::PopStyleVar();
+	}
+	ImGui::End();
+	ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
+	if (ImGui::Begin("Entity Inspector", NULL)) {
+		// Render the selected component attributes that we have widgets for
+		const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
 		ImGui::Text(text.c_str());
-		m_engine->getModule_World().updateSystems(m_inspectorSystems, deltaTime);
+		world.updateSystems(m_inspectorSystems, deltaTime);
+		ImGui::Spacing();
+		ImGui::Spacing();
+		ImGui::Spacing();
+		constexpr const char* items[] = {
+			Transform_Component::NAME(),
+			PlayerSpawn_Component::NAME(),
+			Player3D_Component::NAME(),
+			Renderable_Component::NAME(),
+			Camera_Component::NAME(),
+			CameraArray_Component::NAME(),
+			BoundingSphere_Component::NAME(),
+			Prop_Component::NAME(),
+			Skeleton_Component::NAME(),
+			Shadow_Component::NAME(),
+			LightColor_Component::NAME(),
+			LightRadius_Component::NAME(),
+			LightCutoff_Component::NAME(),
+			LightDirectional_Component::NAME(),
+			LightPoint_Component::NAME(),
+			LightSpot_Component::NAME(),
+			Reflector_Component::NAME(),
+			Collider_Component::NAME()
+		};
+		static int item_current = 0;
+		ImGui::Combo("", &item_current, items, IM_ARRAYSIZE(items));
+		ImGui::SameLine();
+		if (ImGui::Button("+")) {
+
+		}		
 	}
 	ImGui::End();
 }

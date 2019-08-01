@@ -14,7 +14,7 @@ class Prefabs : public ImGUI_Element {
 public:
 	// Public (de)Constructors
 	/***/
-	~Prefabs();
+	inline ~Prefabs() = default;
 	/***/
 	Prefabs(Engine * engine, LevelEditor_Module * editor);
 
@@ -34,8 +34,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // PREFABS_H

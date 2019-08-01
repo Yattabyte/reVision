@@ -95,8 +95,7 @@ void RotationIndicator::tick(const float & deltaTime)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	}
 
-	ImGui::SetNextWindowSize({ 128,128 }, ImGuiCond_Appearing);
-	ImGui::SetNextWindowPos({ m_renderSize.x - 128.0f, m_renderSize.y - 128.0f }, ImGuiCond_Appearing);
+	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
 		ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
 	}

@@ -95,13 +95,22 @@ glm::vec3 LevelEditor_Module::getGizmoPosition() const
 
 void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& entities)
 {
-	/**@todo	check if CTRL held, if so APPEND entitities. */
 	m_selectionGizmo->setSelection(entities);
 }
 
 const std::vector<EntityHandle> & LevelEditor_Module::getSelection() const
 {
 	return m_selectionGizmo->getSelection();
+}
+
+void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entity)
+{
+	auto & selection = m_selectionGizmo->getSelection();
+	// If the entity is already selected, deselect it
+	if (std::find(selection.cbegin(), selection.cend(), entity) != selection.cend())
+		std::remove(selection.begin(), selection.end(), entity);
+	else
+		selection.push_back(entity);
 }
 
 void LevelEditor_Module::showEditor()

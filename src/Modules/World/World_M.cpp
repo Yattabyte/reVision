@@ -86,8 +86,8 @@ void World_Module::saveWorld(const std::string & mapName)
 void World_Module::unloadWorld()
 {
 	for (auto it = m_components.begin(); it != m_components.end(); ++it) {
-		size_t typeSize = BaseECSComponent::getTypeSize(it->first);
-		ECSComponentFreeFunction freefn = BaseECSComponent::getTypeFreeFunction(it->first);
+		auto typeSize = BaseECSComponent::getTypeSize(it->first);
+		auto freefn = BaseECSComponent::getTypeFreeFunction(it->first);
 		for (size_t i = 0; i < it->second.size(); i += typeSize)
 			freefn((BaseECSComponent*)&it->second[i]);
 		it->second.clear();
@@ -110,9 +110,8 @@ void World_Module::addLevelListener(const std::shared_ptr<bool> & alive, const s
 EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const int * componentIDs, const size_t & numComponents)
 {
 	auto * newEntity = new std::pair<int, std::vector<std::pair<int, int> > >();
-	EntityHandle handle = (EntityHandle)newEntity;
+	auto handle = (EntityHandle)newEntity;
 	for (size_t i = 0; i < numComponents; ++i) {
-		// Check if componentID is actually valid
 		if (!BaseECSComponent::isTypeValid(componentIDs[i])) {
 			m_engine->getManager_Messages().error("ECS Error: attempted to make an unsupported component, cancelling entity creation...\r\n");
 			delete newEntity;
@@ -128,16 +127,24 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 
 void World_Module::removeEntity(const EntityHandle & handle)
 {
-	std::vector<std::pair<int, int>> & entity = handleToEntity(handle);
+	auto & entity = handleToEntity(handle);
 	for (size_t i = 0; i < entity.size(); ++i)
 		deleteComponent(entity[i].first, entity[i].second);
 
 	const int destIndex = handleToEntityIndex(handle);
-	const int srcIndex = (int)m_entities.size() - 1u;
+	const int srcIndex = int(m_entities.size() - 1u);
 	delete m_entities[destIndex];
 	m_entities[destIndex] = m_entities[srcIndex];
 	m_entities[destIndex]->first = destIndex;
 	m_entities.pop_back();
+}
+
+std::vector<EntityHandle> World_Module::getEntities()
+{
+	std::vector<EntityHandle> entities(m_entities.size());
+	for (size_t x = 0; x < entities.size(); ++x)
+		entities[x] = (EntityHandle)m_entities[x];
+	return entities;
 }
 
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
@@ -206,23 +213,23 @@ void World_Module::notifyListeners(const WorldState & state)
 
 void World_Module::deleteComponent(const int & componentID, const int & index)
 {
-	std::vector<uint8_t> mem_array = m_components[componentID];
-	ECSComponentFreeFunction freefn = BaseECSComponent::getTypeFreeFunction(componentID);
-	const size_t typeSize = BaseECSComponent::getTypeSize(componentID);
-	const size_t srcIndex = mem_array.size() - typeSize;
+	auto mem_array = m_components[componentID];
+	auto freefn = BaseECSComponent::getTypeFreeFunction(componentID);
+	const auto typeSize = BaseECSComponent::getTypeSize(componentID);
+	const auto srcIndex = mem_array.size() - typeSize;
 
-	BaseECSComponent * srcComponent = (BaseECSComponent*)&mem_array[srcIndex];
-	BaseECSComponent * destComponent = (BaseECSComponent*)&mem_array[index];
+	auto * srcComponent = (BaseECSComponent*)&mem_array[srcIndex];
+	auto * destComponent = (BaseECSComponent*)&mem_array[index];
 	freefn(destComponent);
 
-	if (index == (int)srcIndex) {
+	if ((size_t)index == srcIndex) {
 		mem_array.resize(srcIndex);
 		return;
 	}
 	std::memcpy(destComponent, srcComponent, typeSize);
 
 	// Update references
-	std::vector<std::pair<int, int>> & srcComponents = handleToEntity(srcComponent->entity);
+	auto & srcComponents = handleToEntity(srcComponent->entity);
 	for (size_t i = 0; i < srcComponents.size(); ++i) {
 		if (componentID == srcComponents[i].first && (int)srcIndex == srcComponents[i].second) {
 			srcComponents[i].second = index;
@@ -234,7 +241,7 @@ void World_Module::deleteComponent(const int & componentID, const int & index)
 
 void World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>>& entity, const int & componentID, BaseECSComponent * component)
 {
-	ECSComponentCreateFunction createfn = BaseECSComponent::getTypeCreateFunction(componentID);
+	auto createfn = BaseECSComponent::getTypeCreateFunction(componentID);
 	std::pair<int, int> newPair;
 	newPair.first = componentID;
 	newPair.second = createfn(m_components[componentID], handle, component);
@@ -243,12 +250,12 @@ void World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pa
 
 bool World_Module::removeComponentInternal(EntityHandle handle, const int & componentID)
 {
-	std::vector<std::pair<int, int>> & entityComponents = handleToEntity(handle);
-	for (size_t i = 0; i < entityComponents.size(); ++i) {
+	auto & entityComponents = handleToEntity(handle);
+	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
 		if (componentID == entityComponents[i].first) {
 			deleteComponent(entityComponents[i].first, entityComponents[i].second);
-			const size_t srcIndex = entityComponents.size() - 1;
-			const size_t destIndex = i;
+			const auto srcIndex = entityComponents.size() - 1ull;
+			const auto destIndex = i;
 			entityComponents[destIndex] = entityComponents[srcIndex];
 			entityComponents.pop_back();
 			return true;
@@ -259,7 +266,7 @@ bool World_Module::removeComponentInternal(EntityHandle handle, const int & comp
 
 BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<int, int>> & entityComponents, std::vector<uint8_t> & mem_array, const int & componentID)
 {
-	for (size_t i = 0; i < entityComponents.size(); ++i)
+	for (size_t i = 0ull; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
 			return (BaseECSComponent*)&mem_array[entityComponents[i].second];
 	return nullptr;
@@ -267,12 +274,12 @@ BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<int,
 
 std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags)
 {
-	std::vector< std::vector<BaseECSComponent*> > components;
+	std::vector<std::vector<BaseECSComponent*>> components;
 	if (componentTypes.size() > 0ull) {
 		if (componentTypes.size() == 1u) {
 			// Super simple procedure for system with 1 component type
-			const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
-			const std::vector<uint8_t>& mem_array = m_components[componentTypes[0]];
+			const auto typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
+			const auto & mem_array = m_components[componentTypes[0]];
 			components.resize(mem_array.size() / typeSize);
 			for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
 				components[k].push_back((BaseECSComponent*)&mem_array[j]);
@@ -284,20 +291,20 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 			for (size_t i = 0; i < componentTypes.size(); ++i)
 				componentArrays[i] = &m_components[componentTypes[i]];
 
-			const size_t minSizeIndex = findLeastCommonComponent(componentTypes, componentFlags);
-			const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[minSizeIndex]);
+			const auto minSizeIndex = findLeastCommonComponent(componentTypes, componentFlags);
+			const auto typeSize = BaseECSComponent::getTypeSize(componentTypes[minSizeIndex]);
 			const std::vector<uint8_t> & mem_array = *componentArrays[minSizeIndex];
-			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as we component at [i] may be invalid
+			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
 				componentParam[minSizeIndex] = (BaseECSComponent*)&mem_array[i];
-				std::vector<std::pair<int, int> > & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
+				auto & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
 
 				bool isValid = true;
 				for (size_t j = 0; j < componentTypes.size(); ++j) {
 					if (j == minSizeIndex)
 						continue;
 					componentParam[j] = getComponentInternal(entityComponents, *componentArrays[j], componentTypes[j]);
-					if ((componentParam[j] == nullptr) && (componentFlags[j] & BaseECSSystem::FLAG_REQUIRED)) {
+					if ((componentParam[j] == nullptr) && (componentFlags[j] & BaseECSSystem::FLAG_OPTIONAL) == 0) {
 						isValid = false;
 						break;
 					}
@@ -312,13 +319,13 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 
 size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int> & componentFlags)
 {
-	size_t minSize = (size_t)-1;
-	size_t minIndex = (size_t)-1;
+	auto minSize = (size_t)-1ull;
+	auto minIndex = (size_t)-1ull;
 	for (size_t i = 0; i < componentTypes.size(); ++i) {
 		if ((componentFlags[i] & BaseECSSystem::FLAG_OPTIONAL) != 0)
 			continue;
-		const size_t typeSize = BaseECSComponent::getTypeSize(componentTypes[i]);
-		const size_t size = m_components[componentTypes[i]].size() / typeSize;
+		const auto typeSize = BaseECSComponent::getTypeSize(componentTypes[i]);
+		const auto size = m_components[componentTypes[i]].size() / typeSize;
 		if (size <= minSize) {
 			minSize = size;
 			minIndex = i;

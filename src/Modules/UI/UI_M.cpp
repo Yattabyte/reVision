@@ -17,7 +17,9 @@ void UI_Module::initialize(Engine * engine)
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
 	io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Gamepad Controls
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
+	io.ConfigDockingWithShift = true;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();

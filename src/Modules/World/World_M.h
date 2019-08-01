@@ -49,6 +49,18 @@ public:
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier	function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool> & alive, const std::function<void(const WorldState&)> & func);
+	/** Convert an entity handle to its raw index.
+	@param	handle				the entity handle to process.
+	@return						raw entity index. */
+	inline int handleToEntityIndex(const EntityHandle& handle) {
+		return handleToRawType(handle)->first;
+	}
+	/** Convert an entity handle to its raw data.
+	@param	handle				the entity handle to process.
+	@return						raw entity data. */
+	inline std::vector<std::pair<int, int>>& handleToEntity(const EntityHandle& handle) {
+		return handleToRawType(handle)->second;
+	}
 	/** Construct an entity from the array of components and IDS*/
 	EntityHandle makeEntity(BaseECSComponent ** components, const int * componentIDS, const size_t & numComponents);
 	/** Construct an entity from the array of component references.
@@ -72,6 +84,8 @@ public:
 	/** Remove an entity.
 	@param	handle	the entity to remove. */
 	void removeEntity(const EntityHandle & handle);
+	/***/
+	std::vector<EntityHandle> getEntities();
 	// Public BaseECSComponent Functions
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
@@ -86,7 +100,11 @@ public:
 	@return						true on successful removal, false otherwise. */
 	template <typename T>
 	inline bool removeComponent(const EntityHandle & entity) {
-		return removeComponentInternal(entity, T::ID);
+		return removeComponent(entity, T::ID);
+	}
+	/***/
+	inline bool removeComponent(const EntityHandle & entity, const int & componentID) {
+		return removeComponentInternal(entity, componentID);
 	}
 	/** Retrieve a component.
 	@param	entity				the entity to retrieve from.
@@ -123,18 +141,6 @@ private:
 	@return						raw handle. */
 	inline std::pair< int, std::vector<std::pair<int, int> > >* handleToRawType(const EntityHandle & handle) {
 		return (std::pair< int, std::vector<std::pair<int, int> > >*)handle;
-	}
-	/** Convert an entity handle to its raw index. 
-	@param	handle				the entity handle to process.
-	@return						raw entity index. */
-	inline int handleToEntityIndex(const EntityHandle & handle) {
-		return handleToRawType(handle)->first;
-	}
-	/** Convert an entity handle to its raw data.
-	@param	handle				the entity handle to process.
-	@return						raw entity data. */
-	inline std::vector<std::pair<int, int>> & handleToEntity(const EntityHandle & handle) {
-		return handleToRawType(handle)->second;
 	}
 	/** Delete a component matching the category ID supplied, at the given index. 
 	@param	componentID			the component class/category ID.

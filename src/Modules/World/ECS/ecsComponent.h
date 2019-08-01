@@ -27,6 +27,7 @@ public:
 	// Public Methods
 	static int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size, const char * string, BaseECSComponent * templateComponent);
 	static std::tuple<BaseECSComponent *, int, size_t> findTemplate(const char * name);
+	static const char * findName(const int& id);
 	inline static ECSComponentCreateFunction getTypeCreateFunction(const int & id) { return std::get<0>((*componentTypes)[id]); }
 	inline static ECSComponentFreeFunction getTypeFreeFunction(const int & id) { return std::get<1>((*componentTypes)[id]); }
 	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
@@ -43,6 +44,7 @@ public:
 private:
 	// Private Attributes
 	static std::vector<std::tuple<ECSComponentCreateFunction, ECSComponentFreeFunction, size_t> > * componentTypes;
+	static std::vector<const char*>* componentNames;
 	struct compare_string { bool operator()(const char * a, const char * b) const { return strcmp(a, b) < 0; } };
 	static std::map<const char *, std::tuple<BaseECSComponent *, int, size_t>, compare_string> * templateMap;
 };
@@ -54,14 +56,17 @@ struct ECSComponent : public BaseECSComponent {
 	static const ECSComponentCreateFunction CREATE_FUNCTION;
 	static const ECSComponentFreeFunction FREE_FUNCTION;
 	static const int ID;
-	static std::string NAME;
+	static std::string STRING_NAME;
 	static const size_t SIZE;
+	inline constexpr static const char* NAME() {
+		return chars;
+	}
 	inline virtual BaseECSComponent * clone() override {
 		return new T(static_cast<T const &>(*this));
 	}
 	inline std::vector<char> save() override {
 		// First retrieve the name of this component
-		const auto stringifiedName = std::string(chars);
+		const auto stringifiedName = STRING_NAME;
 		std::vector<char> output(sizeof(unsigned int) + (stringifiedName.size() * sizeof(char)));
 		const auto nameCount = (int)stringifiedName.size();
 		std::memcpy(&output[0], &nameCount, sizeof(int));
@@ -102,7 +107,7 @@ template <typename T, const char* chars>
 const int ECSComponent<T, chars>::ID(BaseECSComponent::registerComponentType(ECSComponentCreate<T>, ECSComponentFree<T>, sizeof(T), chars, new T()));
 
 template <typename T, const char* chars>
-std::string ECSComponent<T, chars>::NAME(chars);
+std::string ECSComponent<T, chars>::STRING_NAME(chars);
 
 template <typename T, const char * chars>
 const size_t ECSComponent<T, chars>::SIZE(sizeof(T));

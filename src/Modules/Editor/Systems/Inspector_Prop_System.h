@@ -31,9 +31,8 @@ public:
 				selectedComponents.push_back(component);
 		}
 		if (selectedComponents.size()) {
-			static bool open = true;
-			const auto text = Prop_Component::NAME + "(" + std::to_string(selectedComponents.size()) + ")";
-			if (ImGui::CollapsingHeader(text.c_str(), &open, ImGuiTreeNodeFlags_DefaultOpen)) {
+			const auto text = Prop_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
+			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 				char nameInput[256];
 				for (size_t x = 0; x < selectedComponents[0]->m_modelName.length() && x < IM_ARRAYSIZE(nameInput); ++x)
 					nameInput[x] = selectedComponents[0]->m_modelName[x];

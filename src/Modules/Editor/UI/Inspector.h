@@ -4,6 +4,7 @@
 
 #include "Modules/UI/UI_M.h"
 #include "Modules/World/ECS/ecsSystem.h"
+#include <map>
 
 
 // Forward declarations
@@ -29,8 +30,7 @@ private:
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
 	ECSSystemList m_inspectorSystems;
-	glm::ivec2 m_renderSize = glm::ivec2(1);
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	std::map<int, size_t> m_selectionCountMap;
 };
 
 #endif // INSPECTOR_H
