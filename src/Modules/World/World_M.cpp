@@ -52,10 +52,20 @@ void World_Module::loadWorld(const std::string & mapName)
 void World_Module::saveWorld(const std::string & mapName)
 {
 	std::vector<char> ecsData;
+	size_t entityCount(0ull);
 	for each (const auto & entity in m_entities) {
-		// Remember the beginning spot for this entity, we will update this index with the total entity data size
-		const auto entityDataCount_Offset = ecsData.size();
-		ecsData.resize(entityDataCount_Offset + sizeof(size_t));
+		/* ENTITY DATA STRUCTURE {
+			name char count
+			name chars
+			component data count
+		} */
+		const auto entityName = m_names[entityCount];
+		const auto nameSize = (unsigned int)(entityName.size());
+		const auto previousSize = ecsData.size();
+		const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t);
+		ecsData.resize(previousSize + ENTITY_HEADER_SIZE);
+		std::memcpy(&ecsData[previousSize], &nameSize, sizeof(unsigned int)); // copy name char count
+		std::memcpy(&ecsData[previousSize + sizeof(unsigned int)], entityName.c_str(), nameSize * sizeof(char)); // copy name chars
 		size_t entityDataCount(0ull);
 		const auto & handle = (EntityHandle)entity;
 		for (const auto &[componentID, createFunc] : entity->second) {
@@ -71,7 +81,8 @@ void World_Module::saveWorld(const std::string & mapName)
 		}
 
 		// modify entity data count at offset spot to be total data
-		std::memcpy(&ecsData[entityDataCount_Offset], &entityDataCount, sizeof(size_t));
+		std::memcpy(&ecsData[previousSize + sizeof(unsigned int) + (nameSize * sizeof(char))], &entityDataCount, sizeof(size_t)); // component data count
+		entityCount++;
 	}
 
 	// Write ecsData to disk
@@ -107,7 +118,7 @@ void World_Module::addLevelListener(const std::shared_ptr<bool> & alive, const s
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, const int * componentIDs, const size_t & numComponents)
+EntityHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name)
 {
 	auto * newEntity = new std::pair<int, std::vector<std::pair<int, int> > >();
 	auto handle = (EntityHandle)newEntity;
@@ -122,6 +133,7 @@ EntityHandle World_Module::makeEntity(BaseECSComponent ** entityComponents, cons
 
 	newEntity->first = (int)m_entities.size();
 	m_entities.push_back(newEntity);
+	m_names.push_back(name);
 	return handle;
 }
 
@@ -145,6 +157,11 @@ std::vector<EntityHandle> World_Module::getEntities()
 	for (size_t x = 0; x < entities.size(); ++x)
 		entities[x] = (EntityHandle)m_entities[x];
 	return entities;
+}
+
+std::vector<std::string> & World_Module::getEntityNames()
+{
+	return m_names;
 }
 
 void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
@@ -187,7 +204,7 @@ void World_Module::processLevel()
 
 			// Make an entity out of the available components
 			if (components.size())
-				makeEntity(components.data(), ids.data(), components.size());
+				makeEntity(components.data(), ids.data(), components.size(), entity.name);
 
 			// Delete temporary components
 			for each (auto * component in components)
@@ -251,6 +268,7 @@ bool World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pa
 	newPair.first = componentID;
 	newPair.second = createfn(m_components[componentID], handle, component);
 	entity.push_back(newPair);
+	return true;
 }
 
 bool World_Module::removeComponentInternal(EntityHandle handle, const int & componentID)

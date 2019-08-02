@@ -62,7 +62,7 @@ public:
 		return handleToRawType(handle)->second;
 	}
 	/** Construct an entity from the array of components and IDS*/
-	EntityHandle makeEntity(BaseECSComponent ** components, const int * componentIDS, const size_t & numComponents);
+	EntityHandle makeEntity(BaseECSComponent ** components, const int * componentIDS, const size_t & numComponents, const std::string & name = "Entity");
 	/** Construct an entity from the array of component references.
 	@note Variadic
 	@param	args	all components to use for this entity. */
@@ -86,6 +86,8 @@ public:
 	void removeEntity(const EntityHandle & handle);
 	/***/
 	std::vector<EntityHandle> getEntities();
+	/***/
+	std::vector<std::string> & getEntityNames();
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
 	@param	component			the component being added.
@@ -186,6 +188,7 @@ private:
 	bool m_finishedLoading = false;
 	std::map<int, std::vector<uint8_t>> m_components;
 	std::vector<std::pair<int, std::vector<std::pair<int, int>>>*> m_entities;
+	std::vector<std::string> m_names;
 	Shared_Level m_level;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;

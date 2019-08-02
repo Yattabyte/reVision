@@ -24,13 +24,17 @@ Inspector::Inspector(Engine* engine, LevelEditor_Module* editor)
 void Inspector::tick(const float& deltaTime)
 {
 	auto& world = m_engine->getModule_World();
+	const auto& worldEntities = world.getEntities();
+	auto& entityNames = world.getEntityNames();
 	const auto& selectedEntities = m_editor->getSelection();
 	ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);	
 	if (ImGui::Begin("Scene Inspector", NULL)) {				
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 		ImGui::Separator();
 
-		for each (const auto & entity in world.getEntities()) {
+		size_t entityCount(0ull);
+		for each (const auto & entity in worldEntities) {
+			auto& entityName = entityNames.at(entityCount);
 			ImGui::PushID(entity);
 			ImGui::AlignTextToFramePadding();
 
@@ -50,7 +54,14 @@ void Inspector::tick(const float& deltaTime)
 				if (ImGui::BeginPopupContextItem("Entity Controls")) {
 					// Force selection to single item so operations will occur on just IT
 					m_editor->setSelection({ entity });
-					if (ImGui::MenuItem("Rename", "F2")) {}
+					char entityNameChars[256];
+					for (int x = 0; x < entityName.size() && x < 256; ++x)
+						entityNameChars[x] = entityName[x];
+					entityNameChars[entityName.size()] = '\0';
+					if (ImGui::InputText("Rename", entityNameChars, 256, ImGuiInputTextFlags_AutoSelectAll | ImGuiInputTextFlags_EnterReturnsTrue)) {
+						entityName = entityNameChars;
+						ImGui::CloseCurrentPopup();
+					}
 					ImGui::Separator();
 					if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
 					if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
@@ -60,7 +71,7 @@ void Inspector::tick(const float& deltaTime)
 					ImGui::EndPopup();
 				}
 			};
-			if (ImGui::TreeNodeEx("Entity", node_flags, "%s_%u", "Entity", entity)) {
+			if (ImGui::TreeNodeEx(entity, node_flags, "%s", entityName.c_str())) {
 				tryLeftClickElement();
 				tryRightClickElement();
 				const auto& components = world.handleToEntity(entity);
@@ -134,6 +145,7 @@ void Inspector::tick(const float& deltaTime)
 			tryRightClickElement();			
 			ImGui::NewLine();
 			ImGui::PopID();
+			entityCount++;
 		}
 
 		ImGui::Separator();

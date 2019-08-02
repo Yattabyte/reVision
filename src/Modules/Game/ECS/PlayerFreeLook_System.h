@@ -60,32 +60,6 @@ public:
 				deltaPosition += glm::vec3(-moveAmount, 0, 0);
 			if (actionState.isAction(ActionState::RIGHT))
 				deltaPosition += glm::vec3(moveAmount, 0, 0);
-			if (actionState.isAction(ActionState::FIRE1)) {
-				auto & world = m_engine->getModule_World();
-				/*Prop_Component prop;
-				prop.m_static = false;
-				prop.m_model = Shared_Model(m_engine, "Test\\ChamferedCube.obj");*/
-				Renderable_Component renderable;
-				BoundingSphere_Component bsphere;
-				LightColor_Component color;
-				LightRadius_Component radius;
-				LightPoint_Component point;
-				Shadow_Component shadow;
-				CameraArray_Component camArray;
-				Transform_Component trans;
-
-				radius.m_radius = 5.0f;
-				color.m_color = glm::vec3(5.0f, 2.5, 1);
-				color.m_intensity = 1.0f;
-				auto dir = glm::inverse(rotationMatrix) * glm::vec4(0, 0, -1, 1);
-				dir /= dir.w;
-				trans.m_transform = transform;
-				trans.m_transform.m_position = transform.m_position + (glm::vec3(dir) * 10.0f);
-				trans.m_transform.update();
-				BaseECSComponent * entityComponents[] = { &renderable, &bsphere, &color, &radius, &point, &shadow, &camArray, &trans };
-				int types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, LightColor_Component::ID, LightRadius_Component::ID, LightPoint_Component::ID, Shadow_Component::ID, CameraArray_Component::ID, Transform_Component::ID };
-				world.makeEntity(entityComponents, types, 7ull);
-			}
 			// Make the translation amount be relative to the camera's orientation
 			glm::vec4 rotatedPosition = glm::inverse(rotationMatrix) * glm::vec4(deltaPosition, 1.0f);
 			transform.m_position += glm::vec3(rotatedPosition / rotatedPosition.w);

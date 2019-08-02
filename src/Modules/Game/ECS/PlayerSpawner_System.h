@@ -53,7 +53,7 @@ public:
 
 				BaseECSComponent * entityComponents[] = { &player, &trans };
 				int types[] = { Player3D_Component::ID, Transform_Component::ID };
-				world.makeEntity(entityComponents, types, 2ull);
+				world.makeEntity(entityComponents, types, 2ull, "Player");
 				m_playerCount++;
 			}
 		}

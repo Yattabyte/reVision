@@ -47,5 +47,5 @@ void Prefabs::spawnPrefab(const int & index)
    	trans.m_transform.update();
 	BaseECSComponent * entityComponents[] = { &renderable, &bsphere, &prop, &trans };
 	const int types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, Prop_Component::ID, Transform_Component::ID };
-	world.makeEntity(entityComponents, types, 4ull);
+	world.makeEntity(entityComponents, types, 4ull, "Fire Hydrant Prefab");
 }

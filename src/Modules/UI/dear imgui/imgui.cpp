@@ -6131,7 +6131,7 @@ bool ImGui::Begin(const char* name, bool* p_open, ImGuiWindowFlags flags)
             // won't steal the OS focus away from their parent window (which may be reflected in OS the title bar decoration).
             // Setting _NoFocusOnClick would technically prevent us from bringing back to front in case they are being covered by an OS window from a different app, 
             // but it shouldn't be much of a problem considering those are already popups that are closed when clicking elsewhere.
-            if (is_short_lived_floating_window)
+            if (is_short_lived_floating_window && (flags & ImGuiWindowFlags_Modal) == 0)
                 viewport_flags |= ImGuiViewportFlags_NoFocusOnAppearing | ImGuiViewportFlags_NoFocusOnClick;
 
             // We can overwrite viewport flags using ImGuiWindowClass (advanced users)
@@ -11426,13 +11426,14 @@ static void ImGui::DockContextPruneUnusedSettingsNodes(ImGuiContext* ctx)
     }
 
     // Count reference to dock ids from window settings
+    // We guard against the possibility of an invalid .ini file (RootID may point to a missing node)
     for (int settings_n = 0; settings_n < g.SettingsWindows.Size; settings_n++)
         if (ImGuiID dock_id = g.SettingsWindows[settings_n].DockId)
             if (ImGuiDockContextPruneNodeData* data = pool.GetByKey(dock_id))
             {
-                ImGuiDockContextPruneNodeData* data_root = (data->RootID == dock_id) ? data : pool.GetByKey(data->RootID);
                 data->CountWindows++;
-                data_root->CountChildWindows++;
+                if (ImGuiDockContextPruneNodeData* data_root = (data->RootID == dock_id) ? data : pool.GetByKey(data->RootID))
+                    data_root->CountChildWindows++;
             }
 
     // Prune

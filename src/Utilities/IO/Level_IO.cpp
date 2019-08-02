@@ -34,11 +34,21 @@ std::vector<LevelStruct_Entity> Level_IO::parse_level(const std::vector<char> & 
 	size_t dataRead(0ull);
 	while (dataRead < ecsData.size()) {
 		LevelStruct_Entity entity;
+		/* ENTITY DATA STRUCTURE {
+			name char count
+			name chars
+			component data count
+		} */
 
-		// Find the end of this entity
+		// Read the header for this entity
+		char entityNameChars[256] = { '\0' };
+		unsigned int nameSize(0u);
 		size_t entityDataCount(0ull), entityDataRead(0ull);
-		std::memcpy(&entityDataCount, &ecsData[dataRead], sizeof(size_t));
-		dataRead += sizeof(size_t);
+		std::memcpy(&nameSize, &ecsData[dataRead], sizeof(unsigned int)); // copy name char count
+		std::memcpy(entityNameChars, &ecsData[dataRead + sizeof(unsigned int)], size_t(nameSize) * sizeof(char)); // copy name chars
+		std::memcpy(&entityDataCount, &ecsData[dataRead + sizeof(unsigned int) + (size_t(nameSize) * sizeof(char))], sizeof(size_t)); // component data count
+		dataRead += sizeof(unsigned int) + (nameSize * sizeof(char)) + sizeof(size_t);
+		entity.name = std::string(entityNameChars, nameSize);
 
 		// Find all components between the beginning and end of this entity
 		while (entityDataRead < entityDataCount) {

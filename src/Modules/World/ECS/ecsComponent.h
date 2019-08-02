@@ -71,11 +71,10 @@ struct ECSComponent : public BaseECSComponent {
 	}
 	inline std::vector<char> save() override {
 		// First retrieve the name of this component
-		const auto stringifiedName = STRING_NAME;
-		std::vector<char> output(sizeof(unsigned int) + (stringifiedName.size() * sizeof(char)));
-		const auto nameCount = (int)stringifiedName.size();
+		std::vector<char> output(sizeof(unsigned int) + (STRING_NAME.size() * sizeof(char)));
+		const auto nameCount = (int)STRING_NAME.size();
 		std::memcpy(&output[0], &nameCount, sizeof(int));
-		std::memcpy(&output[sizeof(int)], stringifiedName.data(), stringifiedName.size());
+		std::memcpy(&output[sizeof(int)], STRING_NAME.data(), STRING_NAME.size());
 
 		const auto data = static_cast<T*>(this)->serialize();
 		output.insert(output.end(), data.begin(), data.end());

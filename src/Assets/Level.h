@@ -59,6 +59,7 @@ struct LevelStruct_Component {
 	std::vector<char> data;
 };
 struct LevelStruct_Entity {
+	std::string name = "Entity";
 	std::vector<LevelStruct_Component> components;
 };
 
