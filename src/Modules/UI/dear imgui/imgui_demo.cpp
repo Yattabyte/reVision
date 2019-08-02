@@ -3914,7 +3914,7 @@ struct ExampleAppLog
         ImGui::SameLine();
         bool clear = ImGui::Button("Clear");
         ImGui::SameLine();
-        bool copy = ImGui::Button("Copy");
+        bool copySelection = ImGui::Button("Copy");
         ImGui::SameLine();
         Filter.Draw("Filter", -100.0f);
 
@@ -3923,7 +3923,7 @@ struct ExampleAppLog
 
         if (clear)
             Clear();
-        if (copy)
+        if (copySelection)
             ImGui::LogToClipboard();
 
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));

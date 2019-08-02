@@ -46,13 +46,17 @@ public:
 	/***/
 	void redo();
 	/***/
-	void cut();
+	void cutSelection();
 	/***/
-	void copy();
+	void copySelection();
 	/***/
 	void paste();
 	/***/
-	void deleteObject();
+	void deleteSelection();
+	/***/
+	void deleteComponent(const EntityHandle& handle, const int& componentID);
+	/***/
+	void addComponent(const EntityHandle& handle, const char * name);
 	/***/
 	void bindFBO();
 	/***/

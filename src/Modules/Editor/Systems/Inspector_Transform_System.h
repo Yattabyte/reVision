@@ -38,6 +38,7 @@ public:
 					for each (auto & component in selectedComponents) {
 						component->m_transform.m_position = posInput;
 						component->m_transform.update();
+						m_editor->setGizmoPosition(posInput);
 					}
 				}
 				auto sclInput = selectedComponents[0]->m_transform.m_scale;

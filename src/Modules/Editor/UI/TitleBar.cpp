@@ -39,11 +39,11 @@ void TitleBar::tick(const float & deltaTime)
 			if (ImGui::MenuItem("Undo", "CTRL+Z")) { m_editor->undo(); }
 			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) { m_editor->redo(); }  // Disabled item
 			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cut(); }
-			if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copy(); }
+			if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
+			if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
 			if (ImGui::MenuItem("Paste", "CTRL+V")) { m_editor->paste(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteObject(); }
+			if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteSelection(); }
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();

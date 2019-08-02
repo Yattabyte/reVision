@@ -86,13 +86,21 @@ public:
 	void removeEntity(const EntityHandle & handle);
 	/***/
 	std::vector<EntityHandle> getEntities();
-	// Public BaseECSComponent Functions
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
-	@param	component			the component being added. */
-	template <typename T>
-	inline void addComponent(const EntityHandle & entity, T * component) {
-		addComponentInternal(entity, handleToEntity(entity), T::ID, component);
+	@param	component			the component being added.
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	template <typename SpecificComponent>
+	inline bool addComponent(const EntityHandle& entity, const SpecificComponent& component) {
+		return addComponentInternal(entity, handleToEntity(entity), SpecificComponent::ID, &component);
+	}
+	/**
+	/** Adds a component to an entity.
+	@param	entity				the entity to add the component to.
+	@param	component			the component being added.
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	inline bool addComponent(const EntityHandle & entity, BaseECSComponent * component) {
+		return addComponentInternal(entity, handleToEntity(entity), component->get_id(), component);
 	}
 	/** Removes a component from an entity.
 	@param	entity				the entity to remove from.
@@ -150,8 +158,9 @@ private:
 	@param	handle				the entity handle, to add the component to.
 	@param	entity				the specific entity data array.
 	@param	componentID			the class ID of the component.
-	@param	component			the specific component to add to the entity. */
-	void addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>> & entity, const int & componentID, BaseECSComponent * component);
+	@param	component			the specific component to add to the entity. 
+	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
+	bool addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>> & entity, const int & componentID, BaseECSComponent * component);
 	/** Remove a component from the entity specified.
 	@param	handle				the entity handle, to remove the component from.
 	@param	componentID			the class ID of the component. 

@@ -100,6 +100,13 @@ glm::vec3 Selection_Gizmo::getPosition() const
 void Selection_Gizmo::setSelection(const std::vector<EntityHandle> & entities)
 {
 	m_selection = entities;
+
+	// Find FIRST transform in the selection
+	auto world = m_engine->getModule_World();
+	for each (const auto entity in m_selection)
+		if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr)
+			m_position = transform->m_transform.m_position;
+	m_editor->setGizmoPosition(m_position);
 }
 
 std::vector<EntityHandle> & Selection_Gizmo::getSelection()
@@ -112,13 +119,14 @@ void Selection_Gizmo::rayCastMouse(const float& deltaTime)
 	m_engine->getModule_World().updateSystem(m_pickerSystem, deltaTime);
 	const auto& [entity, position] = ((MousePicker_System*)m_pickerSystem)->getSelection();
 
-	// Apply position to all tools that need it
-	setPosition(position);
-	m_editor->setGizmoPosition(position);
-
 	// Set selection to all tools that need it	
-	if (ImGui::GetIO().KeyCtrl) 
+	if (ImGui::GetIO().KeyCtrl)
 		m_editor->toggleAddToSelection(entity);
 	else
-		m_editor->setSelection({ entity });
+		if (entity == NULL_ENTITY_HANDLE) {
+			m_editor->setSelection({});
+			m_editor->setGizmoPosition(position);
+		}
+		else
+			m_editor->setSelection({ entity });	
 }

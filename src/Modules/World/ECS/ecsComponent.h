@@ -28,10 +28,12 @@ public:
 	static int registerComponentType(ECSComponentCreateFunction createfn, ECSComponentFreeFunction freefn, const size_t & size, const char * string, BaseECSComponent * templateComponent);
 	static std::tuple<BaseECSComponent *, int, size_t> findTemplate(const char * name);
 	static const char * findName(const int& id);
+	static int findID(const char* name);
 	inline static ECSComponentCreateFunction getTypeCreateFunction(const int & id) { return std::get<0>((*componentTypes)[id]); }
 	inline static ECSComponentFreeFunction getTypeFreeFunction(const int & id) { return std::get<1>((*componentTypes)[id]); }
 	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
 	inline static bool isTypeValid(const int & id) { return id < componentTypes->size(); }
+	virtual int get_id() = 0;
 	virtual BaseECSComponent * clone() = 0;
 	virtual std::vector<char> save() = 0;
 	virtual void load(const std::vector<char> & data) = 0;
@@ -60,6 +62,9 @@ struct ECSComponent : public BaseECSComponent {
 	static const size_t SIZE;
 	inline constexpr static const char* NAME() {
 		return chars;
+	}
+	inline virtual int get_id() override {
+		return ID;
 	}
 	inline virtual BaseECSComponent * clone() override {
 		return new T(static_cast<T const &>(*this));

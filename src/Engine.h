@@ -25,7 +25,7 @@
 // Other
 #include <string>
 
-constexpr char ENGINE_VERSION[] = "4.1.9";
+constexpr char ENGINE_VERSION[] = "4.2.0";
 struct GLFWwindow;
 
 

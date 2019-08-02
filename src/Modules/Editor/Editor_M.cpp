@@ -111,6 +111,9 @@ void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entity)
 		std::remove(selection.begin(), selection.end(), entity);
 	else
 		selection.push_back(entity);
+
+	// Ensure our gizmos stay in sync
+	setSelection(selection);
 }
 
 void LevelEditor_Module::showEditor()
@@ -156,30 +159,58 @@ void LevelEditor_Module::saveLevel()
 
 void LevelEditor_Module::saveLevelDialog()
 {
+	/**@todo*/
 }
 
 void LevelEditor_Module::undo()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
 }
 
 void LevelEditor_Module::redo()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
 }
 
-void LevelEditor_Module::cut()
+void LevelEditor_Module::cutSelection()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
 }
 
-void LevelEditor_Module::copy()
+void LevelEditor_Module::copySelection()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
 }
 
 void LevelEditor_Module::paste()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
 }
 
-void LevelEditor_Module::deleteObject()
+void LevelEditor_Module::deleteSelection()
 {
+	/**@todo	undo/redo */
+	/**@todo*/
+}
+
+void LevelEditor_Module::deleteComponent(const EntityHandle& handle, const int& componentID)
+{
+	/**@todo	undo/redo */
+	m_engine->getModule_World().removeComponent(handle, componentID);
+}
+
+void LevelEditor_Module::addComponent(const EntityHandle& handle, const char * name)
+{
+	if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(name); templateComponent != nullptr) {
+		auto * clone = templateComponent->clone();
+		m_engine->getModule_World().addComponent(handle, clone);
+		delete clone;
+	}
 }
 
 void LevelEditor_Module::bindFBO()

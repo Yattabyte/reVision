@@ -239,8 +239,13 @@ void World_Module::deleteComponent(const int & componentID, const int & index)
 	mem_array.resize(srcIndex);
 }
 
-void World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>>& entity, const int & componentID, BaseECSComponent * component)
+bool World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>>& entity, const int & componentID, BaseECSComponent * component)
 {
+	// Prevent adding duplicate component types to the same entity
+	for (const auto& [ID, fn] : entity)
+		if (ID == componentID)
+			return false;
+
 	auto createfn = BaseECSComponent::getTypeCreateFunction(componentID);
 	std::pair<int, int> newPair;
 	newPair.first = componentID;
@@ -319,8 +324,8 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 
 size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int> & componentFlags)
 {
-	auto minSize = (size_t)-1ull;
-	auto minIndex = (size_t)-1ull;
+	auto minSize = (size_t)(-1ull);
+	auto minIndex = (size_t)(-1ull);
 	for (size_t i = 0; i < componentTypes.size(); ++i) {
 		if ((componentFlags[i] & BaseECSSystem::FLAG_OPTIONAL) != 0)
 			continue;

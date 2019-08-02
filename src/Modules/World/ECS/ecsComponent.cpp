@@ -34,3 +34,10 @@ const char* BaseECSComponent::findName(const int& id)
 {
 	return componentNames->at((size_t)id);
 }
+
+int BaseECSComponent::findID(const char* name)
+{
+	if (templateMap->find(name) != templateMap->end())
+		return std::get<1>(templateMap->at(name));
+	else return -1;
+}

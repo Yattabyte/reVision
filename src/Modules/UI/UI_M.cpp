@@ -69,9 +69,9 @@ void UI_Module::frameTick(const float & deltaTime)
 {
 	// Copy the list of callbacks, execute a copy of them
 	// We use a copy because any callback may alter the list, 
-	auto copy = m_callbacks;
+	auto copySelection = m_callbacks;
 	m_callbacks.clear();
-	for each (const auto & func in copy)
+	for each (const auto & func in copySelection)
 		func();
 
 	if (m_rootElement.size() && m_rootElement.back()) {
