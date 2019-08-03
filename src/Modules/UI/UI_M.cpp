@@ -20,6 +20,8 @@ void UI_Module::initialize(Engine * engine)
 	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Gamepad Controls
 	io.ConfigWindowsMoveFromTitleBarOnly = true;
 	io.ConfigDockingWithShift = true;
+	ImGuiStyle& style = ImGui::GetStyle();
+	style.FrameRounding = 6.0f;
 
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
