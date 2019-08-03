@@ -17,9 +17,15 @@ void Prefabs::tick(const float & deltaTime)
 {
 	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
 	if (ImGui::Begin("Prefabs", NULL)) {
+		static ImGuiTextFilter filter;
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
+		filter.Draw("Search");
+		ImGui::PopStyleVar();
 		// Loop over all prefabs
-		if (ImGui::Button("Fire Hydrant")) {
-			spawnPrefab(0);
+		if (filter.PassFilter("Fire Hydrant")) {
+			if (ImGui::Button("Fire Hydrant")) {
+				spawnPrefab(0);
+			}
 		}
 	}
 	ImGui::End();
