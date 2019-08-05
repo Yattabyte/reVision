@@ -35,7 +35,7 @@ public:
 
 			auto & actionState = m_engine->getActionState();
 			auto & rotation = playerComponent->m_rotation;
-			auto & transform = transformComponent->m_transform;
+			auto & transform = transformComponent->m_worldTransform;
 			// Determine how much the camera should rotate
 			rotation += 25.0f * deltaTime * glm::vec3(actionState.at(ActionState::LOOK_X), actionState.at(ActionState::LOOK_Y), 0);
 			rotation.x = fmodf(rotation.x, 360.0f);

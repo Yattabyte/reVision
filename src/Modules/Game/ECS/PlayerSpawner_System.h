@@ -43,13 +43,13 @@ public:
 			PlayerSpawn_Component * spawnComponent = (PlayerSpawn_Component*)componentParam[0];
 			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
 
-			auto & transform = transformComponent->m_transform;
+			auto & transform = transformComponent->m_worldTransform;
 			if (m_playerCount == 0ull) {
 				auto & world = m_engine->getModule_World();
 				Player3D_Component player;
 				Transform_Component trans;
 
-				trans.m_transform = transform;
+				trans.m_worldTransform = transform;
 
 				BaseECSComponent * entityComponents[] = { &player, &trans };
 				int types[] = { Player3D_Component::ID, Transform_Component::ID };

@@ -6,7 +6,7 @@
 #include <filesystem>
 
 
-void World_Module::initialize(Engine * engine)
+void World_Module::initialize(Engine* engine)
 {
 	Engine_Module::initialize(engine);
 	m_engine->getManager_Messages().statement("Loading Module: World...");
@@ -20,46 +20,45 @@ void World_Module::deinitialize()
 	unloadWorld();
 }
 
-void World_Module::frameTick(const float & deltaTime)
+void World_Module::frameTick(const float& deltaTime)
 {
-	auto & assetManager = m_engine->getManager_Assets();
+	auto& assetManager = m_engine->getManager_Assets();
 
 	// Firstly, check and see if the following systems are ready
 	if (!assetManager.readyToUse())
 		return;
 
 	// Signal that the map has finished loading ONCE
-	if (m_state == startLoading) 
-		notifyListeners(finishLoading);	
+	if (m_state == startLoading)
+		notifyListeners(finishLoading);
 	else if (m_state == finishLoading) {
 		// Lastly, check and see if we observed any changes
-		if (assetManager.hasChanged())		
+		if (assetManager.hasChanged())
 			notifyListeners(updated);
 	}
 }
 
-void World_Module::loadWorld(const std::string & mapName)
+void World_Module::loadWorld(const std::string& mapName)
 {
 	unloadWorld();
 
 	// Signal that a new map is begining to load
 	notifyListeners(startLoading);
-	
+
 	m_level = Shared_Level(m_engine, mapName);
 	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));
 }
 
-void World_Module::saveWorld(const std::string & mapName)
+void World_Module::saveWorld(const std::string& mapName)
 {
 	std::vector<char> ecsData;
-	size_t entityCount(0ull);
 	for each (const auto & entity in m_entities) {
 		/* ENTITY DATA STRUCTURE {
 			name char count
 			name chars
 			component data count
 		} */
-		const auto entityName = m_names[entityCount];
+		const auto& entityName = entity->m_name;
 		const auto nameSize = (unsigned int)(entityName.size());
 		const auto previousSize = ecsData.size();
 		const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t);
@@ -67,9 +66,8 @@ void World_Module::saveWorld(const std::string & mapName)
 		std::memcpy(&ecsData[previousSize], &nameSize, sizeof(unsigned int)); // copy name char count
 		std::memcpy(&ecsData[previousSize + sizeof(unsigned int)], entityName.c_str(), nameSize * sizeof(char)); // copy name chars
 		size_t entityDataCount(0ull);
-		const auto & handle = (EntityHandle)entity;
-		for (const auto &[componentID, createFunc] : entity->second) {
-			const auto componentData = getComponentInternal(handleToEntity(entity), m_components[componentID], componentID)->save();
+		for (const auto& [componentID, createFunc] : entity->m_components) {
+			const auto componentData = getComponentInternal(entity->m_components, m_components[componentID], componentID)->save();
 			const auto componentDataSize = componentData.size();
 			entityDataCount += sizeof(size_t) + componentDataSize;
 
@@ -82,7 +80,6 @@ void World_Module::saveWorld(const std::string & mapName)
 
 		// modify entity data count at offset spot to be total data
 		std::memcpy(&ecsData[previousSize + sizeof(unsigned int) + (nameSize * sizeof(char))], &entityDataCount, sizeof(size_t)); // component data count
-		entityCount++;
 	}
 
 	// Write ecsData to disk
@@ -108,91 +105,81 @@ void World_Module::unloadWorld()
 	for (size_t i = 0; i < m_entities.size(); ++i)
 		delete m_entities[i];
 	m_entities.clear();
-	
+
 	// Signal that the last map has unloaded
 	notifyListeners(unloaded);
 }
 
-void World_Module::addLevelListener(const std::shared_ptr<bool> & alive, const std::function<void(const WorldState&)> & func)
+void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func)
 {
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-EntityHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name)
+ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name)
 {
-	auto * newEntity = new std::pair<int, std::vector<std::pair<int, int> > >();
-	auto handle = (EntityHandle)newEntity;
+	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
 		if (!BaseECSComponent::isTypeValid(componentIDs[i])) {
 			m_engine->getManager_Messages().error("ECS Error: attempted to make an unsupported component, cancelling entity creation...\r\n");
 			delete newEntity;
 			return NULL_ENTITY_HANDLE;
 		}
-		addComponentInternal(handle, newEntity->second, componentIDs[i], entityComponents[i]);
+		addComponentInternal(newEntity, componentIDs[i], entityComponents[i]);
 	}
 
-	newEntity->first = (int)m_entities.size();
+	newEntity->m_name = name;
+	newEntity->m_entityIndex = (int)m_entities.size();
 	m_entities.push_back(newEntity);
-	m_names.push_back(name);
-	return handle;
+	return newEntity;
 }
 
-void World_Module::removeEntity(const EntityHandle & handle)
+void World_Module::removeEntity(ecsEntity * entity)
 {
-	auto & entity = handleToEntity(handle);
-	for (size_t i = 0; i < entity.size(); ++i)
-		deleteComponent(entity[i].first, entity[i].second);
+	for (auto & [id, createFn] : entity->m_components)
+		deleteComponent(id, createFn);
 
-	const int destIndex = handleToEntityIndex(handle);
+	const int destIndex = entity->m_entityIndex;
 	const int srcIndex = int(m_entities.size() - 1u);
 	delete m_entities[destIndex];
 	m_entities[destIndex] = m_entities[srcIndex];
-	m_entities[destIndex]->first = destIndex;
+	m_entities[destIndex]->m_entityIndex = destIndex;
 	m_entities.pop_back();
 }
 
-std::vector<EntityHandle> World_Module::getEntities()
+std::vector<ecsEntity*> World_Module::getEntities()
 {
-	std::vector<EntityHandle> entities(m_entities.size());
-	for (size_t x = 0; x < entities.size(); ++x)
-		entities[x] = (EntityHandle)m_entities[x];
-	return entities;
+	return m_entities;
 }
 
-std::vector<std::string> & World_Module::getEntityNames()
-{
-	return m_names;
-}
-
-void World_Module::updateSystems(ECSSystemList & systems, const float & deltaTime)
+void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)
 {
 	for (size_t i = 0; i < systems.size(); ++i)
 		updateSystem(systems[i], deltaTime);
 }
 
-void World_Module::updateSystem(BaseECSSystem * system, const float & deltaTime)
+void World_Module::updateSystem(BaseECSSystem* system, const float& deltaTime)
 {
 	if (auto components = getRelevantComponents(system->getComponentTypes(), system->getComponentFlags()); components.size() > 0ull)
 		system->updateComponents(deltaTime, components);
 }
 
-void World_Module::updateSystem(const float & deltaTime, const std::vector<int> & types, const std::vector<int> & flags, const std::function<void(const float&, const std::vector<std::vector<BaseECSComponent*>>&)>& func)
+void World_Module::updateSystem(const float& deltaTime, const std::vector<int>& types, const std::vector<int>& flags, const std::function<void(const float&, const std::vector<std::vector<BaseECSComponent*>>&)>& func)
 {
 	if (auto components = getRelevantComponents(types, flags); components.size() > 0ull)
-		func(deltaTime, components);	
+		func(deltaTime, components);
 }
 
 void World_Module::processLevel()
 {
-	if (m_level->existsYet()) {	
+	if (m_level->existsYet()) {
 		for each (auto & entity in m_level->m_entities) {
 			// Retrieve all of this entity's components
 			std::vector<BaseECSComponent*> components;
 			std::vector<int> ids;
 			for each (auto & component in entity.components) {
-				if (const auto &[templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(component.type.data()); templateComponent != nullptr) {
+				if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(component.type.data()); templateComponent != nullptr) {
 					// Clone the template component completely, then fill in the serialized data
-					auto * castedComponent = templateComponent->clone();
+					auto* castedComponent = templateComponent->clone();
 					if (component.data.size())
 						castedComponent->load(component.data);
 					castedComponent->entity = NULL_ENTITY_HANDLE;
@@ -213,11 +200,11 @@ void World_Module::processLevel()
 	}
 }
 
-void World_Module::notifyListeners(const WorldState & state)
+void World_Module::notifyListeners(const WorldState& state)
 {
 	// Get all callback functions, and call them if their owners are still alive
 	for (int x = 0; x < (int)m_notifyees.size(); ++x) {
-		const auto &[alive, func] = m_notifyees[x];
+		const auto& [alive, func] = m_notifyees[x];
 		if (alive && *(alive.get()) == true)
 			func(state);
 		else {
@@ -228,15 +215,15 @@ void World_Module::notifyListeners(const WorldState & state)
 	m_state = state;
 }
 
-void World_Module::deleteComponent(const int & componentID, const int & index)
+void World_Module::deleteComponent(const int& componentID, const int& index)
 {
 	auto mem_array = m_components[componentID];
 	auto freefn = BaseECSComponent::getTypeFreeFunction(componentID);
 	const auto typeSize = BaseECSComponent::getTypeSize(componentID);
 	const auto srcIndex = mem_array.size() - typeSize;
 
-	auto * srcComponent = (BaseECSComponent*)&mem_array[srcIndex];
-	auto * destComponent = (BaseECSComponent*)&mem_array[index];
+	auto* srcComponent = (BaseECSComponent*)& mem_array[srcIndex];
+	auto* destComponent = (BaseECSComponent*)& mem_array[index];
 	freefn(destComponent);
 
 	if ((size_t)index == srcIndex) {
@@ -246,7 +233,7 @@ void World_Module::deleteComponent(const int & componentID, const int & index)
 	std::memcpy(destComponent, srcComponent, typeSize);
 
 	// Update references
-	auto & srcComponents = handleToEntity(srcComponent->entity);
+	auto& srcComponents = srcComponent->entity->m_components;
 	for (size_t i = 0; i < srcComponents.size(); ++i) {
 		if (componentID == srcComponents[i].first && (int)srcIndex == srcComponents[i].second) {
 			srcComponents[i].second = index;
@@ -256,24 +243,24 @@ void World_Module::deleteComponent(const int & componentID, const int & index)
 	mem_array.resize(srcIndex);
 }
 
-bool World_Module::addComponentInternal(EntityHandle handle, std::vector<std::pair<int, int>>& entity, const int & componentID, BaseECSComponent * component)
+bool World_Module::addComponentInternal(ecsEntity* entity, const int& componentID, BaseECSComponent* component)
 {
 	// Prevent adding duplicate component types to the same entity
-	for (const auto& [ID, fn] : entity)
+	for (const auto& [ID, fn] : entity->m_components)
 		if (ID == componentID)
 			return false;
 
 	auto createfn = BaseECSComponent::getTypeCreateFunction(componentID);
 	std::pair<int, int> newPair;
 	newPair.first = componentID;
-	newPair.second = createfn(m_components[componentID], handle, component);
-	entity.push_back(newPair);
+	newPair.second = createfn(m_components[componentID], entity, component);
+	entity->m_components.push_back(newPair);
 	return true;
 }
 
-bool World_Module::removeComponentInternal(EntityHandle handle, const int & componentID)
+bool World_Module::removeComponentInternal(ecsEntity* entity, const int& componentID)
 {
-	auto & entityComponents = handleToEntity(handle);
+	auto& entityComponents = entity->m_components;
 	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
 		if (componentID == entityComponents[i].first) {
 			deleteComponent(entityComponents[i].first, entityComponents[i].second);
@@ -287,7 +274,7 @@ bool World_Module::removeComponentInternal(EntityHandle handle, const int & comp
 	return false;
 }
 
-BaseECSComponent * World_Module::getComponentInternal(std::vector<std::pair<int, int>> & entityComponents, std::vector<uint8_t> & mem_array, const int & componentID)
+BaseECSComponent* World_Module::getComponentInternal(std::vector<std::pair<int, int>>& entityComponents, std::vector<uint8_t>& mem_array, const int& componentID)
 {
 	for (size_t i = 0ull; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
@@ -302,10 +289,10 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 		if (componentTypes.size() == 1u) {
 			// Super simple procedure for system with 1 component type
 			const auto typeSize = BaseECSComponent::getTypeSize(componentTypes[0]);
-			const auto & mem_array = m_components[componentTypes[0]];
+			const auto& mem_array = m_components[componentTypes[0]];
 			components.resize(mem_array.size() / typeSize);
 			for (size_t j = 0, k = 0; j < mem_array.size(); j += typeSize, ++k)
-				components[k].push_back((BaseECSComponent*)&mem_array[j]);
+				components[k].push_back((BaseECSComponent*)& mem_array[j]);
 		}
 		else {
 			// More complex procedure for system with > 1 component type
@@ -316,11 +303,11 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 
 			const auto minSizeIndex = findLeastCommonComponent(componentTypes, componentFlags);
 			const auto typeSize = BaseECSComponent::getTypeSize(componentTypes[minSizeIndex]);
-			const std::vector<uint8_t> & mem_array = *componentArrays[minSizeIndex];
+			const std::vector<uint8_t>& mem_array = *componentArrays[minSizeIndex];
 			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
-				componentParam[minSizeIndex] = (BaseECSComponent*)&mem_array[i];
-				auto & entityComponents = handleToEntity(componentParam[minSizeIndex]->entity);
+				componentParam[minSizeIndex] = (BaseECSComponent*)& mem_array[i];
+				auto& entityComponents = componentParam[minSizeIndex]->entity->m_components;
 
 				bool isValid = true;
 				for (size_t j = 0; j < componentTypes.size(); ++j) {
@@ -340,7 +327,7 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 	return components;
 }
 
-size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int> & componentFlags)
+size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags)
 {
 	auto minSize = (size_t)(-1ull);
 	auto minIndex = (size_t)(-1ull);

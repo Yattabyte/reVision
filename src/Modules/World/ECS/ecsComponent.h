@@ -10,9 +10,9 @@
 #include <vector>
 
 
+struct ecsEntity;
 struct BaseECSComponent;
-using EntityHandle = void*;
-using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, const EntityHandle & entity, BaseECSComponent * comp);
+using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, ecsEntity* entity, BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 using ParamList = std::vector<std::any>;
 #define NULL_ENTITY_HANDLE nullptr
@@ -40,7 +40,7 @@ public:
 
 
 	// Public Attributes
-	EntityHandle entity = NULL_ENTITY_HANDLE;
+	ecsEntity * entity = NULL_ENTITY_HANDLE;
 
 
 private:
@@ -95,7 +95,7 @@ struct ECSComponent : public BaseECSComponent {
 };
 
 template <typename Component>
-inline const int ECSComponentCreate(std::vector<uint8_t> & memory, const EntityHandle & entity, BaseECSComponent * comp) {
+inline const int ECSComponentCreate(std::vector<uint8_t> & memory, ecsEntity* entity, BaseECSComponent * comp) {
 	const size_t index = memory.size();
 	memory.resize(index + Component::SIZE);
 	(new(&memory[index])Component(*(Component*)comp))->entity = entity;

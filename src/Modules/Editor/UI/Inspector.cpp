@@ -25,7 +25,6 @@ void Inspector::tick(const float& deltaTime)
 {
 	auto& world = m_engine->getModule_World();
 	const auto& worldEntities = world.getEntities();
-	auto& entityNames = world.getEntityNames();
 	const auto& selectedEntities = m_editor->getSelection();
 	ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);	
 	if (ImGui::Begin("Scene Inspector", NULL)) {			
@@ -35,11 +34,11 @@ void Inspector::tick(const float& deltaTime)
 		ImGui::PopStyleVar();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-		size_t entityCount(0ull), displayCount(0ull);
+		size_t  displayCount(0ull);
 		for each (const auto & entity in worldEntities) {
 			bool entity_or_components_pass_filter = false;
-			auto& entityName = entityNames.at(entityCount);
-			const auto& components = world.handleToEntity(entity);
+			auto& entityName = entity->m_name;
+			const auto& components = entity->m_components;
 			entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
 			for each (const auto & component in components)
 				entity_or_components_pass_filter += filter.PassFilter(BaseECSComponent::findName(component.first));	
@@ -148,7 +147,6 @@ void Inspector::tick(const float& deltaTime)
 						ImGui::EndPopup();
 					}
 					ImGui::TreePop();
-
 				}
 
 				ImGui::SameLine();
@@ -158,7 +156,6 @@ void Inspector::tick(const float& deltaTime)
 				ImGui::PopID();
 				displayCount++;
 			}
-			entityCount++;
 		}
 		if (displayCount == 0ull) {
 			ImGui::Separator();

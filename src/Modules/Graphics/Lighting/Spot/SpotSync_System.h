@@ -73,8 +73,8 @@ public:
 
 				// Sync Transform Attributes
 				if (transformComponent) {
-					const auto & position = transformComponent->m_transform.m_position;
-					const auto & orientation = transformComponent->m_transform.m_orientation;
+					const auto & position = transformComponent->m_worldTransform.m_position;
+					const auto & orientation = transformComponent->m_worldTransform.m_orientation;
 					const auto matRot = glm::mat4_cast(orientation);
 					m_frameData->lightBuffer[index].LightPosition = position;
 					auto dir = matRot * glm::vec4(0, 0, -1, 1);

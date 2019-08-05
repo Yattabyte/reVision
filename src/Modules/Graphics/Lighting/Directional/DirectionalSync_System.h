@@ -81,7 +81,7 @@ public:
 						}
 						const glm::mat4 CamInv = m_frameData->clientCamera.get()->get()->vMatrixInverse;
 						const glm::mat4 CamP = m_frameData->clientCamera.get()->get()->pMatrix;
-						const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_transform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
+						const glm::mat4 sunModelMatrix = glm::inverse(glm::mat4_cast(transformComponent->m_worldTransform.m_orientation) * glm::mat4_cast(glm::rotate(glm::quat(1, 0, 0, 0), glm::radians(90.0f), glm::vec3(0, 1.0f, 0))));
 						const glm::mat4 sunInverse = glm::inverse(sunModelMatrix);
 						for (int i = 0; i < NUM_CASCADES; ++i) {
 							auto & cam = cameraComponent->m_cameras[i];
@@ -128,7 +128,7 @@ public:
 
 				// Sync Transform Attributes
 				if (transformComponent) {
-					const auto & orientation = transformComponent->m_transform.m_orientation;
+					const auto & orientation = transformComponent->m_worldTransform.m_orientation;
 					const auto matRot = glm::mat4_cast(orientation);
 					const glm::mat4 sunTransform = matRot;
 					m_frameData->lightBuffer[index].LightDirection = glm::vec3(glm::normalize(sunTransform * glm::vec4(1.0f, 0.0f, 0.0f, 0.0f)));

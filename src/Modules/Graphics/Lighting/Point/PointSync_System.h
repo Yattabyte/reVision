@@ -63,7 +63,7 @@ public:
 
 				// Sync Transform Attributes
 				if (transformComponent) {
-					const auto & position = transformComponent->m_transform.m_position;
+					const auto & position = transformComponent->m_worldTransform.m_position;
 					m_frameData->lightBuffer[index].LightPosition = position;
 					const glm::mat4 trans = glm::translate(glm::mat4(1.0f), position);
 					const glm::mat4 scl = glm::scale(glm::mat4(1.0f), glm::vec3(radiusSquared *1.1f));

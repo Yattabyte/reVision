@@ -37,9 +37,9 @@ public:
 	/***/
 	glm::vec3 getPosition() const;
 	/***/
-	void setSelection(const std::vector<EntityHandle> & entities);
+	void setSelection(const std::vector<ecsEntity*> & entities);
 	/***/
-	std::vector<EntityHandle> & getSelection();
+	std::vector<ecsEntity*> & getSelection();
 
 
 
@@ -54,7 +54,7 @@ private:
 	LevelEditor_Module * m_editor = nullptr;
 	bool m_clicked = false;
 	glm::vec3 m_position = glm::vec3(0.0f);
-	std::vector<EntityHandle> m_selection;
+	std::vector<ecsEntity*> m_selection;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_selIndicator;
 	Shared_Shader m_gizmoShader, m_wireframeShader;

@@ -1,5 +1,6 @@
 #include "Modules/Graphics/Graphics_M.h"
 #include "Modules/Graphics/Common/RH_Volume.h"
+#include "Modules/Graphics/Logical/Transform_System.h"
 #include "Modules/Graphics/Logical/CameraPerspective_System.h"
 #include "Modules/Graphics/Logical/CameraArrayPerspective_System.h"
 #include "Modules/Graphics/Logical/FrustumCull_System.h"
@@ -76,6 +77,7 @@ void Graphics_Module::initialize(Engine * engine)
 	m_sceneCameras = std::make_shared<std::vector<Camera*>>();
 	m_cameraBuffer = std::make_shared<GL_ArrayBuffer<Camera::GPUData>>();
 	auto sharedCameraCounter = std::make_shared<int>(0);
+	m_systems.addSystem(new Transform_System());
 	m_systems.addSystem(new CameraPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new CameraArrayPerspective_System(m_sceneCameras));
 	m_systems.addSystem(new FrustumCull_System(m_sceneCameras));

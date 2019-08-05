@@ -93,17 +93,17 @@ glm::vec3 LevelEditor_Module::getGizmoPosition() const
 	return m_selectionGizmo->getPosition();
 }
 
-void LevelEditor_Module::setSelection(const std::vector<EntityHandle>& entities)
+void LevelEditor_Module::setSelection(const std::vector<ecsEntity*>& entities)
 {
 	m_selectionGizmo->setSelection(entities);
 }
 
-const std::vector<EntityHandle> & LevelEditor_Module::getSelection() const
+const std::vector<ecsEntity*> & LevelEditor_Module::getSelection() const
 {
 	return m_selectionGizmo->getSelection();
 }
 
-void LevelEditor_Module::toggleAddToSelection(const EntityHandle& entity)
+void LevelEditor_Module::toggleAddToSelection(ecsEntity* entity)
 {
 	auto & selection = m_selectionGizmo->getSelection();
 	// If the entity is already selected, deselect it
@@ -198,13 +198,13 @@ void LevelEditor_Module::deleteSelection()
 	/**@todo*/
 }
 
-void LevelEditor_Module::deleteComponent(const EntityHandle& handle, const int& componentID)
+void LevelEditor_Module::deleteComponent(ecsEntity* handle, const int& componentID)
 {
 	/**@todo	undo/redo */
 	m_engine->getModule_World().removeComponent(handle, componentID);
 }
 
-void LevelEditor_Module::addComponent(const EntityHandle& handle, const char * name)
+void LevelEditor_Module::addComponent(ecsEntity* handle, const char * name)
 {
 	if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(name); templateComponent != nullptr) {
 		auto * clone = templateComponent->clone();

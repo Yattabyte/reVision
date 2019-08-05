@@ -47,11 +47,11 @@ public:
 				// Sync Transform Attributes
 				float radius = 1.0f;
 				if (transformComponent) {
-					const auto & position = transformComponent->m_transform.m_position;
-					const auto & orientation = transformComponent->m_transform.m_orientation;
-					const auto & scale = transformComponent->m_transform.m_scale;
+					const auto & position = transformComponent->m_worldTransform.m_position;
+					const auto & orientation = transformComponent->m_worldTransform.m_orientation;
+					const auto & scale = transformComponent->m_worldTransform.m_scale;
 					const auto matRot = glm::mat4_cast(orientation);
-					m_frameData->modelBuffer[index].mMatrix = transformComponent->m_transform.m_modelMatrix;
+					m_frameData->modelBuffer[index].mMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 
 					// Update bounding sphere
 					const glm::vec3 bboxMax_World = (propComponent->m_model->m_bboxMax * scale) + position;

@@ -17,7 +17,7 @@
 constexpr static const char transformName[] = "Transform_Component";
 struct Transform_Component : public ECSComponent<Transform_Component, transformName> {
 	// Default Serialization
-	Transform m_transform;
+	Transform m_localTransform, m_worldTransform;
 };
 
 constexpr static const char playerSpawnName[] = "PlayerSpawn_Component";
@@ -262,7 +262,7 @@ struct Collider_Component : public ECSComponent<Collider_Component, colliderName
 	btDefaultMotionState * m_motionState = nullptr;
 	btRigidBody * m_rigidBody = nullptr;
 	btConvexHullShape * m_shape = nullptr;
-	Transform m_transform;
+	Transform m_worldTransform;
 
 	inline virtual std::vector<char> serialize() override {
 		/**@todo*/

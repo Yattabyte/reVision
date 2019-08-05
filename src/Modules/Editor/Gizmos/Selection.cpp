@@ -97,7 +97,7 @@ glm::vec3 Selection_Gizmo::getPosition() const
 	return m_position;
 }
 
-void Selection_Gizmo::setSelection(const std::vector<EntityHandle> & entities)
+void Selection_Gizmo::setSelection(const std::vector<ecsEntity*> & entities)
 {
 	m_selection = entities;
 
@@ -105,11 +105,11 @@ void Selection_Gizmo::setSelection(const std::vector<EntityHandle> & entities)
 	auto world = m_engine->getModule_World();
 	for each (const auto entity in m_selection)
 		if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr)
-			m_position = transform->m_transform.m_position;
+			m_position = transform->m_worldTransform.m_position;
 	m_editor->setGizmoPosition(m_position);
 }
 
-std::vector<EntityHandle> & Selection_Gizmo::getSelection()
+std::vector<ecsEntity*> & Selection_Gizmo::getSelection()
 {
 	return m_selection;
 }

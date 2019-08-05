@@ -54,9 +54,9 @@ public:
 	/***/
 	void deleteSelection();
 	/***/
-	void deleteComponent(const EntityHandle& handle, const int& componentID);
+	void deleteComponent(ecsEntity* handle, const int& componentID);
 	/***/
-	void addComponent(const EntityHandle& handle, const char * name);
+	void addComponent(ecsEntity* handle, const char * name);
 	/***/
 	void bindFBO();
 	/***/
@@ -66,11 +66,11 @@ public:
 	/***/
 	glm::vec3 getGizmoPosition() const;
 	/***/
-	void setSelection(const std::vector<EntityHandle>& entities);
+	void setSelection(const std::vector<ecsEntity*>& entities);
 	/***/
-	const std::vector<EntityHandle> & getSelection() const;
+	const std::vector<ecsEntity*> & getSelection() const;
 	/***/
-	void toggleAddToSelection(const EntityHandle & entity);
+	void toggleAddToSelection(ecsEntity* entity);
 
 
 private:

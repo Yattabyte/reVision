@@ -38,10 +38,10 @@ public:
 
 			// Synchronize the component if it is visible
 			if (renderableComponent->m_visibleAtAll) {
-				const auto & position = transformComponent->m_transform.m_position;
-				const auto & orientation = transformComponent->m_transform.m_orientation;
-				const auto & scale = transformComponent->m_transform.m_scale;
-				const auto & modelMatrix = transformComponent->m_transform.m_modelMatrix;
+				const auto & position = transformComponent->m_worldTransform.m_position;
+				const auto & orientation = transformComponent->m_worldTransform.m_orientation;
+				const auto & scale = transformComponent->m_worldTransform.m_scale;
+				const auto & modelMatrix = transformComponent->m_worldTransform.m_modelMatrix;
 				const auto matRot = glm::mat4_cast(orientation);
 				const float largest = pow(std::max(std::max(scale.x, scale.y), scale.z), 2.0f);
 				m_frameData->lightBuffer[index].mMatrix = modelMatrix;

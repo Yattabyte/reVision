@@ -35,14 +35,14 @@ public:
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * colliderComponent = (Collider_Component*)componentParam[1];
 
-			const auto & position = transformComponent->m_transform.m_position;
-			const auto & orientation = transformComponent->m_transform.m_orientation;
-			const auto & scale = transformComponent->m_transform.m_scale;
+			const auto & position = transformComponent->m_worldTransform.m_position;
+			const auto & orientation = transformComponent->m_worldTransform.m_orientation;
+			const auto & scale = transformComponent->m_worldTransform.m_scale;
 
 			if (colliderComponent) {
 				if (colliderComponent->m_collider->existsYet()) {
 					// If the collider's transformation is out of date
-					if (colliderComponent->m_transform != transformComponent->m_transform) {
+					if (colliderComponent->m_worldTransform != transformComponent->m_worldTransform) {
 
 						// Remove from the physics simulation
 						if (colliderComponent->m_rigidBody) {
@@ -56,7 +56,7 @@ public:
 						colliderComponent->m_motionState->setWorldTransform(btTransform(btTransform(btQuaternion(orientation.x, orientation.y, orientation.z, orientation.w), btVector3(position.x, position.y, position.z))));
 
 						// Resize the collider shape to fit
-						if (colliderComponent->m_transform.m_scale != transformComponent->m_transform.m_scale || !colliderComponent->m_shape) {	
+						if (colliderComponent->m_worldTransform.m_scale != transformComponent->m_worldTransform.m_scale || !colliderComponent->m_shape) {	
 							if (!colliderComponent->m_shape)
 								delete colliderComponent->m_shape;
 							colliderComponent->m_shape = new btConvexHullShape(*(btConvexHullShape*)colliderComponent->m_collider->m_shape);
@@ -73,7 +73,7 @@ public:
 						m_world->addRigidBody(colliderComponent->m_rigidBody);
 
 						// Update the transform
-						colliderComponent->m_transform = transformComponent->m_transform;
+						colliderComponent->m_worldTransform = transformComponent->m_worldTransform;
 					}
 					
 					// Otherwise update the transform with the collider info
@@ -82,10 +82,10 @@ public:
 						colliderComponent->m_motionState->getWorldTransform(trans);
 						const btQuaternion quat = trans.getRotation();
 						const btVector3 pos = trans.getOrigin();
-						transformComponent->m_transform.m_position = glm::vec3(pos.x(), pos.y(), pos.z());
-						transformComponent->m_transform.m_orientation = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
-						transformComponent->m_transform.update();
-						colliderComponent->m_transform = transformComponent->m_transform;
+						transformComponent->m_worldTransform.m_position = glm::vec3(pos.x(), pos.y(), pos.z());
+						transformComponent->m_worldTransform.m_orientation = glm::quat(quat.w(), quat.x(), quat.y(), quat.z());
+						transformComponent->m_worldTransform.update();
+						colliderComponent->m_worldTransform = transformComponent->m_worldTransform;
 					}
 				}
 			}

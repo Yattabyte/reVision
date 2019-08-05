@@ -43,7 +43,7 @@ public:
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
 				bool isVisible = true;
 				const auto & camPosition = camera->get()->EyePosition;
-				auto objPosition = transformComponent->m_transform.m_position;
+				auto objPosition = transformComponent->m_worldTransform.m_position;
 				if (bsphereComponent)
 					objPosition += bsphereComponent->m_positionOffset;
 
