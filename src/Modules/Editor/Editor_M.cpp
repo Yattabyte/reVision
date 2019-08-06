@@ -174,6 +174,24 @@ void LevelEditor_Module::redo()
 	/**@todo*/
 }
 
+void LevelEditor_Module::groupSelection()
+{
+	auto& world = m_engine->getModule_World();
+	auto& selection = m_selectionGizmo->getSelection();
+	
+	// Make a new -root- entity for the selection
+	auto root = world.makeEntity(0, 0, 0, "Group");
+
+	// Parent all the entities in the selection to the root
+	for each (auto & entity in selection)
+		world.parentEntity(root, entity);
+
+	// Need to add a transform to the root, and modify the transforms of the children
+
+	// Switch the selection to the root entity
+	selection = { root };
+}
+
 void LevelEditor_Module::cutSelection()
 {
 	/**@todo	undo/redo */

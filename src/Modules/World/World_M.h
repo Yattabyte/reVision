@@ -50,8 +50,8 @@ public:
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier	function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func);
-	/** Construct an entity from the array of components and IDS*/
-	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity");
+	/***/
+	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", ecsEntity * parentEntity = nullptr);
 	/** Construct an entity from the array of component references.
 	@note Variadic
 	@param	args	all components to use for this entity. */
@@ -110,6 +110,8 @@ public:
 	inline T* getComponent(ecsEntity* entity) {
 		return (T*)getComponentInternal(entity->m_components, m_components[T::ID], T::ID);
 	}
+	/***/
+	void parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */

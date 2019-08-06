@@ -46,6 +46,8 @@ public:
 	/***/
 	void redo();
 	/***/
+	void groupSelection();
+	/***/
 	void cutSelection();
 	/***/
 	void copySelection();

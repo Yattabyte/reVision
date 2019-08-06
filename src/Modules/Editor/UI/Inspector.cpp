@@ -34,14 +34,14 @@ void Inspector::tick(const float& deltaTime)
 		ImGui::PopStyleVar();
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(2, 2));
 
-		size_t  displayCount(0ull);
-		for each (const auto & entity in worldEntities) {
+		size_t displayCount(0ull);
+		std::function<void(ecsEntity*)> displayEntity = [&](ecsEntity* entity) {
 			bool entity_or_components_pass_filter = false;
 			auto& entityName = entity->m_name;
 			const auto& components = entity->m_components;
 			entity_or_components_pass_filter += filter.PassFilter(entityName.c_str());
 			for each (const auto & component in components)
-				entity_or_components_pass_filter += filter.PassFilter(BaseECSComponent::findName(component.first));	
+				entity_or_components_pass_filter += filter.PassFilter(BaseECSComponent::findName(component.first));
 
 			// Check if the entity or its components matched search criteria
 			if (entity_or_components_pass_filter) {
@@ -60,8 +60,6 @@ void Inspector::tick(const float& deltaTime)
 				};
 				auto tryRightClickElement = [&]() {
 					if (ImGui::BeginPopupContextItem("Entity Controls")) {
-						// Force selection to single item so operations will occur on just IT
-						m_editor->setSelection({ entity });
 						char entityNameChars[256];
 						for (int x = 0; x < entityName.size() && x < 256; ++x)
 							entityNameChars[x] = entityName[x];
@@ -70,6 +68,7 @@ void Inspector::tick(const float& deltaTime)
 							entityName = entityNameChars;
 							ImGui::CloseCurrentPopup();
 						}
+						if (ImGui::MenuItem("Group", "CTRL+G")) { m_editor->groupSelection(); }
 						ImGui::Separator();
 						if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
 						if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
@@ -84,6 +83,8 @@ void Inspector::tick(const float& deltaTime)
 				if (ImGui::TreeNodeEx(entity, node_flags, "%s", entityName.c_str())) {
 					tryLeftClickElement();
 					tryRightClickElement();
+					for each (const auto & subEntity in entity->m_children) 
+						displayEntity(subEntity);					
 					for (int x = 0; x < components.size(); ++x) {
 						const auto& component = components[x];
 						ImGui::PushID(&component);
@@ -156,6 +157,9 @@ void Inspector::tick(const float& deltaTime)
 				ImGui::PopID();
 				displayCount++;
 			}
+		};
+		for each (const auto & entity in worldEntities) {
+			displayEntity(entity);
 		}
 		if (displayCount == 0ull) {
 			ImGui::Separator();

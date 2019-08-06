@@ -49,7 +49,7 @@ public:
 				Player3D_Component player;
 				Transform_Component trans;
 
-				trans.m_worldTransform = transform;
+				trans.m_localTransform = transform;
 
 				BaseECSComponent * entityComponents[] = { &player, &trans };
 				int types[] = { Player3D_Component::ID, Transform_Component::ID };

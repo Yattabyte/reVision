@@ -49,8 +49,8 @@ void Prefabs::spawnPrefab(const int & index)
 	// Later, we must perform some check for a transform component, adding it if its missing
 	// Similarly, later I'd like to do a check for a prop component, if missing add a sprite billboard component (renders only in the editor)
 	Transform_Component trans;
-	trans.m_worldTransform.m_position = m_editor->getGizmoPosition();
-   	trans.m_worldTransform.update();
+	trans.m_localTransform.m_position = m_editor->getGizmoPosition();
+   	trans.m_localTransform.update();
 	BaseECSComponent * entityComponents[] = { &renderable, &bsphere, &prop, &trans };
 	const int types[] = { Renderable_Component::ID, BoundingSphere_Component::ID, Prop_Component::ID, Transform_Component::ID };
 	world.makeEntity(entityComponents, types, 4ull, "Fire Hydrant Prefab");

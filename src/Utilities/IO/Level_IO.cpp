@@ -29,59 +29,79 @@ bool Level_IO::Import_Level(Engine * engine, const std::string & relativePath, s
 
 std::vector<LevelStruct_Entity> Level_IO::parse_level(const std::vector<char> & ecsData)
 {
-	std::vector<LevelStruct_Entity> entities;
 	// Find all entities
+	std::vector<LevelStruct_Entity> entities;
 	size_t dataRead(0ull);
-	while (dataRead < ecsData.size()) {
+	std::function<LevelStruct_Entity()> readInEntity = [&]() ->LevelStruct_Entity {
 		LevelStruct_Entity entity;
 		/* ENTITY DATA STRUCTURE {
 			name char count
 			name chars
 			component data count
+			component data
+			entity child count
+			--nested entity children--
 		} */
 
 		// Read the header for this entity
 		char entityNameChars[256] = { '\0' };
-		unsigned int nameSize(0u);
-		size_t entityDataCount(0ull), entityDataRead(0ull);
-		std::memcpy(&nameSize, &ecsData[dataRead], sizeof(unsigned int)); // copy name char count
-		std::memcpy(entityNameChars, &ecsData[dataRead + sizeof(unsigned int)], size_t(nameSize) * sizeof(char)); // copy name chars
-		std::memcpy(&entityDataCount, &ecsData[dataRead + sizeof(unsigned int) + (size_t(nameSize) * sizeof(char))], sizeof(size_t)); // component data count
-		dataRead += sizeof(unsigned int) + (nameSize * sizeof(char)) + sizeof(size_t);
-		entity.name = std::string(entityNameChars, nameSize);
+		unsigned int nameSize(0u), entityChildCount(0u);
+		size_t componentDataCount(0ull);
 
+		// Read name char count
+		std::memcpy(&nameSize, &ecsData[dataRead], sizeof(unsigned int));
+		dataRead += sizeof(unsigned int);
+		// Read name chars
+		std::memcpy(entityNameChars, &ecsData[dataRead], size_t(nameSize) * sizeof(char));
+		dataRead += nameSize * sizeof(char);
+		// Read entity component data count
+		std::memcpy(&componentDataCount, &ecsData[dataRead], sizeof(size_t));
+		entity.name = std::string(entityNameChars, nameSize);
+		dataRead += sizeof(size_t);
+		// Read enitity child count
+		std::memcpy(&entityChildCount, &ecsData[dataRead], sizeof(unsigned int));
+		dataRead += sizeof(unsigned int);
 		// Find all components between the beginning and end of this entity
-		while (entityDataRead < entityDataCount) {
+		size_t componentDataRead(0ull);
+		while (componentDataRead < componentDataCount) {
 			// Find how large the component data is
 			size_t componentDataSize(0ull);
 			std::memcpy(&componentDataSize, &ecsData[dataRead], sizeof(size_t));
-			entityDataRead += sizeof(size_t);
+			componentDataRead += sizeof(size_t);
 			dataRead += sizeof(size_t);
 
 			// Retrieve component Data
 			std::vector<char> componentData(componentDataSize);
 			std::memcpy(&componentData[0], &ecsData[dataRead], componentDataSize);
-			entityDataRead += componentDataSize;
+			componentDataRead += componentDataSize;
 			dataRead += componentDataSize;
 
 			// Read component name from the data
-			size_t componentDataRead(0ull);
+			size_t nameDataRead(0ull);
 			int nameCount(0);
 			std::memcpy(&nameCount, &componentData[0], sizeof(int));
-			componentDataRead += sizeof(int);
-			char *chars = new char[size_t(nameCount) + 1ull];
+			nameDataRead += sizeof(int);
+			char* chars = new char[size_t(nameCount) + 1ull];
 			std::fill(&chars[0], &chars[nameCount + 1], '\0');
 			std::memcpy(chars, &componentData[sizeof(int)], nameCount);
-			componentDataRead += sizeof(char) * nameCount;
+			nameDataRead += sizeof(char) * nameCount;
 			const auto stringifiedName = std::string(chars);
 			delete[] chars;
 
 			std::vector<char> serializedComponentData;
-			if (componentDataSize - componentDataRead)
-				serializedComponentData = std::vector<char>(componentData.begin() + componentDataRead, componentData.end());
+			if (componentDataSize - nameDataRead)
+				serializedComponentData = std::vector<char>(componentData.begin() + nameDataRead, componentData.end());
 			entity.components.push_back(LevelStruct_Component{ stringifiedName, serializedComponentData });
 		}
-		entities.push_back(entity);
-	}
+		// Find all child entities
+		unsigned int childEntitiesRead(0ull);
+		while (childEntitiesRead < entityChildCount && dataRead < ecsData.size()) {
+			entity.children.push_back(readInEntity());
+			childEntitiesRead++;
+		}
+		return entity;
+	};
+	while (dataRead < ecsData.size()) 
+		entities.push_back(readInEntity());	
 	return entities;
 }

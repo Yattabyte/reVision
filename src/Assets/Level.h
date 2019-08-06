@@ -61,6 +61,7 @@ struct LevelStruct_Component {
 struct LevelStruct_Entity {
 	std::string name = "Entity";
 	std::vector<LevelStruct_Component> components;
+	std::vector<LevelStruct_Entity> children;
 };
 
 #endif // LEVEL_H
