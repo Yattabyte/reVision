@@ -188,22 +188,33 @@ std::vector<ecsEntity*> World_Module::getEntities()
 	return m_entities;
 }
 
-void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* entity)
+void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 {
 	auto * root = &m_entities;
-	const auto childIndex = size_t(entity->m_entityIndex);
+	const auto childIndex = size_t(childEntity->m_entityIndex);
 
 	// Check if the entity has a parent
-	if (auto * entityParent = entity->m_parent)
+	if (auto * entityParent = childEntity->m_parent)
 		root = &entityParent->m_children;
+	else if (parentEntity == nullptr)
+		return; // root is scene root, no new parent provided
 
-	// Swap the entity pointer with the end of the root, then pop it off
+	// Swap the entity pointer with the end of the root, then remove it from the list
 	root->at(childIndex) = root->at(root->size() - 1u);
 	root->at(childIndex)->m_entityIndex = int(childIndex);
 	root->pop_back();
 
-	entity->m_parent = parentEntity;
-	parentEntity->m_children.push_back(entity);
+	// Make this child a child of the new parent, change its index
+	childEntity->m_parent = parentEntity;
+	childEntity->m_entityIndex = parentEntity->m_children.size();
+	parentEntity->m_children.push_back(childEntity);
+}
+
+void World_Module::unparentEntity(ecsEntity* entity)
+{
+	// Move entity up tree, making it a child of its old parent's parent
+	if (auto & parent = entity->m_parent)
+		parentEntity(parent->m_parent, entity);
 }
 
 void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)

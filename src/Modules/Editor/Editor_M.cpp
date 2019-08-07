@@ -179,35 +179,67 @@ void LevelEditor_Module::groupSelection()
 {
 	auto& world = m_engine->getModule_World();
 	auto& selection = m_selectionGizmo->getSelection();
-	
-	// Make a new -root- entity for the selection
-	auto root = world.makeEntity(0, 0, 0, "Group");
+	if (selection.size()) {
+		// Make a new -root- entity for the selection
+		auto root = world.makeEntity(0, 0, 0, "Group", selection[0]->m_parent);
 
-	// Parent all the entities in the selection to the root & calculate center position
-	Transform_Component rootTransform;
-	size_t posCount(0ull);
-	for each (auto & entity in selection) {
-		world.parentEntity(root, entity);
-		if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
-			rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
-			posCount++;
+		// Parent all the entities in the selection to the root & calculate center position
+		Transform_Component rootTransform;
+		size_t posCount(0ull);
+		for each (auto & entity in selection) {
+			world.parentEntity(root, entity);
+			if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
+				rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
+				posCount++;
+			}
 		}
+		rootTransform.m_localTransform.m_position /= float(posCount);
+		rootTransform.m_localTransform.update();
+
+		// Offset children by new center position
+		for each (auto & entity in selection)
+			if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
+				transform->m_localTransform.m_position -= rootTransform.m_localTransform.m_position;
+				transform->m_localTransform.update();
+			}
+
+		// Add center transform to root
+		world.addComponent(root, &rootTransform);
+
+		// Switch the selection to the root entity
+		selection = { root };
 	}
-	rootTransform.m_localTransform.m_position /= float(posCount);
-	rootTransform.m_localTransform.update();
+}
 
-	// Offset children by new center position
-	for each (auto & entity in selection) 
-		if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
-			transform->m_localTransform.m_position -= rootTransform.m_localTransform.m_position;
-			transform->m_localTransform.update();
+void LevelEditor_Module::ungroupSelection()
+{
+	auto& world = m_engine->getModule_World();
+	auto& selection = m_selectionGizmo->getSelection();
+	std::vector<ecsEntity*> newSelection;
+
+	for each (const auto & root in selection) {
+		Transform rootTransform;
+		bool hasRoot(false);
+		if (const auto & rootComponent = world.getComponent<Transform_Component>(root)) {
+			rootTransform = rootComponent->m_localTransform;
+			hasRoot = true;
 		}
-		
-	// Add center transform to root
-	world.addComponent(root, &rootTransform);
+		// Unparent all the children of the root, undo their parent transformation
+		const auto childrenCopy = root->m_children;
+		for each (const auto & child in childrenCopy) {
+			world.unparentEntity(child);
+			if (const auto & transform = world.getComponent<Transform_Component>(child)) {
+				transform->m_localTransform.m_position += rootTransform.m_position;
+				transform->m_localTransform.update();
+			}
+			newSelection.push_back(child);
+		}
 
-	// Switch the selection to the root entity
-	selection = { root };
+		// Delete the root if its only component is a transform
+		if (root->m_components.size() == 1 && hasRoot)
+			world.removeEntity(root);
+	}
+	selection = newSelection;
 }
 
 void LevelEditor_Module::cutSelection()

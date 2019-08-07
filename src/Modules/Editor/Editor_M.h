@@ -48,6 +48,8 @@ public:
 	/***/
 	void groupSelection();
 	/***/
+	void ungroupSelection();
+	/***/
 	void cutSelection();
 	/***/
 	void copySelection();

@@ -112,6 +112,8 @@ public:
 	}
 	/***/
 	void parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity);
+	/***/
+	void unparentEntity(ecsEntity* childEntity);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */

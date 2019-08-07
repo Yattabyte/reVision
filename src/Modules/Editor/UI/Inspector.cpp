@@ -24,8 +24,9 @@ Inspector::Inspector(Engine* engine, LevelEditor_Module* editor)
 void Inspector::tick(const float& deltaTime)
 {
 	auto& world = m_engine->getModule_World();
-	const auto& worldEntities = world.getEntities();
 	const auto& selectedEntities = m_editor->getSelection();
+	// Copy the list of world entities, we call methods that may alter it while traversing it
+	const auto worldEntities = world.getEntities();
 	ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);	
 	if (ImGui::Begin("Scene Inspector", NULL)) {			
 		static ImGuiTextFilter filter;
@@ -68,7 +69,15 @@ void Inspector::tick(const float& deltaTime)
 							entityName = entityNameChars;
 							ImGui::CloseCurrentPopup();
 						}
-						if (ImGui::MenuItem("Group", "CTRL+G")) { m_editor->groupSelection(); }
+						bool enableGrouping = selectedEntities.size() >= 2ull;
+						bool enableUnGrouping = false;
+						for each (const auto & entity in selectedEntities)
+							if (entity->m_children.size()) {
+								enableUnGrouping = true;
+								break;
+							}
+						if (ImGui::MenuItem("Group", "CTRL+G", (bool)0, enableGrouping)) { m_editor->groupSelection(); }
+						if (ImGui::MenuItem("Ungroup", "CTRL+SHIFT+G", (bool)0, enableUnGrouping)) { m_editor->ungroupSelection(); }
 						ImGui::Separator();
 						if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
 						if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
