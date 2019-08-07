@@ -158,9 +158,8 @@ void Inspector::tick(const float& deltaTime)
 				displayCount++;
 			}
 		};
-		for each (const auto & entity in worldEntities) {
-			displayEntity(entity);
-		}
+		for each (const auto & entity in worldEntities)
+			displayEntity(entity);		
 		if (displayCount == 0ull) {
 			ImGui::Separator();
 			ImGui::Spacing();

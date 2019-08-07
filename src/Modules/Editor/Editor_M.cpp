@@ -1,6 +1,7 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Editor/UI/Editor_Interface.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/World/ECS/components.h"
 #include "Engine.h"
 
 
@@ -182,11 +183,28 @@ void LevelEditor_Module::groupSelection()
 	// Make a new -root- entity for the selection
 	auto root = world.makeEntity(0, 0, 0, "Group");
 
-	// Parent all the entities in the selection to the root
-	for each (auto & entity in selection)
+	// Parent all the entities in the selection to the root & calculate center position
+	Transform_Component rootTransform;
+	size_t posCount(0ull);
+	for each (auto & entity in selection) {
 		world.parentEntity(root, entity);
+		if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
+			rootTransform.m_localTransform.m_position += transform->m_localTransform.m_position;
+			posCount++;
+		}
+	}
+	rootTransform.m_localTransform.m_position /= float(posCount);
+	rootTransform.m_localTransform.update();
 
-	// Need to add a transform to the root, and modify the transforms of the children
+	// Offset children by new center position
+	for each (auto & entity in selection) 
+		if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
+			transform->m_localTransform.m_position -= rootTransform.m_localTransform.m_position;
+			transform->m_localTransform.update();
+		}
+		
+	// Add center transform to root
+	world.addComponent(root, &rootTransform);
 
 	// Switch the selection to the root entity
 	selection = { root };

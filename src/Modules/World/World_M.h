@@ -80,7 +80,7 @@ public:
 	@param	component			the component being added.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
 	template <typename SpecificComponent>
-	inline bool addComponent(ecsEntity* entity, const SpecificComponent& component) {
+	inline bool addComponent(ecsEntity* entity, SpecificComponent& component) {
 		return addComponentInternal(entity, SpecificComponent::ID, &component);
 	}
 	/**
