@@ -46,6 +46,8 @@ public:
 	/***/
 	void redo();
 	/***/
+	void mergeSelection();
+	/***/
 	void groupSelection();
 	/***/
 	void ungroupSelection();

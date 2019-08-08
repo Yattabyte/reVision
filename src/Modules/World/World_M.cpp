@@ -190,14 +190,16 @@ std::vector<ecsEntity*> World_Module::getEntities()
 
 void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 {
-	auto * root = &m_entities;
+	// Validate input parameters
+	if ((!parentEntity && !childEntity) || parentEntity == childEntity)
+		return;
+
+	auto * root = &m_entities, * newRoot = parentEntity ? &parentEntity->m_children : &m_entities;
 	const auto childIndex = size_t(childEntity->m_entityIndex);
 
 	// Check if the entity has a parent
 	if (auto * entityParent = childEntity->m_parent)
 		root = &entityParent->m_children;
-	else if (parentEntity == nullptr)
-		return; // root is scene root, no new parent provided
 
 	// Swap the entity pointer with the end of the root, then remove it from the list
 	root->at(childIndex) = root->at(root->size() - 1u);
@@ -206,8 +208,8 @@ void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 
 	// Make this child a child of the new parent, change its index
 	childEntity->m_parent = parentEntity;
-	childEntity->m_entityIndex = parentEntity->m_children.size();
-	parentEntity->m_children.push_back(childEntity);
+	childEntity->m_entityIndex = newRoot->size();
+	newRoot->push_back(childEntity);
 }
 
 void World_Module::unparentEntity(ecsEntity* entity)

@@ -175,6 +175,33 @@ void LevelEditor_Module::redo()
 	/**@todo*/
 }
 
+void LevelEditor_Module::mergeSelection()
+{
+	auto& world = m_engine->getModule_World();
+	auto& selection = m_selectionGizmo->getSelection();
+	if (selection.size()) {
+		// Find the root element
+		const auto & root = selection[0];
+		Transform rootTransform;
+		if (const auto & rootComponent = world.getComponent<Transform_Component>(root))
+			rootTransform = rootComponent->m_localTransform;
+
+		// Parent remaining entities in the selection to the root
+		for (size_t x = 1ull, selSize = selection.size(); x < selSize; ++x) {
+			const auto& entity = selection[x];
+			world.parentEntity(root, entity);
+			if (const auto & transform = world.getComponent<Transform_Component>(entity)) {
+				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - rootTransform.m_position) / rootTransform.m_scale;
+				transform->m_localTransform.m_scale /= rootTransform.m_scale;
+				transform->m_localTransform.update();
+			}			
+		}
+
+		// Switch the selection to the root entity
+		selection = { root };
+	}
+}
+
 void LevelEditor_Module::groupSelection()
 {
 	auto& world = m_engine->getModule_World();

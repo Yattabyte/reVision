@@ -69,29 +69,52 @@ void Inspector::tick(const float& deltaTime)
 							entityName = entityNameChars;
 							ImGui::CloseCurrentPopup();
 						}
-						bool enableGrouping = selectedEntities.size() >= 2ull;
-						bool enableUnGrouping = false;
-						for each (const auto & entity in selectedEntities)
-							if (entity->m_children.size()) {
-								enableUnGrouping = true;
-								break;
+						ImGui::Separator();
+						if (const auto selectionSize = selectedEntities.size()) {
+							if (selectionSize >= 2ull) {								
+								if (ImGui::MenuItem("Merge")) { m_editor->mergeSelection(); }
+								if (ImGui::MenuItem("Group")) { m_editor->groupSelection(); }
+								ImGui::Separator();
 							}
-						if (ImGui::MenuItem("Group", "CTRL+G", (bool)0, enableGrouping)) { m_editor->groupSelection(); }
-						if (ImGui::MenuItem("Ungroup", "CTRL+SHIFT+G", (bool)0, enableUnGrouping)) { m_editor->ungroupSelection(); }
-						ImGui::Separator();
-						if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
-						if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
-						if (ImGui::MenuItem("Paste", "CTRL+V")) { m_editor->paste(); }
-						ImGui::Separator();
-						if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteSelection(); }
-						ImGui::EndPopup();
+							for each (const auto& entity in selectedEntities)
+								if (entity->m_parent) {
+									if (ImGui::MenuItem("Unparent")) { m_editor->ungroupSelection(); }
+									ImGui::Separator();
+									break;
+								}							
+							if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
+							if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
+							if (ImGui::MenuItem("Paste", "CTRL+V")) { m_editor->paste(); }
+							ImGui::Separator();
+							if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteSelection(); }
+							ImGui::EndPopup();
+						}						
 					}
 				};
+				auto tryDragElement = [&]() {
+					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
+						ImGui::SetDragDropPayload("Qwe", &entity, sizeof(ecsEntity**));        // Set payload to carry the index of our item (could be anything)
+						ImGui::Text("Qweeeee");
+						ImGui::EndDragDropSource();
+					}
+					if (ImGui::BeginDragDropTarget()) {
+						if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Qwe")) {
+							IM_ASSERT(payload->DataSize == sizeof(ecsEntity**));
+							auto* childEntity = *(ecsEntity**)(payload->Data);
+							m_editor->setSelection({ entity, childEntity });
+							m_editor->mergeSelection();
+							m_editor->setSelection({ entity });
+						}
+						ImGui::EndDragDropTarget();
+					}
+				};
+			
 
 				// Check if the entity is expanded
 				if (ImGui::TreeNodeEx(entity, node_flags, "%s", entityName.c_str())) {
 					tryLeftClickElement();
 					tryRightClickElement();
+					tryDragElement();
 					for each (const auto & subEntity in entity->m_children) 
 						displayEntity(subEntity);					
 					for (int x = 0; x < components.size(); ++x) {
@@ -162,6 +185,7 @@ void Inspector::tick(const float& deltaTime)
 				ImGui::SameLine();
 				tryLeftClickElement();
 				tryRightClickElement();
+				tryDragElement();
 				ImGui::NewLine();
 				ImGui::PopID();
 				displayCount++;

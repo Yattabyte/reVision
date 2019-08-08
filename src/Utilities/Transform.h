@@ -8,6 +8,7 @@
 #include "glm/gtc/quaternion.hpp"
 #include "glm/gtx/quaternion.hpp"
 #include "glm/gtc/matrix_access.hpp"
+#include "glm/gtx/matrix_decompose.hpp"
 
 
 /** A 3D transformation object. 
@@ -43,6 +44,16 @@ struct Transform {
 						glm::mat4_cast( m_orientation ) *
 						glm::scale( glm::mat4(1.0f), m_scale );
 		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
+	}
+	inline Transform inverse() {
+		Transform n(*this); 
+		n.m_modelMatrix = m_inverseModelMatrix;
+		n.m_inverseModelMatrix = m_modelMatrix;
+		glm::vec3 skew;
+		glm::vec4 perspective;
+		glm::decompose(n.m_modelMatrix, n.m_scale, n.m_orientation, n.m_position, skew, perspective);
+		return n;
+
 	}
 	inline bool operator==(const Transform & other) {
 		return (m_position == other.m_position && m_orientation == other.m_orientation && m_scale == other.m_scale);
