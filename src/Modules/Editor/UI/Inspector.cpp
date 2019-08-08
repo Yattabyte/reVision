@@ -115,7 +115,8 @@ void Inspector::tick(const float& deltaTime)
 					tryLeftClickElement();
 					tryRightClickElement();
 					tryDragElement();
-					for each (const auto & subEntity in entity->m_children) 
+					auto childrenCopy = entity->m_children; // copy because we can modify list
+					for each (const auto & subEntity in childrenCopy)
 						displayEntity(subEntity);					
 					for (int x = 0; x < components.size(); ++x) {
 						const auto& component = components[x];

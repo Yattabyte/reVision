@@ -69,7 +69,7 @@ void World_Module::saveWorld(const std::string& mapName)
 
 		// Write name char count
 		size_t dataIndex(previousSize);
-		std::memcpy(&ecsData[dataIndex], &nameSize, sizeof(unsigned int)); 
+		std::memcpy(&ecsData[dataIndex], &nameSize, sizeof(unsigned int));
 		dataIndex += sizeof(unsigned int);
 		// Write name chars
 		std::memcpy(&ecsData[dataIndex], entityName.c_str(), nameSize * sizeof(char));
@@ -80,7 +80,7 @@ void World_Module::saveWorld(const std::string& mapName)
 		// Write entity child count
 		const auto entityChildCount = (unsigned int)entity->m_children.size();
 		std::memcpy(&ecsData[dataIndex], &entityChildCount, sizeof(unsigned int));
-		dataIndex += sizeof(unsigned int);				
+		dataIndex += sizeof(unsigned int);
 		// Accumulate entity component data count
 		for (const auto& [componentID, createFunc] : entity->m_components) {
 			const auto componentData = getComponentInternal(entity->m_components, m_components[componentID], componentID)->save();
@@ -118,7 +118,7 @@ void World_Module::unloadWorld()
 		auto typeSize = BaseECSComponent::getTypeSize(it->first);
 		auto freefn = BaseECSComponent::getTypeFreeFunction(it->first);
 		for (size_t i = 0; i < it->second.size(); i += typeSize)
-			freefn((BaseECSComponent*)&it->second[i]);
+			freefn((BaseECSComponent*)& it->second[i]);
 		it->second.clear();
 	}
 	m_components.clear();
@@ -128,8 +128,8 @@ void World_Module::unloadWorld()
 			deleteEntity(child);
 		delete entity;
 	};
-	for each (auto & entity in m_entities) 
-		deleteEntity(entity);	
+	for each (auto & entity in m_entities)
+		deleteEntity(entity);
 	m_entities.clear();
 
 	// Signal that the last map has unloaded
@@ -141,7 +141,7 @@ void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const st
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, ecsEntity * parent)
+ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, ecsEntity* parent)
 {
 	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
@@ -152,18 +152,17 @@ ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const i
 		}
 		addComponentInternal(newEntity, componentIDs[i], entityComponents[i]);
 	}
-	
-	newEntity->m_name = name;
-	newEntity->m_entityIndex = (int)m_entities.size();
-	m_entities.push_back(newEntity);
 
-	// Parent last
-	if (parent)
-		parentEntity(parent, newEntity);
+	auto * root = parent ? &parent->m_children : &m_entities;
+	newEntity->m_name = name;
+	newEntity->m_entityIndex = (int)root->size();
+	newEntity->m_parent = parent;
+	root->push_back(newEntity);
+
 	return newEntity;
 }
 
-void World_Module::removeEntity(ecsEntity * entity)
+void World_Module::removeEntity(ecsEntity* entity)
 {
 	auto* root = &m_entities;
 	const auto childIndex = size_t(entity->m_entityIndex);
@@ -173,7 +172,7 @@ void World_Module::removeEntity(ecsEntity * entity)
 		root = &entityParent->m_children;
 
 	// Delete the components and then the entity
-	for (auto & [id, createFn] : entity->m_components)
+	for (auto& [id, createFn] : entity->m_components)
 		deleteComponent(id, createFn);
 	delete root->at(childIndex);
 
@@ -191,25 +190,48 @@ std::vector<ecsEntity*> World_Module::getEntities()
 void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 {
 	// Validate input parameters
-	if ((!parentEntity && !childEntity) || parentEntity == childEntity)
+	if (!childEntity || parentEntity == childEntity)
 		return;
 
-	auto * root = &m_entities, * newRoot = parentEntity ? &parentEntity->m_children : &m_entities;
+	// Variables
+	auto* root = &m_entities, * newRoot = parentEntity ? &parentEntity->m_children : &m_entities;
 	const auto childIndex = size_t(childEntity->m_entityIndex);
+	Transform newParentTransform, oldParentTransform;
 
-	// Check if the entity has a parent
-	if (auto * entityParent = childEntity->m_parent)
-		root = &entityParent->m_children;
+	// Check for parent transformations
+	if (parentEntity)
+		if (const auto & transformComponent = getComponent<Transform_Component>(parentEntity))
+			newParentTransform = transformComponent->m_worldTransform;
+	if (childEntity)
+		if (auto * oldParent = childEntity->m_parent) {
+			root = &oldParent->m_children;
+			if (const auto & transformComponent = getComponent<Transform_Component>(oldParent))
+				oldParentTransform = transformComponent->m_worldTransform;
+		}
 
-	// Swap the entity pointer with the end of the root, then remove it from the list
+	// Remove child entity from its previous parent by swapping with last element + popping it
 	root->at(childIndex) = root->at(root->size() - 1u);
 	root->at(childIndex)->m_entityIndex = int(childIndex);
 	root->pop_back();
+	if (const auto & transform = getComponent<Transform_Component>(childEntity)) {
+		// Transform the child entity, removing it from its previous parent's space
+		const auto newPos = oldParentTransform.m_modelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
+		transform->m_localTransform.m_position = glm::vec3(newPos) / newPos.w;
+		transform->m_localTransform.m_scale *= oldParentTransform.m_scale;
+		transform->m_localTransform.update();
+	}
 
 	// Make this child a child of the new parent, change its index
 	childEntity->m_parent = parentEntity;
 	childEntity->m_entityIndex = newRoot->size();
 	newRoot->push_back(childEntity);
+	if (const auto & transform = getComponent<Transform_Component>(childEntity)) {
+		// Transform the child entity, moving it into its new parent's space
+		const auto newPos = newParentTransform.m_inverseModelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
+		transform->m_localTransform.m_position = glm::vec3(newPos) / newPos.w;
+		transform->m_localTransform.m_scale /= newParentTransform.m_scale;
+		transform->m_localTransform.update();
+	}
 }
 
 void World_Module::unparentEntity(ecsEntity* entity)
@@ -240,7 +262,7 @@ void World_Module::updateSystem(const float& deltaTime, const std::vector<int>& 
 void World_Module::processLevel()
 {
 	if (m_level->existsYet()) {
-		const std::function<void(const LevelStruct_Entity&, ecsEntity * parent)> addEntity = [&](const LevelStruct_Entity& entity, ecsEntity * parent) {
+		const std::function<void(const LevelStruct_Entity&, ecsEntity * parent)> addEntity = [&](const LevelStruct_Entity& entity, ecsEntity* parent) {
 			// Retrieve all of this entity's components
 			std::vector<BaseECSComponent*> components;
 			std::vector<int> ids;
@@ -258,7 +280,7 @@ void World_Module::processLevel()
 			}
 
 			// Make an entity out of the available components			
-			auto * thisEntity = makeEntity(components.data(), ids.data(), components.size(), entity.name, parent);
+			auto* thisEntity = makeEntity(components.data(), ids.data(), components.size(), entity.name, parent);
 
 			// Delete temporary components
 			for each (auto * component in components)
@@ -351,7 +373,7 @@ BaseECSComponent* World_Module::getComponentInternal(std::vector<std::pair<int, 
 {
 	for (size_t i = 0ull; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
-			return (BaseECSComponent*)&mem_array[entityComponents[i].second];
+			return (BaseECSComponent*)& mem_array[entityComponents[i].second];
 	return nullptr;
 }
 
