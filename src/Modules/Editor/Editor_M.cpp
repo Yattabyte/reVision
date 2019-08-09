@@ -175,6 +175,11 @@ void LevelEditor_Module::redo()
 	/**@todo*/
 }
 
+void LevelEditor_Module::clearSelection()
+{
+	m_selectionGizmo->getSelection().clear();
+}
+
 void LevelEditor_Module::mergeSelection()
 {
 	auto& world = m_engine->getModule_World();

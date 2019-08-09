@@ -35,9 +35,9 @@ public:
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * colliderComponent = (Collider_Component*)componentParam[1];
 
-			const auto & position = transformComponent->m_localTransform.m_position;
-			const auto & orientation = transformComponent->m_localTransform.m_orientation;
-			const auto & scale = transformComponent->m_localTransform.m_scale;
+			const auto & position = transformComponent->m_worldTransform.m_position;
+			const auto & orientation = transformComponent->m_worldTransform.m_orientation;
+			const auto & scale = transformComponent->m_worldTransform.m_scale;
 
 			if (colliderComponent) {
 				if (colliderComponent->m_collider->existsYet()) {

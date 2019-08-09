@@ -64,7 +64,7 @@ struct Transform {
 	inline Transform operator*(const Transform& o) const {
 		Transform n(m_position + o.m_position, m_orientation * o.m_orientation, m_scale * o.m_scale);
 		n.m_modelMatrix = m_modelMatrix * o.m_modelMatrix;
-		n.m_inverseModelMatrix = m_inverseModelMatrix * o.m_inverseModelMatrix;
+		n.m_inverseModelMatrix = glm::inverse(n.m_modelMatrix);
 		return n;
 	}
 

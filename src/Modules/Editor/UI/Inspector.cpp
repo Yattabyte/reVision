@@ -71,8 +71,9 @@ void Inspector::tick(const float& deltaTime)
 						}
 						ImGui::Separator();
 						if (const auto selectionSize = selectedEntities.size()) {
-							if (selectionSize >= 2ull) {								
-								if (ImGui::MenuItem("Merge")) { m_editor->mergeSelection(); }
+							if (selectionSize >= 2ull) {
+								const auto text = "Join to \"" + selectedEntities[0]->m_name + "\"";
+								if (ImGui::MenuItem(text.c_str())) { m_editor->mergeSelection(); }
 								if (ImGui::MenuItem("Group")) { m_editor->groupSelection(); }
 								ImGui::Separator();
 							}
@@ -93,22 +94,21 @@ void Inspector::tick(const float& deltaTime)
 				};
 				auto tryDragElement = [&]() {
 					if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-						ImGui::SetDragDropPayload("Qwe", &entity, sizeof(ecsEntity**));        // Set payload to carry the index of our item (could be anything)
-						ImGui::Text("Qweeeee");
+						ImGui::SetDragDropPayload("Entity", &entity, sizeof(ecsEntity**));        // Set payload to carry the index of our item (could be anything)
+						const auto text = "Move \"" + entityName + "\" into...";
+						ImGui::Text(text.c_str());
 						ImGui::EndDragDropSource();
 					}
 					if (ImGui::BeginDragDropTarget()) {
-						if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Qwe")) {
+						if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
 							IM_ASSERT(payload->DataSize == sizeof(ecsEntity**));
-							auto* childEntity = *(ecsEntity**)(payload->Data);
-							m_editor->setSelection({ entity, childEntity });
+							m_editor->setSelection({ entity, *(ecsEntity * *)(payload->Data) });
 							m_editor->mergeSelection();
 							m_editor->setSelection({ entity });
 						}
 						ImGui::EndDragDropTarget();
 					}
-				};
-			
+				};			
 
 				// Check if the entity is expanded
 				if (ImGui::TreeNodeEx(entity, node_flags, "%s", entityName.c_str())) {
@@ -189,11 +189,27 @@ void Inspector::tick(const float& deltaTime)
 				tryDragElement();
 				ImGui::NewLine();
 				ImGui::PopID();
+				ImGui::Separator();
 				displayCount++;
 			}
 		};
+		
+		ImGui::Separator();
 		for each (const auto & entity in worldEntities)
-			displayEntity(entity);		
+			displayEntity(entity);
+
+		// Special case to allow dragging to end of scene list
+		if (ImGui::BeginDragDropTarget()) {
+			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
+				IM_ASSERT(payload->DataSize == sizeof(ecsEntity * *));
+				m_editor->setSelection({ nullptr, *(ecsEntity * *)(payload->Data) });
+				m_editor->mergeSelection();
+				m_editor->clearSelection();
+			}
+			ImGui::EndDragDropTarget();
+		}		
+
+		// Display message when no filtered results
 		if (displayCount == 0ull) {
 			ImGui::Separator();
 			ImGui::Spacing();

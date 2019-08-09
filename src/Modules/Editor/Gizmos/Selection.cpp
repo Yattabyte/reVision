@@ -104,8 +104,9 @@ void Selection_Gizmo::setSelection(const std::vector<ecsEntity*> & entities)
 	// Find FIRST transform in the selection
 	auto world = m_engine->getModule_World();
 	for each (const auto entity in m_selection)
-		if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr)
-			m_position = transform->m_worldTransform.m_position;
+		if (entity)
+			if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr)
+				m_position = transform->m_worldTransform.m_position;
 	m_editor->setGizmoPosition(m_position);
 }
 
