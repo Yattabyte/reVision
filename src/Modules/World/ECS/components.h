@@ -36,7 +36,7 @@ struct Renderable_Component : public ECSComponent<Renderable_Component, renderab
 	std::vector<int> m_visible;
 	bool m_visibleAtAll = false;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		return {};
 	}
 	inline virtual void deserialize(const std::vector<char> & data) override {
@@ -48,7 +48,7 @@ struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		std::vector<char> data(sizeof(Camera));
 		std::memcpy(&data[0], &m_camera, sizeof(Camera));
 		return data;
@@ -63,7 +63,7 @@ struct CameraArray_Component : public ECSComponent<CameraArray_Component, camera
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		/**@todo copy out cameras*/
 		return {};
 	}
@@ -97,7 +97,7 @@ struct Prop_Component : public ECSComponent<Prop_Component, propName> {
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
 		std::vector<char> data(propSize);
@@ -153,7 +153,7 @@ struct Skeleton_Component : public ECSComponent<Skeleton_Component, skeletonName
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(int) + sizeof(bool);
 		std::vector<char> data(propSize);
@@ -197,7 +197,7 @@ constexpr static const char shadowName[] = "Shadow_Component";
 struct Shadow_Component : public ECSComponent<Shadow_Component, shadowName> {
 	int m_shadowSpot = -1;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		return {};
 	}
 	inline virtual void deserialize(const std::vector<char> & data) override {
@@ -246,7 +246,7 @@ struct Reflector_Component : public ECSComponent<Reflector_Component, reflectorN
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		return {};
 	}
 	inline virtual void deserialize(const std::vector<char> & data) override {
@@ -264,7 +264,7 @@ struct Collider_Component : public ECSComponent<Collider_Component, colliderName
 	btConvexHullShape * m_shape = nullptr;
 	Transform m_worldTransform;
 
-	inline virtual std::vector<char> serialize() override {
+	inline virtual std::vector<char> serialize()  override {
 		/**@todo*/
 		return {};
 	}

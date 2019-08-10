@@ -94,16 +94,6 @@ glm::vec3 LevelEditor_Module::getGizmoPosition() const
 	return m_selectionGizmo->getPosition();
 }
 
-void LevelEditor_Module::setSelection(const std::vector<ecsEntity*>& entities)
-{
-	m_selectionGizmo->setSelection(entities);
-}
-
-const std::vector<ecsEntity*> & LevelEditor_Module::getSelection() const
-{
-	return m_selectionGizmo->getSelection();
-}
-
 void LevelEditor_Module::toggleAddToSelection(ecsEntity* entity)
 {
 	auto & selection = m_selectionGizmo->getSelection();
@@ -144,7 +134,7 @@ void LevelEditor_Module::openLevel(const std::string & name)
 
 void LevelEditor_Module::openLevelDialog()
 {
-	openLevel(m_currentLevelName);
+	/**@todo*/
 }
 
 void LevelEditor_Module::saveLevel(const std::string & name)
@@ -178,6 +168,21 @@ void LevelEditor_Module::redo()
 void LevelEditor_Module::clearSelection()
 {
 	m_selectionGizmo->getSelection().clear();
+}
+
+void LevelEditor_Module::selectAll()
+{
+	setSelection(m_engine->getModule_World().getEntities());
+}
+
+void LevelEditor_Module::setSelection(const std::vector<ecsEntity*>& entities)
+{
+	m_selectionGizmo->setSelection(entities);
+}
+
+const std::vector<ecsEntity*>& LevelEditor_Module::getSelection() const
+{
+	return m_selectionGizmo->getSelection();
 }
 
 void LevelEditor_Module::mergeSelection()
@@ -241,25 +246,52 @@ void LevelEditor_Module::ungroupSelection()
 void LevelEditor_Module::cutSelection()
 {
 	/**@todo	undo/redo */
-	/**@todo*/
+	copySelection();
+	deleteSelection();
 }
 
 void LevelEditor_Module::copySelection()
 {
-	/**@todo	undo/redo */
-	/**@todo*/
+	m_copiedData.clear();
+	auto& world = m_engine->getModule_World();
+	for each (const auto & entity in getSelection()) {
+		const auto entData = world.serializeEntity(entity);
+		m_copiedData.insert(m_copiedData.end(), entData.begin(), entData.end());
+	}
 }
 
 void LevelEditor_Module::paste()
 {
 	/**@todo	undo/redo */
-	/**@todo*/
+	auto& world = m_engine->getModule_World();
+	if (m_copiedData.size()) {
+		size_t dataRead(0ull);
+		glm::vec3 center(0.0f);
+		std::vector<Transform_Component*> transformComponents;
+		while (dataRead < m_copiedData.size()) {
+			if (auto *entity = world.deserializeEntity(m_copiedData.data(), m_copiedData.size(), dataRead, nullptr))
+				if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+					transformComponents.push_back(transform);
+					center += transform->m_localTransform.m_position;
+				}
+		}
+
+		// Treat entity collection as a group
+		// Move the group to world origin, then transform to 3D cursor
+		center /= transformComponents.size();
+		const auto cursorPos = getGizmoPosition();
+		for each (auto * transform in transformComponents) {
+			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
+			transform->m_localTransform.update();
+		}
+	}
 }
 
 void LevelEditor_Module::deleteSelection()
 {
 	/**@todo	undo/redo */
-	/**@todo*/
+	for each (const auto & entity in getSelection())
+		m_engine->getModule_World().removeEntity(entity);
 }
 
 void LevelEditor_Module::deleteComponent(ecsEntity* handle, const int& componentID)

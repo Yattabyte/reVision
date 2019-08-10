@@ -48,6 +48,12 @@ public:
 	/***/
 	void clearSelection();
 	/***/
+	void selectAll();
+	/***/
+	void setSelection(const std::vector<ecsEntity*>& entities);
+	/***/
+	const std::vector<ecsEntity*>& getSelection() const;
+	/***/
 	void mergeSelection();
 	/***/
 	void groupSelection();
@@ -74,10 +80,6 @@ public:
 	/***/
 	glm::vec3 getGizmoPosition() const;
 	/***/
-	void setSelection(const std::vector<ecsEntity*>& entities);
-	/***/
-	const std::vector<ecsEntity*> & getSelection() const;
-	/***/
 	void toggleAddToSelection(ecsEntity* entity);
 
 
@@ -88,6 +90,7 @@ private:
 	std::unique_ptr<Selection_Gizmo> m_selectionGizmo;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
+	std::vector<char> m_copiedData;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

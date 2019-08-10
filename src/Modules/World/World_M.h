@@ -3,7 +3,6 @@
 #define WORLD_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Assets/Level.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsEntity.h"
 #include "Modules/World/ECS/ecsSystem.h"
@@ -46,6 +45,15 @@ public:
 	void saveWorld(const std::string& mapName);
 	/** Unload the current world. */
 	void unloadWorld();
+	/***/
+	std::vector<char> serializeEntity(ecsEntity* entity);
+	/***/
+	ecsEntity* deserializeEntity(const char * data, const size_t& dataSize, size_t& dataRead, ecsEntity* parent = nullptr);
+	/***/
+	std::vector<char> serializeComponent(BaseECSComponent* component);
+	/***/
+	std::pair<BaseECSComponent*, int> deserializeComponent(const char * data, const size_t& dataSize, size_t& dataRead);
+
 	/** Registers a notification function to be called when the world state changes.
 	@param	alive		a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier	function to be called on state change. */
@@ -132,8 +140,6 @@ public:
 
 private:
 	// Private Methods
-	/** Process the level asset, generating components and entities. */
-	void processLevel();
 	/** Notify all world-listeners of a state change.
 	@param	state				the new state to notify listeners of. */
 	void notifyListeners(const WorldState& state);
@@ -172,7 +178,6 @@ private:
 	bool m_finishedLoading = false;
 	std::map<int, std::vector<uint8_t>> m_components;
 	std::vector<ecsEntity*> m_entities;
-	Shared_Level m_level;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

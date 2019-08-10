@@ -34,7 +34,7 @@ public:
 	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
 	inline static bool isTypeValid(const int & id) { return id < componentTypes->size(); }
 	virtual int get_id() = 0;
-	virtual BaseECSComponent * clone() = 0;
+	virtual BaseECSComponent * clone() const  = 0;
 	virtual std::vector<char> save() = 0;
 	virtual void load(const std::vector<char> & data) = 0;
 
@@ -66,7 +66,7 @@ struct ECSComponent : public BaseECSComponent {
 	inline virtual int get_id() override {
 		return ID;
 	}
-	inline virtual BaseECSComponent * clone() override {
+	inline virtual BaseECSComponent * clone() const override {
 		return new T(static_cast<T const &>(*this));
 	}
 	inline std::vector<char> save() override {
@@ -80,7 +80,7 @@ struct ECSComponent : public BaseECSComponent {
 		output.insert(output.end(), data.begin(), data.end());
 		return output;
 	}
-	inline virtual std::vector<char> serialize() {
+	inline virtual std::vector<char> serialize()  {
 		std::vector<char> data(sizeof(T));
 		std::memcpy(&data[0], static_cast<T*>(this), sizeof(T));
 		return data;

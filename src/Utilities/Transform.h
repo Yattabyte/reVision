@@ -61,6 +61,14 @@ struct Transform {
 	inline bool operator!=(const Transform & other) {
 		return !((*this)==other);
 	}
+	inline Transform & operator*=(const Transform& o) {
+		m_position += o.m_position;
+		m_orientation *= o.m_orientation;
+		m_scale *= o.m_scale;
+		m_modelMatrix = m_modelMatrix * o.m_modelMatrix;
+		m_inverseModelMatrix = glm::inverse(m_modelMatrix);
+		return *this;
+	}
 	inline Transform operator*(const Transform& o) const {
 		Transform n(m_position + o.m_position, m_orientation * o.m_orientation, m_scale * o.m_scale);
 		n.m_modelMatrix = m_modelMatrix * o.m_modelMatrix;

@@ -1,6 +1,5 @@
 #include "Modules/World/World_M.h"
 #include "Modules/World/ECS/components.h"
-#include "Utilities/IO/Level_IO.h"
 #include "Engine.h"
 #include <fstream>
 #include <filesystem>
@@ -45,70 +44,37 @@ void World_Module::loadWorld(const std::string& mapName)
 	// Signal that a new map is begining to load
 	notifyListeners(startLoading);
 
-	m_level = Shared_Level(m_engine, mapName);
-	m_level->addCallback(m_aliveIndicator, std::bind(&World_Module::processLevel, this));
+	// Read ecsData from disk
+	const auto path = Engine::Get_Current_Dir() + "\\Maps\\" + mapName;
+	std::vector<char> ecsData(std::filesystem::file_size(path));
+	std::fstream mapFile(path, std::ios::binary | std::ios::in | std::ios::beg);
+	if (!mapFile.is_open())
+		m_engine->getManager_Messages().error("Cannot read the binary map file from disk!");
+	else
+		mapFile.read(ecsData.data(), (std::streamsize)ecsData.size());
+	mapFile.close();
+
+	if (ecsData.size()) {
+		size_t dataRead(0ull);
+		while (dataRead < ecsData.size())
+			deserializeEntity(ecsData.data(), ecsData.size(), dataRead, nullptr);
+	}
 }
 
 void World_Module::saveWorld(const std::string& mapName)
 {
-	std::vector<char> ecsData;
-	std::function<void(ecsEntity*)> writeOutEntity = [&](ecsEntity* entity) {
-		/* ENTITY DATA STRUCTURE {
-			name char count
-			name chars
-			component data count
-			entity child count
-			component data
-			--nested entity children--
-		} */
-		const auto previousSize = ecsData.size();
-		const auto& entityName = entity->m_name;
-		const auto nameSize = (unsigned int)(entityName.size());
-		const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
-		ecsData.resize(previousSize + ENTITY_HEADER_SIZE);
-
-		// Write name char count
-		size_t dataIndex(previousSize);
-		std::memcpy(&ecsData[dataIndex], &nameSize, sizeof(unsigned int));
-		dataIndex += sizeof(unsigned int);
-		// Write name chars
-		std::memcpy(&ecsData[dataIndex], entityName.c_str(), nameSize * sizeof(char));
-		dataIndex += nameSize * sizeof(char);
-		// Defer writing entity component data count until later
-		size_t entityDataCount(0ull), entityDataCountIndex(dataIndex);
-		dataIndex += sizeof(size_t);
-		// Write entity child count
-		const auto entityChildCount = (unsigned int)entity->m_children.size();
-		std::memcpy(&ecsData[dataIndex], &entityChildCount, sizeof(unsigned int));
-		dataIndex += sizeof(unsigned int);
-		// Accumulate entity component data count
-		for (const auto& [componentID, createFunc] : entity->m_components) {
-			const auto componentData = getComponentInternal(entity->m_components, m_components[componentID], componentID)->save();
-			const auto componentDataSize = componentData.size();
-			entityDataCount += sizeof(size_t) + componentDataSize;
-
-			// Write component data size + component data to ecs data
-			const auto oldDataSize = ecsData.size();
-			ecsData.resize(oldDataSize + sizeof(size_t) + componentDataSize);
-			std::memcpy(&ecsData[oldDataSize], &componentDataSize, sizeof(size_t));
-			std::memcpy(&ecsData[oldDataSize + sizeof(size_t)], &componentData[0], componentDataSize);
-		}
-		// Fulfill the entity component data count
-		std::memcpy(&ecsData[entityDataCountIndex], &entityDataCount, sizeof(size_t));
-
-		// Write child entities
-		for each (const auto & child in entity->m_children)
-			writeOutEntity(child);
-	};
-	for each (const auto & entity in m_entities)
-		writeOutEntity(entity);
+	std::vector<char> data;
+	for each (const auto & entity in m_entities) {		
+		const auto entityData = serializeEntity(entity);
+		data.insert(data.end(), entityData.begin(), entityData.end());
+	}
 
 	// Write ecsData to disk
 	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\a.bmap", std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
-		mapFile.write(ecsData.data(), (std::streamsize)ecsData.size());
+		mapFile.write(data.data(), (std::streamsize)data.size());
 	mapFile.close();
 }
 
@@ -134,6 +100,158 @@ void World_Module::unloadWorld()
 
 	// Signal that the last map has unloaded
 	notifyListeners(unloaded);
+}
+
+std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
+{
+	/* ENTITY DATA STRUCTURE {
+			name char count
+			name chars
+			component data count
+			entity child count
+			component data
+			--nested entity children--
+	} */
+	size_t dataIndex(0ull);
+	const auto& entityName = entity->m_name;
+	const auto nameSize = (unsigned int)(entityName.size());
+	const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
+	std::vector<char> data(ENTITY_HEADER_SIZE);
+
+	// Write name char count
+	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
+	dataIndex += sizeof(unsigned int);
+	// Write name chars
+	std::memcpy(&data[dataIndex], entityName.c_str(), nameSize * sizeof(char));
+	dataIndex += nameSize * sizeof(char);
+	// Defer writing entity component data count until later
+	size_t entityDataCount(0ull), entityDataCountIndex(dataIndex);
+	dataIndex += sizeof(size_t);
+	// Write entity child count
+	const auto entityChildCount = (unsigned int)entity->m_children.size();
+	std::memcpy(&data[dataIndex], &entityChildCount, sizeof(unsigned int));
+	dataIndex += sizeof(unsigned int);
+	// Accumulate entity component data count
+	for (const auto& [componentID, createFunc] : entity->m_components) {
+		const auto componentData = serializeComponent(getComponentInternal(entity->m_components, m_components[componentID], componentID));
+		data.insert(data.end(), componentData.begin(), componentData.end());
+		entityDataCount += componentData.size();
+	}
+	// Fulfill the entity component data count
+	std::memcpy(&data[entityDataCountIndex], &entityDataCount, sizeof(size_t));
+
+	// Write child entities
+	for each (const auto & child in entity->m_children) {
+		const auto childData = serializeEntity(child);
+		data.insert(data.end(), childData.begin(), childData.end());
+	}
+
+	return data;
+}
+
+ecsEntity* World_Module::deserializeEntity(const char * data, const size_t & dataSize, size_t& dataIndex, ecsEntity * parent)
+{
+	/* ENTITY DATA STRUCTURE {
+		name char count
+		name chars
+		component data count
+		component data
+		entity child count
+		--nested entity children--
+	} */
+	char entityNameChars[256] = { '\0' };
+	unsigned int nameSize(0u), entityChildCount(0u);
+	size_t componentDataCount(0ull);
+
+	// Read name char count
+	std::memcpy(&nameSize, &data[dataIndex], sizeof(unsigned int));
+	dataIndex += sizeof(unsigned int);
+	// Read name chars
+	std::memcpy(entityNameChars, &data[dataIndex], size_t(nameSize) * sizeof(char));
+	dataIndex += nameSize * sizeof(char);
+	// Read entity component data count
+	std::memcpy(&componentDataCount, &data[dataIndex], sizeof(size_t));
+	dataIndex += sizeof(size_t);
+	// Read enitity child count
+	std::memcpy(&entityChildCount, &data[dataIndex], sizeof(unsigned int));
+	dataIndex += sizeof(unsigned int);
+	// Find all components between the beginning and end of this entity
+	std::vector<BaseECSComponent*> components;
+	std::vector<int> componentIDS;
+	const size_t endIndex = dataIndex + componentDataCount;
+	while (dataIndex < endIndex) {
+		const auto& [component, id] = deserializeComponent(data, dataSize, dataIndex);
+		components.push_back(component);
+		componentIDS.push_back(id);
+	}
+
+	// Make the entity		
+	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), parent);
+
+	// Delete temporary components
+	for each (auto * component in components)
+		delete component;
+
+	// Make all child entities
+	unsigned int childEntitiesRead(0ull);
+	while (childEntitiesRead < entityChildCount && dataIndex < dataSize) {
+		deserializeEntity(data, dataSize, dataIndex, thisEntity);
+		childEntitiesRead++;
+	}
+	return thisEntity;
+}
+
+std::vector<char> World_Module::serializeComponent(BaseECSComponent* component)
+{
+	const auto componentData = component->save();
+	const auto componentDataSize = componentData.size();
+
+	std::vector<char> data(sizeof(size_t) + componentDataSize);
+	std::memcpy(&data[0], &componentDataSize, sizeof(size_t));
+	std::memcpy(&data[sizeof(size_t)], &componentData[0], componentDataSize);
+
+	return data;
+}
+
+std::pair<BaseECSComponent*, int> World_Module::deserializeComponent(const char* data, const size_t& dataSize, size_t& dataIndex)
+{
+	// Find how large the component data is
+	size_t componentDataSize(0ull);
+	std::memcpy(&componentDataSize, &data[dataIndex], sizeof(size_t));
+	dataIndex += sizeof(size_t);
+
+	// Retrieve component Data
+	std::vector<char> componentData(componentDataSize);
+	std::memcpy(&componentData[0], &data[dataIndex], componentDataSize);
+	dataIndex += componentDataSize;
+
+	// Read component name from the data
+	size_t nameDataRead(0ull);
+	int nameCount(0);
+	std::memcpy(&nameCount, &componentData[0], sizeof(int));
+	nameDataRead += sizeof(int);
+	char* chars = new char[size_t(nameCount) + 1ull];
+	std::fill(&chars[0], &chars[nameCount + 1], '\0');
+	std::memcpy(chars, &componentData[sizeof(int)], nameCount);
+	nameDataRead += sizeof(char) * nameCount;
+	const auto componentTypeName = std::string(chars);
+	delete[] chars;
+
+	std::vector<char> serializedComponentData;
+	if (componentDataSize - nameDataRead)
+		serializedComponentData = std::vector<char>(componentData.begin() + nameDataRead, componentData.end());
+
+	std::pair<BaseECSComponent*, int> compPair = { nullptr, -1 };
+	if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(componentTypeName.c_str()); templateComponent != nullptr) {
+		// Clone the template component completely, then fill in the serialized data
+		auto* castedComponent = templateComponent->clone();
+		if (serializedComponentData.size())
+			castedComponent->load(serializedComponentData);
+		castedComponent->entity = NULL_ENTITY_HANDLE;
+
+		compPair = { castedComponent , componentID};
+	}
+	return compPair;
 }
 
 void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func)
@@ -164,12 +282,12 @@ ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const i
 
 void World_Module::removeEntity(ecsEntity* entity)
 {
-	auto* root = &m_entities;
-	const auto childIndex = size_t(entity->m_entityIndex);
+	// Delete children entities
+	for each (const auto & child in entity->m_children)
+		removeEntity(child);
 
-	// Check if the entity has a parent
-	if (auto * entityParent = entity->m_parent)
-		root = &entityParent->m_children;
+	auto * root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
+	const auto childIndex = size_t(entity->m_entityIndex);
 
 	// Delete the components and then the entity
 	for (auto& [id, createFn] : entity->m_components)
@@ -257,42 +375,6 @@ void World_Module::updateSystem(const float& deltaTime, const std::vector<int>& 
 {
 	if (auto components = getRelevantComponents(types, flags); components.size() > 0ull)
 		func(deltaTime, components);
-}
-
-void World_Module::processLevel()
-{
-	if (m_level->existsYet()) {
-		const std::function<void(const LevelStruct_Entity&, ecsEntity * parent)> addEntity = [&](const LevelStruct_Entity& entity, ecsEntity* parent) {
-			// Retrieve all of this entity's components
-			std::vector<BaseECSComponent*> components;
-			std::vector<int> ids;
-			for each (auto & component in entity.components) {
-				if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(component.type.data()); templateComponent != nullptr) {
-					// Clone the template component completely, then fill in the serialized data
-					auto* castedComponent = templateComponent->clone();
-					if (component.data.size())
-						castedComponent->load(component.data);
-					castedComponent->entity = NULL_ENTITY_HANDLE;
-
-					components.push_back(castedComponent);
-					ids.push_back(componentID);
-				}
-			}
-
-			// Make an entity out of the available components			
-			auto* thisEntity = makeEntity(components.data(), ids.data(), components.size(), entity.name, parent);
-
-			// Delete temporary components
-			for each (auto * component in components)
-				delete component;
-
-			// Make child entities
-			for each (const auto & child in entity.children)
-				addEntity(child, thisEntity);
-		};
-		for each (const auto & entity in m_level->m_entities)
-			addEntity(entity, nullptr);
-	}
 }
 
 void World_Module::notifyListeners(const WorldState& state)

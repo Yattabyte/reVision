@@ -33,12 +33,29 @@ public:
 		if (selectedComponents.size()) {
 			const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
 			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-				auto posInput = selectedComponents[0]->m_localTransform.m_position;
-				if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
-					for each (auto & component in selectedComponents) {
-						component->m_localTransform.m_position = posInput;
-						component->m_localTransform.update();
-						m_editor->setGizmoPosition(posInput);
+				static bool treatAsGroup = false;
+				ImGui::Checkbox("Treat as group", &treatAsGroup);
+
+				if (treatAsGroup) {
+					const auto groupCenter = find_center_transform(selectedComponents);
+					auto posInput = groupCenter.m_position;
+					if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
+						const auto delta = posInput - groupCenter.m_position;
+						for each (auto & component in selectedComponents) {
+							component->m_localTransform.m_position += delta;
+							component->m_localTransform.update();
+							m_editor->setGizmoPosition(posInput);
+						}
+					}
+				}
+				else {
+					auto posInput = selectedComponents[0]->m_localTransform.m_position;
+					if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
+						for each (auto & component in selectedComponents) {
+							component->m_localTransform.m_position = posInput;
+							component->m_localTransform.update();
+							m_editor->setGizmoPosition(posInput);
+						}
 					}
 				}
 				auto sclInput = selectedComponents[0]->m_localTransform.m_scale;
@@ -61,6 +78,18 @@ public:
 
 
 private:
+	// Private Methods
+	/***/
+	static Transform find_center_transform(const std::vector<Transform_Component*> & transforms) {
+		Transform center;
+		for each (const auto & component in transforms)
+			center *= component->m_localTransform;
+		center.m_position /= transforms.size();
+		center.update();
+		return center;
+	}
+
+
 	// Private Attributes
 	LevelEditor_Module* m_editor = nullptr;
 };
