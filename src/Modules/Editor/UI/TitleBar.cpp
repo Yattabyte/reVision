@@ -40,13 +40,18 @@ void TitleBar::tick(const float & deltaTime)
 			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) { m_editor->redo(); }  // Disabled item
 			ImGui::Separator();
 			if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor->selectAll(); }
-			if (ImGui::MenuItem("Clear Selection", "CTRL+D")) { m_editor->clearSelection(); }
+			const bool hasSelection = m_editor->getSelection().size() ? true : false;
+			if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor->clearSelection(); }
+			const bool canGroup = m_editor->getSelection().size() > 1 ? true : false;
+			if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor->groupSelection(); }
+			if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, hasSelection)) { m_editor->makePrefab(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
-			if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
-			if (ImGui::MenuItem("Paste", "CTRL+V")) { m_editor->paste(); }
+			if (ImGui::MenuItem("Cut", "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
+			if (ImGui::MenuItem("Copy", "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
+			const bool canPaste = m_editor->hasCopy();
+			if (ImGui::MenuItem("Paste", "CTRL+V", nullptr, canPaste)) { m_editor->paste(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteSelection(); }
+			if (ImGui::MenuItem("Delete", "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();

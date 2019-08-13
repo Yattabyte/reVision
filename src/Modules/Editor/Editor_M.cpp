@@ -1,5 +1,11 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Editor/UI/Editor_Interface.h"
+#include "Modules/Editor/UI/CameraController.h"
+#include "Modules/Editor/UI/RotationIndicator.h"
+#include "Modules/Editor/UI/TitleBar.h"
+#include "Modules/Editor/UI/Prefabs.h"
+#include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Modules/World/ECS/components.h"
 #include "Engine.h"
@@ -17,7 +23,7 @@ void LevelEditor_Module::initialize(Engine * engine)
 	m_editorInterface = std::make_shared<Editor_Interface>(engine, this);	
 
 	// Gizmos
-	m_selectionGizmo = std::make_unique<Selection_Gizmo>(engine, this);
+	m_selectionGizmo = std::make_shared<Selection_Gizmo>(engine, this);
 
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
@@ -105,6 +111,11 @@ void LevelEditor_Module::toggleAddToSelection(ecsEntity* entity)
 
 	// Ensure our gizmos stay in sync
 	setSelection(selection);
+}
+
+bool LevelEditor_Module::hasCopy() const
+{
+	return m_copiedData.size() ? true : false;
 }
 
 void LevelEditor_Module::showEditor()
@@ -241,6 +252,11 @@ void LevelEditor_Module::ungroupSelection()
 
 	for each (const auto & root in selection) 
 		world.unparentEntity(root);		
+}
+
+void LevelEditor_Module::makePrefab()
+{
+	m_editorInterface->m_uiPrefabs->makePrefab(getSelection());
 }
 
 void LevelEditor_Module::cutSelection()

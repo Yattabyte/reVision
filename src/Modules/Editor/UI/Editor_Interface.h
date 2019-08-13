@@ -10,6 +10,11 @@
 // Forward Declarations
 class Engine;
 class LevelEditor_Module;
+class CameraController;
+class TitleBar;
+class Prefabs;
+class Inspector;
+class RotationIndicator;
 
 /***/
 class Editor_Interface : public ImGUI_Element {
@@ -25,11 +30,18 @@ public:
 	virtual void tick(const float & deltaTime) override;
 
 
+	// Public Attributes
+	std::shared_ptr<CameraController> m_uiCamController;
+	std::shared_ptr<TitleBar> m_uiTitlebar;
+	std::shared_ptr<Prefabs> m_uiPrefabs;
+	std::shared_ptr<Inspector> m_uiInspector;
+	std::shared_ptr<RotationIndicator> m_uiRotIndicator;
+
+
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
-	std::vector<ImGUI_Element*> m_elements;
 	Shared_Auto_Model m_shapeQuad;
 	Shared_Shader m_shader;
 	StaticBuffer m_indirectBuffer;

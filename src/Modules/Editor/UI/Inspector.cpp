@@ -74,20 +74,21 @@ void Inspector::tick(const float& deltaTime)
 							if (selectionSize >= 2ull) {
 								const auto text = "Join to \"" + selectedEntities[0]->m_name + "\"";
 								if (ImGui::MenuItem(text.c_str())) { m_editor->mergeSelection(); }
-								if (ImGui::MenuItem("Group")) { m_editor->groupSelection(); }
+								if (ImGui::MenuItem("Group Selection")) { m_editor->groupSelection(); }
 								ImGui::Separator();
 							}
+							if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
 							for each (const auto& entity in selectedEntities)
 								if (entity->m_parent) {
 									if (ImGui::MenuItem("Unparent")) { m_editor->ungroupSelection(); }
 									ImGui::Separator();
 									break;
 								}							
-							if (ImGui::MenuItem("Cut", "CTRL+X")) { m_editor->cutSelection(); }
-							if (ImGui::MenuItem("Copy", "CTRL+C")) { m_editor->copySelection(); }
-							if (ImGui::MenuItem("Paste", "CTRL+V")) { m_editor->paste(); }
+							if (ImGui::MenuItem("Cut")) { m_editor->cutSelection(); }
+							if (ImGui::MenuItem("Copy")) { m_editor->copySelection(); }
+							if (ImGui::MenuItem("Paste")) { m_editor->paste(); }
 							ImGui::Separator();
-							if (ImGui::MenuItem("Delete", "DEL")) { m_editor->deleteSelection(); }
+							if (ImGui::MenuItem("Delete")) { m_editor->deleteSelection(); }
 							ImGui::EndPopup();
 						}						
 					}

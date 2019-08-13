@@ -33,7 +33,7 @@ public:
 		if (selectedComponents.size()) {
 			const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
 			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-				static bool treatAsGroup = false;
+				static bool treatAsGroup = true;
 				ImGui::Checkbox("Treat as group", &treatAsGroup);
 
 				if (treatAsGroup) {

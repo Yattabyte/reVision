@@ -3,10 +3,13 @@
 #define EDITOR_MODULE_H
 
 #include "Modules/Engine_Module.h"
-#include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
 
+
+// Forward Declarations
+class Editor_Interface;
+class Selection_Gizmo;
 
 /** A level editor module. */
 class LevelEditor_Module : public Engine_Module {
@@ -60,6 +63,8 @@ public:
 	/***/
 	void ungroupSelection();
 	/***/
+	void makePrefab();
+	/***/
 	void cutSelection();
 	/***/
 	void copySelection();
@@ -81,13 +86,15 @@ public:
 	glm::vec3 getGizmoPosition() const;
 	/***/
 	void toggleAddToSelection(ecsEntity* entity);
+	/***/
+	bool hasCopy() const;
 
 
 private:
 	// Private Attributes
 	std::string m_currentLevelName = "";
-	std::shared_ptr<ImGUI_Element> m_editorInterface;
-	std::unique_ptr<Selection_Gizmo> m_selectionGizmo;
+	std::shared_ptr<Editor_Interface> m_editorInterface;
+	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;

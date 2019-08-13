@@ -11,11 +11,11 @@
 Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_elements.push_back(new CameraController(engine, editor));
-	m_elements.push_back(new TitleBar(engine, editor));
-	m_elements.push_back(new Prefabs(engine, editor));
-	m_elements.push_back(new Inspector(engine, editor));
-	m_elements.push_back(new RotationIndicator(engine, editor));
+	m_uiCamController = std::make_shared<CameraController>(engine, editor);
+	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
+	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
+	m_uiInspector = std::make_shared<Inspector>(engine, editor);
+	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine, editor);
 
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
@@ -25,7 +25,6 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 		const GLuint data[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 		m_indirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
 	});
-
 
 	auto& preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -57,7 +56,10 @@ void Editor_Interface::tick(const float & deltaTime)
 	ImGui::End();
 
 	// Process all UI elements
-	for each (auto & element in m_elements)
+	const std::shared_ptr<ImGUI_Element> elements[] = { 
+		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator 
+	};
+	for each (auto & element in elements)
 		element->tick(deltaTime);
 
 	// Render overlay
