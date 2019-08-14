@@ -15,6 +15,7 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	m_texBack = Shared_Texture(engine, "Editor//folderBack.png");
 	m_texFolder = Shared_Texture(engine, "Editor//folder.png");
 	m_texMissingThumb = Shared_Texture(engine, "Editor//prefab.png");
+	m_texIconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 
 	// Load prefabs
 	populatePrefabs();
@@ -23,10 +24,22 @@ Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 void Prefabs::tick(const float& deltaTime)
 {
 	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
+	enum PrefabOptions {
+		none,
+		open,
+		del,
+		rename
+	} prefabOption = none;
+	// Draw Prefabs window
 	if (ImGui::Begin("Prefabs", NULL)) {
 		static ImGuiTextFilter filter;
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
 		filter.Draw("Search");
+		auto alignOffset = ImGui::GetWindowContentRegionMax().x - 19.0f;
+		alignOffset = alignOffset < 0.0f ? 0.0f : alignOffset;
+		ImGui::SameLine(alignOffset);
+		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_texIconRefresh->existsYet() ? m_texIconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+			populatePrefabs(m_prefabSubDirectory);		
 		ImGui::PopStyleVar();
 		ImGui::Separator();
 		ImGui::Spacing();
@@ -38,8 +51,8 @@ void Prefabs::tick(const float& deltaTime)
 		auto columnCount = int(float(ImGui::GetWindowContentRegionMax().x) / float((ImGui::GetStyle().ItemSpacing.x * 2) + 50));
 		columnCount < 1 ? 1 : columnCount;
 		ImGui::Columns(columnCount, nullptr, false);
-		for (int x = 0; x < m_prefabs.size(); ++x) {
-			const auto& prefab = m_prefabs[x];
+		int count(0);
+		for each (const auto& prefab in m_prefabs) {
 			if (filter.PassFilter(prefab.name.c_str())) {
 				ImGui::PushID(&prefab);
 				GLuint textureID = 0;
@@ -51,42 +64,101 @@ void Prefabs::tick(const float& deltaTime)
 					textureID = m_texMissingThumb->m_glTexID;
 
 				ImGui::BeginGroup();
-				ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(textureID), { 50, 50 }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+				ImVec4 color = count == m_selectedIndex ? ImVec4(1,1,1,0.75) : ImVec4(0,0,0,0);
+				ImGui::ImageButton(
+					(ImTextureID)static_cast<uintptr_t>(textureID), 
+					{ 50, 50 }, 
+					{ 0.0f, 1.0f }, { 1.0f, 0.0f }, 
+					-1, 
+					color
+				);
 				ImGui::TextWrapped(prefab.name.c_str());
 				ImGui::EndGroup();
-				if (ImGui::IsItemClicked() && ImGui::IsMouseDoubleClicked(0))
-					selectPrefab(prefab);
+				if (ImGui::IsItemClicked()) {
+					m_selectedIndex = count;
+					if (ImGui::IsMouseDoubleClicked(0))
+						prefabOption = open;
+				}
 				else if (ImGui::BeginPopupContextItem("Edit Prefab")) {
-					if (ImGui::MenuItem("Open")) { selectPrefab(prefab); }
+					m_selectedIndex = count;
+					if (ImGui::MenuItem("Open")) { prefabOption = open; }
 					ImGui::Separator();
-					if (ImGui::MenuItem("Rename")) {  }
+					if (ImGui::MenuItem("Delete")) { prefabOption = del; }
+					ImGui::Separator();
+					if (ImGui::MenuItem("Rename")) { prefabOption = rename; }
 					ImGui::EndPopup();
 				}
 				ImGui::PopID();
 				ImGui::NextColumn();
 			}
+			count++;
 		}
 	}
 	ImGui::End();
 
-	if (m_selectedPrefab > -1)
+	// Do something with the option chosen
+	switch (prefabOption) {
+	case open:
+		openPrefab();
+		break;
+	case del:
+		ImGui::OpenPopup("Delete Prefab?");
+		break;
+	case rename:
 		ImGui::OpenPopup("Name Prefab");
+		break;
+	}
+	
+	// Draw 'Delete Prefab' confirmation
+	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);
+	if (ImGui::BeginPopupModal("Delete Prefab?", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
+		ImGui::TextWrapped(
+			"Are you sure you want to delete this prefab?\n"
+			"This won't remove the prefab from any levels."
+		);
+		ImGui::Spacing();
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
+		if (ImGui::Button("Cancel", { 75, 20 }))
+			ImGui::CloseCurrentPopup();
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		ImGui::Spacing();
+		ImGui::SameLine();
+		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
+		if (ImGui::Button("Delete", { 50, 20 })) {
+			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
+			std::filesystem::remove(fullPath);
+			m_selectedIndex = -1;
+			populatePrefabs(m_prefabSubDirectory);
+			ImGui::CloseCurrentPopup();  
+		}
+		ImGui::PopStyleColor(6);
+		ImGui::EndPopup();
+	}
+
+	// Draw 'Rename Prefab' dialog
 	if (ImGui::BeginPopupModal("Name Prefab", NULL, ImGuiWindowFlags_NoCollapse)) {
 		ImGui::Text("Enter a name for this prefab");
 		ImGui::Spacing();
 
 		char nameInput[256];
-		for (size_t x = 0; x < m_prefabs[m_selectedPrefab].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
-			nameInput[x] = m_prefabs[m_selectedPrefab].name[x];
-		nameInput[std::min(256ull, m_prefabs[m_selectedPrefab].name.length())] = '\0';
-		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput)))
-			m_prefabs[m_selectedPrefab].name = nameInput;
-		ImGui::Spacing();
-
-		if (ImGui::Button("Close")) {
-			m_selectedPrefab = -1;
+		for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
+			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
+		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
+		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
+			m_prefabs[m_selectedIndex].name = nameInput;
+			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
+			std::filesystem::rename(fullPath, std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)));
 			ImGui::CloseCurrentPopup();
 		}
+		ImGui::Spacing();    
+
+		if (ImGui::Button("Close")) 
+			ImGui::CloseCurrentPopup();		
 		ImGui::EndPopup();
 	}
 }
@@ -97,24 +169,22 @@ void Prefabs::makePrefab(const std::vector<ecsEntity*>& entities)
 	// Temporarily save this prefab data somewhere, probably to a variable
 	// Then move the 'making prefab' work into the main tick
 	// So we can create a proper naming window, checking for prefabs with existing name
-
-
-	/*auto& world = m_engine->getModule_World();
+	auto& world = m_engine->getModule_World();
 	std::vector<char> prefabData;
 	for each (const auto & entity in entities) {
 		const auto entData = world.serializeEntity(entity);
 		prefabData.insert(prefabData.end(), entData.begin(), entData.end());
 	}
-	m_prefabs.push_back({ "New Entity", prefabData });
-	m_selectedPrefab = (int)(m_prefabs.size()) - 1;
+	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Prefab::file, prefabData });
+	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
-	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabSubDirectory + m_prefabs[m_selectedPrefab].name , std::ios::binary | std::ios::out);
+	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path , std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
 		mapFile.write(prefabData.data(), (std::streamsize)prefabData.size());
-	mapFile.close();*/
+	mapFile.close();
 }
 
 void Prefabs::populatePrefabs(const std::string & directory)
@@ -146,16 +216,18 @@ void Prefabs::populatePrefabs(const std::string & directory)
 	}
 }
 
-void Prefabs::selectPrefab(const Prefab & prefab)
+void Prefabs::openPrefab()
 {
-	if (prefab.type == Prefab::back || prefab.type == Prefab::folder) {
-		const std::string nameCopy(prefab.path);
+	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
+	if (selectedPrefab.type == Prefab::back || selectedPrefab.type == Prefab::folder) {
+		const std::string nameCopy(selectedPrefab.path);
 		populatePrefabs(nameCopy);
+		m_selectedIndex = -1;
 	}
 	else {
 		auto& world = m_engine->getModule_World();
 		size_t dataRead(0ull);
-		while (dataRead < prefab.serialData.size())
-			world.deserializeEntity(prefab.serialData.data(), prefab.serialData.size(), dataRead);
+		while (dataRead < selectedPrefab.serialData.size())
+			world.deserializeEntity(selectedPrefab.serialData.data(), selectedPrefab.serialData.size(), dataRead);
 	}
 }

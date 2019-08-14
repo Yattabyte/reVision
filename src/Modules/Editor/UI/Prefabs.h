@@ -11,12 +11,13 @@
 class Engine;
 class LevelEditor_Module;
 struct Prefab {
-	std::string name, path;
+	std::string name = "", path = "";
 	enum type {
+		none, 
 		file,
 		folder,
 		back
-	} type = file;
+	} type = none;
 	std::vector<char> serialData;
 };
 
@@ -44,15 +45,15 @@ private:
 	/***/
 	void populatePrefabs(const std::string & directory = "");
 	/***/
-	void selectPrefab(const Prefab& prefab);
+	void openPrefab();
 
 
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;	
-	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb;
-	int m_selectedPrefab = -1;
+	Shared_Texture m_texBack, m_texFolder, m_texMissingThumb, m_texIconRefresh;
 	std::string m_prefabSubDirectory = "";
+	int m_selectedIndex = -1;
 	std::vector<Prefab> m_prefabs;
 };
 
