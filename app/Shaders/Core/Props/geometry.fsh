@@ -11,6 +11,7 @@ layout (location = 0) out vec3 FirstTexture;
 layout (location = 1) out vec4 SecondTexture; 
 layout (location = 2) out vec4 ThirdTexture; 
 
+
 void main()									
 {		
 	const vec4 Texture1			= texture(MaterialMap, vec3(TexCoord, MaterialOffset + 0));	

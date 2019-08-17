@@ -11,7 +11,7 @@
 Prefabs::Prefabs(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
-	// Load Texture Assets
+	// Load Assets
 	m_texBack = Shared_Texture(engine, "Editor//folderBack.png");
 	m_texFolder = Shared_Texture(engine, "Editor//folder.png");
 	m_texMissingThumb = Shared_Texture(engine, "Editor//prefab.png");
@@ -165,10 +165,6 @@ void Prefabs::tick(const float& deltaTime)
 
 void Prefabs::makePrefab(const std::vector<ecsEntity*>& entities)
 {
-	// Changes To Make
-	// Temporarily save this prefab data somewhere, probably to a variable
-	// Then move the 'making prefab' work into the main tick
-	// So we can create a proper naming window, checking for prefabs with existing name
 	auto& world = m_engine->getModule_World();
 	std::vector<char> prefabData;
 	for each (const auto & entity in entities) {
@@ -227,7 +223,23 @@ void Prefabs::openPrefab()
 	else {
 		auto& world = m_engine->getModule_World();
 		size_t dataRead(0ull);
-		while (dataRead < selectedPrefab.serialData.size())
-			world.deserializeEntity(selectedPrefab.serialData.data(), selectedPrefab.serialData.size(), dataRead);
+		glm::vec3 center(0.0f);
+		std::vector<Transform_Component*> transformComponents;
+		while (dataRead < selectedPrefab.serialData.size()) {
+			if (auto * entity = world.deserializeEntity(selectedPrefab.serialData.data(), selectedPrefab.serialData.size(), dataRead))
+				if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+					transformComponents.push_back(transform);
+					center += transform->m_localTransform.m_position;
+				}
+		}
+
+		// Treat entity collection as a group
+		// Move the group to world origin, then transform to 3D cursor
+		center /= transformComponents.size();
+		const auto cursorPos = m_editor->getGizmoPosition();
+		for each (auto * transform in transformComponents) {
+			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
+			transform->m_localTransform.update();
+		}
 	}
 }

@@ -90,14 +90,16 @@ void LevelEditor_Module::setGizmoPosition(const glm::vec3 & position)
 {	
 	// Update all gizmos we support
 	m_selectionGizmo->setPosition(position);
-	// m_translateGizmo->setPosition(position);
-	// m_scaleGizmo->setPosition(position);
-	// m_rotateGizmo->setPosition(position);
 }
 
 glm::vec3 LevelEditor_Module::getGizmoPosition() const
 {
 	return m_selectionGizmo->getPosition();
+}
+
+const glm::vec3 & LevelEditor_Module::getCameraPosition() const
+{
+	return m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition;
 }
 
 void LevelEditor_Module::toggleAddToSelection(ecsEntity* entity)
@@ -300,6 +302,23 @@ void LevelEditor_Module::paste()
 			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
 			transform->m_localTransform.update();
 		}
+	}
+}
+
+void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
+{
+	auto& world = m_engine->getModule_World();
+	std::vector<Transform_Component*> transformComponents;
+	glm::vec3 center(0.0f);
+	for each (const auto & entity in getSelection())
+		if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+			transformComponents.push_back(transform);
+			center += transform->m_localTransform.m_position;
+		}
+	center /= transformComponents.size();
+	for each (auto * transform in transformComponents) {
+		transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + newPosition;
+		transform->m_localTransform.update();
 	}
 }
 

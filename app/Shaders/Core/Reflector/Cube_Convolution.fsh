@@ -20,7 +20,7 @@ vec2 Hammersley(uint i, uint N)
 	return vec2(float(i) / float(N), float(bitfieldReverse(i)) * 2.3283064365386963e-10);
 }
  
-vec3 ImportanceSampleGGX( in vec2 Xi, in vec3 Normal )
+vec3 ImportanceSampleGGX(vec2 Xi, vec3 Normal)
 {
 	float a 			= roughness * roughness;
 	

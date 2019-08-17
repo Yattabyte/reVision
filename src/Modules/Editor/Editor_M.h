@@ -71,6 +71,8 @@ public:
 	/***/
 	void paste();
 	/***/
+	void moveSelection(const glm::vec3& newPosition);
+	/***/
 	void deleteSelection();
 	/***/
 	void deleteComponent(ecsEntity* handle, const int& componentID);
@@ -84,6 +86,8 @@ public:
 	void setGizmoPosition(const glm::vec3 & position);
 	/***/
 	glm::vec3 getGizmoPosition() const;
+	/***/
+	const glm::vec3& getCameraPosition() const;
 	/***/
 	void toggleAddToSelection(ecsEntity* entity);
 	/***/
