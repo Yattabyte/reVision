@@ -1,16 +1,16 @@
-#include "Modules/Editor/Gizmos/Translation.h"
+#include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 #include "glm/gtx/intersect.hpp"
 
 
-Translation_Gizmo::~Translation_Gizmo()
+Scaling_Gizmo::~Scaling_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
 }
 
-Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
+Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	// Update indicator
@@ -18,27 +18,27 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Assets
 	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
-	m_model = Shared_Auto_Model(engine, "Editor\\translate");
+	m_model = Shared_Auto_Model(engine, "Editor\\scale");
 	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint data[4] = { (GLuint)m_model->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
-	});
+		});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
-	});
+		});
 }
 
-bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
+bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
 {
 	// See if the mouse intersects any entities.
 	// In any case move the translation gizmo to where the mouse is.
@@ -53,7 +53,7 @@ bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
 	return false;
 }
 
-void Translation_Gizmo::render(const float& deltaTime)
+void Scaling_Gizmo::render(const float& deltaTime)
 {
 	// Safety check first
 	if (m_model->existsYet() && m_colorPalette->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
@@ -80,7 +80,7 @@ void Translation_Gizmo::render(const float& deltaTime)
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * mMatrix);
 
 		// Render
-		m_gizmoShader->bind();		
+		m_gizmoShader->bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Revert State
@@ -88,12 +88,12 @@ void Translation_Gizmo::render(const float& deltaTime)
 	}
 }
 
-void Translation_Gizmo::setTransform(const Transform & transform)
+void Scaling_Gizmo::setTransform(const Transform& transform)
 {
 	m_transform = transform;
 }
 
-bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
+bool Scaling_Gizmo::rayCastMouse(const float& deltaTime)
 {
 	const auto& actionState = m_engine->getActionState();
 	const auto& position = m_transform.m_position;
@@ -114,13 +114,13 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 	// Check if the user selected an axis
 	if (m_selectedAxes == NONE) {
 		const auto TestRayOBBIntersection = [](
-			const glm::vec3 & ray_origin,        // Ray origin, in world space
-			const glm::vec3 & ray_direction,     // Ray direction (NOT target position!), in world space. Must be normalize()'d.
-			const glm::vec3 & aabb_min,          // Minimum X,Y,Z coords of the mesh when not transformed at all.
-			const glm::vec3 & aabb_max,          // Maximum X,Y,Z coords. Often aabb_min*-1 if your mesh is centered, but it's not always the case.
-			const glm::mat4 & ModelMatrix,       // Transformation applied to the mesh (which will thus be also applied to its bounding box)
+			const glm::vec3& ray_origin,        // Ray origin, in world space
+			const glm::vec3& ray_direction,     // Ray direction (NOT target position!), in world space. Must be normalize()'d.
+			const glm::vec3& aabb_min,          // Minimum X,Y,Z coords of the mesh when not transformed at all.
+			const glm::vec3& aabb_max,          // Maximum X,Y,Z coords. Often aabb_min*-1 if your mesh is centered, but it's not always the case.
+			const glm::mat4& ModelMatrix,       // Transformation applied to the mesh (which will thus be also applied to its bounding box)
 			float& intersection_distance		// Output : distance between ray_origin and the intersection with the OBB
-		) -> bool {
+			) -> bool {
 				float tMin = 0.0f;
 				float tMax = 100000.0f;
 				glm::vec3 OBBposition_worldspace(ModelMatrix[3].x, ModelMatrix[3].y, ModelMatrix[3].z);
@@ -227,7 +227,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 				return true;
 		};
 
-		
+
 		const auto scalingFactor = direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f;
 		const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 		glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3], plane_intersections[3];
@@ -258,7 +258,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 				if (intDistance < closestIntersection) {
 					closestIntersection = intDistance;
 					closestClickedAxis = x;
-				}			
+				}
 			plane_intersections[x] = ray_origin + intDistance * ray_world;
 		}
 		// Check against double-axis
@@ -267,10 +267,12 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 			if (TestRayOBBIntersection(ray_origin, ray_world, doubleAxes_min[x], doubleAxes_max[x], mMatrix, intDistance))
 				if (intDistance < closestIntersection) {
 					closestIntersection = intDistance;
-					closestClickedAxis = x+3;
+					closestClickedAxis = x + 3;
 				}
 		}
 
+		m_startingScale = m_transform.m_scale;
+		m_startingPosition = position;
 		m_startingOffset = position;
 		// Set the appropriate selected axis
 		if (closestClickedAxis == 0) {
@@ -314,7 +316,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 		m_axisDelta = m_startingOffset - position;
 		return (m_selectedAxes != NONE);
 	}
-	
+
 	// An axis is now selected, perform dragging operation
 	else {
 		glm::vec3 plane_normals[3], plane_intersections[3];
@@ -325,7 +327,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 		for (int x = 0; x < 3; ++x) {
 			float intDistance;
 			if (!glm::intersectRayPlane(ray_origin, ray_world, position, plane_normals[x], intDistance))
-				glm::intersectRayPlane(ray_origin, ray_world, position, -plane_normals[x], intDistance);			
+				glm::intersectRayPlane(ray_origin, ray_world, position, -plane_normals[x], intDistance);
 			plane_intersections[x] = ray_origin + intDistance * ray_world;
 		}
 
@@ -362,8 +364,8 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 			endingOffset.z = plane_intersections[2].z;
 		}
 
-		m_transform.m_position = endingOffset - m_axisDelta;
-		m_editor->moveSelection(m_transform.m_position);
+		m_transform.m_scale = m_startingScale + (((endingOffset - m_axisDelta) - m_startingPosition) * 2.0f);
+		m_editor->scaleSelection(m_transform.m_scale);
 	}
 
 	return false;

@@ -5,6 +5,7 @@
 #include "Modules/Engine_Module.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
+#include "Utilities/Transform.h"
 
 
 // Forward Declarations
@@ -73,6 +74,8 @@ public:
 	/***/
 	void moveSelection(const glm::vec3& newPosition);
 	/***/
+	void scaleSelection(const glm::vec3& newScale);
+	/***/
 	void deleteSelection();
 	/***/
 	void deleteComponent(ecsEntity* handle, const int& componentID);
@@ -83,7 +86,7 @@ public:
 	/***/
 	void bindTexture(const GLuint & offset = 0);
 	/***/
-	void setGizmoPosition(const glm::vec3 & position);
+	void setGizmoTransform(const Transform & transform);
 	/***/
 	glm::vec3 getGizmoPosition() const;
 	/***/

@@ -1,6 +1,6 @@
 #pragma once
-#ifndef TRANSLATION_GIZMO_H
-#define TRANSLATION_GIZMO_H
+#ifndef SCALING_GIZMO_H
+#define SCALING_GIZMO_H
 
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
@@ -17,13 +17,13 @@ class Engine;
 class LevelEditor_Module;
 
 /***/
-class Translation_Gizmo {
+class Scaling_Gizmo {
 public:
 	// Public (de)Constructors
 	/***/
-	~Translation_Gizmo();
+	~Scaling_Gizmo();
 	/***/
-	Translation_Gizmo(Engine* engine, LevelEditor_Module* editor);
+	Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Methods
@@ -32,7 +32,7 @@ public:
 	/***/
 	void render(const float& deltaTime);
 	/***/
-	void setTransform(const Transform & position);
+	void setTransform(const Transform& position);
 
 
 private:
@@ -47,13 +47,13 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	Transform m_transform;
 	enum SelectedAxes : unsigned int {
-		NONE	= 0b0000'0000,
-		X_AXIS	= 0b0000'0001,
-		Y_AXIS	= 0b0000'0010,
-		Z_AXIS	= 0b0000'0100,
+		NONE = 0b0000'0000,
+		X_AXIS = 0b0000'0001,
+		Y_AXIS = 0b0000'0010,
+		Z_AXIS = 0b0000'0100,
 	};
 	unsigned int m_selectedAxes = NONE;
-	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
+	glm::vec3 m_startingPosition = glm::vec3(0.0f), m_startingScale = glm::vec3(0.0f), m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader;
@@ -61,4 +61,4 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
-#endif // TRANSLATION_GIZMO_H
+#endif // SCALING_GIZMO_H

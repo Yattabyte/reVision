@@ -8,6 +8,7 @@
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/Transform.h"
 #include <vector>
 
 
@@ -15,6 +16,7 @@
 class Engine;
 class LevelEditor_Module;
 class Translation_Gizmo;
+class Scaling_Gizmo;
 
 /***/
 class Selection_Gizmo {
@@ -30,13 +32,13 @@ public:
 	/***/
 	void frameTick(const float& deltaTime);
 	/***/
-	bool checkMouseInput(const float& deltaTime);
+	bool checkInput(const float& deltaTime);
 	/***/
 	void render(const float& deltaTime);
 	/***/
-	void setPosition(const glm::vec3& position);
+	void setTransform(const Transform& transform);
 	/***/
-	glm::vec3 getPosition() const;
+	Transform getTransform() const;
 	/***/
 	void setSelection(const std::vector<ecsEntity*>& entities);
 	/***/
@@ -54,14 +56,16 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	bool m_clicked = false;
-	glm::vec3 m_position = glm::vec3(0.0f);
+	Transform m_transform = glm::vec3(0.0f);
 	std::vector<ecsEntity*> m_selection;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_wireframeShader;
 	StaticBuffer m_indicatorIndirectBuffer;
 	BaseECSSystem* m_pickerSystem;
+	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
+	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

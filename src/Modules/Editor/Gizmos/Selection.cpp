@@ -1,5 +1,6 @@
 #include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/Editor/Gizmos/Translation.h"
+#include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/Editor/Systems/MousePicker_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
@@ -12,7 +13,7 @@ Selection_Gizmo::~Selection_Gizmo()
 	delete m_pickerSystem;
 }
 
-Selection_Gizmo::Selection_Gizmo(Engine * engine, LevelEditor_Module * editor)
+Selection_Gizmo::Selection_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	// Update indicator
@@ -31,26 +32,34 @@ Selection_Gizmo::Selection_Gizmo(Engine * engine, LevelEditor_Module * editor)
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint data[4] = { (GLuint)m_model->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
 		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
-	});
+		});
 
 	m_translationGizmo = std::make_shared<Translation_Gizmo>(engine, editor);
+	m_scalingGizmo = std::make_shared<Scaling_Gizmo>(engine, editor);
 }
 
-void Selection_Gizmo::frameTick(const float & deltaTime)
-{	
-	checkMouseInput(deltaTime);
+void Selection_Gizmo::frameTick(const float& deltaTime)
+{
+	checkInput(deltaTime);
 	render(deltaTime);
 }
 
-bool Selection_Gizmo::checkMouseInput(const float & deltaTime)
-{	
-	if (m_translationGizmo->checkMouseInput(deltaTime))
+bool Selection_Gizmo::checkInput(const float& deltaTime)
+{
+	if (ImGui::IsKeyPressed('t') || ImGui::IsKeyPressed('T'))
+		m_inputMode = 0;
+	else if (ImGui::IsKeyPressed('e') || ImGui::IsKeyPressed('E'))
+		m_inputMode = 2;
+
+	if (m_inputMode == 0 && m_translationGizmo->checkMouseInput(deltaTime))
+		return true;
+	else if(m_inputMode == 2 && m_scalingGizmo->checkMouseInput(deltaTime))
 		return true;
 
 	// See if the mouse intersects any entities.
 	// In any case move the selection gizmo to where the mouse is.
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseClicked(0) && !m_clicked) {
-		m_clicked = true;		
+		m_clicked = true;
 		return rayCastMouse(deltaTime);
 	}
 
@@ -58,7 +67,7 @@ bool Selection_Gizmo::checkMouseInput(const float & deltaTime)
 	return false;
 }
 
-void Selection_Gizmo::render(const float & deltaTime)
+void Selection_Gizmo::render(const float& deltaTime)
 {
 	// Safety check first
 	if (m_model->existsYet() && m_colorPalette->existsYet() && m_gizmoShader->existsYet() && m_wireframeShader->existsYet() && m_editor->getSelection().size() == 0) {
@@ -71,7 +80,7 @@ void Selection_Gizmo::render(const float & deltaTime)
 		// Generate matrices
 		auto pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
-		auto mMatrix = glm::translate(glm::mat4(1.0f), m_position) * glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f));
+		auto mMatrix = glm::translate(glm::mat4(1.0f), m_transform.m_position) * glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(m_transform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f));
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * mMatrix);
 		m_wireframeShader->setUniform(0, pMatrix * vMatrix * mMatrix);
 		m_wireframeShader->setUniform(4, glm::vec3(1, 0, 0));
@@ -93,21 +102,25 @@ void Selection_Gizmo::render(const float & deltaTime)
 		m_gizmoShader->Release();
 	}
 
-	m_translationGizmo->render(deltaTime);
+	if (m_inputMode == 0)
+		m_translationGizmo->render(deltaTime);
+	else if (m_inputMode == 2)
+		m_scalingGizmo->render(deltaTime);
 }
 
-void Selection_Gizmo::setPosition(const glm::vec3 & position)
+void Selection_Gizmo::setTransform(const Transform& transform)
 {
-	m_position = position;
-	m_translationGizmo->setPosition(position);
+	m_transform = transform;
+	m_translationGizmo->setTransform(transform);
+	m_scalingGizmo->setTransform(transform);
 }
 
-glm::vec3 Selection_Gizmo::getPosition() const
+Transform Selection_Gizmo::getTransform() const
 {
-	return m_position;
+	return m_transform;
 }
 
-void Selection_Gizmo::setSelection(const std::vector<ecsEntity*> & entities)
+void Selection_Gizmo::setSelection(const std::vector<ecsEntity*>& entities)
 {
 	m_selection = entities;
 
@@ -115,12 +128,13 @@ void Selection_Gizmo::setSelection(const std::vector<ecsEntity*> & entities)
 	auto world = m_engine->getModule_World();
 	for each (const auto entity in m_selection)
 		if (entity)
-			if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr)
-				m_position = transform->m_worldTransform.m_position;
-	m_editor->setGizmoPosition(m_position);
+			if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr) {
+				setTransform(transform->m_worldTransform);
+				break;
+			}
 }
 
-std::vector<ecsEntity*> & Selection_Gizmo::getSelection()
+std::vector<ecsEntity*>& Selection_Gizmo::getSelection()
 {
 	return m_selection;
 }
@@ -128,7 +142,7 @@ std::vector<ecsEntity*> & Selection_Gizmo::getSelection()
 bool Selection_Gizmo::rayCastMouse(const float& deltaTime)
 {
 	m_engine->getModule_World().updateSystem(m_pickerSystem, deltaTime);
-	const auto& [entity, position] = ((MousePicker_System*)m_pickerSystem)->getSelection();
+	const auto& [entity, transform] = ((MousePicker_System*)m_pickerSystem)->getSelection();
 
 	// Set selection to all tools that need it	
 	if (ImGui::GetIO().KeyCtrl)
@@ -136,9 +150,9 @@ bool Selection_Gizmo::rayCastMouse(const float& deltaTime)
 	else
 		if (entity == NULL_ENTITY_HANDLE) {
 			m_editor->setSelection({});
-			m_editor->setGizmoPosition(position);
+			setTransform(transform);
 		}
 		else
-			m_editor->setSelection({ entity });	
+			m_editor->setSelection({ entity });
 	return m_editor->getSelection().size();
 }

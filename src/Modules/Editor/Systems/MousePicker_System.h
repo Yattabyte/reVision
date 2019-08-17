@@ -48,7 +48,7 @@ public:
 		const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
 		// Set the selection position for the worst-case scenario
-		m_selectionPosition = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
+		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
 
 		const auto hit_sphere = [&](const glm::vec3 & center, const float & radius) {
 			const auto oc = ray_origin - center;
@@ -70,7 +70,7 @@ public:
 			}
 		};
 
-		std::tuple<ecsEntity*, float, glm::vec3> closest = { NULL_ENTITY_HANDLE, FLT_MAX, glm::vec3(0.0f) };
+		std::tuple<ecsEntity*, float, Transform> closest = { NULL_ENTITY_HANDLE, FLT_MAX, Transform() };
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * bSphere = (BoundingSphere_Component*)componentParam[1];
@@ -85,7 +85,7 @@ public:
 				if (auto distance = hit_sphere(transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f)
 					if (distance < std::get<1>(closest)) {
 						checkSuccessfull = true;
-						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform.m_position };
+						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform };
 					}
 
 			}
@@ -97,14 +97,14 @@ public:
 				if (auto distance = hit_sphere(transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f)
 					if (distance < std::get<1>(closest)) {
 						checkSuccessfull = true;
-						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform.m_position };
+						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform };
 					}
 			}
 
 			// Ensure we have a valid entity selected
-			if (const auto &[entity, distance, position] = closest; entity != NULL_ENTITY_HANDLE) {
+			if (const auto &[entity, distance, transform] = closest; entity != NULL_ENTITY_HANDLE) {
 				m_selection = entity;
-				m_selectionPosition = position;
+				m_selectionTransform = transform;
 			}
 		}
 	}
@@ -112,8 +112,8 @@ public:
 
 	// Public Methods
 	/***/
-	std::pair<ecsEntity*, glm::vec3> getSelection() {
-		return { m_selection, m_selectionPosition };
+	std::pair<ecsEntity*, Transform> getSelection() {
+		return { m_selection, m_selectionTransform };
 	}
 
 
@@ -121,7 +121,7 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	ecsEntity * m_selection = NULL_ENTITY_HANDLE;
-	glm::vec3 m_selectionPosition = glm::vec3(0.0f);
+	Transform m_selectionTransform = glm::vec3(0.0f);
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

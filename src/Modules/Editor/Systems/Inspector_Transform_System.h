@@ -44,7 +44,6 @@ public:
 						for each (auto & component in selectedComponents) {
 							component->m_localTransform.m_position += delta;
 							component->m_localTransform.update();
-							m_editor->setGizmoPosition(posInput);
 						}
 					}
 				}
@@ -54,7 +53,6 @@ public:
 						for each (auto & component in selectedComponents) {
 							component->m_localTransform.m_position = posInput;
 							component->m_localTransform.update();
-							m_editor->setGizmoPosition(posInput);
 						}
 					}
 				}
@@ -72,6 +70,7 @@ public:
 						component->m_localTransform.update();
 					}
 				}
+				m_editor->setGizmoTransform(selectedComponents[0]->m_localTransform);
 			}
 		}
 	}
