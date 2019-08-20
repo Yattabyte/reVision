@@ -6,6 +6,7 @@
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
 #include "Modules/Editor/Gizmos/Selection.h"
+#include "Modules/Editor/Systems/Wireframe_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Modules/World/ECS/components.h"
 #include "Engine.h"
@@ -24,6 +25,9 @@ void LevelEditor_Module::initialize(Engine * engine)
 
 	// Gizmos
 	m_selectionGizmo = std::make_shared<Selection_Gizmo>(engine, this);
+
+	// Systems
+	m_systems.addSystem(new Wireframe_System(engine));
 
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
@@ -77,10 +81,12 @@ void LevelEditor_Module::frameTick(const float & deltaTime)
 	constexpr GLfloat clearDepth = 1.0f;
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(true);
-
 	glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 	glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
+
+	// Tick all tools this frame
 	m_selectionGizmo->frameTick(deltaTime);
+	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 
 	glDepthMask(false);
 	glDisable(GL_DEPTH_TEST);

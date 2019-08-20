@@ -49,7 +49,7 @@ public:
 	Shared_Mesh				m_mesh;
 	Shared_Material			m_materialArray;
 	GeometryInfo			m_data;
-	glm::vec3				m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0);
+	glm::vec3				m_bboxMin = glm::vec3(0), m_bboxMax = glm::vec3(0), m_bboxCenter = glm::vec3(0), m_bboxScale = glm::vec3(1);
 	float					m_radius = 0.0f;
 
 
@@ -58,9 +58,12 @@ private:
 	/** Calculates a Axis Aligned Bounding Box from a set of vertices.
 	Returns it as updated minimum and maximum values &minOut and &maxOut respectively.
 	@param	vertices	the vertices of the mesh to derive the AABB from.
-	@param	minOut	output reference containing the minimum extents of the AABB.
-	@param	maxOut	output reference containing the maximum extents of the AABB. */
-	void calculateAABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut);
+	@param	minOut		output reference containing the minimum extents of the AABB.
+	@param	maxOut		output reference containing the maximum extents of the AABB. 
+	@param	scaleOut	output reference containing the scale of the AABB. 
+	@param	centerOut	output reference containing the center of the AABB. 
+	@param	radius		output reference containing the radius of the AABB converted to a sphere. */
+	void calculateAABB(const std::vector<SingleVertex> & mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & scaleOut, glm::vec3 & centerOut, float & radiusOut);
 	/** Create a mesh material, loading the textures as defined by the mesh file itself.
 	@note	Used as a failsafe. Mesh importer may not succeed in fetching the directories, and the mesh may not store usable directories.
 	@param	engine			the engine being used.

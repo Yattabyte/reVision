@@ -292,7 +292,7 @@ void Engine::printBoilerPlate()
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   August 17th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   August 20th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
@@ -343,11 +343,11 @@ void Engine::tick()
 	m_moduleWorld.frameTick(deltaTime);
 	if (m_engineState == in_startMenu)
 		m_moduleStartScreen.frameTick(deltaTime);
-	else if (m_engineState == in_editor)
-		m_moduleEditor.frameTick(deltaTime);
-	else
+	else if (m_engineState == in_game)
 		m_moduleGame.frameTick(deltaTime);
 	m_moduleGraphics.frameTick(deltaTime);
+	if (m_engineState == in_editor)
+		m_moduleEditor.frameTick(deltaTime);
 	m_moduleUI.frameTick(deltaTime);	
 
 	// This is done last so they can appear over-top

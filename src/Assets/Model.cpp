@@ -45,13 +45,13 @@ void Model::initialize()
 	}
 
 	// Calculate the mesh's min, max, center, and radius
-	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxCenter, m_radius);
+	calculateAABB(m_data.m_vertices, m_bboxMin, m_bboxMax, m_bboxScale, m_bboxCenter, m_radius);
 	
 	// Finalize
 	Asset::finalize();
 }
 
-void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3 & centerOut, float & radiusOut)
+void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & minOut, glm::vec3 & maxOut, glm::vec3& scaleOut, glm::vec3 & centerOut, float & radiusOut)
 {
 	if (mesh.size() >= 1) {
 		const glm::vec3 & vector = mesh[0].vertex;
@@ -74,6 +74,7 @@ void Model::calculateAABB(const std::vector<SingleVertex>& mesh, glm::vec3 & min
 
 		minOut = glm::vec3(minX, minY, minZ);
 		maxOut = glm::vec3(maxX, maxY, maxZ);
+		scaleOut = (maxOut - minOut) / 2.0f;
 		centerOut = ((maxOut - minOut) / 2.0f) + minOut;
 		radiusOut = glm::distance(minOut, maxOut) / 2.0f;
 	}
