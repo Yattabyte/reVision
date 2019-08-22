@@ -1,7 +1,7 @@
 #include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Utilities/Intersection.h"
 #include "Engine.h"
-#include "glm/gtx/intersect.hpp"
 
 
 Scaling_Gizmo::~Scaling_Gizmo()
@@ -113,121 +113,6 @@ bool Scaling_Gizmo::rayCastMouse(const float& deltaTime)
 
 	// Check if the user selected an axis
 	if (m_selectedAxes == NONE) {
-		const auto TestRayOBBIntersection = [](
-			const glm::vec3& ray_origin,        // Ray origin, in world space
-			const glm::vec3& ray_direction,     // Ray direction (NOT target position!), in world space. Must be normalize()'d.
-			const glm::vec3& aabb_min,          // Minimum X,Y,Z coords of the mesh when not transformed at all.
-			const glm::vec3& aabb_max,          // Maximum X,Y,Z coords. Often aabb_min*-1 if your mesh is centered, but it's not always the case.
-			const glm::mat4& ModelMatrix,       // Transformation applied to the mesh (which will thus be also applied to its bounding box)
-			float& intersection_distance		// Output : distance between ray_origin and the intersection with the OBB
-			) -> bool {
-				float tMin = 0.0f;
-				float tMax = 100000.0f;
-				glm::vec3 OBBposition_worldspace(ModelMatrix[3].x, ModelMatrix[3].y, ModelMatrix[3].z);
-				glm::vec3 delta = OBBposition_worldspace - ray_origin;
-
-				// Test intersection with the 2 planes perpendicular to the OBB's X axis
-				{
-					glm::vec3 xaxis(ModelMatrix[0].x, ModelMatrix[0].y, ModelMatrix[0].z);
-					float e = glm::dot(xaxis, delta);
-					float f = glm::dot(ray_direction, xaxis);
-
-					if (fabs(f) > 0.001f) { // Standard case
-						float t1 = (e + aabb_min.x) / f; // Intersection with the "left" plane
-						float t2 = (e + aabb_max.x) / f; // Intersection with the "right" plane
-						// t1 and t2 now contain distances betwen ray origin and ray-plane intersections
-
-						// We want t1 to represent the nearest intersection, 
-						// so if it's not the case, invert t1 and t2
-						if (t1 > t2) {
-							float w = t1;
-							t1 = t2;
-							t2 = w; // swap t1 and t2
-						}
-
-						// tMax is the nearest "far" intersection (amongst the X,Y and Z planes pairs)
-						if (t2 < tMax)
-							tMax = t2;
-						// tMin is the farthest "near" intersection (amongst the X,Y and Z planes pairs)
-						if (t1 > tMin)
-							tMin = t1;
-
-						// And here's the trick :
-						// If "far" is closer than "near", then there is NO intersection.
-						// See the images in the tutorials for the visual explanation.
-						if (tMax < tMin)
-							return false;
-					}
-					else // Rare case : the ray is almost parallel to the planes, so they don't have any "intersection"
-						if (-e + aabb_min.x > 0.0f || -e + aabb_max.x < 0.0f)
-							return false;
-				}
-
-
-				// Test intersection with the 2 planes perpendicular to the OBB's Y axis
-				// Exactly the same thing than above.
-				{
-					glm::vec3 yaxis(ModelMatrix[1].x, ModelMatrix[1].y, ModelMatrix[1].z);
-					float e = glm::dot(yaxis, delta);
-					float f = glm::dot(ray_direction, yaxis);
-
-					if (fabs(f) > 0.001f) {
-						float t1 = (e + aabb_min.y) / f;
-						float t2 = (e + aabb_max.y) / f;
-
-						if (t1 > t2) {
-							float w = t1;
-							t1 = t2;
-							t2 = w;
-						}
-
-						if (t2 < tMax)
-							tMax = t2;
-						if (t1 > tMin)
-							tMin = t1;
-						if (tMin > tMax)
-							return false;
-					}
-					else
-						if (-e + aabb_min.y > 0.0f || -e + aabb_max.y < 0.0f)
-							return false;
-				}
-
-
-				// Test intersection with the 2 planes perpendicular to the OBB's Z axis
-				// Exactly the same thing than above.
-				{
-					glm::vec3 zaxis(ModelMatrix[2].x, ModelMatrix[2].y, ModelMatrix[2].z);
-					float e = glm::dot(zaxis, delta);
-					float f = glm::dot(ray_direction, zaxis);
-
-					if (fabs(f) > 0.001f) {
-						float t1 = (e + aabb_min.z) / f;
-						float t2 = (e + aabb_max.z) / f;
-
-						if (t1 > t2) {
-							float w = t1;
-							t1 = t2;
-							t2 = w;
-						}
-
-						if (t2 < tMax)
-							tMax = t2;
-						if (t1 > tMin)
-							tMin = t1;
-						if (tMin > tMax)
-							return false;
-					}
-					else
-						if (-e + aabb_min.z > 0.0f || -e + aabb_max.z < 0.0f)
-							return false;
-				}
-
-				intersection_distance = tMin;
-				return true;
-		};
-
-
 		const auto scalingFactor = direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f;
 		const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 		glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3], plane_intersections[3];
@@ -252,9 +137,9 @@ bool Scaling_Gizmo::rayCastMouse(const float& deltaTime)
 		float closestIntersection = FLT_MAX;
 		for (int x = 0; x < 3; ++x) {
 			float intDistance;
-			if (!glm::intersectRayPlane(ray_origin, ray_world, position, plane_normals[x], intDistance))
-				glm::intersectRayPlane(ray_origin, ray_world, position, -plane_normals[x], intDistance);
-			if (TestRayOBBIntersection(ray_origin, ray_world, arrowAxes_min[x], arrowAxes_max[x], mMatrix, intDistance))
+			if (!RayPlaneIntersection(ray_origin, ray_world, position, plane_normals[x], intDistance))
+				RayPlaneIntersection(ray_origin, ray_world, position, -plane_normals[x], intDistance);
+			if (RayOOBBIntersection(ray_origin, ray_world, arrowAxes_min[x], arrowAxes_max[x], mMatrix, intDistance))
 				if (intDistance < closestIntersection) {
 					closestIntersection = intDistance;
 					closestClickedAxis = x;
@@ -264,7 +149,7 @@ bool Scaling_Gizmo::rayCastMouse(const float& deltaTime)
 		// Check against double-axis
 		for (int x = 0; x < 3; ++x) {
 			float intDistance;
-			if (TestRayOBBIntersection(ray_origin, ray_world, doubleAxes_min[x], doubleAxes_max[x], mMatrix, intDistance))
+			if (RayOOBBIntersection(ray_origin, ray_world, doubleAxes_min[x], doubleAxes_max[x], mMatrix, intDistance))
 				if (intDistance < closestIntersection) {
 					closestIntersection = intDistance;
 					closestClickedAxis = x + 3;

@@ -17,7 +17,6 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline SpotVisibility_System(const std::shared_ptr<SpotData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightSpot_Component::ID, FLAG_REQUIRED);
 	}
 
@@ -31,12 +30,10 @@ public:
 			viewInfo.lightIndices.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
-				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-				LightPoint_Component * lightComponent = (LightPoint_Component*)componentParam[1];
+				auto* lightComponent = (LightPoint_Component*)componentParam[0];
 
 				// Synchronize the component if it is visible
-				if (renderableComponent->m_visible[x])
-					viewInfo.lightIndices.push_back((GLuint)index);
+				viewInfo.lightIndices.push_back((GLuint)index);
 				index++;
 			}
 		}

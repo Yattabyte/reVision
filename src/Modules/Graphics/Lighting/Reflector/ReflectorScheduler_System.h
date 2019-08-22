@@ -22,7 +22,6 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorScheduler_System(Engine * engine, const std::shared_ptr<ReflectorData> & frameData)
 		: m_engine(engine), m_frameData(frameData) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
 
@@ -45,51 +44,48 @@ public:
 		if (int availableRoom = (int)m_maxReflectionCasters - (int)m_frameData->reflectorsToUpdate.size()) {
 			int cameraCount = 0;
 			for each (const auto & componentParam in components) {
-				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-				Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
-				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[2];
+				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
+				auto* cameraComponent = (CameraArray_Component*)componentParam[1];
+				
+				auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int& reflectorSpot, Camera* cb, float* updateTime) {
+					const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
+					const float importance_distance = 1.0f - (linDist * linDist);
 
-				if (renderableComponent->m_visibleAtAll) {
-					auto tryToAddReflector = [&reflectors, &maxReflectors, &clientPosition, &clientFarPlane, &clientTime](const int & reflectorSpot, Camera * cb, float * updateTime) {
-						const float linDist = glm::distance(clientPosition, cb->getFrustumCenter()) / clientFarPlane;
-						const float importance_distance = 1.0f - (linDist * linDist);
+					const float linTime = (clientTime - *updateTime) / 5.0f;
+					const float importance_time = linTime * linTime;
 
-						const float linTime = (clientTime - *updateTime) / 5.0f;
-						const float importance_time = linTime * linTime;
-
-						const float importance = importance_distance + importance_time * (1.0f - importance_distance);
-						bool didAnything = false;
-						// Try to find the oldest components
-						for (int x = 0; x < reflectors.size(); ++x) {
-							auto &[oldImportance, oldTime, oldReflectorSpot, oldCamera] = reflectors[x];
-							if ((oldReflectorSpot != -1 && importance > oldImportance)) {
-								// Expand container by one
-								reflectors.resize(reflectors.size() + 1);
-								// Shuffle next elements down
-								for (auto y = reflectors.size() - 1ull; y > x; --y)
-									reflectors[y] = reflectors[y - 1ull];
-								oldImportance = importance;
-								oldTime = updateTime;
-								oldReflectorSpot = reflectorSpot;
-								oldCamera = cb;
-								didAnything = true;
-								break;
-							}
+					const float importance = importance_distance + importance_time * (1.0f - importance_distance);
+					bool didAnything = false;
+					// Try to find the oldest components
+					for (int x = 0; x < reflectors.size(); ++x) {
+						auto& [oldImportance, oldTime, oldReflectorSpot, oldCamera] = reflectors[x];
+						if ((oldReflectorSpot != -1 && importance > oldImportance)) {
+							// Expand container by one
+							reflectors.resize(reflectors.size() + 1);
+							// Shuffle next elements down
+							for (auto y = reflectors.size() - 1ull; y > x; --y)
+								reflectors[y] = reflectors[y - 1ull];
+							oldImportance = importance;
+							oldTime = updateTime;
+							oldReflectorSpot = reflectorSpot;
+							oldCamera = cb;
+							didAnything = true;
+							break;
 						}
-						if (!didAnything && reflectors.size() < maxReflectors)
-							reflectors.push_back({ importance, updateTime, reflectorSpot, cb });
-						if (reflectors.size() > maxReflectors)
-							reflectors.resize(maxReflectors);
-					};
-					// Set appropriate reflector spot
-					reflectorComponent->m_cubeSpot = cameraCount;
-					cameraComponent->m_updateTimes.resize(cameraComponent->m_cameras.size());
-					for (int x = 0; x < cameraComponent->m_cameras.size(); ++x) {
-						cameraComponent->m_cameras[x].setEnabled(false);
-						tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
 					}
-					cameraCount += (int)cameraComponent->m_cameras.size();
+					if (!didAnything && reflectors.size() < maxReflectors)
+						reflectors.push_back({ importance, updateTime, reflectorSpot, cb });
+					if (reflectors.size() > maxReflectors)
+						reflectors.resize(maxReflectors);
+				};
+				// Set appropriate reflector spot
+				reflectorComponent->m_cubeSpot = cameraCount;
+				cameraComponent->m_updateTimes.resize(cameraComponent->m_cameras.size());
+				for (int x = 0; x < cameraComponent->m_cameras.size(); ++x) {
+					cameraComponent->m_cameras[x].setEnabled(false);
+					tryToAddReflector(reflectorComponent->m_cubeSpot + x, &(cameraComponent->m_cameras[x]), &cameraComponent->m_updateTimes[x]);
 				}
+				cameraCount += (int)cameraComponent->m_cameras.size();				
 			}
 
 			// Enable cameras in final set

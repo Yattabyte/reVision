@@ -263,12 +263,10 @@ ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const i
 {
 	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
-		if (!BaseECSComponent::isTypeValid(componentIDs[i])) {
-			m_engine->getManager_Messages().error("ECS Error: attempted to make an unsupported component, cancelling entity creation...\r\n");
-			delete newEntity;
-			return NULL_ENTITY_HANDLE;
-		}
-		addComponentInternal(newEntity, componentIDs[i], entityComponents[i]);
+		if (BaseECSComponent::isTypeValid(componentIDs[i])) 
+			addComponentInternal(newEntity, componentIDs[i], entityComponents[i]); 
+		else 
+			m_engine->getManager_Messages().error("ECS Error: attempted to add an unsupported component to the entity \"" + name + "\"! Skipping component...\r\n");		
 	}
 
 	auto * root = parent ? &parent->m_children : &m_entities;

@@ -4,6 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
+#include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
 
@@ -22,6 +23,7 @@ public:
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
+		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
 
@@ -50,64 +52,61 @@ public:
 		// Set the selection position for the worst-case scenario
 		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
 
-		const auto hit_sphere = [&](const glm::vec3 & center, const float & radius) {
-			const auto oc = ray_origin - center;
-			const auto a = glm::dot(ray_world, ray_world);
-			const auto b = 2.0f * glm::dot(oc, ray_world);
-			const auto c = glm::dot(oc, oc) - radius * radius;
-			const auto discriminant = b * b - 4.0f * a * c;
-			if (discriminant < 0.0f)
-				return -1.0f;
-			else {
-				float numerator = -b - glm::sqrt(discriminant);
-				if (numerator > 0.0)
-					return numerator / (2.0f * a);
-				numerator = -b + glm::sqrt(discriminant);
-				if (numerator > 0.0)
-					return numerator / (2.0f * a);
-				else
-					return -1.0f;
-			}
-		};
-
-		std::tuple<ecsEntity*, float, Transform> closest = { NULL_ENTITY_HANDLE, FLT_MAX, Transform() };
+		float closestDistanceFromScreen = FLT_MAX, closestDistanceToCenter = FLT_MAX;
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
-			auto * bSphere = (BoundingSphere_Component*)componentParam[1];
-			auto * collider = (Collider_Component*)componentParam[2];
+			auto * bBox = (BoundingBox_Component*)componentParam[1];
+			auto * bSphere = (BoundingSphere_Component*)componentParam[2];
+			auto * collider = (Collider_Component*)componentParam[3];
 
 			bool checkSuccessfull = false;
+			float distanceFromScreen = FLT_MAX, distanceToCenter = FLT_MAX;
+			// Ray-collider intersection test
 			if (collider) {
-				// Ray-Collider intersection test
 			}
-			else if (bSphere && !checkSuccessfull) {
+			// Ray-OOBB intersection test
+			if (bBox && bBox->m_cameraCollision == BoundingBox_Component::OUTSIDE) {
+				float distance;
+				const auto& position = transformComponent->m_worldTransform.m_position;
+				const auto& scale = transformComponent->m_worldTransform.m_scale;
+				const auto matrixWithoutScale = (transformComponent->m_worldTransform * Transform(bBox->m_positionOffset, glm::quat(1.0f, 0, 0, 0), 1.0f / scale)).m_modelMatrix;
 				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-				if (auto distance = hit_sphere(transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f)
-					if (distance < std::get<1>(closest)) {
-						checkSuccessfull = true;
-						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform };
-					}
-
+				if (RayOOBBIntersection(ray_origin, ray_world, bBox->m_min * scale, bBox->m_max * scale, matrixWithoutScale, distance))
+					distanceFromScreen = distance;
 			}
-			else if (!checkSuccessfull) {
+			// Ray-BoundingSphere intersection test
+			if (bSphere && bSphere->m_cameraCollision == BoundingSphere_Component::OUTSIDE) {
+				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
+				if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f)
+					distanceFromScreen = distance;
+			}
+			// Ray-Origin intersection test
+			{
 				// Create scaling factor to keep all origins same screen size
 				const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
 
 				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-				if (auto distance = hit_sphere(transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f)
-					if (distance < std::get<1>(closest)) {
-						checkSuccessfull = true;
-						closest = { transformComponent->entity, distance, transformComponent->m_worldTransform };
-					}
+				if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f)
+					distanceFromScreen = distance;
 			}
 
-			// Ensure we have a valid entity selected
-			if (const auto &[entity, distance, transform] = closest; entity != NULL_ENTITY_HANDLE) {
-				m_selection = entity;
-				m_selectionTransform = transform;
+			auto hitToCam = clientCamera.pMatrix * clientCamera.vMatrix * glm::vec4(ray_origin + distanceToCenter * ray_world, 1.0f); 
+			hitToCam /= hitToCam.w;
+			const auto hit_ss = (0.5f * glm::vec2(hitToCam) + 0.5f) * glm::vec2(m_renderSize);
+			auto centerToCam = clientCamera.pMatrix * clientCamera.vMatrix * glm::vec4(transformComponent->m_worldTransform.m_position, 1.0f);
+			centerToCam /= centerToCam.w;
+			const auto center_ss = (0.5f * glm::vec2(centerToCam) + 0.5f) * glm::vec2(m_renderSize);
+			distanceToCenter = glm::length(center_ss - hit_ss);
+
+			// Find the closest best match
+			if (distanceFromScreen < closestDistanceFromScreen || distanceToCenter < closestDistanceToCenter) {
+				closestDistanceFromScreen = distanceFromScreen;
+				closestDistanceToCenter = distanceToCenter;
+				m_selection = transformComponent->entity;
+				m_selectionTransform = transformComponent->m_worldTransform;
 			}
 		}
-	}
+	}  
 
 
 	// Public Methods

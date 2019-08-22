@@ -17,7 +17,6 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline DirectionalVisibility_System(const std::shared_ptr<DirectionalData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(LightDirectional_Component::ID, FLAG_REQUIRED);
 		addComponentType(Shadow_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
@@ -34,17 +33,13 @@ public:
 			viewInfo.visShadowCount = 0;
 			int index = 0;
 			for each (const auto & componentParam in components) {
-				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-				LightDirectional_Component * lightComponent = (LightDirectional_Component*)componentParam[1];
-				Shadow_Component * shadowComponent = (Shadow_Component*)componentParam[2];
-				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[3];
+				auto* lightComponent = (LightDirectional_Component*)componentParam[0];
+				auto* shadowComponent = (Shadow_Component*)componentParam[1];
+				auto* cameraComponent = (CameraArray_Component*)componentParam[2];
 
-				// Render lights and shadows for all visible directional lights
-				if (renderableComponent->m_visible[x])
-					viewInfo.lightIndices.push_back((GLuint)index);
-
-				if (renderableComponent->m_visibleAtAll)
-					viewInfo.visShadowCount++;
+				// Render lights and shadows for all directional lights
+				viewInfo.lightIndices.push_back((GLuint)index);
+				viewInfo.visShadowCount++;
 				index++;
 			}
 		}

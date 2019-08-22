@@ -17,7 +17,6 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline ReflectorVisibility_System(const std::shared_ptr<ReflectorData> & visibility)
 		: m_frameData(visibility) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Reflector_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
 		addComponentType(CameraArray_Component::ID, FLAG_REQUIRED);
@@ -33,14 +32,12 @@ public:
 			viewInfo.lightIndices.clear();
 			int index = 0;
 			for each (const auto & componentParam in components) {
-				Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-				Reflector_Component * reflectorComponent = (Reflector_Component*)componentParam[1];
-				Transform_Component * transformComponent = (Transform_Component*)componentParam[2];
-				CameraArray_Component * cameraComponent = (CameraArray_Component*)componentParam[3];
+				auto* reflectorComponent = (Reflector_Component*)componentParam[0];
+				auto* transformComponent = (Transform_Component*)componentParam[1];
+				auto* cameraComponent = (CameraArray_Component*)componentParam[2];
 
 				// Synchronize the component if it is visible
-				if (renderableComponent->m_visible[x])
-					viewInfo.lightIndices.push_back((GLuint)index);
+				viewInfo.lightIndices.push_back((GLuint)index);
 				index++;
 			}
 		}

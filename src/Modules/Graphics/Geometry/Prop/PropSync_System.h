@@ -19,11 +19,10 @@ public:
 	@param	frameData	shared pointer of common data that changes frame-to-frame. */
 	inline PropSync_System(const std::shared_ptr<PropData> & frameData)
 		: m_frameData(frameData) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Prop_Component::ID, FLAG_REQUIRED);
 		addComponentType(Skeleton_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Transform_Component::ID, FLAG_OPTIONAL);
-		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
+		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
 	}
 
 
@@ -36,16 +35,14 @@ public:
 		m_frameData->skeletonBuffer.beginWriting();
 		int index = 0;
 		for each (const auto & componentParam in components) {
-			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-			Prop_Component * propComponent = (Prop_Component*)componentParam[1];
-			Skeleton_Component * skeletonComponent = (Skeleton_Component*)componentParam[2];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[3];
-			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[4];
+			auto* propComponent = (Prop_Component*)componentParam[0];
+			auto* skeletonComponent = (Skeleton_Component*)componentParam[1];
+			auto* transformComponent = (Transform_Component*)componentParam[2];
+			auto* bboxComponent = (BoundingBox_Component*)componentParam[3];
 
 			// Synchronize the component if it is visible
-			if (renderableComponent->m_visibleAtAll && propComponent->m_model->existsYet()) {
+			if (propComponent->m_model->existsYet()) {
 				// Sync Transform Attributes
-				float radius = 1.0f;
 				if (transformComponent) {
 					const auto & position = transformComponent->m_worldTransform.m_position;
 					const auto & orientation = transformComponent->m_worldTransform.m_orientation;
@@ -62,13 +59,15 @@ public:
 					glm::mat4 matScale = glm::scale(glm::mat4(1.0f), bboxScale);
 					glm::mat4 matFinal = (matTrans * matRot * matScale);
 					m_frameData->modelBuffer[index].bBoxMatrix = matFinal;
-					radius = glm::compMax(propComponent->m_model->m_radius * scale);
+					float radius = glm::compMax(propComponent->m_model->m_radius * scale);
 					propComponent->m_radius = radius;
 					propComponent->m_position = propComponent->m_model->m_bboxCenter + position;
 				}
-				if (bsphereComponent) {
-					bsphereComponent->m_radius = radius;
-					bsphereComponent->m_positionOffset = propComponent->m_model->m_bboxCenter;
+				if (bboxComponent) {					
+					bboxComponent->m_extent = propComponent->m_model->m_bboxScale;
+					bboxComponent->m_min = propComponent->m_model->m_bboxMin;
+					bboxComponent->m_max = propComponent->m_model->m_bboxMax;
+					bboxComponent->m_positionOffset = propComponent->m_model->m_bboxCenter;
 				}
 
 				// Sync Animation Attributes

@@ -30,10 +30,8 @@ public:
 		: m_engine(engine) {
 		// Declare component types used
 		addComponentType(Transform_Component::ID);
-		addComponentType(Prop_Component::ID, FLAG_OPTIONAL);
-		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
-		addComponentType(LightRadius_Component::ID, FLAG_OPTIONAL);
-		addComponentType(LightPoint_Component::ID, FLAG_OPTIONAL);
+		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
+		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 		addComponentType(LightSpot_Component::ID, FLAG_OPTIONAL);
 		//addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 
@@ -67,20 +65,18 @@ public:
 			glm::ivec4 drawData[3];
 			for each (const auto & componentParam in components) {
 				auto* trans = (Transform_Component*)componentParam[0];
-				auto* prop = (Prop_Component*)componentParam[1];
-				auto* collider = (Collider_Component*)componentParam[2];
-				auto* lightRadius = (LightRadius_Component*)componentParam[3];
-				auto* point = (LightPoint_Component*)componentParam[4];
-				auto* spot = (LightSpot_Component*)componentParam[5];
+				auto* bbox = (BoundingBox_Component*)componentParam[1];
+				auto* bsphere = (BoundingSphere_Component*)componentParam[2];
+				auto* spot = (LightSpot_Component*)componentParam[3];
 
 				const auto transform = trans->m_worldTransform;
-				if (prop)
-					if (prop->m_model && prop->m_model->existsYet()) 
-						cubeData.push_back(pMatrix * vMatrix * (transform * Transform(prop->m_model->m_bboxCenter, glm::quat(1.0f, 0, 0, 0), prop->m_model->m_bboxScale)).m_modelMatrix);
-				if (point && lightRadius)
-					sphereData.push_back(pMatrix * vMatrix * (transform * Transform(glm::vec3(0), glm::quat(1.0f, 0, 0, 0), glm::vec3(lightRadius->m_radius))).m_modelMatrix);
-				if (spot && lightRadius)
-					coneData.push_back(pMatrix * vMatrix * (transform * Transform(glm::vec3(0), glm::quat(1.0f, 0, 0, 0), glm::vec3(lightRadius->m_radius))).m_modelMatrix);				
+				if (bbox)
+					cubeData.push_back(pMatrix * vMatrix * (transform * Transform(bbox->m_positionOffset, glm::quat(1.0f, 0, 0, 0), bbox->m_extent)).m_modelMatrix);													
+				if (bsphere)
+					if (spot)
+						coneData.push_back(pMatrix * vMatrix * (transform * Transform(glm::vec3(0), glm::quat(1.0f, 0, 0, 0), glm::vec3(bsphere->m_radius))).m_modelMatrix);
+					else
+						sphereData.push_back(pMatrix * vMatrix * (transform * Transform(glm::vec3(0), glm::quat(1.0f, 0, 0, 0), glm::vec3(bsphere->m_radius))).m_modelMatrix);
 			}
 			// Spheres
 			const auto sphereCount = (GLuint)sphereData.size();

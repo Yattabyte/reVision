@@ -18,8 +18,8 @@ public:
 	@param	cameras		list of all the active cameras in the scene, updated per frame. */
 	inline FrustumCull_System(const std::shared_ptr<std::vector<Camera*>> & cameras)
 		: m_cameras(cameras) {
-		addComponentType(Renderable_Component::ID, FLAG_REQUIRED);
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);
+		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 	}
 
@@ -27,62 +27,44 @@ public:
 	// Public Interface Implementations
 	inline virtual void updateComponents(const float & deltaTime, const std::vector<std::vector<BaseECSComponent*>> & components) override {
 		for each (const auto & componentParam in components) {
-			Renderable_Component * renderableComponent = (Renderable_Component*)componentParam[0];
-			Transform_Component * transformComponent = (Transform_Component*)componentParam[1];
-			BoundingSphere_Component * bsphereComponent = (BoundingSphere_Component*)componentParam[2];
-
-			// Ensure renderable component visibility and cameras are linked
-			renderableComponent->m_visible.resize(m_cameras->size());
+			auto* transformComponent = (Transform_Component*)componentParam[0];
+			auto* bboxComponent = (BoundingBox_Component*)componentParam[1];
+			auto* bsphereComponent = (BoundingSphere_Component*)componentParam[2];
 
 			// Update the visibility status for each camera this entity is visible in
-			bool visibleAtAll = false;
 			for (int x = 0; x < m_cameras->size(); ++x) {
 				auto camera = m_cameras->at(x);
 
 				// Err on the side of caution and say its visible by default
 				// Our visibility tests will try to EXCLUDE, not INCLUDE
-				bool isVisible = true;
 				const auto & camPosition = camera->get()->EyePosition;
 				auto objPosition = transformComponent->m_worldTransform.m_position;
-				if (bsphereComponent)
-					objPosition += bsphereComponent->m_positionOffset;
+				const auto objScale = transformComponent->m_worldTransform.m_scale;
 
 				// If FOV is 360, it can see everything
 				if (camera->get()->FOV < 359.9f) {
+					if (bboxComponent) {
+						objPosition += bboxComponent->m_positionOffset;
+						// Treat it like a sphere
+						const auto radius = glm::distance(bboxComponent->m_min * objScale, bboxComponent->m_max * objScale) / 2.0f;
+						// Update bsphere with whether or not the camera is within it
+						if (glm::distance(camPosition, objPosition) > radius)
+							bboxComponent->m_cameraCollision = BoundingBox_Component::OUTSIDE;
+						else
+							bboxComponent->m_cameraCollision = BoundingBox_Component::INSIDE;
+					}
 					// Frustum x Bounding-Sphere Test
 					if (bsphereComponent) {
+						objPosition += bsphereComponent->m_positionOffset;
 						const auto radius = bsphereComponent->m_radius;
 						// Update bsphere with whether or not the camera is within it
 						if (glm::distance(camPosition, objPosition) > radius)
 							bsphereComponent->m_cameraCollision = BoundingSphere_Component::OUTSIDE;
 						else
 							bsphereComponent->m_cameraCollision = BoundingSphere_Component::INSIDE;
-
-						for (int i = 0; i < 6; ++i) {
-							if (camera->m_planes[i].x * objPosition.x + camera->m_planes[i].y * objPosition.y + camera->m_planes[i].z * objPosition.z + camera->m_planes[i].w <= -radius) {
-								isVisible = false;
-								break;
-							}
-						}
 					}
 				}
-				else {
-					// See if it falls outside our far plane
-					// Consider the shape of the object
-					if (bsphereComponent)
-						objPosition -= bsphereComponent->m_radius;
-					if (glm::distance(camPosition, objPosition) > camera->get()->FarPlane)
-						isVisible = false;
-				}
-
-				if (isVisible)
-					visibleAtAll = true;
-
-				// Set visibility
-				renderableComponent->m_visible[x] = isVisible;
 			}
-
-			renderableComponent->m_visibleAtAll = visibleAtAll;
 		}
 	}
 

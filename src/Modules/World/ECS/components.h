@@ -31,18 +31,6 @@ struct Player3D_Component : public ECSComponent<Player3D_Component, player3DName
 	glm::vec3 m_rotation = glm::vec3(0.0f);
 };
 
-constexpr static const char renderableName[] = "Renderable_Component";
-struct Renderable_Component : public ECSComponent<Renderable_Component, renderableName> {
-	std::vector<int> m_visible;
-	bool m_visibleAtAll = false;
-
-	inline virtual std::vector<char> serialize()  override {
-		return {};
-	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
-	}
-};
-
 constexpr static const char cameraName[] = "Camera_Component";
 struct Camera_Component : public ECSComponent<Camera_Component, cameraName> {
 	Camera m_camera;
@@ -78,6 +66,15 @@ struct BoundingSphere_Component : public ECSComponent<BoundingSphere_Component, 
 	// Default Serialization
 	glm::vec3 m_positionOffset = glm::vec3(0.0f);
 	float m_radius = 1.0f;
+	enum CameraCollision {
+		OUTSIDE, INSIDE
+	} m_cameraCollision = OUTSIDE;
+};
+
+constexpr static const char boundingBoxName[] = "BoundingBox_Component";
+struct BoundingBox_Component : public ECSComponent<BoundingBox_Component, boundingBoxName> {
+	// Default Serialization
+	glm::vec3 m_positionOffset = glm::vec3(0.0f), m_extent = glm::vec3(0), m_min = glm::vec3(0.0f), m_max = glm::vec3(0.0f);
 	enum CameraCollision {
 		OUTSIDE, INSIDE
 	} m_cameraCollision = OUTSIDE;

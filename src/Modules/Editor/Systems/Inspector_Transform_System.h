@@ -31,11 +31,16 @@ public:
 				selectedComponents.push_back(component);
 		}
 		if (selectedComponents.size()) {
+			static void* previousSelection = nullptr, * currentSelection = selectedComponents[0];
+			static bool selectionChanged = false;
+			if (previousSelection != currentSelection) {
+				previousSelection = currentSelection;
+				selectionChanged = true;
+			}
 			const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
 			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 				static bool treatAsGroup = true;
 				ImGui::Checkbox("Treat as group", &treatAsGroup);
-
 				if (treatAsGroup) {
 					const auto groupCenter = find_center_transform(selectedComponents);
 					auto posInput = groupCenter.m_position;
@@ -49,27 +54,24 @@ public:
 				}
 				else {
 					auto posInput = selectedComponents[0]->m_localTransform.m_position;
-					if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
+					if (ImGui::DragFloat3("Position", glm::value_ptr(posInput)))
 						for each (auto & component in selectedComponents) {
 							component->m_localTransform.m_position = posInput;
 							component->m_localTransform.update();
-						}
-					}
+						}					
 				}
 				auto sclInput = selectedComponents[0]->m_localTransform.m_scale;
-				if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput))) {
+				if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput)))
 					for each (auto & component in selectedComponents) {
 						component->m_localTransform.m_scale = sclInput;
 						component->m_localTransform.update();
-					}
-				}
-				auto rotInput = selectedComponents[0]->m_localTransform.m_orientation;
-				if (ImGui::DragFloat4("Orientation", glm::value_ptr(rotInput))) {
+					}				
+				auto rotInput = glm::degrees(glm::eulerAngles(selectedComponents[0]->m_localTransform.m_orientation));
+				if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput)))
 					for each (auto & component in selectedComponents) {
-						component->m_localTransform.m_orientation = rotInput;
+						component->m_localTransform.m_orientation = glm::quat(glm::radians(rotInput));
 						component->m_localTransform.update();
-					}
-				}
+					}			
 				m_editor->setGizmoTransform(selectedComponents[0]->m_localTransform);
 			}
 		}
