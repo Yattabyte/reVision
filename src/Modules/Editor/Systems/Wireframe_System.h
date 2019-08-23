@@ -4,7 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
-#include "Assets/Auto_Model.h"
+#include "Assets/Mesh.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include "Utilities/GL/StaticBuffer.h"
@@ -39,9 +39,9 @@ public:
 
 		// Assets
 		m_shader = Shared_Shader(engine, "Editor//wireframe");
-		m_sphere = Shared_Auto_Model(engine, "sphere");
-		m_cone = Shared_Auto_Model(engine, "cone");
-		m_cube = Shared_Auto_Model(engine, "cube");
+		m_sphere = Shared_Mesh(engine, "\\Models\\sphere.obj");
+		m_cone = Shared_Mesh(engine, "\\Models\\cone.obj");
+		m_cube = Shared_Mesh(engine, "\\Models\\cube.obj");
 
 		// Asset-Finished Callbacks
 		m_sphere->addCallback(m_aliveIndicator, [&]() mutable {
@@ -120,11 +120,11 @@ private:
 	void prepareGeometry() {
 		if (m_sphere->existsYet() && m_cone->existsYet() && m_cube->existsYet()) {
 			// Create VBO's
-			const auto size = sizeof(glm::vec3) * (m_sphere->m_mesh->m_geometry.vertices.size() + m_cone->m_mesh->m_geometry.vertices.size() + m_cube->m_mesh->m_geometry.vertices.size());
+			const auto size = sizeof(glm::vec3) * (m_sphere->m_geometry.vertices.size() + m_cone->m_geometry.vertices.size() + m_cube->m_geometry.vertices.size());
 			std::vector<glm::vec3> mergedData;
-			mergedData.insert(mergedData.end(), m_sphere->m_mesh->m_geometry.vertices.begin(), m_sphere->m_mesh->m_geometry.vertices.end());
-			mergedData.insert(mergedData.end(), m_cone->m_mesh->m_geometry.vertices.begin(), m_cone->m_mesh->m_geometry.vertices.end());
-			mergedData.insert(mergedData.end(), m_cube->m_mesh->m_geometry.vertices.begin(), m_cube->m_mesh->m_geometry.vertices.end());
+			mergedData.insert(mergedData.end(), m_sphere->m_geometry.vertices.begin(), m_sphere->m_geometry.vertices.end());
+			mergedData.insert(mergedData.end(), m_cone->m_geometry.vertices.begin(), m_cone->m_geometry.vertices.end());
+			mergedData.insert(mergedData.end(), m_cube->m_geometry.vertices.begin(), m_cube->m_geometry.vertices.end());
 			glCreateBuffers(1, &m_vboID);
 			glNamedBufferStorage(m_vboID, size, &mergedData[0], GL_CLIENT_STORAGE_BIT);
 
@@ -135,9 +135,9 @@ private:
 			glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
 			glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 
-			m_sphereSize = m_sphere->m_mesh->m_geometry.vertices.size();
-			m_coneSize = m_cone->m_mesh->m_geometry.vertices.size();
-			m_cubeSize = m_cube->m_mesh->m_geometry.vertices.size();
+			m_sphereSize = m_sphere->m_geometry.vertices.size();
+			m_coneSize = m_cone->m_geometry.vertices.size();
+			m_cubeSize = m_cube->m_geometry.vertices.size();
 			m_sphereOffset = 0;
 			m_coneOffset = m_sphereSize;
 			m_cubeOffset = m_sphereSize + m_coneSize;
@@ -148,7 +148,7 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	Shared_Shader m_shader;
-	Shared_Auto_Model m_sphere, m_cone, m_cube;
+	Shared_Mesh m_sphere, m_cone, m_cube;
 	int m_sphereSize = 0, m_sphereOffset = 0, m_coneSize = 0, m_coneOffset = 0, m_cubeSize = 0, m_cubeOffset = 0;
 	StaticBuffer m_indirectGeometry;
 	DynamicBuffer m_ssbo;

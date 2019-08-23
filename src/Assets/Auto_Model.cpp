@@ -9,6 +9,7 @@ constexpr char* DIRECTORY_PRIMITIVE = "\\Models\\";
 struct Single_Primitive_Vertex {
 	glm::vec3 vertex;
 	glm::vec2 uv;
+	unsigned int meshID;
 };
 
 Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filename, const bool & threaded)
@@ -25,7 +26,7 @@ Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filena
 Auto_Model::~Auto_Model()
 {
 	if (existsYet())
-		glDeleteBuffers(1, &m_uboID);
+		glDeleteBuffers(1, &m_vboID);
 }
 
 Auto_Model::Auto_Model(Engine * engine, const std::string & filename) : Asset(engine, filename) 
@@ -33,12 +34,15 @@ Auto_Model::Auto_Model(Engine * engine, const std::string & filename) : Asset(en
 	glCreateVertexArrays(1, &m_vaoID);
 	glEnableVertexArrayAttrib(m_vaoID, 0);
 	glEnableVertexArrayAttrib(m_vaoID, 1);
+	glEnableVertexArrayAttrib(m_vaoID, 2);
 	glVertexArrayAttribBinding(m_vaoID, 0, 0);
 	glVertexArrayAttribBinding(m_vaoID, 1, 0);
-	glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, 0);
-	glVertexArrayAttribFormat(m_vaoID, 1, 2, GL_FLOAT, GL_FALSE, 12);
-	glCreateBuffers(1, &m_uboID);
-	glVertexArrayVertexBuffer(m_vaoID, 0, m_uboID, 0, sizeof(Single_Primitive_Vertex));
+	glVertexArrayAttribBinding(m_vaoID, 2, 0);
+	glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Single_Primitive_Vertex, vertex));
+	glVertexArrayAttribFormat(m_vaoID, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Single_Primitive_Vertex, uv));
+	glVertexArrayAttribIFormat(m_vaoID, 2, 1, GL_UNSIGNED_INT, offsetof(Single_Primitive_Vertex, meshID));
+	glCreateBuffers(1, &m_vboID);
+	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(Single_Primitive_Vertex));
 }
 
 void Auto_Model::initialize()
@@ -51,11 +55,12 @@ void Auto_Model::initialize()
 	for (size_t x = 0; x < vertexCount; ++x) {
 		m_data[x].vertex = m_mesh->m_geometry.vertices[x];
 		m_data[x].uv = m_mesh->m_geometry.texCoords[x];
+		m_data[x].meshID = m_mesh->m_geometry.meshIndices[x];
 	}
 
 	// Load Buffers
 	const size_t arraySize = m_data.size();
-	glNamedBufferStorage(m_uboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);
+	glNamedBufferStorage(m_vboID, arraySize * sizeof(Single_Primitive_Vertex), &m_data[0], 0);
 
 	// Finalize
 	m_fence = glFenceSync(GL_SYNC_GPU_COMMANDS_COMPLETE, 0);

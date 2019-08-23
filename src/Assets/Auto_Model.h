@@ -53,7 +53,7 @@ public:
 	// Public Attributes
 	Shared_Mesh m_mesh;
 	std::vector<Single_Primitive_Vertex> m_data;
-	GLuint m_uboID = 0, m_vaoID = 0;
+	GLuint m_vboID = 0, m_vaoID = 0;
 
 
 private:

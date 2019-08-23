@@ -94,28 +94,29 @@ bool Mesh_IO::Import_Model(Engine * engine, const std::string & relativePath, Me
 	}
 
 	// Import geometry
-	for (int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
+	for (unsigned int a = 0, atotal = scene->mNumMeshes; a < atotal; ++a) {
 		const aiMesh * mesh = scene->mMeshes[a];
 		const GLuint meshMaterialOffset = std::max(0u, scene->mNumMaterials > 1 ? mesh->mMaterialIndex - 1u : 0u);
-		for (int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
+		for (unsigned int x = 0, faceCount = mesh->mNumFaces; x < faceCount; ++x) {
 			const aiFace & face = mesh->mFaces[x];
-			for (int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
-				const int & index = face.mIndices[b];
+			for (unsigned int b = 0, indCount = face.mNumIndices; b < indCount; ++b) {
+				const auto & index = face.mIndices[b];
 				data_container.vertices.push_back(glm::vec3(mesh->mVertices[index].x, mesh->mVertices[index].y, mesh->mVertices[index].z));
 
-				const aiVector3D normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto normal = mesh->HasNormals() ? mesh->mNormals[index] : aiVector3D(1.0f, 1.0f, 1.0f);
 				data_container.normals.push_back(glm::normalize(glm::vec3(normal.x, normal.y, normal.z)));
 
-				const aiVector3D tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto tangent = mesh->HasTangentsAndBitangents() ? mesh->mTangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
 				data_container.tangents.push_back(glm::normalize(glm::vec3(tangent.x, tangent.y, tangent.z)));
 
-				const aiVector3D bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
+				const auto bitangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[index] : aiVector3D(1.0f, 1.0f, 1.0f);
 				data_container.bitangents.push_back(glm::normalize(glm::vec3(bitangent.x, bitangent.y, bitangent.z)));
 
-				const aiVector3D uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
+				const auto uvmap = mesh->HasTextureCoords(0) ? (mesh->mTextureCoords[0][index]) : aiVector3D(0, 0, 0);
 				data_container.texCoords.push_back(glm::vec2(uvmap.x, uvmap.y));
 
 				data_container.materialIndices.push_back(meshMaterialOffset);
+				data_container.meshIndices.push_back(a);
 			}
 		}
 	}

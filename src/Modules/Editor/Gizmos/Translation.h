@@ -3,7 +3,6 @@
 #define TRANSLATION_GIZMO_H
 
 #include "Assets/Auto_Model.h"
-#include "Assets/Texture.h"
 #include "Assets/Shader.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsSystem.h"
@@ -54,7 +53,6 @@ private:
 	};
 	unsigned int m_selectedAxes = NONE;
 	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
-	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
 	StaticBuffer m_indicatorIndirectBuffer;

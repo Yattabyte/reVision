@@ -64,6 +64,7 @@ struct Mesh_Geometry {
 	std::vector<glm::vec3> bitangents;
 	std::vector<glm::vec2> texCoords;
 	std::vector<GLuint> materialIndices;
+	std::vector<GLuint> meshIndices;
 
 	// Materials
 	std::vector<Material_Strings> materials;

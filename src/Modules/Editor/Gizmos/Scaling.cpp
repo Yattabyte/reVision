@@ -20,7 +20,6 @@ Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	*m_aliveIndicator = true;
 
 	// Assets
-	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
 	m_model = Shared_Auto_Model(engine, "Editor\\scale");
 	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
 	m_axisShader = Shared_Shader(engine, "Editor\\axis_line");
@@ -72,7 +71,7 @@ bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
 void Scaling_Gizmo::render(const float& deltaTime)
 {
 	// Safety check first
-	if (m_model->existsYet() && m_colorPalette->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
+	if (m_model->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
 		// Set up state
 		m_editor->bindFBO();
 
@@ -89,33 +88,38 @@ void Scaling_Gizmo::render(const float& deltaTime)
 		// Get camera matrices
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
-		
+		const auto trans = glm::translate(glm::mat4(1.0f), position);
+		const auto mScale = glm::scale(glm::mat4(1.0f), directions * glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
+		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0));
+
+		// Render Gizmo Model
+		m_model->bind();
+		m_gizmoShader->bind();
+		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
+		m_gizmoShader->setUniform(4, GLuint(m_selectedAxes));
+		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		glDrawArraysIndirect(GL_TRIANGLES, 0);
+
 		// Render Axis Lines
-		glBindVertexArray(m_axisVAO);
 		m_axisShader->bind();
+		glBindVertexArray(m_axisVAO);
 		if (m_selectedAxes & X_AXIS) {
-			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * aScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
 		if (m_selectedAxes & Y_AXIS) {
-			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 0, 1)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(-90.0f), glm::vec3(0, 0, 1));
+			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 1, 0));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
 		if (m_selectedAxes & Z_AXIS) {
-			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			const auto rot = glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0));
+			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * rot * aScale);
 			m_axisShader->setUniform(4, glm::vec3(0, 0, 1));
 			glDrawArrays(GL_LINES, 0, 2);
 		}
-
-		// Render
-		m_model->bind();
-		m_colorPalette->bind(0);
-		m_gizmoShader->bind();
-		m_gizmoShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), directions * glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f)));
-		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Revert State
 		m_gizmoShader->Release();
