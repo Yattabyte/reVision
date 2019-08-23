@@ -8,6 +8,9 @@ Translation_Gizmo::~Translation_Gizmo()
 {
 	// Update indicator
 	*m_aliveIndicator = false;
+
+	glDeleteBuffers(1, &m_axisVBO);
+	glDeleteVertexArrays(1, &m_axisVAO);
 }
 
 Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
@@ -20,6 +23,7 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
 	m_model = Shared_Auto_Model(engine, "Editor\\translate");
 	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
+	m_axisShader = Shared_Shader(engine, "Editor\\axis_line");
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
@@ -36,6 +40,18 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 	});
+
+	// Axis Lines
+	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
+	glCreateBuffers(1, &m_axisVBO);
+	glNamedBufferStorage(m_axisVBO, sizeof(glm::vec3) * 2, axisData, GL_CLIENT_STORAGE_BIT);
+
+	// Create VAO
+	glCreateVertexArrays(1, &m_axisVAO);
+	glEnableVertexArrayAttrib(m_axisVAO, 0);
+	glVertexArrayAttribBinding(m_axisVAO, 0, 0);
+	glVertexArrayAttribFormat(m_axisVAO, 0, 2, GL_FLOAT, GL_FALSE, 0);
+	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 }
 
 bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
@@ -59,9 +75,6 @@ void Translation_Gizmo::render(const float& deltaTime)
 	if (m_model->existsYet() && m_colorPalette->existsYet() && m_gizmoShader->existsYet() && m_editor->getSelection().size()) {
 		// Set up state
 		m_editor->bindFBO();
-		m_model->bind();
-		m_colorPalette->bind(0);
-		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 		// Flip the model's axes based on which side of it were on
 		const auto& position = m_transform.m_position;
@@ -73,14 +86,35 @@ void Translation_Gizmo::render(const float& deltaTime)
 			dir.z > 0 ? 1 : -1
 		);
 
-		// Generate matrices
-		auto pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
-		auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
-		auto mMatrix = glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), directions * glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
-		m_gizmoShader->setUniform(0, pMatrix * vMatrix * mMatrix);
+		// Get camera matrices
+		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
+		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
+				
+		// Render Axis Lines
+		glBindVertexArray(m_axisVAO);
+		m_axisShader->bind();
+		if (m_selectedAxes & X_AXIS) {
+			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			m_axisShader->setUniform(4, glm::vec3(1, 0, 0));
+			glDrawArrays(GL_LINES, 0, 2);
+		}
+		if (m_selectedAxes & Y_AXIS) {
+			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0,0,1)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			m_axisShader->setUniform(4, glm::vec3(0, 1, 0));
+			glDrawArrays(GL_LINES, 0, 2);
+		}
+		if (m_selectedAxes & Z_AXIS) {
+			m_axisShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::rotate(glm::mat4(1.0f), glm::radians(90.0f), glm::vec3(0, 1, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0)));
+			m_axisShader->setUniform(4, glm::vec3(0, 0, 1));
+			glDrawArrays(GL_LINES, 0, 2);
+		}
 
-		// Render
-		m_gizmoShader->bind();		
+		// Render Gizmo Model
+		m_model->bind();
+		m_colorPalette->bind(0);
+		m_gizmoShader->bind();
+		m_gizmoShader->setUniform(0, pMatrix * vMatrix * glm::translate(glm::mat4(1.0f), position) * glm::scale(glm::mat4(1.0f), directions * glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f)));
+		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 
 		// Revert State

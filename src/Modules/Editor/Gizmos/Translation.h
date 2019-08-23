@@ -56,8 +56,9 @@ private:
 	glm::vec3 m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_model;
-	Shared_Shader m_gizmoShader;
+	Shared_Shader m_gizmoShader, m_axisShader;
 	StaticBuffer m_indicatorIndirectBuffer;
+	GLuint m_axisVAO = 0, m_axisVBO = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

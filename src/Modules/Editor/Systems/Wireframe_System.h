@@ -38,7 +38,7 @@ public:
 		m_indirectGeometry = StaticBuffer(sizeof(glm::ivec4) * 3, 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Assets
-		m_shader = Shared_Shader(engine, "Editor//test");
+		m_shader = Shared_Shader(engine, "Editor//wireframe");
 		m_sphere = Shared_Auto_Model(engine, "sphere");
 		m_cone = Shared_Auto_Model(engine, "cone");
 		m_cube = Shared_Auto_Model(engine, "cube");
