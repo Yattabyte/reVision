@@ -97,35 +97,27 @@ void Prefabs::tick(const float& deltaTime)
 	ImGui::End();
 
 	// Do something with the option chosen
+	bool openDelete = true, openRename = true;
 	switch (prefabOption) {
 	case open:
 		openPrefab();
 		break;
 	case del:
-		ImGui::OpenPopup("Delete Prefab?");
+		ImGui::OpenPopup("Delete Prefab");
 		break;
 	case rename:
-		ImGui::OpenPopup("Name Prefab");
+		ImGui::OpenPopup("Rename Prefab");
 		break;
 	}
 	
 	// Draw 'Delete Prefab' confirmation
 	ImGui::SetNextWindowSize({ 350, 90 }, ImGuiCond_Appearing);
-	if (ImGui::BeginPopupModal("Delete Prefab?", NULL, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize)) {
+	if (ImGui::BeginPopupModal("Delete Prefab", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::TextWrapped(
 			"Are you sure you want to delete this prefab?\n"
 			"This won't remove the prefab from any levels."
 		);
 		ImGui::Spacing();
-		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
-		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
-		if (ImGui::Button("Cancel", { 75, 20 }))
-			ImGui::CloseCurrentPopup();
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		ImGui::Spacing();
-		ImGui::SameLine();
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(0, 0.6f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(0, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
@@ -134,31 +126,36 @@ void Prefabs::tick(const float& deltaTime)
 			std::filesystem::remove(fullPath);
 			m_selectedIndex = -1;
 			populatePrefabs(m_prefabSubDirectory);
-			ImGui::CloseCurrentPopup();  
+			ImGui::CloseCurrentPopup();
 		}
-		ImGui::PopStyleColor(6);
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		ImGui::Spacing();
+		ImGui::SameLine();
+		ImGui::PopStyleColor(3);
+		if (ImGui::Button("Cancel", { 75, 20 }))
+			ImGui::CloseCurrentPopup();
 		ImGui::EndPopup();
 	}
 
 	// Draw 'Rename Prefab' dialog
-	if (ImGui::BeginPopupModal("Name Prefab", NULL, ImGuiWindowFlags_NoCollapse)) {
-		ImGui::Text("Enter a name for this prefab");
+	if (ImGui::BeginPopupModal("Rename Prefab", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
+		ImGui::Text("Enter a new name for this prefab...");
 		ImGui::Spacing();
 
 		char nameInput[256];
 		for (size_t x = 0; x < m_prefabs[m_selectedIndex].name.length() && x < IM_ARRAYSIZE(nameInput); ++x)
 			nameInput[x] = m_prefabs[m_selectedIndex].name[x];
 		nameInput[std::min(256ull, m_prefabs[m_selectedIndex].name.length())] = '\0';
+		if (ImGui::IsRootWindowOrAnyChildFocused() && !ImGui::IsAnyItemActive() && !ImGui::IsMouseClicked(0))
+			ImGui::SetKeyboardFocusHere(0);
 		if (ImGui::InputText("", nameInput, IM_ARRAYSIZE(nameInput), ImGuiInputTextFlags_EnterReturnsTrue)) {
 			m_prefabs[m_selectedIndex].name = nameInput;
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path);
 			std::filesystem::rename(fullPath, std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)));
+			m_prefabs[m_selectedIndex].path = std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)).string();
 			ImGui::CloseCurrentPopup();
 		}
-		ImGui::Spacing();    
-
-		if (ImGui::Button("Close")) 
-			ImGui::CloseCurrentPopup();		
 		ImGui::EndPopup();
 	}
 }

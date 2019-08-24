@@ -70,7 +70,7 @@ void World_Module::saveWorld(const std::string& mapName)
 	}
 
 	// Write ecsData to disk
-	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\a.bmap", std::ios::binary | std::ios::out);
+	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\" + mapName, std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else

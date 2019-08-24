@@ -15,6 +15,7 @@ class TitleBar;
 class Prefabs;
 class Inspector;
 class RotationIndicator;
+class LevelDialogue;
 
 /***/
 class Editor_Interface : public ImGUI_Element {
@@ -36,6 +37,7 @@ public:
 	std::shared_ptr<Prefabs> m_uiPrefabs;
 	std::shared_ptr<Inspector> m_uiInspector;
 	std::shared_ptr<RotationIndicator> m_uiRotIndicator;
+	std::shared_ptr<LevelDialogue> m_uiLevelDialogue;
 
 
 private:

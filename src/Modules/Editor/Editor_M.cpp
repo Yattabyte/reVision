@@ -5,6 +5,7 @@
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/UI/LevelDialogue.h"
 #include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/Editor/Systems/Wireframe_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
@@ -130,7 +131,6 @@ void LevelEditor_Module::showEditor()
 {
 	m_engine->getModule_UI().clear();
 	m_engine->getModule_UI().setRootElement(m_editorInterface);
-	openLevel("a.bmap");
 }
 
 void LevelEditor_Module::exit()
@@ -147,13 +147,15 @@ void LevelEditor_Module::newLevel()
 
 void LevelEditor_Module::openLevel(const std::string & name)
 {
+	/**@todo	check against dirty bit for 'level has unsaved changes' */
 	m_engine->getModule_World().loadWorld(name);
 	m_currentLevelName = name;
 }
 
 void LevelEditor_Module::openLevelDialog()
 {
-	/**@todo*/
+	/**@todo	check against dirty bit for 'level has unsaved changes' */
+	m_editorInterface->m_uiLevelDialogue->startOpenDialogue();
 }
 
 void LevelEditor_Module::saveLevel(const std::string & name)
@@ -169,7 +171,7 @@ void LevelEditor_Module::saveLevel()
 
 void LevelEditor_Module::saveLevelDialog()
 {
-	/**@todo*/
+	m_editorInterface->m_uiLevelDialogue->startSaveDialogue();
 }
 
 void LevelEditor_Module::undo()
