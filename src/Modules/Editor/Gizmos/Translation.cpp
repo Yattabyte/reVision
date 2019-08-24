@@ -61,7 +61,10 @@ bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
 		return rayCastMouse(deltaTime);
 	}
 	else {
-		m_selectedAxes = NONE;
+		if (m_selectedAxes != NONE) {
+			m_selectedAxes = NONE;
+			return true; // block input as we just finished doing an action here
+		}
 		// use difference in position for undo/redo
 		// const auto deltaPos = m_position - m_startingPosition;
 	}
@@ -150,7 +153,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 	);
 
 	// Check if the user selected an axis
-	if (m_selectedAxes == NONE) {
+	if (m_selectedAxes == NONE && !ImGui::IsMouseDragging(0)) {
 		const auto scalingFactor = direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f;
 		const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 		glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3], plane_intersections[3];
@@ -239,7 +242,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 	}
 	
 	// An axis is now selected, perform dragging operation
-	else {
+	else if (ImGui::IsMouseDragging(0)) {
 		glm::vec3 plane_normals[3], plane_intersections[3];
 		plane_normals[0] = glm::vec3(0, 0, 1) * direction; // xy
 		plane_normals[1] = glm::vec3(0, 1, 0) * direction; // xz
@@ -287,6 +290,7 @@ bool Translation_Gizmo::rayCastMouse(const float& deltaTime)
 
 		m_transform.m_position = endingOffset - m_axisDelta;
 		m_editor->moveSelection(m_transform.m_position);
+		return true;
 	}
 
 	return false;

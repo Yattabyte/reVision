@@ -58,7 +58,7 @@ bool Selection_Gizmo::checkInput(const float& deltaTime)
 
 	// See if the mouse intersects any entities.
 	// In any case move the selection gizmo to where the mouse is.
-	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseClicked(0) && !m_clicked) {
+	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseReleased(0) && !m_clicked) {
 		m_clicked = true;
 		return rayCastMouse(deltaTime);
 	}

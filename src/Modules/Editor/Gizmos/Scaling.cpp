@@ -61,7 +61,10 @@ bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
 		return rayCastMouse(deltaTime);
 	}
 	else {
-		m_selectedAxes = NONE;
+		if (m_selectedAxes != NONE) {
+			m_selectedAxes = NONE;
+			return true; // block input as we just finished doing an action here
+		}
 		// use difference in position for undo/redo
 		// const auto deltaPos = m_position - m_startingPosition;
 	}
