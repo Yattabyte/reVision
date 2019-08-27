@@ -74,6 +74,8 @@ public:
 	/***/
 	void moveSelection(const glm::vec3& newPosition);
 	/***/
+	void rotateSelection(const glm::quat& newRotation);
+	/***/
 	void scaleSelection(const glm::vec3& newScale);
 	/***/
 	void deleteSelection();

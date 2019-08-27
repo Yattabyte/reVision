@@ -330,6 +330,24 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 	}
 }
 
+void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
+{
+	auto& world = m_engine->getModule_World();
+	std::vector<Transform_Component*> transformComponents;
+	glm::vec3 center(0.0f);
+	for each (const auto & entity in getSelection())
+		if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+			transformComponents.push_back(transform);
+			center += transform->m_localTransform.m_position;
+		}
+	center /= transformComponents.size();
+	for each (auto * transform in transformComponents) {
+		//transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + newPosition;
+		transform->m_localTransform.m_orientation = newRotation;
+		transform->m_localTransform.update();
+	}
+}
+
 void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 {
 	auto& world = m_engine->getModule_World();

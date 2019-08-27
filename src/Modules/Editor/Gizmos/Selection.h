@@ -2,13 +2,10 @@
 #ifndef SELECTION_GIZMO_H
 #define SELECTION_GIZMO_H
 
-#include "Assets/Auto_Model.h"
-#include "Assets/Texture.h"
-#include "Assets/Shader.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Utilities/GL/StaticBuffer.h"
 #include "Utilities/Transform.h"
+#include <memory>
 #include <vector>
 
 
@@ -17,6 +14,7 @@ class Engine;
 class LevelEditor_Module;
 class Translation_Gizmo;
 class Scaling_Gizmo;
+class Rotation_Gizmo;
 
 /***/
 class Selection_Gizmo {
@@ -58,15 +56,11 @@ private:
 	bool m_clicked = false;
 	Transform m_transform = glm::vec3(0.0f);
 	std::vector<ecsEntity*> m_selection;
-	Shared_Texture m_colorPalette;
-	Shared_Auto_Model m_model;
-	Shared_Shader m_gizmoShader, m_wireframeShader;
-	StaticBuffer m_indicatorIndirectBuffer;
 	BaseECSSystem* m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
 	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;
-	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+	std::shared_ptr<Rotation_Gizmo> m_rotationGizmo;
 };
 
 #endif // SELECTION_GIZMO_H

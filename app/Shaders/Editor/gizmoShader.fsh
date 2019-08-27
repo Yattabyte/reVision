@@ -26,6 +26,6 @@ void main()
 	if ((SelectedAxes == AXES[axisID]))
 		fragColor = vec4(1, 0.8, 0, 1);	
 	else 
-		fragColor = vec4(ColorScheme[axisID], 1);
+		fragColor = vec4(ColorScheme[axisID], 0.75f);
 }
 
