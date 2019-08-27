@@ -54,6 +54,31 @@ void TitleBar::tick(const float & deltaTime)
 			if (ImGui::MenuItem("Delete", "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
 			ImGui::EndMenu();
 		}
+		if (ImGui::BeginMenu("Tools")) {
+			static bool qwe = true;
+			if (ImGui::Checkbox("Transform as Group", &qwe))
+				m_editor->transformAsGroup(qwe);
+			ImGui::Separator();
+			static bool qwee = true;
+			ImGui::Checkbox("Align-to-grid", &qwee);
+			if (qwee) {
+				static float asd = 0.0f;
+				if (ImGui::SliderFloat("Position", &asd, 0.0f, 100.0f)) {
+
+				}
+				if (ImGui::SliderAngle("Rotation", &asd, 0.0f, 100.0f)) {
+
+				}
+				if (ImGui::SliderFloat("Scale", &asd, 0.0f, 100.0f)) {
+
+				}
+			}
+			ImGui::Separator();
+			if (ImGui::MenuItem("Settings")) { 
+
+			}
+			ImGui::EndMenu();
+		}
 		ImGui::EndMainMenuBar();
 	}
 }

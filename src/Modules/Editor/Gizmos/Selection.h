@@ -41,8 +41,7 @@ public:
 	void setSelection(const std::vector<ecsEntity*>& entities);
 	/***/
 	std::vector<ecsEntity*>& getSelection();
-
-
+	
 
 private:
 	// Private Methods

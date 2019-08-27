@@ -83,15 +83,6 @@ Transform Selection_Gizmo::getTransform() const
 void Selection_Gizmo::setSelection(const std::vector<ecsEntity*>& entities)
 {
 	m_selection = entities;
-
-	// Find FIRST transform in the selection
-	auto world = m_engine->getModule_World();
-	for each (const auto entity in m_selection)
-		if (entity)
-			if (auto transform = world.getComponent<Transform_Component>(entity); transform != nullptr) {
-				setTransform(transform->m_worldTransform);
-				break;
-			}
 }
 
 std::vector<ecsEntity*>& Selection_Gizmo::getSelection()

@@ -97,11 +97,14 @@ public:
 	void toggleAddToSelection(ecsEntity* entity);
 	/***/
 	bool hasCopy() const;
+	/***/
+	void transformAsGroup(const bool& moveAsGroup);
 
 
 private:
 	// Private Attributes
 	std::string m_currentLevelName = "";
+	bool m_transformAsGroup = true;
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
