@@ -90,7 +90,7 @@ public:
 	/***/
 	void setGizmoTransform(const Transform & transform);
 	/***/
-	glm::vec3 getGizmoPosition() const;
+	Transform getGizmoTransform() const;
 	/***/
 	const glm::vec3& getCameraPosition() const;
 	/***/

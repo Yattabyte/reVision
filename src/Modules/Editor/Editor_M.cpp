@@ -99,9 +99,9 @@ void LevelEditor_Module::setGizmoTransform(const Transform & transform)
 	m_selectionGizmo->setTransform(transform);
 }
 
-glm::vec3 LevelEditor_Module::getGizmoPosition() const
+Transform LevelEditor_Module::getGizmoTransform() const
 {
-	return m_selectionGizmo->getTransform().m_position;
+	return m_selectionGizmo->getTransform();
 }
 
 const glm::vec3 & LevelEditor_Module::getCameraPosition() const
@@ -208,14 +208,17 @@ void LevelEditor_Module::setSelection(const std::vector<ecsEntity*>& entities)
 	auto &world = m_engine->getModule_World();
 	if (m_transformAsGroup) {
 		size_t count(0ull);
-		glm::vec3 center(0.0f);
+		glm::vec3 center(0.0f), scale(0.0f);
 		for each (const auto & entity in entities)
 			if (auto * transform = world.getComponent<Transform_Component>(entity)) {
 				center += transform->m_localTransform.m_position;
+				scale += transform->m_localTransform.m_scale;
 				count++;
 			}
 		center /= count;
+		scale /= count;
 		newTransform.m_position = center;
+		newTransform.m_scale = scale;
 		newTransform.update();
 	}
 	else {
@@ -334,7 +337,7 @@ void LevelEditor_Module::paste()
 		// Treat entity collection as a group
 		// Move the group to world origin, then transform to 3D cursor
 		center /= transformComponents.size();
-		const auto cursorPos = getGizmoPosition();
+		const auto cursorPos = getGizmoTransform().m_position;
 		for each (auto * transform in transformComponents) {
 			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
 			transform->m_localTransform.update();
@@ -345,10 +348,11 @@ void LevelEditor_Module::paste()
 void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 {
 	auto& world = m_engine->getModule_World();
-	if (m_transformAsGroup) {
+	const auto& selection = getSelection();
+	if (m_transformAsGroup && selection.size() > 1ull) {
 		std::vector<Transform_Component*> transformComponents;
 		glm::vec3 center(0.0f);
-		for each (const auto & entity in getSelection())
+		for each (const auto & entity in selection)
 			if (auto * transform = world.getComponent<Transform_Component>(entity)) {
 				transformComponents.push_back(transform);
 				center += transform->m_localTransform.m_position;
@@ -360,7 +364,7 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 		}
 	}
 	else {
-		for each (const auto & entity in getSelection())
+		for each (const auto & entity in selection)
 			if (auto * transform = world.getComponent<Transform_Component>(entity)) {
 				transform->m_localTransform.m_position = newPosition;
 				transform->m_localTransform.update();
@@ -375,19 +379,36 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
 {
 	auto& world = m_engine->getModule_World();
-	std::vector<Transform_Component*> transformComponents;
-	glm::vec3 center(0.0f);
-	for each (const auto & entity in getSelection())
-		if (auto * transform = world.getComponent<Transform_Component>(entity)) {
-			transformComponents.push_back(transform);
-			center += transform->m_localTransform.m_position;
+	const auto& selection = getSelection();
+	if (m_transformAsGroup && selection.size() > 1ull) {
+		std::vector<Transform_Component*> transformComponents;
+		glm::vec3 center(0.0f);
+		for each (const auto & entity in selection)
+			if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+				transformComponents.push_back(transform);
+				center += transform->m_localTransform.m_position;
+			}
+		center /= transformComponents.size();
+		for each (auto * transform in transformComponents) {
+			const auto delta = transform->m_localTransform.m_position - center;
+			auto rotatedDelta = glm::mat4_cast(newRotation) * glm::vec4(delta, 1.0f);
+			rotatedDelta /= rotatedDelta.w;
+			transform->m_localTransform.m_position = glm::vec3(rotatedDelta) + center;
+			transform->m_localTransform.m_orientation = newRotation * transform->m_localTransform.m_orientation;
+			transform->m_localTransform.update();
 		}
-	center /= transformComponents.size();
-	for each (auto * transform in transformComponents) {
-		//transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + newPosition;
-		transform->m_localTransform.m_orientation = newRotation;
-		transform->m_localTransform.update();
 	}
+	else {
+		for each (const auto & entity in selection)
+			if (auto * transform = world.getComponent<Transform_Component>(entity)) {
+				transform->m_localTransform.m_orientation = newRotation * transform->m_localTransform.m_orientation;
+				transform->m_localTransform.update();
+			}
+	}
+	auto gizmoTransform = m_selectionGizmo->getTransform();
+	gizmoTransform.m_orientation = newRotation;
+	gizmoTransform.update();
+	setGizmoTransform(gizmoTransform);
 }
 
 void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
@@ -406,6 +427,10 @@ void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 		transform->m_localTransform.m_scale = newScale;
 		transform->m_localTransform.update();
 	}
+	auto gizmoTransform = m_selectionGizmo->getTransform();
+	gizmoTransform.m_scale = newScale;
+	gizmoTransform.update();
+	setGizmoTransform(gizmoTransform);
 }
 
 void LevelEditor_Module::deleteSelection()

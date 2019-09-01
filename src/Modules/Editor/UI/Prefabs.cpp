@@ -233,7 +233,7 @@ void Prefabs::openPrefab()
 		// Treat entity collection as a group
 		// Move the group to world origin, then transform to 3D cursor
 		center /= transformComponents.size();
-		const auto cursorPos = m_editor->getGizmoPosition();
+		const auto cursorPos = m_editor->getGizmoTransform().m_position;
 		for each (auto * transform in transformComponents) {
 			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
 			transform->m_localTransform.update();

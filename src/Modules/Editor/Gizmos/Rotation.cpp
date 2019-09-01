@@ -177,8 +177,8 @@ bool Rotation_Gizmo::rayCastMouse(const float& deltaTime)
 				clickedAxis = x;
 				m_startPoint = disk_intersections[x];
 			}
-		}		 
-		m_startingRot = rotation;
+		}	
+		m_prevRot = rotation;
 		// Set the appropriate selected axis
 		if (clickedAxis == 0) 
 			m_selectedAxes |= X_AXIS;		
@@ -197,8 +197,15 @@ bool Rotation_Gizmo::rayCastMouse(const float& deltaTime)
 			RayPlaneIntersection(ray_origin, ray_world, position, -normal, intDistance);
 		const auto endPoint = ray_origin + intDistance * ray_world;
 		const auto a = glm::normalize(m_startPoint - position), b = glm::normalize(endPoint - position);
+
+		// Measure the angle between the first point we clicked and the spot we've dragged to
 		const auto angle = glm::orientedAngle(a, b, normal);
-		m_editor->rotateSelection(glm::rotate(glm::quat(1, 0, 0, 0), angle, normal) * m_startingRot);
+		const auto newQuat = glm::rotate(glm::quat(1, 0, 0, 0), angle, normal);
+
+		// Undo the previous rotation, rotate selection to the current quaternion
+		// Note: editor rotations aren't explicit, they are deltas, as a group of objects could be selected and need to orbit their center point
+		m_editor->rotateSelection(newQuat * glm::inverse(m_prevRot));
+		m_prevRot = newQuat;
 		return true;
 	}
 

@@ -290,7 +290,7 @@ bool Scaling_Gizmo::rayCastMouse(const float& deltaTime)
 			endingOffset.z = plane_intersections[2].z;
 		}
 
-		m_transform.m_scale = m_startingScale + (((endingOffset - m_axisDelta) - m_startingPosition) * 2.0f);
+		m_transform.m_scale = m_startingScale + (((endingOffset - m_axisDelta) - m_startingPosition) * 2.0f * direction);
 		m_editor->scaleSelection(m_transform.m_scale);
 	}
 
