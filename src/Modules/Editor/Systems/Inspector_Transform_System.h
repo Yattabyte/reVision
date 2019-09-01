@@ -40,15 +40,38 @@ public:
 			const auto text = Transform_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
 			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {		
 				auto transform = m_editor->getGizmoTransform();
-				auto posInput = transform.m_position;
-				if (ImGui::DragFloat3("Position", glm::value_ptr(posInput)))
-					m_editor->moveSelection(posInput);				
-				auto sclInput = transform.m_scale;
-				if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput)))
-					m_editor->scaleSelection(sclInput);				
-				auto rotInput = glm::degrees(glm::eulerAngles(transform.m_orientation));
-				if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput)))
-					m_editor->rotateSelection(glm::quat(glm::radians(rotInput)));
+				bool changed = false;
+
+				// Position
+				auto posInput = selectedComponents[0]->m_localTransform.m_position;
+				if (ImGui::DragFloat3("Position", glm::value_ptr(posInput))) {
+					changed = true;
+					transform.m_position = posInput;
+					transform.update();
+				}				
+
+				// Rotation
+				auto rotInput = glm::degrees(glm::eulerAngles(selectedComponents[0]->m_localTransform.m_orientation));
+				if (ImGui::DragFloat3("Rotation", glm::value_ptr(rotInput))) {
+					changed = true;
+					transform.m_orientation = glm::quat(glm::radians(rotInput));
+					transform.update();
+				} 
+
+				// Sclaing
+				auto sclInput = selectedComponents[0]->m_localTransform.m_scale;
+				if (ImGui::DragFloat3("Scale", glm::value_ptr(sclInput))) {
+					changed = true;
+					transform.m_scale = sclInput;
+					transform.update();
+				}
+
+				// Update Components
+				if (changed) {
+					for each (auto & component in selectedComponents)
+						component->m_localTransform = transform;
+					m_editor->setGizmoTransform(transform);
+				}
 			}
 		}
 	}

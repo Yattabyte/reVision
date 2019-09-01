@@ -52,9 +52,8 @@ private:
 		Z_AXIS	= 0b0000'0100,
 	};
 	unsigned int m_selectedAxes = NONE;
-	glm::quat test = glm::quat(1, 0, 0, 0);
 	glm::vec3 m_startPoint = glm::vec3(0.0f);
-	glm::quat m_startingRot = glm::quat(1, 0, 0, 0);
+	glm::quat m_prevRot = glm::quat(1, 0, 0, 0);
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
 	StaticBuffer m_indicatorIndirectBuffer;

@@ -52,7 +52,7 @@ private:
 		Z_AXIS = 0b0000'0100,
 	};
 	unsigned int m_selectedAxes = NONE;
-	glm::vec3 m_startingPosition = glm::vec3(0.0f), m_startingScale = glm::vec3(0.0f), m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
+	glm::vec3 m_startingPosition = glm::vec3(0.0f), m_prevScale = glm::vec3(0.0f), m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f);
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
 	StaticBuffer m_indicatorIndirectBuffer;
