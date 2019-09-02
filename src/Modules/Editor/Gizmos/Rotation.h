@@ -38,7 +38,9 @@ public:
 private:
 	// Private Methods
 	/***/
-	bool rayCastMouse(const float& deltaTime);
+	void checkMouseHover();
+	/***/
+	bool checkMousePress();
 	/***/
 	void updateDisk();
 
@@ -54,8 +56,8 @@ private:
 		Y_AXIS	= 0b0000'0010,
 		Z_AXIS	= 0b0000'0100,
 	};
-	unsigned int m_selectedAxes = NONE;
-	glm::vec3 m_startPoint = glm::vec3(0.0f);
+	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
+	glm::vec3 m_hoveredPoint = glm::vec3(0.0f), m_hoveredEnds[3], m_startPoint = glm::vec3(0.0f), m_direction = glm::vec3(1.0f);
 	glm::quat m_prevRot = glm::quat(1, 0, 0, 0);
 	float m_startingAngle = 0.0f, m_deltaAngle = 0.0f;
 	Shared_Auto_Model m_model;
