@@ -4,7 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Shader.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 
 
 /** UI separator class. Renders a faded out line across its width. */
@@ -40,8 +40,7 @@ public:
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), &m_data[0], GL_CLIENT_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 		setMaxHeight(2.0f);
 		setMinHeight(2.0f);
 	}
@@ -60,8 +59,7 @@ public:
 		m_shader->setUniform(1, newScale);
 		m_shader->setUniform(2, m_color);
 		glBindVertexArray(m_vaoID);
-		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirect.drawCall();
 		
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
@@ -86,7 +84,7 @@ protected:
 	glm::vec4 m_color = glm::vec4(1.0f);
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirect;
+	IndirectDraw m_indirect;
 };
 
 #endif // UI_SEPARATOR_H

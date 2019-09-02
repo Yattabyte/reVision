@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Decorators/Border.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include <string>
 #include <vector>
 
@@ -46,8 +47,7 @@ public:
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Make a background panel for cosemetic purposes
 		auto panel = std::make_shared<Panel>(engine);
@@ -126,8 +126,7 @@ public:
 		m_shader->setUniform(6, m_lpressed);
 		m_shader->setUniform(7, m_rpressed);
 		glBindVertexArray(m_vaoID);
-		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirect.drawCall();
 
 		// Render children (text)
 		UI_Element::renderElement(deltaTime, position, scale);
@@ -215,7 +214,7 @@ protected:
 		m_vaoID = 0,
 		m_vboID[2] = { 0, 0 };
 	Shared_Shader m_shader;
-	StaticBuffer m_indirect;
+	IndirectDraw m_indirect;
 	std::shared_ptr<Label> m_label;
 	std::shared_ptr<Border> m_backPanel;
 };

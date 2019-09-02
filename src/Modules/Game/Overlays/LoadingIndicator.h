@@ -6,7 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Texture.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Engine.h"
 
 
@@ -37,8 +37,7 @@ public:
 
 		// Asset-Finished Callbacks
 		m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-			const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-			m_quadIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
+			m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 		});
 		
 		// World-Changed Callback
@@ -71,14 +70,13 @@ public:
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 			glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 			glBindVertexArray(m_shapeQuad->m_vaoID);
-			m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 			m_texture->bind(0);
 			m_shader->bind();
 			m_shader->setUniform(1, m_projMatrix);
 			m_shader->setUniform(2, glm::translate(glm::mat4(1.0f), glm::vec3(m_renderSize.x - 64, 64, 0)) * glm::scale(glm::mat4(1.0f), glm::vec3(32)));
 			m_shader->setUniform(3, m_time);
 			m_shader->setUniform(4, m_blendAmt);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			m_indirectQuad.drawCall();
 			m_shader->Release();
 			glDisable(GL_BLEND);
 		}
@@ -98,7 +96,7 @@ private:
 	Shared_Shader m_shader;
 	Shared_Texture m_texture;
 	Shared_Auto_Model m_shapeQuad;
-	StaticBuffer m_quadIndirectBuffer;	
+	IndirectDraw m_indirectQuad;
 	bool m_show = false;
 	float m_time = 0.0f, m_blendAmt = 1.0f;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

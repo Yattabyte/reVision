@@ -24,7 +24,7 @@ void Graphics_Module::initialize(Engine * engine)
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
 		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
 	});
 
 	// GL settings
@@ -103,7 +103,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 {
 	// Prepare rendering pipeline for a new frame, wait for buffers to free
 	m_clientCamera->updateFrustum();
-	m_quadIndirectBuffer.beginWriting();
+	m_indirectQuad.beginWriting();
 	m_cameraBuffer->beginWriting();
 	m_sceneCameras->clear();
 	m_sceneCameras->push_back(m_clientCamera.get());
@@ -136,7 +136,7 @@ void Graphics_Module::frameTick(const float & deltaTime)
 	// Consolidate and prepare for the next frame, swap to next set of buffers
 	m_pipeline->prepareForNextFrame(deltaTime);
 	m_cameraBuffer->endWriting();
-	m_quadIndirectBuffer.endWriting();
+	m_indirectQuad.endWriting();
 }
 
 void Graphics_Module::renderScene(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives,  const unsigned int & allowedCategories)
@@ -181,7 +181,7 @@ void Graphics_Module::copyToScreen()
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
 	}
 }

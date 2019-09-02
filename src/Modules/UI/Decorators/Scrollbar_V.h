@@ -4,6 +4,7 @@
 
 #include "Modules/UI/Basic Elements/Button.h"
 #include "Modules/UI/Decorators/UI_Decorator.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include <algorithm>
 #include <string>
 
@@ -55,8 +56,7 @@ public:
 		glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(glm::vec3));
 		constexpr auto num_data = 2 * 3;
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 
 		// Add Callbacks
 		addCallback(UI_Element::on_resize, [&]() { updateGeometry(); });
@@ -91,8 +91,7 @@ public:
 		m_shader->bind();
 		m_shader->setUniform(0, newPosition);
 		glBindVertexArray(m_vaoID);
-		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirect.drawCall();
 		
 
 		// Render Children
@@ -156,7 +155,7 @@ protected:
 	float m_linear = 1.0f;
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirect;
+	IndirectDraw m_indirect;
 };
 
 #endif // UI_SCROLLBAR_V_H

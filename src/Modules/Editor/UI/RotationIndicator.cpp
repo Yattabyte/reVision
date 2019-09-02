@@ -34,9 +34,8 @@ RotationIndicator::RotationIndicator(Engine * engine, LevelEditor_Module * edito
 	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
 
 	// Asset-Finished Callbacks
-	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint data[4] = { (GLuint)m_3dIndicator->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
+	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {		
+		m_indirectIndicator = IndirectDraw((GLuint)m_3dIndicator->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	// GL structures
@@ -85,8 +84,7 @@ void RotationIndicator::tick(const float & deltaTime)
 		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6.0f)) * camMatrix;
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix);
 
-		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirectIndicator.drawCall();
 
 		m_gizmoShader->Release();
 		glDepthMask(false);

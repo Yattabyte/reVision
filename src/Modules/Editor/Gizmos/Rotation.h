@@ -6,8 +6,7 @@
 #include "Assets/Shader.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsSystem.h"
-#include "Utilities/GL/StaticBuffer.h"
-#include "Utilities/GL/DynamicBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Utilities/Transform.h"
 #include <vector>
 
@@ -62,7 +61,7 @@ private:
 	float m_startingAngle = 0.0f, m_deltaAngle = 0.0f;
 	Shared_Auto_Model m_model;
 	Shared_Shader m_gizmoShader, m_axisShader;
-	StaticBuffer m_indicatorIndirectBuffer, m_diskIndirectBuffer;
+	IndirectDraw m_indirectIndicator, m_indirectDisk;
 	GLuint m_axisVAO = 0, m_axisVBO = 0, m_diskVAO = 0, m_diskVBO = 0;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

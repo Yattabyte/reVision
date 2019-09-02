@@ -24,8 +24,7 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint data[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_indirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	auto& preferences = engine->getPreferenceState();
@@ -70,12 +69,9 @@ void Editor_Interface::tick(const float & deltaTime)
 		m_editor->bindTexture();
 		m_shader->bind();
 		m_shapeQuad->bind();
-		m_indirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-		// Draw
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirectQuad.drawCall();
 	}
 }

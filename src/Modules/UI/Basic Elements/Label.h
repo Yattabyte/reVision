@@ -5,7 +5,7 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Utilities/GL/DynamicBuffer.h"
 #include <algorithm>
 #include <string>
@@ -60,8 +60,7 @@ public:
 		data[4] = { -1,  1, 0 };
 		data[5] = { -1, -1, 0 };
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Configure THIS element
 		setText(text);
@@ -87,8 +86,7 @@ public:
 		m_textureFont->bind(0);
 		m_bufferString.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 8);
 		glBindVertexArray(m_vaoID);
-		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirect.drawCall();
 
 		// Render Children
 		UI_Element::renderElement(deltaTime, position, scale);
@@ -108,7 +106,7 @@ public:
 		for (size_t x = 0; x < (size_t)count; ++x)
 			data[x + 1ull] = (int)(m_text[x]) - 32;
 		m_bufferString.write_immediate(0, sizeof(int)*(int(count + 1u)), data.data());
-		m_indirect.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &count);
+		m_indirect.setPrimitiveCount(count);
 
 		// Notify text changed
 		enactCallback(on_textChanged);
@@ -160,7 +158,7 @@ protected:
 	GLuint m_vaoID = 0, m_vboID = 0;
 	Shared_Shader m_shader;
 	Shared_Texture m_textureFont;
-	StaticBuffer m_indirect;
+	IndirectDraw m_indirect;
 	DynamicBuffer m_bufferString;
 };
 

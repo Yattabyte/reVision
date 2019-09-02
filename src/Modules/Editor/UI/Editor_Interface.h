@@ -5,6 +5,7 @@
 #include "Modules/UI/UI_M.h"
 #include "Assets/Auto_Model.h"
 #include "Assets/Shader.h"
+#include "Utilities/GL/IndirectDraw.h"
 
 
 // Forward Declarations
@@ -46,7 +47,7 @@ private:
 	LevelEditor_Module * m_editor = nullptr;
 	Shared_Auto_Model m_shapeQuad;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirectBuffer;
+	IndirectDraw m_indirectQuad;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

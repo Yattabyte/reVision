@@ -26,9 +26,8 @@ Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint data[4] = { (GLuint)m_model->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
-		});
+		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT); 
+	});
 
 	auto& preferences = m_engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -92,8 +91,7 @@ void Scaling_Gizmo::render(const float& deltaTime)
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
 		m_gizmoShader->setUniform(4, GLuint(m_selectedAxes));
 		m_gizmoShader->setUniform(5, GLuint(m_hoveredAxes));
-		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirectIndicator.drawCall();
 
 		// Render Axis Lines
 		m_axisShader->bind();

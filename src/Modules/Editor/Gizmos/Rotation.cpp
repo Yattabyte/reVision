@@ -31,8 +31,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint data[4] = { (GLuint)m_model->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_indicatorIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, data, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	auto& preferences = m_engine->getPreferenceState();
@@ -56,8 +55,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 
 	// Disk
-	const GLuint diskData[4] = { 0, 1, 0, 0 };
-	m_diskIndirectBuffer = StaticBuffer(sizeof(GLuint) * 4, diskData, GL_DYNAMIC_STORAGE_BIT);
+	m_indirectDisk.setPrimitiveCount(1);
 	glCreateBuffers(1, &m_diskVBO);
 	glNamedBufferStorage(m_diskVBO, sizeof(glm::vec3) * DISK_MAX_POINTS, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glCreateVertexArrays(1, &m_diskVAO);
@@ -106,8 +104,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
 		m_gizmoShader->setUniform(4, GLuint(m_selectedAxes));
 		m_gizmoShader->setUniform(5, GLuint(m_hoveredAxes));
-		m_indicatorIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirectIndicator.drawCall();
 
 		// Render Disk
 		if (m_selectedAxes != NONE) {
@@ -117,8 +114,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 			m_axisShader->setUniform(0, pMatrix * vMatrix * trans * diskScale);
 			m_axisShader->setUniform(4, glm::vec3(1, 0.8, 0));
 			glBindVertexArray(m_diskVAO);
-			m_diskIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-			glDrawArraysIndirect(GL_TRIANGLES, 0);
+			m_indirectDisk.drawCall();
 		}
 						
 		// Render Axis Lines
@@ -277,7 +273,6 @@ void Rotation_Gizmo::updateDisk()
 		points[v + 4] = v2;
 		points[v + 5] = v1;
 	}
-	const auto stepCount = GLuint(points.size());
-	m_diskIndirectBuffer.write(0, sizeof(GLuint), &stepCount);
+	m_indirectDisk.setCount(GLuint(points.size()));
 	glNamedBufferSubData(m_diskVBO, 0, sizeof(glm::vec3) * points.size(), points.data());
 }

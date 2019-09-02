@@ -5,7 +5,7 @@
 #include "Modules/UI/Basic Elements/UI_Element.h"
 #include "Modules/UI/Basic Elements/Label.h"
 #include "Assets/Shader.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include <algorithm>
 #include <string>
 
@@ -59,8 +59,7 @@ public:
 		constexpr auto num_data = 4 * 3;
 		glNamedBufferStorage(m_vboID[0], num_data * sizeof(glm::vec3), 0, GL_DYNAMIC_STORAGE_BIT);
 		glNamedBufferStorage(m_vboID[1], num_data * sizeof(int), 0, GL_DYNAMIC_STORAGE_BIT);
-		const GLuint quad[4] = { (GLuint)num_data, 1, 0, 0 };
-		m_indirect = StaticBuffer(sizeof(GLuint) * 4, quad, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 	}
 
 
@@ -127,8 +126,7 @@ public:
 		m_shader->setUniform(2, m_edit);
 		m_shader->setUniform(3, m_blinkTime += deltaTime);
 		glBindVertexArray(m_vaoID);
-		m_indirect.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);		
+		m_indirect.drawCall();
 
 		// Render Children (text)
 		UI_Element::renderElement(deltaTime, position, scale);
@@ -195,7 +193,7 @@ protected:
 		m_vboID[2] = { 0, 0 };
 	float m_blinkTime = 0.0f;
 	Shared_Shader m_shader;
-	StaticBuffer m_indirect;
+	IndirectDraw m_indirect;
 };
 
 #endif // UI_TEXTINPUT_H
