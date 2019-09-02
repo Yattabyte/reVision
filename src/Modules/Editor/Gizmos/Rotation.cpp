@@ -55,7 +55,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 
 	// Disk
-	m_indirectDisk.setPrimitiveCount(1);
+	m_indirectDisk = IndirectDraw(0, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
 	glCreateBuffers(1, &m_diskVBO);
 	glNamedBufferStorage(m_diskVBO, sizeof(glm::vec3) * DISK_MAX_POINTS, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glCreateVertexArrays(1, &m_diskVAO);
@@ -108,6 +108,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 
 		// Render Disk
 		if (m_selectedAxes != NONE) {
+			m_indirectDisk.beginWriting();
 			updateDisk();
 			const auto diskScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
 			m_axisShader->bind();
@@ -115,6 +116,7 @@ void Rotation_Gizmo::render(const float& deltaTime)
 			m_axisShader->setUniform(4, glm::vec3(1, 0.8, 0));
 			glBindVertexArray(m_diskVAO);
 			m_indirectDisk.drawCall();
+			m_indirectDisk.endWriting();
 		}
 						
 		// Render Axis Lines

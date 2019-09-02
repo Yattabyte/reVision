@@ -7,7 +7,7 @@
 #include "Assets/Cubemap.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Engine.h"
 
 
@@ -65,9 +65,9 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto &[camIndexBuffer, quadIndirectBuffer, quad6IndirectBuffer] : m_drawData) {
+		for (auto &[camIndexBuffer, indirectQuad, quad6IndirectBuffer] : m_drawData) {
 			camIndexBuffer.endWriting();
-			quadIndirectBuffer.endWriting();
+			indirectQuad.endWriting();
 			quad6IndirectBuffer.endWriting();
 		}
 		m_drawIndex = 0;
@@ -85,16 +85,15 @@ public:
 			m_skyOutOfDate = false;
 		}
 
-		auto &[camBufferIndex, quadIndirectBuffer, quad6IndirectBuffer] = m_drawData[m_drawIndex];
+		auto &[camBufferIndex, indirectQuad, quad6IndirectBuffer] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
-		quadIndirectBuffer.beginWriting();
+		indirectQuad.beginWriting();
 		quad6IndirectBuffer.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-		const auto instanceCount = (GLuint)perspectives.size();
-		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);		
 
 		glDisable(GL_BLEND);
@@ -102,7 +101,7 @@ public:
 		glEnable(GL_DEPTH_TEST);
 		glDepthMask(GL_FALSE);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		indirectQuad.bind();
 		glBindTextureUnit(4, m_cubemapMipped);
 
 		// Render skybox to reflection buffer
@@ -133,7 +132,7 @@ private:
 		m_shaderConvolute->setUniform(0, 0);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_cubeFBO);
 		glBindTextureUnit(0, m_cubemapMipped);
-		m_drawData[m_drawIndex].quad6IndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
+		m_drawData[m_drawIndex].quad6IndirectBuffer.bind();
 		for (unsigned int r = 1; r < 6; ++r) {
 			// Ensure we are writing to MIP level r
 			const unsigned int write_size = (unsigned int)std::max(1.0f, (floor((float)m_skySize.x / pow(2.0f, (float)r))));
@@ -169,9 +168,7 @@ private:
 	glm::ivec2 m_skySize = glm::ivec2(1);
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
-		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
-		constexpr static GLuint quad6Data[4] = { (GLuint)6, 6, 0, 0 };
-		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData), quad6IndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quad6Data, GL_CLIENT_STORAGE_BIT);
+		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT), quad6IndirectBuffer = IndirectDraw((GLuint)6, 6, 0, 0, GL_CLIENT_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

@@ -22,9 +22,8 @@ void Graphics_Module::initialize(Engine * engine)
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");	
 	
 	// Asset-Finished Callbacks
-	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {
-		const GLuint quadData[4] = { (GLuint)m_shapeQuad->getSize(), 1, 0, 0 }; // count, primCount, first, reserved
-		m_indirectQuad = StaticTripleBuffer(sizeof(GLuint) * 4, quadData, GL_CLIENT_STORAGE_BIT);
+	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {		
+		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	// GL settings
@@ -181,7 +180,6 @@ void Graphics_Module::copyToScreen()
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 		m_shader->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		m_indirectQuad.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		m_indirectQuad.drawCall();
 	}
 }

@@ -6,7 +6,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Engine.h"
 
 
@@ -35,9 +35,9 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto &[camIndexBuffer, quadIndirectBuffer] : m_drawData) {
+		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
-			quadIndirectBuffer.endWriting();
+			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
@@ -48,15 +48,14 @@ public:
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, quadIndirectBuffer] = m_drawData[m_drawIndex];
+		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
-		quadIndirectBuffer.beginWriting();
+		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-		const auto instanceCount = (GLuint)perspectives.size();
-		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		// Apply FXAA effect
@@ -64,8 +63,7 @@ public:
 		viewport->m_gfxFBOS->bindForReading("HDR", 0);
 		m_shaderFXAA->bind();
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
-		glDrawArraysIndirect(GL_TRIANGLES, 0);
+		indirectQuad.drawCall();
 
 		// Bind for reading by next effect	
 		glBindTextureUnit(0, viewport->m_gfxFBOS->getTexID("FXAA", 0));
@@ -80,8 +78,7 @@ private:
 	Shared_Auto_Model m_shapeQuad;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
-		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
-		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

@@ -7,7 +7,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Auto_Model.h"
 #include "Utilities/GL/DynamicBuffer.h"
-#include "Utilities/GL/StaticTripleBuffer.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include "Engine.h"
 #include <random>
 
@@ -87,9 +87,9 @@ public:
 
 	// Public Interface Implementations.
 	inline virtual void prepareForNextFrame(const float & deltaTime) override {
-		for (auto &[camIndexBuffer, quadIndirectBuffer] : m_drawData) {
+		for (auto &[camIndexBuffer, indirectQuad] : m_drawData) {
 			camIndexBuffer.endWriting();
-			quadIndirectBuffer.endWriting();
+			indirectQuad.endWriting();
 		}
 		m_drawIndex = 0;
 	}
@@ -100,15 +100,14 @@ public:
 		// Prepare camera index
 		if (m_drawIndex >= m_drawData.size())
 			m_drawData.resize(size_t(m_drawIndex) + 1ull);
-		auto &[camBufferIndex, quadIndirectBuffer] = m_drawData[m_drawIndex];
+		auto &[camBufferIndex, indirectQuad] = m_drawData[m_drawIndex];
 		camBufferIndex.beginWriting();
-		quadIndirectBuffer.beginWriting();
+		indirectQuad.beginWriting();
 		std::vector<glm::ivec2> camIndices;
 		for (auto &[camIndex, layer] : perspectives)
 			camIndices.push_back({ camIndex, layer });
 		camBufferIndex.write(0, sizeof(glm::ivec2) * camIndices.size(), camIndices.data());
-		const auto instanceCount = (GLuint)perspectives.size();
-		quadIndirectBuffer.write(sizeof(GLuint), sizeof(GLuint), &instanceCount);
+		indirectQuad.setPrimitiveCount((GLuint)perspectives.size());
 		camBufferIndex.bindBufferBase(GL_SHADER_STORAGE_BUFFER, 3);
 
 		glDisable(GL_DEPTH_TEST);
@@ -118,12 +117,12 @@ public:
 		viewport->m_gfxFBOS->bindForReading("GEOMETRY", 0);
 		glBindTextureUnit(6, m_noiseID);
 		glBindVertexArray(m_shapeQuad->m_vaoID);
-		quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 		glDrawBuffer(GL_COLOR_ATTACHMENT0);
+		indirectQuad.bind();
 		glDrawArraysIndirect(GL_TRIANGLES, 0);
-		size_t aoSpot = 0;
 			
 		// Gaussian blur the lines we got from the SSAO pass
+		size_t aoSpot = 0;
 		if (m_blurStrength > 0) {
 			// Clear the second attachment
 			GLfloat clearRed = 0.0f;
@@ -137,8 +136,6 @@ public:
 			m_shaderGB_A->bind();
 			m_shaderGB_A->setUniform(0, horizontal);
 			m_shaderGB_A->setUniform(1, glm::vec2(viewport->m_dimensions));
-			glBindVertexArray(m_shapeQuad->m_vaoID);
-			quadIndirectBuffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 
 			// Blur remainder of the times
 			for (int i = 0; i < m_blurStrength; i++) {
@@ -175,8 +172,7 @@ private:
 	GLuint m_noiseID = 0;
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
-		constexpr static GLuint quadData[4] = { (GLuint)6, 1, 0, 0 };
-		StaticTripleBuffer quadIndirectBuffer = StaticTripleBuffer(sizeof(GLuint) * 4, quadData);
+		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;
