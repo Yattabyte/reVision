@@ -48,7 +48,7 @@ public:
 					changed = true;
 					transform.m_position = posInput;
 					transform.update();
-				}				
+				}
 
 				// Rotation
 				auto rotInput = glm::degrees(glm::eulerAngles(selectedComponents[0]->m_localTransform.m_orientation));
@@ -56,7 +56,7 @@ public:
 					changed = true;
 					transform.m_orientation = glm::quat(glm::radians(rotInput));
 					transform.update();
-				} 
+				}
 
 				// Sclaing
 				auto sclInput = selectedComponents[0]->m_localTransform.m_scale;
