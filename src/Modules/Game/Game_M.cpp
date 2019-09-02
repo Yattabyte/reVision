@@ -14,8 +14,8 @@ void Game_Module::initialize(Engine * engine)
 	m_engine->getManager_Messages().statement("Loading Module: Game...");
 
 	// Initialize ECS Systems
-	m_ecsSystems.addSystem(new PlayerSpawn_System(m_engine));
-	m_ecsSystems.addSystem(new PlayerFreeLook_System(m_engine));
+	m_ecsSystems.makeSystem<PlayerSpawn_System>(m_engine);
+	m_ecsSystems.makeSystem<PlayerFreeLook_System>(m_engine);
 
 	// Create Overlay Effects
 	m_loadingRing = std::make_shared<LoadingIndicator>(m_engine);

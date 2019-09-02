@@ -16,7 +16,7 @@ void Physics_Module::initialize(Engine * engine)
 	m_world->setGravity(btVector3(0, btScalar(-9.8), 0));
 
 	// Physics Systems
-	m_physicsSystems.addSystem(new TransformSync_Phys_System(engine, m_world));
+	m_physicsSystems.makeSystem<TransformSync_Phys_System>(engine, m_world);
 
 	// World-Changed Callback
 	m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {

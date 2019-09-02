@@ -21,7 +21,7 @@ class Selection_Gizmo {
 public:
 	// Public (de)Constructors
 	/***/
-	~Selection_Gizmo();
+	inline ~Selection_Gizmo() = default;
 	/***/
 	Selection_Gizmo(Engine* engine, LevelEditor_Module* editor);
 
@@ -55,7 +55,7 @@ private:
 	bool m_clicked = false;
 	Transform m_transform = glm::vec3(0.0f);
 	std::vector<ecsEntity*> m_selection;
-	BaseECSSystem* m_pickerSystem;
+	std::shared_ptr<BaseECSSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
 	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;

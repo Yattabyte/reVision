@@ -28,9 +28,9 @@ public:
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
-		auxilliarySystems.addSystem(new ReflectorScheduler_System(m_engine, m_frameData));
-		auxilliarySystems.addSystem(new ReflectorVisibility_System(m_frameData));
-		auxilliarySystems.addSystem(new ReflectorSync_System(m_frameData));
+		auxilliarySystems.makeSystem<ReflectorScheduler_System>(m_engine, m_frameData);
+		auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
+		auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");

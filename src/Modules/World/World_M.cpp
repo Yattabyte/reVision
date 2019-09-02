@@ -360,7 +360,7 @@ void World_Module::unparentEntity(ecsEntity* entity)
 void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)
 {
 	for (size_t i = 0; i < systems.size(); ++i)
-		updateSystem(systems[i], deltaTime);
+		updateSystem(systems[i].get(), deltaTime);
 }
 
 void World_Module::updateSystem(BaseECSSystem* system, const float& deltaTime)

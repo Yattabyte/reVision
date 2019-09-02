@@ -23,13 +23,13 @@ public:
 		*m_aliveIndicator = false;
 	}
 	/** Constructor. */
-	inline Prop_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & viewports, ECSSystemList & auxilliarySystems)
+	inline Prop_Technique(Engine* engine, const std::shared_ptr<std::vector<Camera*>>& viewports, ECSSystemList& auxilliarySystems)
 		: m_engine(engine), m_cameras(viewports) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PropData>();
-		auxilliarySystems.addSystem(new PropUpload_System(engine, m_frameData));
-		auxilliarySystems.addSystem(new PropVisibility_System(m_frameData, viewports));
-		auxilliarySystems.addSystem(new PropSync_System(m_frameData));
+		auxilliarySystems.makeSystem<PropUpload_System>(engine, m_frameData);
+		auxilliarySystems.makeSystem<PropVisibility_System>(m_frameData, viewports);
+		auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
@@ -37,20 +37,20 @@ public:
 		m_shaderShadowCull = Shared_Shader(m_engine, "Core\\Props\\shadow culling");
 		m_shaderShadowGeometry = Shared_Shader(m_engine, "Core\\Props\\shadow");
 		m_shapeCube = Shared_Auto_Model(m_engine, "cube");
-		
+
 		// Clear state on world-unloaded
-		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {
+		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {
 			if (state == World_Module::unloaded)
 				clear();
-		});
+			});
 	}
 
 
 	// Public Interface Implementations
-	inline virtual void prepareForNextFrame(const float & deltaTime) override {
+	inline virtual void prepareForNextFrame(const float& deltaTime) override {
 		m_frameData->modelBuffer.endWriting();
 		m_frameData->skeletonBuffer.endWriting();
-		for (auto & drawBuffer : m_drawData) {
+		for (auto& drawBuffer : m_drawData) {
 			drawBuffer.bufferCamIndex.endWriting();
 			drawBuffer.bufferPropIndex.endWriting();
 			drawBuffer.bufferCulling.endWriting();
@@ -59,17 +59,17 @@ public:
 		}
 		m_drawIndex = 0;
 	}
-	inline virtual void renderTechnique(const float & deltaTime, const std::shared_ptr<Viewport> & viewport, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void renderTechnique(const float& deltaTime, const std::shared_ptr<Viewport>& viewport, const std::vector<std::pair<int, int>>& perspectives) override {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderCull->existsYet() && m_shaderGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto & drawBuffer = m_drawData[m_drawIndex];
-			auto &camBufferIndex = drawBuffer.bufferCamIndex;
-			auto &propIndexBuffer = drawBuffer.bufferPropIndex;
-			auto &propCullingBuffer = drawBuffer.bufferCulling;
-			auto &propRenderBuffer = drawBuffer.bufferRender;
-			auto &propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
+			auto& drawBuffer = m_drawData[m_drawIndex];
+			auto& camBufferIndex = drawBuffer.bufferCamIndex;
+			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
+			auto& propCullingBuffer = drawBuffer.bufferCulling;
+			auto& propRenderBuffer = drawBuffer.bufferRender;
+			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
 			camBufferIndex.beginWriting();
 			propIndexBuffer.beginWriting();
 			propCullingBuffer.beginWriting();
@@ -81,7 +81,7 @@ public:
 			std::vector<glm::ivec4> cullingDrawData, renderingDrawData;
 			std::vector<GLuint> visibleIndices;
 			std::vector<int> skeletonData;
-			for (auto &[camIndex, layer] : perspectives) {
+			for (auto& [camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				visibleIndices.insert(visibleIndices.end(), m_frameData->viewInfo[camIndex].visibleIndices.begin(), m_frameData->viewInfo[camIndex].visibleIndices.end());
@@ -140,17 +140,17 @@ public:
 		else
 			viewport->m_gfxFBOS->clearDepthStencil();
 	}
-	inline virtual void cullShadows(const float & deltaTime, const std::vector<std::pair<int, int>> & perspectives) override {
+	inline virtual void cullShadows(const float& deltaTime, const std::vector<std::pair<int, int>>& perspectives) override {
 		// Exit Early
 		if (m_enabled && m_frameData->viewInfo.size() && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_drawIndex >= m_drawData.size())
 				m_drawData.resize(size_t(m_drawIndex) + 1ull);
-			auto & drawBuffer = m_drawData[m_drawIndex];
-			auto &camBufferIndex = drawBuffer.bufferCamIndex;
-			auto &propIndexBuffer = drawBuffer.bufferPropIndex;
-			auto &propCullingBuffer = drawBuffer.bufferCulling;
-			auto &propRenderBuffer = drawBuffer.bufferRender;
-			auto &propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
+			auto& drawBuffer = m_drawData[m_drawIndex];
+			auto& camBufferIndex = drawBuffer.bufferCamIndex;
+			auto& propIndexBuffer = drawBuffer.bufferPropIndex;
+			auto& propCullingBuffer = drawBuffer.bufferCulling;
+			auto& propRenderBuffer = drawBuffer.bufferRender;
+			auto& propSkeletonBuffer = drawBuffer.bufferSkeletonIndex;
 			camBufferIndex.beginWriting();
 			propIndexBuffer.beginWriting();
 			propCullingBuffer.beginWriting();
@@ -161,7 +161,7 @@ public:
 			std::vector<GLuint> visibleIndices;
 			std::vector<int> skeletonData;
 			// Accumulate all visibility info for the cameras passed in
-			for (auto &[camIndex, layer] : perspectives) {
+			for (auto& [camIndex, layer] : perspectives) {
 				const std::vector<glm::ivec2> tempIndices(m_frameData->viewInfo[camIndex].visibleIndices.size(), { camIndex, layer });
 				camIndices.insert(camIndices.end(), tempIndices.begin(), tempIndices.end());
 				visibleIndices.insert(visibleIndices.end(), m_frameData->viewInfo[camIndex].visibleIndices.begin(), m_frameData->viewInfo[camIndex].visibleIndices.end());
@@ -202,9 +202,9 @@ public:
 			}
 		}
 	}
-	inline virtual void renderShadows(const float & deltaTime) override {
+	inline virtual void renderShadows(const float& deltaTime) override {
 		// Exit Early
-		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {					
+		if (m_enabled && m_shapeCube->existsYet() && m_shaderShadowCull->existsYet() && m_shaderShadowGeometry->existsYet()) {
 			if (m_count) {
 				// Draw geometry using the populated render buffer
 				glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
@@ -221,7 +221,7 @@ public:
 				glCullFace(GL_BACK);
 				m_drawIndex++;
 			}
-		}	
+		}
 	}
 
 
@@ -234,7 +234,7 @@ private:
 
 
 	// Private Attributes
-	Engine * m_engine = nullptr;
+	Engine* m_engine = nullptr;
 	Shared_Shader m_shaderCull, m_shaderGeometry, m_shaderShadowCull, m_shaderShadowGeometry;
 	Shared_Auto_Model m_shapeCube;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

@@ -27,8 +27,8 @@ public:
 		// Auxilliary Systems
 		m_frameData = std::make_shared<PointData>();
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.addSystem(new PointVisibility_System(m_frameData));
-		auxilliarySystems.addSystem(new PointSync_System(m_frameData));
+		auxilliarySystems.makeSystem<PointVisibility_System>(m_frameData);
+		auxilliarySystems.makeSystem<PointSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Point\\Light");

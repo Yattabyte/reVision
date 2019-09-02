@@ -3,6 +3,7 @@
 #define ECSSYSTEM_H
 
 #include "Modules/World/ECS/ecsComponent.h"
+#include <memory>
 
 
 /** An interface for ECS Systems. */
@@ -72,14 +73,23 @@ public:
 	// Public (de)Constructors
 	inline ~ECSSystemList() = default;
 	inline explicit ECSSystemList() = default;
-	inline ECSSystemList(const std::vector<BaseECSSystem*> & systems) 
+	inline ECSSystemList(const std::vector<std::shared_ptr<BaseECSSystem>> & systems) 
 		: m_systems(systems) {}
 
 
 	// Public Methods
+	/***/
+	template <typename T, class...Args>
+	inline const bool makeSystem(Args ...args) {
+		const auto & system = std::make_shared<T>(args...);
+		if (!system->isValid())
+			return false;
+		m_systems.push_back(system);
+		return true;
+	}
 	/** Adds a system to the list.
 	@param	system	the system to add. */
-	inline const bool addSystem(BaseECSSystem * system)	{
+	inline const bool addSystem(const std::shared_ptr<BaseECSSystem>& system)	{
 		if (!system->isValid())
 			return false;
 		m_systems.push_back(system);
@@ -87,9 +97,9 @@ public:
 	}
 	/** Removes a system from the list.
 	@param	system	the system to remove. */
-	inline const bool removeSystem(BaseECSSystem * system) {
+	inline const bool removeSystem(const std::shared_ptr<BaseECSSystem>& system) {
 		for (size_t i = 0; i < m_systems.size(); ++i)
-			if (system == m_systems[i]) {
+			if (system.get() == m_systems[i].get()) {
 				m_systems.erase(m_systems.begin() + i);
 				return true;
 			}		
@@ -102,34 +112,34 @@ public:
 	}
 	/** Retrieve a specific system at a given index.
 	@param	index	the index to fetch the system from. */
-	inline BaseECSSystem * operator[](const size_t & index) {
+	inline auto operator[](const size_t & index) {
 		return m_systems[index];
 	}
 	/** Retrieve an iterator to the beginning of this system list.
 	@return			 an iterator to the beginning of this system list. */
-	inline std::vector<BaseECSSystem*>::iterator begin() {
+	inline auto begin() {
 		return m_systems.begin(); 
 	}
 	/** Retrieve a const iterator to the beginning of this system list.
 	@return			a const iterator to the beginning of this system list. */
-	inline std::vector<BaseECSSystem*>::const_iterator begin() const {
+	inline auto begin() const {
 		return m_systems.cbegin(); 
 	}
 	/** Retrieve an iterator to the end of this system list.
 	@return			an iterator to the end of this system list. */
-	inline std::vector<BaseECSSystem*>::iterator end() {
+	inline auto end() {
 		return m_systems.end(); 
 	}
 	/** Retrieve a const iterator to the end of this system list. 
 	@return			a const iterator to the end of this system list. */
-	inline std::vector<BaseECSSystem*>::const_iterator end() const {
+	inline auto end() const {
 		return  m_systems.cend();
 	}
 
 
 private:
 	// Private attributes
-	std::vector<BaseECSSystem*> m_systems;
+	std::vector<std::shared_ptr<BaseECSSystem>> m_systems;
 };
 
 #endif // ECSSYSTEM_H

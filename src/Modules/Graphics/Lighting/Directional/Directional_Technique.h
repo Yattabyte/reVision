@@ -30,8 +30,8 @@ public:
 		m_frameData = std::make_shared<DirectionalData>();
 		m_frameData->clientCamera = clientCamera;
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.addSystem(new DirectionalVisibility_System(m_frameData));
-		auxilliarySystems.addSystem(new DirectionalSync_System(m_frameData));
+		auxilliarySystems.makeSystem<DirectionalVisibility_System>(m_frameData);
+		auxilliarySystems.makeSystem<DirectionalSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");

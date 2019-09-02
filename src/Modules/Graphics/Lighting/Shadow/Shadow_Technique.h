@@ -23,7 +23,7 @@ public:
 	inline Shadow_Technique(Engine * engine, const std::shared_ptr<std::vector<Camera*>> & cameras, ECSSystemList & auxilliarySystems)
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		m_frameData = std::make_shared<ShadowData>();
-		auxilliarySystems.addSystem(new ShadowScheduler_System(m_engine, m_frameData));
+		auxilliarySystems.makeSystem<ShadowScheduler_System>(m_engine, m_frameData);
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

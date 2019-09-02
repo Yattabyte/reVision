@@ -27,8 +27,8 @@ public:
 		// Auxilliary Systems
 		m_frameData = std::make_shared<SpotData>();
 		m_frameData->shadowData = shadowData;
-		auxilliarySystems.addSystem(new SpotVisibility_System(m_frameData));
-		auxilliarySystems.addSystem(new SpotSync_System(m_frameData));
+		auxilliarySystems.makeSystem<SpotVisibility_System>(m_frameData);
+		auxilliarySystems.makeSystem<SpotSync_System>(m_frameData);
 
 		// Asset Loading
 		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Spot\\Light");

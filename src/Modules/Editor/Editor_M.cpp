@@ -28,7 +28,7 @@ void LevelEditor_Module::initialize(Engine * engine)
 	m_selectionGizmo = std::make_shared<Selection_Gizmo>(engine, this);
 
 	// Systems
-	m_systems.addSystem(new Wireframe_System(engine));
+	m_systems.makeSystem<Wireframe_System>(engine);
 
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
