@@ -390,7 +390,7 @@ void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
 	}
 	
 	auto gizmoTransform = m_selectionGizmo->getTransform();
-	gizmoTransform.m_orientation = newRotation * gizmoTransform.m_orientation;
+	gizmoTransform.m_orientation = newRotation;
 	gizmoTransform.update();
 	setGizmoTransform(gizmoTransform);
 }

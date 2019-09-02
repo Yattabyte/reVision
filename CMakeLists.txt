@@ -2,7 +2,7 @@
 ### reVision ###
 ################
 cmake_minimum_required(VERSION 3.10)
-project(reVision VERSION 4.4.5 DESCRIPTION "Video game engine project.")
+project(reVision VERSION 4.4.6 DESCRIPTION "Video game engine project.")
 
 # Get dependency directory locations from the user
 set(ASSIMP_DIR "" CACHE PATH "ASSIMP root directory")

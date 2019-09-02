@@ -110,8 +110,6 @@ void Rotation_Gizmo::render(const float& deltaTime)
 		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0));
 
 		// Render Gizmo Model
-		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_BLEND);
 		m_model->bind();
 		m_gizmoShader->bind();
 		m_gizmoShader->setUniform(0, pMatrix * vMatrix * trans * mScale);
@@ -152,8 +150,6 @@ void Rotation_Gizmo::render(const float& deltaTime)
 		}
 
 		// Revert State
-		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_BLEND);
 		m_gizmoShader->Release();
 	}
 }
