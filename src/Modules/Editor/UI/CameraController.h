@@ -13,9 +13,11 @@ class LevelEditor_Module;
 class CameraController : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy the camera controller. */
 	inline ~CameraController() = default;
-	/***/
+	/** Construct a camera controller.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	CameraController(Engine * engine, LevelEditor_Module * editor);
 
 

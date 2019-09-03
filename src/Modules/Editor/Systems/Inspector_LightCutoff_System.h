@@ -8,11 +8,13 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-/***/
+/** An ECS system allowing the user to inspect selected light cutoff components. */
 class Inspector_LightCutoff_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
+	inline ~Inspector_LightCutoff_System() = default;
+	/** Construct this system. */
 	inline Inspector_LightCutoff_System() {
 		// Declare component types used
 		addComponentType(Selected_Component::ID);

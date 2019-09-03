@@ -44,7 +44,7 @@ bool Selection_Gizmo::checkInput(const float& deltaTime)
 	// In any case move the selection gizmo to where the mouse is.
 	if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseReleased(0) && !m_clicked) {
 		m_clicked = true;
-		return rayCastMouse(deltaTime);
+		return checkMouseInput(deltaTime);
 	}
 
 	m_clicked = false;
@@ -85,7 +85,7 @@ std::vector<ecsEntity*>& Selection_Gizmo::getSelection()
 	return m_selection;
 }
 
-bool Selection_Gizmo::rayCastMouse(const float& deltaTime)
+bool Selection_Gizmo::checkMouseInput(const float& deltaTime)
 {
 	m_engine->getModule_World().updateSystem(m_pickerSystem.get(), deltaTime);	
 	const auto& [entity, transform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();

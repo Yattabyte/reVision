@@ -9,11 +9,14 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-/***/
+/** An ECS system allowing the user to inspect selected component transforms.*/
 class Inspector_Transform_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
+	inline ~Inspector_Transform_System() = default;
+	/** Construct this system. 
+	@param	editor		the level editor. */
 	inline Inspector_Transform_System(LevelEditor_Module* editor)
 		: m_editor(editor) {
 		// Declare component types used
@@ -65,7 +68,8 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Find the center transformation from a list of transforms. 
+	@return			the center/average transform of a group of transformations. */
 	static Transform find_center_transform(const std::vector<Transform_Component*> & transforms) {
 		Transform center;
 		for each (const auto & component in transforms)

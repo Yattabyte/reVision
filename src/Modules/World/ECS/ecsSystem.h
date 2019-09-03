@@ -78,7 +78,9 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Generate a system with a specifc type and input arguments.
+	@param	<T>		the system class type.
+	@param	...Args	variadic arguments to forward to the system constructor. */
 	template <typename T, class...Args>
 	inline const bool makeSystem(Args ...args) {
 		const auto & system = std::make_shared<T>(args...);

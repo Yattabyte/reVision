@@ -12,7 +12,7 @@
 #include <vector>
 
 
-/***/
+/** UI element representing an ImGUI element. */
 struct ImGUI_Element {
 	virtual void tick(const float & deltaTime) {};
 };
@@ -32,13 +32,10 @@ public:
 	virtual void deinitialize() override;
 	virtual void frameTick(const float & deltaTime) override;
 
-	// Public Methods
-	/***/
-	inline void showEditor(const bool & state) { m_showEditor = state; }
-
 
 	// Public Methods
-	/***/
+	/** Push a new UI element onto a stack to receive input and be rendered.
+	@param	rootElement			the main element of focus for this UI system. */
 	void setRootElement(const std::shared_ptr<ImGUI_Element> & rootElement) {
 		m_rootUIElement = rootElement;
 	}
@@ -83,7 +80,6 @@ public:
 
 private:
 	// Private Attributes
-	bool m_showEditor = false; 
 	std::shared_ptr<ImGUI_Element> m_rootUIElement;
 
 

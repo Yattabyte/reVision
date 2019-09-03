@@ -40,7 +40,7 @@ public:
 		m_data[4] = { -1,  1, 0 };
 		m_data[5] = { -1, -1, 0 };
 		glNamedBufferStorage(m_vboID, num_data * sizeof(glm::vec3), &m_data[0], GL_CLIENT_STORAGE_BIT);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_CLIENT_STORAGE_BIT);
 		setMaxHeight(2.0f);
 		setMinHeight(2.0f);
 	}

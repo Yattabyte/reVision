@@ -8,11 +8,13 @@
 #include "glm/gtc/type_ptr.hpp"
 
 
-/***/
+/** An ECS system allowing the user to inpect selected light radius components. */
 class Inspector_LightRadius_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
+	inline ~Inspector_LightRadius_System() = default;
+	/** Construct this system. */
 	inline Inspector_LightRadius_System() {
 		// Declare component types used
 		addComponentType(Selected_Component::ID);

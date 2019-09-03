@@ -7,13 +7,14 @@
 #include "Engine.h"
 
 
-/***/
+/** An ECS system responsible for deleting all Selected Components from entities. */
 class ClearSelection_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~ClearSelection_System() = default;
-	/***/
+	/** Construct this system.
+	@param	engine		the currently active engine. */
 	inline ClearSelection_System(Engine* engine)
 		: m_engine(engine) {
 		// Declare component types used

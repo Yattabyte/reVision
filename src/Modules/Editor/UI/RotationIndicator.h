@@ -13,13 +13,15 @@
 class Engine;
 class LevelEditor_Module;
 
-/** Allows the user to control the camera whenever not interacting with other UI elements. */
+/** A level editor UI element displaying which direction the camera is rotated towards. */
 class RotationIndicator : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy the rotation indicator. */
 	~RotationIndicator();
-	/***/
+	/** Construct a rotation indicator. 
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	RotationIndicator(Engine* engine, LevelEditor_Module* editor);
 
 

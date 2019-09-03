@@ -11,13 +11,15 @@
 class Engine;
 class LevelEditor_Module;
 
-/***/
+/** A level editor UI element responsible for allowing the user to inspect selected entity components. */
 class Inspector : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this inspector. */
 	inline ~Inspector() = default;
-	/***/
+	/** Construct a component inspector.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	Inspector(Engine * engine, LevelEditor_Module * editor);
 
 

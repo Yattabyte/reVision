@@ -23,7 +23,7 @@ void Graphics_Module::initialize(Engine * engine)
 	
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {		
-		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectQuad = IndirectDraw((GLuint)m_shapeQuad->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	// GL settings

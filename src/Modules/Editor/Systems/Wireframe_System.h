@@ -12,11 +12,11 @@
 #include "Engine.h"
 
 
-/***/
+/** An ECS system responsible for rendering wireframe outlines of selected entities bounding objects. */
 class Wireframe_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~Wireframe_System() {
 		// Update indicator
 		*m_aliveIndicator = false;
@@ -26,7 +26,9 @@ public:
 			glDeleteVertexArrays(1, &m_vaoID);
 		}
 	}
-	/***/
+	/** Construct this system.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	inline Wireframe_System(Engine * engine, LevelEditor_Module * editor)
 		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
@@ -120,7 +122,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Attempt to prepare the VAO & VBO if all geometry types are ready. */
 	void prepareGeometry() {
 		if (m_sphere->existsYet() && m_cone->existsYet() && m_cube->existsYet()) {
 			// Create VBO's

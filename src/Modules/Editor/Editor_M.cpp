@@ -149,6 +149,7 @@ void LevelEditor_Module::exit()
 
 void LevelEditor_Module::newLevel()
 {
+	/**@todo	check against dirty bit for 'level has unsaved changes' */
 	m_engine->getModule_World().unloadWorld();
 	m_currentLevelName = "";
 }
@@ -354,6 +355,13 @@ void LevelEditor_Module::paste()
 	}
 }
 
+void LevelEditor_Module::deleteSelection()
+{
+	/**@todo	undo/redo */
+	for each (const auto & entity in getSelection())
+		m_engine->getModule_World().removeEntity(entity);
+}
+
 void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 {
 	auto& world = m_engine->getModule_World();
@@ -426,13 +434,6 @@ void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 	gizmoTransform.m_scale = newScale;
 	gizmoTransform.update();
 	setGizmoTransform(gizmoTransform);
-}
-
-void LevelEditor_Module::deleteSelection()
-{
-	/**@todo	undo/redo */
-	for each (const auto & entity in getSelection())
-		m_engine->getModule_World().removeEntity(entity);
 }
 
 void LevelEditor_Module::deleteComponent(ecsEntity* handle, const int& componentID)

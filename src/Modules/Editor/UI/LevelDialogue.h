@@ -13,13 +13,15 @@
 class Engine;
 class LevelEditor_Module;
 
-/** Allows the user to control the camera whenever not interacting with other UI elements. */
+/** A level editor UI element allowing the user to view, open, and save levels in the maps folder. */
 class LevelDialogue : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this level dialogue. */
 	inline ~LevelDialogue() = default;
-	/***/
+	/** Construct a level diaglogue.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	LevelDialogue(Engine* engine, LevelEditor_Module* editor);
 
 
@@ -28,15 +30,16 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Enable the dialogue for opening a level. */
 	void startOpenDialogue();
-	/***/
+	/** Enable the dialogue for saving a level. */
 	void startSaveDialogue();
 
 
 private:
 	// Private Methods
-	/***/
+	/** Populate the level dialogue with an optional sub-directory.
+	@param	directory	if non-blank, a subfolder within the maps folder. */
 	void populateLevels(const std::string& directory = "");
 
 

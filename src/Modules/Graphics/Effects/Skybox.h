@@ -168,7 +168,7 @@ private:
 	glm::ivec2 m_skySize = glm::ivec2(1);
 	struct DrawData {
 		DynamicBuffer camBufferIndex;
-		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT), quad6IndirectBuffer = IndirectDraw((GLuint)6, 6, 0, 0, GL_CLIENT_STORAGE_BIT);
+		IndirectDraw indirectQuad = IndirectDraw((GLuint)6, 1, 0, GL_DYNAMIC_STORAGE_BIT), quad6IndirectBuffer = IndirectDraw((GLuint)6, 6, 0, GL_CLIENT_STORAGE_BIT);
 	};
 	std::vector<DrawData> m_drawData;
 	int	m_drawIndex = 0;

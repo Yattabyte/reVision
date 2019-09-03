@@ -60,7 +60,7 @@ public:
 		data[4] = { -1,  1, 0 };
 		data[5] = { -1, -1, 0 };
 		glNamedBufferSubData(m_vboID, 0, num_data * sizeof(glm::vec3), &data[0]);
-		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
+		m_indirect = IndirectDraw((GLuint)num_data, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 
 		// Configure THIS element
 		setText(text);

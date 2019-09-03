@@ -9,14 +9,14 @@
 #include <memory>
 
 
-/***/
+/** An ECS system responsible for applying a transformation hierarchy between parent and child entities. */
 class Transform_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
 	/** Destroy this system. */
 	inline ~Transform_System() = default;
 	/** Construct this system.
-	@param	cameras		shared list of scene cameras. */
+	@param	engine		the currently active engine. */
 	inline Transform_System(Engine * engine)
 		: m_engine(engine) {
 		addComponentType(Transform_Component::ID, FLAG_REQUIRED);

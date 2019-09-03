@@ -5,7 +5,7 @@
 
 
 TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
-	: m_editor(editor)
+	: m_engine(engine), m_editor(editor)
 {
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);

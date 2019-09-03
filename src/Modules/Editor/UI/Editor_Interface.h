@@ -18,13 +18,15 @@ class Inspector;
 class RotationIndicator;
 class LevelDialogue;
 
-/***/
+/** A top-level UI element representing the entire level editor's GUI. */
 class Editor_Interface : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/** Destroy the editor. */
+	/** Destroy the level editor UI. */
 	inline ~Editor_Interface() = default;
-	/** Creates an editor. */
+	/** Creates the level editor UI.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	Editor_Interface(Engine * engine, LevelEditor_Module * editor);
 
 

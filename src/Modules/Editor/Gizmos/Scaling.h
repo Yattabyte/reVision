@@ -15,30 +15,35 @@
 class Engine;
 class LevelEditor_Module;
 
-/***/
+/** A 3D tool allowing the user to scale a set of selected entities. */
 class Scaling_Gizmo {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this gizmo. */
 	~Scaling_Gizmo();
-	/***/
+	/** Construct this gizmo.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Methods
-	/***/
+	/** Check for mouse input.
+	@param	deltaTime	the amount of time since the last frame. */
 	bool checkMouseInput(const float& deltaTime);
-	/***/
+	/** Render this gizmo.
+	@param	deltaTime	the amount of time since the last frame. */
 	void render(const float& deltaTime);
-	/***/
-	void setTransform(const Transform& position);
+	/** Apply a specific transform.
+	@param	transform	the new transform to use. */
+	void setTransform(const Transform& transform);
 
 
 private:
 	// Private Methods
-	/***/
+	/** Check if the mouse is hovering over any particular element of this gizmo, highlighting it. */
 	void checkMouseHover();
-	/***/
+	/** Check if the mouse is pressing any particular element of this gizmo, selecting or dragging it. */
 	bool checkMousePress();
 
 

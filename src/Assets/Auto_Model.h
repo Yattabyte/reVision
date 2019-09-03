@@ -46,7 +46,7 @@ public:
 	/** Returns the vertex-count of this object. 
 	@return					vertex-count of this object. */
 	size_t getSize() const;
-	/***/
+	/** Bind this model's VAO to the currently active GL context. */
 	void bind();
 	
 	

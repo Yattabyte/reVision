@@ -26,7 +26,7 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	auto& preferences = m_engine->getPreferenceState();

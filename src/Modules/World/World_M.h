@@ -39,30 +39,47 @@ public:
 
 	// Public Methods
 	/** Loads the world, specified by the map name.
-	@param	mapName		the name of the map to load. */
+	@param	mapName				the name of the map to load. */
 	void loadWorld(const std::string& mapName);
-	/***/
+	/** Saves the world with a specified map name.
+	@param	mapName				the name of the map to save as. */
 	void saveWorld(const std::string& mapName);
 	/** Unload the current world. */
 	void unloadWorld();
-	/***/
+	/** Serialize a specific entity to a char vector.
+	@param	entity				the entity to serialize.
+	@return						char vector containing serialized entity data. */
 	std::vector<char> serializeEntity(ecsEntity* entity);
-	/***/
+	/** Deserialize an entity from a char array.
+	@param	data				previously serialized entity data.
+	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
+	@param	dataRead			reference to number of elements or bytes read in data so far.
+	@param	parent				optional pointer to parent entity, designed to be called recursively if entity has children. */
 	ecsEntity* deserializeEntity(const char * data, const size_t& dataSize, size_t& dataRead, ecsEntity* parent = nullptr);
-	/***/
+	/** Serialize a specific component to a char vector.
+	@param	component			the component to serialize.
+	@return						char vector containing serialized component data. */
 	std::vector<char> serializeComponent(BaseECSComponent* component);
-	/***/
+	/** Deserialize a component from a char array.
+	@param	data				previously serialized component data.
+	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
+	@param	dataRead			reference to number of elements or bytes read in data so far. */
 	std::pair<BaseECSComponent*, int> deserializeComponent(const char * data, const size_t& dataSize, size_t& dataRead);
 
 	/** Registers a notification function to be called when the world state changes.
-	@param	alive		a shared pointer indicating whether the caller is still alive or not.
-	@param	notifier	function to be called on state change. */
+	@param	alive				a shared pointer indicating whether the caller is still alive or not.
+	@param	notifier			function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func);
-	/***/
+	/** Create an entity from a list of input components.
+	@param	components			array of component pointers, whom will be hard copied.
+	@param	componentIDS		array of component ids.
+	@param	numComponents		the number of components in the array.
+	@param	name				optional component name, more for use in the level editor.
+	@param	parentEntity		optional parent entity, if not at the level root. */
 	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", ecsEntity * parentEntity = nullptr);
 	/** Construct an entity from the array of component references.
 	@note Variadic
-	@param	args	all components to use for this entity. */
+	@param	...args				all components to use for this entity. */
 	template <class...Args>
 	inline ecsEntity * makeEntity(Args& ...args) {
 		BaseECSComponent* components[] = { &args... };
@@ -71,7 +88,7 @@ public:
 	}
 	/** Construct an entity from the array of component pointers.
 	@note Variadic
-	@param	args	all components to use for this entity. */
+	@param	args				all components to use for this entity. */
 	template <class...Args>
 	inline ecsEntity * makeEntity(Args* ...args) {
 		BaseECSComponent* components[] = { args... };
@@ -79,9 +96,10 @@ public:
 		return makeEntity(components, componentIDS, sizeof...(Args));
 	}
 	/** Remove an entity.
-	@param	entity	the entity to remove. */
+	@param	entity				the entity to remove. */
 	void removeEntity(ecsEntity* entity);
-	/***/
+	/** Retrieve a list of all level entities. 
+	@return						a vector of all level entities. */
 	std::vector<ecsEntity*> getEntities();	
 	/**
 	/** Adds a component to an entity.
@@ -99,7 +117,9 @@ public:
 	inline bool removeComponent(ecsEntity* entity) {
 		return removeComponent(entity, T::ID);
 	}
-	/***/
+	/** Remove a specific component from an entity and the world.
+	@param	entity				the entity to remove the component from.
+	@param	componentID			the runtime ID identifying the component class. */
 	inline bool removeComponent(ecsEntity* entity, const int& componentID) {
 		return removeComponentInternal(entity, componentID);
 	}
@@ -110,9 +130,12 @@ public:
 	inline T* getComponent(ecsEntity* entity) {
 		return (T*)getComponentInternal(entity->m_components, m_components[T::ID], T::ID);
 	}
-	/***/
+	/** Parent an entity to another entity.
+	@param	parentEntity		the handle to the desired parent entity.
+	@param	childEntity			the handle to the desired child entity. */
 	void parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity);
-	/***/
+	/** Strip a child entity of its parent. 
+	@param	childEntity			handle to the child entity, whom will be stripped of its parent. */
 	void unparentEntity(ecsEntity* childEntity);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.

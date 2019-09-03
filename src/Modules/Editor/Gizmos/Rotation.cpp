@@ -31,7 +31,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 
 	// Asset-Finished Callbacks
 	m_model->addCallback(m_aliveIndicator, [&]() mutable {
-		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, 0, GL_CLIENT_STORAGE_BIT);
+		m_indirectIndicator = IndirectDraw((GLuint)m_model->getSize(), 1, 0, GL_CLIENT_STORAGE_BIT);
 	});
 
 	auto& preferences = m_engine->getPreferenceState();
@@ -55,7 +55,7 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	glVertexArrayVertexBuffer(m_axisVAO, 0, m_axisVBO, 0, sizeof(glm::vec3));
 
 	// Disk
-	m_indirectDisk = IndirectDraw(0, 1, 0, 0, GL_DYNAMIC_STORAGE_BIT);
+	m_indirectDisk = IndirectDraw(0, 1, 0, GL_DYNAMIC_STORAGE_BIT);
 	glCreateBuffers(1, &m_diskVBO);
 	glNamedBufferStorage(m_diskVBO, sizeof(glm::vec3) * DISK_MAX_POINTS, nullptr, GL_DYNAMIC_STORAGE_BIT);
 	glCreateVertexArrays(1, &m_diskVAO);

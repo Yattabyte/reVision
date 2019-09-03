@@ -9,16 +9,17 @@
 #include "glm/glm.hpp"
 
 
-/***/
+/** An ECS system allowing the user to ray-pick entities by selecting against their components. */
 class MousePicker_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this system. */
 	inline ~MousePicker_System() {
 		// Update indicator
 		*m_aliveIndicator = false;
 	}
-	/***/
+	/** Construct this system.
+	@param	engine		the currently active engine. */
 	inline MousePicker_System(Engine * engine)
 		: m_engine(engine) {
 		// Declare component types used
@@ -110,7 +111,7 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Retrieve this system's last selection result. */
 	std::pair<ecsEntity*, Transform> getSelection() {
 		return { m_selection, m_selectionTransform };
 	}

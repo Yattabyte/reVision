@@ -11,13 +11,15 @@
 class Engine;
 class LevelEditor_Module;
 
-/***/
+/** A level editor UI element allowing the user to spawn previously made prefab object sets. */
 class Prefabs : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/***/
+	/** Destroy this prefab UI element. */
 	inline ~Prefabs() = default;
-	/***/
+	/** Construct a prefab UI element.
+	@param	engine		the currently active engine.
+	@param	editor		the level editor. */
 	Prefabs(Engine* engine, LevelEditor_Module* editor);
 
 
@@ -26,15 +28,17 @@ public:
 
 
 	// Public Methods
-	/***/
+	/** Construct a prefab from a specified entity set.
+	@param	entities	the entities constituting a new prefab. */
 	void makePrefab(const std::vector<ecsEntity*>& entities);
 
 
 private:
 	// Private Methods
-	/***/
+	/** Populate a list of prefabs given an optional subdirectory.
+	@param	directory	if non-blank, a subdirectory within the prefabs folder. */
 	void populatePrefabs(const std::string& directory = "");
-	/***/
+	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
 	void openPrefab();
 
 

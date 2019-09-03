@@ -5,7 +5,7 @@
 #include "Utilities/GL/StaticTripleBuffer.h"
 
 
-/***/
+/** A helper class encapsulating the data needed to perform an indirect draw call in OpenGL. */
 class IndirectDraw {
 public:
 	// Public (de)Constructors
@@ -18,11 +18,10 @@ public:
 		const GLuint & count,
 		const GLuint & primitiveCount,
 		const GLuint & first,
-		const GLuint & reserved,
 		const GLbitfield& storageFlags = GL_DYNAMIC_STORAGE_BIT
-	)	: m_count(count), m_primitiveCount(primitiveCount), m_first(first), m_reserved(reserved) {
+	)	: m_count(count), m_primitiveCount(primitiveCount), m_first(first) {
 		// Populate Buffer
-		const GLuint data[4] = { count, primitiveCount, first, reserved };
+		const GLuint data[4] = { count, primitiveCount, first, 0 };
 		m_buffer = StaticTripleBuffer(sizeof(GLuint) * 4, data, storageFlags);
 	}
 	/** Copy an Indirect Draw Object. */
@@ -31,7 +30,6 @@ public:
 		m_count = other.m_count;
 		m_primitiveCount = other.m_primitiveCount;
 		m_first = other.m_first;
-		m_reserved = other.m_reserved;
 		m_storageFlags = other.m_storageFlags;
 	}
 	/** Move an Indirect Draw Object. */
@@ -44,7 +42,6 @@ public:
 			m_count = other.m_count;
 			m_primitiveCount = other.m_primitiveCount;
 			m_first = other.m_first;
-			m_reserved = other.m_reserved;
 			m_storageFlags = other.m_storageFlags;
 			m_buffer = std::move(other.m_buffer);
 		}
@@ -53,42 +50,40 @@ public:
 
 
 	// Public Methods	
-	/***/
+	/** Bind this draw call to the OpenGL indirect buffer target. */
 	inline void bind() {
 		m_buffer.bindBuffer(GL_DRAW_INDIRECT_BUFFER);
 	}
-	/***/
+	/** Bind this buffer and also perform an indirect draw call. */
 	inline void drawCall(const void * indirect = 0) {
 		bind();
 		glDrawArraysIndirect(GL_TRIANGLES, indirect);
 	}	
-	/***/
+	/** Prepare this buffer for writing, waiting on its sync fence. */
 	inline void beginWriting() {
 		m_buffer.beginWriting();
 	}
-	/***/
+	/** Signal that this buffer has finished being written to, place a sync fence, switch to next buffer set. */
 	inline void endWriting() {
 		m_buffer.endWriting();
 	}
-	/***/
+	/** Specify how many vertices will be rendered.
+	@param	count			the vertex count. */
 	inline void setCount(const GLuint& count) {
 		m_count = count;
 		m_buffer.write(0, GLsizeiptr(sizeof(GLuint)), &count);
 	}
-	/***/
+	/** Specify how many primitives will be rendered.
+	@param	primitiveCount	the number of primitives to be rendered. */
 	inline void setPrimitiveCount(const GLuint& primitiveCount) {
 		m_primitiveCount = primitiveCount;
 		m_buffer.write(GLsizeiptr(sizeof(GLuint)), GLsizeiptr(sizeof(GLuint)), &primitiveCount);
 	}
-	/***/
+	/** Specify the offset to the first vertex to be rendered.
+	@param	first			the offset to the first rendered vertex. */
 	inline void setFirst(const GLuint& first) {
 		m_first = first;
 		m_buffer.write(GLsizeiptr(sizeof(GLuint)) * 2ull, GLsizeiptr(sizeof(GLuint)), &first);
-	}
-	/***/
-	inline void setReserved(const GLuint& reserved) {
-		m_reserved = reserved;
-		m_buffer.write(GLsizeiptr(sizeof(GLuint)) * 3ull, GLsizeiptr(sizeof(GLuint)), &reserved);
 	}
 
 
@@ -97,8 +92,7 @@ private:
 	GLuint
 		m_count = 0,
 		m_primitiveCount = 0,
-		m_first = 0,
-		m_reserved = 0;
+		m_first = 0;
 	GLbitfield m_storageFlags = GL_DYNAMIC_STORAGE_BIT;
 	StaticTripleBuffer m_buffer;
 };
