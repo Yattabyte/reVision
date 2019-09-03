@@ -122,14 +122,4 @@ const ECSComponentCreateFunction ECSComponent<T, chars>::CREATE_FUNCTION(ECSComp
 template <typename T, const char * chars>
 const ECSComponentFreeFunction ECSComponent<T, chars>::FREE_FUNCTION(ECSComponentFree<T>);
 
-/**@todo delete*/
-template <typename T>
-inline static T CastAny(const ParamList & parameters, const int & index, const T & fallback) {
-	if (index < parameters.size()) {
-		if (const auto & parameter = parameters[index]; parameter.has_value() && parameter.type() == typeid(T))
-			return std::any_cast<T>(parameter);
-	}
-	return fallback;
-}
-
 #endif // ECSCOMPONENT_H

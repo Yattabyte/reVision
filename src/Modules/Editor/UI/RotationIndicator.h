@@ -36,7 +36,7 @@ private:
 	GLuint m_fboID, m_texID, m_depthID;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_3dIndicator;
-	Shared_Shader m_gizmoShader;
+	Shared_Shader m_shader;
 	IndirectDraw m_indirectIndicator;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

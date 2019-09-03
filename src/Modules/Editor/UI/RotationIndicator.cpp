@@ -31,7 +31,7 @@ RotationIndicator::RotationIndicator(Engine * engine, LevelEditor_Module * edito
 	// Assets
 	m_colorPalette = Shared_Texture(engine, "Editor\\colors.png");
 	m_3dIndicator = Shared_Auto_Model(engine, "Editor\\3dind");
-	m_gizmoShader = Shared_Shader(engine, "Editor\\gizmoShader");
+	m_shader = Shared_Shader(engine, "Editor\\3dindShader");
 
 	// Asset-Finished Callbacks
 	m_3dIndicator->addCallback(m_aliveIndicator, [&]() mutable {		
@@ -59,20 +59,20 @@ RotationIndicator::RotationIndicator(Engine * engine, LevelEditor_Module * edito
 
 void RotationIndicator::tick(const float & deltaTime)
 {
-	if (m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_gizmoShader->existsYet()) {
+	if (m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
+		// Set up state
+		m_shader->bind();
+		m_3dIndicator->bind();
+		m_colorPalette->bind(0);
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(true);
+
 		glViewport(0, 0, 256, 256);
 		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		constexpr GLfloat clearDepth = 1.0f;
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
 		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
-
-		// Set up state
-		m_gizmoShader->bind();
-		m_3dIndicator->bind();
-		m_colorPalette->bind(0);
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(true);
 
 		// Generate matrices
 		auto pMatrix = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 10.0f);
@@ -82,11 +82,11 @@ void RotationIndicator::tick(const float & deltaTime)
 		camMatrix[3][2] = 0.0f;
 		camMatrix[3][3] = 1.0f;
 		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6.0f)) * camMatrix;
-		m_gizmoShader->setUniform(0, pMatrix * vMatrix);
+		m_shader->setUniform(0, pMatrix * vMatrix);
 
 		m_indirectIndicator.drawCall();
 
-		m_gizmoShader->Release();
+		m_shader->Release();
 		glDepthMask(false);
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
