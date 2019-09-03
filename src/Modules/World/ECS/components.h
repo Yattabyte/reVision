@@ -14,6 +14,10 @@
 #include <memory>
 
 
+constexpr static const char selectedComponentName[] = "Selected_Component";
+struct Selected_Component : public ECSComponent<Selected_Component, selectedComponentName> {
+};
+
 constexpr static const char transformName[] = "Transform_Component";
 struct Transform_Component : public ECSComponent<Transform_Component, transformName> {
 	// Default Serialization

@@ -107,6 +107,7 @@ private:
 	bool m_transformAsGroup = true;
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
+	std::shared_ptr<BaseECSSystem> m_selectionClearer;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;

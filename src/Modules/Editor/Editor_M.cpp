@@ -7,6 +7,7 @@
 #include "Modules/Editor/UI/Inspector.h"
 #include "Modules/Editor/UI/LevelDialogue.h"
 #include "Modules/Editor/Gizmos/Selection.h"
+#include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Wireframe_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Modules/World/ECS/components.h"
@@ -28,7 +29,8 @@ void LevelEditor_Module::initialize(Engine * engine)
 	m_selectionGizmo = std::make_shared<Selection_Gizmo>(engine, this);
 
 	// Systems
-	m_systems.makeSystem<Wireframe_System>(engine);
+	m_selectionClearer = std::make_shared<ClearSelection_System>(engine);
+	m_systems.makeSystem<Wireframe_System>(engine, this);
 
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
@@ -111,15 +113,16 @@ const glm::vec3 & LevelEditor_Module::getCameraPosition() const
 
 void LevelEditor_Module::toggleAddToSelection(ecsEntity* entity)
 {
-	auto & selection = m_selectionGizmo->getSelection();
+	auto selectionCopy = m_selectionGizmo->getSelection();
+
 	// If the entity is already selected, deselect it
-	if (std::find(selection.cbegin(), selection.cend(), entity) != selection.cend())
-		std::remove(selection.begin(), selection.end(), entity);
+	if (std::find(selectionCopy.cbegin(), selectionCopy.cend(), entity) != selectionCopy.cend())
+		std::remove(selectionCopy.begin(), selectionCopy.end(), entity);
 	else
-		selection.push_back(entity);
+		selectionCopy.push_back(entity);
 
 	// Ensure our gizmos stay in sync
-	setSelection(selection);
+	setSelection(selectionCopy);
 }
 
 bool LevelEditor_Module::hasCopy() const
@@ -193,6 +196,7 @@ void LevelEditor_Module::redo()
 
 void LevelEditor_Module::clearSelection()
 {
+	m_engine->getModule_World().updateSystem(m_selectionClearer.get(), 0.0f);
 	m_selectionGizmo->getSelection().clear();
 }
 
@@ -203,9 +207,14 @@ void LevelEditor_Module::selectAll()
 
 void LevelEditor_Module::setSelection(const std::vector<ecsEntity*>& entities)
 {
+	clearSelection();
+	auto& world = m_engine->getModule_World();
+	for each (const auto entity in entities) {
+		const Selected_Component component;
+		world.addComponent(entity, &component);
+	}
 	m_selectionGizmo->setSelection(entities);
 	Transform newTransform;
-	auto &world = m_engine->getModule_World();
 	if (m_transformAsGroup) {
 		size_t count(0ull);
 		glm::vec3 center(0.0f), scale(0.0f);

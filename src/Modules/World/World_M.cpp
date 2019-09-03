@@ -392,7 +392,7 @@ void World_Module::notifyListeners(const WorldState& state)
 
 void World_Module::deleteComponent(const int& componentID, const int& index)
 {
-	auto mem_array = m_components[componentID];
+	auto& mem_array = m_components[componentID];
 	auto freefn = BaseECSComponent::getTypeFreeFunction(componentID);
 	const auto typeSize = BaseECSComponent::getTypeSize(componentID);
 	const auto srcIndex = mem_array.size() - typeSize;
@@ -418,7 +418,7 @@ void World_Module::deleteComponent(const int& componentID, const int& index)
 	mem_array.resize(srcIndex);
 }
 
-bool World_Module::addComponentInternal(ecsEntity* entity, const int& componentID, BaseECSComponent* component)
+bool World_Module::addComponentInternal(ecsEntity* entity, const int& componentID, const BaseECSComponent* component)
 {
 	// Prevent adding duplicate component types to the same entity
 	for (const auto& [ID, fn] : entity->m_components)

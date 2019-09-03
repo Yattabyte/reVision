@@ -2,7 +2,6 @@
 #ifndef INSPECTOR_LIGHTRADIUS_SYSTEM_H
 #define INSPECTOR_LIGHTRADIUS_SYSTEM_H 
 
-#include "Modules/Editor/Editor_M.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
 #include "Modules/UI/dear imgui/imgui.h"
@@ -14,36 +13,22 @@ class Inspector_LightRadius_System : public BaseECSSystem {
 public:
 	// Public (de)Constructors
 	/***/
-	inline Inspector_LightRadius_System(LevelEditor_Module* editor)
-		: m_editor(editor) {
+	inline Inspector_LightRadius_System() {
 		// Declare component types used
+		addComponentType(Selected_Component::ID);
 		addComponentType(LightRadius_Component::ID);
 	}
 
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<BaseECSComponent*> >& components) override {
-		const auto& selectedEntities = m_editor->getSelection();
-		std::vector<LightRadius_Component*> selectedComponents;
-		for each (const auto & componentParam in components) {
-			auto* component = (LightRadius_Component*)componentParam[0];
-			if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), component->entity) != selectedEntities.cend())
-				selectedComponents.push_back(component);
-		}
-		if (selectedComponents.size()) {
-			const auto text = LightRadius_Component::STRING_NAME + ": (" + std::to_string(selectedComponents.size()) + ")";
-			if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
-				auto radiusInput = selectedComponents[0]->m_radius;
-				if (ImGui::DragFloat("Radius", &radiusInput))
-					for each (auto & component in selectedComponents)
-						component->m_radius = radiusInput;
-			}
+		const auto text = LightRadius_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
+		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
+			auto radiusInput = ((LightRadius_Component*)components[0][1])->m_radius;
+			if (ImGui::DragFloat("Radius", &radiusInput))
+				for each (auto & componentParam in components)
+					((LightRadius_Component*)componentParam[1])->m_radius = radiusInput;
 		}
 	}
-
-
-private:
-	// Private Attributes
-	LevelEditor_Module* m_editor = nullptr;
 };
 #endif // INSPECTOR_LIGHTRADIUS_SYSTEM_H

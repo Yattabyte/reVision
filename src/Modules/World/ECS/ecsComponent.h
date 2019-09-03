@@ -12,7 +12,7 @@
 
 struct ecsEntity;
 struct BaseECSComponent;
-using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, ecsEntity* entity, BaseECSComponent * comp);
+using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, ecsEntity* entity, const BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 using ParamList = std::vector<std::any>;
 #define NULL_ENTITY_HANDLE nullptr
@@ -33,7 +33,7 @@ public:
 	inline static ECSComponentFreeFunction getTypeFreeFunction(const int & id) { return std::get<1>((*componentTypes)[id]); }
 	inline static size_t getTypeSize(const int & id) { return std::get<2>((*componentTypes)[id]); }
 	inline static bool isTypeValid(const int & id) { return id < componentTypes->size(); }
-	virtual int get_id() = 0;
+	virtual int get_id() const = 0;
 	virtual BaseECSComponent * clone() const  = 0;
 	virtual std::vector<char> save() = 0;
 	virtual void load(const std::vector<char> & data) = 0;
@@ -63,7 +63,7 @@ struct ECSComponent : public BaseECSComponent {
 	inline constexpr static const char* NAME() {
 		return chars;
 	}
-	inline virtual int get_id() override {
+	inline virtual int get_id() const override {
 		return ID;
 	}
 	inline virtual BaseECSComponent * clone() const override {
@@ -95,7 +95,7 @@ struct ECSComponent : public BaseECSComponent {
 };
 
 template <typename Component>
-inline const int ECSComponentCreate(std::vector<uint8_t> & memory, ecsEntity* entity, BaseECSComponent * comp) {
+inline const int ECSComponentCreate(std::vector<uint8_t> & memory, ecsEntity* entity, const BaseECSComponent * comp) {
 	const size_t index = memory.size();
 	memory.resize(index + Component::SIZE);
 	(new(&memory[index])Component(*(Component*)comp))->entity = entity;

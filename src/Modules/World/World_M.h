@@ -82,21 +82,13 @@ public:
 	@param	entity	the entity to remove. */
 	void removeEntity(ecsEntity* entity);
 	/***/
-	std::vector<ecsEntity*> getEntities();
-	/** Adds a component to an entity.
-	@param	entity				the entity to add the component to.
-	@param	component			the component being added.
-	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	template <typename SpecificComponent>
-	inline bool addComponent(ecsEntity* entity, SpecificComponent& component) {
-		return addComponentInternal(entity, SpecificComponent::ID, &component);
-	}
+	std::vector<ecsEntity*> getEntities();	
 	/**
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
 	@param	component			the component being added.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	inline bool addComponent(ecsEntity* entity, BaseECSComponent* component) {
+	inline bool addComponent(ecsEntity* entity, const BaseECSComponent* component) {
 		return addComponentInternal(entity, component->get_id(), component);
 	}
 	/** Removes a component from an entity.
@@ -152,7 +144,7 @@ private:
 	@param	componentID			the class ID of the component.
 	@param	component			the specific component to add to the entity.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	bool addComponentInternal(ecsEntity* entity, const int& componentID, BaseECSComponent* component);
+	bool addComponentInternal(ecsEntity* entity, const int& componentID, const BaseECSComponent* component);
 	/** Remove a component from the entity specified.
 	@param	handle				the entity handle, to remove the component from.
 	@param	componentID			the class ID of the component.

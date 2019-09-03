@@ -4,6 +4,7 @@
 
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/World/ECS/components.h"
+#include "Modules/Editor/Editor_M.h"
 #include "Assets/Mesh.h"
 #include "Assets/Shader.h"
 #include "Utilities/GL/DynamicBuffer.h"
@@ -26,9 +27,10 @@ public:
 		}
 	}
 	/***/
-	inline Wireframe_System(Engine * engine) 
-		: m_engine(engine) {
+	inline Wireframe_System(Engine * engine, LevelEditor_Module * editor)
+		: m_engine(engine), m_editor(editor) {
 		// Declare component types used
+		addComponentType(Selected_Component::ID);
 		addComponentType(Transform_Component::ID);
 		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
@@ -63,11 +65,13 @@ public:
 			const auto vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 			std::vector<glm::mat4> sphereData, coneData, cubeData;
 			glm::ivec4 drawData[3];
+
 			for each (const auto & componentParam in components) {
-				auto* trans = (Transform_Component*)componentParam[0];
-				auto* bbox = (BoundingBox_Component*)componentParam[1];
-				auto* bsphere = (BoundingSphere_Component*)componentParam[2];
-				auto* spot = (LightSpot_Component*)componentParam[3];
+				//auto* selectedComponent = (Selected_Component*)componentParam[0];
+				auto* trans = (Transform_Component*)componentParam[1];
+				auto* bbox = (BoundingBox_Component*)componentParam[2];
+				auto* bsphere = (BoundingSphere_Component*)componentParam[3];
+				auto* spot = (LightSpot_Component*)componentParam[4];
 
 				const auto transform = trans->m_worldTransform;
 				if (bbox)
@@ -115,7 +119,7 @@ public:
 
 
 private:
-	// Private
+	// Private Methods
 	/***/
 	void prepareGeometry() {
 		if (m_sphere->existsYet() && m_cone->existsYet() && m_cube->existsYet()) {
@@ -147,6 +151,7 @@ private:
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
+	LevelEditor_Module* m_editor = nullptr;
 	Shared_Shader m_shader;
 	Shared_Mesh m_sphere, m_cone, m_cube;
 	int m_sphereSize = 0, m_sphereOffset = 0, m_coneSize = 0, m_coneOffset = 0, m_cubeSize = 0, m_cubeOffset = 0;
