@@ -11,7 +11,6 @@
 
 // Forward declarations
 class Engine;
-class LevelEditor_Module;
 
 /** A level editor UI element allowing the user to view, open, and save levels in the maps folder. */
 class LevelDialogue : public ImGUI_Element {
@@ -20,9 +19,8 @@ public:
 	/** Destroy this level dialogue. */
 	inline ~LevelDialogue() = default;
 	/** Construct a level diaglogue.
-	@param	engine		the currently active engine.
-	@param	editor		the level editor. */
-	LevelDialogue(Engine* engine, LevelEditor_Module* editor);
+	@param	engine		the currently active engine. */
+	LevelDialogue(Engine* engine);
 
 
 	// Public Interface Implementation
@@ -45,7 +43,6 @@ private:
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
 	bool m_popupOpen = false;
 	bool m_openOrSave = true;
 	std::string m_subDirectory;

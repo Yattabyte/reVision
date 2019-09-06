@@ -15,8 +15,8 @@ RotationIndicator::~RotationIndicator()
 	glDeleteTextures(1, &m_depthID);
 }
 
-RotationIndicator::RotationIndicator(Engine * engine, LevelEditor_Module * editor)
-	: m_engine(engine), m_editor(editor)
+RotationIndicator::RotationIndicator(Engine * engine)
+	: m_engine(engine)
 {
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);

@@ -100,7 +100,7 @@ void Prefabs::tick(const float& deltaTime)
 	bool openDelete = true, openRename = true;
 	switch (prefabOption) {
 	case open:
-		openPrefab();
+		openPrefabEntry();
 		break;
 	case del:
 		ImGui::OpenPopup("Delete Prefab");
@@ -172,7 +172,7 @@ void Prefabs::makePrefab(const std::vector<ecsEntity*>& entities)
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
 	// Save Prefab to disk
-	std::fstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path , std::ios::binary | std::ios::out);
+	std::ofstream mapFile(Engine::Get_Current_Dir() + "\\Maps\\Prefabs\\" + m_prefabs[m_selectedIndex].path , std::ios::binary | std::ios::out);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot write the binary map file to disk!");
 	else
@@ -196,10 +196,11 @@ void Prefabs::populatePrefabs(const std::string & directory)
 		};
 		if (entry.is_regular_file()) {
 			prefabEntry.type = Prefab::file;
-			std::fstream prefabFile(entry, std::ios::binary | std::ios::beg || std::ios::in);
+			std::ifstream prefabFile(entry, std::ios::binary | std::ios::beg);
 			if (prefabFile.is_open()) {
-				prefabEntry.serialData.resize(std::filesystem::file_size(entry));
-				prefabFile.read(&prefabEntry.serialData[0], (std::streamsize)prefabEntry.serialData.size());
+				const auto size = std::filesystem::file_size(entry);
+				prefabEntry.serialData.resize(size);
+				prefabFile.read(&prefabEntry.serialData[0], (std::streamsize)size);
 			}
 			prefabFile.close();
 		}
@@ -209,7 +210,7 @@ void Prefabs::populatePrefabs(const std::string & directory)
 	}
 }
 
-void Prefabs::openPrefab()
+void Prefabs::openPrefabEntry()
 {
 	const auto& selectedPrefab = m_prefabs[m_selectedIndex];
 	if (selectedPrefab.type == Prefab::back || selectedPrefab.type == Prefab::folder) {
@@ -217,26 +218,6 @@ void Prefabs::openPrefab()
 		populatePrefabs(nameCopy);
 		m_selectedIndex = -1;
 	}
-	else {
-		auto& world = m_engine->getModule_World();
-		size_t dataRead(0ull);
-		glm::vec3 center(0.0f);
-		std::vector<Transform_Component*> transformComponents;
-		while (dataRead < selectedPrefab.serialData.size()) {
-			if (auto * entity = world.deserializeEntity(selectedPrefab.serialData.data(), selectedPrefab.serialData.size(), dataRead))
-				if (auto * transform = world.getComponent<Transform_Component>(entity)) {
-					transformComponents.push_back(transform);
-					center += transform->m_localTransform.m_position;
-				}
-		}
-
-		// Treat entity collection as a group
-		// Move the group to world origin, then transform to 3D cursor
-		center /= transformComponents.size();
-		const auto cursorPos = m_editor->getGizmoTransform().m_position;
-		for each (auto * transform in transformComponents) {
-			transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + cursorPos;
-			transform->m_localTransform.update();
-		}
-	}
+	else
+		m_editor->addEntity(selectedPrefab.serialData);	
 }

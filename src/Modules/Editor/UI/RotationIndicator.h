@@ -11,7 +11,6 @@
 
 // Forward declarations
 class Engine;
-class LevelEditor_Module;
 
 /** A level editor UI element displaying which direction the camera is rotated towards. */
 class RotationIndicator : public ImGUI_Element {
@@ -22,7 +21,7 @@ public:
 	/** Construct a rotation indicator. 
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	RotationIndicator(Engine* engine, LevelEditor_Module* editor);
+	RotationIndicator(Engine* engine);
 
 
 	// Public Interface Implementation
@@ -32,7 +31,6 @@ public:
 private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
-	LevelEditor_Module* m_editor = nullptr;
 	GLuint m_fboID, m_texID, m_depthID;
 	Shared_Texture m_colorPalette;
 	Shared_Auto_Model m_3dIndicator;

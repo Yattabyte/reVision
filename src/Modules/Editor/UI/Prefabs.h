@@ -39,7 +39,7 @@ private:
 	@param	directory	if non-blank, a subdirectory within the prefabs folder. */
 	void populatePrefabs(const std::string& directory = "");
 	/** Open the selected prefab entry, spawning if its an object, if a folder populates with the folder contents.*/
-	void openPrefab();
+	void openPrefabEntry();
 
 
 	// Private Attributes

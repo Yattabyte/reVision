@@ -7,7 +7,6 @@
 
 // Forward declarations
 class Engine;
-class LevelEditor_Module;
 
 /** Allows the user to control the camera whenever not interacting with other UI elements. */
 class CameraController : public ImGUI_Element {
@@ -16,9 +15,8 @@ public:
 	/** Destroy the camera controller. */
 	inline ~CameraController() = default;
 	/** Construct a camera controller.
-	@param	engine		the currently active engine.
-	@param	editor		the level editor. */
-	CameraController(Engine * engine, LevelEditor_Module * editor);
+	@param	engine		the currently active engine. */
+	CameraController(Engine * engine);
 
 
 	// Public Interface Implementation
@@ -28,7 +26,6 @@ public:
 private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
-	LevelEditor_Module * m_editor = nullptr;
 	bool m_beginPress = false;
 	glm::vec2 m_startPos = glm::vec2(0.0f), m_rotation = glm::vec2(0), m_lastRotation = glm::vec2(0);
 

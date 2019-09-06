@@ -10,6 +10,8 @@
 struct ecsEntity {
 	// A non-unique name used primarily for level editing and debugging
 	std::string m_name = "Entity";
+	// A universally unique identifier
+	std::string m_uuid = std::string(32,'0');
 	// The index this entity is found at in the entity vector
 	int m_entityIndex = -1;
 	// The list of component raw-types held by this entity

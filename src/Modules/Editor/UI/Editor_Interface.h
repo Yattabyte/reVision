@@ -43,7 +43,7 @@ public:
 	std::shared_ptr<LevelDialogue> m_uiLevelDialogue;
 
 
-private:
+private: 
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;

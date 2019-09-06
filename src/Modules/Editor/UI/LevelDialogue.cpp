@@ -4,8 +4,8 @@
 #include <filesystem>
 
 
-LevelDialogue::LevelDialogue(Engine* engine, LevelEditor_Module* editor)
-	: m_engine(engine), m_editor(editor)
+LevelDialogue::LevelDialogue(Engine* engine)
+	: m_engine(engine)
 {
 }
 
@@ -112,9 +112,8 @@ void LevelDialogue::tick(const float& deltaTime)
 			else {
 				if (m_openOrSave == true)
 					m_engine->getModule_World().loadWorld(selectedLevel.path);
-				else {
-					m_engine->getModule_World().saveWorld(std::string(nameInput) + ".bmap");
-				}
+				else 
+					m_engine->getModule_World().saveWorld(std::string(nameInput) + ".bmap");				
 				m_popupOpen = false;
 			}
 			break;

@@ -6,8 +6,8 @@
 #include "glm/matrix.hpp"
 
 
-CameraController::CameraController(Engine * engine, LevelEditor_Module * editor)
-	: m_engine(engine), m_editor(editor)
+CameraController::CameraController(Engine * engine)
+	: m_engine(engine)
 {
 }
 

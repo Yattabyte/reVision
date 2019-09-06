@@ -7,17 +7,18 @@
 #include "Modules/Editor/UI/LevelDialogue.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
+#include "GLFW/glfw3.h"
 
 
 Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_uiCamController = std::make_shared<CameraController>(engine, editor);
+	m_uiCamController = std::make_shared<CameraController>(engine);
 	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
 	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
 	m_uiInspector = std::make_shared<Inspector>(engine, editor);
-	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine, editor);
-	m_uiLevelDialogue = std::make_shared<LevelDialogue>(engine, editor);
+	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine);
+	m_uiLevelDialogue = std::make_shared<LevelDialogue>(engine);
 
 	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");

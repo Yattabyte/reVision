@@ -6,11 +6,13 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
+#include <stack>
 
 
 // Forward Declarations
 class Editor_Interface;
 class Selection_Gizmo;
+struct Editor_Command;
 
 /** A level editor module. */
 class LevelEditor_Module : public Engine_Module {
@@ -51,6 +53,10 @@ public:
 	/** Display the 'save level' dialogue for choosing a level to save.
 	*@todo	confirmation check on overwrite. */
 	void saveLevelDialog();
+	/** Retrieve if we have any undo-able actions. */
+	bool canUndo() const;
+	/** Retrieve if we have any redo-able actions. */
+	bool canRedo() const;
 	/** Undo the previous action in the undo stack. */
 	void undo();
 	/** Redo the previously undone action in the redo stack. */
@@ -90,14 +96,18 @@ public:
 	/** Streth the current selection to a new scale.
 	Supports scaling as group. */
 	void scaleSelection(const glm::vec3& newScale);
+	/** Add a new blank component to an entity given its handle and component name alone.
+	@param	handle			the entity the component will be added to.
+	@param	name			the component class name. */
+	void addComponent(ecsEntity* handle, const char* name);
 	/** Delete the component given its entity and component ID.
 	@param	handle			the entity the component belongs to.
 	@param	componentID		the runtime ID for this component. */
 	void deleteComponent(ecsEntity* handle, const int& componentID);
-	/** Add a new blank component to an entity given its handle and component name alone. 
-	@param	handle			the entity the component will be added to.
-	@param	name			the component class name. */
-	void addComponent(ecsEntity* handle, const char * name);
+	/** Spawn a serialized entity into the level.
+	@param	entityData		the serialized entity data.
+	@param	parent			optional pointer to the entity's parent. */
+	void addEntity(const std::vector<char>& entityData, const std::string& parentUUID = "");
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO();
 	/** Bind the editor's screen texture to the currently active GL context.
@@ -124,6 +134,11 @@ public:
 
 
 private:
+	// Private Methods
+	/***/
+	void doReversableAction(const std::shared_ptr<Editor_Command> & command);
+
+
 	// Private Attributes
 	std::string m_currentLevelName = "";
 	bool m_transformAsGroup = true;
@@ -134,7 +149,16 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
 	ECSSystemList m_systems;
+	std::stack<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
+};
+
+struct Editor_Command {
+	// Public Interface
+	/** Perform the command. */
+	virtual void execute() = 0;
+	/** Perform the reverse, undo the command. */
+	virtual void undo() = 0;
 };
 
 #endif // EDITOR_MODULE_H

@@ -3,6 +3,8 @@
 #include "Engine.h"
 #include <fstream>
 #include <filesystem>
+#include <random>
+#include <sstream>
 
 
 void World_Module::initialize(Engine* engine)
@@ -47,7 +49,7 @@ void World_Module::loadWorld(const std::string& mapName)
 	// Read ecsData from disk
 	const auto path = Engine::Get_Current_Dir() + "\\Maps\\" + mapName;
 	std::vector<char> ecsData(std::filesystem::file_size(path));
-	std::fstream mapFile(path, std::ios::binary | std::ios::in | std::ios::beg);
+	std::ifstream mapFile(path, std::ios::binary | std::ios::beg);
 	if (!mapFile.is_open())
 		m_engine->getManager_Messages().error("Cannot read the binary map file from disk!");
 	else
@@ -59,12 +61,14 @@ void World_Module::loadWorld(const std::string& mapName)
 		while (dataRead < ecsData.size())
 			deserializeEntity(ecsData.data(), ecsData.size(), dataRead, nullptr);
 	}
+
+	validateUIDS();
 }
 
 void World_Module::saveWorld(const std::string& mapName)
 {
 	std::vector<char> data;
-	for each (const auto & entity in m_entities) {		
+	for each (const auto & entity in m_entities) {
 		const auto entityData = serializeEntity(entity);
 		data.insert(data.end(), entityData.begin(), entityData.end());
 	}
@@ -115,9 +119,12 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	size_t dataIndex(0ull);
 	const auto& entityName = entity->m_name;
 	const auto nameSize = (unsigned int)(entityName.size());
-	const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
+	const auto ENTITY_HEADER_SIZE = (32 * sizeof(char)) + (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
+	// Write UUID
+	std::memcpy(&data[dataIndex], &entity->m_uuid, 32 * sizeof(char));
+	dataIndex += 32 * sizeof(char);
 	// Write name char count
 	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
@@ -149,7 +156,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	return data;
 }
 
-ecsEntity* World_Module::deserializeEntity(const char * data, const size_t & dataSize, size_t& dataIndex, ecsEntity * parent)
+ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataIndex, ecsEntity* parent)
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count
@@ -159,10 +166,14 @@ ecsEntity* World_Module::deserializeEntity(const char * data, const size_t & dat
 		entity child count
 		--nested entity children--
 	} */
+	char entityUUID[32] = { '\0' };
 	char entityNameChars[256] = { '\0' };
 	unsigned int nameSize(0u), entityChildCount(0u);
 	size_t componentDataCount(0ull);
 
+	// Read UUID
+	std::memcpy(&entityUUID, &data[dataIndex], 32 * sizeof(char));
+	dataIndex += 32 * sizeof(char);
 	// Read name char count
 	std::memcpy(&nameSize, &data[dataIndex], sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
@@ -186,7 +197,7 @@ ecsEntity* World_Module::deserializeEntity(const char * data, const size_t & dat
 	}
 
 	// Make the entity		
-	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), parent);
+	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), std::string(entityUUID, 32), parent);
 
 	// Delete temporary components
 	for each (auto * component in components)
@@ -249,7 +260,7 @@ std::pair<BaseECSComponent*, int> World_Module::deserializeComponent(const char*
 			castedComponent->load(serializedComponentData);
 		castedComponent->entity = NULL_ENTITY_HANDLE;
 
-		compPair = { castedComponent , componentID};
+		compPair = { castedComponent , componentID };
 	}
 	return compPair;
 }
@@ -259,19 +270,20 @@ void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const st
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, ecsEntity* parent)
+ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const std::string& UUID, ecsEntity* parent)
 {
 	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
-		if (BaseECSComponent::isTypeValid(componentIDs[i])) 
-			addComponentInternal(newEntity, componentIDs[i], entityComponents[i]); 
-		else 
-			m_engine->getManager_Messages().error("ECS Error: attempted to add an unsupported component to the entity \"" + name + "\"! Skipping component...\r\n");		
+		if (BaseECSComponent::isTypeValid(componentIDs[i]))
+			addComponentInternal(newEntity, componentIDs[i], entityComponents[i]);
+		else
+			m_engine->getManager_Messages().error("ECS Error: attempted to add an unsupported component to the entity \"" + name + "\"! Skipping component...\r\n");
 	}
 
-	auto * root = parent ? &parent->m_children : &m_entities;
+	auto* root = parent ? &parent->m_children : &m_entities;
 	newEntity->m_name = name;
 	newEntity->m_entityIndex = (int)root->size();
+	newEntity->m_uuid = UUID == "" ? generateUUID() : UUID;
 	newEntity->m_parent = parent;
 	root->push_back(newEntity);
 
@@ -284,7 +296,7 @@ void World_Module::removeEntity(ecsEntity* entity)
 	for each (const auto & child in entity->m_children)
 		removeEntity(child);
 
-	auto * root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
+	auto* root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
 	const auto childIndex = size_t(entity->m_entityIndex);
 
 	// Delete the components and then the entity
@@ -355,6 +367,31 @@ void World_Module::unparentEntity(ecsEntity* entity)
 	// Move entity up tree, making it a child of its old parent's parent
 	if (auto & parent = entity->m_parent)
 		parentEntity(parent->m_parent, entity);
+}
+
+ecsEntity* World_Module::findEntity(const std::string& UUID)
+{
+	std::function<ecsEntity*(const std::string&, const std::vector<ecsEntity*>&)> find_entity = [&](const std::string& UUID, const std::vector<ecsEntity*>& entities) -> ecsEntity * {
+		for each (const auto & entity in entities) {
+			if (entity->m_uuid == UUID)
+				return entity;
+			else
+				if (auto * childEntity = find_entity(UUID, entity->m_children))
+					return childEntity;
+		}
+		return nullptr;
+	};
+	return find_entity(UUID, m_entities);
+}
+
+std::vector<ecsEntity*> World_Module::findEntities(const std::vector<std::string>& uuids)
+{
+	std::vector<ecsEntity*> entities;
+	entities.reserve(uuids.size());
+	for each (const auto & uuid in uuids)
+		if (auto * entity = findEntity(uuid))
+			entities.push_back(entity);
+	return entities;
 }
 
 void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)
@@ -517,4 +554,28 @@ size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentT
 		}
 	}
 	return minIndex;
+}
+
+std::string World_Module::generateUUID()
+{
+	std::stringstream ss;
+	for (auto i = 0; i < 16; i++) {
+		std::random_device rd;
+		std::mt19937 gen(rd());
+		std::uniform_int_distribution<> dis(0, 255);
+		const auto rc = dis(gen);
+		std::stringstream hexstream;
+		hexstream << std::hex << rc;
+		auto hex = hexstream.str();
+		ss << (hex.length() < 2 ? '0' + hex : hex);
+	}
+	return ss.str();
+}
+
+void World_Module::validateUIDS()
+{
+	for each (auto & entity in m_entities) {
+		if (auto& uuid = entity->m_uuid; uuid == "")
+			uuid = generateUUID();
+	}
 }

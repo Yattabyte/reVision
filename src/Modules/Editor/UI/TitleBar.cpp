@@ -36,15 +36,15 @@ void TitleBar::tick(const float & deltaTime)
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Edit")) {
-			if (ImGui::MenuItem("Undo", "CTRL+Z")) { m_editor->undo(); }
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) { m_editor->redo(); }  // Disabled item
+			if (ImGui::MenuItem("Undo", "CTRL+Z", false, m_editor->canUndo())) { m_editor->undo(); }
+			if (ImGui::MenuItem("Redo", "CTRL+Y", false, m_editor->canRedo())) { m_editor->redo(); }
 			ImGui::Separator();
 			if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor->selectAll(); }
 			const bool hasSelection = m_editor->getSelection().size() ? true : false;
 			if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor->clearSelection(); }
 			const bool canGroup = m_editor->getSelection().size() > 1 ? true : false;
 			if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor->groupSelection(); }
-			if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, hasSelection)) { m_editor->makePrefab(); }
+			if (ImGui::MenuItem("Make Prefab", nullptr, hasSelection)) { m_editor->makePrefab(); }
 			ImGui::Separator();
 			if (ImGui::MenuItem("Cut", "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
 			if (ImGui::MenuItem("Copy", "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
@@ -81,4 +81,34 @@ void TitleBar::tick(const float & deltaTime)
 		}
 		ImGui::EndMainMenuBar();
 	}
+
+	// Check keyboard input
+	const auto& io = ImGui::GetIO();
+	const auto pressedKey = [&](const auto& c) -> bool {
+		return (io.KeyCtrl && ImGui::IsKeyPressed(c));
+	};
+	if (pressedKey('N'))
+		m_editor->newLevel();
+	if (pressedKey('O'))
+		m_editor->openLevelDialog();
+	if (pressedKey('S'))
+		m_editor->saveLevel();
+	if (pressedKey('Z'))
+		m_editor->undo();
+	if (pressedKey('Y'))
+		m_editor->redo();
+	if (pressedKey('A'))
+		m_editor->selectAll();
+	if (pressedKey('D'))
+		m_editor->clearSelection();
+	if (pressedKey('G'))
+		m_editor->groupSelection();
+	if (pressedKey('X'))
+		m_editor->cutSelection();
+	if (pressedKey('C'))
+		m_editor->copySelection();
+	if (pressedKey('V'))
+		m_editor->paste();
+	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+		m_editor->deleteSelection();
 }

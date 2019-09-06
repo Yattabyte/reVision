@@ -74,9 +74,10 @@ public:
 	@param	components			array of component pointers, whom will be hard copied.
 	@param	componentIDS		array of component ids.
 	@param	numComponents		the number of components in the array.
-	@param	name				optional component name, more for use in the level editor.
+	@param	name				optional entity name, more for use in the level editor.
+	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentEntity		optional parent entity, if not at the level root. */
-	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", ecsEntity * parentEntity = nullptr);
+	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", const std::string& UUID = "", ecsEntity * parentEntity = nullptr);
 	/** Construct an entity from the array of component references.
 	@note Variadic
 	@param	...args				all components to use for this entity. */
@@ -137,6 +138,14 @@ public:
 	/** Strip a child entity of its parent. 
 	@param	childEntity			handle to the child entity, whom will be stripped of its parent. */
 	void unparentEntity(ecsEntity* childEntity);
+	/** Try to find an entity matching the UUID provided.
+	@param	UUID				the target entity's UUID.
+	@return						pointer to the found entity on success, nullptr on failure. */
+	ecsEntity* findEntity(const std::string& uuid);
+	/** Try to find a list of entities matching the UUID's provided.
+	@param	UUIDs				list of target entity UUID's
+	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
+	std::vector<ecsEntity*> findEntities(const std::vector<std::string>& uuids);
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -187,6 +196,10 @@ private:
 	@param	componentTypes		the component types.
 	@param	componentFlags		the component flags. */
 	size_t findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags);
+	/***/
+	static std::string generateUUID();
+	/***/
+	void validateUIDS();
 
 
 	// Private Attributes
