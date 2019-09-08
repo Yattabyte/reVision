@@ -14,7 +14,7 @@ struct ecsEntity {
 	std::string m_uuid = std::string(32,'0');
 	// The index this entity is found at in the entity vector
 	int m_entityIndex = -1;
-	// The list of component raw-types held by this entity
+	// The list of component raw-types held by this entity. First of pair is the component ID, second is id to the create function
 	std::vector<std::pair<int, int>> m_components = {};
 	// An optional parent for this entity, used when forming larger mega-entities
 	ecsEntity* m_parent = nullptr;

@@ -62,7 +62,7 @@ void World_Module::loadWorld(const std::string& mapName)
 			deserializeEntity(ecsData.data(), ecsData.size(), dataRead, nullptr);
 	}
 
-	validateUIDS();
+	regenerateUUIDs();
 }
 
 void World_Module::saveWorld(const std::string& mapName)
@@ -106,6 +106,16 @@ void World_Module::unloadWorld()
 	notifyListeners(unloaded);
 }
 
+std::vector<char> World_Module::serializeEntities(const std::vector<ecsEntity*> entities)
+{
+	std::vector<char> data;
+	for each (const auto & entity in entities) {
+		const auto entData = serializeEntity(entity);
+		data.insert(data.end(), entData.begin(), entData.end());
+	}
+	return data;
+}
+
 std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 {
 	/* ENTITY DATA STRUCTURE {
@@ -123,7 +133,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
 	// Write UUID
-	std::memcpy(&data[dataIndex], &entity->m_uuid, 32 * sizeof(char));
+	std::memcpy(&data[dataIndex], entity->m_uuid.c_str(), 32 * sizeof(char));
 	dataIndex += 32 * sizeof(char);
 	// Write name char count
 	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
@@ -172,7 +182,7 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 	size_t componentDataCount(0ull);
 
 	// Read UUID
-	std::memcpy(&entityUUID, &data[dataIndex], 32 * sizeof(char));
+	std::memcpy(entityUUID, &data[dataIndex], 32 * sizeof(char));
 	dataIndex += 32 * sizeof(char);
 	// Read name char count
 	std::memcpy(&nameSize, &data[dataIndex], sizeof(unsigned int));
@@ -214,14 +224,17 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 
 std::vector<char> World_Module::serializeComponent(BaseECSComponent* component)
 {
-	const auto componentData = component->save();
-	const auto componentDataSize = componentData.size();
+	if (component) {
+		const auto componentData = component->save();
+		const auto componentDataSize = componentData.size();
 
-	std::vector<char> data(sizeof(size_t) + componentDataSize);
-	std::memcpy(&data[0], &componentDataSize, sizeof(size_t));
-	std::memcpy(&data[sizeof(size_t)], &componentData[0], componentDataSize);
+		std::vector<char> data(sizeof(size_t) + componentDataSize);
+		std::memcpy(&data[0], &componentDataSize, sizeof(size_t));
+		std::memcpy(&data[sizeof(size_t)], &componentData[0], componentDataSize);
 
-	return data;
+		return data;
+	}
+	return {};
 }
 
 std::pair<BaseECSComponent*, int> World_Module::deserializeComponent(const char* data, const size_t& dataSize, size_t& dataIndex)
@@ -310,11 +323,6 @@ void World_Module::removeEntity(ecsEntity* entity)
 	root->pop_back();
 }
 
-std::vector<ecsEntity*> World_Module::getEntities()
-{
-	return m_entities;
-}
-
 void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 {
 	// Validate input parameters
@@ -369,6 +377,19 @@ void World_Module::unparentEntity(ecsEntity* entity)
 		parentEntity(parent->m_parent, entity);
 }
 
+std::vector<std::string> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)
+{
+	std::vector<std::string> uuids;
+	for each (const auto & entity in entities)
+		uuids.push_back(entity->m_uuid);
+	return uuids;
+}
+
+std::string World_Module::getUUID(const ecsEntity* entity)
+{
+	return entity->m_uuid;
+}
+
 ecsEntity* World_Module::findEntity(const std::string& UUID)
 {
 	std::function<ecsEntity*(const std::string&, const std::vector<ecsEntity*>&)> find_entity = [&](const std::string& UUID, const std::vector<ecsEntity*>& entities) -> ecsEntity * {
@@ -392,6 +413,11 @@ std::vector<ecsEntity*> World_Module::findEntities(const std::vector<std::string
 		if (auto * entity = findEntity(uuid))
 			entities.push_back(entity);
 	return entities;
+}
+
+std::vector<ecsEntity*> World_Module::getEntities()
+{
+	return m_entities;
 }
 
 void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)
@@ -572,10 +598,8 @@ std::string World_Module::generateUUID()
 	return ss.str();
 }
 
-void World_Module::validateUIDS()
+void World_Module::regenerateUUIDs()
 {
-	for each (auto & entity in m_entities) {
-		if (auto& uuid = entity->m_uuid; uuid == "")
-			uuid = generateUUID();
-	}
+	for each (auto & entity in m_entities)
+		entity->m_uuid = generateUUID();	
 }

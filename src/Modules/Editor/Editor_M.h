@@ -128,9 +128,6 @@ public:
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
-	/** Enable or disable transforming as a group with the gizmos.
-	@param	moveAsGroup		if true enables moving as a group. */
-	void transformAsGroup(const bool& moveAsGroup);
 
 
 private:
@@ -141,7 +138,6 @@ private:
 
 	// Private Attributes
 	std::string m_currentLevelName = "";
-	bool m_transformAsGroup = true;
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
 	std::shared_ptr<BaseECSSystem> m_selectionClearer;

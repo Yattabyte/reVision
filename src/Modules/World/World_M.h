@@ -46,6 +46,10 @@ public:
 	void saveWorld(const std::string& mapName);
 	/** Unload the current world. */
 	void unloadWorld();
+	/** Serialize a specific set of entities to a char vector.
+	@param	entities			the set of entities to serialize.
+	@return						char vector containing serialized entity data. */
+	std::vector<char> serializeEntities(const std::vector<ecsEntity*> entities);
 	/** Serialize a specific entity to a char vector.
 	@param	entity				the entity to serialize.
 	@return						char vector containing serialized entity data. */
@@ -99,9 +103,6 @@ public:
 	/** Remove an entity.
 	@param	entity				the entity to remove. */
 	void removeEntity(ecsEntity* entity);
-	/** Retrieve a list of all level entities. 
-	@return						a vector of all level entities. */
-	std::vector<ecsEntity*> getEntities();	
 	/**
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
@@ -120,16 +121,25 @@ public:
 	}
 	/** Remove a specific component from an entity and the world.
 	@param	entity				the entity to remove the component from.
-	@param	componentID			the runtime ID identifying the component class. */
+	@param	componentID			the runtime ID identifying the component class. 
+	@return						true on successful removal, false otherwise. */
 	inline bool removeComponent(ecsEntity* entity, const int& componentID) {
 		return removeComponentInternal(entity, componentID);
 	}
 	/** Retrieve a component.
 	@param	entity				the entity to retrieve from.
-	@param	<BaseECSComponent>	the category of component being retrieved. */
+	@param	<BaseECSComponent>	the category of component being retrieved. 
+	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
 	inline T* getComponent(ecsEntity* entity) {
 		return (T*)getComponentInternal(entity->m_components, m_components[T::ID], T::ID);
+	}
+	/** Retrieve a component.
+	@param	entity				the entity to retrieve from. 
+	@param	componentID			the runtime ID identifying the component class.
+	@return						the specific component on success, nullptr otherwise. */
+	inline BaseECSComponent* getComponent(ecsEntity* entity, const int& componentID) {
+		return getComponentInternal(entity->m_components, m_components[componentID], componentID);
 	}
 	/** Parent an entity to another entity.
 	@param	parentEntity		the handle to the desired parent entity.
@@ -138,6 +148,14 @@ public:
 	/** Strip a child entity of its parent. 
 	@param	childEntity			handle to the child entity, whom will be stripped of its parent. */
 	void unparentEntity(ecsEntity* childEntity);
+	/** Convert a list of entities into a list of their UUID's.
+	@param	entities			list of entities to retrieve the UUID's for.
+	@return						list of entity UUID strings. */
+	static std::vector<std::string> getUUIDs(const std::vector<ecsEntity*>& entities);
+	/** Convert an entity into its UUID.
+	@param	entity				the entity to retrieve the UUID for.
+	@return						entity UUID string. */
+	static std::string getUUID(const ecsEntity* entity);
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
@@ -146,6 +164,9 @@ public:
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
 	std::vector<ecsEntity*> findEntities(const std::vector<std::string>& uuids);
+	/** Retrieve a list of all level entities.
+	@return						a vector of all level entities. */
+	std::vector<ecsEntity*> getEntities();
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -199,7 +220,7 @@ private:
 	/***/
 	static std::string generateUUID();
 	/***/
-	void validateUIDS();
+	void regenerateUUIDs();
 
 
 	// Private Attributes

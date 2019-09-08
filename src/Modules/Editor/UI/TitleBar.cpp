@@ -55,10 +55,6 @@ void TitleBar::tick(const float & deltaTime)
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Tools")) {
-			static bool qwe = true;
-			if (ImGui::Checkbox("Transform as Group", &qwe))
-				m_editor->transformAsGroup(qwe);
-			ImGui::Separator();
 			static bool qwee = true;
 			ImGui::Checkbox("Align-to-grid", &qwee);
 			if (qwee) {

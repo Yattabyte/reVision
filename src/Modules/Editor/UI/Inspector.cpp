@@ -79,8 +79,8 @@ void Inspector::tick(const float& deltaTime)
 							}
 							if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
 							for each (const auto& entity in selectedEntities)
-								if (entity->m_parent) {
-									if (ImGui::MenuItem("Unparent")) { m_editor->ungroupSelection(); }
+								if (entity->m_children.size()) {
+									if (ImGui::MenuItem("Ungroup")) { m_editor->ungroupSelection(); }
 									ImGui::Separator();
 									break;
 								}							
