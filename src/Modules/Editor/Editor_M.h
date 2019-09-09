@@ -67,11 +67,11 @@ public:
 	/** Select all level entities. */
 	void selectAll();
 	/** Select a sepecific set of entities. 
-	@param	entities		the new set of entities to make selected. */
-	void setSelection(const std::vector<ecsEntity*>& entities);
+	@param	handles			the new set of entity handles to make selected. */
+	void setSelection(const std::vector<ecsHandle>& handles);
 	/** Retrieve the set of selected entities.
-	@return					all selected entities. */
-	const std::vector<ecsEntity*>& getSelection() const;
+	@return					all selected entity handles. */
+	const std::vector<ecsHandle>& getSelection() const;
 	/** Parent all selected entities into the first one in the set. */
 	void mergeSelection();
 	/** Create a new entity and parent all selected entities into it. */
@@ -98,13 +98,13 @@ public:
 	Supports scaling as group. */
 	void scaleSelection(const glm::vec3& newScale);
 	/** Add a new blank component to an entity given its handle and component name alone.
-	@param	handle			the entity the component will be added to.
+	@param	entityhandle	handle to the entity the component will be added to.
 	@param	name			the component class name. */
-	void addComponent(ecsEntity* handle, const char* name);
+	void addComponent(const ecsHandle& entityHandle, const char* name);
 	/** Delete the component given its entity and component ID.
-	@param	handle			the entity the component belongs to.
+	@param	entityhandle	handle to the entity the component belongs to.
 	@param	componentID		the runtime ID for this component. */
-	void deleteComponent(ecsEntity* handle, const int& componentID);
+	void deleteComponent(const ecsHandle& entityHandle, const int& componentID);
 	/** Spawn a serialized entity into the level.
 	@param	entityData		the serialized entity data.
 	@param	parent			optional parent's handle. */
@@ -124,8 +124,8 @@ public:
 	@return					the current camera's position. */
 	const glm::vec3& getCameraPosition() const;
 	/** Try to add an entity to the selection, removing it if it's already present. 
-	@param	entity			the entity to attempt to (de)select. */
-	void toggleAddToSelection(ecsEntity* entity);
+	@param	entityHandle	the entity to attempt to (de)select. */
+	void toggleAddToSelection(const ecsHandle& entityHandle);
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;

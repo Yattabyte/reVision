@@ -176,13 +176,13 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 		entity child count
 		--nested entity children--
 	} */
-	char entityUUID[32] = { '\0' };
+	char entityHandle[32] = { '\0' };
 	char entityNameChars[256] = { '\0' };
 	unsigned int nameSize(0u), entityChildCount(0u);
 	size_t componentDataCount(0ull);
 
 	// Read UUID
-	std::memcpy(entityUUID, &data[dataIndex], 32 * sizeof(char));
+	std::memcpy(entityHandle, &data[dataIndex], 32 * sizeof(char));
 	dataIndex += 32 * sizeof(char);
 	// Read name char count
 	std::memcpy(&nameSize, &data[dataIndex], sizeof(unsigned int));
@@ -207,8 +207,8 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 	}
 
 	// Make the entity		
-	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), ecsHandle(entityUUID), parent);
-
+	auto& thisentityHandle = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), ecsHandle(entityHandle), parent);
+	auto* thisEntity = findEntity(thisentityHandle);
 	// Delete temporary components
 	for each (auto * component in components)
 		delete component;
@@ -283,7 +283,7 @@ void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const st
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, ecsEntity* parent)
+ecsHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, ecsEntity* parent)
 {
 	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
@@ -300,14 +300,15 @@ ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const i
 	newEntity->m_parent = parent;
 	root->push_back(newEntity);
 
-	return newEntity;
+	return newEntity->m_uuid;
 }
 
-void World_Module::removeEntity(ecsEntity* entity)
+void World_Module::removeEntity(const ecsHandle& entityHandle)
 {
 	// Delete children entities
+	auto* entity = findEntity(entityHandle);
 	for each (const auto & child in entity->m_children)
-		removeEntity(child);
+		removeEntity(child->m_uuid);
 
 	auto* root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
 	const auto childIndex = size_t(entity->m_entityIndex);
@@ -323,25 +324,26 @@ void World_Module::removeEntity(ecsEntity* entity)
 	root->pop_back();
 }
 
-void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
+void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& childHandle)
 {
 	// Validate input parameters
-	if (!childEntity || parentEntity == childEntity)
+	if (!childHandle.isValid() || parentHandle == childHandle)
 		return;
 
 	// Variables
+	auto* parentEntity = findEntity(parentHandle), * childEntity = findEntity(childHandle);
 	auto* root = &m_entities, * newRoot = parentEntity ? &parentEntity->m_children : &m_entities;
 	const auto childIndex = size_t(childEntity->m_entityIndex);
 	Transform newParentTransform, oldParentTransform;
 
 	// Check for parent transformations
 	if (parentEntity)
-		if (const auto & transformComponent = getComponent<Transform_Component>(parentEntity))
+		if (const auto & transformComponent = getComponent<Transform_Component>(parentHandle))
 			newParentTransform = transformComponent->m_worldTransform;
 	if (childEntity)
 		if (auto * oldParent = childEntity->m_parent) {
 			root = &oldParent->m_children;
-			if (const auto & transformComponent = getComponent<Transform_Component>(oldParent))
+			if (const auto & transformComponent = getComponent<Transform_Component>(oldParent->m_uuid))
 				oldParentTransform = transformComponent->m_worldTransform;
 		}
 
@@ -349,7 +351,7 @@ void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 	root->at(childIndex) = root->at(root->size() - 1u);
 	root->at(childIndex)->m_entityIndex = int(childIndex);
 	root->pop_back();
-	if (const auto & transform = getComponent<Transform_Component>(childEntity)) {
+	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
 		// Transform the child entity, removing it from its previous parent's space
 		const auto newPos = oldParentTransform.m_modelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
 		transform->m_localTransform.m_position = glm::vec3(newPos) / newPos.w;
@@ -361,7 +363,7 @@ void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 	childEntity->m_parent = parentEntity;
 	childEntity->m_entityIndex = newRoot->size();
 	newRoot->push_back(childEntity);
-	if (const auto & transform = getComponent<Transform_Component>(childEntity)) {
+	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
 		// Transform the child entity, moving it into its new parent's space
 		const auto newPos = newParentTransform.m_inverseModelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
 		transform->m_localTransform.m_position = glm::vec3(newPos) / newPos.w;
@@ -370,11 +372,13 @@ void World_Module::parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity)
 	}
 }
 
-void World_Module::unparentEntity(ecsEntity* entity)
+void World_Module::unparentEntity(const ecsHandle& entityHandle)
 {
 	// Move entity up tree, making it a child of its old parent's parent
-	if (auto & parent = entity->m_parent)
-		parentEntity(parent->m_parent, entity);
+	if (entityHandle.isValid())
+		if (auto* entity = findEntity(entityHandle))
+			if (auto* parent = entity->m_parent)
+				parentEntity(parent->m_parent->m_uuid, entityHandle);
 }
 
 std::vector<ecsHandle> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)

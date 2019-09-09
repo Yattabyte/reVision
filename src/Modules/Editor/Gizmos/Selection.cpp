@@ -75,12 +75,12 @@ Transform Selection_Gizmo::getTransform() const
 	return m_transform;
 }
 
-void Selection_Gizmo::setSelection(const std::vector<ecsEntity*>& entities)
+void Selection_Gizmo::setSelection(const std::vector<ecsHandle>& entityHandles)
 {
-	m_selection = entities;
+	m_selection = entityHandles;
 }
 
-std::vector<ecsEntity*>& Selection_Gizmo::getSelection()
+std::vector<ecsHandle>& Selection_Gizmo::getSelection()
 {
 	return m_selection;
 }
@@ -88,17 +88,17 @@ std::vector<ecsEntity*>& Selection_Gizmo::getSelection()
 bool Selection_Gizmo::checkMouseInput(const float& deltaTime)
 {
 	m_engine->getModule_World().updateSystem(m_pickerSystem.get(), deltaTime);	
-	const auto& [entity, transform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
+	const auto& [entityHandle, transform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 
 	// Set selection to all tools that need it	
 	if (ImGui::GetIO().KeyCtrl)
-		m_editor->toggleAddToSelection(entity);
+		m_editor->toggleAddToSelection(entityHandle);
 	else
-		if (entity == NULL_ENTITY_HANDLE) {
+		if (!entityHandle.isValid()) {
 			m_editor->setSelection({});
 			setTransform(transform);
 		}
 		else
-			m_editor->setSelection({ entity });
+			m_editor->setSelection({ entityHandle });
 	return m_editor->getSelection().size();
 }

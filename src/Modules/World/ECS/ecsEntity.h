@@ -30,6 +30,16 @@ struct ecsHandle {
 	inline bool operator==(const ecsHandle& other) const {
 		return bool(std::strncmp(uuid, other.uuid, 32ull) == 0);
 	}
+	// Return if handle is valid
+	inline operator bool() const {
+		const ecsHandle empty;
+		return !bool((*this) == empty);
+	}
+	// Return if handle is valid
+	inline bool isValid() const {
+		const ecsHandle empty;
+		return !bool((*this) == empty);
+	}
 };
 
 /** An entity in the ECS paradigm - holds components and heirarchical information. */

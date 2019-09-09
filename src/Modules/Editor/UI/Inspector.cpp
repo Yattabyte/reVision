@@ -49,15 +49,15 @@ void Inspector::tick(const float& deltaTime)
 				ImGui::PushID(entity);
 				ImGui::AlignTextToFramePadding();
 				ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-				if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), entity) != selectedEntities.cend())
+				if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), entity->m_uuid) != selectedEntities.cend())
 					node_flags |= ImGuiTreeNodeFlags_Selected;
 
 				auto tryLeftClickElement = [&]() {
 					if (ImGui::IsItemClicked())
 						if (ImGui::GetIO().KeyCtrl)
-							m_editor->toggleAddToSelection(entity);
+							m_editor->toggleAddToSelection(entity->m_uuid);
 						else
-							m_editor->setSelection({ entity });
+							m_editor->setSelection({ entity->m_uuid });
 				};
 				auto tryRightClickElement = [&]() {
 					if (ImGui::BeginPopupContextItem("Entity Controls")) {
@@ -72,14 +72,14 @@ void Inspector::tick(const float& deltaTime)
 						ImGui::Separator();
 						if (const auto selectionSize = selectedEntities.size()) {
 							if (selectionSize >= 2ull) {
-								const auto text = "Join to \"" + selectedEntities[0]->m_name + "\"";
+								const auto text = "Join to \"" + world.findEntity(selectedEntities[0])->m_name + "\"";
 								if (ImGui::MenuItem(text.c_str())) { m_editor->mergeSelection(); }
 								if (ImGui::MenuItem("Group Selection")) { m_editor->groupSelection(); }
 								ImGui::Separator();
 							}
 							if (ImGui::MenuItem("Make Prefab", "CTRL+G", nullptr, selectedEntities.size())) { m_editor->makePrefab(); }
-							for each (const auto& entity in selectedEntities)
-								if (entity->m_children.size()) {
+							for each (const auto& entityHandle in selectedEntities)
+								if (world.findEntity(entityHandle)->m_children.size()) {
 									if (ImGui::MenuItem("Ungroup")) { m_editor->ungroupSelection(); }
 									ImGui::Separator();
 									break;
@@ -103,9 +103,9 @@ void Inspector::tick(const float& deltaTime)
 					if (ImGui::BeginDragDropTarget()) {
 						if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
 							IM_ASSERT(payload->DataSize == sizeof(ecsEntity**));
-							m_editor->setSelection({ entity, *(ecsEntity * *)(payload->Data) });
+							m_editor->setSelection({ entity->m_uuid, (*(ecsEntity * *)(payload->Data))->m_uuid });
 							m_editor->mergeSelection();
-							m_editor->setSelection({ entity });
+							m_editor->setSelection({ entity->m_uuid });
 						}
 						ImGui::EndDragDropTarget();
 					}
@@ -132,7 +132,7 @@ void Inspector::tick(const float& deltaTime)
 						ImGui::Text(BaseECSComponent::findName(component.first));
 						ImGui::PopID();
 						if (buttonPressed)
-							m_editor->deleteComponent(entity, component.first);
+							m_editor->deleteComponent(entity->m_uuid, component.first);
 					}
 					ImGui::AlignTextToFramePadding();
 					ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
@@ -176,7 +176,7 @@ void Inspector::tick(const float& deltaTime)
 						if (ImGui::Button("Cancel"))
 							ImGui::CloseCurrentPopup();
 						if (isOk) {
-							m_editor->addComponent(entity, items[item_current]);
+							m_editor->addComponent(entity->m_uuid, items[item_current]);
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
@@ -203,7 +203,7 @@ void Inspector::tick(const float& deltaTime)
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
 				IM_ASSERT(payload->DataSize == sizeof(ecsEntity * *));
-				m_editor->setSelection({ nullptr, *(ecsEntity * *)(payload->Data) });
+				m_editor->setSelection({ ecsHandle(), (*(ecsEntity * *)(payload->Data))->m_uuid });
 				m_editor->mergeSelection();
 				m_editor->clearSelection();
 			}

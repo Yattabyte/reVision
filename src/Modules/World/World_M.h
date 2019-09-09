@@ -80,54 +80,59 @@ public:
 	@param	name				optional entity name, more for use in the level editor.
 	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentEntity		optional parent entity, if not at the level root. */
-	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", const ecsHandle& UUID = ecsHandle(), ecsEntity * parentEntity = nullptr);
+	ecsHandle makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", const ecsHandle& UUID = ecsHandle(), ecsEntity * parentEntity = nullptr);
 	/** Remove an entity.
-	@param	entity				the entity to remove. */
-	void removeEntity(ecsEntity* entity);
+	@param	entityHandle		handle to the entity to be removed. */
+	void removeEntity(const ecsHandle& entityHandle);
 	/** Adds a component to an entity.
-	@param	entity				the entity to add the component to.
+	@param	entityHandle		handle to the entity to add the component to.
 	@param	component			the component being added.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
-	inline bool addComponent(ecsEntity* entity, const BaseECSComponent* component) {
-		return addComponentInternal(entity, component->get_id(), component);
+	inline bool addComponent(const ecsHandle& entityHandle, const BaseECSComponent* component) {
+		if (auto* entity = findEntity(entityHandle))
+			return addComponentInternal(entity, component->get_id(), component);
 	}
 	/** Removes a component from an entity.
-	@param	entity				the entity to remove from.
+	@param	entityHandle		handle to the entity to remove the component from.
 	@param	<BaseECSComponent>	the category of component being removed.
 	@return						true on successful removal, false otherwise. */
 	template <typename T>
-	inline bool removeComponent(ecsEntity* entity) {
-		return removeComponent(entity, T::ID);
+	inline bool removeComponent(const ecsHandle& entityHandle) {
+		return removeComponent(entityHandle, T::ID);
 	}
 	/** Remove a specific component from an entity and the world.
-	@param	entity				the entity to remove the component from.
+	@param	entityHandle		handle to the entity to remove the component from.
 	@param	componentID			the runtime ID identifying the component class. 
 	@return						true on successful removal, false otherwise. */
-	inline bool removeComponent(ecsEntity* entity, const int& componentID) {
-		return removeComponentInternal(entity, componentID);
+	inline bool removeComponent(const ecsHandle& entityHandle, const int& componentID) {
+		if (auto * entity = findEntity(entityHandle))
+			return removeComponentInternal(entity, componentID);
+		return false;
 	}
 	/** Retrieve a component.
-	@param	entity				the entity to retrieve from.
+	@param	entityHandle		handle to the entity to retrieve from.
 	@param	<BaseECSComponent>	the category of component being retrieved. 
 	@return						the specific component of the type requested on success, nullptr otherwise. */
 	template <typename T>
-	inline T* getComponent(ecsEntity* entity) {
-		return (T*)getComponentInternal(entity->m_components, m_components[T::ID], T::ID);
+	inline T* getComponent(const ecsHandle& entityHandle) {
+		return (T*)getComponent(entityHandle, T::ID);
 	}
 	/** Retrieve a component.
-	@param	entity				the entity to retrieve from. 
+	@param	entityHandle		handle to the entity to retrieve from.
 	@param	componentID			the runtime ID identifying the component class.
 	@return						the specific component on success, nullptr otherwise. */
-	inline BaseECSComponent* getComponent(ecsEntity* entity, const int& componentID) {
-		return getComponentInternal(entity->m_components, m_components[componentID], componentID);
+	inline BaseECSComponent* getComponent(const ecsHandle& entityHandle, const int& componentID) {
+		if (auto * entity = findEntity(entityHandle))
+			return getComponentInternal(entity->m_components, m_components[componentID], componentID);
+		return nullptr;
 	}
 	/** Parent an entity to another entity.
 	@param	parentEntity		the handle to the desired parent entity.
 	@param	childEntity			the handle to the desired child entity. */
-	void parentEntity(ecsEntity* parentEntity, ecsEntity* childEntity);
+	void parentEntity(const ecsHandle& parentEntity, const ecsHandle& childEntity);
 	/** Strip a child entity of its parent. 
 	@param	childEntity			handle to the child entity, whom will be stripped of its parent. */
-	void unparentEntity(ecsEntity* childEntity);
+	void unparentEntity(const ecsHandle& childEntity);
 	/** Convert a list of entities into a list of their UUID's.
 	@param	entities			list of entities to retrieve the UUID's for.
 	@return						list of entity UUIDs. */

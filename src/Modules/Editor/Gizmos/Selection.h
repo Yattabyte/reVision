@@ -3,6 +3,7 @@
 #define SELECTION_GIZMO_H
 
 #include "Modules/World/ECS/ecsComponent.h"
+#include "Modules/World/ECS/ecsEntity.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/Transform.h"
 #include <memory>
@@ -31,26 +32,26 @@ public:
 
 	// Public Methods
 	/** Tick this gizmo, checking for input and rendering.
-	@param	deltaTime	the amount of time since the last frame. */
+	@param	deltaTime		the amount of time since the last frame. */
 	void frameTick(const float& deltaTime);
 	/** Check for user input.
-	@param	deltaTime	the amount of time since the last frame. */
+	@param	deltaTime		the amount of time since the last frame. */
 	bool checkInput(const float& deltaTime);
 	/** Render this gizmo.
-	@param	deltaTime	the amount of time since the last frame. */
+	@param	deltaTime		the amount of time since the last frame. */
 	void render(const float& deltaTime);
 	/** Apply a specific transform.
-	@param	transform	the new transform to use. */
+	@param	transform		the new transform to use. */
 	void setTransform(const Transform& transform);
 	/** Retrieve this gizmo's transform.
-	@return				the transform used by this gizmo. */
+	@return					the transform used by this gizmo. */
 	Transform getTransform() const;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
-	@param	entities	the new set of selected entities to use. */
-	void setSelection(const std::vector<ecsEntity*>& entities);
+	@param	entityHandles	the new set of selected entity handles to use. */
+	void setSelection(const std::vector<ecsHandle>& entities);
 	/** Retrieve the current set of selected entities.
-	@return				the active set of selected entities. */
-	std::vector<ecsEntity*>& getSelection();
+	@return					the active set of selected entity handles. */
+	std::vector<ecsHandle>& getSelection();
 	
 
 private:
@@ -65,7 +66,7 @@ private:
 	LevelEditor_Module* m_editor = nullptr;
 	bool m_clicked = false;
 	Transform m_transform = glm::vec3(0.0f);
-	std::vector<ecsEntity*> m_selection;
+	std::vector<ecsHandle> m_selection;
 	std::shared_ptr<BaseECSSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
