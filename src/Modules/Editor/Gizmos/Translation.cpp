@@ -165,7 +165,7 @@ void Translation_Gizmo::checkMouseHover()
 	int hoveredAxis = -1;
 	float closestIntersection = FLT_MAX;
 	for (int x = 0; x < 3; ++x) {
-		float intDistance;
+		float intDistance = FLT_MAX;
 		if (!RayPlaneIntersection(ray_origin, ray_world, position, plane_normals[x], intDistance))
 			RayPlaneIntersection(ray_origin, ray_world, position, -plane_normals[x], intDistance);
 		if (RayOOBBIntersection(ray_origin, ray_world, arrowAxes_min[x], arrowAxes_max[x], mMatrix, intDistance))

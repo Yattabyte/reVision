@@ -133,7 +133,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
 	// Write UUID
-	std::memcpy(&data[dataIndex], entity->m_uuid.c_str(), 32 * sizeof(char));
+	std::memcpy(&data[dataIndex], entity->m_uuid.uuid, 32 * sizeof(char));
 	dataIndex += 32 * sizeof(char);
 	// Write name char count
 	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
@@ -207,7 +207,7 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 	}
 
 	// Make the entity		
-	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), std::string(entityUUID, 32), parent);
+	auto* thisEntity = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), ecsHandle(entityUUID), parent);
 
 	// Delete temporary components
 	for each (auto * component in components)
@@ -283,7 +283,7 @@ void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const st
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const std::string& UUID, ecsEntity* parent)
+ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, ecsEntity* parent)
 {
 	auto* newEntity = new ecsEntity();
 	for (size_t i = 0; i < numComponents; ++i) {
@@ -296,7 +296,7 @@ ecsEntity* World_Module::makeEntity(BaseECSComponent** entityComponents, const i
 	auto* root = parent ? &parent->m_children : &m_entities;
 	newEntity->m_name = name;
 	newEntity->m_entityIndex = (int)root->size();
-	newEntity->m_uuid = UUID == "" ? generateUUID() : UUID;
+	newEntity->m_uuid = UUID == ecsHandle() ? generateUUID() : UUID;
 	newEntity->m_parent = parent;
 	root->push_back(newEntity);
 
@@ -377,22 +377,22 @@ void World_Module::unparentEntity(ecsEntity* entity)
 		parentEntity(parent->m_parent, entity);
 }
 
-std::vector<std::string> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)
+std::vector<ecsHandle> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)
 {
-	std::vector<std::string> uuids;
+	std::vector<ecsHandle> uuids;
 	for each (const auto & entity in entities)
 		uuids.push_back(entity->m_uuid);
 	return uuids;
 }
 
-std::string World_Module::getUUID(const ecsEntity* entity)
+ecsHandle World_Module::getUUID(const ecsEntity* entity)
 {
 	return entity->m_uuid;
 }
 
-ecsEntity* World_Module::findEntity(const std::string& UUID)
+ecsEntity* World_Module::findEntity(const ecsHandle& UUID)
 {
-	std::function<ecsEntity*(const std::string&, const std::vector<ecsEntity*>&)> find_entity = [&](const std::string& UUID, const std::vector<ecsEntity*>& entities) -> ecsEntity * {
+	std::function<ecsEntity*(const ecsHandle&, const std::vector<ecsEntity*>&)> find_entity = [&](const ecsHandle& UUID, const std::vector<ecsEntity*>& entities) -> ecsEntity * {
 		for each (const auto & entity in entities) {
 			if (entity->m_uuid == UUID)
 				return entity;
@@ -405,7 +405,7 @@ ecsEntity* World_Module::findEntity(const std::string& UUID)
 	return find_entity(UUID, m_entities);
 }
 
-std::vector<ecsEntity*> World_Module::findEntities(const std::vector<std::string>& uuids)
+std::vector<ecsEntity*> World_Module::findEntities(const std::vector<ecsHandle>& uuids)
 {
 	std::vector<ecsEntity*> entities;
 	entities.reserve(uuids.size());
@@ -582,7 +582,7 @@ size_t World_Module::findLeastCommonComponent(const std::vector<int>& componentT
 	return minIndex;
 }
 
-std::string World_Module::generateUUID()
+ecsHandle World_Module::generateUUID()
 {
 	std::stringstream ss;
 	for (auto i = 0; i < 16; i++) {
@@ -595,7 +595,10 @@ std::string World_Module::generateUUID()
 		auto hex = hexstream.str();
 		ss << (hex.length() < 2 ? '0' + hex : hex);
 	}
-	return ss.str();
+	const auto& string = ss.str();
+	ecsHandle handle;
+	std::memcpy(handle.uuid, string.c_str(), size_t(sizeof(char) * 32));
+	return handle;
 }
 
 void World_Module::regenerateUUIDs()

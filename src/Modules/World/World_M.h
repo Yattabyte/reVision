@@ -69,7 +69,6 @@ public:
 	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
 	@param	dataRead			reference to number of elements or bytes read in data so far. */
 	std::pair<BaseECSComponent*, int> deserializeComponent(const char * data, const size_t& dataSize, size_t& dataRead);
-
 	/** Registers a notification function to be called when the world state changes.
 	@param	alive				a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier			function to be called on state change. */
@@ -81,29 +80,10 @@ public:
 	@param	name				optional entity name, more for use in the level editor.
 	@param	UUID				optional entity UUID, if empty will auto-generate.
 	@param	parentEntity		optional parent entity, if not at the level root. */
-	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", const std::string& UUID = "", ecsEntity * parentEntity = nullptr);
-	/** Construct an entity from the array of component references.
-	@note Variadic
-	@param	...args				all components to use for this entity. */
-	template <class...Args>
-	inline ecsEntity * makeEntity(Args& ...args) {
-		BaseECSComponent* components[] = { &args... };
-		const int componentIDS[] = { Args::ID... };
-		return makeEntity(components, componentIDS, sizeof...(Args));
-	}
-	/** Construct an entity from the array of component pointers.
-	@note Variadic
-	@param	args				all components to use for this entity. */
-	template <class...Args>
-	inline ecsEntity * makeEntity(Args* ...args) {
-		BaseECSComponent* components[] = { args... };
-		const int componentIDS[] = { Args::ID... };
-		return makeEntity(components, componentIDS, sizeof...(Args));
-	}
+	ecsEntity * makeEntity(BaseECSComponent** components, const int* componentIDS, const size_t& numComponents, const std::string& name = "Entity", const ecsHandle& UUID = ecsHandle(), ecsEntity * parentEntity = nullptr);
 	/** Remove an entity.
 	@param	entity				the entity to remove. */
 	void removeEntity(ecsEntity* entity);
-	/**
 	/** Adds a component to an entity.
 	@param	entity				the entity to add the component to.
 	@param	component			the component being added.
@@ -150,20 +130,20 @@ public:
 	void unparentEntity(ecsEntity* childEntity);
 	/** Convert a list of entities into a list of their UUID's.
 	@param	entities			list of entities to retrieve the UUID's for.
-	@return						list of entity UUID strings. */
-	static std::vector<std::string> getUUIDs(const std::vector<ecsEntity*>& entities);
+	@return						list of entity UUIDs. */
+	static std::vector<ecsHandle> getUUIDs(const std::vector<ecsEntity*>& entities);
 	/** Convert an entity into its UUID.
 	@param	entity				the entity to retrieve the UUID for.
 	@return						entity UUID string. */
-	static std::string getUUID(const ecsEntity* entity);
+	static ecsHandle getUUID(const ecsEntity* entity);
 	/** Try to find an entity matching the UUID provided.
 	@param	UUID				the target entity's UUID.
 	@return						pointer to the found entity on success, nullptr on failure. */
-	ecsEntity* findEntity(const std::string& uuid);
+	ecsEntity* findEntity(const ecsHandle& uuid);
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
-	std::vector<ecsEntity*> findEntities(const std::vector<std::string>& uuids);
+	std::vector<ecsEntity*> findEntities(const std::vector<ecsHandle>& uuids);
 	/** Retrieve a list of all level entities.
 	@return						a vector of all level entities. */
 	std::vector<ecsEntity*> getEntities();
@@ -218,7 +198,7 @@ private:
 	@param	componentFlags		the component flags. */
 	size_t findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags);
 	/***/
-	static std::string generateUUID();
+	static ecsHandle generateUUID();
 	/***/
 	void regenerateUUIDs();
 

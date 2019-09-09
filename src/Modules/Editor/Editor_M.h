@@ -3,6 +3,7 @@
 #define EDITOR_MODULE_H
 
 #include "Modules/Engine_Module.h"
+#include "Modules/World/ECS/ecsEntity.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
@@ -106,8 +107,8 @@ public:
 	void deleteComponent(ecsEntity* handle, const int& componentID);
 	/** Spawn a serialized entity into the level.
 	@param	entityData		the serialized entity data.
-	@param	parent			optional pointer to the entity's parent. */
-	void addEntity(const std::vector<char>& entityData, const std::string& parentUUID = "");
+	@param	parent			optional parent's handle. */
+	void addEntity(const std::vector<char>& entityData, const ecsHandle& parentUUID = ecsHandle());
 	/** Bind the editor's FBO to the currently active GL context, for rendering. */
 	void bindFBO();
 	/** Bind the editor's screen texture to the currently active GL context.
