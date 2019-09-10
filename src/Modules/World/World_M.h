@@ -89,7 +89,7 @@ public:
 	@param	component			the component being added.
 	@return						true if the component was added successfully, false otherwise (e.g. component ID already present in entity) */
 	inline bool addComponent(const ecsHandle& entityHandle, const BaseECSComponent* component) {
-		if (auto* entity = findEntity(entityHandle))
+		if (auto* entity = getEntity(entityHandle))
 			return addComponentInternal(entity, component->get_id(), component);
 	}
 	/** Removes a component from an entity.
@@ -105,7 +105,7 @@ public:
 	@param	componentID			the runtime ID identifying the component class. 
 	@return						true on successful removal, false otherwise. */
 	inline bool removeComponent(const ecsHandle& entityHandle, const int& componentID) {
-		if (auto * entity = findEntity(entityHandle))
+		if (auto * entity = getEntity(entityHandle))
 			return removeComponentInternal(entity, componentID);
 		return false;
 	}
@@ -122,7 +122,7 @@ public:
 	@param	componentID			the runtime ID identifying the component class.
 	@return						the specific component on success, nullptr otherwise. */
 	inline BaseECSComponent* getComponent(const ecsHandle& entityHandle, const int& componentID) {
-		if (auto * entity = findEntity(entityHandle))
+		if (auto * entity = getEntity(entityHandle))
 			return getComponentInternal(entity->m_components, m_components[componentID], componentID);
 		return nullptr;
 	}
@@ -141,17 +141,17 @@ public:
 	@param	entity				the entity to retrieve the UUID for.
 	@return						entity UUID string. */
 	static ecsHandle getUUID(const ecsEntity* entity);
-	/** Try to find an entity matching the UUID provided.
-	@param	UUID				the target entity's UUID.
-	@return						pointer to the found entity on success, nullptr on failure. */
-	ecsEntity* findEntity(const ecsHandle& uuid);
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
-	std::vector<ecsEntity*> findEntities(const std::vector<ecsHandle>& uuids);
-	/** Retrieve a list of all level entities.
+	std::vector<ecsEntity*> getEntities(const std::vector<ecsHandle>& uuids);
+	/** Try to find an entity matching the UUID provided.
+	@param	UUID				the target entity's UUID.
+	@return						pointer to the found entity on success, nullptr on failure. */
+	ecsEntity* getEntity(const ecsHandle& uuid);
+	/** Retrieve the top-level root of the map.
 	@return						a vector of all level entities. */
-	std::vector<ecsEntity*> getEntities();
+	std::vector<ecsHandle> getEntityHandles(const ecsHandle& root = ecsHandle());
 	/** Update the components of all systems provided.
 	@param	systems				the systems to update.
 	@param	deltaTime			the delta time. */
@@ -204,14 +204,12 @@ private:
 	size_t findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags);
 	/***/
 	static ecsHandle generateUUID();
-	/***/
-	void regenerateUUIDs();
 
 
 	// Private Attributes
 	bool m_finishedLoading = false;
 	std::map<int, std::vector<uint8_t>> m_components;
-	std::vector<ecsEntity*> m_entities;
+	std::map<ecsHandle, ecsEntity*> m_entities;
 	WorldState m_state = unloaded;
 	std::vector<std::pair<std::shared_ptr<bool>, std::function<void(const WorldState&)>>> m_notifyees;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);

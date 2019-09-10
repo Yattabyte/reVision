@@ -2,9 +2,11 @@
 #ifndef ECSENTITY_H
 #define ECSENTITY_H
 
+#include <map>
 #include <string>
 #include <vector>
 
+/***/
 struct ecsHandle {
 	char uuid[32] = { '\0' };
 	/** Default Constructor. */
@@ -29,6 +31,10 @@ struct ecsHandle {
 	// Compare against another handle
 	inline bool operator==(const ecsHandle& other) const {
 		return bool(std::strncmp(uuid, other.uuid, 32ull) == 0);
+	}
+	// Compare if this should be ordered before another handle
+	inline bool operator<(const ecsHandle& other) const {
+		return bool(std::strncmp(uuid, other.uuid, 32ull) < 0);
 	}
 	// Return if handle is valid
 	inline operator bool() const {
@@ -55,7 +61,7 @@ struct ecsEntity {
 	// An optional parent for this entity, used when forming larger mega-entities
 	ecsEntity* m_parent = nullptr;
 	// An optional set of children for this entity, whom this entity will be the parent of
-	std::vector<ecsEntity*> m_children;
+	std::map<ecsHandle, ecsEntity*> m_children;
 };
 
 #endif // ECSENTITY_H

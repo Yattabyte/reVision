@@ -305,8 +305,7 @@ void LevelEditor_Module::clearSelection()
 
 void LevelEditor_Module::selectAll()
 {
-	auto& world = m_engine->getModule_World();
-	setSelection(world.getUUIDs(m_engine->getModule_World().getEntities()));
+	setSelection(m_engine->getModule_World().getEntityHandles());
 }
 
 void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
@@ -387,7 +386,7 @@ void LevelEditor_Module::mergeSelection()
 		virtual void undo() {
 			auto& world = m_engine->getModule_World();
 			// Find the root element
-			if (auto * root = world.findEntity(m_uuids[0])) {
+			if (auto * root = world.getEntity(m_uuids[0])) {
 				// Unparent remaining entities from the root
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
 					if (const auto & entityHandle = m_uuids[x])
@@ -439,10 +438,10 @@ void LevelEditor_Module::groupSelection()
 			auto& world = m_engine->getModule_World();
 			auto& selection = m_editor->m_selectionGizmo->getSelection();
 			selection.clear();
-			if (auto * root = world.findEntity(m_rootUUID)) {
-				for each (const auto & child in root->m_children) {
-					world.unparentEntity(child->m_uuid);
-					selection.push_back(child->m_uuid);
+			if (m_rootUUID != ecsHandle()) {
+				for each (const auto & child in world.getEntityHandles(m_rootUUID)) {
+					world.unparentEntity(child);
+					selection.push_back(child);
 				}
 				world.removeEntity(m_rootUUID);
 			}
@@ -463,18 +462,18 @@ void LevelEditor_Module::ungroupSelection()
 		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {
 			auto& world = m_engine->getModule_World();
-			for each (const auto & entity in world.findEntities(m_uuids)) {
+			for each (const auto & entityHandle in m_uuids) {
 				std::vector<ecsHandle> childrenUUIDS;
-				for each (const auto & child in entity->m_children)
-					childrenUUIDS.push_back(child->m_uuid);			
+				for each (const auto & childHandle in world.getEntityHandles(entityHandle))
+					childrenUUIDS.push_back(childHandle);
 				m_children.push_back(childrenUUIDS);
 			}
 		}
 		virtual void execute() {
 			auto& world = m_engine->getModule_World();
-			for each (const auto & entity in  world.findEntities(m_uuids))
-				for each (const auto & child in entity->m_children) 
-					world.unparentEntity(child->m_uuid);			
+			for each (const auto & entityHandle in m_uuids)
+				for each (const auto & childHandle in world.getEntityHandles(entityHandle))
+					world.unparentEntity(childHandle);
 		}
 		virtual void undo() {
 			auto& world = m_engine->getModule_World();
@@ -491,7 +490,7 @@ void LevelEditor_Module::ungroupSelection()
 
 void LevelEditor_Module::makePrefab()
 {
-	m_editorInterface->m_uiPrefabs->makePrefab(m_engine->getModule_World().findEntities(getSelection()));
+	m_editorInterface->m_uiPrefabs->makePrefab(m_engine->getModule_World().getEntities(getSelection()));
 }
 
 void LevelEditor_Module::cutSelection()
@@ -505,7 +504,7 @@ void LevelEditor_Module::copySelection()
 	m_copiedData.clear();
 	auto& world = m_engine->getModule_World();
 	for each (const auto & entityHandle in getSelection()) {
-		const auto entData = world.serializeEntity(world.findEntity(entityHandle));
+		const auto entData = world.serializeEntity(world.getEntity(entityHandle));
 		m_copiedData.insert(m_copiedData.end(), entData.begin(), entData.end());
 	}
 }
@@ -523,7 +522,7 @@ void LevelEditor_Module::deleteSelection()
 		const std::vector<char> m_data;
 		const std::vector<ecsHandle> m_uuids;
 		Delete_Selection_Command(Engine* engine, const std::vector<ecsHandle>& selection)
-			: m_engine(engine), m_data(m_engine->getModule_World().serializeEntities(m_engine->getModule_World().findEntities(selection))), m_uuids(selection) {}
+			: m_engine(engine), m_data(m_engine->getModule_World().serializeEntities(m_engine->getModule_World().getEntities(selection))), m_uuids(selection) {}
 		virtual void execute() {
 			auto& world = m_engine->getModule_World();
 			for each (const auto& entityHandle in m_uuids)
@@ -687,7 +686,7 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 		virtual void undo() {
 			auto& world = m_engine->getModule_World();
 			if (const auto & [templateComponent, componentID, componentSize] = BaseECSComponent::findTemplate(m_componentName); templateComponent != nullptr)
-				for each (auto & component in world.findEntity(m_entityHandle)->m_components)
+				for each (auto & component in world.getEntity(m_entityHandle)->m_components)
 					if (component.first == componentID) {
 						world.removeComponent(m_entityHandle, component.first);
 						break;

@@ -61,14 +61,12 @@ void World_Module::loadWorld(const std::string& mapName)
 		while (dataRead < ecsData.size())
 			deserializeEntity(ecsData.data(), ecsData.size(), dataRead, nullptr);
 	}
-
-	regenerateUUIDs();
 }
 
 void World_Module::saveWorld(const std::string& mapName)
 {
 	std::vector<char> data;
-	for each (const auto & entity in m_entities) {
+	for (const auto & [handle, entity] : m_entities) {
 		const auto entityData = serializeEntity(entity);
 		data.insert(data.end(), entityData.begin(), entityData.end());
 	}
@@ -94,11 +92,11 @@ void World_Module::unloadWorld()
 	m_components.clear();
 
 	std::function<void(ecsEntity*)> deleteEntity = [&](ecsEntity* entity) {
-		for each (auto & child in entity->m_children)
+		for (auto & [handle, child] : entity->m_children)
 			deleteEntity(child);
 		delete entity;
 	};
-	for each (auto & entity in m_entities)
+	for (const auto& [handle, entity] : m_entities)
 		deleteEntity(entity);
 	m_entities.clear();
 
@@ -158,7 +156,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	std::memcpy(&data[entityDataCountIndex], &entityDataCount, sizeof(size_t));
 
 	// Write child entities
-	for each (const auto & child in entity->m_children) {
+	for (auto & [handle, child] : entity->m_children) {
 		const auto childData = serializeEntity(child);
 		data.insert(data.end(), childData.begin(), childData.end());
 	}
@@ -208,7 +206,7 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 
 	// Make the entity		
 	auto& thisentityHandle = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), ecsHandle(entityHandle), parent);
-	auto* thisEntity = findEntity(thisentityHandle);
+	auto* thisEntity = getEntity(thisentityHandle);
 	// Delete temporary components
 	for each (auto * component in components)
 		delete component;
@@ -298,30 +296,26 @@ ecsHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const in
 	newEntity->m_entityIndex = (int)root->size();
 	newEntity->m_uuid = UUID == ecsHandle() ? generateUUID() : UUID;
 	newEntity->m_parent = parent;
-	root->push_back(newEntity);
+	root->insert_or_assign(newEntity->m_uuid, newEntity);
 
 	return newEntity->m_uuid;
 }
 
 void World_Module::removeEntity(const ecsHandle& entityHandle)
 {
-	// Delete children entities
-	auto* entity = findEntity(entityHandle);
-	for each (const auto & child in entity->m_children)
-		removeEntity(child->m_uuid);
-
-	auto* root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
-	const auto childIndex = size_t(entity->m_entityIndex);
-
-	// Delete the components and then the entity
+	// Delete this entity's components
+	auto* entity = getEntity(entityHandle);
 	for (auto& [id, createFn] : entity->m_components)
 		deleteComponent(id, createFn);
-	delete root->at(childIndex);
+	
+	// Delete children entities
+	for (auto& [handle, child] : entity->m_children)
+		removeEntity(child->m_uuid);
 
-	// Swap the entity pointer with the end of the root, then pop it off
-	root->at(childIndex) = root->at(root->size() - 1u);
-	root->at(childIndex)->m_entityIndex = int(childIndex);
-	root->pop_back();
+	// Delete this entity
+	auto* root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
+	root->erase(entityHandle);
+	delete entity;
 }
 
 void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& childHandle)
@@ -331,9 +325,8 @@ void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& 
 		return;
 
 	// Variables
-	auto* parentEntity = findEntity(parentHandle), * childEntity = findEntity(childHandle);
+	auto* parentEntity = getEntity(parentHandle), * childEntity = getEntity(childHandle);
 	auto* root = &m_entities, * newRoot = parentEntity ? &parentEntity->m_children : &m_entities;
-	const auto childIndex = size_t(childEntity->m_entityIndex);
 	Transform newParentTransform, oldParentTransform;
 
 	// Check for parent transformations
@@ -347,22 +340,21 @@ void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& 
 				oldParentTransform = transformComponent->m_worldTransform;
 		}
 
-	// Remove child entity from its previous parent by swapping with last element + popping it
-	root->at(childIndex) = root->at(root->size() - 1u);
-	root->at(childIndex)->m_entityIndex = int(childIndex);
-	root->pop_back();
+	// Transform the child entity, removing it from its previous parent's space
 	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
-		// Transform the child entity, removing it from its previous parent's space
 		const auto newPos = oldParentTransform.m_modelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
 		transform->m_localTransform.m_position = glm::vec3(newPos) / newPos.w;
 		transform->m_localTransform.m_scale *= oldParentTransform.m_scale;
 		transform->m_localTransform.update();
 	}
 
+	// Remove child entity from its previous parent
+	root->erase(childHandle);
+
 	// Make this child a child of the new parent, change its index
 	childEntity->m_parent = parentEntity;
 	childEntity->m_entityIndex = newRoot->size();
-	newRoot->push_back(childEntity);
+	newRoot->insert_or_assign(childHandle, childEntity);
 	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
 		// Transform the child entity, moving it into its new parent's space
 		const auto newPos = newParentTransform.m_inverseModelMatrix * glm::vec4(transform->m_localTransform.m_position, 1.0F);
@@ -376,9 +368,9 @@ void World_Module::unparentEntity(const ecsHandle& entityHandle)
 {
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
-		if (auto* entity = findEntity(entityHandle))
+		if (auto* entity = getEntity(entityHandle))
 			if (auto* parent = entity->m_parent)
-				parentEntity(parent->m_parent->m_uuid, entityHandle);
+				parentEntity(parent->m_parent == nullptr ? ecsHandle() : parent->m_parent->m_uuid, entityHandle);
 }
 
 std::vector<ecsHandle> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)
@@ -394,34 +386,41 @@ ecsHandle World_Module::getUUID(const ecsEntity* entity)
 	return entity->m_uuid;
 }
 
-ecsEntity* World_Module::findEntity(const ecsHandle& UUID)
+std::vector<ecsEntity*> World_Module::getEntities(const std::vector<ecsHandle>& uuids)
 {
-	std::function<ecsEntity*(const ecsHandle&, const std::vector<ecsEntity*>&)> find_entity = [&](const ecsHandle& UUID, const std::vector<ecsEntity*>& entities) -> ecsEntity * {
-		for each (const auto & entity in entities) {
-			if (entity->m_uuid == UUID)
-				return entity;
-			else
+	std::vector<ecsEntity*> entities;
+	entities.reserve(uuids.size());
+	for each (const auto & uuid in uuids)
+		if (auto * entity = getEntity(uuid))
+			entities.push_back(entity);
+	return entities;
+}
+
+ecsEntity* World_Module::getEntity(const ecsHandle& UUID)
+{
+	std::function<ecsEntity* (const ecsHandle&, const std::map<ecsHandle, ecsEntity*>&)> find_entity = [&](const ecsHandle& UUID, const std::map<ecsHandle, ecsEntity*>& entities) -> ecsEntity * {
+		// First try to find in main map using built-in algorithm
+		const auto pos = entities.find(UUID);
+		if (pos != entities.end())
+			return pos->second;
+		// Next start searching children
+		else
+			for (auto& [handle, entity] : entities)
 				if (auto * childEntity = find_entity(UUID, entity->m_children))
 					return childEntity;
-		}
 		return nullptr;
 	};
 	return find_entity(UUID, m_entities);
 }
 
-std::vector<ecsEntity*> World_Module::findEntities(const std::vector<ecsHandle>& uuids)
+std::vector<ecsHandle> World_Module::getEntityHandles(const ecsHandle& rootHandle)
 {
-	std::vector<ecsEntity*> entities;
-	entities.reserve(uuids.size());
-	for each (const auto & uuid in uuids)
-		if (auto * entity = findEntity(uuid))
-			entities.push_back(entity);
-	return entities;
-}
-
-std::vector<ecsEntity*> World_Module::getEntities()
-{
-	return m_entities;
+	std::vector<ecsHandle> entityHandles;
+	auto* root = rootHandle != ecsHandle() ? &getEntity(rootHandle)->m_children : &m_entities;
+	entityHandles.reserve(root->size());
+	for (const auto& [handle, entity] : *root)
+		entityHandles.push_back(handle);
+	return entityHandles;
 }
 
 void World_Module::updateSystems(ECSSystemList& systems, const float& deltaTime)
@@ -603,10 +602,4 @@ ecsHandle World_Module::generateUUID()
 	ecsHandle handle;
 	std::memcpy(handle.uuid, string.c_str(), size_t(sizeof(char) * 32));
 	return handle;
-}
-
-void World_Module::regenerateUUIDs()
-{
-	for each (auto & entity in m_entities)
-		entity->m_uuid = generateUUID();	
 }
