@@ -160,12 +160,12 @@ void Prefabs::tick(const float& deltaTime)
 	}
 }
 
-void Prefabs::makePrefab(const std::vector<ecsEntity*>& entities)
+void Prefabs::makePrefab(const std::vector<ecsHandle>& entityHandles)
 {
 	auto& world = m_engine->getModule_World();
 	std::vector<char> prefabData;
-	for each (const auto & entity in entities) {
-		const auto entData = world.serializeEntity(entity);
+	for each (const auto & entityHandle in entityHandles) {
+		const auto entData = world.serializeEntity(entityHandle);
 		prefabData.insert(prefabData.end(), entData.begin(), entData.end());
 	}
 	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Prefab::file, prefabData });

@@ -103,7 +103,7 @@ public:
 			if (distanceFromScreen < closestDistanceFromScreen || distanceToCenter < closestDistanceToCenter) {
 				closestDistanceFromScreen = distanceFromScreen;
 				closestDistanceToCenter = distanceToCenter;
-				m_selection = transformComponent->entity->m_uuid;
+				m_selection = transformComponent->m_entity;
 				m_selectionTransform = transformComponent->m_worldTransform;
 			}
 		}

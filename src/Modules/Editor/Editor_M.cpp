@@ -490,7 +490,7 @@ void LevelEditor_Module::ungroupSelection()
 
 void LevelEditor_Module::makePrefab()
 {
-	m_editorInterface->m_uiPrefabs->makePrefab(m_engine->getModule_World().getEntities(getSelection()));
+	m_editorInterface->m_uiPrefabs->makePrefab(getSelection());
 }
 
 void LevelEditor_Module::cutSelection()
@@ -504,7 +504,7 @@ void LevelEditor_Module::copySelection()
 	m_copiedData.clear();
 	auto& world = m_engine->getModule_World();
 	for each (const auto & entityHandle in getSelection()) {
-		const auto entData = world.serializeEntity(world.getEntity(entityHandle));
+		const auto entData = world.serializeEntity(entityHandle);
 		m_copiedData.insert(m_copiedData.end(), entData.begin(), entData.end());
 	}
 }
@@ -522,7 +522,7 @@ void LevelEditor_Module::deleteSelection()
 		const std::vector<char> m_data;
 		const std::vector<ecsHandle> m_uuids;
 		Delete_Selection_Command(Engine* engine, const std::vector<ecsHandle>& selection)
-			: m_engine(engine), m_data(m_engine->getModule_World().serializeEntities(m_engine->getModule_World().getEntities(selection))), m_uuids(selection) {}
+			: m_engine(engine), m_data(m_engine->getModule_World().serializeEntities(selection)), m_uuids(selection) {}
 		virtual void execute() {
 			auto& world = m_engine->getModule_World();
 			for each (const auto& entityHandle in m_uuids)
@@ -743,29 +743,21 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor->getGizmoTransform()) {}
 		virtual void execute() {
 			auto& world = m_engine->getModule_World();
-			size_t dataRead(0ull), uuidIndex(0ull);
+			size_t dataRead(0ull), handleCount(0ull);
 			glm::vec3 center(0.0f);
 			std::vector<Transform_Component*> transformComponents;
-			std::vector<ecsEntity*> entities;
 			while (dataRead < m_data.size()) {
-				if (auto * entity = world.deserializeEntity(m_data.data(), m_data.size(), dataRead)) {
-					if (auto * transform = world.getComponent<Transform_Component>(entity->m_uuid)) {
+				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
+				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
+
+				const auto& [entityHandle, entity] = world.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), m_uuids[handleCount]);
+				if (entityHandle.isValid() && entity) {
+					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
 						center += transform->m_localTransform.m_position;
 					}
-					entities.push_back(entity);
 				}
-			}
-			// First time around, save the generated uuids
-			if (m_uuids.size() != entities.size()) {
-				for each (const auto & entity in entities)
-					m_uuids.push_back(entity->m_uuid);
-			}
-			// Every other time, recover the first uuids used for future undo/redo actions
-			else {
-				size_t uuidIndex(0ull);
-				for each (auto & entity in entities)
-					entity->m_uuid = m_uuids[uuidIndex++];
+				m_uuids[handleCount++] = entityHandle;
 			}
 			// Treat entity collection as a group
 			// Move the group to world origin, then transform to 3D cursor

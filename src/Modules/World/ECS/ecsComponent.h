@@ -2,6 +2,7 @@
 #ifndef ECSCOMPONENT_H
 #define ECSCOMPONENT_H
 
+#include "Modules/World/ECS/ecsHandle.h"
 #include <any>
 #include <limits>
 #include <map>
@@ -12,10 +13,9 @@
 
 struct ecsEntity;
 struct BaseECSComponent;
-using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, ecsEntity* entity, const BaseECSComponent * comp);
+using ECSComponentCreateFunction = const int(*)(std::vector<uint8_t>& memory, const ecsHandle& entityHandle, const BaseECSComponent * comp);
 using ECSComponentFreeFunction = void(*)(BaseECSComponent * comp);
 using ParamList = std::vector<std::any>;
-#define NULL_ENTITY_HANDLE nullptr
 
 /** A base type component. */
 struct BaseECSComponent {
@@ -40,7 +40,7 @@ public:
 
 
 	// Public Attributes
-	ecsEntity * entity = NULL_ENTITY_HANDLE;
+	ecsHandle m_entity;
 
 
 private:
@@ -87,7 +87,7 @@ struct ECSComponent : public BaseECSComponent {
 	}
 	inline virtual void load(const std::vector<char> & data) override {
 		static_cast<T*>(this)->deserialize(data);
-		entity = NULL_ENTITY_HANDLE;
+		m_entity = ecsHandle();
 	}
 	inline virtual void deserialize(const std::vector<char> & data) {
 		(*static_cast<T*>(this)) = (*(T*)(&data[0]));
@@ -98,7 +98,7 @@ template <typename Component>
 inline const int ECSComponentCreate(std::vector<uint8_t> & memory, ecsEntity* entity, const BaseECSComponent * comp) {
 	const size_t index = memory.size();
 	memory.resize(index + Component::SIZE);
-	(new(&memory[index])Component(*(Component*)comp))->entity = entity;
+	(new(&memory[index])Component(*(Component*)comp))->m_entity = entityHandle;
 	return (int)index;
 }
 

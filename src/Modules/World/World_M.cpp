@@ -59,7 +59,7 @@ void World_Module::loadWorld(const std::string& mapName)
 	if (ecsData.size()) {
 		size_t dataRead(0ull);
 		while (dataRead < ecsData.size())
-			deserializeEntity(ecsData.data(), ecsData.size(), dataRead, nullptr);
+			deserializeEntity(ecsData.data(), ecsData.size(), dataRead);
 	}
 }
 
@@ -67,7 +67,7 @@ void World_Module::saveWorld(const std::string& mapName)
 {
 	std::vector<char> data;
 	for (const auto & [handle, entity] : m_entities) {
-		const auto entityData = serializeEntity(entity);
+		const auto entityData = serializeEntity(handle);
 		data.insert(data.end(), entityData.begin(), entityData.end());
 	}
 
@@ -104,17 +104,17 @@ void World_Module::unloadWorld()
 	notifyListeners(unloaded);
 }
 
-std::vector<char> World_Module::serializeEntities(const std::vector<ecsEntity*> entities)
+std::vector<char> World_Module::serializeEntities(const std::vector<ecsHandle>& entityHandles)
 {
 	std::vector<char> data;
-	for each (const auto & entity in entities) {
-		const auto entData = serializeEntity(entity);
+	for each (const auto & entityHandle in entityHandles) {
+		const auto entData = serializeEntity(entityHandle);
 		data.insert(data.end(), entData.begin(), entData.end());
 	}
 	return data;
 }
 
-std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
+std::vector<char> World_Module::serializeEntity(const ecsHandle& entityHandle)
 {
 	/* ENTITY DATA STRUCTURE {
 			name char count
@@ -124,6 +124,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 			component data
 			--nested entity children--
 	} */
+	const auto& entity = getEntity(entityHandle);
 	size_t dataIndex(0ull);
 	const auto& entityName = entity->m_name;
 	const auto nameSize = (unsigned int)(entityName.size());
@@ -131,7 +132,7 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
 	// Write UUID
-	std::memcpy(&data[dataIndex], entity->m_uuid.uuid, 32 * sizeof(char));
+	std::memcpy(&data[dataIndex], entityHandle.uuid, 32 * sizeof(char));
 	dataIndex += 32 * sizeof(char);
 	// Write name char count
 	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
@@ -156,15 +157,15 @@ std::vector<char> World_Module::serializeEntity(ecsEntity* entity)
 	std::memcpy(&data[entityDataCountIndex], &entityDataCount, sizeof(size_t));
 
 	// Write child entities
-	for (auto & [handle, child] : entity->m_children) {
-		const auto childData = serializeEntity(child);
+	for (auto & [childHandle, child] : entity->m_children) {
+		const auto childData = serializeEntity(childHandle);
 		data.insert(data.end(), childData.begin(), childData.end());
 	}
 
 	return data;
 }
 
-ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataIndex, ecsEntity* parent)
+std::pair<ecsHandle, ecsEntity*> World_Module::deserializeEntity(const char* data, const size_t& dataSize, size_t& dataIndex, const ecsHandle& parentHandle, const ecsHandle& desiredHandle)
 {
 	/* ENTITY DATA STRUCTURE {
 		name char count
@@ -204,9 +205,9 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 		componentIDS.push_back(id);
 	}
 
-	// Make the entity		
-	auto& thisentityHandle = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), ecsHandle(entityHandle), parent);
-	auto* thisEntity = getEntity(thisentityHandle);
+	// Make the entity
+	auto& thisEntityHandle = makeEntity(components.data(), componentIDS.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle.isValid() ? desiredHandle : ecsHandle(entityHandle), parentHandle);
+	auto* thisEntity = getEntity(thisEntityHandle);
 	// Delete temporary components
 	for each (auto * component in components)
 		delete component;
@@ -214,10 +215,10 @@ ecsEntity* World_Module::deserializeEntity(const char* data, const size_t& dataS
 	// Make all child entities
 	unsigned int childEntitiesRead(0ull);
 	while (childEntitiesRead < entityChildCount && dataIndex < dataSize) {
-		deserializeEntity(data, dataSize, dataIndex, thisEntity);
+		deserializeEntity(data, dataSize, dataIndex, thisEntityHandle);
 		childEntitiesRead++;
 	}
-	return thisEntity;
+	return { thisEntityHandle, thisEntity };
 }
 
 std::vector<char> World_Module::serializeComponent(BaseECSComponent* component)
@@ -269,7 +270,7 @@ std::pair<BaseECSComponent*, int> World_Module::deserializeComponent(const char*
 		auto* castedComponent = templateComponent->clone();
 		if (serializedComponentData.size())
 			castedComponent->load(serializedComponentData);
-		castedComponent->entity = NULL_ENTITY_HANDLE;
+		castedComponent->m_entity = ecsHandle();
 
 		compPair = { castedComponent , componentID };
 	}
@@ -281,24 +282,24 @@ void World_Module::addLevelListener(const std::shared_ptr<bool>& alive, const st
 	m_notifyees.push_back(std::make_pair(alive, func));
 }
 
-ecsHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, ecsEntity* parent)
+ecsHandle World_Module::makeEntity(BaseECSComponent** entityComponents, const int* componentIDs, const size_t& numComponents, const std::string& name, const ecsHandle& UUID, const ecsHandle& parent)
 {
+	const auto finalHandle = UUID == ecsHandle() ? generateUUID() : UUID;
 	auto* newEntity = new ecsEntity();
+	auto* root = parent.isValid() ? &(getEntity(parent)->m_children) : &m_entities;
+	newEntity->m_name = name;
+	newEntity->m_entityIndex = (int)root->size();
+	newEntity->m_parent = parent;
+	root->insert_or_assign(finalHandle, newEntity);
+
 	for (size_t i = 0; i < numComponents; ++i) {
 		if (BaseECSComponent::isTypeValid(componentIDs[i]))
-			addComponentInternal(newEntity, componentIDs[i], entityComponents[i]);
+			addComponentInternal(finalHandle, componentIDs[i], entityComponents[i]);
 		else
 			m_engine->getManager_Messages().error("ECS Error: attempted to add an unsupported component to the entity \"" + name + "\"! Skipping component...\r\n");
 	}
 
-	auto* root = parent ? &parent->m_children : &m_entities;
-	newEntity->m_name = name;
-	newEntity->m_entityIndex = (int)root->size();
-	newEntity->m_uuid = UUID == ecsHandle() ? generateUUID() : UUID;
-	newEntity->m_parent = parent;
-	root->insert_or_assign(newEntity->m_uuid, newEntity);
-
-	return newEntity->m_uuid;
+	return finalHandle;
 }
 
 void World_Module::removeEntity(const ecsHandle& entityHandle)
@@ -309,11 +310,11 @@ void World_Module::removeEntity(const ecsHandle& entityHandle)
 		deleteComponent(id, createFn);
 	
 	// Delete children entities
-	for (auto& [handle, child] : entity->m_children)
-		removeEntity(child->m_uuid);
+	for (const auto& childHandle : getEntityHandles(entityHandle))
+		removeEntity(childHandle);
 
 	// Delete this entity
-	auto* root = entity->m_parent ? &entity->m_parent->m_children : &m_entities;
+	auto* root = entity->m_parent.isValid() ? &(getEntity(entity->m_parent)->m_children) : &m_entities;
 	root->erase(entityHandle);
 	delete entity;
 }
@@ -334,11 +335,14 @@ void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& 
 		if (const auto & transformComponent = getComponent<Transform_Component>(parentHandle))
 			newParentTransform = transformComponent->m_worldTransform;
 	if (childEntity)
-		if (auto * oldParent = childEntity->m_parent) {
-			root = &oldParent->m_children;
-			if (const auto & transformComponent = getComponent<Transform_Component>(oldParent->m_uuid))
-				oldParentTransform = transformComponent->m_worldTransform;
-		}
+		if (childEntity->m_parent.isValid()) {
+			const auto& oldParentHandle = childEntity->m_parent;
+			if (auto oldParent = getEntity(oldParentHandle)) {
+				root = &oldParent->m_children;
+				if (const auto & transformComponent = getComponent<Transform_Component>(oldParentHandle))
+					oldParentTransform = transformComponent->m_worldTransform;
+			}
+		}	
 
 	// Transform the child entity, removing it from its previous parent's space
 	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
@@ -352,7 +356,7 @@ void World_Module::parentEntity(const ecsHandle& parentHandle, const ecsHandle& 
 	root->erase(childHandle);
 
 	// Make this child a child of the new parent, change its index
-	childEntity->m_parent = parentEntity;
+	childEntity->m_parent = parentHandle;
 	childEntity->m_entityIndex = newRoot->size();
 	newRoot->insert_or_assign(childHandle, childEntity);
 	if (const auto & transform = getComponent<Transform_Component>(childHandle)) {
@@ -369,21 +373,9 @@ void World_Module::unparentEntity(const ecsHandle& entityHandle)
 	// Move entity up tree, making it a child of its old parent's parent
 	if (entityHandle.isValid())
 		if (auto* entity = getEntity(entityHandle))
-			if (auto* parent = entity->m_parent)
-				parentEntity(parent->m_parent == nullptr ? ecsHandle() : parent->m_parent->m_uuid, entityHandle);
-}
-
-std::vector<ecsHandle> World_Module::getUUIDs(const std::vector<ecsEntity*>& entities)
-{
-	std::vector<ecsHandle> uuids;
-	for each (const auto & entity in entities)
-		uuids.push_back(entity->m_uuid);
-	return uuids;
-}
-
-ecsHandle World_Module::getUUID(const ecsEntity* entity)
-{
-	return entity->m_uuid;
+			if (entity->m_parent.isValid())
+				if (auto* parent = getEntity(entity->m_parent))
+					parentEntity(parent->m_parent.isValid() ? parent->m_parent : ecsHandle(), entityHandle);
 }
 
 std::vector<ecsEntity*> World_Module::getEntities(const std::vector<ecsHandle>& uuids)
@@ -474,7 +466,7 @@ void World_Module::deleteComponent(const int& componentID, const int& index)
 	std::memcpy(destComponent, srcComponent, typeSize);
 
 	// Update references
-	auto& srcComponents = srcComponent->entity->m_components;
+	auto& srcComponents = getEntity(srcComponent->m_entity)->m_components;
 	for (size_t i = 0; i < srcComponents.size(); ++i) {
 		if (componentID == srcComponents[i].first && (int)srcIndex == srcComponents[i].second) {
 			srcComponents[i].second = index;
@@ -484,32 +476,37 @@ void World_Module::deleteComponent(const int& componentID, const int& index)
 	mem_array.resize(srcIndex);
 }
 
-bool World_Module::addComponentInternal(ecsEntity* entity, const int& componentID, const BaseECSComponent* component)
+bool World_Module::addComponentInternal(const ecsHandle& entityHandle, const int& componentID, const BaseECSComponent* component)
 {
-	// Prevent adding duplicate component types to the same entity
-	for (const auto& [ID, fn] : entity->m_components)
-		if (ID == componentID)
-			return false;
+	if (auto * entity = getEntity(entityHandle)) {
+		// Prevent adding duplicate component types to the same entity
+		for (const auto& [ID, fn] : entity->m_components)
+			if (ID == componentID)
+				return false;
 
-	auto createfn = BaseECSComponent::getTypeCreateFunction(componentID);
-	std::pair<int, int> newPair;
-	newPair.first = componentID;
-	newPair.second = createfn(m_components[componentID], entity, component);
-	entity->m_components.push_back(newPair);
-	return true;
+		auto createfn = BaseECSComponent::getTypeCreateFunction(componentID);
+		std::pair<int, int> newPair;
+		newPair.first = componentID;
+		newPair.second = createfn(m_components[componentID], entityHandle, component);
+		entity->m_components.push_back(newPair);
+		return true;
+	}
+	return false;
 }
 
-bool World_Module::removeComponentInternal(ecsEntity* entity, const int& componentID)
+bool World_Module::removeComponentInternal(const ecsHandle& entityHandle, const int& componentID)
 {
-	auto& entityComponents = entity->m_components;
-	for (size_t i = 0ull; i < entityComponents.size(); ++i) {
-		if (componentID == entityComponents[i].first) {
-			deleteComponent(entityComponents[i].first, entityComponents[i].second);
-			const auto srcIndex = entityComponents.size() - 1ull;
-			const auto destIndex = i;
-			entityComponents[destIndex] = entityComponents[srcIndex];
-			entityComponents.pop_back();
-			return true;
+	if (auto * entity = getEntity(entityHandle)) {
+		auto& entityComponents = entity->m_components;
+		for (size_t i = 0ull; i < entityComponents.size(); ++i) {
+			if (componentID == entityComponents[i].first) {
+				deleteComponent(entityComponents[i].first, entityComponents[i].second);
+				const auto srcIndex = entityComponents.size() - 1ull;
+				const auto destIndex = i;
+				entityComponents[destIndex] = entityComponents[srcIndex];
+				entityComponents.pop_back();
+				return true;
+			}
 		}
 	}
 	return false;
@@ -548,7 +545,7 @@ std::vector<std::vector<BaseECSComponent*>> World_Module::getRelevantComponents(
 			components.reserve(mem_array.size() / typeSize); // reserve, not resize, as the component at [i] may be invalid
 			for (size_t i = 0; i < mem_array.size(); i += typeSize) {
 				componentParam[minSizeIndex] = (BaseECSComponent*)& mem_array[i];
-				auto& entityComponents = componentParam[minSizeIndex]->entity->m_components;
+				auto& entityComponents = getEntity(componentParam[minSizeIndex]->m_entity)->m_components;
 
 				bool isValid = true;
 				for (size_t j = 0; j < componentTypes.size(); ++j) {

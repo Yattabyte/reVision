@@ -48,15 +48,15 @@ void Inspector::tick(const float& deltaTime)
 					ImGui::PushID(entity);
 					ImGui::AlignTextToFramePadding();
 					ImGuiTreeNodeFlags node_flags = ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
-					if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), entity->m_uuid) != selectedEntities.cend())
+					if (std::find(selectedEntities.cbegin(), selectedEntities.cend(), entityHandle) != selectedEntities.cend())
 						node_flags |= ImGuiTreeNodeFlags_Selected;
 
 					auto tryLeftClickElement = [&]() {
 						if (ImGui::IsItemClicked())
 							if (ImGui::GetIO().KeyCtrl)
-								m_editor->toggleAddToSelection(entity->m_uuid);
+								m_editor->toggleAddToSelection(entityHandle);
 							else
-								m_editor->setSelection({ entity->m_uuid });
+								m_editor->setSelection({ entityHandle });
 					};
 					auto tryRightClickElement = [&]() {
 						if (ImGui::BeginPopupContextItem("Entity Controls")) {
@@ -94,17 +94,17 @@ void Inspector::tick(const float& deltaTime)
 					};
 					auto tryDragElement = [&]() {
 						if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_None)) {
-							ImGui::SetDragDropPayload("Entity", &entity, sizeof(ecsEntity * *));        // Set payload to carry the index of our item (could be anything)
+							ImGui::SetDragDropPayload("Entity", &entityHandle, sizeof(ecsHandle *));        // Set payload to carry the index of our item (could be anything)
 							const auto text = "Move \"" + entityName + "\" into...";
 							ImGui::Text(text.c_str());
 							ImGui::EndDragDropSource();
 						}
 						if (ImGui::BeginDragDropTarget()) {
 							if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
-								IM_ASSERT(payload->DataSize == sizeof(ecsEntity * *));
-								m_editor->setSelection({ entity->m_uuid, (*(ecsEntity * *)(payload->Data))->m_uuid });
+								IM_ASSERT(payload->DataSize == sizeof(ecsHandle *));
+								m_editor->setSelection({ entityHandle, (*(ecsHandle *)(payload->Data)) });
 								m_editor->mergeSelection();
-								m_editor->setSelection({ entity->m_uuid });
+								m_editor->setSelection({ entityHandle });
 							}
 							ImGui::EndDragDropTarget();
 						}
@@ -130,7 +130,7 @@ void Inspector::tick(const float& deltaTime)
 							ImGui::Text(BaseECSComponent::findName(component.first));
 							ImGui::PopID();
 							if (buttonPressed)
-								m_editor->deleteComponent(entity->m_uuid, component.first);
+								m_editor->deleteComponent(entityHandle, component.first);
 						}
 						ImGui::AlignTextToFramePadding();
 						ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
@@ -174,7 +174,7 @@ void Inspector::tick(const float& deltaTime)
 							if (ImGui::Button("Cancel"))
 								ImGui::CloseCurrentPopup();
 							if (isOk) {
-								m_editor->addComponent(entity->m_uuid, items[item_current]);
+								m_editor->addComponent(entityHandle, items[item_current]);
 								ImGui::CloseCurrentPopup();
 							}
 							ImGui::EndPopup();
@@ -201,8 +201,8 @@ void Inspector::tick(const float& deltaTime)
 		// Special case to allow dragging to end of scene list
 		if (ImGui::BeginDragDropTarget()) {
 			if (const ImGuiPayload * payload = ImGui::AcceptDragDropPayload("Entity")) {
-				IM_ASSERT(payload->DataSize == sizeof(ecsEntity * *));
-				m_editor->setSelection({ ecsHandle(), (*(ecsEntity * *)(payload->Data))->m_uuid });
+				IM_ASSERT(payload->DataSize == sizeof(ecsHandle *));
+				m_editor->setSelection({ ecsHandle(), (*(ecsHandle *)(payload->Data)) });
 				m_editor->mergeSelection();
 				m_editor->clearSelection();
 			}
