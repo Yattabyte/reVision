@@ -14,11 +14,11 @@
 Inspector::Inspector(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_inspectorSystems.makeSystem<Inspector_Transform_System>(editor);
-	m_inspectorSystems.makeSystem<Inspector_Prop_System>();
-	m_inspectorSystems.makeSystem<Inspector_LightColor_System>();
-	m_inspectorSystems.makeSystem<Inspector_LightRadius_System>();
-	m_inspectorSystems.makeSystem<Inspector_LightCutoff_System>();
+	m_inspectorSystems.makeSystem<Inspector_Transform_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_Prop_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_LightColor_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_LightRadius_System>(engine, editor);
+	m_inspectorSystems.makeSystem<Inspector_LightCutoff_System>(engine, editor);
 }
 
 void Inspector::tick(const float& deltaTime)

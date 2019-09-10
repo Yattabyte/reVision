@@ -95,7 +95,7 @@ struct ECSComponent : public BaseECSComponent {
 };
 
 template <typename Component>
-inline const int ECSComponentCreate(std::vector<uint8_t> & memory, ecsEntity* entity, const BaseECSComponent * comp) {
+inline const int ECSComponentCreate(std::vector<uint8_t> & memory, const ecsHandle& entityHandle, const BaseECSComponent * comp) {
 	const size_t index = memory.size();
 	memory.resize(index + Component::SIZE);
 	(new(&memory[index])Component(*(Component*)comp))->m_entity = entityHandle;

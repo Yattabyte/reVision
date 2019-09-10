@@ -129,14 +129,11 @@ public:
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
+	/***/
+	void doReversableAction(const std::shared_ptr<Editor_Command>& command);
 
 
 private:
-	// Private Methods
-	/***/
-	void doReversableAction(const std::shared_ptr<Editor_Command> & command);
-
-
 	// Private Attributes
 	std::string m_currentLevelName = "";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
