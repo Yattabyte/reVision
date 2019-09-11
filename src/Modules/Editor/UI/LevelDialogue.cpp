@@ -1,11 +1,12 @@
 #include "Modules/Editor/UI/LevelDialogue.h"
+#include "Modules/Editor/Editor_M.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 #include <filesystem>
 
 
-LevelDialogue::LevelDialogue(Engine* engine)
-	: m_engine(engine)
+LevelDialogue::LevelDialogue(Engine* engine, LevelEditor_Module* editor)
+	: m_engine(engine), m_editor(editor)
 {
 }
 
@@ -100,7 +101,6 @@ void LevelDialogue::tick(const float& deltaTime)
 		}
 
 		// Do something with the option chosen
-		bool openDelete = true, openRename = true;
 		switch (option) {
 		case use: {
 			const auto& selectedLevel = m_levels[m_selected];
@@ -111,9 +111,9 @@ void LevelDialogue::tick(const float& deltaTime)
 			}
 			else {
 				if (m_openOrSave == true)
-					m_engine->getModule_World().loadWorld(selectedLevel.path);
+					m_editor->openLevel(selectedLevel.path);
 				else 
-					m_engine->getModule_World().saveWorld(std::string(nameInput) + ".bmap");				
+					m_editor->saveLevel(std::string(nameInput) + ".bmap");
 				m_popupOpen = false;
 			}
 			break;
@@ -127,6 +127,7 @@ void LevelDialogue::tick(const float& deltaTime)
 		}
 
 		// Draw 'Delete Level' confirmation
+		bool openDelete = true;
 		ImGui::SetNextWindowSize({ 350, 75 }, ImGuiCond_Appearing);
 		if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 			ImGui::TextWrapped("Are you sure you want to delete this level/folder, and all of its contents?\r\n");
@@ -151,7 +152,8 @@ void LevelDialogue::tick(const float& deltaTime)
 			ImGui::EndPopup();
 		}
 
-		// Draw 'Rename Level' dialog
+		// Draw 'Rename Level' dialogue
+		bool openRename = true;
 		if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 			ImGui::Text("Enter a new name for this level/folder...");
 			ImGui::Spacing();

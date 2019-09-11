@@ -138,7 +138,7 @@ void Prefabs::tick(const float& deltaTime)
 		ImGui::EndPopup();
 	}
 
-	// Draw 'Rename Prefab' dialog
+	// Draw 'Rename Prefab' dialogue
 	if (ImGui::BeginPopupModal("Rename Prefab", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Enter a new name for this prefab...");
 		ImGui::Spacing();

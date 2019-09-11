@@ -6,6 +6,7 @@
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
 #include "Modules/Editor/UI/LevelDialogue.h"
+#include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Wireframe_System.h"
@@ -40,12 +41,12 @@ void LevelEditor_Module::initialize(Engine* engine)
 		m_renderSize.x = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		});
+	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-		});
+	});
 
 	// GL structures
 	glCreateFramebuffers(1, &m_fboID);
@@ -133,38 +134,68 @@ void LevelEditor_Module::showEditor()
 {
 	m_engine->getModule_UI().clear();
 	m_engine->getModule_UI().setRootElement(m_editorInterface);
+	newLevel();
+}
+
+bool LevelEditor_Module::hasUnsavedChanges() const
+{
+	return m_unsavedChanges;
 }
 
 void LevelEditor_Module::exit()
 {
-	m_engine->goToMainMenu();
-	m_currentLevelName = "";
+	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() { 
+		m_engine->goToMainMenu();
+		m_currentLevelName = "My Map";
+		m_unsavedChanges = false;
+		m_undoStack = {};
+		m_redoStack = {};
+	});
 }
 
 void LevelEditor_Module::newLevel()
 {
-	/**@todo	check against dirty bit for 'level has unsaved changes' */
-	m_engine->getModule_World().unloadWorld();
-	m_currentLevelName = "";
+	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
+		m_engine->getModule_World().unloadWorld();
+		m_currentLevelName = "My Map";
+
+		// Starting new level, changes will be discarded
+		m_unsavedChanges = false;
+		m_undoStack = {};
+		m_redoStack = {}; 
+	});
 }
 
 void LevelEditor_Module::openLevel(const std::string& name)
 {
-	/**@todo	check against dirty bit for 'level has unsaved changes' */
 	m_engine->getModule_World().loadWorld(name);
 	m_currentLevelName = name;
+
+	// Starting new level, changes will be discarded
+	m_unsavedChanges = false;
+	m_undoStack = {};
+	m_redoStack = {};
 }
 
-void LevelEditor_Module::openLevelDialog()
+void LevelEditor_Module::openLevelDialogue()
 {
-	/**@todo	check against dirty bit for 'level has unsaved changes' */
-	m_editorInterface->m_uiLevelDialogue->startOpenDialogue();
+	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
+		m_editorInterface->m_uiLevelDialogue->startOpenDialogue(); 
+	});
 }
 
 void LevelEditor_Module::saveLevel(const std::string& name)
 {
-	m_engine->getModule_World().saveWorld(name);
-	m_currentLevelName = name;
+	// Make sure the level has a valid name, otherwise open the naming dialogue
+	if (name == "")
+		saveLevelDialogue();
+	else {
+		m_engine->getModule_World().saveWorld(name);
+		m_currentLevelName = name;
+
+		// Self Explanitory
+		m_unsavedChanges = false;
+	}
 }
 
 void LevelEditor_Module::saveLevel()
@@ -172,7 +203,7 @@ void LevelEditor_Module::saveLevel()
 	saveLevel(m_currentLevelName);
 }
 
-void LevelEditor_Module::saveLevelDialog()
+void LevelEditor_Module::saveLevelDialogue()
 {
 	m_editorInterface->m_uiLevelDialogue->startSaveDialogue();
 }
@@ -196,6 +227,9 @@ void LevelEditor_Module::undo()
 		// Move the action onto the redo stack
 		m_redoStack.push(m_undoStack.top());
 		m_undoStack.pop();
+
+		// Set unsaved changes all the time
+		m_unsavedChanges = true;
 	}
 }
 
@@ -208,6 +242,9 @@ void LevelEditor_Module::redo()
 		// Push the action onto the undo stack
 		m_undoStack.push(m_redoStack.top());
 		m_redoStack.pop();
+
+		// Set unsaved changes unless we have no more redo actions
+		m_unsavedChanges = bool(m_redoStack.size() != 0ull);
 	}
 }
 
@@ -221,6 +258,7 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 
 	// Add action to the undo stack
 	m_undoStack.push(command);
+	m_unsavedChanges = true;
 }
 
 void LevelEditor_Module::clearSelection()

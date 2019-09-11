@@ -3,14 +3,13 @@
 #define LEVELDIALOGUE_H
 
 #include "Modules/UI/UI_M.h"
-#include "Assets/Auto_Model.h"
-#include "Assets/Texture.h"
-#include "Assets/Shader.h"
-#include "Utilities/GL/StaticBuffer.h"
+#include <string>
+#include <vector>
 
 
 // Forward declarations
 class Engine;
+class LevelEditor_Module;
 
 /** A level editor UI element allowing the user to view, open, and save levels in the maps folder. */
 class LevelDialogue : public ImGUI_Element {
@@ -19,8 +18,9 @@ public:
 	/** Destroy this level dialogue. */
 	inline ~LevelDialogue() = default;
 	/** Construct a level diaglogue.
-	@param	engine		the currently active engine. */
-	LevelDialogue(Engine* engine);
+	@param	engine		the currently active engine.
+	@param	editor		the currently active level editor. */
+	LevelDialogue(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Interface Implementation
@@ -43,6 +43,7 @@ private:
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
+	LevelEditor_Module* m_editor = nullptr;
 	bool m_popupOpen = false;
 	bool m_openOrSave = true;
 	std::string m_subDirectory;

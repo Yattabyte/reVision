@@ -24,13 +24,13 @@ void TitleBar::tick(const float & deltaTime)
 		if (ImGui::BeginMenu("File")) {
 			if (ImGui::MenuItem("New Level", "CTRL+N")) { m_editor->newLevel(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Open Level", "CTRL+O")) { m_editor->openLevelDialog(); }
+			if (ImGui::MenuItem("Open Level", "CTRL+O")) { m_editor->openLevelDialogue(); }
 			if (ImGui::BeginMenu("Open Recent", false)) {
 				ImGui::EndMenu();
 			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("Save Level", "CTRL+S")) { m_editor->saveLevel(); }
-			if (ImGui::MenuItem("Save As")) { m_editor->saveLevelDialog(); }
+			if (ImGui::MenuItem("Save As")) { m_editor->saveLevelDialogue(); }
 			ImGui::Separator();
 			if (ImGui::MenuItem("Exit", "ALT+F4")) { m_editor->exit(); }
 			ImGui::EndMenu();
@@ -86,7 +86,7 @@ void TitleBar::tick(const float & deltaTime)
 	if (pressedKey('N'))
 		m_editor->newLevel();
 	if (pressedKey('O'))
-		m_editor->openLevelDialog();
+		m_editor->openLevelDialogue();
 	if (pressedKey('S'))
 		m_editor->saveLevel();
 	if (pressedKey('Z'))

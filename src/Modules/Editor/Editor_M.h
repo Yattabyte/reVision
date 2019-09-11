@@ -34,6 +34,8 @@ public:
 	// Public Methods
 	/** Display the level editor. */
 	void showEditor();
+	/** Check if the editor has any unsaved changes. */
+	bool hasUnsavedChanges() const;
 	/** Close the level editor, returning to the main menu. */
 	void exit();
 	/** Close the current level, starting a new one. 
@@ -45,7 +47,7 @@ public:
 	void openLevel(const std::string & name);
 	/** Display the 'open level' dialogue for choosing a level.	
 	*@todo	check against dirty bit for 'level has unsaved changes' */
-	void openLevelDialog();
+	void openLevelDialogue();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
 	void saveLevel(const std::string & name);
@@ -53,7 +55,7 @@ public:
 	void saveLevel();
 	/** Display the 'save level' dialogue for choosing a level to save.
 	*@todo	confirmation check on overwrite. */
-	void saveLevelDialog();
+	void saveLevelDialogue();
 	/** Retrieve if we have any undo-able actions. */
 	bool canUndo() const;
 	/** Retrieve if we have any redo-able actions. */
@@ -135,7 +137,8 @@ public:
 
 private:
 	// Private Attributes
-	std::string m_currentLevelName = "";
+	bool m_unsavedChanges = false;
+	std::string m_currentLevelName = "My Map";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
 	std::shared_ptr<BaseECSSystem> m_selectionClearer;
