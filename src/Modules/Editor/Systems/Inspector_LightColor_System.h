@@ -37,13 +37,70 @@ public:
 				uuids.push_back(componentParam[0]->m_entity);
 
 			auto colorInput = ((LightColor_Component*)components[0][1])->m_color;
-			if (ImGui::ColorEdit3("Color", glm::value_ptr(colorInput)))
-				for each (auto & componentParam in components)
-					((LightColor_Component*)componentParam[1])->m_color = colorInput;
+			if (ImGui::ColorEdit3("Color", glm::value_ptr(colorInput))) {
+				struct Color_Command : Editor_Command {
+					World_Module& m_world;
+					std::vector<ecsHandle> m_uuids;
+					std::vector<glm::vec3> m_oldData, m_newData;
+					Color_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const glm::vec3& data)
+						: m_world(world), m_uuids(uuids) {
+						for each (const auto & entityHandle in m_uuids) {
+							const auto* component = m_world.getComponent<LightColor_Component>(entityHandle);
+							m_oldData.push_back(component->m_color);
+							m_newData.push_back(data);
+						}
+					}
+					void setData(const std::vector<glm::vec3>& data) {
+						if (data.size()) {
+							size_t index(0ull);
+							for each (const auto & entityHandle in m_uuids) {
+								auto* component = m_world.getComponent<LightColor_Component>(entityHandle);
+								component->m_color = data[index++];
+							}
+						}
+					}
+					virtual void execute() {
+						setData(m_newData);
+					}
+					virtual void undo() {
+						setData(m_oldData);
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Color_Command>(m_engine->getModule_World(), uuids, colorInput));
+			}
+
 			auto intensityInput = ((LightColor_Component*)(components[0][1]))->m_intensity;
-			if (ImGui::DragFloat("Intensity", &intensityInput))
-				for each (auto & componentParam in components)
-					((LightColor_Component*)componentParam[1])->m_intensity = intensityInput;
+			if (ImGui::DragFloat("Intensity", &intensityInput)) {
+				struct Intensity_Command : Editor_Command {
+					World_Module& m_world;
+					std::vector<ecsHandle> m_uuids;
+					std::vector<float> m_oldData, m_newData;
+					Intensity_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
+						: m_world(world), m_uuids(uuids) {
+						for each (const auto & entityHandle in m_uuids) {
+							const auto* component = m_world.getComponent<LightColor_Component>(entityHandle);
+							m_oldData.push_back(component->m_intensity);
+							m_newData.push_back(data);
+						}
+					}
+					void setData(const std::vector<float>& data) {
+						if (data.size()) {
+							size_t index(0ull);
+							for each (const auto & entityHandle in m_uuids) {
+								auto* component = m_world.getComponent<LightColor_Component>(entityHandle);
+								component->m_intensity = data[index++];
+							}
+						}
+					}
+					virtual void execute() {
+						setData(m_newData);
+					}
+					virtual void undo() {
+						setData(m_oldData);
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_engine->getModule_World(), uuids, intensityInput));
+			}
 		}
 	}
 

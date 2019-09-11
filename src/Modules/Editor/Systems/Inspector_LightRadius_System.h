@@ -37,9 +37,37 @@ public:
 				uuids.push_back(componentParam[0]->m_entity);
 
 			auto radiusInput = ((LightRadius_Component*)components[0][1])->m_radius;
-			if (ImGui::DragFloat("Radius", &radiusInput))
-				for each (auto & componentParam in components)
-					((LightRadius_Component*)componentParam[1])->m_radius = radiusInput;
+			if (ImGui::DragFloat("Radius", &radiusInput)) {
+				struct Radius_Command : Editor_Command {
+					World_Module& m_world;
+					std::vector<ecsHandle> m_uuids;
+					std::vector<float> m_oldData, m_newData;
+					Radius_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
+						: m_world(world), m_uuids(uuids) {
+						for each (const auto & entityHandle in m_uuids) {
+							const auto* component = m_world.getComponent<LightRadius_Component>(entityHandle);
+							m_oldData.push_back(component->m_radius);
+							m_newData.push_back(data);
+						}
+					}
+					void setData(const std::vector<float>& data) {
+						if (data.size()) {
+							size_t index(0ull);
+							for each (const auto & entityHandle in m_uuids) {
+								auto* component = m_world.getComponent<LightRadius_Component>(entityHandle);
+								component->m_radius = data[index++];
+							}
+						}
+					}
+					virtual void execute() {
+						setData(m_newData);
+					}
+					virtual void undo() {
+						setData(m_oldData);
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Radius_Command>(m_engine->getModule_World(), uuids, radiusInput));
+			}
 		}
 	}
 

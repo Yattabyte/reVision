@@ -37,9 +37,37 @@ public:
 				uuids.push_back(componentParam[0]->m_entity);
 
 			auto cutoffInput = ((LightCutoff_Component*)components[0][1])->m_cutoff;
-			if (ImGui::DragFloat("Cutoff", &cutoffInput))
-				for each (auto & componentParam in components)
-					((LightCutoff_Component*)componentParam[1])->m_cutoff = cutoffInput;
+			if (ImGui::DragFloat("Cutoff", &cutoffInput)) {
+				struct Cutoff_Command : Editor_Command {
+					World_Module& m_world;
+					std::vector<ecsHandle> m_uuids;
+					std::vector<float> m_oldData, m_newData;
+					Cutoff_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
+						: m_world(world), m_uuids(uuids) {
+						for each (const auto & entityHandle in m_uuids) {
+							const auto* component = m_world.getComponent<LightCutoff_Component>(entityHandle);
+							m_oldData.push_back(component->m_cutoff);
+							m_newData.push_back(data);
+						}
+					}
+					void setData(const std::vector<float>& data) {
+						if (data.size()) {
+							size_t index(0ull);
+							for each (const auto & entityHandle in m_uuids) {
+								auto* component = m_world.getComponent<LightCutoff_Component>(entityHandle);
+								component->m_cutoff = data[index++];
+							}
+						}
+					}
+					virtual void execute() {
+						setData(m_newData);
+					}
+					virtual void undo() {
+						setData(m_oldData);
+					}
+				};
+				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_engine->getModule_World(), uuids, cutoffInput));
+			}
 		}
 	}
 
