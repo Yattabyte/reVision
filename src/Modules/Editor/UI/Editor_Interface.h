@@ -16,7 +16,8 @@ class TitleBar;
 class Prefabs;
 class Inspector;
 class RotationIndicator;
-class LevelDialogue;
+class OpenDialogue;
+class SaveDialogue;
 class UnsavedChangesDialogue;
 
 /** A top-level UI element representing the entire level editor's GUI. */
@@ -41,7 +42,8 @@ public:
 	std::shared_ptr<Prefabs> m_uiPrefabs;
 	std::shared_ptr<Inspector> m_uiInspector;
 	std::shared_ptr<RotationIndicator> m_uiRotIndicator;
-	std::shared_ptr<LevelDialogue> m_uiLevelDialogue;
+	std::shared_ptr<OpenDialogue> m_uiOpenDialogue;
+	std::shared_ptr<SaveDialogue> m_uiSaveDialogue;
 	std::shared_ptr<UnsavedChangesDialogue> m_uiUnsavedDialogue;
 
 

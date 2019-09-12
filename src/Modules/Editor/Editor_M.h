@@ -34,10 +34,12 @@ public:
 	// Public Methods
 	/** Display the level editor. */
 	void showEditor();
-	/** Check if the editor has any unsaved changes. */
-	bool hasUnsavedChanges() const;
 	/** Close the level editor, returning to the main menu. */
 	void exit();
+	/** Check if the editor has any unsaved changes. */
+	bool hasUnsavedChanges() const;
+	/** Retrieve the currently active map's file name. */
+	std::string getMapName() const;
 	/** Close the current level, starting a new one. 
 	*@todo	check against dirty bit for 'level has unsaved changes' */
 	void newLevel();
@@ -138,7 +140,7 @@ public:
 private:
 	// Private Attributes
 	bool m_unsavedChanges = false;
-	std::string m_currentLevelName = "My Map";
+	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
 	std::shared_ptr<BaseECSSystem> m_selectionClearer;

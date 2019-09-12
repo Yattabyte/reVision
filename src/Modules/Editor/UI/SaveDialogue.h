@@ -1,6 +1,6 @@
 #pragma once
-#ifndef LEVELDIALOGUE_H
-#define LEVELDIALOGUE_H
+#ifndef SAVEDIALOGUE_H
+#define SAVEDIALOGUE_H
 
 #include "Modules/UI/UI_M.h"
 #include <string>
@@ -11,16 +11,16 @@
 class Engine;
 class LevelEditor_Module;
 
-/** A level editor UI element allowing the user to view, open, and save levels in the maps folder. */
-class LevelDialogue : public ImGUI_Element {
+/** A level editor UI element allowing the user to save levels in the maps folder. */
+class SaveDialogue : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/** Destroy this level dialogue. */
-	inline ~LevelDialogue() = default;
-	/** Construct a level diaglogue.
+	/** Destroy this save dialogue. */
+	inline ~SaveDialogue() = default;
+	/** Construct a save diaglogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
-	LevelDialogue(Engine* engine, LevelEditor_Module* editor);
+	SaveDialogue(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Interface Implementation
@@ -28,10 +28,8 @@ public:
 
 
 	// Public Methods
-	/** Enable the dialogue for opening a level. */
-	void startOpenDialogue();
-	/** Enable the dialogue for saving a level. */
-	void startSaveDialogue();
+	/** Trigger the dialogue for saving a level. */
+	void startDialogue();
 
 
 private:
@@ -39,14 +37,21 @@ private:
 	/** Populate the level dialogue with an optional sub-directory.
 	@param	directory	if non-blank, a subfolder within the maps folder. */
 	void populateLevels(const std::string& directory = "");
+	/***/
+	void tickMainDialogue();
+	/***/
+	void tickOverwriteDialogue();
+	/***/
+	void tickDeleteDialogue();
+	/***/
+	void tickRenameDialogue();
 
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	bool m_popupOpen = false;
-	bool m_openOrSave = true;
-	std::string m_subDirectory;
+	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
 		std::string name = "", path = "";
 		enum type {
@@ -60,4 +65,4 @@ private:
 	int m_selected = -1;
 };
 
-#endif // LEVELDIALOGUE_H
+#endif // SAVEDIALOGUE_H

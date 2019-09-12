@@ -5,7 +5,8 @@
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
-#include "Modules/Editor/UI/LevelDialogue.h"
+#include "Modules/Editor/UI/OpenDialogue.h"
+#include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Gizmos/Selection.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
@@ -137,27 +138,32 @@ void LevelEditor_Module::showEditor()
 	newLevel();
 }
 
-bool LevelEditor_Module::hasUnsavedChanges() const
-{
-	return m_unsavedChanges;
-}
-
 void LevelEditor_Module::exit()
 {
 	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() { 
 		m_engine->goToMainMenu();
-		m_currentLevelName = "My Map";
+		m_currentLevelName = "My Map.bmap";
 		m_unsavedChanges = false;
 		m_undoStack = {};
 		m_redoStack = {};
 	});
 }
 
+bool LevelEditor_Module::hasUnsavedChanges() const
+{
+	return m_unsavedChanges;
+}
+
+std::string LevelEditor_Module::getMapName() const
+{
+	return m_currentLevelName;
+}
+
 void LevelEditor_Module::newLevel()
 {
 	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
 		m_engine->getModule_World().unloadWorld();
-		m_currentLevelName = "My Map";
+		m_currentLevelName = "My Map.bmap";
 
 		// Starting new level, changes will be discarded
 		m_unsavedChanges = false;
@@ -180,7 +186,7 @@ void LevelEditor_Module::openLevel(const std::string& name)
 void LevelEditor_Module::openLevelDialogue()
 {
 	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
-		m_editorInterface->m_uiLevelDialogue->startOpenDialogue(); 
+		m_editorInterface->m_uiOpenDialogue->startDialogue();
 	});
 }
 
@@ -205,7 +211,7 @@ void LevelEditor_Module::saveLevel()
 
 void LevelEditor_Module::saveLevelDialogue()
 {
-	m_editorInterface->m_uiLevelDialogue->startSaveDialogue();
+	m_editorInterface->m_uiSaveDialogue->startDialogue();
 }
 
 bool LevelEditor_Module::canUndo() const

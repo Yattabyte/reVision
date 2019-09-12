@@ -292,7 +292,7 @@ void Engine::printBoilerPlate()
 #else
 	m_messageManager.statement("*  - Version      " + std::string(ENGINE_VERSION) + " (DEBUG)\t\t*");
 #endif // DEBUG
-	m_messageManager.statement("*  - Build Date   September 10th, 2019\t*");
+	m_messageManager.statement("*  - Build Date   September 12th, 2019\t*");
 	m_messageManager.statement("*****************************************");
 	m_messageManager.statement("* > Library Info:\t\t\t*");
 	m_messageManager.statement("*  - ASSIMP       " + Mesh_IO::Get_Version() + "\t\t*");
