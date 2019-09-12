@@ -25,10 +25,10 @@ public:
 	inline SSAO(Engine * engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
-		m_shader = Shared_Shader(m_engine, "Effects\\SSAO");
-		m_shaderCopyAO = Shared_Shader(m_engine, "Effects\\SSAO To AO");
-		m_shaderGB_A = Shared_Shader(m_engine, "Effects\\Gaussian Blur Alpha");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_shader = Shared_Shader(engine, "Effects\\SSAO");
+		m_shaderCopyAO = Shared_Shader(engine, "Effects\\SSAO To AO");
+		m_shaderGB_A = Shared_Shader(engine, "Effects\\Gaussian Blur Alpha");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

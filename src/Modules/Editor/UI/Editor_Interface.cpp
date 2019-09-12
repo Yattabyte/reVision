@@ -15,17 +15,17 @@
 Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_uiCamController = std::make_shared<CameraController>(engine);
+	m_uiCamController = std::make_shared<CameraController>(m_engine);
 	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
 	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
 	m_uiInspector = std::make_shared<Inspector>(engine, editor);
-	m_uiRotIndicator = std::make_shared<RotationIndicator>(engine);
+	m_uiRotIndicator = std::make_shared<RotationIndicator>(m_engine);
 	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
 	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
 	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
 
-	m_shader = Shared_Shader(m_engine, "Editor\\editorCopy");
-	m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
+	m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 	// Asset-Finished Callbacks
 	m_shapeQuad->addCallback(m_aliveIndicator, [&]() mutable {

@@ -27,9 +27,9 @@ public:
 	inline Radiance_Hints(Engine * engine, const std::shared_ptr<RH_Volume> & rhVolume)
 		: m_engine(engine), m_rhVolume(rhVolume), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
-		m_shaderRecon = Shared_Shader(m_engine, "Effects\\RH Reconstruction");
-		m_shaderRebounce = Shared_Shader(m_engine, "Effects\\RH Rebounce");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_shaderRecon = Shared_Shader(engine, "Effects\\RH Reconstruction");
+		m_shaderRebounce = Shared_Shader(engine, "Effects\\RH Rebounce");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

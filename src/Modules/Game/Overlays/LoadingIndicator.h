@@ -23,9 +23,9 @@ public:
 	inline LoadingIndicator(Engine * engine)
 		: m_engine(engine) {
 		// Asset Loading
-		m_texture = Shared_Texture(m_engine, "spinner.png", GL_TEXTURE_2D);
-		m_shader = Shared_Shader(m_engine, "Effects\\LoadingIndicator");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_texture = Shared_Texture(engine, "spinner.png", GL_TEXTURE_2D);
+		m_shader = Shared_Shader(engine, "Effects\\LoadingIndicator");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

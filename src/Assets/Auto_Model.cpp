@@ -10,6 +10,7 @@ struct Single_Primitive_Vertex {
 	glm::vec3 vertex;
 	glm::vec2 uv;
 	unsigned int meshID;
+	glm::vec3 normal;
 };
 
 Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filename, const bool & threaded)
@@ -20,7 +21,8 @@ Shared_Auto_Model::Shared_Auto_Model(Engine * engine, const std::string & filena
 			filename,
 			[engine, filename]() { return std::make_shared<Auto_Model>(engine, filename); },
 			threaded
-		));
+		)
+	);
 }
 
 Auto_Model::~Auto_Model()
@@ -35,12 +37,15 @@ Auto_Model::Auto_Model(Engine * engine, const std::string & filename) : Asset(en
 	glEnableVertexArrayAttrib(m_vaoID, 0);
 	glEnableVertexArrayAttrib(m_vaoID, 1);
 	glEnableVertexArrayAttrib(m_vaoID, 2);
+	glEnableVertexArrayAttrib(m_vaoID, 3);
 	glVertexArrayAttribBinding(m_vaoID, 0, 0);
 	glVertexArrayAttribBinding(m_vaoID, 1, 0);
 	glVertexArrayAttribBinding(m_vaoID, 2, 0);
+	glVertexArrayAttribBinding(m_vaoID, 3, 0);
 	glVertexArrayAttribFormat(m_vaoID, 0, 3, GL_FLOAT, GL_FALSE, offsetof(Single_Primitive_Vertex, vertex));
 	glVertexArrayAttribFormat(m_vaoID, 1, 2, GL_FLOAT, GL_FALSE, offsetof(Single_Primitive_Vertex, uv));
 	glVertexArrayAttribIFormat(m_vaoID, 2, 1, GL_UNSIGNED_INT, offsetof(Single_Primitive_Vertex, meshID));
+	glVertexArrayAttribFormat(m_vaoID, 3, 3, GL_FLOAT, GL_FALSE, offsetof(Single_Primitive_Vertex, normal));
 	glCreateBuffers(1, &m_vboID);
 	glVertexArrayVertexBuffer(m_vaoID, 0, m_vboID, 0, sizeof(Single_Primitive_Vertex));
 }
@@ -54,6 +59,7 @@ void Auto_Model::initialize()
 	m_data.resize(vertexCount);
 	for (size_t x = 0; x < vertexCount; ++x) {
 		m_data[x].vertex = m_mesh->m_geometry.vertices[x];
+		m_data[x].normal = m_mesh->m_geometry.normals[x];
 		m_data[x].uv = m_mesh->m_geometry.texCoords[x];
 		m_data[x].meshID = m_mesh->m_geometry.meshIndices[x];
 	}

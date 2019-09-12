@@ -32,11 +32,11 @@ public:
 		auxilliarySystems.makeSystem<PropSync_System>(m_frameData);
 
 		// Asset Loading
-		m_shaderCull = Shared_Shader(m_engine, "Core\\Props\\culling");
-		m_shaderGeometry = Shared_Shader(m_engine, "Core\\Props\\geometry");
-		m_shaderShadowCull = Shared_Shader(m_engine, "Core\\Props\\shadow culling");
-		m_shaderShadowGeometry = Shared_Shader(m_engine, "Core\\Props\\shadow");
-		m_shapeCube = Shared_Auto_Model(m_engine, "cube");
+		m_shaderCull = Shared_Shader(engine, "Core\\Props\\culling");
+		m_shaderGeometry = Shared_Shader(engine, "Core\\Props\\geometry");
+		m_shaderShadowCull = Shared_Shader(engine, "Core\\Props\\shadow culling");
+		m_shaderShadowGeometry = Shared_Shader(engine, "Core\\Props\\shadow");
+		m_shapeCube = Shared_Auto_Model(engine, "cube");
 
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState& state) {

@@ -82,8 +82,8 @@ void Translation_Gizmo::render(const float& deltaTime)
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), m_direction * glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
-		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f, 0, 0));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
+		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f));
 
 		// Render Gizmo Model
 		m_model->bind();
@@ -134,13 +134,13 @@ void Translation_Gizmo::checkMouseHover()
 	const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
 	const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
-	// Flip the model's axes based on which side of it were on
+	/*// Flip the model's axes based on which side of it were on
 	const auto dir = glm::normalize(ray_origin - position);
 	m_direction = glm::vec3(
 		dir.x > 0 ? 1 : -1,
 		dir.y > 0 ? 1 : -1,
 		dir.z > 0 ? 1 : -1
-	);
+	);*/
 
 	const auto scalingFactor = m_direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f;
 	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);

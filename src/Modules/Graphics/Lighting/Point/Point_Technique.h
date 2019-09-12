@@ -31,9 +31,9 @@ public:
 		auxilliarySystems.makeSystem<PointSync_System>(m_frameData);
 
 		// Asset Loading
-		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Point\\Light");
-		m_shader_Stencil = Shared_Shader(m_engine, "Core\\Point\\Stencil");
-		m_shapeSphere = Shared_Auto_Model(m_engine, "sphere");
+		m_shader_Lighting = Shared_Shader(engine, "Core\\Point\\Light");
+		m_shader_Stencil = Shared_Shader(engine, "Core\\Point\\Stencil");
+		m_shapeSphere = Shared_Auto_Model(engine, "sphere");
 
 		// Clear state on world-unloaded
 		m_engine->getModule_World().addLevelListener(m_aliveIndicator, [&](const World_Module::WorldState & state) {

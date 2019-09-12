@@ -21,13 +21,13 @@
 Graphics_Pipeline::Graphics_Pipeline(Engine * engine, const std::shared_ptr<Camera> & clientCamera, const std::shared_ptr<std::vector<Camera*>> & cameras, const std::shared_ptr<RH_Volume> & rhVolume, ECSSystemList & auxilliarySystems)
 	: m_engine(engine)
 {
-	auto propView = new Prop_Technique(m_engine, cameras, auxilliarySystems);
-	auto shadowing = new Shadow_Technique(m_engine, cameras, auxilliarySystems);
-	auto directionalLighting = new Directional_Technique(m_engine, shadowing->getShadowData(), rhVolume, clientCamera, cameras, auxilliarySystems);
-	auto pointLighting = new Point_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto spotLighting = new Spot_Technique(m_engine, shadowing->getShadowData(), cameras, auxilliarySystems);
-	auto reflectorLighting = new Reflector_Technique(m_engine, cameras, auxilliarySystems);
-	auto radianceHints = new Radiance_Hints(m_engine, rhVolume);
+	auto propView = new Prop_Technique(engine, cameras, auxilliarySystems);
+	auto shadowing = new Shadow_Technique(engine, cameras, auxilliarySystems);
+	auto directionalLighting = new Directional_Technique(engine, shadowing->getShadowData(), rhVolume, clientCamera, cameras, auxilliarySystems);
+	auto pointLighting = new Point_Technique(engine, shadowing->getShadowData(), cameras, auxilliarySystems);
+	auto spotLighting = new Spot_Technique(engine, shadowing->getShadowData(), cameras, auxilliarySystems);
+	auto reflectorLighting = new Reflector_Technique(engine, cameras, auxilliarySystems);
+	auto radianceHints = new Radiance_Hints(engine, rhVolume);
 	auto skybox = new Skybox(m_engine);
 	auto ssao = new SSAO(m_engine);
 	auto ssr = new SSR(m_engine);

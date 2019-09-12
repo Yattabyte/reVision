@@ -11,8 +11,9 @@ Selection_Gizmo::Selection_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	// Create mouse picker system
-	m_pickerSystem = std::make_shared<MousePicker_System>(engine);
+	m_pickerSystem = std::make_shared<MousePicker_System>(m_engine);
 
+	// Create Sub-Gizmos
 	m_translationGizmo = std::make_shared<Translation_Gizmo>(engine, editor);
 	m_scalingGizmo = std::make_shared<Scaling_Gizmo>(engine, editor);
 	m_rotationGizmo = std::make_shared<Rotation_Gizmo>(engine, editor);

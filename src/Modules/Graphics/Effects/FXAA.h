@@ -23,8 +23,8 @@ public:
 	inline FXAA(Engine * engine) 
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
-		m_shaderFXAA = Shared_Shader(m_engine, "Effects\\FXAA");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_shaderFXAA = Shared_Shader(engine, "Effects\\FXAA");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

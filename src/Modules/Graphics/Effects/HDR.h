@@ -23,7 +23,7 @@ public:
 	inline HDR(Engine * engine)
 		: m_engine(engine), Graphics_Technique(POST_PROCESSING) {
 		// Asset Loading
-		m_shaderHDR = Shared_Shader(m_engine, "Effects\\HDR");
+		m_shaderHDR = Shared_Shader(engine, "Effects\\HDR");
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences

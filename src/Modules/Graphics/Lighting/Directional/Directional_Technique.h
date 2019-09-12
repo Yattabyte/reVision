@@ -34,8 +34,8 @@ public:
 		auxilliarySystems.makeSystem<DirectionalSync_System>(m_frameData);
 
 		// Asset Loading
-		m_shader_Lighting = Shared_Shader(m_engine, "Core\\Directional\\Light");
-		m_shader_Bounce = Shared_Shader(m_engine, "Core\\Directional\\Bounce");
+		m_shader_Lighting = Shared_Shader(engine, "Core\\Directional\\Light");
+		m_shader_Bounce = Shared_Shader(engine, "Core\\Directional\\Bounce");
 		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Noise Texture

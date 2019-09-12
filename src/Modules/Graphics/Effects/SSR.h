@@ -27,11 +27,11 @@ public:
 	inline SSR(Engine * engine)
 		: m_engine(engine), Graphics_Technique(SECONDARY_LIGHTING) {
 		// Asset Loading
-		m_shaderSSR1 = Shared_Shader(m_engine, "Effects\\SSR part 1");
-		m_shaderSSR2 = Shared_Shader(m_engine, "Effects\\SSR part 2");
-		m_shaderCopy = Shared_Shader(m_engine, "Effects\\Copy Texture");
-		m_shaderConvMips = Shared_Shader(m_engine, "Effects\\Gaussian Blur MIP");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_shaderSSR1 = Shared_Shader(engine, "Effects\\SSR part 1");
+		m_shaderSSR2 = Shared_Shader(engine, "Effects\\SSR part 2");
+		m_shaderCopy = Shared_Shader(engine, "Effects\\Copy Texture");
+		m_shaderConvMips = Shared_Shader(engine, "Effects\\Gaussian Blur MIP");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();

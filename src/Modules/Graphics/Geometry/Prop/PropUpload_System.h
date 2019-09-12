@@ -87,7 +87,7 @@ public:
 
 			// Try to upload model data
 			if (!model) 
-				model = Shared_Model(m_engine, propComponent->m_modelName);			
+				model = Shared_Model(m_engine, propComponent->m_modelName);
 			if (!propComponent->m_uploadModel && model->existsYet()) {
 				tryInsertModel(model);
 				offset = m_modelMap[model].first;

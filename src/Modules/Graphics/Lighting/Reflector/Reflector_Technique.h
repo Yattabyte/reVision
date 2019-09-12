@@ -28,17 +28,17 @@ public:
 		: m_engine(engine), m_sceneCameras(cameras), Graphics_Technique(PRIMARY_LIGHTING) {
 		// Auxilliary Systems
 		m_frameData = std::make_shared<ReflectorData>();
-		auxilliarySystems.makeSystem<ReflectorScheduler_System>(m_engine, m_frameData);
+		auxilliarySystems.makeSystem<ReflectorScheduler_System>(engine, m_frameData);
 		auxilliarySystems.makeSystem<ReflectorVisibility_System>(m_frameData);
 		auxilliarySystems.makeSystem<ReflectorSync_System>(m_frameData);
 
 		// Asset Loading
-		m_shaderLighting = Shared_Shader(m_engine, "Core\\Reflector\\IBL_Parallax");
-		m_shaderStencil = Shared_Shader(m_engine, "Core\\Reflector\\Stencil");
-		m_shaderCopy = Shared_Shader(m_engine, "Core\\Reflector\\2D_To_Cubemap");
-		m_shaderConvolute = Shared_Shader(m_engine, "Core\\Reflector\\Cube_Convolution");
-		m_shapeCube = Shared_Auto_Model(m_engine, "cube");
-		m_shapeQuad = Shared_Auto_Model(m_engine, "quad");
+		m_shaderLighting = Shared_Shader(engine, "Core\\Reflector\\IBL_Parallax");
+		m_shaderStencil = Shared_Shader(engine, "Core\\Reflector\\Stencil");
+		m_shaderCopy = Shared_Shader(engine, "Core\\Reflector\\2D_To_Cubemap");
+		m_shaderConvolute = Shared_Shader(engine, "Core\\Reflector\\Cube_Convolution");
+		m_shapeCube = Shared_Auto_Model(engine, "cube");
+		m_shapeQuad = Shared_Auto_Model(engine, "quad");
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
