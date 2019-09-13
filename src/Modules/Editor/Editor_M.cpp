@@ -14,6 +14,7 @@
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Modules/World/ECS/components.h"
 #include "Engine.h"
+#include <filesystem>
 
 
 void LevelEditor_Module::initialize(Engine* engine)
@@ -82,19 +83,35 @@ void LevelEditor_Module::deinitialize()
 
 void LevelEditor_Module::frameTick(const float& deltaTime)
 {
-	constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-	constexpr GLfloat clearDepth = 1.0f;
-	glEnable(GL_DEPTH_TEST);
-	glDepthMask(true);
-	glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
-	glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
+	if (m_active) {
+		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		constexpr GLfloat clearDepth = 1.0f;
+		glEnable(GL_DEPTH_TEST);
+		glDepthMask(true);
+		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
+		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
 
-	// Tick all tools this frame
-	m_selectionGizmo->frameTick(deltaTime);
-	m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+		// Tick all tools this frame
+		m_selectionGizmo->frameTick(deltaTime);
+		m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 
-	glDepthMask(false);
-	glDisable(GL_DEPTH_TEST);
+		glDepthMask(false);
+		glDisable(GL_DEPTH_TEST);
+
+		// Auto-save
+		if (hasUnsavedChanges()) {
+			m_autoSaveCounter += deltaTime;
+			if (m_autoSaveCounter > 10.0f) {
+				m_autoSaveCounter -= 10.0f;
+				m_engine->getManager_Messages().statement("Autosaving Map...");
+				std::filesystem::path currentPath(m_currentLevelName);
+				currentPath.replace_extension(".autosave");
+				m_engine->getModule_World().saveWorld(currentPath.string());
+			}
+		}
+		else
+			m_autoSaveCounter = 0.0f;
+	}
 }
 
 void LevelEditor_Module::setGizmoTransform(const Transform& transform)
@@ -133,6 +150,7 @@ bool LevelEditor_Module::hasCopy() const
 
 void LevelEditor_Module::showEditor()
 {
+	m_active = true;
 	m_engine->getModule_UI().clear();
 	m_engine->getModule_UI().setRootElement(m_editorInterface);
 	newLevel();
@@ -146,6 +164,7 @@ void LevelEditor_Module::exit()
 		m_unsavedChanges = false;
 		m_undoStack = {};
 		m_redoStack = {};
+		m_active = false;
 	});
 }
 
@@ -196,8 +215,16 @@ void LevelEditor_Module::saveLevel(const std::string& name)
 	if (name == "")
 		saveLevelDialogue();
 	else {
-		m_engine->getModule_World().saveWorld(name);
-		m_currentLevelName = name;
+		std::filesystem::path currentPath(m_currentLevelName);
+		currentPath.replace_extension(".bmap");
+		m_currentLevelName = currentPath.string();
+		m_engine->getModule_World().saveWorld(m_currentLevelName);
+
+		// Delete Autosaves
+		currentPath.replace_extension(".autosave");
+		currentPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + currentPath.string());
+		if (std::filesystem::exists(currentPath) && !std::filesystem::is_directory(currentPath))
+			std::filesystem::remove(currentPath);
 
 		// Self Explanitory
 		m_unsavedChanges = false;

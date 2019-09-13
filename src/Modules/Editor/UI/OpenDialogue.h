@@ -3,6 +3,7 @@
 #define OPENDIALOGUE_H
 
 #include "Modules/UI/UI_M.h"
+#include "Assets/Texture.h"
 #include <string>
 #include <vector>
 
@@ -40,9 +41,9 @@ private:
 	/***/
 	void tickMainDialogue();
 	/***/
-	void tickDeleteDialogue();
-	/***/
 	void tickRenameDialogue();
+	/***/
+	void tickDeleteDialogue();
 
 
 	// Private Attributes
@@ -51,7 +52,7 @@ private:
 	bool m_popupOpen = false;
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
-		std::string name = "", path = "";
+		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";
 		enum type {
 			none,
 			file,
@@ -61,6 +62,7 @@ private:
 	};
 	std::vector<LevelEntry> m_levels;
 	int m_selected = -1;
+	Shared_Texture m_iconFile, m_iconFolder, m_iconBack;
 };
 
 #endif // OPENDIALOGUE_H
