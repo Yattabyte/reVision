@@ -212,6 +212,7 @@ void LevelEditor_Module::openLevelDialogue()
 void LevelEditor_Module::saveLevel(const std::string& name)
 {
 	// Make sure the level has a valid name, otherwise open the naming dialogue
+	m_currentLevelName = name;
 	if (name == "")
 		saveLevelDialogue();
 	else {

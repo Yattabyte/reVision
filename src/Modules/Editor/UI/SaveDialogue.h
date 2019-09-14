@@ -3,6 +3,7 @@
 #define SAVEDIALOGUE_H
 
 #include "Modules/UI/UI_M.h"
+#include "Assets/Texture.h"
 #include <string>
 #include <vector>
 
@@ -42,18 +43,18 @@ private:
 	/***/
 	void tickOverwriteDialogue();
 	/***/
-	void tickDeleteDialogue();
-	/***/
 	void tickRenameDialogue();
+	/***/
+	void tickDeleteDialogue();
 
 
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_popupOpen = false;
+	bool m_popupOpen = false, m_paused = false;
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
-		std::string name = "", path = "";
+		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";
 		enum type {
 			none,
 			file,
@@ -63,6 +64,7 @@ private:
 	};
 	std::vector<LevelEntry> m_levels;
 	int m_selected = -1;
+	Shared_Texture m_iconFile, m_iconFolder, m_iconBack, m_iconRefresh;
 };
 
 #endif // SAVEDIALOGUE_H

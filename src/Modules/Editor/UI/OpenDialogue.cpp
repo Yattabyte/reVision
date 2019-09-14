@@ -85,12 +85,11 @@ void OpenDialogue::tickMainDialogue()
 {
 	static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
 	const auto title = "Open Level";
-	if (m_popupOpen) {
-		ImGui::OpenPopup(title);
-	}
+	if (m_popupOpen) 
+		ImGui::OpenPopup(title);	
 	ImGui::SetNextWindowSize({ 600, 500 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal(title, &m_popupOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
-		enum PrefabOptions {
+		enum DialogueOptions {
 			none,
 			use,
 			clone,
@@ -108,7 +107,6 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::Spacing();
 
 		// Display a list of level entries for the directory chosen
-		int index = 0;
 		ImGui::BeginChild("Level List", ImVec2(580, ImGui::GetWindowContentRegionMax().y - 85), true);
 		ImGui::Text("Name");
 		ImGui::SameLine(250);
@@ -120,6 +118,7 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::Separator();
 		if (ImGui::IsMouseClicked(0) && !m_paused)
 			m_selected = -1;
+		int index = 0;
 		for each (const auto & level in m_levels) {
 			GLuint icon = (level.type == LevelEntry::file && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
 				(level.type == LevelEntry::folder && m_iconFolder->existsYet()) ? m_iconFolder->m_glTexID :
@@ -159,7 +158,7 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::EndChild();
 		ImGui::Spacing();
 
-		// Display a save button
+		// Display an open button
 		ImGui::PushStyleColor(ImGuiCol_Button, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.6f, 0.6f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.7f, 0.7f));
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(2.0f / 7.0f, 0.8f, 0.8f));
