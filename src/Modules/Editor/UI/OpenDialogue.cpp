@@ -12,9 +12,10 @@
 OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
-	m_iconFile = Shared_Texture(engine, "Editor\\iconFile.png");
-	m_iconFolder = Shared_Texture(engine, "Editor\\iconFolder.png");
-	m_iconBack = Shared_Texture(engine, "Editor\\iconBack.png");
+	m_iconFile = Shared_Texture(engine, "Editor//iconFile.png");
+	m_iconFolder = Shared_Texture(engine, "Editor//iconFolder.png");
+	m_iconBack = Shared_Texture(engine, "Editor//iconBack.png");
+	m_iconRefresh = Shared_Texture(engine, "Editor//iconRefresh.png");
 }
 
 void OpenDialogue::tick(const float& deltaTime)
@@ -72,7 +73,7 @@ void OpenDialogue::populateLevels(const std::string& directory)
 				prefabEntry.extType = "Autosave";
 		}
 		else if (entry.is_directory()) {
-			prefabEntry.name = "\\" + prefabEntry.name + "\\";
+			prefabEntry.name = prefabEntry.name;
 			prefabEntry.type = LevelEntry::folder;
 			prefabEntry.extType = "Folder";
 		}
@@ -101,11 +102,14 @@ void OpenDialogue::tickMainDialogue()
 
 		// Header
 		ImGui::Text("Choose a level to open...");
+		ImGui::SameLine(std::max(ImGui::GetWindowContentRegionMax().x - 28.0f, 0.0f));
+		if (ImGui::ImageButton((ImTextureID)static_cast<uintptr_t>(m_iconRefresh->existsYet() ? m_iconRefresh->m_glTexID : 0), { 15, 15 }, { 0.0f, 1.0f }, { 1.0f, 0.0f }))
+			populateLevels(m_subDirectory);
 		ImGui::Spacing();
 
 		// Display a list of level entries for the directory chosen
 		int index = 0;
-		ImGui::BeginChild("Level List", ImVec2(580, ImGui::GetWindowContentRegionMax().y - 75), true);
+		ImGui::BeginChild("Level List", ImVec2(580, ImGui::GetWindowContentRegionMax().y - 85), true);
 		ImGui::Text("Name");
 		ImGui::SameLine(250);
 		ImGui::Text("Type");
@@ -114,7 +118,7 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::SameLine(475);
 		ImGui::Text("Size");
 		ImGui::Separator();
-		if (ImGui::IsMouseClicked(0) && !ImGui::IsPopupOpen("Rename Level") && !ImGui::IsPopupOpen("Delete Level"))
+		if (ImGui::IsMouseClicked(0) && !m_paused)
 			m_selected = -1;
 		for each (const auto & level in m_levels) {
 			GLuint icon = (level.type == LevelEntry::file && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
@@ -139,7 +143,10 @@ void OpenDialogue::tickMainDialogue()
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) { option = del; }
 				ImGui::EndPopup();
+				m_paused = true;
 			}
+			else
+				m_paused = false;
 			ImGui::SameLine(250);
 			ImGui::Text(level.extType.c_str());
 			ImGui::SameLine(350);
@@ -192,9 +199,12 @@ void OpenDialogue::tickMainDialogue()
 			const auto srcPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
 			auto dstPath = srcPath;
 			int count = 1;
-			dstPath.replace_filename(srcPath.filename().string() + " - Copy (1)");
 			while (std::filesystem::exists(dstPath))
-				dstPath.replace_filename(srcPath.filename().string() + " - Copy (" + std::to_string(++count) + ")");
+				dstPath.replace_filename(
+				(srcPath.has_stem() ? srcPath.stem().string() : srcPath.filename().string()) 
+					+ " - Copy (" + std::to_string(count++) + ")"
+					+ (srcPath.has_extension() ? srcPath.extension().string() : "")
+				);
 			std::filesystem::copy(srcPath, dstPath);
 			populateLevels(m_subDirectory);
 		}
@@ -217,6 +227,7 @@ void OpenDialogue::tickMainDialogue()
 
 void OpenDialogue::tickRenameDialogue()
 {
+	m_paused = false;
 	bool openRename = true;
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Enter a new name for this item...");
@@ -231,17 +242,21 @@ void OpenDialogue::tickRenameDialogue()
 			m_levels[m_selected].name = nameInput;
 			if (m_levels[m_selected].type == LevelEntry::folder)
 				m_levels[m_selected].name = "\\" + m_levels[m_selected].name + "\\";
-			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
-			std::filesystem::rename(fullPath, std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)));
-			m_levels[m_selected].path = std::filesystem::path(fullPath.parent_path().string() + "\\" + std::string(nameInput)).string();
+			const auto oldPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
+			const auto newPath = std::filesystem::path(oldPath.parent_path().string() + "\\" + std::string(nameInput) + (oldPath.has_extension() ? oldPath.extension().string() : "")).string();
+			std::filesystem::rename(oldPath, newPath);
+			m_levels[m_selected].path = std::filesystem::relative(newPath, Engine::Get_Current_Dir() + "\\Maps\\").string();
+			m_levels[m_selected].name = std::string(nameInput);
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
+		m_paused = true;
 	}
 }
 
 void OpenDialogue::tickDeleteDialogue()
 {
+	m_paused = false;
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
@@ -252,8 +267,9 @@ void OpenDialogue::tickDeleteDialogue()
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, (ImVec4)ImColor::HSV(0, 0.8f, 0.8f));
 		if (ImGui::Button("Delete", { 75, 20 })) {
 			const auto fullPath = std::filesystem::path(Engine::Get_Current_Dir() + "\\Maps\\" + m_levels[m_selected].path);
-			std::filesystem::remove(fullPath);
-			m_selected = -1;
+			std::error_code ec;
+			if (std::filesystem::remove_all(fullPath, ec))
+				m_selected = -1;
 			populateLevels(m_subDirectory);
 			ImGui::CloseCurrentPopup();
 		}
@@ -265,5 +281,6 @@ void OpenDialogue::tickDeleteDialogue()
 			ImGui::CloseCurrentPopup();
 		ImGui::SetItemDefaultFocus();
 		ImGui::EndPopup();
+		m_paused = true;
 	}
 }
