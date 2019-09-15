@@ -5,6 +5,7 @@
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
@@ -154,6 +155,14 @@ void LevelEditor_Module::showEditor()
 	m_engine->getModule_UI().clear();
 	m_engine->getModule_UI().setRootElement(m_editorInterface);
 	newLevel();
+
+	for (const auto& item : std::filesystem::recursive_directory_iterator(Engine::Get_Current_Dir() + "\\Maps\\")) {
+		const auto& path = item.path();
+		if (path.has_extension() && path.extension().string() == ".autosave") {
+			m_editorInterface->m_uiRecoverDialogue->startDialogue(path);
+			break;
+		}
+	}
 }
 
 void LevelEditor_Module::exit()

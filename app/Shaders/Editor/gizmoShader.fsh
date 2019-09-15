@@ -26,7 +26,7 @@ const uint AXES[6] = {
 
 void main()
 {	
-// Starting Variables
+	// Starting Variables
 	const vec3 P = vec3(0,0,-10);
 	const vec3 E = normalize(P);
 	const vec3 N = normalize(mat3(pvmMat) * normal);

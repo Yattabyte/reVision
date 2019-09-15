@@ -16,6 +16,7 @@ class TitleBar;
 class Prefabs;
 class Inspector;
 class RotationIndicator;
+class RecoverDialogue;
 class OpenDialogue;
 class SaveDialogue;
 class UnsavedChangesDialogue;
@@ -42,6 +43,7 @@ public:
 	std::shared_ptr<Prefabs> m_uiPrefabs;
 	std::shared_ptr<Inspector> m_uiInspector;
 	std::shared_ptr<RotationIndicator> m_uiRotIndicator;
+	std::shared_ptr<RecoverDialogue> m_uiRecoverDialogue;
 	std::shared_ptr<OpenDialogue> m_uiOpenDialogue;
 	std::shared_ptr<SaveDialogue> m_uiSaveDialogue;
 	std::shared_ptr<UnsavedChangesDialogue> m_uiUnsavedDialogue;

@@ -4,6 +4,7 @@
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
 #include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
@@ -20,6 +21,7 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
 	m_uiInspector = std::make_shared<Inspector>(engine, editor);
 	m_uiRotIndicator = std::make_shared<RotationIndicator>(m_engine);
+	m_uiRecoverDialogue = std::make_shared<RecoverDialogue>(engine, editor);
 	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
 	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
 	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
@@ -63,7 +65,7 @@ void Editor_Interface::tick(const float & deltaTime)
 
 	// Process all UI elements
 	const std::shared_ptr<ImGUI_Element> elements[] = {
-		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue
+		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);
