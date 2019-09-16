@@ -37,9 +37,7 @@ void main()
 	// Calculate Light
 	const float metalness = 0.125f;
 	const float radiance = 3.0f;
-	vec3 albedo = ColorScheme[axisID];
-	if (HoveredAxes == AXES[axisID])
-		albedo *= 0.85f;		
+	vec3 albedo = ColorScheme[axisID];	
 	if (SelectedAxes == AXES[axisID])
 		albedo = vec3(1, 0.8, 0);	
 	const vec3 ambient = vec3(0.125f);
@@ -53,7 +51,7 @@ void main()
 	vec3 result = ((ratio * diffuse + specular) * radiance) + ambient;
 	result = 1.0f - ((1.0f - result) * (1.0f - result));
 	result = result * result;
-	result = result * result;
+	result = result * result;	
 	fragColor.rgb = result;
-	fragColor.a = 1.0f;
+	fragColor.a = (HoveredAxes == AXES[axisID]) ? 0.66f : 1.0f;
 }

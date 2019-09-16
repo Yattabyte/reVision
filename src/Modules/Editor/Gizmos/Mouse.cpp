@@ -43,14 +43,14 @@ void Mouse_Gizmo::frameTick(const float& deltaTime)
 
 bool Mouse_Gizmo::checkInput(const float& deltaTime)
 {
-	if (ImGui::IsKeyPressed('t') || ImGui::IsKeyPressed('T'))
-		m_inputMode = 0;
-	else if (ImGui::IsKeyPressed('r') || ImGui::IsKeyPressed('R'))
-		m_inputMode = 1;
-	else if (ImGui::IsKeyPressed('e') || ImGui::IsKeyPressed('E'))
-		m_inputMode = 2;
+	if (!ImGui::GetIO().WantCaptureMouse) {
+		if (ImGui::IsKeyPressed('t') || ImGui::IsKeyPressed('T'))
+			m_inputMode = 0;
+		else if (ImGui::IsKeyPressed('r') || ImGui::IsKeyPressed('R'))
+			m_inputMode = 1;
+		else if (ImGui::IsKeyPressed('e') || ImGui::IsKeyPressed('E'))
+			m_inputMode = 2;
 
-	if (ImGui::IsMouseDown(0) || ImGui::IsMouseReleased(0) || ImGui::IsMouseClicked(0)) {
 		if (m_inputMode == 0 && m_translationGizmo->checkMouseInput(deltaTime))
 			return true;
 		else if (m_inputMode == 1 && m_rotationGizmo->checkMouseInput(deltaTime))
@@ -59,7 +59,7 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 			return true;
 
 		// Set selection LAST, allow attempts at other gizmo's first
-		if (!ImGui::GetIO().WantCaptureMouse && ImGui::IsMouseClicked(0)) {
+		if (ImGui::IsMouseClicked(0)) {
 			m_engine->getModule_World().updateSystem(m_pickerSystem.get(), deltaTime);
 			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
 
@@ -75,12 +75,12 @@ bool Mouse_Gizmo::checkInput(const float& deltaTime)
 					m_editor->setSelection({ entityHandle });
 			return m_editor->getSelection().size();
 		}
-	}
-	else if (ImGui::IsMouseClicked(2)) {
-		m_engine->getModule_World().updateSystem(m_pickerSystem.get(), deltaTime);
-		const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
-		m_spawnTransform = intersectionTransform;
-		return true;
+		else if (ImGui::IsMouseClicked(2)) {
+			m_engine->getModule_World().updateSystem(m_pickerSystem.get(), deltaTime);
+			const auto& [entityHandle, selectionTransform, intersectionTransform] = (std::dynamic_pointer_cast<MousePicker_System>(m_pickerSystem))->getSelection();
+			m_spawnTransform = intersectionTransform;
+			return true;
+		}
 	}
 	return false;
 }

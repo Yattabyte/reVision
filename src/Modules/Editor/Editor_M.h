@@ -156,6 +156,7 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
+/***/
 struct Editor_Command {
 	// Public Interface
 	/** Perform the command. */
