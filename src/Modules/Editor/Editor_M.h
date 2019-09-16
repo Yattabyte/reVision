@@ -40,23 +40,19 @@ public:
 	bool hasUnsavedChanges() const;
 	/** Retrieve the currently active map's file name. */
 	std::string getMapName() const;
-	/** Close the current level, starting a new one. 
-	*@todo	check against dirty bit for 'level has unsaved changes' */
+	/** Close the current level, starting a new one. */
 	void newLevel();
 	/** Open a specific level with the file name specified.
-	@param	name			the level name to open.
-	*@todo	check against dirty bit for 'level has unsaved changes' */
+	@param	name			the level name to open. */
 	void openLevel(const std::string & name);
-	/** Display the 'open level' dialogue for choosing a level.	
-	*@todo	check against dirty bit for 'level has unsaved changes' */
+	/** Display the 'open level' dialogue for choosing a level.	*/
 	void openLevelDialogue();
 	/** Save the level with a specific name.
 	@param	name			the level name to save. */
 	void saveLevel(const std::string & name);
 	/** Save and overwrite the currently active level. */
 	void saveLevel();
-	/** Display the 'save level' dialogue for choosing a level to save.
-	*@todo	confirmation check on overwrite. */
+	/** Display the 'save level' dialogue for choosing a level to save. */
 	void saveLevelDialogue();
 	/** Retrieve if we have any undo-able actions. */
 	bool canUndo() const;
