@@ -2,10 +2,13 @@
 #ifndef SELECTION_GIZMO_H
 #define SELECTION_GIZMO_H
 
+#include "Assets/Auto_Model.h"
+#include "Assets/Shader.h"
 #include "Modules/World/ECS/ecsComponent.h"
 #include "Modules/World/ECS/ecsEntity.h"
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Utilities/Transform.h"
+#include "Utilities/GL/IndirectDraw.h"
 #include <memory>
 #include <vector>
 
@@ -19,15 +22,15 @@ class Rotation_Gizmo;
 
 
 /** A 3D tool allowing the user to select entities in a level. */
-class Selection_Gizmo {
+class Mouse_Gizmo {
 public:
 	// Public (de)Constructors
 	/** Destroy this gizmo. */
-	inline ~Selection_Gizmo() = default;
+	~Mouse_Gizmo();
 	/** Construct this gizmo.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Selection_Gizmo(Engine* engine, LevelEditor_Module* editor);
+	Mouse_Gizmo(Engine* engine, LevelEditor_Module* editor);
 
 
 	// Public Methods
@@ -45,7 +48,10 @@ public:
 	void setTransform(const Transform& transform);
 	/** Retrieve this gizmo's transform.
 	@return					the transform used by this gizmo. */
-	Transform getTransform() const;
+	Transform getSelectionTransform() const;
+	/** Retrieve this gizmo's spawn point transform.
+	@return					the transform used for spawn points. */
+	Transform getSpawnTransform() const;
 	/** Set a specific set of entities as the selection, moving the gizmo to their center.
 	@param	entityHandles	the new set of selected entity handles to use. */
 	void setSelection(const std::vector<ecsHandle>& entities);
@@ -55,23 +61,20 @@ public:
 	
 
 private:
-	// Private Methods
-	/** Check for mouse input.
-	@param	deltaTime	the amount of time since the last frame. */
-	bool checkMouseInput(const float& deltaTime);
-
-
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_clicked = false;
-	Transform m_transform = glm::vec3(0.0f);
+	Transform m_selectionTransform, m_spawnTransform;
 	std::vector<ecsHandle> m_selection;
 	std::shared_ptr<BaseECSSystem> m_pickerSystem;
 	unsigned int m_inputMode = 0;
 	std::shared_ptr<Translation_Gizmo> m_translationGizmo;
 	std::shared_ptr<Scaling_Gizmo> m_scalingGizmo;
 	std::shared_ptr<Rotation_Gizmo> m_rotationGizmo;
+	Shared_Auto_Model m_spawnModel;
+	Shared_Shader m_spawnShader;
+	IndirectDraw m_spawnIndirect;
+	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
 #endif // SELECTION_GIZMO_H

@@ -75,6 +75,8 @@ public:
 	@param	alive				a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier			function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func);
+	/***/
+	static ecsHandle generateUUID();
 	/** Create an entity from a list of input components.
 	@param	components			array of component pointers, whom will be hard copied.
 	@param	componentIDS		array of component ids.
@@ -193,8 +195,6 @@ private:
 	@param	componentTypes		the component types.
 	@param	componentFlags		the component flags. */
 	size_t findLeastCommonComponent(const std::vector<int>& componentTypes, const std::vector<int>& componentFlags);
-	/***/
-	static ecsHandle generateUUID();
 
 
 	// Private Attributes

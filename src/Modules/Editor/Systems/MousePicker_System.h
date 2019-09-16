@@ -7,6 +7,7 @@
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/glm.hpp"
+#include "glm/gtc/quaternion.hpp"
 
 
 /** An ECS system allowing the user to ray-pick entities by selecting against their components. */
@@ -27,6 +28,7 @@ public:
 		addComponentType(BoundingBox_Component::ID, FLAG_OPTIONAL);
 		addComponentType(BoundingSphere_Component::ID, FLAG_OPTIONAL);
 		addComponentType(Collider_Component::ID, FLAG_OPTIONAL);
+		addComponentType(Prop_Component::ID, FLAG_OPTIONAL);
 
 		// Preferences
 		auto & preferences = m_engine->getPreferenceState();
@@ -52,76 +54,142 @@ public:
 
 		// Set the selection position for the worst-case scenario
 		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
+		m_intersectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
 
-		float closestDistanceFromScreen = FLT_MAX, closestDistanceToCenter = FLT_MAX;
+		float closestDistance = FLT_MAX;
+		int highestConfidence = 0;
+		bool found = false;
 		for each (const auto & componentParam in components) {
 			auto * transformComponent = (Transform_Component*)componentParam[0];
 			auto * bBox = (BoundingBox_Component*)componentParam[1];
 			auto * bSphere = (BoundingSphere_Component*)componentParam[2];
 			auto * collider = (Collider_Component*)componentParam[3];
+			auto * prop = (Prop_Component*)componentParam[4];
+			float distanceFromScreen = FLT_MAX;
+			int confidence = 0;
+			const bool hasBoundingShape = bSphere || bBox;
+			bool result = false;
 
-			bool checkSuccessfull = false;
-			float distanceFromScreen = FLT_MAX, distanceToCenter = FLT_MAX;
-			// Ray-collider intersection test
-			if (collider) {
-			}
-			// Ray-OOBB intersection test
-			if (bBox && bBox->m_cameraCollision == BoundingBox_Component::OUTSIDE) {
-				float distance;
-				const auto& position = transformComponent->m_worldTransform.m_position;
-				const auto& scale = transformComponent->m_worldTransform.m_scale;
-				const auto matrixWithoutScale = (transformComponent->m_worldTransform * Transform(bBox->m_positionOffset, glm::quat(1.0f, 0, 0, 0), 1.0f / scale)).m_modelMatrix;
-				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-				if (RayOOBBIntersection(ray_origin, ray_world, bBox->m_min * scale, bBox->m_max * scale, matrixWithoutScale, distance))
-					distanceFromScreen = distance;
-			}
-			// Ray-BoundingSphere intersection test
-			if (bSphere && bSphere->m_cameraCollision == BoundingSphere_Component::OUTSIDE) {
-				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-				if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f)
-					distanceFromScreen = distance;
-			}
-			// Ray-Origin intersection test
-			{
-				// Create scaling factor to keep all origins same screen size
-				const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
+			// Attempt cheap tests first
+			result = RayOrigin(transformComponent, ray_origin, ray_world, distanceFromScreen, confidence);
+			if (bBox)
+				result = RayBBox(transformComponent, bBox, ray_origin, ray_world, distanceFromScreen, confidence);
+			else if (bSphere)
+				result = RayBSphere(transformComponent, bSphere, ray_origin, ray_world, distanceFromScreen, confidence);
 
-				// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-				if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f)
-					distanceFromScreen = distance;
+			// Attempt more complex tests
+			if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+				distanceFromScreen = FLT_MAX;
+				result = RayProp(transformComponent, prop, ray_origin, ray_world, distanceFromScreen, confidence);
 			}
-
-			auto hitToCam = clientCamera.pMatrix * clientCamera.vMatrix * glm::vec4(ray_origin + distanceToCenter * ray_world, 1.0f); 
-			hitToCam /= hitToCam.w;
-			const auto hit_ss = (0.5f * glm::vec2(hitToCam) + 0.5f) * glm::vec2(m_renderSize);
-			auto centerToCam = clientCamera.pMatrix * clientCamera.vMatrix * glm::vec4(transformComponent->m_worldTransform.m_position, 1.0f);
-			centerToCam /= centerToCam.w;
-			const auto center_ss = (0.5f * glm::vec2(centerToCam) + 0.5f) * glm::vec2(m_renderSize);
-			distanceToCenter = glm::length(center_ss - hit_ss);
+			else if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
+				distanceFromScreen = FLT_MAX;
+				result = RayCollider(transformComponent, collider, ray_origin, ray_world, distanceFromScreen, confidence);
+			}
 
 			// Find the closest best match
-			if (distanceFromScreen < closestDistanceFromScreen || distanceToCenter < closestDistanceToCenter) {
-				closestDistanceFromScreen = distanceFromScreen;
-				closestDistanceToCenter = distanceToCenter;
+			if (result && ((distanceFromScreen < closestDistance) || (confidence > highestConfidence))) {
+				closestDistance = distanceFromScreen;
+				highestConfidence = confidence;
 				m_selection = transformComponent->m_entity;
-				m_selectionTransform = transformComponent->m_worldTransform;
+				m_selectionTransform = transformComponent->m_worldTransform;			
+				found = true;
 			}
 		}
-	}  
+		if (found) {
+			m_intersectionTransform.m_position = ray_origin + closestDistance * ray_world;
+			m_intersectionTransform.update();
+		}
+	}
 
 
 	// Public Methods
 	/** Retrieve this system's last selection result. */
-	std::pair<ecsHandle, Transform> getSelection() {
-		return { m_selection, m_selectionTransform };
+	std::tuple<ecsHandle, Transform, Transform> getSelection() {
+		return { m_selection, m_selectionTransform, m_intersectionTransform };
 	}
 
 
 private:
+	// Private Methods
+	/***/
+	bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+		bool intersection = false;
+		if (prop->m_model && prop->m_model->existsYet()) {		
+			float distance = FLT_MAX;
+			for (size_t x = 0; x < prop->m_model->m_data.m_vertices.size(); x += 3) {
+				auto v0 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x].vertex, 1);
+				auto v1 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x +1 ].vertex, 1);
+				auto v2 = transformComponent->m_worldTransform.m_modelMatrix * glm::vec4(prop->m_model->m_data.m_vertices[x + 2].vertex, 1);
+				v0 /= v0.w;
+				v1 /= v1.w;
+				v2 /= v2.w;
+				if (RayTriangleIntersection(
+					ray_origin, ray_world,
+					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2),
+					distance
+				)) {
+					distanceFromScreen = distance;
+					confidence = 3;
+					intersection = true;
+				}
+			}
+		}
+		return intersection;
+	}
+	/***/
+	bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+		//confidence = 3;
+		return false;
+	}
+	/***/
+	bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+		float distance;
+		const auto& position = transformComponent->m_worldTransform.m_position;
+		const auto& scale = transformComponent->m_worldTransform.m_scale;
+		Transform newTransform = transformComponent->m_worldTransform;
+		newTransform.m_position += bBox->m_positionOffset;
+		newTransform.m_scale = glm::vec3(1.0f);
+		newTransform.update();
+		const auto matrixWithoutScale = newTransform.m_modelMatrix;
+
+		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
+		if (RayOOBBIntersection(ray_origin, ray_world, bBox->m_min * scale, bBox->m_max * scale, matrixWithoutScale, distance)) {
+			distanceFromScreen = distance;
+			confidence = 2;
+			return true;
+		}		
+		return false;
+	}
+	/***/
+	bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
+		if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f) {
+			distanceFromScreen = distance;
+			confidence = 2;
+			return true;
+		}
+		return false;		
+	}
+	/***/
+	bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+		// Create scaling factor to keep all origins same screen size
+		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
+
+		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
+		if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f) {
+			distanceFromScreen = distance;
+			confidence = 2;
+			return true;
+		}
+		return false;
+	}
+
+
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	ecsHandle m_selection;
-	Transform m_selectionTransform = glm::vec3(0.0f);
+	Transform m_selectionTransform, m_intersectionTransform;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };

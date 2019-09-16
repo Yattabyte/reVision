@@ -16,6 +16,18 @@ static bool RayPlaneIntersection(
 	return glm::intersectRayPlane(ray_origin, ray_direction, plane_origin, plane_normal, intersectionDistance);
 }
 
+static bool RayTriangleIntersection(
+	const glm::vec3& ray_origin,
+	const glm::vec3& ray_direction,
+	const glm::vec3& v0,
+	const glm::vec3& v1,
+	const glm::vec3& v2,
+	float& intersectionDistance
+) {
+	glm::vec2 baryPos;
+	return glm::intersectRayTriangle(ray_origin, ray_direction, v0, v1, v2, baryPos, intersectionDistance);
+}
+
 static bool RayOOBBIntersection(
 	const glm::vec3& ray_origin,
 	const glm::vec3& ray_direction,

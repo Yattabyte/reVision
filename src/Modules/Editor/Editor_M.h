@@ -12,7 +12,7 @@
 
 // Forward Declarations
 class Editor_Interface;
-class Selection_Gizmo;
+class Mouse_Gizmo;
 struct Editor_Command;
 
 /** A level editor module. */
@@ -124,6 +124,9 @@ public:
 	/** Retrieve the transform from the editor gizmos.
 	@return					the current transform from where the gizmo is. */
 	Transform getGizmoTransform() const;
+	/** Retrieve the spawn point transform from the mouse gizmo.
+	@return					the current transform from where the spawn point is. */
+	Transform getSpawnTransform() const;
 	/** Retrieve the editor's camera position. 
 	@return					the current camera's position. */
 	const glm::vec3& getCameraPosition() const;
@@ -143,7 +146,7 @@ private:
 	float m_autoSaveCounter = 0.0f;
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
-	std::shared_ptr<Selection_Gizmo> m_selectionGizmo;
+	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
 	std::shared_ptr<BaseECSSystem> m_selectionClearer;
 	GLuint m_fboID = 0, m_texID = 0, m_depthID = 0;
 	glm::ivec2 m_renderSize = glm::ivec2(1);

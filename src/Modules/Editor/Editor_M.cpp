@@ -9,7 +9,7 @@
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
-#include "Modules/Editor/Gizmos/Selection.h"
+#include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
 #include "Modules/Editor/Systems/Wireframe_System.h"
 #include "Modules/UI/dear imgui/imgui.h"
@@ -30,7 +30,7 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_editorInterface = std::make_shared<Editor_Interface>(engine, this);
 
 	// Gizmos
-	m_selectionGizmo = std::make_shared<Selection_Gizmo>(engine, this);
+	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(engine, this);
 
 	// Systems
 	m_selectionClearer = std::make_shared<ClearSelection_System>(engine);
@@ -93,7 +93,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
 
 		// Tick all tools this frame
-		m_selectionGizmo->frameTick(deltaTime);
+		m_mouseGizmo->frameTick(deltaTime);
 		m_engine->getModule_World().updateSystems(m_systems, deltaTime);
 
 		glDepthMask(false);
@@ -117,12 +117,17 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 
 void LevelEditor_Module::setGizmoTransform(const Transform& transform)
 {
-	m_selectionGizmo->setTransform(transform);
+	m_mouseGizmo->setTransform(transform);
 }
 
 Transform LevelEditor_Module::getGizmoTransform() const
 {
-	return m_selectionGizmo->getTransform();
+	return m_mouseGizmo->getSelectionTransform();
+}
+
+Transform LevelEditor_Module::getSpawnTransform() const
+{
+	return m_mouseGizmo->getSpawnTransform();
 }
 
 const glm::vec3& LevelEditor_Module::getCameraPosition() const
@@ -132,7 +137,7 @@ const glm::vec3& LevelEditor_Module::getCameraPosition() const
 
 void LevelEditor_Module::toggleAddToSelection(const ecsHandle& entityHandle)
 {
-	auto selectionCopy = m_selectionGizmo->getSelection();
+	auto selectionCopy = m_mouseGizmo->getSelection();
 
 	// If the entity is already selected, deselect it
 	if (std::find(selectionCopy.cbegin(), selectionCopy.cend(), entityHandle) != selectionCopy.cend())
@@ -316,10 +321,10 @@ void LevelEditor_Module::clearSelection()
 			// Remove all selection components from world
 			auto& world = m_engine->getModule_World();
 			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
-			m_editor->m_selectionGizmo->getSelection().clear();
+			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor->m_selectionGizmo->setSelection(uuids);
+			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto& entityHandle in uuids) {
 				const Selected_Component component;
 				world.addComponent(entityHandle, &component);
@@ -340,22 +345,22 @@ void LevelEditor_Module::clearSelection()
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor->m_selectionGizmo->setTransform(newTransform);
+			m_editor->m_mouseGizmo->setTransform(newTransform);
 		};
 		virtual void execute() {
 			// Remove all selection components from world
 			auto& world = m_engine->getModule_World();
 			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
-			m_editor->m_selectionGizmo->getSelection().clear();
+			m_editor->m_mouseGizmo->getSelection().clear();
 		}
 		virtual void undo() {
 			// Remove all selection components from world
 			auto& world = m_engine->getModule_World();
 			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
-			m_editor->m_selectionGizmo->getSelection().clear();
+			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor->m_selectionGizmo->setSelection(m_uuids_old);
+			m_editor->m_mouseGizmo->setSelection(m_uuids_old);
 			for each (const auto& entityHandle in m_uuids_old) {
 				const Selected_Component component;
 				world.addComponent(entityHandle, &component);
@@ -376,7 +381,7 @@ void LevelEditor_Module::clearSelection()
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor->m_selectionGizmo->setTransform(newTransform);
+			m_editor->m_mouseGizmo->setTransform(newTransform);
 		}
 	};
 
@@ -401,10 +406,10 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			// Remove all selection components from world
 			auto& world = m_engine->getModule_World();
 			world.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
-			m_editor->m_selectionGizmo->getSelection().clear();
+			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
-			m_editor->m_selectionGizmo->setSelection(uuids);
+			m_editor->m_mouseGizmo->setSelection(uuids);
 			for each (const auto& entityHandle in uuids) {
 				const Selected_Component component;
 				world.addComponent(entityHandle, &component);
@@ -425,7 +430,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			newTransform.m_position = center;
 			newTransform.m_scale = scale;
 			newTransform.update();
-			m_editor->m_selectionGizmo->setTransform(newTransform);
+			m_editor->m_mouseGizmo->setTransform(newTransform);
 		};
 		virtual void execute() {
 			switchSelection(m_uuids_new);
@@ -441,7 +446,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 
 const std::vector<ecsHandle>& LevelEditor_Module::getSelection() const
 {
-	return m_selectionGizmo->getSelection();
+	return m_mouseGizmo->getSelection();
 }
 
 void LevelEditor_Module::mergeSelection()
@@ -461,7 +466,7 @@ void LevelEditor_Module::mergeSelection()
 				for (size_t x = 1ull, selSize = m_uuids.size(); x < selSize; ++x) 
 					if (const auto & entityHandle = m_uuids[x])
 						world.parentEntity(root, entityHandle);				
-				m_editor->m_selectionGizmo->getSelection() = { root };
+				m_editor->m_mouseGizmo->getSelection() = { root };
 			}
 		}
 		virtual void undo() {
@@ -476,8 +481,8 @@ void LevelEditor_Module::mergeSelection()
 		}
 	};
 
-	auto& selection = m_selectionGizmo->getSelection();
-	if (m_selectionGizmo->getSelection().size())
+	auto& selection = m_mouseGizmo->getSelection();
+	if (m_mouseGizmo->getSelection().size())
 		doReversableAction(std::make_shared<Merge_Selection_Command>(m_engine, this));
 }
 
@@ -517,7 +522,7 @@ void LevelEditor_Module::groupSelection()
 		}
 		virtual void undo() {
 			auto& world = m_engine->getModule_World();
-			auto& selection = m_editor->m_selectionGizmo->getSelection();
+			auto& selection = m_editor->m_mouseGizmo->getSelection();
 			selection.clear();
 			if (m_rootUUID != ecsHandle()) {
 				for each (const auto & child in world.getEntityHandles(m_rootUUID)) {
@@ -529,7 +534,7 @@ void LevelEditor_Module::groupSelection()
 		}
 	};
 
-	if (m_selectionGizmo->getSelection().size())
+	if (m_mouseGizmo->getSelection().size())
 		doReversableAction(std::make_shared<Group_Selection_Command>(m_engine, this));
 }
 
@@ -565,7 +570,7 @@ void LevelEditor_Module::ungroupSelection()
 		}
 	};
 
-	if (m_selectionGizmo->getSelection().size())
+	if (m_mouseGizmo->getSelection().size())
 		doReversableAction(std::make_shared<Ungroup_Selection_Command>(m_engine, this));
 }
 
@@ -617,7 +622,7 @@ void LevelEditor_Module::deleteSelection()
 		}
 	};
 
-	auto& selection = m_selectionGizmo->getSelection();
+	auto& selection = m_mouseGizmo->getSelection();
 	if (selection.size())
 		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, selection));
 }
@@ -630,7 +635,7 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 		const glm::vec3 m_oldPosition, m_newPosition;
 		const std::vector<ecsHandle> m_uuids;
 		Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition)
-			: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->m_selectionGizmo->getTransform().m_position), m_newPosition(newPosition), m_uuids(m_editor->getSelection()) {}
+			: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->m_mouseGizmo->getSelectionTransform().m_position), m_newPosition(newPosition), m_uuids(m_editor->getSelection()) {}
 		void move(const glm::vec3& position) {
 			auto& world = m_engine->getModule_World();
 			std::vector<Transform_Component*> transformComponents;
@@ -646,7 +651,7 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 				transform->m_localTransform.update();
 			}
 
-			auto gizmoTransform = m_editor->m_selectionGizmo->getTransform();
+			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
 			gizmoTransform.m_position = position;
 			gizmoTransform.update();
 			m_editor->setGizmoTransform(gizmoTransform);
@@ -690,7 +695,7 @@ void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
 				transform->m_localTransform.update();
 			}
 
-			auto gizmoTransform = m_editor->m_selectionGizmo->getTransform();
+			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
 			gizmoTransform.m_orientation = rotation;
 			gizmoTransform.update();
 			m_editor->setGizmoTransform(gizmoTransform);
@@ -714,7 +719,7 @@ void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 		const glm::vec3 m_oldScale, m_newScale;
 		const std::vector<ecsHandle> m_uuids;
 		Scale_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newRotation)
-			: m_engine(engine), m_editor(editor), m_oldScale(m_editor->m_selectionGizmo->getTransform().m_scale), m_newScale(newRotation), m_uuids(m_editor->getSelection()) {}
+			: m_engine(engine), m_editor(editor), m_oldScale(m_editor->m_mouseGizmo->getSelectionTransform().m_scale), m_newScale(newRotation), m_uuids(m_editor->getSelection()) {}
 		void scale(const glm::vec3& scale) {
 			auto& world = m_engine->getModule_World();
 			std::vector<Transform_Component*> transformComponents;
@@ -731,7 +736,7 @@ void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 				transform->m_localTransform.m_scale = scale;
 				transform->m_localTransform.update();
 			}
-			auto gizmoTransform = m_editor->m_selectionGizmo->getTransform();
+			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
 			gizmoTransform.m_scale = scale;
 			gizmoTransform.update();
 			m_editor->setGizmoTransform(gizmoTransform);
@@ -821,7 +826,7 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 		const Transform m_cursor;
 		std::vector<ecsHandle> m_uuids;
 		Spawn_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<char>& data, const ecsHandle& pUUID)
-			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor->getGizmoTransform()) {}
+			: m_engine(engine), m_editor(editor), m_data(data), m_parentUUID(pUUID), m_cursor(m_editor->getSpawnTransform()) {}
 		virtual void execute() {
 			auto& world = m_engine->getModule_World();
 			size_t dataRead(0ull), handleCount(0ull);
@@ -830,8 +835,8 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 			while (dataRead < m_data.size()) {
 				// Ensure we have a vector large enough to hold all UUIDs, but maintain previous data
 				m_uuids.resize(std::max<size_t>(m_uuids.size(), handleCount + 1ull));
-
-				const auto& [entityHandle, entity] = world.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), m_uuids[handleCount]);
+				const auto desiredHandle = m_uuids[handleCount].isValid() ? m_uuids[handleCount] : world.generateUUID();
+				const auto& [entityHandle, entity] = world.deserializeEntity(m_data.data(), m_data.size(), dataRead, ecsHandle(), desiredHandle);
 				if (entityHandle.isValid() && entity) {
 					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
 						transformComponents.push_back(transform);
