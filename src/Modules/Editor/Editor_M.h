@@ -136,7 +136,8 @@ public:
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
-	/***/
+	/** Perform an action following the Command design pattern, executing it and appending it to an undo list. 
+	@param	command			the command to execute and store. */
 	void doReversableAction(const std::shared_ptr<Editor_Command>& command);
 
 
@@ -156,7 +157,8 @@ private:
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 
-/***/
+/** A command used by the level editor. Follows the Command Design Pattern.
+To be subclassed where needed, typically within the scope of a specialized function. */
 struct Editor_Command {
 	// Public Interface
 	/** Perform the command. */

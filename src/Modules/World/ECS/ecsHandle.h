@@ -7,7 +7,7 @@
 #include <utility>
 
 
-/***/
+/** A structure used to uniquely identify elements in the engine's ECS 'system'. */
 struct ecsHandle {
 	char uuid[32] = { '\0' };
 	/** Default Constructor. */

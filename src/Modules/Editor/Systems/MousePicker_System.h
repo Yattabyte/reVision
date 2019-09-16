@@ -50,11 +50,11 @@ public:
 		const auto ray_origin = clientCamera.EyePosition;
 		const auto ray_nds = glm::vec2(2.0f * actionState.at(ActionState::MOUSE_X) / m_renderSize.x - 1.0f, 1.0f - (2.0f * actionState.at(ActionState::MOUSE_Y)) / m_renderSize.y);
 		const auto ray_eye = glm::vec4(glm::vec2(clientCamera.pMatrixInverse * glm::vec4(ray_nds, -1.0f, 1.0F)), -1.0f, 0.0f);
-		const auto ray_world = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
+		const auto ray_direction = glm::normalize(glm::vec3(clientCamera.vMatrixInverse * ray_eye));
 
 		// Set the selection position for the worst-case scenario
-		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
-		m_intersectionTransform.m_position = clientCamera.EyePosition + (ray_world * glm::vec3(50.0f));
+		m_selectionTransform.m_position = clientCamera.EyePosition + (ray_direction * glm::vec3(50.0f));
+		m_intersectionTransform.m_position = clientCamera.EyePosition + (ray_direction * glm::vec3(50.0f));
 
 		float closestDistance = FLT_MAX;
 		int highestConfidence = 0;
@@ -71,20 +71,20 @@ public:
 			bool result = false;
 
 			// Attempt cheap tests first
-			result = RayOrigin(transformComponent, ray_origin, ray_world, distanceFromScreen, confidence);
+			result = RayOrigin(transformComponent, ray_origin, ray_direction, distanceFromScreen, confidence);
 			if (bBox)
-				result = RayBBox(transformComponent, bBox, ray_origin, ray_world, distanceFromScreen, confidence);
+				result = RayBBox(transformComponent, bBox, ray_origin, ray_direction, distanceFromScreen, confidence);
 			else if (bSphere)
-				result = RayBSphere(transformComponent, bSphere, ray_origin, ray_world, distanceFromScreen, confidence);
+				result = RayBSphere(transformComponent, bSphere, ray_origin, ray_direction, distanceFromScreen, confidence);
 
 			// Attempt more complex tests
 			if (prop && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 				distanceFromScreen = FLT_MAX;
-				result = RayProp(transformComponent, prop, ray_origin, ray_world, distanceFromScreen, confidence);
+				result = RayProp(transformComponent, prop, ray_origin, ray_direction, distanceFromScreen, confidence);
 			}
 			else if (collider && ((hasBoundingShape && result) || (!hasBoundingShape))) {
 				distanceFromScreen = FLT_MAX;
-				result = RayCollider(transformComponent, collider, ray_origin, ray_world, distanceFromScreen, confidence);
+				result = RayCollider(transformComponent, collider, ray_origin, ray_direction, distanceFromScreen, confidence);
 			}
 
 			// Find the closest best match
@@ -97,7 +97,7 @@ public:
 			}
 		}
 		if (found) {
-			m_intersectionTransform.m_position = ray_origin + closestDistance * ray_world;
+			m_intersectionTransform.m_position = ray_origin + closestDistance * ray_direction;
 			m_intersectionTransform.update();
 		}
 	}
@@ -112,8 +112,15 @@ public:
 
 private:
 	// Private Methods
-	/***/
-	bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+	/** Perform a ray-prop intersection test. 
+	@param	transformComponent		the transform component of interest.
+	@param	prop					the prop component of interest.
+	@param	ray_origin				the mouse ray's origin.
+	@param	ray_direction			the mouse ray's direction.
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen. 
+	@param	confidence				reference updated with the confidence level for this function. 
+	@return							true on successful intersection, false if disjoint. */
+	bool RayProp(Transform_Component* transformComponent, Prop_Component* prop, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		bool intersection = false;
 		if (prop->m_model && prop->m_model->existsYet()) {		
 			float distance = FLT_MAX;
@@ -125,7 +132,7 @@ private:
 				v1 /= v1.w;
 				v2 /= v2.w;
 				if (RayTriangleIntersection(
-					ray_origin, ray_world,
+					ray_origin, ray_direction,
 					glm::vec3(v0), glm::vec3(v1), glm::vec3(v2),
 					distance
 				)) {
@@ -137,13 +144,27 @@ private:
 		}
 		return intersection;
 	}
-	/***/
-	bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+	/** Perform a ray-collider intersection test.
+	@param	transformComponent		the transform component of interest.
+	@param	collider				the collider component of interest.
+	@param	ray_origin				the mouse ray's origin.
+	@param	ray_direction			the mouse ray's direction.
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+	@param	confidence				reference updated with the confidence level for this function.
+	@return							true on successful intersection, false if disjoint. */
+	bool RayCollider(Transform_Component* transformComponent, Collider_Component* collider, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		//confidence = 3;
 		return false;
 	}
-	/***/
-	bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+	/** Perform a ray-bounding-box intersection test.
+	@param	transformComponent		the transform component of interest.
+	@param	bBox					the bounding box component of interest.
+	@param	ray_origin				the mouse ray's origin.
+	@param	ray_direction			the mouse ray's direction.
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+	@param	confidence				reference updated with the confidence level for this function.
+	@return							true on successful intersection, false if disjoint. */
+	bool RayBBox(Transform_Component* transformComponent, BoundingBox_Component* bBox, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		float distance;
 		const auto& position = transformComponent->m_worldTransform.m_position;
 		const auto& scale = transformComponent->m_worldTransform.m_scale;
@@ -154,30 +175,43 @@ private:
 		const auto matrixWithoutScale = newTransform.m_modelMatrix;
 
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-		if (RayOOBBIntersection(ray_origin, ray_world, bBox->m_min * scale, bBox->m_max * scale, matrixWithoutScale, distance)) {
+		if (RayOOBBIntersection(ray_origin, ray_direction, bBox->m_min * scale, bBox->m_max * scale, matrixWithoutScale, distance)) {
 			distanceFromScreen = distance;
 			confidence = 2;
 			return true;
 		}		
 		return false;
 	}
-	/***/
-	bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+	/** Perform a ray-bounding-sphere intersection test.
+	@param	transformComponent		the transform component of interest.
+	@param	bSphere					the bounding sphere component of interest.
+	@param	ray_origin				the mouse ray's origin.
+	@param	ray_direction			the mouse ray's direction.
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+	@param	confidence				reference updated with the confidence level for this function.
+	@return							true on successful intersection, false if disjoint. */
+	bool RayBSphere(Transform_Component* transformComponent, BoundingSphere_Component* bSphere, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-		if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f) {
+		if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position + bSphere->m_positionOffset, bSphere->m_radius); distance >= 0.0f) {
 			distanceFromScreen = distance;
 			confidence = 2;
 			return true;
 		}
 		return false;		
 	}
-	/***/
-	bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_world, float& distanceFromScreen, int& confidence) {
+	/** Perform a ray-origin intersection test.
+	@param	transformComponent		the transform component of interest.
+	@param	ray_origin				the mouse ray's origin.
+	@param	ray_direction			the mouse ray's direction.
+	@param	distanceFromScreen		reference updated with the distance of the intersection point to the screen.
+	@param	confidence				reference updated with the confidence level for this function.
+	@return							true on successful intersection, false if disjoint. */
+	bool RayOrigin(Transform_Component* transformComponent, const glm::vec3& ray_origin, const glm::highp_vec3& ray_direction, float& distanceFromScreen, int& confidence) {
 		// Create scaling factor to keep all origins same screen size
 		const auto radius = glm::distance(transformComponent->m_worldTransform.m_position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.033f;
 
 		// Check if the distance is closer than the last entity found, so we can find the 'best' selection
-		if (auto distance = RaySphereIntersection(ray_origin, ray_world, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f) {
+		if (auto distance = RaySphereIntersection(ray_origin, ray_direction, transformComponent->m_worldTransform.m_position, radius); distance >= 0.0f) {
 			distanceFromScreen = distance;
 			confidence = 2;
 			return true;

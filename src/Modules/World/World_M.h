@@ -75,7 +75,8 @@ public:
 	@param	alive				a shared pointer indicating whether the caller is still alive or not.
 	@param	notifier			function to be called on state change. */
 	void addLevelListener(const std::shared_ptr<bool>& alive, const std::function<void(const WorldState&)>& func);
-	/***/
+	/** Generate a universally unique identifier. 
+	@return						a new ID. */
 	static ecsHandle generateUUID();
 	/** Create an entity from a list of input components.
 	@param	components			array of component pointers, whom will be hard copied.

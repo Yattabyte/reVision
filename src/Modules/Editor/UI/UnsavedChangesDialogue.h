@@ -11,7 +11,7 @@
 class Engine;
 class LevelEditor_Module;
 
-/***/
+/** A level editor UI element which prompts the user to save or ignore unsaved changes in a level. */
 class UnsavedChangesDialogue : public ImGUI_Element {
 public:
 	// Public (de)Constructors
@@ -34,7 +34,7 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Executes a stored function awaiting the level's changes to be saved, or ignored. */
 	void executeFunction();
 
 

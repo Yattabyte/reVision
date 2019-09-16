@@ -33,9 +33,9 @@ public:
 
 private:
 	// Private Methods
-	/***/
+	/** Tick the main dialogue, rendering it and performing all logic. */
 	void tickMainDialogue();
-	/***/
+	/** Tick the delete dialogue, rendering it and performing all logic. */
 	void tickDeleteDialogue();
 
 
