@@ -28,11 +28,6 @@ public:
 	virtual void tick(const float& deltaTime) override;
 
 
-	// Public Methods
-	/** Trigger the dialogue for saving a level. */
-	void startDialogue();
-
-
 private:
 	// Private Methods
 	/** Populate the level dialogue with an optional sub-directory.
@@ -51,7 +46,7 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_popupOpen = false, m_paused = false;
+	bool m_paused = false;
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
 		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";

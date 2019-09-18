@@ -41,7 +41,6 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_popupOpen = false;
 	std::function<void()> m_func;
 };
 

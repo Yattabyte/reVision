@@ -14,6 +14,9 @@
 
 /** UI element representing an ImGUI element. */
 struct ImGUI_Element {
+	bool m_open = true;
+	void open() { m_open = true; }
+	void close() { m_open = false; }
 	virtual void tick(const float & deltaTime) {};
 };
 

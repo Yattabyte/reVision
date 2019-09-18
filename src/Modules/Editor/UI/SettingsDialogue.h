@@ -25,11 +25,6 @@ public:
 	virtual void tick(const float& deltaTime) override;
 
 
-	// Public Methods
-	/** Trigger the dialogue for configuring the level editor. */
-	void startDialogue();
-
-
 private:
 	// Private Methods
 	/** Tick the main dialogue, rendering it and performing all logic. */
@@ -39,7 +34,6 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_popupOpen = false;
 };
 
 #endif // SETTINGSDIALOGUE_H

@@ -9,6 +9,7 @@
 CameraController::CameraController(Engine * engine)
 	: m_engine(engine)
 {
+	m_open = true;
 }
 
 void CameraController::tick(const float & deltaTime)

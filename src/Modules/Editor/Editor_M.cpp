@@ -1,14 +1,7 @@
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/Editor/UI/Editor_Interface.h"
-#include "Modules/Editor/UI/CameraController.h"
-#include "Modules/Editor/UI/RotationIndicator.h"
-#include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
-#include "Modules/Editor/UI/Inspector.h"
 #include "Modules/Editor/UI/RecoverDialogue.h"
-#include "Modules/Editor/UI/OpenDialogue.h"
-#include "Modules/Editor/UI/SaveDialogue.h"
-#include "Modules/Editor/UI/SettingsDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
@@ -175,7 +168,8 @@ void LevelEditor_Module::showEditor()
 	for (const auto& item : std::filesystem::recursive_directory_iterator(Engine::Get_Current_Dir() + "\\Maps\\")) {
 		const auto& path = item.path();
 		if (path.has_extension() && path.extension().string() == ".autosave") {
-			m_editorInterface->m_uiRecoverDialogue->startDialogue(path);
+			std::dynamic_pointer_cast<RecoverDialogue>(m_editorInterface->m_uiRecoverDialogue)->setPath(path);
+			m_editorInterface->m_uiRecoverDialogue->open();
 			break;
 		}
 	}
@@ -183,7 +177,7 @@ void LevelEditor_Module::showEditor()
 
 void LevelEditor_Module::exit()
 {
-	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() { 
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_engine->goToMainMenu();
 		m_currentLevelName = "My Map.bmap";
 		m_unsavedChanges = false;
@@ -205,7 +199,7 @@ std::string LevelEditor_Module::getMapName() const
 
 void LevelEditor_Module::newLevel()
 {
-	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
 		m_engine->getModule_World().unloadWorld();
 		m_currentLevelName = "My Map.bmap";
 
@@ -229,8 +223,8 @@ void LevelEditor_Module::openLevel(const std::string& name)
 
 void LevelEditor_Module::openLevelDialogue()
 {
-	m_editorInterface->m_uiUnsavedDialogue->tryPrompt([&]() {
-		m_editorInterface->m_uiOpenDialogue->startDialogue();
+	std::dynamic_pointer_cast<UnsavedChangesDialogue>(m_editorInterface->m_uiUnsavedDialogue)->tryPrompt([&]() {
+		m_editorInterface->m_uiOpenDialogue->open();
 	});
 }
 
@@ -264,12 +258,12 @@ void LevelEditor_Module::saveLevel()
 
 void LevelEditor_Module::saveLevelDialogue()
 {
-	m_editorInterface->m_uiSaveDialogue->startDialogue();
+	m_editorInterface->m_uiSaveDialogue->open();
 }
 
 void LevelEditor_Module::openSettingsDialogue()
 {
-	m_editorInterface->m_uiSettingsDialogue->startDialogue();
+	m_editorInterface->m_uiSettingsDialogue->open();
 }
 
 bool LevelEditor_Module::canUndo() const
@@ -594,7 +588,7 @@ void LevelEditor_Module::ungroupSelection()
 
 void LevelEditor_Module::makePrefab()
 {
-	m_editorInterface->m_uiPrefabs->makePrefab(getSelection());
+	std::dynamic_pointer_cast<Prefabs>(m_editorInterface->m_uiPrefabs)->makePrefab(getSelection());
 }
 
 void LevelEditor_Module::cutSelection()

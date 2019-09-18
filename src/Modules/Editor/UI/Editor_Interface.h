@@ -11,16 +11,6 @@
 // Forward Declarations
 class Engine;
 class LevelEditor_Module;
-class CameraController;
-class TitleBar;
-class Prefabs;
-class Inspector;
-class RotationIndicator;
-class RecoverDialogue;
-class OpenDialogue;
-class SaveDialogue;
-class UnsavedChangesDialogue;
-class SettingsDialogue;
 
 /** A top-level UI element representing the entire level editor's GUI. */
 class Editor_Interface : public ImGUI_Element {
@@ -39,16 +29,17 @@ public:
 
 
 	// Public Attributes
-	std::shared_ptr<CameraController> m_uiCamController;
-	std::shared_ptr<TitleBar> m_uiTitlebar;
-	std::shared_ptr<Prefabs> m_uiPrefabs;
-	std::shared_ptr<Inspector> m_uiInspector;
-	std::shared_ptr<RotationIndicator> m_uiRotIndicator;
-	std::shared_ptr<RecoverDialogue> m_uiRecoverDialogue;
-	std::shared_ptr<OpenDialogue> m_uiOpenDialogue;
-	std::shared_ptr<SaveDialogue> m_uiSaveDialogue;
-	std::shared_ptr<UnsavedChangesDialogue> m_uiUnsavedDialogue;
-	std::shared_ptr<SettingsDialogue> m_uiSettingsDialogue;
+	std::shared_ptr<ImGUI_Element> 
+		m_uiCamController,
+		m_uiTitlebar,
+		m_uiPrefabs,
+		m_uiInspector,
+		m_uiRotIndicator,
+		m_uiRecoverDialogue,
+		m_uiOpenDialogue,
+		m_uiSaveDialogue, 
+		m_uiUnsavedDialogue, 
+		m_uiSettingsDialogue;
 
 
 private: 

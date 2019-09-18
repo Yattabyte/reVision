@@ -27,8 +27,9 @@ public:
 
 
 	// Public Methods
-	/** Trigger the dialogue for opening a level. */
-	void startDialogue(const std::filesystem::path& path);
+	/** Set the recovered file path. 
+	@param	path		the recovered file path*/
+	void setPath(const std::filesystem::path& path);
 
 
 private:
@@ -42,7 +43,6 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_popupOpen = false;
 	std::filesystem::path m_recoveredPath;
 };
 

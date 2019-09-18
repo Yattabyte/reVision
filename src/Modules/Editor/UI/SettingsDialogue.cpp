@@ -7,6 +7,7 @@
 SettingsDialogue::SettingsDialogue(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
+	m_open = true;
 }
 
 void SettingsDialogue::tick(const float& deltaTime)
@@ -14,16 +15,11 @@ void SettingsDialogue::tick(const float& deltaTime)
 	tickMainDialogue();
 }
 
-void SettingsDialogue::startDialogue()
-{
-	m_popupOpen = true;
-}
-
 void SettingsDialogue::tickMainDialogue()
 {
-	if (m_popupOpen) {
+	if (m_open) {
 		ImGui::SetNextWindowSize({ 400, 600 }, ImGuiCond_Appearing);
-		if (ImGui::Begin("Preferences", &m_popupOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Header
 			ImGui::Text("Configurable level editor settings:");
 			ImGui::Spacing();
@@ -97,13 +93,7 @@ void SettingsDialogue::tickMainDialogue()
 					ImGui::Text(description.c_str());
 					ImGui::EndTooltip();
 				}
-			}
-
-			// Display a close button
-			ImGui::SetItemDefaultFocus();
-			if (ImGui::Button("Close", { 100, 20 })) {
-				m_popupOpen = false;
-			}
+			}	
 		}
 		ImGui::End();
 	}

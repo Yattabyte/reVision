@@ -66,8 +66,8 @@ void Editor_Interface::tick(const float & deltaTime)
 	ImGui::End();
 
 	// Process all UI elements
-	const std::shared_ptr<ImGUI_Element> elements[] = {
-		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiSettingsDialogue
+	const auto elements = {
+		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiSettingsDialogue
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);

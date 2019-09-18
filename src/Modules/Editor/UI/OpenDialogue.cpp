@@ -12,6 +12,7 @@
 OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
+	m_open = false;
 	m_iconFile = Shared_Texture(engine, "Editor//iconFile.png");
 	m_iconFolder = Shared_Texture(engine, "Editor//iconFolder.png");
 	m_iconBack = Shared_Texture(engine, "Editor//iconBack.png");
@@ -21,11 +22,6 @@ OpenDialogue::OpenDialogue(Engine* engine, LevelEditor_Module* editor)
 void OpenDialogue::tick(const float& deltaTime)
 {
 	tickMainDialogue();
-}
-
-void OpenDialogue::startDialogue()
-{
-	m_popupOpen = true;
 }
 
 void OpenDialogue::populateLevels(const std::string& directory)
@@ -85,10 +81,10 @@ void OpenDialogue::tickMainDialogue()
 {
 	static bool freshlyOpened = true; // flag used for operations that should happen only once-per-opening
 	const auto title = "Open Level";
-	if (m_popupOpen) 
+	if (m_open)
 		ImGui::OpenPopup(title);	
 	ImGui::SetNextWindowSize({ 600, 500 }, ImGuiCond_Appearing);
-	if (ImGui::BeginPopupModal(title, &m_popupOpen, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
+	if (ImGui::BeginPopupModal(title, &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		enum DialogueOptions {
 			none,
 			use,
@@ -175,7 +171,7 @@ void OpenDialogue::tickMainDialogue()
 
 		// Display a cancel button
 		if (ImGui::Button("Cancel", { 100, 20 })) {
-			m_popupOpen = false;
+			m_open = false;
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::SetItemDefaultFocus();
@@ -190,7 +186,7 @@ void OpenDialogue::tickMainDialogue()
 			else {
 				m_editor->openLevel(selectedLevel.path);
 				m_selected = -1;
-				m_popupOpen = false;
+				m_open = false;
 			}
 		}
 

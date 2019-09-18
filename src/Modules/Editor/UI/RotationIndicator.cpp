@@ -18,6 +18,8 @@ RotationIndicator::~RotationIndicator()
 RotationIndicator::RotationIndicator(Engine * engine)
 	: m_engine(engine)
 {
+	m_open = true;
+
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
@@ -59,7 +61,7 @@ RotationIndicator::RotationIndicator(Engine * engine)
 
 void RotationIndicator::tick(const float & deltaTime)
 {
-	if (m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
+	if (m_open && m_3dIndicator->existsYet() && m_colorPalette->existsYet() && m_shader->existsYet()) {
 		// Set up state
 		m_shader->bind();
 		m_3dIndicator->bind();
@@ -91,11 +93,11 @@ void RotationIndicator::tick(const float & deltaTime)
 		glDisable(GL_DEPTH_TEST);
 		glViewport(0, 0, m_renderSize.x, m_renderSize.y);
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-	}
 
-	ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
-	if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
-		ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
+		if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
+			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
+		}
+		ImGui::End();
 	}
-	ImGui::End();
 }

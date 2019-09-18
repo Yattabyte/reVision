@@ -7,6 +7,8 @@
 TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
+	m_open = true;
+
 	// Preferences
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
@@ -36,82 +38,84 @@ TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 
 void TitleBar::tick(const float & deltaTime)
 {
-	constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = NULL, bool* selected = NULL, const bool& enabled = true) -> bool{
-		GLuint icon = iconTexture->existsYet() ? iconTexture->m_glTexID : 0;
-		if (icon != 0u) {
-			ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
-			ImGui::SameLine();
-		}
-		return ImGui::MenuItem(string, shortcut, selected, enabled);
-	};
-	if (ImGui::BeginMainMenuBar()) {
-		if (ImGui::BeginMenu("File")) {
-			if (BeginMenuWIcon("New Level", m_iconNew, "CTRL+N")) { m_editor->newLevel(); }
-			ImGui::Separator();
-			if (BeginMenuWIcon("Open Level", m_iconOpen, "CTRL+O")) { m_editor->openLevelDialogue(); }
-			if (BeginMenuWIcon("Open Recent", m_iconRecent, 0, false)) {
+	if (m_open) {
+		constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = NULL, bool* selected = NULL, const bool& enabled = true) -> bool {
+			GLuint icon = iconTexture->existsYet() ? iconTexture->m_glTexID : 0;
+			if (icon != 0u) {
+				ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
+				ImGui::SameLine();
+			}
+			return ImGui::MenuItem(string, shortcut, selected, enabled);
+		};
+		if (ImGui::BeginMainMenuBar()) {
+			if (ImGui::BeginMenu("File")) {
+				if (BeginMenuWIcon("New Level", m_iconNew, "CTRL+N")) { m_editor->newLevel(); }
+				ImGui::Separator();
+				if (BeginMenuWIcon("Open Level", m_iconOpen, "CTRL+O")) { m_editor->openLevelDialogue(); }
+				if (BeginMenuWIcon("Open Recent", m_iconRecent, 0, false)) {
+					ImGui::EndMenu();
+				}
+				ImGui::Separator();
+				if (BeginMenuWIcon("Save Level", m_iconSave, "CTRL+S")) { m_editor->saveLevel(); }
+				if (BeginMenuWIcon("Save As", m_iconSaveAs)) { m_editor->saveLevelDialogue(); }
+				ImGui::Separator();
+				if (BeginMenuWIcon("Exit", m_iconExit, "ALT+F4")) { m_editor->exit(); }
 				ImGui::EndMenu();
 			}
-			ImGui::Separator();
-			if (BeginMenuWIcon("Save Level", m_iconSave, "CTRL+S")) { m_editor->saveLevel(); }
-			if (BeginMenuWIcon("Save As", m_iconSaveAs)) { m_editor->saveLevelDialogue(); }
-			ImGui::Separator();
-			if (BeginMenuWIcon("Exit", m_iconExit, "ALT+F4")) { m_editor->exit(); }
-			ImGui::EndMenu();
+			if (ImGui::BeginMenu("Edit")) {
+				if (BeginMenuWIcon("Undo", m_iconUndo, "CTRL+Z", false, m_editor->canUndo())) { m_editor->undo(); }
+				if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", false, m_editor->canRedo())) { m_editor->redo(); }
+				ImGui::Separator();
+				if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor->selectAll(); }
+				const bool hasSelection = m_editor->getSelection().size() ? true : false;
+				if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor->clearSelection(); }
+				const bool canGroup = m_editor->getSelection().size() > 1 ? true : false;
+				if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor->groupSelection(); }
+				if (ImGui::MenuItem("Make Prefab", nullptr, hasSelection)) { m_editor->makePrefab(); }
+				ImGui::Separator();
+				if (BeginMenuWIcon("Cut", m_iconCut, "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
+				if (BeginMenuWIcon("Copy", m_iconCopy, "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
+				const bool canPaste = m_editor->hasCopy();
+				if (BeginMenuWIcon("Paste", m_iconPaste, "CTRL+V", nullptr, canPaste)) { m_editor->paste(); }
+				ImGui::Separator();
+				if (BeginMenuWIcon("Delete", m_iconDelete, "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
+				ImGui::EndMenu();
+			}
+			if (ImGui::BeginMenu("Options")) {
+				if (BeginMenuWIcon("Settings", m_iconSettings)) { m_editor->openSettingsDialogue(); }
+				ImGui::EndMenu();
+			}
+			ImGui::EndMainMenuBar();
 		}
-		if (ImGui::BeginMenu("Edit")) {
-			if (BeginMenuWIcon("Undo", m_iconUndo, "CTRL+Z", false, m_editor->canUndo())) { m_editor->undo(); }
-			if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", false, m_editor->canRedo())) { m_editor->redo(); }
-			ImGui::Separator();
-			if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor->selectAll(); }
-			const bool hasSelection = m_editor->getSelection().size() ? true : false;
-			if (ImGui::MenuItem("Clear Selection", "CTRL+D", nullptr, hasSelection)) { m_editor->clearSelection(); }
-			const bool canGroup = m_editor->getSelection().size() > 1 ? true : false;
-			if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor->groupSelection(); }
-			if (ImGui::MenuItem("Make Prefab", nullptr, hasSelection)) { m_editor->makePrefab(); }
-			ImGui::Separator();
-			if (BeginMenuWIcon("Cut", m_iconCut, "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
-			if (BeginMenuWIcon("Copy", m_iconCopy, "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
-			const bool canPaste = m_editor->hasCopy();
-			if (BeginMenuWIcon("Paste", m_iconPaste, "CTRL+V", nullptr, canPaste)) { m_editor->paste(); }
-			ImGui::Separator();
-			if (BeginMenuWIcon("Delete", m_iconDelete, "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
-			ImGui::EndMenu();
-		}
-		if (ImGui::BeginMenu("Options")) {
-			if (BeginMenuWIcon("Settings", m_iconSettings)) { m_editor->openSettingsDialogue(); }
-			ImGui::EndMenu();
-		}
-		ImGui::EndMainMenuBar();
-	}
 
-	// Check keyboard input
-	const auto& io = ImGui::GetIO();
-	const auto pressedKey = [&](const auto& c) -> bool {
-		return (io.KeyCtrl && ImGui::IsKeyPressed(c));
-	};
-	if (pressedKey('N'))
-		m_editor->newLevel();
-	if (pressedKey('O'))
-		m_editor->openLevelDialogue();
-	if (pressedKey('S'))
-		m_editor->saveLevel();
-	if (pressedKey('Z'))
-		m_editor->undo();
-	if (pressedKey('Y'))
-		m_editor->redo();
-	if (pressedKey('A'))
-		m_editor->selectAll();
-	if (pressedKey('D'))
-		m_editor->clearSelection();
-	if (pressedKey('G'))
-		m_editor->groupSelection();
-	if (pressedKey('X'))
-		m_editor->cutSelection();
-	if (pressedKey('C'))
-		m_editor->copySelection();
-	if (pressedKey('V'))
-		m_editor->paste();
-	if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
-		m_editor->deleteSelection();
+		// Check keyboard input
+		const auto& io = ImGui::GetIO();
+		const auto pressedKey = [&](const auto& c) -> bool {
+			return (io.KeyCtrl && ImGui::IsKeyPressed(c));
+		};
+		if (pressedKey('N'))
+			m_editor->newLevel();
+		if (pressedKey('O'))
+			m_editor->openLevelDialogue();
+		if (pressedKey('S'))
+			m_editor->saveLevel();
+		if (pressedKey('Z'))
+			m_editor->undo();
+		if (pressedKey('Y'))
+			m_editor->redo();
+		if (pressedKey('A'))
+			m_editor->selectAll();
+		if (pressedKey('D'))
+			m_editor->clearSelection();
+		if (pressedKey('G'))
+			m_editor->groupSelection();
+		if (pressedKey('X'))
+			m_editor->cutSelection();
+		if (pressedKey('C'))
+			m_editor->copySelection();
+		if (pressedKey('V'))
+			m_editor->paste();
+		if (ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+			m_editor->deleteSelection();
+	}
 }
