@@ -66,6 +66,7 @@ public:
 		E_AUTOSAVE_INTERVAL,
 		E_UNDO_STACKSIZE,
 		E_GIZMO_SCALE,
+		E_GRID_SNAP,
 	};
 
 
@@ -109,6 +110,7 @@ public:
 			"E_AUTOSAVE_INTERVAL",
 			"E_UNDO_STACKSIZE",
 			"E_GIZMO_SCALE",
+			"E_GRID_SNAP",
 		};
 		return preferenceStrings;
 	};

@@ -47,13 +47,13 @@ void SettingsDialogue::tickMainDialogue()
 				static float floatStackSize = 500.0f;
 				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_UNDO_STACKSIZE, floatStackSize);
 				static int intStackSize = int(floatStackSize);
-				if (ImGui::DragInt("Max Undo/Redo", &intStackSize)) {
+				if (ImGui::DragInt("Max Undo/Redo", &intStackSize, 1.0f, 0, 1000, "%d Actions")) {
 					intStackSize = std::max(1, intStackSize);
 					m_engine->getPreferenceState().setValue(PreferenceState::E_UNDO_STACKSIZE, float(intStackSize));
 				}
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
-					const auto description = "Save a list of the previous " + std::to_string(intStackSize) + "undo-able actions.";
+					const auto description = "Save a list of the previous " + std::to_string(intStackSize) + " undo-able actions.";
 					ImGui::Text(description.c_str());
 					ImGui::EndTooltip();
 				}
@@ -68,6 +68,19 @@ void SettingsDialogue::tickMainDialogue()
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
 					const auto description = "Set the screen-size scale to " + std::to_string(gizmoScale) + " for level editor gizmos.";
+					ImGui::Text(description.c_str());
+					ImGui::EndTooltip();
+				}
+
+				static float gridSnap = 1.0f;
+				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_GRID_SNAP, gridSnap);
+				if (ImGui::DragFloat("Grid Snap", &gridSnap, 1, 0, 1000.0f, "%.3f Units")) {
+					gridSnap = std::clamp(gridSnap, 0.0f, 1000.0f);
+					m_engine->getPreferenceState().setValue(PreferenceState::E_GRID_SNAP, gridSnap);
+				}
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					const auto description = "Snap object to a grid of " + std::to_string(gridSnap) + " units.\r\nNot retroactive.";
 					ImGui::Text(description.c_str());
 					ImGui::EndTooltip();
 				}
