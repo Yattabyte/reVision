@@ -7,7 +7,7 @@
 #include "Modules/World/ECS/ecsSystem.h"
 #include "Modules/UI/UI_M.h"
 #include "Utilities/Transform.h"
-#include <stack>
+#include <deque>
 
 
 // Forward Declarations
@@ -54,6 +54,8 @@ public:
 	void saveLevel();
 	/** Display the 'save level' dialogue for choosing a level to save. */
 	void saveLevelDialogue();
+	/** Display the 'settings' dialogue for the level editor. */
+	void openSettingsDialogue();
 	/** Retrieve if we have any undo-able actions. */
 	bool canUndo() const;
 	/** Retrieve if we have any redo-able actions. */
@@ -140,7 +142,7 @@ public:
 private:
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
-	float m_autoSaveCounter = 0.0f;
+	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;
@@ -149,7 +151,8 @@ private:
 	glm::ivec2 m_renderSize = glm::ivec2(1);
 	std::vector<char> m_copiedData;
 	ECSSystemList m_systems;
-	std::stack<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
+	std::deque<std::shared_ptr<Editor_Command>> m_undoStack, m_redoStack;
+	int m_maxUndo = 500.0f;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

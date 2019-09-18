@@ -20,6 +20,7 @@ class RecoverDialogue;
 class OpenDialogue;
 class SaveDialogue;
 class UnsavedChangesDialogue;
+class SettingsDialogue;
 
 /** A top-level UI element representing the entire level editor's GUI. */
 class Editor_Interface : public ImGUI_Element {
@@ -47,6 +48,7 @@ public:
 	std::shared_ptr<OpenDialogue> m_uiOpenDialogue;
 	std::shared_ptr<SaveDialogue> m_uiSaveDialogue;
 	std::shared_ptr<UnsavedChangesDialogue> m_uiUnsavedDialogue;
+	std::shared_ptr<SettingsDialogue> m_uiSettingsDialogue;
 
 
 private: 

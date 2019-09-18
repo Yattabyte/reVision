@@ -16,9 +16,9 @@ class LevelEditor_Module;
 class OpenDialogue : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/** Destroy this level dialogue. */
+	/** Destroy this level opening dialogue. */
 	inline ~OpenDialogue() = default;
-	/** Construct a level diaglogue.
+	/** Construct a level opening diaglogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	OpenDialogue(Engine* engine, LevelEditor_Module* editor);

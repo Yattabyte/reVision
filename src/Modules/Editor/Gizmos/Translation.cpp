@@ -38,6 +38,10 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 	});
+	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
+	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
+		m_renderScale = f;
+	});
 
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
@@ -82,7 +86,7 @@ void Translation_Gizmo::render(const float& deltaTime)
 		const auto& pMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->pMatrix;
 		const auto& vMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		const auto trans = glm::translate(glm::mat4(1.0f), position);
-		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f));
+		const auto mScale = glm::scale(glm::mat4(1.0f), glm::vec3(glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale));
 		const auto aScale = glm::scale(glm::mat4(1.0f), glm::vec3(m_engine->getModule_Graphics().getClientCamera()->get()->FarPlane * 2.0f));
 
 		// Render Gizmo Model
@@ -142,7 +146,7 @@ void Translation_Gizmo::checkMouseHover()
 		dir.z > 0 ? 1 : -1
 	);*/
 
-	const auto scalingFactor = m_direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * 0.02f;
+	const auto scalingFactor = m_direction * glm::distance(position, m_engine->getModule_Graphics().getClientCamera()->get()->EyePosition) * m_renderScale;
 	const auto mMatrix = glm::translate(glm::mat4(1.0f), position);
 	glm::vec3 arrowAxes_min[3], arrowAxes_max[3], doubleAxes_min[3], doubleAxes_max[3], plane_normals[3];
 	arrowAxes_min[0] = glm::vec3(2, -0.5, -0.5) * scalingFactor;

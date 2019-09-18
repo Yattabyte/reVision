@@ -7,6 +7,7 @@
 TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
+	// Preferences
 	auto & preferences = engine->getPreferenceState();
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_WIDTH, m_renderSize.x);
 	preferences.getOrSetValue(PreferenceState::C_WINDOW_HEIGHT, m_renderSize.y);
@@ -16,28 +17,51 @@ TitleBar::TitleBar(Engine * engine, LevelEditor_Module * editor)
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float &f) {
 		m_renderSize.y = (int)f;
 	});
+
+	// Assets
+	m_iconNew = Shared_Texture(engine, "Editor//iconNew.png");
+	m_iconOpen = Shared_Texture(engine, "Editor//iconOpen.png");
+	m_iconRecent = Shared_Texture(engine, "Editor//iconOpenRecent.png");
+	m_iconSave = Shared_Texture(engine, "Editor//iconSave.png");
+	m_iconSaveAs = Shared_Texture(engine, "Editor//iconSaveAs.png");
+	m_iconExit = Shared_Texture(engine, "Editor//iconQuit.png");
+	m_iconUndo = Shared_Texture(engine, "Editor//iconUndo.png");
+	m_iconRedo = Shared_Texture(engine, "Editor//iconRedo.png");
+	m_iconCut = Shared_Texture(engine, "Editor//iconCut.png");
+	m_iconCopy = Shared_Texture(engine, "Editor//iconCopy.png");
+	m_iconPaste = Shared_Texture(engine, "Editor//iconPaste.png");
+	m_iconDelete = Shared_Texture(engine, "Editor//iconDelete.png");
+	m_iconSettings = Shared_Texture(engine, "Editor//iconOptions.png");
 }
 
 void TitleBar::tick(const float & deltaTime)
 {
+	constexpr static auto BeginMenuWIcon = [](const char* string, const Shared_Texture& iconTexture, const char* shortcut = NULL, bool* selected = NULL, const bool& enabled = true) -> bool{
+		GLuint icon = iconTexture->existsYet() ? iconTexture->m_glTexID : 0;
+		if (icon != 0u) {
+			ImGui::Image((ImTextureID)static_cast<uintptr_t>(icon), ImVec2(15, 15), { 0.0f, 1.0f }, { 1.0f, 0.0f });
+			ImGui::SameLine();
+		}
+		return ImGui::MenuItem(string, shortcut, selected, enabled);
+	};
 	if (ImGui::BeginMainMenuBar()) {
 		if (ImGui::BeginMenu("File")) {
-			if (ImGui::MenuItem("New Level", "CTRL+N")) { m_editor->newLevel(); }
+			if (BeginMenuWIcon("New Level", m_iconNew, "CTRL+N")) { m_editor->newLevel(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Open Level", "CTRL+O")) { m_editor->openLevelDialogue(); }
-			if (ImGui::BeginMenu("Open Recent", false)) {
+			if (BeginMenuWIcon("Open Level", m_iconOpen, "CTRL+O")) { m_editor->openLevelDialogue(); }
+			if (BeginMenuWIcon("Open Recent", m_iconRecent, 0, false)) {
 				ImGui::EndMenu();
 			}
 			ImGui::Separator();
-			if (ImGui::MenuItem("Save Level", "CTRL+S")) { m_editor->saveLevel(); }
-			if (ImGui::MenuItem("Save As")) { m_editor->saveLevelDialogue(); }
+			if (BeginMenuWIcon("Save Level", m_iconSave, "CTRL+S")) { m_editor->saveLevel(); }
+			if (BeginMenuWIcon("Save As", m_iconSaveAs)) { m_editor->saveLevelDialogue(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Exit", "ALT+F4")) { m_editor->exit(); }
+			if (BeginMenuWIcon("Exit", m_iconExit, "ALT+F4")) { m_editor->exit(); }
 			ImGui::EndMenu();
 		}
 		if (ImGui::BeginMenu("Edit")) {
-			if (ImGui::MenuItem("Undo", "CTRL+Z", false, m_editor->canUndo())) { m_editor->undo(); }
-			if (ImGui::MenuItem("Redo", "CTRL+Y", false, m_editor->canRedo())) { m_editor->redo(); }
+			if (BeginMenuWIcon("Undo", m_iconUndo, "CTRL+Z", false, m_editor->canUndo())) { m_editor->undo(); }
+			if (BeginMenuWIcon("Redo", m_iconRedo, "CTRL+Y", false, m_editor->canRedo())) { m_editor->redo(); }
 			ImGui::Separator();
 			if (ImGui::MenuItem("Select All", "CTRL+A")) { m_editor->selectAll(); }
 			const bool hasSelection = m_editor->getSelection().size() ? true : false;
@@ -46,33 +70,16 @@ void TitleBar::tick(const float & deltaTime)
 			if (ImGui::MenuItem("Group Selection", "CTRL+G", nullptr, canGroup)) { m_editor->groupSelection(); }
 			if (ImGui::MenuItem("Make Prefab", nullptr, hasSelection)) { m_editor->makePrefab(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Cut", "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
-			if (ImGui::MenuItem("Copy", "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
+			if (BeginMenuWIcon("Cut", m_iconCut, "CTRL+X", nullptr, hasSelection)) { m_editor->cutSelection(); }
+			if (BeginMenuWIcon("Copy", m_iconCopy, "CTRL+C", nullptr, hasSelection)) { m_editor->copySelection(); }
 			const bool canPaste = m_editor->hasCopy();
-			if (ImGui::MenuItem("Paste", "CTRL+V", nullptr, canPaste)) { m_editor->paste(); }
+			if (BeginMenuWIcon("Paste", m_iconPaste, "CTRL+V", nullptr, canPaste)) { m_editor->paste(); }
 			ImGui::Separator();
-			if (ImGui::MenuItem("Delete", "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
+			if (BeginMenuWIcon("Delete", m_iconDelete, "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
 			ImGui::EndMenu();
 		}
-		if (ImGui::BeginMenu("Tools")) {
-			static bool qwee = true;
-			ImGui::Checkbox("Align-to-grid", &qwee);
-			if (qwee) {
-				static float asd = 0.0f;
-				if (ImGui::SliderFloat("Position", &asd, 0.0f, 100.0f)) {
-
-				}
-				if (ImGui::SliderAngle("Rotation", &asd, 0.0f, 100.0f)) {
-
-				}
-				if (ImGui::SliderFloat("Scale", &asd, 0.0f, 100.0f)) {
-
-				}
-			}
-			ImGui::Separator();
-			if (ImGui::MenuItem("Settings")) { 
-
-			}
+		if (ImGui::BeginMenu("Options")) {
+			if (BeginMenuWIcon("Settings", m_iconSettings)) { m_editor->openSettingsDialogue(); }
 			ImGui::EndMenu();
 		}
 		ImGui::EndMainMenuBar();

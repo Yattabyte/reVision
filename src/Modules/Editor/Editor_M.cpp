@@ -8,6 +8,7 @@
 #include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
+#include "Modules/Editor/UI/SettingsDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
 #include "Modules/Editor/Gizmos/Mouse.h"
 #include "Modules/Editor/Systems/ClearSelection_System.h"
@@ -49,6 +50,16 @@ void LevelEditor_Module::initialize(Engine* engine)
 		m_renderSize.y = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
 		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+	});
+	preferences.getOrSetValue(PreferenceState::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
+	preferences.addCallback(PreferenceState::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
+		m_autosaveInterval = f;
+	});
+	float undoStacksize = 500.0f;
+	preferences.getOrSetValue(PreferenceState::E_UNDO_STACKSIZE, undoStacksize);
+	m_maxUndo = int(undoStacksize);
+	preferences.addCallback(PreferenceState::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
+		m_maxUndo = int(f);
 	});
 
 	// GL structures
@@ -102,8 +113,8 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		// Auto-save
 		if (hasUnsavedChanges()) {
 			m_autoSaveCounter += deltaTime;
-			if (m_autoSaveCounter > 10.0f) {
-				m_autoSaveCounter -= 10.0f;
+			if (m_autoSaveCounter > m_autosaveInterval) {
+				m_autoSaveCounter -= m_autosaveInterval;
 				m_engine->getManager_Messages().statement("Autosaving Map...");
 				std::filesystem::path currentPath(m_currentLevelName);
 				currentPath.replace_extension(".autosave");
@@ -256,6 +267,11 @@ void LevelEditor_Module::saveLevelDialogue()
 	m_editorInterface->m_uiSaveDialogue->startDialogue();
 }
 
+void LevelEditor_Module::openSettingsDialogue()
+{
+	m_editorInterface->m_uiSettingsDialogue->startDialogue();
+}
+
 bool LevelEditor_Module::canUndo() const
 {
 	return m_undoStack.size();
@@ -270,11 +286,11 @@ void LevelEditor_Module::undo()
 {
 	if (m_undoStack.size()) {
 		// Undo the the last action
-		m_undoStack.top()->undo();
+		m_undoStack.front()->undo();
 
 		// Move the action onto the redo stack
-		m_redoStack.push(m_undoStack.top());
-		m_undoStack.pop();
+		m_redoStack.push_front(m_undoStack.front());
+		m_undoStack.pop_front();
 
 		// Set unsaved changes all the time
 		m_unsavedChanges = true;
@@ -285,11 +301,11 @@ void LevelEditor_Module::redo()
 {
 	if (m_redoStack.size()) {
 		// Redo the last action
-		m_redoStack.top()->execute();
+		m_redoStack.front()->execute();
 
 		// Push the action onto the undo stack
-		m_undoStack.push(m_redoStack.top());
-		m_redoStack.pop();
+		m_undoStack.push_front(m_redoStack.front());
+		m_redoStack.pop_front();
 
 		// Set unsaved changes unless we have no more redo actions
 		m_unsavedChanges = bool(m_redoStack.size() != 0ull);
@@ -305,7 +321,9 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	command->execute();
 
 	// Add action to the undo stack
-	m_undoStack.push(command);
+	m_undoStack.push_front(command);
+	while (m_undoStack.size() > m_maxUndo)
+		m_undoStack.pop_back();
 	m_unsavedChanges = true;
 }
 

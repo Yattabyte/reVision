@@ -58,6 +58,7 @@ private:
 		Y_AXIS = 0b0000'0010,
 		Z_AXIS = 0b0000'0100,
 	};
+	float m_renderScale = 0.02f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
 	glm::vec3 m_startingPosition = glm::vec3(0.0f), m_prevScale = glm::vec3(0.0f), m_startingOffset = glm::vec3(0.0f), m_axisDelta = glm::vec3(0.0f), m_hoveredEnds[3], m_direction = glm::vec3(1.0f);
 	Shared_Auto_Model m_model;

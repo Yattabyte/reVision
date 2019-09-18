@@ -60,7 +60,12 @@ public:
 		C_SSAO_QUALITY,
 
 		C_SSR,
-		C_FXAA
+		C_FXAA,
+
+		// Editor Options
+		E_AUTOSAVE_INTERVAL,
+		E_UNDO_STACKSIZE,
+		E_GIZMO_SCALE,
 	};
 
 
@@ -98,7 +103,12 @@ public:
 			"C_SSAO_QUALITY",
 
 			"C_SSR",
-			"C_FXAA"
+			"C_FXAA",
+
+			// Editor Options
+			"E_AUTOSAVE_INTERVAL",
+			"E_UNDO_STACKSIZE",
+			"E_GIZMO_SCALE",
 		};
 		return preferenceStrings;
 	};

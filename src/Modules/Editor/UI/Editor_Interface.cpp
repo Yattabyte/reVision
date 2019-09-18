@@ -8,6 +8,7 @@
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
+#include "Modules/Editor/UI/SettingsDialogue.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 #include "GLFW/glfw3.h"
@@ -25,6 +26,7 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
 	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
 	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
+	m_uiSettingsDialogue = std::make_shared<SettingsDialogue>(engine, editor);
 
 	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(engine, "quad");
@@ -65,7 +67,7 @@ void Editor_Interface::tick(const float & deltaTime)
 
 	// Process all UI elements
 	const std::shared_ptr<ImGUI_Element> elements[] = {
-		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue
+		m_uiCamController,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRotIndicator,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiSettingsDialogue
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);

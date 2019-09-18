@@ -3,6 +3,7 @@
 #define TITLEBAR_H
 
 #include "Modules/UI/UI_M.h"
+#include "Assets/Texture.h"
 
 
 // Forward declarations
@@ -30,6 +31,7 @@ private:
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
 	glm::ivec2 m_renderSize = glm::ivec2(1);
+	Shared_Texture m_iconNew, m_iconOpen, m_iconRecent, m_iconSave, m_iconSaveAs, m_iconExit, m_iconUndo, m_iconRedo, m_iconCut, m_iconCopy, m_iconPaste, m_iconDelete, m_iconSettings;
 	std::shared_ptr<bool> m_aliveIndicator = std::make_shared<bool>(true);
 };
 

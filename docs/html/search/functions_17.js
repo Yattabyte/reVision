@@ -95,6 +95,7 @@ var searchData=
   ['_7escaling_5fgizmo',['~Scaling_Gizmo',['../class_scaling___gizmo.html#ac9e0feb4f283b574a299de01609219c1',1,'Scaling_Gizmo']]],
   ['_7escrollbar_5fv',['~Scrollbar_V',['../class_scrollbar___v.html#a5b3d5145d554237c436998d3d37864ea',1,'Scrollbar_V']]],
   ['_7eseparator',['~Separator',['../class_separator.html#a0e38203f41ca3e8053c25d55afaa9c9b',1,'Separator']]],
+  ['_7esettingsdialogue',['~SettingsDialogue',['../class_settings_dialogue.html#a6f98cb2ad6e4bc71b066cdce97cddb45',1,'SettingsDialogue']]],
   ['_7eshader',['~Shader',['../class_shader.html#aff01df87e8a102f270b5b135a295e59d',1,'Shader']]],
   ['_7eshader_5fgeometry',['~Shader_Geometry',['../class_shader___geometry.html#a25f00091ed3134546ad3ad31f1f3a642',1,'Shader_Geometry']]],
   ['_7eshader_5fpkg',['~Shader_Pkg',['../class_shader___pkg.html#a58a1cce9338f0bf73afd8fd81c41d75d',1,'Shader_Pkg']]],

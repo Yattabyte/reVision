@@ -60,6 +60,7 @@ private:
 		Y_AXIS	= 0b0000'0010,
 		Z_AXIS	= 0b0000'0100,
 	};
+	float m_renderScale = 0.02f;
 	unsigned int m_selectedAxes = NONE, m_hoveredAxes = NONE;
 	glm::vec3 m_hoveredPoint = glm::vec3(0.0f), m_hoveredEnds[3], m_startPoint = glm::vec3(0.0f), m_direction = glm::vec3(1.0f);
 	glm::quat m_prevRot = glm::quat(1, 0, 0, 0);

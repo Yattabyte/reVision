@@ -16,9 +16,9 @@ class LevelEditor_Module;
 class SaveDialogue : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/** Destroy this save dialogue. */
+	/** Destroy this level save dialogue. */
 	inline ~SaveDialogue() = default;
-	/** Construct a save diaglogue.
+	/** Construct a level save diaglogue.
 	@param	engine		the currently active engine.
 	@param	editor		the currently active level editor. */
 	SaveDialogue(Engine* engine, LevelEditor_Module* editor);

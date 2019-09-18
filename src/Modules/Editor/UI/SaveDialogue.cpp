@@ -264,8 +264,7 @@ void SaveDialogue::tickMainDialogue()
 		if (option == del)
 			ImGui::OpenPopup("Delete Level");
 		tickDeleteDialogue();
-
-
+		
 		ImGui::EndPopup();
 		freshlyOpened = false;
 	}
