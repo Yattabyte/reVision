@@ -61,10 +61,6 @@ void LevelEditor_Module::initialize(Engine* engine)
 	preferences.addCallback(PreferenceState::E_UNDO_STACKSIZE, m_aliveIndicator, [&](const float& f) {
 		m_maxUndo = int(f);
 	});
-	preferences.getOrSetValue(PreferenceState::E_GRID_SNAP, m_gridSize);
-	preferences.addCallback(PreferenceState::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
-		m_gridSize = f;
-	});
 
 	// GL structures
 	glCreateFramebuffers(1, &m_fboID);
@@ -684,8 +680,7 @@ void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
 			move(m_oldPosition);
 		}
 	};
-	const auto gridSnappedPosition = m_gridSize ? (glm::vec3(glm::ivec3((newPosition + (m_gridSize / 2.0F)) / m_gridSize)) * m_gridSize) : newPosition;
-	doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, this, gridSnappedPosition));
+	doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, this, newPosition));
 }
 
 void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
@@ -768,15 +763,7 @@ void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
 			scale(m_oldScale);
 		}
 	};
-
-	auto gridSnappedScale = m_gridSize ? (glm::vec3(glm::ivec3((newScale + (m_gridSize / 2.0F)) / m_gridSize)) * m_gridSize) : newScale;
-	if (gridSnappedScale.x == 0.0f)
-		gridSnappedScale.x += 0.0001F;
-	if (gridSnappedScale.y == 0.0f)
-		gridSnappedScale.y += 0.0001F;
-	if (gridSnappedScale.z == 0.0f)
-		gridSnappedScale.z += 0.0001F;
-	doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, this, gridSnappedScale));
+	doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, this, newScale));
 }
 
 void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char* name)

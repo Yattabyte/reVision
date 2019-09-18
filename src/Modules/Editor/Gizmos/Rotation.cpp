@@ -47,6 +47,10 @@ Rotation_Gizmo::Rotation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
 	});
+	preferences.getOrSetValue(PreferenceState::E_ANGLE_SNAP, m_angleSnapping);
+	preferences.addCallback(PreferenceState::E_ANGLE_SNAP, m_aliveIndicator, [&](const float& f) {
+		m_angleSnapping = f;
+	});
 
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
@@ -227,16 +231,17 @@ bool Rotation_Gizmo::checkMousePress()
 		const auto endPoint = m_hoveredEnds[index];
 		const auto a = glm::normalize(m_startPoint - position), b = glm::normalize(endPoint - position);
 
-		// Measure the angle between the first point we clicked and the spot we've dragged to
-		const auto angle = glm::orientedAngle(a, b, normals[index]);
-		const auto newQuat = glm::rotate(glm::quat(1, 0, 0, 0), angle, normals[index]);
+		// Measure the angle between the first point we clicked and the spot we've dragged to, then snap to grid
+		const auto angle = glm::degrees(glm::orientedAngle(a, b, normals[index]));
+		const auto gridSnappedAngle = m_angleSnapping ? glm::radians(float(int((angle + (m_angleSnapping / 2.0f)) / m_angleSnapping) * m_angleSnapping)) : angle;
+		const auto newQuat = glm::rotate(glm::quat(1, 0, 0, 0), gridSnappedAngle, normals[index]);
 		if (m_selectedAxes == X_AXIS)
 			m_startingAngle = glm::atan(m_startPoint.z - position.z, m_startPoint.y - position.y);
 		else if (m_selectedAxes == Y_AXIS)
 			m_startingAngle = glm::atan(m_startPoint.x - position.x, m_startPoint.z - position.z);
 		else if (m_selectedAxes == Z_AXIS)
 			m_startingAngle = glm::atan(m_startPoint.y - position.y, m_startPoint.x - position.x);
-		m_deltaAngle = glm::degrees(angle);
+		m_deltaAngle = glm::degrees(gridSnappedAngle);
 
 		// Undo the previous rotation, rotate selection to the current quaternion
 		// Note: editor rotations aren't explicit, they are deltas, as a group of objects could be selected and need to orbit their center point

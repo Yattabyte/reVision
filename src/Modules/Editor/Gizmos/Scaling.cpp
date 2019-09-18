@@ -42,6 +42,10 @@ Scaling_Gizmo::Scaling_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
 	});
+	preferences.getOrSetValue(PreferenceState::E_GRID_SNAP, m_gridSnap);
+	preferences.addCallback(PreferenceState::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
+		m_gridSnap = f;
+	});
 	
 	// Axis Lines
 	const glm::vec3 axisData[] = { glm::vec3(-1,0,0), glm::vec3(1,0,0) };
@@ -288,9 +292,16 @@ bool Scaling_Gizmo::checkMousePress()
 			endingOffset.y = m_hoveredEnds[2].y;
 			endingOffset.z = m_hoveredEnds[2].z;
 		}
-
-		m_transform.m_scale = m_prevScale + (((endingOffset - m_axisDelta) - m_startingPosition) * 2.0f * m_direction);
-		m_editor->scaleSelection(m_transform.m_scale);
+		const auto scale = m_prevScale + (((endingOffset - m_axisDelta) - m_startingPosition) * 2.0f * m_direction);
+		auto gridSnappedScale = m_gridSnap ? (glm::vec3(glm::ivec3((scale + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : scale;
+		if (gridSnappedScale.x == 0.0f)
+			gridSnappedScale.x += 0.0001F;
+		if (gridSnappedScale.y == 0.0f)
+			gridSnappedScale.y += 0.0001F;
+		if (gridSnappedScale.z == 0.0f)
+			gridSnappedScale.z += 0.0001F;
+		m_transform.m_scale = gridSnappedScale;
+		m_editor->scaleSelection(gridSnappedScale);
 	}
 
 	return false;

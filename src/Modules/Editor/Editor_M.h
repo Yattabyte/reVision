@@ -142,7 +142,7 @@ public:
 private:
 	// Private Attributes
 	bool m_active = false, m_unsavedChanges = false;
-	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f, m_gridSize = 1.0f;
+	float m_autoSaveCounter = 0.0f, m_autosaveInterval = 60.0f;
 	std::string m_currentLevelName = "My Map.bmap";
 	std::shared_ptr<Editor_Interface> m_editorInterface;
 	std::shared_ptr<Mouse_Gizmo> m_mouseGizmo;

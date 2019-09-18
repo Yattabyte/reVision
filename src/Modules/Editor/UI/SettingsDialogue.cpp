@@ -80,7 +80,20 @@ void SettingsDialogue::tickMainDialogue()
 				}
 				if (ImGui::IsItemHovered()) {
 					ImGui::BeginTooltip();
-					const auto description = "Snap object to a grid of " + std::to_string(gridSnap) + " units.\r\nNot retroactive.";
+					const auto description = "Snap object translation/scaling to a grid of " + std::to_string(gridSnap) + " units.\r\nNot retroactive.";
+					ImGui::Text(description.c_str());
+					ImGui::EndTooltip();
+				}
+
+				static float angleSnapping = 1.0f;
+				m_engine->getPreferenceState().getOrSetValue(PreferenceState::E_ANGLE_SNAP, angleSnapping);
+				if (ImGui::DragFloat("Angle Snap", &angleSnapping, 1, 0, 360.0f, "%.3f Degrees")) {
+					angleSnapping = std::clamp(angleSnapping, 0.0f, 360.0f);
+					m_engine->getPreferenceState().setValue(PreferenceState::E_ANGLE_SNAP, angleSnapping);
+				}
+				if (ImGui::IsItemHovered()) {
+					ImGui::BeginTooltip();
+					const auto description = "Snap object rotations every " + std::to_string(angleSnapping) + " degrees.\r\nNot retroactive.";
 					ImGui::Text(description.c_str());
 					ImGui::EndTooltip();
 				}

@@ -67,6 +67,7 @@ public:
 		E_UNDO_STACKSIZE,
 		E_GIZMO_SCALE,
 		E_GRID_SNAP,
+		E_ANGLE_SNAP,
 	};
 
 
@@ -111,6 +112,7 @@ public:
 			"E_UNDO_STACKSIZE",
 			"E_GIZMO_SCALE",
 			"E_GRID_SNAP",
+			"E_ANGLE_SNAP",
 		};
 		return preferenceStrings;
 	};

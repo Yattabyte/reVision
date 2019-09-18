@@ -41,6 +41,10 @@ Translation_Gizmo::Translation_Gizmo(Engine* engine, LevelEditor_Module* editor)
 	preferences.getOrSetValue(PreferenceState::E_GIZMO_SCALE, m_renderScale);
 	preferences.addCallback(PreferenceState::E_GIZMO_SCALE, m_aliveIndicator, [&](const float& f) {
 		m_renderScale = f;
+	}); 
+	preferences.getOrSetValue(PreferenceState::E_GRID_SNAP, m_gridSnap);
+	preferences.addCallback(PreferenceState::E_GRID_SNAP, m_aliveIndicator, [&](const float& f) {
+		m_gridSnap = f;
 	});
 
 	// Axis Lines
@@ -287,8 +291,10 @@ bool Translation_Gizmo::checkMousePress()
 			endingOffset.z = m_hoveredEnds[2].z;
 		}
 
-		m_transform.m_position = endingOffset - m_axisDelta;
-		m_editor->moveSelection(m_transform.m_position);
+		const auto position = endingOffset - m_axisDelta;
+		auto gridSnappedScale = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
+		m_transform.m_position = gridSnappedScale;
+		m_editor->moveSelection(gridSnappedScale);
 		return true;
 	}
 
