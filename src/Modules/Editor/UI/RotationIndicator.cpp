@@ -77,13 +77,13 @@ void RotationIndicator::tick(const float & deltaTime)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_fboID);
 
 		// Generate matrices
-		auto pMatrix = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, -10.0f, 10.0f);
+		auto pMatrix = glm::ortho(-5.1f, 5.1f, -5.1f, 5.1f, -10.0f, 10.0f);
 		auto camMatrix = m_engine->getModule_Graphics().getClientCamera()->get()->vMatrix;
 		camMatrix[3][0] = 0.0f;
 		camMatrix[3][1] = 0.0f;
 		camMatrix[3][2] = 0.0f;
 		camMatrix[3][3] = 1.0f;
-		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -6.0f)) * camMatrix;
+		auto vMatrix = glm::translate(glm::mat4(1.0f), glm::vec3(0, 0, -5.0f)) * camMatrix;
 		m_shader->setUniform(0, pMatrix * vMatrix);
 
 		m_indirectIndicator.drawCall();
@@ -95,9 +95,8 @@ void RotationIndicator::tick(const float & deltaTime)
 		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 
 		ImGui::SetNextWindowDockID(ImGui::GetID("LeftDock"), ImGuiCond_FirstUseEver);
-		if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground)) {
-			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });
-		}
+		if (ImGui::Begin("Rotation Indicator", NULL, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_AlwaysAutoResize)) 
+			ImGui::Image((ImTextureID)static_cast<uintptr_t>(m_texID), { 128.0f, 128.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f });		
 		ImGui::End();
 	}
 }

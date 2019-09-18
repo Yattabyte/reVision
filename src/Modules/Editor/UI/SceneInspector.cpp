@@ -1,34 +1,23 @@
-#include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/UI/SceneInspector.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/World/ECS/components.h"
 #include "Engine.h"
 
-// Component Inspectors
-#include "Modules/Editor/Systems/Inspector_Transform_System.h"
-#include "Modules/Editor/Systems/Inspector_Prop_System.h"
-#include "Modules/Editor/Systems/Inspector_LightColor_System.h"
-#include "Modules/Editor/Systems/Inspector_LightRadius_System.h"
-#include "Modules/Editor/Systems/Inspector_LightCutoff_System.h"
 
-
-Inspector::Inspector(Engine* engine, LevelEditor_Module* editor)
+SceneInspector::SceneInspector(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
-	m_inspectorSystems.makeSystem<Inspector_Transform_System>(engine, editor);
-	m_inspectorSystems.makeSystem<Inspector_Prop_System>(engine, editor);
-	m_inspectorSystems.makeSystem<Inspector_LightColor_System>(engine, editor);
-	m_inspectorSystems.makeSystem<Inspector_LightRadius_System>(engine, editor);
-	m_inspectorSystems.makeSystem<Inspector_LightCutoff_System>(engine, editor);
 }
 
-void Inspector::tick(const float& deltaTime)
+void SceneInspector::tick(const float& deltaTime)
 {
 	if (m_open) {
 		auto& world = m_engine->getModule_World();
 		const auto& selectedEntities = m_editor->getSelection();
 		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
-		if (ImGui::Begin("Scene Inspector", &m_open)) {
+		if (ImGui::Begin("Scene Inspector", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
 			filter.Draw("Search");
@@ -221,14 +210,6 @@ void Inspector::tick(const float& deltaTime)
 			}
 			ImGui::PopStyleVar();
 		}
-		ImGui::End();
-		ImGui::SetNextWindowDockID(ImGui::GetID("RightDock"), ImGuiCond_FirstUseEver);
-		if (ImGui::Begin("Entity Inspector", &m_open)) {
-			// Render the selected component attributes that we have widgets for
-			const auto text = std::string("Entities Selected: (" + std::to_string(selectedEntities.size()) + ")");
-			ImGui::Text(text.c_str());
-			world.updateSystems(m_inspectorSystems, deltaTime);
-		}
-		ImGui::End();
+		ImGui::End();		
 	}
 }

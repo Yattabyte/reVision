@@ -134,6 +134,12 @@ public:
 	/** Retrieve if we have any data on the clipboard. 
 	@return					true if clipboard data present, false otherwise. */
 	bool hasCopy() const;
+	/***/
+	void openSceneInspector();
+	/***/
+	void openEntityInspector();
+	/***/
+	void openPrefabs();
 	/** Perform an action following the Command design pattern, executing it and appending it to an undo list. 
 	@param	command			the command to execute and store. */
 	void doReversableAction(const std::shared_ptr<Editor_Command>& command);

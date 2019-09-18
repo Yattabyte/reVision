@@ -158,6 +158,21 @@ bool LevelEditor_Module::hasCopy() const
 	return m_copiedData.size() ? true : false;
 }
 
+void LevelEditor_Module::openSceneInspector()
+{
+	m_editorInterface->m_uiSceneInspector->open();
+}
+
+void LevelEditor_Module::openEntityInspector()
+{
+	m_editorInterface->m_uiEntityInspector->open();
+}
+
+void LevelEditor_Module::openPrefabs()
+{
+	m_editorInterface->m_uiPrefabs->open();
+}
+
 void LevelEditor_Module::showEditor()
 {
 	m_active = true;
@@ -263,7 +278,7 @@ void LevelEditor_Module::saveLevelDialogue()
 
 void LevelEditor_Module::openSettingsDialogue()
 {
-	m_editorInterface->m_uiSettingsDialogue->open();
+	m_editorInterface->m_uiSettings->open();
 }
 
 bool LevelEditor_Module::canUndo() const

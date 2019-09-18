@@ -1,6 +1,6 @@
 #pragma once
-#ifndef INSPECTOR_H
-#define INSPECTOR_H
+#ifndef SCENEINSPECTOR_H
+#define SCENEINSPECTOR_H
 
 #include "Modules/UI/UI_M.h"
 #include "Modules/World/ECS/ecsSystem.h"
@@ -11,16 +11,16 @@
 class Engine;
 class LevelEditor_Module;
 
-/** A level editor UI element responsible for allowing the user to inspect selected entity components. */
-class Inspector : public ImGUI_Element {
+/** A level editor UI element responsible for allowing the user to see all the elements of the active scene. */
+class SceneInspector : public ImGUI_Element {
 public:
 	// Public (de)Constructors
-	/** Destroy this inspector. */
-	inline ~Inspector() = default;
-	/** Construct a component inspector.
+	/** Destroy this scene inspector. */
+	inline ~SceneInspector() = default;
+	/** Construct a scene inspector.
 	@param	engine		the currently active engine.
 	@param	editor		the level editor. */
-	Inspector(Engine * engine, LevelEditor_Module * editor);
+	SceneInspector(Engine * engine, LevelEditor_Module * editor);
 
 
 	// Public Interface Implementation
@@ -31,8 +31,6 @@ private:
 	// Private Attributes
 	Engine * m_engine = nullptr;
 	LevelEditor_Module * m_editor = nullptr;
-	ECSSystemList m_inspectorSystems;
-	std::map<int, size_t> m_selectionCountMap;
 };
 
-#endif // INSPECTOR_H
+#endif // SCENEINSPECTOR_H

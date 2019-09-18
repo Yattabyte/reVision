@@ -34,7 +34,7 @@ void Prefabs::tick(const float& deltaTime)
 			rename
 		} prefabOption = none;
 		// Draw Prefabs window
-		if (ImGui::Begin("Prefabs", &m_open)) {
+		if (ImGui::Begin("Prefabs", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			static ImGuiTextFilter filter;
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 12.0f);
 			filter.Draw("Search");

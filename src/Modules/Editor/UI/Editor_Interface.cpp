@@ -3,12 +3,13 @@
 #include "Modules/Editor/UI/RotationIndicator.h"
 #include "Modules/Editor/UI/TitleBar.h"
 #include "Modules/Editor/UI/Prefabs.h"
-#include "Modules/Editor/UI/Inspector.h"
+#include "Modules/Editor/UI/SceneInspector.h"
+#include "Modules/Editor/UI/EntityInspector.h"
 #include "Modules/Editor/UI/RecoverDialogue.h"
 #include "Modules/Editor/UI/OpenDialogue.h"
 #include "Modules/Editor/UI/SaveDialogue.h"
 #include "Modules/Editor/UI/UnsavedChangesDialogue.h"
-#include "Modules/Editor/UI/SettingsDialogue.h"
+#include "Modules/Editor/UI/Settings.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 #include "GLFW/glfw3.h"
@@ -18,15 +19,16 @@ Editor_Interface::Editor_Interface(Engine * engine, LevelEditor_Module * editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_uiCamController = std::make_shared<CameraController>(m_engine);
+	m_uiRotIndicator = std::make_shared<RotationIndicator>(m_engine);
 	m_uiTitlebar = std::make_shared<TitleBar>(engine, editor);
 	m_uiPrefabs = std::make_shared<Prefabs>(engine, editor);
-	m_uiInspector = std::make_shared<Inspector>(engine, editor);
-	m_uiRotIndicator = std::make_shared<RotationIndicator>(m_engine);
+	m_uiSceneInspector = std::make_shared<SceneInspector>(engine, editor);
+	m_uiEntityInspector = std::make_shared<EntityInspector>(engine, editor);
+	m_uiSettings = std::make_shared<Settings>(engine, editor);
 	m_uiRecoverDialogue = std::make_shared<RecoverDialogue>(engine, editor);
 	m_uiOpenDialogue = std::make_shared<OpenDialogue>(engine, editor);
 	m_uiSaveDialogue = std::make_shared<SaveDialogue>(engine, editor);
 	m_uiUnsavedDialogue = std::make_shared<UnsavedChangesDialogue>(engine, editor);
-	m_uiSettingsDialogue = std::make_shared<SettingsDialogue>(engine, editor);
 
 	m_shader = Shared_Shader(engine, "Editor\\editorCopy");
 	m_shapeQuad = Shared_Auto_Model(engine, "quad");
@@ -56,8 +58,6 @@ void Editor_Interface::tick(const float & deltaTime)
 	ImGui::DockSpace(ImGui::GetID("LeftDock"), ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_PassthruCentralNode);
 	ImGui::End();
 
-	//ImGui::DockSpace(0, { 300.0f, m_renderSize.y - 18.0f }, 0);
-
 	// Container for right side of the screen
 	ImGui::SetNextWindowSize({ 300.0f, m_renderSize.y - 18.0f }, ImGuiCond_Appearing);
 	ImGui::SetNextWindowPos({ m_renderSize.x - 300.0f, 18.0f }, ImGuiCond_Appearing);
@@ -67,7 +67,7 @@ void Editor_Interface::tick(const float & deltaTime)
 
 	// Process all UI elements
 	const auto elements = {
-		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiInspector,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,m_uiSettingsDialogue
+		m_uiCamController,m_uiRotIndicator,m_uiTitlebar,m_uiPrefabs,m_uiSceneInspector,m_uiEntityInspector,m_uiSettings,m_uiRecoverDialogue,m_uiOpenDialogue,m_uiSaveDialogue,m_uiUnsavedDialogue,
 	};
 	for each (auto & element in elements)
 		element->tick(deltaTime);

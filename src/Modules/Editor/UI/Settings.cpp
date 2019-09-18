@@ -1,25 +1,25 @@
-#include "Modules/Editor/UI/SettingsDialogue.h"
+#include "Modules/Editor/UI/Settings.h"
 #include "Modules/Editor/Editor_M.h"
 #include "Modules/UI/dear imgui/imgui.h"
 #include "Engine.h"
 
 
-SettingsDialogue::SettingsDialogue(Engine* engine, LevelEditor_Module* editor)
+Settings::Settings(Engine* engine, LevelEditor_Module* editor)
 	: m_engine(engine), m_editor(editor)
 {
 	m_open = true;
 }
 
-void SettingsDialogue::tick(const float& deltaTime)
+void Settings::tick(const float& deltaTime)
 {
 	tickMainDialogue();
 }
 
-void SettingsDialogue::tickMainDialogue()
+void Settings::tickMainDialogue()
 {
 	if (m_open) {
 		ImGui::SetNextWindowSize({ 400, 600 }, ImGuiCond_Appearing);
-		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_AlwaysAutoResize)) {
+		if (ImGui::Begin("Preferences", &m_open, ImGuiWindowFlags_AlwaysAutoResize)) {
 			// Header
 			ImGui::Text("Configurable level editor settings:");
 			ImGui::Spacing();

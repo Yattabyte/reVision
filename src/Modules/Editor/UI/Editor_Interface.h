@@ -29,17 +29,18 @@ public:
 
 
 	// Public Attributes
-	std::shared_ptr<ImGUI_Element> 
+	std::shared_ptr<ImGUI_Element>
 		m_uiCamController,
+		m_uiRotIndicator,
 		m_uiTitlebar,
 		m_uiPrefabs,
-		m_uiInspector,
-		m_uiRotIndicator,
+		m_uiSceneInspector,
+		m_uiEntityInspector,
+		m_uiSettings,
 		m_uiRecoverDialogue,
 		m_uiOpenDialogue,
-		m_uiSaveDialogue, 
-		m_uiUnsavedDialogue, 
-		m_uiSettingsDialogue;
+		m_uiSaveDialogue,
+		m_uiUnsavedDialogue;
 
 
 private: 

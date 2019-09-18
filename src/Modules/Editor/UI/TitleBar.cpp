@@ -81,7 +81,11 @@ void TitleBar::tick(const float & deltaTime)
 				if (BeginMenuWIcon("Delete", m_iconDelete, "DEL", nullptr, hasSelection)) { m_editor->deleteSelection(); }
 				ImGui::EndMenu();
 			}
-			if (ImGui::BeginMenu("Options")) {
+			if (ImGui::BeginMenu("Tools")) {
+				if (ImGui::MenuItem("Scene Inspector")) { m_editor->openSceneInspector(); }
+				if (ImGui::MenuItem("Entity Inspector")) { m_editor->openEntityInspector(); }
+				if (ImGui::MenuItem("Prefabs")) { m_editor->openPrefabs(); }
+				ImGui::Separator();
 				if (BeginMenuWIcon("Settings", m_iconSettings)) { m_editor->openSettingsDialogue(); }
 				ImGui::EndMenu();
 			}
