@@ -343,8 +343,8 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 void LevelEditor_Module::clearSelection()
 {
 	struct Clear_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
+		Engine* const m_engine;
+		LevelEditor_Module* const m_editor;
 		const std::vector<ecsHandle> m_uuids_old;
 		Clear_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids_old(m_editor->getSelection()) {}
@@ -414,6 +414,11 @@ void LevelEditor_Module::clearSelection()
 			newTransform.update();
 			m_editor->m_mouseGizmo->setTransform(newTransform);
 		}
+		virtual bool join(Editor_Command* const other) {
+			if (auto newCommand = dynamic_cast<Clear_Selection_Command*>(other))
+				return true;	
+			return false;
+		}
 	};
 
 	if (getSelection().size())
@@ -428,9 +433,9 @@ void LevelEditor_Module::selectAll()
 void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 {
 	struct Set_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
-		const std::vector<ecsHandle> m_uuids_new, m_uuids_old;
+		Engine* const m_engine;
+		LevelEditor_Module* const m_editor;
+		std::vector<ecsHandle> m_uuids_new, m_uuids_old;
 		Set_Selection_Command(Engine* engine, LevelEditor_Module* editor, const std::vector<ecsHandle>& newSelection)
 			: m_engine(engine), m_editor(editor), m_uuids_new(newSelection), m_uuids_old(m_editor->getSelection()) {}
 		void switchSelection(const std::vector<ecsHandle>& uuids) {
@@ -469,6 +474,15 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 		virtual void undo() {
 			switchSelection(m_uuids_old);
 		}
+		virtual bool join(Editor_Command* const other) {
+			if (auto newCommand = dynamic_cast<Set_Selection_Command*>(other)) {
+				// Join the 2 'new' sets together, make sure it's unique
+				m_uuids_new.insert(m_uuids_new.begin(), newCommand->m_uuids_new.cbegin(), newCommand->m_uuids_new.cend());
+				std::unique(m_uuids_new.begin(), m_uuids_new.end());
+				return true;				
+			}
+			return false;
+		}
 	};
 
 	if (handles.size())
@@ -483,9 +497,9 @@ const std::vector<ecsHandle>& LevelEditor_Module::getSelection() const
 void LevelEditor_Module::mergeSelection()
 {
 	struct Merge_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
-		const std::vector<ecsHandle> m_uuids;
+		Engine* const m_engine;
+		LevelEditor_Module* const m_editor;
+		std::vector<ecsHandle> m_uuids;
 		Merge_Selection_Command(Engine* engine, LevelEditor_Module* editor)
 			: m_engine(engine), m_editor(editor), m_uuids(m_editor->getSelection()) {}
 		virtual void execute() {
@@ -510,6 +524,18 @@ void LevelEditor_Module::mergeSelection()
 						world.unparentEntity(entityHandle);				
 			}
 		}
+		virtual bool join(Editor_Command* const other) {
+			if (auto newCommand = dynamic_cast<Merge_Selection_Command*>(other)) {
+				// If root is the same, continue
+				if (m_uuids[0] == newCommand->m_uuids[0]) {
+					// Join the 2 'new' sets together, make sure it's unique
+					m_uuids.insert(m_uuids.begin(), newCommand->m_uuids.cbegin(), newCommand->m_uuids.cend());
+					std::unique(m_uuids.begin(), m_uuids.end());
+				}
+				return true;
+			}
+			return false;
+		}
 	};
 
 	auto& selection = m_mouseGizmo->getSelection();
@@ -520,8 +546,8 @@ void LevelEditor_Module::mergeSelection()
 void LevelEditor_Module::groupSelection()
 {
 	struct Group_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
+		Engine* const m_engine;
+		LevelEditor_Module* const m_editor;
 		const std::vector<ecsHandle> m_uuids;
 		ecsHandle m_rootUUID;
 		Group_Selection_Command(Engine* engine, LevelEditor_Module* editor)
@@ -563,6 +589,10 @@ void LevelEditor_Module::groupSelection()
 				world.removeEntity(m_rootUUID);
 			}
 		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
+		}
 	};
 
 	if (m_mouseGizmo->getSelection().size())
@@ -572,8 +602,8 @@ void LevelEditor_Module::groupSelection()
 void LevelEditor_Module::ungroupSelection()
 {
 	struct Ungroup_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
+		Engine* const m_engine;
+		LevelEditor_Module* const m_editor;
 		const std::vector<ecsHandle> m_uuids;
 		std::vector<std::vector<ecsHandle>> m_children;
 		Ungroup_Selection_Command(Engine* engine, LevelEditor_Module* editor)
@@ -598,6 +628,10 @@ void LevelEditor_Module::ungroupSelection()
 			for each (const auto & enityUUID in m_uuids)
 				for each (const auto & childUUID in m_children[childIndex++]) 
 					world.parentEntity(enityUUID, childUUID);
+		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
 		}
 	};
 
@@ -635,7 +669,7 @@ void LevelEditor_Module::paste()
 void LevelEditor_Module::deleteSelection()
 {
 	struct Delete_Selection_Command : Editor_Command {
-		Engine* m_engine;
+		Engine* const m_engine;
 		const std::vector<char> m_data;
 		const std::vector<ecsHandle> m_uuids;
 		Delete_Selection_Command(Engine* engine, const std::vector<ecsHandle>& selection)
@@ -650,6 +684,10 @@ void LevelEditor_Module::deleteSelection()
 			size_t dataRead(0ull), uuidIndex(0ull);
 			while (dataRead < m_data.size())
 				world.deserializeEntity(m_data.data(), m_data.size(), dataRead);			
+		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
 		}
 	};
 
@@ -684,6 +722,10 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 						break;
 					}
 		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
+		}
 	};
 
 	doReversableAction(std::make_shared<Spawn_Component_Command>(m_engine, this, entityHandle, name));
@@ -695,8 +737,8 @@ void LevelEditor_Module::deleteComponent(const ecsHandle& entityHandle, const in
 		Engine* m_engine;
 		LevelEditor_Module* m_editor;
 		const ecsHandle m_entityHandle;
-		std::vector<char> m_componentData;
 		const int m_componentID;
+		std::vector<char> m_componentData;
 		Delete_Component_Command(Engine* engine, LevelEditor_Module* editor, const ecsHandle& entityHandle, const int componentID)
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentID(componentID) {
 			auto& world = m_engine->getModule_World();
@@ -716,6 +758,10 @@ void LevelEditor_Module::deleteComponent(const ecsHandle& entityHandle, const in
 				world.addComponent(m_entityHandle, copy.first);
 				delete copy.first;
 			}
+		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
 		}
 	};
 
@@ -764,6 +810,10 @@ void LevelEditor_Module::addEntity(const std::vector<char>& entityData, const ec
 			auto& world = m_engine->getModule_World();
 			for each (const auto& entityHandle in m_uuids)
 				world.removeEntity(entityHandle);
+		}
+		virtual bool join(Editor_Command* const other) {
+			// Disallow Joining
+			return false;
 		}
 	};
 

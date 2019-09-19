@@ -31,10 +31,13 @@ public:
 		const auto text = Prop_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
-			std::vector<ecsHandle> uuids;
-			uuids.reserve(components.size());
-			for each (const auto & componentParam in components)
-				uuids.push_back(componentParam[0]->m_entity);
+			const auto getUUIDS = [&]() {
+				std::vector<ecsHandle> uuids;
+				uuids.reserve(components.size());
+				for each (const auto & componentParam in components)
+					uuids.push_back(componentParam[0]->m_entity);
+				return uuids;
+			};
 
 			char nameInput[256];
 			for (size_t x = 0; x < ((Prop_Component*)components[0][1])->m_modelName.length() && x < IM_ARRAYSIZE(nameInput); ++x)
@@ -43,7 +46,7 @@ public:
 			if (ImGui::InputText("Model Name", nameInput, IM_ARRAYSIZE(nameInput))) {
 				struct Name_Command : Editor_Command {
 					World_Module& m_world;
-					std::vector<ecsHandle> m_uuids;
+					const std::vector<ecsHandle> m_uuids;
 					std::vector<std::string> m_oldData, m_newData;
 					Name_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const std::string& data)
 						: m_world(world), m_uuids(uuids) {
@@ -74,15 +77,24 @@ public:
 					virtual void undo() {
 						setData(m_oldData);
 					}
+					virtual bool join(Editor_Command* const other) {
+						if (auto newCommand = dynamic_cast<Name_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
 				};
-				m_editor->doReversableAction(std::make_shared<Name_Command>(m_engine->getModule_World(), uuids, std::string(nameInput)));
+				m_editor->doReversableAction(std::make_shared<Name_Command>(m_engine->getModule_World(), getUUIDS(), std::string(nameInput)));
 			}
 
 			auto skinInput = (int)((Prop_Component*)components[0][1])->m_skin;
 			if (ImGui::DragInt("Skin", &skinInput)) {
 				struct Skin_Command : Editor_Command {
 					World_Module& m_world;
-					std::vector<ecsHandle> m_uuids;
+					const std::vector<ecsHandle> m_uuids;
 					std::vector<unsigned int> m_oldData, m_newData;
 					Skin_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const unsigned int& data)
 						: m_world(world), m_uuids(uuids) {
@@ -107,8 +119,17 @@ public:
 					virtual void undo() {
 						setData(m_oldData);
 					}
+					virtual bool join(Editor_Command* const other) {
+						if (auto newCommand = dynamic_cast<Skin_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
 				};
-				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_engine->getModule_World(), uuids, skinInput));
+				m_editor->doReversableAction(std::make_shared<Skin_Command>(m_engine->getModule_World(), getUUIDS(), skinInput));
 			}
 				for each (auto & componentParam in components)
 					((Prop_Component*)componentParam[1])->m_skin = (unsigned int)skinInput;

@@ -31,16 +31,19 @@ public:
 		const auto text = LightCutoff_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
-			std::vector<ecsHandle> uuids;
-			uuids.reserve(components.size());
-			for each (const auto & componentParam in components)
-				uuids.push_back(componentParam[0]->m_entity);
+			const auto getUUIDS = [&]() {
+				std::vector<ecsHandle> uuids;
+				uuids.reserve(components.size());
+				for each (const auto & componentParam in components)
+					uuids.push_back(componentParam[0]->m_entity);
+				return uuids;
+			};
 
 			auto cutoffInput = ((LightCutoff_Component*)components[0][1])->m_cutoff;
 			if (ImGui::DragFloat("Cutoff", &cutoffInput)) {
 				struct Cutoff_Command : Editor_Command {
 					World_Module& m_world;
-					std::vector<ecsHandle> m_uuids;
+					const std::vector<ecsHandle> m_uuids;
 					std::vector<float> m_oldData, m_newData;
 					Cutoff_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
 						: m_world(world), m_uuids(uuids) {
@@ -65,8 +68,17 @@ public:
 					virtual void undo() {
 						setData(m_oldData);
 					}
+					virtual bool join(Editor_Command* const other) {
+						if (auto newCommand = dynamic_cast<Cutoff_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
 				};
-				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_engine->getModule_World(), uuids, cutoffInput));
+				m_editor->doReversableAction(std::make_shared<Cutoff_Command>(m_engine->getModule_World(), getUUIDS(), cutoffInput));
 			}
 		}
 	}

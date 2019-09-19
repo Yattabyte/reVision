@@ -31,16 +31,19 @@ public:
 		const auto text = LightColor_Component::STRING_NAME + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
-			std::vector<ecsHandle> uuids;
-			uuids.reserve(components.size());
-			for each (const auto & componentParam in components)
-				uuids.push_back(componentParam[0]->m_entity);
+			const auto getUUIDS = [&]() {
+				std::vector<ecsHandle> uuids;
+				uuids.reserve(components.size());
+				for each (const auto & componentParam in components)
+					uuids.push_back(componentParam[0]->m_entity);
+				return uuids;
+			};
 
 			auto colorInput = ((LightColor_Component*)components[0][1])->m_color;
 			if (ImGui::ColorEdit3("Color", glm::value_ptr(colorInput))) {
 				struct Color_Command : Editor_Command {
 					World_Module& m_world;
-					std::vector<ecsHandle> m_uuids;
+					const std::vector<ecsHandle> m_uuids;
 					std::vector<glm::vec3> m_oldData, m_newData;
 					Color_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const glm::vec3& data)
 						: m_world(world), m_uuids(uuids) {
@@ -65,15 +68,24 @@ public:
 					virtual void undo() {
 						setData(m_oldData);
 					}
+					virtual bool join(Editor_Command* const other) {
+						if (auto newCommand = dynamic_cast<Color_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
 				};
-				m_editor->doReversableAction(std::make_shared<Color_Command>(m_engine->getModule_World(), uuids, colorInput));
+				m_editor->doReversableAction(std::make_shared<Color_Command>(m_engine->getModule_World(), getUUIDS(), colorInput));
 			}
 
 			auto intensityInput = ((LightColor_Component*)(components[0][1]))->m_intensity;
 			if (ImGui::DragFloat("Intensity", &intensityInput)) {
 				struct Intensity_Command : Editor_Command {
 					World_Module& m_world;
-					std::vector<ecsHandle> m_uuids;
+					const std::vector<ecsHandle> m_uuids;
 					std::vector<float> m_oldData, m_newData;
 					Intensity_Command(World_Module& world, const std::vector<ecsHandle>& uuids, const float& data)
 						: m_world(world), m_uuids(uuids) {
@@ -98,8 +110,17 @@ public:
 					virtual void undo() {
 						setData(m_oldData);
 					}
+					virtual bool join(Editor_Command* const other) {
+						if (auto newCommand = dynamic_cast<Intensity_Command*>(other)) {
+							if (std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+								m_newData = newCommand->m_newData;
+								return true;
+							}
+						}
+						return false;
+					}
 				};
-				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_engine->getModule_World(), uuids, intensityInput));
+				m_editor->doReversableAction(std::make_shared<Intensity_Command>(m_engine->getModule_World(), getUUIDS(), intensityInput));
 			}
 		}
 	}
