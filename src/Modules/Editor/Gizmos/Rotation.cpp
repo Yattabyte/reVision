@@ -1,5 +1,6 @@
 #include "Modules/Editor/Gizmos/Rotation.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/World/ECS/components.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 #include "glm/gtx/vector_angle.hpp"
@@ -84,8 +85,6 @@ bool Rotation_Gizmo::checkMouseInput(const float& deltaTime)
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-		// use difference in position for undo/redo
-		// const auto deltaPos = m_position - m_startingPosition;
 	}
 	return false;
 }
@@ -243,9 +242,55 @@ bool Rotation_Gizmo::checkMousePress()
 			m_startingAngle = glm::atan(m_startPoint.y - position.y, m_startPoint.x - position.x);
 		m_deltaAngle = glm::degrees(gridSnappedAngle);
 
-		// Undo the previous rotation, rotate selection to the current quaternion
-		// Note: editor rotations aren't explicit, they are deltas, as a group of objects could be selected and need to orbit their center point
-		m_editor->rotateSelection(newQuat * glm::inverse(m_prevRot));
+		struct Rotate_Selection_Command : Editor_Command {
+			Engine* const m_engine = nullptr;
+			LevelEditor_Module* const m_editor = nullptr;
+			glm::quat m_oldRotation, m_newRotation;
+			const unsigned int m_axis = NONE;
+			const std::vector<ecsHandle> m_uuids;
+			Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& oldRotation, const glm::quat& newRotation, const unsigned int& axis)
+				: m_engine(engine), m_editor(editor), m_oldRotation(oldRotation), m_newRotation(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
+			void rotate(const glm::quat& rotation) {
+				auto& world = m_engine->getModule_World();
+				std::vector<Transform_Component*> transformComponents;
+				glm::vec3 center(0.0f);
+				for each (const auto & entityHandle in m_uuids)
+					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+						transformComponents.push_back(transform);
+						center += transform->m_localTransform.m_position;
+					}
+				center /= transformComponents.size();
+				for each (auto * transform in transformComponents) {
+					const auto delta = transform->m_localTransform.m_position - center;
+					auto rotatedDelta = glm::mat4_cast(rotation) * glm::vec4(delta, 1.0f);
+					rotatedDelta /= rotatedDelta.w;
+					transform->m_localTransform.m_position = glm::vec3(rotatedDelta) + center;
+					transform->m_localTransform.m_orientation = rotation * transform->m_localTransform.m_orientation;
+					transform->m_localTransform.update();
+				}
+
+				auto gizmoTransform = m_editor->getGizmoTransform();
+				gizmoTransform.m_orientation = rotation;
+				gizmoTransform.update();
+				m_editor->setGizmoTransform(gizmoTransform);
+			}
+			virtual void execute() {
+				rotate(m_newRotation * glm::inverse(m_oldRotation));
+			}
+			virtual void undo() {
+				rotate(glm::inverse(m_newRotation) * m_oldRotation);
+			}
+			virtual bool join(Editor_Command* const other) {
+				if (auto newCommand = dynamic_cast<Rotate_Selection_Command*>(other)) {
+					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+						m_newRotation = newCommand->m_newRotation;
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		m_editor->doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, m_editor, m_prevRot, newQuat, m_selectedAxes));
 		m_prevRot = newQuat;
 		return true;
 	}

@@ -329,8 +329,12 @@ void LevelEditor_Module::doReversableAction(const std::shared_ptr<Editor_Command
 	// Perform the desired action
 	command->execute();
 
-	// Add action to the undo stack
-	m_undoStack.push_front(command);
+	// Try to join the new command into the previous one if the types match
+	if (m_undoStack.size() && typeid(m_undoStack.front()) == typeid(command) && m_undoStack.front()->join(command.get())) {}
+	// Otherwise add action to the undo stack
+	else
+		m_undoStack.push_front(command);
+	
 	while (m_undoStack.size() > m_maxUndo)
 		m_undoStack.pop_back();
 	m_unsavedChanges = true;
@@ -652,127 +656,6 @@ void LevelEditor_Module::deleteSelection()
 	auto& selection = m_mouseGizmo->getSelection();
 	if (selection.size())
 		doReversableAction(std::make_shared<Delete_Selection_Command>(m_engine, selection));
-}
-
-void LevelEditor_Module::moveSelection(const glm::vec3& newPosition)
-{
-	struct Move_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
-		const glm::vec3 m_oldPosition, m_newPosition;
-		const std::vector<ecsHandle> m_uuids;
-		Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition)
-			: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->m_mouseGizmo->getSelectionTransform().m_position), m_newPosition(newPosition), m_uuids(m_editor->getSelection()) {}
-		void move(const glm::vec3& position) {
-			auto& world = m_engine->getModule_World();
-			std::vector<Transform_Component*> transformComponents;
-			glm::vec3 center(0.0f);
-			for each (const auto& entityHandle in m_uuids)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
-					transformComponents.push_back(transform);
-					center += transform->m_localTransform.m_position;
-				}
-			center /= transformComponents.size();
-			for each (auto * transform in transformComponents) {
-				transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + position;
-				transform->m_localTransform.update();
-			}
-			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
-			gizmoTransform.m_position = position;
-			gizmoTransform.update();
-			m_editor->setGizmoTransform(gizmoTransform);
-		}
-		virtual void execute() {
-			move(m_newPosition);
-		}
-		virtual void undo() {
-			move(m_oldPosition);
-		}
-	};
-	doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, this, newPosition));
-}
-
-void LevelEditor_Module::rotateSelection(const glm::quat& newRotation)
-{
-	struct Rotate_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
-		const glm::quat m_newRotation;
-		const std::vector<ecsHandle> m_uuids;
-		Rotate_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::quat& newRotation)
-			: m_engine(engine), m_editor(editor), m_newRotation(newRotation), m_uuids(m_editor->getSelection()) {}
-		void rotate(const glm::quat& rotation) {
-			auto& world = m_engine->getModule_World();
-			std::vector<Transform_Component*> transformComponents;
-			glm::vec3 center(0.0f);
-			for each (const auto& entityHandle in m_uuids)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
-					transformComponents.push_back(transform);
-					center += transform->m_localTransform.m_position;
-				}
-			center /= transformComponents.size();
-			for each (auto * transform in transformComponents) {
-				const auto delta = transform->m_localTransform.m_position - center;
-				auto rotatedDelta = glm::mat4_cast(rotation) * glm::vec4(delta, 1.0f);
-				rotatedDelta /= rotatedDelta.w;
-				transform->m_localTransform.m_position = glm::vec3(rotatedDelta) + center;
-				transform->m_localTransform.m_orientation = rotation * transform->m_localTransform.m_orientation;
-				transform->m_localTransform.update();
-			}
-
-			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
-			gizmoTransform.m_orientation = rotation;
-			gizmoTransform.update();
-			m_editor->setGizmoTransform(gizmoTransform);
-		}
-		virtual void execute() {
-			rotate(m_newRotation);
-		}
-		virtual void undo() {
-			rotate(glm::inverse(m_newRotation));
-		}
-	};
-	doReversableAction(std::make_shared<Rotate_Selection_Command>(m_engine, this, newRotation));
-}
-
-void LevelEditor_Module::scaleSelection(const glm::vec3& newScale)
-{
-	struct Scale_Selection_Command : Editor_Command {
-		Engine* m_engine;
-		LevelEditor_Module* m_editor;
-		const glm::vec3 m_oldScale, m_newScale;
-		const std::vector<ecsHandle> m_uuids;
-		Scale_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newRotation)
-			: m_engine(engine), m_editor(editor), m_oldScale(m_editor->m_mouseGizmo->getSelectionTransform().m_scale), m_newScale(newRotation), m_uuids(m_editor->getSelection()) {}
-		void scale(const glm::vec3& scale) {
-			auto& world = m_engine->getModule_World();
-			std::vector<Transform_Component*> transformComponents;
-			glm::vec3 center(0.0f);
-			for each (const auto &entityHandle in m_uuids)
-				if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
-					transformComponents.push_back(transform);
-					center += transform->m_localTransform.m_position;
-				}
-			center /= transformComponents.size();
-			for each (auto * transform in transformComponents) {
-				const auto delta = transform->m_localTransform.m_position - center;
-				transform->m_localTransform.m_position = ((delta / transform->m_localTransform.m_scale) * scale) + center;
-				transform->m_localTransform.m_scale = scale;
-				transform->m_localTransform.update();
-			}
-			auto gizmoTransform = m_editor->m_mouseGizmo->getSelectionTransform();
-			gizmoTransform.m_scale = scale;
-			gizmoTransform.update();
-			m_editor->setGizmoTransform(gizmoTransform);
-		}
-		virtual void execute() {
-			scale(m_newScale);
-		}
-		virtual void undo() {
-			scale(m_oldScale);
-		}
-	};
-	doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, this, newScale));
 }
 
 void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char* name)

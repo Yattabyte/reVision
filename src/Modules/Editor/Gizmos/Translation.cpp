@@ -1,5 +1,6 @@
 #include "Modules/Editor/Gizmos/Translation.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/World/ECS/components.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 
@@ -71,8 +72,6 @@ bool Translation_Gizmo::checkMouseInput(const float& deltaTime)
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-		// use difference in position for undo/redo
-		// const auto deltaPos = m_position - m_startingPosition;
 	}
 	return false;
 }
@@ -292,9 +291,53 @@ bool Translation_Gizmo::checkMousePress()
 		}
 
 		const auto position = endingOffset - m_axisDelta;
-		auto gridSnappedScale = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
-		m_transform.m_position = gridSnappedScale;
-		m_editor->moveSelection(gridSnappedScale);
+		auto gridSnappedPosition = m_gridSnap ? (glm::vec3(glm::ivec3((position + (m_gridSnap / 2.0F)) / m_gridSnap)) * m_gridSnap) : position;
+		m_transform.m_position = gridSnappedPosition;
+
+		struct Move_Selection_Command : Editor_Command {
+			Engine* const m_engine = nullptr;
+			LevelEditor_Module* const m_editor = nullptr;
+			glm::vec3 m_oldPosition, m_newPosition;
+			const unsigned int m_axis = NONE;
+			const std::vector<ecsHandle> m_uuids;
+			Move_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newPosition, const unsigned int& axis)
+				: m_engine(engine), m_editor(editor), m_oldPosition(m_editor->getGizmoTransform().m_position), m_newPosition(newPosition), m_axis(axis), m_uuids(m_editor->getSelection()) {}
+			void move(const glm::vec3& position) {
+				auto& world = m_engine->getModule_World();
+				std::vector<Transform_Component*> transformComponents;
+				glm::vec3 center(0.0f);
+				for each (const auto & entityHandle in m_uuids)
+					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+						transformComponents.push_back(transform);
+						center += transform->m_localTransform.m_position;
+					}
+				center /= transformComponents.size();
+				for each (auto * transform in transformComponents) {
+					transform->m_localTransform.m_position = (transform->m_localTransform.m_position - center) + position;
+					transform->m_localTransform.update();
+				}
+				auto gizmoTransform = m_editor->getGizmoTransform();
+				gizmoTransform.m_position = position;
+				gizmoTransform.update();
+				m_editor->setGizmoTransform(gizmoTransform);
+			}
+			virtual void execute() {
+				move(m_newPosition);
+			}
+			virtual void undo() {
+				move(m_oldPosition);
+			}
+			virtual bool join(Editor_Command* const other) {
+				if (auto newCommand = dynamic_cast<Move_Selection_Command*>(other)) {
+					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+						m_newPosition = newCommand->m_newPosition;
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		m_editor->doReversableAction(std::make_shared<Move_Selection_Command>(m_engine, m_editor, gridSnappedPosition, m_selectedAxes));
 		return true;
 	}
 

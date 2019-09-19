@@ -90,15 +90,6 @@ public:
 	void paste();
 	/** Delete the currently selected entities from the level. */
 	void deleteSelection();
-	/** Translate the current selection to a new position. 
-	Supports moving as group. */
-	void moveSelection(const glm::vec3& newPosition);
-	/** Rotate the current selection to a new orientation.
-	Supports rotating as group. */
-	void rotateSelection(const glm::quat& newRotation);
-	/** Streth the current selection to a new scale.
-	Supports scaling as group. */
-	void scaleSelection(const glm::vec3& newScale);
 	/** Add a new blank component to an entity given its handle and component name alone.
 	@param	entityhandle	handle to the entity the component will be added to.
 	@param	name			the component class name. */
@@ -170,6 +161,8 @@ struct Editor_Command {
 	virtual void execute() = 0;
 	/** Perform the reverse, undo the command. */
 	virtual void undo() = 0;
+	/***/
+	virtual bool join(Editor_Command* const newerCommand) { return false; }
 };
 
 #endif // EDITOR_MODULE_H

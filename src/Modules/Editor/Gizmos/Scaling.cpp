@@ -1,5 +1,6 @@
 #include "Modules/Editor/Gizmos/Scaling.h"
 #include "Modules/UI/dear imgui/imgui.h"
+#include "Modules/World/ECS/components.h"
 #include "Utilities/Intersection.h"
 #include "Engine.h"
 
@@ -71,8 +72,6 @@ bool Scaling_Gizmo::checkMouseInput(const float& deltaTime)
 			m_selectedAxes = NONE;
 			return true; // block input as we just finished doing an action here
 		}
-		// use difference in position for undo/redo
-		// const auto deltaPos = m_position - m_startingPosition;
 	}
 	return false;
 }
@@ -301,7 +300,54 @@ bool Scaling_Gizmo::checkMousePress()
 		if (gridSnappedScale.z == 0.0f)
 			gridSnappedScale.z += 0.0001F;
 		m_transform.m_scale = gridSnappedScale;
-		m_editor->scaleSelection(gridSnappedScale);
+
+		struct Scale_Selection_Command : Editor_Command {
+			Engine* const m_engine = nullptr;
+			LevelEditor_Module* const m_editor = nullptr;
+			glm::vec3 m_oldScale, m_newScale;
+			const unsigned int m_axis = NONE;
+			const std::vector<ecsHandle> m_uuids;
+			Scale_Selection_Command(Engine* engine, LevelEditor_Module* editor, const glm::vec3& newRotation, const unsigned int& axis)
+				: m_engine(engine), m_editor(editor), m_oldScale(m_editor->getGizmoTransform().m_scale), m_newScale(newRotation), m_axis(axis), m_uuids(m_editor->getSelection()) {}
+			void scale(const glm::vec3& scale) {
+				auto& world = m_engine->getModule_World();
+				std::vector<Transform_Component*> transformComponents;
+				glm::vec3 center(0.0f);
+				for each (const auto & entityHandle in m_uuids)
+					if (auto * transform = world.getComponent<Transform_Component>(entityHandle)) {
+						transformComponents.push_back(transform);
+						center += transform->m_localTransform.m_position;
+					}
+				center /= transformComponents.size();
+				for each (auto * transform in transformComponents) {
+					const auto delta = transform->m_localTransform.m_position - center;
+					transform->m_localTransform.m_position = ((delta / transform->m_localTransform.m_scale) * scale) + center;
+					transform->m_localTransform.m_scale = scale;
+					transform->m_localTransform.update();
+				}
+				auto gizmoTransform = m_editor->getGizmoTransform();
+				gizmoTransform.m_scale = scale;
+				gizmoTransform.update();
+				m_editor->setGizmoTransform(gizmoTransform);
+			}
+			virtual void execute() {
+				scale(m_newScale);
+			}
+			virtual void undo() {
+				scale(m_oldScale);
+			}
+			virtual bool join(Editor_Command* const other) {
+				if (auto newCommand = dynamic_cast<Scale_Selection_Command*>(other)) {
+					if (m_axis == newCommand->m_axis && std::equal(m_uuids.cbegin(), m_uuids.cend(), newCommand->m_uuids.cbegin())) {
+						m_newScale = newCommand->m_newScale;
+						return true;
+					}
+				}
+				return false;
+			}
+		};
+		m_editor->doReversableAction(std::make_shared<Scale_Selection_Command>(m_engine, m_editor, gridSnappedScale, m_selectedAxes));
+		return true;
 	}
 
 	return false;

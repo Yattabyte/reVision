@@ -12,13 +12,7 @@
 #include <vector>
 
 
-/** UI element representing an ImGUI element. */
-struct ImGUI_Element {
-	bool m_open = true;
-	void open() { m_open = true; }
-	void close() { m_open = false; }
-	virtual void tick(const float & deltaTime) {};
-};
+struct ImGUI_Element;
 
 /** A module responsible for the overall user interface. */
 class UI_Module : public Engine_Module {
@@ -95,7 +89,14 @@ private:
 	std::shared_ptr<FocusMap> m_focusMap;
 	MouseEvent m_mouseEvent;
 	KeyboardEvent m_keyboardEvent;
+};
 
+/** UI element representing an ImGUI element. */
+struct ImGUI_Element {
+	bool m_open = true;
+	void open() { m_open = true; }
+	void close() { m_open = false; }
+	virtual void tick(const float& deltaTime) {};
 };
 
 #endif // UI_MODULE_H
