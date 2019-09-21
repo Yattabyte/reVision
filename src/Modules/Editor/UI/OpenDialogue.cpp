@@ -112,8 +112,6 @@ void OpenDialogue::tickMainDialogue()
 		ImGui::SameLine(475);
 		ImGui::Text("Size");
 		ImGui::Separator();
-		if (ImGui::IsMouseClicked(0) && !m_paused)
-			m_selected = -1;
 		int index = 0;
 		for each (const auto & level in m_levels) {
 			GLuint icon = (level.type == LevelEntry::file && m_iconFile->existsYet()) ? m_iconFile->m_glTexID :
@@ -138,10 +136,7 @@ void OpenDialogue::tickMainDialogue()
 				ImGui::Separator();
 				if (ImGui::MenuItem("Delete")) { option = del; }
 				ImGui::EndPopup();
-				m_paused = true;
 			}
-			else
-				m_paused = false;
 			ImGui::SameLine(250);
 			ImGui::Text(level.extType.c_str());
 			ImGui::SameLine(350);
@@ -222,7 +217,6 @@ void OpenDialogue::tickMainDialogue()
 
 void OpenDialogue::tickRenameDialogue()
 {
-	m_paused = false;
 	bool openRename = true;
 	if (ImGui::BeginPopupModal("Rename Level", &openRename, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::Text("Enter a new name for this item...");
@@ -245,13 +239,11 @@ void OpenDialogue::tickRenameDialogue()
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::EndPopup();
-		m_paused = true;
 	}
 }
 
 void OpenDialogue::tickDeleteDialogue()
 {
-	m_paused = false;
 	bool openDelete = true;
 	ImGui::SetNextWindowSize({ 350, 95 }, ImGuiCond_Appearing);
 	if (ImGui::BeginPopupModal("Delete Level", &openDelete, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove)) {
@@ -276,6 +268,5 @@ void OpenDialogue::tickDeleteDialogue()
 			ImGui::CloseCurrentPopup();
 		ImGui::SetItemDefaultFocus();
 		ImGui::EndPopup();
-		m_paused = true;
 	}
 }

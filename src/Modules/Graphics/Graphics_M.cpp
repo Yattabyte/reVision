@@ -27,8 +27,6 @@ void Graphics_Module::initialize(Engine * engine)
 	});
 
 	// GL settings
-	glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
-	glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
 	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
 	// Preferences

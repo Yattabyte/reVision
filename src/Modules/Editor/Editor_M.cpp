@@ -37,12 +37,12 @@ void LevelEditor_Module::initialize(Engine* engine)
 	preferences.addCallback(PreferenceState::C_WINDOW_WIDTH, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.x = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
-		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 	});
 	preferences.addCallback(PreferenceState::C_WINDOW_HEIGHT, m_aliveIndicator, [&](const float& f) {
 		m_renderSize.y = (int)f;
 		glTextureImage2DEXT(m_texID, GL_TEXTURE_2D, 0, GL_RGBA16F, m_renderSize.x, m_renderSize.y, 0, GL_RGBA, GL_FLOAT, 0);
-		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
+		glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
 	});
 	preferences.getOrSetValue(PreferenceState::E_AUTOSAVE_INTERVAL, m_autosaveInterval);
 	preferences.addCallback(PreferenceState::E_AUTOSAVE_INTERVAL, m_aliveIndicator, [&](const float& f) {
@@ -69,8 +69,8 @@ void LevelEditor_Module::initialize(Engine* engine)
 	glTextureParameteri(m_depthID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTextureParameteri(m_depthID, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTextureParameteri(m_depthID, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT16, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_COMPONENT, GL_FLOAT, 0);
-	glNamedFramebufferTexture(m_fboID, GL_DEPTH_ATTACHMENT, m_depthID, 0);
+	glTextureImage2DEXT(m_depthID, GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, m_renderSize.x, m_renderSize.y, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, 0);
+	glNamedFramebufferTexture(m_fboID, GL_DEPTH_STENCIL_ATTACHMENT, m_depthID, 0);
 	glNamedFramebufferDrawBuffer(m_fboID, GL_COLOR_ATTACHMENT0);
 }
 
@@ -91,17 +91,23 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 	if (m_active) {
 		constexpr GLfloat clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
 		constexpr GLfloat clearDepth = 1.0f;
-		glEnable(GL_DEPTH_TEST);
-		glDepthMask(true);
+		constexpr GLint clearStencil = 0;
+		glEnable(GL_DEPTH_TEST); 
+		glEnable(GL_STENCIL_TEST);
+		glDepthMask(true);	
+		glStencilMask(0xFF);
 		glClearNamedFramebufferfv(m_fboID, GL_COLOR, 0, clearColor);
-		glClearNamedFramebufferfv(m_fboID, GL_DEPTH, 0, &clearDepth);
+		glClearNamedFramebufferfi(m_fboID, GL_DEPTH_STENCIL, 0, clearDepth, clearStencil);
+		glStencilMask(0x00);
+		glDisable(GL_STENCIL_TEST);
 
 		// Tick all tools this frame
-		m_mouseGizmo->frameTick(deltaTime);
 		m_engine->getModule_World().updateSystems(m_systems, deltaTime);
+		m_mouseGizmo->frameTick(deltaTime);
 
 		glDepthMask(false);
 		glDisable(GL_DEPTH_TEST);
+		glDisable(GL_STENCIL_TEST);
 
 		// Auto-save
 		if (hasUnsavedChanges()) {

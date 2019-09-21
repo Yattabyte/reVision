@@ -44,7 +44,6 @@ private:
 	// Private Attributes
 	Engine* m_engine = nullptr;
 	LevelEditor_Module* m_editor = nullptr;
-	bool m_paused = false;
 	std::string m_chosen = "", m_subDirectory = "";
 	struct LevelEntry {
 		std::string name = "", path = "", extension = "", extType = "", date = "", size = "";

@@ -104,6 +104,9 @@ private:
 		glEnable(GL_BLEND);
 		glBlendEquation(GL_FUNC_ADD);
 		glBlendFunc(GL_ONE, GL_ONE);
+		glStencilOpSeparate(GL_BACK, GL_KEEP, GL_INCR_WRAP, GL_KEEP);
+		glStencilOpSeparate(GL_FRONT, GL_KEEP, GL_DECR_WRAP, GL_KEEP);
+		glStencilMask(0xFF);
 
 		// Draw only into depth-stencil buffer
 		m_shader_Stencil->bind();																		// Shader (spot)
