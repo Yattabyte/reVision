@@ -73,7 +73,7 @@ public:
 	@param	array				the array of component data.
 	@param	componentID			the class ID of the component.
 	@return						the component pointer matching the ID specified. */
-	ecsBaseComponent* getComponent(std::vector<std::pair<ComponentID, ComponentID>>& entityComponents, ComponentDataSpace& array, const ComponentID& componentID);
+	ecsBaseComponent* getComponent(std::vector<std::pair<ComponentID, int>>& entityComponents, ComponentDataSpace& array, const ComponentID& componentID);
 	/** Try to find a list of entities matching the UUID's provided.
 	@param	UUIDs				list of target entity UUID's
 	@return						list of pointers to the found entities. Dimensions may not match input list (nullptrs omitted) */
@@ -108,15 +108,6 @@ public:
 	@param	desiredHandle		optional specific handle to use, if empty will use handle held in data stream.
 	@return						a handle and a pointer pair to the entity created. */
 	std::pair<ecsHandle, ecsEntity*> deserializeEntity(const char* data, const size_t& dataSize, size_t& dataRead, const ecsHandle& parentHandle = ecsHandle(), const ecsHandle& desiredHandle = ecsHandle());
-	/** Serialize a specific component to a char vector.
-	@param	component			the component to serialize.
-	@return						char vector containing serialized component data. */
-	std::vector<char> serializeComponent(ecsBaseComponent* component);
-	/** Deserialize a component from a char array.
-	@param	data				previously serialized component data.
-	@param	dataSize			the size of the data in bytes (sizeof(char) * elements).
-	@param	dataRead			reference to number of elements or bytes read in data so far. */
-	std::pair<ecsBaseComponent*, ComponentID> deserializeComponent(const char* data, const size_t& dataSize, size_t& dataRead);
 	/** Search for a component template with a matching class name.
 	@param	name				the component class name to search for.
 	@return						pointer to the template parameters if true, nullptr otherwise. */
@@ -129,6 +120,10 @@ public:
 	@param	system				the system to update.
 	@param	deltaTime			the delta time. */
 	void updateSystem(ecsBaseSystem* system, const float& deltaTime);
+	/** Update the components of a single system.
+	@param	system				the system to update.
+	@param	deltaTime			the delta time. */
+	void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime);
 	/** Update the components of a single system.
 	@param	deltaTime			the delta time.
 	@param	types				list of component types to retrieve.

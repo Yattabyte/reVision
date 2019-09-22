@@ -134,24 +134,24 @@ void SceneInspector::tick(const float& deltaTime)
 								ImGui::Separator();
 								ImGui::Spacing();
 								constexpr const char* items[] = {
-									Transform_Component::CHARS(),
-									PlayerSpawn_Component::CHARS(),
-									Player3D_Component::CHARS(),
-									Camera_Component::CHARS(),
-									CameraArray_Component::CHARS(),
-									BoundingSphere_Component::CHARS(),
-									BoundingBox_Component::CHARS(),
-									Prop_Component::CHARS(),
-									Skeleton_Component::CHARS(),
-									Shadow_Component::CHARS(),
-									LightColor_Component::CHARS(),
-									LightRadius_Component::CHARS(),
-									LightCutoff_Component::CHARS(),
-									LightDirectional_Component::CHARS(),
-									LightPoint_Component::CHARS(),
-									LightSpot_Component::CHARS(),
-									Reflector_Component::CHARS(),
-									Collider_Component::CHARS()
+									Transform_Component::m_name,
+									PlayerSpawn_Component::m_name,
+									Player3D_Component::m_name,
+									Camera_Component::m_name,
+									CameraArray_Component::m_name,
+									BoundingSphere_Component::m_name,
+									BoundingBox_Component::m_name,
+									Prop_Component::m_name,
+									Skeleton_Component::m_name,
+									Shadow_Component::m_name,
+									LightColor_Component::m_name,
+									LightRadius_Component::m_name,
+									LightCutoff_Component::m_name,
+									LightDirectional_Component::m_name,
+									LightPoint_Component::m_name,
+									LightSpot_Component::m_name,
+									Reflector_Component::m_name,
+									Collider_Component::m_name,
 								};
 								static int item_current = 0;
 								ImGui::Combo("", &item_current, items, IM_ARRAYSIZE(items));

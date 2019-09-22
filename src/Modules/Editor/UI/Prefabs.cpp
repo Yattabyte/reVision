@@ -166,11 +166,7 @@ void Prefabs::tick(const float& deltaTime)
 
 void Prefabs::makePrefab(const std::vector<ecsHandle>& entityHandles)
 {
-	std::vector<char> prefabData;
-	for each (const auto & entityHandle in entityHandles) {
-		const auto entData = m_engine->getModule_ECS().getWorld().serializeEntity(entityHandle);
-		prefabData.insert(prefabData.end(), entData.begin(), entData.end());
-	}
+	std::vector<char> prefabData = m_engine->getModule_ECS().getWorld().serializeEntities(entityHandles);
 	m_prefabs.push_back({ "New Entity", m_prefabSubDirectory + "\\New Entity", Prefab::file, prefabData });
 	m_selectedIndex = (int)(m_prefabs.size()) - 1;
 
@@ -193,9 +189,9 @@ void Prefabs::populatePrefabs(const std::string & directory)
 	if (directory != "" && directory != "." && directory != "..")
 		m_prefabs.push_back(Prefab{ "back", std::filesystem::relative(path.parent_path(), rootPath).string(), Prefab::back, {} });
 	if (directory == "" || directory == ".") {
-		m_prefabs.push_back(Prefab{ "Defaults", "Defaults", Prefab::folder, {} });
+		m_prefabs.push_back(Prefab{ "Default", "Default", Prefab::folder, {} });
 	}
-	if (directory == "Defaults") {
+	if (directory == "Default") {
 		m_prefabs.push_back({"Hydrant", "Hydrant", Prefab::def});
 	}
 	else {

@@ -27,8 +27,8 @@ void LevelEditor_Module::initialize(Engine* engine)
 	m_mouseGizmo = std::make_shared<Mouse_Gizmo>(engine, this);
 
 	// Systems
-	m_engine->getModule_ECS().makeSystem<Wireframe_System>(engine, this);
-	m_selectionClearer = std::make_shared<ClearSelection_System>(engine);
+	m_systemWireframe = std::make_shared<Wireframe_System>(engine, this);
+	m_systemSelClearer = std::make_shared<ClearSelection_System>(engine);
 
 	// Preferences
 	auto& preferences = engine->getPreferenceState();
@@ -102,6 +102,7 @@ void LevelEditor_Module::frameTick(const float& deltaTime)
 		glDisable(GL_STENCIL_TEST);
 
 		// Tick all tools this frame
+		m_engine->getModule_ECS().updateSystem(m_systemWireframe, deltaTime);
 		m_mouseGizmo->frameTick(deltaTime);
 
 		glDepthMask(false);
@@ -357,7 +358,7 @@ void LevelEditor_Module::clearSelection()
 			// Remove all selection components from world
 			auto& ecs = m_engine->getModule_ECS();
 			auto& ecsWorld = ecs.getWorld();
-			ecs.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			ecs.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
@@ -386,13 +387,13 @@ void LevelEditor_Module::clearSelection()
 		};
 		virtual void execute() {
 			// Remove all selection components from world
-			m_engine->getModule_ECS().getWorld().updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			m_engine->getModule_ECS().getWorld().updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 		}
 		virtual void undo() {
 			// Remove all selection components from world
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
-			m_engine->getModule_ECS().getWorld().updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			ecsWorld.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
@@ -447,7 +448,7 @@ void LevelEditor_Module::setSelection(const std::vector<ecsHandle>& handles)
 			// Remove all selection components from world
 			auto& ecs = m_engine->getModule_ECS();
 			auto& ecsWorld = ecs.getWorld();
-			ecs.updateSystem(m_editor->m_selectionClearer.get(), 0.0f);
+			ecs.updateSystem(m_editor->m_systemSelClearer.get(), 0.0f);
 			m_editor->m_mouseGizmo->getSelection().clear();
 
 			// Add selection component to new selection
@@ -714,9 +715,8 @@ void LevelEditor_Module::addComponent(const ecsHandle& entityHandle, const char*
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			if (const auto & templateParams = ecsWorld.findTemplate(m_componentName)) {
 				const auto& [templateComponent, componentID, componentSize] = *templateParams;
-				auto* clone = templateComponent->clone();
-				ecsWorld.addComponent(m_entityHandle, clone);
-				delete clone;
+				const auto& clone = templateComponent->clone();
+				ecsWorld.addComponent(m_entityHandle, clone.get());
 			}
 		}
 		virtual void undo() {
@@ -751,19 +751,16 @@ void LevelEditor_Module::deleteComponent(const ecsHandle& entityHandle, const in
 			: m_engine(engine), m_editor(editor), m_entityHandle(entityHandle), m_componentID(componentID) {
 			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			if (const auto & component = ecsWorld.getComponent(m_entityHandle, m_componentID))
-				m_componentData = ecsWorld.serializeComponent(component);
-			
+				m_componentData = component->to_buffer();			
 		}
 		virtual void execute() {
 			m_engine->getModule_ECS().getWorld().removeComponent(m_entityHandle, m_componentID);
 		}
 		virtual void undo() {
-			auto& ecsWorld = m_engine->getModule_ECS().getWorld();
 			if (m_componentData.size()) {
 				size_t dataRead(0ull);
-				auto copy = ecsWorld.deserializeComponent(m_componentData.data(), m_componentData.size(), dataRead);
-				ecsWorld.addComponent(m_entityHandle, copy.first);
-				delete copy.first;
+				const auto& copy = ecsBaseComponent::from_buffer(m_componentData.data(), dataRead);
+				m_engine->getModule_ECS().getWorld().addComponent(m_entityHandle, copy.get());
 			}
 		}
 		virtual bool join(Editor_Command* const other) {

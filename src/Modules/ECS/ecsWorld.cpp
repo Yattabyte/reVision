@@ -101,7 +101,7 @@ bool ecsWorld::addComponent(const ecsHandle& entityHandle, const ecsBaseComponen
 					return false;
 
 			const auto& createfn = std::get<0>(ecsBaseComponent::_componentRegister[componentID]);
-			std::pair<ComponentID, ComponentID> newPair;
+			std::pair<ComponentID, int> newPair;
 			newPair.first = componentID;
 			newPair.second = createfn(m_components[componentID], entityHandle, component);
 			entity->m_components.push_back(newPair);
@@ -130,7 +130,7 @@ bool ecsWorld::removeComponent(const ecsHandle& entityHandle, const ComponentID&
 	return false;
 }
 
-ecsBaseComponent* ecsWorld::getComponent(std::vector<std::pair<ComponentID, ComponentID>>& entityComponents, ComponentDataSpace& mem_array, const ComponentID& componentID) {
+ecsBaseComponent* ecsWorld::getComponent(std::vector<std::pair<ComponentID, int>>& entityComponents, ComponentDataSpace& mem_array, const ComponentID& componentID) {
 	for (size_t i = 0ull; i < entityComponents.size(); ++i)
 		if (componentID == entityComponents[i].first)
 			return (ecsBaseComponent*)& mem_array[entityComponents[i].second];
@@ -292,12 +292,9 @@ std::vector<char> ecsWorld::serializeEntity(const ecsHandle& entityHandle)
 	size_t dataIndex(0ull);
 	const auto& entityName = entity->m_name;
 	const auto nameSize = (unsigned int)(entityName.size());
-	const auto ENTITY_HEADER_SIZE = (32 * sizeof(char)) + (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
+	const auto ENTITY_HEADER_SIZE = (sizeof(unsigned int) + (entityName.size() * sizeof(char))) + sizeof(size_t) + sizeof(unsigned int);
 	std::vector<char> data(ENTITY_HEADER_SIZE);
 
-	// Write UUID
-	std::memcpy(&data[dataIndex], entityHandle.uuid, 32 * sizeof(char));
-	dataIndex += 32 * sizeof(char);
 	// Write name char count
 	std::memcpy(&data[dataIndex], &nameSize, sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
@@ -313,9 +310,11 @@ std::vector<char> ecsWorld::serializeEntity(const ecsHandle& entityHandle)
 	dataIndex += sizeof(unsigned int);
 	// Accumulate entity component data count
 	for (const auto& [componentID, createFunc] : entity->m_components) {
-		const auto componentData = serializeComponent(getComponent(entityHandle, componentID));
-		data.insert(data.end(), componentData.begin(), componentData.end());
-		entityDataCount += componentData.size();
+		if (const auto & component = getComponent(entityHandle, componentID)) {
+			const auto componentData = component->to_buffer();
+			data.insert(data.end(), componentData.begin(), componentData.end());
+			entityDataCount += componentData.size();
+		}
 	}
 	// Fulfill the entity component data count
 	std::memcpy(&data[entityDataCountIndex], &entityDataCount, sizeof(size_t));
@@ -339,14 +338,10 @@ std::pair<ecsHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, c
 		entity child count
 		--nested entity children--
 	} */
-	char entityHandle[32] = { '\0' };
 	char entityNameChars[256] = { '\0' };
 	unsigned int nameSize(0u), entityChildCount(0u);
 	size_t componentDataCount(0ull);
 
-	// Read UUID
-	std::memcpy(entityHandle, &data[dataIndex], 32 * sizeof(char));
-	dataIndex += 32 * sizeof(char);
 	// Read name char count
 	std::memcpy(&nameSize, &data[dataIndex], sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
@@ -360,17 +355,18 @@ std::pair<ecsHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, c
 	std::memcpy(&entityChildCount, &data[dataIndex], sizeof(unsigned int));
 	dataIndex += sizeof(unsigned int);
 	// Find all components between the beginning and end of this entity
+	std::vector<std::shared_ptr<ecsBaseComponent>> pointers;
 	std::vector<ecsBaseComponent*> components;
 	const size_t endIndex = dataIndex + componentDataCount;
-	while (dataIndex < endIndex)
-		components.push_back(std::get<0>(deserializeComponent(data, dataSize, dataIndex)));
+	while (dataIndex < endIndex) {
+		const auto& ptr = ecsBaseComponent::from_buffer(data, dataIndex);
+		pointers.push_back(ptr);
+		components.push_back(ptr.get());
+	}
 
 	// Make the entity
-	auto& thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle.isValid() ? desiredHandle : ecsHandle(entityHandle), parentHandle);
+	auto& thisEntityHandle = makeEntity(components.data(), components.size(), std::string(entityNameChars, nameSize), desiredHandle, parentHandle);
 	auto* thisEntity = getEntity(thisEntityHandle);
-	// Delete temporary components
-	for each (auto * component in components)
-		delete component;
 
 	// Make all child entities
 	unsigned int childEntitiesRead(0ull);
@@ -381,65 +377,8 @@ std::pair<ecsHandle, ecsEntity*> ecsWorld::deserializeEntity(const char* data, c
 	return { thisEntityHandle, thisEntity };
 }
 
-std::vector<char> ecsWorld::serializeComponent(ecsBaseComponent* component)
+std::optional<std::tuple<ecsBaseComponent*, ComponentID, size_t>> ecsWorld::findTemplate(const char* name) 
 {
-	if (component) {
-		const auto componentData = component->save();
-		const auto componentDataSize = componentData.size();
-
-		std::vector<char> data(sizeof(size_t) + componentDataSize);
-		std::memcpy(&data[0], &componentDataSize, sizeof(size_t));
-		std::memcpy(&data[sizeof(size_t)], &componentData[0], componentDataSize);
-
-		return data;
-	}
-	return {};
-}
-
-std::pair<ecsBaseComponent*, ComponentID> ecsWorld::deserializeComponent(const char* data, const size_t& dataSize, size_t& dataIndex)
-{
-	// Find how large the component data is
-	size_t componentDataSize(0ull);
-	std::memcpy(&componentDataSize, &data[dataIndex], sizeof(size_t));
-	dataIndex += sizeof(size_t);
-
-	// Retrieve component Data
-	std::vector<char> componentData(componentDataSize);
-	std::memcpy(&componentData[0], &data[dataIndex], componentDataSize);
-	dataIndex += componentDataSize;
-
-	// Read component name from the data
-	size_t nameDataRead(0ull);
-	int nameCount(0);
-	std::memcpy(&nameCount, &componentData[0], sizeof(int));
-	nameDataRead += sizeof(int);
-	char* chars = new char[size_t(nameCount) + 1ull];
-	std::fill(&chars[0], &chars[nameCount + 1], '\0');
-	std::memcpy(chars, &componentData[sizeof(int)], nameCount);
-	nameDataRead += sizeof(char) * nameCount;
-	const auto componentTypeName = std::string(chars);
-	delete[] chars;
-
-	std::vector<char> serializedComponentData;
-	if (componentDataSize - nameDataRead)
-		serializedComponentData = std::vector<char>(componentData.begin() + nameDataRead, componentData.end());
-
-	std::pair<ecsBaseComponent*, ComponentID> compPair = { nullptr, -1 };
-	if (const auto &templateParams = findTemplate(componentTypeName.c_str())) {
-		const auto& [templateComponent, componentID, componentSize] = *templateParams;
-
-		// Clone the template component completely, then fill in the serialized data
-		auto* castedComponent = templateComponent->clone();
-		if (serializedComponentData.size())
-			castedComponent->load(serializedComponentData);
-		castedComponent->m_entity = ecsHandle();
-
-		compPair = { castedComponent , componentID };
-	}
-	return compPair;
-}
-
-std::optional<std::tuple<ecsBaseComponent*, ComponentID, size_t>> ecsWorld::findTemplate(const char* name) {
 	if (const auto & templateParams = ecsBaseComponent::_templateMap.search(name))
 		return *templateParams;
 	return {};
@@ -455,6 +394,11 @@ void ecsWorld::updateSystem(ecsBaseSystem* system, const float& deltaTime)
 {
 	if (auto components = getRelevantComponents(system->getComponentTypes(), system->getComponentFlags()); components.size() > 0ull)
 		system->updateComponents(deltaTime, components);
+}
+
+void ecsWorld::updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime)
+{
+	updateSystem(system.get(), deltaTime);
 }
 
 void ecsWorld::updateSystem(const float& deltaTime, const std::vector<ComponentID>& types, const std::vector<ecsBaseSystem::RequirementsFlag>& flags, const std::function<void(const float&, const std::vector<std::vector<ecsBaseComponent*>>&)>& func)

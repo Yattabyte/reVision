@@ -7,6 +7,7 @@
 #include <functional>
 #include <map>
 #include <string>
+#include <sstream>
 #include <tuple>
 #include <vector>
 
@@ -21,7 +22,7 @@ using ComponentCreateFunction = std::function<ComponentID(ComponentDataSpace& me
 using ComponentFreeFunction = std::function<void(ecsBaseComponent* comp)>;
 
 
-/** A base class representing components in an ECS architecture.*/
+/** A base class representing components in an ECS architecture. */
 struct ecsBaseComponent {
 	// Public (de)Constructors
 	inline virtual ~ecsBaseComponent() = default;
@@ -30,16 +31,18 @@ struct ecsBaseComponent {
 		: m_ID(ID), m_size(size), m_name(name) {}
 
 
-	// Public Interface Declarations
-	/** Save this component to a char buffer. 
-	@return				serialized component data. */
-	virtual std::vector<char> save() = 0;
-	/** Load into this component data from a char buffer.
-	param	data		serialized component data. */
-	virtual void load(const std::vector<char>& data) = 0;
-	/** Generate a clone of this component. 
+	// Public Methods
+	/** Save this component to a char buffer.
+	@return				serialized version of self. */
+	virtual std::vector<char> to_buffer() = 0;
+	/** Recover and generate a component from a char buffer.
+	@param	data		serialized version of component.
+	@param	dataRead	reference updated with the number of bytes read.
+	@return				if successfull a shared pointer to a new component, nullptr otherwise. */
+	static std::shared_ptr<ecsBaseComponent> from_buffer(const char* data, size_t& dataRead);
+	/** Generate a clone of this component.
 	@return				clone of this component. */
-	virtual ecsBaseComponent* clone() const = 0;
+	virtual std::shared_ptr<ecsBaseComponent> clone() const = 0;
 
 
 	// Public Attributes
@@ -63,6 +66,9 @@ protected:
 	@param	templateC	template component used for copying from. 
 	@return				runtime component ID. */
 	static ComponentID registerType(const ComponentCreateFunction& createFn, const ComponentFreeFunction& freeFn, const size_t& size, const char* string, ecsBaseComponent* templateC);
+	/** Recover and load component data into this component from a char buffer.
+	param	data		serialized component data. */
+	virtual void recover_data(const char* data) = 0;
 
 
 	// Protected Attributes
@@ -74,6 +80,7 @@ protected:
 	friend class ecsWorld;
 };
 
+
 /** A specialized, specific type of component.
 @param	C	the type of this component */
 template <typename C, const char* chars>
@@ -84,54 +91,71 @@ struct ecsComponent : public ecsBaseComponent {
 
 
 	// Public Methods
-	/** Return the run-time size of this component's class.
-	@return				the size of this component. */
-	inline constexpr static const size_t SIZE() { return sizeof(C); }
-	/** Return the run-time class name of this component's class.
-	@return				class name. */
-	inline constexpr static const char* CHARS() { return chars; }
-
-
-	// Interface Implementation
-	inline virtual std::vector<char> save() override {
-		// First retrieve the name of this component
-		const auto stringSize = std::string(chars).size();
-		std::vector<char> output(sizeof(unsigned int) + (stringSize * sizeof(char)));
-		const auto nameCount = (int)stringSize;
-		std::memcpy(&output[0], &nameCount, sizeof(int));
-		std::memcpy(&output[sizeof(int)], chars, stringSize);
-
-		const auto data = static_cast<C*>(this)->serialize();
-		output.insert(output.end(), data.begin(), data.end());
-		return output;
-	}
-	inline virtual void load(const std::vector<char>& data) override {
-		static_cast<C*>(this)->deserialize(data);
-		m_entity = ecsHandle();
-	}
-	inline virtual ecsBaseComponent* clone() const override {
-		return new C(static_cast<C const&>(*this));
-	}
-
-
-	// Interface Declaration (for specific components)
-	/** Serialize this component to a char buffer. Default behaviour memcpy's self. 
+	/** Default serialization method.
 	@return				serialized component data. */
-	inline virtual std::vector<char> serialize() {
+	inline std::vector<char> serialize() {
 		std::vector<char> data(sizeof(C));
-		std::memcpy(&data[0], static_cast<C*>(this), sizeof(C));
+		(*(C*)(&data[0])) = (*static_cast<C*>(this));
 		return data;
 	}
-	/** Deserialize buffer data into this component.
+	/** Default deserialization method.
 	@param	data		serialized component data. */
-	inline virtual void deserialize(const std::vector<char>& data) {
+	inline void deserialize(const char* data) {
 		(*static_cast<C*>(this)) = (*(C*)(&data[0]));
+	}
+	/** Save this component to a char buffer.
+	@return				serialized version of self. */
+	inline virtual std::vector<char> to_buffer() override {
+		// Get portable name data
+		const auto charCount = (int)std::string(chars).size();
+		std::vector<char> nameData(sizeof(unsigned int) + (charCount * sizeof(char)));
+		std::memcpy(&nameData[0], &charCount, sizeof(int));
+		std::memcpy(&nameData[sizeof(int)], chars, charCount);
+		// Get serial data
+		auto classData = static_cast<C*>(this)->serialize();
+		const auto& classDataSize = classData.size();
+		std::vector<char> classDataSizeData(sizeof(size_t));
+		std::memcpy(&classDataSizeData[0], &classDataSize, sizeof(size_t));
+		classData.insert(classData.begin(), classDataSizeData.cbegin(), classDataSizeData.cend()); 
+
+		std::vector<char> output;
+		output.reserve(nameData.size() + classData.size());
+		output.insert(output.end(), nameData.cbegin(), nameData.cend()); // name first (char count + name)
+		output.insert(output.end(), classData.cbegin(), classData.cend()); // then data (data count + data)
+		return output;
+	}
+	/** Generate a clone of this component.
+	@return				clone of this component. */
+	inline virtual std::shared_ptr<ecsBaseComponent> clone() const override {
+		const auto& component = std::shared_ptr<ecsBaseComponent>(new C(static_cast<C const&>(*this)));
+		// Always clear the entity handle
+		component->m_entity = ecsHandle();
+		return component;
 	}
 
 
 	// Static Type-Specific Attributes
+	/** Runtime class name of this component, also stored in base-component. */
+	constexpr static const char* m_name = chars;
 	/** Runtime generated ID per class, also stored in base-component. */
 	static const ComponentID m_ID;
+
+
+protected:
+	// Protected Interface Implementation
+	inline virtual void recover_data(const char* data) override {
+		// Previously recovered type name, created this class
+		// Next recover data
+		static_cast<C*>(this)->deserialize(data);
+
+		// Enforce runtime variables
+		ecsBaseComponent::m_ID = ecsComponent::m_ID;
+		ecsBaseComponent::m_size = sizeof(C);
+		ecsBaseComponent::m_name = chars;
+
+		// Always clear the entity handle
+		ecsBaseComponent::m_entity = ecsHandle();
+	}
 };
 
 
@@ -145,11 +169,11 @@ struct ecsComponent : public ecsBaseComponent {
 @param	comp			temporary pre-constructed component to copy data from. 
 @return					component ID - the index into the memory array where this component was created at. */
 template <typename C>
-inline constexpr static const ComponentID createFn(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp) {
+inline constexpr static const int createFn(ComponentDataSpace& memory, const ecsHandle& entityHandle, const ecsBaseComponent* comp) {
 	const size_t index = memory.size();
 	memory.resize(index + sizeof(C));
 	(new(&memory[index])C(*(C*)comp))->m_entity = entityHandle;
-	return (ComponentID)index;
+	return (int)index;
 }
 /** Destructs the supplied component, invalidating the memory range it occupied.
 @param	comp			the component to destruct. */

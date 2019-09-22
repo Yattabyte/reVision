@@ -28,7 +28,7 @@ public:
 
 	// Public Interface Implementation
 	inline virtual void updateComponents(const float& deltaTime, const std::vector< std::vector<ecsBaseComponent*> >& components) override {
-		const auto text = std::string(LightColor_Component::CHARS()) + ": (" + std::to_string(components.size()) + ")";
+		const auto text = std::string(LightColor_Component::m_name) + ": (" + std::to_string(components.size()) + ")";
 		if (ImGui::CollapsingHeader(text.c_str(), ImGuiTreeNodeFlags_DefaultOpen)) {
 			// Create list of handles for commands to use
 			const auto getUUIDS = [&]() {

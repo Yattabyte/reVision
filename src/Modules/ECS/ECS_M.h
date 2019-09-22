@@ -60,6 +60,10 @@ public:
 	@param	deltaTime			the delta time. */
 	void updateSystem(ecsBaseSystem* system, const float& deltaTime);
 	/** Update the components of a single system.
+	@param	system				the system to update.
+	@param	deltaTime			the delta time. */
+	void updateSystem(const std::shared_ptr<ecsBaseSystem>& system, const float& deltaTime);
+	/** Update the components of a single system.
 	@param	deltaTime			the delta time.
 	@param	types				list of component types to retrieve.
 	@param	flags				list of flags, designating a component as required or optional.

@@ -40,13 +40,13 @@ struct Camera_Component : public ecsComponent<Camera_Component, cameraName> {
 	Camera m_camera;
 	float m_updateTime = 0.0f;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		std::vector<char> data(sizeof(Camera));
 		std::memcpy(&data[0], &m_camera, sizeof(Camera));
 		return data;
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
-		std::memcpy(&m_camera, &data[0], data.size());
+	inline void deserialize(const char* data) {
+		std::memcpy(&m_camera, &data[0], sizeof(Camera));
 	}
 };
 
@@ -55,11 +55,11 @@ struct CameraArray_Component : public ecsComponent<CameraArray_Component, camera
 	std::vector<Camera> m_cameras;
 	std::vector<float> m_updateTimes;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		/**@todo copy out cameras*/
 		return {};
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 		m_cameras = std::vector<Camera>();
 		/**@todo copy in cameras*/
 	}
@@ -98,7 +98,7 @@ struct Prop_Component : public ecsComponent<Prop_Component, propName> {
 	size_t m_offset = 0ull, m_count = 0ull;
 	GLuint m_materialID = 0u;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(unsigned int) + sizeof(float) + sizeof(glm::vec3);
 		std::vector<char> data(propSize);
@@ -119,7 +119,7 @@ struct Prop_Component : public ecsComponent<Prop_Component, propName> {
 
 		return data;
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 		// Want a pointer that I can increment, promise to not change underlying data
 		auto ptr = const_cast<char*>(&data[0]);
 
@@ -154,7 +154,7 @@ struct Skeleton_Component : public ecsComponent<Skeleton_Component, skeletonName
 	float m_animTime = 0, m_animStart = 0;
 	std::vector<glm::mat4> m_transforms;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		const size_t propSize = sizeof(unsigned int) + (m_modelName.size() * sizeof(char)) + // need to store size + chars
 			sizeof(int) + sizeof(bool);
 		std::vector<char> data(propSize);
@@ -173,7 +173,7 @@ struct Skeleton_Component : public ecsComponent<Skeleton_Component, skeletonName
 
 		return data;
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 		// Want a pointer that I can increment, promise to not change underlying data
 		auto ptr = const_cast<char*>(&data[0]);
 
@@ -198,10 +198,10 @@ constexpr static const char shadowName[] = "Shadow_Component";
 struct Shadow_Component : public ecsComponent<Shadow_Component, shadowName> {
 	int m_shadowSpot = -1;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		return {};
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 	}
 };
 
@@ -247,10 +247,10 @@ struct Reflector_Component : public ecsComponent<Reflector_Component, reflectorN
 	float m_updateTime = 0.0f;
 	int m_cubeSpot = -1;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		return {};
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 	}
 };
 
@@ -265,11 +265,11 @@ struct Collider_Component : public ecsComponent<Collider_Component, colliderName
 	btConvexHullShape * m_shape = nullptr;
 	Transform m_worldTransform;
 
-	inline virtual std::vector<char> serialize()  override {
+	inline std::vector<char> serialize() {
 		/**@todo*/
 		return {};
 	}
-	inline virtual void deserialize(const std::vector<char> & data) override {
+	inline void deserialize(const char* data) {
 		/**@todo*/
 	}
 };
